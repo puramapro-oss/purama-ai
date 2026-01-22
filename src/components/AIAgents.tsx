@@ -11,7 +11,7 @@ import {
   Scale, CheckCircle, Plane, Brain, LineChart, PenTool,
   Image, Video, Music, Database, Code, Settings, Heart,
   Award, BookOpen, Rocket, Clock, MapPin, Phone, AlertTriangle,
-  ArrowRight
+  ArrowRight, ChevronDown, ChevronUp
 } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { Json } from '@/integrations/supabase/types'
@@ -111,10 +111,13 @@ const colorClasses = {
   },
 }
 
+const INITIAL_DISPLAY_COUNT = 10
+
 export function AIAgents() {
   const [hoveredAgent, setHoveredAgent] = useState<string | null>(null)
   const [agents, setAgents] = useState<Agent[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     async function fetchAgents() {
@@ -139,6 +142,9 @@ export function AIAgents() {
     if (!iconEmoji) return Bot
     return iconMap[iconEmoji] || Bot
   }
+
+  const displayedAgents = showAll ? agents : agents.slice(0, INITIAL_DISPLAY_COUNT)
+  const remainingCount = agents.length - INITIAL_DISPLAY_COUNT
 
   return (
     <section id="agents" className="relative py-24 overflow-hidden">
@@ -181,8 +187,9 @@ export function AIAgents() {
 
         {/* Agents Grid */}
         {!isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {agents.map((agent, index) => {
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {displayedAgents.map((agent, index) => {
               const colorTheme = getColorTheme(agent.color)
               const colors = colorClasses[colorTheme]
               const Icon = getIcon(agent.icon)
@@ -256,6 +263,37 @@ export function AIAgents() {
               )
             })}
           </div>
+
+          {/* Show More/Less Button */}
+          {agents.length > INITIAL_DISPLAY_COUNT && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="flex justify-center mt-12"
+            >
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="group flex items-center gap-3 glass-effect px-8 py-4 rounded-full border border-accent-cyan/30 hover:border-accent-cyan/60 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
+              >
+                {showAll ? (
+                  <>
+                    <ChevronUp className="w-5 h-5 text-accent-cyan group-hover:animate-bounce" />
+                    <span className="text-foreground font-medium">Voir moins d'agents</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-foreground font-medium">
+                      Voir les {remainingCount} autres agents
+                    </span>
+                    <ChevronDown className="w-5 h-5 text-accent-cyan group-hover:animate-bounce" />
+                  </>
+                )}
+              </button>
+            </motion.div>
+          )}
+        </>
         )}
 
         {/* CTA */}
