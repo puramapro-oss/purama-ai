@@ -1,10 +1,14 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Menu, X, Bot, Zap, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Menu, X, Bot, Zap, ArrowRight, LogIn, UserPlus } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
+import { Button } from '@/components/ui/button'
 
 export function Hero() {
+  const { user, loading } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -101,17 +105,34 @@ export function Hero() {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* Auth Buttons */}
+            <div className="hidden md:flex items-center gap-3">
+              {!loading && !user ? (
+                <>
+                  <Link to="/login">
+                    <Button variant="ghost" className="text-foreground/80 hover:text-accent-cyan hover:bg-accent-cyan/10">
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Connexion
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Inscription
+                    </Button>
+                  </Link>
+                </>
+              ) : !loading && user ? (
+                <Link to="/dashboard">
+                  <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
+                    Mon Dashboard
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              ) : null}
+            </div>
+
             <div className="flex items-center gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => document.getElementById('agents')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hidden sm:flex items-center gap-2 btn-primary"
-              >
-                Découvrir
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
 
               {/* Mobile Menu Button */}
               <button
@@ -150,7 +171,31 @@ export function Hero() {
                   {item}
                 </a>
               ))}
-              <button className="btn-primary mt-4">Découvrir</button>
+              
+              {/* Mobile Auth Buttons */}
+              {!loading && !user ? (
+                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border">
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full">
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Connexion
+                    </Button>
+                  </Link>
+                  <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button className="w-full bg-gradient-to-r from-primary to-accent">
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Inscription
+                    </Button>
+                  </Link>
+                </div>
+              ) : !loading && user ? (
+                <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="mt-4">
+                  <Button className="w-full bg-gradient-to-r from-primary to-accent">
+                    Mon Dashboard
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              ) : null}
             </div>
           </motion.div>
         </>
