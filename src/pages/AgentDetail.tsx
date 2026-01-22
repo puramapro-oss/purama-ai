@@ -191,7 +191,7 @@ export default function AgentDetail() {
             </motion.div>
 
             {/* Agent Usage Form */}
-            <AgentUsageForm agent={agent} isPremium={isPremium} />
+            <AgentUsageForm agent={agent} />
 
             {/* Usage history */}
             {usageHistory && usageHistory.length > 0 && (
