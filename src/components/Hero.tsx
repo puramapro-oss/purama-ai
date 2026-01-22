@@ -1,117 +1,67 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Volume2, VolumeX, Menu, X } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { Menu, X, Bot, Zap, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 export function Hero() {
-  const [isMuted, setIsMuted] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY
-      setIsScrolled(scrollTop > 50) // Show background after 50px scroll
+      setIsScrolled(window.scrollY > 50)
     }
-
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Ensure video is muted immediately on load to prevent any audio
-  useEffect(() => {
-    if (videoRef.current) {
-      console.log('Video element found, setting up...')
-      videoRef.current.volume = 0
-      videoRef.current.muted = true
-      videoRef.current.defaultMuted = true
-      
-      // Add event listeners for debugging
-      videoRef.current.addEventListener('loadstart', () => console.log('Video: loadstart'))
-      videoRef.current.addEventListener('loadedmetadata', () => console.log('Video: loadedmetadata'))
-      videoRef.current.addEventListener('canplay', () => console.log('Video: canplay'))
-      videoRef.current.addEventListener('playing', () => console.log('Video: playing'))
-      videoRef.current.addEventListener('error', (e) => console.error('Video error:', e))
-      
-      // Force mute on play
-      videoRef.current.addEventListener('play', () => {
-        if (videoRef.current) {
-          console.log('Video play event fired')
-          videoRef.current.muted = isMuted
-          videoRef.current.volume = isMuted ? 0 : 0.7
-        }
-      })
-      
-      // Try to play the video
-      const playPromise = videoRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => console.log('Video autoplay successful'))
-          .catch(error => console.error('Video autoplay failed:', error))
-      }
-    }
-  }, [])
-
-  // Update video mute state when isMuted changes
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = isMuted
-      videoRef.current.volume = isMuted ? 0 : 0.7
-    }
-  }, [isMuted])
-
-  // Handle body scroll lock when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'unset'
     }
-
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = 'unset'
     }
   }, [isMobileMenuOpen])
 
-  // Close mobile menu on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false)
-      }
-    }
-
-    if (isMobileMenuOpen) {
-      window.addEventListener('scroll', handleScroll)
-    }
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [isMobileMenuOpen])
-
-
-
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-black">
-      {/* MASSIVE VIDEO - Takes up 95% of space */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover scale-110"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src="https://mojli.s3.us-east-2.amazonaws.com/Mojli+Website+upscaled+(12mb).webm" type="video/webm" />
-        Your browser does not support the video tag.
-      </video>
+    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        {/* Grid pattern */}
+        <div className="absolute inset-0 grid-pattern opacity-50" />
+        
+        {/* Gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-accent-purple/20 rounded-full blur-[120px] float-animation" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-cyan/20 rounded-full blur-[100px] float-animation" style={{ animationDelay: '-3s' }} />
+        <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-accent-pink/10 rounded-full blur-[80px] float-animation" style={{ animationDelay: '-1.5s' }} />
+        
+        {/* Animated particles */}
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-accent-cyan rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 1, 0.2],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
 
-      {/* Full-Width Navbar */}
+      {/* Navbar */}
       <motion.nav
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -121,93 +71,52 @@ export function Hero() {
         <div 
           className={`w-full px-6 sm:px-8 lg:px-12 py-4 transition-all duration-300 ease-out ${
             isScrolled 
-              ? 'bg-black/80 backdrop-blur-xl border-b border-white/10' 
+              ? 'bg-background/80 backdrop-blur-xl border-b border-accent-cyan/20' 
               : 'bg-transparent'
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between max-w-7xl mx-auto">
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="flex items-center cursor-pointer"
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
+              className="flex items-center cursor-pointer gap-2"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              <span className="font-bagel text-white text-xl tracking-wider">MOJJU</span>
+              <Bot className="w-8 h-8 text-accent-cyan" />
+              <span className="font-orbitron text-foreground text-xl tracking-wider font-bold">
+                AI<span className="text-accent-cyan">AGENTS</span>
+              </span>
             </motion.div>
 
-            {/* Navigation Menu */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a 
-                href="#portfolio" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
-              >
-                Work
-              </a>
-              <a 
-                href="#about" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
-              >
-                Process
-              </a>
-              <a 
-                href="#services" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
-              >
-                Capabilities
-              </a>
-              <a 
-                href="#team" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
-              >
-                Team
-              </a>
-              <a 
-                href="#contact" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
-              >
-                Contact
-              </a>
+              {['Agents', 'Fonctionnalités', 'Tarifs', 'Contact'].map((item) => (
+                <a 
+                  key={item}
+                  href={`#${item.toLowerCase()}`} 
+                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
+                >
+                  {item}
+                </a>
+              ))}
             </div>
 
-            {/* Right Side - Video Controls + CTA + Mobile Menu */}
-            <div className="flex items-center space-x-3 relative">
-              {/* Video Controls with Sound On indicator */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="glass-effect p-3 rounded-full text-white hover:bg-white/20 gentle-animation cursor-pointer"
-                >
-                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
-                
-                {/* Sound On indicator - only show when muted */}
-                {isMuted && (
-                  <div className="absolute -bottom-10 right-0 flex items-center text-white/80">
-                    <span className="whitespace-nowrap font-medium text-sm mr-2">Sound On</span>
-                    <span className="text-lg">↗</span>
-                  </div>
-                )}
-              </div>
-              
-              {/* CTA Button - Hidden on mobile */}
+            {/* CTA Button */}
+            <div className="flex items-center gap-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  const contactSection = document.getElementById('contact')
-                  contactSection?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                className="hidden sm:block bg-red-600 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-md hover:bg-red-700 gentle-animation ml-4 cursor-pointer"
+                onClick={() => document.getElementById('agents')?.scrollIntoView({ behavior: 'smooth' })}
+                className="hidden sm:flex items-center gap-2 btn-primary"
               >
-                Book a Call
+                Découvrir
+                <ArrowRight className="w-4 h-4" />
               </motion.button>
 
-              {/* Mobile Hamburger Menu Button */}
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden glass-effect p-3 rounded-full text-white hover:bg-white/20 active:bg-white/30 gentle-animation cursor-pointer z-[120] relative"
+                className="md:hidden glass-effect p-3 rounded-full text-foreground"
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -216,113 +125,128 @@ export function Hero() {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-md z-[80] cursor-pointer"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="md:hidden fixed inset-0 bg-background/80 backdrop-blur-md z-[80]"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            className="md:hidden fixed top-0 right-0 h-full w-72 bg-card border-l border-accent-cyan/20 z-[90] p-6 pt-20"
+          >
+            <div className="flex flex-col space-y-4">
+              {['Agents', 'Fonctionnalités', 'Tarifs', 'Contact'].map((item) => (
+                <a 
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+              <button className="btn-primary mt-4">Découvrir</button>
+            </div>
+          </motion.div>
+        </>
       )}
 
-      {/* Mobile Menu Panel */}
-      <motion.div
-        initial={{ x: '100%' }}
-        animate={{ x: isMobileMenuOpen ? '0%' : '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="md:hidden fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-black/90 backdrop-blur-xl border-l border-white/10 z-[90] mobile-menu-panel pointer-events-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex flex-col h-full">
-          {/* Close Button at the top */}
-          <div className="flex justify-end p-4">
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="glass-effect p-3 rounded-full text-white hover:bg-white/20 active:bg-white/30 gentle-animation cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          
-          <div className="flex flex-col px-6 pb-6 h-full">
-            {/* Mobile Navigation Links */}
-            <div className="flex flex-col space-y-4 text-white">
-              <a 
-                href="#portfolio" 
-                className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Work
-              </a>
-              <a 
-                href="#about" 
-                className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Process
-              </a>
-              <a 
-                href="#services" 
-                className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Capabilities
-              </a>
-              <a 
-                href="#team" 
-                className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Team
-              </a>
-              <a 
-                href="#contact" 
-                className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </a>
-            </div>
+      {/* Hero Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="text-center max-w-5xl mx-auto"
+        >
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="inline-flex items-center gap-2 glass-effect px-4 py-2 rounded-full mb-8"
+          >
+            <Zap className="w-4 h-4 text-accent-cyan" />
+            <span className="text-sm font-medium text-foreground/80">20 Agents IA pour Automatiser Votre Business</span>
+          </motion.div>
 
-            {/* Mobile CTA Button */}
+          {/* Main Title */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-orbitron font-black leading-tight mb-6">
+            <span className="block text-foreground">AUTOMATISEZ</span>
+            <span className="block gradient-text">VOTRE ENTREPRISE</span>
+            <span className="block text-foreground">AVEC L'IA</span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            Découvrez nos 20 agents IA conçus pour révolutionner votre productivité. 
+            Marketing, ventes, service client, RH — chaque agent est expert dans son domaine.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                const contactSection = document.getElementById('contact')
-                contactSection?.scrollIntoView({ behavior: 'smooth' })
-                setIsMobileMenuOpen(false)
-              }}
-              className="bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 active:bg-red-800 gentle-animation mt-8 cursor-pointer"
+              onClick={() => document.getElementById('agents')?.scrollIntoView({ behavior: 'smooth' })}
+              className="btn-primary flex items-center gap-2 text-lg px-8 py-4"
             >
-              Book a Call
+              Voir les Agents
+              <ArrowRight className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              className="btn-secondary text-lg px-8 py-4"
+            >
+              Nous Contacter
             </motion.button>
           </div>
-        </div>
-      </motion.div>
 
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+            className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto"
+          >
+            {[
+              { value: '20', label: 'Agents IA' },
+              { value: '99%', label: 'Automatisation' },
+              { value: '24/7', label: 'Disponibilité' },
+            ].map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-3xl sm:text-4xl font-orbitron font-bold text-accent-cyan neon-text-cyan">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
 
-
-      {/* Big Studio Title - Lower Left */}
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 1.5 }}
-        className="absolute bottom-12 left-6 sm:left-8 lg:left-12 z-40"
-      >
-        <div className="max-w-2xl">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-white">
-            <span className="block">AI FILM</span>
-            <span className="block">PRODUCTION</span>
-            <span className="block">WITHOUT LIMITS</span>
-          </h1>
-        </div>
-      </motion.div>
-
-
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-6 h-10 border-2 border-accent-cyan/50 rounded-full flex justify-center pt-2"
+          >
+            <div className="w-1.5 h-3 bg-accent-cyan rounded-full" />
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   )
 }

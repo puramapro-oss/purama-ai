@@ -7,7 +7,7 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: 'calc(var(--spacing) * 4)', // 1rem with 14px base = 14px padding
+      padding: 'calc(var(--spacing) * 4)',
       screens: {
         sm: '40rem',
         md: '48rem', 
@@ -18,7 +18,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        bagel: ['Bagel Fat One', 'cursive'],
+        orbitron: ['Orbitron', 'sans-serif'],
+        space: ['Space Grotesk', 'sans-serif'],
       },
       colors: {
         border: "var(--border)",
@@ -45,9 +46,11 @@ export default {
         accent: {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)",
+          cyan: "var(--accent-cyan)",
+          purple: "var(--accent-purple)",
+          pink: "var(--accent-pink)",
           blue: "var(--accent-blue)",
           emerald: "var(--accent-emerald)",
-          purple: "var(--accent-purple)",
         },
         popover: {
           DEFAULT: "var(--popover)",
