@@ -94,6 +94,50 @@ export type Database = {
         }
         Relationships: []
       }
+      commissions: {
+        Row: {
+          client_id: string
+          commission_amount: number
+          created_at: string | null
+          id: string
+          influencer_id: string
+          payment_date: string | null
+          sale_amount: number
+          status: string | null
+          subscription_id: string | null
+        }
+        Insert: {
+          client_id: string
+          commission_amount: number
+          created_at?: string | null
+          id?: string
+          influencer_id: string
+          payment_date?: string | null
+          sale_amount: number
+          status?: string | null
+          subscription_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          commission_amount?: number
+          created_at?: string | null
+          id?: string
+          influencer_id?: string
+          payment_date?: string | null
+          sale_amount?: number
+          status?: string | null
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commissions_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_submissions: {
         Row: {
           company: string | null
@@ -121,6 +165,57 @@ export type Database = {
           message?: string
           name?: string
           status?: string
+        }
+        Relationships: []
+      }
+      influencers: {
+        Row: {
+          affiliation_link: string
+          beneficiary_name: string | null
+          commission_rate: number | null
+          contract_signed_at: string | null
+          contract_status: string | null
+          created_at: string | null
+          expires_at: string | null
+          iban: string | null
+          id: string
+          promo_code: string
+          total_revenue: number | null
+          total_sales: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          affiliation_link: string
+          beneficiary_name?: string | null
+          commission_rate?: number | null
+          contract_signed_at?: string | null
+          contract_status?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          iban?: string | null
+          id?: string
+          promo_code: string
+          total_revenue?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          affiliation_link?: string
+          beneficiary_name?: string | null
+          commission_rate?: number | null
+          contract_signed_at?: string | null
+          contract_status?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          iban?: string | null
+          id?: string
+          promo_code?: string
+          total_revenue?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -394,6 +489,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_promo_code: {
+        Args: { influencer_name: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
