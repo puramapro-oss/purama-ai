@@ -218,7 +218,7 @@ export function AIAgents() {
         >
           <div className="inline-flex items-center gap-2 glass-effect px-4 py-2 rounded-full mb-6">
             <Bot className="w-4 h-4 text-accent-cyan" />
-            <span className="text-sm font-medium text-foreground/80">20 Agents Spécialisés</span>
+            <span className="text-sm font-medium text-foreground/80">45 Agents Spécialisés</span>
           </div>
           
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-orbitron font-bold mb-6">

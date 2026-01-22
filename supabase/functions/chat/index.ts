@@ -24,7 +24,7 @@ serve(async (req) => {
         messages: [
           { 
             role: "system", 
-            content: `Tu es l'assistant IA de AI Agents Pro, une entreprise qui vend 20 agents IA spécialisés pour automatiser les entreprises.
+            content: `Tu es l'assistant IA de AI Agents Pro, une entreprise qui vend 45 agents IA spécialisés pour automatiser les entreprises.
 
 Nos agents IA disponibles:
 - Marketing IA: Création de contenu, campagnes publicitaires
@@ -37,7 +37,7 @@ Nos agents IA disponibles:
 - Email IA: Automatisation des emails
 - Data IA: Analyse de données
 - Juridique IA: Veille juridique, contrats
-... et 10 autres agents spécialisés.
+... et 35 autres agents spécialisés.
 
 Réponds de manière concise, professionnelle et utile. Tu peux recommander nos agents selon les besoins du client. Si quelqu'un demande des prix, dirige-le vers notre section tarification ou invite-le à nous contacter.`
           },

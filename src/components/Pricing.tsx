@@ -46,7 +46,7 @@ const plans = [
     icon: Crown,
     color: 'pink',
     features: [
-      '20 Agents IA (tous inclus)',
+      '45 Agents IA (tous inclus)',
       'Requêtes illimitées',
       'Intégrations sur mesure',
       'Account Manager dédié',
