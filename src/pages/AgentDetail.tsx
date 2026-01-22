@@ -10,13 +10,13 @@ import {
   Loader2,
   AlertCircle,
   Sparkles,
-  MessageSquare,
   Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { AgentUsageForm } from '@/components/agent/AgentUsageForm';
 import { useAgent, useActivateAgent, useAgentUsage } from '@/hooks/useAgent';
 import { useSubscription } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
@@ -184,11 +184,14 @@ export default function AgentDetail() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-muted-foreground">
+              <p className="text-muted-foreground">
                   Cet agent offre des capacités d'automatisation avancées pour votre entreprise.
                 </p>
               )}
             </motion.div>
+
+            {/* Agent Usage Form */}
+            <AgentUsageForm agent={agent} isPremium={isPremium} />
 
             {/* Usage history */}
             {usageHistory && usageHistory.length > 0 && (
