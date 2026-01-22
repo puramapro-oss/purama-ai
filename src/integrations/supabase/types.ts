@@ -124,6 +124,78 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          alert_enabled: boolean | null
+          created_at: string | null
+          daily_report_enabled: boolean | null
+          email_enabled: boolean | null
+          id: string
+          question_enabled: boolean | null
+          task_completed_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_enabled?: boolean | null
+          created_at?: string | null
+          daily_report_enabled?: boolean | null
+          email_enabled?: boolean | null
+          id?: string
+          question_enabled?: boolean | null
+          task_completed_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_enabled?: boolean | null
+          created_at?: string | null
+          daily_report_enabled?: boolean | null
+          email_enabled?: boolean | null
+          id?: string
+          question_enabled?: boolean | null
+          task_completed_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          agent_slug: string | null
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          agent_slug?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          agent_slug?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -332,6 +404,11 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      notification_type:
+        | "task_completed"
+        | "question"
+        | "daily_report"
+        | "alert"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -460,6 +537,12 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      notification_type: [
+        "task_completed",
+        "question",
+        "daily_report",
+        "alert",
+      ],
     },
   },
 } as const
