@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Send, Mail, MessageSquare, Phone, MapPin, ArrowRight } from 'lucide-react'
+import { supabase } from '@/integrations/supabase/client'
+import { useToast } from '@/hooks/use-toast'
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -13,14 +15,61 @@ export function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Basic validation
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez entrer une adresse email valide.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSubmitting(true)
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setSubmitted(true)
-    setIsSubmitting(false)
+    
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          company: formData.company.trim() || null,
+          message: formData.message.trim(),
+        })
+
+      if (error) throw error
+
+      setSubmitted(true)
+      toast({
+        title: "Message envoyé !",
+        description: "Nous vous répondrons dans les plus brefs délais.",
+      })
+    } catch (error) {
+      console.error('Error submitting contact form:', error)
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -144,20 +193,30 @@ export function Contact() {
                   <h3 className="text-2xl font-orbitron font-bold text-foreground mb-4">
                     Message Envoyé !
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground mb-6">
                     Nous vous répondrons dans les 24 heures.
                   </p>
+                  <button
+                    onClick={() => {
+                      setSubmitted(false)
+                      setFormData({ name: '', email: '', company: '', message: '' })
+                    }}
+                    className="btn-secondary"
+                  >
+                    Envoyer un autre message
+                  </button>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Nom Complet
+                        Nom Complet *
                       </label>
                       <input
                         type="text"
                         required
+                        maxLength={100}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors"
@@ -166,11 +225,12 @@ export function Contact() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Email
+                        Email *
                       </label>
                       <input
                         type="email"
                         required
+                        maxLength={255}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors"
@@ -185,6 +245,7 @@ export function Contact() {
                     </label>
                     <input
                       type="text"
+                      maxLength={100}
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                       className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors"
@@ -194,11 +255,12 @@ export function Contact() {
 
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Votre Message
+                      Votre Message *
                     </label>
                     <textarea
                       required
                       rows={5}
+                      maxLength={2000}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors resize-none"
@@ -209,7 +271,7 @@ export function Contact() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full btn-primary flex items-center justify-center gap-2 py-4 disabled:opacity-50"
+                    className="w-full btn-primary flex items-center justify-center gap-2 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
