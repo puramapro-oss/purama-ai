@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, User, Settings, Crown, Sparkles, Bell } from 'lucide-react';
+import { LogOut, User, Settings, Crown, Sparkles, Bell, Link2 } from 'lucide-react';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 
 export function DashboardHeader() {
@@ -87,6 +87,12 @@ export function DashboardHeader() {
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 Mon profil
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/mes-connexions">
+                  <Link2 className="mr-2 h-4 w-4" />
+                  Mes connexions
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/notification-settings">
