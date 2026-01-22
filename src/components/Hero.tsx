@@ -94,7 +94,7 @@ export function Hero() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Agents', 'Fonctionnalités', 'Tarifs', 'Contact'].map((item) => (
+              {['Agents', 'Fonctionnalités', 'Contact'].map((item) => (
                 <a 
                   key={item}
                   href={`#${item.toLowerCase()}`} 
@@ -103,6 +103,12 @@ export function Hero() {
                   {item}
                 </a>
               ))}
+              <Link 
+                to="/pricing"
+                className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
+              >
+                Tarifs
+              </Link>
             </div>
 
             {/* Auth Buttons */}
@@ -161,7 +167,7 @@ export function Hero() {
             className="md:hidden fixed top-0 right-0 h-full w-72 bg-card border-l border-accent-cyan/20 z-[90] p-6 pt-20"
           >
             <div className="flex flex-col space-y-4">
-              {['Agents', 'Fonctionnalités', 'Tarifs', 'Contact'].map((item) => (
+              {['Agents', 'Fonctionnalités', 'Contact'].map((item) => (
                 <a 
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -171,6 +177,13 @@ export function Hero() {
                   {item}
                 </a>
               ))}
+              <Link 
+                to="/pricing"
+                className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Tarifs
+              </Link>
               
               {/* Mobile Auth Buttons */}
               {!loading && !user ? (
