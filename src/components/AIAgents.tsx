@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { 
   Bot, MessageSquare, TrendingUp, Users, Mail, Calendar,
   FileText, ShoppingCart, Headphones, BarChart3, Search,
@@ -9,7 +10,8 @@ import {
   Lightbulb, Zap, Target, Sparkles, LucideIcon, Loader2,
   Scale, CheckCircle, Plane, Brain, LineChart, PenTool,
   Image, Video, Music, Database, Code, Settings, Heart,
-  Award, BookOpen, Rocket, Clock, MapPin, Phone, AlertTriangle
+  Award, BookOpen, Rocket, Clock, MapPin, Phone, AlertTriangle,
+  ArrowRight
 } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { Json } from '@/integrations/supabase/types'
@@ -17,6 +19,7 @@ import { Json } from '@/integrations/supabase/types'
 interface Agent {
   id: string
   name: string
+  slug: string
   description: string | null
   icon: string | null
   color: string | null
@@ -117,7 +120,7 @@ export function AIAgents() {
     async function fetchAgents() {
       const { data, error } = await supabase
         .from('agents')
-        .select('id, name, description, icon, color, features, category, is_premium')
+        .select('id, name, slug, description, icon, color, features, category, is_premium')
         .eq('is_active', true)
         .order('name')
 
@@ -188,61 +191,68 @@ export function AIAgents() {
                 : []
               
               return (
-                <motion.div
-                  key={agent.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: Math.min(index * 0.03, 0.5) }}
-                  onMouseEnter={() => setHoveredAgent(agent.id)}
-                  onMouseLeave={() => setHoveredAgent(null)}
-                  className={`
-                    futuristic-card p-6 cursor-pointer relative
-                    ${colors.glow}
-                    ${hoveredAgent === agent.id ? 'border-opacity-100' : ''}
-                  `}
-                >
-                  {/* Premium Badge */}
-                  {agent.is_premium && (
-                    <div className="absolute top-3 right-3">
-                      <span className="text-xs bg-accent-purple/20 text-accent-purple px-2 py-1 rounded-full border border-accent-purple/30">
-                        Premium
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Icon */}
-                  <div className={`w-14 h-14 ${colors.bg} rounded-xl flex items-center justify-center mb-4 ${colors.border} border`}>
-                    <Icon className={`w-7 h-7 ${colors.icon}`} />
-                  </div>
-
-                  {/* Content */}
-                  <h3 className="text-lg font-orbitron font-semibold text-foreground mb-2">
-                    {agent.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                    {agent.description}
-                  </p>
-
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-2">
-                    {features.slice(0, 3).map((feature, i) => (
-                      <span 
-                        key={i}
-                        className={`text-xs ${colors.bg} ${colors.text} px-2 py-1 rounded-full ${colors.border} border`}
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Hover indicator */}
+                <Link to={`/agent/${agent.slug}`} key={agent.id}>
                   <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: hoveredAgent === agent.id ? '100%' : 0 }}
-                    className={`h-0.5 ${colors.text} bg-current mt-4 rounded-full`}
-                  />
-                </motion.div>
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: Math.min(index * 0.03, 0.5) }}
+                    onMouseEnter={() => setHoveredAgent(agent.id)}
+                    onMouseLeave={() => setHoveredAgent(null)}
+                    className={`
+                      futuristic-card p-6 cursor-pointer relative h-full
+                      ${colors.glow}
+                      ${hoveredAgent === agent.id ? 'border-opacity-100' : ''}
+                    `}
+                  >
+                    {/* Premium Badge */}
+                    {agent.is_premium && (
+                      <div className="absolute top-3 right-3">
+                        <span className="text-xs bg-accent-purple/20 text-accent-purple px-2 py-1 rounded-full border border-accent-purple/30">
+                          Premium
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Icon */}
+                    <div className={`w-14 h-14 ${colors.bg} rounded-xl flex items-center justify-center mb-4 ${colors.border} border`}>
+                      <Icon className={`w-7 h-7 ${colors.icon}`} />
+                    </div>
+
+                    {/* Content */}
+                    <h3 className="text-lg font-orbitron font-semibold text-foreground mb-2">
+                      {agent.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2">
+                      {agent.description}
+                    </p>
+
+                    {/* Features */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {features.slice(0, 3).map((feature, i) => (
+                        <span 
+                          key={i}
+                          className={`text-xs ${colors.bg} ${colors.text} px-2 py-1 rounded-full ${colors.border} border`}
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* View details link */}
+                    <div className={`flex items-center gap-2 text-sm ${colors.text} mt-auto`}>
+                      <span>Voir les détails</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+
+                    {/* Hover indicator */}
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: hoveredAgent === agent.id ? '100%' : 0 }}
+                      className={`h-0.5 ${colors.text} bg-current mt-4 rounded-full`}
+                    />
+                  </motion.div>
+                </Link>
               )
             })}
           </div>
