@@ -12,7 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, User, Settings, Crown, Sparkles } from 'lucide-react';
+import { LogOut, User, Settings, Crown, Sparkles, Bell } from 'lucide-react';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 
 export function DashboardHeader() {
   const { user, signOut } = useAuth();
@@ -55,6 +56,9 @@ export function DashboardHeader() {
             )}
           </Badge>
 
+          {/* Notification Center */}
+          <NotificationCenter />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -74,13 +78,21 @@ export function DashboardHeader() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/notifications">
+                  <Bell className="mr-2 h-4 w-4" />
+                  Mes notifications
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 Mon profil
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Paramètres
+              <DropdownMenuItem asChild>
+                <Link to="/notification-settings">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Paramètres notifications
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut} className="text-destructive">

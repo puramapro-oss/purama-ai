@@ -10,6 +10,8 @@ import Dashboard from '@/pages/Dashboard';
 import AgentDetail from '@/pages/AgentDetail';
 import Pricing from '@/pages/Pricing';
 import MyAgents from '@/pages/MyAgents';
+import Notifications from '@/pages/Notifications';
+import NotificationSettings from '@/pages/NotificationSettings';
 import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -46,6 +48,22 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <MyAgents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notification-settings"
+              element={
+                <ProtectedRoute>
+                  <NotificationSettings />
                 </ProtectedRoute>
               }
             />
