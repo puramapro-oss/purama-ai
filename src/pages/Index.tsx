@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Hero } from '@/components/Hero';
 import { AIAgents } from '@/components/AIAgents';
 import { Features } from '@/components/Features';
@@ -7,10 +8,20 @@ import { Pricing } from '@/components/Pricing';
 import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
 import { Chatbot } from '@/components/Chatbot';
+import { ReferralBanner } from '@/components/influencer/ReferralBanner';
+import { useReferralTracking } from '@/hooks/useInfluencer';
 
 export default function Index() {
+  const { checkAndStoreReferral } = useReferralTracking();
+
+  useEffect(() => {
+    // Check for referral code in URL and store it
+    checkAndStoreReferral();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <ReferralBanner />
       <main className="relative" role="main">
         <section id="hero" aria-label="Hero section">
           <Hero />

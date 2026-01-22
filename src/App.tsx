@@ -14,6 +14,8 @@ import MyConnections from '@/pages/MyConnections';
 import OAuthCallback from '@/pages/OAuthCallback';
 import Notifications from '@/pages/Notifications';
 import NotificationSettings from '@/pages/NotificationSettings';
+import InfluencerDashboard from '@/pages/InfluencerDashboard';
+import AdminInfluencers from '@/pages/AdminInfluencers';
 import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -75,6 +77,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <NotificationSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
+            <Route
+              path="/admin/influenceurs"
+              element={
+                <ProtectedRoute>
+                  <AdminInfluencers />
                 </ProtectedRoute>
               }
             />
