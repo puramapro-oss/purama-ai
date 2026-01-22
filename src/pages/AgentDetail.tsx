@@ -9,7 +9,9 @@ import {
   Star,
   Loader2,
   AlertCircle,
-  Sparkles
+  Sparkles,
+  MessageSquare,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -284,6 +286,24 @@ export default function AgentDetail() {
                   <Crown className="w-4 h-4 mr-2" />
                 )}
                 {canUse ? 'Activer l\'agent' : 'Passer au Premium'}
+              </Button>
+
+              {/* Demo request button */}
+              <Button
+                variant="outline"
+                className="w-full border-accent-cyan/50 text-accent-cyan hover:bg-accent-cyan/10"
+                size="lg"
+                onClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    navigate('/#contact');
+                  }
+                }}
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Demander une démo
               </Button>
 
               {lastUsed && (
