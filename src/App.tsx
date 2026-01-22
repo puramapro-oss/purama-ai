@@ -1,43 +1,38 @@
-import { Hero } from './components/Hero'
-import { AIAgents } from './components/AIAgents'
-import { Features } from './components/Features'
-import { ROICalculator } from './components/ROICalculator'
-import { AgentComparator } from './components/AgentComparator'
-import { Pricing } from './components/Pricing'
-import { Contact } from './components/Contact'
-import { Footer } from './components/Footer'
-import { Chatbot } from './components/Chatbot'
-import { Toaster } from 'sonner'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
+import { AuthProvider } from '@/hooks/useAuth';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import Index from '@/pages/Index';
+import Login from '@/pages/Login';
+import Signup from '@/pages/Signup';
+import Dashboard from '@/pages/Dashboard';
+import NotFound from '@/pages/NotFound';
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Toaster position="top-right" richColors />
-      <main className="relative" role="main">
-        <section id="hero" aria-label="Hero section">
-          <Hero />
-        </section>
-        <section id="agents-section" aria-label="AI Agents section">
-          <AIAgents />
-        </section>
-        <section id="features-section" aria-label="Features section">
-          <Features />
-        </section>
-        <section id="roi-section" aria-label="ROI Calculator section">
-          <ROICalculator />
-        </section>
-        <section id="comparator-section" aria-label="Agent Comparator section">
-          <AgentComparator />
-        </section>
-        <section id="pricing-section" aria-label="Pricing section">
-          <Pricing />
-        </section>
-        <section id="contact-section" aria-label="Contact section">
-          <Contact />
-        </section>
-      </main>
-      <Footer />
-      <Chatbot />
-    </div>
-  )
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Toaster position="top-right" richColors />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
 }
