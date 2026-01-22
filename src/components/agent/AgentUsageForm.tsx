@@ -11,8 +11,17 @@ import {
   Send,
   Crown,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Headphones,
+  AlertTriangle
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -53,6 +62,10 @@ interface FormData {
   brandName?: string;
   platform?: string;
   description?: string;
+  // Support fields
+  problemDescription?: string;
+  urgencyLevel?: string;
+  contactEmail?: string;
   // Generic field
   prompt?: string;
 }
@@ -101,6 +114,16 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
     } else if (category.includes('marketing')) {
       if (!formData.brandName || !formData.platform || !formData.description) {
         setError('Veuillez remplir tous les champs marketing');
+        return false;
+      }
+    } else if (category.includes('support')) {
+      if (!formData.problemDescription || !formData.urgencyLevel || !formData.contactEmail) {
+        setError('Veuillez remplir tous les champs du formulaire');
+        return false;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.contactEmail)) {
+        setError('Adresse email de contact invalide');
         return false;
       }
     } else {
@@ -193,6 +216,13 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
             brandName: formData.brandName,
             platform: formData.platform,
             description: formData.description,
+          };
+        } else if (category.includes('support')) {
+          payload = {
+            ...payload,
+            problemDescription: formData.problemDescription,
+            urgencyLevel: formData.urgencyLevel,
+            contactEmail: formData.contactEmail,
           };
         } else {
           payload = {
@@ -332,6 +362,59 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
               rows={4}
               value={formData.description || ''}
               onChange={(e) => handleInputChange('description', e.target.value)}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (category.includes('support')) {
+      return (
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="problem-description" className="flex items-center gap-2 mb-2">
+              <Headphones className="w-4 h-4" />
+              Description du problème
+            </Label>
+            <Textarea
+              id="problem-description"
+              placeholder="Décrivez le problème rencontré en détail..."
+              rows={4}
+              value={formData.problemDescription || ''}
+              onChange={(e) => handleInputChange('problemDescription', e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="urgency-level" className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="w-4 h-4" />
+              Niveau d'urgence
+            </Label>
+            <Select
+              value={formData.urgencyLevel || ''}
+              onValueChange={(value) => handleInputChange('urgencyLevel', value)}
+            >
+              <SelectTrigger id="urgency-level">
+                <SelectValue placeholder="Sélectionnez le niveau d'urgence" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="faible">Faible</SelectItem>
+                <SelectItem value="moyen">Moyen</SelectItem>
+                <SelectItem value="eleve">Élevé</SelectItem>
+                <SelectItem value="critique">Critique</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="contact-email" className="flex items-center gap-2 mb-2">
+              <Mail className="w-4 h-4" />
+              Email de contact
+            </Label>
+            <Input
+              id="contact-email"
+              type="email"
+              placeholder="votre@email.com"
+              value={formData.contactEmail || ''}
+              onChange={(e) => handleInputChange('contactEmail', e.target.value)}
             />
           </div>
         </div>
