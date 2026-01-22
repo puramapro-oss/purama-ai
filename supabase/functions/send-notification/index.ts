@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Resend } from "resend";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +14,105 @@ interface NotificationPayload {
   title: string;
   message: string;
   action_url?: string;
+}
+
+const typeEmoji: Record<string, string> = {
+  task_completed: '✅',
+  question: '❓',
+  daily_report: '📊',
+  alert: '⚠️',
+};
+
+const typeLabel: Record<string, string> = {
+  task_completed: 'Tâche terminée',
+  question: 'Question',
+  daily_report: 'Rapport quotidien',
+  alert: 'Alerte',
+};
+
+const typeColor: Record<string, string> = {
+  task_completed: '#22c55e',
+  question: '#3b82f6',
+  daily_report: '#a855f7',
+  alert: '#f97316',
+};
+
+function generateEmailHtml(payload: NotificationPayload, actionUrl: string | null): string {
+  const emoji = typeEmoji[payload.type];
+  const label = typeLabel[payload.type];
+  const color = typeColor[payload.type];
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${payload.title}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0a0a0f;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0f;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px 32px 24px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <span style="font-size: 24px; font-weight: bold; background: linear-gradient(135deg, #00d4ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                      Agentia
+                    </span>
+                  </td>
+                  <td align="right">
+                    <span style="display: inline-block; padding: 6px 12px; background-color: ${color}22; color: ${color}; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                      ${emoji} ${label}
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 0 32px 32px;">
+              <h1 style="margin: 0 0 16px; font-size: 24px; font-weight: 600; color: #ffffff;">
+                ${payload.title}
+              </h1>
+              <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #a1a1aa;">
+                ${payload.message}
+              </p>
+              ${payload.agent_slug ? `
+              <p style="margin: 0 0 24px; font-size: 14px; color: #71717a;">
+                Agent: <span style="color: #00d4ff;">${payload.agent_slug}</span>
+              </p>
+              ` : ''}
+              ${actionUrl ? `
+              <a href="${actionUrl}" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+                Voir les détails →
+              </a>
+              ` : ''}
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);">
+              <p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">
+                Vous recevez cet email car vous avez activé les notifications par email.<br>
+                <a href="#" style="color: #a855f7; text-decoration: none;">Gérer vos préférences</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
 }
 
 Deno.serve(async (req) => {
@@ -84,13 +184,14 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     let userId = payload.user_id;
+    let userEmail = payload.user_email;
 
     // If user_email provided, look up user_id
-    if (!userId && payload.user_email) {
+    if (!userId && userEmail) {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('user_id')
-        .eq('email', payload.user_email)
+        .select('user_id, email')
+        .eq('email', userEmail)
         .maybeSingle();
 
       if (profileError) {
@@ -109,6 +210,19 @@ Deno.serve(async (req) => {
       }
 
       userId = profile.user_id;
+    }
+
+    // If user_id provided but no email, look up email
+    if (userId && !userEmail) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (profile?.email) {
+        userEmail = profile.email;
+      }
     }
 
     // Check user's notification preferences
@@ -140,6 +254,12 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Build full action URL
+    const baseUrl = 'https://agentiapuramafr.lovable.app';
+    const fullActionUrl = payload.action_url 
+      ? (payload.action_url.startsWith('http') ? payload.action_url : `${baseUrl}${payload.action_url}`)
+      : null;
+
     // Insert notification
     const { data: notification, error: insertError } = await supabase
       .from('notifications')
@@ -165,11 +285,43 @@ Deno.serve(async (req) => {
 
     console.log('Notification created:', notification.id);
 
+    // Send email if enabled
+    let emailSent = false;
+    const emailEnabled = preferences ? preferences.email_enabled !== false : true;
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+    if (emailEnabled && userEmail && resendApiKey) {
+      try {
+        const resend = new Resend(resendApiKey);
+        
+        const emailHtml = generateEmailHtml(payload, fullActionUrl);
+        
+        const { error: emailError } = await resend.emails.send({
+          from: 'Agentia <notifications@resend.dev>',
+          to: [userEmail],
+          subject: `${typeEmoji[payload.type]} ${payload.title}`,
+          html: emailHtml,
+        });
+
+        if (emailError) {
+          console.error('Error sending email:', emailError);
+        } else {
+          console.log('Email sent to:', userEmail);
+          emailSent = true;
+        }
+      } catch (emailErr) {
+        console.error('Email sending failed:', emailErr);
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         notification_id: notification.id,
-        message: 'Notification sent successfully' 
+        email_sent: emailSent,
+        message: emailSent 
+          ? 'Notification sent and email delivered' 
+          : 'Notification sent (email skipped or failed)'
       }),
       { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
