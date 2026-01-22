@@ -10,6 +10,8 @@ import Dashboard from '@/pages/Dashboard';
 import AgentDetail from '@/pages/AgentDetail';
 import Pricing from '@/pages/Pricing';
 import MyAgents from '@/pages/MyAgents';
+import MyConnections from '@/pages/MyConnections';
+import OAuthCallback from '@/pages/OAuthCallback';
 import Notifications from '@/pages/Notifications';
 import NotificationSettings from '@/pages/NotificationSettings';
 import NotFound from '@/pages/NotFound';
@@ -51,6 +53,15 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/mes-connexions"
+              element={
+                <ProtectedRoute>
+                  <MyConnections />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route
               path="/notifications"
               element={

@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.daily-report]
 verify_jwt = false
+
+[functions.oauth-google]
+verify_jwt = false
