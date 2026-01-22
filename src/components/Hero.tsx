@@ -230,7 +230,7 @@ export function Hero() {
             className="inline-flex items-center gap-2 glass-effect px-4 py-2 rounded-full mb-8"
           >
             <Zap className="w-4 h-4 text-accent-cyan" />
-            <span className="text-sm font-medium text-foreground/80">20 Agents IA pour Automatiser Votre Business</span>
+            <span className="text-sm font-medium text-foreground/80">45 Agents IA pour Automatiser Votre Business</span>
           </motion.div>
 
           {/* Main Title */}
@@ -242,7 +242,7 @@ export function Hero() {
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Découvrez nos 20 agents IA conçus pour révolutionner votre productivité. 
+            Découvrez nos 45 agents IA conçus pour révolutionner votre productivité. 
             Marketing, ventes, service client, RH — chaque agent est expert dans son domaine.
           </p>
 
@@ -275,7 +275,7 @@ export function Hero() {
             className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto"
           >
             {[
-              { value: '20', label: 'Agents IA' },
+              { value: '45', label: 'Agents IA' },
               { value: '99%', label: 'Automatisation' },
               { value: '24/7', label: 'Disponibilité' },
             ].map((stat, index) => (
