@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Rocket, 
   Loader2, 
-  Upload, 
   Mail, 
   Building2, 
   FileText,
@@ -13,7 +12,9 @@ import {
   AlertCircle,
   CheckCircle2,
   Headphones,
-  AlertTriangle
+  AlertTriangle,
+  Zap,
+  Plus
 } from 'lucide-react';
 import {
   Select,
@@ -35,6 +36,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useAgentSelections } from '@/hooks/useAgentSelections';
 import { toast } from 'sonner';
 
 interface Agent {
@@ -48,7 +51,6 @@ interface Agent {
 
 interface AgentUsageFormProps {
   agent: Agent;
-  isPremium: boolean;
 }
 
 interface FormData {
@@ -70,17 +72,25 @@ interface FormData {
   prompt?: string;
 }
 
-export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
+export function AgentUsageForm({ agent }: AgentUsageFormProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { hasSubscription, isStarter, isPremium, isLoading: subLoading } = useSubscription();
+  const { hasAgent, addAgent, remainingSlots, isLoading: selectionsLoading } = useAgentSelections();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
   const [result, setResult] = useState<string | null>(null);
   const [showResultModal, setShowResultModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [addingAgent, setAddingAgent] = useState(false);
 
-  const canUse = !agent.is_premium || isPremium;
   const category = agent.category?.toLowerCase() || '';
+  
+  // Determine access
+  const isAgentInSelection = hasAgent(agent.id);
+  const canUse = isPremium || (isStarter && isAgentInSelection);
+  const canAddToSelection = isStarter && !isAgentInSelection && remainingSlots > 0;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,6 +104,17 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
     setError(null);
   };
 
+  const handleAddToSelection = async () => {
+    setAddingAgent(true);
+    const success = await addAgent(agent.id);
+    setAddingAgent(false);
+    if (success) {
+      toast.success('Agent ajouté !', {
+        description: 'Vous pouvez maintenant utiliser cet agent.',
+      });
+    }
+  };
+
   const validateForm = (): boolean => {
     if (category.includes('legal') || category.includes('juridique')) {
       if (!formData.file) {
@@ -105,7 +126,6 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
         setError('Veuillez remplir tous les champs email');
         return false;
       }
-      // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.recipient)) {
         setError('Adresse email invalide');
@@ -139,7 +159,6 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
     e.preventDefault();
     setError(null);
 
-    // Check authentication
     if (!user) {
       toast.error('Connexion requise', {
         description: 'Veuillez vous connecter pour utiliser cet agent.',
@@ -148,16 +167,13 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
       return;
     }
 
-    // Check subscription access
     if (!canUse) {
-      toast.error('Agent Premium', {
-        description: 'Passez au plan Premium pour utiliser cet agent.',
+      toast.error('Accès refusé', {
+        description: 'Vous n\'avez pas accès à cet agent.',
       });
-      navigate('/pricing');
       return;
     }
 
-    // Validate form
     if (!validateForm()) {
       return;
     }
@@ -167,7 +183,6 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
     try {
       const webhookUrl = `https://n8n.srv1286148.hstgr.cloud/webhook/agent-${agent.slug}`;
       
-      // Prepare payload based on category
       let payload: Record<string, unknown> = {
         agentId: agent.id,
         agentName: agent.name,
@@ -178,7 +193,6 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
       };
 
       if (category.includes('legal') || category.includes('juridique')) {
-        // For file uploads, we need to send as FormData
         const formDataPayload = new FormData();
         formDataPayload.append('agentId', agent.id);
         formDataPayload.append('agentName', agent.name);
@@ -202,7 +216,6 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
         const resultData = await response.text();
         setResult(resultData || 'Contrat analysé avec succès !');
       } else {
-        // For other types, send as JSON
         if (category.includes('email') || category.includes('mail')) {
           payload = {
             ...payload,
@@ -441,8 +454,24 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
     );
   };
 
-  // Show premium upgrade message if user can't use
-  if (!canUse) {
+  // Loading state
+  if (subLoading || selectionsLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="futuristic-card p-8"
+      >
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </motion.div>
+    );
+  }
+
+  // No subscription - show subscribe message
+  if (!hasSubscription) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -451,29 +480,96 @@ export function AgentUsageForm({ agent, isPremium }: AgentUsageFormProps) {
         className="futuristic-card p-8"
       >
         <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-          <Rocket className="w-5 h-5 text-amber-500" />
+          <Rocket className="w-5 h-5 text-primary" />
           Utiliser cet agent
         </h2>
         <div className="text-center py-8">
-          <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
-            <Crown className="w-8 h-8 text-amber-500" />
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
+            <Zap className="w-8 h-8 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold mb-2">Agent Premium requis</h3>
+          <h3 className="text-lg font-semibold mb-2">Abonnez-vous pour utiliser cet agent</h3>
           <p className="text-muted-foreground mb-6">
-            Passez au Premium pour utiliser cet agent et profiter de toutes ses fonctionnalités avancées.
+            Un abonnement est requis pour accéder aux agents IA.
           </p>
-          <Button
-            onClick={() => navigate('/pricing')}
-            className="bg-gradient-to-r from-amber-500 to-orange-500"
-          >
-            <Crown className="w-4 h-4 mr-2" />
-            Passer au Premium
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              onClick={() => navigate('/pricing')}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500"
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Starter - 33€/mois
+            </Button>
+            <Button
+              onClick={() => navigate('/pricing')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Premium - 99€/mois
+            </Button>
+          </div>
         </div>
       </motion.div>
     );
   }
 
+  // Starter plan but agent not in selection
+  if (isStarter && !isAgentInSelection) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="futuristic-card p-8"
+      >
+        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+          <Rocket className="w-5 h-5" style={{ color: agent.color || 'hsl(var(--primary))' }} />
+          Utiliser cet agent
+        </h2>
+        <div className="text-center py-8">
+          <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-amber-500" />
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Agent non sélectionné</h3>
+          <p className="text-muted-foreground mb-6">
+            {remainingSlots > 0 
+              ? `Ajoutez cet agent à votre sélection (${remainingSlots} place${remainingSlots > 1 ? 's' : ''} restante${remainingSlots > 1 ? 's' : ''}) ou passez au Premium.`
+              : 'Vous avez atteint la limite de 5 agents. Passez au Premium pour tous les débloquer.'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            {canAddToSelection && (
+              <Button
+                onClick={handleAddToSelection}
+                disabled={addingAgent}
+                className="bg-gradient-to-r from-blue-500 to-cyan-500"
+              >
+                {addingAgent ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4 mr-2" />
+                )}
+                Ajouter à ma sélection
+              </Button>
+            )}
+            <Button
+              onClick={() => navigate('/pricing')}
+              variant={canAddToSelection ? 'outline' : 'default'}
+              className={canAddToSelection ? '' : 'bg-gradient-to-r from-purple-500 to-pink-500'}
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Passer au Premium
+            </Button>
+            <Link to="/my-agents">
+              <Button variant="ghost">
+                Gérer mes agents
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // User can use the agent - show form
   return (
     <>
       <motion.div

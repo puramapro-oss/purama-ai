@@ -22,58 +22,38 @@ const PLANS = {
   starter: {
     id: 'starter',
     name: 'Starter',
-    price: 19,
+    price: 33,
     priceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
     productId: 'prod_Tq9M8BqZXnWp8A',
-    description: 'Idéal pour démarrer',
+    description: 'Choisissez 5 agents',
     icon: Zap,
     color: 'from-blue-500 to-cyan-500',
     features: [
-      '5 agents IA basiques',
-      '100 exécutions/mois',
+      '5 agents au choix parmi 45',
+      'Exécutions illimitées',
       'Support par email',
-      'Intégrations essentielles',
-      'Tableau de bord basique',
+      'Toutes les intégrations',
+      'Tableau de bord complet',
     ],
   },
   premium: {
     id: 'premium',
     name: 'Premium',
-    price: 49,
+    price: 99,
     priceId: 'price_1SsT7x4Y1unNvKtXvRnyLp4W',
     productId: 'prod_Tq9Q2m69e3A5h4',
-    description: 'Pour les professionnels',
+    description: 'Accès illimité',
     icon: Crown,
     color: 'from-purple-500 to-pink-500',
     popular: true,
     features: [
-      'Tous les agents IA (45+)',
+      'Tous les 45 agents IA',
       'Exécutions illimitées',
       'Support prioritaire 24/7',
       'Toutes les intégrations',
       'Analytics avancés',
       'Agents personnalisables',
       'API access',
-    ],
-  },
-  enterprise: {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 99,
-    priceId: 'price_1SsT8L4Y1unNvKtXSeH1ZZBV',
-    productId: 'prod_Tq9R8iVUYzD0UE',
-    description: 'Solution sur mesure',
-    icon: Building2,
-    color: 'from-amber-500 to-orange-500',
-    features: [
-      'Tout Premium +',
-      'Agents sur mesure',
-      'API dédiée',
-      'Support 24/7 dédié',
-      'Formation équipe',
-      'SLA garanti',
-      'Facturation personnalisée',
-      'Déploiement on-premise',
     ],
   },
 };
@@ -344,7 +324,7 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Free plan notice */}
+        {/* No free plan notice */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -352,8 +332,8 @@ export default function Pricing() {
           className="text-center mt-12 text-muted-foreground"
         >
           <p>
-            Vous utilisez actuellement le plan gratuit ?{' '}
-            <span className="text-foreground">3 agents disponibles, 10 exécutions/mois</span>
+            Tous nos agents nécessitent un abonnement.{' '}
+            <span className="text-foreground">Essai gratuit de 7 jours inclus.</span>
           </p>
         </motion.div>
       </main>

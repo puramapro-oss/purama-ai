@@ -9,6 +9,7 @@ import Signup from '@/pages/Signup';
 import Dashboard from '@/pages/Dashboard';
 import AgentDetail from '@/pages/AgentDetail';
 import Pricing from '@/pages/Pricing';
+import MyAgents from '@/pages/MyAgents';
 import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -37,6 +38,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <AgentDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-agents"
+              element={
+                <ProtectedRoute>
+                  <MyAgents />
                 </ProtectedRoute>
               }
             />
