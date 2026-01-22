@@ -1,176 +1,88 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Bot, MessageSquare, TrendingUp, Users, Mail, Calendar,
   FileText, ShoppingCart, Headphones, BarChart3, Search,
   Megaphone, CreditCard, Globe, Briefcase, Shield, 
-  Lightbulb, Zap, Target, Sparkles
+  Lightbulb, Zap, Target, Sparkles, LucideIcon, Loader2,
+  Scale, CheckCircle, Plane, Brain, LineChart, PenTool,
+  Image, Video, Music, Database, Code, Settings, Heart,
+  Award, BookOpen, Rocket, Clock, MapPin, Phone, AlertTriangle
 } from 'lucide-react'
+import { supabase } from '@/integrations/supabase/client'
+import { Json } from '@/integrations/supabase/types'
 
-const agents = [
-  {
-    id: 1,
-    name: 'Agent Marketing',
-    description: 'Crée des campagnes marketing automatisées et personnalisées',
-    icon: Megaphone,
-    color: 'cyan',
-    features: ['Création de contenu', 'A/B Testing', 'Analyse ROI'],
-  },
-  {
-    id: 2,
-    name: 'Agent Commercial',
-    description: 'Qualifie les leads et automatise le processus de vente',
-    icon: TrendingUp,
-    color: 'purple',
-    features: ['Lead scoring', 'Suivi automatique', 'Propositions'],
-  },
-  {
-    id: 3,
-    name: 'Agent Support',
-    description: 'Répond aux clients 24/7 avec une précision exceptionnelle',
-    icon: Headphones,
-    color: 'pink',
-    features: ['Chat en direct', 'FAQ intelligent', 'Escalade auto'],
-  },
-  {
-    id: 4,
-    name: 'Agent Email',
-    description: 'Gère et personnalise vos campagnes email automatiquement',
-    icon: Mail,
-    color: 'cyan',
-    features: ['Séquences auto', 'Segmentation', 'Optimisation'],
-  },
-  {
-    id: 5,
-    name: 'Agent RH',
-    description: 'Automatise le recrutement et la gestion des talents',
-    icon: Users,
-    color: 'purple',
-    features: ['Tri CV', 'Onboarding', 'Formation'],
-  },
-  {
-    id: 6,
-    name: 'Agent Planning',
-    description: 'Optimise les plannings et gère les rendez-vous',
-    icon: Calendar,
-    color: 'pink',
-    features: ['Réservation auto', 'Rappels', 'Optimisation'],
-  },
-  {
-    id: 7,
-    name: 'Agent Contenu',
-    description: 'Génère du contenu de qualité pour tous vos besoins',
-    icon: FileText,
-    color: 'cyan',
-    features: ['Articles SEO', 'Réseaux sociaux', 'Scripts'],
-  },
-  {
-    id: 8,
-    name: 'Agent E-commerce',
-    description: 'Optimise votre boutique et booste vos ventes',
-    icon: ShoppingCart,
-    color: 'purple',
-    features: ['Recommandations', 'Panier abandonné', 'Upsell'],
-  },
-  {
-    id: 9,
-    name: 'Agent Analytics',
-    description: 'Analyse vos données et génère des insights actionnables',
-    icon: BarChart3,
-    color: 'pink',
-    features: ['Rapports auto', 'Prédictions', 'Alertes'],
-  },
-  {
-    id: 10,
-    name: 'Agent SEO',
-    description: 'Optimise votre référencement naturel automatiquement',
-    icon: Search,
-    color: 'cyan',
-    features: ['Audit technique', 'Mots-clés', 'Backlinks'],
-  },
-  {
-    id: 11,
-    name: 'Agent Chatbot',
-    description: 'Conversationnel intelligent pour votre site web',
-    icon: MessageSquare,
-    color: 'purple',
-    features: ['Multi-langue', 'Personnalisé', 'Intégration CRM'],
-  },
-  {
-    id: 12,
-    name: 'Agent Finance',
-    description: 'Automatise la comptabilité et les rapports financiers',
-    icon: CreditCard,
-    color: 'pink',
-    features: ['Facturation', 'Suivi dépenses', 'Prévisions'],
-  },
-  {
-    id: 13,
-    name: 'Agent Social Media',
-    description: 'Gère vos réseaux sociaux de A à Z',
-    icon: Globe,
-    color: 'cyan',
-    features: ['Publication auto', 'Engagement', 'Analytics'],
-  },
-  {
-    id: 14,
-    name: 'Agent Projet',
-    description: 'Coordonne vos projets et équipes efficacement',
-    icon: Briefcase,
-    color: 'purple',
-    features: ['Tâches', 'Deadlines', 'Collaboration'],
-  },
-  {
-    id: 15,
-    name: 'Agent Sécurité',
-    description: 'Protège votre entreprise contre les menaces',
-    icon: Shield,
-    color: 'pink',
-    features: ['Surveillance', 'Alertes', 'Conformité'],
-  },
-  {
-    id: 16,
-    name: 'Agent Innovation',
-    description: 'Génère des idées et analyse les tendances marché',
-    icon: Lightbulb,
-    color: 'cyan',
-    features: ['Veille', 'Brainstorming', 'R&D'],
-  },
-  {
-    id: 17,
-    name: 'Agent Productivité',
-    description: 'Optimise les workflows et élimine les tâches répétitives',
-    icon: Zap,
-    color: 'purple',
-    features: ['Automatisation', 'Templates', 'Intégrations'],
-  },
-  {
-    id: 18,
-    name: 'Agent Publicité',
-    description: 'Gère vos campagnes publicitaires multi-plateformes',
-    icon: Target,
-    color: 'pink',
-    features: ['Google Ads', 'Meta Ads', 'Optimisation'],
-  },
-  {
-    id: 19,
-    name: 'Agent IA Pro',
-    description: 'Assistant personnel ultra-intelligent et polyvalent',
-    icon: Bot,
-    color: 'cyan',
-    features: ['Multi-tâches', 'Apprentissage', 'Personnalisé'],
-  },
-  {
-    id: 20,
-    name: 'Agent Premium',
-    description: 'Solution complète avec tous les agents intégrés',
-    icon: Sparkles,
-    color: 'purple',
-    features: ['Tout inclus', 'Support VIP', 'Custom'],
-  },
-]
+interface Agent {
+  id: string
+  name: string
+  description: string | null
+  icon: string | null
+  color: string | null
+  features: Json | null
+  category: string
+  is_premium: boolean | null
+}
+
+// Map emoji icons to Lucide icons
+const iconMap: Record<string, LucideIcon> = {
+  '⚖️': Scale,
+  '⚡': Zap,
+  '✅': CheckCircle,
+  '✈️': Plane,
+  '🧠': Brain,
+  '📊': BarChart3,
+  '📈': LineChart,
+  '📝': FileText,
+  '🎨': PenTool,
+  '🖼️': Image,
+  '🎬': Video,
+  '🎵': Music,
+  '💾': Database,
+  '💻': Code,
+  '⚙️': Settings,
+  '❤️': Heart,
+  '🏆': Award,
+  '📚': BookOpen,
+  '🚀': Rocket,
+  '⏰': Clock,
+  '📍': MapPin,
+  '📞': Phone,
+  '⚠️': AlertTriangle,
+  '📧': Mail,
+  '💬': MessageSquare,
+  '📢': Megaphone,
+  '🛒': ShoppingCart,
+  '🎧': Headphones,
+  '🔍': Search,
+  '🌐': Globe,
+  '💼': Briefcase,
+  '🛡️': Shield,
+  '💡': Lightbulb,
+  '🎯': Target,
+  '✨': Sparkles,
+  '👥': Users,
+  '📅': Calendar,
+  '💳': CreditCard,
+  '🤖': Bot,
+}
+
+// Map hex colors to theme colors
+const getColorTheme = (hexColor: string | null): 'cyan' | 'purple' | 'pink' => {
+  if (!hexColor) return 'cyan'
+  
+  // Convert hex to RGB to determine color category
+  const hex = hexColor.replace('#', '')
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+  
+  // Determine dominant color
+  if (b > r && b > g) return 'cyan'
+  if (r > b && r > g * 1.2) return 'pink'
+  return 'purple'
+}
 
 const colorClasses = {
   cyan: {
@@ -197,7 +109,33 @@ const colorClasses = {
 }
 
 export function AIAgents() {
-  const [hoveredAgent, setHoveredAgent] = useState<number | null>(null)
+  const [hoveredAgent, setHoveredAgent] = useState<string | null>(null)
+  const [agents, setAgents] = useState<Agent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchAgents() {
+      const { data, error } = await supabase
+        .from('agents')
+        .select('id, name, description, icon, color, features, category, is_premium')
+        .eq('is_active', true)
+        .order('name')
+
+      if (error) {
+        console.error('Error fetching agents:', error)
+      } else {
+        setAgents(data || [])
+      }
+      setIsLoading(false)
+    }
+
+    fetchAgents()
+  }, [])
+
+  const getIcon = (iconEmoji: string | null): LucideIcon => {
+    if (!iconEmoji) return Bot
+    return iconMap[iconEmoji] || Bot
+  }
 
   return (
     <section id="agents" className="relative py-24 overflow-hidden">
@@ -218,7 +156,7 @@ export function AIAgents() {
         >
           <div className="inline-flex items-center gap-2 glass-effect px-4 py-2 rounded-full mb-6">
             <Bot className="w-4 h-4 text-accent-cyan" />
-            <span className="text-sm font-medium text-foreground/80">45 Agents Spécialisés</span>
+            <span className="text-sm font-medium text-foreground/80">{agents.length} Agents Spécialisés</span>
           </div>
           
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-orbitron font-bold mb-6">
@@ -231,62 +169,84 @@ export function AIAgents() {
           </p>
         </motion.div>
 
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-10 h-10 text-accent-cyan animate-spin" />
+          </div>
+        )}
+
         {/* Agents Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {agents.map((agent, index) => {
-            const colors = colorClasses[agent.color as keyof typeof colorClasses]
-            const Icon = agent.icon
-            
-            return (
-              <motion.div
-                key={agent.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                onMouseEnter={() => setHoveredAgent(agent.id)}
-                onMouseLeave={() => setHoveredAgent(null)}
-                className={`
-                  futuristic-card p-6 cursor-pointer
-                  ${colors.glow}
-                  ${hoveredAgent === agent.id ? 'border-opacity-100' : ''}
-                `}
-              >
-                {/* Icon */}
-                <div className={`w-14 h-14 ${colors.bg} rounded-xl flex items-center justify-center mb-4 ${colors.border} border`}>
-                  <Icon className={`w-7 h-7 ${colors.icon}`} />
-                </div>
-
-                {/* Content */}
-                <h3 className="text-lg font-orbitron font-semibold text-foreground mb-2">
-                  {agent.name}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                  {agent.description}
-                </p>
-
-                {/* Features */}
-                <div className="flex flex-wrap gap-2">
-                  {agent.features.map((feature, i) => (
-                    <span 
-                      key={i}
-                      className={`text-xs ${colors.bg} ${colors.text} px-2 py-1 rounded-full ${colors.border} border`}
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Hover indicator */}
+        {!isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {agents.map((agent, index) => {
+              const colorTheme = getColorTheme(agent.color)
+              const colors = colorClasses[colorTheme]
+              const Icon = getIcon(agent.icon)
+              const features: string[] = Array.isArray(agent.features) 
+                ? agent.features.filter((f): f is string => typeof f === 'string')
+                : []
+              
+              return (
                 <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: hoveredAgent === agent.id ? '100%' : 0 }}
-                  className={`h-0.5 ${colors.text} bg-current mt-4 rounded-full`}
-                />
-              </motion.div>
-            )
-          })}
-        </div>
+                  key={agent.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: Math.min(index * 0.03, 0.5) }}
+                  onMouseEnter={() => setHoveredAgent(agent.id)}
+                  onMouseLeave={() => setHoveredAgent(null)}
+                  className={`
+                    futuristic-card p-6 cursor-pointer relative
+                    ${colors.glow}
+                    ${hoveredAgent === agent.id ? 'border-opacity-100' : ''}
+                  `}
+                >
+                  {/* Premium Badge */}
+                  {agent.is_premium && (
+                    <div className="absolute top-3 right-3">
+                      <span className="text-xs bg-accent-purple/20 text-accent-purple px-2 py-1 rounded-full border border-accent-purple/30">
+                        Premium
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Icon */}
+                  <div className={`w-14 h-14 ${colors.bg} rounded-xl flex items-center justify-center mb-4 ${colors.border} border`}>
+                    <Icon className={`w-7 h-7 ${colors.icon}`} />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg font-orbitron font-semibold text-foreground mb-2">
+                    {agent.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                    {agent.description}
+                  </p>
+
+                  {/* Features */}
+                  <div className="flex flex-wrap gap-2">
+                    {features.slice(0, 3).map((feature, i) => (
+                      <span 
+                        key={i}
+                        className={`text-xs ${colors.bg} ${colors.text} px-2 py-1 rounded-full ${colors.border} border`}
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Hover indicator */}
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: hoveredAgent === agent.id ? '100%' : 0 }}
+                    className={`h-0.5 ${colors.text} bg-current mt-4 rounded-full`}
+                  />
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
 
         {/* CTA */}
         <motion.div
