@@ -1,13 +1,18 @@
 import { Hero } from './components/Hero'
 import { AIAgents } from './components/AIAgents'
 import { Features } from './components/Features'
+import { ROICalculator } from './components/ROICalculator'
+import { AgentComparator } from './components/AgentComparator'
 import { Pricing } from './components/Pricing'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
+import { Chatbot } from './components/Chatbot'
+import { Toaster } from 'sonner'
 
 export default function App() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Toaster position="top-right" richColors />
       <main className="relative" role="main">
         <section id="hero" aria-label="Hero section">
           <Hero />
@@ -18,6 +23,12 @@ export default function App() {
         <section id="features-section" aria-label="Features section">
           <Features />
         </section>
+        <section id="roi-section" aria-label="ROI Calculator section">
+          <ROICalculator />
+        </section>
+        <section id="comparator-section" aria-label="Agent Comparator section">
+          <AgentComparator />
+        </section>
         <section id="pricing-section" aria-label="Pricing section">
           <Pricing />
         </section>
@@ -26,6 +37,7 @@ export default function App() {
         </section>
       </main>
       <Footer />
+      <Chatbot />
     </div>
   )
 }

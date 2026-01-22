@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Send, Mail, MessageSquare, Phone, MapPin, ArrowRight } from 'lucide-react'
+import { supabase } from '@/integrations/supabase/client'
+import { toast } from 'sonner'
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -17,10 +19,27 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setSubmitted(true)
-    setIsSubmitting(false)
+    
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || null,
+          message: formData.message,
+        })
+      
+      if (error) throw error
+      
+      setSubmitted(true)
+      toast.success('Message envoyé avec succès!')
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      toast.error('Erreur lors de l\'envoi. Veuillez réessayer.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
