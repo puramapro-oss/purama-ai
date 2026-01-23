@@ -94,6 +94,98 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_conversations: {
+        Row: {
+          created_at: string
+          escalated: boolean | null
+          id: string
+          session_id: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          escalated?: boolean | null
+          id?: string
+          session_id: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          escalated?: boolean | null
+          id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chatbot_knowledge: {
+        Row: {
+          categorie: string
+          created_at: string
+          id: string
+          keywords: string[] | null
+          question: string
+          reponse: string
+          updated_at: string
+        }
+        Insert: {
+          categorie: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          question: string
+          reponse: string
+          updated_at?: string
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          question?: string
+          reponse?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       commissions: {
         Row: {
           client_id: string
