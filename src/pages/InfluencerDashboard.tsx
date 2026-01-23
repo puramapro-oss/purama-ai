@@ -49,6 +49,7 @@ import { toast } from 'sonner';
 import { generateContractPdf } from '@/utils/generateContractPdf';
 import { PerformanceCharts } from '@/components/influencer/PerformanceCharts';
 import { TierProgress } from '@/components/influencer/TierProgress';
+import { TierBadge } from '@/components/influencer/TierBadge';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -249,10 +250,17 @@ export default function InfluencerDashboard() {
               Agentia
             </span>
           </Link>
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-            <Users className="w-3 h-3 mr-1" />
-            Espace Influenceur
-          </Badge>
+          <div className="flex items-center gap-3">
+            <TierBadge 
+              tier={influencer.commission_tier || 'bronze'} 
+              commissionRate={influencer.commission_rate}
+              size="md"
+            />
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 hidden sm:flex">
+              <Users className="w-3 h-3 mr-1" />
+              Influenceur
+            </Badge>
+          </div>
         </div>
       </header>
 
