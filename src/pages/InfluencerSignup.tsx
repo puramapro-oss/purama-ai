@@ -39,8 +39,8 @@ export default function InfluencerSignup() {
   const benefits = [
     {
       icon: Wallet,
-      title: '20% de commission',
-      description: 'Gagnez 20% sur chaque vente générée par votre lien'
+      title: 'Jusqu\'à 33% de commission',
+      description: 'Paliers évolutifs: Bronze 9.99%, Silver 19.99%, Gold 33%'
     },
     {
       icon: TrendingUp,

@@ -9,6 +9,7 @@ export interface Influencer {
   promo_code: string;
   affiliation_link: string;
   commission_rate: number;
+  commission_tier: 'bronze' | 'silver' | 'gold';
   total_revenue: number;
   total_sales: number;
   contract_status: 'pending' | 'signed' | 'expired';
@@ -18,6 +19,57 @@ export interface Influencer {
   created_at: string;
   expires_at: string;
   updated_at: string;
+}
+
+// Commission tier configuration
+export const COMMISSION_TIERS = {
+  bronze: {
+    name: 'Bronze',
+    rate: 9.99,
+    minSales: 0,
+    maxSales: 19,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-500/20',
+    borderColor: 'border-amber-500/30',
+    icon: '🥉',
+  },
+  silver: {
+    name: 'Silver',
+    rate: 19.99,
+    minSales: 20,
+    maxSales: 49,
+    color: 'text-slate-400',
+    bgColor: 'bg-slate-400/20',
+    borderColor: 'border-slate-400/30',
+    icon: '🥈',
+  },
+  gold: {
+    name: 'Gold',
+    rate: 33,
+    minSales: 50,
+    maxSales: Infinity,
+    color: 'text-yellow-500',
+    bgColor: 'bg-yellow-500/20',
+    borderColor: 'border-yellow-500/30',
+    icon: '🥇',
+  },
+} as const;
+
+export function getTierProgress(totalSales: number, currentTier: string) {
+  if (currentTier === 'gold') {
+    return { progress: 100, nextTier: null, salesNeeded: 0 };
+  }
+  
+  if (currentTier === 'silver') {
+    const salesNeeded = 50 - totalSales;
+    const progress = ((totalSales - 20) / 30) * 100;
+    return { progress: Math.min(progress, 100), nextTier: 'gold', salesNeeded };
+  }
+  
+  // Bronze
+  const salesNeeded = 20 - totalSales;
+  const progress = (totalSales / 20) * 100;
+  return { progress: Math.min(progress, 100), nextTier: 'silver', salesNeeded };
 }
 
 export interface Commission {
