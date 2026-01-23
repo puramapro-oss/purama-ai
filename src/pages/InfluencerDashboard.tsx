@@ -51,6 +51,7 @@ import { PerformanceCharts } from '@/components/influencer/PerformanceCharts';
 import { TierProgress } from '@/components/influencer/TierProgress';
 import { TierBadge } from '@/components/influencer/TierBadge';
 import { InfluencerLeaderboard } from '@/components/influencer/InfluencerLeaderboard';
+import { TierUpgradeConfetti } from '@/components/influencer/TierUpgradeConfetti';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -240,6 +241,8 @@ export default function InfluencerDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Confetti on tier upgrade */}
+      {user && <TierUpgradeConfetti userId={user.id} currentTier={influencer.commission_tier || 'bronze'} />}
       {/* Header */}
       <header className="sticky top-0 z-50 glass-effect border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
