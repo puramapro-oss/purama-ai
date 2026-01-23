@@ -133,6 +133,13 @@ export type Database = {
             foreignKeyName: "commissions_influencer_id_fkey"
             columns: ["influencer_id"]
             isOneToOne: false
+            referencedRelation: "influencer_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
             referencedRelation: "influencers"
             referencedColumns: ["id"]
           },
@@ -440,6 +447,13 @@ export type Database = {
             foreignKeyName: "tier_upgrade_queue_influencer_id_fkey"
             columns: ["influencer_id"]
             isOneToOne: false
+            referencedRelation: "influencer_leaderboard"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tier_upgrade_queue_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
             referencedRelation: "influencers"
             referencedColumns: ["id"]
           },
@@ -530,7 +544,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      influencer_leaderboard: {
+        Row: {
+          beneficiary_name: string | null
+          commission_rate: number | null
+          commission_tier: string | null
+          created_at: string | null
+          id: string | null
+          rank: number | null
+          total_revenue: number | null
+          total_sales: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_promo_code: {
