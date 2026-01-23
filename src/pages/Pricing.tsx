@@ -9,13 +9,15 @@ import {
   ArrowLeft, 
   Loader2,
   Sparkles,
-  Settings
+  Settings,
+  Gift
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useReferralTracking } from '@/hooks/useInfluencer';
 
 // Stripe price and product IDs
 const PLANS = {
@@ -106,6 +108,8 @@ export default function Pricing() {
     checkSubscription();
   }, [user]);
 
+  const { getStoredReferral, clearReferral } = useReferralTracking();
+
   const handleSubscribe = async (planId: string) => {
     if (!user) {
       toast.error('Connexion requise', {
@@ -120,13 +124,26 @@ export default function Pricing() {
 
     setLoading(planId);
     try {
+      // Get stored referral code if any
+      const storedReferral = getStoredReferral();
+      
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: plan.priceId },
+        body: { 
+          priceId: plan.priceId,
+          referralCode: storedReferral?.code || null,
+        },
       });
 
       if (error) throw error;
 
       if (data?.url) {
+        // Show discount notification if applied
+        if (data.hasDiscount && data.influencerName) {
+          toast.success('Réduction appliquée !', {
+            description: `-50% grâce à ${data.influencerName}`,
+            icon: <Gift className="w-4 h-4" />,
+          });
+        }
         window.open(data.url, '_blank');
       }
     } catch (err) {

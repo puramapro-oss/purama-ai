@@ -19,6 +19,13 @@ const planMapping: Record<string, string> = {
   'prod_Tq9R8iVUYzD0UE': 'enterprise',
 };
 
+// Plan prices for commission calculation (monthly price in EUR)
+const planPrices: Record<string, number> = {
+  'starter': 33,
+  'premium': 99,
+  'enterprise': 299,
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -76,7 +83,8 @@ serve(async (req) => {
         logStep("Checkout session completed", { 
           sessionId: session.id, 
           customerId: session.customer,
-          customerEmail: session.customer_email 
+          customerEmail: session.customer_email,
+          metadata: session.metadata
         });
 
         if (session.mode === 'subscription' && session.subscription) {
@@ -84,6 +92,11 @@ serve(async (req) => {
           const productId = subscription.items.data[0]?.price.product as string;
           const planType = planMapping[productId] || 'premium';
           const customerEmail = session.customer_email || session.customer_details?.email;
+
+          // Extract influencer info from metadata
+          const referralCode = session.metadata?.referral_code;
+          const influencerId = session.metadata?.influencer_id;
+          const clientUserId = session.metadata?.user_id;
 
           if (customerEmail) {
             // Find user by email
@@ -106,6 +119,83 @@ serve(async (req) => {
                 logStep("ERROR: Failed to update subscription", { error: updateError.message });
               } else {
                 logStep("Subscription updated successfully", { userId: user.id, planType });
+              }
+
+              // Handle influencer commission if referral was used
+              if (influencerId && referralCode) {
+                logStep("Processing influencer commission", { influencerId, referralCode });
+
+                // Get influencer data
+                const { data: influencer } = await supabaseClient
+                  .from('influencers')
+                  .select('*')
+                  .eq('id', influencerId)
+                  .single();
+
+                if (influencer) {
+                  // Calculate commission (annual subscription value * commission rate)
+                  const monthlyPrice = planPrices[planType] || 99;
+                  const annualValue = monthlyPrice * 12;
+                  const commissionRate = influencer.commission_rate / 100;
+                  const commissionAmount = annualValue * commissionRate;
+
+                  logStep("Commission calculation", { 
+                    monthlyPrice, 
+                    annualValue, 
+                    commissionRate,
+                    commissionAmount 
+                  });
+
+                  // Create commission record
+                  const { error: commissionError } = await supabaseClient
+                    .from('commissions')
+                    .insert({
+                      influencer_id: influencerId,
+                      client_id: user.id,
+                      sale_amount: annualValue,
+                      commission_amount: commissionAmount,
+                      status: 'pending',
+                      subscription_id: session.subscription as string,
+                    });
+
+                  if (commissionError) {
+                    logStep("ERROR: Failed to create commission", { error: commissionError.message });
+                  } else {
+                    logStep("Commission created successfully", { commissionAmount });
+
+                    // Update influencer stats
+                    const { error: statsError } = await supabaseClient
+                      .from('influencers')
+                      .update({
+                        total_revenue: influencer.total_revenue + commissionAmount,
+                        total_sales: influencer.total_sales + 1,
+                        updated_at: new Date().toISOString(),
+                      })
+                      .eq('id', influencerId);
+
+                    if (statsError) {
+                      logStep("ERROR: Failed to update influencer stats", { error: statsError.message });
+                    } else {
+                      logStep("Influencer stats updated", { 
+                        newTotalRevenue: influencer.total_revenue + commissionAmount,
+                        newTotalSales: influencer.total_sales + 1
+                      });
+                    }
+
+                    // Send notification to influencer
+                    await supabaseClient
+                      .from('notifications')
+                      .insert({
+                        user_id: influencer.user_id,
+                        type: 'task_completed',
+                        title: 'Nouvelle vente !',
+                        message: `Vous avez gagné ${commissionAmount.toFixed(2)}€ de commission grâce à votre code ${referralCode}`,
+                        action_url: '/influenceur/dashboard',
+                      });
+
+                    logStep("Notification sent to influencer");
+                  }
+                }
               }
             } else {
               logStep("User not found for email", { email: customerEmail });
@@ -210,6 +300,37 @@ serve(async (req) => {
             logStep("ERROR: Failed to update subscription status", { error: updateError.message });
           } else {
             logStep("Subscription marked as past_due", { userId: subscriptionData.user_id });
+          }
+        }
+        break;
+      }
+
+      case 'invoice.payment_succeeded': {
+        // Validate commission after successful payment (not just checkout)
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscriptionId = invoice.subscription as string;
+        
+        if (subscriptionId && invoice.billing_reason === 'subscription_create') {
+          logStep("First invoice paid, validating commission", { subscriptionId });
+
+          // Find commission with this subscription ID
+          const { data: commission, error: findError } = await supabaseClient
+            .from('commissions')
+            .select('*')
+            .eq('subscription_id', subscriptionId)
+            .eq('status', 'pending')
+            .maybeSingle();
+
+          if (commission && !findError) {
+            // Update commission to validated
+            const { error: updateError } = await supabaseClient
+              .from('commissions')
+              .update({ status: 'validated' })
+              .eq('id', commission.id);
+
+            if (!updateError) {
+              logStep("Commission validated", { commissionId: commission.id });
+            }
           }
         }
         break;
