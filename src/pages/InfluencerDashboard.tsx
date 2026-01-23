@@ -52,6 +52,7 @@ import { TierProgress } from '@/components/influencer/TierProgress';
 import { TierBadge } from '@/components/influencer/TierBadge';
 import { InfluencerLeaderboard } from '@/components/influencer/InfluencerLeaderboard';
 import { TierUpgradeConfetti } from '@/components/influencer/TierUpgradeConfetti';
+import { AchievementBadges } from '@/components/influencer/AchievementBadges';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -465,6 +466,11 @@ export default function InfluencerDashboard() {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Achievement Badges */}
+        <div className="mb-8">
+          <AchievementBadges totalSales={influencer.total_sales} />
         </div>
 
         {/* Tier Progress & Leaderboard */}
