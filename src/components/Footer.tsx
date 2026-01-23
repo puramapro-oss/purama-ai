@@ -1,6 +1,8 @@
 'use client'
 
-import { Bot, Github, Linkedin, Twitter } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Bot, Github, Linkedin, Twitter, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export function Footer() {
   return (
@@ -66,6 +68,16 @@ export function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Partner CTA */}
+          <div className="md:col-span-4 flex justify-center pt-8 border-t border-accent-cyan/10">
+            <Button asChild className="bg-gradient-to-r from-accent-purple to-accent-cyan hover:opacity-90">
+              <Link to="/influenceur/inscription" className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Devenir Partenaire
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Bottom */}

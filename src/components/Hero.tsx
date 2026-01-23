@@ -2,13 +2,15 @@
 
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Menu, X, Bot, Zap, ArrowRight, LogIn, UserPlus } from 'lucide-react'
+import { Menu, X, Bot, Zap, ArrowRight, LogIn, UserPlus, Users, Star } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useInfluencer } from '@/hooks/useInfluencer'
 import { Button } from '@/components/ui/button'
 
 export function Hero() {
   const { user, loading } = useAuth()
+  const { influencer } = useInfluencer()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -184,6 +186,28 @@ export function Hero() {
               >
                 Tarifs
               </Link>
+
+              {/* Influencer Links */}
+              <div className="border-t border-border pt-4 mt-2">
+                <Link 
+                  to="/influenceur/inscription"
+                  className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium flex items-center gap-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Users className="w-4 h-4" />
+                  Devenir Influenceur
+                </Link>
+                {influencer && (
+                  <Link 
+                    to="/influenceur/dashboard"
+                    className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium flex items-center gap-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Star className="w-4 h-4" />
+                    Espace Influenceur
+                  </Link>
+                )}
+              </div>
               
               {/* Mobile Auth Buttons */}
               {!loading && !user ? (
