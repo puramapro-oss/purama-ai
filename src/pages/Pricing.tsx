@@ -5,7 +5,6 @@ import {
   Check, 
   Crown, 
   Zap, 
-  Building2, 
   ArrowLeft, 
   Loader2,
   Sparkles,
@@ -24,9 +23,12 @@ const PLANS = {
   starter: {
     id: 'starter',
     name: 'Starter',
-    price: 33,
-    priceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
+    monthlyPrice: 33,
+    yearlyPrice: 265,
+    monthlyPriceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
+    yearlyPriceId: 'price_1SsY0t4Y1unNvKtXhJN6n3Vb',
     productId: 'prod_Tq9M8BqZXnWp8A',
+    yearlyProductId: 'prod_TqETIWE4cO3JqH',
     description: 'Choisissez 5 agents',
     icon: Zap,
     color: 'from-blue-500 to-cyan-500',
@@ -41,9 +43,12 @@ const PLANS = {
   premium: {
     id: 'premium',
     name: 'Premium',
-    price: 99,
-    priceId: 'price_1SsT7x4Y1unNvKtXvRnyLp4W',
+    monthlyPrice: 99,
+    yearlyPrice: 796,
+    monthlyPriceId: 'price_1SsT7x4Y1unNvKtXvRnyLp4W',
+    yearlyPriceId: 'price_1SsY1T4Y1unNvKtXUP6btXHe',
     productId: 'prod_Tq9Q2m69e3A5h4',
+    yearlyProductId: 'prod_TqEUl7wUEF8NEO',
     description: 'Accès illimité',
     icon: Crown,
     color: 'from-purple-500 to-pink-500',
@@ -68,6 +73,7 @@ export default function Pricing() {
   const [currentPlan, setCurrentPlan] = useState<string>('free');
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
   const [checkingSubscription, setCheckingSubscription] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
 
   // Check for success/cancel from Stripe
   useEffect(() => {
@@ -122,6 +128,8 @@ export default function Pricing() {
     const plan = PLANS[planId as keyof typeof PLANS];
     if (!plan) return;
 
+    const priceId = billingPeriod === 'yearly' ? plan.yearlyPriceId : plan.monthlyPriceId;
+
     setLoading(planId);
     try {
       // Get stored referral code if any
@@ -129,7 +137,7 @@ export default function Pricing() {
       
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { 
-          priceId: plan.priceId,
+          priceId,
           referralCode: storedReferral?.code || null,
         },
       });
@@ -223,10 +231,37 @@ export default function Pricing() {
             Choisissez votre{' '}
             <span className="gradient-text-cyan-purple">plan</span>
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
             Débloquez le potentiel de l'IA pour automatiser votre business.
             Tous les plans incluent un essai gratuit de 7 jours.
           </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                billingPeriod === 'monthly'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setBillingPeriod('yearly')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                billingPeriod === 'yearly'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Annuel
+              <Badge variant="secondary" className="bg-green-500/20 text-green-500 border-0">
+                -33%
+              </Badge>
+            </button>
+          </div>
         </motion.div>
 
         {/* Current subscription info */}
@@ -297,8 +332,21 @@ export default function Pricing() {
 
                 {/* Price */}
                 <div className="mb-6">
-                  <span className="text-4xl font-bold">{plan.price}€</span>
-                  <span className="text-muted-foreground">/mois</span>
+                  {billingPeriod === 'yearly' ? (
+                    <>
+                      <span className="text-4xl font-bold">{plan.yearlyPrice}€</span>
+                      <span className="text-muted-foreground">/an</span>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        <span className="line-through">{plan.monthlyPrice * 12}€</span>
+                        <span className="text-green-500 ml-2">Économisez {plan.monthlyPrice * 12 - plan.yearlyPrice}€</span>
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-4xl font-bold">{plan.monthlyPrice}€</span>
+                      <span className="text-muted-foreground">/mois</span>
+                    </>
+                  )}
                 </div>
 
                 {/* Features */}
