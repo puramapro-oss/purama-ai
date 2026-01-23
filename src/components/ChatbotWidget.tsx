@@ -50,7 +50,7 @@ const SUGGESTION_CHIPS = [
   "Comment connecter Gmail ?",
 ];
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chatbot`;
+const N8N_WEBHOOK_URL = 'https://n8n.srv1286148.hstgr.cloud/webhook/agent-chatbot-support';
 
 export function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -166,7 +166,7 @@ export function ChatbotWidget() {
     });
   };
 
-  const streamChat = async (userMessage: string) => {
+  const sendToN8n = async (userMessage: string) => {
     setIsLoading(true);
     
     const userMsg: Message = {
@@ -182,90 +182,55 @@ export function ChatbotWidget() {
       const convId = await createOrGetConversation();
       await saveMessage(convId, 'user', userMessage);
 
-      const messagesToSend = messages
+      // Build conversation history for n8n
+      const conversationHistory = messages
         .filter(m => m.role !== 'assistant' || !m.content.startsWith('Bienvenue'))
         .concat(userMsg)
         .map(m => ({ role: m.role, content: m.content }));
 
-      const resp = await fetch(CHAT_URL, {
+      // Send to n8n webhook
+      const resp = await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
-          messages: messagesToSend,
-          conversationId: convId,
-          sessionId,
-          pageContext: location.pathname,
+          message: userMessage,
+          user_id: user?.id || null,
+          page_url: window.location.href,
+          conversation_history: conversationHistory,
         }),
       });
 
       if (!resp.ok) {
-        const errorData = await resp.json().catch(() => ({}));
-        if (resp.status === 429) {
-          toast.error('Trop de requêtes. Veuillez patienter quelques instants.');
-        } else if (resp.status === 402) {
-          toast.error('Service temporairement indisponible.');
-        } else {
-          toast.error(errorData.error || 'Erreur de communication avec le chatbot');
-        }
-        throw new Error(errorData.error || 'Stream failed');
+        throw new Error(`n8n webhook error: ${resp.status}`);
       }
 
-      if (!resp.body) throw new Error('No response body');
+      const data = await resp.json();
+      
+      // Handle n8n response
+      const assistantContent = data.response || "Je n'ai pas pu générer une réponse.";
+      const suggestions = data.suggestions || [];
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = '';
-      let assistantContent = '';
-      let streamDone = false;
+      const assistantMsg: Message = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: assistantContent,
+        createdAt: new Date(),
+      };
 
-      const assistantMsgId = crypto.randomUUID();
-      setMessages(prev => [...prev, { id: assistantMsgId, role: 'assistant', content: '', createdAt: new Date() }]);
+      setMessages(prev => [...prev, assistantMsg]);
 
-      while (!streamDone) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textBuffer += decoder.decode(value, { stream: true });
+      // Save assistant message to database
+      await saveMessage(convId, 'assistant', assistantContent);
 
-        let newlineIndex: number;
-        while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
-          let line = textBuffer.slice(0, newlineIndex);
-          textBuffer = textBuffer.slice(newlineIndex + 1);
-
-          if (line.endsWith('\r')) line = line.slice(0, -1);
-          if (line.startsWith(':') || line.trim() === '') continue;
-          if (!line.startsWith('data: ')) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === '[DONE]') {
-            streamDone = true;
-            break;
-          }
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) {
-              assistantContent += content;
-              setMessages(prev => 
-                prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
-              );
-            }
-          } catch {
-            textBuffer = line + '\n' + textBuffer;
-            break;
-          }
-        }
-      }
-
-      // Save assistant message
-      if (assistantContent) {
-        await saveMessage(convId, 'assistant', assistantContent);
+      // Update suggestion chips if n8n provides custom suggestions
+      if (suggestions.length > 0) {
+        // Store suggestions for display (could be extended to show dynamically)
+        console.log('n8n suggestions:', suggestions);
       }
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error('n8n webhook error:', error);
       setMessages(prev => [
         ...prev,
         {
@@ -284,11 +249,11 @@ export function ChatbotWidget() {
     if (!inputValue.trim() || isLoading) return;
     const message = inputValue.trim();
     setInputValue('');
-    streamChat(message);
+    sendToN8n(message);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    streamChat(suggestion);
+    sendToN8n(suggestion);
   };
 
   const handleEscalate = async () => {
