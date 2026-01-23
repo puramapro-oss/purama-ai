@@ -15,7 +15,7 @@ import {
   CreditCard,
   ArrowLeft,
   Sparkles,
-  ExternalLink
+  Download
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,6 +46,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { formatDistanceToNow, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { generateContractPdf } from '@/utils/generateContractPdf';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -96,6 +97,20 @@ export default function InfluencerDashboard() {
   const handleSignContract = () => {
     signContract.mutate();
     setShowContractDialog(false);
+  };
+
+  const handleDownloadContract = () => {
+    if (!influencer) return;
+    
+    generateContractPdf({
+      beneficiaryName: influencer.beneficiary_name || 'Affilié',
+      promoCode: influencer.promo_code,
+      commissionRate: influencer.commission_rate,
+      contractSignedAt: influencer.contract_signed_at,
+      createdAt: influencer.created_at,
+    });
+    
+    toast.success('Contrat téléchargé !');
   };
 
   const handleUpdateBank = () => {
@@ -325,9 +340,13 @@ export default function InfluencerDashboard() {
                         Date du contrat : {format(new Date(), 'dd MMMM yyyy', { locale: fr })}
                       </p>
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
                       <Button variant="outline" onClick={() => setShowContractDialog(false)}>
                         Annuler
+                      </Button>
+                      <Button variant="secondary" onClick={handleDownloadContract}>
+                        <Download className="w-4 h-4 mr-2" />
+                        Télécharger PDF
                       </Button>
                       <Button onClick={handleSignContract} disabled={signContract.isPending}>
                         <Check className="w-4 h-4 mr-2" />
@@ -456,10 +475,21 @@ export default function InfluencerDashboard() {
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </Button>
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between text-sm flex-wrap gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="outline">Code: {influencer.promo_code}</Badge>
                 <Badge variant="secondary">-50% pour vos abonnés</Badge>
+                {influencer.contract_status === 'signed' && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleDownloadContract}
+                    className="h-6 text-xs"
+                  >
+                    <Download className="w-3 h-3 mr-1" />
+                    Télécharger contrat
+                  </Button>
+                )}
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Clock className="w-4 h-4" />
