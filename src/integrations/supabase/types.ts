@@ -173,6 +173,7 @@ export type Database = {
           affiliation_link: string
           beneficiary_name: string | null
           commission_rate: number | null
+          commission_tier: string | null
           contract_signed_at: string | null
           contract_status: string | null
           created_at: string | null
@@ -189,6 +190,7 @@ export type Database = {
           affiliation_link: string
           beneficiary_name?: string | null
           commission_rate?: number | null
+          commission_tier?: string | null
           contract_signed_at?: string | null
           contract_status?: string | null
           created_at?: string | null
@@ -205,6 +207,7 @@ export type Database = {
           affiliation_link?: string
           beneficiary_name?: string | null
           commission_rate?: number | null
+          commission_tier?: string | null
           contract_signed_at?: string | null
           contract_status?: string | null
           created_at?: string | null

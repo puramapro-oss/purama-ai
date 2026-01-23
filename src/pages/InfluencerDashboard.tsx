@@ -41,13 +41,14 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
-import { useInfluencer } from '@/hooks/useInfluencer';
+import { useInfluencer, COMMISSION_TIERS } from '@/hooks/useInfluencer';
 import { useProfile } from '@/hooks/useProfile';
 import { formatDistanceToNow, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { generateContractPdf } from '@/utils/generateContractPdf';
 import { PerformanceCharts } from '@/components/influencer/PerformanceCharts';
+import { TierProgress } from '@/components/influencer/TierProgress';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -184,15 +185,15 @@ export default function InfluencerDashboard() {
                 </div>
                 <CardTitle className="text-2xl">Devenir Influenceur Agentia</CardTitle>
                 <CardDescription className="text-base">
-                  Gagnez 20% de commission sur chaque vente générée par votre lien unique
+                  Gagnez jusqu'à 33% de commission grâce à notre système de paliers évolutif
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="text-center p-4 rounded-lg bg-secondary/50">
                     <DollarSign className="w-8 h-8 mx-auto mb-2 text-primary" />
-                    <p className="font-bold text-lg">20%</p>
-                    <p className="text-sm text-muted-foreground">Commission</p>
+                    <p className="font-bold text-lg">9.99% → 33%</p>
+                    <p className="text-sm text-muted-foreground">Commission évolutive</p>
                   </div>
                   <div className="text-center p-4 rounded-lg bg-secondary/50">
                     <Clock className="w-8 h-8 mx-auto mb-2 text-primary" />
@@ -441,17 +442,26 @@ export default function InfluencerDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Commission</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {influencer.commission_rate}%
+                  <p className="text-sm text-muted-foreground">Palier</p>
+                  <p className={`text-2xl font-bold ${COMMISSION_TIERS[influencer.commission_tier || 'bronze'].color}`}>
+                    {COMMISSION_TIERS[influencer.commission_tier || 'bronze'].icon} {influencer.commission_rate}%
                   </p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-purple-500" />
+                <div className={`w-12 h-12 rounded-xl ${COMMISSION_TIERS[influencer.commission_tier || 'bronze'].bgColor} flex items-center justify-center`}>
+                  <Sparkles className={`w-6 h-6 ${COMMISSION_TIERS[influencer.commission_tier || 'bronze'].color}`} />
                 </div>
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Tier Progress Card */}
+        <div className="mb-8">
+          <TierProgress 
+            currentTier={influencer.commission_tier || 'bronze'}
+            totalSales={influencer.total_sales}
+            commissionRate={influencer.commission_rate}
+          />
         </div>
 
         {/* Affiliation Link */}
