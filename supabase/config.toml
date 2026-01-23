@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.process-tier-queue]
 verify_jwt = false
+
+[functions.chatbot]
+verify_jwt = false
+
+[functions.escalate-chat]
+verify_jwt = false

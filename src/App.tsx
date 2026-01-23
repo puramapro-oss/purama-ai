@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ChatbotWidget } from '@/components/ChatbotWidget';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
@@ -93,6 +94,7 @@ export default function App() {
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatbotWidget />
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>
