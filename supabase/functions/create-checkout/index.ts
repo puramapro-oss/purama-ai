@@ -7,6 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Coupon ID for influencer referrals (-50% for first year)
+const INFLUENCER_COUPON_ID = "lHDOePig";
+
 const logStep = (step: string, details?: Record<string, unknown>) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
@@ -22,12 +25,17 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_ANON_KEY") ?? ""
   );
 
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+  );
+
   try {
     logStep("Function started");
 
-    const { priceId } = await req.json();
+    const { priceId, referralCode } = await req.json();
     if (!priceId) throw new Error("Price ID is required");
-    logStep("Price ID received", { priceId });
+    logStep("Price ID received", { priceId, referralCode });
 
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
@@ -49,7 +57,41 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://agentiapuramafr.lovable.app";
     
-    const session = await stripe.checkout.sessions.create({
+    // Check if referral code is valid and influencer exists
+    let validInfluencer = null;
+    let applyCoupon = false;
+
+    if (referralCode) {
+      logStep("Checking referral code", { referralCode });
+      
+      const { data: influencer, error: infError } = await supabaseAdmin
+        .from('influencers')
+        .select('*')
+        .eq('promo_code', referralCode.toUpperCase())
+        .eq('contract_status', 'signed')
+        .maybeSingle();
+
+      if (!infError && influencer) {
+        // Check if influencer link is not expired
+        const expiresAt = new Date(influencer.expires_at);
+        if (expiresAt > new Date()) {
+          validInfluencer = influencer;
+          applyCoupon = true;
+          logStep("Valid influencer found", { 
+            influencerId: influencer.id, 
+            promoCode: influencer.promo_code,
+            expiresAt: influencer.expires_at 
+          });
+        } else {
+          logStep("Influencer link expired", { expiresAt: influencer.expires_at });
+        }
+      } else {
+        logStep("Influencer not found or not signed", { referralCode });
+      }
+    }
+
+    // Build checkout session options
+    const sessionOptions: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
@@ -61,11 +103,32 @@ serve(async (req) => {
       mode: "subscription",
       success_url: `${origin}/pricing?success=true`,
       cancel_url: `${origin}/pricing?canceled=true`,
+      metadata: {
+        user_id: user.id,
+        referral_code: validInfluencer?.promo_code || '',
+        influencer_id: validInfluencer?.id || '',
+      },
+    };
+
+    // Apply coupon if valid influencer referral
+    if (applyCoupon) {
+      sessionOptions.discounts = [{ coupon: INFLUENCER_COUPON_ID }];
+      logStep("Applying influencer coupon", { couponId: INFLUENCER_COUPON_ID });
+    }
+    
+    const session = await stripe.checkout.sessions.create(sessionOptions);
+
+    logStep("Checkout session created", { 
+      sessionId: session.id, 
+      hasCoupon: applyCoupon,
+      influencerCode: validInfluencer?.promo_code 
     });
 
-    logStep("Checkout session created", { sessionId: session.id });
-
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ 
+      url: session.url,
+      hasDiscount: applyCoupon,
+      influencerName: validInfluencer?.beneficiary_name || null,
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
