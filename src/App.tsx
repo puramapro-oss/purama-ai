@@ -15,6 +15,7 @@ import OAuthCallback from '@/pages/OAuthCallback';
 import Notifications from '@/pages/Notifications';
 import NotificationSettings from '@/pages/NotificationSettings';
 import InfluencerDashboard from '@/pages/InfluencerDashboard';
+import InfluencerSignup from '@/pages/InfluencerSignup';
 import AdminInfluencers from '@/pages/AdminInfluencers';
 import NotFound from '@/pages/NotFound';
 
@@ -81,6 +82,7 @@ export default function App() {
               }
             />
             <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
+            <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
             <Route
               path="/admin/influenceurs"
               element={
