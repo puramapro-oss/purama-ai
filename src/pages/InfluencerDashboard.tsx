@@ -47,6 +47,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { generateContractPdf } from '@/utils/generateContractPdf';
+import { PerformanceCharts } from '@/components/influencer/PerformanceCharts';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -502,6 +503,9 @@ export default function InfluencerDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Performance Charts */}
+        <PerformanceCharts commissions={commissions} />
 
         {/* Bank Details & Commissions */}
         <div className="grid gap-6 md:grid-cols-3">
