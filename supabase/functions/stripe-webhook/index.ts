@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,106 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
+
+// Generate commission email HTML
+function generateCommissionEmailHtml(data: {
+  beneficiaryName: string;
+  commissionAmount: number;
+  saleAmount: number;
+  promoCode: string;
+  planType: string;
+}): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nouvelle commission Agentia</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0a0a0f;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0f;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px 32px 24px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <span style="font-size: 24px; font-weight: bold; background: linear-gradient(135deg, #00d4ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                      Agentia
+                    </span>
+                  </td>
+                  <td align="right">
+                    <span style="display: inline-block; padding: 6px 12px; background-color: #22c55e22; color: #22c55e; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                      💰 Nouvelle commission
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 0 32px 32px;">
+              <h1 style="margin: 0 0 16px; font-size: 28px; font-weight: 600; color: #ffffff;">
+                Félicitations ${data.beneficiaryName} ! 🎉
+              </h1>
+              <p style="margin: 0 0 24px; font-size: 18px; line-height: 1.6; color: #a1a1aa;">
+                Vous avez généré une nouvelle vente grâce à votre code <strong style="color: #00d4ff;">${data.promoCode}</strong> !
+              </p>
+              
+              <!-- Stats Box -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.3); margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="50%" style="padding-right: 12px;">
+                          <p style="margin: 0 0 4px; font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Commission gagnée</p>
+                          <p style="margin: 0; font-size: 32px; font-weight: bold; color: #22c55e;">+${data.commissionAmount.toFixed(2)}€</p>
+                        </td>
+                        <td width="50%" style="padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.1);">
+                          <p style="margin: 0 0 4px; font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Valeur de la vente</p>
+                          <p style="margin: 0; font-size: 24px; font-weight: 600; color: #ffffff;">${data.saleAmount.toFixed(2)}€</p>
+                          <p style="margin: 4px 0 0; font-size: 12px; color: #a1a1aa;">Abonnement ${data.planType}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.6; color: #71717a;">
+                Cette commission est actuellement en attente de validation. Une fois le premier paiement confirmé, elle sera validée et ajoutée à votre prochain versement.
+              </p>
+              
+              <a href="https://agentiapuramafr.lovable.app/influenceur/dashboard" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+                Voir mon tableau de bord →
+              </a>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);">
+              <p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">
+                Merci d'être partenaire Agentia !<br>
+                <a href="https://agentiapuramafr.lovable.app/influenceur/dashboard" style="color: #a855f7; text-decoration: none;">Gérer mon compte influenceur</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
 
 // Map Stripe product IDs to internal plan types
 const planMapping: Record<string, string> = {
@@ -194,6 +295,46 @@ serve(async (req) => {
                       });
 
                     logStep("Notification sent to influencer");
+
+                    // Send email notification to influencer
+                    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+                    if (resendApiKey) {
+                      try {
+                        // Get influencer's email from profile
+                        const { data: influencerProfile } = await supabaseClient
+                          .from('profiles')
+                          .select('email')
+                          .eq('user_id', influencer.user_id)
+                          .single();
+
+                        if (influencerProfile?.email) {
+                          const resend = new Resend(resendApiKey);
+                          
+                          const emailHtml = generateCommissionEmailHtml({
+                            beneficiaryName: influencer.beneficiary_name || 'Partenaire',
+                            commissionAmount,
+                            saleAmount: annualValue,
+                            promoCode: referralCode,
+                            planType: planType.charAt(0).toUpperCase() + planType.slice(1),
+                          });
+
+                          const { error: emailError } = await resend.emails.send({
+                            from: 'Agentia <notifications@resend.dev>',
+                            to: [influencerProfile.email],
+                            subject: `💰 Nouvelle commission: +${commissionAmount.toFixed(2)}€`,
+                            html: emailHtml,
+                          });
+
+                          if (emailError) {
+                            logStep("ERROR: Failed to send commission email", { error: emailError });
+                          } else {
+                            logStep("Commission email sent to influencer", { email: influencerProfile.email });
+                          }
+                        }
+                      } catch (emailErr) {
+                        logStep("ERROR: Email sending failed", { error: String(emailErr) });
+                      }
+                    }
                   }
                 }
               }
