@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.oauth-google]
 verify_jwt = false
+
+[functions.process-influencer-payments]
+verify_jwt = false

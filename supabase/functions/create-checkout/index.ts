@@ -108,6 +108,10 @@ serve(async (req) => {
         referral_code: validInfluencer?.promo_code || '',
         influencer_id: validInfluencer?.id || '',
       },
+      // 14-day free trial
+      subscription_data: {
+        trial_period_days: 14,
+      },
     };
 
     // Apply coupon if valid influencer referral
