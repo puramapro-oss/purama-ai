@@ -50,6 +50,7 @@ import { generateContractPdf } from '@/utils/generateContractPdf';
 import { PerformanceCharts } from '@/components/influencer/PerformanceCharts';
 import { TierProgress } from '@/components/influencer/TierProgress';
 import { TierBadge } from '@/components/influencer/TierBadge';
+import { InfluencerLeaderboard } from '@/components/influencer/InfluencerLeaderboard';
 
 export default function InfluencerDashboard() {
   const { user } = useAuth();
@@ -463,13 +464,14 @@ export default function InfluencerDashboard() {
           </Card>
         </div>
 
-        {/* Tier Progress Card */}
-        <div className="mb-8">
+        {/* Tier Progress & Leaderboard */}
+        <div className="grid gap-6 lg:grid-cols-2 mb-8">
           <TierProgress 
             currentTier={influencer.commission_tier || 'bronze'}
             totalSales={influencer.total_sales}
             commissionRate={influencer.commission_rate}
           />
+          <InfluencerLeaderboard />
         </div>
 
         {/* Affiliation Link */}
