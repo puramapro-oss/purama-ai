@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.process-influencer-payments]
 verify_jwt = false
+
+[functions.process-tier-queue]
+verify_jwt = false

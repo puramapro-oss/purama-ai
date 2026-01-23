@@ -404,6 +404,47 @@ export type Database = {
         }
         Relationships: []
       }
+      tier_upgrade_queue: {
+        Row: {
+          created_at: string | null
+          id: string
+          influencer_id: string
+          new_rate: number
+          new_tier: string
+          previous_tier: string
+          processed: boolean | null
+          total_sales: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          influencer_id: string
+          new_rate: number
+          new_tier: string
+          previous_tier: string
+          processed?: boolean | null
+          total_sales: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          influencer_id?: string
+          new_rate?: number
+          new_tier?: string
+          previous_tier?: string
+          processed?: boolean | null
+          total_sales?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tier_upgrade_queue_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_agent_selections: {
         Row: {
           agent_id: string
