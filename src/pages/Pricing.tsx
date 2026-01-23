@@ -233,7 +233,7 @@ export default function Pricing() {
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
             Débloquez le potentiel de l'IA pour automatiser votre business.
-            Tous les plans incluent un essai gratuit de 7 jours.
+            <span className="text-primary font-medium"> 14 jours d'essai gratuit inclus.</span>
           </p>
 
           {/* Billing Toggle */}
