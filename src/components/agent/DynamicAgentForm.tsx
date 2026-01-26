@@ -9,7 +9,8 @@ import {
   Upload,
   Calendar,
   Clock,
-  ChevronDown
+  ChevronDown,
+  FlaskConical
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -413,9 +414,23 @@ export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAg
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-green-500" />
               Résultat de l'agent
+              {/* Demo mode badge */}
+              {result?.success && result.data && typeof result.data === 'object' && 
+               (result.data as Record<string, unknown>).demo_mode && (
+                <Badge variant="outline" className="ml-2 bg-amber-500/10 text-amber-500 border-amber-500/30">
+                  <FlaskConical className="w-3 h-3 mr-1" />
+                  Mode démo
+                </Badge>
+              )}
             </DialogTitle>
             <DialogDescription>
               L'agent "{agentName}" a terminé son exécution.
+              {result?.success && result.data && typeof result.data === 'object' && 
+               (result.data as Record<string, unknown>).demo_mode && (
+                <span className="block mt-1 text-amber-500 text-xs">
+                  Cette réponse est simulée. Les workflows n8n ne sont pas encore configurés.
+                </span>
+              )}
             </DialogDescription>
           </DialogHeader>
           
