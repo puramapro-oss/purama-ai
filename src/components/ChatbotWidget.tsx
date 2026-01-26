@@ -243,31 +243,103 @@ export function ChatbotWidget() {
       // Debug: log the raw response from n8n
       console.log('n8n raw response:', JSON.stringify(data, null, 2));
       
-      // Handle n8n response - it might be wrapped in an array or nested
-      let parsedData = data;
-      
-      // If response is an array, get the first element
-      if (Array.isArray(data)) {
-        parsedData = data[0] || {};
-      }
-      
-      // If response is a string, try to parse it as JSON
-      if (typeof parsedData === 'string') {
-        try {
-          parsedData = JSON.parse(parsedData);
-        } catch {
-          // If parsing fails, use the string as the response
-          parsedData = { response: parsedData };
+      // Helper function to parse n8n response
+      const parseN8nResponse = (rawData: unknown): { response: string; suggestions: string[] } => {
+        let parsedData = rawData;
+        
+        // If response is an array, get the first element
+        if (Array.isArray(parsedData)) {
+          parsedData = parsedData[0] || {};
         }
-      }
+        
+        // If response is a string, try to parse it as JSON
+        if (typeof parsedData === 'string') {
+          try {
+            parsedData = JSON.parse(parsedData);
+          } catch {
+            // If parsing fails, use the string as the response
+            parsedData = { response: parsedData };
+          }
+        }
+        
+        const responseContent = (parsedData as Record<string, unknown>)?.response || 
+          (parsedData as Record<string, unknown>)?.message || 
+          (parsedData as Record<string, unknown>)?.text || 
+          (typeof parsedData === 'string' ? parsedData : "");
+        const suggestions = ((parsedData as Record<string, unknown>)?.suggestions as string[]) || [];
+        
+        return { response: String(responseContent), suggestions };
+      };
       
-      // Extract the response and suggestions
-      const assistantContent = parsedData.response || parsedData.message || parsedData.text || 
-        (typeof parsedData === 'string' ? parsedData : "Je n'ai pas pu générer une réponse.");
-      const suggestions: string[] = parsedData.suggestions || [];
+      let { response: assistantContent, suggestions } = parseN8nResponse(data);
       
       console.log('Parsed response:', assistantContent);
       console.log('Parsed suggestions:', suggestions);
+      
+      // Check if this is an async workflow response - need to poll for real response
+      const isWorkflowStarted = assistantContent.toLowerCase().includes('workflow was started') || 
+        assistantContent.toLowerCase().includes('workflow started');
+      
+      if (isWorkflowStarted) {
+        console.log('Async workflow detected, polling for real response...');
+        
+        // Poll for the real response (max 5 attempts, 2 seconds apart)
+        const MAX_POLL_ATTEMPTS = 5;
+        const POLL_DELAY_MS = 2000;
+        
+        for (let pollAttempt = 0; pollAttempt < MAX_POLL_ATTEMPTS; pollAttempt++) {
+          await new Promise(resolve => setTimeout(resolve, POLL_DELAY_MS));
+          
+          console.log(`Polling attempt ${pollAttempt + 1}/${MAX_POLL_ATTEMPTS}...`);
+          
+          try {
+            const pollResp = await fetchWithTimeout(
+              N8N_WEBHOOK_URL,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  message: userMessage,
+                  user_id: user?.id || null,
+                  page_url: window.location.href,
+                  conversation_history: conversationHistory,
+                  is_polling: true,
+                }),
+              },
+              TIMEOUT_MS
+            );
+            
+            if (pollResp.ok) {
+              const pollData = await pollResp.json();
+              console.log('Poll response:', JSON.stringify(pollData, null, 2));
+              
+              const pollParsed = parseN8nResponse(pollData);
+              
+              // Check if we got a real response (not another "workflow started")
+              if (pollParsed.response && 
+                  !pollParsed.response.toLowerCase().includes('workflow was started') &&
+                  !pollParsed.response.toLowerCase().includes('workflow started')) {
+                assistantContent = pollParsed.response;
+                suggestions = pollParsed.suggestions;
+                console.log('Got real response from polling:', assistantContent);
+                break;
+              }
+            }
+          } catch (pollError) {
+            console.error('Poll error:', pollError);
+          }
+          
+          // If this was the last attempt and we still don't have a real response
+          if (pollAttempt === MAX_POLL_ATTEMPTS - 1) {
+            assistantContent = "Je traite votre demande, cela peut prendre quelques instants. Réessayez dans un moment si vous n'avez pas de réponse.";
+          }
+        }
+      }
+      
+      // Final fallback if response is empty
+      if (!assistantContent || assistantContent.trim() === '') {
+        assistantContent = "Je n'ai pas pu générer une réponse.";
+      }
 
       const assistantMsg: Message = {
         id: crypto.randomUUID(),
