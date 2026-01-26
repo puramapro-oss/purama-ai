@@ -57,14 +57,29 @@ serve(async (req) => {
 
     console.log(`Calling n8n webhook: ${webhookUrl}`);
 
-    // Call n8n webhook
-    const n8nResponse = await fetch(webhookUrl, {
+    // Call n8n webhook with POST first
+    let n8nResponse = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
+
+    // If POST returns 404, fallback to GET with query params
+    if (n8nResponse.status === 404) {
+      console.log("POST returned 404, trying GET fallback...");
+      const queryParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(payload)) {
+        if (typeof value === "object") {
+          queryParams.append(key, JSON.stringify(value));
+        } else {
+          queryParams.append(key, String(value));
+        }
+      }
+      const getUrl = `${webhookUrl}?${queryParams.toString()}`;
+      n8nResponse = await fetch(getUrl, { method: "GET" });
+    }
 
     const responseText = await n8nResponse.text();
     
