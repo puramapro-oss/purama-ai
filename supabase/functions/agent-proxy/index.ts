@@ -392,21 +392,16 @@ serve(async (req) => {
       ...formData,
     };
 
-    // Build query params from payload
-    const queryParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(payload)) {
-      if (typeof value === "object") {
-        queryParams.append(key, JSON.stringify(value));
-      } else {
-        queryParams.append(key, String(value));
-      }
-    }
-    
-    const getUrl = `${webhookUrl}?${queryParams.toString()}`;
-    console.log(`Calling n8n webhook (GET): ${webhookUrl}`);
+    console.log(`Calling n8n webhook (POST): ${webhookUrl}`);
 
-    // Call n8n webhook with GET method
-    const n8nResponse = await fetch(getUrl, { method: "GET" });
+    // Call n8n webhook with POST method
+    const n8nResponse = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
     const responseText = await n8nResponse.text();
     
