@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
-import { getAgentWebhookUrl, getAgentConfig, AgentFieldConfig } from '@/config/agentConfigs';
+import { getAgentConfig, AgentFieldConfig } from '@/config/agentConfigs';
 import { supabase } from '@/integrations/supabase/client';
 import { Json } from '@/integrations/supabase/types';
 
@@ -43,73 +43,34 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
     setResult(null);
 
     try {
-      const webhookUrl = getAgentWebhookUrl(agentSlug);
       const agentConfig = getAgentConfig(agentSlug);
 
-      // Prepare the payload
-      const payload: Record<string, unknown> = {
-        // Agent metadata
-        agentSlug,
-        agentName: agentConfig?.name || agentSlug,
-        // User metadata
-        user_id: user.id,
-        userEmail: user.email,
-        // Timestamp
-        timestamp: new Date().toISOString(),
-        // Form data
-        ...formData,
-      };
-
-      // Check if we need to send as FormData (for file uploads)
-      const hasFileField = agentConfig?.fields.some(f => f.type === 'file');
+      // Check if we have file uploads - for now, files not supported via proxy
       const hasFile = Object.values(formData).some(v => v instanceof File);
-
-      let response: Response;
-
-      if (hasFileField && hasFile) {
-        // Send as FormData for file uploads
-        const formDataPayload = new FormData();
-        Object.entries(payload).forEach(([key, value]) => {
-          if (value instanceof File) {
-            formDataPayload.append(key, value);
-          } else if (value !== undefined && value !== null) {
-            formDataPayload.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
-          }
-        });
-
-        response = await fetch(webhookUrl, {
-          method: 'POST',
-          body: formDataPayload,
-        });
-      } else {
-        // Send as JSON
-        response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+      if (hasFile) {
+        throw new Error("L'upload de fichiers n'est pas encore supporté");
       }
 
-      // Parse response
-      const responseText = await response.text();
-      let parsedData: unknown;
+      // Call the agent-proxy edge function instead of n8n directly
+      const { data: proxyResponse, error: proxyError } = await supabase.functions.invoke('agent-proxy', {
+        body: {
+          agentSlug,
+          formData,
+        },
+      });
 
+      if (proxyError) {
+        throw new Error(proxyError.message || 'Erreur lors de l\'appel au proxy');
+      }
+
+      if (!proxyResponse.success) {
+        throw new Error(proxyResponse.error || 'Erreur inconnue du workflow');
+      }
+
+      const parsedData = proxyResponse.data;
+
+      // Log usage to database
       try {
-        parsedData = JSON.parse(responseText);
-      } catch {
-        // Response is not JSON, use raw text
-        parsedData = responseText;
-      }
-
-      if (!response.ok) {
-        throw new Error(`Erreur ${response.status}: ${responseText || 'Échec de la requête'}`);
-      }
-
-      // Log usage to database - we need to get the actual agent UUID first
-      try {
-        // First, get the agent ID from the slug
         const { data: agentData } = await supabase
           .from('agents')
           .select('id')
@@ -117,7 +78,6 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
           .maybeSingle();
 
         if (agentData?.id) {
-          // Prepare metadata as Json-compatible object
           const sanitizedFormData: Record<string, Json> = {};
           for (const [key, value] of Object.entries(formData)) {
             if (!(value instanceof File)) {
@@ -142,13 +102,12 @@ export function useAgentExecution(agentSlug: string): UseAgentExecutionReturn {
         }
       } catch (logError) {
         console.warn('Failed to log agent usage:', logError);
-        // Don't fail the main operation if logging fails
       }
 
       const successResult: ExecutionResult = {
         success: true,
         data: parsedData,
-        rawResponse: responseText,
+        rawResponse: JSON.stringify(parsedData),
       };
 
       setResult(successResult);
