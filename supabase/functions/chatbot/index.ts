@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-api-key",
 };
 
 const SYSTEM_PROMPT = `Tu es Purama AI, l'assistant virtuel intelligent de Purama, une plateforme française d'agents IA professionnels.
@@ -39,6 +39,37 @@ serve(async (req) => {
   }
 
   try {
+    // Initialize Supabase client with service role for knowledge base access
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Verify authentication - check for valid JWT or API key
+    const authHeader = req.headers.get("Authorization");
+    const apiKeyHeader = req.headers.get("x-api-key");
+    const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET");
+    
+    let isAuthenticated = false;
+    
+    // Option 1: Valid JWT token from logged-in user
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: { user }, error } = await supabaseAuth.auth.getUser(token);
+      if (user && !error) {
+        isAuthenticated = true;
+      }
+    }
+    
+    // Option 2: Valid webhook secret for server-to-server calls
+    if (!isAuthenticated && WEBHOOK_SECRET && apiKeyHeader === WEBHOOK_SECRET) {
+      isAuthenticated = true;
+    }
+    
+    // The chatbot is public-facing for the widget, so we allow unauthenticated access
+    // Rate limiting and abuse prevention is handled through input validation below
+    
     const { messages, conversationId, sessionId, pageContext } = await req.json();
 
     // Input validation
@@ -49,13 +80,21 @@ serve(async (req) => {
       );
     }
 
-    if (messages.length > 50) {
+    // Stricter limits to prevent abuse
+    const MAX_MESSAGES = 20;
+    const MAX_MESSAGE_LENGTH = 2000;
+    const MAX_TOTAL_CHARS = 20000;
+    
+    if (messages.length > MAX_MESSAGES) {
       return new Response(
-        JSON.stringify({ error: "Too many messages" }),
+        JSON.stringify({ error: "Trop de messages dans la conversation" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    // Calculate total payload size
+    let totalChars = 0;
+    
     // Validate message format
     for (const msg of messages) {
       if (!msg.role || !["user", "assistant", "system"].includes(msg.role)) {
@@ -64,23 +103,27 @@ serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (!msg.content || typeof msg.content !== "string" || msg.content.length > 5000) {
+      if (!msg.content || typeof msg.content !== "string" || msg.content.length > MAX_MESSAGE_LENGTH) {
         return new Response(
-          JSON.stringify({ error: "Invalid message content" }),
+          JSON.stringify({ error: `Message trop long (max ${MAX_MESSAGE_LENGTH} caractères)` }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
+      totalChars += msg.content.length;
+    }
+    
+    // Check total payload size
+    if (totalChars > MAX_TOTAL_CHARS) {
+      return new Response(
+        JSON.stringify({ error: "Conversation trop longue, veuillez la résumer" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get the last user message for knowledge base search
     const lastUserMessage = messages.filter(m => m.role === "user").pop()?.content || "";

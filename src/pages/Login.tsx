@@ -58,7 +58,7 @@ export default function Login() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="glass-effect rounded-2xl p-8">
+        <div className="glass-effect rounded-2xl p-8 bg-card/95">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent mb-4">
