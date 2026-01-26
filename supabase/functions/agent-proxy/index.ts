@@ -24,18 +24,20 @@ serve(async (req) => {
       );
     }
 
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const authHeader = req.headers.get("Authorization");
+    
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: authHeader ? { Authorization: authHeader } : {} },
+    });
+
     // Get user from auth header if available
     let userId = "anonymous";
     let userEmail = "anonymous@user.com";
     
-    const authHeader = req.headers.get("Authorization");
     if (authHeader) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-      const supabase = createClient(supabaseUrl, supabaseKey, {
-        global: { headers: { Authorization: authHeader } },
-      });
-      
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         userId = user.id;
@@ -43,8 +45,24 @@ serve(async (req) => {
       }
     }
 
-    // Build webhook URL
-    const webhookUrl = `${N8N_BASE_URL}/agent-${agentSlug}`;
+    // Fetch webhook_slug from agents table
+    const { data: agent, error: agentError } = await supabase
+      .from("agents")
+      .select("webhook_slug, slug")
+      .eq("slug", agentSlug)
+      .single();
+
+    if (agentError || !agent) {
+      console.error("Agent not found:", agentSlug, agentError);
+      return new Response(
+        JSON.stringify({ success: false, error: `Agent '${agentSlug}' non trouvé` }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Use webhook_slug if available, otherwise fallback to slug
+    const webhookSlug = agent.webhook_slug || agent.slug;
+    const webhookUrl = `${N8N_BASE_URL}/agent-${webhookSlug}`;
 
     // Prepare payload for n8n
     const payload = {
