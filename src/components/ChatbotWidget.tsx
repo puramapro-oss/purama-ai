@@ -166,41 +166,72 @@ export function ChatbotWidget() {
     });
   };
 
-  const sendToN8n = async (userMessage: string) => {
-    setIsLoading(true);
+  const fetchWithTimeout = async (url: string, options: RequestInit, timeout: number): Promise<Response> => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
     
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: userMessage,
-      createdAt: new Date(),
-    };
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
+    }
+  };
+
+  const sendToN8n = async (userMessage: string, retryCount = 0) => {
+    const MAX_RETRIES = 3;
+    const TIMEOUT_MS = 10000; // 10 seconds
     
-    setMessages(prev => [...prev, userMsg]);
+    if (retryCount === 0) {
+      setIsLoading(true);
+      
+      const userMsg: Message = {
+        id: crypto.randomUUID(),
+        role: 'user',
+        content: userMessage,
+        createdAt: new Date(),
+      };
+      
+      setMessages(prev => [...prev, userMsg]);
+    }
 
     try {
       const convId = await createOrGetConversation();
-      await saveMessage(convId, 'user', userMessage);
+      
+      if (retryCount === 0) {
+        await saveMessage(convId, 'user', userMessage);
+      }
 
       // Build conversation history for n8n
       const conversationHistory = messages
         .filter(m => m.role !== 'assistant' || !m.content.startsWith('Bienvenue'))
-        .concat(userMsg)
         .map(m => ({ role: m.role, content: m.content }));
+      
+      // Add current message to history
+      conversationHistory.push({ role: 'user', content: userMessage });
 
-      // Send to n8n webhook
-      const resp = await fetch(N8N_WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Send to n8n webhook with timeout
+      const resp = await fetchWithTimeout(
+        N8N_WEBHOOK_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: userMessage,
+            user_id: user?.id || null,
+            page_url: window.location.href,
+            conversation_history: conversationHistory,
+          }),
         },
-        body: JSON.stringify({
-          message: userMessage,
-          user_id: user?.id || null,
-          page_url: window.location.href,
-          conversation_history: conversationHistory,
-        }),
-      });
+        TIMEOUT_MS
+      );
 
       if (!resp.ok) {
         throw new Error(`n8n webhook error: ${resp.status}`);
@@ -226,22 +257,39 @@ export function ChatbotWidget() {
 
       // Update suggestion chips if n8n provides custom suggestions
       if (suggestions.length > 0) {
-        // Store suggestions for display (could be extended to show dynamically)
         console.log('n8n suggestions:', suggestions);
       }
     } catch (error) {
-      console.error('n8n webhook error:', error);
+      const isTimeout = error instanceof Error && error.name === 'AbortError';
+      const errorType = isTimeout ? 'Timeout' : 'Error';
+      console.error(`n8n webhook ${errorType} (attempt ${retryCount + 1}/${MAX_RETRIES}):`, error);
+
+      // Retry if we haven't exceeded max retries
+      if (retryCount < MAX_RETRIES - 1) {
+        toast.info(`Nouvelle tentative... (${retryCount + 2}/${MAX_RETRIES})`);
+        // Wait a bit before retrying (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return sendToN8n(userMessage, retryCount + 1);
+      }
+
+      // All retries failed
+      const errorMessage = isTimeout 
+        ? "Le serveur met trop de temps à répondre. 😔 Souhaitez-vous parler à un membre de notre équipe ?"
+        : "Désolé, je rencontre un problème technique. 😔 Souhaitez-vous parler à un membre de notre équipe ?";
+      
       setMessages(prev => [
         ...prev,
         {
           id: crypto.randomUUID(),
           role: 'assistant',
-          content: "Désolé, je rencontre un problème technique. 😔 Souhaitez-vous parler à un membre de notre équipe ?",
+          content: errorMessage,
           createdAt: new Date(),
         },
       ]);
     } finally {
-      setIsLoading(false);
+      if (retryCount === 0 || retryCount >= MAX_RETRIES - 1) {
+        setIsLoading(false);
+      }
     }
   };
 
