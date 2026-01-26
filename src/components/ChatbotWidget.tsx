@@ -50,7 +50,8 @@ const SUGGESTION_CHIPS = [
   "Comment connecter Gmail ?",
 ];
 
-const N8N_WEBHOOK_URL = 'https://n8n.srv1286148.hstgr.cloud/webhook/agent-chatbot-support';
+// Edge Function URL for chatbot
+const CHATBOT_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chatbot`;
 
 export function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -167,48 +168,24 @@ export function ChatbotWidget() {
     });
   };
 
-  const fetchWithTimeout = async (url: string, options: RequestInit, timeout: number): Promise<Response> => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
-    try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      return response;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
-  };
 
-  const sendToN8n = async (userMessage: string, retryCount = 0) => {
-    const MAX_RETRIES = 3;
-    const TIMEOUT_MS = 10000; // 10 seconds
+  const sendMessage = async (userMessage: string) => {
+    setIsLoading(true);
     
-    if (retryCount === 0) {
-      setIsLoading(true);
-      
-      const userMsg: Message = {
-        id: crypto.randomUUID(),
-        role: 'user',
-        content: userMessage,
-        createdAt: new Date(),
-      };
-      
-      setMessages(prev => [...prev, userMsg]);
-    }
+    const userMsg: Message = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      content: userMessage,
+      createdAt: new Date(),
+    };
+    
+    setMessages(prev => [...prev, userMsg]);
 
     try {
       const convId = await createOrGetConversation();
-      
-      if (retryCount === 0) {
-        await saveMessage(convId, 'user', userMessage);
-      }
+      await saveMessage(convId, 'user', userMessage);
 
-      // Build conversation history for n8n
+      // Build conversation history for the Edge Function
       const conversationHistory = messages
         .filter(m => m.role !== 'assistant' || !m.content.startsWith('Bienvenue'))
         .map(m => ({ role: m.role, content: m.content }));
@@ -216,165 +193,98 @@ export function ChatbotWidget() {
       // Add current message to history
       conversationHistory.push({ role: 'user', content: userMessage });
 
-      // Send to n8n webhook with timeout
-      const resp = await fetchWithTimeout(
-        N8N_WEBHOOK_URL,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: userMessage,
-            user_id: user?.id || null,
-            page_url: window.location.href,
-            conversation_history: conversationHistory,
-          }),
+      // Call the Edge Function with streaming
+      const response = await fetch(CHATBOT_FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
-        TIMEOUT_MS
-      );
+        body: JSON.stringify({
+          messages: conversationHistory,
+          conversationId: convId,
+          sessionId,
+          pageContext: window.location.href,
+        }),
+      });
 
-      if (!resp.ok) {
-        throw new Error(`n8n webhook error: ${resp.status}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Erreur ${response.status}`);
       }
 
-      const data = await resp.json();
-      
-      // Debug: log the raw response from n8n
-      console.log('n8n raw response:', JSON.stringify(data, null, 2));
-      
-      // Helper function to parse n8n response
-      const parseN8nResponse = (rawData: unknown): { response: string; suggestions: string[] } => {
-        let parsedData = rawData;
-        
-        // If response is an array, get the first element
-        if (Array.isArray(parsedData)) {
-          parsedData = parsedData[0] || {};
-        }
-        
-        // If response is a string, try to parse it as JSON
-        if (typeof parsedData === 'string') {
-          try {
-            parsedData = JSON.parse(parsedData);
-          } catch {
-            // If parsing fails, use the string as the response
-            parsedData = { response: parsedData };
-          }
-        }
-        
-        const responseContent = (parsedData as Record<string, unknown>)?.response || 
-          (parsedData as Record<string, unknown>)?.message || 
-          (parsedData as Record<string, unknown>)?.text || 
-          (typeof parsedData === 'string' ? parsedData : "");
-        const suggestions = ((parsedData as Record<string, unknown>)?.suggestions as string[]) || [];
-        
-        return { response: String(responseContent), suggestions };
-      };
-      
-      let { response: assistantContent, suggestions } = parseN8nResponse(data);
-      
-      console.log('Parsed response:', assistantContent);
-      console.log('Parsed suggestions:', suggestions);
-      
-      // Check if this is an async workflow response - need to poll for real response
-      const isWorkflowStarted = assistantContent.toLowerCase().includes('workflow was started') || 
-        assistantContent.toLowerCase().includes('workflow started');
-      
-      if (isWorkflowStarted) {
-        console.log('Async workflow detected, polling for real response...');
-        
-        // Poll for the real response (max 5 attempts, 2 seconds apart)
-        const MAX_POLL_ATTEMPTS = 5;
-        const POLL_DELAY_MS = 2000;
-        
-        for (let pollAttempt = 0; pollAttempt < MAX_POLL_ATTEMPTS; pollAttempt++) {
-          await new Promise(resolve => setTimeout(resolve, POLL_DELAY_MS));
-          
-          console.log(`Polling attempt ${pollAttempt + 1}/${MAX_POLL_ATTEMPTS}...`);
-          
-          try {
-            const pollResp = await fetchWithTimeout(
-              N8N_WEBHOOK_URL,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  message: userMessage,
-                  user_id: user?.id || null,
-                  page_url: window.location.href,
-                  conversation_history: conversationHistory,
-                  is_polling: true,
-                }),
-              },
-              TIMEOUT_MS
-            );
-            
-            if (pollResp.ok) {
-              const pollData = await pollResp.json();
-              console.log('Poll response:', JSON.stringify(pollData, null, 2));
-              
-              const pollParsed = parseN8nResponse(pollData);
-              
-              // Check if we got a real response (not another "workflow started")
-              if (pollParsed.response && 
-                  !pollParsed.response.toLowerCase().includes('workflow was started') &&
-                  !pollParsed.response.toLowerCase().includes('workflow started')) {
-                assistantContent = pollParsed.response;
-                suggestions = pollParsed.suggestions;
-                console.log('Got real response from polling:', assistantContent);
-                break;
-              }
-            }
-          } catch (pollError) {
-            console.error('Poll error:', pollError);
-          }
-          
-          // If this was the last attempt and we still don't have a real response
-          if (pollAttempt === MAX_POLL_ATTEMPTS - 1) {
-            assistantContent = "Je traite votre demande, cela peut prendre quelques instants. Réessayez dans un moment si vous n'avez pas de réponse.";
-          }
-        }
-      }
-      
-      // Final fallback if response is empty
-      if (!assistantContent || assistantContent.trim() === '') {
-        assistantContent = "Je n'ai pas pu générer une réponse.";
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
       }
 
-      const assistantMsg: Message = {
-        id: crypto.randomUUID(),
+      let assistantContent = '';
+      const assistantMsgId = crypto.randomUUID();
+      
+      // Add empty assistant message that we'll update as content streams in
+      setMessages(prev => [...prev, {
+        id: assistantMsgId,
         role: 'assistant',
-        content: assistantContent,
+        content: '',
         createdAt: new Date(),
-      };
+      }]);
 
-      setMessages(prev => [...prev, assistantMsg]);
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') continue;
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                assistantContent += content;
+                // Update the message in real-time
+                setMessages(prev => prev.map(m => 
+                  m.id === assistantMsgId 
+                    ? { ...m, content: assistantContent }
+                    : m
+                ));
+              }
+            } catch {
+              // Ignore parsing errors for incomplete chunks
+            }
+          }
+        }
+      }
+
+      // If we got no content, show fallback
+      if (!assistantContent.trim()) {
+        assistantContent = "Je n'ai pas pu générer une réponse. Réessayez dans un instant.";
+        setMessages(prev => prev.map(m => 
+          m.id === assistantMsgId 
+            ? { ...m, content: assistantContent }
+            : m
+        ));
+      }
 
       // Save assistant message to database
       await saveMessage(convId, 'assistant', assistantContent);
 
-      // Update suggestion chips if n8n provides custom suggestions
-      if (suggestions.length > 0) {
-        setDynamicSuggestions(suggestions);
-      } else {
-        setDynamicSuggestions([]);
-      }
+      // Reset dynamic suggestions
+      setDynamicSuggestions([]);
     } catch (error) {
-      const isTimeout = error instanceof Error && error.name === 'AbortError';
-      const errorType = isTimeout ? 'Timeout' : 'Error';
-      console.error(`n8n webhook ${errorType} (attempt ${retryCount + 1}/${MAX_RETRIES}):`, error);
-
-      // Retry if we haven't exceeded max retries
-      if (retryCount < MAX_RETRIES - 1) {
-        toast.info(`Nouvelle tentative... (${retryCount + 2}/${MAX_RETRIES})`);
-        // Wait a bit before retrying (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-        return sendToN8n(userMessage, retryCount + 1);
-      }
-
-      // All retries failed
-      const errorMessage = isTimeout 
-        ? "Le serveur met trop de temps à répondre. 😔 Souhaitez-vous parler à un membre de notre équipe ?"
+      console.error('Chatbot error:', error);
+      
+      const errorMessage = error instanceof Error && error.message.includes('429')
+        ? "Limite de requêtes atteinte. ⏳ Réessayez dans quelques instants."
         : "Désolé, je rencontre un problème technique. 😔 Souhaitez-vous parler à un membre de notre équipe ?";
       
       setMessages(prev => [
@@ -387,9 +297,7 @@ export function ChatbotWidget() {
         },
       ]);
     } finally {
-      if (retryCount === 0 || retryCount >= MAX_RETRIES - 1) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
@@ -397,11 +305,11 @@ export function ChatbotWidget() {
     if (!inputValue.trim() || isLoading) return;
     const message = inputValue.trim();
     setInputValue('');
-    sendToN8n(message);
+    sendMessage(message);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    sendToN8n(suggestion);
+    sendMessage(suggestion);
   };
 
   const handleEscalate = async () => {
