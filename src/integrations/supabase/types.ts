@@ -65,6 +65,7 @@ export type Database = {
           is_premium: boolean | null
           name: string
           slug: string
+          webhook_slug: string | null
         }
         Insert: {
           category: string
@@ -78,6 +79,7 @@ export type Database = {
           is_premium?: boolean | null
           name: string
           slug: string
+          webhook_slug?: string | null
         }
         Update: {
           category?: string
@@ -91,6 +93,7 @@ export type Database = {
           is_premium?: boolean | null
           name?: string
           slug?: string
+          webhook_slug?: string | null
         }
         Relationships: []
       }
