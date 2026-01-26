@@ -61,8 +61,9 @@ serve(async (req) => {
     }
 
     // Use webhook_slug if available, otherwise fallback to slug
-    const webhookSlug = agent.webhook_slug || agent.slug;
-    const webhookUrl = `${N8N_BASE_URL}/agent-${webhookSlug}`;
+    // The webhook_slug should already contain the full path (e.g., "agent-crm-intelligent")
+    const webhookSlug = agent.webhook_slug || `agent-${agent.slug}`;
+    const webhookUrl = `${N8N_BASE_URL}/${webhookSlug}`;
 
     // Prepare payload for n8n
     const payload = {
