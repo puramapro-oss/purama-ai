@@ -106,7 +106,7 @@ export default function Signup() {
           {/* Email Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nom complet</Label>
+              <Label htmlFor="fullName" className="text-foreground font-medium">Nom complet</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -115,13 +115,13 @@ export default function Signup() {
                   placeholder="Jean Dupont"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="pl-10 h-12 bg-input-background"
+                  className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -130,14 +130,14 @@ export default function Signup() {
                   placeholder="vous@exemple.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12 bg-input-background"
+                  className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password" className="text-foreground font-medium">Mot de passe</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -146,14 +146,14 @@ export default function Signup() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-12 bg-input-background"
+                  className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirmer le mot de passe</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -162,7 +162,7 @@ export default function Signup() {
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10 h-12 bg-input-background"
+                  className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
