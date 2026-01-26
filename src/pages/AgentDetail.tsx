@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { AgentUsageForm } from '@/components/agent/AgentUsageForm';
+import { DynamicAgentForm } from '@/components/agent/DynamicAgentForm';
 import { useAgent, useActivateAgent, useAgentUsage } from '@/hooks/useAgent';
 import { useSubscription } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
@@ -190,8 +190,12 @@ export default function AgentDetail() {
               )}
             </motion.div>
 
-            {/* Agent Usage Form */}
-            <AgentUsageForm agent={agent} />
+            {/* Dynamic Agent Form - connected to n8n */}
+            <DynamicAgentForm 
+              agentSlug={agent.slug} 
+              agentName={agent.name} 
+              agentColor={agent.color} 
+            />
 
             {/* Usage history */}
             {usageHistory && usageHistory.length > 0 && (
