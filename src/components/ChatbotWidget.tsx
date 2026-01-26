@@ -460,18 +460,33 @@ export function ChatbotWidget() {
 
                 {isLoading && messages[messages.length - 1]?.role === 'user' && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className="flex gap-3"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                      <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                      <Bot className="w-4 h-4 text-primary" />
                     </div>
                     <div className="bg-muted p-3 rounded-2xl rounded-tl-none">
-                      <div className="flex gap-1">
-                        <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1">
+                          <motion.span 
+                            className="w-2 h-2 bg-primary rounded-full"
+                            animate={{ y: [0, -6, 0] }}
+                            transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                          />
+                          <motion.span 
+                            className="w-2 h-2 bg-primary rounded-full"
+                            animate={{ y: [0, -6, 0] }}
+                            transition={{ duration: 0.6, repeat: Infinity, delay: 0.15 }}
+                          />
+                          <motion.span 
+                            className="w-2 h-2 bg-primary rounded-full"
+                            animate={{ y: [0, -6, 0] }}
+                            transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }}
+                          />
+                        </div>
+                        <span className="text-xs text-muted-foreground ml-1">Purama réfléchit...</span>
                       </div>
                     </div>
                   </motion.div>
