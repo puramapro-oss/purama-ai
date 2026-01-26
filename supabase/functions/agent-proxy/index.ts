@@ -9,7 +9,7 @@ const corsHeaders = {
 const N8N_BASE_URL = "https://n8n.srv1286148.hstgr.cloud/webhook";
 
 // Demo mode: simulate responses when n8n workflows are not active
-const DEMO_MODE_ENABLED = true;
+const DEMO_MODE_ENABLED = false;
 
 // Generate demo responses based on agent category and form data
 function generateDemoResponse(agentSlug: string, formData: Record<string, unknown>): Record<string, unknown> {
