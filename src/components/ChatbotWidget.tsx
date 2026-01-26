@@ -62,6 +62,7 @@ export function ChatbotWidget() {
   const [showHistory, setShowHistory] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -239,9 +240,34 @@ export function ChatbotWidget() {
 
       const data = await resp.json();
       
-      // Handle n8n response
-      const assistantContent = data.response || "Je n'ai pas pu générer une réponse.";
-      const suggestions = data.suggestions || [];
+      // Debug: log the raw response from n8n
+      console.log('n8n raw response:', JSON.stringify(data, null, 2));
+      
+      // Handle n8n response - it might be wrapped in an array or nested
+      let parsedData = data;
+      
+      // If response is an array, get the first element
+      if (Array.isArray(data)) {
+        parsedData = data[0] || {};
+      }
+      
+      // If response is a string, try to parse it as JSON
+      if (typeof parsedData === 'string') {
+        try {
+          parsedData = JSON.parse(parsedData);
+        } catch {
+          // If parsing fails, use the string as the response
+          parsedData = { response: parsedData };
+        }
+      }
+      
+      // Extract the response and suggestions
+      const assistantContent = parsedData.response || parsedData.message || parsedData.text || 
+        (typeof parsedData === 'string' ? parsedData : "Je n'ai pas pu générer une réponse.");
+      const suggestions: string[] = parsedData.suggestions || [];
+      
+      console.log('Parsed response:', assistantContent);
+      console.log('Parsed suggestions:', suggestions);
 
       const assistantMsg: Message = {
         id: crypto.randomUUID(),
@@ -257,7 +283,9 @@ export function ChatbotWidget() {
 
       // Update suggestion chips if n8n provides custom suggestions
       if (suggestions.length > 0) {
-        console.log('n8n suggestions:', suggestions);
+        setDynamicSuggestions(suggestions);
+      } else {
+        setDynamicSuggestions([]);
       }
     } catch (error) {
       const isTimeout = error instanceof Error && error.name === 'AbortError';
@@ -543,10 +571,10 @@ export function ChatbotWidget() {
             </ScrollArea>
 
             {/* Suggestions */}
-            {messages.length <= 2 && !isLoading && (
+            {!isLoading && (messages.length <= 2 || dynamicSuggestions.length > 0) && (
               <div className="px-4 pb-2">
                 <div className="flex flex-wrap gap-2">
-                  {SUGGESTION_CHIPS.map((suggestion) => (
+                  {(dynamicSuggestions.length > 0 ? dynamicSuggestions : SUGGESTION_CHIPS).map((suggestion) => (
                     <button
                       key={suggestion}
                       onClick={() => handleSuggestionClick(suggestion)}
