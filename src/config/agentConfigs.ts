@@ -36,7 +36,7 @@ const salesAgents: AgentConfig[] = [
     slug: 'crm-intelligent',
     name: 'CRM Intelligent',
     category: 'Ventes',
-    endpoint: `${N8N_BASE_URL}/agent-crm-intelligent`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/crm-intelligent-auto',
     description: 'Posez une question ou décrivez une tâche CRM à effectuer',
     fields: [
       { name: 'message', type: 'textarea', label: 'Votre message', placeholder: 'Ex: Ajoute un nouveau lead Jean Dupont de Acme Corp, email jean@exemple.com, en phase de qualification...', required: true },
@@ -46,7 +46,7 @@ const salesAgents: AgentConfig[] = [
     slug: 'machine-de-suivi',
     name: 'Machine de Suivi',
     category: 'Ventes',
-    endpoint: `${N8N_BASE_URL}/agent-machine-de-suivi`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/machine-suivi-auto',
     description: 'Décrivez le suivi ou la relance que vous souhaitez automatiser',
     fields: [
       { name: 'message', type: 'textarea', label: 'Votre message', placeholder: 'Ex: Relance le contact Marie Martin (marie@exemple.com) en phase de première relance, dernier contact il y a 5 jours...', required: true },
@@ -56,7 +56,7 @@ const salesAgents: AgentConfig[] = [
     slug: 'buteur-principal',
     name: 'Meilleur Marqueur IA (Lead Scoring)',
     category: 'Ventes',
-    endpoint: `${N8N_BASE_URL}/agent-buteur-principal`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/buteur-principal-auto',
     description: 'Scorez automatiquement vos leads pour prioriser vos efforts',
     fields: [
       { name: 'email', type: 'email', label: 'Email', placeholder: 'lead@exemple.com', required: true },
@@ -90,7 +90,7 @@ const salesAgents: AgentConfig[] = [
     slug: 'planificateur-d-appels',
     name: 'Planificateur d\'Appels',
     category: 'Ventes',
-    endpoint: `${N8N_BASE_URL}/agent-planificateur-d-appels`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/planificateur-appels-auto',
     description: 'Planifiez et gérez vos appels commerciaux',
     fields: [
       { name: 'name', type: 'text', label: 'Nom du contact', placeholder: 'Marie Dupont', required: true },
@@ -344,7 +344,7 @@ const emailAgents: AgentConfig[] = [
     slug: 'repondeur-intelligent',
     name: 'Répondeur Intelligent',
     category: 'Email',
-    endpoint: `${N8N_BASE_URL}/agent-repondeur-intelligent`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/repondeur-intelligent-auto',
     description: 'Répondez automatiquement aux emails',
     fields: [
       { name: 'from', type: 'email', label: 'Email de l\'expéditeur', placeholder: 'expediteur@exemple.com', required: true },
@@ -362,7 +362,7 @@ const emailAgents: AgentConfig[] = [
     slug: 'campagnes-par-courriel',
     name: 'Campagnes par E-mail',
     category: 'Email',
-    endpoint: `${N8N_BASE_URL}/agent-campagnes-par-courriel`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/campagnes-email-auto',
     description: 'Créez des campagnes email performantes',
     fields: [
       { name: 'campaign_name', type: 'text', label: 'Nom de la campagne', placeholder: 'Promo Été 2024', required: true },
@@ -376,7 +376,7 @@ const emailAgents: AgentConfig[] = [
     slug: 'pro-de-la-sensibilisation-au-froid',
     name: 'Pro de la Prospection à Froid',
     category: 'Email',
-    endpoint: `${N8N_BASE_URL}/agent-pro-de-la-sensibilisation-au-froid`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/cold-outreach-auto',
     description: 'Créez des emails de prospection efficaces',
     fields: [
       { name: 'name', type: 'text', label: 'Nom du prospect', placeholder: 'Jean Dupont', required: true },
@@ -389,7 +389,7 @@ const emailAgents: AgentConfig[] = [
     slug: 'newsletter-genie',
     name: 'Newsletter Genius',
     category: 'Email',
-    endpoint: `${N8N_BASE_URL}/agent-newsletter-genie`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/newsletter-auto',
     description: 'Créez des newsletters engageantes',
     fields: [
       { name: 'topic', type: 'text', label: 'Thème de la newsletter', placeholder: 'Tendances tech du mois', required: true },
@@ -625,7 +625,7 @@ const financeAgents: AgentConfig[] = [
     slug: 'chasseur-de-paiements',
     name: 'Chasseur de Paiements',
     category: 'Finance',
-    endpoint: `${N8N_BASE_URL}/agent-chasseur-de-paiements`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/chasseur-paiements-auto',
     description: 'Relancez les factures impayées',
     fields: [
       { name: 'invoice_id', type: 'text', label: 'Numéro de facture', placeholder: 'FAC-2024-001', required: true },
@@ -639,7 +639,7 @@ const financeAgents: AgentConfig[] = [
     slug: 'rapports-financiers',
     name: 'Rapports Financiers',
     category: 'Finance',
-    endpoint: `${N8N_BASE_URL}/agent-rapports-financiers`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/rapports-financiers-auto',
     description: 'Générez des rapports financiers',
     fields: [
       { name: 'type', type: 'select', label: 'Type de rapport', required: true, options: [
@@ -660,7 +660,7 @@ const financeAgents: AgentConfig[] = [
     slug: 'facture-pro',
     name: 'Facturation Pro',
     category: 'Finance',
-    endpoint: `${N8N_BASE_URL}/agent-facture-pro`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/facture-pro-auto',
     description: 'Créez des factures professionnelles',
     fields: [
       { name: 'client_name', type: 'text', label: 'Nom du client', placeholder: 'Société XYZ', required: true },
@@ -862,7 +862,7 @@ const productivityAgents: AgentConfig[] = [
     slug: 'reservation-intelligente',
     name: 'Réservation Intelligente',
     category: 'Productivité',
-    endpoint: `${N8N_BASE_URL}/agent-reservation-intelligente`,
+    endpoint: 'https://n8n.srv1286148.hstgr.cloud/webhook/reservation-intelligente-auto',
     description: 'Gérez vos réservations automatiquement',
     fields: [
       { name: 'client_name', type: 'text', label: 'Nom du client', placeholder: 'Marie Martin', required: true },
