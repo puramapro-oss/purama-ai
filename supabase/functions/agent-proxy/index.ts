@@ -382,13 +382,13 @@ serve(async (req) => {
     const webhookSlug = agent.webhook_slug || agent.slug;
     const webhookUrl = `${N8N_BASE_URL}/${webhookSlug}`;
 
-    // Prepare payload for n8n
+    // Prepare payload for n8n - use simple format with message field
     const payload = {
+      message: formData.message || JSON.stringify(formData),
       agentSlug,
       user_id: userId,
       userEmail,
       timestamp: new Date().toISOString(),
-      ...formData,
     };
 
     console.log(`Calling n8n webhook (POST): ${webhookUrl}`);
@@ -453,11 +453,14 @@ serve(async (req) => {
       );
     }
 
-    // Success - return n8n response
+    // Success - extract the response field if available, otherwise return full response
+    const responseData = parsedResponse.response || parsedResponse;
+    
     return new Response(
       JSON.stringify({
         success: true,
-        data: parsedResponse,
+        data: responseData,
+        raw: parsedResponse,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
