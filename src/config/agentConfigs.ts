@@ -37,21 +37,9 @@ const salesAgents: AgentConfig[] = [
     name: 'CRM Intelligent',
     category: 'Ventes',
     endpoint: `${N8N_BASE_URL}/agent-crm-intelligent`,
-    description: 'Gérez vos leads et opportunités de vente intelligemment',
+    description: 'Posez une question ou décrivez une tâche CRM à effectuer',
     fields: [
-      { name: 'lead_name', type: 'text', label: 'Nom du lead', placeholder: 'Jean Dupont', required: true },
-      { name: 'email', type: 'email', label: 'Email', placeholder: 'jean@exemple.com', required: true },
-      { name: 'company', type: 'text', label: 'Entreprise', placeholder: 'Acme Corp', required: false },
-      { name: 'stage', type: 'select', label: 'Étape', required: true, options: [
-        { value: 'nouveau', label: 'Nouveau' },
-        { value: 'qualification', label: 'Qualification' },
-        { value: 'proposition', label: 'Proposition' },
-        { value: 'negociation', label: 'Négociation' },
-        { value: 'gagne', label: 'Gagné' },
-        { value: 'perdu', label: 'Perdu' },
-      ]},
-      { name: 'notes', type: 'textarea', label: 'Notes', placeholder: 'Notes sur le lead...', required: false },
-      { name: 'value', type: 'number', label: 'Valeur estimée (€)', placeholder: '10000', required: false },
+      { name: 'message', type: 'textarea', label: 'Votre message', placeholder: 'Ex: Ajoute un nouveau lead Jean Dupont de Acme Corp, email jean@exemple.com, en phase de qualification...', required: true },
     ],
   },
   {
