@@ -47,17 +47,9 @@ const salesAgents: AgentConfig[] = [
     name: 'Machine de Suivi',
     category: 'Ventes',
     endpoint: `${N8N_BASE_URL}/agent-machine-de-suivi`,
-    description: 'Automatisez le suivi de vos prospects',
+    description: 'Décrivez le suivi ou la relance que vous souhaitez automatiser',
     fields: [
-      { name: 'email', type: 'email', label: 'Email du contact', placeholder: 'contact@exemple.com', required: true },
-      { name: 'name', type: 'text', label: 'Nom du contact', placeholder: 'Marie Martin', required: true },
-      { name: 'last_contact', type: 'date', label: 'Dernier contact', required: false },
-      { name: 'stage', type: 'select', label: 'Étape', required: true, options: [
-        { value: 'premier_contact', label: 'Premier contact' },
-        { value: 'relance_1', label: 'Relance 1' },
-        { value: 'relance_2', label: 'Relance 2' },
-        { value: 'relance_finale', label: 'Relance finale' },
-      ]},
+      { name: 'message', type: 'textarea', label: 'Votre message', placeholder: 'Ex: Relance le contact Marie Martin (marie@exemple.com) en phase de première relance, dernier contact il y a 5 jours...', required: true },
     ],
   },
   {
