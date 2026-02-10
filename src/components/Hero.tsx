@@ -90,7 +90,7 @@ export function Hero() {
             >
               <Bot className="w-8 h-8 text-accent-cyan" />
               <span className="font-orbitron text-foreground text-xl tracking-wider font-bold">
-                AI<span className="text-accent-cyan">AGENTS</span>
+                PURAMA<span className="text-accent-cyan"> AI</span>
               </span>
             </motion.div>
 
