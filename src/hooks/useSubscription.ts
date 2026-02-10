@@ -52,9 +52,9 @@ export function useSubscription() {
         let planType: 'none' | 'starter' | 'premium' = 'none';
         
         if (data.subscribed && data.product_id) {
-          if (data.product_id === PLANS.premium.productId) {
+          if (data.product_id === PLANS.premium.productId || data.product_id === PLANS.premium.yearlyProductId) {
             planType = 'premium';
-          } else if (data.product_id === PLANS.starter.productId) {
+          } else if (data.product_id === PLANS.starter.productId || data.product_id === PLANS.starter.yearlyProductId) {
             planType = 'starter';
           }
         }
