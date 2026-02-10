@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
@@ -62,37 +62,48 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    const subscriptions = await stripe.subscriptions.list({
+    // Check for active OR trialing subscriptions
+    const activeSubscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
       limit: 1,
     });
-    
-    const hasActiveSub = subscriptions.data.length > 0;
+
+    const trialingSubscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "trialing",
+      limit: 1,
+    });
+
+    const allSubscriptions = [...activeSubscriptions.data, ...trialingSubscriptions.data];
+    const hasActiveSub = allSubscriptions.length > 0;
     let productId = null;
     let subscriptionEnd = null;
     let planType = 'free';
 
     if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
+      const subscription = allSubscriptions[0];
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       productId = subscription.items.data[0].price.product;
-      logStep("Active subscription found", { 
+      logStep("Active/trialing subscription found", { 
         subscriptionId: subscription.id, 
+        status: subscription.status,
         endDate: subscriptionEnd,
         productId 
       });
 
-      // Map product IDs to plan types
+      // Map product IDs to plan types (monthly + yearly products)
       const planMapping: Record<string, string> = {
         'prod_Tq9M8BqZXnWp8A': 'starter',
+        'prod_TqETIWE4cO3JqH': 'starter',
         'prod_Tq9Q2m69e3A5h4': 'premium',
+        'prod_TqEUl7wUEF8NEO': 'premium',
         'prod_Tq9R8iVUYzD0UE': 'enterprise',
       };
       planType = planMapping[productId as string] || 'premium';
       logStep("Determined plan type", { planType });
     } else {
-      logStep("No active subscription found");
+      logStep("No active or trialing subscription found");
     }
 
     return new Response(JSON.stringify({
