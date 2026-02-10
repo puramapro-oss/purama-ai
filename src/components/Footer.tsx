@@ -1,8 +1,7 @@
-'use client'
-
 import { Link } from 'react-router-dom'
 import { Bot, Github, Linkedin, Twitter, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { resetCookieConsent } from '@/components/CookieConsent'
 
 export function Footer() {
   return (
@@ -16,7 +15,7 @@ export function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <Bot className="w-8 h-8 text-accent-cyan" />
               <span className="font-orbitron text-xl font-bold text-foreground">
-                AI<span className="text-accent-cyan">AGENTS</span>
+                PURAMA<span className="text-accent-cyan"> AI</span>
               </span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
@@ -27,6 +26,7 @@ export function Footer() {
                 <a
                   key={i}
                   href="#"
+                  aria-label={Icon === Twitter ? 'Twitter' : Icon === Linkedin ? 'LinkedIn' : 'GitHub'}
                   className="w-10 h-10 bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground hover:text-accent-cyan hover:bg-accent-cyan/10 transition-all"
                 >
                   <Icon className="w-5 h-5" />
@@ -35,42 +35,57 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Links */}
-          {[
-            {
-              title: 'Produit',
-              links: ['Agents IA', 'Fonctionnalités', 'Tarifs', 'Intégrations', 'API'],
-            },
-            {
-              title: 'Entreprise',
-              links: ['À Propos', 'Blog', 'Carrières', 'Partenaires', 'Presse'],
-            },
-            {
-              title: 'Support',
-              links: ['Documentation', 'FAQ', 'Contact', 'Status', 'Communauté'],
-            },
-          ].map((section, index) => (
-            <div key={index}>
-              <h4 className="font-orbitron font-semibold text-foreground mb-4">
-                {section.title}
-              </h4>
-              <ul className="space-y-3">
-                {section.links.map((link, i) => (
-                  <li key={i}>
-                    <a
-                      href="#"
-                      className="text-muted-foreground hover:text-accent-cyan transition-colors text-sm"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Product links */}
+          <div>
+            <h4 className="font-orbitron font-semibold text-foreground mb-4">Produit</h4>
+            <ul className="space-y-3">
+              {[
+                { label: 'Accueil', to: '/' },
+                { label: 'Agents IA', to: '/#agents-section' },
+                { label: 'Tarifs', to: '/pricing' },
+                { label: 'Contact', to: '/#contact-section' },
+              ].map((link, i) => (
+                <li key={i}>
+                  <Link to={link.to} className="text-muted-foreground hover:text-accent-cyan transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          {/* Partner CTA */}
-          <div className="md:col-span-4 flex justify-center pt-8 border-t border-accent-cyan/10">
+          {/* Legal links */}
+          <div>
+            <h4 className="font-orbitron font-semibold text-foreground mb-4">Légal</h4>
+            <ul className="space-y-3">
+              {[
+                { label: 'Mentions légales', to: '/mentions-legales' },
+                { label: 'CGV', to: '/cgv' },
+                { label: 'CGU', to: '/cgu' },
+                { label: 'Politique de confidentialité', to: '/politique-de-confidentialite' },
+                { label: 'Politique de cookies', to: '/politique-cookies' },
+              ].map((link, i) => (
+                <li key={i}>
+                  <Link to={link.to} className="text-muted-foreground hover:text-accent-cyan transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <button
+                  onClick={resetCookieConsent}
+                  className="text-muted-foreground hover:text-accent-cyan transition-colors text-sm"
+                >
+                  Gérer les cookies
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Partner */}
+          <div>
+            <h4 className="font-orbitron font-semibold text-foreground mb-4">Partenaires</h4>
+            <p className="text-muted-foreground text-sm mb-4">Rejoignez notre programme partenaire et gagnez des commissions.</p>
             <Button asChild className="bg-gradient-to-r from-accent-purple to-accent-cyan hover:opacity-90">
               <Link to="/influenceur/inscription" className="flex items-center gap-2">
                 <Users className="w-4 h-4" />
@@ -83,19 +98,11 @@ export function Footer() {
         {/* Bottom */}
         <div className="pt-8 border-t border-accent-cyan/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
-            © 2024 AI Agents. Tous droits réservés.
+            © 2025 Purama AI — Tous droits réservés.
           </p>
-          <div className="flex gap-6">
-            {['Confidentialité', 'CGU', 'Cookies'].map((item, i) => (
-              <a
-                key={i}
-                href="#"
-                className="text-muted-foreground hover:text-accent-cyan text-sm transition-colors"
-              >
-                {item}
-              </a>
-            ))}
-          </div>
+          <p className="text-muted-foreground text-xs">
+            Sans engagement, résiliable à tout moment.
+          </p>
         </div>
       </div>
     </footer>
