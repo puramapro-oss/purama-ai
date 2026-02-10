@@ -96,13 +96,17 @@ export function Hero() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Agents', 'Fonctionnalités', 'Contact'].map((item) => (
+              {[
+                { label: 'Agents', href: '#agents-section' },
+                { label: 'Fonctionnalités', href: '#features-section' },
+                { label: 'Contact', href: '#contact-section' },
+              ].map((item) => (
                 <a 
-                  key={item}
-                  href={`#${item.toLowerCase()}`} 
+                  key={item.label}
+                  href={item.href} 
                   className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
               <Link 
