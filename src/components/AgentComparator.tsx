@@ -146,7 +146,7 @@ export function AgentComparator() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 onClick={() => toggleAgent(agent.id)}
-                className={`relative p-4 rounded-xl text-left transition-all ${
+                className={`relative p-4 rounded-xl text-left transition-all min-h-[100px] ${
                   isSelected
                     ? 'bg-gradient-to-br from-accent-cyan/20 to-accent-purple/20 border-2 border-accent-cyan'
                     : 'futuristic-card hover:border-accent-cyan/50'

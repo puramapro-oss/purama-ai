@@ -128,7 +128,7 @@ export function Pricing() {
                 className={`
                   relative futuristic-card p-8 
                   ${colors.border}
-                  ${plan.popular ? 'scale-105 lg:scale-110' : ''}
+                  ${plan.popular ? 'lg:scale-110' : ''}
                 `}
               >
                 {/* Popular Badge */}
