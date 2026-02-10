@@ -99,8 +99,8 @@ export function Contact() {
             {/* Contact Cards */}
             <div className="space-y-4">
               {[
-                { icon: Mail, label: 'Email', value: 'contact@aiagents.fr' },
-                { icon: Phone, label: 'Téléphone', value: '+33 1 23 45 67 89' },
+                { icon: Mail, label: 'Email', value: 'contact@purama.fr' },
+                { icon: Phone, label: 'Téléphone', value: '[À COMPLÉTER]' },
                 { icon: MapPin, label: 'Adresse', value: 'Paris, France' },
               ].map((item, index) => (
                 <motion.div
