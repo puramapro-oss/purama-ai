@@ -173,14 +173,18 @@ export function Hero() {
             className="md:hidden fixed top-0 right-0 h-full w-72 bg-card border-l border-accent-cyan/20 z-[90] p-6 pt-20"
           >
             <div className="flex flex-col space-y-4">
-              {['Agents', 'Fonctionnalités', 'Contact'].map((item) => (
+              {[
+                { label: 'Agents', href: '#agents-section' },
+                { label: 'Fonctionnalités', href: '#features-section' },
+                { label: 'Contact', href: '#contact-section' },
+              ].map((item) => (
                 <a 
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.label}
+                  href={item.href}
                   className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
               <Link 
