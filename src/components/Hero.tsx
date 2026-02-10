@@ -283,7 +283,7 @@ export function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => document.getElementById('agents')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('agents-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="btn-primary flex items-center gap-2 text-lg px-8 py-4"
             >
               Voir les Agents
