@@ -134,7 +134,7 @@ export function AgentComparator() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-12"
         >
           {filteredAgents.map((agent, index) => {
             const isSelected = selectedAgents.includes(agent.id)
@@ -146,7 +146,7 @@ export function AgentComparator() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 onClick={() => toggleAgent(agent.id)}
-                className={`relative p-4 rounded-xl text-left transition-all ${
+                className={`relative p-4 rounded-xl text-left transition-all min-h-[100px] ${
                   isSelected
                     ? 'bg-gradient-to-br from-accent-cyan/20 to-accent-purple/20 border-2 border-accent-cyan'
                     : 'futuristic-card hover:border-accent-cyan/50'
