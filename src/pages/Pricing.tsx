@@ -284,7 +284,7 @@ export default function Pricing() {
         )}
 
         {/* Pricing cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {Object.values(PLANS).map((plan, index) => {
             const Icon = plan.icon;
             const isCurrent = isCurrentPlan(plan.id);
@@ -397,8 +397,8 @@ export default function Pricing() {
           className="text-center mt-12 text-muted-foreground"
         >
           <p>
-            Tous nos agents nécessitent un abonnement.{' '}
-            <span className="text-foreground">Essai gratuit de 7 jours inclus.</span>
+            Sans engagement, résiliable à tout moment.{' '}
+            <span className="text-foreground">14 jours d'essai gratuit inclus.</span>
           </p>
         </motion.div>
       </main>

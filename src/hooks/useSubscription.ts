@@ -15,6 +15,7 @@ export const PLANS = {
     price: 33,
     priceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
     productId: 'prod_Tq9M8BqZXnWp8A',
+    yearlyProductId: 'prod_TqETIWE4cO3JqH',
     maxAgents: 5,
   },
   premium: {
@@ -23,6 +24,7 @@ export const PLANS = {
     price: 99,
     priceId: 'price_1SsT7x4Y1unNvKtXvRnyLp4W',
     productId: 'prod_Tq9Q2m69e3A5h4',
+    yearlyProductId: 'prod_TqEUl7wUEF8NEO',
     maxAgents: 45,
   },
 } as const;
@@ -50,9 +52,9 @@ export function useSubscription() {
         let planType: 'none' | 'starter' | 'premium' = 'none';
         
         if (data.subscribed && data.product_id) {
-          if (data.product_id === PLANS.premium.productId) {
+          if (data.product_id === PLANS.premium.productId || data.product_id === PLANS.premium.yearlyProductId) {
             planType = 'premium';
-          } else if (data.product_id === PLANS.starter.productId) {
+          } else if (data.product_id === PLANS.starter.productId || data.product_id === PLANS.starter.yearlyProductId) {
             planType = 'starter';
           }
         }

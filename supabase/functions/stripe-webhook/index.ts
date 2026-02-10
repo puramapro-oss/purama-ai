@@ -5,7 +5,7 @@ import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
@@ -116,7 +116,9 @@ function generateCommissionEmailHtml(data: {
 // Map Stripe product IDs to internal plan types
 const planMapping: Record<string, string> = {
   'prod_Tq9M8BqZXnWp8A': 'starter',
+  'prod_TqETIWE4cO3JqH': 'starter',
   'prod_Tq9Q2m69e3A5h4': 'premium',
+  'prod_TqEUl7wUEF8NEO': 'premium',
   'prod_Tq9R8iVUYzD0UE': 'enterprise',
 };
 
@@ -165,7 +167,7 @@ serve(async (req) => {
     let event: Stripe.Event;
 
     try {
-      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret, undefined, Stripe.createSubtleCryptoProvider());
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       logStep("ERROR: Webhook signature verification failed", { error: errorMessage });
