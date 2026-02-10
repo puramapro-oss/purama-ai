@@ -90,19 +90,23 @@ export function Hero() {
             >
               <Bot className="w-8 h-8 text-accent-cyan" />
               <span className="font-orbitron text-foreground text-xl tracking-wider font-bold">
-                AI<span className="text-accent-cyan">AGENTS</span>
+                PURAMA<span className="text-accent-cyan"> AI</span>
               </span>
             </motion.div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Agents', 'Fonctionnalités', 'Contact'].map((item) => (
+              {[
+                { label: 'Agents', href: '#agents-section' },
+                { label: 'Fonctionnalités', href: '#features-section' },
+                { label: 'Contact', href: '#contact-section' },
+              ].map((item) => (
                 <a 
-                  key={item}
-                  href={`#${item.toLowerCase()}`} 
+                  key={item.label}
+                  href={item.href} 
                   className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
               <Link 
@@ -169,14 +173,18 @@ export function Hero() {
             className="md:hidden fixed top-0 right-0 h-full w-72 bg-card border-l border-accent-cyan/20 z-[90] p-6 pt-20"
           >
             <div className="flex flex-col space-y-4">
-              {['Agents', 'Fonctionnalités', 'Contact'].map((item) => (
+              {[
+                { label: 'Agents', href: '#agents-section' },
+                { label: 'Fonctionnalités', href: '#features-section' },
+                { label: 'Contact', href: '#contact-section' },
+              ].map((item) => (
                 <a 
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.label}
+                  href={item.href}
                   className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
               <Link 
@@ -275,7 +283,7 @@ export function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => document.getElementById('agents')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('agents-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="btn-primary flex items-center gap-2 text-lg px-8 py-4"
             >
               Voir les Agents
@@ -284,7 +292,7 @@ export function Hero() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
               className="btn-secondary text-lg px-8 py-4"
             >
               Nous Contacter

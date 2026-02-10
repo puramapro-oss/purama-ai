@@ -276,7 +276,7 @@ export function AgentComparator() {
             
             <div className="p-6 border-t border-accent-cyan/20 flex justify-center">
               <button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="btn-primary"
               >
                 Demander une Démo

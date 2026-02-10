@@ -147,7 +147,7 @@ export function AIAgents() {
   const remainingCount = agents.length - INITIAL_DISPLAY_COUNT
 
   return (
-    <section id="agents" className="relative py-24 overflow-hidden">
+    <section id="agents-section" className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-background">
         <div className="absolute inset-0 grid-pattern opacity-30" />
@@ -305,7 +305,7 @@ export function AIAgents() {
           className="text-center mt-16"
         >
           <button 
-            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
             className="btn-primary text-lg px-10 py-4"
           >
             Demander une Démo

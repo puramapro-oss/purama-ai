@@ -11,7 +11,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Bonjour ! Je suis l\'assistant IA d\'AI Agents Pro. Comment puis-je vous aider à automatiser votre entreprise ?' }
+    { role: 'assistant', content: 'Bonjour ! Je suis l\'assistant IA de Purama AI. Comment puis-je vous aider à automatiser votre entreprise ?' }
   ])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)

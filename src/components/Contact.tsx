@@ -43,7 +43,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="relative py-24 overflow-hidden">
+    <section id="contact-section" className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-card/30">
         <div className="absolute inset-0 grid-pattern opacity-20" />
@@ -99,8 +99,8 @@ export function Contact() {
             {/* Contact Cards */}
             <div className="space-y-4">
               {[
-                { icon: Mail, label: 'Email', value: 'contact@aiagents.fr' },
-                { icon: Phone, label: 'Téléphone', value: '+33 1 23 45 67 89' },
+                { icon: Mail, label: 'Email', value: 'contact@purama.fr' },
+                { icon: Phone, label: 'Téléphone', value: '[À COMPLÉTER]' },
                 { icon: MapPin, label: 'Adresse', value: 'Paris, France' },
               ].map((item, index) => (
                 <motion.div
