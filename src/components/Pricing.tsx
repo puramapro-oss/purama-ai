@@ -1,61 +1,43 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Sparkles, Zap, Crown } from 'lucide-react'
+import { Check, Zap, Crown } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const plans = [
   {
     name: 'Starter',
-    price: '49',
+    price: '33',
     period: '/mois',
-    description: 'Parfait pour les freelances et petites équipes',
+    description: 'Choisissez 5 agents pour automatiser vos tâches essentielles',
     icon: Zap,
     color: 'cyan',
     features: [
-      '3 Agents IA au choix',
-      '1 000 requêtes/mois',
-      'Intégrations basiques',
+      '5 agents au choix parmi 45',
+      'Exécutions illimitées',
       'Support par email',
-      'Analytics standard',
+      'Toutes les intégrations',
+      'Tableau de bord complet',
     ],
     popular: false,
   },
   {
-    name: 'Business',
-    price: '149',
+    name: 'Premium',
+    price: '99',
     period: '/mois',
-    description: 'Idéal pour les PME en croissance',
-    icon: Sparkles,
+    description: 'Accès illimité à tous les agents IA',
+    icon: Crown,
     color: 'purple',
     features: [
-      '10 Agents IA au choix',
-      '10 000 requêtes/mois',
-      'Toutes les intégrations',
+      'Tous les 45 agents IA',
+      'Exécutions illimitées',
       'Support prioritaire 24/7',
+      'Toutes les intégrations',
       'Analytics avancés',
-      'API personnalisée',
-      'Formation incluse',
+      'Agents personnalisables',
+      'API access',
     ],
     popular: true,
-  },
-  {
-    name: 'Enterprise',
-    price: '499',
-    period: '/mois',
-    description: 'Solution complète pour les grandes entreprises',
-    icon: Crown,
-    color: 'pink',
-    features: [
-      '45 Agents IA (tous inclus)',
-      'Requêtes illimitées',
-      'Intégrations sur mesure',
-      'Account Manager dédié',
-      'SLA garanti 99.9%',
-      'Agents personnalisés',
-      'Déploiement on-premise',
-      'Audit sécurité inclus',
-    ],
-    popular: false,
   },
 ]
 
@@ -88,12 +70,12 @@ export function Pricing() {
           </h2>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Des forfaits flexibles adaptés à tous les besoins. Changez de plan à tout moment.
+            Des forfaits flexibles adaptés à tous les besoins. 14 jours d'essai gratuit inclus.
           </p>
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan, index) => {
             const Icon = plan.icon
             const colorMap = {
@@ -109,12 +91,6 @@ export function Pricing() {
                 button: 'bg-gradient-to-r from-accent-cyan to-accent-purple hover:opacity-90',
                 check: 'text-accent-purple',
               },
-              pink: {
-                border: 'border-accent-pink/30 hover:border-accent-pink/60',
-                icon: 'text-accent-pink bg-accent-pink/10',
-                button: 'bg-accent-pink hover:bg-accent-pink/80',
-                check: 'text-accent-pink',
-              },
             }
             const colors = colorMap[plan.color as keyof typeof colorMap]
             
@@ -128,7 +104,7 @@ export function Pricing() {
                 className={`
                   relative futuristic-card p-8 
                   ${colors.border}
-                  ${plan.popular ? 'lg:scale-110' : ''}
+                  ${plan.popular ? 'lg:scale-105' : ''}
                 `}
               >
                 {/* Popular Badge */}
@@ -157,6 +133,7 @@ export function Pricing() {
                 <div className="mb-8">
                   <span className="text-5xl font-orbitron font-bold text-foreground">{plan.price}€</span>
                   <span className="text-muted-foreground">{plan.period}</span>
+                  <p className="text-sm text-muted-foreground mt-1">TTC</p>
                 </div>
 
                 {/* Features */}
@@ -170,18 +147,18 @@ export function Pricing() {
                 </ul>
 
                 {/* CTA */}
-                <button 
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                  className={`w-full py-4 rounded-lg font-semibold text-white transition-all duration-300 ${colors.button}`}
+                <Link 
+                  to="/pricing"
+                  className={`block w-full py-4 rounded-lg font-semibold text-white text-center transition-all duration-300 ${colors.button}`}
                 >
-                  Commencer
-                </button>
+                  Commencer l'essai gratuit
+                </Link>
               </motion.div>
             )
           })}
         </div>
 
-        {/* Money Back Guarantee */}
+        {/* Bottom note */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -190,7 +167,7 @@ export function Pricing() {
           className="text-center mt-12"
         >
           <p className="text-muted-foreground">
-            ✨ Essai gratuit de 14 jours • Sans engagement • Satisfait ou remboursé
+            ✨ 14 jours d'essai gratuit • Sans engagement • Résiliable à tout moment
           </p>
         </motion.div>
       </div>

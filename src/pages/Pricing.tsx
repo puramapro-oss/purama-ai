@@ -397,8 +397,8 @@ export default function Pricing() {
           className="text-center mt-12 text-muted-foreground"
         >
           <p>
-            Tous nos agents nécessitent un abonnement.{' '}
-            <span className="text-foreground">Essai gratuit de 7 jours inclus.</span>
+            Sans engagement, résiliable à tout moment.{' '}
+            <span className="text-foreground">14 jours d'essai gratuit inclus.</span>
           </p>
         </motion.div>
       </main>

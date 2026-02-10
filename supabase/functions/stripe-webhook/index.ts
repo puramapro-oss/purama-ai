@@ -116,7 +116,9 @@ function generateCommissionEmailHtml(data: {
 // Map Stripe product IDs to internal plan types
 const planMapping: Record<string, string> = {
   'prod_Tq9M8BqZXnWp8A': 'starter',
+  'prod_TqETIWE4cO3JqH': 'starter',
   'prod_Tq9Q2m69e3A5h4': 'premium',
+  'prod_TqEUl7wUEF8NEO': 'premium',
   'prod_Tq9R8iVUYzD0UE': 'enterprise',
 };
 
