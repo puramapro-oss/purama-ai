@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Mail, Lock, User, Loader2, Sparkles } from 'lucide-react';
 
@@ -13,20 +14,31 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!fullName.trim()) {
+      toast.error('Veuillez entrer votre nom complet');
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error('Le mot de passe doit contenir au moins 8 caractères');
+      return;
+    }
     
     if (password !== confirmPassword) {
       toast.error('Les mots de passe ne correspondent pas');
       return;
     }
 
-    if (password.length < 6) {
-      toast.error('Le mot de passe doit contenir au moins 6 caractères');
+    if (!acceptedTerms) {
+      toast.error('Veuillez accepter les CGU et la Politique de Confidentialité');
       return;
     }
 
@@ -39,8 +51,10 @@ export default function Signup() {
         description: error.message,
       });
     } else {
-      toast.success('Compte créé avec succès !');
-      navigate('/dashboard');
+      toast.success('Compte créé avec succès !', {
+        description: 'Vérifiez votre email pour confirmer votre compte.',
+      });
+      navigate('/login');
     }
     
     setIsLoading(false);
@@ -106,7 +120,7 @@ export default function Signup() {
           {/* Email Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName" className="text-foreground font-medium">Nom complet</Label>
+              <Label htmlFor="fullName" className="text-foreground font-medium">Nom complet *</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -116,12 +130,14 @@ export default function Signup() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
+                  required
+                  maxLength={100}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
+              <Label htmlFor="email" className="text-foreground font-medium">Email *</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -132,12 +148,13 @@ export default function Signup() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                   required
+                  maxLength={255}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground font-medium">Mot de passe</Label>
+              <Label htmlFor="password" className="text-foreground font-medium">Mot de passe * <span className="text-muted-foreground font-normal text-xs">(min. 8 caractères)</span></Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -148,12 +165,13 @@ export default function Signup() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                   required
+                  minLength={8}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirmer le mot de passe *</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -164,14 +182,32 @@ export default function Signup() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10 h-12 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
                   required
+                  minLength={8}
                 />
               </div>
+            </div>
+
+            {/* RGPD Consent */}
+            <div className="flex items-start space-x-3">
+              <Checkbox
+                id="terms"
+                checked={acceptedTerms}
+                onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                className="mt-1"
+              />
+              <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                J'accepte les{' '}
+                <Link to="/cgu" target="_blank" className="text-primary hover:underline">CGU</Link>
+                {' '}et la{' '}
+                <Link to="/politique-de-confidentialite" target="_blank" className="text-primary hover:underline">Politique de Confidentialité</Link>
+                {' '}*
+              </label>
             </div>
 
             <Button
               type="submit"
               className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-              disabled={isLoading}
+              disabled={isLoading || !acceptedTerms}
             >
               {isLoading ? (
                 <>

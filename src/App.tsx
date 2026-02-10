@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
+import { CookieConsent } from '@/components/CookieConsent';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
@@ -20,6 +21,11 @@ import NotificationSettings from '@/pages/NotificationSettings';
 import InfluencerDashboard from '@/pages/InfluencerDashboard';
 import InfluencerSignup from '@/pages/InfluencerSignup';
 import AdminInfluencers from '@/pages/AdminInfluencers';
+import MentionsLegales from '@/pages/MentionsLegales';
+import PolitiqueConfidentialite from '@/pages/PolitiqueConfidentialite';
+import CGV from '@/pages/CGV';
+import CGU from '@/pages/CGU';
+import PolitiqueCookies from '@/pages/PolitiqueCookies';
 import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -37,68 +43,46 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/politique-de-confidentialite" element={<PolitiqueConfidentialite />} />
+            <Route path="/cgv" element={<CGV />} />
+            <Route path="/cgu" element={<CGU />} />
+            <Route path="/politique-cookies" element={<PolitiqueCookies />} />
             <Route
               path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
             />
             <Route
               path="/agent/:slug"
-              element={
-                <ProtectedRoute>
-                  <AgentDetail />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><AgentDetail /></ProtectedRoute>}
             />
             <Route
               path="/my-agents"
-              element={
-                <ProtectedRoute>
-                  <MyAgents />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><MyAgents /></ProtectedRoute>}
             />
             <Route
               path="/mes-connexions"
-              element={
-                <ProtectedRoute>
-                  <MyConnections />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><MyConnections /></ProtectedRoute>}
             />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route
               path="/notifications"
-              element={
-                <ProtectedRoute>
-                  <Notifications />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Notifications /></ProtectedRoute>}
             />
             <Route
               path="/notification-settings"
-              element={
-                <ProtectedRoute>
-                  <NotificationSettings />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>}
             />
             <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
             <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
             <Route
               path="/admin/influenceurs"
-              element={
-                <ProtectedRoute>
-                  <AdminInfluencers />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>}
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ChatbotWidget />
+          <CookieConsent />
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>
