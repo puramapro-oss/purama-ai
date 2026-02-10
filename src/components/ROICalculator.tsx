@@ -235,7 +235,7 @@ export function ROICalculator() {
               </div>
               
               <button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="w-full btn-primary mt-6"
               >
                 Obtenir une Estimation Personnalisée

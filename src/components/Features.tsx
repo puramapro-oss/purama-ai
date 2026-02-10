@@ -59,7 +59,7 @@ const features = [
 
 export function Features() {
   return (
-    <section id="fonctionnalités" className="relative py-24 overflow-hidden">
+    <section id="features-section" className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-card/50">
         <div className="absolute inset-0 grid-pattern opacity-20" />

@@ -43,7 +43,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="relative py-24 overflow-hidden">
+    <section id="contact-section" className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-card/30">
         <div className="absolute inset-0 grid-pattern opacity-20" />
