@@ -147,7 +147,7 @@ export function AIAgents() {
   const remainingCount = agents.length - INITIAL_DISPLAY_COUNT
 
   return (
-    <section id="agents" className="relative py-24 overflow-hidden">
+    <section id="agents-section" className="relative py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-background">
         <div className="absolute inset-0 grid-pattern opacity-30" />
