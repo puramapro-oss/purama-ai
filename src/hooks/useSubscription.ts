@@ -12,7 +12,7 @@ export const PLANS = {
   starter: {
     id: 'starter',
     name: 'Starter',
-    price: 33,
+    price: 66,
     priceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
     productId: 'prod_Tq9M8BqZXnWp8A',
     yearlyProductId: 'prod_TqETIWE4cO3JqH',

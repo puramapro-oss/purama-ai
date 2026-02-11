@@ -25,6 +25,11 @@ export function Hero() {
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsMobileMenuOpen(false)
+      }
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
     } else {
       document.body.style.overflow = 'unset'
     }
@@ -150,6 +155,8 @@ export function Hero() {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden glass-effect p-3 rounded-full text-foreground"
+                aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+                aria-expanded={isMobileMenuOpen}
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>

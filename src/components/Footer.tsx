@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Bot, Github, Linkedin, Twitter, Users } from 'lucide-react'
+import { Bot, Linkedin, Twitter, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { resetCookieConsent } from '@/components/CookieConsent'
 
@@ -22,11 +22,16 @@ export function Footer() {
               La plateforme #1 d'agents IA pour automatiser votre entreprise et booster votre productivité.
             </p>
             <div className="flex gap-4">
-              {[Twitter, Linkedin, Github].map((Icon, i) => (
+              {[
+                { Icon: Twitter, label: 'Twitter', url: '#' },
+                { Icon: Linkedin, label: 'LinkedIn', url: '#' },
+              ].map(({ Icon, label, url }) => (
                 <a
-                  key={i}
-                  href="#"
-                  aria-label={Icon === Twitter ? 'Twitter' : Icon === Linkedin ? 'LinkedIn' : 'GitHub'}
+                  key={label}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
                   className="w-10 h-10 bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground hover:text-accent-cyan hover:bg-accent-cyan/10 transition-all"
                 >
                   <Icon className="w-5 h-5" />
@@ -98,7 +103,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="pt-8 border-t border-accent-cyan/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
-            © 2025 Purama AI — Tous droits réservés.
+            © 2025–2026 Purama AI — Tous droits réservés.
           </p>
           <p className="text-muted-foreground text-xs">
             Sans engagement, résiliable à tout moment.
