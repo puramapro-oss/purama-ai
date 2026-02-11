@@ -171,56 +171,64 @@ export function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        Nom Complet
+                      <label htmlFor="contact-name" className="block text-sm font-medium text-foreground mb-2">
+                        Nom Complet *
                       </label>
                       <input
+                        id="contact-name"
                         type="text"
                         required
+                        maxLength={100}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors"
+                        className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan focus:ring-2 focus:ring-accent-cyan/30 transition-colors"
                         placeholder="Jean Dupont"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        Email
+                      <label htmlFor="contact-email" className="block text-sm font-medium text-foreground mb-2">
+                        Email *
                       </label>
                       <input
+                        id="contact-email"
                         type="email"
                         required
+                        maxLength={255}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors"
+                        className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan focus:ring-2 focus:ring-accent-cyan/30 transition-colors"
                         placeholder="jean@entreprise.fr"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
+                    <label htmlFor="contact-company" className="block text-sm font-medium text-foreground mb-2">
                       Entreprise
                     </label>
                     <input
+                      id="contact-company"
                       type="text"
+                      maxLength={100}
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors"
+                      className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan focus:ring-2 focus:ring-accent-cyan/30 transition-colors"
                       placeholder="Nom de votre entreprise"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Votre Message
+                    <label htmlFor="contact-message" className="block text-sm font-medium text-foreground mb-2">
+                      Votre Message *
                     </label>
                     <textarea
+                      id="contact-message"
                       required
                       rows={5}
+                      maxLength={2000}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan transition-colors resize-none"
+                      className="w-full bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent-cyan focus:ring-2 focus:ring-accent-cyan/30 transition-colors resize-none"
                       placeholder="Décrivez votre projet et vos besoins en automatisation..."
                     />
                   </div>

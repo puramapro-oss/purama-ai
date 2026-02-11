@@ -37,7 +37,7 @@ interface Conversation {
 
 const WELCOME_MESSAGES: Record<string, string> = {
   '/': "Bienvenue ! 👋 Je suis Purama AI, votre assistant. Besoin d'aide pour choisir votre agent IA ?",
-  '/pricing': "Des questions sur nos tarifs ? 💰 Starter à 33€/mois ou Premium à 99€/mois - je peux tout vous expliquer !",
+  '/pricing': "Des questions sur nos tarifs ? 💰 Starter à 66€/mois ou Premium à 99€/mois - je peux tout vous expliquer !",
   '/agent': "Besoin d'aide avec cet agent ? 🤖 Je peux vous expliquer son fonctionnement en détail !",
   '/dashboard': "Besoin d'assistance avec votre tableau de bord ? 📊 Je suis là pour vous aider !",
   '/influenceur': "Questions sur notre programme d'affiliation ? 🌟 Gagnez jusqu'à 33% de commission !",

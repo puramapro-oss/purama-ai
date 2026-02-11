@@ -58,7 +58,7 @@ export function CookieConsent() {
         exit={{ y: 100, opacity: 0 }}
         className="fixed bottom-0 left-0 right-0 z-[200] p-4"
       >
-        <div className="max-w-3xl mx-auto glass-effect rounded-2xl p-6">
+        <div className="max-w-3xl mx-auto glass-effect rounded-2xl p-6" role="dialog" aria-label="Gestion des cookies" aria-modal="false">
           <div className="flex items-start gap-4">
             <Cookie className="w-8 h-8 text-accent-cyan shrink-0 mt-1" />
             <div className="flex-1">

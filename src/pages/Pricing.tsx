@@ -23,8 +23,8 @@ const PLANS = {
   starter: {
     id: 'starter',
     name: 'Starter',
-    monthlyPrice: 33,
-    yearlyPrice: 265,
+    monthlyPrice: 66,
+    yearlyPrice: 530,
     monthlyPriceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
     yearlyPriceId: 'price_1SsY0t4Y1unNvKtXhJN6n3Vb',
     productId: 'prod_Tq9M8BqZXnWp8A',

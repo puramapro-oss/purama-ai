@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 const plans = [
   {
     name: 'Starter',
-    price: '33',
+    price: '66',
     period: '/mois',
     description: 'Choisissez 5 agents pour automatiser vos tâches essentielles',
     icon: Zap,
@@ -133,7 +133,7 @@ export function Pricing() {
                 <div className="mb-8">
                   <span className="text-5xl font-orbitron font-bold text-foreground">{plan.price}€</span>
                   <span className="text-muted-foreground">{plan.period}</span>
-                  <p className="text-sm text-muted-foreground mt-1">TTC</p>
+                  <p className="text-sm text-muted-foreground mt-1">Prix TTC • Sans engagement</p>
                 </div>
 
                 {/* Features */}
