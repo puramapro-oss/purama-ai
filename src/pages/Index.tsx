@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Hero } from '@/components/Hero';
 import { AIAgents } from '@/components/AIAgents';
+import { CommunityHighlights } from '@/components/CommunityHighlights';
 import { ROICalculator } from '@/components/ROICalculator';
 import { Pricing } from '@/components/Pricing';
 import { Contact } from '@/components/Contact';
@@ -33,6 +34,9 @@ export default function Index() {
         </section>
         <section id="agents-section-wrapper" aria-label="AI Agents section">
           <AIAgents />
+        </section>
+        <section id="community-section" aria-label="Communauté PURAMA">
+          <CommunityHighlights />
         </section>
         <section id="roi-section" aria-label="Calculateur d'économies">
           <ROICalculator />
