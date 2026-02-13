@@ -97,6 +97,62 @@ export type Database = {
         }
         Relationships: []
       }
+      candidatures_classement: {
+        Row: {
+          agents_utilises: string[] | null
+          analyse_ia: string | null
+          categorie_impact: string | null
+          classement_id: string
+          created_at: string | null
+          description_impact: string
+          gains: number | null
+          id: string
+          rang: number | null
+          score_ia: number | null
+          site_url: string
+          user_id: string
+          verifie_agents: boolean | null
+        }
+        Insert: {
+          agents_utilises?: string[] | null
+          analyse_ia?: string | null
+          categorie_impact?: string | null
+          classement_id: string
+          created_at?: string | null
+          description_impact: string
+          gains?: number | null
+          id?: string
+          rang?: number | null
+          score_ia?: number | null
+          site_url: string
+          user_id: string
+          verifie_agents?: boolean | null
+        }
+        Update: {
+          agents_utilises?: string[] | null
+          analyse_ia?: string | null
+          categorie_impact?: string | null
+          classement_id?: string
+          created_at?: string | null
+          description_impact?: string
+          gains?: number | null
+          id?: string
+          rang?: number | null
+          score_ia?: number | null
+          site_url?: string
+          user_id?: string
+          verifie_agents?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidatures_classement_classement_id_fkey"
+            columns: ["classement_id"]
+            isOneToOne: false
+            referencedRelation: "classement_mensuel"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_conversations: {
         Row: {
           created_at: string
@@ -189,6 +245,30 @@ export type Database = {
         }
         Relationships: []
       }
+      classement_mensuel: {
+        Row: {
+          cagnotte: number | null
+          created_at: string | null
+          id: string
+          mois: string
+          statut: string | null
+        }
+        Insert: {
+          cagnotte?: number | null
+          created_at?: string | null
+          id?: string
+          mois: string
+          statut?: string | null
+        }
+        Update: {
+          cagnotte?: number | null
+          created_at?: string | null
+          id?: string
+          mois?: string
+          statut?: string | null
+        }
+        Relationships: []
+      }
       commissions: {
         Row: {
           client_id: string
@@ -239,6 +319,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      concours: {
+        Row: {
+          cagnotte: number | null
+          created_at: string | null
+          date_debut: string
+          date_fin: string
+          description: string | null
+          gagnants: Json | null
+          id: string
+          pourcentage_ca: number
+          statut: string | null
+          titre: string
+          type: string
+        }
+        Insert: {
+          cagnotte?: number | null
+          created_at?: string | null
+          date_debut: string
+          date_fin: string
+          description?: string | null
+          gagnants?: Json | null
+          id?: string
+          pourcentage_ca: number
+          statut?: string | null
+          titre: string
+          type: string
+        }
+        Update: {
+          cagnotte?: number | null
+          created_at?: string | null
+          date_debut?: string
+          date_fin?: string
+          description?: string | null
+          gagnants?: Json | null
+          id?: string
+          pourcentage_ca?: number
+          statut?: string | null
+          titre?: string
+          type?: string
+        }
+        Relationships: []
       }
       contact_submissions: {
         Row: {
@@ -396,39 +518,194 @@ export type Database = {
         }
         Relationships: []
       }
+      paliers_parrainage: {
+        Row: {
+          atteint_le: string | null
+          id: string
+          palier: number
+          prime_description: string
+          prime_reclamee: boolean | null
+          prime_type: string
+          user_id: string
+        }
+        Insert: {
+          atteint_le?: string | null
+          id?: string
+          palier: number
+          prime_description: string
+          prime_reclamee?: boolean | null
+          prime_type: string
+          user_id: string
+        }
+        Update: {
+          atteint_le?: string | null
+          id?: string
+          palier?: number
+          prime_description?: string
+          prime_reclamee?: boolean | null
+          prime_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      participations_concours: {
+        Row: {
+          concours_id: string
+          created_at: string | null
+          id: string
+          nombre_places: number | null
+          source: string | null
+          user_id: string
+        }
+        Insert: {
+          concours_id: string
+          created_at?: string | null
+          id?: string
+          nombre_places?: number | null
+          source?: string | null
+          user_id: string
+        }
+        Update: {
+          concours_id?: string
+          created_at?: string | null
+          id?: string
+          nombre_places?: number | null
+          source?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participations_concours_concours_id_fkey"
+            columns: ["concours_id"]
+            isOneToOne: false
+            referencedRelation: "concours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          code_parrainage: string | null
           company_name: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
+          gains_totaux: number | null
           id: string
+          nombre_filleuls: number | null
+          palier_actuel: number | null
+          parraine_par: string | null
           phone: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          code_parrainage?: string | null
           company_name?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
+          gains_totaux?: number | null
           id?: string
+          nombre_filleuls?: number | null
+          palier_actuel?: number | null
+          parraine_par?: string | null
           phone?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          code_parrainage?: string | null
           company_name?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
+          gains_totaux?: number | null
           id?: string
+          nombre_filleuls?: number | null
+          palier_actuel?: number | null
+          parraine_par?: string | null
           phone?: string | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      referral_commissions: {
+        Row: {
+          created_at: string | null
+          filleul_user_id: string
+          id: string
+          mois: string | null
+          montant: number
+          parrain_user_id: string
+          statut: string | null
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          filleul_user_id: string
+          id?: string
+          mois?: string | null
+          montant: number
+          parrain_user_id: string
+          statut?: string | null
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          filleul_user_id?: string
+          id?: string
+          mois?: string | null
+          montant?: number
+          parrain_user_id?: string
+          statut?: string | null
+          type?: string | null
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          code_parrainage: string
+          commission_premier_mois: number | null
+          commission_recurrente: number | null
+          created_at: string | null
+          filleul_email: string | null
+          filleul_user_id: string | null
+          id: string
+          parrain_user_id: string
+          places_concours_mois: number | null
+          places_concours_semaine: number | null
+          statut: string | null
+        }
+        Insert: {
+          code_parrainage: string
+          commission_premier_mois?: number | null
+          commission_recurrente?: number | null
+          created_at?: string | null
+          filleul_email?: string | null
+          filleul_user_id?: string | null
+          id?: string
+          parrain_user_id: string
+          places_concours_mois?: number | null
+          places_concours_semaine?: number | null
+          statut?: string | null
+        }
+        Update: {
+          code_parrainage?: string
+          commission_premier_mois?: number | null
+          commission_recurrente?: number | null
+          created_at?: string | null
+          filleul_email?: string | null
+          filleul_user_id?: string | null
+          id?: string
+          parrain_user_id?: string
+          places_concours_mois?: number | null
+          places_concours_semaine?: number | null
+          statut?: string | null
         }
         Relationships: []
       }
