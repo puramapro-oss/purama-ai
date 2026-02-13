@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Bot, MessageSquare, TrendingUp, Users, Mail, Calendar,
@@ -28,60 +28,31 @@ interface Agent {
   is_premium: boolean | null
 }
 
-// Map emoji icons to Lucide icons
 const iconMap: Record<string, LucideIcon> = {
-  '⚖️': Scale,
-  '⚡': Zap,
-  '✅': CheckCircle,
-  '✈️': Plane,
-  '🧠': Brain,
-  '📊': BarChart3,
-  '📈': LineChart,
-  '📝': FileText,
-  '🎨': PenTool,
-  '🖼️': Image,
-  '🎬': Video,
-  '🎵': Music,
-  '💾': Database,
-  '💻': Code,
-  '⚙️': Settings,
-  '❤️': Heart,
-  '🏆': Award,
-  '📚': BookOpen,
-  '🚀': Rocket,
-  '⏰': Clock,
-  '📍': MapPin,
-  '📞': Phone,
-  '⚠️': AlertTriangle,
-  '📧': Mail,
-  '💬': MessageSquare,
-  '📢': Megaphone,
-  '🛒': ShoppingCart,
-  '🎧': Headphones,
-  '🔍': Search,
-  '🌐': Globe,
-  '💼': Briefcase,
-  '🛡️': Shield,
-  '💡': Lightbulb,
-  '🎯': Target,
-  '✨': Sparkles,
-  '👥': Users,
-  '📅': Calendar,
-  '💳': CreditCard,
+  '⚖️': Scale, '⚡': Zap, '✅': CheckCircle, '✈️': Plane, '🧠': Brain,
+  '📊': BarChart3, '📈': LineChart, '📝': FileText, '🎨': PenTool,
+  '🖼️': Image, '🎬': Video, '🎵': Music, '💾': Database, '💻': Code,
+  '⚙️': Settings, '❤️': Heart, '🏆': Award, '📚': BookOpen, '🚀': Rocket,
+  '⏰': Clock, '📍': MapPin, '📞': Phone, '⚠️': AlertTriangle, '📧': Mail,
+  '💬': MessageSquare, '📢': Megaphone, '🛒': ShoppingCart, '🎧': Headphones,
+  '🔍': Search, '🌐': Globe, '💼': Briefcase, '🛡️': Shield, '💡': Lightbulb,
+  '🎯': Target, '✨': Sparkles, '👥': Users, '📅': Calendar, '💳': CreditCard,
   '🤖': Bot,
 }
 
-// Map hex colors to theme colors
+// Generate a deterministic profile avatar URL from agent slug
+const getAgentAvatar = (slug: string, index: number): string => {
+  const styles = ['bottts', 'shapes', 'identicon']
+  const style = styles[index % styles.length]
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${slug}&backgroundColor=0a0a1f&radius=50`
+}
+
 const getColorTheme = (hexColor: string | null): 'cyan' | 'purple' | 'pink' => {
   if (!hexColor) return 'cyan'
-  
-  // Convert hex to RGB to determine color category
   const hex = hexColor.replace('#', '')
   const r = parseInt(hex.substring(0, 2), 16)
   const g = parseInt(hex.substring(2, 4), 16)
   const b = parseInt(hex.substring(4, 6), 16)
-  
-  // Determine dominant color
   if (b > r && b > g) return 'cyan'
   if (r > b && r > g * 1.2) return 'pink'
   return 'purple'
@@ -89,32 +60,25 @@ const getColorTheme = (hexColor: string | null): 'cyan' | 'purple' | 'pink' => {
 
 const colorClasses = {
   cyan: {
-    bg: 'bg-accent-cyan/10',
-    border: 'border-accent-cyan/30',
-    text: 'text-accent-cyan',
-    glow: 'hover:shadow-[0_0_30px_rgba(0,240,255,0.3)]',
-    icon: 'text-accent-cyan',
+    bg: 'bg-accent-cyan/10', border: 'border-accent-cyan/30',
+    text: 'text-accent-cyan', glow: 'hover:shadow-[0_0_30px_rgba(0,240,255,0.3)]',
+    ring: 'ring-accent-cyan/40',
   },
   purple: {
-    bg: 'bg-accent-purple/10',
-    border: 'border-accent-purple/30',
-    text: 'text-accent-purple',
-    glow: 'hover:shadow-[0_0_30px_rgba(124,58,237,0.3)]',
-    icon: 'text-accent-purple',
+    bg: 'bg-accent-purple/10', border: 'border-accent-purple/30',
+    text: 'text-accent-purple', glow: 'hover:shadow-[0_0_30px_rgba(124,58,237,0.3)]',
+    ring: 'ring-accent-purple/40',
   },
   pink: {
-    bg: 'bg-accent-pink/10',
-    border: 'border-accent-pink/30',
-    text: 'text-accent-pink',
-    glow: 'hover:shadow-[0_0_30px_rgba(244,114,182,0.3)]',
-    icon: 'text-accent-pink',
+    bg: 'bg-accent-pink/10', border: 'border-accent-pink/30',
+    text: 'text-accent-pink', glow: 'hover:shadow-[0_0_30px_rgba(244,114,182,0.3)]',
+    ring: 'ring-accent-pink/40',
   },
 }
 
-const INITIAL_DISPLAY_COUNT = 10
+const INITIAL_DISPLAY_COUNT = 8
 
 export function AIAgents() {
-  const [hoveredAgent, setHoveredAgent] = useState<string | null>(null)
   const [agents, setAgents] = useState<Agent[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showAll, setShowAll] = useState(false)
@@ -127,14 +91,9 @@ export function AIAgents() {
         .eq('is_active', true)
         .order('name')
 
-      if (error) {
-        console.error('Error fetching agents:', error)
-      } else {
-        setAgents(data || [])
-      }
+      if (!error) setAgents(data || [])
       setIsLoading(false)
     }
-
     fetchAgents()
   }, [])
 
@@ -148,7 +107,6 @@ export function AIAgents() {
 
   return (
     <section id="agents-section" className="relative py-24 overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 bg-background">
         <div className="absolute inset-0 grid-pattern opacity-30" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent-purple/10 rounded-full blur-[120px]" />
@@ -169,16 +127,16 @@ export function AIAgents() {
           </div>
           
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-orbitron font-bold mb-6">
-            <span className="text-foreground">Nos </span>
+            <span className="text-foreground">Vos </span>
             <span className="gradient-text">Agents IA</span>
           </h2>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Chaque agent est conçu pour exceller dans son domaine et s'intégrer parfaitement à votre workflow.
+            Chaque agent est un expert dans son domaine, prêt à transformer votre productivité.
           </p>
         </motion.div>
 
-        {/* Loading State */}
+        {/* Loading */}
         {isLoading && (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-10 h-10 text-accent-cyan animate-spin" />
@@ -190,110 +148,97 @@ export function AIAgents() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {displayedAgents.map((agent, index) => {
-              const colorTheme = getColorTheme(agent.color)
-              const colors = colorClasses[colorTheme]
-              const Icon = getIcon(agent.icon)
-              const features: string[] = Array.isArray(agent.features) 
-                ? agent.features.filter((f): f is string => typeof f === 'string')
-                : []
-              
-              return (
-                <Link to={`/agent/${agent.slug}`} key={agent.id}>
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: Math.min(index * 0.03, 0.5) }}
-                    onMouseEnter={() => setHoveredAgent(agent.id)}
-                    onMouseLeave={() => setHoveredAgent(null)}
-                    className={`
-                      futuristic-card p-6 cursor-pointer relative h-full
-                      ${colors.glow}
-                      ${hoveredAgent === agent.id ? 'border-opacity-100' : ''}
-                    `}
-                  >
-                    {/* Premium Badge */}
-                    {agent.is_premium && (
-                      <div className="absolute top-3 right-3">
-                        <span className="text-xs bg-accent-purple/20 text-accent-purple px-2 py-1 rounded-full border border-accent-purple/30">
-                          Premium
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Icon */}
-                    <div className={`w-14 h-14 ${colors.bg} rounded-xl flex items-center justify-center mb-4 ${colors.border} border`}>
-                      <Icon className={`w-7 h-7 ${colors.icon}`} />
-                    </div>
-
-                    {/* Content */}
-                    <h3 className="text-lg font-orbitron font-semibold text-foreground mb-2">
-                      {agent.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2">
-                      {agent.description}
-                    </p>
-
-                    {/* Features */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {features.slice(0, 3).map((feature, i) => (
-                        <span 
-                          key={i}
-                          className={`text-xs ${colors.bg} ${colors.text} px-2 py-1 rounded-full ${colors.border} border`}
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* View details link */}
-                    <div className={`flex items-center gap-2 text-sm ${colors.text} mt-auto`}>
-                      <span>Voir les détails</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-
-                    {/* Hover indicator */}
+                const colorTheme = getColorTheme(agent.color)
+                const colors = colorClasses[colorTheme]
+                const Icon = getIcon(agent.icon)
+                
+                return (
+                  <Link to={`/agent/${agent.slug}`} key={agent.id}>
                     <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: hoveredAgent === agent.id ? '100%' : 0 }}
-                      className={`h-0.5 ${colors.text} bg-current mt-4 rounded-full`}
-                    />
-                  </motion.div>
-                </Link>
-              )
-            })}
-          </div>
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.4) }}
+                      whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                      className={`futuristic-card p-6 cursor-pointer relative h-full group ${colors.glow}`}
+                    >
+                      {/* Premium Badge */}
+                      {agent.is_premium && (
+                        <div className="absolute top-3 right-3">
+                          <span className="text-xs bg-accent-purple/20 text-accent-purple px-2 py-1 rounded-full border border-accent-purple/30 font-semibold">
+                            Premium
+                          </span>
+                        </div>
+                      )}
 
-          {/* Show More/Less Button */}
-          {agents.length > INITIAL_DISPLAY_COUNT && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="flex justify-center mt-12"
-            >
-              <button
-                onClick={() => setShowAll(!showAll)}
-                className="group flex items-center gap-3 glass-effect px-8 py-4 rounded-full border border-accent-cyan/30 hover:border-accent-cyan/60 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
+                      {/* Avatar + Icon row */}
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className={`relative w-14 h-14 rounded-full overflow-hidden ring-2 ${colors.ring} flex-shrink-0`}>
+                          <img 
+                            src={getAgentAvatar(agent.slug, index)} 
+                            alt={`Avatar ${agent.name}`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          <div className={`absolute bottom-0 right-0 w-5 h-5 ${colors.bg} rounded-full flex items-center justify-center border border-card`}>
+                            <Icon className={`w-3 h-3 ${colors.text}`} />
+                          </div>
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-base font-orbitron font-semibold text-foreground truncate group-hover:text-accent-cyan transition-colors">
+                            {agent.name}
+                          </h3>
+                          <span className={`text-xs ${colors.text} font-medium`}>{agent.category}</span>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2">
+                        {agent.description}
+                      </p>
+
+                      {/* View details */}
+                      <div className={`flex items-center gap-2 text-sm ${colors.text} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
+                        <span>Découvrir</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </motion.div>
+                  </Link>
+                )
+              })}
+            </div>
+
+            {/* Show More/Less */}
+            {agents.length > INITIAL_DISPLAY_COUNT && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="flex justify-center mt-12"
               >
-                {showAll ? (
-                  <>
-                    <ChevronUp className="w-5 h-5 text-accent-cyan group-hover:animate-bounce" />
-                    <span className="text-foreground font-medium">Voir moins d'agents</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-foreground font-medium">
-                      Voir les {remainingCount} autres agents
-                    </span>
-                    <ChevronDown className="w-5 h-5 text-accent-cyan group-hover:animate-bounce" />
-                  </>
-                )}
-              </button>
-            </motion.div>
-          )}
-        </>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowAll(!showAll)}
+                  className="group flex items-center gap-3 glass-effect px-8 py-4 rounded-full border border-accent-cyan/30 hover:border-accent-cyan/60 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
+                >
+                  {showAll ? (
+                    <>
+                      <ChevronUp className="w-5 h-5 text-accent-cyan" />
+                      <span className="text-foreground font-medium">Voir moins</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-foreground font-medium">
+                        Voir les {remainingCount} autres agents
+                      </span>
+                      <ChevronDown className="w-5 h-5 text-accent-cyan" />
+                    </>
+                  )}
+                </motion.button>
+              </motion.div>
+            )}
+          </>
         )}
 
         {/* CTA */}
@@ -301,15 +246,17 @@ export function AIAgents() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           className="text-center mt-16"
         >
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(0, 240, 255, 0.4)' }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
             className="btn-primary text-lg px-10 py-4"
           >
-            Demander une Démo
-          </button>
+            Demander une Démo Gratuite
+          </motion.button>
         </motion.div>
       </div>
     </section>
