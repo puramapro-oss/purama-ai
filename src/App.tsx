@@ -27,6 +27,9 @@ import CGV from '@/pages/CGV';
 import CGU from '@/pages/CGU';
 import PolitiqueCookies from '@/pages/PolitiqueCookies';
 import NotFound from '@/pages/NotFound';
+import Parrainage from '@/pages/Parrainage';
+import Concours from '@/pages/Concours';
+import Classement from '@/pages/Classement';
 
 const queryClient = new QueryClient();
 
@@ -79,6 +82,9 @@ export default function App() {
               path="/admin/influenceurs"
               element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>}
             />
+            <Route path="/parrainage" element={<Parrainage />} />
+            <Route path="/concours" element={<Concours />} />
+            <Route path="/classement" element={<Classement />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ChatbotWidget />

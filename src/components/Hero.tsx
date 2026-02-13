@@ -120,12 +120,20 @@ export function Hero() {
                   {item.label}
                 </a>
               ))}
-              <Link 
-                to="/pricing"
-                className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
-              >
-                Tarifs
-              </Link>
+              {[
+                { label: 'Tarifs', to: '/pricing' },
+                { label: '🤝 Parrainage', to: '/parrainage' },
+                { label: '🎰 Concours', to: '/concours' },
+                { label: '🏆 Classement', to: '/classement' },
+              ].map((item) => (
+                <Link 
+                  key={item.label}
+                  to={item.to}
+                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
 
             <div className="hidden md:flex items-center gap-3">
@@ -195,13 +203,21 @@ export function Hero() {
                   {item.label}
                 </a>
               ))}
-              <Link 
-                to="/pricing"
-                className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Tarifs
-              </Link>
+              {[
+                { label: 'Tarifs', to: '/pricing' },
+                { label: '🤝 Parrainage', to: '/parrainage' },
+                { label: '🎰 Concours', to: '/concours' },
+                { label: '🏆 Classement', to: '/classement' },
+              ].map((item) => (
+                <Link 
+                  key={item.label}
+                  to={item.to}
+                  className="text-foreground hover:text-accent-cyan p-3 rounded-lg hover:bg-accent-cyan/10 transition-all font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
 
               <div className="border-t border-border pt-4 mt-2">
                 <Link 

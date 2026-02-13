@@ -48,6 +48,9 @@ export function Footer() {
                 { label: 'Accueil', to: '/' },
                 { label: 'Agents IA', to: '/#agents-section' },
                 { label: 'Tarifs', to: '/pricing' },
+                { label: '🤝 Parrainage', to: '/parrainage' },
+                { label: '🎰 Concours', to: '/concours' },
+                { label: '🏆 Classement', to: '/classement' },
                 { label: 'Contact', to: '/#contact-section' },
               ].map((link, i) => (
                 <li key={i}>
