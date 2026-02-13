@@ -11,6 +11,12 @@ interface AgentCardProps {
   onUse: (agent: Agent) => void;
 }
 
+const getAgentAvatar = (slug: string, index: number): string => {
+  const styles = ['bottts', 'shapes', 'identicon'];
+  const style = styles[index % styles.length];
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${slug}&backgroundColor=0a0a1f&radius=50`;
+};
+
 export function AgentCard({ agent, index, onUse }: AgentCardProps) {
   const features = Array.isArray(agent.features) 
     ? agent.features 
@@ -21,6 +27,7 @@ export function AgentCard({ agent, index, onUse }: AgentCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
       className="futuristic-card p-6 relative group"
     >
       {/* Premium badge */}
@@ -33,17 +40,16 @@ export function AgentCard({ agent, index, onUse }: AgentCardProps) {
         </div>
       )}
 
-      {/* Icon and color indicator */}
+      {/* Icon and avatar */}
       <Link to={`/agent/${agent.slug}`} className="block">
         <div className="flex items-start gap-4 mb-4">
-          <div
-            className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 bg-secondary border border-border"
-            style={agent.color ? { 
-              backgroundColor: `${agent.color}20`,
-              borderColor: agent.color,
-            } : undefined}
-          >
-            {agent.icon || '🤖'}
+          <div className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-accent-cyan/30 shrink-0">
+            <img 
+              src={getAgentAvatar(agent.slug, index)} 
+              alt={`Avatar ${agent.name}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg truncate group-hover:text-primary transition-colors">
