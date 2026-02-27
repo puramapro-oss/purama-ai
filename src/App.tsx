@@ -5,12 +5,12 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
 import { CookieConsent } from '@/components/CookieConsent';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
-import Dashboard from '@/pages/Dashboard';
 import AgentDetail from '@/pages/AgentDetail';
 import Pricing from '@/pages/Pricing';
 import MyAgents from '@/pages/MyAgents';
@@ -30,8 +30,22 @@ import NotFound from '@/pages/NotFound';
 import Parrainage from '@/pages/Parrainage';
 import Concours from '@/pages/Concours';
 import Classement from '@/pages/Classement';
+import DashboardOverview from '@/pages/DashboardOverview';
+import DashboardAgents from '@/pages/DashboardAgents';
+import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
+import DashboardAnalytics from '@/pages/DashboardAnalytics';
+import DashboardBilling from '@/pages/DashboardBilling';
+import DashboardSettings from '@/pages/DashboardSettings';
 
 const queryClient = new QueryClient();
+
+function DashboardRoute({ children }: { children: React.ReactNode }) {
+  return (
+    <ProtectedRoute>
+      <DashboardLayout>{children}</DashboardLayout>
+    </ProtectedRoute>
+  );
+}
 
 export default function App() {
   return (
@@ -51,37 +65,26 @@ export default function App() {
             <Route path="/cgv" element={<CGV />} />
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
-            <Route
-              path="/dashboard"
-              element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
-            />
-            <Route
-              path="/agent/:slug"
-              element={<ProtectedRoute><AgentDetail /></ProtectedRoute>}
-            />
-            <Route
-              path="/my-agents"
-              element={<ProtectedRoute><MyAgents /></ProtectedRoute>}
-            />
-            <Route
-              path="/mes-connexions"
-              element={<ProtectedRoute><MyConnections /></ProtectedRoute>}
-            />
+            
+            {/* Dashboard routes with sidebar layout */}
+            <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
+            <Route path="/dashboard/agents" element={<DashboardRoute><DashboardAgents /></DashboardRoute>} />
+            <Route path="/dashboard/auto-agents" element={<DashboardRoute><DashboardAutoAgents /></DashboardRoute>} />
+            <Route path="/dashboard/analytics" element={<DashboardRoute><DashboardAnalytics /></DashboardRoute>} />
+            <Route path="/dashboard/billing" element={<DashboardRoute><DashboardBilling /></DashboardRoute>} />
+            <Route path="/dashboard/settings" element={<DashboardRoute><DashboardSettings /></DashboardRoute>} />
+            <Route path="/dashboard/sites" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Sites</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
+            <Route path="/dashboard/apps" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Applications</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
+
+            <Route path="/agent/:slug" element={<ProtectedRoute><AgentDetail /></ProtectedRoute>} />
+            <Route path="/my-agents" element={<ProtectedRoute><MyAgents /></ProtectedRoute>} />
+            <Route path="/mes-connexions" element={<ProtectedRoute><MyConnections /></ProtectedRoute>} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
-            <Route
-              path="/notifications"
-              element={<ProtectedRoute><Notifications /></ProtectedRoute>}
-            />
-            <Route
-              path="/notification-settings"
-              element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>}
-            />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            <Route path="/notification-settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
             <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
             <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
-            <Route
-              path="/admin/influenceurs"
-              element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>}
-            />
+            <Route path="/admin/influenceurs" element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>} />
             <Route path="/parrainage" element={<Parrainage />} />
             <Route path="/concours" element={<Concours />} />
             <Route path="/classement" element={<Classement />} />

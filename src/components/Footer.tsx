@@ -45,9 +45,26 @@ export function Footer() {
             <h4 className="font-orbitron font-semibold text-foreground mb-4">Produit</h4>
             <ul className="space-y-3">
               {[
-                { label: 'Accueil', to: '/' },
+                { label: 'Origin Forge', to: '/dashboard' },
                 { label: 'Agents IA', to: '/#agents-section' },
+                { label: 'Templates', to: '/dashboard' },
+                { label: 'Galerie', to: '/dashboard' },
                 { label: 'Tarifs', to: '/pricing' },
+              ].map((link, i) => (
+                <li key={i}>
+                  <Link to={link.to} className="text-muted-foreground hover:text-accent-cyan transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h4 className="font-orbitron font-semibold text-foreground mb-4">Communauté</h4>
+            <ul className="space-y-3">
+              {[
                 { label: '🤝 Parrainage', to: '/parrainage' },
                 { label: '🎰 Concours', to: '/concours' },
                 { label: '🏆 Classement', to: '/classement' },

@@ -106,34 +106,45 @@ export function Hero() {
               </span>
             </motion.div>
 
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6">
               {[
                 { label: 'Agents', href: '#agents-section' },
-                { label: 'Fonctionnalités', href: '#features-section' },
                 { label: 'Contact', href: '#contact-section' },
               ].map((item) => (
                 <a 
                   key={item.label}
                   href={item.href} 
-                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
+                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan text-sm"
                 >
                   {item.label}
                 </a>
               ))}
+              <Link 
+                to="/dashboard"
+                className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan text-sm relative"
+              >
+                🧠 Origin Forge
+                <span className="absolute -top-2 -right-8 px-1.5 py-0.5 rounded text-[9px] font-bold bg-destructive text-destructive-foreground animate-pulse">NEW</span>
+              </Link>
               {[
                 { label: 'Tarifs', to: '/pricing' },
-                { label: '🤝 Parrainage', to: '/parrainage' },
-                { label: '🎰 Concours', to: '/concours' },
-                { label: '🏆 Classement', to: '/classement' },
               ].map((item) => (
                 <Link 
                   key={item.label}
                   to={item.to}
-                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan"
+                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan text-sm"
                 >
                   {item.label}
                 </Link>
               ))}
+              {user && (
+                <Link 
+                  to="/dashboard"
+                  className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan text-sm"
+                >
+                  📊 Dashboard
+                </Link>
+              )}
             </div>
 
             <div className="hidden md:flex items-center gap-3">
@@ -191,7 +202,6 @@ export function Hero() {
             <div className="flex flex-col space-y-4">
               {[
                 { label: 'Agents', href: '#agents-section' },
-                { label: 'Fonctionnalités', href: '#features-section' },
                 { label: 'Contact', href: '#contact-section' },
               ].map((item) => (
                 <a 
@@ -204,10 +214,9 @@ export function Hero() {
                 </a>
               ))}
               {[
+                { label: '🧠 Origin Forge', to: '/dashboard' },
                 { label: 'Tarifs', to: '/pricing' },
-                { label: '🤝 Parrainage', to: '/parrainage' },
-                { label: '🎰 Concours', to: '/concours' },
-                { label: '🏆 Classement', to: '/classement' },
+                ...(user ? [{ label: '📊 Dashboard', to: '/dashboard' }] : []),
               ].map((item) => (
                 <Link 
                   key={item.label}
