@@ -87,8 +87,8 @@ export function OriginForgeDemo() {
                   <p className="text-xs text-muted-foreground">3 compétences • Prêt à déployer</p>
                 </div>
               </div>
-              <button onClick={() => navigate('/dashboard')} className="text-accent-cyan text-sm font-semibold hover:underline mt-2">
-                Voir le résultat complet →
+              <button onClick={() => navigate('/forge')} className="text-accent-cyan text-sm font-semibold hover:underline mt-2">
+                Voir le résultat complet sur Origin Forge →
               </button>
             </motion.div>
           )}
