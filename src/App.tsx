@@ -30,6 +30,7 @@ import NotFound from '@/pages/NotFound';
 import Parrainage from '@/pages/Parrainage';
 import Concours from '@/pages/Concours';
 import Classement from '@/pages/Classement';
+import Forge from '@/pages/Forge';
 import DashboardOverview from '@/pages/DashboardOverview';
 import DashboardAgents from '@/pages/DashboardAgents';
 import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
@@ -65,6 +66,7 @@ export default function App() {
             <Route path="/cgv" element={<CGV />} />
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
+            <Route path="/forge" element={<Forge />} />
             
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />

@@ -85,7 +85,7 @@ export function OriginForgeSocialProof() {
         </div>
 
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }} className="text-center mt-10">
-          <Link to="/dashboard" className="btn-primary inline-flex items-center gap-2 px-6 py-3">
+          <Link to="/forge" className="btn-primary inline-flex items-center gap-2 px-6 py-3">
             Rejoins les entrepreneurs qui ont forgé leur IA →
           </Link>
         </motion.div>

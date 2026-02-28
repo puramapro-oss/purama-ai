@@ -120,7 +120,7 @@ export function Hero() {
                 </a>
               ))}
               <Link 
-                to="/dashboard"
+                to="/forge"
                 className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan text-sm relative"
               >
                 🧠 Origin Forge
@@ -214,7 +214,7 @@ export function Hero() {
                 </a>
               ))}
               {[
-                { label: '🧠 Origin Forge', to: '/dashboard' },
+                { label: '🧠 Origin Forge', to: '/forge' },
                 { label: 'Tarifs', to: '/pricing' },
                 ...(user ? [{ label: '📊 Dashboard', to: '/dashboard' }] : []),
               ].map((item) => (

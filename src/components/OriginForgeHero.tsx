@@ -139,7 +139,7 @@ export function OriginForgeHero() {
             </div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.7 }} className="flex flex-wrap gap-3">
-              <Link to="/dashboard" className="btn-primary flex items-center gap-2 text-base px-6 py-3">
+              <Link to="/forge" className="btn-primary flex items-center gap-2 text-base px-6 py-3">
                 Créer mon Agent IA →
               </Link>
               <button onClick={() => document.getElementById('origin-demo')?.scrollIntoView({ behavior: 'smooth' })} className="btn-secondary text-base px-6 py-3">
