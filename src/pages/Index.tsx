@@ -8,6 +8,7 @@ import { CommunityHighlights } from '@/components/CommunityHighlights';
 import { ROICalculator } from '@/components/ROICalculator';
 import { PricingSection } from '@/components/PricingSection';
 import { Contact } from '@/components/Contact';
+import { PuramaComptaSection } from '@/components/PuramaComptaSection';
 import { Footer } from '@/components/Footer';
 import { Chatbot } from '@/components/Chatbot';
 import { ReferralBanner } from '@/components/influencer/ReferralBanner';
@@ -43,6 +44,9 @@ export default function Index() {
         </section>
         <section id="agents-section-wrapper" aria-label="AI Agents section">
           <AIAgents />
+        </section>
+        <section id="purama-compta-section" aria-label="Purama Compta">
+          <PuramaComptaSection />
         </section>
         <section id="community-section" aria-label="Communauté PURAMA">
           <CommunityHighlights />

@@ -290,56 +290,16 @@ const adminAgents: AgentConfig[] = [
   ),
 ];
 
-// ==================== FINANCE (6 agents) ====================
+// ==================== FINANCE (1 agent — Purama Compta) ====================
 
 const financeAgents: AgentConfig[] = [
   createSimpleAgent(
-    'synchronisation-bancaire',
-    'Synchronisation Bancaire',
+    'purama-compta',
+    'DAF Virtuel — Purama Compta',
     'Finance',
-    `${N8N_BASE_URL}/agent-synchronisation-bancaire`,
-    'Décrivez la synchronisation bancaire souhaitée',
-    'Ex: Synchronise mon compte BNP (FR76...) du 1er au 31 janvier 2024...'
-  ),
-  createSimpleAgent(
-    'calculateur-d-impot',
-    'Calculateur d\'Impôt',
-    'Finance',
-    `${N8N_BASE_URL}/agent-calculateur-d-impot`,
-    'Décrivez votre situation fiscale',
-    'Ex: Calcule mes impôts: CA 100000€, charges 30000€, SASU à l\'IS, régime réel simplifié...'
-  ),
-  createSimpleAgent(
-    'suivi-des-depenses',
-    'Suivi des Dépenses',
-    'Finance',
-    `${N8N_BASE_URL}/agent-suivi-des-depenses`,
-    'Décrivez la dépense à enregistrer',
-    'Ex: Enregistre: Achat fournitures bureautiques 150.50€ chez Amazon le 15/01/2024...'
-  ),
-  createSimpleAgent(
-    'chasseur-de-paiements',
-    'Chasseur de Paiements',
-    'Finance',
-    'https://n8n.srv1286148.hstgr.cloud/webhook/chasseur-paiements-auto',
-    'Décrivez la facture impayée à relancer',
-    'Ex: Relance facture FAC-2024-001 de 1500€ pour client@exemple.com, échue depuis 15 jours...'
-  ),
-  createSimpleAgent(
-    'rapports-financiers',
-    'Rapports Financiers',
-    'Finance',
-    'https://n8n.srv1286148.hstgr.cloud/webhook/rapports-financiers-auto',
-    'Décrivez le rapport financier souhaité',
-    'Ex: Génère un compte de résultat (P&L) pour le trimestre en cours...'
-  ),
-  createSimpleAgent(
-    'facture-pro',
-    'Facturation Pro',
-    'Finance',
-    'https://n8n.srv1286148.hstgr.cloud/webhook/facture-pro-auto',
-    'Décrivez la facture à créer',
-    'Ex: Facture pour Société XYZ (facturation@client.com): Consultation 2h | 200€, Développement web | 500€...'
+    `${N8N_BASE_URL}/agent-purama-compta`,
+    'Votre DAF virtuel IA : comptabilité, fiscalité, trésorerie, facturation, rapprochement bancaire et reporting financier tout-en-un',
+    'Ex: Génère ma déclaration de TVA du trimestre, analyse ma trésorerie des 6 prochains mois, crée une facture pour Société XYZ, calcule mes charges sociales, rapproche mes opérations bancaires...'
   ),
 ];
 

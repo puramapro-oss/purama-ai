@@ -49,6 +49,8 @@ export function Footer() {
                 { label: 'Agents IA', to: '/#agents-section' },
                 { label: 'Templates', to: '/dashboard' },
                 { label: 'Galerie', to: '/dashboard' },
+                { label: 'Purama Compta', to: '/purama-compta' },
+                { label: 'Social AI Agent', to: '/agent' },
                 { label: 'Tarifs', to: '/pricing' },
               ].map((link, i) => (
                 <li key={i}>

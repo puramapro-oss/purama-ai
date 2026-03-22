@@ -31,12 +31,15 @@ import Parrainage from '@/pages/Parrainage';
 import Concours from '@/pages/Concours';
 import Classement from '@/pages/Classement';
 import Forge from '@/pages/Forge';
+import PuramaCompta from '@/pages/PuramaCompta';
+import SocialAgent from '@/pages/SocialAgent';
 import DashboardOverview from '@/pages/DashboardOverview';
 import DashboardAgents from '@/pages/DashboardAgents';
 import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
 import DashboardAnalytics from '@/pages/DashboardAnalytics';
 import DashboardBilling from '@/pages/DashboardBilling';
 import DashboardSettings from '@/pages/DashboardSettings';
+import AdminDashboard from '@/pages/AdminDashboard';
 
 const queryClient = new QueryClient();
 
@@ -67,6 +70,8 @@ export default function App() {
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
             <Route path="/forge" element={<Forge />} />
+            <Route path="/purama-compta" element={<PuramaCompta />} />
+            <Route path="/agent" element={<SocialAgent />} />
             
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
@@ -87,6 +92,7 @@ export default function App() {
             <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
             <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
             <Route path="/admin/influenceurs" element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/parrainage" element={<Parrainage />} />
             <Route path="/concours" element={<Concours />} />
             <Route path="/classement" element={<Classement />} />
