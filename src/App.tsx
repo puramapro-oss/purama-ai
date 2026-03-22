@@ -39,6 +39,7 @@ import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
 import DashboardAnalytics from '@/pages/DashboardAnalytics';
 import DashboardBilling from '@/pages/DashboardBilling';
 import DashboardSettings from '@/pages/DashboardSettings';
+import AdminDashboard from '@/pages/AdminDashboard';
 
 const queryClient = new QueryClient();
 
@@ -91,6 +92,7 @@ export default function App() {
             <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
             <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
             <Route path="/admin/influenceurs" element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/parrainage" element={<Parrainage />} />
             <Route path="/concours" element={<Concours />} />
             <Route path="/classement" element={<Classement />} />

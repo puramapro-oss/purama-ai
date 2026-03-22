@@ -138,11 +138,19 @@ export function Hero() {
                 </Link>
               ))}
               {user && (
-                <Link 
+                <Link
                   to="/dashboard"
                   className="text-foreground/80 hover:text-accent-cyan font-medium transition-all duration-300 hover:neon-text-cyan text-sm"
                 >
                   📊 Dashboard
+                </Link>
+              )}
+              {user && user.email === 'matiss.frasne@gmail.com' && (
+                <Link
+                  to="/admin/dashboard"
+                  className="text-foreground/80 hover:text-red-400 font-medium transition-all duration-300 text-sm"
+                >
+                  🔒 Admin
                 </Link>
               )}
             </div>
