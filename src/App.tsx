@@ -31,6 +31,8 @@ import Parrainage from '@/pages/Parrainage';
 import Concours from '@/pages/Concours';
 import Classement from '@/pages/Classement';
 import Forge from '@/pages/Forge';
+import PuramaCompta from '@/pages/PuramaCompta';
+import SocialAgent from '@/pages/SocialAgent';
 import DashboardOverview from '@/pages/DashboardOverview';
 import DashboardAgents from '@/pages/DashboardAgents';
 import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
@@ -67,6 +69,8 @@ export default function App() {
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
             <Route path="/forge" element={<Forge />} />
+            <Route path="/purama-compta" element={<PuramaCompta />} />
+            <Route path="/agent" element={<SocialAgent />} />
             
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
