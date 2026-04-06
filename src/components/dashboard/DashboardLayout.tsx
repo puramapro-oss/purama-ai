@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
-  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2
+  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -17,6 +17,7 @@ const navItems = [
   { label: 'Analytics', icon: BarChart3, to: '/dashboard/analytics' },
   { label: 'Abonnement', icon: CreditCard, to: '/dashboard/billing' },
   { label: 'Réseaux sociaux', icon: Globe2, to: '/dashboard/social' },
+  { label: 'Agent Email', icon: Mail, to: '/dashboard/email-agent' },
   { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },
 ];
 
@@ -27,7 +28,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile } = useProfile();
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) =>
+    location.pathname === path ||
+    (path !== '/dashboard' && location.pathname.startsWith(path + '/'));
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">

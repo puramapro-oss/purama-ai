@@ -41,6 +41,12 @@ import DashboardBilling from '@/pages/DashboardBilling';
 import DashboardSettings from '@/pages/DashboardSettings';
 import SocialSettings from '@/pages/SocialSettings';
 import AdminDashboard from '@/pages/AdminDashboard';
+import EmailAgent from '@/pages/EmailAgent';
+import EmailAgentSettings from '@/pages/EmailAgentSettings';
+import EmailAgentLogs from '@/pages/EmailAgentLogs';
+import EmailAgentRules from '@/pages/EmailAgentRules';
+import EmailAgentMemoryPage from '@/pages/EmailAgentMemory';
+import EmailAgentTemplates from '@/pages/EmailAgentTemplates';
 
 const queryClient = new QueryClient();
 
@@ -82,6 +88,12 @@ export default function App() {
             <Route path="/dashboard/billing" element={<DashboardRoute><DashboardBilling /></DashboardRoute>} />
             <Route path="/dashboard/settings" element={<DashboardRoute><DashboardSettings /></DashboardRoute>} />
             <Route path="/dashboard/social" element={<DashboardRoute><SocialSettings /></DashboardRoute>} />
+            <Route path="/dashboard/email-agent" element={<DashboardRoute><EmailAgent /></DashboardRoute>} />
+            <Route path="/dashboard/email-agent/settings" element={<DashboardRoute><EmailAgentSettings /></DashboardRoute>} />
+            <Route path="/dashboard/email-agent/logs" element={<DashboardRoute><EmailAgentLogs /></DashboardRoute>} />
+            <Route path="/dashboard/email-agent/rules" element={<DashboardRoute><EmailAgentRules /></DashboardRoute>} />
+            <Route path="/dashboard/email-agent/memory" element={<DashboardRoute><EmailAgentMemoryPage /></DashboardRoute>} />
+            <Route path="/dashboard/email-agent/templates" element={<DashboardRoute><EmailAgentTemplates /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Sites</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
             <Route path="/dashboard/apps" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Applications</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
 

@@ -1,0 +1,233 @@
+{
+  "name": "Email Agent — Fetch & Process",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 2 }] }
+      },
+      "id": "cron-trigger",
+      "name": "Every 2 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/email_agent_config?is_active=eq.true&select=*",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-active-users",
+      "name": "Fetch active users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-users",
+      "name": "Split users",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Refresh access token if expired\nconst cfg = $json;\nconst now = Date.now();\nconst expiry = cfg.gmail_token_expiry ? new Date(cfg.gmail_token_expiry).getTime() : 0;\nlet accessToken = cfg.gmail_access_token;\nif (!accessToken || expiry < now + 30000) {\n  const refresh = cfg.gmail_refresh_token;\n  if (!refresh) return [{ json: { ...cfg, _skip: true } }];\n  const r = await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://oauth2.googleapis.com/token',\n    body: new URLSearchParams({\n      client_id: $env.GOOGLE_CLIENT_ID,\n      client_secret: $env.GOOGLE_CLIENT_SECRET,\n      refresh_token: refresh,\n      grant_type: 'refresh_token',\n    }).toString(),\n    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n    json: true,\n  });\n  accessToken = r.access_token;\n  // Persist back\n  await this.helpers.httpRequest({\n    method: 'PATCH',\n    url: `https://auth.purama.dev/rest/v1/email_agent_config?user_id=eq.${cfg.user_id}`,\n    headers: {\n      apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n      Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n      'Content-Profile': 'purama_ai',\n      'Content-Type': 'application/json',\n      Prefer: 'return=minimal',\n    },\n    body: { gmail_access_token: accessToken, gmail_token_expiry: new Date(Date.now() + (r.expires_in - 60) * 1000).toISOString() },\n  });\n}\nreturn [{ json: { ...cfg, _accessToken: accessToken } }];"
+      },
+      "id": "refresh-token",
+      "name": "Refresh Gmail token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is:unread newer_than:1d&maxResults=20",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$json._accessToken}}" }
+          ]
+        }
+      },
+      "id": "list-messages",
+      "name": "List Gmail messages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Refresh Gmail token').item.json;\nconst messages = $json.messages || [];\nreturn messages.map(m => ({ json: { ...cfg, message_id: m.id, thread_id: m.threadId } }));"
+      },
+      "id": "explode-messages",
+      "name": "Explode messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://gmail.googleapis.com/gmail/v1/users/me/messages/{{$json.message_id}}?format=full",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$json._accessToken}}" }
+          ]
+        }
+      },
+      "id": "get-message",
+      "name": "Get full message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Gmail message + extract from/subject/body\nconst cfg = $('Explode messages').item.json;\nconst msg = $json;\nconst headers = (msg.payload?.headers ?? []).reduce((acc, h) => { acc[h.name.toLowerCase()] = h.value; return acc; }, {});\nconst fromHeader = headers.from || '';\nconst match = fromHeader.match(/(.*?)<(.+?)>/) || [null, null, fromHeader];\nconst from_name = (match[1] || '').replace(/\"/g, '').trim() || null;\nconst from_email = (match[2] || fromHeader).trim();\nconst subject = headers.subject || '';\n\n// Decode body (text/plain preferred)\nfunction findPart(parts, mime) {\n  for (const p of parts || []) {\n    if (p.mimeType === mime && p.body?.data) return p.body.data;\n    if (p.parts) { const r = findPart(p.parts, mime); if (r) return r; }\n  }\n  return null;\n}\nlet body = '';\nif (msg.payload?.body?.data) body = msg.payload.body.data;\nelse body = findPart(msg.payload?.parts, 'text/plain') || findPart(msg.payload?.parts, 'text/html') || '';\nif (body) body = Buffer.from(body.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf-8');\nbody = body.replace(/<[^>]+>/g, '').slice(0, 4000);\n\nreturn [{ json: { ...cfg, gmail_message_id: msg.id, gmail_thread_id: msg.threadId, snippet: msg.snippet, from_name, from_email, subject, body_preview: body.slice(0, 600), body_full: body, received_at: new Date(parseInt(msg.internalDate)).toISOString() } }];"
+      },
+      "id": "parse-message",
+      "name": "Parse message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/email_agent_logs?user_id=eq.{{$json.user_id}}&gmail_message_id=eq.{{$json.gmail_message_id}}&select=id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "check-already-processed",
+      "name": "Already processed?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 320]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.length}}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "if-new",
+      "name": "Is new?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2220, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1500,\n  \"system\": \"Tu es l'agent email IA d'un utilisateur Purama. Niveau d'autonomie: {{ $('Parse message').item.json.autonomy_level }}/5. Ton: {{ $('Parse message').item.json.tone }}. Signature: {{ $('Parse message').item.json.signature }}.\\n\\nNiveau 1: notifie tout. Niveau 2: classe + notifie les importants. Niveau 3: répond aux simples, brouillon pour le reste. Niveau 4: répond presque tout. Niveau 5: 100% autonome sauf décisions critiques.\\n\\nAnalyse l'email et retourne UNIQUEMENT un JSON valide avec: category (urgent|important|normal|spam|newsletter|promo), intention, sentiment, action (auto_reply|draft|notify|archive|ignore), confidence (0-1), reasoning, suggested_response (string ou null), suggested_subject, urgency_score (1-10), tags (array).\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"De: {{ $('Parse message').item.json.from_name }} <{{ $('Parse message').item.json.from_email }}>\\nObjet: {{ $('Parse message').item.json.subject }}\\n\\n{{ $('Parse message').item.json.body_preview }}\"\n    }\n  ]\n}"
+      },
+      "id": "claude-analyze",
+      "name": "Claude analyze",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Parse message').item.json;\nconst raw = $json.content?.[0]?.text || '{}';\nlet analysis = {};\ntry {\n  const m = raw.match(/\\{[\\s\\S]*\\}/);\n  analysis = JSON.parse(m ? m[0] : raw);\n} catch { analysis = { category: 'normal', intention: 'autre', action: 'notify', confidence: 0.3, reasoning: 'parse error' }; }\nreturn [{ json: { ...ctx, analysis, tokens_used: ($json.usage?.input_tokens || 0) + ($json.usage?.output_tokens || 0) } }];"
+      },
+      "id": "parse-analysis",
+      "name": "Parse analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2660, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/email_agent_logs",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_id\": \"{{ $json.user_id }}\",\n  \"gmail_message_id\": \"{{ $json.gmail_message_id }}\",\n  \"gmail_thread_id\": \"{{ $json.gmail_thread_id }}\",\n  \"from_email\": \"{{ $json.from_email }}\",\n  \"from_name\": \"{{ $json.from_name }}\",\n  \"subject\": \"{{ $json.subject }}\",\n  \"snippet\": \"{{ $json.snippet }}\",\n  \"body_preview\": \"{{ $json.body_preview }}\",\n  \"received_at\": \"{{ $json.received_at }}\",\n  \"category\": \"{{ $json.analysis.category }}\",\n  \"intention\": \"{{ $json.analysis.intention }}\",\n  \"sentiment\": \"{{ $json.analysis.sentiment }}\",\n  \"urgency_score\": {{ $json.analysis.urgency_score || 5 }},\n  \"action_taken\": \"{{ $json.analysis.action }}\",\n  \"ai_response\": {{ JSON.stringify($json.analysis.suggested_response || null) }},\n  \"ai_subject\": {{ JSON.stringify($json.analysis.suggested_subject || null) }},\n  \"ai_reasoning\": {{ JSON.stringify($json.analysis.reasoning || '') }},\n  \"confidence_score\": {{ $json.analysis.confidence || 0 }},\n  \"tokens_used\": {{ $json.tokens_used || 0 }}\n}"
+      },
+      "id": "insert-log",
+      "name": "Insert log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2880, 240]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            { "conditions": { "options": { "version": 2 }, "combinator": "and", "conditions": [{ "leftValue": "={{ $('Parse analysis').item.json.analysis.action }}", "rightValue": "auto_reply", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "auto_reply" },
+            { "conditions": { "options": { "version": 2 }, "combinator": "and", "conditions": [{ "leftValue": "={{ $('Parse analysis').item.json.analysis.action }}", "rightValue": "draft", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "draft" },
+            { "conditions": { "options": { "version": 2 }, "combinator": "and", "conditions": [{ "leftValue": "={{ $('Parse analysis').item.json.analysis.action }}", "rightValue": "archive", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "archive" }
+          ]
+        }
+      },
+      "id": "switch-action",
+      "name": "Switch on action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [3100, 240]
+    }
+  ],
+  "connections": {
+    "Every 2 minutes": { "main": [[{ "node": "Fetch active users", "type": "main", "index": 0 }]] },
+    "Fetch active users": { "main": [[{ "node": "Split users", "type": "main", "index": 0 }]] },
+    "Split users": { "main": [[{ "node": "Refresh Gmail token", "type": "main", "index": 0 }]] },
+    "Refresh Gmail token": { "main": [[{ "node": "List Gmail messages", "type": "main", "index": 0 }]] },
+    "List Gmail messages": { "main": [[{ "node": "Explode messages", "type": "main", "index": 0 }]] },
+    "Explode messages": { "main": [[{ "node": "Get full message", "type": "main", "index": 0 }]] },
+    "Get full message": { "main": [[{ "node": "Parse message", "type": "main", "index": 0 }]] },
+    "Parse message": { "main": [[{ "node": "Already processed?", "type": "main", "index": 0 }]] },
+    "Already processed?": { "main": [[{ "node": "Is new?", "type": "main", "index": 0 }]] },
+    "Is new?": { "main": [[{ "node": "Claude analyze", "type": "main", "index": 0 }], []] },
+    "Claude analyze": { "main": [[{ "node": "Parse analysis", "type": "main", "index": 0 }]] },
+    "Parse analysis": { "main": [[{ "node": "Insert log", "type": "main", "index": 0 }]] },
+    "Insert log": { "main": [[{ "node": "Switch on action", "type": "main", "index": 0 }]] }
+  }
+}
