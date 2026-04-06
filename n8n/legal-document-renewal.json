@@ -1,0 +1,78 @@
+{
+  "name": "Legal Agent — Document Renewal",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 1 * *" }] } },
+      "id": "cron",
+      "name": "1st of month 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date(); today.setHours(0,0,0,0);\nconst until = new Date(); until.setDate(until.getDate() + 60);\nreturn [{ json: { today_iso: today.toISOString().slice(0,10), until_iso: until.toISOString().slice(0,10) } }];"
+      },
+      "id": "window",
+      "name": "Window 60d",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/legal_documents?expires_at=gte.{{$json.today_iso}}&expires_at=lte.{{$json.until_iso}}&status=in.(final,signed,sent)&select=id,user_id,title,type,expires_at",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch",
+      "name": "Expiring documents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = Array.isArray($json) ? $json : [];\nconst now = new Date(); now.setHours(0,0,0,0);\nreturn rows.map((r) => {\n  const dl = new Date(r.expires_at);\n  const days = Math.ceil((dl.getTime() - now.getTime()) / 86400000);\n  return { json: {\n    user_id: r.user_id,\n    agent_type: 'legal',\n    title: `📜 ${r.title} expire dans ${days}j`,\n    body: `Le document « ${r.title} » expire le ${new Date(r.expires_at).toLocaleDateString('fr-FR')}. L'agent peut générer une nouvelle version mise à jour.`,\n    action_type: 'review',\n    action_payload: { document_id: r.id },\n    action_url: '/dashboard/legal-agent/documents',\n    priority: days <= 14 ? 'high' : 'normal',\n    channels: ['push', 'in_app'],\n  } };\n});"
+      },
+      "id": "format",
+      "name": "Format notifs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "send",
+      "name": "Push notif",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    }
+  ],
+  "connections": {
+    "1st of month 9am": { "main": [[{ "node": "Window 60d", "type": "main", "index": 0 }]] },
+    "Window 60d": { "main": [[{ "node": "Expiring documents", "type": "main", "index": 0 }]] },
+    "Expiring documents": { "main": [[{ "node": "Format notifs", "type": "main", "index": 0 }]] },
+    "Format notifs": { "main": [[{ "node": "Push notif", "type": "main", "index": 0 }]] }
+  }
+}

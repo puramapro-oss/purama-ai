@@ -1,0 +1,128 @@
+{
+  "name": "Legal Agent — Audit RGPD Trimestriel",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 1 1,4,7,10 *" }] } },
+      "id": "cron",
+      "name": "Quarterly 1st 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/legal_agent_config?is_active=eq.true&expertise_areas=cs.{rgpd}&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "users",
+      "name": "RGPD users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    { "parameters": { "batchSize": 1, "options": {} }, "id": "split", "name": "Split", "type": "n8n-nodes-base.splitInBatches", "typeVersion": 3, "position": [680, 320] },
+    {
+      "parameters": {
+        "jsCode": "// Pull doc inventory: registre, PIA, mentions, politique, dpa\nconst cfg = $json;\nconst types = ['registre_traitement','pia','mentions_legales','politique_confidentialite'];\nconst rows = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/legal_documents?user_id=eq.${cfg.user_id}&type=in.(${types.join(',')})&select=type,title,status,updated_at`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n  },\n  json: true,\n});\nconst inventory = {};\nfor (const t of types) inventory[t] = rows.find((r) => r.type === t) || null;\nreturn [{ json: { ...cfg, _inventory: inventory } }];"
+      },
+      "id": "inventory",
+      "name": "Inventory",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1500,\n  \"system\": \"Tu es un DPO français certifié. Tu réalises un audit RGPD trimestriel rapide. Tu retournes UNIQUEMENT un JSON: {score: 0-100, missing: [], outdated: [], recommendations: [], summary: 'résumé en 2-3 phrases'}.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Profil: {{ $json.user_type }} {{ $json.company_name || '' }}, {{ $json.employee_count || 0 }} salariés, activité: {{ $json.activity_description || '—' }}\\n\\nDocuments RGPD existants:\\n{{ JSON.stringify($json._inventory) }}\\n\\nAudit cette conformité RGPD et évalue le score sur 100.\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude audit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Inventory').item.json;\nconst raw = $json.content?.[0]?.text || '{}';\nlet a = { score: 50, summary: '', missing: [], outdated: [], recommendations: [] };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); a = { ...a, ...JSON.parse(m ? m[0] : raw) }; } catch(e) {}\nconst severity = a.score < 50 ? 'urgent' : a.score < 75 ? 'action_required' : 'info';\nconst priority = a.score < 50 ? 'urgent' : a.score < 75 ? 'high' : 'normal';\nreturn [{ json: {\n  // Veille insert payload\n  _insert: {\n    user_id: cfg.user_id,\n    title: `Audit RGPD trimestriel · ${a.score}/100`,\n    type: 'alert',\n    category: 'rgpd',\n    severity,\n    summary: a.summary || 'Audit RGPD complété',\n    impact: (a.missing && a.missing.length ? `Manquants: ${a.missing.join(', ')}` : '') + (a.outdated && a.outdated.length ? ` · À jour: ${a.outdated.join(', ')}` : ''),\n    action_required: (a.recommendations || []).join(' · '),\n    source_name: 'Purama Legal Agent',\n    reference: 'Audit RGPD trimestriel',\n  },\n  // Push payload\n  _notif: {\n    user_id: cfg.user_id,\n    agent_type: 'legal',\n    title: `🛡️ Audit RGPD : ${a.score}/100`,\n    body: a.summary || 'Audit RGPD trimestriel disponible',\n    action_type: 'review',\n    action_url: '/dashboard/legal-agent/veille',\n    priority,\n    channels: ['push', 'in_app'],\n  },\n} }];"
+      },
+      "id": "build",
+      "name": "Build payloads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/legal_veille",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json._insert) }}"
+      },
+      "id": "insert",
+      "name": "Insert veille",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Build payloads').item.json._notif) }}"
+      },
+      "id": "send",
+      "name": "Push notif",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 320]
+    }
+  ],
+  "connections": {
+    "Quarterly 1st 9am": { "main": [[{ "node": "RGPD users", "type": "main", "index": 0 }]] },
+    "RGPD users": { "main": [[{ "node": "Split", "type": "main", "index": 0 }]] },
+    "Split": { "main": [[{ "node": "Inventory", "type": "main", "index": 0 }]] },
+    "Inventory": { "main": [[{ "node": "Claude audit", "type": "main", "index": 0 }]] },
+    "Claude audit": { "main": [[{ "node": "Build payloads", "type": "main", "index": 0 }]] },
+    "Build payloads": { "main": [[{ "node": "Insert veille", "type": "main", "index": 0 }]] },
+    "Insert veille": { "main": [[{ "node": "Push notif", "type": "main", "index": 0 }]] }
+  }
+}
