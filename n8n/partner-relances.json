@@ -1,0 +1,69 @@
+{
+  "name": "Partner Agent — Smart Relances",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 10 * * *" }] }
+      },
+      "id": "cron",
+      "name": "Daily 10am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/partner_prospects?has_replied=eq.false&next_action_at=lte.{{ new Date().toISOString() }}&status=in.(contacted,relance_1,relance_2)&select=id,user_id,relance_count",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch",
+      "name": "Fetch due relances",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = Array.isArray($json) ? $json : [];\nreturn rows.map((r) => ({ json: { ...r, _next_relance: `relance_${r.relance_count + 1}` } }));"
+      },
+      "id": "explode",
+      "name": "Explode",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/partner-send-outreach",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prospect_id\": \"{{ $json.id }}\",\n  \"type\": \"{{ $json._next_relance }}\"\n}"
+      },
+      "id": "send",
+      "name": "Trigger relance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 320]
+    }
+  ],
+  "connections": {
+    "Daily 10am": { "main": [[{ "node": "Fetch due relances", "type": "main", "index": 0 }]] },
+    "Fetch due relances": { "main": [[{ "node": "Explode", "type": "main", "index": 0 }]] },
+    "Explode": { "main": [[{ "node": "Trigger relance", "type": "main", "index": 0 }]] }
+  }
+}

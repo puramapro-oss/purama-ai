@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
-  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator
+  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -19,6 +19,7 @@ const navItems = [
   { label: 'Réseaux sociaux', icon: Globe2, to: '/dashboard/social' },
   { label: 'Agent Email', icon: Mail, to: '/dashboard/email-agent' },
   { label: 'Agent Compta', icon: Calculator, to: '/dashboard/compta-agent' },
+  { label: 'Agent Partenariat', icon: Handshake, to: '/dashboard/partner-agent' },
   { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },
 ];
 

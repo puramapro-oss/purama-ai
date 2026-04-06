@@ -55,6 +55,11 @@ import ComptaAgentTransactions from '@/pages/ComptaAgentTransactions';
 import ComptaAgentInvoices from '@/pages/ComptaAgentInvoices';
 import ComptaAgentDeclarations from '@/pages/ComptaAgentDeclarations';
 import ComptaAgentReports from '@/pages/ComptaAgentReports';
+import PartnerAgent from '@/pages/PartnerAgent';
+import PartnerAgentProspects from '@/pages/PartnerAgentProspects';
+import PartnerAgentPartners from '@/pages/PartnerAgentPartners';
+import PartnerAgentEmails from '@/pages/PartnerAgentEmails';
+import PartnerAgentSettings from '@/pages/PartnerAgentSettings';
 
 const queryClient = new QueryClient();
 
@@ -108,6 +113,11 @@ export default function App() {
             <Route path="/dashboard/compta-agent/invoices" element={<DashboardRoute><ComptaAgentInvoices /></DashboardRoute>} />
             <Route path="/dashboard/compta-agent/declarations" element={<DashboardRoute><ComptaAgentDeclarations /></DashboardRoute>} />
             <Route path="/dashboard/compta-agent/reports" element={<DashboardRoute><ComptaAgentReports /></DashboardRoute>} />
+            <Route path="/dashboard/partner-agent" element={<DashboardRoute><PartnerAgent /></DashboardRoute>} />
+            <Route path="/dashboard/partner-agent/prospects" element={<DashboardRoute><PartnerAgentProspects /></DashboardRoute>} />
+            <Route path="/dashboard/partner-agent/partners" element={<DashboardRoute><PartnerAgentPartners /></DashboardRoute>} />
+            <Route path="/dashboard/partner-agent/emails" element={<DashboardRoute><PartnerAgentEmails /></DashboardRoute>} />
+            <Route path="/dashboard/partner-agent/settings" element={<DashboardRoute><PartnerAgentSettings /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Sites</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
             <Route path="/dashboard/apps" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Applications</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
 

@@ -1,0 +1,89 @@
+{
+  "name": "Partner Agent — Weekly Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * 1" }] }
+      },
+      "id": "cron",
+      "name": "Monday 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/partner_agent_config?is_active=eq.true&select=user_id,sender_name,company_name",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "users",
+      "name": "Active users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": { "batchSize": 1, "options": {} },
+      "id": "split",
+      "name": "Split",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch week stats\nconst cfg = $json;\nconst weekAgo = new Date();\nweekAgo.setDate(weekAgo.getDate() - 7);\nconst sinceISO = weekAgo.toISOString();\n\nasync function fetchCount(url) {\n  const r = await this.helpers.httpRequest({\n    method: 'GET', url, returnFullResponse: true, json: true,\n    headers: {\n      apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n      Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n      'Accept-Profile': 'purama_ai',\n      Prefer: 'count=exact',\n    },\n  });\n  return parseInt((r.headers['content-range'] || '0/0').split('/')[1] || '0', 10);\n}\n\nconst base = 'https://auth.purama.dev/rest/v1';\nconst u = cfg.user_id;\nconst newProspects = await fetchCount.call(this, `${base}/partner_prospects?user_id=eq.${u}&created_at=gte.${sinceISO}&select=id`);\nconst sentEmails = await fetchCount.call(this, `${base}/partner_emails?user_id=eq.${u}&sent_at=gte.${sinceISO}&select=id`);\nconst replies = await fetchCount.call(this, `${base}/partner_emails?user_id=eq.${u}&replied=eq.true&replied_at=gte.${sinceISO}&select=id`);\nconst signed = await fetchCount.call(this, `${base}/partner_prospects?user_id=eq.${u}&contract_signed_at=gte.${sinceISO}&select=id`);\nconst activePartners = await fetchCount.call(this, `${base}/partner_active?user_id=eq.${u}&is_active=eq.true&select=id`);\n\nconst rate = sentEmails > 0 ? Math.round((replies / sentEmails) * 100) : 0;\n\nreturn [{ json: {\n  ...cfg,\n  _stats: { newProspects, sentEmails, replies, signed, activePartners, rate },\n} }];"
+      },
+      "id": "stats",
+      "name": "Aggregate week",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $json;\nconst s = cfg._stats;\nconst body = `Cette semaine: ${s.newProspects} nouveaux prospects · ${s.sentEmails} emails · ${s.replies} réponses (${s.rate}%) · ${s.signed} contrats signés · ${s.activePartners} partenaires actifs`;\nreturn [{ json: {\n  user_id: cfg.user_id,\n  agent_type: 'partner',\n  title: '🤝 Rapport partenariat hebdomadaire',\n  body,\n  action_type: 'review',\n  action_url: '/dashboard/partner-agent',\n  priority: 'normal',\n  channels: ['push', 'in_app'],\n} }];"
+      },
+      "id": "build",
+      "name": "Build notif",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "send",
+      "name": "Push report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 320]
+    }
+  ],
+  "connections": {
+    "Monday 9am": { "main": [[{ "node": "Active users", "type": "main", "index": 0 }]] },
+    "Active users": { "main": [[{ "node": "Split", "type": "main", "index": 0 }]] },
+    "Split": { "main": [[{ "node": "Aggregate week", "type": "main", "index": 0 }]] },
+    "Aggregate week": { "main": [[{ "node": "Build notif", "type": "main", "index": 0 }]] },
+    "Build notif": { "main": [[{ "node": "Push report", "type": "main", "index": 0 }]] }
+  }
+}

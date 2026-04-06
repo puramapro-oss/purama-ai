@@ -1,0 +1,83 @@
+{
+  "name": "Partner Agent — Outreach Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "*/30 9-18 * * 1-5" }
+          ]
+        }
+      },
+      "id": "cron",
+      "name": "Every 30min biz hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/partner_agent_config?is_active=eq.true&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "users",
+      "name": "Active users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": { "batchSize": 1, "options": {} },
+      "id": "split",
+      "name": "Split users",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check daily quota\nconst cfg = $json;\nconst today = new Date().toISOString().slice(0, 10);\nconst countRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/partner_emails?user_id=eq.${cfg.user_id}&type=in.(outreach,relance_1,relance_2,relance_3)&sent_at=gte.${today}T00:00:00&select=id`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n    Prefer: 'count=exact',\n  },\n  json: true,\n  returnFullResponse: true,\n});\nconst sentToday = (countRes.headers['content-range'] || '0/0').split('/')[1];\nconst remaining = Math.max(0, cfg.daily_outreach_limit - parseInt(sentToday, 10));\nif (remaining === 0) return [{ json: { ...cfg, _skip: true, _sent_today: sentToday } }];\n// Fetch ready prospects\nconst prosRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/partner_prospects?user_id=eq.${cfg.user_id}&status=eq.ready_to_contact&email=not.is.null&order=ai_score.desc.nullslast&limit=${Math.min(remaining, 5)}`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n  },\n  json: true,\n});\nif (!prosRes.length) return [{ json: { ...cfg, _skip: true } }];\nreturn prosRes.map((p) => ({ json: { ...cfg, _prospect: p } }));"
+      },
+      "id": "fetch-ready",
+      "name": "Fetch ready prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/partner-send-outreach",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Impersonate-User-Id", "value": "={{ $json.user_id }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prospect_id\": \"{{ $json._prospect.id }}\",\n  \"type\": \"outreach\"\n}"
+      },
+      "id": "send",
+      "name": "Trigger outreach",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    }
+  ],
+  "connections": {
+    "Every 30min biz hours": { "main": [[{ "node": "Active users", "type": "main", "index": 0 }]] },
+    "Active users": { "main": [[{ "node": "Split users", "type": "main", "index": 0 }]] },
+    "Split users": { "main": [[{ "node": "Fetch ready prospects", "type": "main", "index": 0 }]] },
+    "Fetch ready prospects": { "main": [[{ "node": "Trigger outreach", "type": "main", "index": 0 }]] }
+  }
+}
