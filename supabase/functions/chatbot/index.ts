@@ -43,8 +43,16 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAuth = createClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      { db: { schema: 'purama_ai' } }
+    );
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      { db: { schema: 'purama_ai' } }
+    );
     
     // Verify authentication - check for valid JWT or API key
     const authHeader = req.headers.get("Authorization");

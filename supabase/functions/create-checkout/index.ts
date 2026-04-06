@@ -21,14 +21,18 @@ serve(async (req) => {
   }
 
   const supabaseClient = createClient(
+      
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-  );
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { db: { schema: 'purama_ai' } }
+    );
 
   const supabaseAdmin = createClient(
+      
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-  );
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { db: { schema: 'purama_ai' } }
+    );
 
   try {
     logStep("Function started");
@@ -55,7 +59,7 @@ serve(async (req) => {
       logStep("Existing customer found", { customerId });
     }
 
-    const origin = req.headers.get("origin") || "https://agentiapuramafr.lovable.app";
+    const origin = req.headers.get("origin") || "https://purama-ai.purama.dev";
     
     // Check if referral code is valid and influencer exists
     let validInfluencer = null;

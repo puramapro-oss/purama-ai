@@ -89,10 +89,10 @@ function generateTierUpgradeEmailHtml(data: {
                 </tr>
               </table>
               ${isGold ? `<div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.1)); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;"><p style="margin: 0; font-size: 16px; color: #eab308; font-weight: 600;">🌟 Vous avez atteint le palier maximum ! 🌟</p><p style="margin: 8px 0 0; font-size: 14px; color: #a1a1aa;">Profitez du taux de commission le plus élevé sur toutes vos ventes futures.</p></div>` : ''}
-              <div style="text-align: center;"><a href="https://agentiapuramafr.lovable.app/influenceur/dashboard" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">Voir mon tableau de bord →</a></div>
+              <div style="text-align: center;"><a href="https://purama-ai.purama.dev/influenceur/dashboard" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">Voir mon tableau de bord →</a></div>
             </td>
           </tr>
-          <tr><td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);"><p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">Merci d'être un partenaire Agentia !<br><a href="https://agentiapuramafr.lovable.app/influenceur/dashboard" style="color: #a855f7; text-decoration: none;">Gérer mon compte influenceur</a></p></td></tr>
+          <tr><td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);"><p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">Merci d'être un partenaire Agentia !<br><a href="https://purama-ai.purama.dev/influenceur/dashboard" style="color: #a855f7; text-decoration: none;">Gérer mon compte influenceur</a></p></td></tr>
         </table>
       </td>
     </tr>
@@ -112,7 +112,7 @@ serve(async (req) => {
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
     );
 
     // Fetch unprocessed tier upgrades

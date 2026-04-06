@@ -347,8 +347,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const authHeader = req.headers.get("Authorization");
     
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: authHeader ? { Authorization: authHeader } : {} },
+    const supabase = createClient(supabaseUrl, supabaseKey, { db: { schema: 'purama_ai' }, global: { headers: authHeader ? { Authorization: authHeader } : {} },
     });
 
     // Get user from auth header if available

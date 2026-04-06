@@ -27,7 +27,7 @@ serve(async (req) => {
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
     );
 
     const authHeader = req.headers.get("Authorization");
@@ -49,7 +49,7 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    const origin = req.headers.get("origin") || "https://agentiapuramafr.lovable.app";
+    const origin = req.headers.get("origin") || "https://purama-ai.purama.dev";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: `${origin}/pricing`,

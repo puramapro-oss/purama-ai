@@ -84,7 +84,7 @@ export interface Commission {
   created_at: string;
 }
 
-const BASE_URL = 'https://agentiapuramafr.lovable.app';
+const BASE_URL = (import.meta.env.VITE_APP_URL as string) || 'https://purama-ai.purama.dev';
 
 export function useInfluencer() {
   const { user } = useAuth();

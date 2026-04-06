@@ -7,7 +7,7 @@ const corsHeaders = {
 
 const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
 const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
-const REDIRECT_URI = 'https://agentiapuramafr.lovable.app/oauth/callback';
+const REDIRECT_URI = 'https://purama-ai.purama.dev/oauth/callback';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -109,7 +109,11 @@ Deno.serve(async (req) => {
       // Store tokens in database
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
       const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      { db: { schema: 'purama_ai' } }
+    );
 
       // Upsert connection
       const { error: upsertError } = await supabase
@@ -157,7 +161,11 @@ Deno.serve(async (req) => {
 
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
       const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      { db: { schema: 'purama_ai' } }
+    );
 
       // Get current refresh token
       const { data: connection, error: fetchError } = await supabase

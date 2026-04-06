@@ -16,7 +16,7 @@ export default function CGV() {
         <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : février 2025</p>
 
         <h2>1. Objet</h2>
-        <p>Les présentes CGV régissent les conditions de vente des services proposés par Purama AI, accessible à l'adresse agentiapuramafr.lovable.app.</p>
+        <p>Les présentes CGV régissent les conditions de vente des services proposés par Purama AI, accessible à l'adresse purama-ai.purama.dev.</p>
 
         <h2>2. Services proposés</h2>
         <p>Purama AI propose des agents d'intelligence artificielle accessibles via abonnement :</p>

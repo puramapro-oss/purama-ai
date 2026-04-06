@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
-  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield
+  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -16,6 +16,7 @@ const navItems = [
   { label: 'Mes Agents', icon: Brain, to: '/dashboard/agents' },
   { label: 'Analytics', icon: BarChart3, to: '/dashboard/analytics' },
   { label: 'Abonnement', icon: CreditCard, to: '/dashboard/billing' },
+  { label: 'Réseaux sociaux', icon: Globe2, to: '/dashboard/social' },
   { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },
 ];
 

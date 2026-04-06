@@ -181,7 +181,11 @@ Deno.serve(async (req) => {
     // Create Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      { db: { schema: 'purama_ai' } }
+    );
 
     let userId = payload.user_id;
     let userEmail = payload.user_email;
@@ -255,7 +259,7 @@ Deno.serve(async (req) => {
     }
 
     // Build full action URL
-    const baseUrl = 'https://agentiapuramafr.lovable.app';
+    const baseUrl = 'https://purama-ai.purama.dev';
     const fullActionUrl = payload.action_url 
       ? (payload.action_url.startsWith('http') ? payload.action_url : `${baseUrl}${payload.action_url}`)
       : null;

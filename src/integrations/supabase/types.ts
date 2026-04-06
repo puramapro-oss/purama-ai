@@ -12,7 +12,7 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  public: {
+  purama_ai: {
     Tables: {
       agent_usage: {
         Row: {
@@ -491,7 +491,7 @@ export type Database = {
           message: string
           read: boolean | null
           title: string
-          type: Database["public"]["Enums"]["notification_type"]
+          type: Database["purama_ai"]["Enums"]["notification_type"]
           user_id: string
         }
         Insert: {
@@ -502,7 +502,7 @@ export type Database = {
           message: string
           read?: boolean | null
           title: string
-          type: Database["public"]["Enums"]["notification_type"]
+          type: Database["purama_ai"]["Enums"]["notification_type"]
           user_id: string
         }
         Update: {
@@ -513,7 +513,7 @@ export type Database = {
           message?: string
           read?: boolean | null
           title?: string
-          type?: Database["public"]["Enums"]["notification_type"]
+          type?: Database["purama_ai"]["Enums"]["notification_type"]
           user_id?: string
         }
         Relationships: []
@@ -897,19 +897,19 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: Database["purama_ai"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: Database["purama_ai"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: Database["purama_ai"]["Enums"]["app_role"]
           user_id?: string
         }
         Relationships: []
@@ -937,7 +937,7 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
+          _role: Database["purama_ai"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
@@ -1075,7 +1075,7 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  public: {
+  purama_ai: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       notification_type: [

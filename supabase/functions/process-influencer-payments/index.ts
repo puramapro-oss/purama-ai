@@ -32,7 +32,7 @@ serve(async (req) => {
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
+    { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
   );
 
   try {
@@ -268,7 +268,7 @@ function generatePaymentEmailHtml(data: {
                 Le virement devrait apparaître sur votre compte dans les 2 à 5 jours ouvrés.
               </p>
               
-              <a href="https://agentiapuramafr.lovable.app/influenceur/dashboard" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+              <a href="https://purama-ai.purama.dev/influenceur/dashboard" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
                 Voir mon tableau de bord →
               </a>
             </td>
@@ -279,7 +279,7 @@ function generatePaymentEmailHtml(data: {
             <td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);">
               <p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">
                 Merci d'être partenaire Agentia !<br>
-                <a href="https://agentiapuramafr.lovable.app/influenceur/dashboard" style="color: #a855f7; text-decoration: none;">Gérer mon compte influenceur</a>
+                <a href="https://purama-ai.purama.dev/influenceur/dashboard" style="color: #a855f7; text-decoration: none;">Gérer mon compte influenceur</a>
               </p>
             </td>
           </tr>

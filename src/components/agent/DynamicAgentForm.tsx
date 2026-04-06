@@ -37,6 +37,8 @@ import { getAgentConfig, AgentFieldConfig } from '@/config/agentConfigs';
 import { useAgentExecution, validateAgentFormData } from '@/hooks/useAgentExecution';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
+import { PublishEverywhereButton } from '@/components/social/PublishEverywhereButton';
+import { maybeAutopilot } from '@/lib/social';
 
 interface DynamicAgentFormProps {
   agentSlug: string;
@@ -118,6 +120,21 @@ export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAg
     if (result.success) {
       setShowResultModal(true);
       toast.success('Agent exécuté avec succès !');
+
+      // Social Autopilot: if user has it enabled, push the generated content
+      // to all connected social accounts. Silent on failure.
+      const text = typeof result.data === 'string'
+        ? result.data
+        : (() => {
+            try { return JSON.stringify(result.data); } catch { return ''; }
+          })();
+      if (text) {
+        maybeAutopilot({
+          content: text,
+          contentType: 'text',
+          agentName,
+        });
+      }
     } else {
       toast.error('Erreur d\'exécution', {
         description: result.error || 'Une erreur est survenue',
@@ -450,7 +467,18 @@ export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAg
             )}
           </div>
           
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex flex-wrap justify-end gap-2 mt-4">
+            {result?.success && result.data && (
+              <PublishEverywhereButton
+                content={
+                  typeof result.data === 'string'
+                    ? result.data
+                    : formatResult(result.data)
+                }
+                contentType="text"
+                agentName={agentName}
+              />
+            )}
             <Button variant="outline" onClick={() => setShowResultModal(false)}>
               Fermer
             </Button>

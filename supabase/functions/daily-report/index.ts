@@ -148,7 +148,7 @@ function generateReportHtml(report: UserReport, date: string): string {
           <!-- CTA -->
           <tr>
             <td style="padding: 0 32px 32px; text-align: center;">
-              <a href="https://agentiapuramafr.lovable.app/dashboard" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+              <a href="https://purama-ai.purama.dev/dashboard" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
                 Voir mon tableau de bord →
               </a>
             </td>
@@ -159,7 +159,7 @@ function generateReportHtml(report: UserReport, date: string): string {
             <td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);">
               <p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">
                 Vous recevez ce rapport car vous avez activé les rapports quotidiens.<br>
-                <a href="https://agentiapuramafr.lovable.app/notification-settings" style="color: #a855f7; text-decoration: none;">Gérer vos préférences</a>
+                <a href="https://purama-ai.purama.dev/notification-settings" style="color: #a855f7; text-decoration: none;">Gérer vos préférences</a>
               </p>
             </td>
           </tr>
@@ -182,7 +182,11 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      { db: { schema: 'purama_ai' } }
+    );
 
     // Get today's date range
     const now = new Date();

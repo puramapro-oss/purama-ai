@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local-only artifacts
+CLAUDE.md
+PURAMA-AI-SOCIAL-AUTOPILOT-BRIEF.md
+task_plan.md
+findings.md
+progress.md

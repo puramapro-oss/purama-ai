@@ -39,6 +39,7 @@ import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
 import DashboardAnalytics from '@/pages/DashboardAnalytics';
 import DashboardBilling from '@/pages/DashboardBilling';
 import DashboardSettings from '@/pages/DashboardSettings';
+import SocialSettings from '@/pages/SocialSettings';
 import AdminDashboard from '@/pages/AdminDashboard';
 
 const queryClient = new QueryClient();
@@ -80,6 +81,7 @@ export default function App() {
             <Route path="/dashboard/analytics" element={<DashboardRoute><DashboardAnalytics /></DashboardRoute>} />
             <Route path="/dashboard/billing" element={<DashboardRoute><DashboardBilling /></DashboardRoute>} />
             <Route path="/dashboard/settings" element={<DashboardRoute><DashboardSettings /></DashboardRoute>} />
+            <Route path="/dashboard/social" element={<DashboardRoute><SocialSettings /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Sites</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
             <Route path="/dashboard/apps" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Applications</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
 

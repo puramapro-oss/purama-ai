@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.escalate-chat]
 verify_jwt = false
+
+[functions.social-callback]
+verify_jwt = false
