@@ -6,6 +6,7 @@ import {
   Store, History, Brain,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { TutorialOverlay, type TutorialStep } from '@/components/shared/TutorialOverlay';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -50,8 +51,17 @@ export default function CreatorAgentPage() {
   const totalRuns = myAgents.reduce((s, a) => s + a.total_runs, 0);
   const totalTokens = myAgents.reduce((s, a) => s + a.total_tokens, 0);
 
+  const tutorialSteps: TutorialStep[] = [
+    { selector: null, title: 'Bienvenue dans le Créateur d\'agents 🧬', body: 'Crée tes propres agents IA personnalisés en décrivant ce que tu veux en français. Pas de code.' },
+    { selector: null, title: 'Mode IA en 30 secondes', body: 'Tape « Je veux un agent qui... » et l\'IA génère nom, emoji, prompt système et config complète.' },
+    { selector: null, title: '10 templates prêts à cloner', body: 'Sales Closer, Content Writer, Daily Recap... Clone-les en 1 clic depuis la marketplace.' },
+    { selector: null, title: 'Chat ou cron', body: 'Discute avec ton agent OU active le mode autonome cron pour qu\'il tourne tout seul.' },
+    { selector: null, title: 'Suis tes runs', body: 'Historique complet des exécutions, tokens consommés, durée, status.' },
+  ];
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
+      <TutorialOverlay storageKey="creator-agent" steps={tutorialSteps} />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}

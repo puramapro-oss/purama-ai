@@ -7,6 +7,7 @@ import {
   CheckCircle2, AlertCircle, Sparkles, Heart, Inbox, Wallet,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { TutorialOverlay, type TutorialStep } from '@/components/shared/TutorialOverlay';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -102,8 +103,17 @@ export default function ComptaAgent() {
     .slice(0, 4);
   const tvaNet = (stats?.monthTvaCollectee ?? 0) - (stats?.monthTvaDeductible ?? 0);
 
+  const tutorialSteps: TutorialStep[] = [
+    { selector: null, title: 'Bienvenue dans l\'Agent Comptable 🧾', body: 'Catégorisation IA, déclarations TVA/IS, factures Factur-X, recouvrement auto. Le module est inclus dans tous les plans, même Free.' },
+    { selector: '[data-tuto="compta-config"]', title: 'Renseigne ton entreprise', body: 'SIREN, régime fiscal, régime TVA. C\'est la base pour que l\'IA catégorise correctement.' },
+    { selector: '[data-tuto="compta-bridge"]', title: 'Connecte ta banque (Bridge)', body: 'L\'agent récupère tes transactions automatiquement toutes les 4h via Bridge (DSP2 conforme).' },
+    { selector: '[data-tuto="compta-stats"]', title: 'Suis ta trésorerie temps réel', body: 'Recettes, dépenses, TVA nette. L\'IA détecte aussi les anomalies.' },
+    { selector: '[data-tuto="compta-deadlines"]', title: 'Deadlines fiscales auto', body: 'L\'agent prépare TVA, IS, liasse, CFE 7 jours avant deadline. Tu valides en 1 tap.' },
+  ];
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
+      <TutorialOverlay storageKey="compta-agent" steps={tutorialSteps} />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -147,7 +157,7 @@ export default function ComptaAgent() {
                 </p>
               </div>
             </div>
-            <Link to="/dashboard/compta-agent/settings">
+            <Link to="/dashboard/compta-agent/settings" data-tuto="compta-config">
               <Button>Configurer</Button>
             </Link>
           </CardContent>
@@ -177,7 +187,7 @@ export default function ComptaAgent() {
       </Card>
 
       {/* Stats trésorerie */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" data-tuto="compta-stats">
         {[
           {
             label: 'Recettes du mois',

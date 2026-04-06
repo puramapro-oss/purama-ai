@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { TutorialOverlay, type TutorialStep } from '@/components/shared/TutorialOverlay';
 import {
   Mail, Power, Settings, FileText, Activity, Inbox, Brain,
   Zap, Clock, Sparkles, ArrowRight, AlertCircle, CheckCircle2,
@@ -133,8 +134,17 @@ export default function EmailAgent() {
   const levelMeta = AUTONOMY_LEVELS[config.autonomy_level];
   const isConnected = !!config.gmail_email;
 
+  const tutorialSteps: TutorialStep[] = [
+    { selector: null, title: 'Bienvenue dans l\'Agent Email 📬', body: 'Ton agent va lire, trier et répondre à tes emails Gmail 24/7. Je te montre les 5 essentiels en 30 secondes.', position: 'center' },
+    { selector: '[data-tuto="email-gmail-connect"]', title: 'Connecte ton Gmail', body: 'Première étape obligatoire : OAuth Google sécurisé. Tes tokens sont chiffrés et tu peux révoquer à tout moment.', position: 'bottom' },
+    { selector: '[data-tuto="email-toggle"]', title: 'Active l\'agent', body: 'Une fois Gmail connecté, active le toggle. L\'agent traite tes nouveaux emails toutes les 2 minutes.', position: 'top' },
+    { selector: '[data-tuto="email-autonomy"]', title: 'Choisis ton niveau d\'autonomie', body: 'De 1 (notifie tout) à 5 (100% auto). Démarre à 2-3 et augmente quand tu lui fais confiance.', position: 'top' },
+    { selector: '[data-tuto="email-feed"]', title: 'Suis l\'activité en temps réel', body: 'Toutes les actions de l\'agent apparaissent ici. Tu peux valider/rejeter les brouillons depuis la page Activité.', position: 'top' },
+  ];
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
+      <TutorialOverlay storageKey="email-agent" steps={tutorialSteps} />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -180,7 +190,7 @@ export default function EmailAgent() {
                 </p>
               </div>
             </div>
-            <Button onClick={handleConnectGmail} disabled={connecting}>
+            <Button onClick={handleConnectGmail} disabled={connecting} data-tuto="email-gmail-connect">
               {connecting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
               Connecter Gmail
             </Button>
@@ -212,7 +222,7 @@ export default function EmailAgent() {
       )}
 
       {/* Master toggle + autonomy */}
-      <Card className="bg-card border-border">
+      <Card className="bg-card border-border" data-tuto="email-toggle">
         <CardContent className="p-6 space-y-6">
           {/* On/off */}
           <div className="flex items-center justify-between gap-4">
@@ -235,7 +245,7 @@ export default function EmailAgent() {
           </div>
 
           {/* Autonomy */}
-          <div className="pt-4 border-t border-border space-y-4">
+          <div className="pt-4 border-t border-border space-y-4" data-tuto="email-autonomy">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-foreground flex items-center gap-2">
@@ -304,7 +314,7 @@ export default function EmailAgent() {
       </div>
 
       {/* Activity feed */}
-      <Card className="bg-card border-border">
+      <Card className="bg-card border-border" data-tuto="email-feed">
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-orbitron font-bold text-foreground">Activité récente</h2>

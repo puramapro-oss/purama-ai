@@ -7,6 +7,7 @@ import {
   Send,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { TutorialOverlay, type TutorialStep } from '@/components/shared/TutorialOverlay';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -92,8 +93,17 @@ export default function PartnerAgent() {
     ? Math.round((stats.emailsReplied / stats.emailsSent) * 100)
     : 0;
 
+  const tutorialSteps: TutorialStep[] = [
+    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Trouve, contacte, signe et accompagne tes partenaires 24/7. L\'IA fait tout : recherche Tavily, rédaction Claude, envoi Resend, contrats DocuSeal.' },
+    { selector: null, title: 'Configure ton identité', body: 'Avant tout : ton nom d\'envoi, ton email, ton ton de communication, tes niches cibles.' },
+    { selector: null, title: 'Trouve des prospects via IA', body: 'Décris en français le type de partenaire que tu veux. L\'IA cherche, analyse et score 0-100.' },
+    { selector: null, title: 'Active l\'outreach automatique', body: 'L\'agent envoie 20 emails/jour personnalisés par défaut, dans tes plages horaires.' },
+    { selector: null, title: 'Suis le pipeline visuel', body: 'Identifié → Contacté → Intéressé → Contrat → Actif. Tu vois tout en un coup d\'œil.' },
+  ];
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
+      <TutorialOverlay storageKey="partner-agent" steps={tutorialSteps} />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}

@@ -7,6 +7,7 @@ import {
   CalendarClock, DollarSign,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { TutorialOverlay, type TutorialStep } from '@/components/shared/TutorialOverlay';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -83,8 +84,17 @@ export default function LegalAgent() {
   const unreadVeille = veille.filter(v => !v.is_read);
   const urgentVeille = veille.filter(v => v.severity === 'urgent' || v.severity === 'action_required');
 
+  const tutorialSteps: TutorialStep[] = [
+    { selector: null, title: 'Bienvenue dans l\'Agent Juridique ⚖️', body: 'Ton avocat IA disponible 24/7. Droit français + européen + jurisprudence à jour. Génère contrats, monte des dossiers, surveille la veille juridique.' },
+    { selector: null, title: 'Pose une question via le chat', body: 'Le chat IA cite les articles de loi exacts et la jurisprudence pertinente. Pose tes questions en langage naturel.' },
+    { selector: null, title: 'Génère 30+ types de documents', body: 'CDI, CGV, statuts, mise en demeure, bail... L\'IA produit des documents complets et conformes en 15s.' },
+    { selector: null, title: 'Monte un dossier complet', body: 'Décris des faits → l\'IA produit analyse, stratégie, jurisprudence, probabilité de succès, prescription.' },
+    { selector: null, title: 'Veille juridique automatique', body: 'L\'agent surveille Légifrance / Cour de cassation chaque jour et t\'alerte sur les changements qui te concernent.' },
+  ];
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
+      <TutorialOverlay storageKey="legal-agent" steps={tutorialSteps} />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}

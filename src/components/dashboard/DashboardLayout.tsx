@@ -8,6 +8,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
+import { ExecutionCounter } from '@/components/dashboard/ExecutionCounter';
 
 const ADMIN_EMAIL = 'matiss.frasne@gmail.com';
 
@@ -83,6 +84,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="h-px bg-border mx-4" />
+
+      {/* Execution counter */}
+      {sidebarOpen && (
+        <div className="px-3 pb-2">
+          <ExecutionCounter variant="compact" />
+        </div>
+      )}
 
       {/* User */}
       <div className="p-3 border-t border-border">
