@@ -66,6 +66,11 @@ import LegalAgentDocuments from '@/pages/LegalAgentDocuments';
 import LegalAgentCases from '@/pages/LegalAgentCases';
 import LegalAgentImpayes from '@/pages/LegalAgentImpayes';
 import LegalAgentVeille from '@/pages/LegalAgentVeille';
+import CreatorAgentPage from '@/pages/CreatorAgent';
+import CreatorAgentNew from '@/pages/CreatorAgentNew';
+import CreatorAgentDetail from '@/pages/CreatorAgentDetail';
+import CreatorAgentTemplates from '@/pages/CreatorAgentTemplates';
+import CreatorAgentRuns from '@/pages/CreatorAgentRuns';
 
 const queryClient = new QueryClient();
 
@@ -130,6 +135,11 @@ export default function App() {
             <Route path="/dashboard/legal-agent/cases" element={<DashboardRoute><LegalAgentCases /></DashboardRoute>} />
             <Route path="/dashboard/legal-agent/impayes" element={<DashboardRoute><LegalAgentImpayes /></DashboardRoute>} />
             <Route path="/dashboard/legal-agent/veille" element={<DashboardRoute><LegalAgentVeille /></DashboardRoute>} />
+            <Route path="/dashboard/creator-agent" element={<DashboardRoute><CreatorAgentPage /></DashboardRoute>} />
+            <Route path="/dashboard/creator-agent/new" element={<DashboardRoute><CreatorAgentNew /></DashboardRoute>} />
+            <Route path="/dashboard/creator-agent/templates" element={<DashboardRoute><CreatorAgentTemplates /></DashboardRoute>} />
+            <Route path="/dashboard/creator-agent/runs" element={<DashboardRoute><CreatorAgentRuns /></DashboardRoute>} />
+            <Route path="/dashboard/creator-agent/:id" element={<DashboardRoute><CreatorAgentDetail /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Sites</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
             <Route path="/dashboard/apps" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Applications</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
 

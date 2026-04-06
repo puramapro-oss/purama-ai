@@ -1,0 +1,69 @@
+{
+  "name": "Creator Agent — Scheduler",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] } },
+      "id": "cron",
+      "name": "Every 5min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/creator_agents?is_active=eq.true&schedule_enabled=eq.true&select=id,user_id,schedule_cron,schedule_input,last_scheduled_run,name",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch",
+      "name": "Fetch scheduled agents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Minimal cron evaluator: matches the current minute against the agent's schedule_cron.\n// Supports the 5-field cron format: minute hour day-of-month month day-of-week\n// Each field accepts: *, number, comma list, range (a-b), step (*/n)\nconst rows = Array.isArray($json) ? $json : [];\nconst now = new Date();\nconst nowMinute = now.getUTCMinutes();\nconst nowHour = now.getUTCHours();\nconst nowDom = now.getUTCDate();\nconst nowMon = now.getUTCMonth() + 1;\nconst nowDow = now.getUTCDay(); // 0=sunday\n\nfunction matchField(field, value, max) {\n  if (field === '*') return true;\n  for (const part of field.split(',')) {\n    if (part.startsWith('*/')) {\n      const step = parseInt(part.slice(2), 10);\n      if (step > 0 && value % step === 0) return true;\n    } else if (part.includes('-')) {\n      const [a, b] = part.split('-').map(Number);\n      if (value >= a && value <= b) return true;\n    } else {\n      if (parseInt(part, 10) === value) return true;\n    }\n  }\n  return false;\n}\n\nfunction shouldRun(cron) {\n  if (!cron) return false;\n  const parts = cron.trim().split(/\\s+/);\n  if (parts.length !== 5) return false;\n  // We allow a 5-min tolerance window (this workflow ticks every 5 min)\n  for (let m = nowMinute - 4; m <= nowMinute; m++) {\n    const minute = (m + 60) % 60;\n    if (matchField(parts[0], minute, 60)\n      && matchField(parts[1], nowHour, 24)\n      && matchField(parts[2], nowDom, 31)\n      && matchField(parts[3], nowMon, 12)\n      && matchField(parts[4], nowDow, 7)) {\n      return true;\n    }\n  }\n  return false;\n}\n\nconst toRun = [];\nfor (const r of rows) {\n  if (!shouldRun(r.schedule_cron)) continue;\n  // Avoid double-execution: skip if last_scheduled_run is within the last 4 minutes\n  if (r.last_scheduled_run) {\n    const ageMs = Date.now() - new Date(r.last_scheduled_run).getTime();\n    if (ageMs < 4 * 60 * 1000) continue;\n  }\n  toRun.push({ json: r });\n}\nreturn toRun;"
+      },
+      "id": "evaluate",
+      "name": "Evaluate crons",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/creator-agent-run",
+        "method": "POST",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"{{ $json.id }}\",\n  \"input\": {{ JSON.stringify(JSON.stringify($json.schedule_input || {})) }},\n  \"trigger\": \"cron\"\n}"
+      },
+      "id": "trigger-run",
+      "name": "Trigger run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 320]
+    }
+  ],
+  "connections": {
+    "Every 5min": { "main": [[{ "node": "Fetch scheduled agents", "type": "main", "index": 0 }]] },
+    "Fetch scheduled agents": { "main": [[{ "node": "Evaluate crons", "type": "main", "index": 0 }]] },
+    "Evaluate crons": { "main": [[{ "node": "Trigger run", "type": "main", "index": 0 }]] }
+  }
+}
