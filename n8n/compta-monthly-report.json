@@ -1,0 +1,142 @@
+{
+  "name": "Compta Agent — Monthly Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 8 1 * *" }] }
+      },
+      "id": "cron",
+      "name": "1st of month 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/compta_agent_config?is_active=eq.true&notify_monthly_report=eq.true&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-users",
+      "name": "Fetch users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": { "batchSize": 1, "options": {} },
+      "id": "split",
+      "name": "Split users",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute previous month range\nconst now = new Date();\nconst start = new Date(now.getFullYear(), now.getMonth() - 1, 1);\nconst end = new Date(now.getFullYear(), now.getMonth(), 0);\nconst pad = (n) => String(n).padStart(2, '0');\nconst startStr = `${start.getFullYear()}-${pad(start.getMonth() + 1)}-01`;\nconst endStr = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`;\nconst label = start.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });\nreturn [{ json: { ...$json, _start: startStr, _end: endStr, _label: label } }];"
+      },
+      "id": "period",
+      "name": "Compute period",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/compta_transactions?user_id=eq.{{$json.user_id}}&date=gte.{{$json._start}}&date=lte.{{$json._end}}&select=date,description,amount,type,pcg_account,pcg_label,tva_amount,tva_deductible,is_anomaly",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-tx",
+      "name": "Fetch month transactions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Compute period').item.json;\nconst rows = $json || [];\nlet ca = 0, charges = 0, tvaC = 0, tvaD = 0, anomalies = 0;\nconst byAccount = {};\nfor (const t of rows) {\n  const amt = Number(t.amount) || 0;\n  const tva = Number(t.tva_amount) || 0;\n  const isCredit = t.type === 'credit' || amt > 0;\n  if (isCredit) { ca += Math.abs(amt); tvaC += tva; }\n  else {\n    charges += Math.abs(amt);\n    if (t.tva_deductible) tvaD += tva;\n    const key = t.pcg_label || t.pcg_account || 'autres';\n    byAccount[key] = (byAccount[key] || 0) + Math.abs(amt);\n  }\n  if (t.is_anomaly) anomalies++;\n}\nconst topCharges = Object.entries(byAccount).sort((a, b) => b[1] - a[1]).slice(0, 5);\nreturn [{ json: { ...ctx, _summary: {\n  tx_count: rows.length, ca: Math.round(ca * 100) / 100, charges: Math.round(charges * 100) / 100,\n  resultat: Math.round((ca - charges) * 100) / 100,\n  tva_collectee: Math.round(tvaC * 100) / 100, tva_deductible: Math.round(tvaD * 100) / 100,\n  tva_nette: Math.round((tvaC - tvaD) * 100) / 100,\n  anomalies, top_charges: topCharges,\n} } }];"
+      },
+      "id": "aggregate",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 600,\n  \"system\": \"Tu es un expert-comptable empathique et pédagogue. Tu rédiges un récap mensuel court (4-6 phrases max), en français, tutoiement, factuel mais chaleureux. Tu mets en avant les évolutions et tu signales les éventuelles alertes. Tu finis par 1 conseil actionnable.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Période: {{ $json._label }}\\nEntreprise: {{ $json.company_name }}\\nForme: {{ $json.legal_form }}\\n\\nDonnées:\\n{{ JSON.stringify($json._summary) }}\\n\\nRédige le récap.\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude narrative",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Aggregate').item.json;\nconst narrative = $json.content?.[0]?.text || '';\nconst s = ctx._summary;\nconst body = `${ctx._label} · CA ${s.ca}€ · Charges ${s.charges}€ · Résultat ${s.resultat}€${s.anomalies ? ' · ' + s.anomalies + ' anomalie(s)' : ''}`;\nreturn [{ json: {\n  user_id: ctx.user_id,\n  agent_type: 'compta',\n  title: `📊 Rapport mensuel — ${ctx._label}`,\n  body,\n  action_type: 'review',\n  action_payload: { period: ctx._label, narrative },\n  action_url: '/dashboard/compta-agent/reports',\n  priority: 'normal',\n  channels: ['push', 'in_app'],\n} }];"
+      },
+      "id": "build",
+      "name": "Build notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "send",
+      "name": "Send notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 320]
+    }
+  ],
+  "connections": {
+    "1st of month 8am": { "main": [[{ "node": "Fetch users", "type": "main", "index": 0 }]] },
+    "Fetch users": { "main": [[{ "node": "Split users", "type": "main", "index": 0 }]] },
+    "Split users": { "main": [[{ "node": "Compute period", "type": "main", "index": 0 }]] },
+    "Compute period": { "main": [[{ "node": "Fetch month transactions", "type": "main", "index": 0 }]] },
+    "Fetch month transactions": { "main": [[{ "node": "Aggregate", "type": "main", "index": 0 }]] },
+    "Aggregate": { "main": [[{ "node": "Claude narrative", "type": "main", "index": 0 }]] },
+    "Claude narrative": { "main": [[{ "node": "Build notification", "type": "main", "index": 0 }]] },
+    "Build notification": { "main": [[{ "node": "Send notification", "type": "main", "index": 0 }]] }
+  }
+}

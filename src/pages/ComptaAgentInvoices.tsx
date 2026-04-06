@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Loader2, Plus, Trash2, FileText, Pencil, Send } from 'lucide-react';
+import { ArrowLeft, Loader2, Plus, Trash2, FileText, Pencil, Send, FileCheck2, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
   listInvoices, createInvoice, updateInvoice, deleteInvoice,
-  computeInvoiceTotals, formatEUR,
+  computeInvoiceTotals, formatEUR, generateFacturX,
   type ComptaInvoice, type InvoiceLine, type InvoiceType, type InvoiceStatus,
 } from '@/lib/compta';
 
@@ -111,6 +111,24 @@ export default function ComptaAgentInvoices() {
     catch (e) { toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) }); }
   };
 
+  const [facturxBusy, setFacturxBusy] = useState<string | null>(null);
+
+  const handleFacturX = async (inv: ComptaInvoice) => {
+    setFacturxBusy(inv.id);
+    try {
+      const { url } = await generateFacturX(inv.id);
+      toast.success('✅ Factur-X généré', {
+        description: 'PDF/A-3 avec XML EN 16931 intégré',
+        action: { label: 'Ouvrir', onClick: () => window.open(url, '_blank') },
+      });
+      refresh();
+    } catch (e) {
+      toast.error('Erreur Factur-X', { description: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setFacturxBusy(null);
+    }
+  };
+
   const markStatus = async (inv: ComptaInvoice, status: InvoiceStatus) => {
     try {
       await updateInvoice(inv.id, { status, payment_date: status === 'paid' ? new Date().toISOString().slice(0, 10) : null });
@@ -174,6 +192,21 @@ export default function ComptaAgentInvoices() {
                     <p className="text-[10px] text-muted-foreground">HT {formatEUR(inv.total_ht)}</p>
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
+                    {inv.facturx_pdf_url ? (
+                      <a href={inv.facturx_pdf_url} target="_blank" rel="noreferrer">
+                        <Button variant="ghost" size="icon" title="Télécharger PDF Factur-X"><Download className="w-4 h-4 text-emerald-400" /></Button>
+                      </a>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleFacturX(inv)}
+                        disabled={facturxBusy === inv.id}
+                        title="Générer Factur-X"
+                      >
+                        {facturxBusy === inv.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileCheck2 className="w-4 h-4 text-accent-purple" />}
+                      </Button>
+                    )}
                     {inv.status === 'draft' && (
                       <Button variant="ghost" size="icon" onClick={() => markStatus(inv, 'sent')} title="Marquer envoyée"><Send className="w-4 h-4 text-cyan-400" /></Button>
                     )}

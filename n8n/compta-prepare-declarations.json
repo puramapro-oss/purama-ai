@@ -1,0 +1,211 @@
+{
+  "name": "Compta Agent — Prepare Declarations",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "0 9 5 * *" }
+          ]
+        }
+      },
+      "id": "cron",
+      "name": "5th of month 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/compta_agent_config?is_active=eq.true&auto_declarations=eq.true&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-users",
+      "name": "Fetch eligible users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": { "batchSize": 1, "options": {} },
+      "id": "split",
+      "name": "Split users",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine which declarations are due this month based on the user's TVA regime\nconst cfg = $json;\nconst now = new Date();\nconst Y = now.getFullYear();\nconst M = now.getMonth() + 1; // 1-12\nconst pad = (n) => String(n).padStart(2, '0');\nconst declarations = [];\n\n// Helper: build period & deadline\nfunction addDecl(type, period, deadline, periodStart, periodEnd) {\n  declarations.push({ type, period, deadline, period_start: periodStart, period_end: periodEnd });\n}\n\nif (cfg.tva_regime === 'mensuel') {\n  // CA3 mensuelle pour le mois précédent — deadline le 19 de ce mois\n  const prev = new Date(Y, M - 2, 1);\n  const py = prev.getFullYear();\n  const pm = prev.getMonth() + 1;\n  const period = `${py}-${pad(pm)}`;\n  const deadline = `${Y}-${pad(M)}-19`;\n  const start = `${py}-${pad(pm)}-01`;\n  const end = new Date(py, pm, 0).toISOString().slice(0, 10);\n  addDecl('tva_ca3', period, deadline, start, end);\n} else if (cfg.tva_regime === 'trimestriel') {\n  // CA3 trimestrielle quand le mois courant est avril, juillet, octobre, janvier\n  const trimMonths = { 4: ['T1', 1, 3], 7: ['T2', 4, 6], 10: ['T3', 7, 9], 1: ['T4', 10, 12] };\n  if (trimMonths[M]) {\n    const [trimLabel, ms, me] = trimMonths[M];\n    const py = M === 1 ? Y - 1 : Y;\n    const period = `${py}-${trimLabel}`;\n    const deadline = `${Y}-${pad(M)}-19`;\n    const start = `${py}-${pad(ms)}-01`;\n    const end = new Date(py, me, 0).toISOString().slice(0, 10);\n    addDecl('tva_ca3', period, deadline, start, end);\n  }\n} else if (cfg.tva_regime === 'annuel') {\n  // CA12 annuelle deadline début mai\n  if (M === 5) {\n    addDecl('tva_ca12', String(Y - 1), `${Y}-05-05`, `${Y - 1}-01-01`, `${Y - 1}-12-31`);\n  }\n}\n\n// Acomptes IS : 15 mars, 15 juin, 15 sept, 15 déc\nif ([3, 6, 9, 12].includes(M)) {\n  addDecl('is', `${Y}-acompte-${pad(M)}`, `${Y}-${pad(M)}-15`, `${Y}-01-01`, `${Y}-${pad(M)}-${pad(new Date(Y, M, 0).getDate())}`);\n}\n\n// Liasse + IS solde : 2e jour ouvré suivant le 1er mai\nif (M === 5) {\n  addDecl('liasse', String(Y - 1), `${Y}-05-15`, `${Y - 1}-01-01`, `${Y - 1}-12-31`);\n}\n\n// CFE : 15 décembre\nif (M === 12) {\n  addDecl('cfe', String(Y), `${Y}-12-15`, `${Y}-01-01`, `${Y}-12-31`);\n}\n\nif (declarations.length === 0) return [{ json: { ...cfg, _skip: true } }];\nreturn declarations.map((d) => ({ json: { ...cfg, _decl: d } }));"
+      },
+      "id": "determine",
+      "name": "Determine due",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/compta_declarations?user_id=eq.{{$json.user_id}}&type=eq.{{$json._decl.type}}&period=eq.{{$json._decl.period}}&select=id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "dedupe",
+      "name": "Already prepared?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.length}}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "if-new",
+      "name": "Is new?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/compta_transactions?user_id=eq.{{$('Determine due').item.json.user_id}}&date=gte.{{$('Determine due').item.json._decl.period_start}}&date=lte.{{$('Determine due').item.json._decl.period_end}}&select=date,description,amount,type,pcg_account,pcg_label,tva_rate,tva_amount,ht_amount,tva_deductible",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-tx",
+      "name": "Fetch period transactions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pre-aggregate to keep the Claude prompt small\nconst ctx = $('Determine due').item.json;\nconst txs = $json || [];\nconst byBase = { 20: { ht: 0, tva: 0 }, 10: { ht: 0, tva: 0 }, 5.5: { ht: 0, tva: 0 }, 2.1: { ht: 0, tva: 0 }, 0: { ht: 0, tva: 0 } };\nlet collectee = 0, deductible = 0, ca = 0, charges = 0;\nfor (const t of txs) {\n  const amt = Number(t.amount) || 0;\n  const ht = Number(t.ht_amount) || 0;\n  const tva = Number(t.tva_amount) || 0;\n  const rate = Number(t.tva_rate) || 0;\n  const isCredit = t.type === 'credit' || amt > 0;\n  if (isCredit) {\n    ca += Math.abs(amt);\n    collectee += tva;\n    if (byBase[rate]) byBase[rate].ht += Math.abs(ht || amt);\n    if (byBase[rate]) byBase[rate].tva += tva;\n  } else {\n    charges += Math.abs(amt);\n    if (t.tva_deductible) deductible += tva;\n  }\n}\nreturn [{ json: {\n  ...ctx,\n  _summary: {\n    tx_count: txs.length,\n    ca,\n    charges,\n    tva_collectee: Math.round(collectee * 100) / 100,\n    tva_deductible: Math.round(deductible * 100) / 100,\n    tva_nette: Math.round((collectee - deductible) * 100) / 100,\n    base_ht_20: Math.round(byBase[20].ht * 100) / 100,\n    base_ht_10: Math.round(byBase[10].ht * 100) / 100,\n    base_ht_5_5: Math.round(byBase[5.5].ht * 100) / 100,\n    base_ht_2_1: Math.round(byBase[2.1].ht * 100) / 100,\n    base_ht_0: Math.round(byBase[0].ht * 100) / 100,\n  }\n} }];"
+      },
+      "id": "aggregate",
+      "name": "Aggregate transactions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1500,\n  \"system\": \"Tu es un expert-comptable français certifié. Tu calcules une déclaration fiscale en fonction du type, de la période et des données agrégées fournies. Tu retournes UNIQUEMENT un JSON valide avec les champs exacts de la déclaration. Tu détectes les optimisations fiscales applicables (ZFRR, CIR, CII, IP Box, JEI). Tu rédiges des notes brèves et pédagogiques.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Type: {{ $json._decl.type }}\\nPériode: {{ $json._decl.period }}\\n\\nContexte:\\n- Forme: {{ $json.legal_form }}\\n- Régime fiscal: {{ $json.fiscal_regime }}\\n- Régime TVA: {{ $json.tva_regime }}\\n- ZFRR: {{ $json.is_zfrr }}\\n- CIR: {{ $json.cir_eligible }}\\n- IP Box: {{ $json.ip_box_eligible }}\\n- JEI: {{ $json.jei_status }}\\n\\nAgrégés période:\\n{{ JSON.stringify($json._summary) }}\\n\\nRetourne JSON: {calculated_data: {...champs déclaration...}, ai_notes: 'résumé court', ai_optimizations: ['liste optimisations appliquées']}\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude compute",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Aggregate transactions').item.json;\nconst raw = $json.content?.[0]?.text || '{}';\nlet a = { calculated_data: {}, ai_notes: '', ai_optimizations: [] };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); a = { ...a, ...JSON.parse(m ? m[0] : raw) }; } catch (e) { a.ai_notes = 'parse error'; }\nreturn [{ json: {\n  user_id: ctx.user_id,\n  type: ctx._decl.type,\n  period: ctx._decl.period,\n  status: 'ready',\n  calculated_data: a.calculated_data || ctx._summary,\n  ai_notes: a.ai_notes || '',\n  ai_optimizations: a.ai_optimizations || [],\n  deadline: ctx._decl.deadline,\n} }];"
+      },
+      "id": "build",
+      "name": "Build declaration row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/compta_declarations",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation,resolution=merge-duplicates" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "insert",
+      "name": "Insert declaration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_id\": \"{{ $('Build declaration row').item.json.user_id }}\",\n  \"agent_type\": \"compta\",\n  \"title\": \"Déclaration prête à valider\",\n  \"body\": \"{{ $('Build declaration row').item.json.type }} — {{ $('Build declaration row').item.json.period }} · deadline {{ $('Build declaration row').item.json.deadline }}\",\n  \"action_type\": \"approve_declaration\",\n  \"action_payload\": { \"declaration_id\": \"{{ $json[0]?.id || '' }}\" },\n  \"action_url\": \"/dashboard/compta-agent/declarations\",\n  \"priority\": \"high\",\n  \"channels\": [\"push\", \"in_app\"]\n}"
+      },
+      "id": "notify",
+      "name": "Notify user",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2660, 240]
+    }
+  ],
+  "connections": {
+    "5th of month 9am": { "main": [[{ "node": "Fetch eligible users", "type": "main", "index": 0 }]] },
+    "Fetch eligible users": { "main": [[{ "node": "Split users", "type": "main", "index": 0 }]] },
+    "Split users": { "main": [[{ "node": "Determine due", "type": "main", "index": 0 }]] },
+    "Determine due": { "main": [[{ "node": "Already prepared?", "type": "main", "index": 0 }]] },
+    "Already prepared?": { "main": [[{ "node": "Is new?", "type": "main", "index": 0 }]] },
+    "Is new?": { "main": [[{ "node": "Fetch period transactions", "type": "main", "index": 0 }], []] },
+    "Fetch period transactions": { "main": [[{ "node": "Aggregate transactions", "type": "main", "index": 0 }]] },
+    "Aggregate transactions": { "main": [[{ "node": "Claude compute", "type": "main", "index": 0 }]] },
+    "Claude compute": { "main": [[{ "node": "Build declaration row", "type": "main", "index": 0 }]] },
+    "Build declaration row": { "main": [[{ "node": "Insert declaration", "type": "main", "index": 0 }]] },
+    "Insert declaration": { "main": [[{ "node": "Notify user", "type": "main", "index": 0 }]] }
+  }
+}

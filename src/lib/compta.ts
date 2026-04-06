@@ -647,6 +647,22 @@ export async function isPushSubscribed(): Promise<boolean> {
 }
 
 // =============================================================
+// Factur-X (delegated to edge function)
+// =============================================================
+export async function generateFacturX(
+  invoiceId: string,
+): Promise<{ url: string }> {
+  const { data, error } = await supabase.functions.invoke(
+    'compta-invoice-facturx',
+    { body: { invoice_id: invoiceId } },
+  );
+  if (error) throw error;
+  const url = (data as { url?: string } | null)?.url;
+  if (!url) throw new Error('PDF non généré');
+  return { url };
+}
+
+// =============================================================
 // Bridge OAuth (delegated to edge function)
 // =============================================================
 export async function getBridgeConnectUrl(): Promise<string> {

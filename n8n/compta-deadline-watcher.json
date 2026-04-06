@@ -1,0 +1,80 @@
+{
+  "name": "Compta Agent — Deadline Watcher",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * *" }] }
+      },
+      "id": "cron",
+      "name": "Daily 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute the threshold date (today + 14 days)\nconst d = new Date();\nd.setDate(d.getDate() + 14);\nreturn [{ json: { until: d.toISOString().slice(0, 10), today: new Date().toISOString().slice(0, 10) } }];"
+      },
+      "id": "dates",
+      "name": "Compute window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/compta_declarations?status=in.(ready,pending_approval,approved)&deadline=lte.{{$json.until}}&deadline=gte.{{$json.today}}&select=id,user_id,type,period,deadline,status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch",
+      "name": "Fetch upcoming declarations",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Explode + compute days remaining + decide whether to notify (J-14, J-7, J-3, J-1, J0)\nconst rows = Array.isArray($json) ? $json : ($json.body || []);\nconst now = new Date(); now.setHours(0, 0, 0, 0);\nconst out = [];\nconst LABELS = {\n  tva_ca3: 'TVA CA3', tva_ca12: 'TVA CA12', is: 'Acompte IS',\n  liasse: 'Liasse fiscale', cfe: 'CFE', cvae: 'CVAE', das2: 'DAS2',\n};\nfor (const r of rows) {\n  const dl = new Date(r.deadline);\n  const days = Math.ceil((dl.getTime() - now.getTime()) / 86400000);\n  if (![14, 7, 3, 1, 0].includes(days)) continue;\n  let prefix = '⏰', priority = 'normal';\n  if (days === 0) { prefix = '🔴'; priority = 'urgent'; }\n  else if (days <= 1) { prefix = '🚨'; priority = 'urgent'; }\n  else if (days <= 3) { prefix = '⚠️'; priority = 'high'; }\n  else if (days <= 7) { prefix = '🔔'; priority = 'high'; }\n  out.push({ json: {\n    user_id: r.user_id,\n    declaration_id: r.id,\n    title: `${prefix} ${LABELS[r.type] || r.type} dans ${days}j`,\n    body: `${LABELS[r.type] || r.type} ${r.period} · deadline ${new Date(r.deadline).toLocaleDateString('fr-FR')}`,\n    priority,\n    days,\n  } });\n}\nif (out.length === 0) return [];\nreturn out;"
+      },
+      "id": "filter",
+      "name": "Filter & format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_id\": \"{{ $json.user_id }}\",\n  \"agent_type\": \"compta\",\n  \"title\": \"{{ $json.title }}\",\n  \"body\": \"{{ $json.body }}\",\n  \"action_type\": \"review\",\n  \"action_payload\": { \"declaration_id\": \"{{ $json.declaration_id }}\" },\n  \"action_url\": \"/dashboard/compta-agent/declarations\",\n  \"priority\": \"{{ $json.priority }}\",\n  \"channels\": [\"push\", \"in_app\"]\n}"
+      },
+      "id": "notify",
+      "name": "Notify user",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    }
+  ],
+  "connections": {
+    "Daily 9am": { "main": [[{ "node": "Compute window", "type": "main", "index": 0 }]] },
+    "Compute window": { "main": [[{ "node": "Fetch upcoming declarations", "type": "main", "index": 0 }]] },
+    "Fetch upcoming declarations": { "main": [[{ "node": "Filter & format", "type": "main", "index": 0 }]] },
+    "Filter & format": { "main": [[{ "node": "Notify user", "type": "main", "index": 0 }]] }
+  }
+}
