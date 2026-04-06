@@ -381,6 +381,19 @@ export async function sendOutreach(prospectId: string): Promise<void> {
 }
 
 // =============================================================
+// Generate + send partnership contract via DocuSeal
+// =============================================================
+export async function generateContract(
+  prospectId: string,
+): Promise<{ pdf_url: string; signing_url: string | null }> {
+  const { data, error } = await supabase.functions.invoke('partner-generate-contract', {
+    body: { prospect_id: prospectId },
+  });
+  if (error) throw error;
+  return data as { pdf_url: string; signing_url: string | null };
+}
+
+// =============================================================
 // EMAILS
 // =============================================================
 export async function listEmails(

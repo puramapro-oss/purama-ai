@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Plus, Trash2, Send, Search, Filter, Pencil,
-  ExternalLink, Sparkles, Users,
+  ExternalLink, Sparkles, Users, FileSignature,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
   listProspects, createProspect, updateProspect, deleteProspect,
-  findProspects, sendOutreach,
+  findProspects, sendOutreach, generateContract,
   STATUS_META, PROSPECT_TYPES, NICHES,
   type PartnerProspect, type ProspectStatus, type ProspectType,
 } from '@/lib/partner';
@@ -98,6 +98,24 @@ export default function PartnerAgentProspects() {
     if (!confirm('Supprimer ce prospect ?')) return;
     try { await deleteProspect(id); toast.success('Supprimé'); refresh(); }
     catch (e) { toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) }); }
+  };
+
+  const handleContract = async (p: PartnerProspect) => {
+    if (!p.email) {
+      toast.error('Pas d\'email pour ce prospect');
+      return;
+    }
+    if (!confirm(`Générer et envoyer un contrat de partenariat à ${p.name} via DocuSeal ?`)) return;
+    try {
+      const r = await generateContract(p.id);
+      toast.success('✅ Contrat envoyé via DocuSeal', {
+        description: 'Le partenaire reçoit le contrat à signer par email',
+        action: r.pdf_url ? { label: 'PDF', onClick: () => window.open(r.pdf_url!, '_blank') } : undefined,
+      });
+      refresh();
+    } catch (e) {
+      toast.error('Erreur DocuSeal', { description: e instanceof Error ? e.message : String(e) });
+    }
   };
 
   const handleSend = async (p: PartnerProspect) => {
@@ -215,6 +233,11 @@ export default function PartnerAgentProspects() {
                     {p.email && p.status !== 'active' && p.status !== 'rejected' && (
                       <Button variant="ghost" size="icon" onClick={() => handleSend(p)} title="Envoyer outreach IA">
                         <Send className="w-4 h-4 text-accent-purple" />
+                      </Button>
+                    )}
+                    {p.email && (p.status === 'interested' || p.status === 'contract_sent') && (
+                      <Button variant="ghost" size="icon" onClick={() => handleContract(p)} title="Générer contrat DocuSeal">
+                        <FileSignature className="w-4 h-4 text-emerald-400" />
                       </Button>
                     )}
                     {p.website && (

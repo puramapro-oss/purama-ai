@@ -1,0 +1,156 @@
+{
+  "name": "Partner Agent — Reply Handler",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] } },
+      "id": "cron",
+      "name": "Every 5min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/email_agent_config?is_active=eq.true&select=user_id,gmail_access_token,gmail_refresh_token,gmail_token_expiry",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "users",
+      "name": "Users with Gmail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    { "parameters": { "batchSize": 1, "options": {} }, "id": "split", "name": "Split", "type": "n8n-nodes-base.splitInBatches", "typeVersion": 3, "position": [680, 320] },
+    {
+      "parameters": {
+        "jsCode": "// Cross-check: this user must also have an active partner agent config\nconst cfg = $json;\nconst partnerCheck = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/partner_agent_config?user_id=eq.${cfg.user_id}&is_active=eq.true&select=user_id`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n  },\n  json: true,\n});\nif (!partnerCheck.length) return [{ json: { ...cfg, _skip: true } }];\n\n// Refresh access token if needed\nlet accessToken = cfg.gmail_access_token;\nconst expiry = cfg.gmail_token_expiry ? new Date(cfg.gmail_token_expiry).getTime() : 0;\nif (!accessToken || expiry < Date.now() + 30000) {\n  if (!cfg.gmail_refresh_token) return [{ json: { ...cfg, _skip: true } }];\n  const r = await this.helpers.httpRequest({\n    method: 'POST',\n    url: 'https://oauth2.googleapis.com/token',\n    body: new URLSearchParams({\n      client_id: $env.GOOGLE_CLIENT_ID,\n      client_secret: $env.GOOGLE_CLIENT_SECRET,\n      refresh_token: cfg.gmail_refresh_token,\n      grant_type: 'refresh_token',\n    }).toString(),\n    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n    json: true,\n  });\n  accessToken = r.access_token;\n  await this.helpers.httpRequest({\n    method: 'PATCH',\n    url: `https://auth.purama.dev/rest/v1/email_agent_config?user_id=eq.${cfg.user_id}`,\n    headers: {\n      apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n      Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n      'Content-Profile': 'purama_ai',\n      'Content-Type': 'application/json',\n      Prefer: 'return=minimal',\n    },\n    body: { gmail_access_token: accessToken, gmail_token_expiry: new Date(Date.now() + (r.expires_in - 60) * 1000).toISOString() },\n  });\n}\n\n// Pull contacted prospects with email\nconst prospects = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/partner_prospects?user_id=eq.${cfg.user_id}&status=in.(contacted,relance_1,relance_2,relance_3)&has_replied=eq.false&email=not.is.null&select=id,name,email,status,relance_count`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n  },\n  json: true,\n});\nif (!prospects.length) return [{ json: { ...cfg, _skip: true } }];\n\nreturn prospects.map((p) => ({ json: { ...cfg, _accessToken: accessToken, _prospect: p } }));"
+      },
+      "id": "prepare",
+      "name": "Prepare prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://gmail.googleapis.com/gmail/v1/users/me/messages?q=from:{{ $json._prospect.email }} newer_than:7d&maxResults=5",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $json._accessToken }}" }
+          ]
+        }
+      },
+      "id": "search",
+      "name": "Gmail search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Prepare prospects').item.json;\nconst messages = $json.messages || [];\nif (!messages.length) return [];\n// Pull the latest message body\nconst msgRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://gmail.googleapis.com/gmail/v1/users/me/messages/${messages[0].id}?format=full`,\n  headers: { Authorization: `Bearer ${ctx._accessToken}` },\n  json: true,\n});\nfunction findPart(parts, mime) {\n  for (const p of parts || []) {\n    if (p.mimeType === mime && p.body?.data) return p.body.data;\n    if (p.parts) { const r = findPart(p.parts, mime); if (r) return r; }\n  }\n  return null;\n}\nlet body = '';\nif (msgRes.payload?.body?.data) body = msgRes.payload.body.data;\nelse body = findPart(msgRes.payload?.parts, 'text/plain') || findPart(msgRes.payload?.parts, 'text/html') || '';\nif (body) body = Buffer.from(body.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf-8');\nbody = body.replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').slice(0, 3000);\nreturn [{ json: { ...ctx, _body: body, _gmail_msg_id: msgRes.id, _thread_id: msgRes.threadId } }];"
+      },
+      "id": "fetch-body",
+      "name": "Fetch body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 600,\n  \"system\": \"Tu analyses la réponse d'un prospect partenariat. Tu retournes UNIQUEMENT un JSON: {sentiment: positif|neutre|negatif, intent: interested|question|not_interested|unsubscribe|spam, summary: résumé en 1 phrase, suggested_action: send_contract|reply_answer|reply_convince|close|escalate}.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"De: {{ $json._prospect.name }}\\n\\n{{ $json._body }}\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude analyze reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Fetch body').item.json;\nconst raw = $json.content?.[0]?.text || '{}';\nlet a = { sentiment: 'neutre', intent: 'question', summary: '', suggested_action: 'reply_answer' };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); a = { ...a, ...JSON.parse(m ? m[0] : raw) }; } catch(e) {}\nlet newStatus = ctx._prospect.status;\nif (a.intent === 'interested') newStatus = 'interested';\nelse if (a.intent === 'not_interested' || a.intent === 'unsubscribe') newStatus = 'rejected';\nreturn [{ json: { ...ctx, _analysis: a, _new_status: newStatus } }];"
+      },
+      "id": "decide",
+      "name": "Decide",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/partner_prospects?id=eq.{{ $json._prospect.id }}",
+        "method": "PATCH",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"has_replied\": true,\n  \"reply_sentiment\": \"{{ $json._analysis.sentiment }}\",\n  \"reply_summary\": {{ JSON.stringify($json._analysis.summary || '') }},\n  \"status\": \"{{ $json._new_status }}\",\n  \"next_action_at\": null\n}"
+      },
+      "id": "update",
+      "name": "Update prospect",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_id\": \"{{ $('Decide').item.json.user_id }}\",\n  \"agent_type\": \"partner\",\n  \"title\": \"💬 Réponse de {{ $('Decide').item.json._prospect.name }}\",\n  \"body\": \"{{ ($('Decide').item.json._analysis.sentiment === 'positif' ? '🔥 ' : '') + ($('Decide').item.json._analysis.summary || 'Nouvelle réponse').slice(0, 180) }}\",\n  \"action_type\": \"review\",\n  \"action_payload\": { \"prospect_id\": \"{{ $('Decide').item.json._prospect.id }}\" },\n  \"action_url\": \"/dashboard/partner-agent/prospects\",\n  \"priority\": \"{{ $('Decide').item.json._analysis.intent === 'interested' ? 'high' : 'normal' }}\",\n  \"channels\": [\"push\", \"in_app\"]\n}"
+      },
+      "id": "notify",
+      "name": "Push notif",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 320]
+    }
+  ],
+  "connections": {
+    "Every 5min": { "main": [[{ "node": "Users with Gmail", "type": "main", "index": 0 }]] },
+    "Users with Gmail": { "main": [[{ "node": "Split", "type": "main", "index": 0 }]] },
+    "Split": { "main": [[{ "node": "Prepare prospects", "type": "main", "index": 0 }]] },
+    "Prepare prospects": { "main": [[{ "node": "Gmail search", "type": "main", "index": 0 }]] },
+    "Gmail search": { "main": [[{ "node": "Fetch body", "type": "main", "index": 0 }]] },
+    "Fetch body": { "main": [[{ "node": "Claude analyze reply", "type": "main", "index": 0 }]] },
+    "Claude analyze reply": { "main": [[{ "node": "Decide", "type": "main", "index": 0 }]] },
+    "Decide": { "main": [[{ "node": "Update prospect", "type": "main", "index": 0 }]] },
+    "Update prospect": { "main": [[{ "node": "Push notif", "type": "main", "index": 0 }]] }
+  }
+}

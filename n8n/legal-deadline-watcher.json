@@ -1,0 +1,78 @@
+{
+  "name": "Legal Agent — Deadline Watcher",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 8 * * *" }] } },
+      "id": "cron",
+      "name": "Daily 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date(); today.setHours(0,0,0,0);\nconst until = new Date(); until.setDate(until.getDate() + 30);\nreturn [{ json: { today_iso: today.toISOString().slice(0,10), until_iso: until.toISOString().slice(0,10) } }];"
+      },
+      "id": "dates",
+      "name": "Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/legal_cases?prescription_date=gte.{{$json.today_iso}}&prescription_date=lte.{{$json.until_iso}}&status=in.(open,in_progress,waiting)&select=id,user_id,title,prescription_date,prescription_type",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-cases",
+      "name": "Cases approaching prescription",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = Array.isArray($json) ? $json : [];\nconst out = [];\nconst now = new Date(); now.setHours(0,0,0,0);\nfor (const r of rows) {\n  const dl = new Date(r.prescription_date);\n  const days = Math.ceil((dl.getTime() - now.getTime()) / 86400000);\n  if (![30, 14, 7, 3, 1].includes(days)) continue;\n  let priority = 'high';\n  if (days <= 3) priority = 'urgent';\n  out.push({ json: {\n    user_id: r.user_id,\n    agent_type: 'legal',\n    title: `🚨 Prescription dans ${days}j : ${r.title}`,\n    body: `${r.prescription_type || 'Délai de prescription'} le ${new Date(r.prescription_date).toLocaleDateString('fr-FR')}`,\n    action_type: 'review',\n    action_url: '/dashboard/legal-agent/cases',\n    priority,\n    channels: ['push','in_app'],\n  } });\n}\nreturn out;"
+      },
+      "id": "filter",
+      "name": "Filter & format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "send",
+      "name": "Push notif",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    }
+  ],
+  "connections": {
+    "Daily 8am": { "main": [[{ "node": "Window", "type": "main", "index": 0 }]] },
+    "Window": { "main": [[{ "node": "Cases approaching prescription", "type": "main", "index": 0 }]] },
+    "Cases approaching prescription": { "main": [[{ "node": "Filter & format", "type": "main", "index": 0 }]] },
+    "Filter & format": { "main": [[{ "node": "Push notif", "type": "main", "index": 0 }]] }
+  }
+}

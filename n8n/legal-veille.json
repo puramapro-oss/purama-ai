@@ -1,0 +1,132 @@
+{
+  "name": "Legal Agent — Veille Juridique",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 7 * * *" }] } },
+      "id": "cron",
+      "name": "Daily 7am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/legal_agent_config?is_active=eq.true&auto_veille=eq.true&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "users",
+      "name": "Active users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    { "parameters": { "batchSize": 1, "options": {} }, "id": "split", "name": "Split", "type": "n8n-nodes-base.splitInBatches", "typeVersion": 3, "position": [680, 320] },
+    {
+      "parameters": {
+        "url": "https://api.tavily.com/search",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"api_key\": \"{{ $env.TAVILY_API_KEY }}\",\n  \"query\": \"nouvelle loi {{ $json.naf_code || 'PME' }} {{ ($json.expertise_areas || []).join(' ') }} France {{ new Date().getFullYear() }} entreprise obligation\",\n  \"search_depth\": \"advanced\",\n  \"max_results\": 6,\n  \"include_domains\": [\"legifrance.gouv.fr\",\"economie.gouv.fr\",\"impots.gouv.fr\",\"service-public.fr\",\"courdecassation.fr\",\"conseil-etat.fr\"]\n}"
+      },
+      "id": "tavily",
+      "name": "Tavily search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 2500,\n  \"system\": \"Tu es un juriste veilleur français. Tu analyses des résultats de recherche juridique et tu identifies UNIQUEMENT ce qui impacte concrètement le profil utilisateur fourni. Tu retournes UNIQUEMENT un JSON {items: [{title, type, category, severity, summary, impact, action_required, source_url, source_name, reference, effective_date}]}. type: new_law|law_change|jurisprudence|regulation|deadline|alert. severity: info|warning|action_required|urgent. Pas de spéculation, uniquement du concret. Si rien de pertinent, retourne {items: []}.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Profil: {{ $('Split').item.json.user_type }} {{ $('Split').item.json.company_name || '' }}, NAF {{ $('Split').item.json.naf_code || '—' }}, {{ $('Split').item.json.employee_count || 0 }} salariés, domaines: {{ ($('Split').item.json.expertise_areas || []).join(', ') }}\\n\\nRésultats:\\n{{ JSON.stringify($json.results || []).slice(0, 6000) }}\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude analyze",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Split').item.json;\nconst raw = $json.content?.[0]?.text || '{}';\nlet parsed = { items: [] };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); parsed = JSON.parse(m ? m[0] : raw); } catch(e) {}\nreturn (parsed.items || []).map((it) => ({ json: { ...it, user_id: cfg.user_id } }));"
+      },
+      "id": "explode",
+      "name": "Explode items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/legal_veille",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "insert",
+      "name": "Insert veille",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/functions/v1/agent-push-send",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_id\": \"{{ $('Explode items').item.json.user_id }}\",\n  \"agent_type\": \"legal\",\n  \"title\": \"⚖️ {{ $('Explode items').item.json.title }}\",\n  \"body\": \"{{ ($('Explode items').item.json.summary || '').slice(0, 200) }}\",\n  \"action_type\": \"review\",\n  \"action_url\": \"/dashboard/legal-agent/veille\",\n  \"priority\": \"{{ ($('Explode items').item.json.severity === 'urgent' || $('Explode items').item.json.severity === 'action_required') ? 'high' : 'normal' }}\",\n  \"channels\": [\"push\", \"in_app\"]\n}"
+      },
+      "id": "notify",
+      "name": "Push notif",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 320]
+    }
+  ],
+  "connections": {
+    "Daily 7am": { "main": [[{ "node": "Active users", "type": "main", "index": 0 }]] },
+    "Active users": { "main": [[{ "node": "Split", "type": "main", "index": 0 }]] },
+    "Split": { "main": [[{ "node": "Tavily search", "type": "main", "index": 0 }]] },
+    "Tavily search": { "main": [[{ "node": "Claude analyze", "type": "main", "index": 0 }]] },
+    "Claude analyze": { "main": [[{ "node": "Explode items", "type": "main", "index": 0 }]] },
+    "Explode items": { "main": [[{ "node": "Insert veille", "type": "main", "index": 0 }]] },
+    "Insert veille": { "main": [[{ "node": "Push notif", "type": "main", "index": 0 }]] }
+  }
+}

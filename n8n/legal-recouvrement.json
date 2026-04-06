@@ -1,0 +1,117 @@
+{
+  "name": "Legal Agent — Recouvrement Auto",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * *" }] } },
+      "id": "cron",
+      "name": "Daily 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/legal_agent_config?is_active=eq.true&auto_relance_impayes=eq.true&select=user_id,company_name,sender_email:signer_email",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "users",
+      "name": "Eligible users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    { "parameters": { "batchSize": 1, "options": {} }, "id": "split", "name": "Split", "type": "n8n-nodes-base.splitInBatches", "typeVersion": 3, "position": [680, 320] },
+    {
+      "parameters": {
+        "jsCode": "// Pull impayes that need an action today based on their status & due_date\nconst cfg = $json;\nconst now = Date.now();\nconst rows = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/legal_impayes?user_id=eq.${cfg.user_id}&status=in.(overdue,reminder_1,reminder_2,mise_en_demeure)&select=*`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n  },\n  json: true,\n});\nconst out = [];\nfor (const r of rows) {\n  const due = r.due_date ? new Date(r.due_date).getTime() : 0;\n  const ageDays = (now - due) / 86400000;\n  let nextStep = null;\n  if (r.status === 'overdue' && ageDays >= 7) nextStep = 'reminder_1';\n  else if (r.status === 'reminder_1' && ageDays >= 15) nextStep = 'reminder_2';\n  else if (r.status === 'reminder_2' && ageDays >= 30) nextStep = 'mise_en_demeure';\n  else if (r.status === 'mise_en_demeure' && ageDays >= 45) nextStep = 'injonction';\n  if (nextStep) out.push({ json: { ...r, _next: nextStep, _user: cfg } });\n}\nreturn out;"
+      },
+      "id": "due",
+      "name": "Due actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1500,\n  \"system\": \"Tu rédiges des emails de recouvrement français conformes au droit. Pour reminder_1: courtois et amical. Pour reminder_2: ferme avec mention pénalités. Pour mise_en_demeure: format LRAR officiel avec art. L441-10 et L441-6 Code de commerce, intérêts de retard taux légal majoré + indemnité forfaitaire 40€. Tu retournes UNIQUEMENT un JSON {subject, body_html, body_text}.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Étape: {{ $json._next }}\\nDébiteur: {{ $json.debtor_name }}\\nFacture: {{ $json.invoice_number || '—' }} du {{ $json.invoice_date }}\\nMontant: {{ $json.amount }} €\\nÉchéance: {{ $json.due_date }}\\nTaux pénalités: {{ $json.interest_rate }}%\\nCréancier: {{ $json._user.company_name }}\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude redact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.resend.com/emails",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.RESEND_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"{{ $('Due actions').item.json._user.company_name }} <onboarding@resend.dev>\",\n  \"to\": \"{{ $('Due actions').item.json.debtor_email }}\",\n  \"subject\": \"{{ JSON.parse(($json.content[0].text.match(/\\\\{[\\\\s\\\\S]*\\\\}/) || ['{}'])[0]).subject }}\",\n  \"html\": {{ JSON.stringify(JSON.parse(($json.content[0].text.match(/\\{[\\s\\S]*\\}/) || ['{}'])[0]).body_html || '') }}\n}"
+      },
+      "id": "send",
+      "name": "Send email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/legal_impayes?id=eq.{{ $('Due actions').item.json.id }}",
+        "method": "PATCH",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"{{ $('Due actions').item.json._next }}\",\n  \"{{ $('Due actions').item.json._next }}_sent_at\": \"{{ new Date().toISOString() }}\"\n}"
+      },
+      "id": "update",
+      "name": "Update status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 320]
+    }
+  ],
+  "connections": {
+    "Daily 9am": { "main": [[{ "node": "Eligible users", "type": "main", "index": 0 }]] },
+    "Eligible users": { "main": [[{ "node": "Split", "type": "main", "index": 0 }]] },
+    "Split": { "main": [[{ "node": "Due actions", "type": "main", "index": 0 }]] },
+    "Due actions": { "main": [[{ "node": "Claude redact", "type": "main", "index": 0 }]] },
+    "Claude redact": { "main": [[{ "node": "Send email", "type": "main", "index": 0 }]] },
+    "Send email": { "main": [[{ "node": "Update status", "type": "main", "index": 0 }]] }
+  }
+}
