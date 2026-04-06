@@ -1,0 +1,166 @@
+{
+  "name": "Compta Agent — Sync & Categorize",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 4 }] }
+      },
+      "id": "cron",
+      "name": "Every 4 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/compta_agent_config?is_active=eq.true&select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "fetch-users",
+      "name": "Fetch active users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": { "batchSize": 1, "options": {} },
+      "id": "split",
+      "name": "Split users",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Bridge API: list transactions of every account, since last_sync\nconst cfg = $json;\nif (!cfg.bridge_user_uuid) return [{ json: { ...cfg, _skip: true, _txs: [] } }];\nconst auth = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://api.bridgeapi.io/v3/aggregation/authorization/token',\n  headers: {\n    'Client-Id': $env.BRIDGE_CLIENT_ID,\n    'Client-Secret': $env.BRIDGE_CLIENT_SECRET,\n    'Bridge-Version': '2025-01-15',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({ user_uuid: cfg.bridge_user_uuid, external_user_id: cfg.user_id }),\n  json: true,\n});\nconst since = cfg.bridge_last_sync_at || new Date(Date.now() - 30 * 86400 * 1000).toISOString();\nconst txRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://api.bridgeapi.io/v3/aggregation/transactions?since=${encodeURIComponent(since)}&limit=200`,\n  headers: {\n    Authorization: `Bearer ${auth.access_token}`,\n    'Client-Id': $env.BRIDGE_CLIENT_ID,\n    'Client-Secret': $env.BRIDGE_CLIENT_SECRET,\n    'Bridge-Version': '2025-01-15',\n  },\n  json: true,\n});\nreturn [{ json: { ...cfg, _txs: txRes.resources || [] } }];"
+      },
+      "id": "bridge-fetch",
+      "name": "Bridge: list transactions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $json;\nconst out = [];\nfor (const t of (cfg._txs || [])) {\n  out.push({ json: { ...cfg, _tx: t } });\n}\nif (out.length === 0) return [{ json: { ...cfg, _empty: true } }];\nreturn out;"
+      },
+      "id": "explode",
+      "name": "Explode tx",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 320]
+    },
+    {
+      "parameters": {
+        "url": "=https://auth.purama.dev/rest/v1/compta_transactions?user_id=eq.{{$json.user_id}}&bridge_transaction_id=eq.{{$json._tx.id}}&select=id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Accept-Profile", "value": "purama_ai" }
+          ]
+        }
+      },
+      "id": "dedupe",
+      "name": "Already exists?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 320]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.length}}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "if-new",
+      "name": "Is new?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 800,\n  \"system\": \"Tu es un expert-comptable français certifié, spécialisé TPE/PME. Tu analyses des transactions bancaires et tu retournes UNIQUEMENT un JSON valide. Plan comptable français : 60 achats, 61 services ext, 62 autres services, 63 impôts, 64 personnel, 70 ventes. TVA: 20% normal, 10% restau/transport/travaux, 5.5% alimentation/livres/énergie, 2.1% médicaments/presse, 0% export/franchise.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Contexte: {{ JSON.stringify({legal_form: $('Explode tx').item.json.legal_form, fiscal_regime: $('Explode tx').item.json.fiscal_regime, tva_regime: $('Explode tx').item.json.tva_regime, naf: $('Explode tx').item.json.naf_code, zfrr: $('Explode tx').item.json.is_zfrr}) }}\\n\\nTransaction:\\nDate: {{ $('Explode tx').item.json._tx.date }}\\nMontant: {{ $('Explode tx').item.json._tx.amount }} EUR\\nDescription: {{ $('Explode tx').item.json._tx.description }}\\nMarchand: {{ $('Explode tx').item.json._tx.merchant_name }}\\n\\nRetourne JSON: {pcg_account, pcg_label, category, subcategory, tva_rate, tva_amount, ht_amount, tva_deductible, is_cca, is_ik, is_amortizable, counterpart_name, tags, confidence, reasoning, is_anomaly}\"\n    }\n  ]\n}"
+      },
+      "id": "claude",
+      "name": "Claude categorize",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Explode tx').item.json;\nconst tx = ctx._tx;\nconst raw = $json.content?.[0]?.text || '{}';\nlet a = {};\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); a = JSON.parse(m ? m[0] : raw); } catch { a = { confidence: 0, reasoning: 'parse error' }; }\nreturn [{ json: {\n  user_id: ctx.user_id,\n  bridge_transaction_id: tx.id,\n  bridge_account_id: tx.account_id,\n  date: tx.date,\n  description: tx.description || tx.clean_description || '',\n  raw_description: tx.description || '',\n  amount: tx.amount,\n  type: tx.amount > 0 ? 'credit' : 'debit',\n  category: a.category || null,\n  subcategory: a.subcategory || null,\n  pcg_account: a.pcg_account || null,\n  pcg_label: a.pcg_label || null,\n  ai_confidence: a.confidence || 0,\n  ai_reasoning: a.reasoning || '',\n  tva_rate: a.tva_rate ?? null,\n  tva_amount: a.tva_amount ?? null,\n  ht_amount: a.ht_amount ?? null,\n  tva_deductible: !!a.tva_deductible,\n  is_cca: !!a.is_cca,\n  is_ik: !!a.is_ik,\n  is_amortizable: !!a.is_amortizable,\n  counterpart_name: a.counterpart_name || tx.merchant_name || null,\n  tags: a.tags || [],\n  is_anomaly: !!a.is_anomaly,\n} }];"
+      },
+      "id": "build-row",
+      "name": "Build row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 240]
+    },
+    {
+      "parameters": {
+        "url": "https://auth.purama.dev/rest/v1/compta_transactions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
+            { "name": "Content-Profile", "value": "purama_ai" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "insert",
+      "name": "Insert transaction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 240]
+    }
+  ],
+  "connections": {
+    "Every 4 hours": { "main": [[{ "node": "Fetch active users", "type": "main", "index": 0 }]] },
+    "Fetch active users": { "main": [[{ "node": "Split users", "type": "main", "index": 0 }]] },
+    "Split users": { "main": [[{ "node": "Bridge: list transactions", "type": "main", "index": 0 }]] },
+    "Bridge: list transactions": { "main": [[{ "node": "Explode tx", "type": "main", "index": 0 }]] },
+    "Explode tx": { "main": [[{ "node": "Already exists?", "type": "main", "index": 0 }]] },
+    "Already exists?": { "main": [[{ "node": "Is new?", "type": "main", "index": 0 }]] },
+    "Is new?": { "main": [[{ "node": "Claude categorize", "type": "main", "index": 0 }], []] },
+    "Claude categorize": { "main": [[{ "node": "Build row", "type": "main", "index": 0 }]] },
+    "Build row": { "main": [[{ "node": "Insert transaction", "type": "main", "index": 0 }]] }
+  }
+}

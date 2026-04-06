@@ -1,0 +1,33 @@
+{
+  "name": "Purama AI",
+  "short_name": "Purama",
+  "description": "Vos agents IA autonomes — Email, Compta, Social",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0A0F",
+  "theme_color": "#8B5CF6",
+  "categories": ["productivity", "finance", "business"],
+  "lang": "fr",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "any", "type": "image/x-icon" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agent Compta",
+      "short_name": "Compta",
+      "url": "/dashboard/compta-agent",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    },
+    {
+      "name": "Agent Email",
+      "short_name": "Email",
+      "url": "/dashboard/email-agent",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    }
+  ]
+}
