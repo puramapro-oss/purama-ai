@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Loader2, Plus, MessageSquare, Scale, BookOpen } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Plus, MessageSquare, Scale, BookOpen, Headphones } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,15 @@ import {
   sendChatMessage, listChatSessions, listChatMessages, newSessionId,
   type LegalChatMessage,
 } from '@/lib/legal';
+import { useVoice } from '@/hooks/useVoice';
+import { MicButton } from '@/components/voice/MicButton';
+import { SpeakButton } from '@/components/voice/SpeakButton';
+import { VoiceMode } from '@/components/voice/VoiceMode';
 
 export default function LegalAgentChat() {
   const { user } = useAuth();
+  const voice = useVoice();
+  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string>('');
   const [messages, setMessages] = useState<LegalChatMessage[]>([]);
   const [sessions, setSessions] = useState<Array<{ session_id: string; title: string; created_at: string }>>([]);
@@ -38,12 +44,8 @@ export default function LegalAgentChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || sending || !user) return;
-    const userMsg = input.trim();
-    setInput('');
-    setSending(true);
-    // Optimistic UI
+  const submitMessage = async (userMsg: string): Promise<string | null> => {
+    if (!userMsg.trim() || !user) return null;
     const tempUser: LegalChatMessage = {
       id: 'tmp-' + Date.now(),
       user_id: user.id,
@@ -69,13 +71,21 @@ export default function LegalAgentChat() {
         sources_cited: result.sources,
       };
       setMessages(prev => [...prev, assistantMsg]);
-      // Refresh sessions list to surface a freshly-named one
       listChatSessions(user.id).then(setSessions).catch(() => {});
+      return result.reply;
     } catch (e) {
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
-      setInput(userMsg);
-    } finally { setSending(false); }
+      return null;
+    }
+  };
+
+  const handleSend = async () => {
+    if (!input.trim() || sending) return;
+    const userMsg = input.trim();
+    setInput('');
+    setSending(true);
+    try { await submitMessage(userMsg); } finally { setSending(false); }
   };
 
   const newSession = () => {
@@ -93,9 +103,19 @@ export default function LegalAgentChat() {
           <h1 className="text-2xl font-orbitron font-bold text-foreground flex items-center gap-2">
             <Scale className="w-6 h-6 text-accent-purple" /> Chat juridique
           </h1>
-          <Button variant="outline" size="sm" onClick={newSession}>
-            <Plus className="w-4 h-4 mr-2" /> Nouvelle conversation
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setVoiceModeOpen(true)}
+              className="border-accent-purple/40 text-accent-purple hover:bg-accent-purple/10"
+            >
+              <Headphones className="w-4 h-4 mr-2" /> Mode vocal
+            </Button>
+            <Button variant="outline" size="sm" onClick={newSession}>
+              <Plus className="w-4 h-4 mr-2" /> Nouvelle
+            </Button>
+          </div>
         </div>
       </motion.div>
 
@@ -170,6 +190,12 @@ export default function LegalAgentChat() {
                     <div className="text-sm text-foreground prose prose-sm prose-invert max-w-none prose-p:my-1 prose-headings:mt-3 prose-headings:mb-1">
                       <ReactMarkdown>{m.content}</ReactMarkdown>
                     </div>
+                    {m.role === 'assistant' && (
+                      <div className="mt-2 flex items-center gap-1.5">
+                        <SpeakButton voice={voice} text={m.content} />
+                        <span className="text-[10px] text-muted-foreground">Écouter</span>
+                      </div>
+                    )}
                     {m.sources_cited && m.sources_cited.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-border/50">
                         <p className="text-[10px] uppercase text-muted-foreground mb-1 flex items-center gap-1">
@@ -205,7 +231,12 @@ export default function LegalAgentChat() {
           </div>
 
           <div className="border-t border-border p-3">
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-end">
+              <MicButton
+                voice={voice}
+                onTranscript={(t) => setInput(prev => (prev ? prev + ' ' : '') + t)}
+                disabled={sending}
+              />
               <Textarea
                 value={input}
                 onChange={e => setInput(e.target.value)}
@@ -230,6 +261,16 @@ export default function LegalAgentChat() {
           </div>
         </Card>
       </div>
+
+      <VoiceMode
+        open={voiceModeOpen}
+        onClose={() => setVoiceModeOpen(false)}
+        voice={voice}
+        agentName="Agent Juridique"
+        agentEmoji="⚖️"
+        agentColor="#6D28D9"
+        onSend={async (text) => submitMessage(text)}
+      />
     </div>
   );
 }

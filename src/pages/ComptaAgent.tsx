@@ -22,6 +22,7 @@ import {
   DECLARATION_META, STATUS_META,
   type ComptaConfig, type ComptaTransaction, type ComptaDeclaration,
 } from '@/lib/compta';
+import { AgentChatTab } from '@/components/voice/AgentChatTab';
 
 interface Stats {
   monthRevenue: number;
@@ -357,6 +358,20 @@ export default function ComptaAgent() {
           )}
         </CardContent>
       </Card>
+
+      {/* Chat with the Compta Agent */}
+      <AgentChatTab
+        agentType="compta"
+        agentName="Agent Comptable"
+        agentEmoji="📊"
+        agentColor="#0EA5E9"
+        suggestions={[
+          'Calcule ma TVA collectée du mois',
+          'Quelles sont mes obligations URSSAF en SASU ?',
+          'Comment optimiser mon IS légalement ?',
+          'Explique-moi la franchise art. 293B',
+        ]}
+      />
     </div>
   );
 }

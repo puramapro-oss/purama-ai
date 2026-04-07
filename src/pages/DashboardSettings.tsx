@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Copy, RefreshCw } from 'lucide-react';
+import { VoiceSettingsCard } from '@/components/voice/VoiceSettingsCard';
 
 export default function DashboardSettings() {
   const { user, signOut } = useAuth();
@@ -37,6 +38,9 @@ export default function DashboardSettings() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Voice */}
+      <VoiceSettingsCard />
 
       {/* Notifications */}
       <Card className="bg-card border-border">

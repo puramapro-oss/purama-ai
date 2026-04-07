@@ -20,6 +20,7 @@ import {
   AUTONOMY_LEVELS, ACTION_META, CATEGORY_META,
   type EmailAgentConfig, type EmailAgentLog, type AutonomyLevel,
 } from '@/lib/email-agent';
+import { AgentChatTab } from '@/components/voice/AgentChatTab';
 
 export default function EmailAgent() {
   const { user } = useAuth();
@@ -312,6 +313,20 @@ export default function EmailAgent() {
         <QuickLink to="/dashboard/email-agent/memory" icon={Users} label="Contacts" />
         <QuickLink to="/dashboard/email-agent/templates" icon={BookOpen} label="Templates" />
       </div>
+
+      {/* Chat with the Email Agent */}
+      <AgentChatTab
+        agentType="email"
+        agentName="Agent Email"
+        agentEmoji="📬"
+        agentColor="#06B6D4"
+        suggestions={[
+          'Rédige un email de relance pour une facture impayée',
+          'Comment trier mes emails plus efficacement ?',
+          'Crée un template de prospection commerciale',
+          'Analyse le ton de mes derniers échanges clients',
+        ]}
+      />
 
       {/* Activity feed */}
       <Card className="bg-card border-border" data-tuto="email-feed">

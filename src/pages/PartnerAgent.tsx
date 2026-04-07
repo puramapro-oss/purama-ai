@@ -19,6 +19,7 @@ import {
   PIPELINE_COLUMNS, STATUS_META,
   type PartnerConfig, type PartnerProspect, type PartnerActive,
 } from '@/lib/partner';
+import { AgentChatTab } from '@/components/voice/AgentChatTab';
 
 export default function PartnerAgent() {
   const { user } = useAuth();
@@ -296,6 +297,20 @@ export default function PartnerAgent() {
           </CardContent>
         </Card>
       )}
+
+      {/* Chat with the Partner Agent */}
+      <AgentChatTab
+        agentType="partner"
+        agentName="Agent Partenariats"
+        agentEmoji="🤝"
+        agentColor="#A855F7"
+        suggestions={[
+          'Écris-moi un cold email pour un partenaire SaaS B2B',
+          'Quels KPI suivre pour mon programme d\'affiliation ?',
+          'Comment qualifier un lead en MEDDIC ?',
+          'Propose une grille de commission pour des partenaires premium',
+        ]}
+      />
     </div>
   );
 }

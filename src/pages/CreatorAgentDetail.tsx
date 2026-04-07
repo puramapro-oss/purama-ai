@@ -3,8 +3,12 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Send, Settings, MessageSquare, Activity,
-  Trash2, Save, Power, Bot, AlertCircle,
+  Trash2, Save, Power, Bot, AlertCircle, Headphones,
 } from 'lucide-react';
+import { useVoice } from '@/hooks/useVoice';
+import { MicButton } from '@/components/voice/MicButton';
+import { SpeakButton } from '@/components/voice/SpeakButton';
+import { VoiceMode } from '@/components/voice/VoiceMode';
 import ReactMarkdown from 'react-markdown';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,6 +40,8 @@ export default function CreatorAgentDetail() {
   const nav = useNavigate();
   const [agent, setAgent] = useState<CreatorAgent | null>(null);
   const [loading, setLoading] = useState(true);
+  const voice = useVoice();
+  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
 
   // Chat
   const [sessionId, setSessionId] = useState<string>('');
@@ -79,11 +85,8 @@ export default function CreatorAgentDetail() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendChat = async () => {
-    if (!chatInput.trim() || sending || !id || !user) return;
-    const msg = chatInput.trim();
-    setChatInput('');
-    setSending(true);
+  const submitMessage = async (msg: string): Promise<string | null> => {
+    if (!msg.trim() || !id || !user) return null;
     const tempUser: CreatorAgentChatMessage = {
       id: 'tmp-' + Date.now(),
       user_id: user.id,
@@ -98,11 +101,20 @@ export default function CreatorAgentDetail() {
     try {
       const res = await chatWithAgent(id, sessionId, msg);
       setMessages(prev => [...prev, { ...tempUser, id: 'tmp-asst-' + Date.now(), role: 'assistant', content: res.reply, tokens: res.tokens }]);
+      return res.reply;
     } catch (e) {
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
-      setChatInput(msg);
-    } finally { setSending(false); }
+      return null;
+    }
+  };
+
+  const handleSendChat = async () => {
+    if (!chatInput.trim() || sending) return;
+    const msg = chatInput.trim();
+    setChatInput('');
+    setSending(true);
+    try { await submitMessage(msg); } finally { setSending(false); }
   };
 
   const handleSave = async () => {
@@ -206,6 +218,12 @@ export default function CreatorAgentDetail() {
                         <ReactMarkdown>{m.content}</ReactMarkdown>
                       </div>
                     </div>
+                    {m.role === 'assistant' && (
+                      <div className="mt-1.5 flex items-center gap-1.5">
+                        <SpeakButton voice={voice} text={m.content} />
+                        <span className="text-[10px] text-muted-foreground">Écouter</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -219,7 +237,24 @@ export default function CreatorAgentDetail() {
               )}
             </div>
             <div className="border-t border-border p-3">
-              <div className="flex gap-2">
+              <div className="mb-2 flex justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setVoiceModeOpen(true)}
+                  disabled={isReadOnly}
+                  className="border-accent-purple/40 text-accent-purple hover:bg-accent-purple/10"
+                >
+                  <Headphones className="w-4 h-4 mr-1.5" /> Mode vocal
+                </Button>
+              </div>
+              <div className="flex gap-2 items-end">
+                <MicButton
+                  voice={voice}
+                  onTranscript={(t) => setChatInput(prev => (prev ? prev + ' ' : '') + t)}
+                  disabled={sending || isReadOnly}
+                />
                 <Textarea
                   value={chatInput}
                   onChange={e => setChatInput(e.target.value)}
@@ -389,6 +424,16 @@ export default function CreatorAgentDetail() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <VoiceMode
+        open={voiceModeOpen}
+        onClose={() => setVoiceModeOpen(false)}
+        voice={voice}
+        agentName={agent.name}
+        agentEmoji={agent.emoji}
+        agentColor="#8B5CF6"
+        onSend={async (text) => submitMessage(text)}
+      />
     </div>
   );
 }
