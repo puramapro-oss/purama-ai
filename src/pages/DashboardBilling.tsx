@@ -2,104 +2,250 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Link } from 'react-router-dom';
+import { Loader2, ExternalLink, Crown, Receipt } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { useSubscription, PLANS } from '@/hooks/useSubscription';
+import { useAgents } from '@/hooks/useAgents';
+import { useAgentSelections } from '@/hooks/useAgentSelections';
+import { useAgentStats } from '@/hooks/useAgentStats';
+import { supabase } from '@/integrations/supabase/client';
 
-const credits = [
-  { date: '27 fév 2026', action: 'Création agent ShopAssist', used: 1, balance: 18 },
-  { date: '25 fév 2026', action: 'Création agent LegalBot', used: 1, balance: 19 },
-  { date: '20 fév 2026', action: 'Régénération SupportPro', used: 1, balance: 20 },
-  { date: '15 fév 2026', action: 'Création agent RecruitHelper', used: 1, balance: 21 },
-];
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 
-const packs = [
-  { amount: 10, price: '4,90€', perCredit: '0,49€' },
-  { amount: 50, price: '19,90€', perCredit: '0,40€' },
-  { amount: 100, price: '34,90€', perCredit: '0,35€' },
-  { amount: 500, price: '149€', perCredit: '0,30€' },
-];
+const formatDateTime = (iso: string) =>
+  new Date(iso).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
 export default function DashboardBilling() {
+  const { planType, subscriptionEnd, isLoading: subLoading, isPremium, isStarter } =
+    useSubscription();
+  const { data: agents = [] } = useAgents();
+  const { selectedAgentIds, maxSelections } = useAgentSelections();
+  const { raw, totalThisMonth, statsByAgent } = useAgentStats();
+
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const planInfo =
+    planType === 'premium' ? PLANS.premium : planType === 'starter' ? PLANS.starter : null;
+
+  const planLabel = isPremium ? 'PREMIUM' : isStarter ? 'STARTER' : 'GRATUIT';
+  const planPrice = planInfo ? `${planInfo.price}€` : '0€';
+  const agentCap = isPremium ? agents.length : isStarter ? maxSelections : 0;
+  const usedAgents = selectedAgentIds.length;
+
+  const openCustomerPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('URL du portail introuvable');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Impossible d'ouvrir le portail de facturation", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
+  // Recent usage history (top 20)
+  const history = raw.slice(0, 20);
+
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-orbitron font-bold text-foreground">Abonnement & Crédits</h1>
+      <h1 className="text-2xl font-orbitron font-bold text-foreground">Abonnement & Utilisation</h1>
 
       {/* Current Plan */}
-      <Card className="bg-card border-accent-purple/30" style={{ boxShadow: '0 0 20px rgba(124,58,237,0.15)' }}>
+      <Card
+        className="bg-card border-accent-purple/30"
+        style={{ boxShadow: '0 0 20px rgba(124,58,237,0.15)' }}
+      >
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
-              <span className="px-3 py-1 rounded-full bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground text-xs font-bold">⭐ PROFESSIONNEL</span>
-              <h2 className="text-3xl font-orbitron font-bold text-foreground mt-3">19€<span className="text-lg text-muted-foreground">/mois</span></h2>
-              <p className="text-sm text-muted-foreground mt-1">Renouvellement le 15 mars 2026</p>
+              <span className="px-3 py-1 rounded-full bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground text-xs font-bold flex items-center gap-1 w-fit">
+                {isPremium && <Crown className="w-3 h-3" />} {planLabel}
+              </span>
+              <h2 className="text-3xl font-orbitron font-bold text-foreground mt-3">
+                {subLoading ? (
+                  <Loader2 className="w-7 h-7 animate-spin" />
+                ) : (
+                  <>
+                    {planPrice}
+                    <span className="text-lg text-muted-foreground">/mois</span>
+                  </>
+                )}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {subscriptionEnd
+                  ? `Renouvellement le ${formatDate(subscriptionEnd)}`
+                  : planType === 'none'
+                    ? 'Aucun abonnement actif'
+                    : 'Date de renouvellement indisponible'}
+              </p>
             </div>
-            <Link to="/pricing" className="btn-secondary text-sm px-4 py-2">Changer de plan →</Link>
+            <div className="flex flex-col gap-2">
+              <Link to="/pricing" className="btn-secondary text-sm px-4 py-2 text-center">
+                Changer de plan →
+              </Link>
+              {planType !== 'none' && (
+                <button
+                  onClick={openCustomerPortal}
+                  disabled={portalLoading}
+                  className="btn-secondary text-xs px-4 py-2 flex items-center justify-center gap-1.5 disabled:opacity-60"
+                >
+                  {portalLoading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <ExternalLink className="w-3 h-3" />
+                  )}
+                  Portail Stripe
+                </button>
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Agents (3/5)</p>
-              <Progress value={60} className="h-2" />
+              <p className="text-xs text-muted-foreground mb-1">
+                Agents ({usedAgents}/{agentCap || '—'})
+              </p>
+              <Progress
+                value={agentCap > 0 ? (usedAgents / agentCap) * 100 : 0}
+                className="h-2"
+              />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Conversations (1 247/2 000)</p>
-              <Progress value={62} className="h-2" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Crédits (18/30)</p>
-              <Progress value={60} className="h-2" />
+              <p className="text-xs text-muted-foreground mb-1">
+                Exécutions ce mois ({totalThisMonth})
+              </p>
+              <Progress value={Math.min((totalThisMonth / 100) * 100, 100)} className="h-2" />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Credit History */}
+      {/* Usage History */}
       <div>
-        <h3 className="font-orbitron font-bold text-foreground mb-4">Historique des crédits</h3>
+        <h3 className="font-orbitron font-bold text-foreground mb-4 flex items-center gap-2">
+          <Receipt className="w-4 h-4" />
+          Historique des exécutions
+        </h3>
         <Card className="bg-card border-border">
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 text-muted-foreground font-medium">Date</th>
-                    <th className="text-left py-3 px-4 text-muted-foreground font-medium">Action</th>
-                    <th className="text-center py-3 px-4 text-muted-foreground font-medium">Crédits</th>
-                    <th className="text-center py-3 px-4 text-muted-foreground font-medium">Solde</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {credits.map((c, i) => (
-                    <tr key={i} className="border-b border-border/30">
-                      <td className="py-3 px-4 text-foreground/70">{c.date}</td>
-                      <td className="py-3 px-4 text-foreground/80">{c.action}</td>
-                      <td className="text-center py-3 px-4 text-destructive">-{c.used}</td>
-                      <td className="text-center py-3 px-4 text-foreground">{c.balance}</td>
+            {history.length === 0 ? (
+              <div className="p-8 text-center text-sm text-muted-foreground">
+                Aucune exécution enregistrée pour le moment.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-4 text-muted-foreground font-medium">
+                        Date
+                      </th>
+                      <th className="text-left py-3 px-4 text-muted-foreground font-medium">
+                        Agent
+                      </th>
+                      <th className="text-left py-3 px-4 text-muted-foreground font-medium">
+                        Action
+                      </th>
+                      <th className="text-center py-3 px-4 text-muted-foreground font-medium">
+                        Statut
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {history.map((row) => {
+                      const agent = agents.find((a) => a.id === row.agent_id);
+                      return (
+                        <tr key={row.id} className="border-b border-border/30">
+                          <td className="py-3 px-4 text-foreground/70">
+                            {formatDateTime(row.created_at)}
+                          </td>
+                          <td className="py-3 px-4 text-foreground/80">
+                            {agent?.name ?? 'Agent inconnu'}
+                          </td>
+                          <td className="py-3 px-4 text-foreground/70 capitalize">
+                            {row.action_type}
+                          </td>
+                          <td className="text-center py-3 px-4">
+                            <span
+                              className={`text-xs font-medium ${
+                                row.status === 'completed'
+                                  ? 'text-accent-emerald'
+                                  : row.status === 'pending'
+                                    ? 'text-yellow-500'
+                                    : 'text-destructive'
+                              }`}
+                            >
+                              {row.status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Credit Packs */}
-      <div>
-        <h3 className="font-orbitron font-bold text-foreground mb-4">Packs de crédits</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {packs.map((pack, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-              <Card className="bg-card border-border hover:border-accent-cyan/30 transition-all cursor-pointer">
-                <CardContent className="p-5 text-center">
-                  <p className="text-2xl font-orbitron font-bold text-foreground">{pack.amount}</p>
-                  <p className="text-xs text-muted-foreground mb-2">crédits</p>
-                  <p className="text-lg font-semibold text-accent-cyan">{pack.price}</p>
-                  <p className="text-xs text-muted-foreground">{pack.perCredit}/crédit</p>
-                  <button className="btn-secondary text-xs mt-3 px-3 py-1.5 w-full">Acheter</button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+      {/* Per-agent breakdown */}
+      {selectedAgentIds.length > 0 && (
+        <div>
+          <h3 className="font-orbitron font-bold text-foreground mb-4">
+            Utilisation par agent (ce mois)
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {selectedAgentIds.map((id, i) => {
+              const agent = agents.find((a) => a.id === id);
+              const stat = statsByAgent.get(id);
+              if (!agent) return null;
+              return (
+                <motion.div
+                  key={id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.05, 0.4) }}
+                >
+                  <Card className="bg-card border-border">
+                    <CardContent className="p-5 text-center">
+                      <div className="text-2xl mb-1">{agent.icon || '🤖'}</div>
+                      <p className="text-xs text-foreground font-semibold truncate">
+                        {agent.name}
+                      </p>
+                      <p className="text-2xl font-orbitron font-bold text-accent-cyan mt-2">
+                        {stat?.thisMonth ?? 0}
+                      </p>
+                      <p className="text-xs text-muted-foreground">exécutions</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

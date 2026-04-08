@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/hooks/useAuth';
@@ -37,7 +37,6 @@ import PuramaCompta from '@/pages/PuramaCompta';
 import SocialAgent from '@/pages/SocialAgent';
 import DashboardOverview from '@/pages/DashboardOverview';
 import DashboardAgents from '@/pages/DashboardAgents';
-import DashboardAutoAgents from '@/pages/DashboardAutoAgents';
 import DashboardAnalytics from '@/pages/DashboardAnalytics';
 import DashboardBilling from '@/pages/DashboardBilling';
 import DashboardSettings from '@/pages/DashboardSettings';
@@ -107,7 +106,7 @@ export default function App() {
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
             <Route path="/dashboard/agents" element={<DashboardRoute><DashboardAgents /></DashboardRoute>} />
-            <Route path="/dashboard/auto-agents" element={<DashboardRoute><DashboardAutoAgents /></DashboardRoute>} />
+            <Route path="/dashboard/auto-agents" element={<Navigate to="/dashboard/agents" replace />} />
             <Route path="/dashboard/analytics" element={<DashboardRoute><DashboardAnalytics /></DashboardRoute>} />
             <Route path="/dashboard/billing" element={<DashboardRoute><DashboardBilling /></DashboardRoute>} />
             <Route path="/dashboard/settings" element={<DashboardRoute><DashboardSettings /></DashboardRoute>} />
@@ -140,8 +139,8 @@ export default function App() {
             <Route path="/dashboard/creator-agent/templates" element={<DashboardRoute><CreatorAgentTemplates /></DashboardRoute>} />
             <Route path="/dashboard/creator-agent/runs" element={<DashboardRoute><CreatorAgentRuns /></DashboardRoute>} />
             <Route path="/dashboard/creator-agent/:id" element={<DashboardRoute><CreatorAgentDetail /></DashboardRoute>} />
-            <Route path="/dashboard/sites" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Sites</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
-            <Route path="/dashboard/apps" element={<DashboardRoute><div className="text-foreground"><h1 className="text-2xl font-orbitron font-bold mb-4">Mes Applications</h1><p className="text-muted-foreground">Fonctionnalité bientôt disponible.</p></div></DashboardRoute>} />
+            <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard/apps" element={<Navigate to="/dashboard" replace />} />
 
             <Route path="/agent/:slug" element={<ProtectedRoute><AgentDetail /></ProtectedRoute>} />
             <Route path="/my-agents" element={<ProtectedRoute><MyAgents /></ProtectedRoute>} />
