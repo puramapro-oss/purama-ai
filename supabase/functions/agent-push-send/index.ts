@@ -115,13 +115,11 @@ Deno.serve(async (req) => {
 
       for (const sub of subs ?? []) {
         try {
-          // deno-lint-ignore no-explicit-any
-          await webpush.sendNotification(sub.subscription as any, payload);
+          await webpush.sendNotification(sub.subscription as unknown as Parameters<typeof webpush.sendNotification>[0], payload);
           pushSent++;
         } catch (e) {
           pushFailed++;
-          // deno-lint-ignore no-explicit-any
-          const status = (e as any)?.statusCode;
+          const status = (e as { statusCode?: number })?.statusCode;
           if (status === 404 || status === 410) {
             // Subscription is gone — deactivate
             await admin

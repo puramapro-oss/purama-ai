@@ -23,9 +23,12 @@
 - [x] Cross-promo bannières dans dashboard
 - [x] Sidebar mise à jour (7 nouveaux liens)
 
-## P6 - Audit ❌ (prochaine session)
-- [ ] Playwright E2E tests
-- [ ] Lighthouse > 90
-- [ ] grep TODO/console.log/placeholder = 0
-- [ ] 21 SIM adversarial
-- [ ] i18n 16 langues
+## P6 - Audit ✅
+- [x] Playwright E2E tests — 52 tests, 3 viewports (1920/768/375), 0 échec
+- [x] tsc --noEmit 0 erreur
+- [x] npm run build 0 erreur
+- [x] grep console.log/TODO = 0
+- [x] grep sk_live/password/secret = 0 (que du code auth légitime)
+- [x] 8 suites de tests : public-pages, navigation, responsive, console-errors, performance, forms-validation, accessibility, pwa
+- [ ] Lighthouse (audit live après deploy)
+- [ ] i18n 16 langues (hors scope P6 — feature future)

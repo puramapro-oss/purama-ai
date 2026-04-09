@@ -54,7 +54,7 @@ export default function AdminDashboard() {
     totalSubscriptions: 0,
     activeAgents: 0,
   });
-  const [recentUsers, setRecentUsers] = useState<any[]>([]);
+  const [recentUsers, setRecentUsers] = useState<Array<{ id: string; email?: string | null; full_name?: string | null; created_at?: string }>>([]);
   const [loading, setLoading] = useState(true);
 
   // Security check

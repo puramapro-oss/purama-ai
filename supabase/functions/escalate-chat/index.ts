@@ -48,7 +48,7 @@ serve(async (req) => {
         </blockquote>
         <h3>Historique de la conversation:</h3>
         <div style="background: #fafafa; padding: 15px; border-radius: 8px;">
-          ${conversationHistory?.map((msg: any) => `
+          ${conversationHistory?.map((msg: { role: string; content: string }) => `
             <p><strong>${msg.role === "user" ? "👤 Utilisateur" : "🤖 Purama AI"}:</strong> ${msg.content}</p>
           `).join("") || "Pas d'historique disponible"}
         </div>

@@ -224,7 +224,7 @@ export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAg
           </div>
         );
 
-      case 'multiselect':
+      case 'multiselect': {
         const selected = selectedMulti[field.name] || [];
         return (
           <div key={field.name} className="space-y-2">
@@ -260,6 +260,7 @@ export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAg
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         );
+      }
 
       case 'date':
         return (

@@ -169,14 +169,15 @@ export function validateAgentFormData(
 
     // Type-specific validation
     switch (field.type) {
-      case 'email':
+      case 'email': {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (typeof value === 'string' && !emailRegex.test(value)) {
           errors[field.name] = 'Adresse email invalide';
         }
         break;
+      }
 
-      case 'number':
+      case 'number': {
         const numValue = typeof value === 'string' ? parseFloat(value) : value;
         if (typeof numValue !== 'number' || isNaN(numValue)) {
           errors[field.name] = 'Valeur numérique invalide';
@@ -189,6 +190,7 @@ export function validateAgentFormData(
           }
         }
         break;
+      }
 
       case 'text':
       case 'textarea':

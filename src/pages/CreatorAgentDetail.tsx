@@ -386,7 +386,7 @@ export default function CreatorAgentDetail() {
                     <div>
                       <Label className="text-xs">Input par défaut</Label>
                       <Input value={JSON.stringify(agent.schedule_input ?? {})} onChange={e => {
-                        try { setAgent({ ...agent, schedule_input: JSON.parse(e.target.value) }); } catch {}
+                        try { setAgent({ ...agent, schedule_input: JSON.parse(e.target.value) }); } catch { /* ignore invalid JSON while typing */ }
                       }} className="mt-1.5 font-mono text-xs" disabled={isReadOnly} />
                     </div>
                   </div>

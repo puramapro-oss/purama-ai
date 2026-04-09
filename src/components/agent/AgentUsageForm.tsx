@@ -455,28 +455,24 @@ export function AgentUsageForm({ agent }: AgentUsageFormProps) {
     );
   };
 
-  // TEMPORARY BYPASS: Skip all subscription checks for testing
-  // TODO: Remove this bypass and uncomment the subscription checks below when ready
-  const bypassSubscriptionCheck = true;
+  // Loading state
+  if (subLoading || selectionsLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="futuristic-card p-8"
+      >
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </motion.div>
+    );
+  }
 
-  // Loading state - bypassed for testing
-  // if (subLoading || selectionsLoading) {
-  //   return (
-  //     <motion.div
-  //       initial={{ opacity: 0, y: 20 }}
-  //       animate={{ opacity: 1, y: 0 }}
-  //       transition={{ delay: 0.15 }}
-  //       className="futuristic-card p-8"
-  //     >
-  //       <div className="flex items-center justify-center py-12">
-  //         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-  //       </div>
-  //     </motion.div>
-  //   );
-  // }
-
-  // No subscription - show subscribe message - BYPASSED FOR TESTING
-  if (!bypassSubscriptionCheck && !hasSubscription) {
+  // No subscription - show subscribe message
+  if (!hasSubscription) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -517,8 +513,8 @@ export function AgentUsageForm({ agent }: AgentUsageFormProps) {
     );
   }
 
-  // Starter plan but agent not in selection - BYPASSED FOR TESTING
-  if (!bypassSubscriptionCheck && isStarter && !isAgentInSelection) {
+  // Starter plan but agent not in selection
+  if (isStarter && !isAgentInSelection) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}

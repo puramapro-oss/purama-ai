@@ -137,7 +137,7 @@ Domaines suivis : ${(cfg.expertise_areas ?? []).join(", ")}
         sources.push({ type: "law", reference: m[1], url: m[2] });
       }
       // Also pick plain references like "- Art. L1234-9"
-      const plainRe = /^-\s+([^\[\n]+)$/gm;
+      const plainRe = /^-\s+([^[\n]+)$/gm;
       while ((m = plainRe.exec(sourcesMatch[1])) !== null) {
         const ref = m[1].trim();
         if (ref && !sources.find(s => s.reference === ref)) {

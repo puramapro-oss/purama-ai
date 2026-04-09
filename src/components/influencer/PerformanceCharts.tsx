@@ -58,15 +58,16 @@ export function PerformanceCharts({ commissions }: PerformanceChartsProps) {
 
   const hasData = commissions.length > 0;
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  type TooltipEntry = { color?: string; name?: string; value?: number; dataKey?: string; payload?: { fullMonth?: string } };
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: TooltipEntry[] }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
           <p className="font-medium text-foreground capitalize mb-2">{payload[0]?.payload?.fullMonth}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry: TooltipEntry, index: number) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.name}: {entry.name.includes('€') || entry.dataKey.includes('revenue') || entry.dataKey.includes('pending') || entry.dataKey.includes('paid') 
-                ? `${entry.value.toFixed(2)}€` 
+              {entry.name}: {(entry.name?.includes('€') || entry.dataKey?.includes('revenue') || entry.dataKey?.includes('pending') || entry.dataKey?.includes('paid'))
+                ? `${entry.value?.toFixed(2)}€`
                 : entry.value}
             </p>
           ))}

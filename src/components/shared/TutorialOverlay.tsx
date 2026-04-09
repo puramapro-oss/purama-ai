@@ -136,7 +136,7 @@ export function TutorialOverlay({
   // Hint card position
   const cardWidth = 360;
   const cardOffset = 24;
-  let cardStyle: React.CSSProperties = {
+  const cardStyle: React.CSSProperties = {
     position: 'fixed',
     width: cardWidth,
     maxWidth: 'calc(100vw - 32px)',

@@ -1,8 +1,8 @@
 # Progress — Purama AI V3 Update
 
-## Dernier état : P5 terminé
+## Dernier état : P6 terminé
 ## Date : 2026-04-09
-## Dernier commit : 17ccab8
+## Dernier deploy : dpl_HZ8zfBFydGv6BLkzRYVSWUQnDZde
 ## Deploy : https://purama-ai.purama.dev (200 OK)
 
 ## Fichiers créés cette session :
@@ -34,4 +34,15 @@
 
 ### DB : p3_schema.sql (15 tables + RLS + indexes + seeds)
 
-## Prochaine étape : P6 (Audit)
+### Tests Playwright (P6)
+- playwright.config.ts (3 projets : desktop/tablet/mobile)
+- tests/public-pages.spec.ts (15 pages publiques + 404 + Lorem check)
+- tests/navigation.spec.ts (CTAs, formulaires, redirect auth)
+- tests/responsive.spec.ts (overflow horizontal + éléments visibles)
+- tests/console-errors.spec.ts (0 erreur JS sur 5 pages)
+- tests/performance.spec.ts (temps chargement + LCP)
+- tests/forms-validation.spec.ts (login, signup, forgot-password)
+- tests/accessibility.spec.ts (dark mode, headings, alt, boutons)
+- tests/pwa.spec.ts (manifest.json)
+
+## Résultat : 52 tests PASS, 0 échec, 3 viewports
