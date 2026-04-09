@@ -8,6 +8,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
 import { CookieConsent } from '@/components/CookieConsent';
 import { ServiceWorkerRegistration } from '@/components/pwa/ServiceWorkerRegistration';
+import { CinematicIntro } from '@/components/shared/CinematicIntro';
 import { InstallBanner } from '@/components/pwa/InstallBanner';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import Index from '@/pages/Index';
@@ -78,6 +79,7 @@ const DailyGift = lazy(() => import('@/pages/DailyGift'));
 const Tirage = lazy(() => import('@/pages/Tirage'));
 const Ecosystem = lazy(() => import('@/pages/Ecosystem'));
 const Aide = lazy(() => import('@/pages/Aide'));
+const Guide = lazy(() => import('@/pages/Guide'));
 
 function PageFallback() {
   return (
@@ -102,6 +104,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
+          <CinematicIntro />
           <Toaster position="top-right" richColors />
           <Suspense fallback={<PageFallback />}>
           <Routes>
@@ -162,6 +165,7 @@ export default function App() {
             <Route path="/dashboard/daily-gift" element={<DashboardRoute><DailyGift /></DashboardRoute>} />
             <Route path="/dashboard/tirage" element={<DashboardRoute><Tirage /></DashboardRoute>} />
             <Route path="/dashboard/aide" element={<DashboardRoute><Aide /></DashboardRoute>} />
+            <Route path="/dashboard/guide" element={<DashboardRoute><Guide /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard/apps" element={<Navigate to="/dashboard" replace />} />
 
