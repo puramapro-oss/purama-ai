@@ -1,6 +1,8 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
@@ -11,65 +13,79 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
-import AgentDetail from '@/pages/AgentDetail';
-import Pricing from '@/pages/Pricing';
-import MyAgents from '@/pages/MyAgents';
-import MyConnections from '@/pages/MyConnections';
-import OAuthCallback from '@/pages/OAuthCallback';
-import Notifications from '@/pages/Notifications';
-import NotificationSettings from '@/pages/NotificationSettings';
-import InfluencerDashboard from '@/pages/InfluencerDashboard';
-import InfluencerSignup from '@/pages/InfluencerSignup';
-import AdminInfluencers from '@/pages/AdminInfluencers';
-import MentionsLegales from '@/pages/MentionsLegales';
-import PolitiqueConfidentialite from '@/pages/PolitiqueConfidentialite';
-import CGV from '@/pages/CGV';
-import CGU from '@/pages/CGU';
-import PolitiqueCookies from '@/pages/PolitiqueCookies';
-import NotFound from '@/pages/NotFound';
-import Parrainage from '@/pages/Parrainage';
-import Concours from '@/pages/Concours';
-import Classement from '@/pages/Classement';
-import Forge from '@/pages/Forge';
-import PuramaCompta from '@/pages/PuramaCompta';
-import SocialAgent from '@/pages/SocialAgent';
-import DashboardOverview from '@/pages/DashboardOverview';
-import DashboardAgents from '@/pages/DashboardAgents';
-import DashboardAnalytics from '@/pages/DashboardAnalytics';
-import DashboardBilling from '@/pages/DashboardBilling';
-import DashboardSettings from '@/pages/DashboardSettings';
-import SocialSettings from '@/pages/SocialSettings';
-import AdminDashboard from '@/pages/AdminDashboard';
-import EmailAgent from '@/pages/EmailAgent';
-import EmailAgentSettings from '@/pages/EmailAgentSettings';
-import EmailAgentLogs from '@/pages/EmailAgentLogs';
-import EmailAgentRules from '@/pages/EmailAgentRules';
-import EmailAgentMemoryPage from '@/pages/EmailAgentMemory';
-import EmailAgentTemplates from '@/pages/EmailAgentTemplates';
-import ComptaAgent from '@/pages/ComptaAgent';
-import ComptaAgentSettings from '@/pages/ComptaAgentSettings';
-import ComptaAgentTransactions from '@/pages/ComptaAgentTransactions';
-import ComptaAgentInvoices from '@/pages/ComptaAgentInvoices';
-import ComptaAgentDeclarations from '@/pages/ComptaAgentDeclarations';
-import ComptaAgentReports from '@/pages/ComptaAgentReports';
-import PartnerAgent from '@/pages/PartnerAgent';
-import PartnerAgentProspects from '@/pages/PartnerAgentProspects';
-import PartnerAgentPartners from '@/pages/PartnerAgentPartners';
-import PartnerAgentEmails from '@/pages/PartnerAgentEmails';
-import PartnerAgentSettings from '@/pages/PartnerAgentSettings';
-import LegalAgent from '@/pages/LegalAgent';
-import LegalAgentChat from '@/pages/LegalAgentChat';
-import LegalAgentDocuments from '@/pages/LegalAgentDocuments';
-import LegalAgentCases from '@/pages/LegalAgentCases';
-import LegalAgentImpayes from '@/pages/LegalAgentImpayes';
-import LegalAgentVeille from '@/pages/LegalAgentVeille';
-import CreatorAgentPage from '@/pages/CreatorAgent';
-import CreatorAgentNew from '@/pages/CreatorAgentNew';
-import CreatorAgentDetail from '@/pages/CreatorAgentDetail';
-import CreatorAgentTemplates from '@/pages/CreatorAgentTemplates';
-import CreatorAgentRuns from '@/pages/CreatorAgentRuns';
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const AgentDetail = lazy(() => import('@/pages/AgentDetail'));
+const Pricing = lazy(() => import('@/pages/Pricing'));
+const MyAgents = lazy(() => import('@/pages/MyAgents'));
+const MyConnections = lazy(() => import('@/pages/MyConnections'));
+const OAuthCallback = lazy(() => import('@/pages/OAuthCallback'));
+const Notifications = lazy(() => import('@/pages/Notifications'));
+const NotificationSettings = lazy(() => import('@/pages/NotificationSettings'));
+const InfluencerDashboard = lazy(() => import('@/pages/InfluencerDashboard'));
+const InfluencerSignup = lazy(() => import('@/pages/InfluencerSignup'));
+const AdminInfluencers = lazy(() => import('@/pages/AdminInfluencers'));
+const MentionsLegales = lazy(() => import('@/pages/MentionsLegales'));
+const PolitiqueConfidentialite = lazy(() => import('@/pages/PolitiqueConfidentialite'));
+const CGV = lazy(() => import('@/pages/CGV'));
+const CGU = lazy(() => import('@/pages/CGU'));
+const PolitiqueCookies = lazy(() => import('@/pages/PolitiqueCookies'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+const Parrainage = lazy(() => import('@/pages/Parrainage'));
+const Concours = lazy(() => import('@/pages/Concours'));
+const Classement = lazy(() => import('@/pages/Classement'));
+const Forge = lazy(() => import('@/pages/Forge'));
+const PuramaCompta = lazy(() => import('@/pages/PuramaCompta'));
+const SocialAgent = lazy(() => import('@/pages/SocialAgent'));
+const DashboardOverview = lazy(() => import('@/pages/DashboardOverview'));
+const DashboardAgents = lazy(() => import('@/pages/DashboardAgents'));
+const DashboardAnalytics = lazy(() => import('@/pages/DashboardAnalytics'));
+const DashboardBilling = lazy(() => import('@/pages/DashboardBilling'));
+const DashboardSettings = lazy(() => import('@/pages/DashboardSettings'));
+const SocialSettings = lazy(() => import('@/pages/SocialSettings'));
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
+const EmailAgent = lazy(() => import('@/pages/EmailAgent'));
+const EmailAgentSettings = lazy(() => import('@/pages/EmailAgentSettings'));
+const EmailAgentLogs = lazy(() => import('@/pages/EmailAgentLogs'));
+const EmailAgentRules = lazy(() => import('@/pages/EmailAgentRules'));
+const EmailAgentMemoryPage = lazy(() => import('@/pages/EmailAgentMemory'));
+const EmailAgentTemplates = lazy(() => import('@/pages/EmailAgentTemplates'));
+const ComptaAgent = lazy(() => import('@/pages/ComptaAgent'));
+const ComptaAgentSettings = lazy(() => import('@/pages/ComptaAgentSettings'));
+const ComptaAgentTransactions = lazy(() => import('@/pages/ComptaAgentTransactions'));
+const ComptaAgentInvoices = lazy(() => import('@/pages/ComptaAgentInvoices'));
+const ComptaAgentDeclarations = lazy(() => import('@/pages/ComptaAgentDeclarations'));
+const ComptaAgentReports = lazy(() => import('@/pages/ComptaAgentReports'));
+const PartnerAgent = lazy(() => import('@/pages/PartnerAgent'));
+const PartnerAgentProspects = lazy(() => import('@/pages/PartnerAgentProspects'));
+const PartnerAgentPartners = lazy(() => import('@/pages/PartnerAgentPartners'));
+const PartnerAgentEmails = lazy(() => import('@/pages/PartnerAgentEmails'));
+const PartnerAgentSettings = lazy(() => import('@/pages/PartnerAgentSettings'));
+const LegalAgent = lazy(() => import('@/pages/LegalAgent'));
+const LegalAgentChat = lazy(() => import('@/pages/LegalAgentChat'));
+const LegalAgentDocuments = lazy(() => import('@/pages/LegalAgentDocuments'));
+const LegalAgentCases = lazy(() => import('@/pages/LegalAgentCases'));
+const LegalAgentImpayes = lazy(() => import('@/pages/LegalAgentImpayes'));
+const LegalAgentVeille = lazy(() => import('@/pages/LegalAgentVeille'));
+const CreatorAgentPage = lazy(() => import('@/pages/CreatorAgent'));
+const CreatorAgentNew = lazy(() => import('@/pages/CreatorAgentNew'));
+const CreatorAgentDetail = lazy(() => import('@/pages/CreatorAgentDetail'));
+const CreatorAgentTemplates = lazy(() => import('@/pages/CreatorAgentTemplates'));
+const CreatorAgentRuns = lazy(() => import('@/pages/CreatorAgentRuns'));
+const Wallet = lazy(() => import('@/pages/Wallet'));
+const Boutique = lazy(() => import('@/pages/Boutique'));
+const DailyGift = lazy(() => import('@/pages/DailyGift'));
+const Tirage = lazy(() => import('@/pages/Tirage'));
+const Ecosystem = lazy(() => import('@/pages/Ecosystem'));
+const Aide = lazy(() => import('@/pages/Aide'));
+
+function PageFallback() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-background">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+  );
+}
 
 const queryClient = new QueryClient();
 
@@ -87,6 +103,7 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Toaster position="top-right" richColors />
+          <Suspense fallback={<PageFallback />}>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
@@ -99,6 +116,7 @@ export default function App() {
             <Route path="/cgv" element={<CGV />} />
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
+            <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/forge" element={<Forge />} />
             <Route path="/purama-compta" element={<PuramaCompta />} />
             <Route path="/agent" element={<SocialAgent />} />
@@ -139,6 +157,11 @@ export default function App() {
             <Route path="/dashboard/creator-agent/templates" element={<DashboardRoute><CreatorAgentTemplates /></DashboardRoute>} />
             <Route path="/dashboard/creator-agent/runs" element={<DashboardRoute><CreatorAgentRuns /></DashboardRoute>} />
             <Route path="/dashboard/creator-agent/:id" element={<DashboardRoute><CreatorAgentDetail /></DashboardRoute>} />
+            <Route path="/dashboard/wallet" element={<DashboardRoute><Wallet /></DashboardRoute>} />
+            <Route path="/dashboard/boutique" element={<DashboardRoute><Boutique /></DashboardRoute>} />
+            <Route path="/dashboard/daily-gift" element={<DashboardRoute><DailyGift /></DashboardRoute>} />
+            <Route path="/dashboard/tirage" element={<DashboardRoute><Tirage /></DashboardRoute>} />
+            <Route path="/dashboard/aide" element={<DashboardRoute><Aide /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard/apps" element={<Navigate to="/dashboard" replace />} />
 
@@ -148,7 +171,7 @@ export default function App() {
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/notification-settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
-            <Route path="/influenceur/dashboard" element={<InfluencerDashboard />} />
+            <Route path="/influenceur/dashboard" element={<ProtectedRoute><InfluencerDashboard /></ProtectedRoute>} />
             <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
             <Route path="/admin/influenceurs" element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>} />
             <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
@@ -157,6 +180,7 @@ export default function App() {
             <Route path="/classement" element={<Classement />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
           <ChatbotWidget />
           <CookieConsent />
           <ServiceWorkerRegistration />

@@ -3,7 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
-  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake, Scale, Sparkles
+  Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake, Scale, Sparkles,
+  Wallet, Star, Gift, Ticket, HelpCircle
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -23,6 +24,11 @@ const navItems = [
   { label: 'Agent Partenariat', icon: Handshake, to: '/dashboard/partner-agent' },
   { label: 'Agent Juridique', icon: Scale, to: '/dashboard/legal-agent' },
   { label: 'Créateur d\'agents', icon: Sparkles, to: '/dashboard/creator-agent' },
+  { label: 'Wallet', icon: Wallet, to: '/dashboard/wallet' },
+  { label: 'Points & Boutique', icon: Star, to: '/dashboard/boutique' },
+  { label: 'Coffre du jour', icon: Gift, to: '/dashboard/daily-gift' },
+  { label: 'Tirage mensuel', icon: Ticket, to: '/dashboard/tirage' },
+  { label: 'Aide', icon: HelpCircle, to: '/dashboard/aide' },
   { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },
 ];
 
