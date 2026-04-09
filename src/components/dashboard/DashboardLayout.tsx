@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
   Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake, Scale, Sparkles,
-  Wallet, Star, Gift, Ticket, HelpCircle
+  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -29,6 +29,7 @@ const navItems = [
   { label: 'Coffre du jour', icon: Gift, to: '/dashboard/daily-gift' },
   { label: 'Tirage mensuel', icon: Ticket, to: '/dashboard/tirage' },
   { label: 'Aide', icon: HelpCircle, to: '/dashboard/aide' },
+  { label: 'Guide', icon: BookOpen, to: '/dashboard/guide' },
   { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },
 ];
 
