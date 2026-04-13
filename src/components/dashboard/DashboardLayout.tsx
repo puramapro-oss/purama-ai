@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ExecutionCounter } from '@/components/dashboard/ExecutionCounter';
 import { SUPER_ADMIN_EMAIL } from '@/lib/constants';
@@ -15,28 +16,29 @@ import { SUPER_ADMIN_EMAIL } from '@/lib/constants';
 const ADMIN_EMAIL = SUPER_ADMIN_EMAIL;
 
 const navItems = [
-  { label: 'Accueil', icon: Home, to: '/dashboard' },
-  { label: 'Mes Agents', icon: Brain, to: '/dashboard/agents' },
-  { label: 'Analytics', icon: BarChart3, to: '/dashboard/analytics' },
-  { label: 'Abonnement', icon: CreditCard, to: '/dashboard/billing' },
-  { label: 'Réseaux sociaux', icon: Globe2, to: '/dashboard/social' },
-  { label: 'Agent Email', icon: Mail, to: '/dashboard/email-agent' },
-  { label: 'Agent Compta', icon: Calculator, to: '/dashboard/compta-agent' },
-  { label: 'Agent Partenariat', icon: Handshake, to: '/dashboard/partner-agent' },
-  { label: 'Agent Juridique', icon: Scale, to: '/dashboard/legal-agent' },
-  { label: 'Créateur d\'agents', icon: Sparkles, to: '/dashboard/creator-agent' },
-  { label: 'Wallet', icon: Wallet, to: '/dashboard/wallet' },
-  { label: 'Points & Boutique', icon: Star, to: '/dashboard/boutique' },
-  { label: 'Coffre du jour', icon: Gift, to: '/dashboard/daily-gift' },
-  { label: 'Tirage mensuel', icon: Ticket, to: '/dashboard/tirage' },
-  { label: 'Respiration', icon: Wind, to: '/dashboard/breathe' },
-  { label: 'Gratitude', icon: Heart, to: '/dashboard/gratitude' },
-  { label: 'Aide', icon: HelpCircle, to: '/dashboard/aide' },
-  { label: 'Guide', icon: BookOpen, to: '/dashboard/guide' },
-  { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },
+  { tKey: 'nav.home', icon: Home, to: '/dashboard' },
+  { tKey: 'nav.agents', icon: Brain, to: '/dashboard/agents' },
+  { tKey: 'nav.analytics', icon: BarChart3, to: '/dashboard/analytics' },
+  { tKey: 'nav.subscription', icon: CreditCard, to: '/dashboard/billing' },
+  { tKey: 'nav.social', icon: Globe2, to: '/dashboard/social' },
+  { tKey: 'nav.emailAgent', icon: Mail, to: '/dashboard/email-agent' },
+  { tKey: 'nav.comptaAgent', icon: Calculator, to: '/dashboard/compta-agent' },
+  { tKey: 'nav.partnerAgent', icon: Handshake, to: '/dashboard/partner-agent' },
+  { tKey: 'nav.legalAgent', icon: Scale, to: '/dashboard/legal-agent' },
+  { tKey: 'nav.creatorAgent', icon: Sparkles, to: '/dashboard/creator-agent' },
+  { tKey: 'nav.wallet', icon: Wallet, to: '/dashboard/wallet' },
+  { tKey: 'nav.points', icon: Star, to: '/dashboard/boutique' },
+  { tKey: 'nav.dailyGift', icon: Gift, to: '/dashboard/daily-gift' },
+  { tKey: 'nav.lottery', icon: Ticket, to: '/dashboard/tirage' },
+  { tKey: 'nav.breathe', icon: Wind, to: '/dashboard/breathe' },
+  { tKey: 'nav.gratitude', icon: Heart, to: '/dashboard/gratitude' },
+  { tKey: 'nav.help', icon: HelpCircle, to: '/dashboard/aide' },
+  { tKey: 'nav.guide', icon: BookOpen, to: '/dashboard/guide' },
+  { tKey: 'nav.settings', icon: Settings, to: '/dashboard/settings' },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { user, signOut } = useAuth();
@@ -75,7 +77,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             }`}
           >
             <item.icon className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>{item.label}</span>}
+            {sidebarOpen && <span>{t(item.tKey)}</span>}
           </Link>
         ))}
       </nav>

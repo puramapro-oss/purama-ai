@@ -6,14 +6,17 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Copy, RefreshCw, Sun, Moon, Monitor } from 'lucide-react';
+import { Eye, EyeOff, Copy, RefreshCw, Sun, Moon, Monitor, Globe } from 'lucide-react';
 import { VoiceSettingsCard } from '@/components/voice/VoiceSettingsCard';
+import { LANGUAGES, loadLanguage } from '@/i18n';
 
 export default function DashboardSettings() {
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile();
   const { theme, setTheme } = useTheme();
+  const { t, i18n } = useTranslation();
   const [showApiKey, setShowApiKey] = useState(false);
   const apiKey = 'pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
@@ -62,6 +65,32 @@ export default function DashboardSettings() {
               >
                 <opt.icon className="w-4 h-4" />
                 {opt.label}
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Language */}
+      <Card className="bg-card border-border">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="font-orbitron font-semibold text-foreground flex items-center gap-2">
+            <Globe className="w-5 h-5 text-accent-cyan" />
+            {t('settings.language')}
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {LANGUAGES.map(lang => (
+              <button
+                key={lang.code}
+                onClick={() => loadLanguage(lang.code)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  i18n.language === lang.code
+                    ? 'bg-gradient-to-r from-accent-cyan to-accent-purple text-white shadow-[0_4px_20px_rgba(124,58,237,0.3)]'
+                    : 'bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary'
+                }`}
+              >
+                <span>{lang.flag}</span>
+                <span className="truncate">{lang.label}</span>
               </button>
             ))}
           </div>
