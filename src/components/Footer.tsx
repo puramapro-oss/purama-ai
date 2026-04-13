@@ -1,9 +1,34 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Bot, Linkedin, Twitter, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { resetCookieConsent } from '@/components/CookieConsent'
 
+const WISDOM_QUOTES = [
+  { text: "Le voyage de mille lieues commence par un seul pas.", author: "Lao Tseu" },
+  { text: "Sois le changement que tu veux voir dans le monde.", author: "Gandhi" },
+  { text: "La blessure est l'endroit par ou la lumiere entre en toi.", author: "Rumi" },
+  { text: "Ce que tu cherches te cherche aussi.", author: "Rumi" },
+  { text: "Le bonheur n'est pas quelque chose de tout fait. Il vient de tes propres actions.", author: "Dalai Lama" },
+  { text: "Connais-toi toi-meme.", author: "Socrate" },
+  { text: "La seule facon de faire du bon travail est d'aimer ce que tu fais.", author: "Steve Jobs" },
+  { text: "Il n'y a pas de chemin vers le bonheur. Le bonheur est le chemin.", author: "Bouddha" },
+  { text: "L'obstacle est le chemin.", author: "Marc Aurele" },
+  { text: "La simplicite est la sophistication supreme.", author: "Leonard de Vinci" },
+];
+
 export function Footer() {
+  const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * WISDOM_QUOTES.length));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex(prev => (prev + 1) % WISDOM_QUOTES.length);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const quote = WISDOM_QUOTES[quoteIndex];
+
   return (
     <footer className="relative py-16 bg-card border-t border-accent-cyan/10">
       <div className="absolute inset-0 grid-pattern opacity-10" />
@@ -120,6 +145,14 @@ export function Footer() {
               </Link>
             </Button>
           </div>
+        </div>
+
+        {/* Wisdom quote */}
+        <div className="py-6 text-center">
+          <p className="text-sm italic text-muted-foreground/70 transition-opacity duration-500">
+            "{quote.text}"
+          </p>
+          <p className="text-xs text-muted-foreground/50 mt-1">— {quote.author}</p>
         </div>
 
         {/* Bottom */}

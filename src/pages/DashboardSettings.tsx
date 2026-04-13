@@ -5,13 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Copy, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Copy, RefreshCw, Sun, Moon, Monitor } from 'lucide-react';
 import { VoiceSettingsCard } from '@/components/voice/VoiceSettingsCard';
 
 export default function DashboardSettings() {
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile();
+  const { theme, setTheme } = useTheme();
   const [showApiKey, setShowApiKey] = useState(false);
   const apiKey = 'pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
@@ -36,6 +38,33 @@ export default function DashboardSettings() {
           <Button className="bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground" onClick={() => toast.success('Profil sauvegardé')}>
             Sauvegarder
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* Theme */}
+      <Card className="bg-card border-border">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="font-orbitron font-semibold text-foreground">Apparence</h3>
+          <div className="flex gap-3">
+            {[
+              { value: 'dark', label: 'Sombre', icon: Moon },
+              { value: 'light', label: 'Clair', icon: Sun },
+              { value: 'system', label: 'Systeme', icon: Monitor },
+            ].map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => setTheme(opt.value)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  theme === opt.value
+                    ? 'bg-gradient-to-r from-accent-cyan to-accent-purple text-white shadow-[0_4px_20px_rgba(124,58,237,0.3)]'
+                    : 'bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary'
+                }`}
+              >
+                <opt.icon className="w-4 h-4" />
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </CardContent>
       </Card>
 

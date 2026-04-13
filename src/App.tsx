@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { ThemeProvider } from 'next-themes';
 import { Loader2 } from 'lucide-react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -10,6 +11,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { ServiceWorkerRegistration } from '@/components/pwa/ServiceWorkerRegistration';
 import { CinematicIntro } from '@/components/shared/CinematicIntro';
 import { InstallBanner } from '@/components/pwa/InstallBanner';
+import { SpiritualLayer } from '@/components/shared/SpiritualLayer';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
@@ -80,6 +82,9 @@ const Tirage = lazy(() => import('@/pages/Tirage'));
 const Ecosystem = lazy(() => import('@/pages/Ecosystem'));
 const Aide = lazy(() => import('@/pages/Aide'));
 const Guide = lazy(() => import('@/pages/Guide'));
+const Breathe = lazy(() => import('@/pages/Breathe'));
+const Gratitude = lazy(() => import('@/pages/Gratitude'));
+const Financer = lazy(() => import('@/pages/Financer'));
 
 function PageFallback() {
   return (
@@ -101,10 +106,12 @@ function DashboardRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
+    <ThemeProvider attribute="class" defaultTheme="dark" storageKey="purama-theme">
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
           <CinematicIntro />
+          <SpiritualLayer />
           <Toaster position="top-right" richColors />
           <Suspense fallback={<PageFallback />}>
           <Routes>
@@ -119,6 +126,7 @@ export default function App() {
             <Route path="/cgv" element={<CGV />} />
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
+            <Route path="/financer" element={<Financer />} />
             <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/forge" element={<Forge />} />
             <Route path="/purama-compta" element={<PuramaCompta />} />
@@ -166,6 +174,8 @@ export default function App() {
             <Route path="/dashboard/tirage" element={<DashboardRoute><Tirage /></DashboardRoute>} />
             <Route path="/dashboard/aide" element={<DashboardRoute><Aide /></DashboardRoute>} />
             <Route path="/dashboard/guide" element={<DashboardRoute><Guide /></DashboardRoute>} />
+            <Route path="/dashboard/breathe" element={<DashboardRoute><Breathe /></DashboardRoute>} />
+            <Route path="/dashboard/gratitude" element={<DashboardRoute><Gratitude /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard/apps" element={<Navigate to="/dashboard" replace />} />
 
@@ -192,5 +202,6 @@ export default function App() {
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>
+    </ThemeProvider>
   );
 }

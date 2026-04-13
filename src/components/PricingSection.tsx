@@ -20,7 +20,7 @@ const comparisonRows = [
   { label: 'Module compta', values: ['✅', '✅', '✅', '✅'] },
   { label: 'Notifications push', values: ['✅', '✅', '✅', '✅'] },
   { label: 'Marketplace agents', values: ['—', '—', '✅', '✅'] },
-  { label: 'Support prioritaire', values: ['—', '—', '✅', '✅ VIP 24/7'] },
+  { label: 'Support prioritaire', values: ['—', '—', '✅', '✅ VIP'] },
   { label: 'API + webhooks', values: ['—', '—', '✅', '✅'] },
   { label: 'White-label', values: ['—', '—', '—', '✅'] },
 ];
@@ -58,6 +58,26 @@ export function PricingSection() {
             5 agents IA, le module compta intégré, et la possibilité de créer vos propres agents.
             14 jours gratuits sur tous les plans payants.
           </p>
+        </motion.div>
+
+        {/* Financer banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-2xl mx-auto mb-8"
+        >
+          <Link
+            to="/financer"
+            className="block bg-gradient-to-r from-emerald-500/15 to-emerald-600/10 border border-emerald-500/30 rounded-xl px-6 py-4 text-center hover:border-emerald-400/50 transition-colors group"
+          >
+            <p className="text-emerald-400 font-semibold text-sm">
+              💰 La plupart de nos clients ne paient rien grace aux aides
+            </p>
+            <p className="text-emerald-400/70 text-xs mt-1 group-hover:text-emerald-400/90 transition-colors">
+              Verifie ton eligibilite en 2 min →
+            </p>
+          </Link>
         </motion.div>
 
         {/* Cards */}

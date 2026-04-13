@@ -4,14 +4,15 @@ import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
   Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake, Scale, Sparkles,
-  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen
+  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen, Wind, Heart
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
 import { ExecutionCounter } from '@/components/dashboard/ExecutionCounter';
+import { SUPER_ADMIN_EMAIL } from '@/lib/constants';
 
-const ADMIN_EMAIL = 'matiss.frasne@gmail.com';
+const ADMIN_EMAIL = SUPER_ADMIN_EMAIL;
 
 const navItems = [
   { label: 'Accueil', icon: Home, to: '/dashboard' },
@@ -28,6 +29,8 @@ const navItems = [
   { label: 'Points & Boutique', icon: Star, to: '/dashboard/boutique' },
   { label: 'Coffre du jour', icon: Gift, to: '/dashboard/daily-gift' },
   { label: 'Tirage mensuel', icon: Ticket, to: '/dashboard/tirage' },
+  { label: 'Respiration', icon: Wind, to: '/dashboard/breathe' },
+  { label: 'Gratitude', icon: Heart, to: '/dashboard/gratitude' },
   { label: 'Aide', icon: HelpCircle, to: '/dashboard/aide' },
   { label: 'Guide', icon: BookOpen, to: '/dashboard/guide' },
   { label: 'Paramètres', icon: Settings, to: '/dashboard/settings' },

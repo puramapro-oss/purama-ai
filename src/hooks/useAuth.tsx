@@ -78,6 +78,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    localStorage.removeItem('purama-theme');
+    localStorage.removeItem('purama_awakening');
+    localStorage.removeItem('purama_gratitude');
+    sessionStorage.clear();
+    window.location.href = '/login';
   };
 
   return (
