@@ -85,6 +85,8 @@ const Guide = lazy(() => import('@/pages/Guide'));
 const Breathe = lazy(() => import('@/pages/Breathe'));
 const Gratitude = lazy(() => import('@/pages/Gratitude'));
 const Financer = lazy(() => import('@/pages/Financer'));
+const Reglement = lazy(() => import('@/pages/Reglement'));
+const Fiscal = lazy(() => import('@/pages/Fiscal'));
 
 function PageFallback() {
   return (
@@ -127,6 +129,8 @@ export default function App() {
             <Route path="/cgu" element={<CGU />} />
             <Route path="/politique-cookies" element={<PolitiqueCookies />} />
             <Route path="/financer" element={<Financer />} />
+            <Route path="/reglement" element={<Reglement />} />
+            <Route path="/fiscal" element={<ProtectedRoute><Fiscal /></ProtectedRoute>} />
             <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/forge" element={<Forge />} />
             <Route path="/purama-compta" element={<PuramaCompta />} />

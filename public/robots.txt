@@ -7,4 +7,5 @@ Disallow: /notifications
 Disallow: /notification-settings
 Disallow: /admin/
 Disallow: /oauth/
-Sitemap: https://agentiapuramafr.lovable.app/sitemap.xml
+
+Sitemap: https://purama-ai.purama.dev/sitemap.xml

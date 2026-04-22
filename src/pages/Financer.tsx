@@ -74,10 +74,94 @@ export default function Financer() {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleDownloadPdf = () => {
-    toast.success('Generation du PDF en cours...');
-    // PDF generation would use jsPDF in production
-    setTimeout(() => toast.success('PDF telecharge !'), 1500);
+  const handleDownloadPdf = async () => {
+    try {
+      toast.loading('Génération du PDF en cours…', { id: 'pdf' });
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const margin = 15;
+      let y = margin;
+
+      // Header
+      doc.setFillColor(139, 92, 246);
+      doc.rect(0, 0, 210, 32, 'F');
+      doc.setTextColor(255);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Purama AI — Mon plan de financement', margin, 15);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(new Date().toLocaleDateString('fr-FR'), margin, 23);
+
+      y = 42;
+      doc.setTextColor(30);
+
+      // Résumé profil
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text('Ton profil', margin, y);
+      y += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`Profil : ${PROFILS.find(p => p.value === profil)?.label ?? '—'}`, margin, y);
+      y += 5;
+      doc.text(`Situation : ${SITUATIONS.find(s => s.value === situation)?.label ?? '—'}`, margin, y);
+      y += 5;
+      if (handicap) { doc.text('Situation de handicap : oui', margin, y); y += 5; }
+      y += 4;
+
+      // Total potentiel
+      doc.setFillColor(16, 185, 129);
+      doc.roundedRect(margin, y, 180, 14, 2, 2, 'F');
+      doc.setTextColor(255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(`Total potentiel : ${totalPotentiel.toLocaleString('fr-FR')} €`, margin + 4, y + 9);
+      y += 20;
+
+      // Liste aides
+      doc.setTextColor(30);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(`Aides compatibles (${matchedAides.length})`, margin, y);
+      y += 7;
+
+      doc.setFontSize(9);
+      for (const aide of matchedAides) {
+        if (y > 270) { doc.addPage(); y = margin; }
+        doc.setFont('helvetica', 'bold');
+        doc.text(`• ${aide.nom}`, margin, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`jusqu'à ${aide.montantMax.toLocaleString('fr-FR')} €`, 160, y, { align: 'right' });
+        y += 4;
+        const desc = doc.splitTextToSize(aide.description, 180);
+        doc.text(desc, margin + 3, y);
+        y += desc.length * 4;
+        doc.setTextColor(59, 130, 246);
+        doc.textWithLink(aide.urlOfficielle, margin + 3, y, { url: aide.urlOfficielle });
+        doc.setTextColor(30);
+        y += 7;
+      }
+
+      // Footer
+      const pages = doc.getNumberOfPages();
+      for (let p = 1; p <= pages; p++) {
+        doc.setPage(p);
+        doc.setFontSize(8);
+        doc.setTextColor(120);
+        doc.text(
+          'Purama AI · Les aides listées sont indicatives — vérifier éligibilité sur le site officiel.',
+          margin, 290,
+        );
+        doc.text(`${p} / ${pages}`, 200, 290, { align: 'right' });
+      }
+
+      doc.save(`purama-financement-${new Date().toISOString().slice(0, 10)}.pdf`);
+      toast.success('PDF téléchargé !', { id: 'pdf' });
+    } catch (e) {
+      toast.error('Impossible de générer le PDF. Réessaie.', { id: 'pdf' });
+      console.error('[Financer PDF]', e);
+    }
   };
 
   return (

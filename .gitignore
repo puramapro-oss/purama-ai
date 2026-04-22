@@ -30,3 +30,11 @@ task_plan.md
 findings.md
 progress.md
 .vercel
+
+# Claude Code per-user local settings (peut contenir des tokens)
+.claude/settings.local.json
+
+# Secrets locaux — jamais committer (utiliser .env.example pour la structure)
+.env
+.env.local
+.env.*.local

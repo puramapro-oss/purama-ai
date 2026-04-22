@@ -102,6 +102,33 @@ export default function Pricing() {
           </p>
         </motion.div>
 
+        {/* Bandeau vert /financer — UPDATE-BRIEF point 1 */}
+        <motion.a
+          href="/financer"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="block max-w-3xl mx-auto mb-10 p-5 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent hover:border-emerald-500/50 transition-colors group"
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+              💰
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-emerald-300">
+                La plupart de nos clients ne paient rien de leur poche
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                CPF, AIF, OPCO, AGEFIPH, Pass Numérique… 45 aides disponibles pour financer
+                ton abonnement Purama. Jusqu'à <b className="text-emerald-300">8 000€</b> pris en charge.
+              </p>
+              <span className="inline-flex items-center gap-1 text-xs text-emerald-400 mt-2 group-hover:gap-2 transition-all">
+                Trouver mes aides en 60 secondes →
+              </span>
+            </div>
+          </div>
+        </motion.a>
+
         <div className="flex items-center justify-center gap-3 mb-12">
           <button
             onClick={() => setBillingCycle('monthly')}

@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://agentiapuramafr.lovable.app/</loc><priority>1.0</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/pricing</loc><priority>0.9</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/login</loc><priority>0.6</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/signup</loc><priority>0.6</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/mentions-legales</loc><priority>0.3</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/cgv</loc><priority>0.3</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/cgu</loc><priority>0.3</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/politique-de-confidentialite</loc><priority>0.3</priority></url>
-  <url><loc>https://agentiapuramafr.lovable.app/politique-cookies</loc><priority>0.3</priority></url>
+  <url><loc>https://purama-ai.purama.dev/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/pricing</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/ecosystem</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/financer</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/purama-compta</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/forge</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/agent</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/parrainage</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/concours</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/classement</loc><priority>0.5</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/reglement</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://purama-ai.purama.dev/login</loc><priority>0.5</priority></url>
+  <url><loc>https://purama-ai.purama.dev/signup</loc><priority>0.5</priority></url>
+  <url><loc>https://purama-ai.purama.dev/influenceur/inscription</loc><priority>0.4</priority></url>
+  <url><loc>https://purama-ai.purama.dev/mentions-legales</loc><priority>0.3</priority></url>
+  <url><loc>https://purama-ai.purama.dev/cgv</loc><priority>0.3</priority></url>
+  <url><loc>https://purama-ai.purama.dev/cgu</loc><priority>0.3</priority></url>
+  <url><loc>https://purama-ai.purama.dev/politique-de-confidentialite</loc><priority>0.3</priority></url>
+  <url><loc>https://purama-ai.purama.dev/politique-cookies</loc><priority>0.3</priority></url>
 </urlset>
