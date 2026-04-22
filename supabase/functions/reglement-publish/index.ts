@@ -1,19 +1,29 @@
-// ─── Edge Function · Publish Règlement + OpenTimestamps (V4.1) ───────────
+// ─── Edge Function · Publish Règlement (V4.1) ────────────────────────────
 // Stocke un règlement (jeu-concours, prime, bourse, CGV) + horodate son hash
-// sur la blockchain Bitcoin via OpenTimestamps.
+// directement sur un calendrier OpenTimestamps via HTTP (Bitcoin backend).
 // Admin only (vérifie rôle super_admin).
+//
+// Note : la lib npm `opentimestamps` dépend de `fs` (Node), incompatible
+// avec l'Edge Runtime Deno. On implémente le protocol OT minimal en
+// appelant directement un calendar OpenTimestamps (Alice/Bob/Eternity Wall).
+// La preuve retournée est opaque pour nous — elle contient la chaîne
+// d'attestation qui sera confirmée dans Bitcoin sous ~2-6 heures.
 // ───────────────────────────────────────────────────────────────────────
 
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-// @deno-types="https://esm.sh/javascript-opentimestamps@0.4.9/dist/index.d.ts"
-import OpenTimestamps from 'https://esm.sh/javascript-opentimestamps@0.4.9?target=deno';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
+
+const OT_CALENDARS = [
+  'https://alice.btc.calendar.opentimestamps.org',
+  'https://bob.btc.calendar.opentimestamps.org',
+  'https://finney.calendar.eternitywall.com',
+];
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -49,14 +59,27 @@ serve(async (req: Request): Promise<Response> => {
     const hash = new Uint8Array(hashBuf);
     const hashHex = Array.from(hash).map((b) => b.toString(16).padStart(2, '0')).join('');
 
-    // Horodatage OpenTimestamps
-    const detachedFile = OpenTimestamps.DetachedTimestampFile.fromHash(
-      new OpenTimestamps.Ops.OpSHA256(),
-      hash,
-    );
-    await OpenTimestamps.stamp(detachedFile);
-    const proofBytes = detachedFile.serializeToBytes();
-    const proofBase64 = btoa(String.fromCharCode(...proofBytes));
+    // Appel direct calendrier OpenTimestamps (racine commit)
+    // Protocol : POST /digest avec le hash binaire → retourne un "head" binaire
+    // qui constitue la pending attestation. Elle sera upgradée dans Bitcoin
+    // dans les heures suivantes par les calendriers.
+    let proofBase64: string | null = null;
+    for (const calendar of OT_CALENDARS) {
+      try {
+        const res = await fetch(`${calendar}/digest`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/octet-stream', 'Accept': 'application/octet-stream' },
+          body: hash,
+        });
+        if (!res.ok) continue;
+        const proofBytes = new Uint8Array(await res.arrayBuffer());
+        if (proofBytes.byteLength === 0) continue;
+        proofBase64 = btoa(String.fromCharCode(...proofBytes));
+        break;
+      } catch {
+        continue;
+      }
+    }
 
     // Store
     const admin = createClient(
@@ -79,7 +102,14 @@ serve(async (req: Request): Promise<Response> => {
 
     if (error) return json({ error: error.message }, 500);
 
-    return json({ ok: true, reglement: row });
+    return json({
+      ok: true,
+      reglement: row,
+      stamped: proofBase64 !== null,
+      note: proofBase64
+        ? 'Hash envoyé à OpenTimestamps. Confirmation Bitcoin dans ~2-6h.'
+        : 'Hash stocké, horodatage blockchain à programmer en batch.',
+    });
   } catch (e) {
     console.error('[reglement-publish]', e);
     return json({ error: (e as Error).message }, 500);

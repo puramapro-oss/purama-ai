@@ -48,14 +48,14 @@ serve(async (req: Request): Promise<Response> => {
       etablissement: {
         siret: e.siret,
         siren: e.siren,
-        denominationUniteLegale: u.denominationUniteLegale ?? `${u.prenomUsuelUniteLegale ?? ''} ${u.nomUniteLegale ?? ''}`.trim() || null,
+        denominationUniteLegale: u.denominationUniteLegale ?? (`${u.prenomUsuelUniteLegale ?? ''} ${u.nomUniteLegale ?? ''}`.trim() || null),
         categorieJuridique: u.categorieJuridiqueUniteLegale ?? null,
         activitePrincipaleEtablissement: e.periodesEtablissement?.[0]?.activitePrincipaleEtablissement ?? null,
         dateCreationEtablissement: e.dateCreationEtablissement ?? null,
         etatAdministratifEtablissement: e.etatAdministratifEtablissement,
         adresse: {
           numero: adr?.numeroVoieEtablissement ?? null,
-          voie: `${adr?.typeVoieEtablissement ?? ''} ${adr?.libelleVoieEtablissement ?? ''}`.trim() || null,
+          voie: (`${adr?.typeVoieEtablissement ?? ''} ${adr?.libelleVoieEtablissement ?? ''}`.trim() || null),
           codePostal: adr?.codePostalEtablissement ?? null,
           commune: adr?.libelleCommuneEtablissement ?? null,
         },
