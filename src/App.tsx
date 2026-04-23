@@ -28,6 +28,8 @@ const NotificationSettings = lazy(() => import('@/pages/NotificationSettings'));
 const InfluencerDashboard = lazy(() => import('@/pages/InfluencerDashboard'));
 const InfluencerSignup = lazy(() => import('@/pages/InfluencerSignup'));
 const AdminInfluencers = lazy(() => import('@/pages/AdminInfluencers'));
+const AdminContracts = lazy(() => import('@/pages/AdminContracts'));
+const AmbassadeurRejoindre = lazy(() => import('@/pages/AmbassadeurRejoindre'));
 const MentionsLegales = lazy(() => import('@/pages/MentionsLegales'));
 const PolitiqueConfidentialite = lazy(() => import('@/pages/PolitiqueConfidentialite'));
 const CGV = lazy(() => import('@/pages/CGV'));
@@ -193,6 +195,8 @@ export default function App() {
             <Route path="/influenceur/inscription" element={<InfluencerSignup />} />
             <Route path="/admin/influenceurs" element={<ProtectedRoute><AdminInfluencers /></ProtectedRoute>} />
             <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/contracts" element={<ProtectedRoute><AdminContracts /></ProtectedRoute>} />
+            <Route path="/ambassadeur/rejoindre" element={<ProtectedRoute><AmbassadeurRejoindre /></ProtectedRoute>} />
             <Route path="/parrainage" element={<Parrainage />} />
             <Route path="/concours" element={<Concours />} />
             <Route path="/classement" element={<Classement />} />
