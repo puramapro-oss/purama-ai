@@ -124,13 +124,18 @@ serve(async (req) => {
       },
     };
 
-    type DSSubmitter = { id: number; email: string; slug: string; role: string };
-    type DSSubmission = { id: number; submitters: DSSubmitter[] };
+    type DSSubmitter = { id: number; email: string; slug: string; role: string; submission_id?: number };
 
-    const submission = await docusealFetch<DSSubmission[]>("POST", "/api/submissions", submissionPayload);
-    // API returns an array of submissions (one per batch call — we have 1)
-    const sub = Array.isArray(submission) ? submission[0] : submission as unknown as DSSubmission;
-    if (!sub?.id) return errorResponse("DocuSeal submission creation failed", 502, submission);
+    // DocuSeal returns an array of SUBMITTERS (one per recipient), not a wrapped Submission.
+    // All submitters share the same submission_id.
+    const response = await docusealFetch<DSSubmitter[]>("POST", "/api/submissions", submissionPayload);
+    const submittersArr: DSSubmitter[] = Array.isArray(response) ? response : [];
+    if (submittersArr.length === 0) {
+      return errorResponse("DocuSeal submission creation failed", 502, response);
+    }
+    const submissionId = submittersArr[0].submission_id ?? submittersArr[0].id;
+    const sub = { id: submissionId, submitters: submittersArr };
+    if (!sub.id) return errorResponse("DocuSeal submission has no id", 502, response);
 
     // ─── Insert purama_ai.contracts row ─────────────────────────────
     const commissionRate = body.variables?.commission_rate

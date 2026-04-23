@@ -21,12 +21,23 @@ serve(async (req) => {
 
   const rawBody = await req.text();
 
-  // ─── Verify HMAC signature ──────────────────────────────────────
+  // ─── Verify shared-secret Bearer token ──────────────────────────
+  // DocuSeal community uses WebhookUrl.secret as raw HTTP headers (not HMAC).
+  // We configure Authorization: Bearer <DOCUSEAL_WEBHOOK_SECRET> on the DocuSeal side
+  // and validate it here via constant-time equality.
   if (DOCUSEAL_WEBHOOK_SECRET) {
-    const signature = req.headers.get("x-docuseal-signature") ?? req.headers.get("docuseal-signature");
-    const valid = await verifyWebhookSignature(rawBody, signature, DOCUSEAL_WEBHOOK_SECRET);
-    if (!valid) {
-      console.error("[webhook] Invalid HMAC signature");
+    const authHeader = req.headers.get("authorization") ?? "";
+    const expected = `Bearer ${DOCUSEAL_WEBHOOK_SECRET}`;
+    let match = authHeader.length === expected.length;
+    if (match) {
+      let diff = 0;
+      for (let i = 0; i < authHeader.length; i++) {
+        diff |= authHeader.charCodeAt(i) ^ expected.charCodeAt(i);
+      }
+      match = diff === 0;
+    }
+    if (!match) {
+      console.error("[webhook] Invalid bearer token");
       return errorResponse("Invalid signature", 401);
     }
   } else {
