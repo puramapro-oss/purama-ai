@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Contrat de Prestation Freelance — Purama</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #111; padding: 40px 48px; max-width: 210mm; }
+.logo-band { border-bottom: 2px solid #7C3AED; padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; }
+.logo { font-size: 18pt; font-weight: 700; color: #7C3AED; }
+.logo-sub { font-size: 9pt; color: #666; }
+h1 { font-size: 16pt; margin: 24px 0 8px; }
+h2 { font-size: 13pt; margin: 20px 0 6px; color: #7C3AED; font-weight: 600; }
+h3 { font-size: 11.5pt; margin: 14px 0 4px; font-weight: 600; }
+p { margin: 8px 0; text-align: justify; }
+ul { margin: 8px 0 8px 24px; }
+li { margin: 4px 0; }
+strong { color: #000; }
+.preamble { background: #F5F3FF; padding: 12px 16px; border-left: 3px solid #7C3AED; margin: 16px 0; font-size: 10pt; }
+.party-box { border: 1px solid #DDD; padding: 12px; margin: 8px 0; border-radius: 4px; font-size: 10.5pt; }
+.sig-block { margin-top: 40px; display: flex; justify-content: space-between; gap: 40px; }
+.sig-col { flex: 1; border-top: 1px solid #999; padding-top: 8px; font-size: 10pt; }
+.sig-col strong { display: block; font-size: 11pt; margin-bottom: 4px; }
+.footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid #EEE; font-size: 8.5pt; color: #666; text-align: center; }
+.legal-mentions { font-size: 9pt; color: #555; margin-top: 24px; padding: 12px; background: #FAFAFA; border-radius: 4px; line-height: 1.4; }
+table.numbers { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10pt; }
+table.numbers td { border: 1px solid #DDD; padding: 6px 10px; }
+table.numbers td.label { background: #FAFAFA; font-weight: 600; width: 40%; }
+</style>
+</head>
+<body>
+
+<div class="logo-band">
+  <div><div class="logo">PURAMA</div><div class="logo-sub">Contrat de prestation freelance</div></div>
+  <div style="text-align:right;font-size:9pt;color:#666;">{{contract_date}}</div>
+</div>
+
+<h1>Contrat de prestation de services</h1>
+
+<div class="preamble">
+Conformément aux articles 1710 et suivants du Code civil relatifs au contrat d'entreprise, les parties conviennent des conditions de la prestation définie ci-après. Le prestataire agit en qualité d'entrepreneur indépendant, sans lien de subordination.
+</div>
+
+<h2>1. Identification des parties</h2>
+
+<div class="party-box">
+<strong>PURAMA SASU (ci-après « le Client »)</strong>
+8 Rue de la Chapelle, 25560 Frasne, France<br>
+SIREN : [en cours d'immatriculation] — ZFRR<br>
+Représentée par : <strong>{{purama_representative_name}}</strong>, {{purama_representative_title}}
+</div>
+
+<div class="party-box">
+<strong>Le Prestataire</strong>
+Nom et prénom : <strong>{{freelance_full_name}}</strong><br>
+Adresse : {{freelance_address}}, {{freelance_postal_code}}, {{freelance_country}}<br>
+SIRET : <strong>{{freelance_siret}}</strong><br>
+Email : {{freelance_email}}
+</div>
+
+<h2>2. Objet et mission</h2>
+<p><strong>Intitulé de la mission</strong> : {{mission_title}}</p>
+<p><strong>Description</strong> :</p>
+<p>{{mission_description}}</p>
+<p><strong>Livrables attendus</strong> :</p>
+<p>{{mission_deliverables}}</p>
+
+<h2>3. Conditions financières</h2>
+<table class="numbers">
+<tr><td class="label">Taux horaire HT</td><td>{{hourly_rate}} €</td></tr>
+<tr><td class="label">Estimation d'heures</td><td>{{estimated_hours}} heures</td></tr>
+<tr><td class="label">Montant total HT</td><td>{{total_amount_ht}} €</td></tr>
+<tr><td class="label">TVA applicable</td><td>{{vat_applicable}} ({{vat_rate}}%)</td></tr>
+<tr><td class="label">Montant total TTC</td><td>{{total_amount_ttc}} €</td></tr>
+<tr><td class="label">Modalités de paiement</td><td>{{payment_terms}}</td></tr>
+</table>
+
+<h2>4. Durée</h2>
+<p>Date de début : <strong>{{start_date}}</strong><br>
+Date de fin prévue : <strong>{{end_date}}</strong></p>
+<p>Toute prolongation fera l'objet d'un avenant écrit.</p>
+
+<h2>5. Obligations du Prestataire</h2>
+<ul>
+<li>Exécuter la mission avec diligence, conformément aux règles de l'art</li>
+<li>Respecter les délais convenus</li>
+<li>Garantir la qualité des livrables et corriger les anomalies constatées</li>
+<li>Maintenir à jour ses obligations légales (immatriculation, déclarations URSSAF, assurance RC pro)</li>
+<li>Ne pas divulguer les informations confidentielles du Client</li>
+</ul>
+
+<h2>6. Obligations du Client</h2>
+<ul>
+<li>Fournir au Prestataire les informations et accès nécessaires à l'exécution</li>
+<li>Régler les factures dans les délais prévus</li>
+<li>Valider les livrables dans un délai de 7 jours ouvrés</li>
+</ul>
+
+<h2>7. Propriété intellectuelle</h2>
+<p>Le Prestataire cède au Client, à compter du paiement intégral, l'ensemble des droits patrimoniaux relatifs aux livrables originaux produits dans le cadre de la mission, pour le monde entier et pour la durée légale de protection. Les outils, méthodes et savoir-faire antérieurs du Prestataire restent sa propriété exclusive.</p>
+
+<h2>8. Absence de lien de subordination</h2>
+<p>Le Prestataire exécute la mission avec une totale autonomie, en qualité d'entrepreneur indépendant. Il n'existe aucun lien de subordination entre les parties. Le Prestataire organise librement son travail et fournit ses propres outils.</p>
+
+<h2>9. Confidentialité</h2>
+<p>Le Prestataire s'engage à la plus stricte confidentialité sur toute information non publique du Client, pendant toute la durée du contrat et pendant <strong>3 ans</strong> après son terme.</p>
+
+<h2>10. Résiliation</h2>
+<p>Chaque partie peut résilier le contrat avec un préavis de <strong>15 jours</strong> par courrier recommandé ou électronique. Les prestations exécutées jusqu'à la date de résiliation sont dues.</p>
+
+<h2>11. RGPD</h2>
+<p>Les données personnelles du Prestataire sont traitées par le Client pour l'exécution du contrat et conservées 10 ans (obligation comptable). Droits d'accès/rectification/effacement : <strong>dpo@purama.dev</strong>.</p>
+
+<h2>12. Juridiction</h2>
+<p>Tout litige sera porté devant le <strong>Tribunal judiciaire de Besançon</strong>, après tentative de résolution amiable.</p>
+
+<h2>13. Signature électronique</h2>
+<p>Signature via DocuSeal (art. 1366 Code civil, règlement eIDAS UE 910/2014) + horodatage blockchain Bitcoin OpenTimestamps.</p>
+
+<div class="sig-block">
+  <div class="sig-col">
+    <strong>PURAMA SASU — Le Client</strong>
+    {{purama_representative_name}}<br>
+    {{purama_representative_title}}<br>
+    Date : {{contract_date}}
+  </div>
+  <div class="sig-col">
+    <strong>Le Prestataire</strong>
+    {{freelance_full_name}}<br>
+    SIRET : {{freelance_siret}}<br>
+    Date : {{contract_date}}
+  </div>
+</div>
+
+<div class="legal-mentions">
+<strong>Signature électronique (art. 1366 Code civil)</strong> — Chaque partie reconnaît avoir pris connaissance de l'intégralité des clauses et les accepter sans réserve.
+</div>
+
+<div class="footer">
+<strong>PURAMA SASU</strong> — 8 Rue de la Chapelle, 25560 Frasne, France — contact@purama.dev
+</div>
+
+</body>
+</html>

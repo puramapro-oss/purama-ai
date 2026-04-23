@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Accord de Partenariat Business — Purama</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #111; padding: 40px 48px; max-width: 210mm; }
+.logo-band { border-bottom: 2px solid #7C3AED; padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; }
+.logo { font-size: 18pt; font-weight: 700; color: #7C3AED; }
+.logo-sub { font-size: 9pt; color: #666; }
+h1 { font-size: 16pt; margin: 24px 0 8px; }
+h2 { font-size: 13pt; margin: 20px 0 6px; color: #7C3AED; font-weight: 600; }
+h3 { font-size: 11.5pt; margin: 14px 0 4px; font-weight: 600; }
+p { margin: 8px 0; text-align: justify; }
+ul { margin: 8px 0 8px 24px; }
+li { margin: 4px 0; }
+strong { color: #000; }
+.preamble { background: #F5F3FF; padding: 12px 16px; border-left: 3px solid #7C3AED; margin: 16px 0; font-size: 10pt; }
+.party-box { border: 1px solid #DDD; padding: 12px; margin: 8px 0; border-radius: 4px; font-size: 10.5pt; }
+.sig-block { margin-top: 40px; display: flex; justify-content: space-between; gap: 40px; }
+.sig-col { flex: 1; border-top: 1px solid #999; padding-top: 8px; font-size: 10pt; }
+.sig-col strong { display: block; font-size: 11pt; margin-bottom: 4px; }
+.footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid #EEE; font-size: 8.5pt; color: #666; text-align: center; }
+.legal-mentions { font-size: 9pt; color: #555; margin-top: 24px; padding: 12px; background: #FAFAFA; border-radius: 4px; line-height: 1.4; }
+table.numbers { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10pt; }
+table.numbers td { border: 1px solid #DDD; padding: 6px 10px; }
+table.numbers td.label { background: #FAFAFA; font-weight: 600; width: 40%; }
+</style>
+</head>
+<body>
+
+<div class="logo-band">
+  <div><div class="logo">PURAMA</div><div class="logo-sub">Accord de Partenariat Business</div></div>
+  <div style="text-align:right;font-size:9pt;color:#666;">{{contract_date}}</div>
+</div>
+
+<h1>Accord de Partenariat Business</h1>
+
+<div class="preamble">
+Conformément aux articles 1101 et suivants du Code civil, les parties conviennent de formaliser par le présent accord les conditions de leur partenariat commercial au sein de l'écosystème Purama.
+</div>
+
+<h2>1. Identification des parties</h2>
+
+<div class="party-box">
+<strong>PURAMA SASU (ci-après « Purama »)</strong>
+8 Rue de la Chapelle, 25560 Frasne, France<br>
+SIREN : [en cours d'immatriculation] — RCS Besançon — ZFRR<br>
+TVA non applicable, article 293 B du CGI<br>
+Représentée par : <strong>{{purama_representative_name}}</strong>, {{purama_representative_title}}
+</div>
+
+<div class="party-box">
+<strong>Le Partenaire (ci-après « le Partenaire »)</strong>
+Raison sociale : <strong>{{partner_company_name}}</strong><br>
+SIRET : {{partner_siret}} — Numéro TVA : {{partner_vat}}<br>
+Siège social : {{partner_address}}, {{partner_postal_code}} {{partner_city}}, {{partner_country}}<br>
+Représenté par : <strong>{{partner_legal_rep_name}}</strong>, {{partner_legal_rep_title}}
+</div>
+
+<h2>2. Objet et périmètre du partenariat</h2>
+<p>Le présent accord définit les modalités d'intégration du Partenaire au sein de la marketplace ou de l'écosystème Purama.</p>
+<p><strong>Périmètre</strong> : {{partnership_scope}}</p>
+
+<h2>3. Conditions financières</h2>
+<table class="numbers">
+<tr><td class="label">Taux de commission Purama</td><td>{{commission_rate}}%</td></tr>
+<tr><td class="label">Volume minimum mensuel</td><td>{{minimum_volume}}</td></tr>
+<tr><td class="label">Fréquence de versement</td><td>Mensuelle, net 30 jours fin de mois</td></tr>
+<tr><td class="label">Moyen de versement</td><td>Virement SEPA sur compte bancaire du Partenaire</td></tr>
+</table>
+
+<h2>4. Obligations du Partenaire</h2>
+<ul>
+<li>Fournir les produits/services décrits dans le périmètre avec un niveau de qualité conforme aux standards Purama</li>
+<li>Respecter la réglementation applicable à son activité (consommation, protection données, fiscalité)</li>
+<li>Maintenir une assurance responsabilité civile professionnelle en vigueur</li>
+<li>Communiquer à Purama tout changement substantiel (forme juridique, dirigeants, SIRET)</li>
+<li>Ne pas utiliser la marque Purama en dehors du périmètre contractuel sans accord écrit préalable</li>
+</ul>
+
+<h2>5. Obligations de Purama</h2>
+<ul>
+<li>Mettre à disposition la plateforme technique d'intégration (API, tableau de bord)</li>
+<li>Reverser les sommes dues dans les délais indiqués à l'article 3</li>
+<li>Assurer la promotion équitable du Partenaire au sein de l'écosystème</li>
+<li>Garantir la confidentialité des informations commerciales du Partenaire</li>
+</ul>
+
+<h2>6. Durée et résiliation</h2>
+<p><strong>Durée</strong> : le présent accord est conclu pour une durée de <strong>12 mois</strong> à compter du <strong>{{start_date}}</strong>, soit jusqu'au <strong>{{end_date}}</strong>. Il se renouvelle ensuite par tacite reconduction pour des périodes successives de 12 mois, sauf dénonciation par l'une des parties un mois avant l'échéance, par lettre recommandée ou courrier électronique.</p>
+
+<p><strong>Résiliation pour faute</strong> : en cas de manquement grave non réparé dans un délai de 15 jours après mise en demeure, la partie lésée peut résilier le contrat sans préavis.</p>
+
+<h2>7. Propriété intellectuelle</h2>
+<p>Chaque partie conserve la pleine propriété de ses marques, savoir-faire et créations antérieures au présent contrat. Les créations réalisées en commun font l'objet d'une copropriété à parts égales, sauf accord écrit contraire.</p>
+
+<h2>8. Confidentialité</h2>
+<p>Les parties s'engagent à préserver la confidentialité de toute information non publique reçue dans le cadre du présent accord, pendant toute la durée du contrat et pendant <strong>5 ans</strong> après son terme.</p>
+
+<h2>9. RGPD</h2>
+<p>Conformément au Règlement Général sur la Protection des Données, les parties conviennent de respecter leurs obligations respectives en tant que responsables de traitement ou sous-traitants. Les données personnelles des clients finaux sont traitées par Purama en qualité de responsable principal.</p>
+
+<h2>10. Juridiction et droit applicable</h2>
+<p>Le présent accord est soumis au droit français. Tout litige non résolu à l'amiable sera porté devant le <strong>Tribunal de Commerce de Besançon</strong>.</p>
+
+<h2>11. Signature électronique</h2>
+<p>Signature recueillie via DocuSeal (art. 1366 Code civil, règlement eIDAS UE 910/2014) et horodatée sur la blockchain Bitcoin via OpenTimestamps.</p>
+
+<div class="sig-block">
+  <div class="sig-col">
+    <strong>PURAMA SASU</strong>
+    {{purama_representative_name}}<br>
+    {{purama_representative_title}}<br>
+    Date : {{contract_date}}
+  </div>
+  <div class="sig-col">
+    <strong>{{partner_company_name}}</strong>
+    {{partner_legal_rep_name}}<br>
+    {{partner_legal_rep_title}}<br>
+    Date : {{contract_date}}
+  </div>
+</div>
+
+<div class="legal-mentions">
+<strong>Signature électronique (art. 1366 Code civil)</strong> — En signant le présent accord par voie électronique, chaque partie reconnaît avoir pris connaissance de l'intégralité de ses clauses et les accepter sans réserve.
+</div>
+
+<div class="footer">
+<strong>PURAMA SASU</strong> — 8 Rue de la Chapelle, 25560 Frasne, France — contact@purama.dev
+</div>
+
+</body>
+</html>

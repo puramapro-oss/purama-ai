@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Convention Territoire Purama</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #111; padding: 40px 48px; max-width: 210mm; }
+.logo-band { border-bottom: 2px solid #7C3AED; padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; }
+.logo { font-size: 18pt; font-weight: 700; color: #7C3AED; }
+.logo-sub { font-size: 9pt; color: #666; }
+h1 { font-size: 16pt; margin: 24px 0 8px; }
+h2 { font-size: 13pt; margin: 20px 0 6px; color: #7C3AED; font-weight: 600; }
+h3 { font-size: 11.5pt; margin: 14px 0 4px; font-weight: 600; }
+p { margin: 8px 0; text-align: justify; }
+ul { margin: 8px 0 8px 24px; }
+li { margin: 4px 0; }
+strong { color: #000; }
+.preamble { background: #F5F3FF; padding: 12px 16px; border-left: 3px solid #7C3AED; margin: 16px 0; font-size: 10pt; }
+.party-box { border: 1px solid #DDD; padding: 12px; margin: 8px 0; border-radius: 4px; font-size: 10.5pt; }
+.sig-block { margin-top: 40px; display: flex; justify-content: space-between; gap: 40px; }
+.sig-col { flex: 1; border-top: 1px solid #999; padding-top: 8px; font-size: 10pt; }
+.sig-col strong { display: block; font-size: 11pt; margin-bottom: 4px; }
+.footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid #EEE; font-size: 8.5pt; color: #666; text-align: center; }
+.legal-mentions { font-size: 9pt; color: #555; margin-top: 24px; padding: 12px; background: #FAFAFA; border-radius: 4px; line-height: 1.4; }
+table.numbers { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10pt; }
+table.numbers td { border: 1px solid #DDD; padding: 6px 10px; }
+table.numbers td.label { background: #FAFAFA; font-weight: 600; width: 40%; }
+</style>
+</head>
+<body>
+
+<div class="logo-band">
+  <div><div class="logo">PURAMA</div><div class="logo-sub">Convention Territoire</div></div>
+  <div style="text-align:right;font-size:9pt;color:#666;">{{contract_date}}</div>
+</div>
+
+<h1>Convention de partenariat territorial</h1>
+
+<div class="preamble">
+Conformément aux articles L.1111-1 et suivants du Code général des collectivités territoriales, et aux règles applicables aux conventions de partenariat entre collectivités publiques et personnes morales de droit privé, les parties conviennent du présent partenariat dans l'intérêt général du territoire concerné.
+</div>
+
+<h2>1. Identification des parties</h2>
+
+<div class="party-box">
+<strong>La Collectivité</strong>
+{{municipality_name}}<br>
+SIREN : {{municipality_siren}}<br>
+Adresse : {{municipality_address}}, {{municipality_postal_code}}, {{municipality_country}}<br>
+Représentée par : <strong>{{mayor_name}}</strong>, {{mayor_title}}, dûment habilité(e) par délibération du conseil municipal
+</div>
+
+<div class="party-box">
+<strong>PURAMA SASU (ci-après « Purama »)</strong>
+8 Rue de la Chapelle, 25560 Frasne, France<br>
+SIREN : [en cours d'immatriculation] — Zone de Revitalisation Rurale Frasne (ZFRR)<br>
+Représentée par : <strong>{{purama_representative_name}}</strong>, {{purama_representative_title}}
+</div>
+
+<h2>2. Objet</h2>
+<p>La présente convention a pour objet de formaliser le partenariat entre la Collectivité et Purama visant à mettre à disposition des habitants du territoire couvert un ensemble de services numériques éthiques favorisant le développement économique local, le bien-être et l'inclusion sociale.</p>
+<p><strong>Périmètre territorial</strong> : {{territory_scope}}</p>
+<p><strong>Nombre de citoyens couverts</strong> : {{citizens_count}}</p>
+
+<h2>3. Engagements de Purama</h2>
+<ul>
+<li>Mettre à disposition des citoyens du territoire l'ensemble des applications Purama listées ci-dessous</li>
+<li>Offrir un accès privilégié ou une tarification adaptée pour les publics spécifiques (jeunes, seniors, demandeurs d'emploi)</li>
+<li>Assurer un support utilisateur dédié en français</li>
+<li>Fournir à la Collectivité des rapports d'usage trimestriels anonymisés</li>
+<li>Respecter les principes éthiques : pas de publicité intrusive, pas de revente de données, transparence algorithmique</li>
+</ul>
+
+<p><strong>Services inclus</strong> : {{services_included}}</p>
+
+<h2>4. Engagements de la Collectivité</h2>
+<ul>
+<li>Promouvoir l'accès aux services Purama auprès de ses administrés</li>
+<li>Faciliter la communication institutionnelle (newsletter, site web, réseaux sociaux)</li>
+<li>Désigner un référent unique pour le suivi opérationnel</li>
+<li>Respecter le cadre éthique et déontologique du partenariat</li>
+</ul>
+
+<h2>5. Subvention annuelle</h2>
+<p>En contrepartie des engagements de Purama et dans le cadre de sa compétence en matière d'aménagement numérique du territoire et de soutien aux acteurs économiques locaux, la Collectivité s'engage à verser une subvention annuelle de <strong>{{subvention_annual_amount}} €</strong>, versée en quatre échéances trimestrielles égales.</p>
+<p>Cette subvention est conforme à l'article L.1511-2 du CGCT et ne constitue pas une aide d'État incompatible au sens de l'article 107 TFUE, étant inférieure au seuil de minimis.</p>
+
+<h2>6. Durée</h2>
+<p>La présente convention est conclue pour une durée de <strong>3 ans</strong> à compter du <strong>{{start_date}}</strong>, soit jusqu'au <strong>{{end_date}}</strong>. Elle pourra être renouvelée par accord exprès des parties matérialisé par un avenant écrit.</p>
+
+<h2>7. Évaluation</h2>
+<p>Un comité de pilotage se réunit semestriellement pour évaluer l'exécution de la convention. Un bilan annuel est présenté au conseil municipal par le référent désigné.</p>
+
+<h2>8. Résiliation</h2>
+<p>Chaque partie peut mettre fin à la présente convention par lettre recommandée avec accusé de réception, avec un préavis de <strong>3 mois</strong>. En cas de manquement grave non réparé, résiliation possible sans préavis.</p>
+
+<h2>9. RGPD</h2>
+<p>Conformément au RGPD, les données personnelles des citoyens utilisateurs sont traitées par Purama en tant que responsable de traitement. La Collectivité reste responsable de ses propres traitements (base de données électorale, services publics).</p>
+
+<h2>10. Juridiction</h2>
+<p>Tout litige relatif à l'interprétation ou l'exécution de la présente convention sera porté devant le <strong>Tribunal administratif de Besançon</strong>.</p>
+
+<h2>11. Signature électronique</h2>
+<p>Signature recueillie via DocuSeal (art. 1366 Code civil, règlement eIDAS UE 910/2014) et horodatée blockchain Bitcoin via OpenTimestamps.</p>
+
+<div class="sig-block">
+  <div class="sig-col">
+    <strong>La Collectivité</strong>
+    {{mayor_name}}<br>
+    {{mayor_title}}<br>
+    Date : {{contract_date}}
+  </div>
+  <div class="sig-col">
+    <strong>PURAMA SASU</strong>
+    {{purama_representative_name}}<br>
+    {{purama_representative_title}}<br>
+    Date : {{contract_date}}
+  </div>
+</div>
+
+<div class="legal-mentions">
+<strong>Signature électronique (art. 1366 Code civil)</strong> — Chaque partie reconnaît avoir pris connaissance de l'intégralité de la convention et l'accepter sans réserve.
+</div>
+
+<div class="footer">
+<strong>PURAMA SASU</strong> — 8 Rue de la Chapelle, 25560 Frasne, France — contact@purama.dev
+</div>
+
+</body>
+</html>

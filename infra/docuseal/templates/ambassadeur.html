@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Contrat Ambassadeur Purama — {{tier_label}}</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #111; padding: 40px 48px; max-width: 210mm; }
+.logo-band { border-bottom: 2px solid #7C3AED; padding-bottom: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 18pt; font-weight: 700; color: #7C3AED; letter-spacing: 0.5px; }
+.logo-sub { font-size: 9pt; color: #666; }
+h1 { font-size: 16pt; margin: 24px 0 8px; }
+h2 { font-size: 13pt; margin: 20px 0 6px; color: #7C3AED; font-weight: 600; }
+p { margin: 8px 0; text-align: justify; }
+ul { margin: 8px 0 8px 24px; }
+li { margin: 4px 0; }
+strong { color: #000; }
+.preamble { background: #F5F3FF; padding: 12px 16px; border-left: 3px solid #7C3AED; margin: 16px 0; font-size: 10pt; }
+.party-box { border: 1px solid #DDD; padding: 12px; margin: 8px 0; border-radius: 4px; font-size: 10.5pt; }
+.party-box strong { display: block; margin-bottom: 4px; }
+.sig-block { margin-top: 40px; display: flex; justify-content: space-between; gap: 40px; }
+.sig-col { flex: 1; border-top: 1px solid #999; padding-top: 8px; font-size: 10pt; }
+.sig-col strong { display: block; font-size: 11pt; margin-bottom: 4px; }
+.footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid #EEE; font-size: 8.5pt; color: #666; text-align: center; }
+.legal-mentions { font-size: 9pt; color: #555; margin-top: 24px; padding: 12px; background: #FAFAFA; border-radius: 4px; line-height: 1.4; }
+.tier-highlight { background: #FEF3C7; padding: 8px 14px; border-left: 3px solid #F59E0B; margin: 14px 0; font-weight: 600; }
+table.numbers { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10pt; }
+table.numbers td { border: 1px solid #DDD; padding: 6px 10px; }
+table.numbers td.label { background: #FAFAFA; font-weight: 600; width: 40%; }
+</style>
+</head>
+<body>
+
+<div class="logo-band">
+  <div>
+    <div class="logo">PURAMA</div>
+    <div class="logo-sub">Écosystème d'applications éthiques</div>
+  </div>
+  <div style="text-align:right;font-size:9pt;color:#666;">
+    {{contract_date}}
+  </div>
+</div>
+
+<h1>Contrat d'Ambassadeur Purama — {{tier_label}}</h1>
+
+<div class="preamble">
+Conformément aux articles 1101 et suivants du Code civil et à la loi n°2014-344 du 17 mars 2014, les parties, dûment identifiées ci-après, conviennent d'établir le présent contrat d'ambassadeur au sein du programme de prescription Purama.
+</div>
+
+<h2>1. Identification des parties</h2>
+
+<div class="party-box">
+<strong>PURAMA SASU (ci-après « Purama »)</strong>
+Forme : Société par actions simplifiée unipersonnelle<br>
+Siège social : 8 Rue de la Chapelle, 25560 Frasne, France<br>
+SIREN : [en cours d'immatriculation] — RCS Besançon<br>
+Zone de Revitalisation Rurale Frasne (ZFRR)<br>
+TVA non applicable, article 293 B du CGI<br>
+Représentée par : <strong>{{purama_representative_name}}</strong>, {{purama_representative_title}}<br>
+Contact : contact@purama.dev
+</div>
+
+<div class="party-box">
+<strong>L'Ambassadeur (ci-après « l'Ambassadeur »)</strong>
+Nom et prénom : <strong>{{user_full_name}}</strong><br>
+Adresse : {{user_address}}, {{user_postal_code}} {{user_city}}, {{user_country}}<br>
+Téléphone : {{user_phone}}<br>
+Email : {{user_email}}<br>
+SIRET (si applicable) : {{user_siret}}<br>
+IBAN (versement commissions) : {{user_iban}}<br>
+Réseaux sociaux : {{user_social_links}}
+</div>
+
+<h2>2. Objet du contrat</h2>
+<p>Le présent contrat a pour objet de définir les conditions dans lesquelles l'Ambassadeur participe au programme de prescription de Purama, en recommandant l'utilisation des applications Purama à des utilisateurs tiers (ci-après « les Filleuls »), en échange d'une rémunération récurrente sous forme de commission.</p>
+
+<div class="tier-highlight">
+Palier <strong>{{tier_label}}</strong> — commission de <strong>{{commission_rate}}%</strong> sur les abonnements Purama souscrits par les Filleuls, versée tant que l'abonnement reste actif.
+</div>
+
+<h2>3. Modalités du programme</h2>
+
+<h3>3.1. Lien de prescription personnalisé</h3>
+<p>Purama attribue à l'Ambassadeur un lien de prescription unique et un code promotionnel permettant d'identifier les Filleuls. Les conversions sont comptabilisées automatiquement via un cookie valable 30 jours.</p>
+
+<h3>3.2. Commissions</h3>
+<table class="numbers">
+<tr><td class="label">Niveau 1 (filleul direct)</td><td>{{commission_rate}}% de l'abonnement, versé chaque mois de paiement actif</td></tr>
+<tr><td class="label">Niveau 2 (filleul de filleul)</td><td>15% de l'abonnement, à vie</td></tr>
+<tr><td class="label">Niveau 3</td><td>7% de l'abonnement, à vie</td></tr>
+<tr><td class="label">Période d'activation</td><td>30 jours consécutifs d'activité réelle du Filleul avant déclenchement</td></tr>
+<tr><td class="label">Versement</td><td>Mensuel, sur l'IBAN indiqué ci-dessus, à partir de 5 € accumulés</td></tr>
+</table>
+
+<h3>3.3. Obligations de l'Ambassadeur</h3>
+<ul>
+<li>Ne pas diffuser de fausses informations sur les produits Purama</li>
+<li>Ne pas utiliser de pratiques trompeuses, de spam, ou de contenus illégaux pour promouvoir les applications</li>
+<li>Respecter la réglementation applicable à l'influence commerciale (loi n°2023-451 du 9 juin 2023)</li>
+<li>Mentionner explicitement la nature commerciale des publications lorsque requis</li>
+<li>Ne pas s'auto-parrainer ni créer de Filleuls fictifs</li>
+</ul>
+
+<h3>3.4. Obligations de Purama</h3>
+<ul>
+<li>Mettre à disposition un tableau de bord avec statistiques en temps réel</li>
+<li>Verser les commissions dues dans un délai maximum de 30 jours après la fin du mois</li>
+<li>Fournir les éléments de communication nécessaires (liens, QR codes, visuels)</li>
+<li>Assurer la transparence du suivi des conversions</li>
+</ul>
+
+<h2>4. Durée et résiliation</h2>
+<p><strong>Durée</strong> : le présent contrat est conclu pour une durée de <strong>{{duration_months}} mois</strong>, tacitement renouvelable par période de 12 mois sauf dénonciation par l'une des parties un mois avant l'échéance, par lettre recommandée ou courrier électronique.</p>
+
+<p><strong>Résiliation anticipée</strong> : le contrat peut être résilié par l'une des parties avec un préavis de 30 jours. En cas de manquement grave (fraude, fausses déclarations, atteinte à l'image de Purama), Purama peut résilier sans préavis.</p>
+
+<p><strong>Conséquences de la résiliation</strong> : les commissions dues au titre des Filleuls actifs sont versées jusqu'à la date de résiliation, puis cessent d'être dues.</p>
+
+<h2>5. Protection des données personnelles (RGPD)</h2>
+<p>Conformément au Règlement Général sur la Protection des Données (UE 2016/679) et à la loi Informatique et Libertés du 6 janvier 1978 modifiée, les données personnelles de l'Ambassadeur sont collectées pour l'exécution du présent contrat et conservées pendant la durée du contrat augmentée de 10 ans (obligation comptable).</p>
+
+<p>L'Ambassadeur dispose des droits d'accès, de rectification, d'effacement, d'opposition, et de portabilité. Ces droits peuvent être exercés par email à <strong>dpo@purama.dev</strong>. Le Délégué à la Protection des Données est Matiss DORNIER.</p>
+
+<h2>6. Juridiction et droit applicable</h2>
+<p>Le présent contrat est soumis au droit français. En cas de litige, les parties s'engagent à rechercher une solution amiable. À défaut, tout différend relatif à l'interprétation, l'exécution ou la résiliation du présent contrat sera porté devant le <strong>Tribunal judiciaire de Besançon</strong>.</p>
+
+<h2>7. Signature électronique et horodatage</h2>
+<p>La signature du présent contrat est recueillie par voie électronique via la plateforme DocuSeal. Conformément à l'article 1366 du Code civil et au règlement eIDAS (UE 910/2014), la signature électronique a la même valeur probante qu'une signature manuscrite.</p>
+
+<p>Le présent contrat est horodaté sur la blockchain Bitcoin via OpenTimestamps, garantissant son intégrité et sa date certaine. La preuve d'horodatage est conservée dans les archives Purama et peut être vérifiée à tout moment par l'Ambassadeur.</p>
+
+<div class="sig-block">
+  <div class="sig-col">
+    <strong>PURAMA SASU</strong>
+    {{purama_representative_name}}<br>
+    {{purama_representative_title}}<br>
+    Date : {{contract_date}}
+  </div>
+  <div class="sig-col">
+    <strong>L'Ambassadeur</strong>
+    {{user_full_name}}<br>
+    {{user_email}}<br>
+    Date : {{contract_date}}
+  </div>
+</div>
+
+<div class="legal-mentions">
+<strong>Mention obligatoire signature électronique (art. 1366 Code civil)</strong> — En signant électroniquement le présent contrat, chaque partie reconnaît avoir pris connaissance de l'intégralité de ses clauses et les accepter sans réserve. La signature électronique est réputée identifier le signataire et manifester son consentement aux obligations qui découlent du contrat.
+</div>
+
+<div class="footer">
+<strong>PURAMA SASU</strong> — 8 Rue de la Chapelle, 25560 Frasne, France<br>
+TVA non applicable, article 293 B du CGI — contact@purama.dev
+</div>
+
+</body>
+</html>
