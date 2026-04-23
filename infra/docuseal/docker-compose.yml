@@ -1,0 +1,46 @@
+services:
+  docuseal:
+    image: docuseal/docuseal:latest
+    container_name: docuseal
+    restart: always
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - /home/docuseal:/data
+    environment:
+      - HOST=docuseal.purama.dev
+      - FORCE_SSL=docuseal.purama.dev
+      - SECRET_KEY_BASE=${DOCUSEAL_SECRET_KEY_BASE}
+      - SMTP_ADDRESS=smtp.resend.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=resend
+      - SMTP_PASSWORD=${RESEND_API_KEY}
+      - SMTP_DOMAIN=purama.dev
+      - SMTP_FROM=contracts@purama.dev
+      - SMTP_AUTHENTICATION=plain
+      - SMTP_STARTTLS=true
+      - MULTITENANT=false
+      - RAILS_ENV=production
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=n8n_default
+      - traefik.http.routers.docuseal.rule=Host(`docuseal.purama.dev`)
+      - traefik.http.routers.docuseal.tls=true
+      - traefik.http.routers.docuseal.entrypoints=web,websecure
+      - traefik.http.routers.docuseal.tls.certresolver=mytlschallenge
+      - traefik.http.services.docuseal.loadbalancer.server.port=3000
+      - traefik.http.middlewares.docuseal-headers.headers.SSLRedirect=true
+      - traefik.http.middlewares.docuseal-headers.headers.STSSeconds=315360000
+      - traefik.http.middlewares.docuseal-headers.headers.browserXSSFilter=true
+      - traefik.http.middlewares.docuseal-headers.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.docuseal-headers.headers.forceSTSHeader=true
+      - traefik.http.middlewares.docuseal-headers.headers.SSLHost=docuseal.purama.dev
+      - traefik.http.middlewares.docuseal-headers.headers.STSIncludeSubdomains=true
+      - traefik.http.middlewares.docuseal-headers.headers.STSPreload=true
+      - traefik.http.routers.docuseal.middlewares=docuseal-headers@docker
+    networks:
+      - n8n_default
+
+networks:
+  n8n_default:
+    external: true
