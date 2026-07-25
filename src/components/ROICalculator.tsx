@@ -16,7 +16,8 @@ export function ROICalculator() {
   const weeklyTimeSaved = employees * hoursAutomated
   const monthlySavings = weeklyTimeSaved * 4.33 * hourlyRate
   const yearlySavings = monthlySavings * 12
-  const agentCost = employees <= 10 ? 299 : employees <= 25 ? 799 : 1499
+  // Real Purama plan pricing (monthly): Starter / Pro / Ultime
+  const agentCost = employees <= 5 ? 29.99 : employees <= 25 ? 69 : 99.99
   const yearlyInvestment = agentCost * 12
   const netROI = yearlySavings - yearlyInvestment
   const roiPercentage = ((yearlySavings - yearlyInvestment) / yearlyInvestment) * 100

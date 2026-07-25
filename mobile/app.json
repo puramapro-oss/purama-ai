@@ -1,0 +1,86 @@
+{
+  "expo": {
+    "name": "Purama AI",
+    "slug": "purama-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "purama-ai",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#0A0A0F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.purama.purama_ai",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Purama AI utilise la camera pour scanner des documents et prendre des photos de preuves.",
+        "NSPhotoLibraryUsageDescription": "Purama AI accede a ta galerie pour joindre des images a tes conversations.",
+        "NSFaceIDUsageDescription": "Purama AI utilise Face ID pour securiser ton compte."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A0F"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "dev.purama.purama_ai",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0A0A0F",
+          "image": "./assets/splash.png",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#8B5CF6"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "purama-ai"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/purama-ai"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}

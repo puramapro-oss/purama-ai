@@ -111,7 +111,7 @@ export const PLANS: Record<PlanId, Plan> = {
       '1 000 000 exécutions / mois',
       'Module compta complet',
       'Tous les modules à venir',
-      'Support VIP 24/7',
+      'Support VIP prioritaire',
       'API complète + webhooks',
       'White-label disponible',
       '14 jours d\'essai gratuit',

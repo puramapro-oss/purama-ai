@@ -1,0 +1,73 @@
+appId: dev.purama.purama_ai
+name: "Agents - List and Search"
+tags:
+  - agents
+  - core
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Login
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+- tapOn:
+    id: "login-submit"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Navigate to Agents tab
+- tapOn: "Agents"
+- extendedWaitUntil:
+    visible:
+      id: "agent-search"
+    timeout: 5000
+
+# Verify all agent cards are visible
+- assertVisible: "agent-card-compta"
+- assertVisible: "agent-card-email"
+- assertVisible: "agent-card-juridique"
+- assertVisible: "agent-card-partenariat"
+- assertVisible: "agent-card-createur"
+- assertVisible: "agent-card-social"
+
+# Search for an agent
+- tapOn:
+    id: "agent-search"
+- inputText: "compta"
+
+# Verify filtered results
+- assertVisible: "agent-card-compta"
+
+# Clear search
+- tapOn:
+    id: "agent-search"
+- eraseText: 6
+
+# Open an agent chat from list
+- tapOn:
+    id: "agent-card-juridique"
+
+# Verify agent chat opened
+- extendedWaitUntil:
+    visible:
+      id: "agent-input"
+    timeout: 5000
+- assertVisible: "agent-input"
+- assertVisible: "agent-send"
+- assertVisible: "agent-back"
+
+# Go back to agent list
+- tapOn:
+    id: "agent-back"
+- extendedWaitUntil:
+    visible:
+      id: "agent-search"
+    timeout: 5000

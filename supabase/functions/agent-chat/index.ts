@@ -2,6 +2,9 @@
 // POST { agent_type, session_id, message }
 // Returns: { reply, tokens? }
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { ChatMessageSchema, validateBody } from "../_shared/validation.ts";
+import { rateLimit } from "../_shared/rate-limit.ts";
+import { json } from "../_shared/response.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -73,14 +76,22 @@ Deno.serve(async (req) => {
     if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
     const userId = userData.user.id;
 
-    const { agent_type, session_id, message } = (await req.json()) as {
-      agent_type?: string;
-      session_id?: string;
-      message?: string;
-    };
-    if (!agent_type || !session_id || !message) {
-      return json({ error: "agent_type, session_id and message required" }, 400);
+    // Rate limiting (20 req/hour per user)
+    const rateLimitResult = rateLimit(`agent-chat:${userId}`, 20, 3600000);
+    if (!rateLimitResult.allowed) {
+      return json({ error: "Rate limit exceeded. Try again in 1 hour." }, 429);
     }
+
+    // Validate request body
+    const validation = validateBody(
+      ChatMessageSchema.extend({ agent_type: ChatMessageSchema.shape.agent_type.default("email") }),
+      await req.json()
+    );
+    if (!validation.ok) {
+      return json({ error: validation.error }, 400);
+    }
+    const { agent_type, session_id, message } = validation.data;
+
     if (!SYSTEM_PROMPTS[agent_type]) return json({ error: "invalid agent_type" }, 400);
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -156,10 +167,3 @@ Deno.serve(async (req) => {
     return json({ error: msg }, 500);
   }
 });
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}

@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.next/
+*.lock
+__pycache__/
+coverage/

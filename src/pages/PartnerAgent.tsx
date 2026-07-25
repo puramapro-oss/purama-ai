@@ -95,7 +95,7 @@ export default function PartnerAgent() {
     : 0;
 
   const tutorialSteps: TutorialStep[] = [
-    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Trouve, contacte, signe et accompagne tes partenaires 24/7. L\'IA fait tout : recherche Tavily, rédaction Claude, envoi Resend, contrats DocuSeal.' },
+    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Trouve, contacte, signe et accompagne tes partenaires en continu. L\'IA fait tout : recherche Tavily, rédaction Claude, envoi Resend, contrats DocuSeal.' },
     { selector: null, title: 'Configure ton identité', body: 'Avant tout : ton nom d\'envoi, ton email, ton ton de communication, tes niches cibles.' },
     { selector: null, title: 'Trouve des prospects via IA', body: 'Décris en français le type de partenaire que tu veux. L\'IA cherche, analyse et score 0-100.' },
     { selector: null, title: 'Active l\'outreach automatique', body: 'L\'agent envoie 20 emails/jour personnalisés par défaut, dans tes plages horaires.' },
@@ -122,7 +122,7 @@ export default function PartnerAgent() {
             )}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Trouve, contacte, signe et accompagne tes partenaires 24/7.
+            Trouve, contacte, signe et accompagne tes partenaires en continu.
           </p>
         </div>
         <div className="flex gap-2">

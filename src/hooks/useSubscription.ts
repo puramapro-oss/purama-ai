@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { isSuperAdmin } from '@/lib/constants';
 
 export interface SubscriptionInfo {
   planType: 'none' | 'starter' | 'premium';
@@ -40,6 +41,12 @@ export function useSubscription() {
   const checkSubscription = useCallback(async () => {
     if (!user) {
       setSubscription({ planType: 'none', subscriptionEnd: null, isLoading: false });
+      return;
+    }
+
+    // Super admin → forced premium, bypass Stripe check
+    if (isSuperAdmin(user.email)) {
+      setSubscription({ planType: 'premium', subscriptionEnd: null, isLoading: false });
       return;
     }
 

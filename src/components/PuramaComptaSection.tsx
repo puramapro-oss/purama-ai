@@ -32,7 +32,7 @@ export function PuramaComptaSection() {
               <span className="text-foreground text-2xl sm:text-3xl">Votre DAF Virtuel IA</span>
             </h2>
             <p className="text-muted-foreground font-space text-lg leading-relaxed mb-8">
-              Automatisez 80% de votre comptabilité grâce à l'IA. Saisie OCR, rapprochement bancaire, déclarations fiscales et pilotage financier — tout-en-un.
+              Automatise une grande partie de ta comptabilité grâce à l'IA. Saisie OCR, rapprochement bancaire, déclarations fiscales et pilotage financier — tout-en-un.
             </p>
             <Link to="/purama-compta">
               <Button className="btn-primary text-lg px-8 py-4 group">

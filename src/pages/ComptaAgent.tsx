@@ -134,7 +134,7 @@ export default function ComptaAgent() {
             )}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Catégorise tes transactions, calcule ta TVA, prépare tes déclarations 24/7.
+            Catégorise tes transactions, calcule ta TVA, prépare tes déclarations.
           </p>
         </div>
         <div className="flex gap-2">

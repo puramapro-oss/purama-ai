@@ -26,7 +26,7 @@ export function ExecutionCounter({ variant = 'compact' }: Props) {
     let alive = true;
     (async () => {
       try {
-        const s = await getUsageSnapshot(user.id);
+        const s = await getUsageSnapshot(user.id, user.email);
         if (alive) setSnap(s);
       } catch (e) {
         console.warn('[ExecutionCounter]', e);
@@ -38,7 +38,7 @@ export function ExecutionCounter({ variant = 'compact' }: Props) {
     const t = setInterval(async () => {
       if (!user) return;
       try {
-        const s = await getUsageSnapshot(user.id);
+        const s = await getUsageSnapshot(user.id, user.email);
         if (alive) setSnap(s);
       } catch { /* silent */ }
     }, 60_000);

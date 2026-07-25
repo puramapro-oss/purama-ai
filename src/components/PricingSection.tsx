@@ -171,8 +171,13 @@ export function PricingSection() {
 
         {/* Comparison toggle */}
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mt-10">
-          <button onClick={() => setShowComparison(!showComparison)} className="inline-flex items-center gap-2 text-accent-cyan text-sm font-semibold hover:underline">
-            <ChevronDown className={`w-4 h-4 transition-transform ${showComparison ? 'rotate-180' : ''}`} />
+          <button
+            onClick={() => setShowComparison(!showComparison)}
+            className="inline-flex items-center gap-2 text-accent-cyan text-sm font-semibold hover:underline"
+            aria-label={showComparison ? "Masquer la comparaison détaillée" : "Afficher la comparaison détaillée"}
+            aria-expanded={showComparison}
+          >
+            <ChevronDown className={`w-4 h-4 transition-transform ${showComparison ? 'rotate-180' : ''}`} aria-hidden="true" />
             {showComparison ? 'Masquer' : 'Voir'} la comparaison détaillée
           </button>
         </motion.div>

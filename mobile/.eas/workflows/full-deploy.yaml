@@ -1,0 +1,68 @@
+name: Full Deploy — Purama AI Mobile
+description: Build, test, and submit Purama AI to iOS and Android stores
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_ios:
+    name: Build iOS Production
+    type: build
+    platform: ios
+    profile: production
+    params:
+      auto_submit: false
+
+  build_android:
+    name: Build Android Production
+    type: build
+    platform: android
+    profile: production
+    params:
+      auto_submit: false
+
+  test_maestro_ios:
+    name: Run Maestro Tests (iOS)
+    needs: [build_ios]
+    type: maestro
+    platform: ios
+    build_id: ${{ jobs.build_ios.outputs.build_id }}
+    params:
+      flow_path: .maestro/
+      app_file: ${{ jobs.build_ios.outputs.app_path }}
+
+  test_maestro_android:
+    name: Run Maestro Tests (Android)
+    needs: [build_android]
+    type: maestro
+    platform: android
+    build_id: ${{ jobs.build_android.outputs.build_id }}
+    params:
+      flow_path: .maestro/
+      app_file: ${{ jobs.build_android.outputs.app_path }}
+
+  submit_ios:
+    name: Submit to App Store
+    needs: [test_maestro_ios]
+    type: submit
+    platform: ios
+    profile: production
+    build_id: ${{ jobs.build_ios.outputs.build_id }}
+
+  submit_android:
+    name: Submit to Google Play
+    needs: [test_maestro_android]
+    type: submit
+    platform: android
+    profile: production
+    build_id: ${{ jobs.build_android.outputs.build_id }}
+
+  ota_update:
+    name: Publish OTA Update
+    needs: [submit_ios, submit_android]
+    type: update
+    params:
+      branch: production
+      message: "OTA update — Purama AI v${{ github.sha }}"

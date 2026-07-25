@@ -115,7 +115,7 @@ const STEPS = [
     tips: [
       'Explore le dashboard pour commencer',
       'Consulte l\'aide si tu as des questions',
-      'Le chatbot IA est disponible 24/7 en bas à droite',
+      'Le chatbot IA est dispo en bas à droite',
     ],
     link: '/dashboard',
     linkLabel: 'Commencer',

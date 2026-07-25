@@ -1,0 +1,74 @@
+appId: dev.purama.purama_ai
+name: "Navigation - All Tabs"
+tags:
+  - navigation
+  - smoke
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Login first
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+- tapOn:
+    id: "login-submit"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Tab 1: Dashboard (already here)
+- assertVisible: "daily-gift-btn"
+- assertVisible: "notifications-btn"
+- assertVisible: "agent-compta"
+- assertVisible: "agent-email"
+- assertVisible: "agent-juridique"
+- assertVisible: "agent-partenariat"
+
+# Tab 2: Agents
+- tapOn: "Agents"
+- extendedWaitUntil:
+    visible:
+      id: "agent-search"
+    timeout: 5000
+- assertVisible: "agent-search"
+- assertVisible: "agent-card-compta"
+
+# Tab 3: Wallet
+- tapOn: "Wallet"
+- extendedWaitUntil:
+    visible:
+      id: "withdraw-btn"
+    timeout: 5000
+- assertVisible: "withdraw-btn"
+
+# Tab 4: Points
+- tapOn: "Points"
+- extendedWaitUntil:
+    visible:
+      id: "open-daily-gift"
+    timeout: 5000
+- assertVisible: "open-daily-gift"
+
+# Tab 5: Settings
+- tapOn: "Paramètres"
+- extendedWaitUntil:
+    visible:
+      id: "settings-parrainage"
+    timeout: 5000
+- assertVisible: "settings-parrainage"
+- assertVisible: "settings-logout"
+
+# Navigate back to Dashboard
+- tapOn: "Accueil"
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 5000
+- assertVisible: "daily-gift-btn"

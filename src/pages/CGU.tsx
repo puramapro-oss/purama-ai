@@ -19,7 +19,7 @@ export default function CGU() {
         <p>Les présentes CGU définissent les conditions d'accès et d'utilisation de la plateforme Purama AI. En créant un compte, vous acceptez l'intégralité des présentes conditions.</p>
 
         <h2>2. Description du service</h2>
-        <p>Purama AI est une plateforme proposant 45 agents d'intelligence artificielle spécialisés dans l'automatisation des tâches professionnelles : marketing, ventes, service client, ressources humaines, finance, et plus encore.</p>
+        <p>Purama AI est une plateforme proposant des agents d'intelligence artificielle spécialisés (Email, Comptabilité, Juridique, Partenariats, Créateur d'agents, et plus) ainsi que des agents personnalisés pour l'automatisation des tâches professionnelles : marketing, ventes, service client, ressources humaines, finance.</p>
 
         <h2>3. Accès et inscription</h2>
         <p>L'inscription est ouverte à toute personne physique ou morale. Vous devez fournir des informations exactes et à jour. Vous êtes responsable de la confidentialité de vos identifiants de connexion.</p>

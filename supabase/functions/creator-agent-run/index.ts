@@ -3,6 +3,9 @@
 // If called by service-role: bypass user check (used by n8n scheduler).
 // If called by user JWT: must own the agent.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { AgentRunSchema, validateBody } from "../_shared/validation.ts";
+import { rateLimit } from "../_shared/rate-limit.ts";
+import { json } from "../_shared/response.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,14 +38,20 @@ Deno.serve(async (req) => {
       const { data: userData, error: userErr } = await userClient.auth.getUser(token);
       if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
       userId = userData.user.id;
+
+      // Rate limiting (10 req/hour for manual runs)
+      const rateLimitResult = rateLimit(`creator-agent-run:${userId}`, 10, 3600000);
+      if (!rateLimitResult.allowed) {
+        return json({ error: "Rate limit exceeded. Try again in 1 hour." }, 429);
+      }
     }
 
-    const body = (await req.json()) as {
-      agent_id?: string;
-      input?: string;
-      trigger?: string;
-    };
-    if (!body.agent_id) return json({ error: "agent_id required" }, 400);
+    // Validate input
+    const validation = validateBody(AgentRunSchema, await req.json());
+    if (!validation.ok) {
+      return json({ error: validation.error }, 400);
+    }
+    const { agent_id, input } = validation.data;
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       db: { schema: "purama_ai" },
@@ -52,7 +61,7 @@ Deno.serve(async (req) => {
     const { data: agent, error: aErr } = await admin
       .from("creator_agents")
       .select("*")
-      .eq("id", body.agent_id)
+      .eq("id", agent_id)
       .single();
     if (aErr || !agent) return json({ error: "Agent not found" }, 404);
 
@@ -67,8 +76,8 @@ Deno.serve(async (req) => {
     const effectiveUserId = userId ?? agent.user_id;
     if (!effectiveUserId) return json({ error: "Cannot determine user" }, 400);
 
-    const trigger = (body.trigger as string) || "manual";
-    const inputText = body.input ?? "";
+    const trigger = (validation.data.trigger as string) || "manual";
+    const inputText = (input ?? "") as string;
 
     // Insert pending run row
     const { data: runRow, error: runErr } = await admin
@@ -155,10 +164,3 @@ Deno.serve(async (req) => {
     return json({ error: msg }, 500);
   }
 });
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}

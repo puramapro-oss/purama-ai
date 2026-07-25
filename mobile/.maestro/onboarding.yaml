@@ -1,0 +1,85 @@
+appId: dev.purama.purama_ai
+name: "Onboarding - First Time Signup to Dashboard"
+tags:
+  - onboarding
+  - e2e
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Verify we start on login screen
+- assertVisible: "login-email"
+
+# Navigate to signup
+- tapOn: "Créer un compte"
+
+# Fill signup form
+- tapOn:
+    id: "signup-name"
+- inputText: "Nouvel Utilisateur"
+
+- tapOn:
+    id: "signup-email"
+- inputText: "onboarding-test@purama.dev"
+
+- tapOn:
+    id: "signup-password"
+- inputText: "OnboardPass789!"
+
+# Submit
+- tapOn:
+    id: "signup-submit"
+
+# Wait for dashboard (after auto-redirect)
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 20000
+
+# Verify dashboard loaded with key elements
+- assertVisible: "daily-gift-btn"
+- assertVisible: "notifications-btn"
+- assertVisible: "agent-compta"
+- assertVisible: "agent-email"
+
+# Open daily gift (first time user bonus)
+- tapOn:
+    id: "daily-gift-btn"
+
+# Wait for gift animation/modal
+- extendedWaitUntil:
+    visible: "cadeau"
+    timeout: 10000
+
+# Dismiss gift modal
+- back
+
+# Navigate through all tabs to confirm access
+- tapOn: "Agents"
+- extendedWaitUntil:
+    visible:
+      id: "agent-search"
+    timeout: 5000
+
+- tapOn: "Wallet"
+- extendedWaitUntil:
+    visible:
+      id: "withdraw-btn"
+    timeout: 5000
+
+- tapOn: "Points"
+- extendedWaitUntil:
+    visible:
+      id: "open-daily-gift"
+    timeout: 5000
+
+- tapOn: "Paramètres"
+- extendedWaitUntil:
+    visible:
+      id: "settings-parrainage"
+    timeout: 5000
+
+# Go back to dashboard
+- tapOn: "Accueil"
+- assertVisible: "daily-gift-btn"

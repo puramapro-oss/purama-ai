@@ -1,0 +1,66 @@
+appId: dev.purama.purama_ai
+name: "Daily Gift - Open and Claim"
+tags:
+  - daily-gift
+  - engagement
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Login
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+- tapOn:
+    id: "login-submit"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Open daily gift from dashboard
+- tapOn:
+    id: "daily-gift-btn"
+
+# Wait for gift animation/modal to appear
+- extendedWaitUntil:
+    visible: "cadeau"
+    timeout: 10000
+
+# Dismiss and go back to dashboard
+- back
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 5000
+
+# Also test via Points tab
+- tapOn: "Points"
+- extendedWaitUntil:
+    visible:
+      id: "open-daily-gift"
+    timeout: 5000
+
+# Open daily gift from Points screen
+- tapOn:
+    id: "open-daily-gift"
+
+# Wait for gift UI
+- extendedWaitUntil:
+    visible: "cadeau"
+    timeout: 10000
+
+# Go back
+- back
+
+# Verify Points screen is still accessible
+- extendedWaitUntil:
+    visible:
+      id: "open-daily-gift"
+    timeout: 5000

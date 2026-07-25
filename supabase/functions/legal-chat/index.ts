@@ -6,12 +6,21 @@
 // 4. Persist user + assistant messages in legal_chat_history
 // 5. Return reply + sources extracted from the response
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { validateBody } from "../_shared/validation.ts";
+import { rateLimit } from "../_shared/rate-limit.ts";
+import { json } from "../_shared/response.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+const LegalChatSchema = z.object({
+  session_id: z.string().uuid(),
+  message: z.string().min(1).max(4000),
+});
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
@@ -55,8 +64,18 @@ Deno.serve(async (req) => {
     if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
     const userId = userData.user.id;
 
-    const { session_id, message } = (await req.json()) as { session_id?: string; message?: string };
-    if (!session_id || !message) return json({ error: "session_id and message required" }, 400);
+    // Rate limiting (20 req/hour)
+    const rateLimitResult = rateLimit(`legal-chat:${userId}`, 20, 3600000);
+    if (!rateLimitResult.allowed) {
+      return json({ error: "Rate limit exceeded. Try again in 1 hour." }, 429);
+    }
+
+    // Validate input
+    const validation = validateBody(LegalChatSchema, await req.json());
+    if (!validation.ok) {
+      return json({ error: validation.error }, 400);
+    }
+    const { session_id, message } = validation.data;
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       db: { schema: "purama_ai" },
@@ -162,10 +181,3 @@ Domaines suivis : ${(cfg.expertise_areas ?? []).join(", ")}
     return json({ error: msg }, 500);
   }
 });
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}

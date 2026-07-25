@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { rateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,6 +40,15 @@ serve(async (req) => {
     }
 
     const userId = data.user.id;
+
+    // Rate limiting (20 req/hour)
+    const rateLimitResult = rateLimit(`chat:${userId}`, 20, 3600000);
+    if (!rateLimitResult.allowed) {
+      return new Response(JSON.stringify({ error: "Rate limit exceeded. Try again in 1 hour." }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Parse and validate input
     const body = await req.json();

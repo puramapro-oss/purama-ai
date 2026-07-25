@@ -417,7 +417,7 @@ export function ChatbotWidget() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">Purama AI</h3>
-                  <p className="text-xs text-white/80">Assistant en ligne 24/7</p>
+                  <p className="text-xs text-white/80">Assistant IA en ligne</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">

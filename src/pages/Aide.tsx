@@ -169,7 +169,7 @@ export default function Aide() {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">Tu n'as pas trouvé ta réponse ?</h3>
-                <p className="text-sm text-muted-foreground">Notre assistant IA est disponible 24/7 pour t'aider</p>
+                <p className="text-sm text-muted-foreground">Notre assistant IA est là pour t'aider</p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">

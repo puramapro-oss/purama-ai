@@ -65,7 +65,7 @@ export default function MyAgents() {
           <Crown className="w-16 h-16 text-amber-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-2">Vous êtes Premium</h1>
           <p className="text-muted-foreground mb-6">
-            Vous avez accès à tous les 45 agents !
+            Vous avez accès à tous les agents !
           </p>
           <Button onClick={() => navigate('/dashboard')}>
             Aller au Dashboard

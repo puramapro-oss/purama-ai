@@ -1,11 +1,26 @@
 // Legal Agent — Build a complete case file from facts (Claude)
 // POST { title, type, facts, parties }
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { validateBody } from "../_shared/validation.ts";
+import { rateLimit } from "../_shared/rate-limit.ts";
+import { json } from "../_shared/response.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const BuildCaseSchema = z.object({
+  title: z.string().min(1).max(200),
+  type: z.string().min(1).max(50),
+  facts: z.string().min(10).max(10000),
+  parties: z.array(z.object({
+    name: z.string().min(1).max(100),
+    role: z.string().min(1).max(50),
+    email: z.string().email().optional(),
+  })).optional(),
+});
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
@@ -28,15 +43,18 @@ Deno.serve(async (req) => {
     if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
     const userId = userData.user.id;
 
-    const body = (await req.json()) as {
-      title?: string;
-      type?: string;
-      facts?: string;
-      parties?: Array<{ name: string; role: string; email?: string }>;
-    };
-    if (!body.title || !body.facts || !body.type) {
-      return json({ error: "title, type and facts required" }, 400);
+    // Rate limiting (10 req/hour)
+    const rateLimitResult = rateLimit(`legal-build-case:${userId}`, 10, 3600000);
+    if (!rateLimitResult.allowed) {
+      return json({ error: "Rate limit exceeded. Try again in 1 hour." }, 429);
     }
+
+    // Validate input
+    const validation = validateBody(BuildCaseSchema, await req.json());
+    if (!validation.ok) {
+      return json({ error: validation.error }, 400);
+    }
+    const body = validation.data;
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       db: { schema: "purama_ai" },
@@ -147,10 +165,3 @@ Monte ce dossier maintenant.`;
     return json({ error: msg }, 500);
   }
 });
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}

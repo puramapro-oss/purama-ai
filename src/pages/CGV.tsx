@@ -21,8 +21,9 @@ export default function CGV() {
         <h2>2. Services proposés</h2>
         <p>Purama AI propose des agents d'intelligence artificielle accessibles via abonnement :</p>
         <ul>
-          <li><strong>Plan Starter</strong> : 33€ TTC/mois ou 265€ TTC/an — Accès à 5 agents IA au choix</li>
-          <li><strong>Plan Premium</strong> : 99€ TTC/mois ou 796€ TTC/an — Accès illimité aux 45 agents IA</li>
+          <li><strong>Plan Starter</strong> : 29,99€ TTC/mois ou 241,08€ TTC/an — Accès à 5 agents IA au choix</li>
+          <li><strong>Plan Pro</strong> : 69€ TTC/mois ou 554,76€ TTC/an — Accès à tous les agents IA</li>
+          <li><strong>Plan Ultime</strong> : 99,99€ TTC/mois ou 803,88€ TTC/an — Tous les agents + 100 agents personnalisés + API + white-label</li>
         </ul>
         <p>Tous les prix sont indiqués en euros, toutes taxes comprises (TTC).</p>
 

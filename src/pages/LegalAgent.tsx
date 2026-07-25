@@ -85,7 +85,7 @@ export default function LegalAgent() {
   const urgentVeille = veille.filter(v => v.severity === 'urgent' || v.severity === 'action_required');
 
   const tutorialSteps: TutorialStep[] = [
-    { selector: null, title: 'Bienvenue dans l\'Agent Juridique ⚖️', body: 'Ton avocat IA disponible 24/7. Droit français + européen + jurisprudence à jour. Génère contrats, monte des dossiers, surveille la veille juridique.' },
+    { selector: null, title: 'Bienvenue dans l\'Agent Juridique ⚖️', body: 'Ton avocat IA. Droit français + européen + jurisprudence à jour. Génère contrats, monte des dossiers, surveille la veille juridique.' },
     { selector: null, title: 'Pose une question via le chat', body: 'Le chat IA cite les articles de loi exacts et la jurisprudence pertinente. Pose tes questions en langage naturel.' },
     { selector: null, title: 'Génère 30+ types de documents', body: 'CDI, CGV, statuts, mise en demeure, bail... L\'IA produit des documents complets et conformes en 15s.' },
     { selector: null, title: 'Monte un dossier complet', body: 'Décris des faits → l\'IA produit analyse, stratégie, jurisprudence, probabilité de succès, prescription.' },
@@ -112,7 +112,7 @@ export default function LegalAgent() {
             )}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Ton avocat IA disponible 24/7 — droit français, européen, jurisprudence à jour.
+            Ton avocat IA — droit français, européen, jurisprudence à jour.
           </p>
         </div>
         <div className="flex gap-2">
@@ -132,7 +132,7 @@ export default function LegalAgent() {
               <Power className="w-6 h-6 text-accent-purple" />
             </div>
             <div>
-              <p className="font-semibold text-foreground">Veille juridique 24/7</p>
+              <p className="font-semibold text-foreground">Veille juridique en continu</p>
               <p className="text-xs text-muted-foreground">
                 Alertes lois, deadlines, prescriptions, documents à renouveler.
               </p>

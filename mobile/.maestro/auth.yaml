@@ -1,0 +1,38 @@
+appId: dev.purama.purama_ai
+name: "Auth - Login Flow"
+tags:
+  - auth
+  - smoke
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Verify login screen is visible
+- assertVisible: "login-email"
+- assertVisible: "login-password"
+- assertVisible: "login-submit"
+- assertVisible: "login-google"
+
+# Enter valid credentials
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+
+# Submit login
+- tapOn:
+    id: "login-submit"
+
+# Wait for dashboard to load
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Verify dashboard elements are visible after login
+- assertVisible: "daily-gift-btn"
+- assertVisible: "notifications-btn"

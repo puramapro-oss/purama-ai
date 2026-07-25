@@ -1,0 +1,101 @@
+appId: dev.purama.purama_ai
+name: "Settings - Navigate Items"
+tags:
+  - settings
+  - navigation
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Login
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+- tapOn:
+    id: "login-submit"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Navigate to Settings tab
+- tapOn: "Paramètres"
+- extendedWaitUntil:
+    visible:
+      id: "settings-parrainage"
+    timeout: 5000
+
+# Verify all settings items are visible
+- assertVisible: "settings-parrainage"
+- assertVisible: "settings-concours"
+- assertVisible: "settings-tirage"
+- assertVisible: "settings-boutique"
+- assertVisible: "settings-share"
+
+# Scroll down to see more settings
+- scroll:
+    direction: DOWN
+
+- assertVisible: "settings-ecosystem"
+- assertVisible: "settings-aide"
+- assertVisible: "settings-notifications"
+- assertVisible: "settings-privacy"
+- assertVisible: "settings-legal"
+- assertVisible: "settings-logout"
+
+# Open parrainage
+- scroll:
+    direction: UP
+- tapOn:
+    id: "settings-parrainage"
+- extendedWaitUntil:
+    visible: "parrainage"
+    timeout: 5000
+- back
+
+# Open concours
+- extendedWaitUntil:
+    visible:
+      id: "settings-concours"
+    timeout: 5000
+- tapOn:
+    id: "settings-concours"
+- extendedWaitUntil:
+    visible: "concours"
+    timeout: 5000
+- back
+
+# Open aide
+- extendedWaitUntil:
+    visible:
+      id: "settings-aide"
+    timeout: 5000
+- tapOn:
+    id: "settings-aide"
+- extendedWaitUntil:
+    visible: "aide"
+    timeout: 5000
+- back
+
+# Open notifications settings
+- extendedWaitUntil:
+    visible:
+      id: "settings-notifications"
+    timeout: 5000
+- tapOn:
+    id: "settings-notifications"
+- extendedWaitUntil:
+    visible: "notification"
+    timeout: 5000
+- back
+
+# Verify we're back on settings
+- extendedWaitUntil:
+    visible:
+      id: "settings-logout"
+    timeout: 5000

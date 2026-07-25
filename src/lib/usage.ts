@@ -1,7 +1,8 @@
 // Usage tracking — counts user executions across all agents for the current month.
 // Reset is implicit: we always query rows WHERE created_at >= start of current month UTC.
 import { supabase } from '@/integrations/supabase/client';
-import { getPlan, type Plan } from './plans';
+import { getPlan, PLANS, type Plan } from './plans';
+import { isSuperAdmin } from './constants';
 
 type AnyTable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 const sb = () => (supabase as unknown as { from: (t: string) => AnyTable });
@@ -49,22 +50,29 @@ async function countTable(table: string, userId: string, since: string, extraFil
   return count ?? 0;
 }
 
-export async function getUsageSnapshot(userId: string): Promise<UsageSnapshot> {
+export async function getUsageSnapshot(userId: string, userEmail?: string | null): Promise<UsageSnapshot> {
   const since = startOfMonthISO();
 
-  // Fetch the user's plan (from purama_ai.subscriptions if any)
-  let planType = 'free';
-  try {
-    const { data } = await sb()
-      .from('subscriptions')
-      .select('plan_type, status')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .maybeSingle();
-    if (data?.plan_type) planType = data.plan_type;
-  } catch { /* ignore */ }
+  // Super admin → forced unlimited (Ultime), bypass DB lookup
+  const superAdmin = isSuperAdmin(userEmail);
 
-  const plan = getPlan(planType);
+  // Fetch the user's plan (from purama_ai.subscriptions if any)
+  let planType = superAdmin ? 'ultime' : 'free';
+  if (!superAdmin) {
+    try {
+      const { data } = await sb()
+        .from('subscriptions')
+        .select('plan_type, status')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .maybeSingle();
+      if (data?.plan_type) planType = data.plan_type;
+    } catch { /* ignore */ }
+  }
+
+  const plan = superAdmin
+    ? { ...PLANS.ultime, monthly_executions: Number.MAX_SAFE_INTEGER, custom_agents_max: 999, agents_included: -1 }
+    : getPlan(planType);
 
   // Run all counts in parallel
   const [emailCount, comptaCount, partnerCount, legalChat, legalDoc, legalCase, creatorCount] = await Promise.all([

@@ -1,0 +1,81 @@
+appId: dev.purama.purama_ai
+name: "Agent Chat - Send Message"
+tags:
+  - agents
+  - chat
+  - core
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Login
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+- tapOn:
+    id: "login-submit"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Open agent from dashboard
+- tapOn:
+    id: "agent-compta"
+
+# Wait for chat screen
+- extendedWaitUntil:
+    visible:
+      id: "agent-input"
+    timeout: 5000
+
+# Verify chat UI elements
+- assertVisible: "agent-input"
+- assertVisible: "agent-send"
+- assertVisible: "agent-clear"
+- assertVisible: "agent-back"
+
+# Type a message
+- tapOn:
+    id: "agent-input"
+- inputText: "Quel est le taux de TVA applicable pour une SASU ?"
+
+# Send the message
+- tapOn:
+    id: "agent-send"
+
+# Wait for response (agent typing indicator or response)
+- extendedWaitUntil:
+    visible: "TVA"
+    timeout: 30000
+
+# Send another message
+- tapOn:
+    id: "agent-input"
+- inputText: "Merci, et pour les charges sociales ?"
+
+- tapOn:
+    id: "agent-send"
+
+# Wait for second response
+- extendedWaitUntil:
+    visible: "charges"
+    timeout: 30000
+
+# Clear conversation
+- tapOn:
+    id: "agent-clear"
+
+# Go back
+- tapOn:
+    id: "agent-back"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 5000

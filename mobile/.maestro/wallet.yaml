@@ -1,0 +1,74 @@
+appId: dev.purama.purama_ai
+name: "Wallet - View and Withdraw"
+tags:
+  - wallet
+  - core
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Login
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+- tapOn:
+    id: "login-password"
+- inputText: "TestPassword123!"
+- tapOn:
+    id: "login-submit"
+
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Navigate to Wallet tab
+- tapOn: "Wallet"
+- extendedWaitUntil:
+    visible:
+      id: "withdraw-btn"
+    timeout: 5000
+
+# Verify wallet screen displays balance
+- assertVisible: "withdraw-btn"
+
+# Scroll to see transaction history
+- scroll:
+    direction: DOWN
+
+# Scroll back up
+- scroll:
+    direction: UP
+
+# Open withdraw flow
+- tapOn:
+    id: "withdraw-btn"
+
+# Verify withdraw form elements
+- extendedWaitUntil:
+    visible:
+      id: "withdraw-amount"
+    timeout: 5000
+- assertVisible: "withdraw-amount"
+- assertVisible: "withdraw-iban"
+- assertVisible: "withdraw-confirm"
+
+# Fill in withdraw amount
+- tapOn:
+    id: "withdraw-amount"
+- inputText: "10"
+
+# Fill in IBAN
+- tapOn:
+    id: "withdraw-iban"
+- inputText: "FR7630006000011234567890189"
+
+# Confirm withdrawal
+- tapOn:
+    id: "withdraw-confirm"
+
+# Wait for confirmation or error
+- extendedWaitUntil:
+    visible: "retrait"
+    timeout: 10000

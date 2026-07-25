@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
+import { rateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -76,9 +77,17 @@ serve(async (req) => {
     }
     
     // The chatbot is public-facing for the widget, so we allow unauthenticated access
-    // Rate limiting and abuse prevention is handled through input validation below
-    
+    // Rate limiting: 30 req/hour per IP (using sessionId as fallback key)
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     const { messages, conversationId, sessionId, pageContext } = await req.json();
+    const rateLimitKey = sessionId || clientIp;
+    const rateLimitResult = rateLimit(`chatbot:${rateLimitKey}`, 30, 3600000);
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Try again in 1 hour." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Input validation
     if (!messages || !Array.isArray(messages) || messages.length === 0) {

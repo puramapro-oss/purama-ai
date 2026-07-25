@@ -1,0 +1,45 @@
+appId: dev.purama.purama_ai
+name: "Auth - Signup Flow"
+tags:
+  - auth
+  - signup
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# Navigate to signup screen
+- tapOn: "Créer un compte"
+
+# Verify signup screen elements
+- assertVisible: "signup-name"
+- assertVisible: "signup-email"
+- assertVisible: "signup-password"
+- assertVisible: "signup-submit"
+- assertVisible: "signup-google"
+
+# Fill in signup form
+- tapOn:
+    id: "signup-name"
+- inputText: "Test Purama"
+
+- tapOn:
+    id: "signup-email"
+- inputText: "test-maestro@purama.dev"
+
+- tapOn:
+    id: "signup-password"
+- inputText: "SecurePass456!"
+
+# Submit signup
+- tapOn:
+    id: "signup-submit"
+
+# Wait for navigation to dashboard
+- extendedWaitUntil:
+    visible:
+      id: "daily-gift-btn"
+    timeout: 15000
+
+# Verify we landed on dashboard
+- assertVisible: "daily-gift-btn"

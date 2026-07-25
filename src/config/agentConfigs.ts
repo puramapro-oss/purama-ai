@@ -1,7 +1,7 @@
 /**
- * Configuration for all 45 AI Agents
- * Each agent has its endpoint, required fields, and field configurations
- * All agents use a simplified single message format for better UX
+ * AI Agents catalogue (n8n-routed).
+ * Each agent has its endpoint, required fields, and field configurations.
+ * All agents use a simplified single message format for better UX.
  */
 
 export const N8N_BASE_URL = 'https://n8n.srv1286148.hstgr.cloud/webhook';

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { isSuperAdmin } from '@/lib/constants';
 
 export interface Profile {
   id: string;
@@ -55,6 +56,19 @@ export function useSubscription() {
     queryKey: ['subscription', user?.id],
     queryFn: async () => {
       if (!user) return null;
+
+      // Super admin → synthetic ultime subscription, bypass DB
+      if (isSuperAdmin(user.email)) {
+        return {
+          id: 'super-admin',
+          user_id: user.id,
+          stripe_customer_id: null,
+          plan_type: 'ultime',
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as Subscription;
+      }
 
       const { data, error } = await supabase
         .from('subscriptions')

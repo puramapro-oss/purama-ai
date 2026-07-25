@@ -1,0 +1,118 @@
+appId: dev.purama.purama_ai
+name: "Error Handling - Invalid Inputs"
+tags:
+  - error
+  - edge-cases
+---
+- launchApp:
+    appId: dev.purama.purama_ai
+    clearState: true
+
+# ---- Test 1: Login with wrong password ----
+- tapOn:
+    id: "login-email"
+- inputText: "matiss.frasne@gmail.com"
+
+- tapOn:
+    id: "login-password"
+- inputText: "WrongPassword999"
+
+- tapOn:
+    id: "login-submit"
+
+# Should show error message, not crash
+- extendedWaitUntil:
+    visible: "erreur"
+    timeout: 10000
+
+# Should still be on login screen
+- assertVisible: "login-email"
+- assertVisible: "login-submit"
+
+# ---- Test 2: Login with invalid email format ----
+- tapOn:
+    id: "login-email"
+- eraseText: 30
+- inputText: "not-an-email"
+
+- tapOn:
+    id: "login-password"
+- eraseText: 20
+- inputText: "SomePassword123"
+
+- tapOn:
+    id: "login-submit"
+
+# Should show validation error
+- extendedWaitUntil:
+    visible: "email"
+    timeout: 5000
+
+# ---- Test 3: Login with empty fields ----
+- tapOn:
+    id: "login-email"
+- eraseText: 30
+
+- tapOn:
+    id: "login-password"
+- eraseText: 20
+
+- tapOn:
+    id: "login-submit"
+
+# Should show required field error
+- assertVisible: "login-email"
+
+# ---- Test 4: Forgot password with invalid email ----
+- tapOn: "Mot de passe oublié"
+
+- extendedWaitUntil:
+    visible:
+      id: "forgot-email"
+    timeout: 5000
+
+- tapOn:
+    id: "forgot-email"
+- inputText: "nonexistent@fake.com"
+
+- tapOn:
+    id: "forgot-submit"
+
+# Should handle gracefully (no crash)
+- extendedWaitUntil:
+    visible:
+      id: "forgot-email"
+    timeout: 5000
+
+# ---- Test 5: Signup with weak password ----
+- back
+
+- tapOn: "Créer un compte"
+
+- extendedWaitUntil:
+    visible:
+      id: "signup-name"
+    timeout: 5000
+
+- tapOn:
+    id: "signup-name"
+- inputText: "Test"
+
+- tapOn:
+    id: "signup-email"
+- inputText: "test@purama.dev"
+
+- tapOn:
+    id: "signup-password"
+- inputText: "123"
+
+- tapOn:
+    id: "signup-submit"
+
+# Should show password strength error
+- extendedWaitUntil:
+    visible: "mot de passe"
+    timeout: 5000
+
+# App should still be functional
+- assertVisible: "signup-submit"
