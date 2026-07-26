@@ -426,6 +426,7 @@ export function ChatbotWidget() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowHistory(!showHistory)}
+                    aria-label="Historique des conversations"
                     className="text-white/80 hover:text-white hover:bg-white/20"
                   >
                     <History className="w-4 h-4" />
@@ -435,6 +436,7 @@ export function ChatbotWidget() {
                   variant="ghost"
                   size="icon"
                   onClick={startNewConversation}
+                  aria-label="Nouvelle conversation"
                   className="text-white/80 hover:text-white hover:bg-white/20"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -443,6 +445,7 @@ export function ChatbotWidget() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
+                  aria-label="Fermer l'assistant"
                   className="text-white/80 hover:text-white hover:bg-white/20"
                 >
                   <X className="w-4 h-4" />
