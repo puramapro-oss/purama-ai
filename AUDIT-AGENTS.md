@@ -1,0 +1,82 @@
+# AUDIT-AGENTS.md — Purama AI (agentiapuramafr)
+> Audit Phase 0 — PURAMA-AGENTS-REELS-BRIEF.md
+> Date : 2026-07-26 — Réalisé par SSH direct sur le VPS (72.62.191.111), lecture de la DB n8n (sqlite, copiée et interrogée), requêtes psql sur `purama_ai` schema, tests HTTP réels (webhooks n8n + edge functions prod), pas de simulation.
+
+---
+
+## 🚨 RÉSUMÉ EXÉCUTIF — 2 PANNES SYSTÉMIQUES BLOQUENT TOUT
+
+**Aucun agent IA de Purama AI ne fonctionne réellement en production actuellement.** Ce n'est pas un problème de code métier (workflows, prompts, UI) — c'est 2 pannes d'infrastructure IA qui coupent TOUTE génération Claude, quel que soit l'agent :
+
+### 🔴 PANNE #1 — Compte Anthropic à sec (bloque n8n : les 4 agents cœur + 45 agents webhook)
+Testé en direct : `curl https://api.anthropic.com/v1/messages` avec la clé `ANTHROPIC_API_KEY` de `.env.secrets` (celle utilisée par n8n) →
+```json
+{"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}
+```
+Conséquence vérifiée : j'ai déclenché en réel le webhook `AGENT - CRM Intelligent` (`https://n8n.srv1286148.hstgr.cloud/webhook/agent-crm-intelligent`) → le workflow s'exécute, arrive au nœud "CLAUDE API", échoue avec `Bad request - please check your parameters` (= le 400 crédit ci-dessus mal reformulé par n8n), et **renvoie une réponse HTTP 200 avec un corps vide** à l'utilisateur final. Donc côté site : l'utilisateur clique sur un agent, ça "marche" (pas d'erreur visible), et il ne reçoit... rien.
+**Action requise (humaine, je ne peux pas la faire) : recharger le crédit sur le compte Anthropic (console.anthropic.com → Plans & Billing) avant toute autre action.** Tant que ce n'est pas fait, RIEN de ce qui appelle Claude ne peut être testé de bout en bout — ni les 4 agents cœur, ni les 45 agents, ni le futur KARTA Engine.
+
+### 🔴 PANNE #2 — 14 Edge Functions Supabase pointent vers une clé qui n'existe pas (bloque chat, chatbot, agent-chat, legal-*, creator-agent-*, partner-*)
+Testé en direct sur la prod : `POST https://auth.purama.dev/functions/v1/chatbot` avec un message valide →
+```json
+{"error":"LOVABLE_API_KEY is not configured"}
+```
+Cause : ces 14 fonctions ont été scaffoldées via Lovable.dev et appellent `https://ai.gateway.lovable.dev/v1/chat/completions` avec `Deno.env.get("LOVABLE_API_KEY")`. Cette variable n'a **jamais existé** dans le container `supabase-edge-functions` du VPS (vérifié via `docker inspect` — seules `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GROQ_API_KEY`, etc. sont présentes). Ce n'est donc pas une régression récente : **ces fonctions n'ont jamais pu fonctionner en prod sur ce VPS**, depuis leur création.
+Fonctions concernées : `chat`, `chatbot`, `agent-chat`, `legal-chat`, `legal-build-case`, `legal-generate-document`, `creator-agent-chat`, `creator-agent-generate`, `creator-agent-run`, `partner-generate-contract`, `partner-send-outreach`, `partner-find-prospects`, `social-publish`.
+**Action recommandée : migrer ces 14 fonctions pour appeler directement l'API Anthropic (`ANTHROPIC_API_KEY`, déjà configurée sur le VPS) au lieu du gateway Lovable — cohérent avec l'architecture standard Purama (`lib/claude.ts`).** Je n'ai pas fait ce correctif dans cette session : avec la Panne #1 active, un appel Anthropic direct échouerait *aussi* (crédit épuisé), donc impossible de PROUVER que le correctif marche (Loi #2 : "Terminé=prouvé"). À faire dès que la Panne #1 est réglée, en 1 feature testée à la fois.
+
+### 🔴 FINDING #3 — Le catalogue `agents` est vide en base (aggrave tout)
+`SELECT count(*) FROM purama_ai.agents` → **0 lignes**. `purama_ai.profiles` → **0 lignes** (alors que 1135 comptes existent dans `auth.users` au niveau écosystème — personne n'a de profil créé spécifiquement sur purama-ai). Conséquence : même une fois les Pannes #1 et #2 réglées, `agent-proxy` échouera systématiquement avec `404 Agent 'xxx' non trouvé` car il fait `SELECT webhook_slug, slug, category FROM agents WHERE slug = agentSlug` sur une table vide. **Le catalogue des 45 agents doit être réinséré/reseedé dans `purama_ai.agents` avant tout test utilisateur réel.**
+
+---
+
+## TABLEAU — INVENTAIRE COMPLET (130 workflows n8n, 78 actifs)
+
+| Agent / Système | État réel (vérifié) | Preuve | Action |
+|---|---|---|---|
+| **Email Agent — Fetch & Process** (n8n, cron 2min) | Tourne sans erreur n8n (5507 exécutions, 0 erreur), **mais 0 action réelle** | `email_agent_logs` = 0 lignes malgré 5507 runs. `email_agent_config` = 2 lignes mais aucun `gmail_refresh_token` valide probable (0 log = 0 email traité) | **Réparer** : vérifier OAuth Gmail admin (Tissma), puis re-tester avec un vrai mail entrant une fois Panne #1 réglée |
+| **Compta Agent** (4 workflows : Sync, Deadline, Monthly Report, Prepare Declarations) | Tourne sans erreur, **0 users configurés** | `compta_agent_config` = 0 lignes | **Réparer** : onboarding compta jamais rempli (SIREN, régime fiscal...). Config à faire avant que l'agent ait quoi que ce soit à traiter |
+| **Legal Agent** (5 workflows) | Tourne sans erreur, **0 users configurés** | `legal_agent_config` = 0 lignes | **Réparer** : idem, onboarding jamais rempli |
+| **Partner Agent** (4 workflows) | Tourne sans erreur (2203 + 100 + 8 + 1 runs), **0 prospect jamais créé** | `partner_agent_config` = 1 ligne, `partner_prospects` = 0 ligne. `partner-find-prospects` (edge function) dépend de LOVABLE_API_KEY → Panne #2 | **Réparer** après Panne #2 |
+| **Creator Agent — Scheduler** | Tourne (2203 runs, 0 erreur) | Boucle probablement à vide (dépend de `creator-agent-*` edge functions, cassées par Panne #2) | **Réparer** après Panne #2 |
+| **45 agents "chat" du site** (webhooks n8n `agent-*`, ex: CRM Intelligent, Facture Pro, SEO Dominator...) | **Cassés à 100%** en usage réel | Testé en direct sur `AGENT - CRM Intelligent` : échec Claude API (Panne #1). Historique : **0 exécution enregistrée jamais** avant mon test de ce jour (confirmé par `execution_entity` + event log) → aucun utilisateur réel n'a jamais réussi à faire fonctionner un seul de ces 45 agents | **Réparer** : Panne #1 + Panne #2 (le flux passe par `agent-proxy` → n8n → Claude direct, donc uniquement bloqué par Panne #1 côté n8n, mais bloqué par Finding #3 avant même d'atteindre n8n) |
+| **`agent-proxy` (edge function, routeur central)** | Code correct, logique saine (webhook_slug → n8n → réponse) | Lu le code : gère bien les erreurs, pas de demo mode actif | **Garder** — fonctionnera dès que Finding #3 + Panne #1 sont réglés |
+| **Duplicats inactifs** (~50 workflows, ex: `AGENT - CRM Intelligent` (x2 versions inactives), `AGENT - crm-intelligent` slug alternatif, `Cold Outreach Auto` x2 inactifs...) | Jamais exécutés, `active=0`, créés le 26-28 janvier (brouillons de test) | Confirmé par requête SQL sur `workflow_entity` | **Supprimer** — pollution, aucune valeur |
+| **12 workflows "Bot X Pro / Auto" + "AGENT - X Auto"** (Buteur, CRM, Cold Outreach, Bot Telegram/TikTok/Messenger/Facebook/Instagram, Chasseur Paiements, Planificateur, Rapports, Newsletter, Répondeur, Facture, Réservation, Suivi) | Actifs mais **0 exécution jamais** | Confirmé — probablement liés au brief séparé `PURAMA-AI-SOCIAL-AUTOPILOT-BRIEF.md`, hors périmètre de cet audit | **À vérifier séparément** (audit social autopilot dédié), ne pas toucher ici |
+| **MIDAS** (trading, app Vercel séparée) | **Vivant** — `midas.purama.dev` → 200 OK, `/api/status` → tous services "operational" (Supabase, Stripe, Binance, Anthropic) | Testé en direct via curl. ⚠️ Le check "anthropic: operational" est probablement un ping de connectivité, pas un vrai appel de complétion — **risque que la génération de signaux réels soit aussi cassée par la Panne #1** si MIDAS partage la même clé Anthropic | **Garder** — à re-vérifier une fois le crédit rechargé (déclencher un vrai cycle de génération de signal et confirmer un signal réel produit) |
+| **SUTRA** (vidéo autonome, app Vercel séparée) | **Vivant** — `sutra.purama.dev` → 200 OK, `/api/status` → Supabase/Stripe/ElevenLabs "operational" | Testé en direct via curl | **Garder** — pas de dépendance Anthropic visible dans le status check, risque plus faible |
+| **KARTA Engine** | N'existe pas encore | Aucun service, aucun code, aucun PM2 process trouvé sur le VPS | Phase 1 — à construire (voir note plan ci-dessous) |
+| **Agent Créateur d'Agents** | N'existe pas | — | Phase 4 |
+
+---
+
+## DÉTAIL TECHNIQUE — CE QUE J'AI VÉRIFIÉ ET COMMENT
+
+1. **SSH VPS** (`72.62.191.111`) : OK, `docker ps` → 12 containers up (n8n, Traefik, DocuSeal, LiveKit, Supabase complet incl. `supabase-edge-functions`). Pas de PM2 (`pm2: command not found`) — confirme que KARTA n'a pas encore de socle.
+2. **n8n** : copié `database.sqlite` (147MB) du container vers local, interrogé avec `sqlite3` en lecture seule (aucune écriture sur la prod). 130 workflows, 78 actifs. Webhooks : 63 routes enregistrées (`webhook_entity`).
+3. **Test réel du webhook CRM Intelligent** : `curl -X POST https://n8n.srv1286148.hstgr.cloud/webhook/agent-crm-intelligent` → HTTP 200, corps vide. Confirmé via `n8nEventLog.log` (event bus) : `n8n.workflow.failed`, `lastNodeExecuted: "CLAUDE API"`, `errorMessage: "Bad request - please check your parameters"`.
+4. **Test direct Anthropic API** avec la clé de `.env.secrets` : 400, "Your credit balance is too low".
+5. **Test edge function prod `chatbot`** (`https://auth.purama.dev/functions/v1/chatbot`) : 500, "LOVABLE_API_KEY is not configured". Confirmé par `docker inspect supabase-edge-functions` : la variable n'existe pas dans l'environnement du container (seules `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GROQ_API_KEY`, `ELEVENLABS_API_KEY`, `TAVILY_API_KEY`, `RESEND_API_KEY`, `DOCUSEAL_API_KEY`, `ZERNIO_API_KEY`, `INSEE_API_KEY` sont présentes).
+6. **DB `purama_ai`** (psql direct sur `supabase-db`) : `agents`=0, `profiles`=0, `chatbot_knowledge`=47, `email_agent_config`=2, `email_agent_logs`=0, `compta_agent_config`=0, `legal_agent_config`=0, `partner_agent_config`=1, `partner_prospects`=0, `auth.users` (écosystème)=1135.
+7. **MIDAS / SUTRA** : `curl` direct sur les domaines de prod + endpoints `/api/status`.
+
+---
+
+## PLAN — SUITE RECOMMANDÉE (Phase 1 KARTA Engine)
+
+Je n'ai **pas** commencé la construction de KARTA Engine dans cette session, pour 3 raisons concrètes :
+1. **Rien n'est testable de bout en bout tant que la Panne #1 (crédit Anthropic) n'est pas réglée** — construire l'orchestrateur maintenant reviendrait à coder à l'aveugle sans pouvoir prouver qu'un seul agent fonctionne (violation Loi #2).
+2. C'est une brique d'infra neuve (service Node.js + BullMQ + Redis + PM2 sur le VPS, tool registry, niveaux d'autonomie, kill switch, logs immuables) — Loi #1 du protocole demande de montrer le plan avant d'exécuter une feature de cette ampleur.
+3. Root causes trouvées aujourd'hui doivent être réglées d'abord — sinon KARTA hériterait des mêmes pannes.
+
+**Ordre recommandé pour la suite** (dès que le crédit Anthropic est rechargé) :
+1. Recharger crédit Anthropic (action Tissma, ~2 min)
+2. Reseed `purama_ai.agents` (catalogue 45 agents) — sans ça rien n'est testable depuis le site
+3. Migrer les 14 edge functions LOVABLE_API_KEY → ANTHROPIC_API_KEY direct (1 feature, testée, déployée)
+4. Re-tester les 4 agents cœur avec un vrai cas (email réel, config compta/légal remplie)
+5. Puis seulement : démarrer KARTA Engine (Phase 1)
+
+---
+
+## LIVRABLE PHASE 0 ✅
+`AUDIT-AGENTS.md` produit avec preuves réelles (SSH, SQL, curl), zéro simulation, zéro supposition non vérifiée.

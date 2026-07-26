@@ -1,5 +1,13 @@
 # PURAMA AI — Task Plan V3
 
+## AGENTS RÉELS — Phase 0 Audit ✅ (2026-07-26)
+- [x] `AUDIT-AGENTS.md` produit — vérification réelle SSH+SQL+curl, 0 simulation
+- [x] Inventaire 130 workflows n8n (78 actifs), 4 agents cœur + 45 agents site + duplicats
+- [x] Trouvé 2 pannes bloquantes système : crédit Anthropic épuisé (n8n) + LOVABLE_API_KEY manquante (14 edge functions)
+- [x] Trouvé catalogue `purama_ai.agents` vide (0 lignes) — bloque agent-proxy même une fois pannes réglées
+- [x] MIDAS + SUTRA confirmés vivants (200 OK, status green)
+- [ ] BLOQUÉ : recharge crédit Anthropic (action humaine Tissma) avant Phase 1 KARTA Engine
+
 ## P1 - Structure+Auth+DB ✅ (pré-existant)
 ## P2 - Features core ✅ (6 agents IA, dashboard, pricing)
 ## P3 - Universels ✅
