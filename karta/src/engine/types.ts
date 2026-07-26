@@ -17,7 +17,16 @@ export type ActionAgentType =
   | "planificateur-d-appels"
   | "reservation-intelligente";
 
-export type AgentType = CoreAgentType | ActionAgentType;
+/** Les 16 agents "statiques" (définis en code, cf AGENT_REGISTRY) — union fermée, exhaustive. */
+export type StaticAgentType = CoreAgentType | ActionAgentType;
+
+/** Agent créé par un utilisateur (cf brief Phase 4 "Agent Créateur d'Agents") : `id` = creator_agents.id.
+ * Type littéral gabarit (union ouverte) — AGENT_REGISTRY reste Record<StaticAgentType,...>, ces agents
+ * sont résolus dynamiquement depuis la table `creator_agents` (cf agents/customAgent.ts), jamais depuis
+ * le registre statique. */
+export type CustomAgentType = `custom:${string}`;
+
+export type AgentType = StaticAgentType | CustomAgentType;
 
 export const ACTION_AGENT_TYPES: ActionAgentType[] = [
   "repondeur-intelligent",

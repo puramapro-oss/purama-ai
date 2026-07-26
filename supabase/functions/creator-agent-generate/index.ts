@@ -1,6 +1,7 @@
 // Creator Agent — Generate a custom agent definition from a natural language description
 // POST { description }
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { rateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,21 @@ const corsHeaders = {
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
+
+// Liste blanche des outils réels que KARTA Engine sait exécuter pour un agent créé par un
+// utilisateur (cf karta/src/tools/customRegistry.ts — 1 seule source de vérité, dupliquée ici
+// car ce fichier tourne côté Deno, pas dans le projet karta/). Un nom hors de cette liste est
+// filtré silencieusement plus bas : même si Claude en invente un, il ne sera jamais exécuté.
+const REAL_TOOL_NAMES = [
+  "supabase_select",
+  "supabase_upsert",
+  "gmail_create_draft",
+  "gmail_send",
+  "calendar_create_event",
+  "generate_pdf",
+  "web_search",
+  "send_notification",
+] as const;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -27,6 +43,12 @@ Deno.serve(async (req) => {
     const { data: userData, error: userErr } = await userClient.auth.getUser(token);
     if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
 
+    // 10 générations / heure / user : génération = 1 appel Claude assez lourd (2000 tokens), pas un usage répétitif.
+    const rateLimitResult = rateLimit(`creator-agent-generate:${userData.user.id}`, 10, 3600000);
+    if (!rateLimitResult.allowed) {
+      return json({ error: "Trop de générations. Réessaie dans un moment." }, 429);
+    }
+
     const { description } = (await req.json()) as { description?: string };
     if (!description) return json({ error: "description required" }, 400);
 
@@ -41,11 +63,21 @@ Tu retournes UNIQUEMENT un JSON valide :
   "category": "productivity|marketing|sales|support|content|dev|finance|autre",
   "description": "1 phrase courte (max 100 chars) qui décrit ce que fait l'agent",
   "system_prompt": "Le prompt système COMPLET que recevra Claude. Dois être : (1) précis sur le rôle et l'expertise, (2) inclure les contraintes (ton, format, longueur), (3) inclure 1-2 exemples implicites de structure attendue, (4) être autoporteur sans dépendre du contexte utilisateur. 200-500 mots idéalement.",
-  "suggested_tools": [],
+  "suggested_tools": ["0 à N noms d'outils, voir liste exacte ci-dessous"],
   "suggested_model": "claude-sonnet-4-20250514 ou claude-haiku-4-5-20251001 (haiku pour les tâches simples et répétitives)",
   "suggested_temperature": 0.0 à 1.0 (0.3 = factuel, 0.7 = équilibré, 0.9 = créatif),
-  "suggested_schedule": "expression cron OU null si pas pertinent"
+  "suggested_schedule": "expression cron 5 champs (ex: '0 9 * * 1' = chaque lundi 9h, '0 8 * * *' = tous les jours 8h) SI l'utilisateur décrit une récurrence, sinon null (agent déclenché manuellement uniquement)"
 }
+
+Outils réels disponibles pour "suggested_tools" — utilise EXACTEMENT ces noms, aucun autre n'existe, choisis seulement ceux dont l'agent a vraiment besoin :
+- supabase_select : lit les données déjà enregistrées par l'agent (factures, prospects, transactions...)
+- supabase_upsert : enregistre/met à jour une donnée (un lead, un statut, une note...)
+- gmail_create_draft : prépare un brouillon email Gmail, jamais envoyé sans validation
+- gmail_send : envoie réellement un email — toujours soumis à validation humaine par défaut
+- calendar_create_event : crée un événement Google Calendar
+- generate_pdf : génère un PDF téléchargeable (rapport, facture, résumé...)
+- web_search : recherche web en temps réel
+- send_notification : notifie l'utilisateur (app/email) quand une décision humaine est nécessaire
 
 Critères de qualité du system_prompt :
 - Tutoiement par défaut sauf si l'utilisateur précise vouvoiement
@@ -100,12 +132,20 @@ Génère la config de cet agent maintenant.`;
         ? parsed.category : "productivity",
       description: String(parsed.description ?? "").slice(0, 200),
       system_prompt: String(parsed.system_prompt ?? "Tu es un assistant IA utile."),
-      suggested_tools: Array.isArray(parsed.suggested_tools) ? parsed.suggested_tools : [],
+      // Liste blanche défensive : même si Claude invente un nom, il ne sera jamais exécutable côté KARTA.
+      suggested_tools: Array.isArray(parsed.suggested_tools)
+        ? parsed.suggested_tools.filter((t: unknown) => REAL_TOOL_NAMES.includes(t as typeof REAL_TOOL_NAMES[number]))
+        : [],
       suggested_model: parsed.suggested_model === "claude-haiku-4-5-20251001"
         ? "claude-haiku-4-5-20251001"
         : "claude-sonnet-4-20250514",
       suggested_temperature: Math.max(0, Math.min(1, Number(parsed.suggested_temperature ?? 0.7))),
-      suggested_schedule: parsed.suggested_schedule ?? null,
+      // Validation légère (5 champs cron) — KARTA revalide avec cron.validate() avant toute
+      // planification réelle, mais autant ne pas stocker de valeur manifestement invalide.
+      suggested_schedule:
+        typeof parsed.suggested_schedule === "string" && /^\S+\s+\S+\s+\S+\s+\S+\s+\S+$/.test(parsed.suggested_schedule)
+          ? parsed.suggested_schedule
+          : null,
     };
 
     return json(result);

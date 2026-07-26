@@ -17,9 +17,11 @@ import {
   planificateurDAppels,
   reservationIntelligente,
 } from "./actionAgents.js";
-import type { AgentDefinition, AgentType, CoreAgentType } from "../engine/types.js";
+import type { AgentDefinition, AgentType, CoreAgentType, StaticAgentType } from "../engine/types.js";
 
-export const AGENT_REGISTRY: Record<AgentType, AgentDefinition> = {
+/** Les agents créés par les utilisateurs (`custom:<id>`) ne sont PAS ici — ils sont résolus
+ * dynamiquement depuis `creator_agents` (cf agents/customAgent.ts), jamais codés en dur. */
+export const AGENT_REGISTRY: Record<StaticAgentType, AgentDefinition> = {
   email: emailAgent,
   compta: comptaAgent,
   legal: legalAgent,

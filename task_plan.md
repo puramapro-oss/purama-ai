@@ -57,7 +57,55 @@ existants, donc 0 double-traitement actuellement).
 - [x] `tsc --noEmit` (frontend + karta/) : 0 erreur
 - [x] `npm run build` (Vite) : 0 erreur — bug environnement trouvé+fixé au passage (binaires natifs `.node` bloqués par Gatekeeper macOS, cf ERRORS.md)
 - [ ] **Non fait** (nécessite navigateur/humain, hors capacité de cette session) : test humain réel de la page en navigateur (clics, responsive 375px, dark mode) — cf Loi 2 CLAUDE.md, ne pas déclarer "testé" sans preuve Playwright/humaine
-- [ ] Phase 3 (non commencée) : Agent Créateur d'Agents
+## AGENTS RÉELS — Phase 3 : Agent Créateur d'Agents passe en exécution réelle ✅ (2026-07-26)
+Réutilise `creator_agents` (existante, chat-only jusqu'ici — 1 source de vérité, pas de table dupliquée)
+au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`karta_runs` tels quels
+(`agent_type = 'custom:<creator_agents.id>'`) — 0 nouvelle table pour l'autonomie/kill switch/logs.
+- [x] Investigation complète de l'existant AVANT de coder (Loi 5) : `creator_agents`/`creator_agent_runs`/
+  `creator_agent_chats` déjà en place mais 100% chat-only (`tools_enabled` déclaré mais jamais lu nulle
+  part, aucune exécution d'outil réelle) — confirmé par lecture de tout le code frontend+edge functions
+- [x] Migration 004 : `creator_agents.karta_enabled BOOLEAN DEFAULT false` (seule colonne ajoutée)
+- [x] `AgentType` restructuré : `StaticAgentType` (16 agents codés en dur, `AGENT_REGISTRY` inchangé) +
+  `CustomAgentType` (`` `custom:${string}` ``, résolu dynamiquement depuis `creator_agents`, jamais codé en dur)
+- [x] `tools/customRegistry.ts` : liste blanche de 8 outils génériques sûrs (exclut Stripe plateforme,
+  Zernio, Apollo, DocuSeal, délégation — spécifiques à Purama ou trop sensibles pour un V1 configurable
+  en langage naturel), filtre défensif même si Claude/le mock invente un nom
+- [x] `agents/customAgent.ts` : construit un `AgentDefinition` à la volée depuis une ligne `creator_agents`
+  (prompt + outils + contexte minimal) — 0 code par agent créé, réutilise `runAgentCycle` intégralement
+  (autonomie, kill switch, simulation, logs immuables, notify) sans dupliquer le moteur
+- [x] `queue/worker.ts` résout statique OU dynamique selon le préfixe `custom:` du job
+- [x] `scheduler/customAgents.ts` : (dés)enregistre les jobs node-cron des agents créés toutes les 5 min
+  (contrairement aux 16 agents statiques, planifiés 1 fois au démarrage — ceux-ci changent à la volée)
+- [x] Route API `POST /trigger-custom/:agentId` (bearer token) pour le déclenchement manuel
+- [x] Edge function `karta-trigger-custom` : vérifie la propriété de l'agent AVANT d'appeler KARTA
+  (contrairement aux 12 agents fixes, l'id est arbitraire — pas de whitelist statique possible)
+- [x] `creator-agent-generate` : le prompt Claude décrit maintenant les 8 vrais noms d'outils KARTA
+  (au lieu de `web_search/send_email/gen_image`, fictifs et jamais exécutables) + filtre whitelist
+  défensif sur `suggested_tools` + rate limit 10/h ajouté (manquait)
+- [x] **Garde anti-double-traitement** : `creator-agent-run` refuse (409) un déclenchement `trigger=cron`
+  si `karta_enabled=true` — empêche n8n (scheduler legacy, toujours actif) et KARTA d'exécuter le même
+  agent planifié en parallèle. Vérifié réel : `curl` avec service-role + `trigger:"cron"` → 409 confirmé.
+- [x] Frontend : `CreatorAgentNew.tsx` propage les outils/planification suggérés par l'IA dans la création ;
+  `CreatorAgentDetail.tsx` → section « Exécution réelle (KARTA) » (toggle, checklist d'outils, niveau
+  d'autonomie, kill switch, « Tester maintenant », activité réelle) + planification par presets « zéro
+  jargon » (`SCHEDULE_PRESETS`) avec repli cron avancé ; `schedule_input` (legacy n8n) préservé, pas cassé
+- [x] 8 tests unitaires supplémentaires (`customRegistry`, `customAgent`) — **38/38 verts** (30 Phase 1-4 + 8 Phase 3)
+- [x] `tsc --noEmit` (frontend + karta/) 0 erreur, `deno check` sur les 3 edge functions touchées 0 erreur,
+  `npm run build` 0 erreur
+- [x] Déployé sur le VPS (edge functions + rebuild `karta-engine`), healthy après redémarrage
+- [x] **Test end-to-end réel complet** (user + agent créé de test, JWT réel, nettoyé après coup — 0 trace résiduelle) :
+  - [x] `karta-trigger-custom` sans auth → 401, agent inexistant → 404
+  - [x] `karta-trigger-custom` avec JWT réel + agent possédé → `{"ok":true,"queued":true}` → vraie ligne
+    `karta_runs` (`agent_type='custom:<id>'`, `status:success`, `claude_mock:true`, décision `TODO_LIVE_TEST`)
+  - [x] `creator-agent-run` avec `trigger:"cron"` sur un agent `karta_enabled=true` → 409 confirmé (garde anti-doublon)
+- [ ] **Non vérifié en direct cette session** : le déclenchement RÉEL d'un job node-cron planifié pour un
+  agent créé (le scheduler a été relu/testé unitairement pour la logique de sélection des agents, mais
+  observer un vrai déclenchement cron aurait nécessité d'attendre ≥5 min en conditions réelles) — à
+  vérifier dès qu'un vrai agent avec planification est activé en usage réel
+- [ ] Test humain navigateur du flow complet (génération IA → activation KARTA → tester maintenant → voir
+  l'activité réelle) — jamais ouvert dans un vrai navigateur cette session
+- [ ] Phase 4 (déjà faite précédemment, cf plus haut) : UX onboarding — reste à décider si le flow
+  "Embauche ton 1er employé IA" doit un jour proposer aussi un agent créé sur-mesure, pas seulement les 12 fixes
 
 ## AGENTS RÉELS — Phase 4 : UX onboarding "Embauche ton 1er employé IA" ✅ (2026-07-26)
 - [x] Proxy sécurisé `karta-trigger` (edge function) : auth JWT + rate limit 10/h + whitelist Zod des 12 slugs, relaie vers l'API interne KARTA (`KARTA_ADMIN_TOKEN` reste 100% serveur, jamais exposé au navigateur)
@@ -154,4 +202,7 @@ existants, donc 0 double-traitement actuellement).
 - [ ] Coût réel par agent/cycle (tokens consommés) vs les rate limits déjà en place (20-30 req/h) — ajuster si besoin
 - [ ] Une fois chaque agent cœur validé en conditions réelles : `karta_agent_state.simulation_mode=false` pour cet agent, PUIS désactiver le workflow n8n équivalent (bascule agent par agent, jamais en bloc)
 - [ ] Les 12 agents "action" KARTA (Phase 2) : jamais exécutés avec un vrai appel Claude — valider chacun avec de vraies données (ex: vraies factures `compta_invoices` pour Facture Pro/Chasseur de Paiements, vrais leads `karta_crm_leads` pour CRM/Suivi, vraie boîte Gmail pour Répondeur) avant de désactiver le workflow n8n équivalent
+- [ ] `creator-agent-generate` (Phase 3) : valider qu'une vraie génération produit un `system_prompt` de qualité + des `suggested_tools`/`suggested_schedule` pertinents pour plusieurs descriptions réelles variées
+- [ ] Un agent créé par un vrai utilisateur, activé en `karta_enabled=true` avec de vrais outils (ex: Gmail connecté) : jamais exécuté avec un vrai appel Claude — le mock a seulement prouvé que le pipeline (déclenchement → décision → outils → log) fonctionne structurellement
+- [ ] Scheduler des agents créés (`refreshCustomAgentSchedules`) : jamais observé en conditions réelles déclenchant un job cron planifié (testé unitairement pour la sélection des agents, pas pour le déclenchement cron lui-même en direct)
 - [ ] Page "Mes employés IA" (`/dashboard/employees`) : test humain en navigateur (clics activation/kill-switch/autonomie, responsive 375px, dark mode) — jamais ouvert dans un vrai navigateur cette session

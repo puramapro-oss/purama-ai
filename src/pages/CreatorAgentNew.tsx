@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
   generateAgent, createAgent,
-  CATEGORIES, MODELS,
+  CATEGORIES, MODELS, TOOL_OPTIONS,
   type AgentCategory, type AgentModel,
 } from '@/lib/creator-agent';
 
@@ -31,6 +31,8 @@ interface DraftAgent {
   system_prompt: string;
   model: AgentModel;
   temperature: number;
+  tools_enabled: string[];
+  schedule_cron: string | null;
 }
 
 const blank = (): DraftAgent => ({
@@ -42,6 +44,8 @@ const blank = (): DraftAgent => ({
   system_prompt: '',
   model: 'claude-sonnet-4-20250514',
   temperature: 0.7,
+  tools_enabled: [],
+  schedule_cron: null,
 });
 
 export default function CreatorAgentNew() {
@@ -69,6 +73,8 @@ export default function CreatorAgentNew() {
         system_prompt: g.system_prompt,
         model: g.suggested_model,
         temperature: g.suggested_temperature,
+        tools_enabled: g.suggested_tools ?? [],
+        schedule_cron: g.suggested_schedule ?? null,
       });
       toast.success('✨ Agent généré', { description: 'Vérifie le prompt et clique « Créer »' });
     } catch (e) {
@@ -144,6 +150,28 @@ export default function CreatorAgentNew() {
                   </div>
                 </div>
                 <DraftEditor draft={draft} setDraft={setDraft} />
+                {(draft.tools_enabled.length > 0 || draft.schedule_cron) && (
+                  <div className="p-3 rounded-lg bg-accent-cyan/10 border border-accent-cyan/20 space-y-2">
+                    <p className="text-[11px] text-muted-foreground">
+                      Une fois créé, active « Exécution réelle » dans ses réglages pour qu'il fasse
+                      vraiment ces actions (validation avant chaque envoi sensible) :
+                    </p>
+                    {draft.tools_enabled.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {draft.tools_enabled.map((t) => (
+                          <Badge key={t} variant="outline" className="text-[10px]">
+                            {TOOL_OPTIONS.find((o) => o.value === t)?.label ?? t}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    {draft.schedule_cron && (
+                      <p className="text-[11px] text-accent-cyan">
+                        Planification suggérée : <code className="font-mono">{draft.schedule_cron}</code>
+                      </p>
+                    )}
+                  </div>
+                )}
                 <Button onClick={handleSave} disabled={saving} className="w-full">
                   {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   <Save className="w-4 h-4 mr-2" /> Créer l'agent

@@ -4,9 +4,10 @@ import { supabase } from "../db/supabase.js";
 import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
-import type { AgentType } from "../engine/types.js";
+import { loadCustomAgent } from "../agents/customAgent.js";
+import type { StaticAgentType } from "../engine/types.js";
 
-const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as AgentType[];
+const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 
 function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -67,7 +68,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
   const agentStateMatch = url.pathname.match(/^\/kill-switch\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "POST" && agentStateMatch) {
     const [, agentType, userId] = agentStateMatch;
-    if (!VALID_AGENT_TYPES.includes(agentType as AgentType)) {
+    if (!VALID_AGENT_TYPES.includes(agentType as StaticAgentType)) {
       json(res, 400, { error: `Agent inconnu: ${agentType}` });
       return;
     }
@@ -88,13 +89,34 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
   const triggerMatch = url.pathname.match(/^\/trigger\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "POST" && triggerMatch) {
     const [, agentType, userId] = triggerMatch;
-    if (!VALID_AGENT_TYPES.includes(agentType as AgentType)) {
+    if (!VALID_AGENT_TYPES.includes(agentType as StaticAgentType)) {
       json(res, 400, { error: `Agent inconnu: ${agentType}` });
       return;
     }
     await enqueueAgentCycle({
-      agentType: agentType as AgentType,
+      agentType: agentType as StaticAgentType,
       userId,
+      trigger: { type: "manual", source: "api" },
+    });
+    json(res, 202, { ok: true, queued: true });
+    return;
+  }
+
+  const triggerCustomMatch = url.pathname.match(/^\/trigger-custom\/([0-9a-f-]+)$/);
+  if (req.method === "POST" && triggerCustomMatch) {
+    const [, agentId] = triggerCustomMatch;
+    const row = await loadCustomAgent(agentId);
+    if (!row) {
+      json(res, 404, { error: "Agent introuvable" });
+      return;
+    }
+    if (!row.karta_enabled) {
+      json(res, 400, { error: "Cet agent n'est pas activé en mode exécution réelle (KARTA)" });
+      return;
+    }
+    await enqueueAgentCycle({
+      agentType: `custom:${row.id}`,
+      userId: row.user_id,
       trigger: { type: "manual", source: "api" },
     });
     json(res, 202, { ok: true, queued: true });

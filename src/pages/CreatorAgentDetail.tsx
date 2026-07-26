@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Send, Settings, MessageSquare, Activity,
-  Trash2, Save, Power, Bot, AlertCircle, Headphones,
+  Trash2, Save, Power, Bot, AlertCircle, Headphones, Zap, ShieldAlert, PlayCircle,
 } from 'lucide-react';
 import { useVoice } from '@/hooks/useVoice';
 import { MicButton } from '@/components/voice/MicButton';
@@ -29,10 +29,14 @@ import {
   getAgent, updateAgent, deleteAgent,
   chatWithAgent, listChatMessages,
   listRuns, newSessionId,
-  CATEGORIES, MODELS,
+  CATEGORIES, MODELS, TOOL_OPTIONS, SCHEDULE_PRESETS,
   type CreatorAgent, type CreatorAgentChatMessage, type CreatorAgentRun,
   type AgentModel, type AgentCategory,
 } from '@/lib/creator-agent';
+import {
+  useCustomAgentKartaState, useUpdateCustomAgentKartaState,
+  useCustomAgentKartaRuns, useTriggerCustomAgent,
+} from '@/hooks/useCreatorAgentKarta';
 
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -55,6 +59,12 @@ export default function CreatorAgentDetail() {
 
   // Settings
   const [saving, setSaving] = useState(false);
+
+  // Exécution réelle (KARTA)
+  const { data: kartaState } = useCustomAgentKartaState(id);
+  const updateKartaState = useUpdateCustomAgentKartaState(id);
+  const { data: kartaRuns = [] } = useCustomAgentKartaRuns(id, 20);
+  const triggerKarta = useTriggerCustomAgent();
 
   useEffect(() => {
     if (!id) return;
@@ -127,6 +137,25 @@ export default function CreatorAgentDetail() {
     } catch (e) {
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
     } finally { setSaving(false); }
+  };
+
+  const handleTriggerNow = async () => {
+    if (!id) return;
+    try {
+      await triggerKarta.mutateAsync(id);
+      toast.success('Agent déclenché', { description: 'Regarde son activité ci-dessous dans quelques secondes.' });
+    } catch (e) {
+      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    }
+  };
+
+  const toggleTool = (toolValue: string) => {
+    if (!agent) return;
+    const has = agent.tools_enabled.includes(toolValue);
+    setAgent({
+      ...agent,
+      tools_enabled: has ? agent.tools_enabled.filter((t) => t !== toolValue) : [...agent.tools_enabled, toolValue],
+    });
   };
 
   const handleDelete = async () => {
@@ -368,27 +397,175 @@ export default function CreatorAgentDetail() {
                 />
               </div>
 
+              <div className="pt-3 border-t border-border space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-accent-cyan" /> Exécution réelle (KARTA)
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Cet agent fait vraiment les actions ci-dessous, au lieu de seulement en discuter dans le chat.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={agent.karta_enabled}
+                    onCheckedChange={v => setAgent({ ...agent, karta_enabled: v })}
+                    disabled={isReadOnly}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-xs">Outils autorisés</Label>
+                  <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {TOOL_OPTIONS.map((opt) => (
+                      <label
+                        key={opt.value}
+                        className="flex items-start gap-2 p-2 rounded-lg bg-secondary/30 border border-border text-xs cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={agent.tools_enabled.includes(opt.value)}
+                          onChange={() => toggleTool(opt.value)}
+                          disabled={isReadOnly}
+                          className="mt-0.5"
+                        />
+                        <span className="text-foreground/80">{opt.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {agent.karta_enabled && (
+                  <>
+                    <div>
+                      <Label className="text-xs">Niveau d'autonomie</Label>
+                      <div className="flex gap-1.5 mt-1.5">
+                        {[1, 2, 3].map((level) => (
+                          <button
+                            key={level}
+                            type="button"
+                            disabled={isReadOnly || updateKartaState.isPending}
+                            onClick={() => updateKartaState.mutate({ autonomy_level: level })}
+                            className={`flex-1 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                              (kartaState?.autonomy_level ?? 1) === level
+                                ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30'
+                                : 'bg-secondary/50 text-muted-foreground border border-transparent'
+                            }`}
+                          >
+                            {level === 1 ? 'Propose' : level === 2 ? 'Semi-auto' : 'Autonome'}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        {(kartaState?.autonomy_level ?? 1) === 1
+                          ? 'Il propose ses actions, tu valides toujours avant.'
+                          : (kartaState?.autonomy_level ?? 1) === 2
+                            ? 'Il agit seul, sauf pour les actions sensibles (envoi email...).'
+                            : 'Il agit seul en totale autonomie — rapport après coup.'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Arrêt d'urgence</span>
+                      </div>
+                      <Switch
+                        checked={kartaState?.kill_switch ?? false}
+                        onCheckedChange={(v) => updateKartaState.mutate({ kill_switch: v })}
+                        disabled={isReadOnly || updateKartaState.isPending}
+                      />
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleTriggerNow}
+                      disabled={isReadOnly || triggerKarta.isPending}
+                      className="w-full"
+                    >
+                      {triggerKarta.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PlayCircle className="w-4 h-4 mr-2" />}
+                      Tester maintenant
+                    </Button>
+
+                    {kartaRuns.length > 0 && (
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">Activité réelle récente</Label>
+                        {kartaRuns.slice(0, 5).map((r) => (
+                          <div key={r.id} className="p-2 rounded-lg bg-secondary/30 border border-border text-xs">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <Badge variant="outline" className="text-[10px]">{r.status}</Badge>
+                              {r.claude_mock && (
+                                <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500">
+                                  [MOCK] TODO_LIVE_TEST
+                                </Badge>
+                              )}
+                              <span className="text-[10px] text-muted-foreground">
+                                {new Date(r.started_at).toLocaleString('fr-FR')}
+                              </span>
+                            </div>
+                            {(r.decision || r.result_summary) && (
+                              <p className="text-[11px] text-foreground/80 mt-1 line-clamp-2">{r.decision || r.result_summary}</p>
+                            )}
+                            {r.error_message && <p className="text-[11px] text-red-400 mt-1">{r.error_message}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
               <div className="pt-3 border-t border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-foreground">Mode autonome (cron)</p>
-                    <p className="text-[11px] text-muted-foreground">L'agent s'exécute automatiquement selon la planification.</p>
+                    <p className="text-sm font-medium text-foreground">Planification</p>
+                    <p className="text-[11px] text-muted-foreground">Quand l'agent se déclenche automatiquement (nécessite « Exécution réelle » ci-dessus).</p>
                   </div>
-                  <Switch checked={agent.schedule_enabled} onCheckedChange={v => setAgent({ ...agent, schedule_enabled: v })} disabled={isReadOnly} />
                 </div>
-                {agent.schedule_enabled && (
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label className="text-xs">Cron expression</Label>
-                      <Input value={agent.schedule_cron ?? ''} onChange={e => setAgent({ ...agent, schedule_cron: e.target.value })} placeholder="0 9 * * *" className="mt-1.5 font-mono text-xs" disabled={isReadOnly} />
-                      <p className="text-[10px] text-muted-foreground mt-1">Ex: « 0 9 * * * » = tous les jours 9h</p>
-                    </div>
-                    <div>
-                      <Label className="text-xs">Input par défaut</Label>
-                      <Input value={JSON.stringify(agent.schedule_input ?? {})} onChange={e => {
-                        try { setAgent({ ...agent, schedule_input: JSON.parse(e.target.value) }); } catch { /* ignore invalid JSON while typing */ }
-                      }} className="mt-1.5 font-mono text-xs" disabled={isReadOnly} />
-                    </div>
+                <div>
+                  <Label className="text-xs">Fréquence</Label>
+                  <Select
+                    value={agent.schedule_cron ?? '__none__'}
+                    onValueChange={(v) => {
+                      const cron = v === '__none__' ? null : v;
+                      setAgent({ ...agent, schedule_cron: cron, schedule_enabled: cron !== null });
+                    }}
+                    disabled={isReadOnly}
+                  >
+                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {SCHEDULE_PRESETS.map((p) => (
+                        <SelectItem key={p.label} value={p.cron ?? '__none__'}>{p.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {agent.schedule_cron && !SCHEDULE_PRESETS.some((p) => p.cron === agent.schedule_cron) && (
+                  <div>
+                    <Label className="text-xs">Planification personnalisée (avancé)</Label>
+                    <Input
+                      value={agent.schedule_cron ?? ''}
+                      onChange={e => setAgent({ ...agent, schedule_cron: e.target.value, schedule_enabled: true })}
+                      placeholder="0 9 * * *"
+                      className="mt-1.5 font-mono text-xs"
+                      disabled={isReadOnly}
+                    />
+                    <p className="text-[10px] text-muted-foreground mt-1">Générée par l'IA ou éditée manuellement — format cron 5 champs.</p>
+                  </div>
+                )}
+                {agent.schedule_cron && (
+                  <div>
+                    <Label className="text-xs">Input par défaut (mode chat/legacy)</Label>
+                    <Input
+                      value={JSON.stringify(agent.schedule_input ?? {})}
+                      onChange={e => {
+                        try { setAgent({ ...agent, schedule_input: JSON.parse(e.target.value) }); } catch { /* JSON invalide en cours de frappe, ignoré */ }
+                      }}
+                      className="mt-1.5 font-mono text-xs"
+                      disabled={isReadOnly}
+                    />
+                    <p className="text-[10px] text-muted-foreground mt-1">Utilisé uniquement si « Exécution réelle » est désactivée (l'agent répond alors en chat via le déclencheur planifié historique).</p>
                   </div>
                 )}
               </div>

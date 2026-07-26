@@ -34,6 +34,8 @@ export interface CreatorAgent {
   schedule_cron: string | null;
   schedule_input: Record<string, unknown> | null;
   last_scheduled_run: string | null;
+  /** true = KARTA Engine exécute réellement cet agent (outils, autonomie, planification), pas juste le chat. */
+  karta_enabled: boolean;
   is_active: boolean;
   is_public: boolean;
   is_template: boolean;
@@ -90,10 +92,28 @@ export const MODELS: { value: AgentModel; label: string; description: string }[]
   { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', description: 'Plus rapide et moins cher. Pour les tâches répétitives.' },
 ];
 
+/** Outils réellement exécutables par KARTA Engine pour un agent créé (cf karta/src/tools/customRegistry.ts
+ * — 1 seule source de vérité pour les noms, dupliquée ici et côté edge function faute de pouvoir
+ * importer un projet Node depuis le frontend Vite). */
 export const TOOL_OPTIONS = [
-  { value: 'web_search', label: 'Recherche web (Tavily)' },
-  { value: 'send_email', label: 'Envoi email (Resend)' },
-  { value: 'gen_image', label: 'Génération image (Pollinations)' },
+  { value: 'supabase_select', label: 'Lire ses données (factures, prospects, notes déjà enregistrées)' },
+  { value: 'supabase_upsert', label: 'Enregistrer une donnée (lead, statut, note...)' },
+  { value: 'gmail_create_draft', label: 'Préparer un brouillon email (jamais envoyé sans validation)' },
+  { value: 'gmail_send', label: 'Envoyer un email (toujours soumis à validation par défaut)' },
+  { value: 'calendar_create_event', label: 'Créer un événement Google Calendar' },
+  { value: 'generate_pdf', label: 'Générer un PDF (rapport, facture, résumé...)' },
+  { value: 'web_search', label: 'Recherche web en temps réel' },
+  { value: 'send_notification', label: "Notifier l'utilisateur (app/email) quand une décision est nécessaire" },
+] as const;
+
+/** Presets de planification "zéro jargon" — l'utilisateur ne voit jamais de syntaxe cron. */
+export const SCHEDULE_PRESETS: { label: string; cron: string | null }[] = [
+  { label: 'Seulement quand je clique sur "Tester"', cron: null },
+  { label: 'Tous les jours à 8h', cron: '0 8 * * *' },
+  { label: 'Tous les jours à 18h', cron: '0 18 * * *' },
+  { label: 'Chaque lundi à 9h', cron: '0 9 * * 1' },
+  { label: 'Toutes les heures', cron: '0 * * * *' },
+  { label: 'Toutes les 30 minutes', cron: '*/30 * * * *' },
 ];
 
 // =============================================================

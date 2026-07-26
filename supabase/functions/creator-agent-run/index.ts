@@ -72,12 +72,18 @@ Deno.serve(async (req) => {
     if (!agent.is_active) {
       return json({ error: "Agent is paused" }, 400);
     }
-
     const effectiveUserId = userId ?? agent.user_id;
     if (!effectiveUserId) return json({ error: "Cannot determine user" }, 400);
 
     const trigger = (validation.data.trigger as string) || "manual";
     const inputText = (input ?? "") as string;
+
+    // Agent passé en exécution réelle (KARTA) : le déclencheur cron passe désormais par le
+    // scheduler KARTA (outils, autonomie, logs karta_runs) — bloque ce chemin legacy pour éviter
+    // un double-traitement (n8n + KARTA exécutant le même agent planifié en parallèle).
+    if (trigger === "cron" && agent.karta_enabled) {
+      return json({ error: "Agent géré par KARTA Engine — le déclencheur cron legacy est désactivé pour cet agent" }, 409);
+    }
 
     // Insert pending run row
     const { data: runRow, error: runErr } = await admin
