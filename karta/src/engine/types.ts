@@ -1,0 +1,79 @@
+export type AgentType = "email" | "compta" | "legal" | "partner";
+
+export type AutonomyLevel = 1 | 2 | 3;
+
+export type TriggerType = "cron" | "webhook" | "manual" | "delegation";
+
+export interface AgentTrigger {
+  type: TriggerType;
+  source: string;
+  /** Charge utile brute du déclencheur (payload webhook, nom du cron, etc.) */
+  payload?: Record<string, unknown>;
+}
+
+export interface AgentState {
+  userId: string;
+  agentType: AgentType;
+  isEnabled: boolean;
+  autonomyLevel: AutonomyLevel;
+  killSwitch: boolean;
+  simulationMode: boolean;
+}
+
+/** Un outil que l'agent peut appeler. `sensitive: true` force la validation humaine en dessous du niveau 3. */
+export interface ToolDefinition<Params = Record<string, unknown>, Result = unknown> {
+  name: string;
+  description: string;
+  sensitive: boolean;
+  execute: (params: Params, ctx: ToolExecutionContext) => Promise<Result>;
+}
+
+/**
+ * Vue "effacée" d'un ToolDefinition, utilisée partout où des outils à Params hétérogènes
+ * doivent cohabiter dans un même tableau (AgentDefinition.tools, ClaudeDecideInput.tools).
+ * Chaque tool concret garde son typage précis à la définition (ex: gmailSendTool) ; c'est
+ * uniquement au moment de l'agrégation dans un agent que le typage est effacé — la validation
+ * réelle des params se fait dans engine/loop.ts au moment de l'exécution.
+ */
+export type AnyToolDefinition = ToolDefinition<any, any>;
+
+export interface ToolExecutionContext {
+  userId: string;
+  agentType: AgentType;
+  mode: "simulation" | "live";
+}
+
+export interface ToolCallRecord {
+  tool: string;
+  paramsSummary: string;
+  resultSummary: string;
+  success: boolean;
+}
+
+/** Ce que Claude (ou le mock) retourne : la décision de l'agent pour ce cycle. */
+export interface AgentDecision {
+  summary: string;
+  toolCalls: Array<{ tool: string; params: Record<string, unknown> }>;
+  requiresApproval: boolean;
+  /** true si la décision vient du mock Claude — propagé jusqu'à karta_runs.claude_mock */
+  mock: boolean;
+}
+
+export interface AgentDefinition {
+  type: AgentType;
+  /** Construit le contexte (mémoire + données réelles) à passer au cerveau Claude. */
+  buildContext: (userId: string, trigger: AgentTrigger) => Promise<Record<string, unknown>>;
+  /** Prompt système spécifique à l'agent. */
+  systemPrompt: string;
+  /** Outils disponibles pour cet agent. */
+  tools: AnyToolDefinition[];
+}
+
+export interface AgentRunResult {
+  status: "success" | "error" | "awaiting_approval";
+  decision: string;
+  toolsUsed: ToolCallRecord[];
+  resultSummary: string;
+  errorMessage?: string;
+  mock: boolean;
+}

@@ -1,0 +1,22 @@
+services:
+  karta-redis:
+    image: redis:7-alpine
+    container_name: karta-redis
+    restart: unless-stopped
+    network_mode: host
+    command: ["redis-server", "--port", "6380", "--save", "60", "1"]
+    volumes:
+      - karta-redis-data:/data
+
+  karta-engine:
+    build: .
+    container_name: karta-engine
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      - karta-redis
+    env_file:
+      - .env
+
+volumes:
+  karta-redis-data:

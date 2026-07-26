@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { rateLimit } from "../_shared/rate-limit.ts";
+import { streamAnthropicChat } from "../_shared/anthropic-stream.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -100,9 +101,9 @@ serve(async (req) => {
       }
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY is not configured");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!ANTHROPIC_API_KEY) {
+      console.error("ANTHROPIC_API_KEY is not configured");
       return new Response(JSON.stringify({ error: "Service temporairement indisponible" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -111,18 +112,10 @@ serve(async (req) => {
 
     console.log(`Chat request from user ${userId} with ${messages.length} messages`);
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { 
-            role: "system", 
-            content: `Tu es l'assistant IA de AI Agents Pro, une entreprise qui vend 45 agents IA spécialisés pour automatiser les entreprises.
+    const response = await streamAnthropicChat({
+      apiKey: ANTHROPIC_API_KEY,
+      model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
+      systemPrompt: `Tu es l'assistant IA de AI Agents Pro, une entreprise qui vend 45 agents IA spécialisés pour automatiser les entreprises.
 
 Nos agents IA disponibles:
 - Marketing IA: Création de contenu, campagnes publicitaires
@@ -137,12 +130,9 @@ Nos agents IA disponibles:
 - Juridique IA: Veille juridique, contrats
 ... et 35 autres agents spécialisés.
 
-Réponds de manière concise, professionnelle et utile. Tu peux recommander nos agents selon les besoins du client. Si quelqu'un demande des prix, dirige-le vers notre section tarification ou invite-le à nous contacter.`
-          },
-          ...messages,
-        ],
-        stream: true,
-      }),
+Réponds de manière concise, professionnelle et utile. Tu peux recommander nos agents selon les besoins du client. Si quelqu'un demande des prix, dirige-le vers notre section tarification ou invite-le à nous contacter.`,
+      // Anthropic n'accepte pas de role "system" dans messages[] (uniquement via le champ `system` ci-dessus).
+      messages: messages.filter((m: { role: string }) => m.role !== "system"),
     });
 
     if (!response.ok) {
@@ -152,14 +142,8 @@ Réponds de manière concise, professionnelle et utile. Tu peux recommander nos 
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Service temporairement indisponible." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      console.error("Anthropic API error:", response.status, t);
       return new Response(JSON.stringify({ error: "Erreur du service IA" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -167,7 +151,7 @@ Réponds de manière concise, professionnelle et utile. Tu peux recommander nos 
     }
 
     return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      headers: { ...corsHeaders, ...Object.fromEntries(response.headers) },
     });
   } catch (e) {
     console.error("chat error:", e);
