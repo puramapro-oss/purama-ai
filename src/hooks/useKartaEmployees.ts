@@ -150,6 +150,78 @@ export function useKartaRuns(limit = 30) {
   });
 }
 
+/** true dès qu'au moins 1 des 12 employés est activé — sert à déclencher l'onboarding "Embauche ton 1er employé IA". */
+export function useHasAnyEmployeeHired() {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['karta-has-employee', user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('karta_agent_state')
+        .select('id')
+        .eq('user_id', user!.id)
+        .eq('is_enabled', true)
+        .in('agent_type', ACTION_AGENT_SLUGS as unknown as string[])
+        .limit(1);
+
+      if (error) throw error;
+      return (data ?? []).length > 0;
+    },
+  });
+}
+
+/**
+ * Déclenche un cycle réel via le proxy sécurisé `karta-trigger` (edge function — le token admin
+ * KARTA ne quitte jamais le serveur). Utilisé par l'onboarding pour la "première action" réelle.
+ */
+export function useTriggerKartaAgent() {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (agentType: ActionAgentSlug) => {
+      if (!user) throw new Error('Non authentifié');
+
+      const { data, error } = await supabase.functions.invoke('karta-trigger', {
+        body: { agentType },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return data as { ok: true; queued: boolean };
+    },
+  });
+}
+
+/**
+ * Attend qu'un nouveau `karta_runs` apparaisse pour cet agent après `sinceIso` (poll court, ~15s max).
+ * Le trigger est asynchrone (mis en queue BullMQ) : on ne peut pas afficher le vrai résultat sans attendre.
+ */
+export function usePollLatestRun(agentType: ActionAgentSlug | null, sinceIso: string | null) {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['karta-poll-run', user?.id, agentType, sinceIso],
+    enabled: !!user && !!agentType && !!sinceIso,
+    refetchInterval: (query) => (query.state.data ? false : 1500),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('karta_runs')
+        .select('*')
+        .eq('user_id', user!.id)
+        .eq('agent_type', agentType!)
+        .gte('started_at', sinceIso!)
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return (data as KartaRun | null) ?? null;
+    },
+  });
+}
+
 /** Stats réelles agrégées depuis karta_runs des 30 derniers jours — 0 si aucune donnée (jamais de faux chiffres). */
 export function useKartaStats() {
   const { user } = useAuth();

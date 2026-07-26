@@ -15,29 +15,36 @@ export interface NotifyInput {
 }
 
 /**
- * Écrit dans agent_notifications (table partagée par tous les agents, cf AGENT-COMPTA-BRIEF)
- * et envoie réellement l'email via Resend si le channel 'email' est demandé.
- * Le channel 'push' insère la notif (visible in-app) mais n'envoie pas de Web Push tant que
- * la clé VAPID privée serveur n'est pas configurée (absente de .env.secrets à ce jour) —
- * ce n'est pas un mock : c'est un intégration réelle qui dégrade proprement si la creds manque.
+ * Envoie une notification réelle (in-app + push Web via VAPID + email via Resend selon `channels`).
+ * Réutilise `agent-push-send` (edge function partagée par tous les agents Purama — compta, email n8n...)
+ * pour l'insert `agent_notifications` + le Web Push, au lieu de dupliquer cette logique : 1 source de
+ * vérité pour l'envoi push (gestion des abonnements expirés, VAPID, etc.), déjà en prod.
  */
 export async function notify(input: NotifyInput): Promise<void> {
   const channels = input.channels ?? ["in_app"];
 
-  const { error } = await supabase.from("agent_notifications").insert({
-    user_id: input.userId,
-    agent_type: input.agentType,
-    title: input.title,
-    body: input.body,
-    action_type: input.actionType ?? "info",
-    action_payload: input.actionPayload ?? {},
-    action_url: input.actionUrl ?? null,
-    priority: input.priority ?? "normal",
-    channels,
+  const response = await fetch(`${config.supabaseUrl}/functions/v1/agent-push-send`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user_id: input.userId,
+      agent_type: input.agentType,
+      title: input.title,
+      body: input.body,
+      action_type: input.actionType ?? "info",
+      action_payload: input.actionPayload ?? {},
+      action_url: input.actionUrl ?? null,
+      priority: input.priority ?? "normal",
+      channels,
+    }),
   });
 
-  if (error) {
-    throw new Error(`notify(${input.agentType}): ${error.message}`);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`notify(${input.agentType}): agent-push-send a répondu ${response.status}: ${text}`);
   }
 
   if (channels.includes("email")) {

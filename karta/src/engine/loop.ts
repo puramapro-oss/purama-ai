@@ -112,15 +112,23 @@ export async function runAgentCycle(
     });
 
     if (awaitingApproval) {
-      await notify({
-        userId,
-        agentType: definition.type,
-        title: `${definition.type} : action en attente de validation`,
-        body: decision.summary,
-        actionType: "review",
-        priority: "normal",
-        channels: ["in_app"],
-      });
+      // Un échec d'envoi (push/email down) ne doit jamais faire échouer le cycle : l'action de
+      // l'agent est déjà journalisée en attente d'approbation, c'est ce qui compte.
+      try {
+        await notify({
+          userId,
+          agentType: definition.type,
+          title: `${definition.type} : action en attente de validation`,
+          body: decision.summary,
+          actionType: "review",
+          actionUrl: "/dashboard/employees",
+          priority: "normal",
+          // Décision humaine requise : seul cas où on sort du silence (push + email), cf brief §UX/Simplicité.
+          channels: ["in_app", "push", "email"],
+        });
+      } catch (notifyError) {
+        console.error(`[loop] notify(${definition.type}) a échoué :`, notifyError);
+      }
     }
 
     await recordRunOutcome(userId, definition.type, "success");

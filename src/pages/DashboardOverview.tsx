@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Brain,
@@ -14,6 +15,7 @@ import {
   BookOpen,
   Share2,
   ExternalLink,
+  Sparkles,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -26,6 +28,8 @@ import { useWallet } from '@/hooks/useWallet';
 import { usePoints } from '@/hooks/usePoints';
 import { useTodaysGift } from '@/hooks/useDailyGift';
 import { useCrossPromos } from '@/hooks/useFaq';
+import { useHasAnyEmployeeHired } from '@/hooks/useKartaEmployees';
+import { HireFirstEmployeeModal } from '@/components/onboarding/HireFirstEmployeeModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -39,8 +43,10 @@ const quickActions = [
 ];
 
 export default function DashboardOverview() {
+  const [hireModalOpen, setHireModalOpen] = useState(false);
   const { user } = useAuth();
   const { data: profile } = useProfile();
+  const { data: hasHiredEmployee, isLoading: hiredLoading } = useHasAnyEmployeeHired();
   const { data: agents = [], isLoading: agentsLoading } = useAgents();
   const { selectedAgentIds, isLoading: selectionsLoading, maxSelections } =
     useAgentSelections();
@@ -117,6 +123,36 @@ export default function DashboardOverview() {
           </p>
         </div>
       </motion.div>
+
+      {/* Onboarding : Embauche ton 1er employé IA */}
+      {!hiredLoading && !hasHiredEmployee && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <Card className="bg-gradient-to-r from-accent-cyan/10 to-accent-purple/10 border-accent-cyan/30">
+            <CardContent className="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-accent-cyan/20 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-accent-cyan" />
+                </div>
+                <div>
+                  <p className="font-orbitron font-bold text-foreground text-sm">
+                    Embauche ton premier employé IA
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    2 minutes, 0 connexion requise — il travaille sous tes yeux dès l'activation.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setHireModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-cyan text-background text-sm font-semibold hover:opacity-90 transition-opacity flex-shrink-0"
+              >
+                Commencer <ArrowRight className="w-4 h-4" />
+              </button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+      <HireFirstEmployeeModal open={hireModalOpen} onOpenChange={setHireModalOpen} />
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

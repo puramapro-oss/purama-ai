@@ -36,6 +36,26 @@ export const HealthConsultationSchema = z.object({
   severity: z.enum(["low", "medium", "high"]).optional(),
 });
 
+// KARTA — 12 agents "action" déclenchables manuellement (cf karta/src/engine/types.ts ACTION_AGENT_TYPES)
+export const KARTA_ACTION_AGENT_TYPES = [
+  "repondeur-intelligent",
+  "campagnes-par-courriel",
+  "pro-de-la-sensibilisation-au-froid",
+  "newsletter-genie",
+  "facture-pro",
+  "chasseur-de-paiements",
+  "rapports-financiers",
+  "crm-intelligent",
+  "machine-de-suivi",
+  "maitre-des-publicites",
+  "planificateur-d-appels",
+  "reservation-intelligente",
+] as const;
+
+export const KartaTriggerSchema = z.object({
+  agentType: z.enum(KARTA_ACTION_AGENT_TYPES),
+});
+
 // Helper
 export function validateBody<T>(
   schema: z.ZodSchema<T>,

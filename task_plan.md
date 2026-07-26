@@ -58,7 +58,18 @@ existants, donc 0 double-traitement actuellement).
 - [x] `npm run build` (Vite) : 0 erreur — bug environnement trouvé+fixé au passage (binaires natifs `.node` bloqués par Gatekeeper macOS, cf ERRORS.md)
 - [ ] **Non fait** (nécessite navigateur/humain, hors capacité de cette session) : test humain réel de la page en navigateur (clics, responsive 375px, dark mode) — cf Loi 2 CLAUDE.md, ne pas déclarer "testé" sans preuve Playwright/humaine
 - [ ] Phase 3 (non commencée) : Agent Créateur d'Agents
-- [ ] Phase 4 (non commencée) : UX onboarding "Embauche ton 1er employé IA"
+
+## AGENTS RÉELS — Phase 4 : UX onboarding "Embauche ton 1er employé IA" 🔄 (2026-07-26)
+- [x] Proxy sécurisé `karta-trigger` (edge function) : auth JWT + rate limit 10/h + whitelist Zod des 12 slugs, relaie vers l'API interne KARTA (`KARTA_ADMIN_TOKEN` reste 100% serveur, jamais exposé au navigateur)
+- [x] Connectivité vérifiée réelle : `karta-engine` (network_mode host) joignable depuis les containers `supabase_default` via la gateway du bridge (`172.19.0.1:4100`, testé par curl réel depuis `supabase-db`)
+- [x] `notify()` (KARTA) réécrit pour réutiliser `agent-push-send` (edge function déjà en prod, partagée par tous les agents) au lieu de dupliquer l'insert + gérer le Web Push nous-mêmes — push réel branché (VAPID déjà configuré côté VPS), email réel déjà en place (Resend). Notifie uniquement quand une décision humaine est requise (`awaiting_approval`), jamais sur les cycles autonomes silencieux — conforme au brief §UX/Simplicité
+- [x] Échec d'envoi notif rendu non bloquant (try/catch dédié dans `loop.ts`) — un push/email en échec ne doit jamais faire échouer un cycle d'agent déjà réussi
+- [x] Composant `HireFirstEmployeeModal` (3 étapes : choix parmi 4 employés sans connexion externe requise → confirmation autonomie niveau 1/simulation → vraie 1ère tâche déclenchée et son résultat réel affiché, avec repli propre si le worker met >20s)
+- [x] Bannière d'accroche sur `DashboardOverview` (affichée uniquement si 0 employé actif — signal réel `karta_agent_state`, jamais un flag arbitraire)
+- [x] `tsc --noEmit` (frontend + karta/) 0 erreur, `deno check` sur `karta-trigger/index.ts` 0 erreur, `npm run build` 0 erreur, 30/30 tests karta toujours verts
+- [ ] **BLOQUÉ (2026-07-26, en cours)** : déploiement VPS du proxy `karta-trigger` + rebuild `karta-engine` — accès SSH refusé (`Connection refused`) suite à un lockout probable fail2ban après des tentatives scp par clé échouées en début de session. Code prêt, testé statiquement (`deno check`, `tsc`), jamais déployé ni testé en conditions réelles. Ne pas cocher `[x]` avant déploiement + test E2E réel (créer un user de test, obtenir un JWT, appeler `karta-trigger`, vérifier une vraie ligne `karta_runs`, nettoyer).
+- [ ] Une fois débloqué : ajouter `KARTA_INTERNAL_URL`/`KARTA_ADMIN_TOKEN` à `/opt/supabase/docker/.env` (déjà fait en amont, backup `.env.bak-karta-trigger-*`) + au bloc `environment:` du service `functions` dans `docker-compose.yml` (déjà fait, backup `docker-compose.yml.bak-karta-trigger`) → `docker compose up -d functions` pour recréer le container avec les nouvelles vars (un simple `docker restart` ne suffit PAS, l'env est figé à la création)
+- [ ] Test humain navigateur du flow onboarding complet (jamais ouvert dans un vrai navigateur cette session)
 
 ## P1 - Structure+Auth+DB ✅ (pré-existant)
 ## P2 - Features core ✅ (6 agents IA, dashboard, pricing)
