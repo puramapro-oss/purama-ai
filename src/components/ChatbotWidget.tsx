@@ -388,6 +388,7 @@ export function ChatbotWidget() {
           >
             <Button
               onClick={() => { setIsOpen(true); setHasNewMessage(false); }}
+              aria-label="Ouvrir l'assistant Purama AI"
               className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent shadow-lg hover:shadow-xl transition-all relative"
             >
               <MessageCircle className="w-6 h-6 text-primary-foreground" />
