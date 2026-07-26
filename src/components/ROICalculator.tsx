@@ -81,13 +81,14 @@ export function ROICalculator() {
               {/* Employees */}
               <div>
                 <div className="flex justify-between mb-3">
-                  <label className="flex items-center gap-2 text-foreground font-medium">
+                  <label htmlFor="roi-employees" className="flex items-center gap-2 text-foreground font-medium">
                     <Users className="w-4 h-4 text-accent-cyan" />
                     Nombre d'employés
                   </label>
                   <span className="text-accent-cyan font-orbitron">{employees}</span>
                 </div>
                 <input
+                  id="roi-employees"
                   type="range"
                   min="1"
                   max="100"
@@ -104,13 +105,14 @@ export function ROICalculator() {
               {/* Hours per week */}
               <div>
                 <div className="flex justify-between mb-3">
-                  <label className="flex items-center gap-2 text-foreground font-medium">
+                  <label htmlFor="roi-hours" className="flex items-center gap-2 text-foreground font-medium">
                     <Clock className="w-4 h-4 text-accent-purple" />
                     Heures de travail / semaine
                   </label>
                   <span className="text-accent-purple font-orbitron">{hoursPerWeek}h</span>
                 </div>
                 <input
+                  id="roi-hours"
                   type="range"
                   min="20"
                   max="60"
@@ -127,13 +129,14 @@ export function ROICalculator() {
               {/* Avg Salary */}
               <div>
                 <div className="flex justify-between mb-3">
-                  <label className="flex items-center gap-2 text-foreground font-medium">
+                  <label htmlFor="roi-salary" className="flex items-center gap-2 text-foreground font-medium">
                     <DollarSign className="w-4 h-4 text-accent-pink" />
                     Salaire moyen mensuel (€)
                   </label>
                   <span className="text-accent-pink font-orbitron">{avgSalary.toLocaleString()}€</span>
                 </div>
                 <input
+                  id="roi-salary"
                   type="range"
                   min="2000"
                   max="10000"
@@ -151,13 +154,14 @@ export function ROICalculator() {
               {/* Automation Rate */}
               <div>
                 <div className="flex justify-between mb-3">
-                  <label className="flex items-center gap-2 text-foreground font-medium">
+                  <label htmlFor="roi-automation" className="flex items-center gap-2 text-foreground font-medium">
                     <Zap className="w-4 h-4 text-accent-cyan" />
                     Taux d'automatisation potentiel
                   </label>
                   <span className="text-accent-cyan font-orbitron">{automationRate}%</span>
                 </div>
                 <input
+                  id="roi-automation"
                   type="range"
                   min="10"
                   max="70"
