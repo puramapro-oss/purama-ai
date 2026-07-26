@@ -59,7 +59,7 @@ existants, donc 0 double-traitement actuellement).
 - [ ] **Non fait** (nécessite navigateur/humain, hors capacité de cette session) : test humain réel de la page en navigateur (clics, responsive 375px, dark mode) — cf Loi 2 CLAUDE.md, ne pas déclarer "testé" sans preuve Playwright/humaine
 - [ ] Phase 3 (non commencée) : Agent Créateur d'Agents
 
-## AGENTS RÉELS — Phase 4 : UX onboarding "Embauche ton 1er employé IA" 🔄 (2026-07-26)
+## AGENTS RÉELS — Phase 4 : UX onboarding "Embauche ton 1er employé IA" ✅ (2026-07-26)
 - [x] Proxy sécurisé `karta-trigger` (edge function) : auth JWT + rate limit 10/h + whitelist Zod des 12 slugs, relaie vers l'API interne KARTA (`KARTA_ADMIN_TOKEN` reste 100% serveur, jamais exposé au navigateur)
 - [x] Connectivité vérifiée réelle : `karta-engine` (network_mode host) joignable depuis les containers `supabase_default` via la gateway du bridge (`172.19.0.1:4100`, testé par curl réel depuis `supabase-db`)
 - [x] `notify()` (KARTA) réécrit pour réutiliser `agent-push-send` (edge function déjà en prod, partagée par tous les agents) au lieu de dupliquer l'insert + gérer le Web Push nous-mêmes — push réel branché (VAPID déjà configuré côté VPS), email réel déjà en place (Resend). Notifie uniquement quand une décision humaine est requise (`awaiting_approval`), jamais sur les cycles autonomes silencieux — conforme au brief §UX/Simplicité
@@ -67,9 +67,13 @@ existants, donc 0 double-traitement actuellement).
 - [x] Composant `HireFirstEmployeeModal` (3 étapes : choix parmi 4 employés sans connexion externe requise → confirmation autonomie niveau 1/simulation → vraie 1ère tâche déclenchée et son résultat réel affiché, avec repli propre si le worker met >20s)
 - [x] Bannière d'accroche sur `DashboardOverview` (affichée uniquement si 0 employé actif — signal réel `karta_agent_state`, jamais un flag arbitraire)
 - [x] `tsc --noEmit` (frontend + karta/) 0 erreur, `deno check` sur `karta-trigger/index.ts` 0 erreur, `npm run build` 0 erreur, 30/30 tests karta toujours verts
-- [ ] **BLOQUÉ (2026-07-26, en cours)** : déploiement VPS du proxy `karta-trigger` + rebuild `karta-engine` — accès SSH refusé (`Connection refused`) suite à un lockout probable fail2ban après des tentatives scp par clé échouées en début de session. Code prêt, testé statiquement (`deno check`, `tsc`), jamais déployé ni testé en conditions réelles. Ne pas cocher `[x]` avant déploiement + test E2E réel (créer un user de test, obtenir un JWT, appeler `karta-trigger`, vérifier une vraie ligne `karta_runs`, nettoyer).
-- [ ] Une fois débloqué : ajouter `KARTA_INTERNAL_URL`/`KARTA_ADMIN_TOKEN` à `/opt/supabase/docker/.env` (déjà fait en amont, backup `.env.bak-karta-trigger-*`) + au bloc `environment:` du service `functions` dans `docker-compose.yml` (déjà fait, backup `docker-compose.yml.bak-karta-trigger`) → `docker compose up -d functions` pour recréer le container avec les nouvelles vars (un simple `docker restart` ne suffit PAS, l'env est figé à la création)
-- [ ] Test humain navigateur du flow onboarding complet (jamais ouvert dans un vrai navigateur cette session)
+- [x] Déploiement VPS débloqué (lockout SSH résolu côté VPS par Tissma) : `karta-trigger` + `_shared/validation.ts` copiés sur `/opt/supabase/docker/volumes/functions/`, container `functions` recréé (`docker compose up -d functions`, nécessaire pour charger `KARTA_INTERNAL_URL`/`KARTA_ADMIN_TOKEN` — un simple restart n'aurait pas suffi), `notify.ts`+`loop.ts` copiés sur `/opt/karta/src/engine/`, `karta-engine` rebuild+redéployé (`docker compose up -d --build karta-engine`)
+- [x] **Test end-to-end réel complet** (user de test créé via GoTrue admin API, JWT obtenu par login réel, nettoyé après coup — 0 trace résiduelle vérifiée) :
+  - [x] `POST /functions/v1/karta-trigger` sans auth → 401 (routing + whitelist Zod OK)
+  - [x] `POST /functions/v1/karta-trigger` avec JWT réel + `agentType:"crm-intelligent"` → `{"ok":true,"queued":true}`, ligne réelle créée dans `karta_runs` (status `success`, `claude_mock:true`, décision `[MOCK] ... TODO_LIVE_TEST`)
+  - [x] `notify()` → `agent-push-send` : appel réel depuis le container `karta-engine`, notification insérée dans `agent_notifications` (id réel vérifié en SQL), `push_sent:0` (cohérent — le user de test n'a aucun abonnement push, comportement attendu)
+  - [x] Cascade `ON DELETE CASCADE` vérifiée : suppression du user de test → 0 ligne restante dans `karta_runs`/`agent_notifications`
+- [ ] Test humain navigateur du flow onboarding complet (clic bannière → choix employé → 1ère tâche réelle affichée, responsive 375px, dark mode) — jamais ouvert dans un vrai navigateur cette session, cf Loi 2 CLAUDE.md
 
 ## P1 - Structure+Auth+DB ✅ (pré-existant)
 ## P2 - Features core ✅ (6 agents IA, dashboard, pricing)
