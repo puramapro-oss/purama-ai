@@ -37,7 +37,26 @@ existants, donc 0 double-traitement actuellement).
   - [x] `tsc --noEmit` 0 erreur
   - [x] Déployé et vérifié réel : `docker ps` → `karta-engine` + `karta-redis` up, `GET /health` → 200 réel, déclenchement manuel réel via API → job traité par le worker → ligne réelle dans `karta_runs` (agent compta, mode simulation, décision mock `TODO_LIVE_TEST`, 28ms)
 - [ ] Reste Phase 1 : bascule progressive des 4 agents n8n → KARTA (activer `karta_agent_state.simulation_mode=false` agent par agent, après validation humaine, PAS avant le crédit réel)
-- [ ] Phase 2 (non commencée) : transformer les 12 agents "action" du site en agents KARTA complets + page "Mes employés IA"
+
+## AGENTS RÉELS — Phase 2 : 12 agents "action" + page "Mes employés IA" ✅ (2026-07-26)
+- [x] `AgentType` élargi (`CoreAgentType` + `ActionAgentType`, 16 valeurs) sans casser le schéma (`agent_type` déjà `TEXT`)
+- [x] `karta_crm_leads` créée (migration 003, RLS, appliquée en prod) — support CRM Intelligent + Machine de Suivi
+- [x] `src/agents/actionAgents.ts` : 12 `AgentDefinition` réels (Répondeur, Campagnes Email, Cold Outreach, Newsletter, Facture Pro, Chasseur de Paiements, Rapports Financiers, CRM Intelligent, Machine de Suivi, Maître des Publicités [mappé sur "Offres"], Planificateur d'Appels, Réservation Intelligente) — chacun avec `buildContext` sur vraies tables (`compta_invoices`, `compta_transactions`, `karta_crm_leads`, Gmail) ou brief-driven (`consumeBrief`)
+- [x] Mock Claude généralisé : `genericItemsFallback` (lit `context.items`, choisit un outil via `PREFERRED_TOOL_ORDER`) — évite 12 handlers dupliqués, toujours suffixé `TODO_LIVE_TEST`
+- [x] `AGENT_REGISTRY` étendu à 16 entrées, `listActiveUserIds` généralisé (table de config dédiée pour les 4 agents cœur, sinon `karta_agent_state.is_enabled` pour les 12 agents action)
+- [x] Scheduler cron étendu (12 cadences, alignées sur la fréquence métier : répondeur 5min, CRM/suivi/RDV 15-30min, factures/paiements quotidien, rapports/newsletter/pubs hebdo)
+- [x] Bug régression trouvé+fixé : routes API `/trigger/:agentType/:userId` et `/kill-switch/:agentType/:userId` ne matchaient pas les slugs à tiret (`crm-intelligent`) — regex corrigée, cf ERRORS.md
+- [x] Test end-to-end réel : lead `karta_crm_leads` inséré en vrai → déclenchement manuel réel de `crm-intelligent` → décision mock correcte → ligne réelle dans `karta_runs`
+- [x] 8 tests unitaires supplémentaires (mock fallback générique, registre 16 agents) — **30/30 verts** (22 Phase 1 + 8 Phase 2)
+- [x] Bug trouvé+fixé : `karta/scripts/agents-catalog.ts` (reseed Phase 0) utilisait des noms Lucide comme icônes au lieu d'emoji littéraux (le frontend rend `agent.icon` en texte brut) — 45 icônes corrigées, re-reseedées, vérifiées en SQL prod
+- [x] Page **"Mes employés IA"** (`src/pages/MyEmployees.tsx`, route `/dashboard/employees`, nav sidebar 16 langues) :
+  - [x] Grille des 12 agents action (métadonnées lues depuis `agents` — 1 source de vérité, pas de duplication)
+  - [x] Réglages par agent en écriture directe RLS (`karta_agent_state` upsert) : activation on/off, niveau d'autonomie 1-3, mode simulation, kill switch individuel — 0 API custom nécessaire
+  - [x] Stats réelles 30 jours (exécutions, taux de réussite, en attente de validation, dernière activité) depuis `karta_runs` — 0 si aucune donnée, jamais de chiffre inventé
+  - [x] Timeline d'activité réelle (`karta_runs`, badges statut/mock/simulation, résumé décision, erreur si échec)
+- [x] `tsc --noEmit` (frontend + karta/) : 0 erreur
+- [x] `npm run build` (Vite) : 0 erreur — bug environnement trouvé+fixé au passage (binaires natifs `.node` bloqués par Gatekeeper macOS, cf ERRORS.md)
+- [ ] **Non fait** (nécessite navigateur/humain, hors capacité de cette session) : test humain réel de la page en navigateur (clics, responsive 375px, dark mode) — cf Loi 2 CLAUDE.md, ne pas déclarer "testé" sans preuve Playwright/humaine
 - [ ] Phase 3 (non commencée) : Agent Créateur d'Agents
 - [ ] Phase 4 (non commencée) : UX onboarding "Embauche ton 1er employé IA"
 
@@ -119,3 +138,5 @@ existants, donc 0 double-traitement actuellement).
 - [ ] Les 45 agents "chat" du site (`agent-proxy` → n8n → Claude) : au moins 1 test par catégorie (10 catégories) pour valider la qualité de chaque prompt système n8n
 - [ ] Coût réel par agent/cycle (tokens consommés) vs les rate limits déjà en place (20-30 req/h) — ajuster si besoin
 - [ ] Une fois chaque agent cœur validé en conditions réelles : `karta_agent_state.simulation_mode=false` pour cet agent, PUIS désactiver le workflow n8n équivalent (bascule agent par agent, jamais en bloc)
+- [ ] Les 12 agents "action" KARTA (Phase 2) : jamais exécutés avec un vrai appel Claude — valider chacun avec de vraies données (ex: vraies factures `compta_invoices` pour Facture Pro/Chasseur de Paiements, vrais leads `karta_crm_leads` pour CRM/Suivi, vraie boîte Gmail pour Répondeur) avant de désactiver le workflow n8n équivalent
+- [ ] Page "Mes employés IA" (`/dashboard/employees`) : test humain en navigateur (clics activation/kill-switch/autonomie, responsive 375px, dark mode) — jamais ouvert dans un vrai navigateur cette session

@@ -104,6 +104,39 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
   return summaries;
 }
 
+/**
+ * Contexte "boîte mail" partagé par l'agent cœur Email (Tissma) et l'agent action
+ * Répondeur Intelligent (clients) — même mécanique de connexion Gmail (email_agent_config),
+ * seul le systemPrompt/persona diffère entre les deux agents.
+ */
+export async function buildGmailInboxContext(userId: string): Promise<Record<string, unknown>> {
+  const { data: emailConfig } = await supabase
+    .from("email_agent_config")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (!emailConfig?.is_active) {
+    return { newEmails: [], reason: "email_agent_config inactif ou absent (Gmail non connecté)" };
+  }
+
+  const newEmails = await listNewGmailMessages(userId, emailConfig.last_email_id ?? null);
+
+  if (newEmails.length > 0) {
+    await supabase
+      .from("email_agent_config")
+      .update({ last_sync_at: new Date().toISOString(), last_email_id: newEmails[0].id })
+      .eq("user_id", userId);
+  }
+
+  return {
+    tone: emailConfig.tone,
+    signature: emailConfig.signature,
+    excludedEmails: emailConfig.excluded_emails,
+    newEmails,
+  };
+}
+
 export const gmailCreateDraftTool: ToolDefinition<
   { threadId: string; to: string; subject: string; body: string },
   { draftId: string }

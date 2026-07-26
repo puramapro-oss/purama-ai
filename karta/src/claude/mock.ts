@@ -18,17 +18,46 @@ export function createMockClaudeClient(): ClaudeClient {
   return {
     isMock: true,
     async decide(input: ClaudeDecideInput): Promise<AgentDecision> {
-      const decision = MOCK_DECISIONS[input.agentType]?.(input) ?? genericNoOp(input);
+      const decision = MOCK_DECISIONS[input.agentType]?.(input) ?? genericItemsFallback(input);
       return { ...decision, mock: true };
     },
   };
 }
 
-function genericNoOp(input: ClaudeDecideInput): AgentDecision {
+/**
+ * Fallback pour tout agent sans handler dédié (les 12 agents "action", cf actionAgents.ts) :
+ * lit le signal générique `context.items` (array) que chacun expose, et si non vide, choisit le
+ * premier outil "d'action" disponible dans les tools déclarés par CET agent (donc naturellement
+ * pertinent — un agent facture n'a que generate_pdf, un agent CRM n'a que supabase_upsert...).
+ */
+const PREFERRED_TOOL_ORDER = [
+  "gmail_create_draft",
+  "gmail_send",
+  "calendar_create_event",
+  "generate_pdf",
+  "supabase_upsert",
+  "send_notification",
+];
+
+function genericItemsFallback(input: ClaudeDecideInput): AgentDecision {
+  const items = Array.isArray(input.context.items) ? (input.context.items as unknown[]) : [];
+
+  if (items.length === 0) {
+    return {
+      summary: `[MOCK] Rien à traiter pour l'agent "${input.agentType}" avec ce contexte (TODO_LIVE_TEST).`,
+      toolCalls: [],
+      requiresApproval: false,
+      mock: true,
+    };
+  }
+
+  const chosenToolName = PREFERRED_TOOL_ORDER.find((name) => input.tools.some((t) => t.name === name));
+  const tool = input.tools.find((t) => t.name === chosenToolName);
+
   return {
-    summary: `[MOCK] Rien à traiter pour l'agent "${input.agentType}" avec ce contexte (TODO_LIVE_TEST).`,
-    toolCalls: [],
-    requiresApproval: false,
+    summary: `[MOCK] ${items.length} élément(s) à traiter pour "${input.agentType}"${tool ? ` → ${tool.name} proposé` : ""} (TODO_LIVE_TEST).`,
+    toolCalls: tool ? [{ tool: tool.name, params: { mock: true, itemsCount: items.length } }] : [],
+    requiresApproval: true,
     mock: true,
   };
 }
@@ -136,3 +165,7 @@ const MOCK_DECISIONS: Record<string, (input: ClaudeDecideInput) => AgentDecision
     };
   },
 };
+
+// Répondeur Intelligent (agent action) partage le même contexte que l'agent cœur Email
+// (buildGmailInboxContext) — donc le même canevas mock.
+MOCK_DECISIONS["repondeur-intelligent"] = MOCK_DECISIONS.email;

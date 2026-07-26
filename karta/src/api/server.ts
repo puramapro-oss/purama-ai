@@ -64,7 +64,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return;
   }
 
-  const agentStateMatch = url.pathname.match(/^\/kill-switch\/([a-z]+)\/([0-9a-f-]+)$/);
+  const agentStateMatch = url.pathname.match(/^\/kill-switch\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "POST" && agentStateMatch) {
     const [, agentType, userId] = agentStateMatch;
     if (!VALID_AGENT_TYPES.includes(agentType as AgentType)) {
@@ -85,7 +85,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return;
   }
 
-  const triggerMatch = url.pathname.match(/^\/trigger\/([a-z]+)\/([0-9a-f-]+)$/);
+  const triggerMatch = url.pathname.match(/^\/trigger\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "POST" && triggerMatch) {
     const [, agentType, userId] = triggerMatch;
     if (!VALID_AGENT_TYPES.includes(agentType as AgentType)) {

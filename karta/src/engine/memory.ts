@@ -17,6 +17,18 @@ export async function getMemory(userId: string, agentType: AgentType, key: strin
   return data?.memory_value ?? null;
 }
 
+/**
+ * Consomme un "brief" laissé par l'utilisateur (ex: sujet de newsletter, brief de campagne) —
+ * utilisé par les agents "action" pilotés à la demande plutôt que par des données déjà en base.
+ * Le brief est effacé après lecture pour ne pas être retraité au cycle suivant.
+ */
+export async function consumeBrief(userId: string, agentType: AgentType, key = "pending_brief"): Promise<string | null> {
+  const value = await getMemory(userId, agentType, key);
+  if (typeof value !== "string" || !value.trim()) return null;
+  await setMemory(userId, agentType, key, null);
+  return value;
+}
+
 export async function setMemory(
   userId: string,
   agentType: AgentType,

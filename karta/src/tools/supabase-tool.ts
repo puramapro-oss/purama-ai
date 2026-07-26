@@ -12,6 +12,7 @@ const ALLOWED_TABLES = [
   "partner_prospects",
   "partner_emails",
   "email_agent_logs",
+  "karta_crm_leads",
 ] as const;
 
 type AllowedTable = (typeof ALLOWED_TABLES)[number];

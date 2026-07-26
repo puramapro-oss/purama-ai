@@ -1,4 +1,38 @@
-export type AgentType = "email" | "compta" | "legal" | "partner";
+/** 4 agents cœur (compte admin, cf brief Phase 2) + 12 agents "action" du site (multi-tenant,
+ * cf brief Phase 3) — slug identique à purama_ai.agents.slug pour les 12 derniers, ce qui permet
+ * de joindre karta_agent_state/karta_runs directement sur le catalogue marketplace. */
+export type CoreAgentType = "email" | "compta" | "legal" | "partner";
+
+export type ActionAgentType =
+  | "repondeur-intelligent"
+  | "campagnes-par-courriel"
+  | "pro-de-la-sensibilisation-au-froid"
+  | "newsletter-genie"
+  | "facture-pro"
+  | "rapports-financiers"
+  | "chasseur-de-paiements"
+  | "crm-intelligent"
+  | "machine-de-suivi"
+  | "maitre-des-publicites"
+  | "planificateur-d-appels"
+  | "reservation-intelligente";
+
+export type AgentType = CoreAgentType | ActionAgentType;
+
+export const ACTION_AGENT_TYPES: ActionAgentType[] = [
+  "repondeur-intelligent",
+  "campagnes-par-courriel",
+  "pro-de-la-sensibilisation-au-froid",
+  "newsletter-genie",
+  "facture-pro",
+  "rapports-financiers",
+  "chasseur-de-paiements",
+  "crm-intelligent",
+  "machine-de-suivi",
+  "maitre-des-publicites",
+  "planificateur-d-appels",
+  "reservation-intelligente",
+];
 
 export type AutonomyLevel = 1 | 2 | 3;
 

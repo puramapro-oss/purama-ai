@@ -914,6 +914,204 @@ export type Database = {
         }
         Relationships: []
       }
+      karta_agent_state: {
+        Row: {
+          agent_type: string
+          autonomy_level: number
+          created_at: string
+          id: string
+          is_enabled: boolean
+          kill_switch: boolean
+          last_run_at: string | null
+          last_run_status: string | null
+          simulation_mode: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_type: string
+          autonomy_level?: number
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          kill_switch?: boolean
+          last_run_at?: string | null
+          last_run_status?: string | null
+          simulation_mode?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_type?: string
+          autonomy_level?: number
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          kill_switch?: boolean
+          last_run_at?: string | null
+          last_run_status?: string | null
+          simulation_mode?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      karta_runs: {
+        Row: {
+          agent_type: string
+          claude_mock: boolean
+          decision: string | null
+          duration_ms: number | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          input_summary: string | null
+          mode: string
+          result_summary: string | null
+          started_at: string
+          status: string
+          tools_used: Json
+          trigger_source: string | null
+          trigger_type: string
+          user_id: string
+        }
+        Insert: {
+          agent_type: string
+          claude_mock?: boolean
+          decision?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          input_summary?: string | null
+          mode?: string
+          result_summary?: string | null
+          started_at?: string
+          status?: string
+          tools_used?: Json
+          trigger_source?: string | null
+          trigger_type: string
+          user_id: string
+        }
+        Update: {
+          agent_type?: string
+          claude_mock?: boolean
+          decision?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          input_summary?: string | null
+          mode?: string
+          result_summary?: string | null
+          started_at?: string
+          status?: string
+          tools_used?: Json
+          trigger_source?: string | null
+          trigger_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      karta_agent_memory: {
+        Row: {
+          agent_type: string
+          id: string
+          memory_key: string
+          memory_value: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_type: string
+          id?: string
+          memory_key: string
+          memory_value: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_type?: string
+          id?: string
+          memory_key?: string
+          memory_value?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      karta_global_state: {
+        Row: {
+          id: string
+          kill_switch: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          kill_switch?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          kill_switch?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      karta_crm_leads: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string | null
+          id: string
+          last_contact_at: string | null
+          name: string
+          next_follow_up_at: string | null
+          notes: string | null
+          phone: string | null
+          score: number | null
+          source: string | null
+          stage: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_contact_at?: string | null
+          name: string
+          next_follow_up_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          score?: number | null
+          source?: string | null
+          stage?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_contact_at?: string | null
+          name?: string
+          next_follow_up_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          score?: number | null
+          source?: string | null
+          stage?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       influencer_leaderboard: {

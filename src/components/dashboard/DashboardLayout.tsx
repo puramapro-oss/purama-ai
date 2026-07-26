@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
   Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake, Scale, Sparkles,
-  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen, Wind, Heart
+  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen, Wind, Heart, Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -26,6 +26,7 @@ const navItems = [
   { tKey: 'nav.partnerAgent', icon: Handshake, to: '/dashboard/partner-agent' },
   { tKey: 'nav.legalAgent', icon: Scale, to: '/dashboard/legal-agent' },
   { tKey: 'nav.creatorAgent', icon: Sparkles, to: '/dashboard/creator-agent' },
+  { tKey: 'nav.employees', icon: Users, to: '/dashboard/employees' },
   { tKey: 'nav.wallet', icon: Wallet, to: '/dashboard/wallet' },
   { tKey: 'nav.points', icon: Star, to: '/dashboard/boutique' },
   { tKey: 'nav.dailyGift', icon: Gift, to: '/dashboard/daily-gift' },
