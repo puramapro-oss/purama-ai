@@ -11,6 +11,7 @@ import { PuramaComptaSection } from '@/components/PuramaComptaSection';
 import { Footer } from '@/components/Footer';
 import { ReferralBanner } from '@/components/influencer/ReferralBanner';
 import { useReferralTracking } from '@/hooks/useInfluencer';
+import { PublicActionsCounter } from '@/components/PublicActionsCounter';
 
 export default function Index() {
   const { checkAndStoreReferral } = useReferralTracking();
@@ -29,6 +30,7 @@ export default function Index() {
         <section id="hero" aria-label="Hero">
           <Hero />
         </section>
+        <PublicActionsCounter />
         <section id="agents-section-wrapper" aria-label="Catalogue d'agents IA" className="scroll-mt-24">
           <AIAgents />
         </section>
