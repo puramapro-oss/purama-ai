@@ -74,7 +74,10 @@ tant que le crédit n'est pas rechargé.
 
 ## Ce qui reste avant un vrai lancement (cf détail complet dans `task_plan.md`)
 
+**Uniquement bloqué sur le crédit Anthropic** (tout le reste est fait, cf section "Clôture des phases
+restantes" du 2026-07-27 dans `task_plan.md` — mécanisme d'approbation réel, chiffrement des tokens
+Gmail, tests Playwright réels des 3 pages, déclenchement cron réel vérifié, Lighthouse) :
+
 1. Recharger le crédit Anthropic (règle permanente : pas avant le lancement réel)
 2. Valider chaque agent (16 statiques + Créateur d'Agents) avec au moins 1 vrai appel Claude
 3. Bascule progressive `simulation_mode=false` agent par agent, jamais en bloc
-4. Test humain navigateur des 3 pages construites cette session (Mes employés IA, onboarding, Créateur d'Agents/Exécution réelle) — jamais ouvertes dans un vrai navigateur

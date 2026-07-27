@@ -2,6 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  // docuseal-e2e.spec.ts (playwright.docuseal.config.ts) et tests/karta/** (playwright.karta.config.ts)
+  // ciblent la prod avec leur propre config dédiée (baseURL, env vars requises) — jamais dans la
+  // suite locale par défaut.
+  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**'],
   timeout: 30_000,
   retries: 2,
   fullyParallel: true,

@@ -7,6 +7,52 @@ mocké (`KARTA_MOCK_CLAUDE=true`, réponses marquées `TODO_LIVE_TEST`). Les tes
 vrai appel Claude sont listés en fin de fichier sous "PRÊT À TESTER DÈS CRÉDIT DISPONIBLE" — jamais
 cochés `[x]` tant qu'ils n'ont pas été validés avec un vrai crédit.
 
+## AGENTS RÉELS — Clôture des phases restantes ✅ (2026-07-27, hors crédit Anthropic)
+Dernière passe : toutes les phases du brief (0→5) sont maintenant closes structurellement, à
+l'exception des points listés en fin de fichier sous "PRÊT À TESTER DÈS CRÉDIT DISPONIBLE" (jamais
+skippés — juste honnêtement non cochés tant que le crédit réel n'est pas rechargé, conformément à la
+règle permanente ci-dessus).
+- [x] **Chiffrement au repos des tokens OAuth Gmail** (brief §Phase 3, jamais fait depuis avril) :
+  AES-256-GCM, `karta/src/lib/gmail-token-crypto.ts` (Node) + `supabase/functions/_shared/gmail-token-crypto.ts`
+  (Deno) — même format binaire (iv+ciphertext+tag), interopérable entre les deux runtimes. Clé
+  `GMAIL_TOKEN_ENCRYPTION_KEY` (32 octets) déployée sur le VPS (`functions` + `karta-engine`).
+  0 donnée réelle à migrer (0/2 lignes `email_agent_config` avec un token). Vérifié réel : chiffré
+  côté Deno (fonction edge temporaire de diagnostic, supprimée après test) → déchiffré côté Node avec
+  la vraie clé de prod — round-trip cross-runtime confirmé.
+- [x] **Déclenchement cron réel du scheduler d'agents créés** (jamais observé en conditions réelles
+  jusqu'ici, cf Phase 3 ci-dessous) : agent de test `schedule_cron='* * * * *'` créé en SQL → 6
+  exécutions automatiques réelles confirmées à ~1 min d'intervalle (`trigger_type='cron'`,
+  `trigger_source='custom-agent:...'`) → nettoyé après coup.
+- [x] **Tests Playwright réels contre la prod** (`tests/karta/`, `playwright.karta.config.ts`) —
+  remplace les 3 gaps "test humain jamais fait en navigateur" listés dans ce fichier : Mes employés IA
+  (grille, activation, autonomie, simulation, kill switch, timeline), section Exécution réelle (KARTA)
+  du Créateur d'Agents (toggle simulation_mode, "Tester maintenant"), flow d'onboarding complet
+  (bannière → pick → confirm → working → result). **18/18 verts sur desktop/tablette/mobile (375px)**.
+- [x] **Bug réel trouvé + corrigé grâce à ces tests** : `usePollLatestRun` gaté sur `step` changeait la
+  queryKey React Query pile au moment de passer à l'étape "result", réinitialisant `run.data` à
+  `undefined` — la modale d'onboarding restait vide après une embauche réussie au lieu d'afficher le
+  résultat. Fix : `agentType` stable, non gaté sur `step`. Sans ce test réel, ce bug serait passé en
+  prod tel quel (aucun test structurel ne pouvait le détecter).
+- [x] **Audit Lighthouse live** (`purama-ai.purama.dev/`) : accessibilité 100/100, best-practices
+  100/100, SEO 100/100. Performance 63-67/100 — cause racine identifiée : la cinématique intro
+  (3.5s, décision produit intentionnelle de la Phase P5, hors périmètre KARTA) retarde le FCP/LCP sur
+  toute 1ère visite sans `localStorage.intro_seen`. Non modifiée (décision produit, pas un bug).
+- [x] **Bug réel trouvé via l'audit Lighthouse** (accessibilité 95→100, `button-name`) : la page
+  d'accueil montait 2 widgets de chat flottants superposés (`Chatbot.tsx`, composant legacy dupliqué,
+  en plus de `ChatbotWidget.tsx` déjà monté globalement) — `Chatbot.tsx` supprimé (mort après retrait
+  de son unique usage dans `Index.tsx`).
+- [x] **Fix sécurité au passage** : `SUPABASE_SERVICE_ROLE_KEY`/`DOCUSEAL_API_TOKEN` réels committés en
+  dur dans `tests/docuseal-e2e.spec.ts` depuis `d75db81` — retirés (lus depuis l'environnement
+  uniquement). **Rotation de cette clé recommandée** (partagée par les 21 apps de l'écosystème,
+  décision à prendre séparément, hors scope de cette session). `playwright.config.ts` : `testIgnore`
+  ajouté pour exclure `docuseal-e2e.spec.ts`/`tests/karta/**` de la suite par défaut (configs dédiées).
+- [x] Suite complète : 49/49 tests vitest (`karta/`), `tsc --noEmit` 0 erreur (frontend + `karta/`),
+  `npm run build` 0 erreur, `deno check` 0 erreur sur les fonctions touchées, 18/18 Playwright KARTA,
+  **155/156 suite Playwright principale** (1 échec : `forms-validation.spec.ts` "Login — champs vides
+  bloqués" mobile — pré-existant, sans rapport avec KARTA : la cinématique intro + la bannière PWA
+  interceptent le clic car ce test ne pré-seed pas `localStorage` comme le fait le test Signup juste
+  en dessous — non corrigé, hors périmètre de cette session). Déployé (VPS + Vercel).
+
 ## AGENTS RÉELS — Suite Phase 3, sécurité "non négociable" du brief ✅ (2026-07-27)
 - [x] `AGENTS-STATUS.md` produit (livrable explicite du brief) : tableau agent | état | autonomie | dernier test réussi, honnête sur ce qui est réellement testé vs seulement couvert par les tests unitaires
 - [x] Rate limit anti-ban Gmail (max 400 envois/jour/compte, brief §Sécurité "non négociable") : jamais implémenté jusqu'ici — `gmailSendTool` pouvait envoyer sans plafond à autonomie niveau 3. Compteur quotidien ajouté (`karta_agent_memory`), partagé entre `email` et `repondeur-intelligent` (même compte Gmail réel). 3 tests unitaires + 41/41 suite complète verte. Déployé, healthy.
@@ -68,7 +114,7 @@ existants, donc 0 double-traitement actuellement).
   - [x] Timeline d'activité réelle (`karta_runs`, badges statut/mock/simulation, résumé décision, erreur si échec)
 - [x] `tsc --noEmit` (frontend + karta/) : 0 erreur
 - [x] `npm run build` (Vite) : 0 erreur — bug environnement trouvé+fixé au passage (binaires natifs `.node` bloqués par Gatekeeper macOS, cf ERRORS.md)
-- [ ] **Non fait** (nécessite navigateur/humain, hors capacité de cette session) : test humain réel de la page en navigateur (clics, responsive 375px, dark mode) — cf Loi 2 CLAUDE.md, ne pas déclarer "testé" sans preuve Playwright/humaine
+- [x] Test Playwright réel en navigateur (clics activation/kill-switch/autonomie/simulation, responsive 375px, dark mode par défaut) — cf `tests/karta/employees.spec.ts`, 2026-07-27, 3/3 verts × 3 viewports
 ## AGENTS RÉELS — Phase 3 : Agent Créateur d'Agents passe en exécution réelle ✅ (2026-07-26)
 Réutilise `creator_agents` (existante, chat-only jusqu'ici — 1 source de vérité, pas de table dupliquée)
 au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`karta_runs` tels quels
@@ -110,12 +156,10 @@ au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`
   - [x] `karta-trigger-custom` avec JWT réel + agent possédé → `{"ok":true,"queued":true}` → vraie ligne
     `karta_runs` (`agent_type='custom:<id>'`, `status:success`, `claude_mock:true`, décision `TODO_LIVE_TEST`)
   - [x] `creator-agent-run` avec `trigger:"cron"` sur un agent `karta_enabled=true` → 409 confirmé (garde anti-doublon)
-- [ ] **Non vérifié en direct cette session** : le déclenchement RÉEL d'un job node-cron planifié pour un
-  agent créé (le scheduler a été relu/testé unitairement pour la logique de sélection des agents, mais
-  observer un vrai déclenchement cron aurait nécessité d'attendre ≥5 min en conditions réelles) — à
-  vérifier dès qu'un vrai agent avec planification est activé en usage réel
-- [ ] Test humain navigateur du flow complet (génération IA → activation KARTA → tester maintenant → voir
-  l'activité réelle) — jamais ouvert dans un vrai navigateur cette session
+- [x] Déclenchement RÉEL d'un job node-cron planifié pour un agent créé, vérifié 2026-07-27 : agent
+  test `schedule_cron='* * * * *'` → 6 exécutions automatiques réelles à ~1 min d'intervalle
+- [x] Test Playwright réel du flow complet (activation KARTA, toggle simulation_mode, "Tester
+  maintenant" → activité réelle) — cf `tests/karta/creator-agent.spec.ts`, 2/2 verts × 3 viewports
 - [ ] Phase 4 (déjà faite précédemment, cf plus haut) : UX onboarding — reste à décider si le flow
   "Embauche ton 1er employé IA" doit un jour proposer aussi un agent créé sur-mesure, pas seulement les 12 fixes
 
@@ -133,7 +177,10 @@ au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`
   - [x] `POST /functions/v1/karta-trigger` avec JWT réel + `agentType:"crm-intelligent"` → `{"ok":true,"queued":true}`, ligne réelle créée dans `karta_runs` (status `success`, `claude_mock:true`, décision `[MOCK] ... TODO_LIVE_TEST`)
   - [x] `notify()` → `agent-push-send` : appel réel depuis le container `karta-engine`, notification insérée dans `agent_notifications` (id réel vérifié en SQL), `push_sent:0` (cohérent — le user de test n'a aucun abonnement push, comportement attendu)
   - [x] Cascade `ON DELETE CASCADE` vérifiée : suppression du user de test → 0 ligne restante dans `karta_runs`/`agent_notifications`
-- [ ] Test humain navigateur du flow onboarding complet (clic bannière → choix employé → 1ère tâche réelle affichée, responsive 375px, dark mode) — jamais ouvert dans un vrai navigateur cette session, cf Loi 2 CLAUDE.md
+- [x] Test Playwright réel du flow onboarding complet (clic bannière → choix employé → 1ère tâche
+  réelle affichée, responsive 375px, dark mode) — cf `tests/karta/onboarding.spec.ts`, 2026-07-27,
+  1/1 vert × 3 viewports. **Bug réel trouvé + corrigé** : la modale restait vide après l'embauche
+  (`usePollLatestRun` gaté sur `step`, cf ERRORS.md) — sans ce test, jamais détecté
 
 ## P1 - Structure+Auth+DB ✅ (pré-existant)
 ## P2 - Features core ✅ (6 agents IA, dashboard, pricing)
@@ -216,5 +263,5 @@ au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`
 - [ ] Les 12 agents "action" KARTA (Phase 2) : jamais exécutés avec un vrai appel Claude — valider chacun avec de vraies données (ex: vraies factures `compta_invoices` pour Facture Pro/Chasseur de Paiements, vrais leads `karta_crm_leads` pour CRM/Suivi, vraie boîte Gmail pour Répondeur) avant de désactiver le workflow n8n équivalent
 - [ ] `creator-agent-generate` (Phase 3) : valider qu'une vraie génération produit un `system_prompt` de qualité + des `suggested_tools`/`suggested_schedule` pertinents pour plusieurs descriptions réelles variées
 - [ ] Un agent créé par un vrai utilisateur, activé en `karta_enabled=true` avec de vrais outils (ex: Gmail connecté) : jamais exécuté avec un vrai appel Claude — le mock a seulement prouvé que le pipeline (déclenchement → décision → outils → log) fonctionne structurellement
-- [ ] Scheduler des agents créés (`refreshCustomAgentSchedules`) : jamais observé en conditions réelles déclenchant un job cron planifié (testé unitairement pour la sélection des agents, pas pour le déclenchement cron lui-même en direct)
-- [ ] Page "Mes employés IA" (`/dashboard/employees`) : test humain en navigateur (clics activation/kill-switch/autonomie, responsive 375px, dark mode) — jamais ouvert dans un vrai navigateur cette session
+- [x] ~~Scheduler des agents créés...~~ Résolu 2026-07-27 (cf section "Clôture des phases restantes" en tête de fichier) — ne dépendait pas du crédit Anthropic, juste du temps réel d'attente
+- [x] ~~Page "Mes employés IA" test humain...~~ Résolu 2026-07-27 (Playwright réel, cf section "Clôture des phases restantes") — ne dépendait pas du crédit Anthropic
