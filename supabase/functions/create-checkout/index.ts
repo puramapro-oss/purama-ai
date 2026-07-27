@@ -10,6 +10,12 @@ const corsHeaders = {
 // Coupon ID for influencer referrals (-50% for first year)
 const INFLUENCER_COUPON_ID = "lHDOePig";
 
+// Price ID du pack de dépassement (+2000 actions = 19€, cf OVERAGE_PACK dans src/lib/plans.ts —
+// dupliqué ici volontairement : cette fonction Deno n'importe pas src/lib). Le mode "payment" est
+// dérivé de ce price_id connu plutôt que d'un booléen `oneTime` fourni par le client, pour ne pas
+// faire confiance à une requête client sur le mode de la session Stripe créée.
+const OVERAGE_PACK_PRICE_ID = "price_1TxuIO4Y1unNvKtXRito4dsU";
+
 const logStep = (step: string, details?: Record<string, unknown>) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
@@ -39,7 +45,8 @@ serve(async (req) => {
 
     const { priceId, referralCode } = await req.json();
     if (!priceId) throw new Error("Price ID is required");
-    logStep("Price ID received", { priceId, referralCode });
+    const oneTime = priceId === OVERAGE_PACK_PRICE_ID;
+    logStep("Price ID received", { priceId, referralCode, oneTime });
 
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
@@ -96,28 +103,33 @@ serve(async (req) => {
       }
     }
 
-    // Build checkout session options
+    // Build checkout session options — pack de dépassement (mode "payment", ponctuel) vs
+    // abonnement (mode "subscription", essai 14 jours) : cf brief PRICING & OFFRE IRRÉSISTIBLE.
     const sessionOptions: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: "subscription",
-      success_url: `${origin}/pricing?success=true`,
-      cancel_url: `${origin}/pricing?canceled=true`,
-      metadata: {
-        user_id: user.id,
-        referral_code: validInfluencer?.promo_code || '',
-        influencer_id: validInfluencer?.id || '',
-      },
-      // 14-day free trial
-      subscription_data: {
-        trial_period_days: 14,
-      },
+      line_items: [{ price: priceId, quantity: 1 }],
+      ...(oneTime
+        ? {
+            mode: "payment",
+            success_url: `${origin}/dashboard/billing?overage_success=true`,
+            cancel_url: `${origin}/dashboard/billing?overage_canceled=true`,
+            metadata: { user_id: user.id, type: "overage_pack" },
+          }
+        : {
+            mode: "subscription",
+            success_url: `${origin}/pricing?success=true`,
+            cancel_url: `${origin}/pricing?canceled=true`,
+            metadata: {
+              user_id: user.id,
+              referral_code: validInfluencer?.promo_code || '',
+              influencer_id: validInfluencer?.id || '',
+            },
+            // 14-day free trial
+            subscription_data: {
+              trial_period_days: 14,
+            },
+          }),
     };
 
     // Apply coupon if valid influencer referral

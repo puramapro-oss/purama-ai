@@ -1,14 +1,19 @@
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Link } from 'react-router-dom';
-import { Loader2, ExternalLink, Crown, Receipt } from 'lucide-react';
-import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Loader2, ExternalLink, Crown, Receipt, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAgents } from '@/hooks/useAgents';
 import { useAgentSelections } from '@/hooks/useAgentSelections';
 import { useAgentStats } from '@/hooks/useAgentStats';
+import { getUsageSnapshot, formatExecutions } from '@/lib/usage';
+import { OVERAGE_PACK } from '@/lib/plans';
+import { isSuperAdmin } from '@/lib/constants';
 import { supabase } from '@/integrations/supabase/client';
 
 const formatDate = (iso: string) =>
@@ -27,42 +32,93 @@ const formatDateTime = (iso: string) =>
     minute: '2-digit',
   });
 
+/** Ouvre une session Stripe (portail client ou checkout) renvoyée par une edge function, ou affiche l'erreur FR. */
+async function redirectToStripe(
+  invoke: () => ReturnType<typeof supabase.functions.invoke>,
+  setLoading: (b: boolean) => void,
+  errorTitle: string,
+  notFoundMessage: string,
+) {
+  setLoading(true);
+  try {
+    const { data, error } = await invoke();
+    if (error) throw error;
+    if (data?.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(notFoundMessage);
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error(errorTitle, { description: err instanceof Error ? err.message : undefined });
+  } finally {
+    setLoading(false);
+  }
+}
+
 export default function DashboardBilling() {
+  const { user } = useAuth();
   const { planId, plan, subscriptionEnd, isTrialing, trialEndsAt, isLoading: subLoading, isPro } =
     useSubscription();
   const { data: agents = [] } = useAgents();
   const { selectedAgentIds } = useAgentSelections();
-  const { raw, totalThisMonth, statsByAgent } = useAgentStats();
+  const { raw, statsByAgent } = useAgentStats();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
+
+  const { data: usage } = useQuery({
+    queryKey: ['usage-snapshot', user?.id],
+    enabled: !!user,
+    queryFn: () => getUsageSnapshot(user!.id, user!.email),
+    refetchInterval: 60_000,
+  });
 
   const [portalLoading, setPortalLoading] = useState(false);
+  const [overageLoading, setOverageLoading] = useState(false);
 
   const planLabel = plan.name.toUpperCase();
   const planPrice = `${plan.monthly_price}€`;
   const agentCap = plan.agents_included === -1 ? agents.length : plan.agents_included;
   const usedAgents = selectedAgentIds.length;
 
-  const openCustomerPortal = async () => {
-    setPortalLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error('URL du portail introuvable');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Impossible d'ouvrir le portail de facturation", {
-        description: err instanceof Error ? err.message : undefined,
+  // Cf ERRORS.md 2026-07-27 : redirection Stripe success/cancel du pack de dépassement
+  // (create-checkout mode "payment" → stripe-webhook crédite overage_credits).
+  useEffect(() => {
+    if (searchParams.get('overage_success') === 'true') {
+      toast.success('Pack de dépassement activé', {
+        description: `+${OVERAGE_PACK.actions.toLocaleString('fr-FR')} actions ajoutées à ton quota de ce mois.`,
       });
-    } finally {
-      setPortalLoading(false);
+      queryClient.invalidateQueries({ queryKey: ['usage-snapshot', user?.id] });
+      searchParams.delete('overage_success');
+      setSearchParams(searchParams, { replace: true });
+    } else if (searchParams.get('overage_canceled') === 'true') {
+      toast.info('Achat annulé', { description: 'Aucun montant débité.' });
+      searchParams.delete('overage_canceled');
+      setSearchParams(searchParams, { replace: true });
     }
-  };
+  }, [searchParams, setSearchParams, queryClient, user?.id]);
+
+  const openCustomerPortal = () =>
+    redirectToStripe(
+      () => supabase.functions.invoke('customer-portal'),
+      setPortalLoading,
+      "Impossible d'ouvrir le portail de facturation",
+      'URL du portail introuvable',
+    );
+
+  const buyOveragePack = () =>
+    redirectToStripe(
+      () => supabase.functions.invoke('create-checkout', { body: { priceId: OVERAGE_PACK.price_id } }),
+      setOverageLoading,
+      "Impossible de lancer l'achat du pack",
+      'URL de paiement introuvable',
+    );
 
   // Recent usage history (top 20)
   const history = raw.slice(0, 20);
+  const usagePercent = usage?.percent ?? 0;
+  const isUnlimited = isSuperAdmin(user?.email);
+  const showOverageCta = !isUnlimited && planId !== 'free' && usagePercent >= 80;
 
   return (
     <div className="space-y-8">
@@ -133,11 +189,32 @@ export default function DashboardBilling() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">
-                Exécutions ce mois ({totalThisMonth})
+                Actions ce mois ({formatExecutions(usage?.used ?? 0)}{isUnlimited ? '' : ` / ${formatExecutions(usage?.limit ?? plan.monthly_executions)}`})
               </p>
-              <Progress value={Math.min((totalThisMonth / 100) * 100, 100)} className="h-2" />
+              <Progress value={usagePercent} className="h-2" />
             </div>
           </div>
+
+          {showOverageCta && (
+            <div className="mt-6 pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Zap className="w-4 h-4 text-accent-cyan" /> Quota bientôt atteint
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  +{OVERAGE_PACK.actions.toLocaleString('fr-FR')} actions supplémentaires ce mois pour {OVERAGE_PACK.price}€, sans changer de plan.
+                </p>
+              </div>
+              <button
+                onClick={buyOveragePack}
+                disabled={overageLoading}
+                className="btn-secondary text-xs px-4 py-2 flex items-center justify-center gap-1.5 disabled:opacity-60 whitespace-nowrap"
+              >
+                {overageLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                Acheter +{OVERAGE_PACK.actions.toLocaleString('fr-FR')} actions
+              </button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

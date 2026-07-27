@@ -96,7 +96,7 @@ export async function getUsageSnapshot(userId: string, userEmail?: string | null
   // Run all counts in parallel
   const [
     emailCount, comptaCount, partnerCount, legalChat, legalDoc, legalCase, creatorCount,
-    kartaCount, marketplaceCount, moneyRecovered,
+    kartaCount, marketplaceCount, moneyRecovered, overageActions,
   ] = await Promise.all([
     countTable('email_agent_logs', userId, since),
     countTable('compta_transactions', userId, since),
@@ -108,6 +108,7 @@ export async function getUsageSnapshot(userId: string, userEmail?: string | null
     countTable('karta_runs', userId, since, undefined, 'started_at'),
     countTable('agent_usage', userId, since),
     sumPaidInvoicesThisMonth(userId, since),
+    sumOverageCreditsThisPeriod(userId, since),
   ]);
 
   const by_agent = {
@@ -120,13 +121,14 @@ export async function getUsageSnapshot(userId: string, userEmail?: string | null
     marketplace: marketplaceCount,
   };
   const used = Object.values(by_agent).reduce((s, n) => s + n, 0);
-  const percent = plan.monthly_executions > 0
-    ? Math.min(100, Math.round((used / plan.monthly_executions) * 100))
-    : 0;
+  const limit = plan.monthly_executions === Number.MAX_SAFE_INTEGER
+    ? plan.monthly_executions
+    : plan.monthly_executions + overageActions;
+  const percent = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
 
   return {
     used,
-    limit: plan.monthly_executions,
+    limit,
     percent,
     plan,
     days_until_reset: daysUntilNextMonth(),
@@ -136,20 +138,37 @@ export async function getUsageSnapshot(userId: string, userEmail?: string | null
   };
 }
 
-/** Somme réelle des factures émises et payées ce mois (compta_invoices.total_ttc, type='emise', payment_date >= since). */
-async function sumPaidInvoicesThisMonth(userId: string, since: string): Promise<number> {
-  const { data, error } = await sb()
-    .from('compta_invoices')
-    .select('total_ttc')
+/** Somme d'une colonne numérique sur une table, filtrée par user + une date >=, plus des filtres exacts optionnels. */
+async function sumTable(
+  table: string,
+  column: string,
+  userId: string,
+  since: string,
+  extraFilters?: Record<string, string>,
+  dateCol = 'created_at',
+): Promise<number> {
+  let q = sb()
+    .from(table)
+    .select(column)
     .eq('user_id', userId)
-    .eq('type', 'emise')
-    .eq('status', 'paid')
-    .gte('payment_date', since.slice(0, 10));
+    .gte(dateCol, since);
+  for (const [col, val] of Object.entries(extraFilters ?? {})) q = q.eq(col, val);
+  const { data, error } = await q;
   if (error) {
-    console.warn('[usage] sumPaidInvoicesThisMonth failed', error);
+    console.warn(`[usage] sum ${table}.${column} failed`, error);
     return 0;
   }
-  return (data ?? []).reduce((sum: number, row: { total_ttc: number }) => sum + Number(row.total_ttc ?? 0), 0);
+  return (data ?? []).reduce((sum: number, row: Record<string, number>) => sum + Number(row[column] ?? 0), 0);
+}
+
+/** Actions créditées ce mois via l'achat de packs de dépassement (+2000 actions = 19€). */
+function sumOverageCreditsThisPeriod(userId: string, since: string): Promise<number> {
+  return sumTable('overage_credits', 'actions', userId, since.slice(0, 10), undefined, 'period_start');
+}
+
+/** Somme réelle des factures émises et payées ce mois (compta_invoices.total_ttc, type='emise', payment_date >= since). */
+function sumPaidInvoicesThisMonth(userId: string, since: string): Promise<number> {
+  return sumTable('compta_invoices', 'total_ttc', userId, since.slice(0, 10), { type: 'emise', status: 'paid' }, 'payment_date');
 }
 
 export function colorForPercent(p: number): string {

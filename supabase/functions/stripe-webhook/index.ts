@@ -130,6 +130,10 @@ const planPrices: Record<string, number> = {
   'ultime': 199,
 };
 
+// Taille du pack de dépassement — cf OVERAGE_PACK.actions dans src/lib/plans.ts (1 seule source de
+// vérité déclarée ; dupliquée ici car cette fonction Deno n'importe pas src/lib).
+const OVERAGE_PACK_ACTIONS = 2000;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -349,6 +353,31 @@ serve(async (req) => {
             } else {
               logStep("User not found for email", { email: customerEmail });
             }
+          }
+        } else if (session.mode === 'payment' && session.metadata?.type === 'overage_pack') {
+          // Pack de dépassement +2000 actions = 19€ (brief PRICING & OFFRE IRRÉSISTIBLE).
+          // Crédité au mois en cours (period_start = 1er du mois courant), cf getUsageSnapshot() (src/lib/usage.ts).
+          const userId = session.metadata.user_id;
+          if (userId) {
+            const now = new Date();
+            const periodStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString().slice(0, 10);
+
+            const { error: creditError } = await supabaseClient
+              .from('overage_credits')
+              .insert({
+                user_id: userId,
+                actions: OVERAGE_PACK_ACTIONS,
+                period_start: periodStart,
+                stripe_session_id: session.id,
+              });
+
+            if (creditError) {
+              logStep("ERROR: Failed to credit overage pack", { error: creditError.message });
+            } else {
+              logStep("Overage pack credited", { userId, periodStart, sessionId: session.id });
+            }
+          } else {
+            logStep("ERROR: overage_pack session missing user_id metadata", { sessionId: session.id });
           }
         }
         break;
