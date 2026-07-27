@@ -98,7 +98,15 @@ async function finalizePendingAction(pending: PendingActionRow, status: FinalSta
   await patchParentRun(pending, status, resultSummary);
 }
 
-/** Met à jour l'entrée tools_used correspondante dans karta_runs, et clôture le run si c'était la dernière action en attente. */
+/**
+ * Met à jour l'entrée tools_used correspondante dans karta_runs, et clôture le run si c'était la
+ * dernière action en attente. Limite connue : lit-modifie-réécrit tout le JSONB tools_used sans
+ * verrou — si 2 actions du MÊME run sont résolues en concurrence (2 clics quasi simultanés sur 2
+ * actions différentes d'un même run), l'une peut écraser le patch de l'autre. Risque jugé
+ * négligeable (résolution humaine, un seul utilisateur, écart de plusieurs secondes en pratique) ;
+ * un correctif robuste nécessiterait un writer unique pour karta_runs (fonction Postgres atomique
+ * ou passage par logger.ts) — hors scope d'un ajustement ponctuel.
+ */
 async function patchParentRun(pending: PendingActionRow, status: FinalStatus, resultSummary: string): Promise<void> {
   const { data: run, error: runError } = await supabase
     .from("karta_runs")

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Send, Settings, MessageSquare, Activity,
   Trash2, Save, Power, Bot, AlertCircle, Headphones, Zap, ShieldAlert, PlayCircle,
-  FlaskConical, PauseCircle, Check, X,
+  FlaskConical,
 } from 'lucide-react';
 import { useVoice } from '@/hooks/useVoice';
 import { MicButton } from '@/components/voice/MicButton';
@@ -38,7 +38,7 @@ import {
   useCustomAgentKartaState, useUpdateCustomAgentKartaState,
   useCustomAgentKartaRuns, useTriggerCustomAgent, useCustomAgentPendingActions,
 } from '@/hooks/useCreatorAgentKarta';
-import { useResolvePendingAction } from '@/hooks/useKartaEmployees';
+import { PendingActionsList } from '@/components/karta/PendingActionsList';
 
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -68,17 +68,6 @@ export default function CreatorAgentDetail() {
   const { data: kartaRuns = [] } = useCustomAgentKartaRuns(id, 20);
   const triggerKarta = useTriggerCustomAgent();
   const { data: pendingActions = [] } = useCustomAgentPendingActions(id);
-  const resolvePendingAction = useResolvePendingAction();
-
-  const handleResolvePendingAction = (pendingActionId: string, decision: 'approve' | 'reject') => {
-    resolvePendingAction.mutate(
-      { pendingActionId, decision },
-      {
-        onSuccess: () => toast.success(decision === 'approve' ? 'Action exécutée' : 'Action rejetée'),
-        onError: (e) => toast.error('Erreur', { description: e instanceof Error ? e.message : "Impossible de traiter cette action" }),
-      },
-    );
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -502,38 +491,7 @@ export default function CreatorAgentDetail() {
                       </p>
                     </div>
 
-                    {pendingActions.length > 0 && (
-                      <div className="space-y-1.5 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/30">
-                        <Label className="text-xs flex items-center gap-1.5">
-                          <PauseCircle className="w-3.5 h-3.5 text-yellow-500" /> En attente de ta validation
-                        </Label>
-                        {pendingActions.map((action) => (
-                          <div key={action.id} className="flex items-center justify-between gap-2 py-1.5">
-                            <p className="text-xs text-foreground/80 truncate">
-                              Exécuter <span className="font-mono text-[11px] bg-secondary/60 px-1 rounded">{action.tool_name}</span>
-                            </p>
-                            <div className="flex gap-1.5 flex-shrink-0">
-                              <Button
-                                size="sm" variant="outline"
-                                disabled={resolvePendingAction.isPending}
-                                onClick={() => handleResolvePendingAction(action.id, 'reject')}
-                                className="h-7 px-2 border-destructive/30 text-destructive hover:bg-destructive/10"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                disabled={resolvePendingAction.isPending}
-                                onClick={() => handleResolvePendingAction(action.id, 'approve')}
-                                className="h-7 px-2"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <PendingActionsList actions={pendingActions} compact />
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">

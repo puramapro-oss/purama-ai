@@ -4,6 +4,13 @@ test.describe('Formulaires — Validation', () => {
   test('Login — champs vides bloqués', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'networkidle' });
 
+    // Dismiss cookie consent if present
+    const acceptBtn = page.locator('button', { hasText: /accepter/i });
+    if (await acceptBtn.count() > 0) {
+      await acceptBtn.first().click();
+      await page.waitForTimeout(300);
+    }
+
     const submitBtn = page.locator('button[type="submit"]');
     await submitBtn.click();
 

@@ -20,12 +20,19 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-async function getKey(): Promise<CryptoKey> {
-  const raw = Deno.env.get("GMAIL_TOKEN_ENCRYPTION_KEY") ?? "";
-  if (!raw) throw new Error("GMAIL_TOKEN_ENCRYPTION_KEY manquante — impossible de chiffrer/déchiffrer un token Gmail");
-  const keyBytes = base64ToBytes(raw);
-  if (keyBytes.length !== 32) throw new Error("GMAIL_TOKEN_ENCRYPTION_KEY doit être une clé AES-256 encodée en base64 (32 octets)");
-  return crypto.subtle.importKey("raw", toArrayBuffer(keyBytes), ALGO, false, ["encrypt", "decrypt"]);
+// La clé ne change jamais en cours d'exécution (variable d'environnement figée) — mémorisée pour
+// éviter un import Web Crypto async par appel (une instance d'edge function reste chaude entre requêtes).
+let cachedKey: Promise<CryptoKey> | null = null;
+
+function getKey(): Promise<CryptoKey> {
+  if (!cachedKey) {
+    const raw = Deno.env.get("GMAIL_TOKEN_ENCRYPTION_KEY") ?? "";
+    if (!raw) throw new Error("GMAIL_TOKEN_ENCRYPTION_KEY manquante — impossible de chiffrer/déchiffrer un token Gmail");
+    const keyBytes = base64ToBytes(raw);
+    if (keyBytes.length !== 32) throw new Error("GMAIL_TOKEN_ENCRYPTION_KEY doit être une clé AES-256 encodée en base64 (32 octets)");
+    cachedKey = crypto.subtle.importKey("raw", toArrayBuffer(keyBytes), ALGO, false, ["encrypt", "decrypt"]);
+  }
+  return cachedKey;
 }
 
 /** Chiffre un token Gmail avant stockage (iv+ciphertext+tag concaténés en base64, le tag GCM est déjà inclus par Web Crypto). */

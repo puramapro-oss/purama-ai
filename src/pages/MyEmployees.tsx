@@ -12,14 +12,13 @@ import {
   Activity,
   Sparkles,
   AlertTriangle,
-  Check,
-  X,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { formatRelative } from '@/lib/utils';
+import { PendingActionsList } from '@/components/karta/PendingActionsList';
 import {
   useEmployeeAgents,
   useKartaAgentStates,
@@ -27,10 +26,8 @@ import {
   useKartaRuns,
   useKartaStats,
   usePendingActions,
-  useResolvePendingAction,
   type ActionAgentSlug,
   type KartaRun,
-  type KartaPendingAction,
 } from '@/hooks/useKartaEmployees';
 
 const AUTONOMY_LABELS: Record<number, string> = {
@@ -46,18 +43,6 @@ const STATUS_META: Record<string, { label: string; icon: typeof CheckCircle2; cl
   running: { label: 'En cours', icon: Loader2, className: 'text-accent-cyan' },
   skipped: { label: 'Ignoré', icon: PauseCircle, className: 'text-muted-foreground' },
 };
-
-function formatRelative(iso: string | null) {
-  if (!iso) return 'jamais';
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return "à l'instant";
-  if (mins < 60) return `il y a ${mins} min`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `il y a ${hours} h`;
-  const days = Math.floor(hours / 24);
-  return `il y a ${days} j`;
-}
 
 function StatCard({
   icon: Icon,
@@ -121,46 +106,6 @@ function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: strin
         <p className="text-[10px] text-muted-foreground/60 mt-1">
           {formatRelative(run.started_at)} · déclenché par {run.trigger_type}
         </p>
-      </div>
-    </div>
-  );
-}
-
-function PendingActionCard({ action, agentName }: { action: KartaPendingAction; agentName: string }) {
-  const resolve = useResolvePendingAction();
-
-  const handle = (decision: 'approve' | 'reject') => {
-    resolve.mutate(
-      { pendingActionId: action.id, decision },
-      {
-        onSuccess: () => toast.success(decision === 'approve' ? 'Action exécutée' : 'Action rejetée'),
-        onError: (e) => toast.error(e instanceof Error ? e.message : "Impossible de traiter cette action"),
-      },
-    );
-  };
-
-  return (
-    <div className="flex items-start gap-3 py-3 border-b border-yellow-500/20 last:border-0">
-      <PauseCircle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground">
-          {agentName} veut exécuter <span className="font-mono text-xs bg-secondary/60 px-1.5 py-0.5 rounded">{action.tool_name}</span>
-        </p>
-        <p className="text-[10px] text-muted-foreground/60 mt-1">Demandé {formatRelative(action.created_at)}</p>
-      </div>
-      <div className="flex gap-2 flex-shrink-0">
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={resolve.isPending}
-          onClick={() => handle('reject')}
-          className="border-destructive/30 text-destructive hover:bg-destructive/10"
-        >
-          <X className="w-3.5 h-3.5 mr-1" /> Rejeter
-        </Button>
-        <Button size="sm" disabled={resolve.isPending} onClick={() => handle('approve')}>
-          <Check className="w-3.5 h-3.5 mr-1" /> Approuver
-        </Button>
       </div>
     </div>
   );
@@ -357,13 +302,12 @@ export default function MyEmployees() {
                 <p className="text-sm font-medium text-foreground mb-1">
                   {pendingActions.length} action{pendingActions.length > 1 ? 's' : ''} en attente de ta validation
                 </p>
-                {pendingActions.map((action) => (
-                  <PendingActionCard
-                    key={action.id}
-                    action={action}
-                    agentName={agentLookup.get(action.agent_type)?.name ?? action.agent_type}
-                  />
-                ))}
+                <PendingActionsList
+                  actions={pendingActions.map((action) => ({
+                    ...action,
+                    agentName: agentLookup.get(action.agent_type)?.name ?? action.agent_type,
+                  }))}
+                />
               </CardContent>
             </Card>
           )}

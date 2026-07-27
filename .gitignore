@@ -38,3 +38,8 @@ progress.md
 .env
 .env.local
 .env.*.local
+
+# Playwright artifacts
+playwright-report
+playwright-report-*
+test-results
