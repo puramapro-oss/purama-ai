@@ -22,10 +22,15 @@ import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? 'https://auth.purama.dev';
-const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY
-  ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NDA1MjQ4MDAsImV4cCI6MTg5ODI5MTIwMH0.asa0EUp9l3iubVW_1cJ5vGcEFxv6GX10G9Mvy8UzMTc';
+const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 const DOCUSEAL_URL = 'https://docuseal.purama.dev';
-const DOCUSEAL_TOKEN = '540df00b0887a9e038406bc02dd25641';
+const DOCUSEAL_TOKEN = process.env.DOCUSEAL_API_TOKEN ?? '';
+
+if (!SUPABASE_SERVICE_ROLE || !DOCUSEAL_TOKEN) {
+  throw new Error(
+    'SUPABASE_SERVICE_ROLE_KEY et DOCUSEAL_API_TOKEN doivent être fournis via variables d\'environnement (jamais en dur dans le code).'
+  );
+}
 
 const TEST_EMAIL = `e2e-docuseal-${Date.now()}@purama.test`;
 const TEST_PASSWORD = 'E2ETest2026!Purama';

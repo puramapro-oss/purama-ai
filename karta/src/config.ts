@@ -25,6 +25,9 @@ export const config = {
 
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+  // Chiffrement au repos des tokens Gmail (brief §Phase 3 "tokens chiffrés AES-256") — optionnel au
+  // démarrage (0 connexion Gmail réelle actuellement) mais requis dès le 1er appel réel à Gmail.
+  gmailTokenEncryptionKey: process.env.GMAIL_TOKEN_ENCRYPTION_KEY ?? "",
 
   resendApiKey: process.env.RESEND_API_KEY ?? "",
   resendFromEmail: process.env.RESEND_FROM_EMAIL ?? "hello@purama-ai.purama.dev",

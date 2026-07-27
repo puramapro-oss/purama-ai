@@ -1,5 +1,6 @@
 import { supabase } from "../db/supabase.js";
 import { config } from "../config.js";
+import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
 import type { ToolDefinition } from "../engine/types.js";
 
 interface EmailAgentConfigRow {
@@ -20,7 +21,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
   if (!data?.gmail_refresh_token) return null;
 
   const stillValid = data.gmail_token_expiry && new Date(data.gmail_token_expiry).getTime() > Date.now() + 60_000;
-  if (stillValid && data.gmail_access_token) return data.gmail_access_token;
+  if (stillValid && data.gmail_access_token) return decryptGmailToken(data.gmail_access_token);
 
   if (!config.googleClientId || !config.googleClientSecret) {
     throw new Error("GOOGLE_CLIENT_ID/SECRET non configurés côté KARTA — impossible de rafraîchir le token Gmail");
@@ -32,7 +33,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
     body: new URLSearchParams({
       client_id: config.googleClientId,
       client_secret: config.googleClientSecret,
-      refresh_token: data.gmail_refresh_token,
+      refresh_token: decryptGmailToken(data.gmail_refresh_token),
       grant_type: "refresh_token",
     }),
   });
@@ -46,7 +47,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
   await supabase
     .from("email_agent_config")
     .update({
-      gmail_access_token: refreshed.access_token,
+      gmail_access_token: encryptGmailToken(refreshed.access_token),
       gmail_token_expiry: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
     })
     .eq("user_id", userId);

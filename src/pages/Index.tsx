@@ -9,7 +9,6 @@ import { PricingSection } from '@/components/PricingSection';
 import { Contact } from '@/components/Contact';
 import { PuramaComptaSection } from '@/components/PuramaComptaSection';
 import { Footer } from '@/components/Footer';
-import { Chatbot } from '@/components/Chatbot';
 import { ReferralBanner } from '@/components/influencer/ReferralBanner';
 import { useReferralTracking } from '@/hooks/useInfluencer';
 
@@ -56,7 +55,6 @@ export default function Index() {
         </section>
       </main>
       <Footer />
-      <Chatbot />
     </div>
   );
 }

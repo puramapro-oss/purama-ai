@@ -46,7 +46,11 @@ export function HireFirstEmployeeModal({
   const [triggerError, setTriggerError] = useState<string | null>(null);
   const [pollTimedOut, setPollTimedOut] = useState(false);
 
-  const run = usePollLatestRun(step === 'working' && !pollTimedOut ? selected : null, sinceIso);
+  // `selected`/`sinceIso` doivent rester stables une fois posés (pas de gating sur `step`) : les
+  // faire dépendre de `step` change la queryKey de usePollLatestRun au moment précis où l'on passe
+  // à 'result', ce qui réinitialise `run.data` à undefined et laisse la modale vide (bug trouvé par
+  // le test Playwright réel du 2026-07-27 — cf tests/karta/onboarding.spec.ts).
+  const run = usePollLatestRun(selected, sinceIso);
 
   useEffect(() => {
     if (run.data && step === 'working') setStep('result');

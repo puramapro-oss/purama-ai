@@ -3,6 +3,7 @@
 //   - { action: 'start' } (POST, authenticated) → returns authorize URL
 //   - GET ?code=...&state=... → callback, exchanges code, stores tokens, redirects
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { encryptGmailToken } from "../_shared/gmail-token-crypto.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -86,8 +87,8 @@ Deno.serve(async (req) => {
         {
           user_id: userId,
           gmail_email: profile.email ?? null,
-          gmail_access_token: tokens.access_token,
-          gmail_refresh_token: tokens.refresh_token ?? null,
+          gmail_access_token: await encryptGmailToken(tokens.access_token),
+          gmail_refresh_token: tokens.refresh_token ? await encryptGmailToken(tokens.refresh_token) : null,
           gmail_token_expiry: expiresAt,
           updated_at: new Date().toISOString(),
         },

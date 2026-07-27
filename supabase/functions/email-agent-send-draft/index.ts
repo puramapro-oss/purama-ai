@@ -5,6 +5,7 @@
 // 3. Send the Gmail draft via the Gmail API (drafts.send)
 // 4. Mark the log as approved + sent
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { decryptGmailToken, encryptGmailToken } from "../_shared/gmail-token-crypto.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -63,12 +64,16 @@ Deno.serve(async (req) => {
     if (cfgErr || !cfg) return json({ error: "Config not found" }, 404);
 
     // Refresh Gmail access token if expired
-    let accessToken = cfg.gmail_access_token as string | null;
+    let accessToken = cfg.gmail_access_token
+      ? await decryptGmailToken(cfg.gmail_access_token as string)
+      : null;
     const expiry = cfg.gmail_token_expiry
       ? new Date(cfg.gmail_token_expiry as string)
       : null;
     if (!accessToken || !expiry || expiry.getTime() < Date.now()) {
-      const refresh = cfg.gmail_refresh_token as string | null;
+      const refresh = cfg.gmail_refresh_token
+        ? await decryptGmailToken(cfg.gmail_refresh_token as string)
+        : null;
       if (!refresh) return json({ error: "Gmail not connected" }, 400);
       const r = await fetch("https://oauth2.googleapis.com/token", {
         method: "POST",
@@ -88,7 +93,7 @@ Deno.serve(async (req) => {
       await admin
         .from("email_agent_config")
         .update({
-          gmail_access_token: accessToken,
+          gmail_access_token: await encryptGmailToken(accessToken),
           gmail_token_expiry: new Date(
             Date.now() + (t.expires_in - 60) * 1000,
           ).toISOString(),
