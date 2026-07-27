@@ -166,6 +166,8 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
   description: "Envoie réellement un email au nom de l'utilisateur — action sensible.",
   sensitive: true,
   async execute(params, ctx) {
+    await assertUnderDailySendLimit(ctx.userId);
+
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
@@ -181,6 +183,50 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     return { messageId: sent.id };
   },
 };
+
+const DAILY_SEND_LIMIT = 400;
+
+interface DailySendCounter {
+  date: string;
+  count: number;
+}
+
+/**
+ * Anti-spam / anti-ban Gmail (cf brief §Sécurité, non négociable) : max 400 envois/jour/compte
+ * Gmail. Compteur partagé entre l'agent cœur `email` et l'agent action `repondeur-intelligent`
+ * (même compte Gmail réel derrière les deux, cf buildGmailInboxContext) — clé `agent_type='gmail'`
+ * volontairement indépendante du type d'agent KARTA qui appelle l'outil.
+ */
+async function assertUnderDailySendLimit(userId: string): Promise<void> {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { data } = await supabase
+    .from("karta_agent_memory")
+    .select("memory_value")
+    .eq("user_id", userId)
+    .eq("agent_type", "gmail")
+    .eq("memory_key", "daily_send_count")
+    .maybeSingle();
+
+  const counter = data?.memory_value as DailySendCounter | undefined;
+  const count = counter?.date === today ? counter.count : 0;
+
+  if (count >= DAILY_SEND_LIMIT) {
+    throw new Error(`Limite quotidienne d'envoi Gmail atteinte (${DAILY_SEND_LIMIT}/jour, anti-ban) — réessaie demain`);
+  }
+
+  const { error } = await supabase.from("karta_agent_memory").upsert(
+    {
+      user_id: userId,
+      agent_type: "gmail",
+      memory_key: "daily_send_count",
+      memory_value: { date: today, count: count + 1 },
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,agent_type,memory_key" }
+  );
+  if (error) throw new Error(`assertUnderDailySendLimit: ${error.message}`);
+}
 
 function buildRawEmail(to: string, subject: string, body: string): string {
   const message = [`To: ${to}`, `Subject: ${subject}`, "Content-Type: text/plain; charset=utf-8", "", body].join("\n");

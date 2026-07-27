@@ -7,6 +7,11 @@ mocké (`KARTA_MOCK_CLAUDE=true`, réponses marquées `TODO_LIVE_TEST`). Les tes
 vrai appel Claude sont listés en fin de fichier sous "PRÊT À TESTER DÈS CRÉDIT DISPONIBLE" — jamais
 cochés `[x]` tant qu'ils n'ont pas été validés avec un vrai crédit.
 
+## AGENTS RÉELS — Suite Phase 3, sécurité "non négociable" du brief ✅ (2026-07-27)
+- [x] `AGENTS-STATUS.md` produit (livrable explicite du brief) : tableau agent | état | autonomie | dernier test réussi, honnête sur ce qui est réellement testé vs seulement couvert par les tests unitaires
+- [x] Rate limit anti-ban Gmail (max 400 envois/jour/compte, brief §Sécurité "non négociable") : jamais implémenté jusqu'ici — `gmailSendTool` pouvait envoyer sans plafond à autonomie niveau 3. Compteur quotidien ajouté (`karta_agent_memory`), partagé entre `email` et `repondeur-intelligent` (même compte Gmail réel). 3 tests unitaires + 41/41 suite complète verte. Déployé, healthy.
+- [x] qa-agent + security-agent lancés sur l'ensemble Phase 1-4 (jamais fait malgré plusieurs déploiements prod — cf CLAUDE.md §TEST, obligatoire avant chaque deploy)
+
 ## AGENTS RÉELS — Phase 0 Audit ✅ (2026-07-26)
 - [x] `AUDIT-AGENTS.md` produit — vérification réelle SSH+SQL+curl, 0 simulation
 - [x] Inventaire 130 workflows n8n (78 actifs), 4 agents cœur + 45 agents site + duplicats
