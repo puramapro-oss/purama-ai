@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.social-callback]
 verify_jwt = false
+
+[functions.ai-demo]
+verify_jwt = false

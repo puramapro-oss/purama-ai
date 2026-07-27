@@ -12,6 +12,7 @@ import { Footer } from '@/components/Footer';
 import { ReferralBanner } from '@/components/influencer/ReferralBanner';
 import { useReferralTracking } from '@/hooks/useInfluencer';
 import { PublicActionsCounter } from '@/components/PublicActionsCounter';
+import { LiveDemoSection } from '@/components/LiveDemoSection';
 
 export default function Index() {
   const { checkAndStoreReferral } = useReferralTracking();
@@ -48,6 +49,9 @@ export default function Index() {
         </section>
         <section id="roi-section" aria-label="Calculateur d'économies" className="scroll-mt-24">
           <ROICalculator />
+        </section>
+        <section id="live-demo-section" aria-label="Démo en direct sans inscription" className="scroll-mt-24">
+          <LiveDemoSection />
         </section>
         <section id="pricing-section" aria-label="Tarifs" className="scroll-mt-24">
           <PricingSection />
