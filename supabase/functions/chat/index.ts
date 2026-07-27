@@ -45,7 +45,7 @@ serve(async (req) => {
     // Rate limiting (20 req/hour)
     const rateLimitResult = rateLimit(`chat:${userId}`, 20, 3600000);
     if (!rateLimitResult.allowed) {
-      return new Response(JSON.stringify({ error: "Rate limit exceeded. Try again in 1 hour." }), {
+      return new Response(JSON.stringify({ error: "Trop de tentatives. Réessaie dans 1 heure." }), {
         status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -115,7 +115,7 @@ serve(async (req) => {
     const response = await streamAnthropicChat({
       apiKey: ANTHROPIC_API_KEY,
       model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
-      systemPrompt: `Tu es l'assistant IA de AI Agents Pro, une entreprise qui vend 45 agents IA spécialisés pour automatiser les entreprises.
+      systemPrompt: `Tu es l'assistant IA de Purama AI, une entreprise qui vend 45 agents IA spécialisés pour automatiser les entreprises.
 
 Nos agents IA disponibles:
 - Marketing IA: Création de contenu, campagnes publicitaires

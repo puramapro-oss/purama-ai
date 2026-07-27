@@ -13,6 +13,9 @@
   Anthropic n'est pas rechargé — **jamais** encore de vraie décision Claude, sur aucun agent.
 - **Autonomie par défaut** : niveau 1 (propose, validation humaine systématique) + `simulation_mode=true`
   — appliqué automatiquement à la 1ère ligne `karta_agent_state` créée pour cet agent/utilisateur.
+- **Validation humaine réelle** (fix QA 2026-07-27) : une action en attente (niveau 1, ou outil sensible
+  niveau 2) est journalisée dans `karta_pending_actions` — approuver depuis l'UI (Mes employés IA /
+  Créateur d'Agents) EXÉCUTE réellement l'outil, rejeter ne l'exécute jamais. Vérifié réel sur le VPS.
 - **Kill switch** : individuel par agent (`karta_agent_state.kill_switch`) + global
   (`karta_global_state.kill_switch`) — les deux à `false` (aucun agent arrêté) au 2026-07-27.
 

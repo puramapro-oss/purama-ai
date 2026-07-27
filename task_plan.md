@@ -10,7 +10,14 @@ cochés `[x]` tant qu'ils n'ont pas été validés avec un vrai crédit.
 ## AGENTS RÉELS — Suite Phase 3, sécurité "non négociable" du brief ✅ (2026-07-27)
 - [x] `AGENTS-STATUS.md` produit (livrable explicite du brief) : tableau agent | état | autonomie | dernier test réussi, honnête sur ce qui est réellement testé vs seulement couvert par les tests unitaires
 - [x] Rate limit anti-ban Gmail (max 400 envois/jour/compte, brief §Sécurité "non négociable") : jamais implémenté jusqu'ici — `gmailSendTool` pouvait envoyer sans plafond à autonomie niveau 3. Compteur quotidien ajouté (`karta_agent_memory`), partagé entre `email` et `repondeur-intelligent` (même compte Gmail réel). 3 tests unitaires + 41/41 suite complète verte. Déployé, healthy.
-- [x] qa-agent + security-agent lancés sur l'ensemble Phase 1-4 (jamais fait malgré plusieurs déploiements prod — cf CLAUDE.md §TEST, obligatoire avant chaque deploy)
+- [x] security-agent lancé sur l'ensemble Phase 1-4 : **0 critique, 0 haute**. 2 moyennes (CORS wildcard `*` sur les 40 edge functions — pré-existant, pas introduit par KARTA, mitigé par l'auth JWT sur tous les endpoints sensibles, non traité car hors périmètre agents ; `npm audit` vite HIGH déjà connu/accepted-risk cf commit `8a97c19`). 2 basses (CSP header absent, DOMPurify manquant sur `PartnerAgentEmails.tsx` — pré-existant, hors périmètre KARTA). Verdict : **PROD OK** sur tout ce qui a été construit cette session.
+- [x] qa-agent lancé sur l'ensemble Phase 1-4 : verdict initial **DEPLOY BLOQUÉ** (4 bloquants), tous corrigés le même jour — cf ERRORS.md 2026-07-27 pour le détail complet. Résumé :
+  - **Mécanisme d'approbation réel** (bloquant #1) : `karta_pending_actions` (migration 005) + `engine/approval.ts` + routes API + edge function `karta-resolve-pending-action` + UI Approuver/Rejeter. Vérifié RÉEL sur le VPS (approve exécute réellement l'outil, reject ne l'exécute jamais, double-approve refusé).
+  - **Toggle `simulation_mode` agents créés** (bloquant #2) : ajouté dans `CreatorAgentDetail.tsx`.
+  - **`isError` exposé** (bloquant #3) : `usePendingActions`/`useKartaStats` + messages FR explicites dans `MyEmployees.tsx`/`CreatorAgentDetail.tsx` au lieu d'un échec silencieux.
+  - **Erreurs FR + marque uniforme** (bloquant #4) : `creator-agent-run`/`chat`/`chatbot` traduits, "AI Agents Pro" → "Purama AI".
+  - Corrigé au passage (warning QA, régression a11y déjà connue cf commit `b2ded1c`) : `htmlFor`/`id` manquant sur l'input température de `CreatorAgentDetail.tsx`.
+  - 46/46 tests vitest (karta/), `tsc --noEmit` 0 erreur (frontend + karta/), `npm run build` 0 erreur, `deno check` 0 erreur sur les 4 fonctions modifiées/créées. Déployé (VPS : migration 005 + rebuild `karta-engine` + edge functions ; Vercel : `purama-ai.purama.dev`).
 
 ## AGENTS RÉELS — Phase 0 Audit ✅ (2026-07-26)
 - [x] `AUDIT-AGENTS.md` produit — vérification réelle SSH+SQL+curl, 0 simulation

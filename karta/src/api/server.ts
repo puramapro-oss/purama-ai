@@ -5,6 +5,7 @@ import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswi
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
+import { resolvePendingAction } from "../engine/approval.js";
 import type { StaticAgentType } from "../engine/types.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
@@ -120,6 +121,18 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       trigger: { type: "manual", source: "api" },
     });
     json(res, 202, { ok: true, queued: true });
+    return;
+  }
+
+  const pendingActionMatch = url.pathname.match(/^\/pending-actions\/([0-9a-f-]+)\/(approve|reject)$/);
+  if (req.method === "POST" && pendingActionMatch) {
+    const [, id, decision] = pendingActionMatch;
+    const result = await resolvePendingAction(id, decision as "approve" | "reject");
+    if (!result.ok) {
+      json(res, 400, { error: result.error });
+      return;
+    }
+    json(res, 200, { ok: true, resultSummary: result.resultSummary });
     return;
   }
 

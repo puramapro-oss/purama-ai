@@ -91,6 +91,9 @@ export interface ToolCallRecord {
   paramsSummary: string;
   resultSummary: string;
   success: boolean;
+  /** Présent uniquement pour un outil mis en attente de validation humaine (mode live) — id de la
+   * ligne karta_pending_actions correspondante, pour retrouver/patcher cette entrée après résolution. */
+  pendingActionId?: string;
 }
 
 /** Ce que Claude (ou le mock) retourne : la décision de l'agent pour ce cycle. */

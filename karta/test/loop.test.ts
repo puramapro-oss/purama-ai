@@ -25,6 +25,7 @@ const tableResolutions: Record<string, { data: unknown; error: unknown }> = {
   karta_global_state: { data: { kill_switch: false }, error: null },
   karta_agent_state: { data: { is_enabled: true, autonomy_level: 2, kill_switch: false, simulation_mode: false }, error: null },
   karta_runs: { data: { id: "run-1" }, error: null },
+  karta_pending_actions: { data: { id: "pending-1" }, error: null },
   agent_notifications: { data: null, error: null },
 };
 
@@ -74,6 +75,9 @@ describe("runAgentCycle", () => {
 
     expect(result.status).toBe("awaiting_approval");
     expect(executed).not.toHaveBeenCalled();
+    // Fix bloquant QA 2026-07-27 : l'action doit être journalisée dans karta_pending_actions
+    // (id retourné par l'insert mocké) pour pouvoir être réellement exécutée après approbation.
+    expect(result.toolsUsed[0].pendingActionId).toBe("pending-1");
   });
 
   it("ne casse pas si l'outil décidé par Claude n'existe pas dans la définition de l'agent", async () => {

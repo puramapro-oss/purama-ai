@@ -20,11 +20,11 @@ const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (req.method !== "POST") return json({ error: "Méthode non autorisée" }, 405);
 
   try {
     const auth = req.headers.get("Authorization");
-    if (!auth) return json({ error: "Unauthorized" }, 401);
+    if (!auth) return json({ error: "Non autorisé" }, 401);
     const token = auth.replace("Bearer ", "");
 
     // Detect service-role token (used by n8n cron)
@@ -36,13 +36,13 @@ Deno.serve(async (req) => {
         db: { schema: "purama_ai" },
       });
       const { data: userData, error: userErr } = await userClient.auth.getUser(token);
-      if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
+      if (userErr || !userData?.user) return json({ error: "Non autorisé" }, 401);
       userId = userData.user.id;
 
       // Rate limiting (10 req/hour for manual runs)
       const rateLimitResult = rateLimit(`creator-agent-run:${userId}`, 10, 3600000);
       if (!rateLimitResult.allowed) {
-        return json({ error: "Rate limit exceeded. Try again in 1 hour." }, 429);
+        return json({ error: "Trop de tentatives. Réessaie dans 1 heure." }, 429);
       }
     }
 
@@ -63,17 +63,17 @@ Deno.serve(async (req) => {
       .select("*")
       .eq("id", agent_id)
       .single();
-    if (aErr || !agent) return json({ error: "Agent not found" }, 404);
+    if (aErr || !agent) return json({ error: "Agent introuvable" }, 404);
 
     // Authorization
     if (!isServiceRole && agent.user_id !== userId) {
-      return json({ error: "Forbidden" }, 403);
+      return json({ error: "Non autorisé" }, 403);
     }
     if (!agent.is_active) {
-      return json({ error: "Agent is paused" }, 400);
+      return json({ error: "Agent en pause" }, 400);
     }
     const effectiveUserId = userId ?? agent.user_id;
-    if (!effectiveUserId) return json({ error: "Cannot determine user" }, 400);
+    if (!effectiveUserId) return json({ error: "Impossible de déterminer l'utilisateur" }, 400);
 
     const trigger = (validation.data.trigger as string) || "manual";
     const inputText = (input ?? "") as string;

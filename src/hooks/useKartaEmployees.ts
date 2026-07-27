@@ -39,6 +39,19 @@ export interface KartaAgentState {
   updated_at: string;
 }
 
+export interface KartaPendingAction {
+  id: string;
+  user_id: string;
+  run_id: string;
+  agent_type: string;
+  tool_name: string;
+  tool_params: unknown;
+  status: string;
+  result_summary: string | null;
+  created_at: string;
+  resolved_at: string | null;
+}
+
 export interface KartaRun {
   id: string;
   user_id: string;
@@ -252,5 +265,54 @@ export function useKartaStats() {
   const errors = rows.filter((r) => r.status === 'error').length;
   const successRate = total > 0 ? Math.round((success / total) * 100) : 0;
 
-  return { isLoading: query.isLoading, total, success, awaitingApproval, errors, successRate };
+  return { isLoading: query.isLoading, isError: query.isError, total, success, awaitingApproval, errors, successRate };
+}
+
+/** Actions en attente de validation humaine (autonomie niveau 1, ou outil sensible niveau 2) pour les 12 employés fixes. */
+export function usePendingActions() {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['karta-pending-actions', user?.id],
+    enabled: !!user,
+    refetchInterval: 15000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('karta_pending_actions')
+        .select('*')
+        .eq('user_id', user!.id)
+        .eq('status', 'pending')
+        .in('agent_type', ACTION_AGENT_SLUGS as unknown as string[])
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return (data ?? []) as KartaPendingAction[];
+    },
+  });
+}
+
+/**
+ * Approuve (exécute réellement l'outil) ou rejette une action en attente, via le proxy sécurisé
+ * `karta-resolve-pending-action` (le token admin KARTA ne quitte jamais le serveur). Générique —
+ * utilisé aussi bien pour les 12 employés fixes que pour les agents créés (Agent Créateur d'Agents).
+ */
+export function useResolvePendingAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ pendingActionId, decision }: { pendingActionId: string; decision: 'approve' | 'reject' }) => {
+      const { data, error } = await supabase.functions.invoke('karta-resolve-pending-action', {
+        body: { pendingActionId, decision },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return data as { ok: true; resultSummary: string };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['karta-pending-actions'] });
+      queryClient.invalidateQueries({ queryKey: ['custom-agent-pending-actions'] });
+      queryClient.invalidateQueries({ queryKey: ['karta-runs'] });
+      queryClient.invalidateQueries({ queryKey: ['karta-stats'] });
+    },
+  });
 }

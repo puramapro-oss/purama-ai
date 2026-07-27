@@ -11,18 +11,26 @@ import {
   PauseCircle,
   Activity,
   Sparkles,
+  AlertTriangle,
+  Check,
+  X,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import {
   useEmployeeAgents,
   useKartaAgentStates,
   useUpdateKartaAgentState,
   useKartaRuns,
   useKartaStats,
+  usePendingActions,
+  useResolvePendingAction,
   type ActionAgentSlug,
   type KartaRun,
+  type KartaPendingAction,
 } from '@/hooks/useKartaEmployees';
 
 const AUTONOMY_LABELS: Record<number, string> = {
@@ -113,6 +121,46 @@ function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: strin
         <p className="text-[10px] text-muted-foreground/60 mt-1">
           {formatRelative(run.started_at)} · déclenché par {run.trigger_type}
         </p>
+      </div>
+    </div>
+  );
+}
+
+function PendingActionCard({ action, agentName }: { action: KartaPendingAction; agentName: string }) {
+  const resolve = useResolvePendingAction();
+
+  const handle = (decision: 'approve' | 'reject') => {
+    resolve.mutate(
+      { pendingActionId: action.id, decision },
+      {
+        onSuccess: () => toast.success(decision === 'approve' ? 'Action exécutée' : 'Action rejetée'),
+        onError: (e) => toast.error(e instanceof Error ? e.message : "Impossible de traiter cette action"),
+      },
+    );
+  };
+
+  return (
+    <div className="flex items-start gap-3 py-3 border-b border-yellow-500/20 last:border-0">
+      <PauseCircle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-foreground">
+          {agentName} veut exécuter <span className="font-mono text-xs bg-secondary/60 px-1.5 py-0.5 rounded">{action.tool_name}</span>
+        </p>
+        <p className="text-[10px] text-muted-foreground/60 mt-1">Demandé {formatRelative(action.created_at)}</p>
+      </div>
+      <div className="flex gap-2 flex-shrink-0">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={resolve.isPending}
+          onClick={() => handle('reject')}
+          className="border-destructive/30 text-destructive hover:bg-destructive/10"
+        >
+          <X className="w-3.5 h-3.5 mr-1" /> Rejeter
+        </Button>
+        <Button size="sm" disabled={resolve.isPending} onClick={() => handle('approve')}>
+          <Check className="w-3.5 h-3.5 mr-1" /> Approuver
+        </Button>
       </div>
     </div>
   );
@@ -250,12 +298,14 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
 
 export default function MyEmployees() {
   const [tab, setTab] = useState<'equipe' | 'activite'>('equipe');
-  const { data: agents = [], isLoading: agentsLoading } = useEmployeeAgents();
-  const { data: statesMap, isLoading: statesLoading } = useKartaAgentStates();
-  const { data: runs = [], isLoading: runsLoading } = useKartaRuns(30);
+  const { data: agents = [], isLoading: agentsLoading, isError: agentsError } = useEmployeeAgents();
+  const { data: statesMap, isLoading: statesLoading, isError: statesError } = useKartaAgentStates();
+  const { data: runs = [], isLoading: runsLoading, isError: runsError } = useKartaRuns(30);
+  const { data: pendingActions = [], isError: pendingError } = usePendingActions();
   const stats = useKartaStats();
 
   const isLoading = agentsLoading || statesLoading;
+  const hasError = agentsError || statesError;
 
   const sortedAgents = useMemo(() => [...agents].sort((a, b) => a.name.localeCompare(b.name)), [agents]);
 
@@ -279,13 +329,46 @@ export default function MyEmployees() {
         </p>
       </div>
 
-      {/* Stats réelles (30 derniers jours) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Activity} label="Exécutions (30j)" value={stats.total} />
-        <StatCard icon={CheckCircle2} label="Taux de réussite" value={`${stats.successRate}%`} />
-        <StatCard icon={PauseCircle} label="En attente de validation" value={stats.awaitingApproval} />
-        <StatCard icon={Clock} label="Dernière activité" value={formatRelative(runs[0]?.started_at ?? null)} />
-      </div>
+      {hasError && (
+        <Card className="bg-destructive/5 border-destructive/30">
+          <CardContent className="p-4 flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
+            <p className="text-sm text-destructive">
+              Impossible de charger tes employés IA pour le moment. Vérifie ta connexion et recharge la page — si le
+              problème persiste, contacte le support.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {!hasError && (
+        <>
+          {/* Stats réelles (30 derniers jours) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon={Activity} label="Exécutions (30j)" value={stats.total} />
+            <StatCard icon={CheckCircle2} label="Taux de réussite" value={`${stats.successRate}%`} />
+            <StatCard icon={PauseCircle} label="En attente de validation" value={stats.awaitingApproval} />
+            <StatCard icon={Clock} label="Dernière activité" value={formatRelative(runs[0]?.started_at ?? null)} />
+          </div>
+
+          {!pendingError && pendingActions.length > 0 && (
+            <Card className="bg-yellow-500/5 border-yellow-500/30">
+              <CardContent className="p-5">
+                <p className="text-sm font-medium text-foreground mb-1">
+                  {pendingActions.length} action{pendingActions.length > 1 ? 's' : ''} en attente de ta validation
+                </p>
+                {pendingActions.map((action) => (
+                  <PendingActionCard
+                    key={action.id}
+                    action={action}
+                    agentName={agentLookup.get(action.agent_type)?.name ?? action.agent_type}
+                  />
+                ))}
+              </CardContent>
+            </Card>
+          )}
+        </>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2">
@@ -307,13 +390,13 @@ export default function MyEmployees() {
         ))}
       </div>
 
-      {isLoading && (
+      {isLoading && !hasError && (
         <div className="flex justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
         </div>
       )}
 
-      {!isLoading && tab === 'equipe' && (
+      {!isLoading && !hasError && tab === 'equipe' && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {sortedAgents.map((agent, i) => (
             <motion.div
@@ -335,7 +418,7 @@ export default function MyEmployees() {
         </div>
       )}
 
-      {!isLoading && tab === 'activite' && (
+      {!isLoading && !hasError && tab === 'activite' && (
         <Card className="bg-card border-border">
           <CardContent className="p-5">
             {runsLoading && (
@@ -343,12 +426,18 @@ export default function MyEmployees() {
                 <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
               </div>
             )}
-            {!runsLoading && runs.length === 0 && (
+            {runsError && (
+              <p className="text-sm text-destructive text-center py-10">
+                Impossible de charger l'historique d'activité pour le moment. Réessaie dans un instant.
+              </p>
+            )}
+            {!runsLoading && !runsError && runs.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-10">
                 Aucune exécution enregistrée pour le moment. Active un employé IA pour démarrer.
               </p>
             )}
             {!runsLoading &&
+              !runsError &&
               runs.map((run) => (
                 <RunRow
                   key={run.id}

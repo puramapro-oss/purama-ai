@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Send, Settings, MessageSquare, Activity,
   Trash2, Save, Power, Bot, AlertCircle, Headphones, Zap, ShieldAlert, PlayCircle,
+  FlaskConical, PauseCircle, Check, X,
 } from 'lucide-react';
 import { useVoice } from '@/hooks/useVoice';
 import { MicButton } from '@/components/voice/MicButton';
@@ -35,8 +36,9 @@ import {
 } from '@/lib/creator-agent';
 import {
   useCustomAgentKartaState, useUpdateCustomAgentKartaState,
-  useCustomAgentKartaRuns, useTriggerCustomAgent,
+  useCustomAgentKartaRuns, useTriggerCustomAgent, useCustomAgentPendingActions,
 } from '@/hooks/useCreatorAgentKarta';
+import { useResolvePendingAction } from '@/hooks/useKartaEmployees';
 
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -61,10 +63,22 @@ export default function CreatorAgentDetail() {
   const [saving, setSaving] = useState(false);
 
   // Exécution réelle (KARTA)
-  const { data: kartaState } = useCustomAgentKartaState(id);
+  const { data: kartaState, isError: kartaStateError } = useCustomAgentKartaState(id);
   const updateKartaState = useUpdateCustomAgentKartaState(id);
   const { data: kartaRuns = [] } = useCustomAgentKartaRuns(id, 20);
   const triggerKarta = useTriggerCustomAgent();
+  const { data: pendingActions = [] } = useCustomAgentPendingActions(id);
+  const resolvePendingAction = useResolvePendingAction();
+
+  const handleResolvePendingAction = (pendingActionId: string, decision: 'approve' | 'reject') => {
+    resolvePendingAction.mutate(
+      { pendingActionId, decision },
+      {
+        onSuccess: () => toast.success(decision === 'approve' ? 'Action exécutée' : 'Action rejetée'),
+        onError: (e) => toast.error('Erreur', { description: e instanceof Error ? e.message : "Impossible de traiter cette action" }),
+      },
+    );
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -387,8 +401,9 @@ export default function CreatorAgentDetail() {
                 />
               </div>
               <div>
-                <Label className="text-xs">Température : {agent.temperature.toFixed(2)}</Label>
+                <Label htmlFor="agent-temperature" className="text-xs">Température : {agent.temperature.toFixed(2)}</Label>
                 <input
+                  id="agent-temperature"
                   type="range" min={0} max={1} step={0.1}
                   value={agent.temperature}
                   onChange={e => setAgent({ ...agent, temperature: parseFloat(e.target.value) })}
@@ -406,6 +421,11 @@ export default function CreatorAgentDetail() {
                     <p className="text-[11px] text-muted-foreground">
                       Cet agent fait vraiment les actions ci-dessous, au lieu de seulement en discuter dans le chat.
                     </p>
+                    {kartaStateError && (
+                      <p className="text-[11px] text-destructive mt-1">
+                        Impossible de charger les réglages d'exécution réelle. Recharge la page.
+                      </p>
+                    )}
                   </div>
                   <Switch
                     checked={agent.karta_enabled}
@@ -437,6 +457,23 @@ export default function CreatorAgentDetail() {
 
                 {agent.karta_enabled && (
                   <>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <FlaskConical className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Mode simulation (dry-run)</span>
+                      </div>
+                      <Switch
+                        checked={kartaState?.simulation_mode ?? true}
+                        onCheckedChange={(v) => updateKartaState.mutate({ simulation_mode: v })}
+                        disabled={isReadOnly || updateKartaState.isPending}
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground -mt-2">
+                      {(kartaState?.simulation_mode ?? true)
+                        ? "Actif : l'agent simule ses actions sans jamais rien exécuter réellement."
+                        : 'Désactivé : selon le niveau d\'autonomie ci-dessous, cet agent peut réellement agir.'}
+                    </p>
+
                     <div>
                       <Label className="text-xs">Niveau d'autonomie</Label>
                       <div className="flex gap-1.5 mt-1.5">
@@ -464,6 +501,39 @@ export default function CreatorAgentDetail() {
                             : 'Il agit seul en totale autonomie — rapport après coup.'}
                       </p>
                     </div>
+
+                    {pendingActions.length > 0 && (
+                      <div className="space-y-1.5 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/30">
+                        <Label className="text-xs flex items-center gap-1.5">
+                          <PauseCircle className="w-3.5 h-3.5 text-yellow-500" /> En attente de ta validation
+                        </Label>
+                        {pendingActions.map((action) => (
+                          <div key={action.id} className="flex items-center justify-between gap-2 py-1.5">
+                            <p className="text-xs text-foreground/80 truncate">
+                              Exécuter <span className="font-mono text-[11px] bg-secondary/60 px-1 rounded">{action.tool_name}</span>
+                            </p>
+                            <div className="flex gap-1.5 flex-shrink-0">
+                              <Button
+                                size="sm" variant="outline"
+                                disabled={resolvePendingAction.isPending}
+                                onClick={() => handleResolvePendingAction(action.id, 'reject')}
+                                className="h-7 px-2 border-destructive/30 text-destructive hover:bg-destructive/10"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                disabled={resolvePendingAction.isPending}
+                                onClick={() => handleResolvePendingAction(action.id, 'approve')}
+                                className="h-7 px-2"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">

@@ -1013,6 +1013,45 @@ export type Database = {
         }
         Relationships: []
       }
+      karta_pending_actions: {
+        Row: {
+          agent_type: string
+          created_at: string
+          id: string
+          resolved_at: string | null
+          result_summary: string | null
+          run_id: string
+          status: string
+          tool_name: string
+          tool_params: Json
+          user_id: string
+        }
+        Insert: {
+          agent_type: string
+          created_at?: string
+          id?: string
+          resolved_at?: string | null
+          result_summary?: string | null
+          run_id: string
+          status?: string
+          tool_name: string
+          tool_params: Json
+          user_id: string
+        }
+        Update: {
+          agent_type?: string
+          created_at?: string
+          id?: string
+          resolved_at?: string | null
+          result_summary?: string | null
+          run_id?: string
+          status?: string
+          tool_name?: string
+          tool_params?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       karta_agent_memory: {
         Row: {
           agent_type: string

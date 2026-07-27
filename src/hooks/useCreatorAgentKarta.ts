@@ -16,6 +16,16 @@ export interface CustomKartaState {
   last_run_status: string | null;
 }
 
+export interface CustomKartaPendingAction {
+  id: string;
+  run_id: string;
+  agent_type: string;
+  tool_name: string;
+  tool_params: unknown;
+  status: string;
+  created_at: string;
+}
+
 export interface CustomKartaRun {
   id: string;
   agent_type: string;
@@ -98,6 +108,29 @@ export function useCustomAgentKartaRuns(agentId: string | undefined, limit = 20)
 
       if (error) throw error;
       return (data ?? []) as CustomKartaRun[];
+    },
+  });
+}
+
+/** Actions en attente de validation humaine pour cet agent créé (même mécanisme que les employés fixes). */
+export function useCustomAgentPendingActions(agentId: string | undefined) {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['custom-agent-pending-actions', agentId],
+    enabled: !!user && !!agentId,
+    refetchInterval: 15000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('karta_pending_actions')
+        .select('*')
+        .eq('user_id', user!.id)
+        .eq('agent_type', agentTypeFor(agentId!))
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return (data ?? []) as CustomKartaPendingAction[];
     },
   });
 }

@@ -3,6 +3,7 @@ import { isRunnable, loadAgentState, recordRunOutcome, requiresHumanApproval } f
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
+import { createPendingAction } from "./approval.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 /**
@@ -72,11 +73,25 @@ export async function runAgentCycle(
       const needsApproval = decision.requiresApproval || requiresHumanApproval(state, tool.sensitive);
 
       if (needsApproval || mode === "simulation") {
+        let pendingActionId: string | undefined;
+        // Un dry-run de simulation n'a rien à approuver plus tard (rien ne serait jamais exécuté) ;
+        // en mode live, on journalise l'action pour pouvoir réellement l'exécuter après validation
+        // humaine (cf engine/approval.ts) — sans cette ligne, l'action reste bloquée pour toujours.
+        if (needsApproval && mode === "live") {
+          pendingActionId = await createPendingAction({
+            userId,
+            runId: run.runId,
+            agentType: definition.type,
+            toolName: tool.name,
+            toolParams: call.params,
+          });
+        }
         toolsUsed.push({
           tool: tool.name,
           paramsSummary: JSON.stringify(call.params),
           resultSummary: mode === "simulation" ? "simulé — aucune action réelle (dry-run)" : "en attente de validation humaine",
           success: true,
+          pendingActionId,
         });
         awaitingApproval = awaitingApproval || (needsApproval && mode === "live");
         continue;

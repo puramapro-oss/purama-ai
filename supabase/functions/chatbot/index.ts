@@ -85,7 +85,7 @@ serve(async (req) => {
     const rateLimitResult = rateLimit(`chatbot:${rateLimitKey}`, 30, 3600000);
     if (!rateLimitResult.allowed) {
       return new Response(
-        JSON.stringify({ error: "Rate limit exceeded. Try again in 1 hour." }),
+        JSON.stringify({ error: "Trop de tentatives. Réessaie dans 1 heure." }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
