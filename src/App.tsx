@@ -38,6 +38,7 @@ const CGU = lazy(() => import('@/pages/CGU'));
 const PolitiqueCookies = lazy(() => import('@/pages/PolitiqueCookies'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const Parrainage = lazy(() => import('@/pages/Parrainage'));
+const GoRedirect = lazy(() => import('@/pages/GoRedirect'));
 const Concours = lazy(() => import('@/pages/Concours'));
 const Classement = lazy(() => import('@/pages/Classement'));
 const Forge = lazy(() => import('@/pages/Forge'));
@@ -219,6 +220,7 @@ export default function App() {
             <Route path="/admin/contracts" element={<ProtectedRoute><AdminContracts /></ProtectedRoute>} />
             <Route path="/ambassadeur/rejoindre" element={<ProtectedRoute><AmbassadeurRejoindre /></ProtectedRoute>} />
             <Route path="/parrainage" element={<Parrainage />} />
+            <Route path="/go/:slug" element={<GoRedirect />} />
             <Route path="/concours" element={<Concours />} />
             <Route path="/classement" element={<Classement />} />
             <Route path="*" element={<NotFound />} />
