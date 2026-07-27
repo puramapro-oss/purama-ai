@@ -8,9 +8,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { PLAN_LIST, type Plan } from '@/lib/plans';
+import { PLAN_LIST, type Plan, type PlanId } from '@/lib/plans';
 
 const ICONS: Record<string, typeof Zap> = {
   free: Gift,
@@ -32,19 +33,29 @@ export default function Pricing() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const nav = useNavigate();
+  const { planId: currentPlanId, hasUsedTrial, refresh: refreshSubscription } = useSubscription();
 
   const success = searchParams.get('success');
   const canceled = searchParams.get('canceled');
 
+  /** Démarre l'essai 14 jours sans carte (RPC start_trial — jamais d'appel Stripe à cette étape). */
+  const handleStartTrial = async (plan: Plan) => {
+    setLoadingPlan(plan.id);
+    try {
+      const { error } = await supabase.rpc('start_trial', { p_plan_type: plan.id });
+      if (error) throw error;
+      toast.success(`✨ Essai ${plan.name} démarré — 14 jours, sans carte`);
+      refreshSubscription();
+      nav('/dashboard');
+    } catch (e) {
+      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  /** S'abonner directement (carte requise) — passe par Stripe Checkout. */
   const handleCheckout = async (plan: Plan) => {
-    if (!user) {
-      nav(`/login?next=${encodeURIComponent('/pricing')}`);
-      return;
-    }
-    if (plan.id === 'free') {
-      toast.success('Tu es déjà sur le plan Free 🎉');
-      return;
-    }
     const priceId = billingCycle === 'monthly' ? plan.monthly_price_id : plan.yearly_price_id;
     if (!priceId) {
       toast.error('Plan indisponible');
@@ -62,6 +73,26 @@ export default function Pricing() {
     } catch (e) {
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setLoadingPlan(null);
+    }
+  };
+
+  const handlePlanClick = (plan: Plan) => {
+    if (!user) {
+      nav(`/login?next=${encodeURIComponent('/pricing')}`);
+      return;
+    }
+    if (plan.id === 'free') {
+      toast.success('Tu es déjà sur le plan Découverte 🎉');
+      return;
+    }
+    if (plan.id === (currentPlanId as PlanId)) {
+      toast.success(`Tu es déjà sur le plan ${plan.name} 🎉`);
+      return;
+    }
+    if (!hasUsedTrial) {
+      handleStartTrial(plan);
+    } else {
+      handleCheckout(plan);
     }
   };
 
@@ -98,7 +129,10 @@ export default function Pricing() {
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Email · Compta · Partenariat · Juridique · Créateur d'agents.
-            14 jours gratuits sur tous les plans payants. Sans engagement.
+            14 jours d'essai Premium gratuit, sans carte bancaire. Sans engagement.
+          </p>
+          <p className="text-emerald-400 text-sm mt-3 font-medium">
+            🛡️ Garantie : tes employés IA te font gagner du temps le 1er mois ou remboursé
           </p>
         </motion.div>
 
@@ -145,7 +179,9 @@ export default function Pricing() {
             }`}
           >
             Annuel
-            <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">−33%</Badge>
+            <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">
+              −{Math.round((1 - PLAN_LIST[1].yearly_price_per_month / PLAN_LIST[1].monthly_price) * 100)}%
+            </Badge>
           </button>
         </div>
 
@@ -203,15 +239,21 @@ export default function Pricing() {
                 </div>
 
                 <Button
-                  onClick={() => handleCheckout(plan)}
-                  disabled={loadingPlan === plan.id}
+                  onClick={() => handlePlanClick(plan)}
+                  disabled={loadingPlan === plan.id || plan.id === currentPlanId}
                   className={`w-full mb-5 ${
                     plan.highlight ? 'bg-accent-purple hover:bg-accent-purple/90' : ''
                   }`}
                   variant={plan.id === 'free' ? 'outline' : 'default'}
                 >
                   {loadingPlan === plan.id && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  {plan.id === 'free' ? 'Commencer gratuitement' : 'Essai 14 jours offerts'}
+                  {plan.id === currentPlanId
+                    ? 'Plan actuel'
+                    : plan.id === 'free'
+                      ? 'Commencer gratuitement'
+                      : hasUsedTrial
+                        ? "S'abonner"
+                        : 'Essai 14 jours, sans carte'}
                 </Button>
 
                 <ul className="space-y-2">

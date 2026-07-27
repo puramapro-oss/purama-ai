@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Loader2, ExternalLink, Crown, Receipt } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useSubscription, PLANS } from '@/hooks/useSubscription';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useAgents } from '@/hooks/useAgents';
 import { useAgentSelections } from '@/hooks/useAgentSelections';
 import { useAgentStats } from '@/hooks/useAgentStats';
@@ -28,20 +28,17 @@ const formatDateTime = (iso: string) =>
   });
 
 export default function DashboardBilling() {
-  const { planType, subscriptionEnd, isLoading: subLoading, isPremium, isStarter } =
+  const { planId, plan, subscriptionEnd, isTrialing, trialEndsAt, isLoading: subLoading, isPro } =
     useSubscription();
   const { data: agents = [] } = useAgents();
-  const { selectedAgentIds, maxSelections } = useAgentSelections();
+  const { selectedAgentIds } = useAgentSelections();
   const { raw, totalThisMonth, statsByAgent } = useAgentStats();
 
   const [portalLoading, setPortalLoading] = useState(false);
 
-  const planInfo =
-    planType === 'premium' ? PLANS.premium : planType === 'starter' ? PLANS.starter : null;
-
-  const planLabel = isPremium ? 'PREMIUM' : isStarter ? 'STARTER' : 'GRATUIT';
-  const planPrice = planInfo ? `${planInfo.price}€` : '0€';
-  const agentCap = isPremium ? agents.length : isStarter ? maxSelections : 0;
+  const planLabel = plan.name.toUpperCase();
+  const planPrice = `${plan.monthly_price}€`;
+  const agentCap = plan.agents_included === -1 ? agents.length : plan.agents_included;
   const usedAgents = selectedAgentIds.length;
 
   const openCustomerPortal = async () => {
@@ -80,7 +77,8 @@ export default function DashboardBilling() {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
               <span className="px-3 py-1 rounded-full bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground text-xs font-bold flex items-center gap-1 w-fit">
-                {isPremium && <Crown className="w-3 h-3" />} {planLabel}
+                {(isPro || planId === 'ultime') && <Crown className="w-3 h-3" />} {planLabel}
+                {isTrialing && <span className="opacity-80">· ESSAI</span>}
               </span>
               <h2 className="text-3xl font-orbitron font-bold text-foreground mt-3">
                 {subLoading ? (
@@ -93,18 +91,20 @@ export default function DashboardBilling() {
                 )}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                {subscriptionEnd
-                  ? `Renouvellement le ${formatDate(subscriptionEnd)}`
-                  : planType === 'none'
-                    ? 'Aucun abonnement actif'
-                    : 'Date de renouvellement indisponible'}
+                {isTrialing && trialEndsAt
+                  ? `Essai gratuit jusqu'au ${formatDate(trialEndsAt)} — aucune carte enregistrée`
+                  : subscriptionEnd
+                    ? `Renouvellement le ${formatDate(subscriptionEnd)}`
+                    : planId === 'free'
+                      ? 'Aucun abonnement actif'
+                      : 'Date de renouvellement indisponible'}
               </p>
             </div>
             <div className="flex flex-col gap-2">
               <Link to="/pricing" className="btn-secondary text-sm px-4 py-2 text-center">
                 Changer de plan →
               </Link>
-              {planType !== 'none' && (
+              {planId !== 'free' && (
                 <button
                   onClick={openCustomerPortal}
                   disabled={portalLoading}

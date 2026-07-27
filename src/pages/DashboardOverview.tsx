@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   Brain,
@@ -16,6 +17,7 @@ import {
   Share2,
   ExternalLink,
   Sparkles,
+  Coins,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -24,6 +26,7 @@ import { useAgents } from '@/hooks/useAgents';
 import { useAgentSelections } from '@/hooks/useAgentSelections';
 import { useAgentStats } from '@/hooks/useAgentStats';
 import { useSubscription } from '@/hooks/useSubscription';
+import { getUsageSnapshot } from '@/lib/usage';
 import { useWallet } from '@/hooks/useWallet';
 import { usePoints } from '@/hooks/usePoints';
 import { useTodaysGift } from '@/hooks/useDailyGift';
@@ -50,8 +53,14 @@ export default function DashboardOverview() {
   const { data: agents = [], isLoading: agentsLoading } = useAgents();
   const { selectedAgentIds, isLoading: selectionsLoading, maxSelections } =
     useAgentSelections();
-  const { statsByAgent, totalThisMonth, isLoading: statsLoading } = useAgentStats();
-  const { isStarter, isPremium } = useSubscription();
+  const { statsByAgent, isLoading: statsLoading } = useAgentStats();
+  const { isStarter, isPro, isUltime } = useSubscription();
+  const { data: usage } = useQuery({
+    queryKey: ['usage-snapshot', user?.id],
+    enabled: !!user,
+    queryFn: () => getUsageSnapshot(user!.id, user!.email),
+    refetchInterval: 60_000,
+  });
   const { data: wallet } = useWallet();
   const { data: points } = usePoints();
   const { data: todaysGift } = useTodaysGift();
@@ -70,10 +79,13 @@ export default function DashboardOverview() {
   // Selected agents (real)
   const myAgents = agents.filter((a) => selectedAgentIds.includes(a.id));
   const activeCount = myAgents.length;
-  const planCap = isPremium ? agents.length : isStarter ? maxSelections : 0;
+  const planCap = isPro || isUltime ? agents.length : isStarter ? maxSelections : 0;
 
-  // Time saved heuristic: each execution ≈ 5 min saved
-  const timeSavedHours = Math.round((totalThisMonth * 5) / 60);
+  // used/hours_saved/money_recovered viennent de getUsageSnapshot (1 source de vérité, cf ERRORS.md
+  // 2026-07-27) — inclut désormais karta_runs + agent_usage marketplace, plus l'historique legacy.
+  const actionsThisMonth = usage?.used ?? 0;
+  const timeSavedHours = usage?.hours_saved ?? 0;
+  const moneyRecovered = usage?.money_recovered ?? 0;
 
   const stats = [
     {
@@ -85,12 +97,12 @@ export default function DashboardOverview() {
       sub: planCap > 0 ? `sur ${planCap} disponibles` : 'aucun plan actif',
     },
     {
-      label: 'Tâches ce mois',
-      value: String(totalThisMonth),
+      label: 'Actions ce mois',
+      value: String(actionsThisMonth),
       icon: Zap,
       color: 'text-accent-cyan',
       bg: 'bg-accent-cyan/10',
-      sub: totalThisMonth === 0 ? 'aucune exécution' : 'exécutions enregistrées',
+      sub: actionsThisMonth === 0 ? 'aucune action' : 'actions enregistrées',
     },
     {
       label: 'Temps gagné',
@@ -99,6 +111,14 @@ export default function DashboardOverview() {
       color: 'text-accent-emerald',
       bg: 'bg-accent-emerald/10',
       sub: 'estimé ce mois-ci',
+    },
+    {
+      label: '€ récupérés',
+      value: `${moneyRecovered.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}€`,
+      icon: Coins,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+      sub: 'factures payées ce mois',
     },
   ];
 
@@ -155,7 +175,7 @@ export default function DashboardOverview() {
       <HireFirstEmployeeModal open={hireModalOpen} onOpenChange={setHireModalOpen} />
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}

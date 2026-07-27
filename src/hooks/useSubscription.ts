@@ -1,92 +1,91 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { isSuperAdmin } from '@/lib/constants';
+import { getPlan, type Plan, type PlanId } from '@/lib/plans';
 
 export interface SubscriptionInfo {
-  planType: 'none' | 'starter' | 'premium';
+  planId: PlanId;
   subscriptionEnd: string | null;
+  isTrialing: boolean;
+  trialEndsAt: string | null;
+  hasUsedTrial: boolean;
   isLoading: boolean;
 }
 
-export const PLANS = {
-  starter: {
-    id: 'starter',
-    name: 'Starter',
-    price: 66,
-    priceId: 'price_1SsT3a4Y1unNvKtXMIU8MvN6',
-    productId: 'prod_Tq9M8BqZXnWp8A',
-    yearlyProductId: 'prod_TqETIWE4cO3JqH',
-    maxAgents: 5,
-  },
-  premium: {
-    id: 'premium',
-    name: 'Premium',
-    price: 99,
-    priceId: 'price_1SsT7x4Y1unNvKtXvRnyLp4W',
-    productId: 'prod_Tq9Q2m69e3A5h4',
-    yearlyProductId: 'prod_TqEUl7wUEF8NEO',
-    maxAgents: 45,
-  },
-} as const;
+interface SubscriptionRow {
+  plan_type: string;
+  status: string;
+  trial_ends_at: string | null;
+  has_used_trial: boolean;
+}
 
+/**
+ * Lit purama_ai.subscriptions directement (écrite par stripe-webhook ou start_trial()) plutôt que
+ * de dépendre de l'edge function check-subscription (appel Stripe live) — cf ERRORS.md 2026-07-27 :
+ * check-subscription ne répond jamais en prod (pare-feu VPS bloque toute sortie Internet externe),
+ * ce qui rendait les 5 pages consommant ce hook indisponibles. La table DB reste la source de
+ * vérité même quand Stripe est injoignable.
+ */
 export function useSubscription() {
   const { user } = useAuth();
-  const [subscription, setSubscription] = useState<SubscriptionInfo>({
-    planType: 'none',
-    subscriptionEnd: null,
-    isLoading: true,
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: ['subscription', user?.id],
+    enabled: !!user,
+    queryFn: async (): Promise<SubscriptionRow | null> => {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('plan_type, status, trial_ends_at, has_used_trial')
+        .eq('user_id', user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
   });
 
-  const checkSubscription = useCallback(async () => {
-    if (!user) {
-      setSubscription({ planType: 'none', subscriptionEnd: null, isLoading: false });
-      return;
-    }
+  const refresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['subscription', user?.id] });
+  }, [queryClient, user?.id]);
 
-    // Super admin → forced premium, bypass Stripe check
-    if (isSuperAdmin(user.email)) {
-      setSubscription({ planType: 'premium', subscriptionEnd: null, isLoading: false });
-      return;
-    }
+  if (user && isSuperAdmin(user.email)) {
+    return {
+      planId: 'ultime' as PlanId,
+      subscriptionEnd: null,
+      isTrialing: false,
+      trialEndsAt: null,
+      hasUsedTrial: true,
+      isLoading: false,
+      plan: getPlan('ultime'),
+      refresh,
+      hasSubscription: true,
+      isStarter: false,
+      isPro: false,
+      isUltime: true,
+    };
+  }
 
-    try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
-      
-      if (error) throw error;
-      
-      if (data) {
-        let planType: 'none' | 'starter' | 'premium' = 'none';
-        
-        if (data.subscribed && data.product_id) {
-          if (data.product_id === PLANS.premium.productId || data.product_id === PLANS.premium.yearlyProductId) {
-            planType = 'premium';
-          } else if (data.product_id === PLANS.starter.productId || data.product_id === PLANS.starter.yearlyProductId) {
-            planType = 'starter';
-          }
-        }
-        
-        setSubscription({
-          planType,
-          subscriptionEnd: data.subscription_end || null,
-          isLoading: false,
-        });
-      }
-    } catch (err) {
-      console.error('Error checking subscription:', err);
-      setSubscription(prev => ({ ...prev, isLoading: false }));
-    }
-  }, [user]);
-
-  useEffect(() => {
-    checkSubscription();
-  }, [checkSubscription]);
+  const row = query.data;
+  const isTrialing = row?.status === 'trialing' && !!row.trial_ends_at && new Date(row.trial_ends_at) > new Date();
+  const isActive = row?.status === 'active';
+  const planId: PlanId = row?.plan_type && (isActive || isTrialing) ? (row.plan_type as PlanId) : 'free';
 
   return {
-    ...subscription,
-    refresh: checkSubscription,
-    hasSubscription: subscription.planType !== 'none',
-    isStarter: subscription.planType === 'starter',
-    isPremium: subscription.planType === 'premium',
+    planId,
+    // Pas de date de renouvellement Stripe fiable stockée en DB pour un abonnement payé actif
+    // (nécessiterait un vrai appel Stripe, actuellement bloqué — cf ERRORS.md 2026-07-27).
+    subscriptionEnd: null,
+    isTrialing,
+    trialEndsAt: isTrialing ? row!.trial_ends_at : null,
+    hasUsedTrial: row?.has_used_trial ?? false,
+    isLoading: query.isLoading,
+    plan: getPlan(planId),
+    refresh,
+    hasSubscription: planId !== 'free',
+    isStarter: planId === 'starter',
+    isPro: planId === 'pro',
+    isUltime: planId === 'ultime',
   };
 }

@@ -75,9 +75,9 @@ interface FormData {
 export function AgentUsageForm({ agent }: AgentUsageFormProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { hasSubscription, isStarter, isPremium, isLoading: subLoading } = useSubscription();
+  const { hasSubscription, isStarter, isPro, isUltime, isLoading: subLoading } = useSubscription();
   const { hasAgent, addAgent, remainingSlots, isLoading: selectionsLoading } = useAgentSelections();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
   const [result, setResult] = useState<string | null>(null);
@@ -86,10 +86,10 @@ export function AgentUsageForm({ agent }: AgentUsageFormProps) {
   const [addingAgent, setAddingAgent] = useState(false);
 
   const category = agent.category?.toLowerCase() || '';
-  
-  // Determine access
+
+  // Determine access — Premium (isPro) et Ultime ont accès à tous les agents
   const isAgentInSelection = hasAgent(agent.id);
-  const canUse = isPremium || (isStarter && isAgentInSelection);
+  const canUse = isPro || isUltime || (isStarter && isAgentInSelection);
   const canAddToSelection = isStarter && !isAgentInSelection && remainingSlots > 0;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

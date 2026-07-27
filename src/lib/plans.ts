@@ -1,5 +1,7 @@
-// Purama AI — plans, limits & Stripe price IDs (V2 — 2026-04-07)
-// All plans include the Compta module by default.
+// Purama AI — plans, limits & Stripe price IDs (V3 — 2026-07-27, brief "PRICING & OFFRE IRRÉSISTIBLE")
+// 1 SEULE source de vérité pour les plans — consommée par usage.ts (quotas), Pricing.tsx/PricingSection
+// (affichage + checkout), useSubscription.ts (état réel Stripe), stripe-webhook (écriture DB).
+// Jamais d'« illimité » (agents_included=-1 signifie "tous les agents du catalogue", pas illimité).
 
 export type PlanId = 'free' | 'starter' | 'pro' | 'ultime';
 
@@ -24,18 +26,18 @@ export interface Plan {
 export const PLANS: Record<PlanId, Plan> = {
   free: {
     id: 'free',
-    name: 'Free',
-    tagline: 'Découvre Purama sans engagement',
+    name: 'Découverte',
+    tagline: 'Goûte à Purama, sans engagement',
     monthly_price: 0,
     yearly_price_per_month: 0,
     yearly_total: 0,
     agents_included: 1,
     custom_agents_max: 1,
-    monthly_executions: 500,
+    monthly_executions: 100,
     features: [
-      '1 agent IA Purama au choix',
+      '1 employé IA au choix',
       '1 agent custom',
-      '500 exécutions / mois',
+      '100 actions / mois',
       'Module compta inclus',
       'Notifications push & email',
       'Communauté Discord',
@@ -49,78 +51,86 @@ export const PLANS: Record<PlanId, Plan> = {
     id: 'starter',
     name: 'Starter',
     tagline: 'Lance ton automatisation',
-    monthly_price: 29.99,
-    yearly_price_per_month: 20.09,
-    yearly_total: 241.08,
+    monthly_price: 33,
+    yearly_price_per_month: 27.5,
+    yearly_total: 330,
     agents_included: 5,
     custom_agents_max: 5,
-    monthly_executions: 5_000,
+    monthly_executions: 1_500,
     features: [
-      '5 agents IA Purama au choix',
+      '5 employés IA au choix',
       '5 agents custom',
-      '5 000 exécutions / mois',
+      '1 500 actions / mois',
       'Module compta inclus',
       'Notifications prioritaires',
       'Support email < 24h',
-      '14 jours d\'essai gratuit',
+      '14 jours d\'essai Premium gratuit, sans carte',
     ],
-    monthly_price_id: 'price_1TJMWX4Y1unNvKtXJZdCt6hn',
-    yearly_price_id: 'price_1TJMWY4Y1unNvKtX7nGABBzO',
+    monthly_price_id: 'price_1TxuHo4Y1unNvKtXhx3LhtPW',
+    yearly_price_id: 'price_1TxuHo4Y1unNvKtXX4yZ3BlN',
     product_id: 'prod_UHwPcnEEVEDf4K',
   },
 
   pro: {
     id: 'pro',
-    name: 'Pro',
+    name: 'Premium',
     tagline: 'Le choix des entrepreneurs sérieux',
-    monthly_price: 69,
-    yearly_price_per_month: 46.23,
-    yearly_total: 554.76,
+    monthly_price: 99,
+    yearly_price_per_month: 82.5,
+    yearly_total: 990,
     agents_included: -1, // tous
     custom_agents_max: 20,
-    monthly_executions: 50_000,
+    monthly_executions: 6_000,
     features: [
-      'TOUS les agents IA Purama',
+      'TOUS les employés IA',
       '20 agents custom',
-      '50 000 exécutions / mois',
+      '6 000 actions / mois',
       'Module compta complet',
       'Marketplace agents',
       'Support prioritaire',
       'API complète',
-      '14 jours d\'essai gratuit',
+      '14 jours d\'essai gratuit, sans carte',
     ],
     highlight: true,
-    monthly_price_id: 'price_1TJMWZ4Y1unNvKtXba2s1RPh',
-    yearly_price_id: 'price_1TJMWZ4Y1unNvKtXUSL85FyO',
+    monthly_price_id: 'price_1TxuHo4Y1unNvKtXJJRsMOIR',
+    yearly_price_id: 'price_1TxuHp4Y1unNvKtX1x0UT3ri',
     product_id: 'prod_UHwPSU2o4DW6Ej',
   },
 
   ultime: {
     id: 'ultime',
     name: 'Ultime',
-    tagline: 'Zéro limite. Pour tout automatiser.',
-    monthly_price: 99.99,
-    yearly_price_per_month: 66.99,
-    yearly_total: 803.88,
+    tagline: 'Tout, en priorité, sans limite basse.',
+    monthly_price: 199,
+    yearly_price_per_month: 165.83,
+    yearly_total: 1_990,
     agents_included: -1,
     custom_agents_max: 100,
-    monthly_executions: 1_000_000,
+    monthly_executions: 15_000,
     features: [
-      'TOUS les agents IA Purama',
+      'TOUS les employés IA',
       '100 agents custom',
-      '1 000 000 exécutions / mois',
+      '15 000 actions / mois',
       'Module compta complet',
-      'Tous les modules à venir',
+      'Traitement prioritaire (file d\'attente)',
+      'Agent Créateur d\'Agents en illimité',
       'Support VIP prioritaire',
       'API complète + webhooks',
-      'White-label disponible',
-      '14 jours d\'essai gratuit',
+      '14 jours d\'essai gratuit, sans carte',
     ],
-    monthly_price_id: 'price_1TJMWb4Y1unNvKtXCRJZkUSz',
-    yearly_price_id: 'price_1TJMWb4Y1unNvKtX1I1Ib1tp',
+    monthly_price_id: 'price_1TxuHp4Y1unNvKtXU2bagDZs',
+    yearly_price_id: 'price_1TxuHp4Y1unNvKtXcUIp2Qxb',
     product_id: 'prod_UHwPBOGTleT37J',
   },
 };
+
+/** Pack de dépassement — achat ponctuel, +2000 actions ajoutées au quota du mois en cours. */
+export const OVERAGE_PACK = {
+  actions: 2_000,
+  price: 19,
+  price_id: 'price_1TxuIO4Y1unNvKtXRito4dsU',
+  product_id: 'prod_Uxpyoimsz3Nkbj',
+} as const;
 
 export const PLAN_LIST: Plan[] = ['free', 'starter', 'pro', 'ultime'].map(id => PLANS[id as PlanId]);
 

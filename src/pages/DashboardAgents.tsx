@@ -48,7 +48,7 @@ export default function DashboardAgents() {
     removeAgent,
   } = useAgentSelections();
   const { statsByAgent, isLoading: statsLoading } = useAgentStats();
-  const { isPremium, isStarter } = useSubscription();
+  const { isPro, isUltime, isStarter } = useSubscription();
 
   const isLoading = agentsLoading || selectionsLoading || statsLoading;
 
@@ -68,7 +68,7 @@ export default function DashboardAgents() {
     });
   }, [myAgents, statsByAgent, filter, search]);
 
-  const planCap = isPremium ? allAgents.length : isStarter ? maxSelections : 0;
+  const planCap = isPro || isUltime ? allAgents.length : isStarter ? maxSelections : 0;
 
   return (
     <div className="space-y-8">

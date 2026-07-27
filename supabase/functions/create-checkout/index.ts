@@ -48,8 +48,11 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { 
-      apiVersion: "2025-08-27.basil" 
+    // httpClient explicite requis en environnement Deno/edge (cf ERRORS.md 2026-07-27)
+    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+      apiVersion: "2025-08-27.basil",
+      httpClient: Stripe.createFetchHttpClient(),
+      timeout: 10_000,
     });
 
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });

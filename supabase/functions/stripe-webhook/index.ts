@@ -113,20 +113,21 @@ function generateCommissionEmailHtml(data: {
   `;
 }
 
-// Map Stripe product IDs to internal plan types
+// Map Stripe product IDs vers les PlanId réels de src/lib/plans.ts (1 seule source de vérité —
+// ERRORS.md 2026-07-27 : l'ancien mapping pointait vers des produits Stripe différents de ceux
+// utilisés par le checkout réel, et 'premium'/'enterprise' ne correspondaient à AUCUNE clé de PLANS,
+// ce qui faisait silencieusement retomber tout abonné payant sur le quota Découverte/Free).
 const planMapping: Record<string, string> = {
-  'prod_Tq9M8BqZXnWp8A': 'starter',
-  'prod_TqETIWE4cO3JqH': 'starter',
-  'prod_Tq9Q2m69e3A5h4': 'premium',
-  'prod_TqEUl7wUEF8NEO': 'premium',
-  'prod_Tq9R8iVUYzD0UE': 'enterprise',
+  'prod_UHwPcnEEVEDf4K': 'starter',
+  'prod_UHwPSU2o4DW6Ej': 'pro', // "Premium" (nom affiché) = PlanId 'pro'
+  'prod_UHwPBOGTleT37J': 'ultime',
 };
 
-// Plan prices for commission calculation (monthly price in EUR)
+// Plan prices for commission calculation (monthly price in EUR) — cf src/lib/plans.ts PLANS
 const planPrices: Record<string, number> = {
   'starter': 33,
-  'premium': 99,
-  'enterprise': 299,
+  'pro': 99,
+  'ultime': 199,
 };
 
 serve(async (req) => {
@@ -145,7 +146,12 @@ serve(async (req) => {
     });
   }
 
-  const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+  // httpClient explicite requis en environnement Deno/edge (cf ERRORS.md 2026-07-27)
+  const stripe = new Stripe(stripeKey, {
+    apiVersion: "2025-08-27.basil",
+    httpClient: Stripe.createFetchHttpClient(),
+    timeout: 10_000,
+  });
   
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -193,7 +199,7 @@ serve(async (req) => {
         if (session.mode === 'subscription' && session.subscription) {
           const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
           const productId = subscription.items.data[0]?.price.product as string;
-          const planType = planMapping[productId] || 'premium';
+          const planType = planMapping[productId] || 'pro';
           const customerEmail = session.customer_email || session.customer_details?.email;
 
           // Extract influencer info from metadata
@@ -352,7 +358,7 @@ serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
         const productId = subscription.items.data[0]?.price.product as string;
-        const planType = planMapping[productId] || 'premium';
+        const planType = planMapping[productId] || 'pro';
         const status = subscription.status === 'active' ? 'active' : subscription.status;
 
         logStep("Subscription updated", { customerId, productId, planType, status });

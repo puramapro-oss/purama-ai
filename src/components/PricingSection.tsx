@@ -14,23 +14,24 @@ const COLORS = {
 } as const;
 
 const comparisonRows = [
-  { label: 'Agents IA inclus', values: ['1', '5', 'TOUS', 'TOUS'] },
+  { label: 'Employés IA inclus', values: ['1', '5', 'TOUS', 'TOUS'] },
   { label: 'Agents personnalisés', values: ['1', '5', '20', '100'] },
-  { label: 'Exécutions/mois', values: ['500', '5 000', '50 000', '1 000 000'] },
+  { label: 'Actions/mois', values: PLAN_LIST.map((p) => p.monthly_executions.toLocaleString('fr-FR')) },
   { label: 'Module compta', values: ['✅', '✅', '✅', '✅'] },
   { label: 'Notifications push', values: ['✅', '✅', '✅', '✅'] },
   { label: 'Marketplace agents', values: ['—', '—', '✅', '✅'] },
   { label: 'Support prioritaire', values: ['—', '—', '✅', '✅ VIP'] },
   { label: 'API + webhooks', values: ['—', '—', '✅', '✅'] },
-  { label: 'White-label', values: ['—', '—', '—', '✅'] },
+  { label: 'Traitement prioritaire', values: ['—', '—', '—', '✅'] },
 ];
 
 const faqItems = [
-  { q: 'Qu\'est-ce qui est inclus dans Free ?', a: '1 agent IA Purama au choix (Email, Compta, Partenariat, Juridique ou Créateur) + 1 agent custom + 500 exécutions/mois. Le module compta est inclus dans tous les plans, même Free.' },
-  { q: 'C\'est quoi une « exécution » ?', a: 'Chaque action de l\'IA compte pour 1 exécution : un email traité, une transaction catégorisée, un message au chat juridique, un email de prospection envoyé, etc.' },
+  { q: 'Qu\'est-ce qui est inclus dans Découverte ?', a: '1 employé IA au choix (Email, Comptable, Partenariat, Juridique ou Créateur) + 1 agent custom + 100 actions/mois. Le module compta est inclus dans tous les plans, même Découverte.' },
+  { q: 'C\'est quoi une « action » ?', a: 'Chaque tâche réalisée par un employé IA compte pour 1 action : un email traité, une transaction catégorisée, un message au chat juridique, un email de prospection envoyé, etc.' },
+  { q: 'Que se passe-t-il si je dépasse mon quota d\'actions ?', a: 'Tu peux acheter un pack de +2 000 actions pour 19€, valable jusqu\'à la fin du mois en cours — ou passer au plan supérieur.' },
   { q: 'Puis-je changer de plan à tout moment ?', a: 'Oui, depuis ton dashboard. L\'upgrade est immédiat, le downgrade prend effet à la fin de ta période en cours.' },
-  { q: 'Y a-t-il un essai gratuit ?', a: 'Oui ! 14 jours d\'essai gratuit sur tous les plans payants. Tu peux annuler en 1 clic, sans aucun frais.' },
-  { q: 'Le module compta est-il vraiment inclus partout ?', a: 'Oui. Free, Starter, Pro et Ultime ont tous accès au module compta complet : Bridge bancaire, catégorisation IA, déclarations TVA/IS, factures Factur-X.' },
+  { q: 'Y a-t-il un essai gratuit ?', a: 'Oui ! 14 jours d\'essai Premium gratuit, sans carte bancaire requise, sur tous les plans payants. Tu peux annuler en 1 clic, sans aucun frais.' },
+  { q: 'Le module compta est-il vraiment inclus partout ?', a: 'Oui. Découverte, Starter, Premium et Ultime ont tous accès au module compta complet : Bridge bancaire, catégorisation IA, déclarations TVA/IS, factures Factur-X.' },
 ];
 
 export function PricingSection() {
@@ -55,8 +56,11 @@ export function PricingSection() {
             <span className="gradient-text">plan</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            5 agents IA, le module compta intégré, et la possibilité de créer vos propres agents.
-            14 jours gratuits sur tous les plans payants.
+            5 employés IA, le module compta intégré, et la possibilité de créer vos propres agents.
+            14 jours d'essai Premium gratuit, sans carte bancaire.
+          </p>
+          <p className="text-accent-emerald text-sm mt-2 font-medium">
+            🛡️ Tes employés IA te font gagner du temps le 1er mois ou tu es remboursé
           </p>
         </motion.div>
 
@@ -123,7 +127,10 @@ export function PricingSection() {
                       </span>
                       <span className="text-muted-foreground text-sm">/mois</span>
                       <p className="text-accent-emerald text-xs mt-1">
-                        ou {plan.yearly_price_per_month.toFixed(2)}€/mois en annuel <span className="text-muted-foreground">(−33%)</span>
+                        ou {plan.yearly_price_per_month.toFixed(2)}€/mois en annuel{' '}
+                        <span className="text-muted-foreground">
+                          (−{Math.round((1 - plan.yearly_price_per_month / plan.monthly_price) * 100)}%)
+                        </span>
                       </p>
                     </>
                   )}
@@ -190,7 +197,7 @@ export function PricingSection() {
                   <thead>
                     <tr className="border-b border-accent-cyan/20">
                       <th className="text-left py-3 px-4 text-muted-foreground font-medium">Fonctionnalité</th>
-                      {['Free', 'Starter', 'Pro', 'Ultime'].map(h => <th key={h} className="text-center py-3 px-4 text-foreground font-orbitron font-semibold">{h}</th>)}
+                      {PLAN_LIST.map((p) => <th key={p.id} className="text-center py-3 px-4 text-foreground font-orbitron font-semibold">{p.name}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -221,7 +228,7 @@ export function PricingSection() {
         </div>
 
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mt-10 text-muted-foreground text-sm">
-          ✨ Sans engagement · 14 jours gratuits · Résiliable en 1 clic · Compta toujours incluse
+          ✨ Sans engagement · 14 jours sans carte · Résiliable en 1 clic · Compta toujours incluse
         </motion.p>
       </div>
     </section>

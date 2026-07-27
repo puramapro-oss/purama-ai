@@ -29,7 +29,7 @@ export default function MyAgents() {
     remainingSlots,
     maxSelections
   } = useAgentSelections();
-  const { isStarter, isPremium, isLoading: subLoading } = useSubscription();
+  const { isStarter, isPro, isUltime, isLoading: subLoading } = useSubscription();
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -57,13 +57,13 @@ export default function MyAgents() {
     setActionLoading(null);
   };
 
-  // If user is Premium, redirect to dashboard
-  if (!subLoading && isPremium) {
+  // If user is Premium/Ultime, redirect to dashboard
+  if (!subLoading && (isPro || isUltime)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Crown className="w-16 h-16 text-amber-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Vous êtes Premium</h1>
+          <h1 className="text-2xl font-bold mb-2">Vous êtes {isUltime ? 'Ultime' : 'Premium'}</h1>
           <p className="text-muted-foreground mb-6">
             Vous avez accès à tous les agents !
           </p>
@@ -76,7 +76,7 @@ export default function MyAgents() {
   }
 
   // If user has no subscription
-  if (!subLoading && !isStarter && !isPremium) {
+  if (!subLoading && !isStarter && !isPro && !isUltime) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md">

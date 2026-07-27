@@ -43,3 +43,4 @@ progress.md
 playwright-report
 playwright-report-*
 test-results
+deno.lock

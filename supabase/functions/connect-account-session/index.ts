@@ -54,7 +54,12 @@ serve(async (req: Request): Promise<Response> => {
       ? body.components.filter((c: string): c is Component => (ALLOWED_COMPONENTS as readonly string[]).includes(c))
       : (ALLOWED_COMPONENTS as readonly Component[]).slice();
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, { apiVersion: '2025-09-30.clover' });
+    // httpClient explicite requis en environnement Deno/edge (cf ERRORS.md 2026-07-27)
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
+      apiVersion: '2025-09-30.clover',
+      httpClient: Stripe.createFetchHttpClient(),
+      timeout: 10_000,
+    });
 
     // 1. Récupère ou crée le compte Connect Express
     const { data: existing } = await supabaseAdmin
