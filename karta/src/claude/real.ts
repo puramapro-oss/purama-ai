@@ -9,6 +9,18 @@ import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
  * (cf AUDIT-AGENTS.md, "Your credit balance is too low"). À valider en conditions réelles
  * avant le vrai lancement (règle permanente 2026-07-26 : ne bloque pas le dev, mais bloque le launch).
  */
+/**
+ * Routage Haiku/Sonnet selon complexité (brief §PRICING "maximiser la marge") : un cycle avec peu
+ * d'outils et peu de contexte est une décision simple (ex: choisir d'envoyer 1 relance générée à
+ * partir de 2-3 champs) — Haiku suffit. Dès que le nombre d'outils ou le volume de contexte grandit,
+ * la décision devient plus fine (arbitrages entre plusieurs actions possibles) — Sonnet reste utilisé.
+ */
+export function selectModel(input: ClaudeDecideInput): string {
+  const contextSize = JSON.stringify(input.context).length;
+  const isSimple = input.tools.length <= 2 && contextSize < 2000 && input.systemPrompt.length < 1500;
+  return isSimple ? config.anthropicModelFast : config.anthropicModelMain;
+}
+
 export function createRealClaudeClient(): ClaudeClient {
   const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
@@ -16,7 +28,7 @@ export function createRealClaudeClient(): ClaudeClient {
     isMock: false,
     async decide(input: ClaudeDecideInput): Promise<AgentDecision> {
       const response = await client.messages.create({
-        model: config.anthropicModelMain,
+        model: selectModel(input),
         max_tokens: 1024,
         system: input.systemPrompt,
         messages: [
