@@ -46,7 +46,7 @@ export default function CGV() {
         <p>Conformément aux articles L217-3 et suivants du Code de la consommation, le consommateur bénéficie de la garantie légale de conformité pour les contenus et services numériques.</p>
 
         <h2>9. Médiation</h2>
-        <p>En cas de litige, vous pouvez recourir gratuitement au service de médiation de la consommation. Le médiateur compétent est : <strong>[À COMPLÉTER - Nom et coordonnées du médiateur]</strong>. Vous pouvez également déposer votre réclamation sur la plateforme européenne de résolution des litiges en ligne : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" className="text-primary">https://ec.europa.eu/consumers/odr</a></p>
+        <p>En cas de litige, vous pouvez recourir gratuitement au service de médiation de la consommation. Le médiateur compétent est : <strong>[À COMPLÉTER - Nom et coordonnées du médiateur]</strong>.</p>
 
         <h2>10. Loi applicable et juridiction</h2>
         <p>Les présentes CGV sont soumises au droit français. Tout litige sera soumis aux tribunaux compétents du ressort de <strong>[À COMPLÉTER - Ville du tribunal]</strong>.</p>
