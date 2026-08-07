@@ -78,7 +78,7 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
  * uniquement au moment de l'agrégation dans un agent que le typage est effacé — la validation
  * réelle des params se fait dans engine/loop.ts au moment de l'exécution.
  */
-export type AnyToolDefinition = ToolDefinition<any, any>;
+export type AnyToolDefinition = ToolDefinition<unknown, unknown>;
 
 export interface ToolExecutionContext {
   userId: string;
