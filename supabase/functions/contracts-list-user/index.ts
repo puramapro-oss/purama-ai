@@ -2,7 +2,7 @@
 // Returns contracts for the authenticated user (own) or for target user_id if admin.
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import { CORS_HEADERS, corsResponse, errorResponse } from "../_shared/docuseal.ts";
 
 serve(async (req) => {

@@ -3,7 +3,7 @@
 // Otherwise return pending=true.
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import OpenTimestamps from "npm:opentimestamps@0.4.9";
 import { CORS_HEADERS, corsResponse, errorResponse, docusealFetch, DOCUSEAL_URL, DOCUSEAL_TOKEN } from "../_shared/docuseal.ts";
 

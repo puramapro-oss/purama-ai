@@ -3,7 +3,7 @@
 // Auth: user (own contracts) or admin.
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import { CORS_HEADERS, corsResponse, errorResponse, docusealFetch } from "../_shared/docuseal.ts";
 
 serve(async (req) => {
