@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -8,7 +7,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Copy, RefreshCw, Sun, Moon, Monitor, Globe } from 'lucide-react';
+import { Sun, Moon, Monitor, Globe } from 'lucide-react';
 import { VoiceSettingsCard } from '@/components/voice/VoiceSettingsCard';
 import { LANGUAGES, loadLanguage } from '@/i18n';
 
@@ -17,8 +16,6 @@ export default function DashboardSettings() {
   const { data: profile } = useProfile();
   const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
-  const [showApiKey, setShowApiKey] = useState(false);
-  const apiKey = 'pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
   return (
     <div className="space-y-8 max-w-2xl">
@@ -114,25 +111,6 @@ export default function DashboardSettings() {
               <Switch defaultChecked />
             </div>
           ))}
-        </CardContent>
-      </Card>
-
-      {/* API Keys */}
-      <Card className="bg-card border-border">
-        <CardContent className="p-6 space-y-4">
-          <h3 className="font-orbitron font-semibold text-foreground">Clé API <span className="text-xs text-muted-foreground font-normal ml-2">(Business uniquement)</span></h3>
-          <div className="flex items-center gap-2">
-            <Input value={showApiKey ? apiKey : '••••••••••••••••••••••••••••••••'} readOnly className="bg-secondary/30 border-border font-mono text-sm" />
-            <Button variant="ghost" size="icon" onClick={() => setShowApiKey(!showApiKey)}>
-              {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => { navigator.clipboard.writeText(apiKey); toast.success('Clé copiée'); }}>
-              <Copy className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => toast.info('Clé régénérée')}>
-              <RefreshCw className="w-4 h-4" />
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
