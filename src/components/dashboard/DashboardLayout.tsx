@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Home, Brain, BarChart3, CreditCard, Settings,
   Menu, LogOut, Bot, ChevronLeft, ArrowLeft, Shield, Globe2, Mail, Calculator, Handshake, Scale, Sparkles,
-  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen, Wind, Heart, Users
+  Wallet, Star, Gift, Ticket, HelpCircle, BookOpen, Wind, Heart, Users, UsersRound
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -33,6 +33,7 @@ const navItems = [
   { tKey: 'nav.lottery', icon: Ticket, to: '/dashboard/tirage' },
   { tKey: 'nav.breathe', icon: Wind, to: '/dashboard/breathe' },
   { tKey: 'nav.gratitude', icon: Heart, to: '/dashboard/gratitude' },
+  { tKey: 'nav.entraide', icon: UsersRound, to: '/dashboard/entraide' },
   { tKey: 'nav.help', icon: HelpCircle, to: '/dashboard/aide' },
   { tKey: 'nav.guide', icon: BookOpen, to: '/dashboard/guide' },
   { tKey: 'nav.settings', icon: Settings, to: '/dashboard/settings' },

@@ -92,6 +92,7 @@ const Gratitude = lazy(() => import('@/pages/Gratitude'));
 const Financer = lazy(() => import('@/pages/Financer'));
 const Reglement = lazy(() => import('@/pages/Reglement'));
 const Fiscal = lazy(() => import('@/pages/Fiscal'));
+const Entraide = lazy(() => import('@/pages/Entraide'));
 
 function PageFallback() {
   return (
@@ -202,6 +203,7 @@ export default function App() {
             <Route path="/dashboard/tirage" element={<DashboardRoute><Tirage /></DashboardRoute>} />
             <Route path="/dashboard/aide" element={<DashboardRoute><Aide /></DashboardRoute>} />
             <Route path="/dashboard/guide" element={<DashboardRoute><Guide /></DashboardRoute>} />
+            <Route path="/dashboard/entraide" element={<DashboardRoute><Entraide /></DashboardRoute>} />
             <Route path="/dashboard/breathe" element={<DashboardRoute><Breathe /></DashboardRoute>} />
             <Route path="/dashboard/gratitude" element={<DashboardRoute><Gratitude /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />

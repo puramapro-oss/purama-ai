@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@purama/entraide": path.resolve(__dirname, "../packages/purama-entraide/src/index.ts"),
     },
   },
   build: {
