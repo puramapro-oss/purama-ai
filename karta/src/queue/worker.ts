@@ -1,4 +1,4 @@
-import { Worker, type Job } from "bullmq";
+import { Worker, UnrecoverableError, type Job } from "bullmq";
 import { redisConnection } from "./redis.js";
 import { runAgentCycle } from "../engine/loop.js";
 import { resolveAgentDefinition } from "../engine/resolveDefinition.js";
@@ -9,9 +9,9 @@ export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
     "karta-agent-cycle",
     async (job: Job<AgentCycleJobData>) => {
       const definition = await resolveAgentDefinition(job.data.agentType);
-      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger);
+      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger, `queue:${job.id}:${job.timestamp}`);
       if (result.status === "error") {
-        // BullMQ retry (attempts:3, cf queues.ts) — utile si l'erreur est transitoire (réseau, DB).
+        if (result.retryable !== true) throw new UnrecoverableError(result.errorMessage ?? "Résultat à vérifier avant reprise");
         throw new Error(result.errorMessage ?? "échec inconnu du cycle agent");
       }
       return result;

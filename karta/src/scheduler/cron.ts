@@ -1,4 +1,4 @@
-import cron from "node-cron";
+import cron, { type ScheduledTask } from "node-cron";
 import { config } from "../config.js";
 import { listActiveUserIds } from "../agents/index.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
@@ -32,7 +32,7 @@ const ACTION_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: s
 
 const SCHEDULES = [...CORE_SCHEDULES, ...ACTION_SCHEDULES];
 
-export function startSchedulers(): cron.ScheduledTask[] {
+export function startSchedulers(): ScheduledTask[] {
   const tasks = SCHEDULES.map(({ agentType, cronExpr, label }) =>
     cron.schedule(cronExpr, () => void runScheduledCycle(agentType, label))
   );

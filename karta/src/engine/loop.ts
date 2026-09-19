@@ -4,186 +4,130 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
+import { assertToolResult } from "./tool-result.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
-/**
- * Boucle cœur KARTA : déclencheur → contexte → décision (Claude, mock ou réel) → outils → log → notif.
- * Un seul point d'entrée pour les 4 agents cœur — chaque agent ne fournit que sa définition
- * (buildContext, systemPrompt, tools), la boucle gère l'autonomie, le kill switch, le mode
- * simulation et la journalisation immuable de façon identique pour tous.
- */
 export async function runAgentCycle(
-  userId: string,
-  definition: AgentDefinition,
-  trigger: AgentTrigger
+  userId: string, definition: AgentDefinition, trigger: AgentTrigger, executionKey?: string
 ): Promise<AgentRunResult> {
-  if (await isGlobalKillSwitchActive()) {
-    return {
-      status: "success",
-      decision: "Cycle ignoré : kill switch global actif",
-      toolsUsed: [],
-      resultSummary: "kill switch global actif",
-      mock: false,
-    };
+  if (await isGlobalKillSwitchActive(true)) {
+    return { status: "skipped", decision: "Cycle ignoré : arrêt global actif", toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
   }
-
   const state = await loadAgentState(userId, definition.type);
-
   const runnable = isRunnable(state);
   if (!runnable.ok) {
     await recordRunOutcome(userId, definition.type, "skipped");
-    return {
-      status: "success",
-      decision: `Cycle ignoré : ${runnable.reason}`,
-      toolsUsed: [],
-      resultSummary: runnable.reason,
-      mock: false,
-    };
+    return { status: "skipped", decision: runnable.reason, toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
   }
-
-  const mode: "simulation" | "live" = state.simulationMode ? "simulation" : "live";
-  const run = await startRun(userId, definition.type, trigger, mode);
-  const claude = getClaudeClient();
+  const mode = state.simulationMode ? "simulation" : "live";
+  const run = await startRun(userId, definition.type, trigger, mode, executionKey);
+  if (run.existingResult) return run.existingResult;
+  const toolsUsed: ToolCallRecord[] = [];
+  let decisionText = "";
+  let mock = false;
+  let effectStarted = false;
 
   try {
     const context = await definition.buildContext(userId, trigger);
-
-    const decision = await claude.decide({
-      systemPrompt: definition.systemPrompt,
-      context,
-      tools: definition.tools,
-      agentType: definition.type,
+    const decision = await getClaudeClient().decide({
+      systemPrompt: definition.systemPrompt, context, tools: definition.tools, agentType: definition.type,
     });
+    decisionText = decision.summary;
+    mock = decision.mock;
+    const simulation = mode === "simulation" || mock;
+    let cancelled = false;
+    let failed = false;
 
-    const toolsUsed: ToolCallRecord[] = [];
-    let awaitingApproval = false;
-
-    for (const call of decision.toolCalls) {
-      const tool = definition.tools.find((t) => t.name === call.tool);
+    for (let index = 0; index < decision.toolCalls.length; index++) {
+      const call = decision.toolCalls[index];
+      const skipRemaining = (reason: string) => {
+        for (const skipped of decision.toolCalls.slice(index)) toolsUsed.push({
+          tool: skipped.tool, paramsSummary: JSON.stringify(skipped.params), resultSummary: reason, success: false, outcome: "skipped",
+        });
+      };
+      const latest = await loadAgentState(userId, definition.type);
+      if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || (mode === "live" && latest.simulationMode)) {
+        cancelled = true;
+        skipRemaining("Action annulée : arrêt ou autorisation modifiée");
+        break;
+      }
+      const tool = definition.tools.find(t => t.name === call.tool);
       if (!tool) {
+        toolsUsed.push({ tool: call.tool, paramsSummary: JSON.stringify(call.params), resultSummary: "Outil inconnu", success: false, outcome: "failed" });
+        failed = true;
+        for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push({
+          tool: skipped.tool, paramsSummary: JSON.stringify(skipped.params), resultSummary: "Non exécutée après un échec", success: false, outcome: "skipped",
+        });
+        break;
+      }
+      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+      if (simulation || needsApproval) {
+        const pendingActionId = !simulation ? await createPendingAction({
+          userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
+        }) : undefined;
         toolsUsed.push({
-          tool: call.tool,
-          paramsSummary: JSON.stringify(call.params),
-          resultSummary: "outil inconnu — ignoré",
-          success: false,
+          tool: tool.name, paramsSummary: JSON.stringify(call.params),
+          resultSummary: simulation ? "Simulée : aucune action réelle" : "En attente de validation humaine",
+          success: false, outcome: simulation ? "simulated" : "pending", pendingActionId,
         });
         continue;
       }
-
-      const needsApproval = decision.requiresApproval || requiresHumanApproval(state, tool.sensitive);
-
-      if (needsApproval || mode === "simulation") {
-        let pendingActionId: string | undefined;
-        // Un dry-run de simulation n'a rien à approuver plus tard (rien ne serait jamais exécuté) ;
-        // en mode live, on journalise l'action pour pouvoir réellement l'exécuter après validation
-        // humaine (cf engine/approval.ts) — sans cette ligne, l'action reste bloquée pour toujours.
-        if (needsApproval && mode === "live") {
-          pendingActionId = await createPendingAction({
-            userId,
-            runId: run.runId,
-            agentType: definition.type,
-            toolName: tool.name,
-            toolParams: call.params,
-          });
-        }
-        toolsUsed.push({
-          tool: tool.name,
-          paramsSummary: JSON.stringify(call.params),
-          resultSummary: mode === "simulation" ? "simulé — aucune action réelle (dry-run)" : "en attente de validation humaine",
-          success: true,
-          pendingActionId,
-        });
-        awaitingApproval = awaitingApproval || (needsApproval && mode === "live");
-        continue;
-      }
-
       try {
-        const result = await tool.execute(call.params, { userId, agentType: definition.type, mode });
-        toolsUsed.push({
-          tool: tool.name,
-          paramsSummary: JSON.stringify(call.params),
-          resultSummary: summarize(result),
-          success: true,
+        effectStarted = true;
+        const result = await tool.execute(call.params, {
+          userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
         });
-      } catch (toolError) {
-        toolsUsed.push({
-          tool: tool.name,
-          paramsSummary: JSON.stringify(call.params),
-          resultSummary: toolError instanceof Error ? toolError.message : String(toolError),
-          success: false,
+        assertToolResult(result);
+        toolsUsed.push({ tool: tool.name, paramsSummary: JSON.stringify(call.params), resultSummary: summarize(result), success: true, outcome: "executed" });
+      } catch (error) {
+        toolsUsed.push({ tool: tool.name, paramsSummary: JSON.stringify(call.params), resultSummary: error instanceof Error ? error.message : "Échec de l'outil", success: false, outcome: "failed" });
+        failed = true;
+        for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push({
+          tool: skipped.tool, paramsSummary: JSON.stringify(skipped.params), resultSummary: "Non exécutée après un échec", success: false, outcome: "skipped",
         });
+        break;
       }
     }
-
-    const status = awaitingApproval ? "awaiting_approval" : "success";
-    const resultSummary = summarizeToolsUsed(toolsUsed, mode);
-
-    await run.finish({
-      status,
-      decision: decision.summary,
-      toolsUsed,
-      resultSummary,
-      mock: decision.mock,
-    });
-
-    if (awaitingApproval) {
-      // Un échec d'envoi (push/email down) ne doit jamais faire échouer le cycle : l'action de
-      // l'agent est déjà journalisée en attente d'approbation, c'est ce qui compte.
+    const pending = toolsUsed.some(t => t.outcome === "pending");
+    const status: AgentRunResult["status"] = failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
+    const outcome: AgentRunResult = {
+      status, decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed), mock,
+      retryable: false,
+      ...(failed ? { errorMessage: "Un outil a échoué ; vérifier les effets avant toute reprise" } : {}),
+    };
+    await run.finish(outcome);
+    if (pending) {
       try {
         await notify({
-          userId,
-          agentType: definition.type,
-          title: `${definition.type} : action en attente de validation`,
-          body: decision.summary,
-          actionType: "review",
-          actionUrl: "/dashboard/employees",
-          priority: "normal",
-          // Décision humaine requise : seul cas où on sort du silence (push + email), cf brief §UX/Simplicité.
+          userId, agentType: definition.type, title: `${definition.type} : action en attente de validation`,
+          body: decisionText, actionType: "review", actionUrl: "/dashboard/employees", priority: "normal",
           channels: ["in_app", "push", "email"],
         });
-      } catch (notifyError) {
-        console.error(`[loop] notify(${definition.type}) a échoué :`, notifyError);
-      }
+      } catch { console.error("[loop] notification indisponible ; action conservée en attente"); }
     }
-
-    await recordRunOutcome(userId, definition.type, "success");
-
-    return { status, decision: decision.summary, toolsUsed, resultSummary, mock: decision.mock };
+    await recordRunOutcome(userId, definition.type, status);
+    return outcome;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    await run.finish({
-      status: "error",
-      decision: "",
-      toolsUsed: [],
-      resultSummary: "erreur avant complétion du cycle",
-      errorMessage,
-      mock: false,
-    });
-    await recordRunOutcome(userId, definition.type, "error");
-
-    return {
-      status: "error",
-      decision: "",
-      toolsUsed: [],
-      resultSummary: "erreur avant complétion du cycle",
-      errorMessage,
-      mock: false,
+    const outcome: AgentRunResult = {
+      status: "error", decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed),
+      errorMessage: error instanceof Error ? error.message : "Erreur du cycle", mock,
+      // A durable execution key is already claimed. No automatic replay of it,
+      // even when logging fails after a completed external action.
+      retryable: !effectStarted && !executionKey && toolsUsed.length === 0,
     };
+    await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
+    await recordRunOutcome(userId, definition.type, "error").catch(() => undefined);
+    return outcome;
   }
 }
 
 function summarize(result: unknown): string {
   if (result === undefined || result === null) return "ok";
   if (typeof result === "string") return result.slice(0, 200);
-  try {
-    return JSON.stringify(result).slice(0, 200);
-  } catch {
-    return "ok";
-  }
+  try { return JSON.stringify(result).slice(0, 200); } catch { return "Résultat non sérialisable"; }
 }
 
-function summarizeToolsUsed(tools: ToolCallRecord[], mode: "simulation" | "live"): string {
-  if (tools.length === 0) return "aucune action";
-  const done = tools.filter((t) => t.success).length;
-  return `${done}/${tools.length} action(s) ${mode === "simulation" ? "simulée(s)" : "exécutée(s)"}`;
+function summarizeToolsUsed(tools: ToolCallRecord[]): string {
+  const count = (outcome: ToolCallRecord["outcome"]) => tools.filter(t => t.outcome === outcome).length;
+  return `${count("executed")}/${tools.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)`;
 }

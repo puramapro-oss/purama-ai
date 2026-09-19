@@ -113,6 +113,7 @@ serve(async (req) => {
     console.log(`Chat request from user ${userId} with ${messages.length} messages`);
 
     const response = await streamAnthropicChat({
+      signal: req.signal,
       apiKey: ANTHROPIC_API_KEY,
       model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
       systemPrompt: `Tu es l'assistant IA de Purama AI, une entreprise qui vend 45 agents IA spécialisés pour automatiser les entreprises.

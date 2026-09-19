@@ -1,5 +1,5 @@
 import { supabase } from "../db/supabase.js";
-import type { AgentState, AgentType } from "./types.js";
+import type { AgentState, AgentType, AgentRunResult } from "./types.js";
 
 /** Charge l'état d'autonomie d'un agent pour un user. Crée une ligne par défaut (niveau 1, simulation) si absente. */
 export async function loadAgentState(userId: string, agentType: AgentType): Promise<AgentState> {
@@ -48,7 +48,7 @@ export async function loadAgentState(userId: string, agentType: AgentType): Prom
 export async function recordRunOutcome(
   userId: string,
   agentType: AgentType,
-  status: "success" | "error" | "skipped"
+  status: AgentRunResult["status"]
 ): Promise<void> {
   const { error } = await supabase
     .from("karta_agent_state")

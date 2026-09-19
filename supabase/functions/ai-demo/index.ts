@@ -77,6 +77,7 @@ serve(async (req) => {
 
     // Tâche simple à contexte court → modèle rapide (cf routage Haiku/Sonnet, ERRORS.md 2026-07-27).
     const response = await streamAnthropicChat({
+      signal: req.signal,
       apiKey: ANTHROPIC_API_KEY,
       model: Deno.env.get("ANTHROPIC_MODEL_FAST") ?? "claude-haiku-4-5-20251001",
       systemPrompt: SYSTEM_PROMPT,
