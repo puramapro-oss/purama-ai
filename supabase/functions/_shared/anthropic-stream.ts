@@ -2,6 +2,8 @@
  * Convert Anthropic SSE to the existing OpenAI-compatible text stream.
  * Only message_stop is a successful completion; HTTP 200 may still contain errors.
  */
+import { createSSEDataParser } from './sse-data.ts';
+
 export async function streamAnthropicChat(params: {
   apiKey: string; model: string; systemPrompt: string;
   messages: Array<{ role: string; content: string }>;
@@ -39,21 +41,14 @@ export async function streamAnthropicChat(params: {
   abort.signal.addEventListener("abort", onAbort, { once: true });
   async function* convert(): AsyncGenerator<Uint8Array> {
     const decoder = new TextDecoder("utf-8", { fatal: true });
-    let buffer = "";
+    const push = createSSEDataParser();
     try {
       while (true) {
         abort.signal.throwIfAborted();
         const part = await reader.read();
         abort.signal.throwIfAborted();
         if (part.done) throw new Error("AI stream interrupted before message_stop");
-        buffer += decoder.decode(part.value, { stream: true });
-        let separator: RegExpExecArray | null;
-        while ((separator = /\r\n\r\n|\n\n|\r\r/.exec(buffer))) {
-          if (separator.index > 262_144) throw new Error("AI stream event too large");
-          const frame = buffer.slice(0, separator.index);
-          buffer = buffer.slice(separator.index + separator[0].length);
-          const data = frame.split(/\r\n|\r|\n/).filter(line => line.startsWith("data:"))
-            .map(line => line.slice(5).replace(/^ /, "")).join("\n");
+        for (const data of push(decoder.decode(part.value, { stream: true }))) {
           if (!data) continue;
           const event = JSON.parse(data);
           if (!event || typeof event !== "object" || typeof event.type !== "string") throw new Error("Invalid AI stream event");
@@ -69,7 +64,6 @@ export async function streamAnthropicChat(params: {
             if (event.delta.text) yield encoder.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: event.delta.text } }] })}\n\n`);
           }
         }
-        if (buffer.length > 262_144) throw new Error("AI stream event too large");
       }
     } finally {
       cleanup();

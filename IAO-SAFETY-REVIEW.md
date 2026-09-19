@@ -22,7 +22,8 @@ Ces changements sont préparés pour revue. Aucune fusion, migration de producti
 
 | Contrôle | Résultat |
 | --- | --- |
-| KARTA, SQL et streaming : Vitest | 107 tests réussis |
+| KARTA, SQL et streaming : Vitest | 121 tests réussis, dont 4 propriétés génératives |
+| Campagne étendue sur les flux | 80 000 cas générés, 4 propriétés × 20 000, 0 échec / 0 abandon |
 | TypeScript KARTA | Réussi |
 | Compilation KARTA | Réussie |
 | Vérification TypeScript isolée des deux parseurs de flux | Réussie |
@@ -64,3 +65,15 @@ Une clé de livraison ne déduplique pas deux demandes métier distinctes. La r�
 - [PostgreSQL — INSERT et gestion des conflits](https://www.postgresql.org/docs/current/sql-insert.html)
 - [Vite — migration de la version 5 vers 6](https://v6.vite.dev/guide/migration)
 - [OWASP — sécurité des agents IA](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html)
+
+## Complément : campagne générative et comparaison des modèles
+
+La campagne du 19 septembre a reproduit un défaut de découpage SSE dans les deux parseurs : `\n\r` est une séparation valide de deux lignes, mais le parseur la laissait en attente puis annonçait une interruption. Le même problème concernait d'autres combinaisons de CR/LF. Les deux consommateurs partagent maintenant `supabase/functions/_shared/sse-data.ts`, un décodeur de champs `data` qui conserve l'état CRLF entre les fragments et borne chaque événement. Les délais, annulations et confirmations de fin restent contrôlés par les consommateurs.
+
+Les tests génèrent du texte Unicode, des fragments d'octets, des commentaires et des séparateurs, et vérifient la restitution exacte, la propagation des erreurs et le refus d'une réponse non confirmée. Ils ne sont pas des appels à un modèle ni des sessions de navigateur réel. Ils ne mesurent pas la latence de production.
+
+Preuves : `karta/test/evidence/generative-before-20260919.json`, `generative-after-20260919.json` et `validation-20260919.json`. Les graines, nombres de cas exécutés, contre-exemples réduits et empreintes des sources permettent de contrôler ce qui a réellement tourné. La correction de types des nouveaux tests a été suivie d'une répétition de la même campagne ; cette répétition n'est pas additionnée pour gonfler les 80 000 cas annoncés.
+
+La vérification TypeScript KARTA, sa compilation, le contrôle isolé des trois fichiers SSE et le build Vite passent. L'ajout de `fast-check@4.10.2` ne produit aucun signalement npm audit dans KARTA. Le contrôle d'impact classe le parseur navigateur et le convertisseur fournisseur en risque faible ; les nouveaux tests ne sont pas résolus dans le graphe et ont été inspectés directement.
+
+Voir `IAO-EVALUATION-PROTOCOL.md` pour la campagne combinée de 200 000 cas avec SMARANA, les références officielles Astra/Fable et les évaluations qui restent non exécutées. Aucun résultat ici ne clôt les points ouverts ci-dessus.

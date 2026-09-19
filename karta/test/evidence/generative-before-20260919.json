@@ -1,0 +1,85 @@
+{
+  "suite": "iao-stream-contracts",
+  "kind": "generated software inputs, not model benchmarks",
+  "at": "2026-09-19T20:58:33.711Z",
+  "node": "v24.19.0",
+  "fastCheck": "4.10.2",
+  "expectedProperties": 4,
+  "runsPerProperty": 50,
+  "sourceHashes": {
+    "../src/lib/sse.ts": "2a3122b74cab898e765630e7a5d71661f74de0e4d4fe15a7b476f25ea17ce800",
+    "../supabase/functions/_shared/anthropic-stream.ts": "b78263c28c1ab36ab0d00b6d14d808637a31a579814a471ef004deb3277caaf2",
+    "test/generative.test.ts": "ff62fb5a7c060fcfa2931bac213e4c7c25f6b7cc95da6b38ee6f2273dc27066c",
+    "package-lock.json": "2731a6d81e43985f80b4db123ce7a8d58de7ab95d61e8f745b0d3f039366c1ba"
+  },
+  "results": [
+    {
+      "name": "browser preserves Unicode through arbitrary valid SSE delimiters and byte chunks",
+      "seed": 20260929,
+      "numRuns": 1,
+      "numSkips": 0,
+      "failed": true,
+      "numShrinks": 4,
+      "counterexample": [
+        {
+          "parts": [
+            ""
+          ],
+          "boundary": "\n\r",
+          "chunk": 1,
+          "space": false,
+          "comment": false
+        }
+      ],
+      "counterexamplePath": "0:0:0:1:1",
+      "error": "Réponse interrompue avant confirmation de fin",
+      "durationMs": 11
+    },
+    {
+      "name": "provider to browser chain preserves content and confirmed completion",
+      "seed": 20260930,
+      "numRuns": 1,
+      "numSkips": 0,
+      "failed": true,
+      "numShrinks": 6,
+      "counterexample": [
+        {
+          "parts": [
+            ""
+          ],
+          "boundary": "\n\r",
+          "chunk": 1,
+          "space": false,
+          "comment": false
+        }
+      ],
+      "counterexamplePath": "0:0:0:1:1:1:1",
+      "error": "AI stream interrupted before message_stop",
+      "durationMs": 9
+    },
+    {
+      "name": "unconfirmed browser responses always reject, including done-shaped text",
+      "seed": 20260931,
+      "numRuns": 50,
+      "numSkips": 0,
+      "failed": false,
+      "numShrinks": 0,
+      "counterexample": null,
+      "counterexamplePath": null,
+      "error": null,
+      "durationMs": 12
+    },
+    {
+      "name": "provider errors propagate without a false completion",
+      "seed": 20260932,
+      "numRuns": 50,
+      "numSkips": 0,
+      "failed": false,
+      "numShrinks": 0,
+      "counterexample": null,
+      "counterexamplePath": null,
+      "error": null,
+      "durationMs": 15
+    }
+  ]
+}

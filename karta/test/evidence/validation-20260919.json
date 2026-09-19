@@ -1,0 +1,29 @@
+{
+  "baseCommit": "2634e7d4e9315b9f143f3d1ba179c5616b4e09f8",
+  "testSuite": {
+    "numTotalTests": 121,
+    "numPassedTests": 121,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "audit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "limitations": [
+    "local engine tests; external model/provider calls mocked",
+    "SQL uses single-backend PGlite; native multi-session PostgreSQL not certified",
+    "no official model benchmark, production, browser or real-device validation"
+  ],
+  "commands": [
+    "npm test",
+    "npm run typecheck",
+    "IAO_PROPERTY_RUNS=20000 IAO_PROPERTY_REPORT=<output.json> npm test -- test/generative.test.ts",
+    "npm audit --json"
+  ]
+}

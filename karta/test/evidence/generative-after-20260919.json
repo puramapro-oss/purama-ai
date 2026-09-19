@@ -1,0 +1,66 @@
+{
+  "suite": "iao-stream-contracts",
+  "kind": "generated software inputs, not model benchmarks",
+  "at": "2026-09-19T21:01:13.871Z",
+  "node": "v24.19.0",
+  "fastCheck": "4.10.2",
+  "expectedProperties": 4,
+  "runsPerProperty": 20000,
+  "sourceHashes": {
+    "../src/lib/sse.ts": "2b76e564ec896975eb0027afc4c2dfeb9c4cd45a222aa4ee383b2c49b6491bca",
+    "../supabase/functions/_shared/anthropic-stream.ts": "d402b559a4f6214479264ae5259b7dab106023a5c6942fd4e9262756afc04155",
+    "../supabase/functions/_shared/sse-data.ts": "18ac71668456447f4734343a621e27660b8cc45ba51a7652d1c01cff229d3ce7",
+    "test/generative.test.ts": "42708d2bc3282915cc9fc4ca47d4048794096fdf3101d058f6020c6a7501f8df",
+    "package-lock.json": "2731a6d81e43985f80b4db123ce7a8d58de7ab95d61e8f745b0d3f039366c1ba"
+  },
+  "results": [
+    {
+      "name": "browser preserves Unicode through arbitrary valid SSE delimiters and byte chunks",
+      "seed": 20260929,
+      "numRuns": 20000,
+      "numSkips": 0,
+      "failed": false,
+      "numShrinks": 0,
+      "counterexample": null,
+      "counterexamplePath": null,
+      "error": null,
+      "durationMs": 865
+    },
+    {
+      "name": "provider to browser chain preserves content and confirmed completion",
+      "seed": 20260930,
+      "numRuns": 20000,
+      "numSkips": 0,
+      "failed": false,
+      "numShrinks": 0,
+      "counterexample": null,
+      "counterexamplePath": null,
+      "error": null,
+      "durationMs": 2068
+    },
+    {
+      "name": "unconfirmed browser responses always reject, including done-shaped text",
+      "seed": 20260931,
+      "numRuns": 20000,
+      "numSkips": 0,
+      "failed": false,
+      "numShrinks": 0,
+      "counterexample": null,
+      "counterexamplePath": null,
+      "error": null,
+      "durationMs": 1091
+    },
+    {
+      "name": "provider errors propagate without a false completion",
+      "seed": 20260932,
+      "numRuns": 20000,
+      "numSkips": 0,
+      "failed": false,
+      "numShrinks": 0,
+      "counterexample": null,
+      "counterexamplePath": null,
+      "error": null,
+      "durationMs": 2000
+    }
+  ]
+}
