@@ -68,15 +68,15 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
   name: string;
   description: string;
   sensitive: boolean;
-  execute: (params: Params, ctx: ToolExecutionContext) => Promise<Result>;
+  execute(params: Params, ctx: ToolExecutionContext): Promise<Result>;
 }
 
 /**
  * Vue "effacée" d'un ToolDefinition, utilisée partout où des outils à Params hétérogènes
  * doivent cohabiter dans un même tableau (AgentDefinition.tools, ClaudeDecideInput.tools).
  * Chaque tool concret garde son typage précis à la définition (ex: gmailSendTool) ; c'est
- * uniquement au moment de l'agrégation dans un agent que le typage est effacé — la validation
- * réelle des params se fait dans engine/loop.ts au moment de l'exécution.
+ * uniquement au moment de l'agrégation dans un agent que le typage est effacé. Chaque
+ * outil doit valider ses paramètres à l'exécution ; ce type n'est pas une validation.
  */
 export type AnyToolDefinition = ToolDefinition<unknown, unknown>;
 
@@ -84,6 +84,8 @@ export interface ToolExecutionContext {
   userId: string;
   agentType: AgentType;
   mode: "simulation" | "live";
+  /** Stable identity of this attempt; providers may use it as an idempotency key. */
+  operationId?: string;
 }
 
 export interface ToolCallRecord {
@@ -91,6 +93,7 @@ export interface ToolCallRecord {
   paramsSummary: string;
   resultSummary: string;
   success: boolean;
+  outcome?: "executed" | "failed" | "pending" | "simulated" | "skipped" | "rejected";
   /** Présent uniquement pour un outil mis en attente de validation humaine (mode live) — id de la
    * ligne karta_pending_actions correspondante, pour retrouver/patcher cette entrée après résolution. */
   pendingActionId?: string;
@@ -116,10 +119,12 @@ export interface AgentDefinition {
 }
 
 export interface AgentRunResult {
-  status: "success" | "error" | "awaiting_approval";
+  status: "success" | "error" | "awaiting_approval" | "skipped" | "cancelled" | "simulated" | "partial";
   decision: string;
   toolsUsed: ToolCallRecord[];
   resultSummary: string;
   errorMessage?: string;
   mock: boolean;
+  /** False after any possible side effect: replay requires reconciliation. */
+  retryable?: boolean;
 }

@@ -1,9 +1,9 @@
-import cron from "node-cron";
+import cron, { type ScheduledTask } from "node-cron";
 import { listKartaEnabledCustomAgents } from "../agents/customAgent.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 
 interface RegisteredJob {
-  task: cron.ScheduledTask;
+  task: ScheduledTask;
   cronExpr: string;
 }
 
@@ -48,7 +48,7 @@ export async function refreshCustomAgentSchedules(): Promise<void> {
 }
 
 /** Démarre le scheduler des agents créés : 1er scan immédiat + réévaluation toutes les 5 min. */
-export function startCustomAgentScheduler(): cron.ScheduledTask {
+export function startCustomAgentScheduler(): ScheduledTask {
   void refreshCustomAgentSchedules().catch((err) =>
     console.error("[custom-agents] scan initial échoué:", err)
   );

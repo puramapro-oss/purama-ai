@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
 import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
@@ -17,25 +18,49 @@ function json(res: ServerResponse, status: number, body: unknown): void {
 
 async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
   const chunks: Buffer[] = [];
-  for await (const chunk of req) chunks.push(chunk as Buffer);
+  let size = 0;
+  for await (const chunk of req) {
+    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    size += bytes.length;
+    if (size > 65_536) throw new RequestError(413, "Requête trop volumineuse");
+    chunks.push(bytes);
+  }
   if (chunks.length === 0) return {};
-  return JSON.parse(Buffer.concat(chunks).toString("utf-8")) as Record<string, unknown>;
+  try {
+    const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks)));
+    if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error();
+    return value as Record<string, unknown>;
+  } catch { throw new RequestError(400, "Objet JSON invalide"); }
+}
+
+class RequestError extends Error {
+  constructor(readonly status: number, message: string) { super(message); }
+}
+
+function readActive(body: Record<string, unknown>): boolean {
+  if (typeof body.active !== "boolean") throw new RequestError(400, "active doit être un booléen");
+  return body.active;
 }
 
 function isAuthorized(req: IncomingMessage): boolean {
   if (!config.adminToken) return false; // pas de token configuré = aucun accès mutant (fail-closed)
-  return req.headers.authorization === `Bearer ${config.adminToken}`;
+  const digest = (value: string) => createHash("sha256").update(value).digest();
+  return timingSafeEqual(digest(req.headers.authorization ?? ""), digest(`Bearer ${config.adminToken}`));
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
 export function startApiServer() {
   const server = createServer((req, res) => {
     void handleRequest(req, res).catch((error) => {
-      console.error("[api] erreur non gérée:", error);
-      json(res, 500, { error: error instanceof Error ? error.message : "erreur interne" });
+      if (res.destroyed || res.headersSent) return;
+      if (error instanceof RequestError) json(res, error.status, { error: error.message });
+      else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
     });
   });
 
+  server.requestTimeout = 15_000;
+  server.headersTimeout = 10_000;
+  server.setTimeout(15_000, socket => socket.destroy());
   server.listen(config.port, () => console.log(`[api] KARTA écoute sur :${config.port}`));
   return server;
 }
@@ -61,8 +86,9 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
 
   if (req.method === "POST" && url.pathname === "/kill-switch/global") {
     const body = await readBody(req);
-    await setGlobalKillSwitch(Boolean(body.active));
-    json(res, 200, { ok: true, active: Boolean(body.active) });
+    const active = readActive(body);
+    await setGlobalKillSwitch(active);
+    json(res, 200, { ok: true, active });
     return;
   }
 
@@ -76,11 +102,11 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     const body = await readBody(req);
     const { error } = await supabase
       .from("karta_agent_state")
-      .update({ kill_switch: Boolean(body.active), updated_at: new Date().toISOString() })
+      .update({ kill_switch: readActive(body), updated_at: new Date().toISOString() })
       .eq("user_id", userId)
       .eq("agent_type", agentType);
     if (error) {
-      json(res, 500, { error: error.message });
+      json(res, 500, { error: "Modification indisponible" });
       return;
     }
     json(res, 200, { ok: true });

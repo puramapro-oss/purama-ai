@@ -29,14 +29,22 @@ export const supabaseUpsertTool: ToolDefinition<{ table: string; row: Record<str
   sensitive: false,
   async execute(params, ctx) {
     assertAllowedTable(params.table);
-    const { data, error } = await supabase
-      .from(params.table)
-      .upsert({ ...params.row, user_id: ctx.userId })
-      .select("id")
-      .maybeSingle();
-
-    if (error) throw new Error(`supabase_upsert(${params.table}): ${error.message}`);
-    return { id: data?.id };
+    if (!params.row || typeof params.row !== "object" || Array.isArray(params.row)) throw new Error("Ligne invalide");
+    const row: Record<string, unknown> = { ...params.row, user_id: ctx.userId };
+    if (row.id !== undefined) {
+      if (typeof row.id !== "string" || !row.id) throw new Error("Identifiant invalide");
+      // The ownership predicate is part of the UPDATE itself. Never follow a
+      // separate ownership read with an unrestricted service-role upsert.
+      const updated = await supabase.from(params.table).update(row)
+        .eq("id", row.id).eq("user_id", ctx.userId).select("id").maybeSingle();
+      if (updated.error) throw new Error(`supabase_upsert(${params.table}): écriture refusée`);
+      if (updated.data) return { id: updated.data.id };
+    }
+    // A foreign/existing primary key fails the INSERT; it cannot be reassigned.
+    const { data, error } = await supabase.from(params.table).insert(row).select("id").single();
+    if (error) throw new Error(`supabase_upsert(${params.table}): insertion refusée`);
+    if (!data?.id) throw new Error("Écriture sans preuve de résultat");
+    return { id: data.id };
   },
 };
 

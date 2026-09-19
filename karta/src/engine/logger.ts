@@ -1,10 +1,11 @@
 import { supabase } from "../db/supabase.js";
-import type { AgentTrigger, AgentType, ToolCallRecord } from "./types.js";
+import type { AgentTrigger, AgentType, ToolCallRecord, AgentRunResult } from "./types.js";
 
 export interface RunLogHandle {
   runId: string;
+  existingResult?: AgentRunResult;
   finish: (outcome: {
-    status: "success" | "error" | "awaiting_approval";
+    status: AgentRunResult["status"];
     decision: string;
     toolsUsed: ToolCallRecord[];
     resultSummary: string;
@@ -22,7 +23,8 @@ export async function startRun(
   userId: string,
   agentType: AgentType,
   trigger: AgentTrigger,
-  mode: "simulation" | "live"
+  mode: "simulation" | "live",
+  executionKey?: string
 ): Promise<RunLogHandle> {
   const startedAt = Date.now();
 
@@ -35,11 +37,32 @@ export async function startRun(
       trigger_source: trigger.source,
       mode,
       status: "running",
+      ...(executionKey ? { execution_key: executionKey } : {}),
     })
     .select("id")
     .single();
 
   if (error) {
+    if (error.code === "23505" && executionKey) {
+      const prior = await supabase.from("karta_runs").select("*")
+        .eq("execution_key", executionKey).eq("user_id", userId).eq("agent_type", agentType).single();
+      if (prior.error || !prior.data) throw new Error("Impossible de vérifier l'exécution précédente");
+      const row = prior.data;
+      const known = ["success", "error", "awaiting_approval", "skipped", "cancelled", "simulated", "partial"].includes(row.status);
+      return {
+        runId: row.id,
+        existingResult: {
+          status: known ? row.status : "error",
+          decision: row.decision ?? "",
+          toolsUsed: Array.isArray(row.tools_used) ? row.tools_used : [],
+          resultSummary: row.result_summary ?? "Exécution déjà réservée : vérifier son résultat avant toute reprise",
+          errorMessage: known ? row.error_message : "Résultat de l'exécution précédente à réconcilier",
+          mock: row.claude_mock === true,
+          retryable: false,
+        },
+        finish: async () => { throw new Error("Une exécution déjà réservée ne doit pas être réécrite"); },
+      };
+    }
     throw new Error(`startRun(${agentType}): ${error.message}`);
   }
 
@@ -52,6 +75,7 @@ export async function startRun(
         .from("karta_runs")
         .update({
           status: outcome.status,
+          mode: outcome.status === "simulated" ? "simulation" : mode,
           decision: outcome.decision,
           tools_used: outcome.toolsUsed,
           result_summary: outcome.resultSummary,

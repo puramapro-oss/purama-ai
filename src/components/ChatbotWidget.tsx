@@ -21,6 +21,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { parseSSEStream } from '@/lib/sse';
 
 interface Message {
   id: string;
@@ -213,56 +214,18 @@ export function ChatbotWidget() {
         throw new Error(errorData.error || `Erreur ${response.status}`);
       }
 
-      // Handle streaming response
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No response body');
-      }
-
-      let assistantContent = '';
       const assistantMsgId = crypto.randomUUID();
-      
-      // Add empty assistant message that we'll update as content streams in
       setMessages(prev => [...prev, {
-        id: assistantMsgId,
-        role: 'assistant',
-        content: '',
-        createdAt: new Date(),
+        id: assistantMsgId, role: 'assistant', content: '', createdAt: new Date(),
       }]);
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
-            
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices?.[0]?.delta?.content;
-              if (content) {
-                assistantContent += content;
-                // Update the message in real-time
-                setMessages(prev => prev.map(m => 
-                  m.id === assistantMsgId 
-                    ? { ...m, content: assistantContent }
-                    : m
-                ));
-              }
-            } catch {
-              // Ignore parsing errors for incomplete chunks
-            }
-          }
-        }
+      let assistantContent: string;
+      try {
+        assistantContent = await parseSSEStream(response, content => {
+          setMessages(prev => prev.map(m => m.id === assistantMsgId ? { ...m, content } : m));
+        });
+      } catch (error) {
+        setMessages(prev => prev.filter(m => m.id !== assistantMsgId));
+        throw error;
       }
 
       // If we got no content, show fallback

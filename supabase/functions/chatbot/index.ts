@@ -179,6 +179,7 @@ serve(async (req) => {
     contextualPrompt += knowledgeContext;
 
     const response = await streamAnthropicChat({
+      signal: req.signal,
       apiKey: ANTHROPIC_API_KEY,
       model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
       systemPrompt: contextualPrompt,

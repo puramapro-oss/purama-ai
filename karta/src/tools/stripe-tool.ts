@@ -5,7 +5,7 @@ import type { ToolDefinition } from "../engine/types.js";
 let stripeClient: Stripe | null = null;
 function getStripe(): Stripe {
   if (!config.stripeSecretKey) throw new Error("STRIPE_SECRET_KEY non configurée côté KARTA");
-  if (!stripeClient) stripeClient = new Stripe(config.stripeSecretKey);
+  if (!stripeClient) stripeClient = new Stripe(config.stripeSecretKey, { timeout: 10_000, maxNetworkRetries: 0 });
   return stripeClient;
 }
 
@@ -14,12 +14,18 @@ export const stripeListUnpaidInvoicesTool: ToolDefinition<{ customerEmail?: stri
   name: "stripe_list_unpaid_invoices",
   description: "Liste les factures Stripe impayées (optionnellement filtrées par email client).",
   sensitive: false,
-  async execute(params) {
+  async execute(params, ctx) {
+    // This key belongs to the platform, not to arbitrary marketplace users.
+    // Explicit server-side ownership is required before even reading its invoices.
+    const owner = process.env.KARTA_PLATFORM_OWNER_USER_ID;
+    if (!owner || ctx.userId !== owner) throw new Error("Accès aux factures de la plateforme non autorisé");
+    if (params.customerEmail !== undefined && (typeof params.customerEmail !== "string" || params.customerEmail.length > 320)) {
+      throw new Error("Email client invalide");
+    }
     const stripe = getStripe();
     const invoices = await stripe.invoices.list({
       status: "open",
       limit: 20,
-      ...(params.customerEmail ? { customer: undefined } : {}),
     });
 
     const filtered = params.customerEmail

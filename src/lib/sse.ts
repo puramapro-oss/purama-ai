@@ -1,40 +1,36 @@
+import { createSSEDataParser } from '../../supabase/functions/_shared/sse-data.ts';
+
 /**
- * Consomme un stream SSE au format OpenAI-compatible produit par streamAnthropicChat
- * (supabase/functions/_shared/anthropic-stream.ts) : `data: {"choices":[{"delta":{"content":"..."}}]}`.
- * Appelle `onDelta` avec le texte accumulé à chaque chunk reçu, et retourne le texte final complet.
+ * Consume OpenAI-compatible SSE. A response is complete only after [DONE].
+ * Never persist a partial transport response as a successful assistant message.
  */
 export async function parseSSEStream(response: Response, onDelta: (full: string) => void): Promise<string> {
+  if (!response.ok) throw new Error(`Erreur ${response.status}`);
   const reader = response.body?.getReader();
   if (!reader) throw new Error('Réponse invalide du serveur');
-
-  const decoder = new TextDecoder();
-  let buffer = '';
+  const decoder = new TextDecoder('utf-8', { fatal: true });
+  const push = createSSEDataParser();
   let content = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
-
-    for (const line of lines) {
-      if (!line.startsWith('data: ')) continue;
-      const data = line.slice(6);
-      if (data === '[DONE]') continue;
-      try {
+  try {
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) throw new Error('Réponse interrompue avant confirmation de fin');
+      for (const data of push(decoder.decode(value, {stream: true}))) {
+        if (!data) continue;
+        if (data === '[DONE]') return content;
         const parsed = JSON.parse(data);
+        if (!parsed || typeof parsed !== 'object' || parsed.error) throw new Error('Erreur du flux de réponse');
         const delta = parsed.choices?.[0]?.delta?.content;
+        if (delta !== undefined && delta !== null && typeof delta !== 'string') throw new Error('Contenu de réponse invalide');
         if (delta) {
           content += delta;
+          if (content.length > 1_048_576) throw new Error('Réponse trop volumineuse');
           onDelta(content);
         }
-      } catch {
-        // ligne SSE incomplète — ignorée
       }
     }
+  } finally {
+    await reader.cancel().catch(()=>undefined);
+    reader.releaseLock();
   }
-
-  return content;
 }
