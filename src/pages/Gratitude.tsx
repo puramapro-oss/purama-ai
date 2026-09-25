@@ -25,7 +25,7 @@ function getEntries(): GratitudeEntry[] {
 }
 
 function saveEntries(entries: GratitudeEntry[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
 }
 
 function getToday(): string {

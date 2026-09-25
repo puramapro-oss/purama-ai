@@ -56,7 +56,7 @@ export function InstallBanner() {
   }, []);
 
   const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, '1');
+    try { localStorage.setItem(DISMISS_KEY, '1') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
     setShow(false);
     setShowIosTuto(false);
   };

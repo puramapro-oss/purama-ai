@@ -245,8 +245,8 @@ export function useReferralTracking() {
     const refCode = urlParams.get('ref');
     
     if (refCode) {
-      localStorage.setItem('referral_code', refCode.toUpperCase());
-      localStorage.setItem('referral_timestamp', Date.now().toString());
+      try { localStorage.setItem('referral_code', refCode.toUpperCase()) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
+      try { localStorage.setItem('referral_timestamp', Date.now().toString()) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
       return refCode.toUpperCase();
     }
     

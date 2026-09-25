@@ -110,7 +110,7 @@ export function TutorialOverlay({
   const close = (markDone: boolean) => {
     setIsOpen(false);
     if (markDone && typeof window !== 'undefined') {
-      localStorage.setItem(`tuto-${storageKey}`, '1');
+      try { localStorage.setItem(`tuto-${storageKey}`, '1') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
     }
   };
 

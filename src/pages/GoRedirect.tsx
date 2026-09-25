@@ -13,8 +13,8 @@ export default function GoRedirect() {
   useEffect(() => {
     if (!slug) return;
     const code = slug.toUpperCase();
-    localStorage.setItem('referral_code', code);
-    localStorage.setItem('referral_timestamp', Date.now().toString());
+    try { localStorage.setItem('referral_code', code) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
+    try { localStorage.setItem('referral_timestamp', Date.now().toString()) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
 
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
     document.cookie = `purama_ref=${code}; expires=${expires}; path=/; SameSite=Lax`;

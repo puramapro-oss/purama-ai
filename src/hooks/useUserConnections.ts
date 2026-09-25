@@ -131,7 +131,7 @@ export function useUserConnections() {
       returnUrl: window.location.pathname,
       nonce: crypto.randomUUID(),
     }));
-    sessionStorage.setItem('oauth_state', state);
+    try { sessionStorage.setItem('oauth_state', state) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
 
     // Get OAuth URL from edge function
     const response = await fetch(

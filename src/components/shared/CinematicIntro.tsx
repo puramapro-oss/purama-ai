@@ -15,7 +15,7 @@ export function CinematicIntro() {
       const t2 = setTimeout(() => setPhase(2), 2000);
       const t3 = setTimeout(() => {
         setShow(false);
-        localStorage.setItem('purama_ai_intro_seen', '1');
+        try { localStorage.setItem('purama_ai_intro_seen', '1') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
       }, 3500);
       return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }
@@ -23,7 +23,7 @@ export function CinematicIntro() {
 
   const skip = () => {
     setShow(false);
-    localStorage.setItem('purama_ai_intro_seen', '1');
+    try { localStorage.setItem('purama_ai_intro_seen', '1') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
   };
 
   if (!show) return null;

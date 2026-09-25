@@ -30,7 +30,7 @@ function getConsent(): ConsentState | null {
 
 function saveConsent(analytics: boolean) {
   const state: ConsentState = { essential: true, analytics, timestamp: Date.now() };
-  localStorage.setItem(COOKIE_KEY, JSON.stringify(state));
+  try { localStorage.setItem(COOKIE_KEY, JSON.stringify(state)) } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
 }
 
 export function CookieConsent() {

@@ -101,7 +101,7 @@ export function TierUpgradeConfetti({ userId, currentTier }: TierUpgradeConfetti
           setUpgradedTier(recentUpgrade.new_tier);
           setShowBanner(true);
           fireConfetti();
-          localStorage.setItem(confettiKey, 'true');
+          try { localStorage.setItem(confettiKey, 'true') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
 
           // Hide banner after 8 seconds
           setTimeout(() => setShowBanner(false), 8000);

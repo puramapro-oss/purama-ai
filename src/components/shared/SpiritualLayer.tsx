@@ -43,13 +43,13 @@ export function SpiritualLayer() {
 
   const handleAccept = () => {
     setShow(false);
-    sessionStorage.setItem(SESSION_KEY, 'true');
+    try { sessionStorage.setItem(SESSION_KEY, 'true') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
     recordAffirmation();
   };
 
   const handleClose = () => {
     setShow(false);
-    sessionStorage.setItem(SESSION_KEY, 'true');
+    try { sessionStorage.setItem(SESSION_KEY, 'true') } catch { /* stockage refusé (navigation privée, quota 0, verrouillage iOS) : ne jamais bloquer l'UI */ }
   };
 
   return (
