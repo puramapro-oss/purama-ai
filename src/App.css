@@ -46,3 +46,9 @@
   --tw-duration: 1s;
     transition-duration: 1s;
 }
+/* R6 a11y — WCAG 2.4.7 : indicateur de focus clavier (absent avant ce correctif).
+   Repli `currentColor` si l'app ne définit pas le token --primary. */
+:focus-visible {
+  outline: 2px solid var(--primary, currentColor);
+  outline-offset: 2px;
+}
