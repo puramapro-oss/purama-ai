@@ -245,21 +245,31 @@ serve(async (req) => {
                   .eq('id', influencerId)
                   .single();
 
-                if (influencer) {
+                if (influencer && influencer.user_id === user.id) {
+                  // Auto-parrainage (F5, QA-T5-p3) : le webhook est la 2e ligne de défense
+                  // — create-checkout refuse déjà la remise, mais un referral_code/
+                  // influencer_id auto-attribué par un appel direct à l'Edge Function
+                  // (hors UI) ne doit jamais générer de commission sur ses propres achats.
+                  logStep("Self-referral commission refused", { influencerId, userId: user.id });
+                } else if (influencer) {
                   // Calculate commission (annual subscription value * commission rate)
                   const monthlyPrice = planPrices[planType] || 99;
                   const annualValue = monthlyPrice * 12;
                   const commissionRate = influencer.commission_rate / 100;
                   const commissionAmount = annualValue * commissionRate;
 
-                  logStep("Commission calculation", { 
-                    monthlyPrice, 
-                    annualValue, 
+                  logStep("Commission calculation", {
+                    monthlyPrice,
+                    annualValue,
                     commissionRate,
-                    commissionAmount 
+                    commissionAmount
                   });
 
-                  // Create commission record
+                  // Create commission record. UNIQUE(subscription_id) (fix F5, QA-T5-p3 —
+                  // 0 idempotence) : Stripe peut redélivrer le MÊME event.id après un
+                  // timeout/erreur réseau côté receveur — sans garde, chaque redélivraison
+                  // recréait une commission pour le MÊME abonnement (subscription_id est
+                  // stable par session : une seule commission possible par abonnement).
                   const { error: commissionError } = await supabaseClient
                     .from('commissions')
                     .insert({
@@ -271,7 +281,9 @@ serve(async (req) => {
                       subscription_id: session.subscription as string,
                     });
 
-                  if (commissionError) {
+                  if (commissionError?.code === '23505') {
+                    logStep("Commission already recorded (webhook redelivery, idempotent)", { subscriptionId: session.subscription });
+                  } else if (commissionError) {
                     logStep("ERROR: Failed to create commission", { error: commissionError.message });
                   } else {
                     logStep("Commission created successfully", { commissionAmount });

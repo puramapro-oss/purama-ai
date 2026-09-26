@@ -87,13 +87,18 @@ serve(async (req) => {
 
       if (!infError && influencer) {
         const expiresAt = new Date(influencer.expires_at);
-        if (expiresAt > new Date()) {
+        if (influencer.user_id === user.id) {
+          // Auto-parrainage (F5, QA-T5-p3) : le client ne passe qu'un referralCode texte,
+          // rien n'empêchait un influenceur d'appliquer SON propre code à SON propre
+          // abonnement — remise -50% + commission auto-versée sur ses propres achats.
+          logStep("Self-referral refused", { userId: user.id, promoCode: referralCode });
+        } else if (expiresAt > new Date()) {
           validInfluencer = influencer;
           applyCoupon = true;
-          logStep("Valid influencer found", { 
-            influencerId: influencer.id, 
+          logStep("Valid influencer found", {
+            influencerId: influencer.id,
             promoCode: influencer.promo_code,
-            expiresAt: influencer.expires_at 
+            expiresAt: influencer.expires_at
           });
         } else {
           logStep("Influencer link expired", { expiresAt: influencer.expires_at });
