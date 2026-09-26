@@ -122,3 +122,13 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
   tsc 0, build 0 · detect_changes LOW/0 processus
 - /simplify 4 agents : efficiency CLEAN, altitude validée (jobId dedup = mauvaise couche),
   6 fixes appliqués, skips documentés (owner-token CAD, builder littéral skip)
+
+### Sous-lot 3 (2026-09-26, XXL) : approbation exactement-une-fois (claim atomique)
+- approval.ts : claimPendingAction (UPDATE WHERE status=pending RETURNING — 1 gagnant), lecture
+  de repli pour distinction déjà-traitée/introuvable, reconcileOrphanPendingActions au boot
+  (processing >10min → failed), migration 007 index partiel processing
+- Ferme : double-approve / approve+reject simultanés (outil exécuté 2× avant)
+- worker.ts : 2e réconciliation fire-and-forget au boot (à côté de reconcileStaleRuns)
+- Gates : 98/98 vitest (approval.test : claim gagnant/perdant, simultané, introuvable, orphelins),
+  tsc 0, build 0 · detect_changes LOW/0 processus
+- /simplify 2 agents : altitude validée, mock allégé 1-source-de-vérité, skips documentés

@@ -2,6 +2,9 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 
 const state = {
   pending: null as Record<string, unknown> | null,
+  /** Résultat du bulk update de reconcileOrphanPendingActions (erreur DB simulée si non-null). */
+  reconcileIds: [] as unknown[],
+  reconcileError: null as unknown,
   run: null as Record<string, unknown> | null,
   remainingPending: 0,
 };
@@ -10,8 +13,41 @@ vi.mock("../src/db/supabase.js", () => ({
   supabase: {
     from: vi.fn((table: string) => {
       if (table === "karta_pending_actions") {
+        // Chaînes possibles : CLAIM (update→eq→eq→select→maybeSingle), FINALIZE (update→eq,
+        // awaitée), FALLBACK (select→eq→maybeSingle), COUNT (select w/ opts.count→eq→then),
+        // RECONCILE (update→eq→lt→select, awaitée).
         return {
-          select: vi.fn((_cols?: string, opts?: { count?: string; head?: boolean }) => {
+          update: vi.fn((patch: Record<string, unknown>) => {
+            const chain: Record<string, unknown> = {
+              eq: vi.fn(() => chain),
+              lt: vi.fn(() => chain),
+              select: vi.fn(() => ({
+                // CLAIM : update WHERE id+status='pending' RETURNING * — fidèle à PostgREST :
+                // l'écriture ne se produit QUE si la ligne est encore 'pending', et le
+                // RETURNING reflète la ligne ÉCRITE (status devient 'processing').
+                maybeSingle: vi.fn(async () => {
+                  if (patch.status === "processing" && state.pending?.status === "pending") {
+                    state.pending = { ...state.pending, ...patch };
+                    return { data: { ...state.pending }, error: null };
+                  }
+                  return { data: null, error: null };
+                }),
+                // RECONCILE : update WHERE status+resolved_at RETURNING id (await direct)
+                then: (onResolve: (v: unknown) => unknown) =>
+                  Promise.resolve({
+                    data: state.reconcileIds,
+                    error: state.reconcileError ?? null,
+                  }).then(onResolve),
+              })),
+              then: (onResolve: (v: unknown) => unknown) => {
+                // FINALIZE : update WHERE id, awaitée — applique le patch à la ligne.
+                if (state.pending) state.pending = { ...state.pending, ...patch };
+                return Promise.resolve({ error: null }).then(onResolve);
+              },
+            };
+            return chain;
+          }),
+          select: vi.fn((_cols?: string, opts?: { count?: string }) => {
             if (opts?.count) {
               return {
                 eq: vi.fn().mockReturnThis(),
@@ -19,17 +55,12 @@ vi.mock("../src/db/supabase.js", () => ({
                   Promise.resolve({ count: state.remainingPending, error: null }).then(resolve),
               };
             }
+            // FALLBACK : lecture "précise" après claim perdant (id existe ?)
             return {
               eq: vi.fn().mockReturnThis(),
-              maybeSingle: vi.fn(async () => ({ data: state.pending, error: null })),
+              maybeSingle: vi.fn(async () => ({ data: state.pending ? { id: state.pending.id } : null, error: null })),
             };
           }),
-          update: vi.fn((patch: Record<string, unknown>) => ({
-            eq: vi.fn(async () => {
-              state.pending = { ...state.pending, ...patch };
-              return { error: null };
-            }),
-          })),
         };
       }
       if (table === "karta_runs") {
@@ -60,7 +91,7 @@ vi.mock("../src/engine/resolveDefinition.js", () => ({
   })),
 }));
 
-const { resolvePendingAction } = await import("../src/engine/approval.js");
+const { resolvePendingAction, reconcileOrphanPendingActions } = await import("../src/engine/approval.js");
 
 function resetState(pendingStatus = "pending") {
   state.pending = {
@@ -72,6 +103,8 @@ function resetState(pendingStatus = "pending") {
     tool_params: { table: "compta_transactions" },
     status: pendingStatus,
   };
+  state.reconcileIds = [];
+  state.reconcileError = null;
   state.run = {
     tools_used: [
       {
@@ -136,11 +169,11 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     expect(state.run?.status).toBe("success");
   });
 
-  it("refuse de retraiter une action déjà résolue", async () => {
-    resetState("executed");
+  it("refuse de retraiter une action déjà résolue (claim atomique perdant → message précis)", async () => {
+    resetState("executed"); // la ligne n'est plus 'pending' → le claim UPDATE ... WHERE status='pending' ne matche pas
     const result = await resolvePendingAction("pending-1", "approve");
 
-    expect(result.ok).toBe(false);
+    expect(result).toMatchObject({ ok: false, error: "Action déjà traitée" });
     expect(executeMock).not.toHaveBeenCalled();
   });
 
@@ -150,5 +183,52 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     await resolvePendingAction("pending-1", "approve");
 
     expect(state.run?.status).toBeUndefined();
+  });
+});
+
+describe("approval — exactement-une-fois (claim atomique, P0 IAO 2026-09-26 sous-lot 3)", () => {
+  beforeEach(() => resetState());
+
+  it("deux approbations simultanées → l'outil n'est exécuté qu'UNE fois", async () => {
+    executeMock.mockResolvedValue({ ok: true });
+
+    // Le claim atomique de PostgREST ne donne la ligne qu'à UN gagnant : après le 1er appel
+    // (attendu jusqu'à la finalisation), la ligne n'est plus 'pending' → le 2e UPDATE ...
+    // WHERE status='pending' ne matche pas (le mock applique réellement l'écriture).
+    const first = await resolvePendingAction("pending-1", "approve");
+    const second = await resolvePendingAction("pending-1", "approve");
+
+    expect(first.ok).toBe(true);
+    expect(second).toMatchObject({ ok: false, error: "Action déjà traitée" }); // lecture de repli : la ligne existe
+    expect(executeMock).toHaveBeenCalledTimes(1); // AVANT le claim : 2 exécutions réelles
+  });
+
+  it("claim perdant sur une action inexistante → 'Action introuvable' (distinction préservée)", async () => {
+    state.pending = null;
+    const result = await resolvePendingAction("pending-inconnu", "approve");
+
+    expect(result).toMatchObject({ ok: false, error: "Action introuvable" });
+    expect(executeMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("reconcileOrphanPendingActions — clôture des 'processing' orphelins au boot", () => {
+  beforeEach(() => resetState());
+
+  it("retourne le nombre d'actions 'processing' orphelines clôturées en échec", async () => {
+    state.reconcileIds = [{ id: "a1" }, { id: "a2" }];
+    await expect(reconcileOrphanPendingActions()).resolves.toBe(2);
+  });
+
+  it("rien à réconcilier → 0", async () => {
+    await expect(reconcileOrphanPendingActions()).resolves.toBe(0);
+  });
+
+  it("échec DB non fatal : loggé, retourne 0", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    state.reconcileError = { message: "connection refused" };
+    await expect(reconcileOrphanPendingActions()).resolves.toBe(0);
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining("reconcileOrphanPendingActions"));
+    spy.mockRestore();
   });
 });

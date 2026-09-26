@@ -46,18 +46,53 @@ export type ResolveResult = { ok: true; resultSummary: string } | { ok: false; e
 type FinalStatus = "executed" | "failed" | "rejected";
 
 /**
+ * Revendique atomiquement l'action : UPDATE ... WHERE id AND status='pending' RETURNING.
+ * PostgREST n'applique l'update QUE si le prédicat tient encore au moment de l'écriture —
+ * 2 approbations simultanées ne peuvent PAS toutes deux gagner (l'une obtient la ligne,
+ * l'autre 0 ligne). Retourne la ligne claimée, ou null si déjà traitée/en cours/introuvable.
+ * Même garde claim-based que le pattern classique des webhooks Stripe (update conditionnel
+ * + RETURNING exactement-une-fois).
+ */
+async function claimPendingAction(id: string): Promise<PendingActionRow | null> {
+  const { data, error } = await supabase
+    .from("karta_pending_actions")
+    .update({ status: "processing", resolved_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "pending")
+    .select("*")
+    .maybeSingle();
+
+  if (error) throw new Error(`claimPendingAction(${id}): ${error.message}`);
+  return data as PendingActionRow | null;
+}
+
+/**
  * Approuve ou rejette une action en attente. Approuver l'EXÉCUTE réellement (résout à nouveau
- * l'AgentDefinition — statique ou `custom:*` — et appelle tool.execute en mode live) ; rejeter la
- * marque simplement comme non exécutée. Dans les deux cas, patche la ligne karta_runs parente
- * (entrée tools_used + statut global une fois toutes les actions du run résolues).
+ * l'AgentDefinition — statique ou `custom:*` — et exécute l'outil en mode live via le contrat
+ * strict tool-result.ts) ; rejeter la marque simplement comme non exécutée. Dans les deux cas,
+ * patche la ligne karta_runs parente (entrée tools_used + statut global une fois toutes les
+ * actions du run résolues).
+ *
+ * Exactement-une-fois : la résolution commence par un CLAIM atomique (status pending →
+ * "processing") — un double-clic ou deux requêtes simultanées ne peuvent exécuter l'outil
+ * qu'une SEULE fois ; la perdante reçoit "Action déjà traitée". Si le process meurt entre
+ * claim et finalisation, la ligne reste "processing" et est réconciliée en "failed" au
+ * démarrage suivant du worker (cf reconcileOrphanPendingActions).
  */
 export async function resolvePendingAction(id: string, decision: ResolveDecision): Promise<ResolveResult> {
-  const { data, error: loadError } = await supabase.from("karta_pending_actions").select("*").eq("id", id).maybeSingle();
-
-  if (loadError) return { ok: false, error: loadError.message };
-  const pending = data as PendingActionRow | null;
-  if (!pending) return { ok: false, error: "Action introuvable" };
-  if (pending.status !== "pending") return { ok: false, error: "Action déjà traitée" };
+  let pending: PendingActionRow;
+  try {
+    const claimed = await claimPendingAction(id);
+    if (!claimed) {
+      // Chemin perdant uniquement (rare) : une lecture pour rendre l'erreur précise —
+      // "introuvable" vs "déjà traitée" — sans jamais ré-exécuter quoi que ce soit.
+      const { data: existing } = await supabase.from("karta_pending_actions").select("id").eq("id", id).maybeSingle();
+      return { ok: false, error: existing ? "Action déjà traitée" : "Action introuvable" };
+    }
+    pending = claimed;
+  } catch (claimError) {
+    return { ok: false, error: claimError instanceof Error ? claimError.message : String(claimError) };
+  }
 
   if (decision === "reject") {
     const resultSummary = "Rejetée par l'utilisateur — aucune action effectuée";
@@ -144,4 +179,37 @@ async function patchParentRun(pending: PendingActionRow, status: FinalStatus, re
   }
 
   await supabase.from("karta_runs").update(updates).eq("id", pending.run_id);
+}
+
+/**
+ * Réconcilie les actions restées "processing" par un crash du process entre claim atomique et
+ * finalisation (fenêtre de quelques secondes). Tout "processing" plus vieux que
+ * `orphanAfterMs` est nécessairement orphelin — l'exécution de l'outil, si elle a eu lieu,
+ * est déjà passée : on clôture en "failed" honnête ("interrompu") pour que l'action ne reste
+ * pas invisible à jamais (le statut "processing" n'est jamais affiché comme traitable).
+ * Appelée au démarrage du worker, à côté de reconcileStaleRuns. Retourne le nombre réconcilié.
+ */
+export async function reconcileOrphanPendingActions(orphanAfterMs: number = 600_000): Promise<number> {
+  const orphanBefore = new Date(Date.now() - orphanAfterMs).toISOString();
+
+  const { data, error } = await supabase
+    .from("karta_pending_actions")
+    .update({
+      status: "failed",
+      result_summary: "interrompu (worker arrêté pendant la résolution) — réconcilié au redémarrage",
+    })
+    .eq("status", "processing")
+    .lt("resolved_at", orphanBefore)
+    .select("id");
+
+  if (error) {
+    console.error(`[approval] reconcileOrphanPendingActions: ${error.message}`);
+    return 0;
+  }
+
+  const reconciled = Array.isArray(data) ? data.length : 0;
+  if (reconciled > 0) {
+    console.log(`[approval] reconcileOrphanPendingActions: ${reconciled} action(s) "processing" orpheline(s) clôturée(s) en échec`);
+  }
+  return reconciled;
 }

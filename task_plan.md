@@ -282,6 +282,12 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
   finally) — ferme overlap cron, cron+manual simultanés, délégation pendant cycle planifié,
   ET les stalled jobs BullMQ post-side-effects. 93/93 vitest, tsc 0, build 0.
   /simplify 4 agents (efficiency CLEAN, altitude validée, 6 fixes, skips documentés)
+- [x] **Sous-lot 3 — approbation exactement-une-fois** (2026-09-26, session XXL) : claim
+  atomique `UPDATE ... WHERE status='pending' RETURNING` dans `resolvePendingAction` (ferme
+  double-approve/reject simultanés → outil exécuté 2×), lecture de repli pour distinction
+  "déjà traitée"/"introuvable", `reconcileOrphanPendingActions` au boot worker (crash entre
+  claim et finalisation → processing >10min → failed), migration 007 (index partiel
+  status='processing'). 98/98 vitest, tsc 0, build 0. /simplify 2 agents (altitude validée)
 - [ ] Déploiement VPS `karta-engine` (rebuild docker) + smoke réel (bloqué w/ reste déploiements
   de la session, aucun deploy ordonné ce lot)
 

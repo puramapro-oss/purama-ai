@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS purama_ai.karta_pending_actions (
   agent_type TEXT NOT NULL,
   tool_name TEXT NOT NULL,
   tool_params JSONB NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending', -- 'pending' | 'executed' | 'failed' | 'rejected'
+  status TEXT NOT NULL DEFAULT 'pending', -- 'pending' | 'processing' (claim atomique en cours, cf approval.ts) | 'executed' | 'failed' | 'rejected'
   result_summary TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   resolved_at TIMESTAMPTZ

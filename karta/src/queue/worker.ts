@@ -4,6 +4,7 @@ import { releaseCycleLock, tryAcquireCycleLock } from "./queues.js";
 import { runAgentCycle } from "../engine/loop.js";
 import { resolveAgentDefinition } from "../engine/resolveDefinition.js";
 import { reconcileStaleRuns } from "../engine/logger.js";
+import { reconcileOrphanPendingActions } from "../engine/approval.js";
 import type { AgentCycleJobData } from "./queues.js";
 import type { AgentRunResult } from "../engine/types.js";
 
@@ -62,8 +63,12 @@ export async function processAgentCycleJob(data: AgentCycleJobData): Promise<Age
 export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
   // Réconciliation au démarrage du composant qui possède les cycles "running" (et pas au boot
   // du process entier) : tout process qui démarre un worker réconcilie ses runs orphelins —
-  // fire-and-forget, non fatale (cf logger.reconcileStaleRuns).
+  // fire-and-forget, non fatale (cf logger.reconcileStaleRuns). Idem pour les actions restées
+  // "processing" par un crash entre claim atomique et finalisation (cf approval.ts).
   void reconcileStaleRuns().catch((err: unknown) => console.error("[worker] reconcileStaleRuns a échoué :", err));
+  void reconcileOrphanPendingActions().catch((err: unknown) =>
+    console.error("[worker] reconcileOrphanPendingActions a échoué :", err)
+  );
 
   const worker = new Worker<AgentCycleJobData>(
     "karta-agent-cycle",
