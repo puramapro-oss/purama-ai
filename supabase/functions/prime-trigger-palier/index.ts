@@ -69,6 +69,27 @@ serve(async (req: Request): Promise<Response> => {
 
       const amount = PALIER_AMOUNTS[palierIdx];
 
+      // Claim atomique AVANT tout credit : sans .eq('palier_actuel', p.palier_actuel),
+      // 2 invocations concurrentes de ce cron (retry Vercel apres timeout) liraient
+      // toutes deux palier_actuel=0/recuperee=false et crediteraient 2x le meme palier
+      // (l'insert wallet_transactions n'a pas de contrainte UNIQUE, et le RPC increment
+      // ci-dessous est atomique PAR APPEL, donc un appel en double = vrai double credit).
+      const dateField = `palier_${nextPalier}_date` as 'palier_1_date' | 'palier_2_date' | 'palier_3_date';
+      const { data: claimed, error: claimErr } = await admin
+        .from('primes')
+        .update({
+          palier_actuel: nextPalier,
+          montant_verse_eur: (PALIER_AMOUNTS.slice(0, nextPalier).reduce((a, b) => a + b, 0)),
+          [dateField]: new Date().toISOString(),
+        })
+        .eq('id', p.id)
+        .eq('palier_actuel', p.palier_actuel ?? 0)
+        .select('id');
+      if (claimErr || !claimed || claimed.length === 0) {
+        results.push({ user_id: p.user_id, palier: nextPalier, amount, status: 'already_claimed' });
+        continue;
+      }
+
       // Crédit wallet_transactions
       const { error: txErr } = await admin.from('wallet_transactions').insert({
         user_id: p.user_id,
@@ -80,23 +101,14 @@ serve(async (req: Request): Promise<Response> => {
         metadata: { app_id: p.app_id, mode, palier: nextPalier },
       });
       if (txErr) {
+        // Rollback du claim pour permettre un retry legitime
+        await admin.from('primes').update({ palier_actuel: p.palier_actuel ?? 0 }).eq('id', p.id);
         results.push({ user_id: p.user_id, palier: nextPalier, amount, status: `tx_error: ${txErr.message}` });
         continue;
       }
 
       // Maj wallet_balance profile (compteur cumulé)
       await admin.rpc('increment_wallet_balance', { p_user_id: p.user_id, p_amount: amount }).then(() => null).catch(() => null);
-
-      // Maj prime
-      const dateField = `palier_${nextPalier}_date` as 'palier_1_date' | 'palier_2_date' | 'palier_3_date';
-      await admin
-        .from('primes')
-        .update({
-          palier_actuel: nextPalier,
-          montant_verse_eur: (PALIER_AMOUNTS.slice(0, nextPalier).reduce((a, b) => a + b, 0)),
-          [dateField]: new Date().toISOString(),
-        })
-        .eq('id', p.id);
 
       results.push({ user_id: p.user_id, palier: nextPalier, amount, status: 'credited' });
     }
