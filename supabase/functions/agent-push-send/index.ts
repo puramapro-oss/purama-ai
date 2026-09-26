@@ -50,10 +50,16 @@ Deno.serve(async (req) => {
 
   try {
     // Service-role required (this endpoint is called by n8n & other agents)
+    // R1 Red Team : `auth.includes(SUPABASE_SERVICE_ROLE_KEY)` fail-open si la clé
+    // n'est pas configurée (`?? ""` en tete de fichier) — "n'importe quoi".includes("")
+    // vaut toujours true en JS, donc un header Authorization non vide quelconque
+    // passait la garde des que la variable d'env manquait au deploy. Comparaison
+    // exacte + garde explicite sur la clé non vide.
     const auth = req.headers.get("Authorization");
     if (
+      !SUPABASE_SERVICE_ROLE_KEY ||
       !auth ||
-      !auth.includes(SUPABASE_SERVICE_ROLE_KEY)
+      (auth !== `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` && auth !== SUPABASE_SERVICE_ROLE_KEY)
     ) {
       return json({ error: "Forbidden — service role required" }, 403);
     }
