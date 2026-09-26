@@ -6,6 +6,10 @@ import {
   publishPost,
   type Platform,
 } from "../_shared/zernio.ts";
+import {
+  executeSocialPublish,
+  type SocialPostRow,
+} from "../_shared/social-publish-core.ts";
 
 interface PublishBody {
   content: string;
@@ -160,9 +164,19 @@ serve(async (req) => {
     }
 
     const platforms = targetAccounts.map((a) => a.platform as Platform);
-    const profileIds = targetAccounts.map((a) => a.zernio_profile_id);
 
-    // 5. Insert "publishing" row first
+    // 5. Is this a real future schedule, or an immediate publish?
+    //    A post is only deferred to the cron consumer (social-publish-scheduled)
+    //    when scheduledAt is strictly in the future. Everything else (no date,
+    //    or a date already due) is published for real right now — we never
+    //    call the social platform API "just in case Zernio itself delays it":
+    //    the scheduled_at column + this app's own cron consumer are the single
+    //    source of truth for when a post actually goes out.
+    const isFutureSchedule = Boolean(
+      body.scheduledAt && new Date(body.scheduledAt).getTime() > Date.now(),
+    );
+
+    // 6. Insert the row first (draft state depends on branch below)
     const { data: postRow, error: insertError } = await supabase
       .from("social_posts")
       .insert({
@@ -172,8 +186,8 @@ serve(async (req) => {
         content_type: body.contentType || "text",
         agent_name: body.agentName,
         target_platforms: platforms,
-        status: "publishing",
-        scheduled_at: body.scheduledAt,
+        status: isFutureSchedule ? "scheduled" : "publishing",
+        scheduled_at: body.scheduledAt || null,
         ai_generated: shouldGenerate,
         ai_caption: caption,
         ai_hashtags: hashtags,
@@ -182,41 +196,73 @@ serve(async (req) => {
       .single();
     if (insertError) throw insertError;
 
-    // 6. Publish via Zernio
-    let result: Record<string, unknown> = {};
-    try {
-      result = await publishPost({
-        text: fullText,
-        mediaUrls: body.mediaUrls && body.mediaUrls.length ? body.mediaUrls : undefined,
-        platforms,
-        profileIds,
-        scheduledAt: body.scheduledAt,
-      });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      await supabase
-        .from("social_posts")
-        .update({
-          status: "failed",
-          error_message: message,
-        })
-        .eq("id", postRow.id);
-      throw e;
+    // 7a. Future date: stop here. social-publish-scheduled will claim and
+    //     publish this row for real once scheduled_at <= now().
+    if (isFutureSchedule) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          post_id: postRow.id,
+          status: "scheduled",
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
-    // 7. Update post row
-    await supabase
-      .from("social_posts")
-      .update({
-        status: body.scheduledAt ? "scheduled" : "published",
-        published_at: body.scheduledAt ? null : new Date().toISOString(),
-        zernio_post_id: (result.id as string) || (result.post_id as string) || null,
-        zernio_response: result,
-      })
-      .eq("id", postRow.id);
+    // 7b. Due now (or no schedule at all): publish for real immediately,
+    //     using the exact same logic the cron consumer reuses.
+    const post: SocialPostRow = {
+      id: postRow.id,
+      user_id: user.id,
+      content_text: fullText,
+      content_media_urls: body.mediaUrls || [],
+      target_platforms: platforms,
+    };
+
+    const outcome = await executeSocialPublish(post, {
+      fetchAccounts: async (_userId, wantedPlatforms) =>
+        targetAccounts
+          .filter((a) => wantedPlatforms.includes(a.platform))
+          .map((a) => ({
+            platform: a.platform as string,
+            zernio_profile_id: a.zernio_profile_id as string,
+          })),
+      publish: (params) => publishPost({ ...params, platforms: params.platforms as Platform[] }),
+      markPublished: async (postId, result) => {
+        await supabase
+          .from("social_posts")
+          .update({
+            status: "published",
+            published_at: new Date().toISOString(),
+            zernio_post_id:
+              (result.id as string) || (result.post_id as string) || null,
+            zernio_response: result,
+          })
+          .eq("id", postId);
+      },
+      markFailed: async (postId, message) => {
+        await supabase
+          .from("social_posts")
+          .update({ status: "failed", error_message: message })
+          .eq("id", postId);
+      },
+    });
+
+    if (outcome.status === "failed") {
+      return new Response(
+        JSON.stringify({ error: outcome.error, post_id: postRow.id }),
+        {
+          status: 502,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
 
     return new Response(
-      JSON.stringify({ success: true, post_id: postRow.id, zernio: result }),
+      JSON.stringify({ success: true, post_id: postRow.id, status: "published" }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
