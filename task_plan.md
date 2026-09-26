@@ -276,6 +276,12 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - [x] Tests : **86/86** (nouveaux tool-result/worker/logger ; loop +5 dont concurrence parallèle
   et timeout fake-timers ; approval +2), `tsc --noEmit` 0, build karta 0. Root tsc/build non
   relancés (node_modules racine absent — anti-saturation §6, diff 100% karta/**)
+- [x] **Sous-lot 2 — verrou anti-double-exécution à la source** (2026-09-26, session XXL) :
+  `tryAcquireCycleLock`/`releaseCycleLock` (Redis SET NX EX 600 par agentType:userId) +
+  `processAgentCycleJob` (acquire au PROCESSING, skip silencieux si verrou tenu, release au
+  finally) — ferme overlap cron, cron+manual simultanés, délégation pendant cycle planifié,
+  ET les stalled jobs BullMQ post-side-effects. 93/93 vitest, tsc 0, build 0.
+  /simplify 4 agents (efficiency CLEAN, altitude validée, 6 fixes, skips documentés)
 - [ ] Déploiement VPS `karta-engine` (rebuild docker) + smoke réel (bloqué w/ reste déploiements
   de la session, aucun deploy ordonné ce lot)
 

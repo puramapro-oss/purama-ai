@@ -110,3 +110,15 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
   test le épingle) ; parallelisation finish/notify/record (le throw de finish DOIT basculer le
   cycle en erreur — test dédié) ; patchParentRun/stringify pré-existants hors diff ; helpers de
   test (aucun existant à réutiliser). Re-gates : 88/88, tsc 0, build 0.
+
+### Sous-lot 2 (2026-09-26, XXL) : verrou anti-double-exécution à la source
+- karta/src/queue/queues.ts : tryAcquireCycleLock/releaseCycleLock (SET NX EX 600 par
+  (agentType,userId), clé privée karta:cycle-lock:*)
+- karta/src/queue/worker.ts : processAgentCycleJob exporté — acquire au PROCESSING (pas à
+  l enqueue, backlog-safe), skip silencieux loggué si verrou tenu, release au finally
+  (couvre crash runtime ET stalled jobs BullMQ : re-dispatch 30s < TTL 600s)
+- Ferme : overlap cron, cron+manual simultanés, délégation pendant cycle planifié
+- Gates : 93/93 vitest karta (worker.test.ts 8 tests : skip/finally/throw/side-effects),
+  tsc 0, build 0 · detect_changes LOW/0 processus
+- /simplify 4 agents : efficiency CLEAN, altitude validée (jobId dedup = mauvaise couche),
+  6 fixes appliqués, skips documentés (owner-token CAD, builder littéral skip)
