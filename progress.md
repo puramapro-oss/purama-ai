@@ -132,3 +132,10 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
 - Gates : 98/98 vitest (approval.test : claim gagnant/perdant, simultané, introuvable, orphelins),
   tsc 0, build 0 · detect_changes LOW/0 processus
 - /simplify 2 agents : altitude validée, mock allégé 1-source-de-vérité, skips documentés
+
+### Sous-lot 4 (2026-09-26, XXL post-quota) : timeout buildContext (dernière phase non bornée)
+- loop.ts : withTimeout + BUILD_CONTEXT_TIMEOUT_MS=60s autour de definition.buildContext()
+  (figeait slot BullMQ + tenait verrou anti-double jusqu au TTL 600s sur fetch DB pendant)
+- index.ts : commentaire résiduel sous-lot 1 commité (cosmétique)
+- Gates : 99/99 vitest (test fake-timers 60s + invariant rejeu-sûr), tsc 0, build 0 ·
+  detect_changes LOW/0 processus · /simplify 1 agent 4 angles : CLEAN

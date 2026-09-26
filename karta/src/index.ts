@@ -6,7 +6,7 @@ import { startCustomAgentScheduler } from "./scheduler/customAgents.js";
 
 console.log(`[karta] démarrage — mockClaude=${config.mockClaude} port=${config.port}`);
 
-const worker = startAgentCycleWorker();
+const worker = startAgentCycleWorker(); // réconcilie aussi les runs orphelins (cf worker.ts)
 const schedulers = startSchedulers();
 const customAgentScheduler = startCustomAgentScheduler();
 const server = startApiServer();

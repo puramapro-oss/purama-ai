@@ -11,6 +11,13 @@ import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } fr
  * l'échec survient AVANT tout side-effect → le cycle reste rejouable (retry BullMQ sûr). */
 const DECIDE_TIMEOUT_MS = 120_000;
 
+/** Timeout de la construction du contexte (requêtes Supabase réelles : mémoire, factures,
+ * emails...). Dernière phase non bornée du cycle : un fetch DB qui pend figeait le slot
+ * BullMQ ET tenait le verrou anti-double jusqu'à son TTL (600s). 60s couvre les agents cœur
+ * (plusieurs requêtes) sans laisser un cycle bloqué à l'infini. Échec avant tout
+ * side-effect → cycle rejouable. */
+const BUILD_CONTEXT_TIMEOUT_MS = 60_000;
+
 /**
  * Boucle cœur KARTA : déclencheur → contexte → décision (Claude, mock ou réel) → outils → log → notif.
  * Un seul point d'entrée pour les 4 agents cœur — chaque agent ne fournit que sa définition
@@ -61,7 +68,12 @@ export async function runAgentCycle(
   let sideEffectsCommitted = false;
 
   try {
-    const context = await definition.buildContext(userId, trigger);
+    const context = await withTimeout(
+      definition.buildContext(userId, trigger),
+      `buildContext(${definition.type})`,
+      BUILD_CONTEXT_TIMEOUT_MS,
+      (label, ms) => new TimeoutError(label, ms)
+    );
 
     const decision = await withTimeout(
       claude.decide({

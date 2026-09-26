@@ -288,6 +288,10 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
   "déjà traitée"/"introuvable", `reconcileOrphanPendingActions` au boot worker (crash entre
   claim et finalisation → processing >10min → failed), migration 007 (index partiel
   status='processing'). 98/98 vitest, tsc 0, build 0. /simplify 2 agents (altitude validée)
+- [x] **Sous-lot 4 — timeout buildContext** (2026-09-26, session XXL) : `withTimeout` +
+  `BUILD_CONTEXT_TIMEOUT_MS=60s` — dernière phase non bornée du cycle ; un fetch DB pendant
+  figeait le slot BullMQ et tenait le verrou anti-double jusqu'au TTL. Échec avant tout
+  side-effect → rejeu sûr. 99/99 vitest, tsc 0, build 0. /simplify CLEAN
 - [ ] Déploiement VPS `karta-engine` (rebuild docker) + smoke réel (bloqué w/ reste déploiements
   de la session, aucun deploy ordonné ce lot)
 

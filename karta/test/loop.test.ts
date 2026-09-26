@@ -235,6 +235,31 @@ describe("runAgentCycle", () => {
     vi.doUnmock("../src/claude/index.js");
   });
 
+  it("un buildContext qui pend est abandonné en timeout 60s — plus de slot worker figé ni verrou détenu jusqu'au TTL", async () => {
+    vi.useFakeTimers();
+    try {
+      const hangingContext = vi.fn(() => new Promise<Record<string, unknown>>(() => {})); // DB injoignable
+      const definition: AgentDefinition = {
+        type: "legal",
+        systemPrompt: "test",
+        tools: [],
+        buildContext: hangingContext,
+      };
+
+      const cycle = runAgentCycle("user-1", definition, trigger);
+      await vi.advanceTimersByTimeAsync(60_500);
+      const result = await cycle;
+
+      expect(result.status).toBe("error");
+      expect(result.errorMessage).toContain("buildContext(legal)");
+      expect(result.errorMessage).toContain("timeout");
+      expect(result.sideEffectsCommitted).toBe(false); // échec AVANT tout side-effect → rejeu BullMQ sûr
+      expect(result.toolsUsed).toHaveLength(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("concurrence : deux cycles parallèles ne se contaminent pas (état par invocation, pas par module)", async () => {
     // Régression du bloc central 2026-09-26 : toolsUsed/sideEffectsCommitted vivaient en variables
     // de MODULE — partagées entre les cycles concurrents du worker (concurrency 5). Ici le cycle
