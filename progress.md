@@ -139,3 +139,11 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
 - index.ts : commentaire résiduel sous-lot 1 commité (cosmétique)
 - Gates : 99/99 vitest (test fake-timers 60s + invariant rejeu-sûr), tsc 0, build 0 ·
   detect_changes LOW/0 processus · /simplify 1 agent 4 angles : CLEAN
+
+### Sous-lot 5 (2026-09-26, XXL) : timeout notify() — AbortSignal réel 15s
+- notify.ts : AbortSignal.timeout(15_000) sur agent-push-send + Resend (annulation socket
+  RÉELLE, couvre response.text()) — dernier await réseau non borné du chemin succès
+- notify.test.ts (nouveau, 4 tests) : branchement ×2 fetch, borne 15s, chemin email,
+  erreur FR 502. Note : getUserById (supabase SDK) reste non borné — à couvrir au
+  prochain lot si pertinent
+- Gates : 103/103 vitest (16 fichiers), tsc 0, build 0

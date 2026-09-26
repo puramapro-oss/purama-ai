@@ -14,6 +14,12 @@ export interface NotifyInput {
   channels?: Array<"push" | "email" | "in_app">;
 }
 
+/** Borne un fetch de notification. AbortSignal.timeout (et non Promise.race) : annulation
+ * RÉELLE de la requête — notify est awaited dans le chemin succès de loop.ts, un fetch pendu
+ * (~5min par défaut undici) tenait le verrou anti-double du cycle jusqu'à son TTL (600s).
+ * Couvre aussi la lecture du corps : le signal abort fait rejeter response.text(). */
+const NOTIFY_TIMEOUT_MS = 15_000;
+
 /**
  * Envoie une notification réelle (in-app + push Web via VAPID + email via Resend selon `channels`).
  * Réutilise `agent-push-send` (edge function partagée par tous les agents Purama — compta, email n8n...)
@@ -40,6 +46,7 @@ export async function notify(input: NotifyInput): Promise<void> {
       priority: input.priority ?? "normal",
       channels,
     }),
+    signal: AbortSignal.timeout(NOTIFY_TIMEOUT_MS),
   });
 
   if (!response.ok) {
@@ -66,6 +73,7 @@ async function sendEmail(input: NotifyInput): Promise<void> {
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
+    signal: AbortSignal.timeout(NOTIFY_TIMEOUT_MS),
     headers: {
       Authorization: `Bearer ${config.resendApiKey}`,
       "Content-Type": "application/json",
