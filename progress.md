@@ -147,3 +147,10 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
   erreur FR 502. Note : getUserById (supabase SDK) reste non borné — à couvrir au
   prochain lot si pertinent
 - Gates : 103/103 vitest (16 fichiers), tsc 0, build 0
+
+### Sous-lot 6 (2026-09-26, XXL) : borne globale des requêtes Supabase
+- db/supabase.ts : boundedFetch (AbortSignal.timeout 30s) en global.fetch du client
+  service_role — borne run.finish/recordRunOutcome/loadAgentState/getUserById/tools
+  (même classe de défaut que sous-lot 5, identifiée par sa revue /simplify)
+- supabase-client.test.ts (nouveau, 2) : branchement + délégation (init préservé, signal ajouté)
+- Gates : 105/105 vitest (17 fichiers), tsc 0, build 0
