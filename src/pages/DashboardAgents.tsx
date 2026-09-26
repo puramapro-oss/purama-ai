@@ -111,7 +111,7 @@ export default function DashboardAgents() {
         </div>
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
+          <input aria-label="Rechercher un agent..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher un agent..."

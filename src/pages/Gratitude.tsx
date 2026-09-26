@@ -144,7 +144,7 @@ export default function Gratitude() {
                 <label className="text-sm font-medium text-foreground block">
                   Pour quoi es-tu reconnaissant aujourd'hui ?
                 </label>
-                <textarea
+                <textarea aria-label="Je suis reconnaissant pour..."
                   value={newText}
                   onChange={e => setNewText(e.target.value)}
                   placeholder="Je suis reconnaissant pour..."

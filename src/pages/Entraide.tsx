@@ -442,7 +442,7 @@ export default function Entraide() {
                   placeholder="Titre de la mission"
                   maxLength={200}
                 />
-                <textarea
+                <textarea aria-label="Décris le coup de main collectif"
                   value={missionDescription}
                   onChange={(event) => setMissionDescription(event.target.value)}
                   placeholder="Décris le coup de main collectif"
