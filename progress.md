@@ -267,3 +267,9 @@ Limites documentées (non bloquantes) : patchParentRun JSONB display race ; owne
   verrou (>600s théorique) ; toolsUsed best-effort si double crash finish+catch ; MOCK=false
   live tests bloqués crédit (règle permanente) ; params tools non re-validés côté loop
   (délégué, fail-safe).
+
+### Sous-lot 8 (2026-09-27) : withRunSerialization — lost-update tools_used fermé (best-effort)
+- engine/run-lock.ts (nouveau) : verrou Redis court par run_id, budget 2s, dégradé sûr (Redis down
+  = avant le fix), TTL 10s, release au finally
+- approval.ts patchParentRun : read-modify-write JSONB sérialisé (limite sous-lot 3 fermée)
+- Tests : run-lock.test.ts (5) + garde approval — 17/17 ciblés, tsc 0

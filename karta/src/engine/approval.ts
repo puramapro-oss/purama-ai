@@ -1,6 +1,7 @@
 import { supabase } from "../db/supabase.js";
 import { resolveAgentDefinition } from "./resolveDefinition.js";
 import { executeToolStrict } from "./tool-result.js";
+import { withRunSerialization } from "./run-lock.js";
 import type { AgentType, ToolCallRecord } from "./types.js";
 
 interface CreatePendingActionInput {
@@ -138,47 +139,48 @@ async function finalizePendingAction(pending: PendingActionRow, status: FinalSta
 
 /**
  * Met à jour l'entrée tools_used correspondante dans karta_runs, et clôture le run si c'était la
- * dernière action en attente. Limite connue : lit-modifie-réécrit tout le JSONB tools_used sans
- * verrou — si 2 actions du MÊME run sont résolues en concurrence (2 clics quasi simultanés sur 2
- * actions différentes d'un même run), l'une peut écraser le patch de l'autre. Risque jugé
- * négligeable (résolution humaine, un seul utilisateur, écart de plusieurs secondes en pratique) ;
- * un correctif robuste nécessiterait un writer unique pour karta_runs (fonction Postgres atomique
- * ou passage par logger.ts) — hors scope d'un ajustement ponctuel.
+ * dernière action en attente. Le read-modify-write du JSONB tools_used est sérialisé par un verrou
+ * Redis court (withRunSerialization, best-effort : budget 2s puis procède sans verrou, Redis down
+ * = comportement d'avant) — sans lui, 2 actions du MÊME run résolues en parallèle pouvaient se
+ * perdre un patch (lost-update display). L'exécution de l'outil, elle, reste
+ * exactement-une-fois via claimPendingAction.
  */
 async function patchParentRun(pending: PendingActionRow, status: FinalStatus, resultSummary: string): Promise<void> {
-  const { data: run, error: runError } = await supabase
-    .from("karta_runs")
-    .select("tools_used")
-    .eq("id", pending.run_id)
-    .maybeSingle();
+  await withRunSerialization(pending.run_id, async () => {
+    const { data: run, error: runError } = await supabase
+      .from("karta_runs")
+      .select("tools_used")
+      .eq("id", pending.run_id)
+      .maybeSingle();
 
-  if (runError || !run) return; // run introuvable — l'action reste correctement résolue dans tous les cas
+    if (runError || !run) return; // run introuvable — l'action reste correctement résolue dans tous les cas
 
-  const toolsUsed = (Array.isArray(run.tools_used) ? run.tools_used : []) as ToolCallRecord[];
-  const patched = toolsUsed.map((t) =>
-    t.pendingActionId === pending.id
-      ? {
-          ...t,
-          resultSummary:
-            status === "rejected" ? "rejetée par l'utilisateur" : status === "executed" ? resultSummary : `échec après approbation : ${resultSummary}`,
-          success: status !== "failed",
-        }
-      : t
-  );
+    const toolsUsed = (Array.isArray(run.tools_used) ? run.tools_used : []) as ToolCallRecord[];
+    const patched = toolsUsed.map((t) =>
+      t.pendingActionId === pending.id
+        ? {
+            ...t,
+            resultSummary:
+              status === "rejected" ? "rejetée par l'utilisateur" : status === "executed" ? resultSummary : `échec après approbation : ${resultSummary}`,
+            success: status !== "failed",
+          }
+        : t
+    );
 
-  const { count } = await supabase
-    .from("karta_pending_actions")
-    .select("id", { count: "exact", head: true })
-    .eq("run_id", pending.run_id)
-    .eq("status", "pending");
+    const { count } = await supabase
+      .from("karta_pending_actions")
+      .select("id", { count: "exact", head: true })
+      .eq("run_id", pending.run_id)
+      .eq("status", "pending");
 
-  const updates: Record<string, unknown> = { tools_used: patched };
-  if (!count) {
-    const anyFailed = patched.some((t) => !t.success);
-    updates.status = anyFailed ? "error" : "success";
-  }
+    const updates: Record<string, unknown> = { tools_used: patched };
+    if (!count) {
+      const anyFailed = patched.some((t) => !t.success);
+      updates.status = anyFailed ? "error" : "success";
+    }
 
-  await supabase.from("karta_runs").update(updates).eq("id", pending.run_id);
+    await supabase.from("karta_runs").update(updates).eq("id", pending.run_id);
+  });
 }
 
 /**

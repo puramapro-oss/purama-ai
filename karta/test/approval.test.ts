@@ -91,7 +91,14 @@ vi.mock("../src/engine/resolveDefinition.js", () => ({
   })),
 }));
 
+// Le verrou de sérialisation des patchs run a ses propres tests (run-lock.test.ts) — ici on
+// vérifie seulement que patchParentRun passe bien DEDANS, avec le bon run_id.
+vi.mock("../src/engine/run-lock.js", () => ({
+  withRunSerialization: vi.fn(async (_runId: string, fn: () => Promise<unknown>) => fn()),
+}));
+
 const { resolvePendingAction, reconcileOrphanPendingActions } = await import("../src/engine/approval.js");
+const { withRunSerialization } = await import("../src/engine/run-lock.js");
 
 function resetState(pendingStatus = "pending") {
   state.pending = {
@@ -131,6 +138,8 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     expect(executeMock).toHaveBeenCalledWith({ table: "compta_transactions" }, { userId: "user-1", agentType: "compta", mode: "live" });
     expect(state.pending?.status).toBe("executed");
     expect(state.run?.status).toBe("success");
+    // Le patch du journal parent passe par le verrou de sérialisation du run (sous-lot 8)
+    expect(withRunSerialization).toHaveBeenCalledWith("run-1", expect.any(Function));
   });
 
   it("approuver marque le run en erreur si l'outil échoue à l'exécution", async () => {
