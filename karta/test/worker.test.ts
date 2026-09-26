@@ -128,4 +128,22 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
     await expect(processAgentCycleJob(job)).rejects.toThrow("boom runtime");
     expect(releaseCycleLock).toHaveBeenCalledWith("legal", "user-1");
   });
+
+  it("vrai parallélisme : 2 jobs du MÊME (agent,user) en Promise.all → exactement 1 exécution", async () => {
+    // Le verrou est le seul mécanisme (pas de sérialisation JS) : le mock simule l'atomicité
+    // SET NX en ne laissant gagner que le 1er acquire (les suivants voient le verrou tenu).
+    let held = false;
+    vi.mocked(tryAcquireCycleLock).mockImplementation(async () => {
+      if (held) return false;
+      held = true; // acquis — le release du finally du gagnant ne survient qu'après son cycle
+      return true;
+    });
+
+    const results = await Promise.all([processAgentCycleJob(job), processAgentCycleJob(job)]);
+
+    expect(runAgentCycle).toHaveBeenCalledOnce(); // le doublon n'a PAS tourné
+    const skips = results.filter((r) => r.resultSummary.includes("verrou"));
+    expect(skips).toHaveLength(1);
+    expect(results.every((r) => r.status === "success")).toBe(true); // aucun n'est une erreur BullMQ
+  });
 });

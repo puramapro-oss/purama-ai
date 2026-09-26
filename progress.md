@@ -160,3 +160,110 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
   gagne, socket fermé) ; migration des 10 fetch nus des 6 tools (gmail OAuth inclus)
 - bounded-fetch.test.ts (nouveau, 3)
 - Gates : 108/108 vitest (18 fichiers), tsc 0, build 0
+
+## FORMAL ASSURANCE PRÉ-INTÉGRATION KARTA P0 IAO — 2026-09-26 (GLM-1)
+Méthode : revue runtime complète + matrice crash + mutation testing + greps + gates.
+
+### Invariant → code → test (2)
+I1 faux succès interdit → executeToolStrict/assertToolResult → tool-result 9, loop, approval 2
+I2 au plus UN cycle exécutant par (agent,user) → verrou Redis NX/finally → worker 6 dont
+   Promise.all vrai parallélisme
+I3 rejeu BullMQ seulement sans side-effect → shouldRetryCycle+sideEffectsCommitted → worker 3
+I4 approbation exactement-une-fois → claimPendingAction atomique → approval 5 (double/reject/404)
+I5 trace des side-effects survit à l échec du cycle → toolsUsed portée fn au catch → loop 2
+I6 toute phase du cycle bornée → 60s/120s/30s/25s/15s/30s → loop fake-timers ×2, notify 2,
+   supabase-client 2, bounded-fetch 3
+I7 orphelins réconciliés au boot → reconcileStaleRuns/OrphanPendingActions → logger 3+approval 3
+
+### Scénarios crash/concurrence (8-19)
+workers 2/5/10 : PASS par construction — verrou Redis GLOBAL (pas in-process), indépendant
+  de la concurrency BullMQ ; I2 tient pour N workers/process (SET NX atomique跨process).
+ordering : finish(journal) AVANT notify AVANT recordRunOutcome — receipt d abord, non fatals
+  ensuite → PASS (revue loop.ts:159-188).
+cancellation : shutdown gracieux worker.close() attend les cycles en cours (pas d avortement
+  brutal) ; AbortSignals clos les sockets ; timers désarmés au finally → PASS.
+retry : L✓ I3 ; timeout : M✓ 6 bornes ; crash avant claim → rien créé, job rejoué (claim
+  jamais pris) ; crash après claim avant side-effect → ligne "processing" → réconciliée
+  failed au boot + job BullMQ: le claim empêche un 2e traitement concurrent, le rejeu du job
+  (si pending) re-claimera après reconcile → au pire 1 exécution (idempotence O✓) ;
+crash avant side-effect (cycle) → status error, sideEffectsCommitted=false → rejeu sûr ;
+crash APRÈS side-effect → sideEffectsCommitted=true → JAMAIS rejoué (I3) + trace toolsUsed ;
+receipt perdu (finish échoue aussi au catch) → run "running" → reconcileStaleRuns au boot →
+  "error interrompu" ; LIMITITE: toolsUsed perdus en DB (le returnvalue BullMQ garde 500
+  derniers) — best-effort documenté, le rejeu reste interdit (I3) → PASS w/ limite.
+replay (stalled job) : re-dispatch ~30s < TTL 600s → tryAcquire échoue → SKIP → PASS testé M2.
+compensation : N/A volontaire — pas de saga/compensation dans le moteur (aucun outil
+  n expose d annulation transactionnelle) ; la compensation humaine = reject avant exécution.
+
+### État runtime (21-27)
+état module-level : 0 variable mutable de module dans le chemin cycle (fix S1, test concurrence
+  loop) ; isolation worker : portée fn + verrou par identité (test Promise.all) ; cleanup :
+  clearTimeout au finally (tool-result), vi.mocked restores en finally (tests) ; AbortController
+  : AbortSignal.timeout natif partout (pas de controller manuel fuyard) ; timers : tous
+  désarmés au finally ; listeners : 0 listener longévif ajouté ; promises orphelines :
+  withTimeout race en laisse une PAR DESIGN (documentée) MAIS sockets fermés par signal 25s
+  (S7) → PASS w/ note.
+
+### Contrat tool-result (28-33) → PASS intégral (9 tests + M3: 6 écrans)
+params : non re-validés côté loop (délégué aux tools + APIs tierces qui 400 → throw →
+  success:false) ; 0 injection possible (whitelist tables supabaseTool + PostgREST).
+
+### Permissions/VAJRA/révocation (34-36) → PASS (ce qui est réellement câblé)
+auth bearer KARTA_ADMIN_TOKEN (routes internes) + JWT+RLS+rate-limit (edge fns vérifiés)
+  + whitelist agents Object.keys(AGENT_REGISTRY) (1 source) + whitelist 8 tools custom
+  + kill switch global/agent (révocation runtime immédiate, cache 5s).
+VAJRA fail-closed : N/A — VAJRA n est PAS câblé dans karta (spec _ULTIMATE_PRODUCT_PASS
+  statut PROPOSÉE) ; le fail-closed RÉEL = erreurs outils → échec (jamais succès par défaut).
+
+### SATYA/PRAMANA/SMARANA (39-40) → N/A factuel
+grep karta/src : 0 occurrence — jamais câblés dans ce moteur. Les receipts RÉELS = karta_runs
+  immuable + toolsUsed + reconciliations (I5/I7). Aucune interaction SMARANA réelle.
+tenant/actor/purpose (41) : isolation par userId dans chaque clé (verrou, claim, runs, RLS)
+  → PASS ; purpose-spacing non applicable (mono-tenant par user).
+
+### Mutation testing (42-44) — 4 mutations, 4 détectées, 10 assertions-écrans
+M1 shouldRetryCycle sans garde → 2 échecs ; M2 verrou neutralisé → 1 échec ;
+M3 assertToolResult no-op → 6 échecs ; M4 awaitingApproval figé → 1 échec.
+Faux verts : aucun sur les mécanismes critiques. Suite 109/109 après ajout du test
+vrai-parallélisme Promise.all (gap T comblé).
+Analyse 108→109 : 18 fichiers, répartition saine (contrat 23, loop 10, worker 9, approval 12,
+  bornes 13, mocks registre 19, crypto 3) ; mocks jamais au-delà de la frontière testée.
+
+### Cross-module/API (48) → PASS
+API server routes inchangées ({ok,queued} 202) ; ResolveResult shape identique (distinction
+  404/409 préservée via repli) ; edge fn karta-resolve-pending-action (JWT+rate 30/h+regex
+  36hex+RLS+pré-check 409) consomme l API telle quelle ; PendingActionsList.tsx → toast
+  générique indépendant du resultSummary. Pré-check 409 edge + claim karta = double
+  couche cohérente.
+
+### Architecture/second passes (49-51)
+49 : /simplify ×7 (12 agents) — altitude validée sur chaque mécanisme (verrou au processing,
+  claim au niveau update, bornes à la couche qui possède le transport).
+50 : adversarial = mutations 4/4 + detect_changes par sous-lot (LOW/MEDIUM analysé).
+51 : 0 TODO/FIXME/debugger dans karta/src ; TODO_LIVE_TEST = balise volontaire (règle
+  crédit permanente) ; console.log = 4 logs lifecycle légitimes (boot/shutdown/reconcile).
+
+### Intégration (52-55)
+52 map : loop→{autonomy,killswitch,logger,notify,approval,tool-result,claude} ;
+  worker→{queues(verrou),loop,resolveDefinition,logger,approval} ; queues→redis ;
+  tools→lib/bounded-fetch ; db/supabase→boundedFetch ; AUCUN cycle d import nouveau.
+53 ordre : 913d6f2→a7e02a0→322ed09→d673914→ee8cbb6→84d8644→26aad47 linéaire, chaque
+  commit vert indépendamment (deps aval avant amont respectées) → PASS.
+54 gates post-intégration : 109/109 vitest, tsc --noEmit 0, tsconfig.build 0 — PASS.
+55 rollback : git revert des 7 commits (ordre inverse) ; migrations 006/007 idempotentes
+  (IF NOT EXISTS) et additives (index seulement — drop sûr si rollback) ; verrou/claim
+  rétrocompatibles avec l existant (pas de schéma breaking ; "processing" sans contrainte).
+
+### Checklist VPS FUTURE (56 — SANS exécution)
+1. df -h VPS + docker ps baseline ; 2. scp src/ modifiés vers /opt/karta/src/ ;
+  3. psql migrations 006+007 (IF NOT EXISTS, ~instantané) ; 4. docker compose up -d --build
+  karta-engine ; 5. GET /health 200 ; 6. logs : absence d erreurs reconcile au boot ;
+  7. trigger manuel 1 agent simulation → karta_runs success ; 8. 2e trigger immédiat même
+  agent → log "SKIPPÉ — verrou" (preuve I2 en prod) ; 9. approbation double-clic UI →
+  1 seule exécution (preuve I4) ; 10. verrou libéré après cycle (redis-cli GET clé = nil).
+
+### VERDICT (57) : READY POUR INTÉGRATION — 0 bug prouvé restant
+Limites documentées (non bloquantes) : patchParentRun JSONB display race ; owner-token CAD
+  verrou (>600s théorique) ; toolsUsed best-effort si double crash finish+catch ; MOCK=false
+  live tests bloqués crédit (règle permanente) ; params tools non re-validés côté loop
+  (délégué, fail-safe).
