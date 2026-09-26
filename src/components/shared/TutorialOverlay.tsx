@@ -114,6 +114,15 @@ export function TutorialOverlay({
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') close(false);
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isOpen]);
+
   const next = () => {
     if (stepIndex < steps.length - 1) {
       setStepIndex(stepIndex + 1);
@@ -232,6 +241,7 @@ export function TutorialOverlay({
         <div
           className="absolute inset-0 cursor-pointer"
           onClick={() => close(false)}
+          aria-hidden="true"
         />
 
         {/* Hint card */}
@@ -243,7 +253,11 @@ export function TutorialOverlay({
           transition={{ type: 'spring', stiffness: 320, damping: 26 }}
           style={cardStyle}
           onClick={e => e.stopPropagation()}
-          className="rounded-2xl border border-accent-purple/40 bg-card/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] p-5"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Astuce ${stepIndex + 1} sur ${steps.length}`}
+          tabIndex={-1}
+          className="rounded-2xl border border-accent-purple/40 bg-card/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(139,92,246,0.25)] p-5 outline-none"
         >
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
