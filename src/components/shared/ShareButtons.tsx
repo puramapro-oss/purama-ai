@@ -53,7 +53,7 @@ export function ShareButtons({ title = 'Purama AI', text = 'Découvre Purama AI 
         <Button variant="ghost" size="sm" onClick={nativeShare} className="text-muted-foreground hover:text-accent-cyan">
           <Share2 className="w-4 h-4" />
         </Button>
-        <Button variant="ghost" size="sm" onClick={copyLink} className="text-muted-foreground hover:text-accent-cyan">
+        <Button variant="ghost" size="sm" onClick={copyLink} aria-label="Copier le lien" className="text-muted-foreground hover:text-accent-cyan">
           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
         </Button>
       </div>

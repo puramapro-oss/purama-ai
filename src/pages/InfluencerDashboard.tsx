@@ -501,7 +501,7 @@ export default function InfluencerDashboard() {
                 readOnly
                 className="font-mono text-sm"
               />
-              <Button onClick={copyLink} variant="outline">
+              <Button onClick={copyLink} variant="outline" aria-label="Copier le lien">
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </Button>
             </div>
