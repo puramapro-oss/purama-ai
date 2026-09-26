@@ -106,7 +106,7 @@ export default function Notifications() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard">
+              <Link to="/dashboard" aria-label="Retour au tableau de bord">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
             </Button>
@@ -283,7 +283,7 @@ export default function Notifications() {
                                   asChild
                                   onClick={(e) => e.stopPropagation()}
                                 >
-                                  <Link to={notification.action_url}>
+                                  <Link to={notification.action_url} aria-label="Ouvrir">
                                     <ExternalLink className="w-4 h-4" />
                                   </Link>
                                 </Button>
