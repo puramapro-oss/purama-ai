@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useModalA11y } from '@/hooks/useModalA11y';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Plus, Trash2, FileText, Sparkles, Eye, Send } from 'lucide-react';
@@ -32,6 +33,8 @@ export default function LegalAgentDocuments() {
   const [genBrief, setGenBrief] = useState('');
   const [generating, setGenerating] = useState(false);
   const [selected, setSelected] = useState<LegalDocument | null>(null);
+  const closeDetail = useCallback(() => setSelected(null), []);
+  const panelRef = useModalA11y(!!selected, closeDetail);
   const [sending, setSending] = useState(false);
   const [signerName, setSignerName] = useState('');
   const [signerEmail, setSignerEmail] = useState('');
@@ -188,12 +191,20 @@ export default function LegalAgentDocuments() {
 
       {/* Document viewer + send-for-signature */}
       {selected && (
-        <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="bg-card border border-border rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={closeDetail} aria-hidden="true">
+          <div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="doc-detail-title"
+            tabIndex={-1}
+            className="bg-card border border-border rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto outline-none"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="p-5 border-b border-border flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs text-muted-foreground mb-1">{selected.type}</p>
-                <h3 className="text-lg font-semibold text-foreground">{selected.title}</h3>
+                <h3 id="doc-detail-title" className="text-lg font-semibold text-foreground">{selected.title}</h3>
               </div>
               <Badge variant="outline">{selected.status}</Badge>
             </div>

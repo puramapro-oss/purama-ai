@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useModalA11y } from '@/hooks/useModalA11y';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Plus, Briefcase, Sparkles, AlertTriangle, Trash2 } from 'lucide-react';
@@ -47,6 +48,8 @@ export default function LegalAgentCases() {
   const [open, setOpen] = useState(false);
   const [building, setBuilding] = useState(false);
   const [selected, setSelected] = useState<LegalCase | null>(null);
+  const closeDetail = useCallback(() => setSelected(null), []);
+  const panelRef = useModalA11y(!!selected, closeDetail);
   const [newCase, setNewCase] = useState({
     title: '',
     type: 'contentieux_commercial',
@@ -196,11 +199,19 @@ export default function LegalAgentCases() {
 
       {/* Detail */}
       {selected && (
-        <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={closeDetail} aria-hidden="true">
+          <div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="case-detail-title"
+            tabIndex={-1}
+            className="bg-card border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto outline-none"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="p-5 border-b border-border flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-foreground">{selected.title}</h3>
+                <h3 id="case-detail-title" className="text-lg font-semibold text-foreground">{selected.title}</h3>
                 <p className="text-xs text-muted-foreground">{selected.type} · {selected.status}</p>
               </div>
               <Button variant="ghost" size="icon" onClick={() => handleDelete(selected.id)} className="text-red-400">
