@@ -77,8 +77,28 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
  * Chaque tool concret garde son typage précis à la définition (ex: gmailSendTool) ; c'est
  * uniquement au moment de l'agrégation dans un agent que le typage est effacé — la validation
  * réelle des params se fait dans engine/loop.ts au moment de l'exécution.
+ *
+ * `never` en position de paramètre (contravariance) : tout ToolDefinition<P> concret est
+ * assignable à cette vue, puisque `never` est assignable à tout P. Un `unknown` ici exigerait
+ * l'inverse (P assignable à unknown en paramètre de fn = interdit en strict), ce qui cassait
+ * la compilation de toutes les agrégations d'outils (régression introduite puis reproduite
+ * le 2026-09-26, cf ERRORS.md).
  */
-export type AnyToolDefinition = ToolDefinition<unknown, unknown>;
+export type AnyToolDefinition = ToolDefinition<never, unknown>;
+
+/**
+ * Unique point de levée du cast d'effacement : exécute un outil effacé avec des params réels.
+ * Seul appelant légitime : `executeToolStrict` (engine/tool-result.ts), qui sert à la fois le
+ * cycle (loop.ts) et l'exécution après validation humaine (approval.ts) — tout autre appel
+ * doit être justifié.
+ */
+export function callErasedTool(
+  tool: AnyToolDefinition,
+  params: Record<string, unknown>,
+  ctx: ToolExecutionContext
+): Promise<unknown> {
+  return tool.execute(params as never, ctx);
+}
 
 export interface ToolExecutionContext {
   userId: string;
@@ -122,4 +142,9 @@ export interface AgentRunResult {
   resultSummary: string;
   errorMessage?: string;
   mock: boolean;
+  /** true si le cycle a tenté au moins une exécution RÉELLE d'outil (mode live, hors simulation
+   * et hors mise en attente d'approbation). Un rejeu BullMQ doublerait des side-effects déjà
+   * commis (email parti, ligne insérée...) : le worker ne doit PAS relancer ces cycles —
+   * il journalise et laisse la main à l'humain/cron suivant. */
+  sideEffectsCommitted: boolean;
 }

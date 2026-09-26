@@ -109,6 +109,24 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     expect(state.run?.status).toBe("error");
   });
 
+  it("approuver un outil qui retourne {ok:false} SANS lever = échec (faux succès interdit, P0 2026-09-26)", async () => {
+    executeMock.mockResolvedValue({ ok: false, error: "envoi refusé par Gmail" });
+    const result = await resolvePendingAction("pending-1", "approve");
+
+    expect(result.ok).toBe(true);
+    expect(state.pending?.status).toBe("failed"); // AVANT le contrat strict : "executed" (mensonge)
+    expect(String(state.pending?.result_summary)).toContain("envoi refusé par Gmail");
+    expect(state.run?.status).toBe("error");
+  });
+
+  it("approuver un outil qui retourne void est un succès légitime (contrat : null/undefined = ok)", async () => {
+    executeMock.mockResolvedValue(undefined);
+    await resolvePendingAction("pending-1", "approve");
+
+    expect(state.pending?.status).toBe("executed");
+    expect(state.run?.status).toBe("success");
+  });
+
   it("rejeter n'exécute jamais l'outil", async () => {
     const result = await resolvePendingAction("pending-1", "reject");
 

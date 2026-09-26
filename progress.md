@@ -65,3 +65,48 @@
 - mobile/scripts/generate-icons.mjs (sharp SVG→PNG)
 
 ## Resultat : tsc 0 erreur, 0 window/localStorage/document direct
+
+## 2026-09-26 — KARTA P0 IAO : bloc exécution centrale (reprise GLM-1 après reboot)
+
+Périmètre IAO/KARTA : orchestration/exécution centrale, concurrence, anti-double-exécution,
+validation stricte, permissions, receipts/réconciliation, reprise après erreur.
+
+### Fait (code + tests)
+- `engine/tool-result.ts` (nouveau) : contrat formel résultats outils — assertToolResult (faux
+  succès interdits : false/{ok:false}/{error}/{status:error} = échec), summarizeToolResult,
+  withToolTimeout (30s/outil, timer désarmé au finally), ToolResultError/ToolTimeoutError
+- `engine/loop.ts` : bloc central réparé — toolsUsed/sideEffectsCommitted en portée FONCTION
+  (fini l état module partagé entre cycles concurrents + toolsUsedRef jamais assigné), timeout
+  decide 120s + par outil 30s, assertToolResult, sideEffectsCommitted compté AVANT tentative
+  réelle, recordRunOutcome succès non fatal, catch préserve [...toolsUsed]
+- `engine/approval.ts` : callErasedTool + withToolTimeout + assertToolResult + summarizeToolResult
+  (summarize local supprimé) — un outil approuvé qui retourne {ok:false} = failed, plus executed
+- `engine/types.ts` : AnyToolDefinition via never (contravariance), callErasedTool unique point
+  de cast, AgentRunResult.sideEffectsCommitted, ToolCallRecord.pendingActionId
+- `queue/worker.ts` : shouldRetryCycle() — rejeu BullMQ UNIQUEMENT si error && !sideEffectsCommitted
+- `engine/logger.ts` : reconcileStaleRuns() — runs "running" orphelins >1h → error au boot
+- `index.ts` : appel reconcileStaleRuns au démarrage (fire-and-forget, non fatal)
+- `vitest.config.ts` : postcss inline vide (vite ne remonte plus au postcss.config.js du parent)
+
+### Gates
+- vitest karta : 86/86 (15 fichiers ; +tool-result, +worker, +logger ; loop/approval étendus)
+- tsc --noEmit : 0 erreur · build karta (tsconfig.build.json) : 0 erreur
+- root tsc/build NON relancés : node_modules racine absent (nettoyage anti-saturation post-
+  certification, policy §6 pas de réinstall auto) — diff 100%% karta/**, frontend non touché
+
+### Reste (prochains sous-lots)
+- Deploy VPS karta-engine (rebuild docker) + vérif /health + 1 cycle réel de smoke
+- Bascule simulation_mode agent par agent (bloqué crédit Anthropic, règle permanente task_plan)
+
+### /simplify (règle #17) — 4 agents convergents
+Appliqué : executeToolStrict (unique point exécution outils, fusionne timeout+cast+assert+résumé
+  pour loop.ts ET approval.ts) ; withTimeout générique + TimeoutError (decide() n est plus un
+  ToolResultError) ; worker restructuré (prédicat unique shouldRetryCycle) ; reconcileStaleRuns
+  déplacée dans startAgentCycleWorker (le composant qui possède les cycles) ; awaitingApproval
+  dérivable (toolsUsed.some(pendingActionId)) ; .catch() one-liners (fini 4 try/catch) ; copie
+  [...toolsUsed] et 3e résultat summary supprimés ; migration 006 (index partiel karta_runs
+  status=running).
+Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contrat intentionnel,
+  test le épingle) ; parallelisation finish/notify/record (le throw de finish DOIT basculer le
+  cycle en erreur — test dédié) ; patchParentRun/stringify pré-existants hors diff ; helpers de
+  test (aucun existant à réutiliser). Re-gates : 88/88, tsc 0, build 0.

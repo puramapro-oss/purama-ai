@@ -145,4 +145,152 @@ describe("runAgentCycle", () => {
 
     tableResolutions.karta_global_state = { data: { kill_switch: false }, error: null };
   });
+
+  it("un outil qui retourne {ok:false} sans lever est un ÉCHEC journalisé (faux succès interdit)", async () => {
+    const executed = vi.fn(async () => ({ ok: false, error: "envoi refusé par Gmail" }));
+    const definition: AgentDefinition = {
+      type: "legal",
+      systemPrompt: "test",
+      tools: [stubTool("send_notification", false, executed)],
+      buildContext: async () => ({ upcomingDeadlines: [{ title: "doc", expires_at: "2026-08-01" }] }),
+    };
+
+    const result = await runAgentCycle("user-1", definition, trigger);
+
+    expect(result.status).toBe("success"); // le cycle se termine ; c'est l'OUTIL qui est en échec
+    expect(result.toolsUsed[0].success).toBe(false);
+    expect(result.toolsUsed[0].resultSummary).toContain("envoi refusé par Gmail");
+    expect(result.sideEffectsCommitted).toBe(true); // tentative réelle → pas de rejeu BullMQ possible
+  });
+
+  it("un outil qui pend est abandonné en échec timeout au bout de 30s (plus jamais de worker figé)", async () => {
+    vi.useFakeTimers();
+    try {
+      const executed = vi.fn(() => new Promise<never>(() => {})); // pend pour toujours
+      const definition: AgentDefinition = {
+        type: "legal",
+        systemPrompt: "test",
+        tools: [stubTool("send_notification", false, executed)],
+        buildContext: async () => ({ upcomingDeadlines: [{ title: "doc", expires_at: "2026-08-01" }] }),
+      };
+
+      const cycle = runAgentCycle("user-1", definition, trigger);
+      await vi.advanceTimersByTimeAsync(30_500);
+      const result = await cycle;
+
+      expect(result.status).toBe("success"); // cycle terminé, échec porté par l'outil
+      expect(result.toolsUsed[0].success).toBe(false);
+      expect(result.toolsUsed[0].resultSummary).toContain("send_notification");
+      expect(result.toolsUsed[0].resultSummary).toContain("timeout");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("les outils déjà exécutés restent journalisés si l'écriture du journal échoue APRÈS (sideEffectsCommitted=true)", async () => {
+    // Cas critique réel : l'outil a agi (side-effect commis) puis karta_runs est injoignable au
+    // moment de la clôture → le chemin catch doit préserver la trace de l'outil au lieu de la
+    // perdre. (recordRunOutcome/notify sont volontairement non fatals dans loop.ts — le seul
+    // échec post-outils qui fait basculer le cycle en erreur est run.finish.)
+    vi.resetModules();
+    vi.doMock("../src/engine/logger.js", () => ({
+      startRun: async () => ({
+        runId: "run-err",
+        finish: async () => {
+          throw new Error("boom écriture karta_runs");
+        },
+      }),
+    }));
+    vi.doMock("../src/claude/index.js", () => ({
+      getClaudeClient: () => ({
+        isMock: true,
+        decide: async () => ({
+          summary: "notifier l'échéance",
+          toolCalls: [{ tool: "send_notification", params: {} }],
+          requiresApproval: false,
+          mock: true,
+        }),
+      }),
+    }));
+
+    const { runAgentCycle: freshRunAgentCycle } = await import("../src/engine/loop.js");
+    const executed = vi.fn(async () => ({ ok: true }));
+    const definition: AgentDefinition = {
+      type: "legal",
+      systemPrompt: "test",
+      tools: [stubTool("send_notification", false, executed)],
+      buildContext: async () => ({}),
+    };
+
+    const result = await freshRunAgentCycle("user-1", definition, trigger);
+
+    expect(result.status).toBe("error");
+    expect(result.errorMessage).toContain("boom écriture karta_runs");
+    expect(executed).toHaveBeenCalledOnce(); // l'outil a RÉELLEMENT tourné avant l'échec
+    expect(result.toolsUsed).toHaveLength(1); // ...et sa trace survit au chemin d'erreur
+    expect(result.toolsUsed[0].success).toBe(true);
+    expect(result.sideEffectsCommitted).toBe(true); // rejeu BullMQ interdit (doublerait le side-effect)
+
+    vi.doUnmock("../src/engine/logger.js");
+    vi.doUnmock("../src/claude/index.js");
+  });
+
+  it("concurrence : deux cycles parallèles ne se contaminent pas (état par invocation, pas par module)", async () => {
+    // Régression du bloc central 2026-09-26 : toolsUsed/sideEffectsCommitted vivaient en variables
+    // de MODULE — partagées entre les cycles concurrents du worker (concurrency 5). Ici le cycle
+    // "legal" échoue à la clôture de son journal après son outil ; le cycle "compta" parallèle
+    // doit rester intact.
+    vi.resetModules();
+    vi.doMock("../src/engine/logger.js", () => ({
+      startRun: async (_userId: string, agentType: string) => ({
+        runId: `run-${agentType}`,
+        finish: async () => {
+          if (agentType === "legal") throw new Error("boom écriture karta_runs (legal)");
+        },
+      }),
+    }));
+    vi.doMock("../src/claude/index.js", () => ({
+      getClaudeClient: () => ({
+        isMock: true,
+        decide: async ({ agentType }: { agentType: string }) => ({
+          summary: "action décidée",
+          toolCalls: [{ tool: agentType === "compta" ? "supabase_upsert" : "send_notification", params: {} }],
+          requiresApproval: false,
+          mock: true,
+        }),
+      }),
+    }));
+
+    const { runAgentCycle: freshRunAgentCycle } = await import("../src/engine/loop.js");
+    const legalExecuted = vi.fn(async () => ({ ok: true, draft: "brouillon" }));
+    const comptaExecuted = vi.fn(async () => ({ ok: true, rows: 2 }));
+    const legalDef: AgentDefinition = {
+      type: "legal",
+      systemPrompt: "test",
+      tools: [stubTool("send_notification", false, legalExecuted)],
+      buildContext: async () => ({}),
+    };
+    const comptaDef: AgentDefinition = {
+      type: "compta",
+      systemPrompt: "test",
+      tools: [stubTool("supabase_upsert", false, comptaExecuted)],
+      buildContext: async () => ({}),
+    };
+
+    const [legalResult, comptaResult] = await Promise.all([
+      freshRunAgentCycle("user-1", legalDef, trigger),
+      freshRunAgentCycle("user-2", comptaDef, trigger),
+    ]);
+
+    expect(legalResult.status).toBe("error");
+    expect(legalResult.toolsUsed).toHaveLength(1);
+    expect(legalResult.toolsUsed[0].success).toBe(true);
+    expect(legalResult.sideEffectsCommitted).toBe(true);
+    expect(comptaResult.status).toBe("success"); // le voisin n'a pas hérité de l'erreur
+    expect(comptaResult.toolsUsed).toHaveLength(1);
+    expect(comptaResult.toolsUsed[0].success).toBe(true);
+
+    vi.doUnmock("../src/engine/logger.js");
+    vi.doUnmock("../src/claude/index.js");
+  });
 });

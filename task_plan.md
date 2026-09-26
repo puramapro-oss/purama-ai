@@ -243,6 +243,42 @@ au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`
 - [ ] EAS build iOS + Android (necessite Apple Team ID + Google Service Account)
 - [ ] EAS submit to stores (necessite premier build)
 
+## INTÉGRATION @PURAMA/ENTRAIDE ✅ (2026-09-04)
+- [x] Migration DB (6 tables schema purama_ai via pg-meta, vérifiées)
+- [x] Package linking (@purama/entraide + alias Vite)
+- [x] Adapter (src/lib/entraide.ts — 8 fonctions MOULE §1)
+- [x] Routes API (4 edge functions Deno — Zod+auth+rate-limit)
+- [x] Écran UI (/dashboard/entraide — VRAIS fetch, 0 mock, design GOD MODE)
+- [x] Nav (sidebar+bottom tabs + i18n FR/EN)
+- [x] Tests structurels (tsc 0, build 0)
+- [x] Docs (DECISIONS.md D-EN01, rollout-notes/purama-ai.md)
+- [ ] Deploy edge functions VPS + tests curl réels (après `supabase functions deploy`)
+
+## KARTA P0 IAO — Bloc exécution centrale ✅ (2026-09-26, reprise GLM-1 post-reboot)
+Périmètre : orchestration/exécution centrale, concurrence, anti-double-exécution, validation
+stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir ERRORS.md 2026-09-26.)
+- [x] Contrat formel résultats d'outils `engine/tool-result.ts` : faux succès interdits
+  (false / {ok:false} / {success:false} / {error} / {status:"error"} sans exception = ÉCHEC),
+  `withToolTimeout` 30s/outil (timer désarmé au finally), `summarizeToolResult` ne levant jamais
+- [x] `engine/loop.ts` bloc central : `toolsUsed`/`sideEffectsCommitted` en portée FONCTION
+  (fini l'état de module partagé entre cycles concurrents — worker concurrency 5 — et le
+  `toolsUsedRef` jamais assigné qui vidait le chemin d'erreur) ; timeout `decide()` 120s ;
+  `sideEffectsCommitted` compté AVANT chaque tentative réelle ; `recordRunOutcome` succès
+  non fatal ; le catch préserve la trace des outils déjà exécutés
+- [x] `engine/approval.ts` : même contrat strict (callErasedTool + timeout + assertToolResult) —
+  un outil approuvé qui retourne {ok:false} est `failed`, jamais `executed`
+- [x] Anti-double-exécution : `worker.ts shouldRetryCycle()` — rejeu BullMQ UNIQUEMENT si
+  `error && !sideEffectsCommitted` (un rejeu après side-effects doublerait l'action réelle)
+- [x] Réconciliation : `logger.reconcileStaleRuns()` au boot (`index.ts`, non fatale) — les runs
+  "running" orphelins (>1h) d'un crash worker sont clôturés en "error interrompu"
+- [x] `types.ts` : `AnyToolDefinition` via `never` (contravariance) + `callErasedTool` unique
+  point de cast (2 appelants légitimes : loop.ts, approval.ts)
+- [x] Tests : **86/86** (nouveaux tool-result/worker/logger ; loop +5 dont concurrence parallèle
+  et timeout fake-timers ; approval +2), `tsc --noEmit` 0, build karta 0. Root tsc/build non
+  relancés (node_modules racine absent — anti-saturation §6, diff 100% karta/**)
+- [ ] Déploiement VPS `karta-engine` (rebuild docker) + smoke réel (bloqué w/ reste déploiements
+  de la session, aucun deploy ordonné ce lot)
+
 ## PRÊT À TESTER DÈS CRÉDIT ANTHROPIC DISPONIBLE (2026-07-26)
 > Rien ci-dessous n'est coché `[x]` — c'est écrit, mocké/routé correctement, et vérifié structurellement,
 > mais AUCUNE réponse Claude réelle n'a été générée ni jugée. Ne pas cocher avant validation humaine

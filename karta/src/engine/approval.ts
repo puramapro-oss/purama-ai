@@ -1,5 +1,6 @@
 import { supabase } from "../db/supabase.js";
 import { resolveAgentDefinition } from "./resolveDefinition.js";
+import { executeToolStrict } from "./tool-result.js";
 import type { AgentType, ToolCallRecord } from "./types.js";
 
 interface CreatePendingActionInput {
@@ -72,13 +73,15 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
     const tool = definition.tools.find((t) => t.name === pending.tool_name);
     if (!tool) throw new Error(`Outil "${pending.tool_name}" introuvable pour cet agent`);
 
-    const result = await tool.execute(pending.tool_params, {
+    // Contrat complet partagé avec le cycle (executeToolStrict, tool-result.ts) : un outil qui
+    // retourne {ok:false}/false sans lever est un ÉCHEC d'exécution — avant ce fix il était
+    // marqué "executed" (faux succès).
+    resultSummary = await executeToolStrict(tool, pending.tool_params, {
       userId: pending.user_id,
       agentType: pending.agent_type as AgentType,
       mode: "live",
     });
     status = "executed";
-    resultSummary = summarize(result);
   } catch (toolError) {
     status = "failed";
     resultSummary = toolError instanceof Error ? toolError.message : String(toolError);
@@ -141,14 +144,4 @@ async function patchParentRun(pending: PendingActionRow, status: FinalStatus, re
   }
 
   await supabase.from("karta_runs").update(updates).eq("id", pending.run_id);
-}
-
-function summarize(result: unknown): string {
-  if (result === undefined || result === null) return "ok";
-  if (typeof result === "string") return result.slice(0, 200);
-  try {
-    return JSON.stringify(result).slice(0, 200);
-  } catch {
-    return "ok";
-  }
 }

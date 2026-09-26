@@ -68,3 +68,40 @@ export async function startRun(
     },
   };
 }
+
+/**
+ * Clôture les runs restés "running" alors qu'aucun worker ne les porte plus (crash/redémarrage
+ * du process au milieu d'un cycle — le chemin catch de loop.ts n'a pas pu écrire le statut).
+ * Appelée au démarrage du worker (cf index.ts) : tout run "running" plus vieux que
+ * `staleAfterMs` est nécessairement orphelin, aucun cycle n'a le droit de durer aussi longtemps
+ * (décision bornée 120s + outils bornés 30s chacun, cf tool-result.ts / loop.ts).
+ * Retourne le nombre de runs réconciliés (0 = rien à faire).
+ */
+export async function reconcileStaleRuns(staleAfterMs: number = 3_600_000): Promise<number> {
+  const staleBefore = new Date(Date.now() - staleAfterMs).toISOString();
+
+  const { data, error } = await supabase
+    .from("karta_runs")
+    .update({
+      status: "error",
+      error_message: "interrompu (worker arrêté pendant le cycle) — réconcilié au redémarrage",
+      result_summary: "erreur avant complétion du cycle",
+      finished_at: new Date().toISOString(),
+    })
+    .eq("status", "running")
+    .lt("created_at", staleBefore)
+    .select("id");
+
+  if (error) {
+    // Non fatal au démarrage : les runs resteront "running" et seront réconciliés au prochain
+    // démarrage — mais il faut que l'échec soit visible dans les logs du container.
+    console.error(`[logger] reconcileStaleRuns: ${error.message}`);
+    return 0;
+  }
+
+  const reconciled = Array.isArray(data) ? data.length : 0;
+  if (reconciled > 0) {
+    console.log(`[logger] reconcileStaleRuns: ${reconciled} run(s) "running" orphelin(s) réconcilié(s) en erreur`);
+  }
+  return reconciled;
+}

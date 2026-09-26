@@ -4,7 +4,12 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
+import { executeToolStrict, TimeoutError, withTimeout } from "./tool-result.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
+
+/** Timeout de la décision (Claude/mock). Un provider qui pend figeait le cycle entier ; ici
+ * l'échec survient AVANT tout side-effect → le cycle reste rejouable (retry BullMQ sûr). */
+const DECIDE_TIMEOUT_MS = 120_000;
 
 /**
  * Boucle cœur KARTA : déclencheur → contexte → décision (Claude, mock ou réel) → outils → log → notif.
@@ -24,6 +29,7 @@ export async function runAgentCycle(
       toolsUsed: [],
       resultSummary: "kill switch global actif",
       mock: false,
+      sideEffectsCommitted: false,
     };
   }
 
@@ -38,6 +44,7 @@ export async function runAgentCycle(
       toolsUsed: [],
       resultSummary: runnable.reason,
       mock: false,
+      sideEffectsCommitted: false,
     };
   }
 
@@ -45,18 +52,28 @@ export async function runAgentCycle(
   const run = await startRun(userId, definition.type, trigger, mode);
   const claude = getClaudeClient();
 
+  // Portée FONCTION (pas module) : le worker tourne en concurrency 5 — des variables de module
+  // seraient partagées entre cycles concurrents et contamineraient le chemin d'erreur d'un cycle
+  // par les outils d'un autre. Déclarées AVANT le try : le catch doit y accéder.
+  const toolsUsed: ToolCallRecord[] = [];
+  /** Toute tentative d'exécution réelle (mode live) est un side-effect POTENTIEL : un throw
+   * au milieu d'un envoi/insert peut avoir déjà agi côté monde réel. Compté AVANT l'await. */
+  let sideEffectsCommitted = false;
+
   try {
     const context = await definition.buildContext(userId, trigger);
 
-    const decision = await claude.decide({
-      systemPrompt: definition.systemPrompt,
-      context,
-      tools: definition.tools,
-      agentType: definition.type,
-    });
-
-    const toolsUsed: ToolCallRecord[] = [];
-    let awaitingApproval = false;
+    const decision = await withTimeout(
+      claude.decide({
+        systemPrompt: definition.systemPrompt,
+        context,
+        tools: definition.tools,
+        agentType: definition.type,
+      }),
+      `decide(${definition.type})`,
+      DECIDE_TIMEOUT_MS,
+      (label, ms) => new TimeoutError(label, ms)
+    );
 
     for (const call of decision.toolCalls) {
       const tool = definition.tools.find((t) => t.name === call.tool);
@@ -93,16 +110,22 @@ export async function runAgentCycle(
           success: true,
           pendingActionId,
         });
-        awaitingApproval = awaitingApproval || (needsApproval && mode === "live");
         continue;
       }
 
+      if (mode === "live") sideEffectsCommitted = true; // potentiel, dès la tentative
       try {
-        const result = await tool.execute(call.params, { userId, agentType: definition.type, mode });
+        // Contrat complet (timeout + cast + faux succès interdits + résumé) : executeToolStrict,
+        // unique point d'exécution — partagé avec engine/approval.ts.
+        const resultSummary = await executeToolStrict(tool, call.params, {
+          userId,
+          agentType: definition.type,
+          mode,
+        });
         toolsUsed.push({
           tool: tool.name,
           paramsSummary: JSON.stringify(call.params),
-          resultSummary: summarize(result),
+          resultSummary,
           success: true,
         });
       } catch (toolError) {
@@ -115,6 +138,9 @@ export async function runAgentCycle(
       }
     }
 
+    // Dérivable : une action n'attend la validation humaine QUE si un pendingActionId a été
+    // journalisé pour elle en mode live (cf branche needsApproval ci-dessus).
+    const awaitingApproval = toolsUsed.some((t) => t.pendingActionId);
     const status = awaitingApproval ? "awaiting_approval" : "success";
     const resultSummary = summarizeToolsUsed(toolsUsed, mode);
 
@@ -129,56 +155,58 @@ export async function runAgentCycle(
     if (awaitingApproval) {
       // Un échec d'envoi (push/email down) ne doit jamais faire échouer le cycle : l'action de
       // l'agent est déjà journalisée en attente d'approbation, c'est ce qui compte.
-      try {
-        await notify({
-          userId,
-          agentType: definition.type,
-          title: `${definition.type} : action en attente de validation`,
-          body: decision.summary,
-          actionType: "review",
-          actionUrl: "/dashboard/employees",
-          priority: "normal",
-          // Décision humaine requise : seul cas où on sort du silence (push + email), cf brief §UX/Simplicité.
-          channels: ["in_app", "push", "email"],
-        });
-      } catch (notifyError) {
-        console.error(`[loop] notify(${definition.type}) a échoué :`, notifyError);
-      }
+      // Décision humaine requise : seul cas où on sort du silence (push + email), cf brief §UX/Simplicité.
+      await notify({
+        userId,
+        agentType: definition.type,
+        title: `${definition.type} : action en attente de validation`,
+        body: decision.summary,
+        actionType: "review",
+        actionUrl: "/dashboard/employees",
+        priority: "normal",
+        channels: ["in_app", "push", "email"],
+      }).catch((notifyError: unknown) => console.error(`[loop] notify(${definition.type}) a échoué :`, notifyError));
     }
 
-    await recordRunOutcome(userId, definition.type, "success");
+    // Un échec d'enregistrement du compteur d'issue (karta_agent_memory) ne doit pas faire
+    // basculer en erreur un cycle déjà terminé, journalisé et notifié — l'outil / l'action
+    // a réellement eu lieu, le dire "error" mentirait sur ce qui s'est passé.
+    await recordRunOutcome(userId, definition.type, "success").catch((outcomeError: unknown) =>
+      console.error(`[loop] recordRunOutcome(${definition.type}, success) a échoué :`, outcomeError)
+    );
 
-    return { status, decision: decision.summary, toolsUsed, resultSummary, mock: decision.mock };
+    return { status, decision: decision.summary, toolsUsed, resultSummary, mock: decision.mock, sideEffectsCommitted };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+    // Les outils déjà exécutés restent journalisés (et visibles au retour) même si le cycle
+    // échoue après coup — les perdre, c'est perdre la trace de side-effects réellement commis.
+    const resultSummary = `erreur après ${toolsUsed.length} outil(s) traité(s)`;
     await run.finish({
       status: "error",
       decision: "",
-      toolsUsed: [],
-      resultSummary: "erreur avant complétion du cycle",
+      toolsUsed,
+      resultSummary,
       errorMessage,
       mock: false,
+    }).catch((finishError: unknown) => {
+      // Le run reste "running" en base — réconcilié en "error (interrompu)" au prochain
+      // démarrage du worker (cf logger.reconcileStaleRuns). Ne jamais masquer l'erreur d'origine.
+      console.error(`[loop] finish(${definition.type}) a échoué après une erreur de cycle :`, finishError);
     });
-    await recordRunOutcome(userId, definition.type, "error");
+
+    await recordRunOutcome(userId, definition.type, "error").catch((outcomeError: unknown) =>
+      console.error(`[loop] recordRunOutcome(${definition.type}) a échoué :`, outcomeError)
+    );
 
     return {
       status: "error",
       decision: "",
-      toolsUsed: [],
-      resultSummary: "erreur avant complétion du cycle",
+      toolsUsed,
+      resultSummary,
       errorMessage,
       mock: false,
+      sideEffectsCommitted,
     };
-  }
-}
-
-function summarize(result: unknown): string {
-  if (result === undefined || result === null) return "ok";
-  if (typeof result === "string") return result.slice(0, 200);
-  try {
-    return JSON.stringify(result).slice(0, 200);
-  } catch {
-    return "ok";
   }
 }
 
