@@ -114,7 +114,7 @@ export default function LegalAgentCases() {
       </motion.div>
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>
+        <div className="flex justify-center py-20" role="status"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /><span className="sr-only">Chargement en cours</span></div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {COLUMNS.map(col => (

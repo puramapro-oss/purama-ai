@@ -42,7 +42,7 @@ export default function PartnerAgentSettings() {
   }, [user?.id]);
 
   if (loading || !config) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>;
+    return <div className="flex justify-center py-20" role="status"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /><span className="sr-only">Chargement en cours</span></div>;
   }
 
   const update = (patch: Partial<PartnerConfig>) => setConfig({ ...config, ...patch });

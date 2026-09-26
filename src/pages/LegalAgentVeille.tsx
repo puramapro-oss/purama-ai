@@ -68,7 +68,7 @@ export default function LegalAgentVeille() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>
+        <div className="flex justify-center py-20" role="status"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /><span className="sr-only">Chargement en cours</span></div>
       ) : filtered.length === 0 ? (
         <Card className="bg-card border-border">
           <CardContent className="p-10 text-center text-sm text-muted-foreground">
