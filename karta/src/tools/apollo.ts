@@ -1,5 +1,6 @@
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { fetchWithTimeout } from "../lib/bounded-fetch.js";
 
 /** Prospection Apollo.io — utilisé par l'agent Partenariat pour trouver des prospects réels. */
 export const apolloSearchPeopleTool: ToolDefinition<
@@ -12,7 +13,7 @@ export const apolloSearchPeopleTool: ToolDefinition<
   async execute(params) {
     if (!config.apolloApiKey) throw new Error("APOLLO_API_KEY non configurée côté KARTA");
 
-    const response = await fetch("https://api.apollo.io/api/v1/mixed_people/search", {
+    const response = await fetchWithTimeout("https://api.apollo.io/api/v1/mixed_people/search", {
       method: "POST",
       headers: { "X-Api-Key": config.apolloApiKey, "Content-Type": "application/json" },
       body: JSON.stringify({ q_keywords: params.keywords, per_page: params.limit ?? 10 }),

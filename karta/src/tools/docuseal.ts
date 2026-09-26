@@ -1,5 +1,6 @@
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { fetchWithTimeout } from "../lib/bounded-fetch.js";
 
 /** DocuSeal self-hosted (VPS, cf CLAUDE.md). Génère une demande de signature — action sensible
  * (engage juridiquement le destinataire), toujours soumise à validation en dessous du niveau 3. */
@@ -13,7 +14,7 @@ export const docusealCreateSubmissionTool: ToolDefinition<
   async execute(params) {
     if (!config.docusealApiKey) throw new Error("DOCUSEAL_API_KEY non configurée côté KARTA");
 
-    const response = await fetch(`${config.docusealBaseUrl}/api/submissions`, {
+    const response = await fetchWithTimeout(`${config.docusealBaseUrl}/api/submissions`, {
       method: "POST",
       headers: { "X-Auth-Token": config.docusealApiKey, "Content-Type": "application/json" },
       body: JSON.stringify({

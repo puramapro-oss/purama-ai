@@ -1,5 +1,6 @@
 import { getGmailAccessToken } from "./gmail.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { fetchWithTimeout } from "../lib/bounded-fetch.js";
 
 /** Réutilise le token OAuth Google (scope Calendar inclus dans le consentement Gmail — cf email_agent_config). */
 export const calendarCreateEventTool: ToolDefinition<
@@ -13,7 +14,7 @@ export const calendarCreateEventTool: ToolDefinition<
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Google OAuth non complété pour cet utilisateur");
 
-    const response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+    const response = await fetchWithTimeout("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({

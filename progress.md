@@ -154,3 +154,9 @@ Skippé (documenté) : ToolTimeoutError garde ToolResultError comme base (contra
   (même classe de défaut que sous-lot 5, identifiée par sa revue /simplify)
 - supabase-client.test.ts (nouveau, 2) : branchement + délégation (init préservé, signal ajouté)
 - Gates : 105/105 vitest (17 fichiers), tsc 0, build 0
+
+### Sous-lot 7 (2026-09-26, XXL) : fetchWithTimeout — sockets zombies des tools fermés
+- lib/bounded-fetch.ts (nouveau) : fetchWithTimeout, AbortSignal 25s < 30s race (abort natif
+  gagne, socket fermé) ; migration des 10 fetch nus des 6 tools (gmail OAuth inclus)
+- bounded-fetch.test.ts (nouveau, 3)
+- Gates : 108/108 vitest (18 fichiers), tsc 0, build 0

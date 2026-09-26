@@ -1,5 +1,6 @@
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { fetchWithTimeout } from "../lib/bounded-fetch.js";
 
 export const zernioPublishTool: ToolDefinition<{ title: string; content: string }, { publicationId: string }> = {
   name: "zernio_publish",
@@ -8,7 +9,7 @@ export const zernioPublishTool: ToolDefinition<{ title: string; content: string 
   async execute(params) {
     if (!config.zernioApiKey) throw new Error("ZERNIO_API_KEY non configurée côté KARTA");
 
-    const response = await fetch(`${config.zernioBaseUrl}/publish`, {
+    const response = await fetchWithTimeout(`${config.zernioBaseUrl}/publish`, {
       method: "POST",
       headers: { Authorization: `Bearer ${config.zernioApiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(params),

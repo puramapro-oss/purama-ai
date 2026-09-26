@@ -2,6 +2,7 @@ import { supabase } from "../db/supabase.js";
 import { config } from "../config.js";
 import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { fetchWithTimeout } from "../lib/bounded-fetch.js";
 
 interface EmailAgentConfigRow {
   gmail_refresh_token: string | null;
@@ -27,7 +28,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
     throw new Error("GOOGLE_CLIENT_ID/SECRET non configurés côté KARTA — impossible de rafraîchir le token Gmail");
   }
 
-  const response = await fetch("https://oauth2.googleapis.com/token", {
+  const response = await fetchWithTimeout("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -69,7 +70,7 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
   if (!accessToken) return []; // OAuth jamais complété — pas une erreur, juste rien à traiter
 
   const query = lastEmailId ? `after:${lastEmailId}` : "is:unread";
-  const listResponse = await fetch(
+  const listResponse = await fetchWithTimeout(
     `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=${encodeURIComponent(query)}`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
   );
@@ -83,7 +84,7 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
 
   const summaries: GmailMessageSummary[] = [];
   for (const m of list.messages) {
-    const detailResponse = await fetch(
+    const detailResponse = await fetchWithTimeout(
       `https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
@@ -150,7 +151,7 @@ export const gmailCreateDraftTool: ToolDefinition<
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
     const raw = buildRawEmail(params.to, params.subject, params.body);
-    const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/drafts", {
+    const response = await fetchWithTimeout("https://gmail.googleapis.com/gmail/v1/users/me/drafts", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ message: { threadId: params.threadId, raw } }),
@@ -173,7 +174,7 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
     const raw = buildRawEmail(params.to, params.subject, params.body);
-    const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
+    const response = await fetchWithTimeout("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ raw }),

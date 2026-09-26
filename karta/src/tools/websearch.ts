@@ -1,5 +1,6 @@
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { fetchWithTimeout } from "../lib/bounded-fetch.js";
 
 export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{ title: string; url: string; snippet: string }> }> = {
   name: "web_search",
@@ -8,7 +9,7 @@ export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{
   async execute(params) {
     if (!config.tavilyApiKey) throw new Error("TAVILY_API_KEY non configurée côté KARTA");
 
-    const response = await fetch("https://api.tavily.com/search", {
+    const response = await fetchWithTimeout("https://api.tavily.com/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ api_key: config.tavilyApiKey, query: params.query, max_results: 5 }),
