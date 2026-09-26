@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/zernio.ts";
+import { verifySocialCallbackState } from "../_shared/social-state.ts";
 
 const APP_URL = Deno.env.get("APP_URL") || "https://purama-ai.purama.dev";
 
@@ -12,7 +13,12 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const platform = url.searchParams.get("platform");
-    const userId = url.searchParams.get("user_id");
+    // R1 Red Team : `user_id` n'est plus lu en clair depuis la query string —
+    // seul un jeton signe/expirant emis par social-connect est accepte, sinon
+    // n'importe quel appelant pouvait lier son propre compte social au user_id
+    // d'une victime (callback jamais authentifie, upsert service-role).
+    const stateSecret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const userId = await verifySocialCallbackState(url.searchParams.get("state"), stateSecret);
     const profileId =
       url.searchParams.get("profile_id") ||
       url.searchParams.get("zernio_profile_id");

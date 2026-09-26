@@ -6,6 +6,7 @@ import {
   SUPPORTED_PLATFORMS,
   type Platform,
 } from "../_shared/zernio.ts";
+import { createSocialCallbackState } from "../_shared/social-state.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -48,11 +49,23 @@ serve(async (req) => {
       );
     }
 
+    // R1 Red Team : `user_id` brut en query string etait recopie tel quel par
+    // Zernio dans le callback, sans aucune preuve que la requete de retour venait
+    // reellement de la session de cet utilisateur — jeton signe/expirant a la place.
+    const stateSecret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    if (!stateSecret) {
+      return new Response(JSON.stringify({ error: "Configuration serveur incomplete" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const state = await createSocialCallbackState(user.id, stateSecret);
+
     // Self-hosted Supabase: edge functions are exposed at SUPABASE_URL/functions/v1/*
     const supabaseUrl = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/$/, "");
     const callbackUrl =
       `${supabaseUrl}/functions/v1/social-callback` +
-      `?platform=${platform}&user_id=${user.id}`;
+      `?platform=${platform}&state=${state}`;
 
     const result = await getConnectUrl(platform, callbackUrl);
 
