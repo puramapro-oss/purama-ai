@@ -2,8 +2,20 @@
 // handler (handleScheduledConsumerRequest), never a reimplementation of its
 // logic. Network calls to Zernio are stubbed via a global fetch replacement
 // (no real key, no real HTTP). The Supabase client is a small in-memory fake
-// reproducing the exact chain the handler calls (update/eq/lte/select/limit,
-// select/eq/in), so the atomic "claim" UPDATE is really exercised.
+// reproducing the exact chain the handler calls (select/eq/lte/limit,
+// update/eq/in/select, select/eq/is/lte/limit), so the 2-step claim and the
+// requeue step are really exercised.
+//
+// `limit()` semantics deliberately mirror the REAL PostgREST protocol, not a
+// convenient fiction: `limit` only ever bounds the ROWS RETURNED FROM A
+// SELECT. Applied after `.update()` it does nothing — PostgREST has no
+// concept of a row-capped update. An earlier version of this mock applied
+// `limitN` unconditionally regardless of `mode`, which made a buggy
+// `update().limit(50)` in the handler look correctly capped in tests when in
+// production it claimed the entire backlog every run (contre-audit finding
+// #1). If this mock is ever changed back to cap updates, the
+// "more than MAX_BATCH due rows" test below will start failing to catch
+// that regression, not silently passing.
 //
 // NOTE: _shared/zernio.ts reads ZERNIO_API_KEY at module-load time (not
 // per-call), which happens as soon as this test file's static `import` of
@@ -17,14 +29,28 @@ import {
   assertEquals,
   assertExists,
 } from "https://deno.land/std@0.190.0/testing/asserts.ts";
-import { handleScheduledConsumerRequest } from "./index.ts";
+import {
+  handleScheduledConsumerRequest,
+  MAX_BATCH,
+} from "./index.ts";
 
 const CRON_SECRET = "test-cron-secret-123";
 
 // deno-lint-ignore no-explicit-any
 type Row = Record<string, any>;
 
-function makeFakeSupabase(db: { social_posts: Row[]; social_accounts: Row[] }) {
+interface FakeDbControls {
+  /** When true, the NEXT update that sets status='published' resolves with
+   * an error instead of applying — simulates a real supabase-js DB write
+   * failure that happens AFTER the external Zernio publish already
+   * succeeded (finding #3). Consumed (reset to false) after firing once. */
+  failNextPublishedWrite?: boolean;
+}
+
+function makeFakeSupabase(
+  db: { social_posts: Row[]; social_accounts: Row[] },
+  controls: FakeDbControls = {},
+) {
   function table(name: "social_posts" | "social_accounts") {
     let mode: "select" | "update" = "select";
     let updatePayload: Row | null = null;
@@ -49,6 +75,10 @@ function makeFakeSupabase(db: { social_posts: Row[]; social_accounts: Row[] }) {
         filters.push((row) => row[col] != null && row[col] <= val);
         return builder;
       },
+      is(col: string, val: null) {
+        filters.push((row) => (row[col] ?? null) === val);
+        return builder;
+      },
       in(col: string, vals: unknown[]) {
         filters.push((row) => vals.includes(row[col]));
         return builder;
@@ -58,19 +88,32 @@ function makeFakeSupabase(db: { social_posts: Row[]; social_accounts: Row[] }) {
         return builder;
       },
       // Thenable: `await` triggers execution, exactly once, like a real
-      // PostgREST query builder. This is where the "atomic claim" UPDATE
-      // actually runs against the in-memory rows.
+      // PostgREST query builder.
       then(
         resolve: (v: { data: Row[] | null; error: unknown }) => void,
         reject?: (e: unknown) => void,
       ) {
         try {
+          if (
+            mode === "update" &&
+            updatePayload &&
+            (updatePayload as Row).status === "published" &&
+            controls.failNextPublishedWrite
+          ) {
+            controls.failNextPublishedWrite = false;
+            resolve({ data: null, error: new Error("simulated DB write failure") });
+            return Promise.resolve();
+          }
+
           const rows = db[name];
           let matched = rows.filter((r) => filters.every((f) => f(r)));
           if (mode === "update" && updatePayload) {
+            // REAL semantics: `limit` is never applied on an UPDATE, only on
+            // a SELECT — see the note atop this file.
             for (const r of matched) Object.assign(r, updatePayload);
+          } else if (limitN !== undefined) {
+            matched = matched.slice(0, limitN);
           }
-          if (limitN !== undefined) matched = matched.slice(0, limitN);
           resolve({ data: matched, error: null });
         } catch (e) {
           if (reject) reject(e);
@@ -240,6 +283,209 @@ Deno.test("a simulated network failure marks the row failed with a non-empty err
     assertEquals(db.social_posts[0].status, "failed");
     assertExists(db.social_posts[0].error_message);
     assertEquals((db.social_posts[0].error_message as string).length > 0, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+// --- Contre-audit finding #1: `.limit()` on an UPDATE is a no-op on real
+// PostgREST — a single `update().limit(MAX_BATCH)` therefore claims the
+// ENTIRE due backlog, not just MAX_BATCH rows. This test seeds more than
+// MAX_BATCH due rows and proves only MAX_BATCH get claimed+published, the
+// rest staying untouched in 'scheduled' for the next invocation.
+Deno.test("more than MAX_BATCH due rows: only MAX_BATCH are claimed and published, the rest stay 'scheduled'", async () => {
+  Deno.env.set("ZERNIO_API_KEY", "test-key");
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (() =>
+    Promise.resolve(
+      new Response(JSON.stringify({ id: "zernio-post-batch" }), { status: 200 }),
+    )) as typeof fetch;
+
+  try {
+    const total = MAX_BATCH + 5;
+    const posts: Row[] = [];
+    for (let i = 0; i < total; i++) {
+      posts.push({
+        id: `post-due-${i}`,
+        user_id: "user-1",
+        content_text: `post ${i}`,
+        content_media_urls: [],
+        target_platforms: ["instagram"],
+        status: "scheduled",
+        scheduled_at: nowMinus(5),
+      });
+    }
+    const db: { social_posts: Row[]; social_accounts: Row[] } = {
+      social_posts: posts,
+      social_accounts: [
+        {
+          user_id: "user-1",
+          platform: "instagram",
+          zernio_profile_id: "profile-1",
+          is_active: true,
+        },
+      ],
+    };
+    const supabase = makeFakeSupabase(db);
+    const res = await handleScheduledConsumerRequest(makeReq(CRON_SECRET), supabase, CRON_SECRET);
+    assertEquals(res.status, 200);
+    const body = await res.json();
+    assertEquals(body.processed, MAX_BATCH);
+    assertEquals(body.published, MAX_BATCH);
+
+    const stillScheduled = db.social_posts.filter((r) => r.status === "scheduled").length;
+    const nowPublished = db.social_posts.filter((r) => r.status === "published").length;
+    assertEquals(stillScheduled, total - MAX_BATCH);
+    assertEquals(nowPublished, MAX_BATCH);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+// --- Contre-audit finding #2: a row left in 'publishing' by a previous
+// invocation that crashed before resolving it must eventually be requeued,
+// never wedged forever. A stale 'publishing' row (updated_at older than
+// STALLED_PUBLISHING_MS, error_message null, scheduled_at in the past) is
+// requeued to 'scheduled' and reclaimed within the SAME invocation.
+Deno.test("a stalled 'publishing' row (crashed previous run) is requeued and republished", async () => {
+  Deno.env.set("ZERNIO_API_KEY", "test-key");
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (() =>
+    Promise.resolve(
+      new Response(JSON.stringify({ id: "zernio-post-recovered" }), { status: 200 }),
+    )) as typeof fetch;
+
+  try {
+    const db: { social_posts: Row[]; social_accounts: Row[] } = {
+      social_posts: [
+        {
+          id: "post-stalled",
+          user_id: "user-1",
+          content_text: "stuck since a crashed run",
+          content_media_urls: [],
+          target_platforms: ["instagram"],
+          status: "publishing",
+          error_message: null,
+          scheduled_at: nowMinus(30),
+          updated_at: nowMinus(10), // older than the 5min stall threshold
+        },
+      ],
+      social_accounts: [
+        {
+          user_id: "user-1",
+          platform: "instagram",
+          zernio_profile_id: "profile-1",
+          is_active: true,
+        },
+      ],
+    };
+    const supabase = makeFakeSupabase(db);
+    const res = await handleScheduledConsumerRequest(makeReq(CRON_SECRET), supabase, CRON_SECRET);
+    assertEquals(res.status, 200);
+    const body = await res.json();
+    assertEquals(body.processed, 1);
+    assertEquals(body.published, 1);
+    assertEquals(db.social_posts[0].status, "published");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+// --- A 'publishing' row that is still FRESH (well within the stall
+// threshold) must be left alone — it might just be a normal invocation
+// still in flight (or, in this synchronous-loop implementation, simply
+// proves the requeue step doesn't touch rows that aren't actually stale).
+Deno.test("a fresh 'publishing' row (within the stall threshold) is not requeued", async () => {
+  const db: { social_posts: Row[]; social_accounts: Row[] } = {
+    social_posts: [
+      {
+        id: "post-in-flight",
+        user_id: "user-1",
+        content_text: "still being processed",
+        content_media_urls: [],
+        target_platforms: ["instagram"],
+        status: "publishing",
+        error_message: null,
+        scheduled_at: nowMinus(1),
+        updated_at: nowMinus(1), // well under the 5min stall threshold
+      },
+    ],
+    social_accounts: [] as Row[],
+  };
+  const supabase = makeFakeSupabase(db);
+  const res = await handleScheduledConsumerRequest(makeReq(CRON_SECRET), supabase, CRON_SECRET);
+  assertEquals(res.status, 200);
+  const body = await res.json();
+  assertEquals(body.processed, 0);
+  assertEquals(db.social_posts[0].status, "publishing");
+});
+
+// --- Contre-audit finding #3: the external Zernio publish call genuinely
+// succeeds, but the follow-up DB write (markPublished) then fails. A retry
+// must NEVER be allowed to re-publish an already-live post, so this must
+// never end up in status='failed' (that status IS retried by nothing today,
+// but "failed" reads as "safe to retry" and future code must not be allowed
+// to assume that). The row must stay out of 'scheduled'/'publishing' churn:
+// here it stays 'publishing' with a non-null error_message, which also
+// keeps it excluded from the requeue-stalled step (see the "is('error_message', null)" guard).
+Deno.test("Zernio publish succeeds but the DB write fails: never marked 'failed', never silently requeued", async () => {
+  Deno.env.set("ZERNIO_API_KEY", "test-key");
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (() =>
+    Promise.resolve(
+      new Response(JSON.stringify({ id: "zernio-post-real-success" }), { status: 200 }),
+    )) as typeof fetch;
+
+  try {
+    const db: { social_posts: Row[]; social_accounts: Row[] } = {
+      social_posts: [
+        {
+          id: "post-write-fails-after-success",
+          user_id: "user-1",
+          content_text: "real publish succeeds, DB write does not",
+          content_media_urls: [],
+          target_platforms: ["instagram"],
+          status: "scheduled",
+          scheduled_at: nowMinus(1),
+        },
+      ],
+      social_accounts: [
+        {
+          user_id: "user-1",
+          platform: "instagram",
+          zernio_profile_id: "profile-1",
+          is_active: true,
+        },
+      ],
+    };
+    const controls: { failNextPublishedWrite?: boolean } = { failNextPublishedWrite: true };
+    const supabase = makeFakeSupabase(db, controls);
+    const res = await handleScheduledConsumerRequest(makeReq(CRON_SECRET), supabase, CRON_SECRET);
+    assertEquals(res.status, 200);
+    const body = await res.json();
+    assertEquals(body.processed, 1);
+    assertEquals(body.published, 0);
+    assertEquals(body.failed, 0);
+    assertEquals(body.unconfirmed, 1);
+
+    // Never 'failed' (would authorize a dangerous retry) and never silently
+    // back to 'scheduled'/'published' either — it must have stayed exactly
+    // where the atomic claim left it.
+    assertEquals(db.social_posts[0].status, "publishing");
+    assertExists(db.social_posts[0].error_message);
+    assertEquals(
+      (db.social_posts[0].error_message as string).includes("publish_unconfirmed"),
+      true,
+    );
+
+    // And it must be excluded from a future requeue-stalled pass: rerun the
+    // handler immediately (still within the stall threshold, but even a
+    // requeue query filtering on error_message IS NULL would already skip
+    // it) and confirm nothing changes.
+    const res2 = await handleScheduledConsumerRequest(makeReq(CRON_SECRET), supabase, CRON_SECRET);
+    const body2 = await res2.json();
+    assertEquals(body2.processed, 0);
+    assertEquals(db.social_posts[0].status, "publishing");
   } finally {
     globalThis.fetch = originalFetch;
   }

@@ -8,13 +8,32 @@
 // contracts-auto-cancel / contracts-reminders / contracts-weekly-report,
 // unrelated). Scheduled posts were silently never published.
 //
-// This function claims due rows atomically (a single UPDATE ... WHERE
-// status='scheduled' AND scheduled_at<=now() RETURNING *, executed by
-// supabase-js as one SQL statement — a second concurrent invocation's UPDATE
-// simply matches zero rows once the first has flipped them to 'publishing'),
-// then publishes each claimed row via the exact same real publish logic used
+// This function claims due rows in 2 steps — SELECT id ... LIMIT (candidates)
+// then UPDATE ... WHERE status='scheduled' AND id IN (candidates) — never a
+// single UPDATE with a trailing `.limit()`. PostgREST only applies `limit`
+// (and the `Range`/count-based paging it maps to) to SELECT responses; on an
+// UPDATE it is silently ignored by the protocol, so a `.update().limit(50)`
+// looked capped in review but actually claimed the ENTIRE backlog of due
+// rows on every invocation (contre-audit finding #1). The UPDATE still keeps
+// `WHERE status='scheduled'` so a second concurrent invocation racing on the
+// same candidate ids matches zero rows once the first has flipped them —
+// that half of the atomicity claim was correct, only the "50 at a time" cap
+// was not.
+//
+// Each claimed row is published via the exact same real publish logic used
 // by the immediate path (executeSocialPublish / zernio.publishPost), marking
-// published/failed with a non-empty error message on failure — never silent.
+// published/failed/publish_unconfirmed — never silent (see
+// _shared/social-publish-core.ts for the 3-way outcome and why a DB write
+// failure AFTER a real successful publish must never be marked 'failed').
+//
+// Before claiming new rows, this also requeues rows stuck in 'publishing'
+// for longer than STALLED_PUBLISHING_MS: if a previous invocation crashed
+// between claiming a row (status='publishing') and resolving it
+// (published/failed/publish_unconfirmed), that row would otherwise stay
+// wedged in 'publishing' forever and never get republished (contre-audit
+// finding #2). Rows already carrying a non-null error_message are excluded
+// from requeue on purpose — that is exactly how a publish_unconfirmed
+// anomaly (finding #3) is marked, and it must never be silently re-queued.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, publishPost, type Platform } from "../_shared/zernio.ts";
@@ -23,7 +42,13 @@ import {
   type SocialPostRow,
 } from "../_shared/social-publish-core.ts";
 
-const MAX_BATCH = 50;
+export const MAX_BATCH = 50;
+
+// A publication (Zernio HTTP call + 1 DB write) is fast — 5 minutes is
+// already generous slack over any realistic invocation time, chosen
+// deliberately shorter than the 15min used by packages/smarana for its
+// heavier compress_memory (LLM call) jobs.
+export const STALLED_PUBLISHING_MS = 5 * 60 * 1000;
 
 /**
  * Handles a single invocation of the scheduled-posts consumer.
@@ -63,20 +88,66 @@ export async function handleScheduledConsumerRequest(
   try {
     const nowIso = new Date().toISOString();
 
-    // Atomic claim: one UPDATE statement, WHERE status='scheduled' AND
-    // scheduled_at<=now(), transitioning straight to 'publishing'. Never a
-    // SELECT followed by a separate UPDATE (that would race two overlapping
-    // cron runs into double-publishing the same post).
-    const { data: claimed, error: claimError } = await supabase
+    // Step 0: requeue rows stuck in 'publishing' past STALLED_PUBLISHING_MS
+    // (a crashed previous invocation) back to 'scheduled', so the claim step
+    // below can pick them back up. Excludes rows with a non-null
+    // error_message — those are publish_unconfirmed anomalies (real publish
+    // succeeded, DB write failed) and must never be auto-requeued.
+    const stalledThresholdIso = new Date(
+      Date.now() - STALLED_PUBLISHING_MS,
+    ).toISOString();
+    const { data: stalledCandidates, error: stalledSelectError } = await supabase
       .from("social_posts")
-      .update({ status: "publishing" })
+      .select("id")
+      .eq("status", "publishing")
+      .is("error_message", null)
+      .lte("updated_at", stalledThresholdIso)
+      .limit(MAX_BATCH);
+    if (stalledSelectError) throw stalledSelectError;
+
+    // deno-lint-ignore no-explicit-any
+    const stalledIds = (stalledCandidates ?? []).map((r: any) => r.id);
+    if (stalledIds.length > 0) {
+      const { error: requeueError } = await supabase
+        .from("social_posts")
+        .update({ status: "scheduled" })
+        .eq("status", "publishing")
+        .in("id", stalledIds);
+      if (requeueError) throw requeueError;
+    }
+
+    // Step 1: SELECT the ids of due rows, bounded by MAX_BATCH. This is the
+    // only place a batch cap can be expressed — see the note atop this file
+    // on why `.limit()` on the UPDATE itself would be a no-op.
+    const { data: candidates, error: selectError } = await supabase
+      .from("social_posts")
+      .select("id")
       .eq("status", "scheduled")
       .lte("scheduled_at", nowIso)
-      .select()
       .limit(MAX_BATCH);
-    if (claimError) throw claimError;
+    if (selectError) throw selectError;
 
-    const rows = claimed ?? [];
+    // deno-lint-ignore no-explicit-any
+    const candidateIds = (candidates ?? []).map((r: any) => r.id);
+
+    // deno-lint-ignore no-explicit-any
+    let rows: any[] = [];
+    if (candidateIds.length > 0) {
+      // Step 2: claim exactly those ids, still guarded by
+      // WHERE status='scheduled' — a second concurrent invocation racing on
+      // the same candidate ids matches zero rows once the first has flipped
+      // them to 'publishing', so this stays safe against double-publishing
+      // even though the cap is no longer enforced by a single statement.
+      const { data: claimed, error: claimError } = await supabase
+        .from("social_posts")
+        .update({ status: "publishing" })
+        .eq("status", "scheduled")
+        .in("id", candidateIds)
+        .select();
+      if (claimError) throw claimError;
+      rows = claimed ?? [];
+    }
+
     if (rows.length === 0) {
       return new Response(
         JSON.stringify({ success: true, processed: 0 }),
@@ -86,6 +157,7 @@ export async function handleScheduledConsumerRequest(
 
     let published = 0;
     let failed = 0;
+    let unconfirmed = 0;
 
     for (const row of rows) {
       const post: SocialPostRow = {
@@ -112,8 +184,15 @@ export async function handleScheduledConsumerRequest(
         },
         publish: (params) =>
           publishPost({ ...params, platforms: params.platforms as Platform[] }),
+        markFailed: async (postId, message) => {
+          const { error } = await supabase
+            .from("social_posts")
+            .update({ status: "failed", error_message: message })
+            .eq("id", postId);
+          if (error) throw error;
+        },
         markPublished: async (postId, result) => {
-          await supabase
+          const { error } = await supabase
             .from("social_posts")
             .update({
               status: "published",
@@ -123,21 +202,49 @@ export async function handleScheduledConsumerRequest(
               zernio_response: result,
             })
             .eq("id", postId);
+          // Real supabase-js does NOT throw on a DB error, it resolves
+          // { error } — must throw explicitly so executeSocialPublish's
+          // post-success catch (publish_unconfirmed path) actually runs
+          // instead of silently reporting 'published' on a failed write.
+          if (error) throw error;
         },
-        markFailed: async (postId, message) => {
-          await supabase
+        markPublishAnomaly: async (postId, result, writeError) => {
+          // Deliberately does NOT touch `status` (row stays 'publishing',
+          // excluded from the requeue-stalled step above because
+          // error_message is now non-null) — see finding #3: the real
+          // publish already succeeded, so this must never become 'failed'
+          // (retryable) nor silently 'scheduled' again (double-post).
+          const { error } = await supabase
             .from("social_posts")
-            .update({ status: "failed", error_message: message })
+            .update({
+              error_message:
+                `ANOMALIE publish_unconfirmed: publication Zernio reussie ` +
+                `(${JSON.stringify(result)}) mais ecriture DB echouee: ${writeError}. ` +
+                `Verification manuelle requise — ne pas retenter.`,
+            })
             .eq("id", postId);
+          if (error) {
+            console.error(
+              `[social-publish-scheduled] echec ecriture de l'anomalie pour post ${postId}:`,
+              error,
+            );
+          }
         },
       });
 
       if (outcome.status === "published") published++;
+      else if (outcome.status === "publish_unconfirmed") unconfirmed++;
       else failed++;
     }
 
     return new Response(
-      JSON.stringify({ success: true, processed: rows.length, published, failed }),
+      JSON.stringify({
+        success: true,
+        processed: rows.length,
+        published,
+        failed,
+        unconfirmed,
+      }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
