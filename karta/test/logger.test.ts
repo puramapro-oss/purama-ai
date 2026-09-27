@@ -8,7 +8,7 @@ vi.mock("../src/db/supabase.js",()=>({supabase:{from:()=>{
   if(patch&&row)Object.assign(row,patch);
   return {data:row??null,error:null};
  };
- const q:any={insert:(v:any)=>{insert=v;return q;},update:(v:any)=>{patch=v;return q;},select:()=>q,eq:(k:string,v:unknown)=>{filters[k]=v;return q;},single:result,then:(resolve:any,reject:any)=>result().then(resolve,reject)};
+ const q:any={insert:(v:any)=>{insert=v;return q;},update:(v:any)=>{patch=v;return q;},select:()=>q,eq:(k:string,v:unknown)=>{filters[k]=v;return q;},single:result,maybeSingle:result,then:(resolve:any,reject:any)=>result().then(resolve,reject)};
  return q;
 }}}));
 const {startRun}=await import("../src/engine/logger.js");
@@ -33,4 +33,11 @@ it("records mocked results with simulation mode",async()=>{
  const run=await startRun("u","compta",trigger,"live","same");
  await run.finish({status:"simulated",decision:"mock",toolsUsed:[],resultSummary:"none",mock:true});
  expect(h.rows.get("same").mode).toBe("simulation");
+});
+
+it("finalizes a run only once",async()=>{
+ const run=await startRun("u","compta",trigger,"live","single-finalize");
+ await run.finish({status:"success",decision:"done",toolsUsed:[],resultSummary:"done",mock:false});
+ await expect(run.finish({status:"error",decision:"late",toolsUsed:[],resultSummary:"late",mock:false})).rejects.toThrow(/déjà finalisée|concurrent/);
+ expect(h.rows.get("single-finalize").status).toBe("success");
 });
