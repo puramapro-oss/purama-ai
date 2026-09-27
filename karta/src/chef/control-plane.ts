@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { supabase } from "../db/supabase.js";
 import type { ChefDriverProvider } from "./driver.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "./supervisor.js";
@@ -31,6 +32,9 @@ function assertRpc(error: { message?: string } | null, label: string): void {
 }
 
 export class SupabaseChefControlPlane implements ChefControlPlane {
+  private readonly sessionId = randomUUID();
+  private reportSequence = 0;
+
   constructor(private readonly options: SupabaseChefControlPlaneOptions) {
     if (!options.repo || !options.defaultCwd) throw new Error("Métadonnées CHEF incomplètes");
     if (options.defaultVerificationProfiles.length === 0) throw new Error("Profils de vérification par défaut requis");
@@ -55,10 +59,12 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
   }): Promise<void> {
     const result = await supabase.rpc("chef_heartbeat_worker", {
       p_worker_id: input.workerId,
+      p_session_id: this.sessionId,
       p_provider: input.provider,
       p_model: input.model ?? null,
       p_state: input.state,
-      p_session_id: null,
+      p_session_id: this.sessionId,
+      p_sequence: ++this.reportSequence,
       p_pid: process.pid,
       p_repo: this.options.repo,
       p_worktree: this.options.worktree ?? this.options.defaultCwd,
