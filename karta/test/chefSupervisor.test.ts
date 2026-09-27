@@ -5,6 +5,7 @@ import { runChefWorkerCycle } from "../src/chef/supervisor.js";
 import type { ChefVerificationEvidence, ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
 
 vi.mock("../src/chef/git-state.js", () => ({
+  captureCleanGitBaseline: vi.fn(async () => ({ headSha: "a".repeat(40), branch: "main" })),
   verifyCommittedGitState: vi.fn(async () => ({
     kind: "receipt",
     sha256: "9".repeat(64),
@@ -26,6 +27,8 @@ function makeTask(overrides: Partial<ChefRuntimeTask> = {}): ChefRuntimeTask {
     fencingToken: 3,
     attempt: 1,
     verificationProfiles: ["unit"],
+    allowedPaths: ["."],
+    branch: "main",
     ...overrides,
   };
 }
