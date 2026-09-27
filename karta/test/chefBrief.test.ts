@@ -19,6 +19,8 @@ function base(): ChefBrief {
         dependsOn: ["T1"],
         requirementKeys: ["R2"],
         provider: "claude",
+        scopeKey: "src/x-integration",
+        verificationProfiles: ["default"],
       },
       {
         key: "T1",
@@ -27,6 +29,7 @@ function base(): ChefBrief {
         requirementKeys: ["R1"],
         provider: "codex",
         scopeKey: "src/x",
+        verificationProfiles: ["default"],
       },
     ],
   };
