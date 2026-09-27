@@ -30,7 +30,10 @@ export const CUSTOM_AGENT_TOOL_NAMES = Object.keys(CUSTOM_AGENT_TOOLS);
 /** Filtre défensif : ne résout QUE les noms d'outils connus (liste blanche), ignore le reste
  * silencieusement — un nom invalide venant de Claude/du mock ne doit jamais planter l'agent. */
 export function resolveCustomAgentTools(names: string[] | null | undefined): AnyToolDefinition[] {
-  return (names ?? [])
-    .map((name) => CUSTOM_AGENT_TOOLS[name])
-    .filter((tool): tool is AnyToolDefinition => Boolean(tool));
+  const requested = names ?? [];
+  const unknown = requested.filter((name) => !CUSTOM_AGENT_TOOLS[name]);
+  if (unknown.length > 0) {
+    throw new Error(`Configuration d'outils inconnue: ${unknown.join(", ")}`);
+  }
+  return requested.map((name) => CUSTOM_AGENT_TOOLS[name]);
 }
