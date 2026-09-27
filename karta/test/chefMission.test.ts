@@ -13,16 +13,16 @@ const brief = {
   repo: "puramapro-oss/x",
   requirements: [
     { key: "R1", description: "Implement X", critical: true },
-    { key: "R2", description: "Verify X", critical: true },
+    { key: "R2", description: "Verify X", critical: false },
   ],
   tasks: [
     {
       key: "T1", title: "Implement", instructions: "Implement X", requirementKeys: ["R1"],
       provider: "codex", accessMode: "write", scopeKey: "puramapro-oss/x:src/x",
-      verificationProfiles: ["unit", "typecheck"], maxAttempts: 3,
+      allowedPaths: ["src/x"], verificationProfiles: ["unit", "typecheck"], maxAttempts: 3,
     },
     {
-      key: "T2", title: "Review", instructions: "Review X", requirementKeys: ["R2"],
+      key: "T2", title: "Review", instructions: "Review X", requirementKeys: ["R1", "R2"],
       provider: "claude", accessMode: "read", dependsOn: ["T1"],
       verificationProfiles: ["review"], maxAttempts: 2,
     },
@@ -45,6 +45,9 @@ beforeAll(async () => {
     "009_chef_hardening.sql",
     "010_chef_reliability.sql", "011_chef_runtime_policy.sql",
     "012_chef_mission_ingest.sql",
+    "013_chef_independent_review.sql",
+    "014_chef_file_ownership.sql",
+    "015_chef_mission_file_ownership.sql",
   ]) {
     await db.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
   }
@@ -76,14 +79,14 @@ describe("CHEF atomic mission ingestion", () => {
     const mission = (await db.query("SELECT state FROM purama_ai.chef_missions")).rows[0] as { state: string };
     expect(mission.state).toBe("active");
 
-    const tasks = await db.query("SELECT task_key,state,verification_profiles FROM purama_ai.chef_tasks ORDER BY task_key");
+    const tasks = await db.query("SELECT task_key,state,verification_profiles,allowed_paths FROM purama_ai.chef_tasks ORDER BY task_key");
     expect(tasks.rows).toMatchObject([
-      { task_key: "T1", state: "ready", verification_profiles: ["unit", "typecheck"] },
-      { task_key: "T2", state: "pending", verification_profiles: ["review"] },
+      { task_key: "T1", state: "ready", verification_profiles: ["unit", "typecheck"], allowed_paths: ["src/x"] },
+      { task_key: "T2", state: "pending", verification_profiles: ["review"], allowed_paths: [] },
     ]);
 
     expect((await db.query("SELECT count(*)::int AS n FROM purama_ai.chef_task_dependencies")).rows[0]).toMatchObject({ n: 1 });
-    expect((await db.query("SELECT count(*)::int AS n FROM purama_ai.chef_task_requirements")).rows[0]).toMatchObject({ n: 2 });
+    expect((await db.query("SELECT count(*)::int AS n FROM purama_ai.chef_task_requirements")).rows[0]).toMatchObject({ n: 3 });
   });
 
   it("is idempotent for the same brief version and hash", async () => {
