@@ -217,7 +217,7 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       child.on("close", (code, signalName) => {
         if (settled || killedForOutput) return;
         if (code !== 0) {
-          finishReject(new Error(`Worker CHEF échoué (code=${code ?? "null"}, signal=${signalName ?? "none"}): ${stderr.slice(-4_000)}`));
+          finishReject(new Error(`Worker CHEF échoué (code=${code ?? "null"}, signal=${signalName ?? "none"})`));
           return;
         }
         const lines = stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
