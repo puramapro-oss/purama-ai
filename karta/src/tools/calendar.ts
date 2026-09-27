@@ -8,7 +8,18 @@ export const calendarCreateEventTool: ToolDefinition<
 > = {
   name: "calendar_create_event",
   description: "Crée un événement dans le Google Calendar de l'utilisateur (ex: appel planifié, rendez-vous).",
-  sensitive: false,
+  sensitive: true,
+  inputSchema: {
+    type: "object",
+    properties: {
+      title: { type: "string", minLength: 1, maxLength: 300 },
+      startIso: { type: "string", minLength: 1, maxLength: 64 },
+      endIso: { type: "string", minLength: 1, maxLength: 64 },
+      attendeeEmail: { type: "string", minLength: 3, maxLength: 320 },
+    },
+    required: ["title", "startIso", "endIso"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Google OAuth non complété pour cet utilisateur");
