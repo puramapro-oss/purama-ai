@@ -4,6 +4,14 @@ import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.j
 import { runChefWorkerCycle } from "../src/chef/supervisor.js";
 import type { ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
 
+vi.mock("../src/chef/git-state.js", () => ({
+  verifyCommittedGitState: vi.fn(async () => ({
+    kind: "receipt",
+    sha256: "9".repeat(64),
+    payload: { profile: "git-state", ok: true, headSha: "d".repeat(40), clean: true },
+  })),
+}));
+
 const hash = "c".repeat(64);
 const sha = "d".repeat(40);
 
