@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { getClaudeClient } from "../claude/index.js";
 import { isRunnable, loadAgentState, recordRunOutcome, requiresHumanApproval } from "./autonomy.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
@@ -5,6 +6,7 @@ import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
 import { assertToolResult } from "./tool-result.js";
+import { validateToolCall } from "./tool-contracts.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
@@ -38,25 +40,37 @@ export async function runAgentCycle(
     let cancelled = false;
     let failed = false;
 
-    // Valider le plan entier AVANT le premier effet. Une action inconnue située
-    // après une action valide ne doit jamais être découverte trop tard.
-    const unknownIndex = decision.toolCalls.findIndex(call => !definition.tools.some(tool => tool.name === call.tool));
-    if (unknownIndex >= 0) {
-      decision.toolCalls.forEach((call, index) => {
+    // Valider le plan ENTIER (outil + schéma runtime + classification) avant le
+    // premier effet externe. Un appel mal formé en position N ne doit pas être
+    // découvert après l'exécution de N-1.
+    let plan: Array<{
+      call: (typeof decision.toolCalls)[number];
+      tool: AgentDefinition["tools"][number];
+      sensitive: boolean;
+    }>;
+    try {
+      plan = decision.toolCalls.map((call) => {
+        const tool = definition.tools.find(candidate => candidate.name === call.tool);
+        if (!tool) throw new Error(`Outil inconnu: ${call.tool}`);
+        const contract = validateToolCall(tool, call.params);
+        return { call, tool, sensitive: contract.sensitive };
+      });
+    } catch (error) {
+      for (const call of decision.toolCalls) {
         toolsUsed.push({
           tool: call.tool,
-          paramsSummary: JSON.stringify(call.params),
-          resultSummary: index === unknownIndex ? "Outil inconnu" : "Non exécutée : plan invalide",
+          paramsSummary: summarizeParams(call.params),
+          resultSummary: "Non exécutée : plan invalide",
           success: false,
-          outcome: index === unknownIndex ? "failed" : "skipped",
+          outcome: "skipped",
         });
-      });
+      }
       const outcome: AgentRunResult = {
         status: "error",
         decision: decisionText,
         toolsUsed,
         resultSummary: summarizeToolsUsed(toolsUsed),
-        errorMessage: "Plan refusé avant exécution : outil inconnu",
+        errorMessage: error instanceof Error ? error.message : "Plan invalide",
         mock,
         retryable: false,
       };
@@ -65,11 +79,11 @@ export async function runAgentCycle(
       return outcome;
     }
 
-    for (let index = 0; index < decision.toolCalls.length; index++) {
-      const call = decision.toolCalls[index];
+    for (let index = 0; index < plan.length; index++) {
+      const { call, tool, sensitive } = plan[index];
       const skipRemaining = (reason: string) => {
-        for (const skipped of decision.toolCalls.slice(index)) toolsUsed.push({
-          tool: skipped.tool, paramsSummary: JSON.stringify(skipped.params), resultSummary: reason, success: false, outcome: "skipped",
+        for (const skipped of plan.slice(index).map(item => item.call)) toolsUsed.push({
+          tool: skipped.tool, paramsSummary: summarizeParams(skipped.params), resultSummary: reason, success: false, outcome: "skipped",
         });
       };
       const latest = await loadAgentState(userId, definition.type);
@@ -78,22 +92,13 @@ export async function runAgentCycle(
         skipRemaining("Action annulée : arrêt ou autorisation modifiée");
         break;
       }
-      const tool = definition.tools.find(t => t.name === call.tool);
-      if (!tool) {
-        toolsUsed.push({ tool: call.tool, paramsSummary: JSON.stringify(call.params), resultSummary: "Outil inconnu", success: false, outcome: "failed" });
-        failed = true;
-        for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push({
-          tool: skipped.tool, paramsSummary: JSON.stringify(skipped.params), resultSummary: "Non exécutée après un échec", success: false, outcome: "skipped",
-        });
-        break;
-      }
-      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, sensitive);
       if (simulation || needsApproval) {
         const pendingActionId = !simulation ? await createPendingAction({
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
         }) : undefined;
         toolsUsed.push({
-          tool: tool.name, paramsSummary: JSON.stringify(call.params),
+          tool: tool.name, paramsSummary: summarizeParams(call.params),
           resultSummary: simulation ? "Simulée : aucune action réelle" : "En attente de validation humaine",
           success: false, outcome: simulation ? "simulated" : "pending", pendingActionId,
         });
@@ -105,12 +110,12 @@ export async function runAgentCycle(
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
         });
         assertToolResult(result);
-        toolsUsed.push({ tool: tool.name, paramsSummary: JSON.stringify(call.params), resultSummary: summarize(result), success: true, outcome: "executed" });
+        toolsUsed.push({ tool: tool.name, paramsSummary: summarizeParams(call.params), resultSummary: summarize(result), success: true, outcome: "executed" });
       } catch (error) {
-        toolsUsed.push({ tool: tool.name, paramsSummary: JSON.stringify(call.params), resultSummary: error instanceof Error ? error.message : "Échec de l'outil", success: false, outcome: "failed" });
+        toolsUsed.push({ tool: tool.name, paramsSummary: summarizeParams(call.params), resultSummary: error instanceof Error ? error.message : "Échec de l'outil", success: false, outcome: "failed" });
         failed = true;
-        for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push({
-          tool: skipped.tool, paramsSummary: JSON.stringify(skipped.params), resultSummary: "Non exécutée après un échec", success: false, outcome: "skipped",
+        for (const skipped of plan.slice(index + 1).map(item => item.call)) toolsUsed.push({
+          tool: skipped.tool, paramsSummary: summarizeParams(skipped.params), resultSummary: "Non exécutée après un échec", success: false, outcome: "skipped",
         });
         break;
       }
@@ -157,4 +162,10 @@ function summarize(result: unknown): string {
 function summarizeToolsUsed(tools: ToolCallRecord[]): string {
   const count = (outcome: ToolCallRecord["outcome"]) => tools.filter(t => t.outcome === outcome).length;
   return `${count("executed")}/${tools.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)`;
+}
+
+function summarizeParams(params: Record<string, unknown>): string {
+  const keys = Object.keys(params).sort();
+  const digest = createHash("sha256").update(JSON.stringify(params)).digest("hex").slice(0, 16);
+  return `keys=[${keys.join(",")}] sha256=${digest}`;
 }
