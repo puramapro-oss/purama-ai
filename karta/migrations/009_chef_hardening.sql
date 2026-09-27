@@ -184,6 +184,7 @@ DECLARE
   mission_tokens_used bigint;
   mission_cost_used bigint;
   worker_provider text;
+  worker_state text;
   worker_task uuid;
   worker_heartbeat timestamptz;
   budget_blocked boolean;
@@ -191,14 +192,15 @@ BEGIN
   IF p_provider NOT IN ('codex','claude','glm') THEN RAISE EXCEPTION 'Invalid provider'; END IF;
   IF p_lease_seconds < 30 OR p_lease_seconds > 3600 THEN RAISE EXCEPTION 'Invalid lease'; END IF;
 
-  SELECT provider, current_task_id, heartbeat_at
-    INTO worker_provider, worker_task, worker_heartbeat
+  SELECT provider, state, current_task_id, heartbeat_at
+    INTO worker_provider, worker_state, worker_task, worker_heartbeat
   FROM purama_ai.chef_workers
   WHERE worker_id = p_worker_id
   FOR UPDATE;
 
   IF worker_provider IS NULL
      OR worker_provider <> p_provider
+     OR worker_state <> 'idle'
      OR worker_task IS NOT NULL
      OR worker_heartbeat < now() - interval '2 minutes' THEN
     RETURN;
@@ -209,7 +211,7 @@ BEGIN
   SELECT max_parallel, token_budget, cost_budget_micros, tokens_used, cost_used_micros
     INTO parallel_limit, mission_token_budget, mission_cost_budget, mission_tokens_used, mission_cost_used
   FROM purama_ai.chef_missions
-  WHERE id = p_mission_id AND state = 'active'
+  WHERE id = p_mission_id AND state IN ('active','human_required','external_required')
   FOR UPDATE;
   IF parallel_limit IS NULL THEN RETURN; END IF;
 
