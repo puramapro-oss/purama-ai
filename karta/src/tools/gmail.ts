@@ -212,6 +212,17 @@ export const gmailCreateDraftTool: ToolDefinition<
   name: "gmail_create_draft",
   description: "Crée un brouillon de réponse Gmail (n'envoie rien — nécessite validation humaine avant envoi).",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      threadId: { type: "string", minLength: 1, maxLength: 256 },
+      to: { type: "string", minLength: 3, maxLength: 320 },
+      subject: { type: "string", minLength: 1, maxLength: 998 },
+      body: { type: "string", maxLength: 2_000_000 },
+    },
+    required: ["threadId", "to", "subject", "body"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
     if (typeof params.threadId !== "string" || !params.threadId || params.threadId.length > 256) {
@@ -239,6 +250,16 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
   name: "gmail_send",
   description: "Envoie réellement un email au nom de l'utilisateur — action sensible.",
   sensitive: true,
+  inputSchema: {
+    type: "object",
+    properties: {
+      to: { type: "string", minLength: 3, maxLength: 320 },
+      subject: { type: "string", minLength: 1, maxLength: 998 },
+      body: { type: "string", maxLength: 2_000_000 },
+    },
+    required: ["to", "subject", "body"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
     await assertUnderDailySendLimit(ctx.userId);
