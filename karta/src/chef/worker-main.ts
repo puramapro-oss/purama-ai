@@ -87,25 +87,39 @@ async function main(): Promise<void> {
 
   const idleMs = positiveInt("CHEF_IDLE_POLL_MS", 2_000, 250, 60_000);
   const leaseSeconds = positiveInt("CHEF_LEASE_SECONDS", 300, 30, 3_600);
+  const maxInfraBackoffMs = positiveInt("CHEF_MAX_INFRA_BACKOFF_MS", 30_000, 1_000, 5 * 60_000);
+  let consecutiveInfraFailures = 0;
 
   try {
     while (!abort.signal.aborted) {
-      const result = await runChefWorkerCycle(control, driver, verifier, {
-        missionId,
-        workerId,
-        provider: selectedProvider,
-        model: process.env.CHEF_MODEL,
-        leaseSeconds,
-      });
+      try {
+        const result = await runChefWorkerCycle(control, driver, verifier, {
+          missionId,
+          workerId,
+          provider: selectedProvider,
+          model: process.env.CHEF_MODEL,
+          leaseSeconds,
+        });
+        consecutiveInfraFailures = 0;
 
-      if (result.state === "failed") {
-        process.exitCode = 2;
-        break;
-      }
-      if (result.state === "lost_lease") {
-        await sleep(Math.min(idleMs * 2, 10_000), abort.signal);
-      } else if (result.state === "idle") {
-        await sleep(idleMs, abort.signal);
+        if (result.state === "failed") {
+          process.exitCode = 2;
+          break;
+        }
+        if (result.state === "lost_lease") {
+          await sleep(Math.min(idleMs * 2, 10_000), abort.signal);
+        } else if (result.state === "idle") {
+          await sleep(idleMs, abort.signal);
+        }
+      } catch (error) {
+        if (abort.signal.aborted) break;
+        consecutiveInfraFailures += 1;
+        const message = error instanceof Error ? error.message : "erreur runtime inconnue";
+        // Runtime/control-plane failures must not kill an all-day worker. No provider
+        // call is started again until the control plane can safely reconcile state.
+        console.error(`[chef-worker] incident runtime #${consecutiveInfraFailures}: ${message}`);
+        const delay = Math.min(maxInfraBackoffMs, idleMs * 2 ** Math.min(consecutiveInfraFailures, 8));
+        await sleep(delay, abort.signal);
       }
     }
   } finally {
