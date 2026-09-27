@@ -16,6 +16,7 @@ export interface ChefRuntimeTask {
 }
 
 export interface ChefControlPlane {
+  housekeeping?(missionId: string): Promise<void>;
   heartbeat(input: { workerId: string; provider: ChefDriverProvider; model?: string; state: "idle" | "claimed" | "running" | "verifying" | "blocked" | "failed"; taskId?: string }): Promise<void>;
   claimNext(input: { missionId: string; workerId: string; provider: ChefDriverProvider; leaseSeconds: number }): Promise<ChefRuntimeTask | null>;
   renewLease(input: { taskId: string; workerId: string; fencingToken: number; leaseSeconds: number }): Promise<boolean>;
@@ -66,6 +67,7 @@ export async function runChefWorkerCycle(
   const leaseSeconds = options.leaseSeconds ?? 300;
   const renewEveryMs = options.renewEveryMs ?? Math.max(5_000, Math.floor((leaseSeconds * 1000) / 3));
 
+  if (control.housekeeping) await control.housekeeping(options.missionId);
   await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "idle" });
   const task = await control.claimNext({
     missionId: options.missionId,
