@@ -1,4 +1,5 @@
 import type { ChefDriverProvider, ChefDriverResponse, ChefWorkerDriver } from "./driver.js";
+import { verifyCommittedGitState } from "./git-state.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
 
 export interface ChefRuntimeTask {
@@ -185,6 +186,27 @@ export async function runChefWorkerCycle(
         target: "retryable", error,
       });
       return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+    }
+
+    if (task.accessMode === "write" && response.outputSha) {
+      try {
+        const gitEvidence = await verifyCommittedGitState({
+          cwd: task.cwd,
+          expectedHeadSha: response.outputSha,
+          expectedBranch: task.branch,
+          baseSha: task.baseSha,
+        });
+        await control.addEvidence(task.id, gitEvidence);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "État Git invalide";
+        const ok = await control.transition({
+          taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+          target: "retryable", error: message.slice(0, 10_000),
+        });
+        return ok
+          ? { state: "retryable", taskId: task.id, error: message }
+          : { state: "lost_lease", taskId: task.id, error: message };
+      }
     }
 
     const verifying = await control.transition({
