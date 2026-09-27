@@ -18,6 +18,8 @@ export interface ChefDriverRequest {
   cwd: string;
   branch?: string;
   baseSha?: string;
+  accessMode: "read" | "write";
+  allowedPaths: string[];
 }
 
 export interface ChefDriverUsage {
@@ -147,6 +149,13 @@ export class ProcessChefDriver implements ChefWorkerDriver {
     if (!/^[0-9a-f]{64}$/i.test(request.briefHash)) throw new Error("briefHash invalide");
     if (typeof request.instructions !== "string" || request.instructions.length === 0 || request.instructions.length > 200_000) {
       throw new Error("instructions invalides");
+    }
+    if (request.accessMode !== "read" && request.accessMode !== "write") throw new Error("accessMode driver invalide");
+    if (!Array.isArray(request.allowedPaths) || request.allowedPaths.some((path) => typeof path !== "string")) {
+      throw new Error("allowedPaths driver invalides");
+    }
+    if (request.accessMode === "write" && request.allowedPaths.length === 0) {
+      throw new Error("allowedPaths requis pour un worker write");
     }
 
     const env = minimalEnv(
