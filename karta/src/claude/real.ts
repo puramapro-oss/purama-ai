@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../config.js";
 import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
+import { schemaForTool } from "../engine/tool-input.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 
 /**
@@ -65,6 +66,7 @@ function toAnthropicTools(tools: AnyToolDefinition[]): Anthropic.Tool[] {
   return tools.map((tool) => ({
     name: tool.name,
     description: tool.description,
-    input_schema: { type: "object", properties: {}, additionalProperties: true },
-  }));
+    input_schema: schemaForTool(tool),
+    strict: true,
+  } as Anthropic.Tool));
 }
