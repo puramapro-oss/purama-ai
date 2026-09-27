@@ -80,11 +80,16 @@ export type ToolCapability =
 export interface ToolDefinition<Params = Record<string, unknown>, Result = unknown> {
   name: string;
   description: string;
-  capability: ToolCapability;
+  /**
+   * Les contrats canoniques vivent dans tool-contracts.ts afin que les outils legacy
+   * ne puissent pas diverger entre le schéma envoyé au modèle et la validation runtime.
+   * Un outil peut répéter ces valeurs localement ; resolveToolContract vérifie alors
+   * qu'elles correspondent au registre. Un outil absent du registre échoue fail-closed.
+   */
+  capability?: ToolCapability;
   /** Transitional approval bit; capability policy is the authoritative classification. */
   sensitive: boolean;
-  /** Runtime boundary and provider tool contract share the exact same schema. */
-  inputSchema: ToolJsonSchema;
+  inputSchema?: ToolJsonSchema;
   execute(params: Params, ctx: ToolExecutionContext): Promise<Result>;
 }
 
