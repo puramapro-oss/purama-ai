@@ -17,7 +17,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS chef_one_writer_per_worktree
     AND state IN ('claimed','running','verifying');
 
 CREATE UNIQUE INDEX IF NOT EXISTS chef_one_writer_per_scope
-  ON purama_ai.chef_tasks(repo, scope_key)
+  ON purama_ai.chef_tasks(scope_key)
   WHERE scope_key IS NOT NULL
     AND access_mode = 'write'
     AND state IN ('claimed','running','verifying');
@@ -248,7 +248,6 @@ BEGIN
         (t.scope_key IS NULL OR NOT EXISTS (
           SELECT 1 FROM purama_ai.chef_tasks busy
           WHERE busy.id <> t.id
-            AND busy.repo = t.repo
             AND busy.scope_key = t.scope_key
             AND busy.access_mode = 'write'
             AND busy.state IN ('claimed','running','verifying')
