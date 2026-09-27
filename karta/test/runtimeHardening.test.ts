@@ -42,13 +42,13 @@ describe("runtime hardening SQL", () => {
       [uid]
     );
     const results = await Promise.all([reserve(), reserve()]);
-    const granted = results.map(r => r.rows[0]?.count).filter(v => v !== null);
+    const granted = results.map(r => (r.rows[0] as { count?: number | null } | undefined)?.count).filter(v => v !== null);
     expect(granted).toEqual([400]);
     const row = await db.query(
       "SELECT count FROM purama_ai.karta_daily_counters WHERE user_id=$1 AND counter_key='gmail_send'",
       [uid]
     );
-    expect(row.rows[0]?.count).toBe(400);
+    expect((row.rows[0] as { count?: number } | undefined)?.count).toBe(400);
   });
 
   it("empêche un vieux run de remplacer l'état d'un run plus récent", async () => {
@@ -60,13 +60,14 @@ describe("runtime hardening SQL", () => {
       "SELECT purama_ai.karta_record_run_outcome($1,'email','error','2026-09-27T11:00:00Z') AS updated",
       [uid]
     );
-    expect(old.rows[0]?.updated).toBe(false);
+    expect((old.rows[0] as { updated?: boolean } | undefined)?.updated).toBe(false);
     const state = await db.query(
       "SELECT last_run_status,last_run_at FROM purama_ai.karta_agent_state WHERE user_id=$1 AND agent_type='email'",
       [uid]
     );
-    expect(state.rows[0]?.last_run_status).toBe("success");
-    expect(new Date(state.rows[0]?.last_run_at as string).toISOString()).toBe("2026-09-27T12:00:00.000Z");
+    expect((state.rows[0] as { last_run_status?: string; last_run_at?: string } | undefined)?.last_run_status).toBe("success");
+    const typed = state.rows[0] as { last_run_status?: string; last_run_at?: string } | undefined;
+    expect(new Date(typed?.last_run_at as string).toISOString()).toBe("2026-09-27T12:00:00.000Z");
   });
 
   it("n'expose pas la réservation de quota au rôle client", async () => {
