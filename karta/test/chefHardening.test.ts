@@ -274,36 +274,49 @@ describe("PURAMA CHEF operational hardening", () => {
     ).state).toBe("failed");
   });
 
-  it("requires direct proof plus independent review for critical requirements", async () => {
+  it("lets implementation finish, but blocks mission completion until critical review exists", async () => {
     await addMission(mission1);
     await db.query(
       "INSERT INTO purama_ai.chef_requirements(id,mission_id,requirement_key,description,critical) VALUES($1,$2,'R1','critical',true)",
       [requirement, mission1]
     );
-    await addTask(taskA, mission1, "a");
+    await addTask(taskA, mission1, "implement");
+    await addTask(taskB, mission1, "review", { access: "read" });
     await db.query(
-      "INSERT INTO purama_ai.chef_task_requirements(task_id,requirement_id) VALUES($1,$2)",
-      [taskA, requirement]
+      "INSERT INTO purama_ai.chef_task_requirements(task_id,requirement_id) VALUES($1,$3),($2,$3)",
+      [taskA, taskB, requirement]
     );
+
     await heartbeat("w1");
-    const claimed = first<{ fencing_token: number }>(await claim(mission1, "w1"));
-    await transition(taskA, "w1", claimed.fencing_token, "running");
-    await transition(taskA, "w1", claimed.fencing_token, "verifying");
+    const implementation = first<{ fencing_token: number }>(await claim(mission1, "w1"));
+    await transition(taskA, "w1", implementation.fencing_token, "running");
+    await transition(taskA, "w1", implementation.fencing_token, "verifying");
     await db.query(
       "INSERT INTO purama_ai.chef_evidence(task_id,requirement_id,kind,payload) VALUES($1,$2,'test','{}'::jsonb)",
       [taskA, requirement]
     );
+    expect(first<{ ok: boolean }>(
+      await transition(taskA, "w1", implementation.fencing_token, "verified_done")
+    ).ok).toBe(true);
+    expect(first<{ done: boolean }>(
+      await db.query("SELECT purama_ai.chef_try_finish_mission($1) AS done", [mission1])
+    ).done).toBe(false);
 
-    await expect(transition(taskA, "w1", claimed.fencing_token, "verified_done"))
-      .rejects.toThrow(/review/i);
-
+    await heartbeat("w2");
+    const review = first<{ id: string; fencing_token: number }>(await claim(mission1, "w2"));
+    expect(review.id).toBe(taskB);
+    await transition(taskB, "w2", review.fencing_token, "running");
+    await transition(taskB, "w2", review.fencing_token, "verifying");
     await db.query(
       "INSERT INTO purama_ai.chef_evidence(task_id,requirement_id,kind,payload) VALUES($1,$2,'review','{}'::jsonb)",
-      [taskA, requirement]
+      [taskB, requirement]
     );
     expect(first<{ ok: boolean }>(
-      await transition(taskA, "w1", claimed.fencing_token, "verified_done")
+      await transition(taskB, "w2", review.fencing_token, "verified_done")
     ).ok).toBe(true);
+    expect(first<{ state: string }>(
+      await db.query("SELECT state FROM purama_ai.chef_missions WHERE id=$1", [mission1])
+    ).state).toBe("verified_done");
   });
 
   it("pauses instead of silently downgrading when the estimated budget is insufficient", async () => {
