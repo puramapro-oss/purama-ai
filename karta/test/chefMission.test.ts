@@ -43,8 +43,8 @@ beforeAll(async () => {
   for (const file of [
     "008_chef_control_plane.sql",
     "009_chef_hardening.sql",
-    "010_chef_runtime_policy.sql",
-    "011_chef_mission_ingest.sql",
+    "010_chef_reliability.sql", "011_chef_runtime_policy.sql",
+    "012_chef_mission_ingest.sql",
   ]) {
     await db.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
   }
