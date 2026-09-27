@@ -98,6 +98,12 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     const accessMode = row.access_mode === "read" ? "read" : row.access_mode === "write" ? "write" : null;
     if (!accessMode) throw new Error("Mode d'accès CHEF invalide");
 
+    const rowProfiles = Array.isArray(row.verification_profiles)
+      ? row.verification_profiles.filter((value): value is string => typeof value === "string" && /^[A-Za-z0-9._:-]{1,120}$/.test(value))
+      : [];
+    const verificationProfiles = rowProfiles.length > 0 ? rowProfiles : this.options.defaultVerificationProfiles;
+    if (verificationProfiles.length === 0) throw new Error("Task CHEF sans vérification");
+
     return {
       id,
       missionId,
@@ -109,7 +115,7 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       attempt: safeInt(row.attempt, "attempt"),
       ...(typeof row.branch === "string" && row.branch ? { branch: row.branch } : {}),
       ...(typeof row.base_sha === "string" && row.base_sha ? { baseSha: row.base_sha } : {}),
-      verificationProfiles: [...this.options.defaultVerificationProfiles],
+      verificationProfiles: [...verificationProfiles],
     };
   }
 
