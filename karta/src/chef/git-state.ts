@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import type { ChefVerificationEvidence } from "./verifier.js";
 
 const execFileAsync = promisify(execFile);
 const SHA = /^[0-9a-f]{40,64}$/i;
@@ -20,19 +21,6 @@ async function git(cwd: string, args: string[]): Promise<string> {
   return stdout.trim();
 }
 
-export interface ChefGitStateEvidence {
-  kind: "receipt";
-  sha256: string;
-  payload: {
-    profile: "git-state";
-    ok: true;
-    headSha: string;
-    clean: true;
-    branch?: string;
-    baseSha?: string;
-  };
-}
-
 /**
  * A write task cannot be VERIFIED_DONE against a SHA reported only by the worker.
  * This independently checks the real repository state and rejects dirty/uncommitted work.
@@ -42,7 +30,7 @@ export async function verifyCommittedGitState(input: {
   expectedHeadSha: string;
   expectedBranch?: string;
   baseSha?: string;
-}): Promise<ChefGitStateEvidence> {
+}): Promise<ChefVerificationEvidence> {
   if (!SHA.test(input.expectedHeadSha)) throw new Error("Expected HEAD invalide");
 
   const actualHead = await git(input.cwd, ["rev-parse", "HEAD"]);
