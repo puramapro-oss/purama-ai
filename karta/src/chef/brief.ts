@@ -21,6 +21,7 @@ export interface ChefBriefTask {
   worktree?: string;
   priority?: number;
   maxAttempts?: number;
+  verificationProfiles?: string[];
 }
 
 export interface ChefBrief {
@@ -83,6 +84,15 @@ export function validateChefBrief(input: ChefBrief): void {
     }
     uniqueStrings(task.dependsOn, `dependsOn(${task.key})`);
     const linked = uniqueStrings(task.requirementKeys, `requirementKeys(${task.key})`);
+    const verificationProfiles = uniqueStrings(task.verificationProfiles, `verificationProfiles(${task.key})`);
+    if (verificationProfiles.length === 0) throw new Error(`Task sans profil de vérification: ${task.key}`);
+    if (verificationProfiles.some((profile) => !/^[A-Za-z0-9._:-]{1,120}$/.test(profile))) {
+      throw new Error(`Profil de vérification invalide: ${task.key}`);
+    }
+    const accessMode = task.accessMode ?? "write";
+    if (accessMode === "write" && !task.scopeKey?.trim() && !task.worktree?.trim()) {
+      throw new Error(`Task write sans scope/worktree: ${task.key}`);
+    }
     if (linked.length === 0) throw new Error(`Task sans requirement: ${task.key}`);
     tasks.set(task.key, task);
   }
@@ -141,6 +151,7 @@ export function normalizeChefBrief(input: ChefBrief): ChefBrief {
         ...(task.worktree ? { worktree: task.worktree.trim() } : {}),
         priority: task.priority ?? 0,
         maxAttempts: task.maxAttempts ?? 3,
+        verificationProfiles: [...(task.verificationProfiles ?? [])].sort(),
       }))
       .sort((a, b) => a.key.localeCompare(b.key)),
   };
