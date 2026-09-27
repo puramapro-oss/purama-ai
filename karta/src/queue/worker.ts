@@ -1,6 +1,6 @@
 import { Worker, type Job } from "bullmq";
 import { redisConnection } from "./redis.js";
-import { releaseCycleLock, tryAcquireCycleLock } from "./queues.js";
+import { releaseCycleLock, tryAcquireCycleLock } from "./cycle-lock.js";
 import { runAgentCycle } from "../engine/loop.js";
 import { resolveAgentDefinition } from "../engine/resolveDefinition.js";
 import { reconcileStaleRuns } from "../engine/logger.js";
@@ -27,7 +27,8 @@ export function shouldRetryCycle(result: AgentRunResult): boolean {
  * cycle légitime en cours porte déjà la vérité.
  */
 export async function processAgentCycleJob(data: AgentCycleJobData): Promise<AgentRunResult> {
-  if (!(await tryAcquireCycleLock(data.agentType, data.userId))) {
+  const lock = await tryAcquireCycleLock(data.agentType, data.userId);
+  if (!lock) {
     console.warn(`[worker] cycle ${data.agentType}:${data.userId} (${data.trigger.type}/${data.trigger.source}) SKIPPÉ — un cycle est déjà en cours pour cet agent et cet utilisateur`);
     return {
       status: "success",
@@ -55,8 +56,9 @@ export async function processAgentCycleJob(data: AgentCycleJobData): Promise<Age
     return result;
   } finally {
     // Libéré même sur throw (rejeu BullMQ après backoff → re-acquisition possible) et même si
-    // runAgentCycle a crashé avant son propre catch.
-    await releaseCycleLock(data.agentType, data.userId);
+    // runAgentCycle a crashé avant son propre catch. Compare-and-del : ne touche jamais le
+    // verrou d'un successeur si ce cycle a dépassé le TTL.
+    await releaseCycleLock(lock);
   }
 }
 

@@ -273,3 +273,8 @@ Limites documentées (non bloquantes) : patchParentRun JSONB display race ; owne
   = avant le fix), TTL 10s, release au finally
 - approval.ts patchParentRun : read-modify-write JSONB sérialisé (limite sous-lot 3 fermée)
 - Tests : run-lock.test.ts (5) + garde approval — 17/17 ciblés, tsc 0
+
+### Sous-lot 9 (2026-09-27) : owner-token CAD du verrou cycle (3e admission fermée)
+- queue/cycle-lock.ts (extrait de queues.ts, ré-export compat) : CycleLockHandle + token
+  UUID + release compare-and-del Lua ; worker handle-based
+- Écran mutation CAD (del naïf → rouge) ; 120/120 karta (20 fichiers), tsc 0, build 0

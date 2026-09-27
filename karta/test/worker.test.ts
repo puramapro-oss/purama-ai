@@ -11,10 +11,10 @@ vi.mock("../src/queue/redis.js", () => ({
   redisConnection: { host: "localhost" },
 }));
 
-// Le verrou vit dans queues.ts, qui construit aussi une vraie Queue BullMQ à l'import —
-// mock du module entier : worker.ts n'en consomme que le verrou (le type AgentCycleJobData
-// est effacé à la compilation).
-vi.mock("../src/queue/queues.js", () => ({
+// Le verrou vit dans queue/cycle-lock.ts (ré-exporté par queues.ts, qui construit une vraie
+// Queue BullMQ à l'import) — mock du module de verrou directement : worker.ts n'en consomme
+// que le verrou (le type AgentCycleJobData est effacé à la compilation).
+vi.mock("../src/queue/cycle-lock.js", () => ({
   tryAcquireCycleLock: vi.fn(),
   releaseCycleLock: vi.fn(),
 }));
@@ -32,7 +32,7 @@ vi.mock("../src/engine/logger.js", () => ({
 }));
 
 const { shouldRetryCycle, processAgentCycleJob } = await import("../src/queue/worker.js");
-const { tryAcquireCycleLock, releaseCycleLock } = await import("../src/queue/queues.js");
+const { tryAcquireCycleLock, releaseCycleLock } = await import("../src/queue/cycle-lock.js");
 const { runAgentCycle } = await import("../src/engine/loop.js");
 
 /** Builder minimal d'AgentRunResult — seuls status/sideEffectsCommitted comptent ici.
@@ -74,7 +74,7 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
     // mockClear obligatoire : les espions sont partagés entre les tests du fichier, sans reset
     // l'appel du test précédent ferait échouer les `not.toHaveBeenCalled()` du suivant.
     vi.mocked(tryAcquireCycleLock).mockClear();
-    vi.mocked(tryAcquireCycleLock).mockResolvedValue(true);
+    vi.mocked(tryAcquireCycleLock).mockResolvedValue({ agentType: "legal", userId: "user-1", token: "t-owner" });
     vi.mocked(releaseCycleLock).mockClear();
     vi.mocked(runAgentCycle).mockClear();
     vi.mocked(runAgentCycle).mockResolvedValue(runResult("success", false));
@@ -85,11 +85,11 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
 
     expect(result.status).toBe("success");
     expect(runAgentCycle).toHaveBeenCalledOnce();
-    expect(releaseCycleLock).toHaveBeenCalledWith("legal", "user-1");
+    expect(releaseCycleLock).toHaveBeenCalledWith({ agentType: "legal", userId: "user-1", token: "t-owner" });
   });
 
   it("verrou déjà tenu (overlap cron / cron+manual / délégation) → cycle SKIPPÉ, aucun run, aucun side-effect", async () => {
-    vi.mocked(tryAcquireCycleLock).mockResolvedValue(false);
+    vi.mocked(tryAcquireCycleLock).mockResolvedValue(null);
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     const result = await processAgentCycleJob(job);
@@ -107,7 +107,7 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
     vi.mocked(runAgentCycle).mockResolvedValue(runResult("error", false));
 
     await expect(processAgentCycleJob(job)).rejects.toThrow();
-    expect(releaseCycleLock).toHaveBeenCalledWith("legal", "user-1"); // finally
+    expect(releaseCycleLock).toHaveBeenCalledWith({ agentType: "legal", userId: "user-1", token: "t-owner" }); // finally
   });
 
   it("erreur APRÈS side-effects → résultat retourné sans throw (pas de rejeu), verrou libéré", async () => {
@@ -118,7 +118,7 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
 
     expect(result.status).toBe("error");
     expect(result.sideEffectsCommitted).toBe(true);
-    expect(releaseCycleLock).toHaveBeenCalledWith("legal", "user-1");
+    expect(releaseCycleLock).toHaveBeenCalledWith({ agentType: "legal", userId: "user-1", token: "t-owner" });
     err.mockRestore();
   });
 
@@ -126,7 +126,7 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
     vi.mocked(runAgentCycle).mockRejectedValue(new Error("boom runtime"));
 
     await expect(processAgentCycleJob(job)).rejects.toThrow("boom runtime");
-    expect(releaseCycleLock).toHaveBeenCalledWith("legal", "user-1");
+    expect(releaseCycleLock).toHaveBeenCalledWith({ agentType: "legal", userId: "user-1", token: "t-owner" });
   });
 
   it("vrai parallélisme : 2 jobs du MÊME (agent,user) en Promise.all → exactement 1 exécution", async () => {
@@ -134,9 +134,9 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
     // SET NX en ne laissant gagner que le 1er acquire (les suivants voient le verrou tenu).
     let held = false;
     vi.mocked(tryAcquireCycleLock).mockImplementation(async () => {
-      if (held) return false;
+      if (held) return null;
       held = true; // acquis — le release du finally du gagnant ne survient qu'après son cycle
-      return true;
+      return { agentType: "legal", userId: "user-1", token: "t-race" };
     });
 
     const results = await Promise.all([processAgentCycleJob(job), processAgentCycleJob(job)]);
