@@ -67,6 +67,12 @@ export async function runChefWorkerCycle(
 ): Promise<ChefWorkerCycleResult> {
   const leaseSeconds = options.leaseSeconds ?? 300;
   const renewEveryMs = options.renewEveryMs ?? Math.max(5_000, Math.floor((leaseSeconds * 1000) / 3));
+  if (!Number.isInteger(leaseSeconds) || leaseSeconds < 30 || leaseSeconds > 3_600) {
+    throw new Error("Durée de lease CHEF invalide");
+  }
+  if (!Number.isInteger(renewEveryMs) || renewEveryMs < 1_000 || renewEveryMs >= leaseSeconds * 1_000) {
+    throw new Error("Cadence de renouvellement CHEF invalide");
+  }
 
   if (control.housekeeping) await control.housekeeping(options.missionId);
   await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "idle" });
@@ -95,22 +101,42 @@ export async function runChefWorkerCycle(
   const abort = new AbortController();
   let lostLease = false;
   let renewalBusy = false;
+  let renewalStopped = false;
+  let heartbeatState: "running" | "verifying" = "running";
+
+  const loseLease = () => {
+    lostLease = true;
+    abort.abort();
+  };
   const renewal = setInterval(() => {
-    if (renewalBusy || lostLease) return;
+    if (renewalBusy || lostLease || renewalStopped) return;
     renewalBusy = true;
     void control.renewLease({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken, leaseSeconds,
-    }).then((ok) => {
-      if (!ok) {
-        lostLease = true;
-        abort.abort();
+    }).then(async (ok) => {
+      if (!ok || renewalStopped) {
+        if (!renewalStopped) loseLease();
+        return;
       }
+      // A live task renews BOTH its fencing lease and the worker heartbeat. Otherwise
+      // housekeeping could mark a healthy long-running worker stale after two minutes.
+      await control.heartbeat({
+        workerId: options.workerId,
+        provider: options.provider,
+        model: options.model,
+        state: heartbeatState,
+        taskId: task.id,
+      });
     }).catch(() => {
-      lostLease = true;
-      abort.abort();
+      if (!renewalStopped) loseLease();
     }).finally(() => { renewalBusy = false; });
   }, renewEveryMs);
   renewal.unref();
+
+  const stopRenewal = () => {
+    renewalStopped = true;
+    clearInterval(renewal);
+  };
 
   try {
     let response: ChefDriverResponse;
@@ -144,21 +170,34 @@ export async function runChefWorkerCycle(
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
 
     if (response.usage) {
-      await control.recordUsage({
-        eventKey: usageEventKey(task, response),
-        missionId: task.missionId,
-        taskId: task.id,
-        workerId: options.workerId,
-        provider: options.provider,
-        model: response.usage.model ?? options.model,
-        inputTokens: response.usage.inputTokens,
-        outputTokens: response.usage.outputTokens,
-        cachedInputTokens: response.usage.cachedInputTokens ?? 0,
-        costMicros: response.usage.costMicros ?? 0,
-      });
+      try {
+        await control.recordUsage({
+          eventKey: usageEventKey(task, response),
+          missionId: task.missionId,
+          taskId: task.id,
+          workerId: options.workerId,
+          provider: options.provider,
+          model: response.usage.model ?? options.model,
+          inputTokens: response.usage.inputTokens,
+          outputTokens: response.usage.outputTokens,
+          cachedInputTokens: response.usage.cachedInputTokens ?? 0,
+          costMicros: response.usage.costMicros ?? 0,
+        });
+      } catch (error) {
+        stopRenewal();
+        const message = error instanceof Error ? error.message : "Comptabilité d'usage indisponible";
+        const blocked = await control.transition({
+          taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+          target: "blocked_external", error: message.slice(0, 10_000),
+        }).catch(() => false);
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
+          : { state: "lost_lease", taskId: task.id, error: message };
+      }
     }
 
     if (response.status === "blocked_human" || response.status === "blocked_external") {
+      stopRenewal();
       const target = response.status;
       const ok = await control.transition({
         taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
@@ -170,6 +209,7 @@ export async function runChefWorkerCycle(
     }
 
     if (response.status === "failed") {
+      stopRenewal();
       const ok = await control.transition({
         taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
         target: "retryable", error: response.summary.slice(0, 10_000),
@@ -180,6 +220,7 @@ export async function runChefWorkerCycle(
     }
 
     if (task.accessMode === "write" && !response.outputSha) {
+      stopRenewal();
       const error = "Worker write terminé sans outputSha";
       const ok = await control.transition({
         taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
@@ -199,6 +240,7 @@ export async function runChefWorkerCycle(
         await control.addEvidence(task.id, gitEvidence);
       } catch (error) {
         const message = error instanceof Error ? error.message : "État Git invalide";
+        stopRenewal();
         const ok = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
           target: "retryable", error: message.slice(0, 10_000),
@@ -214,6 +256,7 @@ export async function runChefWorkerCycle(
       target: "verifying", outputSha: response.outputSha,
     });
     if (!verifying) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
+    heartbeatState = "verifying";
     await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "verifying", taskId: task.id });
 
     let verification;
@@ -222,6 +265,7 @@ export async function runChefWorkerCycle(
     } catch (error) {
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
       const message = error instanceof Error ? error.message : "Erreur de vérification";
+      stopRenewal();
       const ok = await control.transition({
         taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
         target: "retryable", error: message.slice(0, 10_000),
@@ -232,6 +276,7 @@ export async function runChefWorkerCycle(
     for (const evidence of verification.evidence) await control.addEvidence(task.id, evidence);
 
     if (!verification.ok) {
+      stopRenewal();
       const error = verification.error ?? "Vérification échouée";
       const ok = await control.transition({
         taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
@@ -240,6 +285,7 @@ export async function runChefWorkerCycle(
       return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
     }
 
+    stopRenewal();
     const done = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
       target: "verified_done", outputSha: response.outputSha,
@@ -249,6 +295,6 @@ export async function runChefWorkerCycle(
     await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "idle" });
     return { state: "verified_done", taskId: task.id };
   } finally {
-    clearInterval(renewal);
+    stopRenewal();
   }
 }
