@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import type { ChefWorkerDriver } from "../src/chef/driver.js";
+import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.js";
 import { runChefWorkerCycle } from "../src/chef/supervisor.js";
-import type { ChefVerifier } from "../src/chef/verifier.js";
+import type { ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
 
 const hash = "c".repeat(64);
 const sha = "d".repeat(40);
@@ -38,7 +38,7 @@ function makeControl(task: ChefRuntimeTask | null) {
 }
 
 const passingVerifier: ChefVerifier = {
-  verify: vi.fn(async () => ({
+  verify: vi.fn(async (): Promise<ChefVerificationResult> => ({
     ok: true,
     evidence: [{
       kind: "test",
@@ -54,7 +54,7 @@ describe("CHEF autonomous worker cycle", () => {
     const { control, transitions, evidence } = makeControl(task);
     const driver: ChefWorkerDriver = {
       provider: "codex",
-      run: vi.fn(async () => ({
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({
         schemaVersion: 1,
         status: "completed",
         summary: "done",
@@ -79,7 +79,7 @@ describe("CHEF autonomous worker cycle", () => {
     const { control, transitions } = makeControl(task);
     const driver: ChefWorkerDriver = {
       provider: "codex",
-      run: vi.fn(async () => ({ schemaVersion: 1, status: "completed", summary: "done" })),
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "completed", summary: "done" })),
     };
     const result = await runChefWorkerCycle(control, driver, passingVerifier, {
       missionId: "mission-1", workerId: "worker-1", provider: "codex",
@@ -93,7 +93,7 @@ describe("CHEF autonomous worker cycle", () => {
     const { control, transitions } = makeControl(task);
     const driver: ChefWorkerDriver = {
       provider: "codex",
-      run: vi.fn(async () => ({ schemaVersion: 1, status: "blocked_human", summary: "secret required" })),
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "blocked_human", summary: "secret required" })),
     };
     const verifier: ChefVerifier = { verify: vi.fn() };
     const result = await runChefWorkerCycle(control, driver, verifier, {
@@ -119,10 +119,10 @@ describe("CHEF autonomous worker cycle", () => {
     const { control, transitions } = makeControl(task);
     const driver: ChefWorkerDriver = {
       provider: "codex",
-      run: vi.fn(async () => ({ schemaVersion: 1, status: "completed", summary: "done", outputSha: sha })),
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "completed", summary: "done", outputSha: sha })),
     };
     const verifier: ChefVerifier = {
-      verify: vi.fn(async () => ({
+      verify: vi.fn(async (): Promise<ChefVerificationResult> => ({
         ok: false,
         error: "tests red",
         evidence: [{
