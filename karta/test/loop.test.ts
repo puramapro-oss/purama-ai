@@ -29,10 +29,17 @@ describe("cycle outcomes and interruption", () => {
   it("executes a non-sensitive live action", async () => { expect((await run()).status).toBe("success"); expect(h.execute).toHaveBeenCalledOnce(); });
   it("persists an approval without claiming execution", async () => { h.decision.requiresApproval = true; const r = await run(); expect(r.status).toBe("awaiting_approval"); expect(r.toolsUsed[0]).toMatchObject({ pendingActionId: "pending-1", success: false, outcome: "pending" }); expect(h.execute).not.toHaveBeenCalled(); });
   it("fails for an unknown tool", async () => { h.decision.toolCalls[0].tool = "unknown"; expect((await run()).status).toBe("error"); expect(h.execute).not.toHaveBeenCalled(); });
+  it("validates the whole plan before the first external effect", async () => {
+    h.decision.toolCalls = [{ tool: "act", params: {} }, { tool: "unknown", params: {} }];
+    const result = await run();
+    expect(result.status).toBe("error");
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(result.toolsUsed.map(t => t.outcome)).toEqual(["skipped", "failed"]);
+  });
   it("skips a disabled agent", async () => { h.enabled = false; expect((await run()).status).toBe("skipped"); expect(h.execute).not.toHaveBeenCalled(); });
   it("skips under the global stop", async () => { h.stopped = true; expect((await run()).status).toBe("skipped"); expect(h.execute).not.toHaveBeenCalled(); });
   it("observes a stop before the next action", async () => { h.decision.toolCalls.push({ tool: "act", params: {} }); h.execute.mockImplementation(async () => { h.stopped = true; return { ok: true }; }); const r = await run(); expect(r.status).toBe("cancelled"); expect(h.execute).toHaveBeenCalledOnce(); expect(r.toolsUsed.map(t => t.outcome)).toEqual(["executed", "skipped"]); });
-  it.each([{ ok: false }, { success: false }, { error: "denied" }])("does not report a failed tool envelope as success: %j", async value => { h.execute.mockResolvedValue(value); h.decision.toolCalls.push({ tool: "act", params: {} }); expect((await run()).status).toBe("error"); expect(h.execute).toHaveBeenCalledOnce(); });
+  it.each([false, { ok: false }, { ok: "yes" }, { success: false }, { success: 1 }, { error: "denied" }, { status: "failed" }])("does not report a failed or ambiguous tool result as success: %j", async value => { h.execute.mockResolvedValue(value); h.decision.toolCalls.push({ tool: "act", params: {} }); expect((await run()).status).toBe("error"); expect(h.execute).toHaveBeenCalledOnce(); });
   it("mock decisions never cause real effects or approvals", async () => { h.decision.mock = true; h.decision.requiresApproval = true; expect((await run()).status).toBe("simulated"); expect(h.execute).not.toHaveBeenCalled(); expect(h.pending).not.toHaveBeenCalled(); });
   it("simulation never counts as execution", async () => { h.simulation = true; const r = await run(); expect(r.status).toBe("simulated"); expect(r.toolsUsed[0].success).toBe(false); });
   it("retains evidence and forbids replay after a bookkeeping failure", async () => { h.record.mockRejectedValue(new Error("database unavailable")); const r = await run(); expect(r.status).toBe("error"); expect(r.retryable).toBe(false); expect(r.toolsUsed[0].outcome).toBe("executed"); expect(h.execute).toHaveBeenCalledOnce(); });
