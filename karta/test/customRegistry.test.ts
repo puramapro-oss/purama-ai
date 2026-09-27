@@ -7,9 +7,8 @@ describe("customRegistry — liste blanche des outils pour les agents créés pa
     expect(tools.map((t) => t.name)).toEqual(["web_search", "send_notification"]);
   });
 
-  it("ignore silencieusement les noms inconnus (défense en profondeur)", () => {
-    const tools = resolveCustomAgentTools(["web_search", "outil_invente_par_claude", "gen_image"]);
-    expect(tools.map((t) => t.name)).toEqual(["web_search"]);
+  it("refuse toute configuration contenant un outil inconnu", () => {
+    expect(() => resolveCustomAgentTools(["web_search", "outil_invente_par_claude", "gen_image"])).toThrow(/inconnue/);
   });
 
   it("retourne [] pour null/undefined/vide", () => {
