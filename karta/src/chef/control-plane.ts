@@ -48,6 +48,10 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
 
     const requeue = await supabase.rpc("chef_requeue_expired_tasks", { p_mission_id: missionId });
     assertRpc(requeue.error, "chef_requeue_expired_tasks");
+
+    // Self-heal a prior transient failure that happened after the last task became verified.
+    // Re-running this check is safe and avoids a mission staying "active" forever with no work left.
+    await this.tryFinishMission(missionId);
   }
 
   async heartbeat(input: {
@@ -71,6 +75,9 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       p_capabilities: this.options.capabilities ?? {},
     });
     assertRpc(result.error, "chef_heartbeat_worker");
+    if (result.data !== true) {
+      throw new Error("chef_heartbeat_worker: rapport rejeté ou périmé");
+    }
   }
 
   async claimNext(input: {
