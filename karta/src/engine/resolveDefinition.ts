@@ -3,16 +3,25 @@ import { loadCustomAgent, buildCustomAgentDefinition } from "../agents/customAge
 import type { AgentDefinition, AgentType, StaticAgentType } from "./types.js";
 
 /**
- * Résout un AgentType (statique ou `custom:<id>`) en AgentDefinition exécutable — utilisé par le
- * worker (cycle planifié) ET par le flux d'approbation (reprise d'une action après validation
- * humaine), pour ne jamais dupliquer la logique de branchement statique/dynamique.
+ * Résout un AgentType en définition exécutable.
+ * Pour un agent dynamique, l'owner attendu est vérifié avant toute exécution :
+ * un job forgé ne peut pas faire tourner le prompt/outillage d'un autre utilisateur.
  */
-export async function resolveAgentDefinition(agentType: AgentType): Promise<AgentDefinition> {
+export async function resolveAgentDefinition(agentType: AgentType, expectedUserId?: string): Promise<AgentDefinition> {
   if (agentType.startsWith("custom:")) {
     const agentId = agentType.slice("custom:".length);
     const row = await loadCustomAgent(agentId);
     if (!row) throw new Error(`Agent créé introuvable: ${agentId}`);
+    if (!row.karta_enabled || !row.is_active) {
+      throw new Error("Agent créé désactivé ou non autorisé pour KARTA");
+    }
+    if (expectedUserId && row.user_id !== expectedUserId) {
+      throw new Error("Propriétaire de l'agent créé incompatible avec l'exécution");
+    }
     return buildCustomAgentDefinition(row);
   }
-  return AGENT_REGISTRY[agentType as StaticAgentType];
+
+  const definition = AGENT_REGISTRY[agentType as StaticAgentType];
+  if (!definition) throw new Error(`Agent statique introuvable: ${agentType}`);
+  return definition;
 }
