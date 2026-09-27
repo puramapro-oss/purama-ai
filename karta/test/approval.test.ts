@@ -2,8 +2,9 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 
 const state = {
   pending: null as Record<string, unknown> | null,
-  /** Filtres eq/lt capturés par le DERNIER update karta_pending_actions (assert prédicats). */
+  /** Filtres eq/lt + patch capturés par le DERNIER update karta_pending_actions. */
   lastUpdateFilters: null as { eq: Array<[string, unknown]>; lt: Array<[string, unknown]> } | null,
+  lastUpdatePatch: null as Record<string, unknown> | null,
   /** Résultat du bulk update de reconcileOrphanPendingActions (erreur DB simulée si non-null). */
   reconcileIds: [] as unknown[],
   reconcileError: null as unknown,
@@ -25,6 +26,7 @@ vi.mock("../src/db/supabase.js", () => ({
         state.lastUpdateFilters = updateFilters;
         return {
           update: vi.fn((patch: Record<string, unknown>) => {
+            state.lastUpdatePatch = patch;
             const chain: Record<string, unknown> = {
               eq: vi.fn((col: string, val: unknown) => {
                 updateFilters.eq.push([col, val]);
@@ -125,6 +127,8 @@ function resetState(pendingStatus = "pending") {
   };
   state.reconcileIds = [];
   state.reconcileError = null;
+  state.lastUpdateFilters = null; // hygiène : jamais lire la chaîne du test précédent
+  state.lastUpdatePatch = null;
   state.run = {
     tools_used: [
       {
@@ -269,5 +273,8 @@ describe("reconcileOrphanPendingActions — clôture des 'processing' orphelins 
     // Fenêtre orpheline 10min : cutoff ≈ now-600s
     expect(cutoff).toBeGreaterThan(before - 600_000 - 5_000);
     expect(cutoff).toBeLessThan(after - 600_000 + 5_000);
+    // Le PATCH aussi : réconcilier en "executed"/"rejected" serait un mensonge (rien n'a
+    // été exécuté) — écran M8 : flip du statut doit faire échouer ce test.
+    expect(state.lastUpdatePatch).toMatchObject({ status: "failed" });
   });
 });

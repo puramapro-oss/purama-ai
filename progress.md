@@ -285,3 +285,11 @@ Limites documentées (non bloquantes) : patchParentRun JSONB display race ; owne
 - C5 : ordre exact finish→notify→outcome asserté (receipt avant notification)
 - 139/139 karta (20 fichiers), tsc 0, build 0 · C1/C3-C4/C6-C18/C20-C31 : déjà prouvés
   (sous-lots 1-9 + formal assurance 57 points + mutations M1-M5) — PASS documentés
+
+### Continuation XXL (2026-09-27) : lint + forensics
+- eslint karta/src+test : PREMIER passage prouvé — 0 erreur 0 warning (sortie vide)
+- M6/M7 faux verts fermés : prédicats des réconciliations assertés (logger 4/4,
+  approval 13/13) — sans le fix, un retrait de filtre status passait inaperçu
+- 139/139 karta (20 fichiers), tsc 0, build 0 · commit 4f272ff
+- Axes 10-37 du mandat = recouvrement lab C1-C31 (PROUVÉS sauf documentés : storm runtime,
+  params délégués, SATYA/PRAMANA/SMARANA/VAJRA non câblés)
