@@ -262,11 +262,12 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
   },
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
-    await assertUnderDailySendLimit(ctx.userId);
 
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
+    // On ne consomme une réservation qu'une fois l'authentification réellement disponible.
+    await assertUnderDailySendLimit(ctx.userId);
     const raw = buildRawEmail(params.to, params.subject, params.body);
     const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
       method: "POST",
