@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.js";
 import { runChefWorkerCycle } from "../src/chef/supervisor.js";
-import type { ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
+import type { ChefVerificationEvidence, ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
 
 vi.mock("../src/chef/git-state.js", () => ({
   verifyCommittedGitState: vi.fn(async () => ({
@@ -32,7 +32,7 @@ function makeTask(overrides: Partial<ChefRuntimeTask> = {}): ChefRuntimeTask {
 
 function makeControl(task: ChefRuntimeTask | null) {
   const transitions: string[] = [];
-  const evidence: unknown[] = [];
+  const evidence: ChefVerificationEvidence[] = [];
   const control: ChefControlPlane = {
     heartbeat: vi.fn(async () => undefined),
     claimNext: vi.fn(async () => task),
@@ -78,7 +78,7 @@ describe("CHEF autonomous worker cycle", () => {
     expect(result).toMatchObject({ state: "verified_done", taskId: "task-1" });
     expect(transitions).toEqual(["running", "verifying", "verified_done"]);
     expect(evidence).toHaveLength(2);
-    expect(evidence.map((entry: any) => entry.kind)).toEqual(["receipt", "test"]);
+    expect(evidence.map((entry) => entry.kind)).toEqual(["receipt", "test"]);
     expect(control.recordUsage).toHaveBeenCalledOnce();
     expect(control.tryFinishMission).toHaveBeenCalledWith("mission-1");
   });
