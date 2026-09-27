@@ -48,13 +48,15 @@ export async function loadAgentState(userId: string, agentType: AgentType): Prom
 export async function recordRunOutcome(
   userId: string,
   agentType: AgentType,
-  status: AgentRunResult["status"]
+  status: AgentRunResult["status"],
+  startedAt: string
 ): Promise<void> {
-  const { error } = await supabase
-    .from("karta_agent_state")
-    .update({ last_run_at: new Date().toISOString(), last_run_status: status, updated_at: new Date().toISOString() })
-    .eq("user_id", userId)
-    .eq("agent_type", agentType);
+  const { error } = await supabase.rpc("karta_record_run_outcome", {
+    p_user_id: userId,
+    p_agent_type: agentType,
+    p_status: status,
+    p_started_at: startedAt,
+  });
 
   if (error) {
     throw new Error(`recordRunOutcome(${agentType}): ${error.message}`);

@@ -13,15 +13,29 @@ export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reaso
   name: "delegate_to_agent",
   description: "Délègue une tâche à un autre agent cœur (email, compta, legal, partner) — ex: transmettre un contrat au juridique.",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      targetAgent: { type: "string", enum: [...VALID_AGENT_TYPES] },
+      reason: { type: "string", minLength: 1, maxLength: 2000 },
+    },
+    required: ["targetAgent", "reason"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     if (!VALID_AGENT_TYPES.includes(params.targetAgent)) {
       throw new Error(`Agent cible invalide: ${params.targetAgent}`);
     }
-    await enqueueAgentCycle({
-      agentType: params.targetAgent,
-      userId: ctx.userId,
-      trigger: { type: "delegation", source: ctx.agentType, payload: { reason: params.reason } },
-    });
+    await enqueueAgentCycle(
+      {
+        agentType: params.targetAgent,
+        userId: ctx.userId,
+        trigger: { type: "delegation", source: ctx.agentType, payload: { reason: params.reason } },
+      },
+      ctx.operationId
+        ? { dedupeKey: `delegation|${ctx.operationId}|${params.targetAgent}|${ctx.userId}` }
+        : undefined
+    );
     return { queued: true };
   },
 };

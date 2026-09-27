@@ -48,6 +48,15 @@ function isAuthorized(req: IncomingMessage): boolean {
   return timingSafeEqual(digest(req.headers.authorization ?? ""), digest(`Bearer ${config.adminToken}`));
 }
 
+function readIdempotencyKey(req: IncomingMessage): string | undefined {
+  const raw = req.headers["idempotency-key"];
+  if (raw === undefined) return undefined;
+  if (typeof raw !== "string" || !/^[A-Za-z0-9._~-]{8,128}$/.test(raw)) {
+    throw new RequestError(400, "Idempotency-Key invalide");
+  }
+  return raw;
+}
+
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
 export function startApiServer() {
   const server = createServer((req, res) => {
@@ -120,12 +129,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       json(res, 400, { error: `Agent inconnu: ${agentType}` });
       return;
     }
-    await enqueueAgentCycle({
-      agentType: agentType as StaticAgentType,
-      userId,
-      trigger: { type: "manual", source: "api" },
-    });
-    json(res, 202, { ok: true, queued: true });
+    const requestKey = readIdempotencyKey(req);
+    const jobId = await enqueueAgentCycle(
+      {
+        agentType: agentType as StaticAgentType,
+        userId,
+        trigger: { type: "manual", source: "api", payload: requestKey ? { requestKey } : undefined },
+      },
+      requestKey ? { dedupeKey: `manual|${agentType}|${userId}|${requestKey}` } : undefined
+    );
+    json(res, 202, { ok: true, queued: true, jobId });
     return;
   }
 
@@ -141,12 +154,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       json(res, 400, { error: "Cet agent n'est pas activé en mode exécution réelle (KARTA)" });
       return;
     }
-    await enqueueAgentCycle({
-      agentType: `custom:${row.id}`,
-      userId: row.user_id,
-      trigger: { type: "manual", source: "api" },
-    });
-    json(res, 202, { ok: true, queued: true });
+    const requestKey = readIdempotencyKey(req);
+    const jobId = await enqueueAgentCycle(
+      {
+        agentType: `custom:${row.id}`,
+        userId: row.user_id,
+        trigger: { type: "manual", source: "api", payload: requestKey ? { requestKey } : undefined },
+      },
+      requestKey ? { dedupeKey: `manual|custom:${row.id}|${row.user_id}|${requestKey}` } : undefined
+    );
+    json(res, 202, { ok: true, queued: true, jobId });
     return;
   }
 

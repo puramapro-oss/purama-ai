@@ -49,8 +49,14 @@ export function startSchedulers(): ScheduledTask[] {
 async function runScheduledCycle(agentType: AgentType, label: string): Promise<void> {
   try {
     const userIds = await listActiveUserIds(agentType);
+    // Multiple KARTA instances may fire the same cron. The minute slot makes those
+    // deliveries share one durable BullMQ job id instead of executing twice.
+    const slot = new Date().toISOString().slice(0, 16);
     for (const userId of userIds) {
-      await enqueueAgentCycle({ agentType, userId, trigger: { type: "cron", source: label } });
+      await enqueueAgentCycle(
+        { agentType, userId, trigger: { type: "cron", source: label, payload: { slot } } },
+        { dedupeKey: `cron|${agentType}|${userId}|${slot}` }
+      );
     }
   } catch (error) {
     console.error(`[scheduler] ${label} échoué:`, error instanceof Error ? error.message : error);

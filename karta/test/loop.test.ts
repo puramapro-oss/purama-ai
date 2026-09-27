@@ -28,6 +28,15 @@ beforeEach(() => {
 describe("cycle outcomes and interruption", () => {
   it("executes a non-sensitive live action", async () => { expect((await run()).status).toBe("success"); expect(h.execute).toHaveBeenCalledOnce(); });
   it("persists an approval without claiming execution", async () => { h.decision.requiresApproval = true; const r = await run(); expect(r.status).toBe("awaiting_approval"); expect(r.toolsUsed[0]).toMatchObject({ pendingActionId: "pending-1", success: false, outcome: "pending" }); expect(h.execute).not.toHaveBeenCalled(); });
+  it("never executes later actions after an approval boundary", async () => {
+    h.decision.requiresApproval = true;
+    h.decision.toolCalls.push({ tool: "act", params: {} });
+    const r = await run();
+    expect(r.status).toBe("awaiting_approval");
+    expect(h.pending).toHaveBeenCalledOnce();
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(r.toolsUsed.map(t => t.outcome)).toEqual(["pending", "skipped"]);
+  });
   it("fails for an unknown tool", async () => { h.decision.toolCalls[0].tool = "unknown"; expect((await run()).status).toBe("error"); expect(h.execute).not.toHaveBeenCalled(); });
   it("skips a disabled agent", async () => { h.enabled = false; expect((await run()).status).toBe("skipped"); expect(h.execute).not.toHaveBeenCalled(); });
   it("skips under the global stop", async () => { h.stopped = true; expect((await run()).status).toBe("skipped"); expect(h.execute).not.toHaveBeenCalled(); });

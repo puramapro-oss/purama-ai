@@ -27,6 +27,15 @@ export const supabaseUpsertTool: ToolDefinition<{ table: string; row: Record<str
   name: "supabase_upsert",
   description: "Insère ou met à jour une ligne dans une table métier autorisée (transactions, factures, documents, prospects...).",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      table: { type: "string", enum: [...ALLOWED_TABLES] },
+      row: { type: "object", additionalProperties: true },
+    },
+    required: ["table", "row"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     assertAllowedTable(params.table);
     if (!params.row || typeof params.row !== "object" || Array.isArray(params.row)) throw new Error("Ligne invalide");
@@ -52,6 +61,16 @@ export const supabaseSelectTool: ToolDefinition<{ table: string; filters?: Recor
   name: "supabase_select",
   description: "Lit des lignes dans une table métier autorisée pour construire le contexte de décision.",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      table: { type: "string", enum: [...ALLOWED_TABLES] },
+      filters: { type: "object", additionalProperties: true },
+      limit: { type: "integer", minimum: 1, maximum: 100 },
+    },
+    required: ["table"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     assertAllowedTable(params.table);
     let query = supabase

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { Queue } from "bullmq";
 import { redisConnection } from "./redis.js";
 import type { AgentTrigger, AgentType } from "../engine/types.js";
@@ -18,6 +19,27 @@ export const agentCycleQueue = new Queue<AgentCycleJobData>("karta-agent-cycle",
   },
 });
 
-export async function enqueueAgentCycle(data: AgentCycleJobData): Promise<void> {
-  await agentCycleQueue.add(`${data.agentType}:${data.userId}`, data);
+export interface EnqueueAgentCycleOptions {
+  /**
+   * Stable business identity for deliveries that must not be queued twice.
+   * It is hashed because BullMQ custom job ids must not contain its separator characters.
+   */
+  dedupeKey?: string;
+}
+
+function jobIdFromDedupeKey(key: string): string {
+  return `karta-${createHash("sha256").update(key).digest("hex")}`;
+}
+
+export async function enqueueAgentCycle(
+  data: AgentCycleJobData,
+  options: EnqueueAgentCycleOptions = {}
+): Promise<string | undefined> {
+  const jobId = options.dedupeKey ? jobIdFromDedupeKey(options.dedupeKey) : undefined;
+  const job = await agentCycleQueue.add(
+    `${data.agentType}:${data.userId}`,
+    data,
+    jobId ? { jobId } : undefined
+  );
+  return job.id;
 }

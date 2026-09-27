@@ -9,6 +9,32 @@ interface EmailAgentConfigRow {
   gmail_token_expiry: string | null;
 }
 
+const GMAIL_LIST_LIMIT = 50;
+const SYNC_OVERLAP_MS = 2 * 60 * 1000;
+const DAILY_SEND_LIMIT = 400;
+const HEADER_BREAK = /[\r\n]/;
+
+function assertHeader(name: string, value: string, maxLength: number): void {
+  if (typeof value !== "string" || value.length === 0 || value.length > maxLength || HEADER_BREAK.test(value)) {
+    throw new Error(`${name} invalide`);
+  }
+}
+
+function assertEmailAddress(value: string): void {
+  assertHeader("Adresse email", value, 320);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    throw new Error("Adresse email invalide");
+  }
+}
+
+function assertMessageInput(to: string, subject: string, body: string): void {
+  assertEmailAddress(to);
+  assertHeader("Sujet", subject, 998);
+  if (typeof body !== "string" || body.length > 2_000_000) {
+    throw new Error("Corps du message invalide");
+  }
+}
+
 /** Rafraîchit et retourne un access token Gmail valide pour ce user, ou null si OAuth jamais complété. */
 export async function getGmailAccessToken(userId: string): Promise<string | null> {
   const { data, error } = await supabase
@@ -42,9 +68,18 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
     throw new Error(`Refresh token Gmail échoué (${response.status}): ${await response.text()}`);
   }
 
-  const refreshed = (await response.json()) as { access_token: string; expires_in: number };
+  const refreshed = (await response.json()) as { access_token?: unknown; expires_in?: unknown };
+  if (
+    typeof refreshed.access_token !== "string" ||
+    refreshed.access_token.length === 0 ||
+    typeof refreshed.expires_in !== "number" ||
+    !Number.isFinite(refreshed.expires_in) ||
+    refreshed.expires_in <= 0
+  ) {
+    throw new Error("Réponse OAuth Gmail invalide");
+  }
 
-  await supabase
+  const { error: updateError } = await supabase
     .from("email_agent_config")
     .update({
       gmail_access_token: encryptGmailToken(refreshed.access_token),
@@ -52,6 +87,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
     })
     .eq("user_id", userId);
 
+  if (updateError) throw new Error(`Mise à jour du token Gmail échouée: ${updateError.message}`);
   return refreshed.access_token;
 }
 
@@ -63,14 +99,25 @@ export interface GmailMessageSummary {
   snippet: string;
 }
 
-/** Liste les messages reçus depuis la dernière synchro (utilisé par emailAgent.buildContext). */
-export async function listNewGmailMessages(userId: string, lastEmailId: string | null): Promise<GmailMessageSummary[]> {
+/**
+ * Liste les messages arrivés depuis la dernière synchronisation.
+ * Gmail "after:" attend une date/timestamp, jamais un message id. Un léger chevauchement
+ * évite de perdre un message situé exactement à la frontière temporelle.
+ */
+export async function listNewGmailMessages(userId: string, lastSyncAt: string | null): Promise<GmailMessageSummary[]> {
   const accessToken = await getGmailAccessToken(userId);
-  if (!accessToken) return []; // OAuth jamais complété — pas une erreur, juste rien à traiter
+  if (!accessToken) return [];
 
-  const query = lastEmailId ? `after:${lastEmailId}` : "is:unread";
+  let query = "is:unread";
+  if (lastSyncAt) {
+    const millis = new Date(lastSyncAt).getTime();
+    if (Number.isFinite(millis)) {
+      query = `after:${Math.max(0, Math.floor((millis - SYNC_OVERLAP_MS) / 1000))}`;
+    }
+  }
+
   const listResponse = await fetch(
-    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=${encodeURIComponent(query)}`,
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${GMAIL_LIST_LIMIT}&q=${encodeURIComponent(query)}`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
   );
 
@@ -78,27 +125,44 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
     throw new Error(`Gmail list échoué (${listResponse.status}): ${await listResponse.text()}`);
   }
 
-  const list = (await listResponse.json()) as { messages?: Array<{ id: string; threadId: string }> };
-  if (!list.messages || list.messages.length === 0) return [];
+  const list = (await listResponse.json()) as { messages?: Array<{ id?: unknown; threadId?: unknown }> };
+  const rawMessages = list.messages ?? [];
+  const seen = new Set<string>();
+  const messages: Array<{ id: string; threadId: string }> = [];
+  for (const m of rawMessages) {
+    if (typeof m.id !== "string" || typeof m.threadId !== "string" || !m.id || !m.threadId) {
+      throw new Error("Réponse Gmail list invalide");
+    }
+    if (!seen.has(m.id)) {
+      seen.add(m.id);
+      messages.push({ id: m.id, threadId: m.threadId });
+    }
+  }
 
   const summaries: GmailMessageSummary[] = [];
-  for (const m of list.messages) {
+  for (const m of messages) {
     const detailResponse = await fetch(
-      `https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
+      `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(m.id)}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
-    if (!detailResponse.ok) continue;
+    if (!detailResponse.ok) {
+      throw new Error(`Gmail message ${m.id} illisible (${detailResponse.status})`);
+    }
     const detail = (await detailResponse.json()) as {
-      snippet?: string;
-      payload?: { headers?: Array<{ name: string; value: string }> };
+      snippet?: unknown;
+      payload?: { headers?: Array<{ name?: unknown; value?: unknown }> };
     };
     const headers = detail.payload?.headers ?? [];
+    const headerValue = (name: string) => {
+      const entry = headers.find((h) => h.name === name);
+      return typeof entry?.value === "string" ? entry.value : undefined;
+    };
     summaries.push({
       id: m.id,
       threadId: m.threadId,
-      from: headers.find((h) => h.name === "From")?.value ?? "inconnu",
-      subject: headers.find((h) => h.name === "Subject")?.value ?? "(sans sujet)",
-      snippet: detail.snippet ?? "",
+      from: headerValue("From") ?? "inconnu",
+      subject: headerValue("Subject") ?? "(sans sujet)",
+      snippet: typeof detail.snippet === "string" ? detail.snippet : "",
     });
   }
 
@@ -106,29 +170,32 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
 }
 
 /**
- * Contexte "boîte mail" partagé par l'agent cœur Email (Tissma) et l'agent action
- * Répondeur Intelligent (clients) — même mécanique de connexion Gmail (email_agent_config),
- * seul le systemPrompt/persona diffère entre les deux agents.
+ * Contexte "boîte mail" partagé par l'agent cœur Email et le Répondeur Intelligent.
  */
 export async function buildGmailInboxContext(userId: string): Promise<Record<string, unknown>> {
-  const { data: emailConfig } = await supabase
+  const { data: emailConfig, error: configError } = await supabase
     .from("email_agent_config")
     .select("*")
     .eq("user_id", userId)
     .maybeSingle();
 
+  if (configError) throw new Error(`Configuration Gmail illisible: ${configError.message}`);
   if (!emailConfig?.is_active) {
     return { newEmails: [], reason: "email_agent_config inactif ou absent (Gmail non connecté)" };
   }
 
-  const newEmails = await listNewGmailMessages(userId, emailConfig.last_email_id ?? null);
+  const syncStartedAt = new Date().toISOString();
+  const newEmails = await listNewGmailMessages(userId, emailConfig.last_sync_at ?? null);
 
-  if (newEmails.length > 0) {
-    await supabase
-      .from("email_agent_config")
-      .update({ last_sync_at: new Date().toISOString(), last_email_id: newEmails[0].id })
-      .eq("user_id", userId);
-  }
+  const update: Record<string, unknown> = { last_sync_at: syncStartedAt };
+  if (newEmails.length > 0) update.last_email_id = newEmails[0].id;
+
+  const { error: syncError } = await supabase
+    .from("email_agent_config")
+    .update(update)
+    .eq("user_id", userId);
+
+  if (syncError) throw new Error(`Curseur Gmail non enregistré: ${syncError.message}`);
 
   return {
     tone: emailConfig.tone,
@@ -145,7 +212,23 @@ export const gmailCreateDraftTool: ToolDefinition<
   name: "gmail_create_draft",
   description: "Crée un brouillon de réponse Gmail (n'envoie rien — nécessite validation humaine avant envoi).",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      threadId: { type: "string", minLength: 1, maxLength: 256 },
+      to: { type: "string", minLength: 3, maxLength: 320 },
+      subject: { type: "string", minLength: 1, maxLength: 998 },
+      body: { type: "string", maxLength: 2_000_000 },
+    },
+    required: ["threadId", "to", "subject", "body"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
+    assertMessageInput(params.to, params.subject, params.body);
+    if (typeof params.threadId !== "string" || !params.threadId || params.threadId.length > 256) {
+      throw new Error("Thread Gmail invalide");
+    }
+
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
@@ -157,7 +240,8 @@ export const gmailCreateDraftTool: ToolDefinition<
     });
 
     if (!response.ok) throw new Error(`Gmail create draft échoué (${response.status}): ${await response.text()}`);
-    const created = (await response.json()) as { id: string };
+    const created = (await response.json()) as { id?: unknown };
+    if (typeof created.id !== "string" || !created.id) throw new Error("Réponse Gmail draft invalide");
     return { draftId: created.id };
   },
 };
@@ -166,12 +250,24 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
   name: "gmail_send",
   description: "Envoie réellement un email au nom de l'utilisateur — action sensible.",
   sensitive: true,
+  inputSchema: {
+    type: "object",
+    properties: {
+      to: { type: "string", minLength: 3, maxLength: 320 },
+      subject: { type: "string", minLength: 1, maxLength: 998 },
+      body: { type: "string", maxLength: 2_000_000 },
+    },
+    required: ["to", "subject", "body"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
-    await assertUnderDailySendLimit(ctx.userId);
+    assertMessageInput(params.to, params.subject, params.body);
 
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
+    // On ne consomme une réservation qu'une fois l'authentification réellement disponible.
+    await assertUnderDailySendLimit(ctx.userId);
     const raw = buildRawEmail(params.to, params.subject, params.body);
     const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
       method: "POST",
@@ -180,56 +276,30 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     });
 
     if (!response.ok) throw new Error(`Gmail send échoué (${response.status}): ${await response.text()}`);
-    const sent = (await response.json()) as { id: string };
+    const sent = (await response.json()) as { id?: unknown };
+    if (typeof sent.id !== "string" || !sent.id) throw new Error("Réponse Gmail send invalide");
     return { messageId: sent.id };
   },
 };
 
-const DAILY_SEND_LIMIT = 400;
-
-interface DailySendCounter {
-  date: string;
-  count: number;
-}
-
-/**
- * Anti-spam / anti-ban Gmail (cf brief §Sécurité, non négociable) : max 400 envois/jour/compte
- * Gmail. Compteur partagé entre l'agent cœur `email` et l'agent action `repondeur-intelligent`
- * (même compte Gmail réel derrière les deux, cf buildGmailInboxContext) — clé `agent_type='gmail'`
- * volontairement indépendante du type d'agent KARTA qui appelle l'outil.
- */
+/** Réservation atomique : deux workers concurrents ne peuvent plus dépasser le plafond. */
 async function assertUnderDailySendLimit(userId: string): Promise<void> {
   const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await supabase.rpc("karta_reserve_daily_counter", {
+    p_user_id: userId,
+    p_counter_key: "gmail_send",
+    p_day: today,
+    p_limit: DAILY_SEND_LIMIT,
+  });
 
-  const { data } = await supabase
-    .from("karta_agent_memory")
-    .select("memory_value")
-    .eq("user_id", userId)
-    .eq("agent_type", "gmail")
-    .eq("memory_key", "daily_send_count")
-    .maybeSingle();
-
-  const counter = data?.memory_value as DailySendCounter | undefined;
-  const count = counter?.date === today ? counter.count : 0;
-
-  if (count >= DAILY_SEND_LIMIT) {
+  if (error) throw new Error(`Réservation du quota Gmail impossible: ${error.message}`);
+  if (typeof data !== "number" || data < 1 || data > DAILY_SEND_LIMIT) {
     throw new Error(`Limite quotidienne d'envoi Gmail atteinte (${DAILY_SEND_LIMIT}/jour, anti-ban) — réessaie demain`);
   }
-
-  const { error } = await supabase.from("karta_agent_memory").upsert(
-    {
-      user_id: userId,
-      agent_type: "gmail",
-      memory_key: "daily_send_count",
-      memory_value: { date: today, count: count + 1 },
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id,agent_type,memory_key" }
-  );
-  if (error) throw new Error(`assertUnderDailySendLimit: ${error.message}`);
 }
 
-function buildRawEmail(to: string, subject: string, body: string): string {
-  const message = [`To: ${to}`, `Subject: ${subject}`, "Content-Type: text/plain; charset=utf-8", "", body].join("\n");
+export function buildRawEmail(to: string, subject: string, body: string): string {
+  assertMessageInput(to, subject, body);
+  const message = [`To: ${to}`, `Subject: ${subject}`, "Content-Type: text/plain; charset=utf-8", "", body].join("\r\n");
   return Buffer.from(message).toString("base64url");
 }

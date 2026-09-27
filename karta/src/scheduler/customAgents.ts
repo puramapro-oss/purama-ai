@@ -37,11 +37,15 @@ export async function refreshCustomAgentSchedules(): Promise<void> {
 
     const cronExpr = agent.schedule_cron;
     const task = cron.schedule(cronExpr, () => {
-      void enqueueAgentCycle({
-        agentType: `custom:${agent.id}`,
-        userId: agent.user_id,
-        trigger: { type: "cron", source: `custom-agent:${agent.name}` },
-      }).catch((err) => console.error(`[custom-agents] enqueue ${agent.id} a échoué:`, err));
+      const slot = new Date().toISOString().slice(0, 16);
+      void enqueueAgentCycle(
+        {
+          agentType: `custom:${agent.id}`,
+          userId: agent.user_id,
+          trigger: { type: "cron", source: `custom-agent:${agent.name}`, payload: { slot } },
+        },
+        { dedupeKey: `cron|custom:${agent.id}|${agent.user_id}|${slot}` }
+      ).catch((err) => console.error(`[custom-agents] enqueue ${agent.id} a échoué:`, err));
     });
     registeredJobs.set(agent.id, { task, cronExpr });
   }

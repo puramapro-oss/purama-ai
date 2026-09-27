@@ -1,0 +1,48 @@
+name: PURAMA CHEF hardening
+
+on:
+  push:
+    branches:
+      - codex/purama-chef-hardening-20260927
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: purama-chef-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  karta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: karta
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: karta/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm audit --audit-level=high --omit=dev
+
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx tsc --noEmit
+      - run: npm audit --audit-level=high --omit=dev

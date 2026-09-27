@@ -9,6 +9,16 @@ export const generatePdfTool: ToolDefinition<{ title: string; paragraphs: string
   name: "generate_pdf",
   description: "Génère un document PDF (facture, courrier, note) et le stocke, retourne son URL.",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      title: { type: "string", minLength: 1, maxLength: 300 },
+      paragraphs: { type: "array", items: { type: "string" } },
+      fileName: { type: "string", minLength: 1, maxLength: 200 },
+    },
+    required: ["title", "paragraphs", "fileName"],
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     const buffer = await renderPdf(params.title, params.paragraphs);
     const path = `${ctx.userId}/${Date.now()}-${params.fileName}`;

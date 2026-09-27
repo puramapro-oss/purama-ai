@@ -5,18 +5,21 @@ import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
 import { assertToolResult } from "./tool-result.js";
+import { validateToolParams } from "./tool-input.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
   userId: string, definition: AgentDefinition, trigger: AgentTrigger, executionKey?: string
 ): Promise<AgentRunResult> {
+  const cycleStartedAt = new Date().toISOString();
+
   if (await isGlobalKillSwitchActive(true)) {
     return { status: "skipped", decision: "Cycle ignoré : arrêt global actif", toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
   }
   const state = await loadAgentState(userId, definition.type);
   const runnable = isRunnable(state);
   if (!runnable.ok) {
-    await recordRunOutcome(userId, definition.type, "skipped");
+    await recordRunOutcome(userId, definition.type, "skipped", cycleStartedAt);
     return { status: "skipped", decision: runnable.reason, toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
   }
   const mode = state.simulationMode ? "simulation" : "live";
@@ -60,17 +63,60 @@ export async function runAgentCycle(
         });
         break;
       }
-      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
-      if (simulation || needsApproval) {
-        const pendingActionId = !simulation ? await createPendingAction({
-          userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
-        }) : undefined;
+      try {
+        validateToolParams(tool, call.params);
+      } catch (validationError) {
         toolsUsed.push({
-          tool: tool.name, paramsSummary: JSON.stringify(call.params),
-          resultSummary: simulation ? "Simulée : aucune action réelle" : "En attente de validation humaine",
-          success: false, outcome: simulation ? "simulated" : "pending", pendingActionId,
+          tool: tool.name,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: validationError instanceof Error ? validationError.message : "Paramètres invalides",
+          success: false,
+          outcome: "failed",
+        });
+        failed = true;
+        for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push({
+          tool: skipped.tool,
+          paramsSummary: JSON.stringify(skipped.params),
+          resultSummary: "Non exécutée après une validation de paramètres échouée",
+          success: false,
+          outcome: "skipped",
+        });
+        break;
+      }
+
+      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+      if (simulation) {
+        toolsUsed.push({
+          tool: tool.name,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: "Simulée : aucune action réelle",
+          success: false,
+          outcome: "simulated",
         });
         continue;
+      }
+      if (needsApproval) {
+        const pendingActionId = await createPendingAction({
+          userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
+        });
+        toolsUsed.push({
+          tool: tool.name,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: "En attente de validation humaine",
+          success: false,
+          outcome: "pending",
+          pendingActionId,
+        });
+        for (const deferred of decision.toolCalls.slice(index + 1)) {
+          toolsUsed.push({
+            tool: deferred.tool,
+            paramsSummary: JSON.stringify(deferred.params),
+            resultSummary: "Différée : le cycle sera recalculé après résolution de l'approbation",
+            success: false,
+            outcome: "skipped",
+          });
+        }
+        break;
       }
       try {
         effectStarted = true;
@@ -105,7 +151,7 @@ export async function runAgentCycle(
         });
       } catch { console.error("[loop] notification indisponible ; action conservée en attente"); }
     }
-    await recordRunOutcome(userId, definition.type, status);
+    await recordRunOutcome(userId, definition.type, status, cycleStartedAt);
     return outcome;
   } catch (error) {
     const outcome: AgentRunResult = {
@@ -116,7 +162,7 @@ export async function runAgentCycle(
       retryable: !effectStarted && !executionKey && toolsUsed.length === 0,
     };
     await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
-    await recordRunOutcome(userId, definition.type, "error").catch(() => undefined);
+    await recordRunOutcome(userId, definition.type, "error", cycleStartedAt).catch(() => undefined);
     return outcome;
   }
 }

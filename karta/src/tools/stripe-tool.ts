@@ -14,6 +14,13 @@ export const stripeListUnpaidInvoicesTool: ToolDefinition<{ customerEmail?: stri
   name: "stripe_list_unpaid_invoices",
   description: "Liste les factures Stripe impayées (optionnellement filtrées par email client).",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      customerEmail: { type: "string", minLength: 3, maxLength: 320 },
+    },
+    additionalProperties: false,
+  },
   async execute(params, ctx) {
     // This key belongs to the platform, not to arbitrary marketplace users.
     // Explicit server-side ownership is required before even reading its invoices.
