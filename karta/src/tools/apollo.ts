@@ -9,6 +9,15 @@ export const apolloSearchPeopleTool: ToolDefinition<
   name: "apollo_search_people",
   description: "Recherche des prospects via Apollo.io par mots-clés (niche, secteur).",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      keywords: { type: "string", minLength: 1, maxLength: 500 },
+      limit: { type: "integer", minimum: 1, maximum: 100 },
+    },
+    required: ["keywords"],
+    additionalProperties: false,
+  },
   async execute(params) {
     if (!config.apolloApiKey) throw new Error("APOLLO_API_KEY non configurée côté KARTA");
 
