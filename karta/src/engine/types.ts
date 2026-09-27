@@ -64,10 +64,22 @@ export interface AgentState {
 }
 
 /** Un outil que l'agent peut appeler. `sensitive: true` force la validation humaine en dessous du niveau 3. */
+export interface ToolInputSchema {
+  type: "object";
+  properties: Record<string, Record<string, unknown>>;
+  required?: string[];
+  additionalProperties: false;
+}
+
 export interface ToolDefinition<Params = Record<string, unknown>, Result = unknown> {
   name: string;
   description: string;
   sensitive: boolean;
+  /**
+   * JSON Schema sent to the model and revalidated locally before execution.
+   * Missing schemas are treated as "no parameters allowed" for legacy/test-only tools.
+   */
+  inputSchema?: ToolInputSchema;
   execute(params: Params, ctx: ToolExecutionContext): Promise<Result>;
 }
 
