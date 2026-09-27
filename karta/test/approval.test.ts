@@ -2,6 +2,8 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 
 const state = {
   pending: null as Record<string, unknown> | null,
+  /** Filtres eq/lt capturés par le DERNIER update karta_pending_actions (assert prédicats). */
+  lastUpdateFilters: null as { eq: Array<[string, unknown]>; lt: Array<[string, unknown]> } | null,
   /** Résultat du bulk update de reconcileOrphanPendingActions (erreur DB simulée si non-null). */
   reconcileIds: [] as unknown[],
   reconcileError: null as unknown,
@@ -16,11 +18,22 @@ vi.mock("../src/db/supabase.js", () => ({
         // Chaînes possibles : CLAIM (update→eq→eq→select→maybeSingle), FINALIZE (update→eq,
         // awaitée), FALLBACK (select→eq→maybeSingle), COUNT (select w/ opts.count→eq→then),
         // RECONCILE (update→eq→lt→select, awaitée).
+        // Les filtres eq/lt des UPDATE sont CAPTURÉS : sans cela, retirer .eq("status",
+        // "processing") de reconcileOrphanPendingActions laissait les tests VERTS (même
+        // classe de faux vert que M6 sur logger, fiabilité lab 2026-09-27).
+        const updateFilters: { eq: Array<[string, unknown]>; lt: Array<[string, unknown]> } = { eq: [], lt: [] };
+        state.lastUpdateFilters = updateFilters;
         return {
           update: vi.fn((patch: Record<string, unknown>) => {
             const chain: Record<string, unknown> = {
-              eq: vi.fn(() => chain),
-              lt: vi.fn(() => chain),
+              eq: vi.fn((col: string, val: unknown) => {
+                updateFilters.eq.push([col, val]);
+                return chain;
+              }),
+              lt: vi.fn((col: string, val: unknown) => {
+                updateFilters.lt.push([col, val]);
+                return chain;
+              }),
               select: vi.fn(() => ({
                 // CLAIM : update WHERE id+status='pending' RETURNING * — fidèle à PostgREST :
                 // l'écriture ne se produit QUE si la ligne est encore 'pending', et le
@@ -239,5 +252,22 @@ describe("reconcileOrphanPendingActions — clôture des 'processing' orphelins 
     await expect(reconcileOrphanPendingActions()).resolves.toBe(0);
     expect(spy).toHaveBeenCalledWith(expect.stringContaining("reconcileOrphanPendingActions"));
     spy.mockRestore();
+  });
+
+  it("PRÉDICATS — ne réconcilie QUE les 'processing' orphelins de plus de 10min, en 'failed'", async () => {
+    const before = Date.now();
+    state.reconcileIds = [{ id: "a1" }];
+    await reconcileOrphanPendingActions();
+    const after = Date.now();
+
+    const filters = state.lastUpdateFilters;
+    expect(filters).not.toBeNull();
+    expect(filters!.eq).toContainEqual(["status", "processing"]); // jamais les pending/executed
+    const ltCall = filters!.lt.find(([col]) => col === "resolved_at");
+    expect(ltCall).toBeDefined();
+    const cutoff = new Date(String(ltCall![1])).getTime();
+    // Fenêtre orpheline 10min : cutoff ≈ now-600s
+    expect(cutoff).toBeGreaterThan(before - 600_000 - 5_000);
+    expect(cutoff).toBeLessThan(after - 600_000 + 5_000);
   });
 });
