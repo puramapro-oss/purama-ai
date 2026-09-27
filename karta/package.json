@@ -11,7 +11,8 @@
     "reseed:agents": "tsx scripts/reseed-agents.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "chef:worker": "tsx src/chef/worker-main.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
