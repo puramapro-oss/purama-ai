@@ -59,7 +59,6 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
   }): Promise<void> {
     const result = await supabase.rpc("chef_heartbeat_worker", {
       p_worker_id: input.workerId,
-      p_session_id: this.sessionId,
       p_provider: input.provider,
       p_model: input.model ?? null,
       p_state: input.state,
@@ -83,6 +82,7 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     const result = await supabase.rpc("chef_claim_next_task", {
       p_mission_id: input.missionId,
       p_worker_id: input.workerId,
+      p_session_id: this.sessionId,
       p_provider: input.provider,
       p_lease_seconds: input.leaseSeconds,
     });
