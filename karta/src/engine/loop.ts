@@ -85,16 +85,38 @@ export async function runAgentCycle(
       }
 
       const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
-      if (simulation || needsApproval) {
-        const pendingActionId = !simulation ? await createPendingAction({
-          userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
-        }) : undefined;
+      if (simulation) {
         toolsUsed.push({
-          tool: tool.name, paramsSummary: JSON.stringify(call.params),
-          resultSummary: simulation ? "Simulée : aucune action réelle" : "En attente de validation humaine",
-          success: false, outcome: simulation ? "simulated" : "pending", pendingActionId,
+          tool: tool.name,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: "Simulée : aucune action réelle",
+          success: false,
+          outcome: "simulated",
         });
         continue;
+      }
+      if (needsApproval) {
+        const pendingActionId = await createPendingAction({
+          userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
+        });
+        toolsUsed.push({
+          tool: tool.name,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: "En attente de validation humaine",
+          success: false,
+          outcome: "pending",
+          pendingActionId,
+        });
+        for (const deferred of decision.toolCalls.slice(index + 1)) {
+          toolsUsed.push({
+            tool: deferred.tool,
+            paramsSummary: JSON.stringify(deferred.params),
+            resultSummary: "Différée : le cycle sera recalculé après résolution de l'approbation",
+            success: false,
+            outcome: "skipped",
+          });
+        }
+        break;
       }
       try {
         effectStarted = true;
