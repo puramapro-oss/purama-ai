@@ -5,6 +5,14 @@ export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{
   name: "web_search",
   description: "Recherche web (via Tavily) — veille juridique, recherche de prospects, analyse concurrentielle.",
   sensitive: false,
+  inputSchema: {
+    type: "object",
+    properties: {
+      query: { type: "string", minLength: 1, maxLength: 2000 },
+    },
+    required: ["query"],
+    additionalProperties: false,
+  },
   async execute(params) {
     if (!config.tavilyApiKey) throw new Error("TAVILY_API_KEY non configurée côté KARTA");
 
