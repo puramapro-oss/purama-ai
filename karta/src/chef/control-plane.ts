@@ -117,6 +117,13 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     const verificationProfiles = rowProfiles.length > 0 ? rowProfiles : this.options.defaultVerificationProfiles;
     if (verificationProfiles.length === 0) throw new Error("Task CHEF sans vérification");
 
+    const allowedPaths = Array.isArray(row.allowed_paths)
+      ? row.allowed_paths.filter((value): value is string => typeof value === "string" && value.length > 0)
+      : [];
+    if (accessMode === "write" && allowedPaths.length === 0) {
+      throw new Error("Task CHEF write sans allowedPaths");
+    }
+
     return {
       id,
       missionId,
@@ -129,6 +136,7 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       ...(typeof row.branch === "string" && row.branch ? { branch: row.branch } : {}),
       ...(typeof row.base_sha === "string" && row.base_sha ? { baseSha: row.base_sha } : {}),
       verificationProfiles: [...verificationProfiles],
+      allowedPaths: [...allowedPaths],
     };
   }
 
