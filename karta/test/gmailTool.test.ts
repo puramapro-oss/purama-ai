@@ -1,32 +1,26 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const today = new Date().toISOString().slice(0, 10);
-
-/** État mutable du compteur quotidien, lu/écrit par les mocks ci-dessous. */
-let memoryCounter: { date: string; count: number } | null = null;
+let reserved = 0;
+const rpc = vi.fn(async (name: string, params: Record<string, unknown>) => {
+  if (name !== "karta_reserve_daily_counter") return { data: null, error: { message: "unexpected rpc" } };
+  if (params.p_day !== today || params.p_counter_key !== "gmail_send") {
+    return { data: null, error: { message: "invalid counter request" } };
+  }
+  if (reserved >= Number(params.p_limit)) return { data: null, error: null };
+  reserved += 1;
+  return { data: reserved, error: null };
+});
 
 vi.mock("../src/db/supabase.js", () => ({
   supabase: {
-    from: vi.fn((table: string) => {
-      if (table === "karta_agent_memory") {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          maybeSingle: vi.fn(async () => ({ data: memoryCounter ? { memory_value: memoryCounter } : null, error: null })),
-          upsert: vi.fn(async (row: { memory_value: { date: string; count: number } }) => {
-            memoryCounter = row.memory_value;
-            return { error: null };
-          }),
-        };
-      }
-      // email_agent_config : jamais connecté (Gmail OAuth non complété) — suffisant pour isoler
-      // le test sur la limite quotidienne, qui doit se déclencher AVANT même de vérifier l'OAuth.
-      return {
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        maybeSingle: vi.fn(async () => ({ data: null, error: null })),
-      };
-    }),
+    rpc,
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(async () => ({ data: null, error: null })),
+    })),
   },
 }));
 
@@ -34,29 +28,44 @@ vi.mock("../src/config.js", () => ({
   config: { googleClientId: "x", googleClientSecret: "y" },
 }));
 
-const { gmailSendTool } = await import("../src/tools/gmail.js");
-
+const { buildRawEmail, gmailSendTool } = await import("../src/tools/gmail.js");
 const ctx = { userId: "user-1", agentType: "email" as const, mode: "live" as const };
 
-describe("gmail_send — anti-ban Gmail (max 400 envois/jour/compte, cf brief §Sécurité)", () => {
-  it("laisse passer sous la limite (échoue ensuite sur l'OAuth non connecté, pas sur la limite)", async () => {
-    memoryCounter = { date: today, count: 5 };
+beforeEach(() => {
+  reserved = 0;
+  rpc.mockClear();
+});
+
+describe("gmail_send hardening", () => {
+  it("réserve atomiquement une place avant tout envoi", async () => {
+    reserved = 5;
     await expect(gmailSendTool.execute({ to: "a@b.com", subject: "s", body: "b" }, ctx)).rejects.toThrow(
       /OAuth non complété/
     );
+    expect(reserved).toBe(6);
   });
 
-  it("bloque au-delà de 400 envois le même jour", async () => {
-    memoryCounter = { date: today, count: 400 };
+  it("bloque lorsque la réservation atomique n'accorde plus de place", async () => {
+    reserved = 400;
     await expect(gmailSendTool.execute({ to: "a@b.com", subject: "s", body: "b" }, ctx)).rejects.toThrow(
       /Limite quotidienne.*400/
     );
+    expect(reserved).toBe(400);
   });
 
-  it("réinitialise le compteur sur un nouveau jour", async () => {
-    memoryCounter = { date: "2020-01-01", count: 400 };
-    await expect(gmailSendTool.execute({ to: "a@b.com", subject: "s", body: "b" }, ctx)).rejects.toThrow(
-      /OAuth non complété/
-    );
+  it.each([
+    { to: "victim@example.com\r\nBcc: attacker@example.com", subject: "ok" },
+    { to: "victim@example.com", subject: "ok\nBcc: attacker@example.com" },
+  ])("refuse l'injection d'en-têtes avant de consommer le quota: %j", async ({ to, subject }) => {
+    await expect(gmailSendTool.execute({ to, subject, body: "body" }, ctx)).rejects.toThrow(/invalide/);
+    expect(rpc).not.toHaveBeenCalled();
+    expect(reserved).toBe(0);
+  });
+
+  it("produit des en-têtes CRLF valides pour une entrée saine", () => {
+    const raw = buildRawEmail("a@b.com", "Sujet", "Bonjour\nMonde");
+    const decoded = Buffer.from(raw, "base64url").toString("utf8");
+    expect(decoded).toContain("To: a@b.com\r\nSubject: Sujet\r\n");
+    expect(decoded).toContain("\r\n\r\nBonjour\nMonde");
   });
 });
