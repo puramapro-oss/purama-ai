@@ -10,13 +10,15 @@ import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } fr
 export async function runAgentCycle(
   userId: string, definition: AgentDefinition, trigger: AgentTrigger, executionKey?: string
 ): Promise<AgentRunResult> {
+  const cycleStartedAt = new Date().toISOString();
+
   if (await isGlobalKillSwitchActive(true)) {
     return { status: "skipped", decision: "Cycle ignoré : arrêt global actif", toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
   }
   const state = await loadAgentState(userId, definition.type);
   const runnable = isRunnable(state);
   if (!runnable.ok) {
-    await recordRunOutcome(userId, definition.type, "skipped");
+    await recordRunOutcome(userId, definition.type, "skipped", cycleStartedAt);
     return { status: "skipped", decision: runnable.reason, toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
   }
   const mode = state.simulationMode ? "simulation" : "live";
@@ -105,7 +107,7 @@ export async function runAgentCycle(
         });
       } catch { console.error("[loop] notification indisponible ; action conservée en attente"); }
     }
-    await recordRunOutcome(userId, definition.type, status);
+    await recordRunOutcome(userId, definition.type, status, cycleStartedAt);
     return outcome;
   } catch (error) {
     const outcome: AgentRunResult = {
@@ -116,7 +118,7 @@ export async function runAgentCycle(
       retryable: !effectStarted && !executionKey && toolsUsed.length === 0,
     };
     await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
-    await recordRunOutcome(userId, definition.type, "error").catch(() => undefined);
+    await recordRunOutcome(userId, definition.type, "error", cycleStartedAt).catch(() => undefined);
     return outcome;
   }
 }
