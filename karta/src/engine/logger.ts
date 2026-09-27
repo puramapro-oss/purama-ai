@@ -16,8 +16,8 @@ export interface RunLogHandle {
 
 /**
  * Ouvre une entrée immuable dans karta_runs (status "running"), retourne un handle
- * pour la clôturer. Aucune UPDATE de contenu métier après clôture — seul le statut/résultat
- * final est écrit une fois (pas de ré-écriture ultérieure), conformément à "logs immuables".
+ * pour la clôturer. La clôture est compare-and-set : seul un run encore "running"
+ * peut être finalisé, ce qui empêche un writer tardif de réécrire un résultat final.
  */
 export async function startRun(
   userId: string,
@@ -71,7 +71,7 @@ export async function startRun(
   return {
     runId,
     finish: async (outcome) => {
-      const { error: updateError } = await supabase
+      const { data: finalized, error: updateError } = await supabase
         .from("karta_runs")
         .update({
           status: outcome.status,
@@ -84,10 +84,16 @@ export async function startRun(
           duration_ms: Date.now() - startedAt,
           finished_at: new Date().toISOString(),
         })
-        .eq("id", runId);
+        .eq("id", runId)
+        .eq("status", "running")
+        .select("id")
+        .maybeSingle();
 
       if (updateError) {
         throw new Error(`startRun(${agentType}).finish: ${updateError.message}`);
+      }
+      if (!finalized) {
+        throw new Error(`startRun(${agentType}).finish: exécution déjà finalisée ou état concurrent`);
       }
     },
   };
