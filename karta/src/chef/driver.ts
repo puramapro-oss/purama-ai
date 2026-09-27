@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import { isAbsolute, relative, resolve } from "node:path";
+import { realpathSync } from "node:fs";
+import { isAbsolute, relative } from "node:path";
 
 export type ChefDriverProvider = "codex" | "claude" | "glm";
 export type ChefDriverStatus = "completed" | "blocked_human" | "blocked_external" | "failed";
@@ -56,11 +57,21 @@ const SHA = /^[0-9a-f]{40,64}$/i;
 
 export function assertAllowedCwd(cwd: string, allowedRoots: string[]): string {
   if (!isAbsolute(cwd)) throw new Error("CHEF cwd doit être absolu");
-  const canonical = resolve(cwd);
   if (allowedRoots.length === 0) throw new Error("CHEF allowedRoots vide");
+
+  let canonical: string;
+  try {
+    // realpath resolves symlinks. Lexical path checks alone allow /trusted/link -> /etc escapes.
+    canonical = realpathSync(cwd);
+  } catch {
+    throw new Error("CHEF cwd introuvable ou inaccessible");
+  }
+
   const allowed = allowedRoots.some((root) => {
     if (!isAbsolute(root)) return false;
-    const rel = relative(resolve(root), canonical);
+    let trustedRoot: string;
+    try { trustedRoot = realpathSync(root); } catch { return false; }
+    const rel = relative(trustedRoot, canonical);
     return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
   });
   if (!allowed) throw new Error("CHEF cwd hors périmètre autorisé");
