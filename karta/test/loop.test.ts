@@ -260,6 +260,65 @@ describe("runAgentCycle", () => {
     }
   });
 
+  it("C5 ordering — le reçu (run.finish) est écrit AVANT la notification et le compteur d'issue", async () => {
+    // Cœur du contrat receipts (C13) : si le process meurt entre finish et notify, la trace
+    // en base existe déjà — jamais l'inverse (une notification sans reçu serait un mensonge).
+    const events: string[] = [];
+    vi.resetModules();
+    vi.doMock("../src/engine/logger.js", () => ({
+      startRun: async () => ({
+        runId: "run-order",
+        finish: async () => {
+          events.push("finish");
+        },
+      }),
+    }));
+    vi.doMock("../src/engine/notify.js", () => ({
+      notify: async () => {
+        events.push("notify");
+      },
+    }));
+    vi.doMock("../src/engine/autonomy.js", () => ({
+      isRunnable: () => ({ ok: true }),
+      loadAgentState: async () => ({ isEnabled: true, autonomyLevel: 2, killSwitch: false, simulationMode: false }),
+      requiresHumanApproval: () => false,
+      recordRunOutcome: vi.fn(async (_userId: string, _agentType: string, outcome: string) => {
+        events.push(`outcome:${outcome}`);
+      }),
+    }));
+    vi.doMock("../src/claude/index.js", () => ({
+      getClaudeClient: () => ({
+        isMock: true,
+        decide: async () => ({
+          summary: "action décidée",
+          toolCalls: [{ tool: "send_notification", params: {} }],
+          requiresApproval: true, // force le chemin awaiting_approval → notify() est appelé
+          mock: true,
+        }),
+      }),
+    }));
+
+    const { runAgentCycle: freshRunAgentCycle } = await import("../src/engine/loop.js");
+    const executed = vi.fn(async () => ({ ok: true }));
+    const definition: AgentDefinition = {
+      type: "legal",
+      systemPrompt: "test",
+      tools: [stubTool("send_notification", false, executed)],
+      buildContext: async () => ({}),
+    };
+
+    const result = await freshRunAgentCycle("user-1", definition, trigger);
+
+    expect(result.status).toBe("awaiting_approval");
+    expect(executed).not.toHaveBeenCalled(); // chemin approbation : l'outil ne tourne JAMAIS
+    expect(events).toEqual(["finish", "notify", "outcome:success"]); // ORDRE exact
+
+    vi.doUnmock("../src/engine/logger.js");
+    vi.doUnmock("../src/engine/notify.js");
+    vi.doUnmock("../src/engine/autonomy.js");
+    vi.doUnmock("../src/claude/index.js");
+  });
+
   it("concurrence : deux cycles parallèles ne se contaminent pas (état par invocation, pas par module)", async () => {
     // Régression du bloc central 2026-09-26 : toolsUsed/sideEffectsCommitted vivaient en variables
     // de MODULE — partagées entre les cycles concurrents du worker (concurrency 5). Ici le cycle

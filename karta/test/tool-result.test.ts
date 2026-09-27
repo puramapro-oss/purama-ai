@@ -65,6 +65,25 @@ describe("assertToolResult — contrat strict des résultats d'outils (P0 2026-0
       expect((e as ToolResultError).result).toEqual({ ok: false, sent: 0 });
     }
   });
+
+  // — Fuzz C19 (reliability lab 2026-09-27) : direction FAUX ÉCHEC uniquement (une valeur
+  // exotique ne doit JAMAIS lever) ; la direction faux-succès est couverte par les tests
+  // dédiés ci-dessus. Chaque ligne épingle une classe ambiguë du contrat donnée-vs-signal.
+  it.each`
+    value                        | classe
+    ${0}                         | ${"nombre zéro (donnée brute)"}
+    ${-1}                        | ${"nombre négatif (donnée brute)"}
+    ${""}                        | ${"chaîne vide (donnée brute)"}
+    ${NaN}                       | ${"NaN (donnée brute)"}
+    ${Infinity}                  | ${"Infinity (donnée brute)"}
+    ${new Date(0)}               | ${"Date (passe isPlainObject, aucune clé d'enveloppe)"}
+    ${{}}                        | ${"objet vide — aucun signal d'échec, succès silencieux assumé"}
+    ${{ ok: "false" }}           | ${"ok:'false' STRING — strict ===false ne matche pas : donnée, succès"}
+    ${{ nested: { ok: false } }} | ${"enveloppe d'échec NICHÉE — inspection top-level only : donnée opaque, succès"}
+    ${{ success: "error" }}      | ${"success:'error' string ≠ false explicite : succès"}
+  `("fuzz $classe → ne lève jamais", ({ value }: { value: unknown }) => {
+    expect(() => assertToolResult(value)).not.toThrow();
+  });
 });
 
 describe("summarizeToolResult — ne lève jamais, résume en ≤200 caractères", () => {

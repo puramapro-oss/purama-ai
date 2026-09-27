@@ -146,4 +146,24 @@ describe("processAgentCycleJob — verrou anti-double par (agentType, userId)", 
     expect(skips).toHaveLength(1);
     expect(results.every((r) => r.status === "success")).toBe(true); // aucun n'est une erreur BullMQ
   });
+
+  it("C2 — charge concurrency native (5 jobs du même agent en parallèle) : exactement 1 exécution, 4 skips propres", async () => {
+    let held = false;
+    vi.mocked(tryAcquireCycleLock).mockImplementation(async () => {
+      if (held) return null;
+      held = true;
+      return { agentType: "legal", userId: "user-1", token: "t-c2" };
+    });
+    vi.mocked(runAgentCycle).mockImplementation(async () => {
+      // Tient le verrou un peu : les 4 perdants passent leur acquire PENDANT le cycle gagnant.
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      return runResult("success", false);
+    });
+
+    const results = await Promise.all(Array.from({ length: 5 }, () => processAgentCycleJob(job)));
+
+    expect(runAgentCycle).toHaveBeenCalledOnce();
+    expect(results.filter((r) => r.resultSummary.includes("verrou"))).toHaveLength(4);
+    expect(results.every((r) => r.status === "success")).toBe(true); // 0 erreur BullMQ, 0 deadlock
+  });
 });

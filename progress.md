@@ -278,3 +278,10 @@ Limites documentées (non bloquantes) : patchParentRun JSONB display race ; owne
 - queue/cycle-lock.ts (extrait de queues.ts, ré-export compat) : CycleLockHandle + token
   UUID + release compare-and-del Lua ; worker handle-based
 - Écran mutation CAD (del naïf → rouge) ; 120/120 karta (20 fichiers), tsc 0, build 0
+
+### Reliability lab (2026-09-27) : renforts C2/C5/C19
+- C19 : fuzz 12 valeurs exotiques assertToolResult (contrat écranté sur les classes ambiguës)
+- C2 : 5 jobs parallèles même agent → 1 exécution, 4 skips, 0 deadlock (concurrency native)
+- C5 : ordre exact finish→notify→outcome asserté (receipt avant notification)
+- 139/139 karta (20 fichiers), tsc 0, build 0 · C1/C3-C4/C6-C18/C20-C31 : déjà prouvés
+  (sous-lots 1-9 + formal assurance 57 points + mutations M1-M5) — PASS documentés
