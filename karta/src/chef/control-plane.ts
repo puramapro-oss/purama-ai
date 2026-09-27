@@ -162,12 +162,34 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
   }
 
   async addEvidence(taskId: string, evidence: ChefVerificationEvidence): Promise<void> {
-    const result = await supabase.from("chef_evidence").insert({
-      task_id: taskId,
-      kind: evidence.kind,
-      sha256: evidence.sha256,
-      payload: evidence.payload,
-    });
+    const links = await supabase
+      .from("chef_task_requirements")
+      .select("requirement_id")
+      .eq("task_id", taskId);
+    assertRpc(links.error, "chef_task_requirements");
+
+    const requirementIds = (links.data ?? [])
+      .map((row) => row.requirement_id)
+      .filter((value): value is string => typeof value === "string");
+
+    const rows = [
+      {
+        task_id: taskId,
+        requirement_id: null,
+        kind: evidence.kind,
+        sha256: evidence.sha256,
+        payload: evidence.payload,
+      },
+      ...requirementIds.map((requirementId) => ({
+        task_id: taskId,
+        requirement_id: requirementId,
+        kind: evidence.kind,
+        sha256: evidence.sha256,
+        payload: evidence.payload,
+      })),
+    ];
+
+    const result = await supabase.from("chef_evidence").insert(rows);
     assertRpc(result.error, "chef_evidence");
   }
 
