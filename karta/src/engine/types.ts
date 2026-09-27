@@ -1,3 +1,4 @@
+import type { ToolJsonSchema } from "./tool-schema.js";
 /** 4 agents cœur (compte admin, cf brief Phase 2) + 12 agents "action" du site (multi-tenant,
  * cf brief Phase 3) — slug identique à purama_ai.agents.slug pour les 12 derniers, ce qui permet
  * de joindre karta_agent_state/karta_runs directement sur le catalogue marketplace. */
@@ -64,10 +65,26 @@ export interface AgentState {
 }
 
 /** Un outil que l'agent peut appeler. `sensitive: true` force la validation humaine en dessous du niveau 3. */
+export type ToolCapability =
+  | "read"
+  | "internal_write"
+  | "external_draft"
+  | "external_write"
+  | "external_publish"
+  | "communications"
+  | "legal"
+  | "financial"
+  | "delegation"
+  | "destructive";
+
 export interface ToolDefinition<Params = Record<string, unknown>, Result = unknown> {
   name: string;
   description: string;
+  capability: ToolCapability;
+  /** Transitional approval bit; capability policy is the authoritative classification. */
   sensitive: boolean;
+  /** Runtime boundary and provider tool contract share the exact same schema. */
+  inputSchema: ToolJsonSchema;
   execute(params: Params, ctx: ToolExecutionContext): Promise<Result>;
 }
 
