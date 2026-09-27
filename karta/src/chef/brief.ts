@@ -19,6 +19,8 @@ export interface ChefBriefTask {
   accessMode?: ChefAccessMode;
   scopeKey?: string;
   worktree?: string;
+  /** Repo-relative paths or directories this write task may change. "." explicitly means the whole repo. */
+  allowedPaths?: string[];
   priority?: number;
   maxAttempts?: number;
   verificationProfiles?: string[];
@@ -40,13 +42,35 @@ function nonEmpty(value: unknown, label: string, max = 20_000): asserts value is
 }
 
 function uniqueStrings(values: string[] | undefined, label: string): string[] {
-  const clean = values ?? [];
-  if (clean.some(value => typeof value !== "string" || value.trim().length === 0)) {
-    throw new Error(`${label} invalide`);
-  }
+  const clean = (values ?? []).map((value) => {
+    if (typeof value !== "string" || value.trim().length === 0) throw new Error(`${label} invalide`);
+    return value.trim();
+  });
   const set = new Set(clean);
   if (set.size !== clean.length) throw new Error(`${label} contient un doublon`);
   return clean;
+}
+
+function normalizeOwnedPath(value: string): string {
+  const clean = value.trim().replace(/\/$/, "") || ".";
+  if (
+    clean.includes("\0") ||
+    clean.includes("\\") ||
+    clean.startsWith("/") ||
+    clean === ".." ||
+    clean.startsWith("../") ||
+    clean.endsWith("/..") ||
+    clean.includes("/../")
+  ) {
+    throw new Error(`allowedPath invalide: ${value}`);
+  }
+  return clean;
+}
+
+function ownedPaths(values: string[] | undefined, taskKey: string): string[] {
+  const normalized = uniqueStrings(values, `allowedPaths(${taskKey})`).map(normalizeOwnedPath);
+  if (new Set(normalized).size !== normalized.length) throw new Error(`allowedPaths(${taskKey}) contient un doublon canonique`);
+  return normalized;
 }
 
 export function validateChefBrief(input: ChefBrief): void {
@@ -62,8 +86,9 @@ export function validateChefBrief(input: ChefBrief): void {
   for (const requirement of input.requirements) {
     nonEmpty(requirement.key, "requirement.key", 200);
     nonEmpty(requirement.description, "requirement.description", 20_000);
-    if (requirementKeys.has(requirement.key)) throw new Error(`Requirement dupliquée: ${requirement.key}`);
-    requirementKeys.add(requirement.key);
+    const requirementKey = requirement.key.trim();
+    if (requirementKeys.has(requirementKey)) throw new Error(`Requirement dupliquée: ${requirementKey}`);
+    requirementKeys.add(requirementKey);
   }
 
   const tasks = new Map<string, ChefBriefTask>();
@@ -71,7 +96,8 @@ export function validateChefBrief(input: ChefBrief): void {
     nonEmpty(task.key, "task.key", 200);
     nonEmpty(task.title, "task.title", 500);
     nonEmpty(task.instructions, "task.instructions", 100_000);
-    if (tasks.has(task.key)) throw new Error(`Task dupliquée: ${task.key}`);
+    const taskKey = task.key.trim();
+    if (tasks.has(taskKey)) throw new Error(`Task dupliquée: ${taskKey}`);
     if (task.provider && !["auto", "codex", "claude", "glm"].includes(task.provider)) {
       throw new Error(`Provider invalide: ${task.provider}`);
     }
@@ -82,32 +108,37 @@ export function validateChefBrief(input: ChefBrief): void {
     if (task.maxAttempts !== undefined && (!Number.isInteger(task.maxAttempts) || task.maxAttempts < 1 || task.maxAttempts > 20)) {
       throw new Error("maxAttempts invalide");
     }
-    uniqueStrings(task.dependsOn, `dependsOn(${task.key})`);
-    const linked = uniqueStrings(task.requirementKeys, `requirementKeys(${task.key})`);
-    const verificationProfiles = uniqueStrings(task.verificationProfiles, `verificationProfiles(${task.key})`);
+    uniqueStrings(task.dependsOn, `dependsOn(${taskKey})`);
+    const linked = uniqueStrings(task.requirementKeys, `requirementKeys(${taskKey})`);
+    const verificationProfiles = uniqueStrings(task.verificationProfiles, `verificationProfiles(${taskKey})`);
+    const writePaths = ownedPaths(task.allowedPaths, taskKey);
     if (verificationProfiles.length === 0) throw new Error(`Task sans profil de vérification: ${task.key}`);
     if (verificationProfiles.some((profile) => !/^[A-Za-z0-9._:-]{1,120}$/.test(profile))) {
       throw new Error(`Profil de vérification invalide: ${task.key}`);
     }
     const accessMode = task.accessMode ?? "write";
     if (accessMode === "write" && !task.scopeKey?.trim() && !task.worktree?.trim()) {
-      throw new Error(`Task write sans scope/worktree: ${task.key}`);
+      throw new Error(`Task write sans scope/worktree: ${taskKey}`);
     }
-    if (linked.length === 0) throw new Error(`Task sans requirement: ${task.key}`);
-    tasks.set(task.key, task);
+    if (accessMode === "write" && writePaths.length === 0) {
+      throw new Error(`Task write sans allowedPaths: ${taskKey}`);
+    }
+    if (linked.length === 0) throw new Error(`Task sans requirement: ${taskKey}`);
+    tasks.set(taskKey, task);
   }
 
   const covered = new Set<string>();
   for (const task of tasks.values()) {
-    for (const requirementKey of task.requirementKeys) {
+    const taskKey = task.key.trim();
+    for (const requirementKey of uniqueStrings(task.requirementKeys, `requirementKeys(${taskKey})`)) {
       if (!requirementKeys.has(requirementKey)) {
-        throw new Error(`Requirement inconnue ${requirementKey} dans ${task.key}`);
+        throw new Error(`Requirement inconnue ${requirementKey} dans ${taskKey}`);
       }
       covered.add(requirementKey);
     }
-    for (const dependency of task.dependsOn ?? []) {
-      if (!tasks.has(dependency)) throw new Error(`Dépendance inconnue ${dependency} dans ${task.key}`);
-      if (dependency === task.key) throw new Error(`Auto-dépendance: ${task.key}`);
+    for (const dependency of uniqueStrings(task.dependsOn, `dependsOn(${taskKey})`)) {
+      if (!tasks.has(dependency)) throw new Error(`Dépendance inconnue ${dependency} dans ${taskKey}`);
+      if (dependency === taskKey) throw new Error(`Auto-dépendance: ${taskKey}`);
     }
   }
 
@@ -149,6 +180,7 @@ export function normalizeChefBrief(input: ChefBrief): ChefBrief {
         accessMode: task.accessMode ?? "write",
         ...(task.scopeKey ? { scopeKey: task.scopeKey.trim() } : {}),
         ...(task.worktree ? { worktree: task.worktree.trim() } : {}),
+        allowedPaths: ownedPaths(task.allowedPaths, task.key.trim()).sort(),
         priority: task.priority ?? 0,
         maxAttempts: task.maxAttempts ?? 3,
         verificationProfiles: [...(task.verificationProfiles ?? [])].sort(),
