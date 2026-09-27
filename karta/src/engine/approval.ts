@@ -4,6 +4,7 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { isRunnable, loadAgentState } from "./autonomy.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
+import { enqueueAgentCycle } from "../queue/queues.js";
 import type { AgentType } from "./types.js";
 
 interface CreatePendingActionInput {
@@ -73,6 +74,29 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
     // may already exist at the provider, so a retry must only reconcile evidence.
     return { ok: false, error: "Résultat non confirmé dans le journal : vérifier l'action avant toute reprise" };
   }
+
+  if (status === "executed" || status === "rejected") {
+    try {
+      await enqueueAgentCycle(
+        {
+          agentType: pending.agent_type as AgentType,
+          userId: pending.user_id,
+          trigger: {
+            type: "delegation",
+            source: "approval-resume",
+            payload: { previousRunId: pending.run_id, pendingActionId: pending.id, resolution: status },
+          },
+        },
+        { dedupeKey: `approval-resume|${pending.id}|${status}` }
+      );
+    } catch {
+      return {
+        ok: false,
+        error: "Action traitée mais reprise du cycle non planifiée : relancer le cycle sans répéter l'action",
+      };
+    }
+  }
+
   return status === "executed" || status === "rejected"
     ? { ok: true, resultSummary }
     : { ok: false, error: resultSummary };
