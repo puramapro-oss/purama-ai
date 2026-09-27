@@ -20,6 +20,7 @@ function base(): ChefBrief {
         requirementKeys: ["R2"],
         provider: "claude",
         scopeKey: "src/x-integration",
+        allowedPaths: ["src/x-integration"],
         verificationProfiles: ["default"],
       },
       {
@@ -29,6 +30,7 @@ function base(): ChefBrief {
         requirementKeys: ["R1"],
         provider: "codex",
         scopeKey: "src/x",
+        allowedPaths: ["src/x"],
         verificationProfiles: ["default"],
       },
     ],
@@ -76,7 +78,23 @@ describe("canonical CHEF briefs", () => {
     expect(() => validateChefBrief(value)).toThrow(/Cycle/);
   });
 
-  it("refuse les doublons de tâches et de requirements", () => {
+  it("refuse une tâche write sans périmètre de fichiers explicite", () => {
+    const value = base();
+    delete value.tasks[0].allowedPaths;
+    expect(() => validateChefBrief(value)).toThrow(/allowedPaths/);
+  });
+
+  it("refuse les chemins qui sortent du dépôt et les doublons canoniques", () => {
+    const escape = base();
+    escape.tasks[0].allowedPaths = ["../secret"];
+    expect(() => validateChefBrief(escape)).toThrow(/allowedPath/);
+
+    const duplicate = base();
+    duplicate.tasks[0].allowedPaths = ["src/x", " src/x "];
+    expect(() => validateChefBrief(duplicate)).toThrow(/doublon/);
+  });
+
+  it("refuse les doublons de tâches et de requirements après normalisation", () => {
     const taskDup = base();
     taskDup.tasks.push({ ...taskDup.tasks[0] });
     expect(() => validateChefBrief(taskDup)).toThrow(/Task dupliquée/);
@@ -84,5 +102,13 @@ describe("canonical CHEF briefs", () => {
     const reqDup = base();
     reqDup.requirements.push({ ...reqDup.requirements[0] });
     expect(() => validateChefBrief(reqDup)).toThrow(/Requirement dupliquée/);
+
+    const trimmedTaskDup = base();
+    trimmedTaskDup.tasks.push({ ...trimmedTaskDup.tasks[0], key: " T2 " });
+    expect(() => validateChefBrief(trimmedTaskDup)).toThrow(/Task dupliquée/);
+
+    const trimmedReqDup = base();
+    trimmedReqDup.requirements.push({ ...trimmedReqDup.requirements[0], key: " R2 " });
+    expect(() => validateChefBrief(trimmedReqDup)).toThrow(/Requirement dupliquée/);
   });
 });
