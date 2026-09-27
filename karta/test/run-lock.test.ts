@@ -2,28 +2,42 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 process.env.REDIS_URL = "redis://127.0.0.1:6379";
 
-/** État du Redis mocké : verrou courant + mode panne. */
+/** État du Redis mocké : verrous avec expirations + mode panne. */
 const redisState = {
-  heldKey: null as string | null,
+  /** Map key → {holdTime, ttlMs}. Les locks expirent après ttlMs depuis holdTime. */
+  locks: new Map<string, { holdTime: number; ttlMs: number }>(),
   failSet: false,
   /** true → set() ne settle JAMAIS (offline queue ioredis, maxRetriesPerRequest: null). */
   hangSet: false,
+  /** true → del() throw. */
+  failDel: false,
+  /** Simulated current time for TTL expiration (avanceTimersByTime). */
+  currentTime: Date.now(),
 };
+
+/** Helper: vérifier si un verrou a expiré. */
+function isLockExpired(key: string): boolean {
+  const lock = redisState.locks.get(key);
+  if (!lock) return true; // pas de verrou = "expiré" (réacquérable)
+  return redisState.currentTime >= lock.holdTime + lock.ttlMs;
+}
 
 vi.mock("../src/queue/redis.js", () => ({
   redisConnection: {
-    set: vi.fn((key: string, _v: string, _px: string, _ttl: number, nx: string) => {
+    set: vi.fn((key: string, _v: string, _px: string, ttl: number, nx: string) => {
       if (redisState.hangSet) return new Promise<null>(() => {}); // pend pour toujours
       return Promise.resolve().then(() => {
         if (redisState.failSet) throw new Error("ECONNREFUSED simulé");
         if (nx !== "NX") return "OK";
-        if (redisState.heldKey === key) return null;
-        redisState.heldKey = key;
+        // NX : seulement si la clé n'existe pas OU a expiré
+        if (redisState.locks.has(key) && !isLockExpired(key)) return null;
+        redisState.locks.set(key, { holdTime: redisState.currentTime, ttlMs: ttl });
         return "OK";
       });
     }),
     del: vi.fn(async (key: string) => {
-      if (redisState.heldKey === key) redisState.heldKey = null;
+      if (redisState.failDel) throw new Error("DEL failed");
+      redisState.locks.delete(key);
     }),
   },
 }));
@@ -33,9 +47,11 @@ const { redisConnection } = await import("../src/queue/redis.js");
 
 describe("withRunSerialization — sérialisation opportuniste des patchs d'un même run (sous-lot 8)", () => {
   beforeEach(() => {
-    redisState.heldKey = null;
+    redisState.locks.clear();
     redisState.failSet = false;
     redisState.hangSet = false;
+    redisState.failDel = false;
+    redisState.currentTime = Date.now();
     vi.mocked(redisConnection.set).mockClear();
     vi.mocked(redisConnection.del).mockClear();
   });
@@ -44,17 +60,18 @@ describe("withRunSerialization — sérialisation opportuniste des patchs d'un m
     const result = await withRunSerialization("run-1", async () => 42);
 
     expect(result).toBe(42);
-    expect(redisState.heldKey).toBeNull(); // libéré au finally
+    expect(redisState.locks.has("karta:run-lock:run-1")).toBe(false); // libéré au finally
     expect(redisConnection.del).toHaveBeenCalledWith("karta:run-lock:run-1");
   });
 
   it("verrou tenu par un autre → attend sa libération puis exécute (jamais en parallèle)", async () => {
-    redisState.heldKey = "karta:run-lock:run-1"; // un concurrent détient le verrou
+    // Simulate another lock holder
+    redisState.locks.set("karta:run-lock:run-1", { holdTime: redisState.currentTime, ttlMs: 10_000 });
     vi.useFakeTimers();
 
     // Libère le verrou "de l'extérieur" après 150ms de polling (3 polls de 50ms)
     setTimeout(() => {
-      redisState.heldKey = null;
+      redisState.locks.delete("karta:run-lock:run-1");
     }, 150);
 
     const started = withRunSerialization("run-1", async () => "ok");
@@ -65,7 +82,8 @@ describe("withRunSerialization — sérialisation opportuniste des patchs d'un m
   });
 
   it("budget d'attente épuisé → fn exécutée SANS verrou (best-effort : jamais bloquer l'humain)", async () => {
-    redisState.heldKey = "karta:run-lock:run-1"; // jamais libéré
+    // Simulate another lock holder that never releases
+    redisState.locks.set("karta:run-lock:run-1", { holdTime: redisState.currentTime, ttlMs: 10_000 });
     vi.useFakeTimers();
 
     const started = withRunSerialization("run-1", async () => "display quand même");
@@ -106,6 +124,78 @@ describe("withRunSerialization — sérialisation opportuniste des patchs d'un m
         throw new Error("boom patch");
       })
     ).rejects.toThrow("boom patch");
-    expect(redisState.heldKey).toBeNull();
+    expect(redisState.locks.has("karta:run-lock:run-1")).toBe(false);
+  });
+
+  describe("RESILIENCE — crash du process + recovery (P0 IAO sous-lot 8)", () => {
+    it("del() échoue → l'erreur est swallowée, fn retourne son résultat normalement", async () => {
+      redisState.failDel = true;
+      const result = await withRunSerialization("run-3", async () => 42);
+
+      expect(result).toBe(42); // result est retourné MALGRÉ l'erreur de del
+      expect(redisConnection.del).toHaveBeenCalledWith("karta:run-lock:run-3");
+    });
+
+    it("fn complète normalement + del() appelé dans finally (no-crash path)", async () => {
+      // Test que finally s'exécute pour success
+      const result = await withRunSerialization("run-5", async () => "success");
+      expect(result).toBe("success");
+      expect(redisConnection.del).toHaveBeenCalledWith("karta:run-lock:run-5");
+      expect(redisState.locks.has("karta:run-lock:run-5")).toBe(false);
+    });
+
+    it("fn lève exception → del() quand même appelé dans finally (crash-safe path)", async () => {
+      const result = withRunSerialization("run-6", async () => {
+        throw new Error("patch error");
+      });
+      await expect(result).rejects.toThrow("patch error");
+      expect(redisConnection.del).toHaveBeenCalledWith("karta:run-lock:run-6");
+      expect(redisState.locks.has("karta:run-lock:run-6")).toBe(false);
+    });
+
+    it("verrou zombie (pas libéré) → après expiration TTL, peut être réacquis (process restart)", async () => {
+      const lockKey = "karta:run-lock:run-8";
+      const now = redisState.currentTime;
+
+      // Simuler un verrou tenu depuis longtemps (comme si un process avait crashé)
+      redisState.locks.set(lockKey, { holdTime: now, ttlMs: 10_000 });
+
+      // Un nouveau process (ou le même au redémarrage) essaie d'acquérir
+      // → isLockExpired retourne false (lock holdTime + 10s > currentTime)
+      expect(isLockExpired(lockKey)).toBe(false);
+
+      // Le nouveau process ne peut pas acquérir (budget timeout dégradation)
+      const result = await withRunSerialization("run-8", async () => "fallback");
+      expect(result).toBe("fallback");
+
+      // Simuler le passage du temps : le TTL expire
+      redisState.currentTime = now + 10_000; // T = now + 10s
+
+      // Maintenant le verrou est considéré comme expiré
+      expect(isLockExpired(lockKey)).toBe(true);
+
+      // Le nouveau process peut réacquérir
+      const result2 = await withRunSerialization("run-8", async () => "acquired after expiry");
+      expect(result2).toBe("acquired after expiry");
+      expect(redisState.locks.has(lockKey)).toBe(false); // libéré au finally
+    });
+
+    it("verrou expiré mais encore présent dans la map → SETEX NX remplace", async () => {
+      const lockKey = "karta:run-lock:run-9";
+      const holdTime = 100;
+
+      // Simuler un verrou "mort" (expiré mais toujours dans la map)
+      redisState.locks.set(lockKey, { holdTime, ttlMs: 10_000 });
+      redisState.currentTime = holdTime + 10_000 + 1; // Bien au-delà de l'expiration
+
+      // isLockExpired doit retourner true
+      expect(isLockExpired(lockKey)).toBe(true);
+
+      // Un nouveau set doit réussir (NX check passe car verrou expiré)
+      const result = await withRunSerialization("run-9", async () => "new process wins");
+      expect(result).toBe("new process wins");
+      // La nouvelle entrée de verrou remplace l'ancienne
+      expect(redisState.locks.has(lockKey)).toBe(false); // libéré au finally
+    });
   });
 });
