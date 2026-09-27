@@ -1,5 +1,5 @@
 import type { ChefDriverProvider, ChefDriverResponse, ChefWorkerDriver } from "./driver.js";
-import { verifyCommittedGitState } from "./git-state.js";
+import { captureCleanGitBaseline, verifyCommittedGitState } from "./git-state.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
 
 export interface ChefRuntimeTask {
@@ -14,6 +14,7 @@ export interface ChefRuntimeTask {
   branch?: string;
   baseSha?: string;
   verificationProfiles: string[];
+  allowedPaths: string[];
 }
 
 export interface ChefControlPlane {
@@ -92,6 +93,33 @@ export async function runChefWorkerCycle(
     return { state: "failed", taskId: task.id, error: "Brief hash invalide" };
   }
 
+  let executionBaseSha = task.baseSha;
+  if (task.accessMode === "write") {
+    try {
+      const baseline = await captureCleanGitBaseline({ cwd: task.cwd, expectedBranch: task.branch });
+      if (task.baseSha && baseline.headSha.toLowerCase() !== task.baseSha.toLowerCase()) {
+        const error = "Base Git assignée devenue obsolète : replanification requise";
+        const blocked = await control.transition({
+          taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+          target: "blocked_external", error,
+        });
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error }
+          : { state: "lost_lease", taskId: task.id, error };
+      }
+      executionBaseSha = baseline.headSha;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Préflight Git impossible";
+      const blocked = await control.transition({
+        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+        target: "blocked_human", error: message.slice(0, 10_000),
+      });
+      return blocked
+        ? { state: "blocked_human", taskId: task.id, error: message }
+        : { state: "lost_lease", taskId: task.id, error: message };
+    }
+  }
+
   const running = await control.transition({
     taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken, target: "running",
   });
@@ -153,7 +181,9 @@ export async function runChefWorkerCycle(
         instructions: task.instructions,
         cwd: task.cwd,
         branch: task.branch,
-        baseSha: task.baseSha,
+        baseSha: executionBaseSha,
+        accessMode: task.accessMode,
+        allowedPaths: task.allowedPaths,
       }, abort.signal);
     } catch (error) {
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
@@ -235,7 +265,8 @@ export async function runChefWorkerCycle(
           cwd: task.cwd,
           expectedHeadSha: response.outputSha,
           expectedBranch: task.branch,
-          baseSha: task.baseSha,
+          baseSha: executionBaseSha,
+          allowedPaths: task.allowedPaths,
         });
         await control.addEvidence(task.id, gitEvidence);
       } catch (error) {
