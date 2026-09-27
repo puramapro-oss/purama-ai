@@ -18,7 +18,7 @@ beforeAll(async () => {
     CREATE ROLE authenticated;
     CREATE ROLE service_role BYPASSRLS;
   `);
-  for (const file of ["008_chef_control_plane.sql", "009_chef_hardening.sql", "010_chef_runtime_policy.sql"]) {
+  for (const file of ["008_chef_control_plane.sql", "009_chef_hardening.sql", "010_chef_reliability.sql", "011_chef_runtime_policy.sql"]) {
     await db.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
   }
 });
