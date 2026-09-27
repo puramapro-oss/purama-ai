@@ -10,6 +10,16 @@ export const docusealCreateSubmissionTool: ToolDefinition<
   name: "docuseal_create_submission",
   description: "Envoie un document pour signature électronique via DocuSeal.",
   sensitive: true,
+  inputSchema: {
+    type: "object",
+    properties: {
+      templateId: { type: "string", minLength: 1, maxLength: 128 },
+      signerName: { type: "string", minLength: 1, maxLength: 200 },
+      signerEmail: { type: "string", minLength: 3, maxLength: 320 },
+    },
+    required: ["templateId", "signerName", "signerEmail"],
+    additionalProperties: false,
+  },
   async execute(params) {
     if (!config.docusealApiKey) throw new Error("DOCUSEAL_API_KEY non configurée côté KARTA");
 
