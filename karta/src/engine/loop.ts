@@ -5,6 +5,7 @@ import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
 import { assertToolResult } from "./tool-result.js";
+import { validateToolParams } from "./tool-input.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
@@ -62,6 +63,27 @@ export async function runAgentCycle(
         });
         break;
       }
+      try {
+        validateToolParams(tool, call.params);
+      } catch (validationError) {
+        toolsUsed.push({
+          tool: tool.name,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: validationError instanceof Error ? validationError.message : "Paramètres invalides",
+          success: false,
+          outcome: "failed",
+        });
+        failed = true;
+        for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push({
+          tool: skipped.tool,
+          paramsSummary: JSON.stringify(skipped.params),
+          resultSummary: "Non exécutée après une validation de paramètres échouée",
+          success: false,
+          outcome: "skipped",
+        });
+        break;
+      }
+
       const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (simulation || needsApproval) {
         const pendingActionId = !simulation ? await createPendingAction({
