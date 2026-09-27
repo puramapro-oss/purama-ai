@@ -3,6 +3,7 @@ import { resolveAgentDefinition } from "./resolveDefinition.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { isRunnable, loadAgentState } from "./autonomy.js";
 import { assertToolResult } from "./tool-result.js";
+import { validateToolParams } from "./tool-input.js";
 import type { AgentType } from "./types.js";
 
 interface CreatePendingActionInput {
@@ -45,6 +46,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
         const definition = await resolveAgentDefinition(pending.agent_type as AgentType);
         const tool = definition.tools.find(t => t.name === pending.tool_name);
         if (!tool) throw new Error("Outil introuvable pour cet agent");
+        validateToolParams(tool, pending.tool_params);
         // Recheck after definition loading, immediately before dispatch.
         const latest = await loadAgentState(pending.user_id, pending.agent_type as AgentType);
         if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || latest.simulationMode) {
