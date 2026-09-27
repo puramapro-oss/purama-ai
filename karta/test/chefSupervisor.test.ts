@@ -43,7 +43,7 @@ const passingVerifier: ChefVerifier = {
     evidence: [{
       kind: "test",
       sha256: "e".repeat(64),
-      payload: { profile: "unit", ok: true, exitCode: 0, signal: null, outputTail: "pass" },
+      payload: { profile: "unit", ok: true, exitCode: 0, signal: null, outputBytes: 4 },
     }],
   })),
 };
@@ -128,7 +128,7 @@ describe("CHEF autonomous worker cycle", () => {
         evidence: [{
           kind: "test",
           sha256: "f".repeat(64),
-          payload: { profile: "unit", ok: false, exitCode: 1, signal: null, outputTail: "failed" },
+          payload: { profile: "unit", ok: false, exitCode: 1, signal: null, outputBytes: 6 },
         }],
       })),
     };
