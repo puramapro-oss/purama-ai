@@ -406,8 +406,8 @@ BEGIN
 END;
 $$;
 
--- A task cannot be certified by a diff alone. Critical requirements need both an
--- independent review and a concrete execution/verification proof tied to that requirement.
+-- A task cannot be certified by a diff alone. Independent review is enforced at
+-- mission/requirement level so an implementation task can finish before its review task runs.
 CREATE OR REPLACE FUNCTION purama_ai.chef_transition_task(
   p_task_id uuid,
   p_worker_id text,
@@ -425,7 +425,6 @@ DECLARE
   task_row purama_ai.chef_tasks%ROWTYPE;
   final_state text;
   strong_evidence_count integer;
-  missing_critical integer;
 BEGIN
   SELECT * INTO task_row FROM purama_ai.chef_tasks WHERE id = p_task_id FOR UPDATE;
   IF NOT FOUND THEN RETURN false; END IF;
@@ -450,29 +449,6 @@ BEGIN
       RAISE EXCEPTION 'Verified task requires strong evidence';
     END IF;
 
-    SELECT count(*) INTO missing_critical
-    FROM purama_ai.chef_task_requirements tr
-    JOIN purama_ai.chef_requirements r ON r.id = tr.requirement_id
-    WHERE tr.task_id = p_task_id
-      AND r.critical
-      AND (
-        NOT EXISTS (
-          SELECT 1 FROM purama_ai.chef_evidence e
-          WHERE e.task_id = p_task_id
-            AND e.requirement_id = r.id
-            AND e.kind IN ('test','build','typecheck','lint','security','receipt','runtime')
-        )
-        OR NOT EXISTS (
-          SELECT 1 FROM purama_ai.chef_evidence e
-          WHERE e.task_id = p_task_id
-            AND e.requirement_id = r.id
-            AND e.kind = 'review'
-        )
-      );
-
-    IF missing_critical > 0 THEN
-      RAISE EXCEPTION 'Critical requirement lacks proof or independent review';
-    END IF;
   END IF;
 
   IF p_target_state = 'retryable' AND task_row.attempt >= task_row.max_attempts THEN
@@ -536,25 +512,43 @@ AS $$
   SELECT r.id, r.requirement_key, r.description, r.critical
   FROM purama_ai.chef_requirements r
   WHERE r.mission_id = p_mission_id
-    AND NOT EXISTS (
-      SELECT 1
-      FROM purama_ai.chef_task_requirements tr
-      JOIN purama_ai.chef_tasks t ON t.id = tr.task_id AND t.state = 'verified_done'
-      WHERE tr.requirement_id = r.id
-        AND EXISTS (
-          SELECT 1 FROM purama_ai.chef_evidence e
-          WHERE e.task_id = t.id
-            AND e.requirement_id = r.id
-            AND e.kind IN ('test','build','typecheck','lint','security','receipt','runtime')
-        )
+    AND (
+      -- Every requirement needs at least one direct, reproducible proof or review
+      -- from a task that itself reached VERIFIED_DONE.
+      NOT EXISTS (
+        SELECT 1
+        FROM purama_ai.chef_task_requirements tr
+        JOIN purama_ai.chef_tasks t ON t.id = tr.task_id AND t.state = 'verified_done'
+        JOIN purama_ai.chef_evidence e ON e.task_id = t.id
+          AND e.requirement_id = r.id
+          AND e.kind IN ('test','build','typecheck','lint','security','review','receipt','runtime')
+        WHERE tr.requirement_id = r.id
+      )
+      OR (
+        r.critical
         AND (
-          NOT r.critical OR EXISTS (
-            SELECT 1 FROM purama_ai.chef_evidence e
-            WHERE e.task_id = t.id
+          -- Critical requirements need concrete non-review proof...
+          NOT EXISTS (
+            SELECT 1
+            FROM purama_ai.chef_task_requirements tr
+            JOIN purama_ai.chef_tasks t ON t.id = tr.task_id AND t.state = 'verified_done'
+            JOIN purama_ai.chef_evidence e ON e.task_id = t.id
+              AND e.requirement_id = r.id
+              AND e.kind IN ('test','build','typecheck','lint','security','receipt','runtime')
+            WHERE tr.requirement_id = r.id
+          )
+          -- ...and an independent review, which may deliberately be a later task.
+          OR NOT EXISTS (
+            SELECT 1
+            FROM purama_ai.chef_task_requirements tr
+            JOIN purama_ai.chef_tasks t ON t.id = tr.task_id AND t.state = 'verified_done'
+            JOIN purama_ai.chef_evidence e ON e.task_id = t.id
               AND e.requirement_id = r.id
               AND e.kind = 'review'
+            WHERE tr.requirement_id = r.id
           )
         )
+      )
     )
   ORDER BY r.requirement_key;
 $$;
