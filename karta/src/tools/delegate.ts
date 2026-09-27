@@ -17,11 +17,16 @@ export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reaso
     if (!VALID_AGENT_TYPES.includes(params.targetAgent)) {
       throw new Error(`Agent cible invalide: ${params.targetAgent}`);
     }
-    await enqueueAgentCycle({
-      agentType: params.targetAgent,
-      userId: ctx.userId,
-      trigger: { type: "delegation", source: ctx.agentType, payload: { reason: params.reason } },
-    });
+    await enqueueAgentCycle(
+      {
+        agentType: params.targetAgent,
+        userId: ctx.userId,
+        trigger: { type: "delegation", source: ctx.agentType, payload: { reason: params.reason } },
+      },
+      ctx.operationId
+        ? { dedupeKey: `delegation|${ctx.operationId}|${params.targetAgent}|${ctx.userId}` }
+        : undefined
+    );
     return { queued: true };
   },
 };
