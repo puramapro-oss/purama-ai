@@ -3,6 +3,7 @@ import { resolveAgentDefinition } from "./resolveDefinition.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { isRunnable, loadAgentState } from "./autonomy.js";
 import { assertToolResult } from "./tool-result.js";
+import { validateToolCall } from "./tool-contracts.js";
 import type { AgentType } from "./types.js";
 
 interface CreatePendingActionInput {
@@ -42,9 +43,10 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
         status = "cancelled";
         resultSummary = "Action annulée : arrêt ou autorisation modifiée";
       } else {
-        const definition = await resolveAgentDefinition(pending.agent_type as AgentType);
+        const definition = await resolveAgentDefinition(pending.agent_type as AgentType, pending.user_id);
         const tool = definition.tools.find(t => t.name === pending.tool_name);
         if (!tool) throw new Error("Outil introuvable pour cet agent");
+        validateToolCall(tool, pending.tool_params);
         // Recheck after definition loading, immediately before dispatch.
         const latest = await loadAgentState(pending.user_id, pending.agent_type as AgentType);
         if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || latest.simulationMode) {
@@ -61,7 +63,10 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
       }
     } catch (error) {
       status = "failed";
-      resultSummary = error instanceof Error ? error.message : "Échec de l'outil";
+      // Les erreurs fournisseur peuvent contenir des données sensibles. Le détail
+      // reste dans la télémétrie serveur, jamais dans le journal utilisateur.
+      console.error("[approval] exécution approuvée échouée", error instanceof Error ? error.name : "unknown");
+      resultSummary = "Échec de l'outil";
     }
   }
   try {
