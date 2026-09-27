@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import { assertAllowedCwd } from "./driver.js";
 
-export type ChefEvidenceKind = "test" | "build" | "typecheck" | "lint" | "security" | "review" | "runtime" | "other";
+export type ChefEvidenceKind = "test" | "build" | "typecheck" | "lint" | "security" | "review" | "receipt" | "runtime" | "other";
 
 export interface ChefVerificationProfile {
   name: string;
