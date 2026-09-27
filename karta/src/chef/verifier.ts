@@ -23,7 +23,7 @@ export interface ChefVerificationEvidence {
     ok: boolean;
     exitCode: number | null;
     signal: NodeJS.Signals | null;
-    outputTail: string;
+    outputBytes: number;
   };
 }
 
@@ -143,7 +143,7 @@ export class CommandChefVerifier implements ChefVerifier {
             ok,
             exitCode: code,
             signal: signalName,
-            outputTail: output.slice(-8_000),
+            outputBytes: Buffer.byteLength(output, "utf8"),
           },
         });
       });
