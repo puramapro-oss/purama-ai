@@ -51,7 +51,11 @@ describe("CHEF git state verifier", () => {
     await exec("git", ["commit", "-m", "second"], { cwd: dir });
     const { stdout } = await exec("git", ["rev-parse", "HEAD"], { cwd: dir });
     const head = stdout.trim();
-    await expect(verifyCommittedGitState({ cwd: dir, expectedHeadSha: head, baseSha })).resolves.toBeDefined();
-    await expect(verifyCommittedGitState({ cwd: dir, expectedHeadSha: head, baseSha: "e".repeat(40) })).rejects.toThrow(/descend pas/);
+    await expect(
+      verifyCommittedGitState({ cwd: dir, expectedHeadSha: head, baseSha, allowedPaths: ["a.txt"] })
+    ).resolves.toBeDefined();
+    await expect(
+      verifyCommittedGitState({ cwd: dir, expectedHeadSha: head, baseSha: "e".repeat(40), allowedPaths: ["a.txt"] })
+    ).rejects.toThrow(/descend pas/);
   });
 });
