@@ -8,8 +8,10 @@ export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
   const worker = new Worker<AgentCycleJobData>(
     "karta-agent-cycle",
     async (job: Job<AgentCycleJobData>) => {
-      const definition = await resolveAgentDefinition(job.data.agentType);
-      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger, `queue:${job.id}:${job.timestamp}`);
+      const definition = await resolveAgentDefinition(job.data.agentType, job.data.userId);
+      // job.id est stable pour une idempotencyKey. Ne pas inclure le timestamp :
+      // un job recréé après nettoyage doit rester la même livraison métier.
+      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger, `queue:${job.id}`);
       if (result.status === "error") {
         if (result.retryable !== true) throw new UnrecoverableError(result.errorMessage ?? "Résultat à vérifier avant reprise");
         throw new Error(result.errorMessage ?? "échec inconnu du cycle agent");
