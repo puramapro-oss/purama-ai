@@ -38,6 +38,33 @@ export async function runAgentCycle(
     let cancelled = false;
     let failed = false;
 
+    // Valider le plan entier AVANT le premier effet. Une action inconnue située
+    // après une action valide ne doit jamais être découverte trop tard.
+    const unknownIndex = decision.toolCalls.findIndex(call => !definition.tools.some(tool => tool.name === call.tool));
+    if (unknownIndex >= 0) {
+      decision.toolCalls.forEach((call, index) => {
+        toolsUsed.push({
+          tool: call.tool,
+          paramsSummary: JSON.stringify(call.params),
+          resultSummary: index === unknownIndex ? "Outil inconnu" : "Non exécutée : plan invalide",
+          success: false,
+          outcome: index === unknownIndex ? "failed" : "skipped",
+        });
+      });
+      const outcome: AgentRunResult = {
+        status: "error",
+        decision: decisionText,
+        toolsUsed,
+        resultSummary: summarizeToolsUsed(toolsUsed),
+        errorMessage: "Plan refusé avant exécution : outil inconnu",
+        mock,
+        retryable: false,
+      };
+      await run.finish(outcome);
+      await recordRunOutcome(userId, definition.type, "error");
+      return outcome;
+    }
+
     for (let index = 0; index < decision.toolCalls.length; index++) {
       const call = decision.toolCalls[index];
       const skipRemaining = (reason: string) => {
