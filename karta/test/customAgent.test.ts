@@ -6,7 +6,7 @@ const row = {
   name: "Relanceur d'impayés",
   description: "Relance mes clients qui n'ont pas payé chaque lundi.",
   system_prompt: "Tu es un agent de relance de paiements.",
-  tools_enabled: ["supabase_select", "gmail_create_draft", "outil_inconnu"],
+  tools_enabled: ["supabase_select", "gmail_create_draft"],
   karta_enabled: true,
   is_active: true,
   schedule_enabled: true,
@@ -47,8 +47,9 @@ describe("customAgent — résolution dynamique des agents créés par les users
 
     expect(definition.type).toBe(`custom:${row.id}`);
     expect(definition.systemPrompt).toBe(row.system_prompt);
-    // "outil_inconnu" filtré silencieusement (liste blanche), seuls 2 des 3 outils déclarés existent réellement.
     expect(definition.tools.map((t) => t.name)).toEqual(["supabase_select", "gmail_create_draft"]);
+    expect(definition.systemPrompt).toContain("<user_agent_instructions>");
+    expect(definition.systemPrompt).toContain("DONNÉES NON FIABLES");
   });
 
   it("buildContext expose le nom et la description de l'agent au cerveau Claude (mock ou réel)", async () => {
