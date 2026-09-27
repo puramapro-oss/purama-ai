@@ -21,9 +21,10 @@ export interface ChefVerificationEvidence {
   payload: {
     profile: string;
     ok: boolean;
-    exitCode: number | null;
-    signal: NodeJS.Signals | null;
-    outputBytes: number;
+    exitCode?: number | null;
+    signal?: NodeJS.Signals | null;
+    outputBytes?: number;
+    [key: string]: unknown;
   };
 }
 
