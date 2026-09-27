@@ -77,7 +77,8 @@ describe("CHEF autonomous worker cycle", () => {
 
     expect(result).toMatchObject({ state: "verified_done", taskId: "task-1" });
     expect(transitions).toEqual(["running", "verifying", "verified_done"]);
-    expect(evidence).toHaveLength(1);
+    expect(evidence).toHaveLength(2);
+    expect(evidence.map((entry: any) => entry.kind)).toEqual(["receipt", "test"]);
     expect(control.recordUsage).toHaveBeenCalledOnce();
     expect(control.tryFinishMission).toHaveBeenCalledWith("mission-1");
   });
