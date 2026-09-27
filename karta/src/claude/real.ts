@@ -68,5 +68,5 @@ function toAnthropicTools(tools: AnyToolDefinition[]): Anthropic.Tool[] {
     description: tool.description,
     input_schema: schemaForTool(tool),
     strict: true,
-  } as Anthropic.Tool));
+  } as unknown as Anthropic.Tool));
 }
