@@ -73,8 +73,8 @@ async function sendEmail(input: NotifyInput): Promise<void> {
     body: JSON.stringify({
       from: config.resendFromEmail,
       to: userData.user.email,
-      subject: input.title,
-      html: `<p>${input.body}</p>`,
+      subject: input.title.replace(/[\r\n]+/g, " ").slice(0, 998),
+      text: input.body,
     }),
   });
 
