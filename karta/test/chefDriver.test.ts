@@ -24,6 +24,8 @@ function request(cwd = process.cwd()) {
     briefHash: hash,
     instructions: "Do the task",
     cwd,
+    accessMode: "write" as const,
+    allowedPaths: ["."],
   };
 }
 
