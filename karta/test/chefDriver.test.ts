@@ -1,8 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { mkdtemp, rm, symlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { ProcessChefDriver, assertAllowedCwd, validateDriverResponse } from "../src/chef/driver.js";
 
 const hash = "a".repeat(64);
 const sha = "b".repeat(40);
+const tempDirs: string[] = [];
+
+afterEach(async () => {
+  await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+});
 
 function request(cwd = process.cwd()) {
   return {
@@ -22,6 +30,15 @@ function request(cwd = process.cwd()) {
 describe("CHEF process driver", () => {
   it("never permits a cwd outside trusted roots", () => {
     expect(() => assertAllowedCwd("/etc", [process.cwd()])).toThrow(/hors périmètre/);
+  });
+
+  it("rejects a symlink that lexically lives under a trusted root but escapes outside it", async () => {
+    const trusted = await mkdtemp(join(tmpdir(), "chef-trusted-"));
+    const outside = await mkdtemp(join(tmpdir(), "chef-outside-"));
+    tempDirs.push(trusted, outside);
+    const link = join(trusted, "escape");
+    await symlink(outside, link, "dir");
+    expect(() => assertAllowedCwd(link, [trusted])).toThrow(/hors périmètre/);
   });
 
   it("rejects malformed worker responses", () => {
