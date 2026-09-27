@@ -41,5 +41,8 @@ export const config = {
 
   port: Number(process.env.KARTA_PORT ?? 4100),
   adminToken: process.env.KARTA_ADMIN_TOKEN ?? "",
+  // Secret dédié aux appels KARTA -> Edge Functions internes. Ne jamais réutiliser
+  // SUPABASE_SERVICE_ROLE_KEY comme secret de transport.
+  kartaEdgeToken: process.env.KARTA_EDGE_TOKEN ?? "",
   dailyReportCron: process.env.DAILY_REPORT_CRON ?? "0 8 * * *",
 };
