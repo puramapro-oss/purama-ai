@@ -1,7 +1,7 @@
 import { beforeAll, afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
-const h = vi.hoisted(() => ({ db: null as any, execute: vi.fn(), failFinalize: false, stopped: false }));
+const h = vi.hoisted(() => ({ db: null as any, execute: vi.fn(), enqueue: vi.fn(), failFinalize: false, stopped: false }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: async (name: string, p: any) => {
   if (h.failFinalize && name.includes("finalize")) return { data: null, error: { message: "offline" } };
   try {
@@ -13,6 +13,7 @@ vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: async (name: string, 
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.stopped }));
 vi.mock("../src/engine/autonomy.js", () => ({ loadAgentState: async () => ({ simulationMode: false }), isRunnable: () => ({ ok: true }) }));
 vi.mock("../src/engine/resolveDefinition.js", () => ({ resolveAgentDefinition: async () => ({ tools: [{ name: "act", execute: h.execute }] }) }));
+vi.mock("../src/queue/queues.js", () => ({ enqueueAgentCycle: h.enqueue }));
 const { resolvePendingAction } = await import("../src/engine/approval.js");
 const uid = "00000000-0000-4000-8000-000000000001";
 const rid = "00000000-0000-4000-8000-000000000002";
@@ -26,7 +27,7 @@ beforeAll(async () => {
 });
 afterAll(async () => { await h.db?.close(); });
 beforeEach(async () => {
-  vi.clearAllMocks(); h.failFinalize = false; h.stopped = false; h.execute.mockResolvedValue({ ok: true });
+  vi.clearAllMocks(); h.failFinalize = false; h.stopped = false; h.execute.mockResolvedValue({ ok: true }); h.enqueue.mockResolvedValue("resume-job");
   await h.db.exec("TRUNCATE auth.users CASCADE; INSERT INTO purama_ai.karta_global_state(id,kill_switch) VALUES('global',false) ON CONFLICT(id) DO UPDATE SET kill_switch=false;");
   await h.db.query("INSERT INTO auth.users VALUES ($1)", [uid]);
   await h.db.query("INSERT INTO purama_ai.karta_agent_state(user_id,agent_type,simulation_mode) VALUES($1,'compta',false)", [uid]);
@@ -36,6 +37,14 @@ beforeEach(async () => {
 async function state() { return (await h.db.query("SELECT status,tools_used FROM purama_ai.karta_runs WHERE id=$1",[rid])).rows[0]; }
 describe("approval with real PostgreSQL SQL in PGlite (single backend)", () => {
   it("executes and atomically patches the parent", async () => { expect((await resolvePendingAction(aid,"approve")).ok).toBe(true); expect((await state()).status).toBe("success"); expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({userId:uid,operationId:aid})); });
+  it("plans exactly one idempotent continuation after approval", async () => {
+    expect((await resolvePendingAction(aid,"approve")).ok).toBe(true);
+    expect(h.enqueue).toHaveBeenCalledOnce();
+    expect(h.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: uid, agentType: "compta", trigger: expect.objectContaining({ source: "approval-resume" }) }),
+      expect.objectContaining({ dedupeKey: expect.stringContaining(aid) })
+    );
+  });
   it.each([new Error("provider failed"), {ok:false}])("reports provider failure to the caller", async failure => { if(failure instanceof Error) h.execute.mockRejectedValue(failure); else h.execute.mockResolvedValue(failure); expect((await resolvePendingAction(aid,"approve")).ok).toBe(false); expect((await state()).status).toBe("error"); });
   it("rejects without claiming successful execution", async () => { expect((await resolvePendingAction(aid,"reject")).ok).toBe(true); expect(h.execute).not.toHaveBeenCalled(); expect((await state()).status).toBe("skipped"); });
   it("does not repeat a resolved action", async () => { await resolvePendingAction(aid,"approve"); expect((await resolvePendingAction(aid,"approve")).ok).toBe(false); expect(h.execute).toHaveBeenCalledOnce(); });
