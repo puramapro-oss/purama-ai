@@ -3,6 +3,7 @@ import { config } from "../config.js";
 import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
 import type { ToolDefinition } from "../engine/types.js";
 import { defineTool, objectSchema, stringSchema } from "./validation.js";
+import { isOutputObject, isOutputText, requireOutput } from "./response-validation.js";
 
 interface EmailAgentConfigRow {
   gmail_refresh_token: string | null;
@@ -164,7 +165,8 @@ export const gmailCreateDraftTool: ToolDefinition<
     });
 
     if (!response.ok) throw new Error(`Gmail create draft échoué (${response.status}): ${await response.text()}`);
-    const created = (await response.json()) as { id: string };
+    const created: unknown = await response.json();
+    requireOutput(isOutputObject(created) && isOutputText(created.id) && !("error" in created), "Gmail create draft");
     return { draftId: created.id };
   },
 });
@@ -192,7 +194,8 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     });
 
     if (!response.ok) throw new Error(`Gmail send échoué (${response.status}): ${await response.text()}`);
-    const sent = (await response.json()) as { id: string };
+    const sent: unknown = await response.json();
+    requireOutput(isOutputObject(sent) && isOutputText(sent.id) && !("error" in sent), "Gmail send");
     return { messageId: sent.id };
   },
 });

@@ -1,6 +1,7 @@
 import { getGmailAccessToken } from "./gmail.js";
 import type { ToolDefinition } from "../engine/types.js";
 import { defineTool, objectSchema, optionalSchema, stringSchema, ToolInputError } from "./validation.js";
+import { isOutputObject, isOutputText, requireOutput } from "./response-validation.js";
 
 /** Réutilise le token OAuth Google (scope Calendar inclus dans le consentement Gmail — cf email_agent_config). */
 export const calendarCreateEventTool: ToolDefinition<
@@ -36,7 +37,9 @@ export const calendarCreateEventTool: ToolDefinition<
     });
 
     if (!response.ok) throw new Error(`Calendar create event échoué (${response.status}): ${await response.text()}`);
-    const created = (await response.json()) as { id: string };
+    const created: unknown = await response.json();
+    requireOutput(isOutputObject(created) && isOutputText(created.id) && !("error" in created), "Calendar");
+    requireOutput(created.status === undefined || created.status === "confirmed" || created.status === "tentative", "Calendar");
     return { eventId: created.id };
   },
 });

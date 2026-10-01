@@ -43,25 +43,33 @@ export async function notify(input: NotifyInput): Promise<void> {
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`notify(${input.agentType}): agent-push-send a répondu ${response.status}: ${text}`);
+    throw new Error(`notify(${input.agentType}): agent-push-send a répondu ${response.status}`);
+  }
+
+  const receipt: unknown = await response.json();
+  if (!isRecord(receipt) || receipt.ok !== true || !nonEmptyString(receipt.notification_id) || "error" in receipt) {
+    throw new Error(`notify(${input.agentType}): enregistrement non confirmé — vérifier avant toute reprise`);
+  }
+  let pushUnconfirmed = false;
+  if (channels.includes("push")) {
+    pushUnconfirmed = !Number.isSafeInteger(receipt.push_sent) || (receipt.push_sent as number) <= 0 ||
+      !Number.isSafeInteger(receipt.push_failed) || receipt.push_failed !== 0;
   }
 
   if (channels.includes("email")) {
     await sendEmail(input);
   }
+  if (pushUnconfirmed) throw new Error(`notify(${input.agentType}): notification enregistrée, push non confirmé — vérifier sans renvoi automatique`);
 }
 
 async function sendEmail(input: NotifyInput): Promise<void> {
   if (!config.resendApiKey) {
-    console.warn(`[notify] RESEND_API_KEY absente — email "${input.title}" non envoyé (notif in-app créée)`);
-    return;
+    throw new Error("notify: notification enregistrée mais email demandé non envoyé (configuration Resend absente)");
   }
 
   const { data: userData, error: userError } = await supabase.auth.admin.getUserById(input.userId);
   if (userError || !userData.user?.email) {
-    console.warn(`[notify] impossible de résoudre l'email du user ${input.userId}: ${userError?.message}`);
-    return;
+    throw new Error("notify: notification enregistrée mais destinataire email non confirmé");
   }
 
   const response = await fetch("https://api.resend.com/emails", {
@@ -74,12 +82,23 @@ async function sendEmail(input: NotifyInput): Promise<void> {
       from: config.resendFromEmail,
       to: userData.user.email,
       subject: input.title,
-      html: `<p>${input.body}</p>`,
+      text: input.body,
     }),
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    console.error(`[notify] échec envoi Resend (${response.status}): ${text}`);
+    throw new Error(`notify: notification enregistrée mais Resend a répondu ${response.status}`);
   }
+  const receipt: unknown = await response.json();
+  if (!isRecord(receipt) || !nonEmptyString(receipt.id) || "error" in receipt) {
+    throw new Error("notify: acceptation de l'email non confirmée — vérifier avant toute reprise");
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function nonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
 }

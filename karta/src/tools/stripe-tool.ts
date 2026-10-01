@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
 import { defineTool, objectSchema, optionalSchema, stringSchema } from "./validation.js";
+import { isOutputObject, isOutputText, requireOutput } from "./response-validation.js";
 
 let stripeClient: Stripe | null = null;
 function getStripe(): Stripe {
@@ -23,13 +24,20 @@ export const stripeListUnpaidInvoicesTool: ToolDefinition<{ customerEmail?: stri
       limit: 20,
       ...(params.customerEmail ? { customer: undefined } : {}),
     });
+    requireOutput(isOutputObject(invoices) && Array.isArray(invoices.data), "Stripe invoices");
+    for (const invoice of invoices.data) {
+      requireOutput(isOutputObject(invoice) && isOutputText(invoice.id)
+        && Number.isSafeInteger(invoice.amount_due) && invoice.amount_due >= 0
+        && (invoice.due_date === null || (Number.isSafeInteger(invoice.due_date) && invoice.due_date >= 0))
+        && (invoice.customer_email === null || typeof invoice.customer_email === "string"), "Stripe invoices");
+    }
 
     const filtered = params.customerEmail
       ? invoices.data.filter((inv) => inv.customer_email === params.customerEmail)
       : invoices.data;
 
     return {
-      invoices: filtered.map((inv) => ({ id: inv.id ?? "", amountDue: inv.amount_due, dueDate: inv.due_date })),
+      invoices: filtered.map((inv) => ({ id: inv.id, amountDue: inv.amount_due, dueDate: inv.due_date })),
     };
   },
 });
