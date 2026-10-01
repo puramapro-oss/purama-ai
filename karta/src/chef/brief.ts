@@ -108,7 +108,7 @@ export function validateChefBrief(input: ChefBrief): void {
     if (task.maxAttempts !== undefined && (!Number.isInteger(task.maxAttempts) || task.maxAttempts < 1 || task.maxAttempts > 20)) {
       throw new Error("maxAttempts invalide");
     }
-    uniqueStrings(task.dependsOn, `dependsOn(${taskKey})`);
+    const dependencies = uniqueStrings(task.dependsOn, `dependsOn(${taskKey})`);
     const linked = uniqueStrings(task.requirementKeys, `requirementKeys(${taskKey})`);
     const verificationProfiles = uniqueStrings(task.verificationProfiles, `verificationProfiles(${taskKey})`);
     const writePaths = ownedPaths(task.allowedPaths, taskKey);
@@ -124,7 +124,8 @@ export function validateChefBrief(input: ChefBrief): void {
       throw new Error(`Task write sans allowedPaths: ${taskKey}`);
     }
     if (linked.length === 0) throw new Error(`Task sans requirement: ${taskKey}`);
-    tasks.set(taskKey, task);
+    // The cycle walk must use the same references as dependency validation.
+    tasks.set(taskKey, { ...task, dependsOn: dependencies });
   }
 
   const covered = new Set<string>();
@@ -174,8 +175,8 @@ export function normalizeChefBrief(input: ChefBrief): ChefBrief {
         key: task.key.trim(),
         title: task.title.trim(),
         instructions: task.instructions.trim(),
-        dependsOn: [...(task.dependsOn ?? [])].sort(),
-        requirementKeys: [...task.requirementKeys].sort(),
+        dependsOn: uniqueStrings(task.dependsOn, `dependsOn(${task.key.trim()})`).sort(),
+        requirementKeys: uniqueStrings(task.requirementKeys, `requirementKeys(${task.key.trim()})`).sort(),
         provider: task.provider ?? "auto",
         accessMode: task.accessMode ?? "write",
         ...(task.scopeKey ? { scopeKey: task.scopeKey.trim() } : {}),
@@ -183,7 +184,7 @@ export function normalizeChefBrief(input: ChefBrief): ChefBrief {
         allowedPaths: ownedPaths(task.allowedPaths, task.key.trim()).sort(),
         priority: task.priority ?? 0,
         maxAttempts: task.maxAttempts ?? 3,
-        verificationProfiles: [...(task.verificationProfiles ?? [])].sort(),
+        verificationProfiles: uniqueStrings(task.verificationProfiles, `verificationProfiles(${task.key.trim()})`).sort(),
       }))
       .sort((a, b) => a.key.localeCompare(b.key)),
   };

@@ -1,0 +1,142 @@
+{
+  "auditId": "CHEF-BRIEF-20261001",
+  "scope": "Published CHEF branch only; isolated local Linux checkout; no production deployment or physical tests.",
+  "baseCommit": "fd76a082874f3498b618b2543c44fa6d61bdfac7",
+  "baseBranch": "codex/purama-chef-hardening-20260927",
+  "environment": {
+    "node": "v24.19.0",
+    "npm": "11.9.0",
+    "os": "Linux",
+    "architecture": "x86_64",
+    "gitnexus": "1.6.12"
+  },
+  "dependencyInstallation": "npm ci --ignore-scripts --no-audit --no-fund at repository root and karta; lockfiles unchanged",
+  "baseline": {
+    "success": true,
+    "tests": 216,
+    "passed": 216,
+    "failed": 0,
+    "pending": 0,
+    "files": 34,
+    "rawReportSHA256": "2150394a3585e72607716dc9c9db6de05b58a5a90550bdf22d065aaa3cb713f9"
+  },
+  "regressionsBeforeFix": {
+    "success": false,
+    "tests": 23,
+    "passed": 7,
+    "failed": 16,
+    "pending": 0,
+    "files": 2,
+    "rawReportSHA256": "68f1c8265509df44821e0546000031e4def7571b34d608c56b39c6b1d36e1343"
+  },
+  "afterFix": {
+    "success": true,
+    "tests": 239,
+    "passed": 239,
+    "failed": 0,
+    "pending": 0,
+    "files": 36,
+    "rawReportSHA256": "689fc3ebd109ae836edd16cc64ef144d030af734b105c1ac32817dde36b76976"
+  },
+  "commandsFromKarta": [
+    "npm run typecheck",
+    "IAO_PROPERTY_RUNS=2500 IAO_PROPERTY_SEED=20260930 IAO_PROPERTY_REPORT=../../evidence/stream-after.json npm test -- --reporter=json --outputFile=../../evidence/chef-after.json",
+    "npm run build"
+  ],
+  "typecheckExit": 0,
+  "buildExit": 0,
+  "sourceSHA256": {
+    "karta/src/chef/brief.ts": "741517c9a30dcee1723105ec13f2b4a287755d17ede020c2992685066a4fe623",
+    "karta/src/chef/control-plane.ts": "6079170d9d7471ba42c6084f9810ca4b4f5689d17451cc137f16e56b04c5ad64",
+    "karta/test/chefBriefNormalization.test.ts": "353031a8d8d367787e83e3d308335b8b7a01688955b97fb6c2fe905721f5e6cc",
+    "karta/test/chefVerificationProfiles.test.ts": "b3407248fcc6f944263a0b452d90d0b7e551f12014962edaf35d7d1be46477f7",
+    "karta/package-lock.json": "2731a6d81e43985f80b4db123ce7a8d58de7ab95d61e8f745b0d3f039366c1ba",
+    "package-lock.json": "569170ceb68f76b90dad6d466234833ce52627d5795729dde688e9362b019cd9"
+  },
+  "generatedStreamCases": {
+    "suite": "iao-stream-contracts",
+    "kind": "generated software inputs, not model benchmarks",
+    "at": "2026-10-01T18:26:43.328Z",
+    "node": "v24.19.0",
+    "fastCheck": "4.10.2",
+    "expectedProperties": 4,
+    "runsPerProperty": 2500,
+    "sourceHashes": {
+      "../src/lib/sse.ts": "2b76e564ec896975eb0027afc4c2dfeb9c4cd45a222aa4ee383b2c49b6491bca",
+      "../supabase/functions/_shared/anthropic-stream.ts": "d402b559a4f6214479264ae5259b7dab106023a5c6942fd4e9262756afc04155",
+      "../supabase/functions/_shared/sse-data.ts": "18ac71668456447f4734343a621e27660b8cc45ba51a7652d1c01cff229d3ce7",
+      "test/generative.test.ts": "42708d2bc3282915cc9fc4ca47d4048794096fdf3101d058f6020c6a7501f8df",
+      "package-lock.json": "2731a6d81e43985f80b4db123ce7a8d58de7ab95d61e8f745b0d3f039366c1ba"
+    },
+    "results": [
+      {
+        "name": "browser preserves Unicode through arbitrary valid SSE delimiters and byte chunks",
+        "seed": 20260940,
+        "numRuns": 2500,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 189
+      },
+      {
+        "name": "provider to browser chain preserves content and confirmed completion",
+        "seed": 20260941,
+        "numRuns": 2500,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 381
+      },
+      {
+        "name": "unconfirmed browser responses always reject, including done-shaped text",
+        "seed": 20260942,
+        "numRuns": 2500,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 180
+      },
+      {
+        "name": "provider errors propagate without a false completion",
+        "seed": 20260943,
+        "numRuns": 2500,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 311
+      }
+    ]
+  },
+  "briefMetamorphicProperty": {
+    "test": "chefBriefNormalization.test.ts",
+    "runs": 500,
+    "seed": 20261001,
+    "passed": true
+  },
+  "counting": "Generated cases are exercised within tests and are not additional tests. 216 original + 23 new = 239 after fix.",
+  "integrationLimits": [
+    "External providers and RPC transport use test doubles; no paid providers called.",
+    "Existing SQL tests use PGlite, not a live PostgreSQL/Supabase deployment.",
+    "The ingestion-to-claim test simulates RPC responses; it is not an end-to-end production test.",
+    "The 2026-09-30 Mac audit tested different, locally modified snapshots; its 661 passes were not reproduced here.",
+    "No PC, phone, watch, aerial display, quantum hardware, or spiritual effects were physically tested.",
+    "GitNexus call graph available; full-text extension unavailable, so text search was degraded."
+  ],
+  "compatibility": [
+    "Canonical briefs keep their format; padded references now normalize consistently.",
+    "Reingesting a previously stored padded brief can change its hash and require a new brief version; historical hashes were not rewritten.",
+    "Malformed explicit verification policies now reject the claim instead of dropping checks. Null, missing or empty policies retain the configured default fallback."
+  ]
+}

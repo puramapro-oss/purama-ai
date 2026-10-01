@@ -111,11 +111,14 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     const accessMode = row.access_mode === "read" ? "read" : row.access_mode === "write" ? "write" : null;
     if (!accessMode) throw new Error("Mode d'accès CHEF invalide");
 
-    const rowProfiles = Array.isArray(row.verification_profiles)
-      ? row.verification_profiles.filter((value): value is string => typeof value === "string" && /^[A-Za-z0-9._:-]{1,120}$/.test(value))
-      : [];
+    const rowProfiles = row.verification_profiles ?? [];
+    // Never silently drop a required check or replace a malformed explicit policy.
+    if (!Array.isArray(rowProfiles)) throw new Error("Profils de vérification CHEF invalides");
     const verificationProfiles = rowProfiles.length > 0 ? rowProfiles : this.options.defaultVerificationProfiles;
     if (verificationProfiles.length === 0) throw new Error("Task CHEF sans vérification");
+    if (verificationProfiles.some((value) => typeof value !== "string" || !/^[A-Za-z0-9._:-]{1,120}$/.test(value))) {
+      throw new Error("Profils de vérification CHEF invalides");
+    }
 
     const allowedPaths = Array.isArray(row.allowed_paths)
       ? row.allowed_paths.filter((value): value is string => typeof value === "string" && value.length > 0)
