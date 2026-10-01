@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { defineTool, objectSchema, optionalSchema, stringSchema } from "./validation.js";
 
 let stripeClient: Stripe | null = null;
 function getStripe(): Stripe {
@@ -10,10 +11,11 @@ function getStripe(): Stripe {
 }
 
 /** Utilisé par l'agent Comptable pour lister les factures impayées à relancer (lecture seule, non sensible). */
-export const stripeListUnpaidInvoicesTool: ToolDefinition<{ customerEmail?: string }, { invoices: Array<{ id: string; amountDue: number; dueDate: number | null }> }> = {
+export const stripeListUnpaidInvoicesTool: ToolDefinition<{ customerEmail?: string }, { invoices: Array<{ id: string; amountDue: number; dueDate: number | null }> }> = defineTool({
   name: "stripe_list_unpaid_invoices",
   description: "Liste les factures Stripe impayées (optionnellement filtrées par email client).",
   sensitive: false,
+  input: objectSchema({ customerEmail: optionalSchema(stringSchema({ format: "email", maxLength: 254 })) }),
   async execute(params) {
     const stripe = getStripe();
     const invoices = await stripe.invoices.list({
@@ -30,4 +32,4 @@ export const stripeListUnpaidInvoicesTool: ToolDefinition<{ customerEmail?: stri
       invoices: filtered.map((inv) => ({ id: inv.id ?? "", amountDue: inv.amount_due, dueDate: inv.due_date })),
     };
   },
-};
+});

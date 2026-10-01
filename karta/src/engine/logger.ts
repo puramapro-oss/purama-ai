@@ -1,10 +1,10 @@
 import { supabase } from "../db/supabase.js";
-import type { AgentTrigger, AgentType, ToolCallRecord } from "./types.js";
+import type { AgentRunResult, AgentTrigger, AgentType, ToolCallRecord } from "./types.js";
 
 export interface RunLogHandle {
   runId: string;
   finish: (outcome: {
-    status: "success" | "error" | "awaiting_approval";
+    status: AgentRunResult["status"];
     decision: string;
     toolsUsed: ToolCallRecord[];
     resultSummary: string;
@@ -14,9 +14,8 @@ export interface RunLogHandle {
 }
 
 /**
- * Ouvre une entrée immuable dans karta_runs (status "running"), retourne un handle
- * pour la clôturer. Aucune UPDATE de contenu métier après clôture — seul le statut/résultat
- * final est écrit une fois (pas de ré-écriture ultérieure), conformément à "logs immuables".
+ * Ouvre un journal de cycle. La boucle le clôture une seule fois ; la résolution des
+ * approbations peut ensuite mettre à jour les résultats des actions correspondantes.
  */
 export async function startRun(
   userId: string,
@@ -43,12 +42,18 @@ export async function startRun(
     throw new Error(`startRun(${agentType}): ${error.message}`);
   }
 
-  const runId = data.id as string;
+  if (!data || typeof data.id !== "string" || data.id.length === 0) {
+    throw new Error(`startRun(${agentType}): identifiant du journal non confirmé`);
+  }
+  const runId = data.id;
+  let finishAttempted = false;
 
   return {
     runId,
     finish: async (outcome) => {
-      const { error: updateError } = await supabase
+      if (finishAttempted) throw new Error(`startRun(${agentType}).finish: clôture déjà tentée`);
+      finishAttempted = true;
+      const { data: updated, error: updateError } = await supabase
         .from("karta_runs")
         .update({
           status: outcome.status,
@@ -60,11 +65,15 @@ export async function startRun(
           duration_ms: Date.now() - startedAt,
           finished_at: new Date().toISOString(),
         })
-        .eq("id", runId);
+        .eq("id", runId)
+        .eq("status", "running")
+        .select("id")
+        .maybeSingle();
 
       if (updateError) {
         throw new Error(`startRun(${agentType}).finish: ${updateError.message}`);
       }
+      if (!updated) throw new Error(`startRun(${agentType}).finish: journal absent ou déjà clôturé`);
     },
   };
 }

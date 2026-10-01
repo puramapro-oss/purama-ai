@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("../src/db/supabase.js", () => ({
   supabase: {
     from: vi.fn(() => ({
-      upsert: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),

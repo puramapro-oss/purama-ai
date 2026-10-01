@@ -1,5 +1,6 @@
 import { supabase } from "../db/supabase.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { defineTool, enumSchema, integerSchema, jsonRecordSchema, objectSchema, optionalSchema, ToolInputError } from "./validation.js";
 
 /** Tables purama_ai autorisées pour l'outil générique upsert/select — liste blanche explicite,
  * jamais de nom de table dynamique arbitraire venant de Claude. */
@@ -23,27 +24,41 @@ function assertAllowedTable(table: string): asserts table is AllowedTable {
   }
 }
 
-export const supabaseUpsertTool: ToolDefinition<{ table: string; row: Record<string, unknown> }, { id?: string }> = {
+export const supabaseUpsertTool: ToolDefinition<{ table: string; row: Record<string, unknown> }, { id?: string }> = defineTool({
   name: "supabase_upsert",
-  description: "Insère ou met à jour une ligne dans une table métier autorisée (transactions, factures, documents, prospects...).",
+  description: "Insère une nouvelle ligne sans id, ou met à jour une ligne existante par id appartenant à l'utilisateur, dans une table métier autorisée.",
   sensitive: false,
+  input: objectSchema({ table: enumSchema(ALLOWED_TABLES), row: jsonRecordSchema() }, ({ row }) => {
+    if (Object.hasOwn(row, "id") && (typeof row.id !== "string" || row.id.trim().length === 0 || row.id.length > 200)) {
+      throw new ToolInputError("input.row.id", "identifiant texte non vide attendu");
+    }
+  }),
   async execute(params, ctx) {
     assertAllowedTable(params.table);
-    const { data, error } = await supabase
-      .from(params.table)
-      .upsert({ ...params.row, user_id: ctx.userId })
-      .select("id")
-      .maybeSingle();
+    const { id, ...fields } = params.row;
+    const row = { ...fields, user_id: ctx.userId };
+    // The owner predicate is part of the UPDATE itself, not a racy preliminary read.
+    // INSERT never falls back to an unscoped upsert on a conflicting primary key.
+    const query = typeof id === "string"
+      ? supabase.from(params.table).update(row).eq("id", id).eq("user_id", ctx.userId)
+      : supabase.from(params.table).insert(row);
+    const { data, error } = await query.select("id").maybeSingle();
 
     if (error) throw new Error(`supabase_upsert(${params.table}): ${error.message}`);
-    return { id: data?.id };
+    if (!data?.id) throw new Error("supabase_upsert: aucune ligne autorisée confirmée");
+    return { id: data.id };
   },
-};
+});
 
-export const supabaseSelectTool: ToolDefinition<{ table: string; filters?: Record<string, unknown>; limit?: number }, unknown[]> = {
+export const supabaseSelectTool: ToolDefinition<{ table: string; filters?: Record<string, unknown>; limit?: number }, unknown[]> = defineTool({
   name: "supabase_select",
   description: "Lit des lignes dans une table métier autorisée pour construire le contexte de décision.",
   sensitive: false,
+  input: objectSchema({
+    table: enumSchema(ALLOWED_TABLES),
+    filters: optionalSchema(jsonRecordSchema(true)),
+    limit: optionalSchema(integerSchema(1, 100)),
+  }),
   async execute(params, ctx) {
     assertAllowedTable(params.table);
     let query = supabase
@@ -60,4 +75,4 @@ export const supabaseSelectTool: ToolDefinition<{ table: string; filters?: Recor
     if (error) throw new Error(`supabase_select(${params.table}): ${error.message}`);
     return data ?? [];
   },
-};
+});

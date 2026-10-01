@@ -39,9 +39,11 @@ const AUTONOMY_LABELS: Record<number, string> = {
 const STATUS_META: Record<string, { label: string; icon: typeof CheckCircle2; className: string }> = {
   success: { label: 'Réussi', icon: CheckCircle2, className: 'text-accent-emerald' },
   error: { label: 'Erreur', icon: XCircle, className: 'text-destructive' },
-  awaiting_approval: { label: 'En attente de validation', icon: PauseCircle, className: 'text-yellow-500' },
+  awaiting_approval: { label: 'À valider ou à vérifier', icon: PauseCircle, className: 'text-yellow-500' },
   running: { label: 'En cours', icon: Loader2, className: 'text-accent-cyan' },
   skipped: { label: 'Ignoré', icon: PauseCircle, className: 'text-muted-foreground' },
+  simulated: { label: 'Simulé', icon: FlaskConical, className: 'text-accent-purple' },
+  unknown: { label: 'Statut à vérifier', icon: AlertTriangle, className: 'text-yellow-500' },
 };
 
 function StatCard({
@@ -72,7 +74,7 @@ function StatCard({
 }
 
 function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: string; agentIcon: string }) {
-  const meta = STATUS_META[run.status] ?? STATUS_META.running;
+  const meta = STATUS_META[run.status === 'success' && run.mode === 'simulation' ? 'simulated' : run.status] ?? STATUS_META.unknown;
   const StatusIcon = meta.icon;
 
   return (
@@ -290,9 +292,9 @@ export default function MyEmployees() {
         <>
           {/* Stats réelles (30 derniers jours) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={Activity} label="Exécutions (30j)" value={stats.total} />
-            <StatCard icon={CheckCircle2} label="Taux de réussite" value={`${stats.successRate}%`} />
-            <StatCard icon={PauseCircle} label="En attente de validation" value={stats.awaitingApproval} />
+            <StatCard icon={Activity} label="Cycles enregistrés (30j)" value={stats.isError || stats.isLoading ? '—' : stats.total} />
+            <StatCard icon={CheckCircle2} label="Taux de réussite" value={stats.isError || stats.isLoading || stats.successRate === null ? '—' : `${stats.successRate}%`} hint="Cycles live terminés uniquement" />
+            <StatCard icon={PauseCircle} label="À valider ou à vérifier" value={stats.isError || stats.isLoading ? '—' : stats.awaitingApproval} />
             <StatCard icon={Clock} label="Dernière activité" value={formatRelative(runs[0]?.started_at ?? null)} />
           </div>
 
@@ -300,7 +302,7 @@ export default function MyEmployees() {
             <Card className="bg-yellow-500/5 border-yellow-500/30">
               <CardContent className="p-5">
                 <p className="text-sm font-medium text-foreground mb-1">
-                  {pendingActions.length} action{pendingActions.length > 1 ? 's' : ''} en attente de ta validation
+                  {pendingActions.length} action{pendingActions.length > 1 ? 's' : ''} à valider ou à vérifier
                 </p>
                 <PendingActionsList
                   actions={pendingActions.map((action) => ({

@@ -2,6 +2,7 @@ import { supabase } from "../db/supabase.js";
 import { config } from "../config.js";
 import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { defineTool, objectSchema, stringSchema } from "./validation.js";
 
 interface EmailAgentConfigRow {
   gmail_refresh_token: string | null;
@@ -141,10 +142,16 @@ export async function buildGmailInboxContext(userId: string): Promise<Record<str
 export const gmailCreateDraftTool: ToolDefinition<
   { threadId: string; to: string; subject: string; body: string },
   { draftId: string }
-> = {
+> = defineTool({
   name: "gmail_create_draft",
   description: "Crée un brouillon de réponse Gmail (n'envoie rien — nécessite validation humaine avant envoi).",
   sensitive: false,
+  input: objectSchema({
+    threadId: stringSchema({ maxLength: 200, pattern: "^[A-Za-z0-9_-]+$" }),
+    to: stringSchema({ format: "email", maxLength: 254 }),
+    subject: stringSchema({ minLength: 0, maxLength: 998, pattern: "^[^\\r\\n]*$" }),
+    body: stringSchema({ minLength: 0, maxLength: 100_000 }),
+  }),
   async execute(params, ctx) {
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
@@ -160,12 +167,17 @@ export const gmailCreateDraftTool: ToolDefinition<
     const created = (await response.json()) as { id: string };
     return { draftId: created.id };
   },
-};
+});
 
-export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: string }, { messageId: string }> = {
+export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: string }, { messageId: string }> = defineTool({
   name: "gmail_send",
   description: "Envoie réellement un email au nom de l'utilisateur — action sensible.",
   sensitive: true,
+  input: objectSchema({
+    to: stringSchema({ format: "email", maxLength: 254 }),
+    subject: stringSchema({ minLength: 0, maxLength: 998, pattern: "^[^\\r\\n]*$" }),
+    body: stringSchema({ minLength: 0, maxLength: 100_000 }),
+  }),
   async execute(params, ctx) {
     await assertUnderDailySendLimit(ctx.userId);
 
@@ -183,7 +195,7 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     const sent = (await response.json()) as { id: string };
     return { messageId: sent.id };
   },
-};
+});
 
 const DAILY_SEND_LIMIT = 400;
 

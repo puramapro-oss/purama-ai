@@ -3,7 +3,15 @@ import { createMockClaudeClient } from "../src/claude/mock.js";
 import type { ToolDefinition } from "../src/engine/types.js";
 
 function tool(name: string): ToolDefinition {
-  return { name, description: "test", sensitive: false, execute: async () => ({}) };
+  return {
+    name, description: "test", sensitive: false,
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    parseInput: (input) => {
+      if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("objet attendu");
+      return input as Record<string, unknown>;
+    },
+    execute: async () => ({}),
+  };
 }
 
 describe("fallback générique (agents action, cf actionAgents.ts)", () => {

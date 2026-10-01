@@ -1,148 +1,293 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AgentDefinition, AgentTrigger, ToolDefinition } from "../src/engine/types.js";
+import type { AgentDecision, AgentDefinition, AgentState, AgentTrigger, ToolDefinition } from "../src/engine/types.js";
 
 process.env.KARTA_MOCK_CLAUDE = "true";
 process.env.SUPABASE_URL = "https://example.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
-process.env.ANTHROPIC_MODEL_MAIN = "claude-sonnet-4-6";
-process.env.ANTHROPIC_MODEL_FAST = "claude-haiku-4-5-20251001";
-process.env.REDIS_URL = "redis://127.0.0.1:6379";
 
-/** Builder chaînable minimal : chaque méthode "filtre" renvoie this, thenable direct pour
- * les updates/inserts awaités sans terminal, et single()/maybeSingle() configurables par table. */
-function makeBuilder(resolved: { data: unknown; error: unknown }) {
-  const builder: Record<string, unknown> = {};
-  for (const method of ["select", "eq", "lte", "in", "order", "limit", "update", "insert", "upsert"]) {
-    builder[method] = vi.fn(() => builder);
-  }
-  builder.single = vi.fn(async () => resolved);
-  builder.maybeSingle = vi.fn(async () => resolved);
-  builder.then = (onResolve: (v: typeof resolved) => unknown) => Promise.resolve(resolved).then(onResolve);
-  return builder;
-}
-
-const tableResolutions: Record<string, { data: unknown; error: unknown }> = {
-  karta_global_state: { data: { kill_switch: false }, error: null },
-  karta_agent_state: { data: { is_enabled: true, autonomy_level: 2, kill_switch: false, simulation_mode: false }, error: null },
-  karta_runs: { data: { id: "run-1" }, error: null },
-  karta_pending_actions: { data: { id: "pending-1" }, error: null },
-  agent_notifications: { data: null, error: null },
-};
-
-vi.mock("../src/db/supabase.js", () => ({
-  supabase: {
-    from: vi.fn((table: string) => makeBuilder(tableResolutions[table] ?? { data: null, error: null })),
-  },
+const h = vi.hoisted(() => ({
+  state: {} as AgentState, globalKill: false, stateError: undefined as Error | undefined,
+  decide: vi.fn<() => Promise<AgentDecision>>(), finish: vi.fn(), recordOutcome: vi.fn(),
+  createPending: vi.fn(), notify: vi.fn(), globalCheck: vi.fn(), stateRead: vi.fn(),
 }));
-
+vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ isMock: true, decide: h.decide }) }));
+vi.mock("../src/engine/autonomy.js", async (importOriginal) => ({
+  ...await importOriginal<typeof import("../src/engine/autonomy.js")>(),
+  loadAgentState: vi.fn(async () => {
+    if (h.stateError) throw h.stateError;
+    const snapshot = { ...h.state };
+    await h.stateRead();
+    return snapshot;
+  }),
+  recordRunOutcome: h.recordOutcome,
+}));
+vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: h.globalCheck }));
+vi.mock("../src/engine/logger.js", () => ({ startRun: vi.fn(async () => ({ runId: "run-1", finish: h.finish })) }));
+vi.mock("../src/engine/approval.js", () => ({ createPendingAction: h.createPending }));
+vi.mock("../src/engine/notify.js", () => ({ notify: h.notify }));
 const { runAgentCycle } = await import("../src/engine/loop.js");
 
 function stubTool(name: string, sensitive: boolean, execute: ToolDefinition["execute"]): ToolDefinition {
-  return { name, description: "test", sensitive, execute };
+  return {
+    name, description: "test", sensitive, execute,
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    parseInput: (input: unknown) => {
+      if (typeof input !== "object" || input === null || Array.isArray(input) || Object.keys(input).length) {
+        throw new Error("test tool expects an empty object");
+      }
+      return {};
+    },
+  };
 }
-
+function decision(...names: string[]): AgentDecision {
+  return { summary: "Décision de test", toolCalls: names.map((tool) => ({ tool, params: {} })), requiresApproval: false, mock: true };
+}
+function agent(...tools: ToolDefinition[]): AgentDefinition {
+  return { type: "legal", systemPrompt: "test", tools, buildContext: vi.fn(async () => ({})) };
+}
 const trigger: AgentTrigger = { type: "manual", source: "test" };
+const run = (definition: AgentDefinition) => runAgentCycle("user-1", definition, trigger);
 
 describe("runAgentCycle", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("exécute un outil non sensible directement en mode live niveau 2 (decision.requiresApproval=false)", async () => {
-    const executed = vi.fn(async () => ({ ok: true }));
-    const definition: AgentDefinition = {
-      type: "legal",
-      systemPrompt: "test",
-      tools: [stubTool("send_notification", false, executed)],
-      buildContext: async () => ({ upcomingDeadlines: [{ title: "doc", expires_at: "2026-08-01" }] }),
-    };
-
-    const result = await runAgentCycle("user-1", definition, trigger);
-
-    expect(result.status).toBe("success");
-    expect(executed).toHaveBeenCalledOnce();
-    expect(result.mock).toBe(true); // KARTA_MOCK_CLAUDE=true dans ce test
+  beforeEach(() => {
+    vi.clearAllMocks();
+    for (const value of Object.values(h)) {
+      if (typeof value === "function") value.mockReset();
+    }
+    h.state = { userId: "user-1", agentType: "legal", isEnabled: true, autonomyLevel: 2, killSwitch: false, simulationMode: false };
+    h.globalKill = false;
+    h.stateError = undefined;
+    h.globalCheck.mockImplementation(async () => h.globalKill);
+    h.decide.mockResolvedValue(decision("action"));
+    h.finish.mockResolvedValue(undefined);
+    h.recordOutcome.mockResolvedValue(undefined);
+    h.createPending.mockResolvedValue("pending-1");
+    h.notify.mockResolvedValue(undefined);
   });
 
-  it("un outil sensible en attente d'approbation n'est jamais exécuté (autonomie niveau 2)", async () => {
-    const executed = vi.fn(async () => ({ ok: true }));
-    const definition: AgentDefinition = {
-      type: "email",
-      systemPrompt: "test",
-      tools: [stubTool("gmail_create_draft", false, executed)], // decision.requiresApproval=true côté mock email
-      buildContext: async () => ({ newEmails: [{ subject: "Q", from: "a@b.com", threadId: "t1" }] }),
-    };
+  it("exécute un outil non sensible en live au niveau 2", async () => {
+    const execute = vi.fn(async () => ({ ok: true }));
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("success");
+    expect(execute).toHaveBeenCalledOnce();
+    expect(result.mock).toBe(true);
+    expect(result.toolsUsed[0].outcome).toBe("executed");
+    expect(result.retrySafe).toBe(false);
+    expect(h.globalCheck.mock.calls.every(([options]) => options?.fresh === true)).toBe(true);
+  });
 
-    const result = await runAgentCycle("user-1", definition, trigger);
-
+  it("conserve l'approbation demandée sans compter une exécution", async () => {
+    const execute = vi.fn();
+    h.decide.mockResolvedValue({ ...decision("action"), requiresApproval: true });
+    const result = await run(agent(stubTool("action", false, execute)));
     expect(result.status).toBe("awaiting_approval");
-    expect(executed).not.toHaveBeenCalled();
-    // Fix bloquant QA 2026-07-27 : l'action doit être journalisée dans karta_pending_actions
-    // (id retourné par l'insert mocké) pour pouvoir être réellement exécutée après approbation.
-    expect(result.toolsUsed[0].pendingActionId).toBe("pending-1");
+    expect(execute).not.toHaveBeenCalled();
+    expect(result.toolsUsed[0]).toMatchObject({ pendingActionId: "pending-1", outcome: "awaiting_approval" });
+    expect(result.resultSummary).toMatch(/0.*exécut/);
+    expect(result.retrySafe).toBe(false);
   });
 
-  it("ne casse pas si l'outil décidé par Claude n'existe pas dans la définition de l'agent", async () => {
-    vi.resetModules();
-    vi.doMock("../src/claude/index.js", () => ({
-      getClaudeClient: () => ({
-        isMock: true,
-        decide: async () => ({
-          summary: "test",
-          toolCalls: [{ tool: "outil_qui_nexiste_pas", params: {} }],
-          requiresApproval: false,
-          mock: true,
-        }),
-      }),
-    }));
-
-    const { runAgentCycle: freshRunAgentCycle } = await import("../src/engine/loop.js");
-    const definition: AgentDefinition = {
-      type: "email",
-      systemPrompt: "test",
-      tools: [],
-      buildContext: async () => ({}),
-    };
-
-    const result = await freshRunAgentCycle("user-1", definition, trigger);
-    expect(result.status).toBe("success");
+  it("refuse un outil inconnu avec un statut d'erreur", async () => {
+    const result = await run(agent());
+    expect(result.status).toBe("error");
     expect(result.toolsUsed[0].success).toBe(false);
     expect(result.toolsUsed[0].resultSummary).toContain("inconnu");
-
-    vi.doUnmock("../src/claude/index.js");
   });
 
-  it("ne fait rien de plus qu'un skip si l'agent est désactivé", async () => {
-    tableResolutions.karta_agent_state = {
-      data: { is_enabled: false, autonomy_level: 1, kill_switch: false, simulation_mode: true },
-      error: null,
-    };
+  it("marque l'échec d'un outil sans autoriser une répétition de ses effets possibles", async () => {
+    const execute = vi.fn(async () => { throw new Error("réponse perdue après envoi possible"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("error");
+    expect(result.retrySafe).toBe(false);
+    expect(result.toolsUsed[0].success).toBe(false);
+    expect(result.toolsUsed[0].resultSummary).toContain("réponse perdue");
+    expect(h.finish).toHaveBeenCalledOnce();
+  });
 
-    const buildContext = vi.fn(async () => ({}));
-    const definition: AgentDefinition = { type: "compta", systemPrompt: "test", tools: [], buildContext };
+  it("préserve une action réussie quand la suivante échoue", async () => {
+    h.decide.mockResolvedValue(decision("first", "second"));
+    const first = vi.fn(async () => ({ effect: "created" }));
+    const second = vi.fn(async () => { throw new Error("second failed"); });
+    const result = await run(agent(stubTool("first", false, first), stubTool("second", false, second)));
+    expect(result.status).toBe("error");
+    expect(result.retrySafe).toBe(false);
+    expect(result.toolsUsed).toHaveLength(2);
+    expect(result.toolsUsed[0].outcome).toBe("executed");
+    expect(result.toolsUsed[1].success).toBe(false);
+    expect(first).toHaveBeenCalledOnce();
+  });
 
-    const result = await runAgentCycle("user-1", definition, trigger);
+  it("préserve les actions en attente même si un autre outil est inconnu", async () => {
+    h.decide.mockResolvedValue(decision("action", "missing"));
+    const execute = vi.fn();
+    const result = await run(agent(stubTool("action", true, execute)));
+    expect(result.status).toBe("error");
+    expect(result.toolsUsed).toHaveLength(2);
+    expect(result.toolsUsed[0]).toMatchObject({ outcome: "awaiting_approval", pendingActionId: "pending-1" });
+    expect(execute).not.toHaveBeenCalled();
+    expect(result.retrySafe).toBe(false);
+  });
 
+  it("ne construit aucun contexte pour un agent désactivé", async () => {
+    h.state.isEnabled = false;
+    const definition = agent();
+    const result = await run(definition);
+    expect(result.status).toBe("skipped");
     expect(result.resultSummary).toContain("désactivé");
-    expect(buildContext).not.toHaveBeenCalled(); // le cycle s'arrête avant même de construire le contexte
-
-    tableResolutions.karta_agent_state = { data: { is_enabled: true, autonomy_level: 2, kill_switch: false, simulation_mode: false }, error: null };
+    expect(definition.buildContext).not.toHaveBeenCalled();
   });
 
-  it("respecte le kill switch global avant tout", async () => {
-    // isGlobalKillSwitchActive() cache 5s côté module (cf killswitch.ts) — reset le registre de
-    // modules pour repartir d'un cache vierge, sinon ce test hériterait du "false" mis en cache
-    // par les tests précédents dans ce même fichier.
-    vi.resetModules();
-    tableResolutions.karta_global_state = { data: { kill_switch: true }, error: null };
+  it("respecte l'arrêt global avant tout", async () => {
+    h.globalKill = true;
+    const definition = agent();
+    const result = await run(definition);
+    expect(result.status).toBe("skipped");
+    expect(definition.buildContext).not.toHaveBeenCalled();
+    expect(h.decide).not.toHaveBeenCalled();
+  });
 
-    const { runAgentCycle: freshRunAgentCycle } = await import("../src/engine/loop.js");
-    const buildContext = vi.fn(async () => ({}));
-    const definition: AgentDefinition = { type: "legal", systemPrompt: "test", tools: [], buildContext };
+  it("recontrôle l'arrêt après la construction du contexte", async () => {
+    const execute = vi.fn();
+    const definition = agent(stubTool("action", false, execute));
+    definition.buildContext = async () => { h.globalKill = true; return {}; };
+    const result = await run(definition);
+    expect(result.status).not.toBe("success");
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(execute).not.toHaveBeenCalled();
+  });
 
-    const result = await freshRunAgentCycle("user-1", definition, trigger);
+  it("recontrôle l'arrêt activé pendant la décision", async () => {
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.globalKill = true; return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).not.toBe("success");
+    expect(execute).not.toHaveBeenCalled();
+    expect(h.createPending).not.toHaveBeenCalled();
+  });
 
-    expect(result.resultSummary).toContain("kill switch global");
-    expect(buildContext).not.toHaveBeenCalled();
+  it("arrête les actions suivantes lorsque la première active l'arrêt", async () => {
+    h.decide.mockResolvedValue(decision("first", "second"));
+    const first = vi.fn(async () => { h.globalKill = true; return { ok: true }; });
+    const second = vi.fn();
+    const result = await run(agent(stubTool("first", false, first), stubTool("second", false, second)));
+    expect(first).toHaveBeenCalledOnce();
+    expect(second).not.toHaveBeenCalled();
+    expect(result.toolsUsed[0].outcome).toBe("executed");
+    expect(result.status).not.toBe("success");
+    expect(result.retrySafe).toBe(false);
+  });
 
-    tableResolutions.karta_global_state = { data: { kill_switch: false }, error: null };
+  it("refuse une action si l'agent vient d'être désactivé", async () => {
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.state.isEnabled = false; return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).not.toBe("success");
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("refuse une action si la relecture de l'état échoue", async () => {
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.stateError = new Error("state offline"); return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("error");
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("recontrôle l'arrêt activé pendant la relecture de l'état", async () => {
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => {
+      h.stateRead.mockImplementation(async () => { h.globalKill = true; });
+      return decision("action");
+    });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).not.toBe("success");
+    expect(execute).not.toHaveBeenCalled();
+    expect(h.createPending).not.toHaveBeenCalled();
+  });
+
+  it("ne transforme jamais un cycle initialement simulé en action réelle", async () => {
+    h.state.simulationMode = true;
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.state.simulationMode = false; return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("simulated");
+    expect(execute).not.toHaveBeenCalled();
+    expect(h.createPending).not.toHaveBeenCalled();
+    expect(result.toolsUsed[0].outcome).toBe("simulated");
+  });
+
+  it("respecte un passage au mode simulation pendant un cycle live", async () => {
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.state.simulationMode = true; return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).not.toBe("success");
+    expect(execute).not.toHaveBeenCalled();
+    expect(h.createPending).not.toHaveBeenCalled();
+  });
+
+  it("une hausse d'autonomie ne retire pas l'approbation initiale", async () => {
+    h.state.autonomyLevel = 1;
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.state.autonomyLevel = 3; return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("awaiting_approval");
+    expect(execute).not.toHaveBeenCalled();
+    expect(h.createPending).toHaveBeenCalledOnce();
+  });
+
+  it("une baisse d'autonomie ajoute immédiatement l'approbation", async () => {
+    h.state.autonomyLevel = 3;
+    const execute = vi.fn();
+    h.decide.mockImplementation(async () => { h.state.autonomyLevel = 1; return decision("action"); });
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("awaiting_approval");
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("une panne des métadonnées ne réécrit pas le journal ni les effets réussis", async () => {
+    const execute = vi.fn(async () => ({ ok: true }));
+    h.recordOutcome.mockRejectedValue(new Error("metadata offline"));
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("success");
+    expect(result.retrySafe).toBe(false);
+    expect(result.decision).toBe("Décision de test");
+    expect(result.mock).toBe(true);
+    expect(result.toolsUsed[0].outcome).toBe("executed");
+    expect(result.warnings?.join(" ")).toContain("metadata offline");
+    expect(h.finish).toHaveBeenCalledOnce();
+    expect(h.finish.mock.calls[0][0].toolsUsed).toEqual(result.toolsUsed);
+  });
+
+  it("une clôture ambiguë garde l'historique et interdit la reprise automatique", async () => {
+    const execute = vi.fn(async () => ({ ok: true }));
+    h.finish.mockRejectedValue(new Error("finish response lost"));
+    const result = await run(agent(stubTool("action", false, execute)));
+    expect(result.status).toBe("error");
+    expect(result.retrySafe).toBe(false);
+    expect(result.toolsUsed[0].outcome).toBe("executed");
+    expect(result.decision).toBe("Décision de test");
+    expect(result.mock).toBe(true);
+    expect(h.finish).toHaveBeenCalledOnce();
+    expect(execute).toHaveBeenCalledOnce();
+  });
+
+  it("une création d'approbation ambiguë n'autorise pas sa duplication", async () => {
+    const execute = vi.fn();
+    h.createPending.mockRejectedValue(new Error("insert response lost"));
+    const result = await run(agent(stubTool("action", true, execute)));
+    expect(result.status).toBe("error");
+    expect(result.retrySafe).toBe(false);
+    expect(h.createPending).toHaveBeenCalledOnce();
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("refuse des paramètres invalides avant exécution ou création d'approbation", async () => {
+    const execute = vi.fn();
+    h.decide.mockResolvedValue({ ...decision("action"), toolCalls: [{ tool: "action", params: { unexpected: true } }] });
+    const result = await run(agent(stubTool("action", true, execute)));
+    expect(result.status).toBe("error");
+    expect(execute).not.toHaveBeenCalled();
+    expect(h.createPending).not.toHaveBeenCalled();
+    expect(result.toolsUsed[0].success).toBe(false);
   });
 });

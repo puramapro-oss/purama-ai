@@ -1,10 +1,12 @@
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { defineTool, objectSchema, stringSchema } from "./validation.js";
 
-export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{ title: string; url: string; snippet: string }> }> = {
+export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{ title: string; url: string; snippet: string }> }> = defineTool({
   name: "web_search",
   description: "Recherche web (via Tavily) — veille juridique, recherche de prospects, analyse concurrentielle.",
   sensitive: false,
+  input: objectSchema({ query: stringSchema({ maxLength: 2000, pattern: "\\S" }) }),
   async execute(params) {
     if (!config.tavilyApiKey) throw new Error("TAVILY_API_KEY non configurée côté KARTA");
 
@@ -21,4 +23,4 @@ export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{
       results: (data.results ?? []).map((r) => ({ title: r.title, url: r.url, snippet: r.content })),
     };
   },
-};
+});

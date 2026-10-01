@@ -1,14 +1,25 @@
 import { getGmailAccessToken } from "./gmail.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { defineTool, objectSchema, optionalSchema, stringSchema, ToolInputError } from "./validation.js";
 
 /** Réutilise le token OAuth Google (scope Calendar inclus dans le consentement Gmail — cf email_agent_config). */
 export const calendarCreateEventTool: ToolDefinition<
   { title: string; startIso: string; endIso: string; attendeeEmail?: string },
   { eventId: string }
-> = {
+> = defineTool({
   name: "calendar_create_event",
   description: "Crée un événement dans le Google Calendar de l'utilisateur (ex: appel planifié, rendez-vous).",
   sensitive: false,
+  input: objectSchema({
+    title: stringSchema({ maxLength: 512, pattern: "\\S" }),
+    startIso: stringSchema({ format: "date-time", maxLength: 40 }),
+    endIso: stringSchema({ format: "date-time", maxLength: 40 }),
+    attendeeEmail: optionalSchema(stringSchema({ format: "email", maxLength: 254 })),
+  }, (params) => {
+    if (Date.parse(params.endIso) <= Date.parse(params.startIso)) {
+      throw new ToolInputError("input.endIso", "la fin doit être postérieure au début");
+    }
+  }),
   async execute(params, ctx) {
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Google OAuth non complété pour cet utilisateur");
@@ -28,4 +39,4 @@ export const calendarCreateEventTool: ToolDefinition<
     const created = (await response.json()) as { id: string };
     return { eventId: created.id };
   },
-};
+});
