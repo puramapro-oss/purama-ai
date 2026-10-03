@@ -44,6 +44,9 @@ jobs:
       - name: Security tests
         run: npm run test:security
 
+      - name: Release configuration tests
+        run: npm run test:release-config
+
       - name: Mobile OAuth contract tests
         run: node --test tests/mobile-oauth-pkce.test.mjs
 

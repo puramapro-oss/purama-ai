@@ -17,6 +17,7 @@
     "preview": "vite preview",
     "test:unit": "vitest run --config vitest.config.ts",
     "test:security": "node --experimental-strip-types --test tests/oauth-google-security.test.mjs tests/cors-security.test.mjs tests/edge-auth-hardening.test.mjs supabase/functions/_shared/oauth-state.test.ts supabase/functions/_shared/social-callback-gate.test.ts supabase/functions/_shared/webhook-security.test.ts",
+    "test:release-config": "node --test tests/release-config.test.mjs",
     "test:e2e": "npm run build && playwright test",
     "test": "npm run test:e2e",
     "test:desktop": "npm run build && playwright test --project=desktop"

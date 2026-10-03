@@ -26,7 +26,7 @@ Temps estime : 3 minutes (apres la premiere configuration du compte Google Play)
 Dans le menu lateral gauche, remplir chaque section marquee d'un point rouge :
 
 ### Politique de confidentialite
-- URL : `https://purama-ai.purama.dev/politique-confidentialite`
+- URL : `https://purama-ai.purama.dev/politique-de-confidentialite`
 
 ### Acces a l'application
 - Selectionner : **Toutes les fonctionnalites sont accessibles sans droits d'acces speciaux**
