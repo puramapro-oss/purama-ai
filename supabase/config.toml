@@ -12,6 +12,11 @@ verify_jwt = false
 [functions.oauth-google]
 verify_jwt = true
 
+[functions.email-agent-gmail-oauth]
+# Google invokes the GET callback without the Supabase bearer token. The function
+# authenticates POST starts itself and validates signed, one-time callback state.
+verify_jwt = false
+
 [functions.process-influencer-payments]
 verify_jwt = false
 
