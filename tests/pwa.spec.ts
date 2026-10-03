@@ -20,4 +20,17 @@ test.describe('PWA — Manifest & Service Worker', () => {
       expect(href).toBeTruthy();
     }
   });
+
+  test('le service worker renvoie les validations vers l\'interface authentifiée', async ({ request }) => {
+    const response = await request.get('/sw.js');
+    expect(response.ok()).toBeTruthy();
+
+    const serviceWorker = await response.text();
+    expect(serviceWorker).not.toContain('/api/agent/approve');
+    expect(serviceWorker).not.toContain("action: 'approve'");
+    expect(serviceWorker).not.toContain('action_payload: data.action_payload');
+    expect(serviceWorker).toContain("{ action: 'review', title: '👁 Valider dans Purama' }");
+    expect(serviceWorker).toContain("{ action: 'review', title: '👁 Vérifier dans Purama' }");
+    expect(serviceWorker).toContain('self.clients.openWindow(url)');
+  });
 });

@@ -53,22 +53,17 @@ self.addEventListener('push', (event) => {
     data: {
       url: data.action_url || '/dashboard',
       action_type: data.action_type,
-      action_payload: data.action_payload,
     },
     actions: [],
   };
 
   // Contextual actions per agent type
   if (data.action_type === 'approve_declaration') {
-    options.actions = [
-      { action: 'approve', title: '✅ Approuver' },
-      { action: 'review', title: '👁 Voir' },
-    ];
+    // A service worker has no trustworthy Supabase user session to authorize
+    // a sensitive mutation. Approval must happen in the authenticated UI.
+    options.actions = [{ action: 'review', title: '👁 Valider dans Purama' }];
   } else if (data.action_type === 'approve_draft') {
-    options.actions = [
-      { action: 'approve', title: '✅ Envoyer' },
-      { action: 'review', title: '👁 Voir' },
-    ];
+    options.actions = [{ action: 'review', title: '👁 Vérifier dans Purama' }];
   } else if (data.action_type === 'review') {
     options.actions = [{ action: 'review', title: '👁 Voir' }];
   }
@@ -81,24 +76,8 @@ self.addEventListener('notificationclick', (event) => {
   const data = event.notification.data || {};
   const url = data.url || '/dashboard';
 
-  // For "approve" inline action, hit the dedicated edge function
-  if (event.action === 'approve' && data.action_payload) {
-    event.waitUntil(
-      fetch('/api/agent/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action_type: data.action_type,
-          payload: data.action_payload,
-        }),
-      })
-        .catch(() => {})
-        .then(() => self.clients.openWindow(url))
-    );
-    return;
-  }
-
-  // Default: focus an existing tab or open a new one on the action URL
+  // Every click opens the authenticated application. Sensitive actions are
+  // deliberately never executed directly from notification payload data.
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsList) => {
       for (const client of clientsList) {
