@@ -1,4 +1,5 @@
 import { getGmailAccessToken } from "./gmail.js";
+import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
 import { defineTool, objectSchema, optionalSchema, stringSchema, ToolInputError } from "./validation.js";
 import { isOutputObject, isOutputText, requireOutput } from "./response-validation.js";
@@ -34,6 +35,7 @@ export const calendarCreateEventTool: ToolDefinition<
         end: { dateTime: params.endIso },
         attendees: params.attendeeEmail ? [{ email: params.attendeeEmail }] : undefined,
       }),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`Calendar create event échoué (${response.status}): ${await response.text()}`);

@@ -3,7 +3,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   fetch: vi.fn(),
   getUserById: vi.fn(),
-  config: { supabaseUrl: "https://example.invalid", supabaseServiceRoleKey: "test-key", resendApiKey: "test-resend", resendFromEmail: "noreply@example.com" },
+  config: { supabaseUrl: "https://example.invalid", supabaseServiceRoleKey: "test-key", resendApiKey: "test-resend", resendFromEmail: "noreply@example.com", notificationTimeoutMs: 5_000 },
 }));
 vi.mock("../src/config.js", () => ({ config: mocks.config }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: { auth: { admin: { getUserById: mocks.getUserById } } } }));

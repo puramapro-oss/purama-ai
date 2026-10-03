@@ -13,17 +13,18 @@ const state = vi.hoisted(() => ({
 function query(table: string) {
   const rows = table === "karta_pending_actions" ? state.pending : table === "karta_runs" ? state.runs : null;
   if (!rows) throw new Error(`table inattendue : ${table}`);
-  const filters: Array<{ column: string; value: unknown; kind: "eq" | "in" }> = [];
+  const filters: Array<{ column: string; value: unknown; kind: "eq" | "in" | "lte" }> = [];
   let patch: Row | undefined;
   let countRequested = false;
   const matches = (row: Row) => filters.every(({ column, value, kind }) => kind === "in"
     ? (value as unknown[]).includes(row[column])
-    : column === "tools_used" ? JSON.stringify(row[column]) === value : row[column] === value);
-  const execute = async () => {
+    : kind === "lte" ? typeof row[column] === "string" && row[column] <= String(value)
+      : column === "tools_used" ? JSON.stringify(row[column]) === value : row[column] === value);
+  const execute = async (single = false) => {
     if (patch && table === "karta_runs" && state.beforeRunUpdate) await state.beforeRunUpdate();
     const selected = [...rows.values()].filter(matches);
     if (countRequested) return { data: null, count: state.nullCount ? null : selected.length, error: state.countError ? { message: state.countError } : null };
-    if (!patch) return { data: selected.length ? structuredClone(selected[0]) : null, error: null };
+    if (!patch) return { data: single ? (selected.length ? structuredClone(selected[0]) : null) : structuredClone(selected), error: null };
     if ((state.failFinalization && table === "karta_pending_actions" && patch.status !== "executing") ||
       (state.failRunUpdate && table === "karta_runs")) return { data: null, error: { message: "journal indisponible" } };
     if (!selected.length) {
@@ -42,8 +43,9 @@ function query(table: string) {
     update: (value: Row) => { patch = value; return builder; },
     eq: (column: string, value: unknown) => { filters.push({ column, value, kind: "eq" }); return builder; },
     in: (column: string, value: unknown[]) => { filters.push({ column, value, kind: "in" }); return builder; },
-    maybeSingle: execute,
-    then: (resolve: (value: Awaited<ReturnType<typeof execute>>) => unknown) => execute().then(resolve),
+    lte: (column: string, value: unknown) => { filters.push({ column, value, kind: "lte" }); return builder; },
+    maybeSingle: () => execute(true),
+    then: (resolve: (value: Awaited<ReturnType<typeof execute>>) => unknown) => execute(false).then(resolve),
   };
   return builder;
 }
@@ -59,7 +61,7 @@ vi.mock("../src/engine/autonomy.js", () => ({
   isRunnable: (value: Row) => value.killSwitch ? { ok: false, reason: "kill switch actif" }
     : !value.isEnabled ? { ok: false, reason: "agent désactivé" } : { ok: true },
 }));
-const { resolvePendingAction } = await import("../src/engine/approval.js");
+const { reconcileStuckApprovals, resolvePendingAction } = await import("../src/engine/approval.js");
 const tool = {
   name: "supabase_upsert", description: "", sensitive: false,
   inputSchema: { type: "object", properties: { table: { type: "string" } }, required: ["table"], additionalProperties: false },
@@ -226,6 +228,24 @@ describe("approval — atomic claims and concurrent journal", () => {
   it("refuses an already resolved action", async () => {
     resetState("executed");
     expect((await resolvePendingAction("pending-1", "approve")).ok).toBe(false);
+    expect(executeMock).not.toHaveBeenCalled();
+  });
+
+  it("marks a stale execution unknown without replaying it", async () => {
+    resetState("executing");
+    state.pending.get("pending-1")!.claimed_at = "2026-01-01T00:00:00.000Z";
+    await expect(reconcileStuckApprovals(new Date("2026-01-01T01:00:00.000Z"))).resolves.toBe(1);
+    expect(executeMock).not.toHaveBeenCalled();
+    expect(state.pending.get("pending-1")?.status).toBe("unknown");
+    expect((state.runs.get("run-1")?.tools_used as Row[])[0]).toMatchObject({ outcome: "unknown", success: false });
+    expect(state.runs.get("run-1")?.status).toBe("awaiting_approval");
+  });
+
+  it("leaves a fresh execution claim untouched", async () => {
+    resetState("executing");
+    state.pending.get("pending-1")!.claimed_at = "2026-01-01T00:55:00.000Z";
+    await expect(reconcileStuckApprovals(new Date("2026-01-01T01:00:00.000Z"))).resolves.toBe(0);
+    expect(state.pending.get("pending-1")?.status).toBe("executing");
     expect(executeMock).not.toHaveBeenCalled();
   });
 });

@@ -38,6 +38,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
       refresh_token: decryptGmailToken(data.gmail_refresh_token),
       grant_type: "refresh_token",
     }),
+    signal: AbortSignal.timeout(config.providerTimeoutMs),
   });
 
   if (!response.ok) {
@@ -73,7 +74,7 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
   const query = lastEmailId ? `after:${lastEmailId}` : "is:unread";
   const listResponse = await fetch(
     `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=${encodeURIComponent(query)}`,
-    { headers: { Authorization: `Bearer ${accessToken}` } }
+    { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(config.providerTimeoutMs) }
   );
 
   if (!listResponse.ok) {
@@ -87,7 +88,7 @@ export async function listNewGmailMessages(userId: string, lastEmailId: string |
   for (const m of list.messages) {
     const detailResponse = await fetch(
       `https://gmail.googleapis.com/gmail/v1/users/me/messages/${m.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(config.providerTimeoutMs) }
     );
     if (!detailResponse.ok) continue;
     const detail = (await detailResponse.json()) as {
@@ -162,6 +163,7 @@ export const gmailCreateDraftTool: ToolDefinition<
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ message: { threadId: params.threadId, raw } }),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`Gmail create draft échoué (${response.status}): ${await response.text()}`);
@@ -191,6 +193,7 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({ raw }),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`Gmail send échoué (${response.status}): ${await response.text()}`);

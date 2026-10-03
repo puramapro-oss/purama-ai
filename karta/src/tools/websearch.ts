@@ -14,6 +14,7 @@ export const webSearchTool: ToolDefinition<{ query: string }, { results: Array<{
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ api_key: config.tavilyApiKey, query: params.query, max_results: 5 }),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`Tavily search échoué (${response.status}): ${await response.text()}`);

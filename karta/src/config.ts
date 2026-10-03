@@ -58,6 +58,20 @@ export const config = {
   aiTimeoutMs: parseBoundedInteger("AI_TIMEOUT_MS", process.env.AI_TIMEOUT_MS, 60_000, 1_000, 120_000),
   aiMaxRetries: parseBoundedInteger("AI_MAX_RETRIES", process.env.AI_MAX_RETRIES, 1, 0, 2),
   workerConcurrency: parseBoundedInteger("KARTA_WORKER_CONCURRENCY", process.env.KARTA_WORKER_CONCURRENCY, 5, 1, 8),
+  providerTimeoutMs: parseBoundedInteger(
+    "KARTA_PROVIDER_TIMEOUT_MS", process.env.KARTA_PROVIDER_TIMEOUT_MS, 15_000, 1_000, 60_000
+  ),
+  notificationTimeoutMs: parseBoundedInteger(
+    "KARTA_NOTIFICATION_TIMEOUT_MS", process.env.KARTA_NOTIFICATION_TIMEOUT_MS, 10_000, 1_000, 30_000
+  ),
+  approvalExecutingTimeoutMinutes: parseBoundedInteger(
+    "KARTA_APPROVAL_EXECUTING_TIMEOUT_MINUTES", process.env.KARTA_APPROVAL_EXECUTING_TIMEOUT_MINUTES, 15, 5, 1_440
+  ),
+  approvalReconcileCron: process.env.KARTA_APPROVAL_RECONCILE_CRON ?? "*/5 * * * *",
+  opsAlertUrl: process.env.KARTA_OPS_ALERT_URL ?? "",
+  opsAlertTimeoutMs: parseBoundedInteger(
+    "KARTA_OPS_ALERT_TIMEOUT_MS", process.env.KARTA_OPS_ALERT_TIMEOUT_MS, 5_000, 1_000, 15_000
+  ),
 
   redisUrl: required("REDIS_URL", "redis://127.0.0.1:6379"),
 

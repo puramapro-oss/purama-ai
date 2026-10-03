@@ -31,7 +31,7 @@ vi.mock("../src/db/supabase.js", () => ({
 }));
 
 vi.mock("../src/config.js", () => ({
-  config: { googleClientId: "x", googleClientSecret: "y" },
+  config: { googleClientId: "x", googleClientSecret: "y", providerTimeoutMs: 5_000 },
 }));
 
 const { gmailSendTool } = await import("../src/tools/gmail.js");

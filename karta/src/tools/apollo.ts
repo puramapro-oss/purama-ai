@@ -18,6 +18,7 @@ export const apolloSearchPeopleTool: ToolDefinition<
       method: "POST",
       headers: { "X-Api-Key": config.apolloApiKey, "Content-Type": "application/json" },
       body: JSON.stringify({ q_keywords: params.keywords, per_page: params.limit ?? 10 }),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`Apollo search échoué (${response.status}): ${await response.text()}`);

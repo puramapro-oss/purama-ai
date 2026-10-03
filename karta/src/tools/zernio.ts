@@ -23,6 +23,7 @@ export const zernioPublishTool: ToolDefinition<{ title: string; content: string 
       method: "POST",
       headers: { Authorization: `Bearer ${config.zernioApiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(params),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`Zernio publish échoué (${response.status}): ${await response.text()}`);

@@ -4,6 +4,8 @@ import { listActiveUserIds } from "../agents/index.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { runDailyReport } from "./dailyReport.js";
 import type { AgentType } from "../engine/types.js";
+import { reconcileStuckApprovals } from "../engine/approval.js";
+import { reportOpsFailure } from "../engine/opsAlert.js";
 
 /** Cadences alignées sur les workflows n8n existants qu'elles remplacent (cf AUDIT-AGENTS.md). */
 const CORE_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: string }> = [
@@ -39,7 +41,21 @@ export function startSchedulers(): cron.ScheduledTask[] {
 
   tasks.push(
     cron.schedule(config.dailyReportCron, () => {
-      void runDailyReport().catch((err) => console.error("[scheduler] daily report échoué:", err));
+      void runDailyReport().catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error("[scheduler] daily report échoué:", message);
+        reportOpsFailure("scheduler", `daily-report: ${message}`);
+      });
+    })
+  );
+
+  tasks.push(
+    cron.schedule(config.approvalReconcileCron, () => {
+      void reconcileStuckApprovals().catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error("[scheduler] reconciliation approvals echouee:", message);
+        reportOpsFailure("approval-reconciler", message);
+      });
     })
   );
 
@@ -53,6 +69,8 @@ async function runScheduledCycle(agentType: AgentType, label: string): Promise<v
       await enqueueAgentCycle({ agentType, userId, trigger: { type: "cron", source: label } });
     }
   } catch (error) {
-    console.error(`[scheduler] ${label} échoué:`, error instanceof Error ? error.message : error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`[scheduler] ${label} échoué:`, message);
+    reportOpsFailure("scheduler", `${label}: ${message}`);
   }
 }

@@ -40,6 +40,7 @@ export async function notify(input: NotifyInput): Promise<void> {
       priority: input.priority ?? "normal",
       channels,
     }),
+    signal: AbortSignal.timeout(config.notificationTimeoutMs),
   });
 
   if (!response.ok) {
@@ -84,6 +85,7 @@ async function sendEmail(input: NotifyInput): Promise<void> {
       subject: input.title,
       text: input.body,
     }),
+    signal: AbortSignal.timeout(config.notificationTimeoutMs),
   });
 
   if (!response.ok) {

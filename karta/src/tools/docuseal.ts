@@ -31,6 +31,7 @@ export const docusealCreateSubmissionTool: ToolDefinition<
         template_id: Number(params.templateId),
         submitters: [{ name: params.signerName, email: params.signerEmail }],
       }),
+      signal: AbortSignal.timeout(config.providerTimeoutMs),
     });
 
     if (!response.ok) throw new Error(`DocuSeal create submission échoué (${response.status}): ${await response.text()}`);

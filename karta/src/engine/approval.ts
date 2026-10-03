@@ -4,6 +4,7 @@ import { isRunnable, loadAgentState } from "./autonomy.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { validateToolInput } from "../tools/validation.js";
 import type { AgentType, ToolCallRecord } from "./types.js";
+import { config } from "../config.js";
 
 interface CreatePendingActionInput {
   userId: string;
@@ -39,6 +40,7 @@ interface PendingActionRow {
   tool_name: string;
   tool_params: Record<string, unknown>;
   status: string;
+  claimed_at?: string | null;
 }
 
 export type ResolveDecision = "approve" | "reject";
@@ -81,7 +83,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
     // never be repaired by putting the row back into pending.
     const { data: claimed, error: claimError } = await supabase
       .from("karta_pending_actions")
-      .update({ status: "executing" })
+      .update({ status: "executing", claimed_at: new Date().toISOString() })
       .eq("id", pending.id)
       .eq("status", "pending")
       .select("id")
@@ -117,6 +119,34 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
   } catch (error) {
     return { ok: false, error: errorText(error) };
   }
+}
+
+/**
+ * Ferme sans reexecution les prises en charge dont le resultat n'a jamais ete confirme.
+ * `executing` implique qu'un effet externe peut deja avoir eu lieu : le seul etat sur est
+ * `unknown`, jamais `pending` ou une nouvelle tentative.
+ */
+export async function reconcileStuckApprovals(now = new Date()): Promise<number> {
+  const cutoff = new Date(now.getTime() - config.approvalExecutingTimeoutMinutes * 60_000).toISOString();
+  const { data, error } = await supabase
+    .from("karta_pending_actions")
+    .select("id,user_id,run_id,agent_type,tool_name,tool_params,status,claimed_at")
+    .eq("status", "executing")
+    .lte("claimed_at", cutoff);
+  if (error) throw new Error(`reconcileStuckApprovals: ${error.message}`);
+
+  let reconciled = 0;
+  for (const row of (data ?? []) as PendingActionRow[]) {
+    const summary = "Execution expiree au resultat inconnu ; verification manuelle requise, sans reexecution";
+    try {
+      await finalizePendingAction(row, "unknown", summary, "executing");
+      reconciled += 1;
+    } catch (reconcileError) {
+      const message = errorText(reconcileError);
+      if (!message.includes("modifié concurremment")) throw reconcileError;
+    }
+  }
+  return reconciled;
 }
 
 async function assertLiveApprovalAllowed(pending: PendingActionRow): Promise<void> {

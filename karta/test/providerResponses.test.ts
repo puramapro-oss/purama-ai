@@ -8,6 +8,7 @@ const h = vi.hoisted(() => ({
     docusealApiKey: "offline-test", docusealBaseUrl: "https://docuseal.invalid",
     zernioApiKey: "offline-test", zernioBaseUrl: "https://adapter.invalid",
     stripeSecretKey: "offline-test",
+    providerTimeoutMs: 5_000,
   },
 }));
 

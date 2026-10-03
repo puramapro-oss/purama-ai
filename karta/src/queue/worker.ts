@@ -4,6 +4,7 @@ import { runAgentCycle } from "../engine/loop.js";
 import { resolveAgentDefinition } from "../engine/resolveDefinition.js";
 import type { AgentCycleJobData } from "./queues.js";
 import { config } from "../config.js";
+import { reportOpsFailure } from "../engine/opsAlert.js";
 
 export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
   const worker = new Worker<AgentCycleJobData>(
@@ -30,6 +31,7 @@ export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
 
   worker.on("failed", (job, err) => {
     console.error(`[worker] job ${job?.id} (${job?.name}) échoué après ${job?.attemptsMade} tentative(s): ${err.message}`);
+    reportOpsFailure("worker", `job ${job?.id ?? "inconnu"} (${job?.name ?? "inconnu"}) echoue apres ${job?.attemptsMade ?? 0} tentative(s): ${err.message}`);
   });
 
   return worker;
