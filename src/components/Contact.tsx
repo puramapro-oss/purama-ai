@@ -15,20 +15,24 @@ export function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [website, setWebsite] = useState('')
+  const [startedAt] = useState(() => new Date().toISOString())
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setErrorMessage('')
     
     try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          company: formData.company || null,
-          message: formData.message,
-        })
+      const { error } = await supabase.rpc('submit_contact', {
+        p_name: formData.name.trim(),
+        p_email: formData.email.trim(),
+        p_company: formData.company.trim(),
+        p_message: formData.message.trim(),
+        p_website: website,
+        p_started_at: startedAt,
+      })
       
       if (error) throw error
       
@@ -36,7 +40,13 @@ export function Contact() {
       toast.success('Message envoyé avec succès!')
     } catch (error) {
       console.error('Error submitting form:', error)
-      toast.error('Erreur lors de l\'envoi. Veuillez réessayer.')
+      const limited = typeof error === 'object' && error !== null && 'message' in error
+        && String(error.message).includes('contact_rate_limit')
+      const message = limited
+        ? 'Trop de messages ont été envoyés. Veuillez réessayer dans une heure.'
+        : 'Le message n’a pas pu être envoyé. Vérifiez les champs puis réessayez.'
+      setErrorMessage(message)
+      toast.error(message)
     } finally {
       setIsSubmitting(false)
     }
@@ -167,7 +177,24 @@ export function Contact() {
                   </p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6" aria-describedby={errorMessage ? 'contact-error' : undefined}>
+                  <div className="absolute -left-[10000px]" aria-hidden="true">
+                    <label htmlFor="contact-website">Site web</label>
+                    <input
+                      id="contact-website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                    />
+                  </div>
+                  {errorMessage && (
+                    <p id="contact-error" role="alert" aria-live="assertive" className="text-sm text-destructive">
+                      {errorMessage}
+                    </p>
+                  )}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="contact-name" className="block text-sm font-medium text-foreground mb-2">
@@ -177,6 +204,7 @@ export function Contact() {
                         id="contact-name"
                         type="text"
                         required
+                        minLength={2}
                         maxLength={100}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -192,6 +220,7 @@ export function Contact() {
                         id="contact-email"
                         type="email"
                         required
+                        minLength={3}
                         maxLength={255}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -223,6 +252,7 @@ export function Contact() {
                     <textarea
                       id="contact-message"
                       required
+                      minLength={10}
                       rows={5}
                       maxLength={2000}
                       value={formData.message}
@@ -235,6 +265,7 @@ export function Contact() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
+                    aria-busy={isSubmitting}
                     className="w-full btn-primary flex items-center justify-center gap-2 py-4 disabled:opacity-50"
                   >
                     {isSubmitting ? (

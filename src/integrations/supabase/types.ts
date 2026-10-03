@@ -604,6 +604,7 @@ export type Database = {
           id: string
           message: string
           name: string
+          request_fingerprint: string
           status: string
         }
         Insert: {
@@ -613,6 +614,7 @@ export type Database = {
           id?: string
           message: string
           name: string
+          request_fingerprint: string
           status?: string
         }
         Update: {
@@ -622,6 +624,7 @@ export type Database = {
           id?: string
           message?: string
           name?: string
+          request_fingerprint?: string
           status?: string
         }
         Relationships: []
@@ -1408,6 +1411,17 @@ export type Database = {
       }
     }
     Functions: {
+      submit_contact: {
+        Args: {
+          p_company: string
+          p_email: string
+          p_message: string
+          p_name: string
+          p_started_at: string
+          p_website: string
+        }
+        Returns: string
+      }
       generate_promo_code: {
         Args: { influencer_name: string }
         Returns: string
