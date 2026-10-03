@@ -39,3 +39,10 @@ test('never returns refreshed access tokens to the browser', () => {
   assert.doesNotMatch(edge, /success:\s*true,\s*access_token/);
   assert.match(edge, /return json\(req, \{ success: true \}\)/);
 });
+
+test('rejects external and backslash-normalized OAuth return paths', () => {
+  assert.match(edge, /v\.startsWith\("\/\/"\)/);
+  assert.match(edge, /decoded\.includes\("\\\\"\)/);
+  assert.match(edge, /parsed\.origin === "https:\/\/purama\.invalid"/);
+  assert.match(callback, /safeInternalPath\(data\.returnUrl, '\/mes-connexions'\)/);
+});

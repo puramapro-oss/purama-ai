@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Mail, Lock, Loader2, Sparkles } from 'lucide-react';
+import { safeInternalPath } from '@/lib/safeNavigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = safeInternalPath(location.state?.from?.pathname, '/dashboard');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

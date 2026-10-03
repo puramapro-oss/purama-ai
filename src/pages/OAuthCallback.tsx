@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { safeInternalPath } from '@/lib/safeNavigation';
 
 export default function OAuthCallback() {
   const [searchParams] = useSearchParams();
@@ -70,7 +71,7 @@ export default function OAuthCallback() {
         toast.success('Compte connecté avec succès');
         
         setTimeout(() => {
-          navigate(data.returnUrl || '/mes-connexions');
+          navigate(safeInternalPath(data.returnUrl, '/mes-connexions'));
         }, 1500);
 
       } catch (err) {

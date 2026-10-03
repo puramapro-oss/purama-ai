@@ -17,7 +17,16 @@ async function hmac(value: string) { if (!STATE_SECRET || STATE_SECRET.length < 
 async function signState(payload: Record<string, unknown>) { const encoded = b64(encoder.encode(JSON.stringify(payload))); return `${encoded}.${await hmac(encoded)}`; }
 async function verifyState(state: string) { const [payload, signature, extra] = state.split("."); if (!payload || !signature || extra || signature !== await hmac(payload)) throw new Error("Invalid OAuth state"); return JSON.parse(new TextDecoder().decode(unb64(payload))) as { userId: string; provider: Provider; returnUrl: string; nonce: string; exp: number; codeChallenge: string }; }
 function validProvider(v: string | null): v is Provider { return !!v && Object.hasOwn(PROVIDERS, v); }
-function validReturnUrl(v: string | null) { return v?.startsWith("/") && !v.startsWith("//") ? v : "/mes-connexions"; }
+function validReturnUrl(v: string | null) {
+  if (!v?.startsWith("/") || v.startsWith("//") || v.includes("\\") || Array.from(v).some((char) => {
+    const code = char.charCodeAt(0); return code <= 0x1f || code === 0x7f;
+  })) return "/mes-connexions";
+  try {
+    const decoded = decodeURIComponent(v), parsed = new URL(v, "https://purama.invalid");
+    return !decoded.includes("\\") && !decoded.startsWith("//") && parsed.origin === "https://purama.invalid"
+      ? `${parsed.pathname}${parsed.search}${parsed.hash}` : "/mes-connexions";
+  } catch { return "/mes-connexions"; }
+}
 function admin() { const url = Deno.env.get("SUPABASE_URL"), key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"); if (!url || !key) throw new Error("Supabase service is not configured"); return createClient(url, key, { auth: { persistSession: false } }); }
 async function authUser(req: Request) { const match = req.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i); if (!match) return null; const { data, error } = await admin().auth.getUser(match[1]); return error ? null : data.user; }
 
