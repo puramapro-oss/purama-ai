@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/Badge";
 import { AGENTS } from "@/hooks/useAgents";
 import { formatPrice } from "@/lib/utils";
 import { COLORS } from "@/lib/constants";
+import { openPublicWebRoute, showComingSoon } from "@/lib/mobileActions";
 
 export default function DashboardScreen() {
   const { profile } = useAuth();
@@ -52,8 +53,10 @@ export default function DashboardScreen() {
             )}
             <TouchableOpacity
               testID="notifications-btn"
-              onPress={() => {}}
+              onPress={() => showComingSoon("Les notifications")}
               className="w-10 h-10 rounded-full bg-white/5 items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="Notifications"
             >
               <Ionicons name="notifications-outline" size={20} color="#fff" />
             </TouchableOpacity>
@@ -119,18 +122,25 @@ export default function DashboardScreen() {
         </View>
 
         {/* Cross-promo */}
-        <GlassCard className="mb-6 border-accent/20">
-          <View className="flex-row items-center gap-3">
-            <View className="w-10 h-10 rounded-xl bg-accent/20 items-center justify-center">
-              <Ionicons name="apps" size={20} color={COLORS.accent} />
+        <TouchableOpacity
+          onPress={() => void openPublicWebRoute("ecosystem")}
+          activeOpacity={0.7}
+          accessibilityRole="link"
+          accessibilityLabel="Découvrir l'écosystème Purama"
+        >
+          <GlassCard className="mb-6 border-accent/20">
+            <View className="flex-row items-center gap-3">
+              <View className="w-10 h-10 rounded-xl bg-accent/20 items-center justify-center">
+                <Ionicons name="apps" size={20} color={COLORS.accent} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-white font-semibold text-sm">Decouvre l'ecosysteme Purama</Text>
+                <Text className="text-white/40 text-xs mt-0.5">19 apps IA. -50% avec CROSS50</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.3)" />
             </View>
-            <View className="flex-1">
-              <Text className="text-white font-semibold text-sm">Decouvre l'ecosysteme Purama</Text>
-              <Text className="text-white/40 text-xs mt-0.5">19 apps IA. -50% avec CROSS50</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={16} color="rgba(255,255,255,0.3)" />
-          </View>
-        </GlassCard>
+          </GlassCard>
+        </TouchableOpacity>
 
         <View className="h-8" />
       </ScrollView>

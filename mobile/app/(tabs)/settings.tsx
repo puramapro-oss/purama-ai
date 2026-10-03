@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/hooks/useAuth";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Badge } from "@/components/ui/Badge";
+import { openPublicWebRoute, showComingSoon } from "@/lib/mobileActions";
 
 interface SettingsItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -22,6 +23,8 @@ function SettingsItem({ icon, label, onPress, color = "#fff", badge, testID }: S
       onPress={onPress}
       className="flex-row items-center py-3.5 px-1"
       activeOpacity={0.6}
+      accessibilityRole="button"
+      accessibilityLabel={label}
     >
       <Ionicons name={icon} size={22} color={color} />
       <Text className="text-white flex-1 ml-4 text-base">{label}</Text>
@@ -81,29 +84,29 @@ export default function SettingsScreen() {
 
         {/* Sections */}
         <GlassCard className="mb-4">
-          <SettingsItem testID="settings-parrainage" icon="people" label="Parrainage" onPress={() => {}} badge={profile?.referral_code ?? undefined} />
+          <SettingsItem testID="settings-parrainage" icon="people" label="Parrainage" onPress={() => void openPublicWebRoute("parrainage")} badge={profile?.referral_code ?? undefined} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-concours" icon="trophy" label="Concours" onPress={() => {}} />
+          <SettingsItem testID="settings-concours" icon="trophy" label="Concours" onPress={() => void openPublicWebRoute("concours")} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-tirage" icon="ticket" label="Tirage mensuel" onPress={() => {}} />
+          <SettingsItem testID="settings-tirage" icon="ticket" label="Tirage mensuel" onPress={() => showComingSoon("Le tirage mensuel")} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-boutique" icon="bag" label="Boutique" onPress={() => {}} />
+          <SettingsItem testID="settings-boutique" icon="bag" label="Boutique" onPress={() => showComingSoon("La boutique")} />
         </GlassCard>
 
         <GlassCard className="mb-4">
           <SettingsItem testID="settings-share" icon="share-social" label="Partager l'app" onPress={handleShare} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-ecosystem" icon="apps" label="Ecosysteme Purama" onPress={() => {}} />
+          <SettingsItem testID="settings-ecosystem" icon="apps" label="Ecosysteme Purama" onPress={() => void openPublicWebRoute("ecosystem")} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-aide" icon="help-circle" label="Aide et FAQ" onPress={() => {}} />
+          <SettingsItem testID="settings-aide" icon="help-circle" label="Aide et FAQ" onPress={() => showComingSoon("L'aide et la FAQ")} />
         </GlassCard>
 
         <GlassCard className="mb-4">
-          <SettingsItem testID="settings-notifications" icon="notifications" label="Notifications" onPress={() => {}} />
+          <SettingsItem testID="settings-notifications" icon="notifications" label="Notifications" onPress={() => showComingSoon("Les réglages de notifications")} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-privacy" icon="shield" label="Confidentialite" onPress={() => {}} />
+          <SettingsItem testID="settings-privacy" icon="shield" label="Confidentialite" onPress={() => void openPublicWebRoute("privacy")} />
           <View className="h-px bg-white/[0.06]" />
-          <SettingsItem testID="settings-legal" icon="document-text" label="Mentions legales" onPress={() => {}} />
+          <SettingsItem testID="settings-legal" icon="document-text" label="Mentions legales" onPress={() => void openPublicWebRoute("legal")} />
         </GlassCard>
 
         <TouchableOpacity

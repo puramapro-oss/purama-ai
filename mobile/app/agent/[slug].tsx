@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, FlatList,
   KeyboardAvoidingView, Platform, ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
@@ -14,7 +15,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 export default function AgentChatScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const agent = AGENTS.find((a) => a.slug === slug);
-  const { messages, loading, sendMessage } = useAgentChat(agent!);
+  const { messages, loading, sendMessage, clearMessages } = useAgentChat(agent!);
   const [input, setInput] = useState("");
   const flatListRef = useRef<FlatList>(null);
 
@@ -42,6 +43,14 @@ export default function AgentChatScreen() {
     setInput("");
   };
 
+  const handleClear = () => {
+    if (messages.length === 0) return;
+    Alert.alert("Effacer la conversation", "Tous les messages affichés seront supprimés.", [
+      { text: "Annuler", style: "cancel" },
+      { text: "Effacer", style: "destructive", onPress: clearMessages },
+    ]);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       {/* Header */}
@@ -59,7 +68,15 @@ export default function AgentChatScreen() {
           <Text className="text-white font-bold">{agent.name}</Text>
           <Text className="text-white/40 text-xs">{agent.category}</Text>
         </View>
-        <TouchableOpacity testID="agent-clear" onPress={() => {}} className="p-2">
+        <TouchableOpacity
+          testID="agent-clear"
+          onPress={handleClear}
+          disabled={messages.length === 0}
+          className="p-2"
+          accessibilityRole="button"
+          accessibilityLabel="Effacer la conversation"
+          accessibilityState={{ disabled: messages.length === 0 }}
+        >
           <Ionicons name="trash-outline" size={20} color="rgba(255,255,255,0.3)" />
         </TouchableOpacity>
       </View>
