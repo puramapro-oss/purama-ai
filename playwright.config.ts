@@ -5,20 +5,20 @@ export default defineConfig({
   // docuseal-e2e.spec.ts (playwright.docuseal.config.ts) et tests/karta/** (playwright.karta.config.ts)
   // ciblent la prod avec leur propre config dédiée (baseURL, env vars requises) — jamais dans la
   // suite locale par défaut.
-  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**'],
+  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**', '**/*.test.{js,mjs,cjs,ts,tsx}'],
   timeout: 30_000,
   retries: 2,
   fullyParallel: true,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL: 'http://127.0.0.1:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: 'npm run preview',
-    port: 4173,
-    reuseExistingServer: true,
+    command: 'npm run preview -- --host 127.0.0.1',
+    url: 'http://127.0.0.1:4173',
+    reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },
   projects: [
