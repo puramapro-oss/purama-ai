@@ -105,14 +105,7 @@ export function ChatbotWidget() {
     }
   }, [isOpen]);
 
-  // Load conversation history for logged-in users
-  useEffect(() => {
-    if (user && showHistory) {
-      loadConversationHistory();
-    }
-  }, [user, showHistory]);
-
-  const loadConversationHistory = async () => {
+  const loadConversationHistory = useCallback(async () => {
     const { data } = await supabase
       .from('chat_conversations')
       .select('id, created_at')
@@ -140,7 +133,14 @@ export function ChatbotWidget() {
       );
       setConversations(convs);
     }
-  };
+  }, [user?.id]);
+
+  // Load conversation history for logged-in users
+  useEffect(() => {
+    if (user && showHistory) {
+      loadConversationHistory();
+    }
+  }, [user, showHistory, loadConversationHistory]);
 
   const createOrGetConversation = async (): Promise<string> => {
     if (conversationId) return conversationId;

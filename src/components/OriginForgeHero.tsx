@@ -18,6 +18,7 @@ const agentSkills = ['📋 Prises de commandes', '🍝 Recommandations', '📅 R
 function MockupAnimation() {
   const [phase, setPhase] = useState<'typing' | 'forging' | 'result'>('typing');
   const [typedChars, setTypedChars] = useState(0);
+  const isTyping = phase === 'typing';
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,7 +40,7 @@ function MockupAnimation() {
       clearTimeout(resultTimeout);
       clearTimeout(resetTimeout);
     };
-  }, [phase === 'typing' ? 'typing' : 'other']);
+  }, [isTyping]);
 
   return (
     <div className="futuristic-card p-6 max-w-md mx-auto relative overflow-hidden">

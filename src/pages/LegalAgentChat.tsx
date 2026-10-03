@@ -33,12 +33,12 @@ export default function LegalAgentChat() {
     if (!user) return;
     listChatSessions(user.id).then(setSessions).catch(() => {});
     setSessionId(newSessionId());
-  }, [user?.id]);
+  }, [user]);
 
   useEffect(() => {
     if (!user || !sessionId) return;
     listChatMessages(user.id, sessionId).then(setMessages).catch(() => {});
-  }, [user?.id, sessionId]);
+  }, [user, sessionId]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });

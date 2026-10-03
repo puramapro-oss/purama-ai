@@ -42,7 +42,7 @@ export default function CreatorAgentPage() {
         setLoading(false);
       }
     })();
-  }, [user?.id]);
+  }, [user]);
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="w-8 h-8 text-accent-cyan animate-spin" /></div>;

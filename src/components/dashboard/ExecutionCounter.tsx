@@ -43,7 +43,7 @@ export function ExecutionCounter({ variant = 'compact' }: Props) {
       } catch { /* silent */ }
     }, 60_000);
     return () => { alive = false; clearInterval(t); };
-  }, [user?.id]);
+  }, [user]);
 
   if (loading || !snap) {
     if (variant === 'compact') {

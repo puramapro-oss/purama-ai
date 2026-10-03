@@ -92,7 +92,7 @@ export default function CreatorAgentDetail() {
   useEffect(() => {
     if (!user || !id) return;
     listRuns(user.id, { agent_id: id, limit: 50 }).then(setRuns).catch(() => {});
-  }, [user?.id, id]);
+  }, [user, id]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });

@@ -238,9 +238,7 @@ export function useInfluencer() {
   };
 }
 
-// Hook for tracking referrals
-export function useReferralTracking() {
-  const checkAndStoreReferral = () => {
+const checkAndStoreReferral = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
     
@@ -251,9 +249,9 @@ export function useReferralTracking() {
     }
     
     return null;
-  };
+};
 
-  const getStoredReferral = (): { code: string; timestamp: number } | null => {
+const getStoredReferral = (): { code: string; timestamp: number } | null => {
     const code = localStorage.getItem('referral_code');
     const timestamp = localStorage.getItem('referral_timestamp');
     
@@ -268,13 +266,16 @@ export function useReferralTracking() {
     }
     
     return { code, timestamp: parseInt(timestamp) };
-  };
+};
 
-  const clearReferral = () => {
+const clearReferral = () => {
     localStorage.removeItem('referral_code');
     localStorage.removeItem('referral_timestamp');
-  };
+};
 
+// Hook for tracking referrals. Helpers are module-level so consumers receive
+// stable references and effects only run when their actual inputs change.
+export function useReferralTracking() {
   return {
     checkAndStoreReferral,
     getStoredReferral,

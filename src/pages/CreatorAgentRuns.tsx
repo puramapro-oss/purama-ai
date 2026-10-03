@@ -38,7 +38,7 @@ export default function CreatorAgentRuns() {
         setLoading(false);
       }
     })();
-  }, [user?.id]);
+  }, [user]);
 
   const filtered = runs.filter(r => {
     if (statusFilter !== 'all' && r.status !== statusFilter) return false;

@@ -42,7 +42,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   useEffect(() => {
     if (!user || !sessionId) return;
     listAgentChatMessages(user.id, agentType, sessionId).then(setMessages).catch(() => {});
-  }, [user?.id, agentType, sessionId]);
+  }, [user, agentType, sessionId]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });

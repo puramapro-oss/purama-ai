@@ -59,7 +59,7 @@ export function useVoice(): UseVoice {
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoadingSettings(false); });
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user]);
 
   const updateSettings = useCallback(async (patch: Partial<VoiceSettings>) => {
     if (!user) {
@@ -68,7 +68,7 @@ export function useVoice(): UseVoice {
     }
     const next = await saveVoiceSettings(user.id, patch);
     setSettings(next);
-  }, [user?.id]);
+  }, [user]);
 
   // ---------- Audio level monitoring (waveform) ----------
   const startLevelMonitor = useCallback((stream: MediaStream) => {

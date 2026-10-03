@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react'
 import storyboardImage from '@/assets/storyboard-image.avif'
 
-export function About() {
-  const [activeFrame, setActiveFrame] = useState(-1)
-  const [animationStarted, setAnimationStarted] = useState(false)
-
-  const processSteps = [
+const processSteps = [
     {
       number: "01",
       title: "Concept & Script",
@@ -38,7 +34,11 @@ export function About() {
       description: "Multi-format export and secure transfer",
       color: "accent-purple"
     }
-  ]
+]
+
+export function About() {
+  const [activeFrame, setActiveFrame] = useState(-1)
+  const [animationStarted, setAnimationStarted] = useState(false)
 
   useEffect(() => {
     // Start film animation after a 3 second pause

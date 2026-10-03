@@ -30,7 +30,7 @@ export function ReferralBanner() {
       };
       fetchInfluencer();
     }
-  }, []);
+  }, [getStoredReferral]);
 
   if (!referral || dismissed) return null;
 
