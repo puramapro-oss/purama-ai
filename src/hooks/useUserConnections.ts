@@ -121,25 +121,26 @@ export function useUserConnections() {
       return;
     }
 
-    const config = SERVICE_CONFIG[provider];
-    const scopes = config.scopes.join(' ');
-    
-    // Store state in sessionStorage for callback verification
-    const state = btoa(JSON.stringify({
-      provider,
-      userId: user.id,
-      returnUrl: window.location.pathname,
-      nonce: crypto.randomUUID(),
-    }));
-    sessionStorage.setItem('oauth_state', state);
+    const verifierBytes = crypto.getRandomValues(new Uint8Array(32));
+    const codeVerifier = btoa(String.fromCharCode(...verifierBytes)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
+    const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    const session = (await supabase.auth.getSession()).data.session;
+    if (!session?.access_token) {
+      toast.error('Session expirée, veuillez vous reconnecter');
+      return;
+    }
 
     // Get OAuth URL from edge function
     const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/oauth-google?action=authorize&provider=${provider}&state=${encodeURIComponent(state)}&scopes=${encodeURIComponent(scopes)}`,
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/oauth-google?action=authorize`,
       {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ provider, codeChallenge, returnUrl: window.location.pathname }),
       }
     );
 
@@ -148,7 +149,13 @@ export function useUserConnections() {
       return;
     }
 
-    const { authUrl } = await response.json();
+    const { authUrl, state } = await response.json();
+    if (typeof authUrl !== 'string' || typeof state !== 'string') {
+      toast.error('Réponse OAuth invalide');
+      return;
+    }
+    sessionStorage.setItem('oauth_state', state);
+    sessionStorage.setItem('oauth_code_verifier', codeVerifier);
     window.location.href = authUrl;
   };
 

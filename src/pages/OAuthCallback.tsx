@@ -33,7 +33,8 @@ export default function OAuthCallback() {
 
       // Verify state matches
       const storedState = sessionStorage.getItem('oauth_state');
-      if (state !== storedState) {
+      const codeVerifier = sessionStorage.getItem('oauth_code_verifier');
+      if (state !== storedState || !codeVerifier) {
         setStatus('error');
         setMessage('État invalide - possible attaque CSRF');
         setTimeout(() => navigate('/mes-connexions'), 2000);
@@ -42,12 +43,17 @@ export default function OAuthCallback() {
 
       try {
         // Exchange code for tokens via edge function
+        const session = (await supabase.auth.getSession()).data.session;
+        if (!session?.access_token) throw new Error('Session expirée, veuillez vous reconnecter');
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/oauth-google?action=callback&code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`,
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/oauth-google?action=callback`,
           {
+            method: 'POST',
             headers: {
-              'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
             },
+            body: JSON.stringify({ code, state, codeVerifier }),
           }
         );
 
@@ -58,6 +64,7 @@ export default function OAuthCallback() {
         }
 
         sessionStorage.removeItem('oauth_state');
+        sessionStorage.removeItem('oauth_code_verifier');
         setStatus('success');
         setMessage('Compte connecté avec succès !');
         toast.success('Compte connecté avec succès');

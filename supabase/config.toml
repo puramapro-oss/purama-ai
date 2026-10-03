@@ -10,7 +10,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.oauth-google]
-verify_jwt = false
+verify_jwt = true
 
 [functions.process-influencer-payments]
 verify_jwt = false
