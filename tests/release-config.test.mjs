@@ -54,7 +54,25 @@ test('store privacy URLs target the application privacy route', () => {
 
 test('release scripts referenced by CI exist', () => {
   const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-  for (const script of ['lint', 'typecheck', 'test:unit', 'test:security', 'test:release-config', 'build']) {
+  for (const script of ['lint', 'typecheck', 'test:unit', 'test:security', 'test:release-config', 'test:ci', 'build']) {
     assert.equal(typeof pkg.scripts[script], 'string', `missing package script: ${script}`);
   }
+
+  const ci = readFileSync(join(root, '.github/workflows/ci.yml'), 'utf8');
+  assert.match(ci, /npm run test:ci/);
+  assert.match(pkg.scripts['test:ci'], /--project=desktop/);
+  assert.match(pkg.scripts['test:ci'], /--project=tablet/);
+  assert.match(pkg.scripts['test:ci'], /--project=mobile/);
+});
+
+test('release UI does not reintroduce fabricated success data', () => {
+  const sources = [
+    'src/pages/AdminDashboard.tsx',
+    'src/components/OriginForgeDemo.tsx',
+    'src/pages/MyEmployees.tsx',
+    'src/pages/CreatorAgentDetail.tsx',
+    'src/components/onboarding/HireFirstEmployeeModal.tsx',
+  ].map((path) => readFileSync(join(root, path), 'utf8')).join('\n');
+
+  assert.doesNotMatch(sources, /\[MOCK\]|TODO_LIVE_TEST|SmartAssist|const revenueData|const trafficData|const planDistribution/);
 });

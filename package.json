@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:e2e": "vite build --mode e2e",
     "build:dev": "vite build --mode development",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "lint": "eslint .",
@@ -19,6 +20,7 @@
     "test:security": "node --experimental-strip-types --test tests/oauth-google-security.test.mjs tests/cors-security.test.mjs tests/edge-auth-hardening.test.mjs supabase/functions/_shared/oauth-state.test.ts supabase/functions/_shared/social-callback-gate.test.ts supabase/functions/_shared/webhook-security.test.ts",
     "test:release-config": "node --test tests/release-config.test.mjs",
     "test:e2e": "npm run build && playwright test",
+    "test:ci": "npm run build:e2e && playwright test --project=desktop && playwright test tests/release-gates.spec.ts --project=tablet --project=mobile",
     "test": "npm run test:e2e",
     "test:desktop": "npm run build && playwright test --project=desktop"
   },

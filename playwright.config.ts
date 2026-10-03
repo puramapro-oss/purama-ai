@@ -7,7 +7,7 @@ export default defineConfig({
   // suite locale par défaut.
   testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**', '**/*.test.{js,mjs,cjs,ts,tsx}'],
   timeout: 30_000,
-  retries: 2,
+  retries: process.env.CI ? 2 : 0,
   fullyParallel: true,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
