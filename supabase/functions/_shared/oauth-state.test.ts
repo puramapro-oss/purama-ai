@@ -25,7 +25,9 @@ test("signed OAuth state round-trips", async () => {
 
 test("tampered, expired, and wrong-secret states fail closed", async () => {
   const token = await signOAuthState(claims, secret);
-  const tampered = `${token.slice(0, -1)}${token.endsWith("a") ? "b" : "a"}`;
+  const [payload, signature] = token.split(".");
+  const tamperedSignature = `${signature.startsWith("a") ? "b" : "a"}${signature.slice(1)}`;
+  const tampered = `${payload}.${tamperedSignature}`;
   await assert.rejects(verifyOAuthState(tampered, secret, 1_001));
   await assert.rejects(verifyOAuthState(token, `${secret}-different`, 1_001));
   await assert.rejects(verifyOAuthState(token, secret, 1_600));
