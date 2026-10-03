@@ -37,11 +37,11 @@ test.describe('Onboarding — Embauche ton premier employé IA', () => {
     await firstAgentButton.click();
     await expect(page.getByText(/tu valides toujours avant/i)).toBeVisible();
 
-    // Étape "working" → "result" (déclenchement réel via karta-trigger, décision mock TODO_LIVE_TEST)
+    // Étape "working" → "result" (déclenchement réel via karta-trigger, décision de test explicitement signalée)
     await page.getByRole('button', { name: /^embaucher /i }).click();
     await expect(page.getByText(/travaille…/)).toBeVisible();
 
     await expect(page.getByText(/a terminé sa 1ère tâche/i)).toBeVisible({ timeout: 25_000 });
-    await expect(page.getByText(/TODO_LIVE_TEST/i).first()).toBeVisible();
+    await expect(page.getByText(/mode test — résultat simulé/i).first()).toBeVisible();
   });
 });

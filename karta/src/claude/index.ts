@@ -10,7 +10,7 @@ export type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 
 let cached: InferenceProvider | null = null;
 
-/** Sélectionne le mock ou le vrai client selon KARTA_MOCK_CLAUDE (cf .env.example). */
+/** Sélectionne le fournisseur explicitement validé par la configuration. */
 export function getClaudeClient(): ClaudeClient {
   if (!cached) {
     const primary = createProvider(config.aiProvider);

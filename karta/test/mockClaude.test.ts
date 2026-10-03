@@ -68,6 +68,7 @@ describe("createMockClaudeClient", () => {
   it("agent inconnu: fallback générique no-op", async () => {
     const decision = await client.decide({ systemPrompt: "", agentType: "inconnu", context: {}, tools: [] });
     expect(decision.toolCalls).toHaveLength(0);
-    expect(decision.summary).toContain("TODO_LIVE_TEST");
+    expect(decision.summary).toContain("Simulation de test");
+    expect(decision.summary).not.toMatch(/\[MOCK\]|TODO_LIVE_TEST/);
   });
 });

@@ -16,6 +16,7 @@ import {
   usePollLatestRun,
   type ActionAgentSlug,
 } from '@/hooks/useKartaEmployees';
+import { runProvenanceLabel } from '@/lib/presentationSafety';
 
 // Les 4 employés les plus simples à essayer : 0 connexion externe requise (Gmail OAuth...),
 // juste de vraies données déjà présentes (factures, transactions, leads) — démo sans friction.
@@ -226,7 +227,7 @@ export function HireFirstEmployeeModal({
                 {run.data.error_message && <p className="text-xs text-destructive mt-1">{run.data.error_message}</p>}
                 {run.data.claude_mock && (
                   <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500 mt-2">
-                    [MOCK] TODO_LIVE_TEST — sera remplacé par une vraie décision Claude au lancement
+                    {runProvenanceLabel(true)} — aucune action réelle n'a été exécutée
                   </Badge>
                 )}
               </div>

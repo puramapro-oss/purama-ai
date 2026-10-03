@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { formatRelative } from '@/lib/utils';
+import { runProvenanceLabel } from '@/lib/presentationSafety';
 import { PendingActionsList } from '@/components/karta/PendingActionsList';
 import {
   useEmployeeAgents,
@@ -76,6 +77,7 @@ function StatCard({
 function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: string; agentIcon: string }) {
   const meta = STATUS_META[run.status === 'success' && run.mode === 'simulation' ? 'simulated' : run.status] ?? STATUS_META.unknown;
   const StatusIcon = meta.icon;
+  const provenanceLabel = runProvenanceLabel(run.claude_mock);
 
   return (
     <div className="flex items-start gap-3 py-3 border-b border-border/50 last:border-0">
@@ -88,9 +90,9 @@ function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: strin
           <span className={`flex items-center gap-1 text-xs ${meta.className}`}>
             <StatusIcon className="w-3.5 h-3.5" /> {meta.label}
           </span>
-          {run.claude_mock && (
+          {provenanceLabel && (
             <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500">
-              [MOCK] TODO_LIVE_TEST
+              {provenanceLabel}
             </Badge>
           )}
           {run.mode === 'simulation' && (

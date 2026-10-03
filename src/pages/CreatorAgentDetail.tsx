@@ -39,6 +39,7 @@ import {
   useCustomAgentKartaRuns, useTriggerCustomAgent, useCustomAgentPendingActions,
 } from '@/hooks/useCreatorAgentKarta';
 import { PendingActionsList } from '@/components/karta/PendingActionsList';
+import { runProvenanceLabel } from '@/lib/presentationSafety';
 
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -526,7 +527,7 @@ export default function CreatorAgentDetail() {
                               {r.mode === 'simulation' && <Badge variant="outline" className="text-[10px]">Simulation</Badge>}
                               {r.claude_mock && (
                                 <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500">
-                                  [MOCK] TODO_LIVE_TEST
+                                  {runProvenanceLabel(true)}
                                 </Badge>
                               )}
                               <span className="text-[10px] text-muted-foreground">

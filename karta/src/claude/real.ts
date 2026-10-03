@@ -5,7 +5,7 @@ import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
- * TODO_LIVE_TEST : non exécutable tant que le crédit du compte Anthropic n'est pas rechargé
+ * L'exécution réelle requiert une clé Anthropic valide et un compte approvisionné.
  * (cf AUDIT-AGENTS.md, "Your credit balance is too low"). À valider en conditions réelles
  * avant le vrai lancement (règle permanente 2026-07-26 : ne bloque pas le dev, mais bloque le launch).
  */

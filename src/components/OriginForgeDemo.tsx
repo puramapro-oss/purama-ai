@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Loader2 } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 const placeholders = [
   "Un chatbot pour mon salon de coiffure...",
@@ -18,8 +18,6 @@ const examples = [
 
 export function OriginForgeDemo() {
   const [prompt, setPrompt] = useState('');
-  const [isForging, setIsForging] = useState(false);
-  const [showResult, setShowResult] = useState(false);
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const navigate = useNavigate();
 
@@ -30,11 +28,7 @@ export function OriginForgeDemo() {
 
   const handleForge = () => {
     if (!prompt.trim()) return;
-    setIsForging(true);
-    setTimeout(() => {
-      setIsForging(false);
-      setShowResult(true);
-    }, 3000);
+    navigate('/forge', { state: { prompt: prompt.trim() } });
   };
 
   return (
@@ -47,7 +41,7 @@ export function OriginForgeDemo() {
             <span className="gradient-text">Essaie maintenant</span>
             <span className="text-foreground"> — c'est gratuit</span>
           </h2>
-          <p className="text-muted-foreground">Écris ton prompt, vois la magie opérer.</p>
+          <p className="text-muted-foreground">Décris ton besoin, puis configure ton agent dans Origin Forge.</p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="futuristic-card p-6">
@@ -61,42 +55,18 @@ export function OriginForgeDemo() {
             />
             <button
               onClick={handleForge}
-              disabled={isForging || !prompt.trim()}
+              disabled={!prompt.trim()}
               className="btn-primary flex items-center justify-center gap-2 px-6 py-3 h-fit self-end disabled:opacity-50 whitespace-nowrap"
             >
-              {isForging ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-              {isForging ? 'Forge...' : 'Forger'}
+              <Zap className="w-4 h-4" />
+              Continuer
             </button>
           </div>
-
-          {isForging && (
-            <div className="mt-4">
-              <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
-                <motion.div className="h-full bg-gradient-to-r from-accent-cyan to-accent-purple rounded-full" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 3 }} />
-              </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">Analyse du prompt... Génération de l'agent... Déploiement...</p>
-            </div>
-          )}
-
-          {showResult && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-4 bg-accent-cyan/5 border border-accent-cyan/20 rounded-lg p-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-accent-cyan to-accent-purple flex items-center justify-center text-lg">🤖</div>
-                <div>
-                  <p className="font-orbitron font-bold text-sm text-foreground">SmartAssist</p>
-                  <p className="text-xs text-muted-foreground">3 compétences • Prêt à déployer</p>
-                </div>
-              </div>
-              <button onClick={() => navigate('/forge')} className="text-accent-cyan text-sm font-semibold hover:underline mt-2">
-                Voir le résultat complet sur Origin Forge →
-              </button>
-            </motion.div>
-          )}
 
           {/* Examples */}
           <div className="flex flex-wrap gap-2 mt-4">
             {examples.map(ex => (
-              <button key={ex.label} onClick={() => { setPrompt(ex.prompt); setShowResult(false); }} className="px-3 py-1.5 rounded-full bg-secondary/50 border border-accent-purple/20 text-xs text-foreground/80 hover:bg-accent-purple/10 hover:border-accent-purple/40 transition-all cursor-pointer">
+              <button key={ex.label} onClick={() => setPrompt(ex.prompt)} className="px-3 py-1.5 rounded-full bg-secondary/50 border border-accent-purple/20 text-xs text-foreground/80 hover:bg-accent-purple/10 hover:border-accent-purple/40 transition-all cursor-pointer">
                 {ex.emoji} {ex.label}
               </button>
             ))}

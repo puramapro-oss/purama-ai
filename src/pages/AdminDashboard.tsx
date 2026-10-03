@@ -2,49 +2,15 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Users, DollarSign, TrendingUp, Eye, ArrowLeft, Bot,
-  BarChart3, CreditCard, Activity, Globe, UserPlus,
-  ArrowUpRight, ArrowDownRight, RefreshCw, Shield, Calendar
+  Users, DollarSign, ArrowLeft, Bot, CreditCard, RefreshCw, Shield,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { unavailableLiveDataLabel } from '@/lib/presentationSafety';
 
 const ADMIN_EMAIL = 'matiss.frasne@gmail.com';
-
-// Revenue data (simulated — to be replaced with real Stripe data)
-const revenueData = [
-  { month: 'Jan', revenue: 0, expenses: 120 },
-  { month: 'Fév', revenue: 198, expenses: 120 },
-  { month: 'Mar', revenue: 462, expenses: 135 },
-  { month: 'Avr', revenue: 726, expenses: 135 },
-  { month: 'Mai', revenue: 1188, expenses: 150 },
-  { month: 'Jun', revenue: 1650, expenses: 150 },
-  { month: 'Jul', revenue: 2310, expenses: 165 },
-  { month: 'Aoû', revenue: 2970, expenses: 165 },
-  { month: 'Sep', revenue: 3630, expenses: 180 },
-  { month: 'Oct', revenue: 4290, expenses: 180 },
-  { month: 'Nov', revenue: 5280, expenses: 195 },
-  { month: 'Déc', revenue: 6270, expenses: 195 },
-];
-
-const planDistribution = [
-  { name: 'Gratuit', value: 45, color: '#6b7280' },
-  { name: 'Starter', value: 30, color: '#00f0ff' },
-  { name: 'Premium', value: 25, color: '#7c3aed' },
-];
-
-const trafficData = [
-  { day: 'Lun', visitors: 120, signups: 8 },
-  { day: 'Mar', visitors: 145, signups: 12 },
-  { day: 'Mer', visitors: 98, signups: 5 },
-  { day: 'Jeu', visitors: 178, signups: 15 },
-  { day: 'Ven', visitors: 203, signups: 18 },
-  { day: 'Sam', visitors: 87, signups: 6 },
-  { day: 'Dim', visitors: 65, signups: 3 },
-];
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -126,15 +92,6 @@ export default function AdminDashboard() {
     );
   }
 
-  // Calculate key metrics
-  const currentMonthRevenue = revenueData[revenueData.length - 1]?.revenue || 0;
-  const lastMonthRevenue = revenueData[revenueData.length - 2]?.revenue || 0;
-  const revenueGrowth = lastMonthRevenue > 0 ? Math.round(((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) : 0;
-  const currentExpenses = revenueData[revenueData.length - 1]?.expenses || 0;
-  const profit = currentMonthRevenue - currentExpenses;
-  const totalRevenue = revenueData.reduce((sum, d) => sum + d.revenue, 0);
-  const totalExpenses = revenueData.reduce((sum, d) => sum + d.expenses, 0);
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -168,7 +125,7 @@ export default function AdminDashboard() {
         >
           <h1 className="text-2xl font-orbitron font-bold text-foreground">Vue d'ensemble</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Toutes les données de PURAMA AI en temps réel
+            Les métriques ci-dessous proviennent uniquement des sources réellement connectées.
           </p>
         </motion.div>
 
@@ -176,19 +133,9 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
             {
-              label: 'Revenus ce mois',
-              value: `${currentMonthRevenue.toLocaleString('fr-FR')}€`,
-              change: `${revenueGrowth > 0 ? '+' : ''}${revenueGrowth}%`,
-              positive: revenueGrowth >= 0,
-              icon: DollarSign,
-              color: 'text-accent-emerald',
-              bg: 'bg-accent-emerald/10'
-            },
-            {
               label: 'Utilisateurs',
               value: stats.totalUsers.toString(),
-              change: '+12 cette semaine',
-              positive: true,
+              detail: 'Valeur Supabase',
               icon: Users,
               color: 'text-accent-cyan',
               bg: 'bg-accent-cyan/10'
@@ -196,20 +143,26 @@ export default function AdminDashboard() {
             {
               label: 'Abonnés payants',
               value: stats.totalSubscriptions.toString(),
-              change: `${stats.totalUsers > 0 ? Math.round((stats.totalSubscriptions / stats.totalUsers) * 100) : 0}% conversion`,
-              positive: true,
+              detail: `${stats.totalUsers > 0 ? Math.round((stats.totalSubscriptions / stats.totalUsers) * 100) : 0}% des utilisateurs`,
               icon: CreditCard,
               color: 'text-accent-purple',
               bg: 'bg-accent-purple/10'
             },
             {
-              label: 'Dépenses ce mois',
-              value: `${currentExpenses}€`,
-              change: `Profit: ${profit}€`,
-              positive: profit > 0,
-              icon: TrendingUp,
-              color: 'text-accent-pink',
-              bg: 'bg-accent-pink/10'
+              label: 'Agents actifs',
+              value: stats.activeAgents.toString(),
+              detail: 'Valeur Supabase',
+              icon: Bot,
+              color: 'text-accent-emerald',
+              bg: 'bg-accent-emerald/10'
+            },
+            {
+              label: 'Revenus',
+              value: '—',
+              detail: unavailableLiveDataLabel('Stripe'),
+              icon: DollarSign,
+              color: 'text-muted-foreground',
+              bg: 'bg-secondary/50'
             },
           ].map((stat, i) => (
             <motion.div
@@ -224,84 +177,34 @@ export default function AdminDashboard() {
                     <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center`}>
                       <stat.icon className={`w-4 h-4 ${stat.color}`} />
                     </div>
-                    <span className={`text-xs font-medium flex items-center gap-1 ${stat.positive ? 'text-accent-emerald' : 'text-red-400'}`}>
-                      {stat.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                      {stat.change}
-                    </span>
                   </div>
                   <p className="text-2xl font-orbitron font-bold text-foreground">{stat.value}</p>
                   <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                  <p className="text-[10px] text-muted-foreground/70 mt-1">{stat.detail}</p>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </div>
 
-        {/* Charts row */}
+        {/* Sources not connected: never substitute sample values for live metrics. */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <Card className="bg-card border-border">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-orbitron font-bold text-sm text-foreground">Revenus vs Dépenses</h3>
-                  <span className="text-xs text-muted-foreground">12 derniers mois</span>
-                </div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <LineChart data={revenueData}>
-                    <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={11} />
-                    <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                    <Tooltip
-                      contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-                      formatter={(value: number, name: string) => [`${value}€`, name === 'revenue' ? 'Revenus' : 'Dépenses']}
-                    />
-                    <Line type="monotone" dataKey="revenue" stroke="var(--accent-emerald)" strokeWidth={2.5} dot={false} />
-                    <Line type="monotone" dataKey="expenses" stroke="var(--accent-pink)" strokeWidth={2} dot={false} strokeDasharray="5 5" />
-                  </LineChart>
-                </ResponsiveContainer>
-                <div className="flex gap-6 mt-3 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-0.5 bg-accent-emerald rounded" />
-                    <span className="text-muted-foreground">Revenus total: <span className="text-foreground font-semibold">{totalRevenue.toLocaleString('fr-FR')}€</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-0.5 bg-accent-pink rounded" style={{ borderStyle: 'dashed' }} />
-                    <span className="text-muted-foreground">Dépenses total: <span className="text-foreground font-semibold">{totalExpenses.toLocaleString('fr-FR')}€</span></span>
-                  </div>
-                </div>
+              <CardContent className="p-5 min-h-[220px] flex flex-col items-center justify-center text-center">
+                <DollarSign className="w-8 h-8 text-muted-foreground mb-3" />
+                <h3 className="font-orbitron font-bold text-sm text-foreground">Revenus et dépenses</h3>
+                <p className="text-sm text-muted-foreground mt-2">{unavailableLiveDataLabel('Stripe')}</p>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* Traffic chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
             <Card className="bg-card border-border">
-              <CardContent className="p-5">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-orbitron font-bold text-sm text-foreground">Trafic & Inscriptions</h3>
-                  <span className="text-xs text-muted-foreground">Cette semaine</span>
-                </div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={trafficData}>
-                    <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={11} />
-                    <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                    <Tooltip
-                      contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-                    />
-                    <Bar dataKey="visitors" fill="var(--accent-cyan)" radius={[4, 4, 0, 0]} opacity={0.6} />
-                    <Bar dataKey="signups" fill="var(--accent-purple)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-                <div className="flex gap-6 mt-3 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-accent-cyan/60" />
-                    <span className="text-muted-foreground">Visiteurs: <span className="text-foreground font-semibold">{trafficData.reduce((s, d) => s + d.visitors, 0)}</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-accent-purple" />
-                    <span className="text-muted-foreground">Inscriptions: <span className="text-foreground font-semibold">{trafficData.reduce((s, d) => s + d.signups, 0)}</span></span>
-                  </div>
-                </div>
+              <CardContent className="p-5 min-h-[220px] flex flex-col items-center justify-center text-center">
+                <Users className="w-8 h-8 text-muted-foreground mb-3" />
+                <h3 className="font-orbitron font-bold text-sm text-foreground">Trafic et inscriptions</h3>
+                <p className="text-sm text-muted-foreground mt-2">{unavailableLiveDataLabel('analytics')}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -309,41 +212,13 @@ export default function AdminDashboard() {
 
         {/* Bottom row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Plan distribution */}
+          {/* Plan distribution is unavailable until a billing source is connected. */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
             <Card className="bg-card border-border">
-              <CardContent className="p-5">
+              <CardContent className="p-5 min-h-[260px] flex flex-col items-center justify-center text-center">
+                <CreditCard className="w-8 h-8 text-muted-foreground mb-3" />
                 <h3 className="font-orbitron font-bold text-sm text-foreground mb-4">Répartition des plans</h3>
-                <div className="flex items-center justify-center">
-                  <ResponsiveContainer width={160} height={160}>
-                    <PieChart>
-                      <Pie
-                        data={planDistribution}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={70}
-                        dataKey="value"
-                        strokeWidth={0}
-                      >
-                        {planDistribution.map((entry, i) => (
-                          <Cell key={i} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="space-y-2 mt-2">
-                  {planDistribution.map((plan, i) => (
-                    <div key={i} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ background: plan.color }} />
-                        <span className="text-foreground/80">{plan.name}</span>
-                      </div>
-                      <span className="text-foreground font-semibold">{plan.value}%</span>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-sm text-muted-foreground">{unavailableLiveDataLabel('Stripe')}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -387,32 +262,6 @@ export default function AdminDashboard() {
           </motion.div>
         </div>
 
-        {/* Financials summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="mt-8"
-        >
-          <Card className="bg-card border-border">
-            <CardContent className="p-5">
-              <h3 className="font-orbitron font-bold text-sm text-foreground mb-4">Résumé financier</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { label: 'Revenus totaux', value: `${totalRevenue.toLocaleString('fr-FR')}€`, color: 'text-accent-emerald' },
-                  { label: 'Dépenses totales', value: `${totalExpenses.toLocaleString('fr-FR')}€`, color: 'text-accent-pink' },
-                  { label: 'Bénéfice net', value: `${(totalRevenue - totalExpenses).toLocaleString('fr-FR')}€`, color: totalRevenue > totalExpenses ? 'text-accent-emerald' : 'text-red-400' },
-                  { label: 'MRR estimé', value: `${currentMonthRevenue.toLocaleString('fr-FR')}€`, color: 'text-accent-cyan' },
-                ].map((item, i) => (
-                  <div key={i} className="text-center p-3 rounded-lg bg-secondary/20">
-                    <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                    <p className={`text-xl font-orbitron font-bold ${item.color}`}>{item.value}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
       </main>
     </div>
   );

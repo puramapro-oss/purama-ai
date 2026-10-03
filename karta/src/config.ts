@@ -38,6 +38,12 @@ if (fallbackProvider !== "none" && fallbackProvider === aiProvider) {
   throw new Error("AI_FALLBACK_PROVIDER doit etre different de AI_PROVIDER");
 }
 
+const runtimeEnvironment = process.env.NODE_ENV ?? "production";
+const mockProviderAllowed = runtimeEnvironment === "test" || runtimeEnvironment === "development";
+if (!mockProviderAllowed && (aiProvider === "mock" || fallbackProvider === "mock")) {
+  throw new Error("Le fournisseur mock est reserve aux environnements test et development");
+}
+
 export const config = {
   supabaseUrl: required("SUPABASE_URL", "https://auth.purama.dev"),
   supabaseServiceRoleKey: required("SUPABASE_SERVICE_ROLE_KEY", ""),
@@ -46,8 +52,8 @@ export const config = {
   anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",
   anthropicModelMain: required("ANTHROPIC_MODEL_MAIN", "claude-sonnet-4-6"),
   anthropicModelFast: required("ANTHROPIC_MODEL_FAST", "claude-haiku-4-5-20251001"),
-  // Voir .env.example : mock actif tant que le crédit Anthropic n'est pas rechargé (règle permanente 2026-07-26).
-  mockClaude: (process.env.KARTA_MOCK_CLAUDE ?? "true") !== "false",
+  // Compatibilité historique; le garde-fou ci-dessus interdit ce mode hors test/development.
+  mockClaude: aiProvider === "mock",
 
   aiProvider: aiProvider as typeof allowedProviders[number],
   aiFallbackProvider: fallbackProvider as "none" | typeof allowedProviders[number],
