@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { safeInternalPath } from './safeInternalNavigation';
+import { safeInternalPath } from './safeNavigation';
 
 describe('safeInternalPath', () => {
   it.each([

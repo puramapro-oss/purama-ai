@@ -28,7 +28,7 @@ import { useAgents } from '@/hooks/useAgents';
 import { formatDistanceToNow, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { safeInternalPath } from '@/lib/safeInternalNavigation';
+import { safeInternalPath } from '@/lib/safeNavigation';
 
 const typeConfig: Record<NotificationType, { icon: typeof Bell; label: string; color: string }> = {
   task_completed: { 

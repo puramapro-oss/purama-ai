@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { safeInternalPath } from '@/lib/safeInternalNavigation';
+import { safeInternalPath } from '@/lib/safeNavigation';
 
 export type NotificationType = 'task_completed' | 'question' | 'daily_report' | 'alert';
 

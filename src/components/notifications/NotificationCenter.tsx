@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications, NotificationType } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { safeInternalPath } from '@/lib/safeInternalNavigation';
+import { safeInternalPath } from '@/lib/safeNavigation';
 
 const typeIcons: Record<NotificationType, string> = {
   task_completed: '✅',
