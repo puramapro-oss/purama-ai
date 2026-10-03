@@ -27,3 +27,18 @@ or arbitrary callback query parameters unchanged.
 
 Until step 1 is proven, `social-callback` remains a deployment blocker and must not be exposed as a
 trusted production OAuth callback.
+
+## Interim fail-closed gate
+
+The endpoint and the authenticated `social-connect` entry point are disabled by default. They return
+HTTP 503 unless both of these server-side secrets are configured:
+
+- `SOCIAL_CALLBACK_ENABLED=true` (the value is case-sensitive);
+- `SOCIAL_CALLBACK_SHARED_SECRET`, generated randomly with at least 32 characters.
+
+When explicitly enabled, `social-connect` adds the secret to the registered callback URL and
+`social-callback` validates it before constructing a service-role client or trusting callback
+parameters. This is a containment control, not proof of an OAuth callback contract and not a
+replacement for the one-time signed-state design above. Activation is allowed only after a staging
+round trip proves that Zernio returns the complete callback query string unchanged. Rotate the secret
+after logs or provider support access could have exposed callback URLs.

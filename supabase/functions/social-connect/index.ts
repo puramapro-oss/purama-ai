@@ -6,6 +6,7 @@ import {
   SUPPORTED_PLATFORMS,
   type Platform,
 } from "../_shared/zernio.ts";
+import { getSocialCallbackGate } from "../_shared/social-callback-gate.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -48,11 +49,27 @@ serve(async (req) => {
       );
     }
 
+    const callbackGate = getSocialCallbackGate(
+      Deno.env.get("SOCIAL_CALLBACK_ENABLED"),
+      Deno.env.get("SOCIAL_CALLBACK_SHARED_SECRET"),
+    );
+    if (!callbackGate.enabled) {
+      console.error(`[social-connect] callback gate closed: ${callbackGate.reason}`);
+      return new Response(
+        JSON.stringify({ error: "Social account connection is temporarily unavailable" }),
+        {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     // Self-hosted Supabase: edge functions are exposed at SUPABASE_URL/functions/v1/*
     const supabaseUrl = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/$/, "");
     const callbackUrl =
       `${supabaseUrl}/functions/v1/social-callback` +
-      `?platform=${platform}&user_id=${user.id}`;
+      `?platform=${platform}&user_id=${user.id}` +
+      `&callback_secret=${encodeURIComponent(callbackGate.secret)}`;
 
     const result = await getConnectUrl(platform, callbackUrl);
 

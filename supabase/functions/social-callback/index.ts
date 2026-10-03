@@ -1,6 +1,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/zernio.ts";
+import {
+  getSocialCallbackGate,
+  verifySocialCallbackSecret,
+} from "../_shared/social-callback-gate.ts";
 
 const APP_URL = Deno.env.get("APP_URL") || "https://purama-ai.purama.dev";
 
@@ -9,8 +13,38 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== "GET") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const url = new URL(req.url);
+    const callbackGate = getSocialCallbackGate(
+      Deno.env.get("SOCIAL_CALLBACK_ENABLED"),
+      Deno.env.get("SOCIAL_CALLBACK_SHARED_SECRET"),
+    );
+    if (!callbackGate.enabled) {
+      console.error(`[social-callback] callback gate closed: ${callbackGate.reason}`);
+      return new Response(
+        JSON.stringify({ error: "Social callback is disabled" }),
+        {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    const callbackSecret = url.searchParams.get("callback_secret");
+    if (!(await verifySocialCallbackSecret(callbackSecret, callbackGate.secret))) {
+      return new Response(JSON.stringify({ error: "Unauthorized callback" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const platform = url.searchParams.get("platform");
     const userId = url.searchParams.get("user_id");
     const profileId =

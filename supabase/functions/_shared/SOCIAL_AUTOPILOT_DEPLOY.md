@@ -18,6 +18,18 @@ supabase secrets set \
   APP_URL='https://agentiapuramafr.lovable.app'
 ```
 
+`social-connect` and `social-callback` are intentionally disabled by default. Do not enable them
+until a staging OAuth round trip proves that Zernio preserves the complete callback URL query string.
+After that proof, generate a fresh random secret and configure both controls:
+
+```bash
+supabase secrets set \
+  SOCIAL_CALLBACK_ENABLED='true' \
+  SOCIAL_CALLBACK_SHARED_SECRET='REPLACE_WITH_RANDOM_32_PLUS_CHARACTER_SECRET'
+```
+
+Never put the secret in source control, screenshots, client environment variables, or support logs.
+
 `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` are
 auto-injected by the Supabase platform.
 
