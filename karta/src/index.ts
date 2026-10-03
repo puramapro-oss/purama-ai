@@ -4,7 +4,7 @@ import { startAgentCycleWorker } from "./queue/worker.js";
 import { startSchedulers } from "./scheduler/cron.js";
 import { startCustomAgentScheduler } from "./scheduler/customAgents.js";
 
-console.log(`[karta] démarrage — mockClaude=${config.mockClaude} port=${config.port}`);
+console.log(`[karta] démarrage — aiProvider=${config.aiProvider} port=${config.port}`);
 
 const worker = startAgentCycleWorker();
 const schedulers = startSchedulers();

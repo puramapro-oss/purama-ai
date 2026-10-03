@@ -22,7 +22,11 @@ export function selectModel(input: ClaudeDecideInput): string {
 }
 
 export function createRealClaudeClient(): ClaudeClient {
-  const client = new Anthropic({ apiKey: config.anthropicApiKey });
+  const client = new Anthropic({
+    apiKey: config.anthropicApiKey,
+    timeout: config.aiTimeoutMs,
+    maxRetries: config.aiMaxRetries,
+  });
 
   return {
     isMock: false,

@@ -3,6 +3,7 @@ import { redisConnection } from "./redis.js";
 import { runAgentCycle } from "../engine/loop.js";
 import { resolveAgentDefinition } from "../engine/resolveDefinition.js";
 import type { AgentCycleJobData } from "./queues.js";
+import { config } from "../config.js";
 
 export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
   const worker = new Worker<AgentCycleJobData>(
@@ -24,7 +25,7 @@ export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
       return result;
     },
     // Une perte de verrou/crash peut suivre un effet : ne pas relancer les jobs ordinaires bloqués.
-    { connection: redisConnection, concurrency: 5, maxStalledCount: 0 }
+    { connection: redisConnection, concurrency: config.workerConcurrency, maxStalledCount: 0 }
   );
 
   worker.on("failed", (job, err) => {

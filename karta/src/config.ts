@@ -8,6 +8,36 @@ function required(name: string, fallback?: string): string {
   return value;
 }
 
+export function parseBoundedInteger(
+  name: string,
+  raw: string | undefined,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  if (raw === undefined || raw === "") return fallback;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < min || value > max) {
+    throw new Error(`${name} doit etre un entier entre ${min} et ${max}`);
+  }
+  return value;
+}
+
+const legacyMockEnabled = (process.env.KARTA_MOCK_CLAUDE ?? "true") !== "false";
+const aiProvider = process.env.AI_PROVIDER ?? (legacyMockEnabled ? "mock" : "anthropic");
+const allowedProviders = ["mock", "anthropic", "openai-compatible", "ollama"] as const;
+if (!allowedProviders.includes(aiProvider as typeof allowedProviders[number])) {
+  throw new Error(`AI_PROVIDER non supporte: ${aiProvider}`);
+}
+
+const fallbackProvider = process.env.AI_FALLBACK_PROVIDER ?? "none";
+if (!["none", ...allowedProviders].includes(fallbackProvider as "none" | typeof allowedProviders[number])) {
+  throw new Error(`AI_FALLBACK_PROVIDER non supporte: ${fallbackProvider}`);
+}
+if (fallbackProvider !== "none" && fallbackProvider === aiProvider) {
+  throw new Error("AI_FALLBACK_PROVIDER doit etre different de AI_PROVIDER");
+}
+
 export const config = {
   supabaseUrl: required("SUPABASE_URL", "https://auth.purama.dev"),
   supabaseServiceRoleKey: required("SUPABASE_SERVICE_ROLE_KEY", ""),
@@ -18,6 +48,16 @@ export const config = {
   anthropicModelFast: required("ANTHROPIC_MODEL_FAST", "claude-haiku-4-5-20251001"),
   // Voir .env.example : mock actif tant que le crédit Anthropic n'est pas rechargé (règle permanente 2026-07-26).
   mockClaude: (process.env.KARTA_MOCK_CLAUDE ?? "true") !== "false",
+
+  aiProvider: aiProvider as typeof allowedProviders[number],
+  aiFallbackProvider: fallbackProvider as "none" | typeof allowedProviders[number],
+  aiBaseUrl: process.env.AI_BASE_URL ?? "",
+  aiApiKey: process.env.AI_API_KEY ?? "",
+  aiModelMain: process.env.AI_MODEL_MAIN ?? "",
+  aiModelFast: process.env.AI_MODEL_FAST ?? "",
+  aiTimeoutMs: parseBoundedInteger("AI_TIMEOUT_MS", process.env.AI_TIMEOUT_MS, 60_000, 1_000, 120_000),
+  aiMaxRetries: parseBoundedInteger("AI_MAX_RETRIES", process.env.AI_MAX_RETRIES, 1, 0, 2),
+  workerConcurrency: parseBoundedInteger("KARTA_WORKER_CONCURRENCY", process.env.KARTA_WORKER_CONCURRENCY, 5, 1, 8),
 
   redisUrl: required("REDIS_URL", "redis://127.0.0.1:6379"),
 
