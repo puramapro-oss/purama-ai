@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+import { safeInternalPath } from '@/lib/safeInternalNavigation';
 
 export type NotificationType = 'task_completed' | 'question' | 'daily_report' | 'alert';
 
@@ -33,6 +35,7 @@ export interface NotificationPreferences {
 export function useNotifications() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Fetch notifications
   const { data: notifications = [], isLoading } = useQuery({
@@ -70,6 +73,7 @@ export function useNotifications() {
         },
         (payload) => {
           const newNotification = payload.new as Notification;
+          const actionPath = safeInternalPath(newNotification.action_url);
           
           // Show toast for new notification
           const icons: Record<NotificationType, string> = {
@@ -82,9 +86,9 @@ export function useNotifications() {
           toast(newNotification.title, {
             description: newNotification.message,
             icon: icons[newNotification.type],
-            action: newNotification.action_url ? {
+            action: actionPath ? {
               label: 'Voir',
-              onClick: () => window.location.href = newNotification.action_url!,
+              onClick: () => navigate(actionPath),
             } : undefined,
           });
 
@@ -97,7 +101,7 @@ export function useNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id, queryClient]);
+  }, [user?.id, queryClient, navigate]);
 
   // Mark single notification as read
   const markAsRead = useMutation({

@@ -28,6 +28,7 @@ import { useAgents } from '@/hooks/useAgents';
 import { formatDistanceToNow, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { safeInternalPath } from '@/lib/safeInternalNavigation';
 
 const typeConfig: Record<NotificationType, { icon: typeof Bell; label: string; color: string }> = {
   task_completed: { 
@@ -218,6 +219,7 @@ export default function Notifications() {
                 <div className="space-y-3">
                   {notifs.map((notification, index) => {
                     const TypeIcon = typeConfig[notification.type].icon;
+                    const actionPath = safeInternalPath(notification.action_url);
                     return (
                       <motion.div
                         key={notification.id}
@@ -276,14 +278,14 @@ export default function Notifications() {
 
                             {/* Actions */}
                             <div className="flex-shrink-0 flex gap-1">
-                              {notification.action_url && (
+                              {actionPath && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
                                   asChild
                                   onClick={(e) => e.stopPropagation()}
                                 >
-                                  <Link to={notification.action_url}>
+                                  <Link to={actionPath}>
                                     <ExternalLink className="w-4 h-4" />
                                   </Link>
                                 </Button>

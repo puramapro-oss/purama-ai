@@ -13,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications, NotificationType } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { safeInternalPath } from '@/lib/safeInternalNavigation';
 
 const typeIcons: Record<NotificationType, string> = {
   task_completed: '✅',
@@ -94,8 +95,9 @@ export function NotificationCenter() {
             </div>
           ) : (
             <div className="divide-y divide-border">
-              {recentNotifications.map((notification) => (
-                <motion.div
+              {recentNotifications.map((notification) => {
+                const actionPath = safeInternalPath(notification.action_url);
+                return <motion.div
                   key={notification.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -140,7 +142,7 @@ export function NotificationCenter() {
 
                     {/* Actions */}
                     <div className="flex-shrink-0 flex flex-col gap-1">
-                      {notification.action_url && (
+                      {actionPath && (
                         <Button
                           variant="ghost"
                           size="icon"
@@ -148,7 +150,7 @@ export function NotificationCenter() {
                           asChild
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Link to={notification.action_url}>
+                          <Link to={actionPath}>
                             <ExternalLink className="w-3.5 h-3.5" />
                           </Link>
                         </Button>
@@ -166,8 +168,8 @@ export function NotificationCenter() {
                       </Button>
                     </div>
                   </div>
-                </motion.div>
-              ))}
+                </motion.div>;
+              })}
             </div>
           )}
         </ScrollArea>
