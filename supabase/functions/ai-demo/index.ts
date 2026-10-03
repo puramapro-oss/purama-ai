@@ -16,7 +16,7 @@ import { json } from "../_shared/response.ts";
  * concurrents — le rate limit en mémoire seul ne suffit pas (cf ERRORS.md 2026-07-27).
  */
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": Deno.env.get("CORS_ALLOWED_ORIGIN") === "*" ? "" : (Deno.env.get("CORS_ALLOWED_ORIGIN") ?? ""),
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 

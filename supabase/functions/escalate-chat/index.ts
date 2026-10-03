@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
 import { escapeHtml } from "../_shared/html.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": Deno.env.get("CORS_ALLOWED_ORIGIN") === "*" ? "" : (Deno.env.get("CORS_ALLOWED_ORIGIN") ?? ""),
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 

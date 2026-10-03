@@ -10,7 +10,7 @@ import Stripe from 'https://esm.sh/stripe@15.12.0?target=deno&deno-std=0.224.0';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.91.0';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': Deno.env.get('CORS_ALLOWED_ORIGIN') === '*' ? '' : (Deno.env.get('CORS_ALLOWED_ORIGIN') ?? ''),
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };

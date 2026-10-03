@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": Deno.env.get("CORS_ALLOWED_ORIGIN") === "*" ? "" : (Deno.env.get("CORS_ALLOWED_ORIGIN") ?? ""),
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-secret",
 };
 

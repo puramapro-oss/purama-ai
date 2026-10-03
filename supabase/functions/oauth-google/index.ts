@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ALLOWED_ORIGINS = new Set(["https://purama-ai.purama.dev", "https://purama.dev", ...(Deno.env.get("OAUTH_ALLOWED_ORIGINS") ?? "").split(",").map((v) => v.trim()).filter(Boolean)]);
+const ALLOWED_ORIGINS = new Set((Deno.env.get("OAUTH_ALLOWED_ORIGINS") ?? "").split(",").map((v) => v.trim()).filter((v) => v && v !== "*"));
 const PROVIDERS = {
   google_sheets: ["https://www.googleapis.com/auth/spreadsheets"], gmail: ["https://www.googleapis.com/auth/gmail.modify"],
   google_calendar: ["https://www.googleapis.com/auth/calendar"], google_drive: ["https://www.googleapis.com/auth/drive.file"],
@@ -9,7 +9,7 @@ type Provider = keyof typeof PROVIDERS;
 const CLIENT_ID = Deno.env.get("GOOGLE_CLIENT_ID"), CLIENT_SECRET = Deno.env.get("GOOGLE_CLIENT_SECRET"), STATE_SECRET = Deno.env.get("GOOGLE_OAUTH_STATE_SECRET");
 const REDIRECT_URI = "https://purama-ai.purama.dev/oauth/callback", encoder = new TextEncoder();
 
-function cors(req: Request) { const origin = req.headers.get("origin") ?? ""; return { "Access-Control-Allow-Origin": ALLOWED_ORIGINS.has(origin) ? origin : "https://purama-ai.purama.dev", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", Vary: "Origin" }; }
+function cors(req: Request) { const origin = req.headers.get("origin") ?? ""; return { "Access-Control-Allow-Origin": ALLOWED_ORIGINS.has(origin) ? origin : "", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", Vary: "Origin" }; }
 function json(req: Request, body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: { ...cors(req), "Content-Type": "application/json", "Cache-Control": "no-store" } }); }
 function b64(bytes: Uint8Array) { return btoa(String.fromCharCode(...bytes)).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, ""); }
 function unb64(value: string) { const n = value.replaceAll("-", "+").replaceAll("_", "/"); return Uint8Array.from(atob(n.padEnd(Math.ceil(n.length / 4) * 4, "=")), (c) => c.charCodeAt(0)); }
