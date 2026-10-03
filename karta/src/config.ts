@@ -2,7 +2,7 @@ import "dotenv/config";
 
 function required(name: string, fallback?: string): string {
   const value = process.env[name] ?? fallback;
-  if (value === undefined) {
+  if (value === undefined || value.trim() === "") {
     throw new Error(`Variable d'environnement manquante: ${name}`);
   }
   return value;
@@ -78,6 +78,12 @@ export const config = {
   opsAlertTimeoutMs: parseBoundedInteger(
     "KARTA_OPS_ALERT_TIMEOUT_MS", process.env.KARTA_OPS_ALERT_TIMEOUT_MS, 5_000, 1_000, 15_000
   ),
+  shutdownTimeoutMs: parseBoundedInteger(
+    "KARTA_SHUTDOWN_TIMEOUT_MS", process.env.KARTA_SHUTDOWN_TIMEOUT_MS, 30_000, 5_000, 120_000
+  ),
+  readinessTimeoutMs: parseBoundedInteger(
+    "KARTA_READINESS_TIMEOUT_MS", process.env.KARTA_READINESS_TIMEOUT_MS, 5_000, 500, 30_000
+  ),
 
   redisUrl: required("REDIS_URL", "redis://127.0.0.1:6379"),
 
@@ -99,7 +105,9 @@ export const config = {
   docusealBaseUrl: process.env.DOCUSEAL_BASE_URL ?? "http://docuseal:3000",
   apolloApiKey: process.env.APOLLO_API_KEY ?? "",
 
-  port: Number(process.env.KARTA_PORT ?? 4100),
-  adminToken: process.env.KARTA_ADMIN_TOKEN ?? "",
+  port: parseBoundedInteger("KARTA_PORT", process.env.KARTA_PORT, 4100, 1, 65_535),
+  adminToken: runtimeEnvironment === "production"
+    ? required("KARTA_ADMIN_TOKEN")
+    : process.env.KARTA_ADMIN_TOKEN ?? "",
   dailyReportCron: process.env.DAILY_REPORT_CRON ?? "0 8 * * *",
 };

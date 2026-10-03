@@ -11,4 +11,8 @@ describe("configuration bornee", () => {
   it.each(["0", "9", "2.5", "abc"])("refuse une valeur dangereuse: %s", (value) => {
     expect(() => parseBoundedInteger("TEST", value, 5, 1, 8)).toThrow(/entre 1 et 8/);
   });
+
+  it.each(["0", "65536", "1.5", "NaN"])("refuse un port invalide: %s", (value) => {
+    expect(() => parseBoundedInteger("KARTA_PORT", value, 4100, 1, 65_535)).toThrow(/entre 1 et 65535/);
+  });
 });

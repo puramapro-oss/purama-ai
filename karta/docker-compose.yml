@@ -5,6 +5,11 @@ services:
     restart: unless-stopped
     network_mode: host
     command: ["redis-server", "--port", "6380", "--save", "60", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6380", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     volumes:
       - karta-redis-data:/data
 
@@ -12,11 +17,19 @@ services:
     build: .
     container_name: karta-engine
     restart: unless-stopped
+    stop_grace_period: 45s
     network_mode: host
     depends_on:
-      - karta-redis
+      karta-redis:
+        condition: service_healthy
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:'+(process.env.KARTA_PORT||4100)+'/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 8s
+      retries: 4
+      start_period: 20s
 
 volumes:
   karta-redis-data:

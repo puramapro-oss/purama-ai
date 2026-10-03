@@ -9,7 +9,7 @@ export async function alertOps(source: OpsAlertSource, message: string): Promise
   const response = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ source, message: sanitize(message), occurred_at: new Date().toISOString() }),
+    body: JSON.stringify({ source, message: sanitizeOpsMessage(message), occurred_at: new Date().toISOString() }),
     signal: AbortSignal.timeout(config.opsAlertTimeoutMs),
   });
   if (!response.ok) throw new Error(`alerte ops refusee (${response.status})`);
@@ -29,7 +29,7 @@ function validateOpsUrl(value: string): string {
   return url.toString();
 }
 
-function sanitize(value: string): string {
+export function sanitizeOpsMessage(value: string): string {
   return value
     .replace(/Bearer\s+\S+/gi, "Bearer [REDACTED]")
     .replace(/\b(?:sk|gsk|rk|whsec)_[A-Za-z0-9_-]+\b/g, "[REDACTED]")

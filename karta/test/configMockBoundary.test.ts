@@ -25,4 +25,16 @@ describe("mock provider boundary", () => {
   it("refuse aussi un fallback mock en production", async () => {
     await expect(loadConfig("production", "anthropic", "mock")).rejects.toThrow(/reserve aux environnements test et development/);
   });
+
+  it("refuse une clé service_role vide en production", async () => {
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "");
+    vi.stubEnv("KARTA_ADMIN_TOKEN", "admin-test-token");
+    await expect(loadConfig("production", "anthropic")).rejects.toThrow(/SUPABASE_SERVICE_ROLE_KEY/);
+  });
+
+  it("refuse une API interne sans token admin en production", async () => {
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service-role-test");
+    vi.stubEnv("KARTA_ADMIN_TOKEN", "");
+    await expect(loadConfig("production", "anthropic")).rejects.toThrow(/KARTA_ADMIN_TOKEN/);
+  });
 });

@@ -1,12 +1,14 @@
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
-import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
+import { setGlobalKillSwitch } from "../engine/killswitch.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
 import type { StaticAgentType } from "../engine/types.js";
+import { isRuntimeReady, verifyRuntimeDependencies } from "../runtime.js";
+import { sanitizeOpsMessage } from "../engine/opsAlert.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 
@@ -28,29 +30,48 @@ function isAuthorized(req: IncomingMessage): boolean {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer() {
+export function startApiServer(): Promise<Server> {
   const server = createServer((req, res) => {
     void handleRequest(req, res).catch((error) => {
-      console.error("[api] erreur non gérée:", error);
-      json(res, 500, { error: error instanceof Error ? error.message : "erreur interne" });
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("[api] erreur non gérée:", sanitizeOpsMessage(message));
+      json(res, 500, { error: "Erreur interne" });
     });
   });
 
-  server.listen(config.port, () => console.log(`[api] KARTA écoute sur :${config.port}`));
-  return server;
+  return new Promise((resolve, reject) => {
+    const onError = (error: Error) => reject(error);
+    server.once("error", onError);
+    server.listen(config.port, () => {
+      server.off("error", onError);
+      console.log(`[api] KARTA écoute sur :${config.port}`);
+      resolve(server);
+    });
+  });
 }
 
-async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+export async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
   if (req.method === "GET" && url.pathname === "/health") {
-    const globalKillSwitch = await isGlobalKillSwitchActive();
     json(res, 200, {
       status: "ok",
-      mockClaude: config.mockClaude,
-      globalKillSwitch,
       timestamp: new Date().toISOString(),
     });
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/ready") {
+    if (!isRuntimeReady()) {
+      json(res, 503, { status: "not_ready", timestamp: new Date().toISOString() });
+      return;
+    }
+    try {
+      await verifyRuntimeDependencies();
+      json(res, 200, { status: "ready", timestamp: new Date().toISOString() });
+    } catch {
+      json(res, 503, { status: "not_ready", timestamp: new Date().toISOString() });
+    }
     return;
   }
 
