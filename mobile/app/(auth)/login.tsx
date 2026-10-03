@@ -33,7 +33,11 @@ export default function LoginScreen() {
   const handleGoogle = async () => {
     setLoading(true);
     const { error: err } = await signInWithGoogle();
-    if (err) setError("Erreur de connexion Google");
+    if (err) {
+      setError("Erreur de connexion Google");
+    } else {
+      router.replace("/(tabs)");
+    }
     setLoading(false);
   };
 

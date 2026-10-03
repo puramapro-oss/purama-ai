@@ -4,6 +4,9 @@ import { supabase } from "@/lib/supabase";
 import { Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import { completeOAuthRedirect } from "@/lib/oauth";
+
+WebBrowser.maybeCompleteAuthSession();
 
 interface AuthContextType {
   user: User | null;
@@ -126,19 +129,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (error) return { error: new Error(error.message) };
-      if (data?.url) {
-        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
-        if (result.type === "success") {
-          const url = result.url;
-          const params = new URL(url);
-          const accessToken = params.searchParams.get("access_token") || params.hash?.match(/access_token=([^&]*)/)?.[1];
-          const refreshToken = params.searchParams.get("refresh_token") || params.hash?.match(/refresh_token=([^&]*)/)?.[1];
+      if (!data?.url) return { error: new Error("OAuth authorization URL was not returned") };
 
-          if (accessToken && refreshToken) {
-            await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-          }
-        }
-      }
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+      if (result.type !== "success") return { error: new Error("OAuth sign-in was cancelled") };
+
+      await completeOAuthRedirect(result.url, redirectUrl);
       return { error: null };
     } catch (err) {
       return { error: err as Error };
