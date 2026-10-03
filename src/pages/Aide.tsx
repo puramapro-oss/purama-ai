@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HelpCircle, Search, ChevronDown, ChevronUp, ThumbsUp, MessageCircle, Bot, BookOpen } from 'lucide-react';
+import { HelpCircle, Search, ChevronDown, ChevronUp, MessageCircle, Bot, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -140,12 +140,6 @@ export default function Aide() {
                           >
                             <div className="pt-3 pl-4 md:pl-20">
                               <p className="text-sm text-muted-foreground leading-relaxed">{article.answer}</p>
-                              <div className="flex items-center gap-2 mt-3">
-                                <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-green-400">
-                                  <ThumbsUp className="w-3 h-3 mr-1" />
-                                  Utile
-                                </Button>
-                              </div>
                             </div>
                           </motion.div>
                         )}

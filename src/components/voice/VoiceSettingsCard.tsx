@@ -34,6 +34,10 @@ export function VoiceSettingsCard() {
     setTesting(true);
     try {
       await voice.speak("Bonjour, je suis ton agent Purama. Tu peux me parler à voix haute, je t'écoute et je te réponds.");
+    } catch (e) {
+      toast.error('Test vocal impossible', {
+        description: e instanceof Error ? e.message : String(e),
+      });
     } finally {
       setTimeout(() => setTesting(false), 1500);
     }
