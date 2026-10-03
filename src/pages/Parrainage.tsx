@@ -24,17 +24,21 @@ export default function Parrainage() {
   const { data: commissions } = useMyReferralCommissions();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-  const code = profile?.code_parrainage || 'PURAMA-XXXXXXXX';
-  const link = `${window.location.origin}/signup?ref=${code}`;
+  const code = profile?.code_parrainage || null;
+  const link = code ? `${window.location.origin}/signup?ref=${code}` : null;
   const nbFilleuls = profile?.nombre_filleuls || 0;
   const totalGains = profile?.gains_totaux || 0;
 
   const totalCommissions = commissions?.reduce((sum, c) => sum + Number(c.montant || 0), 0) || 0;
   const pendingCommissions = commissions?.filter(c => c.statut === 'en_attente').reduce((sum, c) => sum + Number(c.montant || 0), 0) || 0;
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success(`${label} copié !`);
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(`${label} copié !`);
+    } catch {
+      toast.error(`Impossible de copier le ${label.toLowerCase()}.`);
+    }
   };
 
   const currentPalierIndex = PALIERS.findIndex(p => p.filleuls > nbFilleuls);
@@ -96,17 +100,19 @@ export default function Parrainage() {
             <Card className="glass-effect p-8 text-center border-accent-cyan/20">
               <h2 className="font-orbitron text-xl font-bold mb-6 text-foreground">Mon code parrainage</h2>
               <div className="bg-secondary/50 rounded-xl p-6 mb-6 border border-accent-cyan/10">
-                <span className="font-orbitron text-2xl sm:text-3xl font-black text-accent-cyan tracking-wider">{code}</span>
+                <span className="font-orbitron text-2xl sm:text-3xl font-black text-accent-cyan tracking-wider">
+                  {code ?? 'Code indisponible'}
+                </span>
               </div>
               <div className="flex flex-wrap justify-center gap-3 mb-6">
-                <Button onClick={() => copyToClipboard(code, 'Code')} variant="outline" className="border-accent-cyan/30 hover:bg-accent-cyan/10">
+                <Button disabled={!code} onClick={() => code && void copyToClipboard(code, 'Code')} variant="outline" className="border-accent-cyan/30 hover:bg-accent-cyan/10">
                   <Copy className="w-4 h-4 mr-2" /> Copier le code
                 </Button>
-                <Button onClick={() => copyToClipboard(link, 'Lien')} variant="outline" className="border-accent-purple/30 hover:bg-accent-purple/10">
+                <Button disabled={!link} onClick={() => link && void copyToClipboard(link, 'Lien')} variant="outline" className="border-accent-purple/30 hover:bg-accent-purple/10">
                   <Link2 className="w-4 h-4 mr-2" /> Copier le lien
                 </Button>
               </div>
-              <div className="flex flex-wrap justify-center gap-2">
+              {code && link && <div className="flex flex-wrap justify-center gap-2">
                 {[
                   { label: 'WhatsApp', url: `https://wa.me/?text=${encodeURIComponent(`Rejoins PURAMA AI avec -50% sur ton 1er mois ! ${link}`)}`, color: 'bg-green-600' },
                   { label: 'Twitter', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Découvrez PURAMA AI ! -50% avec mon code : ${code} ${link}`)}`, color: 'bg-blue-500' },
@@ -118,7 +124,7 @@ export default function Parrainage() {
                     </Button>
                   </a>
                 ))}
-              </div>
+              </div>}
             </Card>
           </motion.section>
         )}

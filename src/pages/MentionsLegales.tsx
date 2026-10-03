@@ -19,16 +19,15 @@ export default function MentionsLegales() {
 
         <h2>1. Éditeur du site</h2>
         <ul>
-          <li>Raison sociale : <strong>[À COMPLÉTER - Raison sociale]</strong></li>
-          <li>Forme juridique : <strong>[À COMPLÉTER - Forme juridique]</strong></li>
+          <li>Raison sociale : <strong>SASU PURAMA</strong></li>
+          <li>Forme juridique : <strong>Société par actions simplifiée unipersonnelle</strong></li>
           <li>Capital social : <strong>[À COMPLÉTER - Capital social]</strong></li>
-          <li>Siège social : <strong>[À COMPLÉTER - Adresse du siège social]</strong></li>
+          <li>Siège social : <strong>8 rue de la Chapelle, 25560 Frasne</strong></li>
           <li>SIRET : <strong>[À COMPLÉTER - Numéro SIRET]</strong></li>
           <li>RCS : <strong>[À COMPLÉTER - Numéro RCS]</strong></li>
-          <li>TVA intracommunautaire : <strong>[À COMPLÉTER - Numéro TVA]</strong></li>
+          <li>TVA : <strong>TVA non applicable, article 293 B du CGI</strong></li>
           <li>Directeur de publication : <strong>[À COMPLÉTER - Nom du directeur]</strong></li>
-          <li>Email : <strong>[À COMPLÉTER - Email de contact]</strong></li>
-          <li>Téléphone : <strong>[À COMPLÉTER - Numéro de téléphone]</strong></li>
+          <li>Email : <strong>contact@purama.fr</strong></li>
         </ul>
 
         <h2>2. Hébergement</h2>

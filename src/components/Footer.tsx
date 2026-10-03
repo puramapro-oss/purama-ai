@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Bot, Linkedin, Twitter, Users } from 'lucide-react'
+import { Bot, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { resetCookieConsent } from '@/components/CookieConsent'
 
@@ -46,23 +46,6 @@ export function Footer() {
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               La plateforme #1 d'agents IA pour automatiser votre entreprise et booster votre productivité.
             </p>
-            <div className="flex gap-4">
-              {[
-                { Icon: Twitter, label: 'Twitter', url: '#' },
-                { Icon: Linkedin, label: 'LinkedIn', url: '#' },
-              ].map(({ Icon, label, url }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="w-10 h-10 bg-secondary/50 rounded-lg flex items-center justify-center text-muted-foreground hover:text-accent-cyan hover:bg-accent-cyan/10 transition-all"
-                >
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Product links */}

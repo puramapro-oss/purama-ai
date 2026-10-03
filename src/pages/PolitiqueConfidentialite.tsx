@@ -16,8 +16,8 @@ export default function PolitiqueConfidentialite() {
         <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : février 2025</p>
 
         <h2>1. Responsable de traitement</h2>
-        <p><strong>[À COMPLÉTER - Raison sociale]</strong>, dont le siège social est situé au <strong>[À COMPLÉTER - Adresse]</strong>, est responsable du traitement de vos données personnelles.</p>
-        <p>Contact : <strong>[À COMPLÉTER - Email DPO ou contact]</strong></p>
+        <p><strong>SASU PURAMA</strong>, dont le siège social est situé au <strong>8 rue de la Chapelle, 25560 Frasne</strong>, est responsable du traitement de vos données personnelles.</p>
+        <p>Contact : <strong>contact@purama.fr</strong></p>
 
         <h2>2. Données collectées</h2>
         <p>Nous collectons les données suivantes :</p>
@@ -70,7 +70,7 @@ export default function PolitiqueConfidentialite() {
           <li><strong>Droit d'opposition</strong> : vous opposer au traitement</li>
           <li><strong>Droit à la limitation</strong> : limiter le traitement</li>
         </ul>
-        <p>Pour exercer ces droits, contactez-nous à : <strong>[À COMPLÉTER - Email DPO]</strong></p>
+        <p>Pour exercer ces droits, contactez-nous à : <strong>contact@purama.fr</strong></p>
 
         <h2>8. Réclamation</h2>
         <p>Si vous estimez que le traitement de vos données n'est pas conforme, vous pouvez introduire une réclamation auprès de la CNIL : <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-primary">www.cnil.fr</a></p>

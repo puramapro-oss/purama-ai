@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Send, Mail, MessageSquare, Phone, MapPin, ArrowRight } from 'lucide-react'
+import { Send, Mail, MessageSquare, MapPin, ArrowRight } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { toast } from 'sonner'
 
@@ -100,8 +100,7 @@ export function Contact() {
             <div className="space-y-4">
               {[
                 { icon: Mail, label: 'Email', value: 'contact@purama.fr' },
-                { icon: Phone, label: 'Téléphone', value: '[À COMPLÉTER]' },
-                { icon: MapPin, label: 'Adresse', value: 'Paris, France' },
+                { icon: MapPin, label: 'Adresse', value: '8 rue de la Chapelle, 25560 Frasne' },
               ].map((item, index) => (
                 <motion.div
                   key={index}
