@@ -3,7 +3,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useWallet } from "@/hooks/useWallet";
-import { useAuth } from "@/hooks/useAuth";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -13,11 +12,12 @@ import { COLORS } from "@/lib/constants";
 
 export default function WalletScreen() {
   const { balance, transactions, loading, error, refresh, requestWithdrawal } = useWallet();
-  const { profile } = useAuth();
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [amount, setAmount] = useState("");
   const [iban, setIban] = useState("");
+  const [beneficiary, setBeneficiary] = useState("");
   const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawalKey, setWithdrawalKey] = useState(() => crypto.randomUUID());
 
   const handleWithdraw = async () => {
     const numAmount = parseFloat(amount);
@@ -25,12 +25,12 @@ export default function WalletScreen() {
       Alert.alert("Erreur", "Le montant minimum est de 5 euros");
       return;
     }
-    if (!iban.trim()) {
-      Alert.alert("Erreur", "Entre ton IBAN");
+    if (!iban.trim() || !beneficiary.trim()) {
+      Alert.alert("Erreur", "Entre ton IBAN et le nom du bénéficiaire");
       return;
     }
     setWithdrawing(true);
-    const { error } = await requestWithdrawal(numAmount, iban.trim(), profile?.full_name ?? "");
+    const { error } = await requestWithdrawal(numAmount, iban.trim(), beneficiary.trim(), withdrawalKey);
     setWithdrawing(false);
     if (error) {
       Alert.alert("Erreur", error);
@@ -39,6 +39,8 @@ export default function WalletScreen() {
       setShowWithdraw(false);
       setAmount("");
       setIban("");
+      setBeneficiary("");
+      setWithdrawalKey(crypto.randomUUID());
     }
   };
 
@@ -85,6 +87,13 @@ export default function WalletScreen() {
               value={iban}
               onChangeText={setIban}
               autoCapitalize="characters"
+            />
+            <Input
+              testID="withdraw-beneficiary"
+              label="Bénéficiaire"
+              placeholder="Prénom NOM"
+              value={beneficiary}
+              onChangeText={setBeneficiary}
             />
             <Button
               testID="withdraw-confirm"

@@ -25,7 +25,7 @@ export default function DailyGift() {
     // Animate delay
     await new Promise((r) => setTimeout(r, 1500));
 
-    openGiftMutation.mutate(streakDays, {
+    openGiftMutation.mutate(undefined, {
       onSuccess: (result) => {
         setGiftResult(result);
         setIsOpening(false);
@@ -155,8 +155,8 @@ export default function DailyGift() {
           <CardContent className="pt-5">
             <h3 className="font-semibold text-foreground mb-3">Comment ça marche ?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
-              <p>Ouvre ton coffre chaque jour pour gagner des points, coupons, tickets ou crédits.</p>
-              <p>Plus ton streak est long, meilleures sont les récompenses (min -10% à 7j+).</p>
+              <p>Ouvre ton coffre chaque jour pour gagner des points crédités immédiatement.</p>
+              <p>Le tirage et le crédit sont effectués côté serveur, une seule fois par jour.</p>
               <p>Le multiplicateur augmente tes gains de points : x2 à 7j, x5 à 30j, x10 à 100j.</p>
               <p>Ne manque pas un jour pour ne pas casser ton streak !</p>
             </div>

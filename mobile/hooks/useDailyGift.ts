@@ -30,7 +30,7 @@ export function useDailyGift() {
         .from("daily_gifts")
         .select("*")
         .eq("user_id", user.id)
-        .gte("opened_at", today)
+        .eq("gift_day", today)
         .order("opened_at", { ascending: false })
         .limit(1);
 
@@ -42,25 +42,13 @@ export function useDailyGift() {
         setStreak(data[0].streak_count);
       } else {
         setCanOpen(true);
-        const { data: lastGift, error: lastGiftError } = await supabase.schema("purama_ai")
-          .from("daily_gifts")
-          .select("streak_count, opened_at")
+        const { data: points, error: pointsError } = await supabase
+          .from("purama_points")
+          .select("streak_days")
           .eq("user_id", user.id)
-          .order("opened_at", { ascending: false })
-          .limit(1);
-
-        if (lastGiftError) throw lastGiftError;
-
-        if (lastGift && lastGift.length > 0) {
-          const lastDate = new Date(lastGift[0].opened_at);
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          setStreak(
-            lastDate.toDateString() === yesterday.toDateString()
-              ? lastGift[0].streak_count
-              : 0
-          );
-        }
+          .maybeSingle();
+        if (pointsError) throw pointsError;
+        setStreak(points?.streak_days ?? 0);
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Impossible de charger le cadeau quotidien");
@@ -76,54 +64,23 @@ export function useDailyGift() {
   const openGift = async () => {
     if (!user || !canOpen) return null;
 
-    const rand = Math.random() * 100;
-    let giftType: string;
-    let giftValue: string;
-
-    if (rand < 40) {
-      giftType = "points";
-      giftValue = String(Math.floor(Math.random() * 16) + 5);
-    } else if (rand < 65) {
-      giftType = "coupon";
-      giftValue = Math.random() < 0.5 ? "5" : "10";
-    } else if (rand < 80) {
-      giftType = "ticket";
-      giftValue = "1";
-    } else if (rand < 90) {
-      giftType = "credits";
-      giftValue = "3";
-    } else if (rand < 95) {
-      giftType = "coupon";
-      giftValue = "20";
-    } else if (rand < 98) {
-      giftType = "points";
-      giftValue = String(Math.floor(Math.random() * 51) + 50);
-    } else {
-      giftType = "coupon";
-      giftValue = "50";
-    }
-
-    const newStreak = streak + 1;
-    const { data, error } = await supabase.schema("purama_ai")
-      .from("daily_gifts")
-      .insert({
-        user_id: user.id,
-        gift_type: giftType,
-        gift_value: giftValue,
-        streak_count: newStreak,
-      })
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc("claim_daily_gift");
 
     if (!error && data) {
-      setTodayGift(data);
+      const result = data as Record<string, unknown>;
+      const gift: DailyGift = {
+        gift_type: String(result.gift_type),
+        gift_value: String(result.gift_value),
+        streak_count: Number(result.streak_count),
+        opened_at: String(result.opened_at),
+      };
+      setTodayGift(gift);
+      setStreak(gift.streak_count);
       setCanOpen(false);
-      setStreak(newStreak);
+      return gift;
     }
-
     if (error) setError(error.message);
-
-    return data;
+    return null;
   };
 
   return { todayGift, canOpen, streak, loading, error, openGift, refresh: checkGift };

@@ -60,16 +60,12 @@ export function usePurchaseItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ itemId, pointsCost }: { itemId: string; pointsCost: number }) => {
+    mutationFn: async ({ itemId, idempotencyKey }: { itemId: string; idempotencyKey: string }) => {
       if (!user) throw new Error('Non connecté');
-
-      const { error } = await supabase
-        .from('point_purchases')
-        .insert({
-          user_id: user.id,
-          item_id: itemId,
-          points_spent: pointsCost,
-        });
+      const { error } = await supabase.rpc('purchase_shop_item', {
+        p_item_id: itemId,
+        p_idempotency_key: idempotencyKey,
+      });
       if (error) throw error;
     },
     onSuccess: () => {

@@ -3,39 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 
-interface GiftResult {
+export interface GiftResult {
   type: string;
   value: string;
   label: string;
-}
-
-const GIFT_TABLE: { weight: number; type: string; values: string[]; label: (v: string) => string }[] = [
-  { weight: 40, type: 'points', values: ['5', '10', '15', '20'], label: (v) => `+${v} points` },
-  { weight: 25, type: 'coupon', values: ['5', '10'], label: (v) => `-${v}% sur ton prochain mois` },
-  { weight: 15, type: 'ticket', values: ['1'], label: () => '+1 ticket tirage mensuel' },
-  { weight: 10, type: 'credits', values: ['3'], label: () => '+3 crédits agents' },
-  { weight: 5, type: 'coupon_big', values: ['20'], label: (v) => `-${v}% pendant 3 jours` },
-  { weight: 3, type: 'points_big', values: ['50', '100'], label: (v) => `+${v} points` },
-  { weight: 2, type: 'coupon_mega', values: ['50'], label: (v) => `-${v}% pendant 24h` },
-];
-
-function rollGift(streakDays: number): GiftResult {
-  const totalWeight = GIFT_TABLE.reduce((s, g) => s + g.weight, 0);
-  let roll = Math.random() * totalWeight;
-
-  for (const gift of GIFT_TABLE) {
-    roll -= gift.weight;
-    if (roll <= 0) {
-      const value = gift.values[Math.floor(Math.random() * gift.values.length)];
-      // Streak 7j+ = min coupon 10%
-      if (streakDays >= 7 && gift.type === 'coupon' && Number(value) < 10) {
-        return { type: 'coupon', value: '10', label: '-10% sur ton prochain mois' };
-      }
-      return { type: gift.type, value, label: gift.label(value) };
-    }
-  }
-
-  return { type: 'points', value: '10', label: '+10 points' };
+  alreadyClaimed: boolean;
 }
 
 export function useTodaysGift() {
@@ -65,22 +37,17 @@ export function useOpenGift() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (streakDays: number): Promise<GiftResult> => {
+    mutationFn: async (): Promise<GiftResult> => {
       if (!user) throw new Error('Non connecté');
-
-      const gift = rollGift(streakDays);
-
-      const { error } = await supabase
-        .from('daily_gifts')
-        .insert({
-          user_id: user.id,
-          gift_type: gift.type,
-          gift_value: gift.value,
-          streak_count: streakDays,
-        });
+      const { data, error } = await supabase.rpc('claim_daily_gift');
       if (error) throw error;
-
-      return gift;
+      const result = data as Record<string, unknown>;
+      return {
+        type: String(result.gift_type),
+        value: String(result.gift_value),
+        label: String(result.label),
+        alreadyClaimed: Boolean(result.already_claimed),
+      };
     },
     onSuccess: (gift) => {
       queryClient.invalidateQueries({ queryKey: ['daily-gift'] });

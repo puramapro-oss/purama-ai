@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
 import { ShoppingBag, Star, Ticket, CreditCard, Coins, Gift, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { usePoints, usePointTransactions, useShopItems, usePurchaseItem, getStreakMultiplier } from '@/hooks/usePoints';
+import { useCurrentDraw } from '@/hooks/useLottery';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -30,6 +32,8 @@ export default function Boutique() {
   const { data: transactions = [] } = usePointTransactions();
   const { data: items = [] } = useShopItems();
   const purchaseMutation = usePurchaseItem();
+  const { data: currentDraw } = useCurrentDraw();
+  const purchaseKeys = useRef<Record<string, string>>({});
 
   const balance = points?.balance || 0;
   const lifetime = points?.lifetime_earned || 0;
@@ -40,7 +44,12 @@ export default function Boutique() {
 
   const handlePurchase = (itemId: string, cost: number) => {
     if (balance < cost) return;
-    purchaseMutation.mutate({ itemId, pointsCost: cost });
+    const idempotencyKey = purchaseKeys.current[itemId] ?? crypto.randomUUID();
+    purchaseKeys.current[itemId] = idempotencyKey;
+    purchaseMutation.mutate(
+      { itemId, idempotencyKey },
+      { onSuccess: () => { delete purchaseKeys.current[itemId]; } },
+    );
   };
 
   // Next conversion milestone
@@ -123,10 +132,10 @@ export default function Boutique() {
                     <Button
                       size="sm"
                       onClick={() => handlePurchase(item.id, item.cost_points)}
-                      disabled={balance < item.cost_points || purchaseMutation.isPending}
+                      disabled={item.type !== 'ticket' || !currentDraw || balance < item.cost_points || purchaseMutation.isPending}
                       className="bg-gradient-to-r from-accent-purple to-accent-cyan text-xs"
                     >
-                      Échanger
+                      {item.type !== 'ticket' ? 'Bientôt disponible' : currentDraw ? 'Échanger' : 'Aucun tirage actif'}
                     </Button>
                   </div>
                 </CardContent>

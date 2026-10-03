@@ -33,8 +33,7 @@ export function useWallet() {
         .maybeSingle();
 
       if (walletError) throw walletError;
-
-      setBalance(wallet?.balance ?? 0);
+      setBalance(Number(wallet?.balance ?? 0));
 
       const { data: txns, error: transactionsError } = await purama
         .from("wallet_transactions")
@@ -56,18 +55,17 @@ export function useWallet() {
     fetchWallet();
   }, [fetchWallet]);
 
-  const requestWithdrawal = async (amount: number, iban: string, beneficiaryName: string) => {
+  const requestWithdrawal = async (amount: number, iban: string, beneficiaryName: string, idempotencyKey: string) => {
     if (!user || amount < 5 || amount > balance) {
       return { error: "Montant invalide ou solde insuffisant" };
     }
     if (!beneficiaryName.trim()) return { error: "Le nom du beneficiaire est requis" };
 
-    const { error } = await supabase.schema("purama_ai").from("withdrawals").insert({
-      user_id: user.id,
-      amount,
-      iban,
-      beneficiary_name: beneficiaryName.trim(),
-      status: "pending",
+    const { error } = await supabase.rpc("request_wallet_withdrawal", {
+      p_amount: amount,
+      p_iban: iban,
+      p_beneficiary_name: beneficiaryName.trim(),
+      p_idempotency_key: idempotencyKey,
     });
 
     if (!error) {

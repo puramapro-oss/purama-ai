@@ -1411,6 +1411,10 @@ export type Database = {
       }
     }
     Functions: {
+      claim_daily_gift: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       submit_contact: {
         Args: {
           p_company: string
@@ -1436,6 +1440,19 @@ export type Database = {
       public_weekly_actions_count: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      purchase_shop_item: {
+        Args: { p_idempotency_key: string; p_item_id: string }
+        Returns: Json
+      }
+      request_wallet_withdrawal: {
+        Args: {
+          p_amount: number
+          p_beneficiary_name: string
+          p_iban: string
+          p_idempotency_key: string
+        }
+        Returns: Json
       }
       start_trial: {
         Args: { p_plan_type: string }

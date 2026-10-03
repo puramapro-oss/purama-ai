@@ -24,13 +24,7 @@ export default function PointsScreen() {
     scale.value = withSequence(withSpring(1.2), withSpring(1));
     const gift = await openGift();
     if (gift) {
-      const labels: Record<string, string> = {
-        points: `+${gift.gift_value} points`,
-        coupon: `-${gift.gift_value}% de reduction`,
-        ticket: `${gift.gift_value} ticket(s) loterie`,
-        credits: `+${gift.gift_value} credits IA`,
-      };
-      setGiftResult(labels[gift.gift_type] ?? gift.gift_value);
+      setGiftResult(`+${gift.gift_value} points`);
     }
   };
 

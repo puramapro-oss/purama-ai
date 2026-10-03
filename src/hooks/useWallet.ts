@@ -63,18 +63,16 @@ export function useRequestWithdrawal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ amount, iban, beneficiaryName }: { amount: number; iban: string; beneficiaryName: string }) => {
+    mutationFn: async ({ amount, iban, beneficiaryName, idempotencyKey }: { amount: number; iban: string; beneficiaryName: string; idempotencyKey: string }) => {
       if (!user) throw new Error('Non connecté');
       if (amount < 5) throw new Error('Montant minimum : 5€');
 
-      const { error } = await supabase
-        .from('withdrawals')
-        .insert({
-          user_id: user.id,
-          amount,
-          iban,
-          beneficiary_name: beneficiaryName,
-        });
+      const { error } = await supabase.rpc('request_wallet_withdrawal', {
+        p_amount: amount,
+        p_iban: iban,
+        p_beneficiary_name: beneficiaryName,
+        p_idempotency_key: idempotencyKey,
+      });
       if (error) throw error;
     },
     onSuccess: () => {

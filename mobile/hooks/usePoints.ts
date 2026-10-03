@@ -6,7 +6,7 @@ interface PointTransaction {
   id: string;
   amount: number;
   type: string;
-  source_app: string;
+  source: string;
   created_at: string;
 }
 

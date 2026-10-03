@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Wallet as WalletIcon, ArrowDownRight, ArrowUpRight, Clock, CreditCard, Send, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +24,7 @@ export default function Wallet() {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [iban, setIban] = useState('');
   const [beneficiary, setBeneficiary] = useState('');
+  const withdrawalKey = useRef(crypto.randomUUID());
 
   const balance = Number(wallet?.balance || 0);
   const totalEarned = Number(wallet?.total_earned || 0);
@@ -35,8 +36,14 @@ export default function Wallet() {
     if (!iban.trim() || !beneficiary.trim()) return;
 
     withdrawMutation.mutate(
-      { amount, iban: iban.trim(), beneficiaryName: beneficiary.trim() },
-      { onSuccess: () => { setShowWithdraw(false); setWithdrawAmount(''); setIban(''); setBeneficiary(''); } }
+      { amount, iban: iban.trim(), beneficiaryName: beneficiary.trim(), idempotencyKey: withdrawalKey.current },
+      { onSuccess: () => {
+        withdrawalKey.current = crypto.randomUUID();
+        setShowWithdraw(false);
+        setWithdrawAmount('');
+        setIban('');
+        setBeneficiary('');
+      } }
     );
   };
 
