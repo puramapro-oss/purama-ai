@@ -1,4 +1,4 @@
-import { Worker, type Job } from "bullmq";
+import { UnrecoverableError, Worker, type Job } from "bullmq";
 import { redisConnection } from "./redis.js";
 import { runAgentCycle } from "../engine/loop.js";
 import { resolveAgentDefinition } from "../engine/resolveDefinition.js";
@@ -9,14 +9,22 @@ export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
     "karta-agent-cycle",
     async (job: Job<AgentCycleJobData>) => {
       const definition = await resolveAgentDefinition(job.data.agentType);
-      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger);
+      let result;
+      try {
+        result = await runAgentCycle(job.data.userId, definition, job.data.trigger);
+      } catch (error) {
+        // Une exception sans bilan fiable peut survenir après un effet réel.
+        throw new UnrecoverableError(error instanceof Error ? error.message : String(error));
+      }
       if (result.status === "error") {
-        // BullMQ retry (attempts:3, cf queues.ts) — utile si l'erreur est transitoire (réseau, DB).
-        throw new Error(result.errorMessage ?? "échec inconnu du cycle agent");
+        const message = result.errorMessage ?? "échec inconnu du cycle agent";
+        if (result.retrySafe === true) throw new Error(message);
+        throw new UnrecoverableError(message);
       }
       return result;
     },
-    { connection: redisConnection, concurrency: 5 }
+    // Une perte de verrou/crash peut suivre un effet : ne pas relancer les jobs ordinaires bloqués.
+    { connection: redisConnection, concurrency: 5, maxStalledCount: 0 }
   );
 
   worker.on("failed", (job, err) => {

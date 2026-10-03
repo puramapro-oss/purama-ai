@@ -1,5 +1,6 @@
 import { enqueueAgentCycle } from "../queue/queues.js";
 import type { AgentType, ToolDefinition } from "../engine/types.js";
+import { defineTool, enumSchema, objectSchema, stringSchema } from "./validation.js";
 
 const VALID_AGENT_TYPES: AgentType[] = ["email", "compta", "legal", "partner"];
 
@@ -9,10 +10,11 @@ const VALID_AGENT_TYPES: AgentType[] = ["email", "compta", "legal", "partner"];
  * La délégation passe par la queue (pas d'appel direct) pour garder la même autonomie/logging/kill-switch
  * que n'importe quel autre déclenchement.
  */
-export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reason: string }, { queued: true }> = {
+export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reason: string }, { queued: true }> = defineTool({
   name: "delegate_to_agent",
   description: "Délègue une tâche à un autre agent cœur (email, compta, legal, partner) — ex: transmettre un contrat au juridique.",
   sensitive: false,
+  input: objectSchema({ targetAgent: enumSchema(["email", "compta", "legal", "partner"]), reason: stringSchema({ maxLength: 10_000, pattern: "\\S" }) }),
   async execute(params, ctx) {
     if (!VALID_AGENT_TYPES.includes(params.targetAgent)) {
       throw new Error(`Agent cible invalide: ${params.targetAgent}`);
@@ -24,4 +26,4 @@ export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reaso
     });
     return { queued: true };
   },
-};
+});

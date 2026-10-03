@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { listEmails, type PartnerEmail } from '@/lib/partner';
+import { sanitizeEmailHtml } from '@/lib/sanitizeEmailHtml';
 
 const TYPE_LABEL: Record<string, string> = {
   outreach: 'Outreach',
@@ -112,7 +113,10 @@ export default function PartnerAgentEmails() {
               <p className="text-xs text-muted-foreground mb-1">{TYPE_LABEL[selected.type] ?? selected.type}</p>
               <h3 className="text-lg font-semibold text-foreground">{selected.subject}</h3>
             </div>
-            <div className="p-5 prose prose-sm prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: selected.body_html }} />
+            <div
+              className="p-5 prose prose-sm prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(selected.body_html) }}
+            />
           </div>
         </div>
       )}

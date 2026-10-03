@@ -6,8 +6,12 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
-  DOCUSEAL_WEBHOOK_SECRET, verifyWebhookSignature, docusealFetch,
+  DOCUSEAL_WEBHOOK_SECRET, docusealFetch,
 } from "../_shared/docuseal.ts";
+import {
+  isExplicitDevelopmentEnvironment,
+  verifyDocusealWebhook,
+} from "../_shared/webhook-security.ts";
 
 interface WebhookPayload {
   event_type: string;
@@ -17,35 +21,38 @@ interface WebhookPayload {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
-  if (req.method !== "POST") return errorResponse("Method not allowed", 405);
+  if (req.method !== "POST") {
+    const response = errorResponse("Method not allowed", 405);
+    response.headers.set("Allow", "POST, OPTIONS");
+    return response;
+  }
 
   const rawBody = await req.text();
 
-  // ─── Verify shared-secret Bearer token ──────────────────────────
-  // DocuSeal community uses WebhookUrl.secret as raw HTTP headers (not HMAC).
-  // We configure Authorization: Bearer <DOCUSEAL_WEBHOOK_SECRET> on the DocuSeal side
-  // and validate it here via constant-time equality.
-  if (DOCUSEAL_WEBHOOK_SECRET) {
-    const authHeader = req.headers.get("authorization") ?? "";
-    const expected = `Bearer ${DOCUSEAL_WEBHOOK_SECRET}`;
-    let match = authHeader.length === expected.length;
-    if (match) {
-      let diff = 0;
-      for (let i = 0; i < authHeader.length; i++) {
-        diff |= authHeader.charCodeAt(i) ^ expected.charCodeAt(i);
-      }
-      match = diff === 0;
+  const environment = Deno.env.get("DENO_ENV") ?? Deno.env.get("ENVIRONMENT");
+  if (!DOCUSEAL_WEBHOOK_SECRET) {
+    if (!isExplicitDevelopmentEnvironment(environment)) {
+      console.error("[webhook] authentication is not configured");
+      return errorResponse("Webhook authentication unavailable", 503);
     }
-    if (!match) {
-      console.error("[webhook] Invalid bearer token");
-      return errorResponse("Invalid signature", 401);
-    }
-  } else {
-    console.warn("[webhook] DOCUSEAL_WEBHOOK_SECRET not set — skipping verification (dev only)");
+    console.warn("[webhook] authentication disabled in explicit development environment");
+  } else if (!await verifyDocusealWebhook(rawBody, req.headers, DOCUSEAL_WEBHOOK_SECRET)) {
+    console.warn("[webhook] rejected unauthenticated request");
+    return errorResponse("Unauthorized", 401);
   }
 
   let payload: WebhookPayload;
-  try { payload = JSON.parse(rawBody); } catch { return errorResponse("Invalid JSON", 400); }
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    return errorResponse("Invalid request body", 400);
+  }
+  if (
+    !payload || typeof payload !== "object" || typeof payload.event_type !== "string" ||
+    !payload.data || typeof payload.data !== "object" || Array.isArray(payload.data)
+  ) {
+    return errorResponse("Invalid webhook payload", 400);
+  }
 
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -197,6 +204,6 @@ serve(async (req) => {
     return corsResponse({ ok: true, contract_id: contract.id });
   } catch (err) {
     console.error("[webhook] processing error:", err);
-    return errorResponse(`Webhook processing failed: ${(err as Error).message}`, 500);
+    return errorResponse("Webhook processing failed", 500);
   }
 });

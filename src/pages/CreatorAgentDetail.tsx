@@ -518,11 +518,12 @@ export default function CreatorAgentDetail() {
 
                     {kartaRuns.length > 0 && (
                       <div className="space-y-1.5">
-                        <Label className="text-xs">Activité réelle récente</Label>
+                        <Label className="text-xs">Cycles récents</Label>
                         {kartaRuns.slice(0, 5).map((r) => (
                           <div key={r.id} className="p-2 rounded-lg bg-secondary/30 border border-border text-xs">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <Badge variant="outline" className="text-[10px]">{r.status}</Badge>
+                              {r.mode === 'simulation' && <Badge variant="outline" className="text-[10px]">Simulation</Badge>}
                               {r.claude_mock && (
                                 <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500">
                                   [MOCK] TODO_LIVE_TEST

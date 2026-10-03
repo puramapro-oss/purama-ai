@@ -12,7 +12,7 @@ psql "$DATABASE_URL" -f supabase/migrations/20260406120000_social_autopilot.sql
 
 ```bash
 supabase secrets set \
-  ZERNIO_API_KEY='sk_e95ed9fb3d9daea6de54cc054e62296db591ad9de634a24d9856099c2528f1d9' \
+  ZERNIO_API_KEY='REPLACE_WITH_SECRET_FROM_PROVIDER' \
   ZERNIO_BASE_URL='https://zernio.com/api/v1' \
   ANTHROPIC_API_KEY='sk-ant-...' \
   APP_URL='https://agentiapuramafr.lovable.app'

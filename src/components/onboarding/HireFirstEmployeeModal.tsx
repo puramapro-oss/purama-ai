@@ -28,6 +28,15 @@ const ONBOARDING_SLUGS: ActionAgentSlug[] = [
 
 type Step = 'pick' | 'confirm' | 'working' | 'result';
 
+const RUN_STATUS_LABELS: Record<string, string> = {
+  success: 'Cycle réussi',
+  error: 'Cycle en erreur',
+  running: 'Cycle en cours',
+  awaiting_approval: 'À valider ou à vérifier',
+  skipped: 'Cycle ignoré',
+  simulated: 'Simulation — aucune action exécutée',
+};
+
 export function HireFirstEmployeeModal({
   open,
   onOpenChange,
@@ -173,7 +182,7 @@ export function HireFirstEmployeeModal({
             <div>
               <p className="font-semibold text-foreground">{selectedAgent.name} travaille…</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Première tâche en cours sur tes vraies données. Quelques secondes.
+                Premier cycle en simulation sur tes données. Aucune action réelle n'est exécutée.
               </p>
             </div>
           </div>
@@ -204,13 +213,17 @@ export function HireFirstEmployeeModal({
         {step === 'result' && selectedAgent && run.data && (
           <>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-accent-emerald">
-                <CheckCircle2 className="w-5 h-5" /> {selectedAgent.name} a terminé sa 1ère tâche
+              <DialogTitle className="flex items-center gap-2 text-accent-cyan">
+                <Sparkles className="w-5 h-5" /> Premier cycle de {selectedAgent.name}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-3 mt-2">
               <div className="p-3 rounded-lg bg-secondary/50 border border-border">
-                <p className="text-sm text-foreground">{run.data.decision || run.data.result_summary}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {RUN_STATUS_LABELS[run.data.status === 'success' && run.data.mode === 'simulation' ? 'simulated' : run.data.status] ?? 'Statut à vérifier'}
+                </p>
+                <p className="text-sm text-foreground mt-1">{run.data.result_summary || run.data.decision}</p>
+                {run.data.error_message && <p className="text-xs text-destructive mt-1">{run.data.error_message}</p>}
                 {run.data.claude_mock && (
                   <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500 mt-2">
                     [MOCK] TODO_LIVE_TEST — sera remplacé par une vraie décision Claude au lancement

@@ -1,5 +1,5 @@
 import { supabase } from "../db/supabase.js";
-import type { AgentState, AgentType } from "./types.js";
+import type { AgentRunResult, AgentState, AgentType } from "./types.js";
 
 /** Charge l'état d'autonomie d'un agent pour un user. Crée une ligne par défaut (niveau 1, simulation) si absente. */
 export async function loadAgentState(userId: string, agentType: AgentType): Promise<AgentState> {
@@ -15,14 +15,7 @@ export async function loadAgentState(userId: string, agentType: AgentType): Prom
   }
 
   if (data) {
-    return {
-      userId,
-      agentType,
-      isEnabled: data.is_enabled,
-      autonomyLevel: data.autonomy_level,
-      killSwitch: data.kill_switch,
-      simulationMode: data.simulation_mode,
-    };
+    return parseAgentState(userId, agentType, data);
   }
 
   const { data: created, error: insertError } = await supabase
@@ -35,20 +28,31 @@ export async function loadAgentState(userId: string, agentType: AgentType): Prom
     throw new Error(`loadAgentState(${agentType}) création par défaut: ${insertError.message}`);
   }
 
+  return parseAgentState(userId, agentType, created);
+}
+
+function parseAgentState(userId: string, agentType: AgentType, row: unknown): AgentState {
+  if (!row || typeof row !== "object") throw new Error(`loadAgentState(${agentType}): état absent`);
+  const data = row as Record<string, unknown>;
+  if (typeof data.is_enabled !== "boolean" || typeof data.kill_switch !== "boolean" ||
+      typeof data.simulation_mode !== "boolean" ||
+      (data.autonomy_level !== 1 && data.autonomy_level !== 2 && data.autonomy_level !== 3)) {
+    throw new Error(`loadAgentState(${agentType}): état invalide — exécution bloquée`);
+  }
   return {
     userId,
     agentType,
-    isEnabled: created.is_enabled,
-    autonomyLevel: created.autonomy_level,
-    killSwitch: created.kill_switch,
-    simulationMode: created.simulation_mode,
+    isEnabled: data.is_enabled,
+    autonomyLevel: data.autonomy_level,
+    killSwitch: data.kill_switch,
+    simulationMode: data.simulation_mode,
   };
 }
 
 export async function recordRunOutcome(
   userId: string,
   agentType: AgentType,
-  status: "success" | "error" | "skipped"
+  status: AgentRunResult["status"]
 ): Promise<void> {
   const { error } = await supabase
     .from("karta_agent_state")

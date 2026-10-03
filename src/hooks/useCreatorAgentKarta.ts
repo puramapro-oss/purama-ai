@@ -112,7 +112,7 @@ export function useCustomAgentKartaRuns(agentId: string | undefined, limit = 20)
   });
 }
 
-/** Actions en attente de validation humaine pour cet agent créé (même mécanisme que les employés fixes). */
+/** Actions à valider ou à vérifier pour cet agent créé (même mécanisme que les employés fixes). */
 export function useCustomAgentPendingActions(agentId: string | undefined) {
   const { user } = useAuth();
 
@@ -126,7 +126,7 @@ export function useCustomAgentPendingActions(agentId: string | undefined) {
         .select('*')
         .eq('user_id', user!.id)
         .eq('agent_type', agentTypeFor(agentId!))
-        .eq('status', 'pending')
+        .in('status', ['pending', 'executing', 'unknown', 'blocked'])
         .order('created_at', { ascending: false });
 
       if (error) throw error;

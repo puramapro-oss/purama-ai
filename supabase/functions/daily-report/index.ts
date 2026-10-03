@@ -1,10 +1,39 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "resend";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+const jsonHeaders = {
+  'Content-Type': 'application/json; charset=utf-8',
+  'Cache-Control': 'no-store',
 };
+
+function jsonResponse(body: Record<string, unknown>, status: number): Response {
+  return new Response(JSON.stringify(body), { status, headers: jsonHeaders });
+}
+
+async function constantTimeEqual(value: string, expected: string): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const [valueHash, expectedHash] = await Promise.all([
+    crypto.subtle.digest('SHA-256', encoder.encode(value)),
+    crypto.subtle.digest('SHA-256', encoder.encode(expected)),
+  ]);
+  const valueBytes = new Uint8Array(valueHash);
+  const expectedBytes = new Uint8Array(expectedHash);
+  let difference = 0;
+  for (let i = 0; i < expectedBytes.length; i++) {
+    difference |= valueBytes[i] ^ expectedBytes[i];
+  }
+  return difference === 0;
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;',
+  })[character]!);
+}
 
 interface AgentActivity {
   agent_name: string;
@@ -24,10 +53,11 @@ interface UserReport {
 }
 
 function generateReportHtml(report: UserReport, date: string): string {
+  const safeDate = escapeHtml(date);
   const agentRows = report.agents.map(agent => `
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-        <span style="color: #ffffff; font-weight: 500;">${agent.agent_name}</span>
+        <span style="color: #ffffff; font-weight: 500;">${escapeHtml(agent.agent_name)}</span>
       </td>
       <td style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center;">
         <span style="color: #a1a1aa;">${agent.total_uses}</span>
@@ -84,10 +114,10 @@ function generateReportHtml(report: UserReport, date: string): string {
           <tr>
             <td style="padding: 0 32px 24px;">
               <h1 style="margin: 0 0 8px; font-size: 24px; font-weight: 600; color: #ffffff;">
-                Bonjour${report.full_name ? ` ${report.full_name}` : ''} 👋
+                Bonjour${report.full_name ? ` ${escapeHtml(report.full_name)}` : ''} 👋
               </h1>
               <p style="margin: 0; font-size: 16px; color: #a1a1aa;">
-                Voici le résumé de l'activité de vos agents pour le ${date}
+                Voici le résumé de l'activité de vos agents pour le ${safeDate}
               </p>
             </td>
           </tr>
@@ -173,26 +203,59 @@ function generateReportHtml(report: UserReport, date: string): string {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+  if (req.method !== 'POST') {
+    return new Response(null, {
+      status: 405,
+      headers: { ...jsonHeaders, Allow: 'POST' },
+    });
   }
 
+  const cronSecret = Deno.env.get('CRON_SECRET');
+  if (!cronSecret) {
+    console.error('daily-report: CRON_SECRET is not configured');
+    return jsonResponse({ error: 'Service unavailable' }, 503);
+  }
+
+  const suppliedSecret = req.headers.get('x-cron-secret') ?? '';
+  if (!(await constantTimeEqual(suppliedSecret, cronSecret))) {
+    return jsonResponse({ error: 'Unauthorized' }, 401);
+  }
+
+  let supabase: ReturnType<typeof createClient> | null = null;
+  let reportDate: string | null = null;
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Required Supabase configuration is missing');
+    }
     
-    const supabase = createClient(
-      supabaseUrl,
-      supabaseServiceKey,
-      { db: { schema: 'purama_ai' } }
-    );
+    // Application data lives in public. The run ledger is addressed explicitly
+    // through schema('purama_ai') below.
+    supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get today's date range
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const todayEnd = new Date(todayStart);
     todayEnd.setDate(todayEnd.getDate() + 1);
+    reportDate = todayStart.toISOString().slice(0, 10);
+
+    // Database-backed claim: only one invocation may process a given day. A stale
+    // running claim becomes retryable after 30 minutes if an isolate crashed.
+    const { data: claimed, error: claimError } = await supabase
+      .schema('purama_ai')
+      .rpc('claim_daily_report_run', {
+        p_report_date: reportDate,
+        p_lease_minutes: 30,
+      });
+    if (claimError) throw claimError;
+    if (!claimed) {
+      return jsonResponse({ success: true, status: 'already_processed_or_running' }, 200);
+    }
 
     const dateStr = todayStart.toLocaleDateString('fr-FR', {
       weekday: 'long',
@@ -212,9 +275,10 @@ Deno.serve(async (req) => {
     }
 
     // Get preferences for users who have daily reports enabled
-    const { data: preferences } = await supabase
+    const { data: preferences, error: preferencesError } = await supabase
       .from('notification_preferences')
       .select('user_id, email_enabled, daily_report_enabled');
+    if (preferencesError) throw preferencesError;
 
     // Create a map of user preferences
     const preferencesMap = new Map(
@@ -232,9 +296,10 @@ Deno.serve(async (req) => {
     console.log(`Processing daily reports for ${eligibleUsers.length} users`);
 
     // Get all agents
-    const { data: agents } = await supabase
+    const { data: agents, error: agentsError } = await supabase
       .from('agents')
       .select('id, name, slug');
+    if (agentsError) throw agentsError;
 
     const agentsMap = new Map(
       (agents || []).map(a => [a.id, { name: a.name, slug: a.slug }])
@@ -245,12 +310,13 @@ Deno.serve(async (req) => {
 
     for (const user of eligibleUsers) {
       // Get user's activity for today
-      const { data: usage } = await supabase
+      const { data: usage, error: usageError } = await supabase
         .from('agent_usage')
         .select('agent_id, status, created_at')
         .eq('user_id', user.user_id)
         .gte('created_at', todayStart.toISOString())
         .lt('created_at', todayEnd.toISOString());
+      if (usageError) throw usageError;
 
       // Aggregate by agent
       const agentStats = new Map<string, AgentActivity>();
@@ -287,7 +353,7 @@ Deno.serve(async (req) => {
       };
 
       // Create in-app notification
-      await supabase
+      const { error: notificationError } = await supabase
         .from('notifications')
         .insert({
           user_id: user.user_id,
@@ -299,6 +365,7 @@ Deno.serve(async (req) => {
           action_url: '/dashboard',
           read: false,
         });
+      if (notificationError) throw notificationError;
 
       reportsSent++;
 
@@ -325,22 +392,31 @@ Deno.serve(async (req) => {
 
     console.log(`Daily reports completed: ${reportsSent} notifications, ${emailsSent} emails`);
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
+    const { error: completionError } = await supabase
+      .schema('purama_ai')
+      .from('daily_report_runs')
+      .update({
+        status: 'completed',
+        completed_at: new Date().toISOString(),
         reports_sent: reportsSent,
         emails_sent: emailsSent,
-        date: dateStr
-      }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      })
+      .eq('report_date', reportDate);
+    if (completionError) throw completionError;
+
+    return jsonResponse({ success: true, reports_sent: reportsSent, emails_sent: emailsSent }, 200);
 
   } catch (error) {
     console.error('Error generating daily reports:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(
-      JSON.stringify({ error: 'Failed to generate daily reports', details: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    if (supabase && reportDate) {
+      const { error: releaseError } = await supabase
+        .schema('purama_ai')
+        .from('daily_report_runs')
+        .update({ status: 'failed', completed_at: new Date().toISOString() })
+        .eq('report_date', reportDate)
+        .eq('status', 'running');
+      if (releaseError) console.error('daily-report: failed to release run claim', releaseError);
+    }
+    return jsonResponse({ error: 'Failed to generate daily reports' }, 500);
   }
 });

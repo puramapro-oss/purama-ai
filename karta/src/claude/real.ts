@@ -65,6 +65,6 @@ function toAnthropicTools(tools: AnyToolDefinition[]): Anthropic.Tool[] {
   return tools.map((tool) => ({
     name: tool.name,
     description: tool.description,
-    input_schema: { type: "object", properties: {}, additionalProperties: true },
+    input_schema: { ...tool.inputSchema },
   }));
 }

@@ -248,7 +248,7 @@ export function useKartaStats() {
 
       const { data, error } = await supabase
         .from('karta_runs')
-        .select('agent_type, status, started_at')
+        .select('agent_type, status, mode, started_at')
         .eq('user_id', user!.id)
         .in('agent_type', ACTION_AGENT_SLUGS as unknown as string[])
         .gte('started_at', since.toISOString());
@@ -260,15 +260,16 @@ export function useKartaStats() {
 
   const rows = query.data ?? [];
   const total = rows.length;
-  const success = rows.filter((r) => r.status === 'success').length;
+  const success = rows.filter((r) => r.status === 'success' && r.mode === 'live').length;
   const awaitingApproval = rows.filter((r) => r.status === 'awaiting_approval').length;
-  const errors = rows.filter((r) => r.status === 'error').length;
-  const successRate = total > 0 ? Math.round((success / total) * 100) : 0;
+  const errors = rows.filter((r) => r.status === 'error' && r.mode === 'live').length;
+  const completed = success + errors;
+  const successRate = completed > 0 ? Math.round((success / completed) * 100) : null;
 
-  return { isLoading: query.isLoading, isError: query.isError, total, success, awaitingApproval, errors, successRate };
+  return { isLoading: query.isLoading, isError: query.isError, total, success, awaitingApproval, errors, completed, successRate };
 }
 
-/** Actions en attente de validation humaine (autonomie niveau 1, ou outil sensible niveau 2) pour les 12 employés fixes. */
+/** Actions à valider ou à vérifier ; seules les lignes pending peuvent être approuvées/rejetées. */
 export function usePendingActions() {
   const { user } = useAuth();
 
@@ -281,7 +282,7 @@ export function usePendingActions() {
         .from('karta_pending_actions')
         .select('*')
         .eq('user_id', user!.id)
-        .eq('status', 'pending')
+        .in('status', ['pending', 'executing', 'unknown', 'blocked'])
         .in('agent_type', ACTION_AGENT_SLUGS as unknown as string[])
         .order('created_at', { ascending: false });
 
@@ -306,13 +307,17 @@ export function useResolvePendingAction() {
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
+      if (data?.ok !== true || typeof data.resultSummary !== 'string') throw new Error("Résultat non confirmé : vérifier l'état de l'action avant toute nouvelle tentative");
       return data as { ok: true; resultSummary: string };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['karta-pending-actions'] });
-      queryClient.invalidateQueries({ queryKey: ['custom-agent-pending-actions'] });
-      queryClient.invalidateQueries({ queryKey: ['karta-runs'] });
-      queryClient.invalidateQueries({ queryKey: ['karta-stats'] });
+    onSettled: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['karta-pending-actions'] }),
+        queryClient.invalidateQueries({ queryKey: ['custom-agent-pending-actions'] }),
+        queryClient.invalidateQueries({ queryKey: ['karta-runs'] }),
+        queryClient.invalidateQueries({ queryKey: ['custom-agent-karta-runs'] }),
+        queryClient.invalidateQueries({ queryKey: ['karta-stats'] }),
+      ]);
     },
   });
 }
