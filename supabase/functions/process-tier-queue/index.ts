@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { escapeHtml } from "../_shared/html.ts";
+import { verifyBearerSecret } from "../_shared/webhook-security.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,6 +21,32 @@ const TIERS = {
   gold: { name: 'Gold', emoji: '🥇', color: '#eab308', bgColor: '#eab30822' },
 };
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+type Tier = keyof typeof TIERS;
+
+function isTier(value: unknown): value is Tier {
+  return typeof value === "string" && Object.hasOwn(TIERS, value);
+}
+
+function isValidQueueItem(value: unknown): value is Record<string, unknown> & {
+  id: string;
+  influencer_id: string;
+  previous_tier: Tier;
+  new_tier: Tier;
+  new_rate: number;
+  total_sales: number;
+} {
+  if (!value || typeof value !== "object") return false;
+  const item = value as Record<string, unknown>;
+  return typeof item.id === "string" && UUID_PATTERN.test(item.id) &&
+    typeof item.influencer_id === "string" && UUID_PATTERN.test(item.influencer_id) &&
+    isTier(item.previous_tier) && isTier(item.new_tier) &&
+    typeof item.new_rate === "number" && Number.isFinite(item.new_rate) &&
+    item.new_rate >= 0 && item.new_rate <= 100 &&
+    typeof item.total_sales === "number" && Number.isFinite(item.total_sales) &&
+    item.total_sales >= 0;
+}
+
 function generateTierUpgradeEmailHtml(data: {
   beneficiaryName: string;
   previousTier: string;
@@ -29,6 +57,9 @@ function generateTierUpgradeEmailHtml(data: {
   const prevTierConfig = TIERS[data.previousTier as keyof typeof TIERS];
   const newTierConfig = TIERS[data.newTier as keyof typeof TIERS];
   const isGold = data.newTier === 'gold';
+  const beneficiaryName = escapeHtml(data.beneficiaryName);
+  const newRate = escapeHtml(data.newRate);
+  const totalSales = escapeHtml(data.totalSales);
   
   return `
 <!DOCTYPE html>
@@ -56,7 +87,7 @@ function generateTierUpgradeEmailHtml(data: {
           <tr><td style="padding: 0 32px 24px; text-align: center;"><div style="font-size: 64px; line-height: 1;">🎉 ${newTierConfig.emoji} 🎉</div></td></tr>
           <tr>
             <td style="padding: 0 32px 32px;">
-              <h1 style="margin: 0 0 16px; font-size: 28px; font-weight: 700; color: #ffffff; text-align: center;">Félicitations ${data.beneficiaryName} !</h1>
+              <h1 style="margin: 0 0 16px; font-size: 28px; font-weight: 700; color: #ffffff; text-align: center;">Félicitations ${beneficiaryName} !</h1>
               <p style="margin: 0 0 24px; font-size: 18px; line-height: 1.6; color: #a1a1aa; text-align: center;">Vous avez atteint le palier <strong style="color: ${newTierConfig.color};">${newTierConfig.name}</strong> !</p>
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 24px;">
                 <tr>
@@ -72,7 +103,7 @@ function generateTierUpgradeEmailHtml(data: {
                         <td width="40%" style="text-align: center; padding: 12px; background: ${newTierConfig.bgColor}; border-radius: 12px;">
                           <p style="margin: 0 0 8px; font-size: 40px;">${newTierConfig.emoji}</p>
                           <p style="margin: 0; font-size: 14px; color: ${newTierConfig.color};">${newTierConfig.name}</p>
-                          <p style="margin: 4px 0 0; font-size: 24px; color: ${newTierConfig.color}; font-weight: 700;">${data.newRate}%</p>
+                          <p style="margin: 4px 0 0; font-size: 24px; color: ${newTierConfig.color}; font-weight: 700;">${newRate}%</p>
                         </td>
                       </tr>
                     </table>
@@ -83,8 +114,8 @@ function generateTierUpgradeEmailHtml(data: {
                 <tr>
                   <td style="background: rgba(34, 197, 94, 0.1); border-radius: 12px; padding: 20px; text-align: center;">
                     <p style="margin: 0 0 4px; font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Total de ventes</p>
-                    <p style="margin: 0; font-size: 32px; font-weight: bold; color: #22c55e;">${data.totalSales}</p>
-                    <p style="margin: 8px 0 0; font-size: 14px; color: #a1a1aa;">Vous gagnez maintenant <strong style="color: ${newTierConfig.color};">${data.newRate}%</strong> sur chaque vente !</p>
+                    <p style="margin: 0; font-size: 32px; font-weight: bold; color: #22c55e;">${totalSales}</p>
+                    <p style="margin: 8px 0 0; font-size: 14px; color: #a1a1aa;">Vous gagnez maintenant <strong style="color: ${newTierConfig.color};">${newRate}%</strong> sur chaque vente !</p>
                   </td>
                 </tr>
               </table>
@@ -104,6 +135,29 @@ function generateTierUpgradeEmailHtml(data: {
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json", Allow: "POST" },
+    });
+  }
+
+  const expectedSecret = Deno.env.get("WEBHOOK_SECRET") ?? "";
+  const suppliedSecret = req.headers.get("x-webhook-secret") ?? "";
+  if (!expectedSecret) {
+    console.error("[PROCESS-TIER-QUEUE] WEBHOOK_SECRET is not configured");
+    return new Response(JSON.stringify({ error: "Service unavailable" }), {
+      status: 503,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  if (!verifyBearerSecret(`Bearer ${suppliedSecret}`, expectedSecret)) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -147,6 +201,12 @@ serve(async (req) => {
 
     for (const upgrade of pendingUpgrades) {
       try {
+        if (!isValidQueueItem(upgrade)) {
+          logStep("ERROR: Invalid queue item; leaving it unprocessed", {
+            id: typeof upgrade?.id === "string" ? upgrade.id : "invalid",
+          });
+          continue;
+        }
         // Get influencer details
         const { data: influencer } = await supabaseClient
           .from('influencers')

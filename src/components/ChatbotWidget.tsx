@@ -319,11 +319,16 @@ export function ChatbotWidget() {
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token || !user) {
+        toast.error('Connecte-toi pour demander un support humain');
+        return;
+      }
       const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/escalate-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           conversationId,
@@ -344,6 +349,8 @@ export function ChatbotWidget() {
             createdAt: new Date(),
           },
         ]);
+      } else {
+        toast.error('La demande de support n\'a pas pu être vérifiée');
       }
     } catch (error) {
       toast.error('Erreur lors de la transmission de votre demande');

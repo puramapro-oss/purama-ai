@@ -27,7 +27,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.escalate-chat]
-verify_jwt = false
+verify_jwt = true
 
 [functions.social-callback]
 verify_jwt = false
