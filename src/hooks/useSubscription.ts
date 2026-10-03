@@ -38,11 +38,22 @@ export function useSubscription() {
     queryFn: async (): Promise<SubscriptionRow | null> => {
       const { data, error } = await supabase
         .from('subscriptions')
-        .select('plan_type, status, trial_ends_at, has_used_trial')
+        .select('*')
         .eq('user_id', user!.id)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      if (!data) return null;
+
+      // The checked-in generated types predate the trial columns added by the
+      // migration. Keep the cast at this database boundary until types are
+      // regenerated from the deployed schema.
+      const row = data as unknown as Partial<SubscriptionRow>;
+      return {
+        plan_type: typeof row.plan_type === 'string' ? row.plan_type : 'free',
+        status: typeof row.status === 'string' ? row.status : 'inactive',
+        trial_ends_at: typeof row.trial_ends_at === 'string' ? row.trial_ends_at : null,
+        has_used_trial: row.has_used_trial === true,
+      };
     },
   });
 

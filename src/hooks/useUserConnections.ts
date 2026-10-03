@@ -122,9 +122,9 @@ export function useUserConnections() {
     }
 
     const verifierBytes = crypto.getRandomValues(new Uint8Array(32));
-    const codeVerifier = btoa(String.fromCharCode(...verifierBytes)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    const codeVerifier = btoa(String.fromCharCode(...verifierBytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier));
-    const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     const session = (await supabase.auth.getSession()).data.session;
     if (!session?.access_token) {
       toast.error('Session expirée, veuillez vous reconnecter');

@@ -1,11 +1,11 @@
-import DOMPurify from 'dompurify';
+import DOMPurify, { type Config } from 'dompurify';
 
-const EMAIL_HTML_CONFIG = {
+const EMAIL_HTML_CONFIG: Config = {
   ALLOWED_TAGS: ['p', 'br', 'strong', 'a'],
   ALLOWED_ATTR: ['href', 'title'],
   ALLOW_DATA_ATTR: false,
   ALLOW_ARIA_ATTR: false,
-} as const;
+};
 
 /**
  * Sanitizes persisted/generated email HTML before rendering it in the app.

@@ -43,7 +43,12 @@ async function redirectToStripe(
   try {
     const { data, error } = await invoke();
     if (error) throw error;
-    if (data?.url) {
+    if (
+      typeof data === 'object' &&
+      data !== null &&
+      'url' in data &&
+      typeof data.url === 'string'
+    ) {
       window.location.href = data.url;
     } else {
       throw new Error(notFoundMessage);

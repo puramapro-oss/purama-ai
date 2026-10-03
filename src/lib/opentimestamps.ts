@@ -12,7 +12,6 @@
 // Terme UI : "Preuve blockchain Purama" (jamais "OpenTimestamps" ni "Bitcoin").
 // ───────────────────────────────────────────────────────────────────────────
 
-// @ts-expect-error — le package n'expose pas de types officiels
 import OpenTimestamps from 'opentimestamps';
 
 /**
