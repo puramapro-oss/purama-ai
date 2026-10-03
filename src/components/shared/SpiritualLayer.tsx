@@ -56,6 +56,10 @@ export function SpiritualLayer() {
     <AnimatePresence>
       {show && (
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="daily-affirmation-title"
+          aria-describedby="daily-affirmation-text"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -70,6 +74,8 @@ export function SpiritualLayer() {
             className="relative max-w-md w-full bg-card/90 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center shadow-[0_0_60px_rgba(124,58,237,0.2)]"
           >
             <button
+              type="button"
+              aria-label="Fermer l'affirmation du jour"
               onClick={handleClose}
               className="absolute top-4 right-4 text-white/30 hover:text-white/60 transition-colors"
             >
@@ -80,15 +86,16 @@ export function SpiritualLayer() {
               <Sparkles className="w-8 h-8 text-accent-cyan" />
             </div>
 
-            <p className="text-xs uppercase tracking-widest text-accent-purple/80 mb-4">
+            <p id="daily-affirmation-title" className="text-xs uppercase tracking-widest text-accent-purple/80 mb-4">
               Affirmation du jour
             </p>
 
-            <p className="text-xl font-light text-foreground leading-relaxed mb-8">
+            <p id="daily-affirmation-text" className="text-xl font-light text-foreground leading-relaxed mb-8">
               "{affirmation.text}"
             </p>
 
             <button
+              type="button"
               onClick={handleAccept}
               className="w-full py-3.5 rounded-2xl font-semibold text-white bg-gradient-to-r from-accent-purple to-accent-cyan hover:opacity-90 active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_rgba(124,58,237,0.3)]"
             >
