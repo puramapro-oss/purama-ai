@@ -61,8 +61,13 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
 
   if (req.method === "POST" && url.pathname === "/kill-switch/global") {
     const body = await readBody(req);
-    await setGlobalKillSwitch(Boolean(body.active));
-    json(res, 200, { ok: true, active: Boolean(body.active) });
+    const active = strictActiveFlag(body);
+    if (active === undefined) {
+      json(res, 400, { error: "Le champ active doit être un booléen" });
+      return;
+    }
+    await setGlobalKillSwitch(active);
+    json(res, 200, { ok: true, active });
     return;
   }
 
@@ -74,9 +79,14 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       return;
     }
     const body = await readBody(req);
+    const active = strictActiveFlag(body);
+    if (active === undefined) {
+      json(res, 400, { error: "Le champ active doit être un booléen" });
+      return;
+    }
     const { error } = await supabase
       .from("karta_agent_state")
-      .update({ kill_switch: Boolean(body.active), updated_at: new Date().toISOString() })
+      .update({ kill_switch: active, updated_at: new Date().toISOString() })
       .eq("user_id", userId)
       .eq("agent_type", agentType);
     if (error) {
@@ -137,4 +147,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
   }
 
   json(res, 404, { error: "Route inconnue" });
+}
+
+export function strictActiveFlag(body: Record<string, unknown>): boolean | undefined {
+  return typeof body.active === "boolean" ? body.active : undefined;
 }

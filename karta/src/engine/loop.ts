@@ -116,7 +116,7 @@ export async function runAgentCycle(
           record.outcome = "unknown";
           record.resultSummary = "exécution commencée — résultat à vérifier";
           try {
-            const result = await tool.execute(call.params, { userId, agentType: definition.type, mode });
+            const result = await tool.execute(call.params, { userId, agentType: definition.type, mode, trigger });
             record.resultSummary = summarize(result);
             record.outcome = "executed";
             record.success = true;

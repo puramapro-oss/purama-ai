@@ -94,6 +94,8 @@ export interface ToolExecutionContext {
   userId: string;
   agentType: AgentType;
   mode: "simulation" | "live";
+  /** Déclencheur d'origine du cycle. Absent uniquement pour les anciennes approbations persistées. */
+  trigger?: AgentTrigger;
 }
 
 export interface ToolCallRecord {
