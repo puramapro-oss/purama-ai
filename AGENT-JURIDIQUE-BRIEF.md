@@ -659,17 +659,17 @@ L'agent inclut ces templates prêts à l'emploi, auto-remplis par l'IA :
 
 ```
 # Déjà dans CLAUDE.md
-ANTHROPIC_API_KEY=<from CLAUDE.md>
+ANTHROPIC_API_KEY=<set-in-secret-manager>
 NEXT_PUBLIC_SUPABASE_URL=https://auth.purama.dev
 SUPABASE_SERVICE_ROLE_KEY=<from CLAUDE.md>
-RESEND_API_KEY=re_i2Sg1F6F_Kn2NmU3e1MRYMB4e5Evm3FUP
-TAVILY_API_KEY=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
-DOCUSEAL_API_KEY=pKKLmvPpMi6SmX4FyjuwdFEky4K9tMUEoGP7oZYiGFZ
+RESEND_API_KEY=<set-in-secret-manager>
+TAVILY_API_KEY=<set-in-secret-manager>
+DOCUSEAL_API_KEY=<set-in-secret-manager>
 DOCUSEAL_URL=http://72.62.191.111:3001
 
 # Partagé
 VAPID_PUBLIC_KEY=<généré>
-VAPID_PRIVATE_KEY=<généré>
+VAPID_PRIVATE_KEY=<set-in-secret-manager>
 ```
 
 ---

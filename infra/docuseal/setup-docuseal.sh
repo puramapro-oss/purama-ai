@@ -7,7 +7,15 @@ set -euo pipefail
 DOCUSEAL_DIR="/docker/docuseal"
 DOCUSEAL_DATA_DIR="/home/docuseal"
 DOCUSEAL_HOST="docuseal.purama.dev"
-DOCUSEAL_TOKEN="pKKLmvPpMi6SmX4FyjuwdFEky4K9tMUEoGP7oZYiGFZ"
+DOCUSEAL_TOKEN="${DOCUSEAL_TOKEN:-}"
+
+: "${DOCUSEAL_TOKEN:?Set DOCUSEAL_TOKEN in the deployment environment}"
+: "${RESEND_API_KEY:?Set RESEND_API_KEY in the deployment environment}"
+: "${DOCUSEAL_IMAGE:?Set DOCUSEAL_IMAGE to an immutable image digest}"
+[[ "$DOCUSEAL_IMAGE" =~ ^[^[:space:]@]+@sha256:[0-9a-f]{64}$ ]] || {
+    echo "DOCUSEAL_IMAGE must use image@sha256:<64 lowercase hex>" >&2
+    exit 1
+}
 
 log() { echo "[$(date +%H:%M:%S)] $*"; }
 die() { log "ERROR: $*"; exit 1; }
@@ -45,7 +53,8 @@ mkdir -p "$DOCUSEAL_DIR"
 cat > "$DOCUSEAL_DIR/.env" <<EOF
 DOCUSEAL_SECRET_KEY_BASE=$SECRET_KEY_BASE
 DOCUSEAL_DATABASE_URL=
-RESEND_API_KEY=re_az9YkXuq_LFv9vGdr9fGQX8GDinTm7rw2
+RESEND_API_KEY=$RESEND_API_KEY
+DOCUSEAL_IMAGE=$DOCUSEAL_IMAGE
 EOF
 chmod 600 "$DOCUSEAL_DIR/.env"
 

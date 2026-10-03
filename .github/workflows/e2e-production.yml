@@ -16,17 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: production-e2e
-    env:
-      SUPABASE_URL: https://auth.purama.dev
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      DOCUSEAL_API_TOKEN: ${{ secrets.DOCUSEAL_API_TOKEN }}
-      CLEANUP: "true"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm
@@ -40,29 +35,23 @@ jobs:
 
       - name: Run DocuSeal E2E
         run: npx playwright test --config playwright.docuseal.config.ts
-
-      - name: Upload Playwright report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-docuseal
-          path: playwright-report-docuseal/
-          retention-days: 7
+        env:
+          SUPABASE_URL: https://auth.purama.dev
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DOCUSEAL_API_TOKEN: ${{ secrets.DOCUSEAL_API_TOKEN }}
+          CLEANUP: "true"
 
   karta:
     name: KARTA production E2E
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: production-e2e
-    env:
-      SUPABASE_URL: https://auth.purama.dev
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm
@@ -76,11 +65,6 @@ jobs:
 
       - name: Run KARTA E2E
         run: npx playwright test --config playwright.karta.config.ts
-
-      - name: Upload Playwright report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report-karta
-          path: playwright-report-karta/
-          retention-days: 7
+        env:
+          SUPABASE_URL: https://auth.purama.dev
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

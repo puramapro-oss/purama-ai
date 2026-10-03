@@ -45,55 +45,55 @@ NEXT_PUBLIC_SUPABASE_URL=https://auth.purama.dev
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzQwNTI0ODAwLCJleHAiOjE4OTgyOTEyMDB9.GkiVoEuCykK7vIpNzY_Zmc6XPNnJF3BUPvijXXZy2aU
 SUPABASE_SERVICE_ROLE_KEY=[.env.secrets]
 NEXT_PUBLIC_SUPABASE_DB_SCHEMA={SLUG}
-POSTGRES_PASSWORD=[.env.secrets]
+POSTGRES_PASSWORD=<set-in-secret-manager>
 POSTGRES_HOST=72.62.191.111
 
 # IA (cf SKILL AI)
-ANTHROPIC_API_KEY=[.env.secrets]
+ANTHROPIC_API_KEY=<set-in-secret-manager>
 ANTHROPIC_MODEL_MAIN=claude-sonnet-4-6
 ANTHROPIC_MODEL_FAST=claude-haiku-4-5-20251001
 ANTHROPIC_MODEL_PRO=claude-opus-4-7
-OPENAI_API_KEY=[.env.secrets]
+OPENAI_API_KEY=<set-in-secret-manager>
 
 # Stripe (cf SKILL PAYMENTS)
 STRIPE_SECRET_KEY=[.env.secrets]
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=[.env.secrets]
-STRIPE_WEBHOOK_SECRET=
+STRIPE_WEBHOOK_SECRET=<set-in-secret-manager>
 
 # Vercel + DNS (cf SKILL DEPLOY)
-VERCEL_TOKEN=[.env.secrets]
+VERCEL_TOKEN=<set-in-secret-manager>
 DOMAIN=purama.dev
 
 # Resend
-RESEND_API_KEY=[.env.secrets]
+RESEND_API_KEY=<set-in-secret-manager>
 RESEND_FROM_EMAIL=hello@{SLUG}.purama.dev
 
 # Monitoring
-SENTRY_AUTH_TOKEN=[.env.secrets]
+SENTRY_AUTH_TOKEN=<set-in-secret-manager>
 SENTRY_ORG=purama
 NEXT_PUBLIC_POSTHOG_KEY=phc_H3oYKeaaJrx801AZsZmZCzUZEpMH048ysKOqg9Mig1H
 NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
-BETTERSTACK_API_KEY=[.env.secrets]
-UPSTASH_MANAGEMENT_API_KEY=[.env.secrets]
+BETTERSTACK_API_KEY=<set-in-secret-manager>
+UPSTASH_MANAGEMENT_API_KEY=<set-in-secret-manager>
 UPSTASH_EMAIL=matiss.frasne@gmail.com
 
 # OAuth
 GOOGLE_CLIENT_ID=897200950419-dh86vocgp1ii0csj4eer6jjkqrh00oe7.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=[.env.secrets]
+GOOGLE_CLIENT_SECRET=<set-in-secret-manager>
 
 # Mobile
-EXPO_TOKEN=[.env.secrets]
+EXPO_TOKEN=<set-in-secret-manager>
 APPLE_TEAM_ID=___à_remplir___
 APPLE_ID=matiss.frasne@gmail.com
 GOOGLE_SERVICE_ACCOUNT=./google-service-account.json
 
 # Outils
-TAVILY_API_KEY=[.env.secrets]
-PINECONE_API_KEY=[.env.secrets]
-ZERNIO_API_KEY=[.env.secrets]
+TAVILY_API_KEY=<set-in-secret-manager>
+PINECONE_API_KEY=<set-in-secret-manager>
+ZERNIO_API_KEY=<set-in-secret-manager>
 ZERNIO_BASE_URL=https://zernio.com/api/v1
-INSEE_API_KEY=[.env.secrets]
-PAPPERS_API_KEY=[.env.secrets]
+INSEE_API_KEY=<set-in-secret-manager>
+PAPPERS_API_KEY=<set-in-secret-manager>
 CRON_SECRET=
 ```
 **CLI rules**:INTERDIT `vercel login`/`gh auth login` interactif→`--token $VERCEL_TOKEN --scope puramapro-oss --yes`. VPS `sshpass -p '[.env.secrets→VPS_SSH_PASSWORD]' ssh root@72.62.191.111`. Team Vercel `team_dGuJ4PqnSU1uaAHa26kkmKKk`. n8n `n8n.srv1286148.hstgr.cloud` (57 workflows).

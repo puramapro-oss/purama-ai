@@ -445,17 +445,17 @@ Flux signature :
 # Déjà dans CLAUDE.md
 NEXT_PUBLIC_SUPABASE_URL=https://auth.purama.dev
 SUPABASE_SERVICE_ROLE_KEY=<from CLAUDE.md>
-ANTHROPIC_API_KEY=<from CLAUDE.md>
+ANTHROPIC_API_KEY=<set-in-secret-manager>
 
 # Nouvelles
-RESEND_API_KEY=<à obtenir>
-TAVILY_API_KEY=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
-DOCUSEAL_API_KEY=<from existing setup>
+RESEND_API_KEY=<set-in-secret-manager>
+TAVILY_API_KEY=<set-in-secret-manager>
+DOCUSEAL_API_KEY=<set-in-secret-manager>
 DOCUSEAL_URL=<DocuSeal self-hosted URL>
 
 # Partagé avec Agent Email
 VAPID_PUBLIC_KEY=<généré>
-VAPID_PRIVATE_KEY=<généré>
+VAPID_PRIVATE_KEY=<set-in-secret-manager>
 ```
 
 ---

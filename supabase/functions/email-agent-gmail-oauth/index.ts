@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
         }),
       });
       if (!tokenRes.ok) {
-        console.error("[email-agent-gmail-oauth] token exchange failed", await tokenRes.text());
+        console.error("[email-agent-gmail-oauth] token exchange failed", tokenRes.status);
         return redirect(`${APP_URL}/dashboard/email-agent?gmail=error`);
       }
       const tokens = await tokenRes.json() as {

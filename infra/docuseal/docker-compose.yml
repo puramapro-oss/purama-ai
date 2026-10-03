@@ -1,6 +1,6 @@
 services:
   docuseal:
-    image: docuseal/docuseal:latest
+    image: ${DOCUSEAL_IMAGE:?Set an immutable image digest}
     container_name: docuseal
     restart: always
     ports:

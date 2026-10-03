@@ -812,7 +812,7 @@ Remboursement des frais sur demande : /remboursement
 ```bash
 # Stripe Connect
 STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_WEBHOOK_SECRET=<set-in-secret-manager>
 # ⚠️ V4.1 : PAS besoin de STRIPE_CONNECT_CLIENT_ID (ca_...)
 # Embedded Components utilise AccountSession créée serveur avec STRIPE_SECRET_KEY
 
@@ -832,14 +832,14 @@ KARMA_DUPLICATE_DEVICE_BLOCK=true
 # Rien à ajouter dans .env
 
 # Fiscalité
-URSSAF_TIERCE_API_KEY=...
+URSSAF_TIERCE_API_KEY=<set-in-secret-manager>
 URSSAF_TIERCE_MANDATE_TEMPLATE_ID=...
-INSEE_API_KEY=023ed173-7904-4893-bed1-7379043893fc  # V4.1 : clé universelle active (portail-api.insee.fr)
+INSEE_API_KEY=<set-in-secret-manager>
 PENNYLANE_OAUTH_CLIENT_ID=...
-PENNYLANE_OAUTH_SECRET=...
+PENNYLANE_OAUTH_SECRET=<set-in-secret-manager>
 EDI_TDFC_CERTIFICATE_PATH=/secrets/edi.p12
-DOCUSEAL_API_KEY=...
-BRIDGE_API_KEY=...
+DOCUSEAL_API_KEY=<set-in-secret-manager>
+BRIDGE_API_KEY=<set-in-secret-manager>
 
 # Seuils fiscaux constants
 TAX_THRESHOLD_OCCASIONAL_EUR=305
@@ -850,7 +850,7 @@ TAX_THRESHOLD_TVA_FRANCHISE_EUR=36800
 # Dual circuit SASU/Asso
 ASSO_RNA=W[à compléter]
 ASSO_SIREN=[à compléter quand reçu]
-SOLIDATECH_TOKEN=...
+SOLIDATECH_TOKEN=<set-in-secret-manager>
 GOOGLE_AD_GRANTS_CUSTOMER_ID=...
 
 # V4.1 — Stack santé native (UNIQUEMENT dans projets mobile Expo)

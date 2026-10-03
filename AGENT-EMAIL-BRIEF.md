@@ -379,9 +379,9 @@ Niveau 5 : Tu gères TOUT. Tu ne fais un brouillon que si le risque est critique
 NEXT_PUBLIC_SUPABASE_URL=https://auth.purama.dev
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<from CLAUDE.md>
 SUPABASE_SERVICE_ROLE_KEY=<from CLAUDE.md>
-ANTHROPIC_API_KEY=<from CLAUDE.md>
+ANTHROPIC_API_KEY=<set-in-secret-manager>
 GOOGLE_CLIENT_ID=<from CLAUDE.md>
-GOOGLE_CLIENT_SECRET=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
+GOOGLE_CLIENT_SECRET=<set-in-secret-manager>
 GMAIL_SCOPES=https://www.googleapis.com/auth/gmail.modify
 NEXT_PUBLIC_APP_URL=https://akasha.purama.dev
 ```

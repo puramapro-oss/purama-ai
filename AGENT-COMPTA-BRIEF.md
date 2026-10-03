@@ -768,16 +768,16 @@ self.addEventListener('notificationclick', function(event) {
 NEXT_PUBLIC_SUPABASE_URL=https://auth.purama.dev
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<from CLAUDE.md>
 SUPABASE_SERVICE_ROLE_KEY=<from CLAUDE.md>
-ANTHROPIC_API_KEY=<from CLAUDE.md>
+ANTHROPIC_API_KEY=<set-in-secret-manager>
 GOOGLE_CLIENT_ID=<from CLAUDE.md>
-GOOGLE_CLIENT_SECRET=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
+GOOGLE_CLIENT_SECRET=<set-in-secret-manager>
 
 # Nouvelles
 BRIDGE_CLIENT_ID=<à obtenir sur bridgeapi.io>
-BRIDGE_CLIENT_SECRET=<à obtenir sur bridgeapi.io>
+BRIDGE_CLIENT_SECRET=<set-in-secret-manager>
 VAPID_PUBLIC_KEY=<générer avec web-push>
-VAPID_PRIVATE_KEY=<générer avec web-push>
-RESEND_API_KEY=<à obtenir sur resend.com>
+VAPID_PRIVATE_KEY=<set-in-secret-manager>
+RESEND_API_KEY=<set-in-secret-manager>
 ```
 
 ---
