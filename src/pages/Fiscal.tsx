@@ -44,12 +44,12 @@ export default function Fiscal() {
     (async () => {
       const [{ data: p }, { data: w }] = await Promise.all([
         supabase.from('user_tax_profiles').select('profile_type, siret, company_name').eq('user_id', user.id).maybeSingle(),
-        supabase.from('profiles').select('wallet_balance').eq('id', user.id).maybeSingle(),
+        supabase.from('wallets').select('total_earned').eq('user_id', user.id).maybeSingle(),
       ]);
       if (p?.profile_type) setProfile(p.profile_type as Profile);
       if (p?.siret) setSiret(p.siret);
       if (p?.company_name) setCompanyName(p.company_name);
-      if (w?.wallet_balance) setYearlyEarned(Number(w.wallet_balance));
+      if (w?.total_earned) setYearlyEarned(Number(w.total_earned));
       setLoading(false);
     })();
   }, [user]);
