@@ -36,12 +36,6 @@ export {
 } from './cross-app-auth';
 
 export {
-  stampContract,
-  verifyContractProof,
-  type StampResult,
-} from './ots-stamper';
-
-export {
   AMBASSADEUR_TIERS,
   CreateContractInputSchema,
   WebhookPayloadSchema,
