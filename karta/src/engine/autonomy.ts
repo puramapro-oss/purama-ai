@@ -3,12 +3,7 @@ import type { AgentRunResult, AgentState, AgentType } from "./types.js";
 
 /** Charge l'état d'autonomie d'un agent pour un user. Crée une ligne par défaut (niveau 1, simulation) si absente. */
 export async function loadAgentState(userId: string, agentType: AgentType): Promise<AgentState> {
-  const { data, error } = await supabase
-    .from("karta_agent_state")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("agent_type", agentType)
-    .maybeSingle();
+  const { data, error } = await selectAgentState(userId, agentType);
 
   if (error) {
     throw new Error(`loadAgentState(${agentType}): ${error.message}`);
@@ -20,15 +15,35 @@ export async function loadAgentState(userId: string, agentType: AgentType): Prom
 
   const { data: created, error: insertError } = await supabase
     .from("karta_agent_state")
-    .insert({ user_id: userId, agent_type: agentType })
+    .upsert(
+      { user_id: userId, agent_type: agentType },
+      { onConflict: "user_id,agent_type", ignoreDuplicates: true }
+    )
     .select("*")
-    .single();
+    .maybeSingle();
 
   if (insertError) {
     throw new Error(`loadAgentState(${agentType}) création par défaut: ${insertError.message}`);
   }
 
-  return parseAgentState(userId, agentType, created);
+  if (created) return parseAgentState(userId, agentType, created);
+
+  // Another process inserted the unique (user_id, agent_type) row between our
+  // read and write. DO NOTHING preserves its configuration; read the winner.
+  const { data: concurrent, error: reloadError } = await selectAgentState(userId, agentType);
+  if (reloadError) {
+    throw new Error(`loadAgentState(${agentType}) relecture concurrente: ${reloadError.message}`);
+  }
+  return parseAgentState(userId, agentType, concurrent);
+}
+
+function selectAgentState(userId: string, agentType: AgentType) {
+  return supabase
+    .from("karta_agent_state")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("agent_type", agentType)
+    .maybeSingle();
 }
 
 function parseAgentState(userId: string, agentType: AgentType, row: unknown): AgentState {

@@ -23,9 +23,23 @@ export async function getMemory(userId: string, agentType: AgentType, key: strin
  * Le brief est effacé après lecture pour ne pas être retraité au cycle suivant.
  */
 export async function consumeBrief(userId: string, agentType: AgentType, key = "pending_brief"): Promise<string | null> {
-  const value = await getMemory(userId, agentType, key);
+  // DELETE ... RETURNING is the claim: concurrent cycles cannot both receive
+  // the same one-shot brief, unlike the previous SELECT followed by UPSERT.
+  const { data, error } = await supabase
+    .from("karta_agent_memory")
+    .delete()
+    .eq("user_id", userId)
+    .eq("agent_type", agentType)
+    .eq("memory_key", key)
+    .select("memory_value")
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`consumeBrief(${agentType}, ${key}): ${error.message}`);
+  }
+
+  const value = data?.memory_value;
   if (typeof value !== "string" || !value.trim()) return null;
-  await setMemory(userId, agentType, key, null);
   return value;
 }
 
