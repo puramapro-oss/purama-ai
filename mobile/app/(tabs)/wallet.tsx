@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useWallet } from "@/hooks/useWallet";
+import { useAuth } from "@/hooks/useAuth";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -11,7 +12,8 @@ import { formatPrice, formatDate } from "@/lib/utils";
 import { COLORS } from "@/lib/constants";
 
 export default function WalletScreen() {
-  const { balance, transactions, loading, refresh, requestWithdrawal } = useWallet();
+  const { balance, transactions, loading, error, refresh, requestWithdrawal } = useWallet();
+  const { profile } = useAuth();
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [amount, setAmount] = useState("");
   const [iban, setIban] = useState("");
@@ -28,7 +30,7 @@ export default function WalletScreen() {
       return;
     }
     setWithdrawing(true);
-    const { error } = await requestWithdrawal(numAmount, iban.trim());
+    const { error } = await requestWithdrawal(numAmount, iban.trim(), profile?.full_name ?? "");
     setWithdrawing(false);
     if (error) {
       Alert.alert("Erreur", error);
@@ -95,7 +97,9 @@ export default function WalletScreen() {
 
         {/* Transactions */}
         <Text className="text-white text-lg font-bold mb-3">Historique</Text>
-        {transactions.length === 0 ? (
+        {error ? (
+          <EmptyState icon="cloud-offline-outline" title="Wallet indisponible" description="Verifie ta connexion puis reessaie" actionLabel="Reessayer" onAction={refresh} />
+        ) : transactions.length === 0 ? (
           <EmptyState
             icon="receipt-outline"
             title="Aucune transaction"

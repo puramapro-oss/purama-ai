@@ -47,6 +47,9 @@ export function Button({
       className={`${baseClass} ${variantClass} ${isDisabled ? "opacity-50" : ""} ${className}`}
       style={style}
       activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
     >
       {loading ? (
         <ActivityIndicator color={variant === "primary" ? "#fff" : COLORS.accent} size="small" />

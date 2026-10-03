@@ -15,29 +15,38 @@ export function useWallet() {
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchWallet = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("wallet_balance")
-        .eq("id", user.id)
-        .single();
+      const purama = supabase.schema("purama_ai");
+      const { data: wallet, error: walletError } = await purama
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-      if (profile) setBalance(profile.wallet_balance ?? 0);
+      if (walletError) throw walletError;
 
-      const { data: txns } = await supabase
+      setBalance(wallet?.balance ?? 0);
+
+      const { data: txns, error: transactionsError } = await purama
         .from("wallet_transactions")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(50);
 
+      if (transactionsError) throw transactionsError;
       if (txns) setTransactions(txns);
-    } catch {
-      // silent
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Impossible de charger le wallet");
     } finally {
       setLoading(false);
     }
@@ -47,27 +56,25 @@ export function useWallet() {
     fetchWallet();
   }, [fetchWallet]);
 
-  const requestWithdrawal = async (amount: number, iban: string) => {
+  const requestWithdrawal = async (amount: number, iban: string, beneficiaryName: string) => {
     if (!user || amount < 5 || amount > balance) {
       return { error: "Montant invalide ou solde insuffisant" };
     }
+    if (!beneficiaryName.trim()) return { error: "Le nom du beneficiaire est requis" };
 
-    const { error } = await supabase.from("withdrawals").insert({
+    const { error } = await supabase.schema("purama_ai").from("withdrawals").insert({
       user_id: user.id,
       amount,
       iban,
+      beneficiary_name: beneficiaryName.trim(),
       status: "pending",
     });
 
     if (!error) {
-      await supabase
-        .from("profiles")
-        .update({ wallet_balance: balance - amount })
-        .eq("id", user.id);
       await fetchWallet();
     }
     return { error: error?.message ?? null };
   };
 
-  return { balance, transactions, loading, refresh: fetchWallet, requestWithdrawal };
+  return { balance, transactions, loading, error, refresh: fetchWallet, requestWithdrawal };
 }

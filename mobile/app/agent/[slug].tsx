@@ -15,7 +15,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 export default function AgentChatScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const agent = AGENTS.find((a) => a.slug === slug);
-  const { messages, loading, sendMessage, clearMessages } = useAgentChat(agent!);
+  const { messages, loading, sendMessage, clearMessages } = useAgentChat(agent);
   const [input, setInput] = useState("");
   const flatListRef = useRef<FlatList>(null);
 
@@ -29,7 +29,7 @@ export default function AgentChatScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background items-center justify-center">
         <Text className="text-white/50">Agent introuvable</Text>
-        <TouchableOpacity onPress={() => router.back()} className="mt-4">
+        <TouchableOpacity onPress={() => router.back()} className="mt-4" accessibilityRole="button" accessibilityLabel="Retour">
           <Text className="text-accent">Retour</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -55,7 +55,7 @@ export default function AgentChatScreen() {
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       {/* Header */}
       <View className="flex-row items-center px-4 py-3 border-b border-white/[0.06]">
-        <TouchableOpacity testID="agent-back" onPress={() => router.back()} className="mr-3">
+        <TouchableOpacity testID="agent-back" onPress={() => router.back()} className="mr-3" accessibilityRole="button" accessibilityLabel="Retour">
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View
@@ -140,6 +140,7 @@ export default function AgentChatScreen() {
             multiline
             selectionColor={COLORS.accent}
             onSubmitEditing={handleSend}
+            accessibilityLabel={`Message pour ${agent.name}`}
           />
           <TouchableOpacity
             testID="agent-send"
@@ -147,6 +148,9 @@ export default function AgentChatScreen() {
             disabled={!input.trim() || loading}
             className={`w-12 h-12 rounded-full items-center justify-center ${input.trim() && !loading ? "bg-accent" : "bg-white/10"}`}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Envoyer le message"
+            accessibilityState={{ disabled: !input.trim() || loading }}
           >
             <Ionicons name="send" size={18} color={input.trim() && !loading ? "#fff" : "rgba(255,255,255,0.3)"} />
           </TouchableOpacity>

@@ -76,13 +76,13 @@ export const AGENTS: Agent[] = [
   },
 ];
 
-export function useAgentChat(agent: Agent) {
+export function useAgentChat(agent: Agent | undefined) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
   const sendMessage = useCallback(async (content: string) => {
-    if (!content.trim() || loading) return;
+    if (!agent || !content.trim() || loading) return;
 
     const userMsg = { role: "user", content };
     setMessages(prev => [...prev, userMsg]);

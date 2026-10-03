@@ -11,8 +11,8 @@ import { useState } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withSequence } from "react-native-reanimated";
 
 export default function PointsScreen() {
-  const { balance, lifetimeEarned, transactions, loading, refresh } = usePoints();
-  const { canOpen, streak, todayGift, openGift } = useDailyGift();
+  const { balance, lifetimeEarned, transactions, loading, error, refresh } = usePoints();
+  const { canOpen, streak, openGift } = useDailyGift();
   const [giftResult, setGiftResult] = useState<string | null>(null);
   const scale = useSharedValue(1);
 
@@ -57,6 +57,9 @@ export default function PointsScreen() {
             testID="open-daily-gift"
             onPress={canOpen ? handleOpenGift : undefined}
             activeOpacity={canOpen ? 0.7 : 1}
+            accessibilityRole="button"
+            accessibilityLabel="Ouvrir le cadeau quotidien"
+            accessibilityState={{ disabled: !canOpen }}
           >
             <GlassCard className={`mb-6 items-center py-6 ${canOpen ? "border-amber-500/30" : ""}`}>
               <Ionicons
@@ -96,7 +99,9 @@ export default function PointsScreen() {
 
         {/* Transactions */}
         <Text className="text-white text-lg font-bold mb-3">Historique</Text>
-        {transactions.length === 0 ? (
+        {error ? (
+          <EmptyState icon="cloud-offline-outline" title="Points indisponibles" description="Verifie ta connexion puis reessaie" actionLabel="Reessayer" onAction={refresh} />
+        ) : transactions.length === 0 ? (
           <EmptyState icon="diamond-outline" title="Aucun mouvement" description="Tes points apparaitront ici" />
         ) : (
           transactions.map((tx) => (

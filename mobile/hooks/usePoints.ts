@@ -16,32 +16,41 @@ export function usePoints() {
   const [lifetimeEarned, setLifetimeEarned] = useState(0);
   const [transactions, setTransactions] = useState<PointTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPoints = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
-      const { data: points } = await supabase
+      const purama = supabase.schema("purama_ai");
+      const { data: points, error: pointsError } = await purama
         .from("purama_points")
         .select("balance, lifetime_earned")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
+
+      if (pointsError) throw pointsError;
 
       if (points) {
         setBalance(points.balance ?? 0);
         setLifetimeEarned(points.lifetime_earned ?? 0);
       }
 
-      const { data: txns } = await supabase
+      const { data: txns, error: transactionsError } = await purama
         .from("point_transactions")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(50);
 
+      if (transactionsError) throw transactionsError;
       if (txns) setTransactions(txns);
-    } catch {
-      // silent
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Impossible de charger les points");
     } finally {
       setLoading(false);
     }
@@ -51,5 +60,5 @@ export function usePoints() {
     fetchPoints();
   }, [fetchPoints]);
 
-  return { balance, lifetimeEarned, transactions, loading, refresh: fetchPoints };
+  return { balance, lifetimeEarned, transactions, loading, error, refresh: fetchPoints };
 }

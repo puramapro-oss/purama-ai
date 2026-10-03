@@ -33,11 +33,7 @@
   },
   "submit": {
     "production": {
-      "ios": {
-        "appleId": "matiss.frasne@gmail.com",
-        "ascAppId": "PURAMA_AI_ASC_ID",
-        "appleTeamId": "___a_remplir___"
-      },
+      "ios": {},
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",
         "track": "internal"

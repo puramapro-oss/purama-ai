@@ -16,15 +16,19 @@ import { openPublicWebRoute, showComingSoon } from "@/lib/mobileActions";
 
 export default function DashboardScreen() {
   const { profile } = useAuth();
-  const { balance: walletBalance } = useWallet();
-  const { balance: pointsBalance } = usePoints();
-  const { canOpen, streak } = useDailyGift();
+  const { balance: walletBalance, refresh: refreshWallet } = useWallet();
+  const { balance: pointsBalance, refresh: refreshPoints } = usePoints();
+  const { canOpen, streak, refresh: refreshGift } = useDailyGift();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
+    try {
+      await Promise.all([refreshWallet(), refreshPoints(), refreshGift()]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refreshGift, refreshPoints, refreshWallet]);
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "toi";
 
@@ -47,6 +51,8 @@ export default function DashboardScreen() {
                 testID="daily-gift-btn"
                 onPress={() => router.push("/(tabs)/points")}
                 className="w-10 h-10 rounded-full bg-amber-500/20 items-center justify-center"
+                accessibilityRole="button"
+                accessibilityLabel="Ouvrir le cadeau quotidien"
               >
                 <Ionicons name="gift" size={20} color="#F59E0B" />
               </TouchableOpacity>

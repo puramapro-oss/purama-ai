@@ -7,18 +7,18 @@ import { useFonts, Syne_400Regular, Syne_700Bold } from "@expo-google-fonts/syne
 import * as SplashScreen from "expo-splash-screen";
 import "@/global.css";
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({ Syne_400Regular, Syne_700Bold });
+  const [fontsLoaded, fontError] = useFonts({ Syne_400Regular, Syne_700Bold });
 
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
+    if (fontsLoaded || fontError) {
+      void SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontError, fontsLoaded]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded && !fontError) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

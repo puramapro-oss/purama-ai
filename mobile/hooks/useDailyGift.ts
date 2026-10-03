@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
-import { APP_SLUG } from "@/lib/constants";
 
 interface DailyGift {
   gift_type: string;
@@ -16,20 +15,26 @@ export function useDailyGift() {
   const [canOpen, setCanOpen] = useState(false);
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const checkGift = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
       const today = new Date().toISOString().split("T")[0];
-      const { data } = await supabase
+      const { data, error: giftError } = await supabase.schema("purama_ai")
         .from("daily_gifts")
         .select("*")
         .eq("user_id", user.id)
-        .eq("app_slug", APP_SLUG)
         .gte("opened_at", today)
         .order("opened_at", { ascending: false })
         .limit(1);
+
+      if (giftError) throw giftError;
 
       if (data && data.length > 0) {
         setTodayGift(data[0]);
@@ -37,13 +42,14 @@ export function useDailyGift() {
         setStreak(data[0].streak_count);
       } else {
         setCanOpen(true);
-        const { data: lastGift } = await supabase
+        const { data: lastGift, error: lastGiftError } = await supabase.schema("purama_ai")
           .from("daily_gifts")
           .select("streak_count, opened_at")
           .eq("user_id", user.id)
-          .eq("app_slug", APP_SLUG)
           .order("opened_at", { ascending: false })
           .limit(1);
+
+        if (lastGiftError) throw lastGiftError;
 
         if (lastGift && lastGift.length > 0) {
           const lastDate = new Date(lastGift[0].opened_at);
@@ -56,8 +62,8 @@ export function useDailyGift() {
           );
         }
       }
-    } catch {
-      // silent
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Impossible de charger le cadeau quotidien");
     } finally {
       setLoading(false);
     }
@@ -98,11 +104,10 @@ export function useDailyGift() {
     }
 
     const newStreak = streak + 1;
-    const { data, error } = await supabase
+    const { data, error } = await supabase.schema("purama_ai")
       .from("daily_gifts")
       .insert({
         user_id: user.id,
-        app_slug: APP_SLUG,
         gift_type: giftType,
         gift_value: giftValue,
         streak_count: newStreak,
@@ -116,8 +121,10 @@ export function useDailyGift() {
       setStreak(newStreak);
     }
 
+    if (error) setError(error.message);
+
     return data;
   };
 
-  return { todayGift, canOpen, streak, loading, openGift, refresh: checkGift };
+  return { todayGift, canOpen, streak, loading, error, openGift, refresh: checkGift };
 }
