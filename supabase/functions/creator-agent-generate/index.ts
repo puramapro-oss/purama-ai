@@ -64,7 +64,7 @@ Tu retournes UNIQUEMENT un JSON valide :
   "description": "1 phrase courte (max 100 chars) qui décrit ce que fait l'agent",
   "system_prompt": "Le prompt système COMPLET que recevra Claude. Dois être : (1) précis sur le rôle et l'expertise, (2) inclure les contraintes (ton, format, longueur), (3) inclure 1-2 exemples implicites de structure attendue, (4) être autoporteur sans dépendre du contexte utilisateur. 200-500 mots idéalement.",
   "suggested_tools": ["0 à N noms d'outils, voir liste exacte ci-dessous"],
-  "suggested_model": "claude-sonnet-4-20250514 ou claude-haiku-4-5-20251001 (haiku pour les tâches simples et répétitives)",
+  "suggested_model": "claude-sonnet-4-6 ou claude-haiku-4-5-20251001 (haiku pour les tâches simples et répétitives)",
   "suggested_temperature": 0.0 à 1.0 (0.3 = factuel, 0.7 = équilibré, 0.9 = créatif),
   "suggested_schedule": "expression cron 5 champs (ex: '0 9 * * 1' = chaque lundi 9h, '0 8 * * *' = tous les jours 8h) SI l'utilisateur décrit une récurrence, sinon null (agent déclenché manuellement uniquement)"
 }
@@ -101,7 +101,7 @@ Génère la config de cet agent maintenant.`;
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
         max_tokens: 2000,
         system: systemPrompt,
         messages: [{ role: "user", content: userMessage }],
@@ -138,7 +138,7 @@ Génère la config de cet agent maintenant.`;
         : [],
       suggested_model: parsed.suggested_model === "claude-haiku-4-5-20251001"
         ? "claude-haiku-4-5-20251001"
-        : "claude-sonnet-4-20250514",
+        : (Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6"),
       suggested_temperature: Math.max(0, Math.min(1, Number(parsed.suggested_temperature ?? 0.7))),
       // Validation légère (5 champs cron) — KARTA revalide avec cron.validate() avant toute
       // planification réelle, mais autant ne pas stocker de valeur manifestement invalide.

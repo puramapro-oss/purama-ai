@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
         max_tokens: 3000,
         system: `Tu rédiges un contrat de partenariat français complet et conforme.
 Tu retournes UNIQUEMENT le contenu du contrat en texte brut (pas de markdown), structuré en articles numérotés, prêt à être imprimé sur PDF.
