@@ -27,10 +27,24 @@ export const CUSTOM_AGENT_TOOLS: Record<string, AnyToolDefinition> = {
 
 export const CUSTOM_AGENT_TOOL_NAMES = Object.keys(CUSTOM_AGENT_TOOLS);
 
-/** Filtre défensif : ne résout QUE les noms d'outils connus (liste blanche), ignore le reste
- * silencieusement — un nom invalide venant de Claude/du mock ne doit jamais planter l'agent. */
+/**
+ * Filtre défensif : ne résout QUE les noms d'outils connus (liste blanche), ignore le reste
+ * silencieusement — un nom invalide venant de Claude/du mock ne doit jamais planter l'agent.
+ *
+ * Gardes supplémentaires (fail-closed) :
+ * - Rejette les non-strings (ex: [123, "web_search"] → seul "web_search" est retenu)
+ * - Déduplique stablement (ex: ["web_search", "web_search"] → un seul outil retourné, ordre préservé)
+ */
 export function resolveCustomAgentTools(names: string[] | null | undefined): AnyToolDefinition[] {
+  const seenNames = new Set<string>();
+
   return (names ?? [])
-    .map((name) => CUSTOM_AGENT_TOOLS[name])
-    .filter((tool): tool is AnyToolDefinition => Boolean(tool));
+    .filter((name): name is string => typeof name === "string") // rejette non-strings
+    .filter((name) => {
+      if (seenNames.has(name)) return false; // dédupe stable (garde le premier vu)
+      if (!CUSTOM_AGENT_TOOLS[name]) return false; // ignore inconnus (whitelist stricte)
+      seenNames.add(name);
+      return true;
+    })
+    .map((name) => CUSTOM_AGENT_TOOLS[name]!); // assertion OK car on vient de vérifier l'existence
 }
