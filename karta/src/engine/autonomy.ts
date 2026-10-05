@@ -32,6 +32,32 @@ export async function loadAgentState(userId: string, agentType: AgentType): Prom
     .single();
 
   if (insertError) {
+    // Race-safe : si deux appels concurrents insèrent simultanément, le second échoue avec 23505
+    // (violation UNIQUE sur user_id+agent_type). Dans ce CAS SEULEMENT, on re-SELECT la ligne
+    // créée par l'autre appelant → convergence vers le même état.
+    if (insertError.code === "23505") {
+      const { data: existing, error: retryError } = await supabase
+        .from("karta_agent_state")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("agent_type", agentType)
+        .single();
+
+      if (retryError || !existing) {
+        throw new Error(`loadAgentState(${agentType}) re-SELECT après 23505: ${retryError?.message ?? "ligne absente"}`);
+      }
+
+      return {
+        userId,
+        agentType,
+        isEnabled: existing.is_enabled,
+        autonomyLevel: existing.autonomy_level,
+        killSwitch: existing.kill_switch,
+        simulationMode: existing.simulation_mode,
+      };
+    }
+
+    // Toute AUTRE erreur d'insert est anormale → remonte sans avalage
     throw new Error(`loadAgentState(${agentType}) création par défaut: ${insertError.message}`);
   }
 
