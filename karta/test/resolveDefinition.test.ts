@@ -51,6 +51,12 @@ describe("resolveAgentDefinition — fail-closed sur statique inconnu, custom in
     await expect(resolveAgentDefinition("agent_invente_par_claude" as any)).rejects.toThrow("Agent statique inconnu: agent_invente_par_claude");
   });
 
+  it("rejette les noms de la chaîne de prototype comme agentType (constructor/toString/hasOwnProperty/valueOf) — même classe de fuite que customRegistry, vérifiée par review indépendante", async () => {
+    for (const poisoned of ["constructor", "toString", "hasOwnProperty", "valueOf", "__proto__"]) {
+      await expect(resolveAgentDefinition(poisoned as any)).rejects.toThrow(`Agent statique inconnu: ${poisoned}`);
+    }
+  });
+
   it("rejette un custom introuvable (ID inexistant)", async () => {
     await expect(resolveAgentDefinition("custom:id-inexistant")).rejects.toThrow("Agent créé introuvable: id-inexistant");
   });

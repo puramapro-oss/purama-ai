@@ -22,9 +22,17 @@ export async function resolveAgentDefinition(agentType: AgentType): Promise<Agen
     return buildCustomAgentDefinition(row);
   }
 
-  // Fail-closed : un AgentType statique inconnu doit échouer explicitement, jamais retourner undefined
-  const definition = AGENT_REGISTRY[agentType as StaticAgentType];
-  if (!definition) throw new Error(`Agent statique inconnu: ${agentType}`);
+  // Fail-closed : un AgentType statique inconnu doit échouer explicitement, jamais retourner
+  // undefined. `Object.hasOwn` (pas un accès par clé direct) : AGENT_REGISTRY est un objet
+  // littéral — un agentType comme "constructor"/"toString"/"hasOwnProperty" résoudrait sinon
+  // vers la chaîne de prototype (ex: `Object`/`Function`), une valeur truthy qui passerait un
+  // simple `if (!definition)` (même classe de bug que tools/customRegistry.ts, trouvée par la
+  // review indépendante du 2026-10-05 — faible risque ici car tous les appelants connus filtrent
+  // déjà agentType par liste blanche avant d'atteindre cette fonction, mais fail-closed par
+  // défense en profondeur plutôt que par confiance dans les appelants).
+  if (!Object.hasOwn(AGENT_REGISTRY, agentType)) {
+    throw new Error(`Agent statique inconnu: ${agentType}`);
+  }
 
-  return definition;
+  return AGENT_REGISTRY[agentType as StaticAgentType];
 }
