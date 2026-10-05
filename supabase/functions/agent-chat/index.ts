@@ -105,11 +105,14 @@ Deno.serve(async (req) => {
       .eq("user_id", userId)
       .eq("agent_type", agent_type)
       .eq("session_id", session_id)
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
       .limit(20);
 
+    // Query newest first so the limit keeps recent context, then restore
+    // chronological order before sending messages to the model.
+    const recentHistory = ((history as Array<{ role: string; content: string }>) ?? []).reverse();
     const messages = [
-      ...((history as Array<{ role: string; content: string }>) ?? []).map(m => ({
+      ...recentHistory.map(m => ({
         role: m.role === "user" ? "user" : "assistant",
         content: m.content,
       })),
