@@ -44,6 +44,26 @@ describe("customRegistry — liste blanche des outils pour les agents créés pa
     expect(tools.map((t) => t.name)).toEqual(["web_search", "send_notification", "generate_pdf"]);
   });
 
+  it("rejette les noms de la chaîne de prototype (constructor/__proto__/toString/hasOwnProperty/valueOf/toLocaleString/isPrototypeOf) — fuite de liste blanche vérifiée empiriquement avant ce correctif", () => {
+    for (const poisoned of [
+      "constructor",
+      "__proto__",
+      "toString",
+      "hasOwnProperty",
+      "valueOf",
+      "toLocaleString",
+      "isPrototypeOf",
+      "propertyIsEnumerable",
+    ]) {
+      expect(resolveCustomAgentTools([poisoned])).toEqual([]);
+    }
+  });
+
+  it("un nom de prototype mélangé à des noms valides ne pollue pas le résultat", () => {
+    const tools = resolveCustomAgentTools(["web_search", "constructor", "__proto__", "send_notification"]);
+    expect(tools.map((t) => t.name)).toEqual(["web_search", "send_notification"]);
+  });
+
   it("combine rejet non-strings + déduplication + whitelist stricte", () => {
     const tools = resolveCustomAgentTools([
       "web_search",
