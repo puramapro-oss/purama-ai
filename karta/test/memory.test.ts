@@ -41,7 +41,7 @@ class FakeSupabaseClient {
           },
         };
       },
-      update(payload: { memory_value: unknown; updated_at: string }) {
+      delete() {
         return {
           eq(_col1: string, val1: string) {
             return {
@@ -52,17 +52,25 @@ class FakeSupabaseClient {
                       eq(_col4: string, val4: unknown) {
                         return {
                           async select() {
-                            // Sérialise les UPDATEs concurrents via un compteur
+                            // Sérialise les DELETEs concurrents via un compteur
                             self.callOrder++;
                             const key = `${val1}:${val2}:${val3}`;
                             const currentValue = self.store.get(key);
 
-                            // Garde CAS : UPDATE réussit SEULEMENT si la valeur actuelle === val4
-                            if (currentValue === val4) {
-                              self.store.set(key, payload.memory_value);
+                            // Garde CAS : réplique la comparaison JSONB réelle de Postgres —
+                            // JSON.stringify(currentValue) vs val4 (déjà JSON.stringify(value)
+                            // côté appelant), jamais une égalité JS brute sur la valeur stockée.
+                            // Vérifié empiriquement contre un vrai Postgres+PostgREST (review
+                            // indépendante 2026-10-05) : comparer la valeur JS brute masquait un
+                            // vrai bug de production (texte libre → erreur JSON ; valeur
+                            // "JSON-like" → 0 ligne silencieux).
+                            if (currentValue !== undefined && JSON.stringify(currentValue) === val4) {
+                              // DELETE réel : la ligne disparaît (pas de passage à `null`, qui
+                              // violerait memory_value JSONB NOT NULL en vrai Postgres).
+                              self.store.delete(key);
                               return { data: [{ memory_value: currentValue }], error: null };
                             } else {
-                              // La valeur a changé entre-temps → UPDATE ne touche aucune ligne
+                              // La valeur a changé/disparu entre-temps → DELETE ne touche aucune ligne
                               return { data: [], error: null };
                             }
                           },
@@ -115,9 +123,10 @@ describe("consumeBrief — exactly-once semantics via CAS", () => {
 
     expect(results).toEqual([null, "Envoie une newsletter sur l'IA"]);
 
-    // Vérifier que la valeur est bien clearée dans le store après
+    // Vérifier que la ligne est bien SUPPRIMÉE du store après (pas mise à `null` : violerait
+    // memory_value JSONB NOT NULL en vrai Postgres — vérifié empiriquement le 2026-10-05).
     const finalValue = fakeClient["store"].get("user123:email:pending_brief");
-    expect(finalValue).toBeNull();
+    expect(finalValue).toBeUndefined();
   });
 
   it("retourne null si le brief est vide ou absent", async () => {
@@ -129,5 +138,37 @@ describe("consumeBrief — exactly-once semantics via CAS", () => {
 
     fakeClient.delete("user123:email:pending_brief");
     expect(await consumeBrief("user123", "email" as AgentType, "pending_brief")).toBeNull();
+  });
+
+  // Cas bordure trouvés par la review indépendante (2026-10-05), reproduits ici avec un faux
+  // client fidèle à la comparaison JSONB réelle (voir commentaire dans le faux client ci-dessus).
+  // Vérifiés aussi empiriquement contre un vrai Postgres + vrai PostgREST (pas seulement ce mock).
+
+  it("consomme un brief qui ressemble à un littéral JSON (nombre/bool) sans faux-négatif", async () => {
+    fakeClient.seed("user123:email:pending_brief", "123");
+    expect(await consumeBrief("user123", "email" as AgentType, "pending_brief")).toBe("123");
+    expect(fakeClient["store"].get("user123:email:pending_brief")).toBeUndefined();
+
+    fakeClient.seed("user123:email:pending_brief", "true");
+    expect(await consumeBrief("user123", "email" as AgentType, "pending_brief")).toBe("true");
+  });
+
+  it("consomme un brief contenant guillemets/apostrophes/virgule/caractères spéciaux", async () => {
+    const value = 'Dis "bonjour", l\'ami — 100% sûr';
+    fakeClient.seed("user123:email:pending_brief", value);
+    expect(await consumeBrief("user123", "email" as AgentType, "pending_brief")).toBe(value);
+    expect(fakeClient["store"].get("user123:email:pending_brief")).toBeUndefined();
+  });
+
+  it("deux consommateurs concurrents sur une valeur JSON-like : exactement un gagne (pas de faux-négatif double)", async () => {
+    fakeClient.seed("user123:email:pending_brief", "123");
+
+    const [result1, result2] = await Promise.all([
+      consumeBrief("user123", "email" as AgentType, "pending_brief"),
+      consumeBrief("user123", "email" as AgentType, "pending_brief"),
+    ]);
+
+    const results = [result1, result2].sort((a, b) => (a === null ? -1 : b === null ? 1 : 0));
+    expect(results).toEqual([null, "123"]);
   });
 });
