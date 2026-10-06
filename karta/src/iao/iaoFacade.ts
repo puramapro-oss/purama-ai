@@ -86,7 +86,7 @@ export class IaoFacade {
 
   async submit(request: IaoRequest): Promise<IaoResponse> {
     assertIdentity(request);
-    const key = requestKey(request.tenantId, request.requestId);
+    const key = requestKey(request.tenantId, request.actorId, request.requestId);
     const fingerprint = fingerprintRequest(request);
     const existing = this.#requests.get(key);
     if (existing) {
@@ -111,13 +111,13 @@ export class IaoFacade {
   }
 
   get(tenantId: string, actorId: string, requestId: string): IaoResponse {
-    const stored = this.#requests.get(requestKey(tenantId, requestId));
+    const stored = this.#requests.get(requestKey(tenantId, actorId, requestId));
     if (!stored || stored.actorId !== actorId) throw new IaoRequestNotFoundError("IAO request not found");
     return clone(stored.response);
   }
 
-  recordKartaResult(tenantId: string, requestId: string, result: KartaIaoResult): IaoResponse {
-    const stored = this.#requests.get(requestKey(tenantId, requestId));
+  recordKartaResult(tenantId: string, actorId: string, requestId: string, result: KartaIaoResult): IaoResponse {
+    const stored = this.#requests.get(requestKey(tenantId, actorId, requestId));
     if (!stored) throw new IaoRequestNotFoundError("IAO request not found");
     if (stored.response.status === "verified" || stored.response.status === "blocked") return clone(stored.response);
     stored.response.stale = this.#latestByConversation.get(conversationKey(tenantId, stored.actorId, stored.conversationId)) !== requestId;
@@ -198,7 +198,9 @@ function canonicalize(value: unknown): string {
   const record = value as Record<string, unknown>;
   return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonicalize(record[key])}`).join(",")}}`;
 }
-function requestKey(tenantId: string, requestId: string): string { return `${tenantId}:${requestId}`; }
+function requestKey(tenantId: string, actorId: string, requestId: string): string {
+  return `${tenantId}:${actorId}:${requestId}`;
+}
 function conversationKey(tenantId: string, actorId: string, conversationId: string): string {
   return `${tenantId}:${actorId}:${conversationId}`;
 }

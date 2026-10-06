@@ -133,9 +133,9 @@ describe("IAO facade contract", () => {
     const first = await facade.submit(request());
     expect(first.status).toBe("partial");
     await facade.submit(request({ requestId: "44444444-4444-4444-8444-444444444444" }));
-    expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "partial", stale: true });
-    expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "blocked", reason: "x" })).toMatchObject({ status: "blocked" });
-    expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "blocked" });
+    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "partial", stale: true });
+    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "blocked", reason: "x" })).toMatchObject({ status: "blocked" });
+    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "blocked" });
   });
 
   it("isolates conversation freshness between actors in the same tenant", async () => {
@@ -151,8 +151,22 @@ describe("IAO facade contract", () => {
       identity: actorBIdentity,
     }));
 
-    expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "accepted", evidence: evidence() }))
+    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() }))
       .toMatchObject({ status: "verified", stale: false });
+  });
+
+  it("isolates idempotency keys between actors in the same tenant", async () => {
+    const karta = { prepare: vi.fn(async () => ({ kind: "accepted" as const, preview: "draft" })) };
+    const facade = new IaoFacade(karta);
+    await facade.submit(request());
+    const actorBIdentity = identity({
+      actorId: "user-b",
+      session: { ...identity().session, userId: "user-b" },
+    });
+
+    await expect(facade.submit(request({ actorId: "user-b", identity: actorBIdentity })))
+      .resolves.toMatchObject({ status: "partial", requestId: REQUEST_ID });
+    expect(karta.prepare).toHaveBeenCalledTimes(2);
   });
 });
 
