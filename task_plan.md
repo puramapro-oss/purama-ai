@@ -317,3 +317,27 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - [ ] Un agent créé par un vrai utilisateur, activé en `karta_enabled=true` avec de vrais outils (ex: Gmail connecté) : jamais exécuté avec un vrai appel Claude — le mock a seulement prouvé que le pipeline (déclenchement → décision → outils → log) fonctionne structurellement
 - [x] ~~Scheduler des agents créés...~~ Résolu 2026-07-27 (cf section "Clôture des phases restantes" en tête de fichier) — ne dépendait pas du crédit Anthropic, juste du temps réel d'attente
 - [x] ~~Page "Mes employés IA" test humain...~~ Résolu 2026-07-27 (Playwright réel, cf section "Clôture des phases restantes") — ne dépendait pas du crédit Anthropic
+
+## IAO OPTION B — LOCAL_DONE_VERIFIED (2026-10-07)
+
+- [x] Base KARTA autoritative `2f024bf3cc86af46b4dd705437426fcb2c456ba4`; branche isolée
+  `codex/iao-karta-integration-20261005`; aucun cherry-pick de la lignée runtime parallèle.
+- [x] Façade IAO mince intégrée aux primitives KARTA existantes. KARTA reste l'unique
+  moteur/lifecycle/queue et SMARANA l'unique mémoire via port injecté; sans runtime injecté,
+  les routes IAO échouent en `503`.
+- [x] Commits locaux atomiques : `62f8e9e`, `0245766`, `a4c50de`, `47acbb4`, `53fb4da`.
+- [x] Contrats durcis : identité/ownership serveur, isolation tenant+acteur, idempotence durable
+  tenant+acteur+requête, digests canoniques et rejet avant effet des payloads divergents,
+  staleness recalculée après await, reçus SMARANA strictement allowlistés, export one-shot borné,
+  erreurs génériques sans fuite PII/interne.
+- [x] Tests ciblés `npm test -- --run test/iao-facade.test.ts test/localComputeFabricProvider.test.ts` :
+  36/36 PASS. Suite `npm test` : 30 fichiers, 370/370 PASS.
+- [x] `npm run typecheck` PASS; `npm run build` PASS; lint N/A (aucun script `lint` dans
+  `karta/package.json`); `git diff --check` PASS.
+- [x] Gate SATYA applicable, commande hermétique canonique sur 6 fichiers : 136/136 PASS.
+- [x] GitNexus `detect-changes` pré-commit exécuté : 6 fichiers touchés, aucun symbole indexé
+  dans les nouveaux hunks; exhaustivité graphe explicitement non revendiquée.
+- [x] Revue indépendante sur `2f024bf3..53fb4da7362904f0548610d372cb34044bd17bff` :
+  `NO_FINDINGS`; rejeu indépendant ciblé 36/36 PASS.
+- [x] Aucun push, deploy, DB distante, provider réel, secret, migration, seconde IA, mémoire,
+  queue, scheduler ou orchestrateur.
