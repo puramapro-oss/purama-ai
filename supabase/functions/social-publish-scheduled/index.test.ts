@@ -37,6 +37,7 @@ import {
 const CRON_SECRET = "test-cron-secret-123";
 
 // deno-lint-ignore no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous in-memory database rows
 type Row = Record<string, any>;
 
 interface FakeDbControls {
@@ -58,6 +59,7 @@ function makeFakeSupabase(
     let limitN: number | undefined;
 
     // deno-lint-ignore no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recursive thenable mock for the Supabase fluent API
     const builder: any = {
       update(payload: Row) {
         mode = "update";
