@@ -11,7 +11,7 @@ export type AgentCategory =
   | 'productivity' | 'marketing' | 'sales' | 'support'
   | 'content' | 'dev' | 'finance' | 'autre';
 
-export type AgentModel = 'claude-sonnet-4-20250514' | 'claude-haiku-4-5-20251001';
+export type AgentModel = 'claude-sonnet-4-6' | 'claude-haiku-4-5-20251001';
 
 export type RunTrigger = 'chat' | 'manual' | 'cron' | 'webhook' | 'api';
 export type RunStatus = 'pending' | 'running' | 'success' | 'error';
@@ -88,7 +88,7 @@ export const CATEGORIES: { value: AgentCategory; label: string; emoji: string; c
 ];
 
 export const MODELS: { value: AgentModel; label: string; description: string }[] = [
-  { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4', description: 'Le plus puissant. Recommandé pour 90% des cas.' },
+  { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4', description: 'Le plus puissant. Recommandé pour 90% des cas.' },
   { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', description: 'Plus rapide et moins cher. Pour les tâches répétitives.' },
 ];
 
@@ -181,7 +181,7 @@ export async function createAgent(
       slug,
       emoji: '🤖',
       color: '#8B5CF6',
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       temperature: 0.7,
       max_tokens: 4000,
       tools_enabled: [],
