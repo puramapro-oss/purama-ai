@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { normalizeIaoReceipt } from "./iaoFacade.js";
 import type { IaoMemoryAction, IaoReceipt, IaoRequest, KartaIaoPort, KartaIaoResult } from "./iaoFacade.js";
 
 export type IaoContextSource = Readonly<{
@@ -12,16 +13,16 @@ export type IaoContextPack = Readonly<{ sources: readonly IaoContextSource[] }>;
 /** Injected SMARANA boundary. Implementations own policy, consent and persistence. */
 export interface SmaranaIaoPort {
   buildContext(input: Readonly<{
-    idempotencyKey: string; tenantId: string; actorId: string; conversationId: string; message: string;
+    idempotencyKey: string; payloadDigest: string; tenantId: string; actorId: string; conversationId: string; message: string;
   }>): Promise<Readonly<{ operationId: string; context: IaoContextPack }>>;
   control(input: Readonly<{
-    idempotencyKey: string; tenantId: string; actorId: string; action: IaoMemoryAction; data: Record<string, unknown>;
+    idempotencyKey: string; payloadDigest: string; tenantId: string; actorId: string; action: IaoMemoryAction; data: Record<string, unknown>;
   }>): Promise<IaoReceipt>;
 }
 
 export interface IaoCompletionPort {
   complete(input: Readonly<{
-    requestId: string; idempotencyKey: string; message: string; context: IaoContextPack;
+    requestId: string; idempotencyKey: string; payloadDigest: string; message: string; context: IaoContextPack;
   }>): Promise<Readonly<{ text: string; modelVersion: string }>>;
 }
 
@@ -40,13 +41,14 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
       if (request.type === "memory-control") return await this.#control(request);
       if (request.type !== "conversation" || request.memoryControl) return blocked("memory-denied:unsupported-request");
       const prepared = await bounded(this.smarana.buildContext({
-        idempotencyKey: request.requestId, tenantId: request.tenantId, actorId: request.actorId,
+        idempotencyKey: durableRequestKey(request), payloadDigest: smaranaPayloadDigest(request),
+        tenantId: request.tenantId, actorId: request.actorId,
         conversationId: request.conversationId, message: request.prompt,
       }), this.timeoutMs);
       assertUuid(prepared.operationId);
       const completion = await bounded(this.completion.complete({
         requestId: request.requestId, idempotencyKey: completionIdempotencyKey(request),
-        message: request.prompt, context: prepared.context,
+        payloadDigest: completionPayloadDigest(request), message: request.prompt, context: prepared.context,
       }), this.timeoutMs);
       if (!completion.text.trim() || completion.text.length > 256_000 || !completion.modelVersion.trim()) {
         throw new Error("memory-unavailable:compute-fabric-malformed");
@@ -62,21 +64,46 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
 
   async #control(request: IaoRequest): Promise<KartaIaoResult> {
     if (!request.memoryControl) return blocked("memory-denied:missing-control");
-    const receipt = await bounded(this.smarana.control({
-      idempotencyKey: request.requestId, tenantId: request.tenantId, actorId: request.actorId,
+    const receipt = normalizeIaoReceipt(await bounded(this.smarana.control({
+      idempotencyKey: durableRequestKey(request), payloadDigest: smaranaPayloadDigest(request),
+      tenantId: request.tenantId, actorId: request.actorId,
       action: request.memoryControl.action, data: request.memoryControl.data,
-    }), this.timeoutMs);
-    assertUuid(receipt.operationId);
-    if (receipt.action !== request.memoryControl.action) throw new Error("memory-unavailable:receipt-mismatch");
+    }), this.timeoutMs), request.memoryControl.action);
     return { kind: "accepted", memoryControl: receipt, evidence: evidence(request.requestId, receipt.operationId) };
   }
 }
 
 function completionIdempotencyKey(request: Pick<IaoRequest, "tenantId" | "actorId" | "requestId">): string {
+  return durableRequestKey(request);
+}
+
+function durableRequestKey(request: Pick<IaoRequest, "tenantId" | "actorId" | "requestId">): string {
   const digest = createHash("sha256")
     .update(JSON.stringify([request.tenantId, request.actorId, request.requestId]))
     .digest("hex");
   return `iao:${digest}`;
+}
+
+function smaranaPayloadDigest(request: IaoRequest): string {
+  return createHash("sha256").update(canonicalize({
+    type: request.type,
+    conversationId: request.conversationId,
+    prompt: request.prompt,
+    memoryControl: request.memoryControl,
+  })).digest("hex");
+}
+
+function completionPayloadDigest(request: Pick<IaoRequest, "type" | "conversationId" | "prompt">): string {
+  return createHash("sha256")
+    .update(JSON.stringify([request.type, request.conversationId, request.prompt]))
+    .digest("hex");
+}
+
+function canonicalize(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalize).join(",")}]`;
+  const record = value as Record<string, unknown>;
+  return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonicalize(record[key])}`).join(",")}}`;
 }
 
 function bounded<T>(operation: Promise<T>, timeoutMs: number): Promise<T> {

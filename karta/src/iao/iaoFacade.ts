@@ -33,7 +33,6 @@ export type IaoReceipt = Readonly<{
   action: IaoMemoryAction;
   operationId: string;
   replayed: boolean;
-  status?: string;
   exported?: readonly unknown[];
 }>;
 
@@ -126,8 +125,15 @@ export class IaoFacade {
 
   async #prepare(request: IaoRequest, stored: StoredRequest): Promise<IaoResponse> {
     try {
-      return this.#apply(stored, await this.karta.prepare(request));
+      const result = await this.karta.prepare(request);
+      stored.response.stale = this.#latestByConversation.get(
+        conversationKey(request.tenantId, request.actorId, request.conversationId),
+      ) !== request.requestId;
+      return this.#apply(stored, result);
     } catch (error) {
+      stored.response.stale = this.#latestByConversation.get(
+        conversationKey(request.tenantId, request.actorId, request.conversationId),
+      ) !== request.requestId;
       return this.#block(stored.response, safeDependency(error));
     }
   }
@@ -136,16 +142,17 @@ export class IaoFacade {
     const response = stored.response;
     if (response.status === "verified" || response.status === "blocked") return response;
     if (result.kind === "blocked") return this.#block(response, result.dependency);
-    assertAccepted(result, response.requestId, stored.session);
+    const receipt = result.memoryControl === undefined ? undefined : normalizeIaoReceipt(result.memoryControl);
+    assertAccepted(result, response.requestId, stored.session, receipt);
     if (result.preview !== undefined) response.preview = result.preview;
-    if (result.memoryControl) response.memoryControl = forStorage(result.memoryControl);
+    if (receipt) response.memoryControl = forStorage(receipt);
     if (result.evidence && !response.stale) {
       response.proof = result.evidence;
       response.status = "verified";
     } else if (result.preview !== undefined || result.memoryControl) {
       response.status = "partial";
     }
-    return deliver(response, result.memoryControl);
+    return deliver(response, receipt);
   }
 
   #block(response: IaoResponse, dependency?: string): IaoResponse {
@@ -172,8 +179,11 @@ function assertIdentity(request: IaoRequest): void {
   }
 }
 
-function assertAccepted(result: Extract<KartaIaoResult, { kind: "accepted" }>, requestId: string, session: IaoSession): void {
-  if (result.memoryControl && (!result.evidence || result.evidence.proofId !== result.memoryControl.operationId)) {
+function assertAccepted(
+  result: Extract<KartaIaoResult, { kind: "accepted" }>, requestId: string, session: IaoSession,
+  receipt?: IaoReceipt,
+): void {
+  if (receipt && (!result.evidence || result.evidence.proofId !== receipt.operationId)) {
     throw new Error("Invalid KARTA durable action receipt");
   }
   if (!result.evidence) return;
@@ -183,6 +193,42 @@ function assertAccepted(result: Extract<KartaIaoResult, { kind: "accepted" }>, r
     completedAt < session.issuedAt || completedAt > session.expiresAt) {
     throw new Error("Invalid KARTA evidence");
   }
+}
+
+export function normalizeIaoReceipt(value: unknown, expectedAction?: IaoMemoryAction): IaoReceipt {
+  if (typeof value !== "object" || value === null || Array.isArray(value) || Object.getPrototypeOf(value) !== Object.prototype) {
+    throw new Error("Invalid KARTA memory receipt");
+  }
+  const receipt = value as Record<string, unknown>;
+  const allowed = new Set(["action", "operationId", "replayed", "exported"]);
+  if (!Object.keys(receipt).every((key) => allowed.has(key)) ||
+    !isMemoryAction(receipt.action) || (expectedAction !== undefined && receipt.action !== expectedAction) ||
+    typeof receipt.operationId !== "string" || !isUuid(receipt.operationId) || typeof receipt.replayed !== "boolean") {
+    throw new Error("Invalid KARTA memory receipt");
+  }
+  if (receipt.exported === undefined) {
+    return { action: receipt.action, operationId: receipt.operationId, replayed: receipt.replayed };
+  }
+  if (receipt.action !== "export" || receipt.replayed || !Array.isArray(receipt.exported) || receipt.exported.length > 1_000) {
+    throw new Error("Invalid KARTA memory receipt");
+  }
+  try {
+    const encoded = JSON.stringify(receipt.exported);
+    if (encoded === undefined || Buffer.byteLength(encoded, "utf8") > 1024 * 1024) throw new Error("oversized");
+    const exported: unknown = JSON.parse(encoded);
+    if (!Array.isArray(exported)) throw new Error("invalid");
+    return {
+      action: receipt.action, operationId: receipt.operationId, replayed: receipt.replayed,
+      exported,
+    };
+  } catch {
+    throw new Error("Invalid KARTA memory receipt");
+  }
+}
+
+function isMemoryAction(value: unknown): value is IaoMemoryAction {
+  return value === "import" || value === "update" || value === "export" || value === "correct" ||
+    value === "erase-logical" || value === "erase-physical";
 }
 
 function fingerprintRequest(request: IaoRequest): string {
@@ -204,7 +250,9 @@ function requestKey(tenantId: string, actorId: string, requestId: string): strin
 function conversationKey(tenantId: string, actorId: string, conversationId: string): string {
   return JSON.stringify([tenantId, actorId, conversationId]);
 }
-function forStorage(receipt: IaoReceipt): IaoReceipt { const { exported: _exported, ...safe } = receipt; return safe; }
+function forStorage(receipt: IaoReceipt): IaoReceipt {
+  return { action: receipt.action, operationId: receipt.operationId, replayed: receipt.replayed };
+}
 function deliver(response: IaoResponse, receipt?: IaoReceipt): IaoResponse {
   const copy = clone(response);
   if (receipt?.exported && copy.memoryControl) copy.memoryControl = { ...copy.memoryControl, exported: structuredClone(receipt.exported) };
@@ -212,7 +260,9 @@ function deliver(response: IaoResponse, receipt?: IaoReceipt): IaoResponse {
 }
 function replay(response: IaoResponse): IaoResponse {
   const copy = clone(response);
-  if (copy.memoryControl) copy.memoryControl = { ...copy.memoryControl, replayed: true, exported: undefined };
+  if (copy.memoryControl) copy.memoryControl = {
+    action: copy.memoryControl.action, operationId: copy.memoryControl.operationId, replayed: true,
+  };
   return copy;
 }
 function safeDependency(error: unknown): string {
