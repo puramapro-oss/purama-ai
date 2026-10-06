@@ -8,8 +8,10 @@ import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
 import type { StaticAgentType } from "../engine/types.js";
 import type { KartaRuntime } from "../runtime.js";
+import { handleIaoRoute, type IaoRouteRuntime } from "./iaoRoutes.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
+const MAX_REQUEST_BODY_BYTES = 256 * 1024;
 
 function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -18,7 +20,13 @@ function json(res: ServerResponse, status: number, body: unknown): void {
 
 async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
   const chunks: Buffer[] = [];
-  for await (const chunk of req) chunks.push(chunk as Buffer);
+  let size = 0;
+  for await (const chunk of req) {
+    const buffer = chunk as Buffer;
+    size += buffer.length;
+    if (size > MAX_REQUEST_BODY_BYTES) throw new Error("request-body-too-large");
+    chunks.push(buffer);
+  }
   if (chunks.length === 0) return {};
   return JSON.parse(Buffer.concat(chunks).toString("utf-8")) as Record<string, unknown>;
 }
@@ -29,15 +37,15 @@ function isAuthorized(req: IncomingMessage): boolean {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer(runtime: KartaRuntime) {
+export function startApiServer(runtime: KartaRuntime, options: { iaoRuntime?: IaoRouteRuntime } = {}) {
   const requests = new Set<Promise<void>>();
   let stopping = false;
   let closing: Promise<void> | undefined;
   const server = createServer((req, res) => {
-    const request = handleRequest(req, res, runtime, stopping).catch((error: unknown) => {
+    const request = handleRequest(req, res, runtime, stopping, options.iaoRuntime).catch((error: unknown) => {
       console.error("[api] erreur non gérée:", error);
       if (!res.headersSent && !res.destroyed) {
-        json(res, 500, { error: error instanceof Error ? error.message : "erreur interne" });
+        json(res, 500, { error: "erreur interne" });
       }
     });
     requests.add(request);
@@ -79,7 +87,7 @@ export function startApiServer(runtime: KartaRuntime) {
 }
 
 async function handleRequest(req: IncomingMessage, res: ServerResponse,
-  runtime: KartaRuntime, stopping: boolean): Promise<void> {
+  runtime: KartaRuntime, stopping: boolean, iaoRuntime: IaoRouteRuntime | undefined): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
   if (req.method === "GET" && url.pathname === "/health") {
@@ -98,6 +106,10 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     json(res, 503, { error: "KARTA indisponible" });
     return;
   }
+
+  const isIaoRequest = (req.method === "POST" && (url.pathname === "/iao/requests" || url.pathname === "/pura/requests")) ||
+    (req.method === "GET" && /^\/iao\/requests\/[^/]+$/.test(url.pathname));
+  if (isIaoRequest && await handleIaoRoute(req, res, iaoRuntime, readBody, json)) return;
 
   if (!isAuthorized(req)) {
     json(res, 401, { error: "Non autorisé (KARTA_ADMIN_TOKEN manquant ou invalide)" });
