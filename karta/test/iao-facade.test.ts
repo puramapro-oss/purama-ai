@@ -137,6 +137,23 @@ describe("IAO facade contract", () => {
     expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "blocked", reason: "x" })).toMatchObject({ status: "blocked" });
     expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "blocked" });
   });
+
+  it("isolates conversation freshness between actors in the same tenant", async () => {
+    const facade = new IaoFacade({ prepare: vi.fn(async () => ({ kind: "accepted" as const, preview: "draft" })) });
+    await facade.submit(request());
+    const actorBIdentity = identity({
+      actorId: "user-b",
+      session: { ...identity().session, userId: "user-b" },
+    });
+    await facade.submit(request({
+      requestId: "44444444-4444-4444-8444-444444444444",
+      actorId: "user-b",
+      identity: actorBIdentity,
+    }));
+
+    expect(facade.recordKartaResult("tenant-a", REQUEST_ID, { kind: "accepted", evidence: evidence() }))
+      .toMatchObject({ status: "verified", stale: false });
+  });
 });
 
 describe("KARTA IAO adapter", () => {

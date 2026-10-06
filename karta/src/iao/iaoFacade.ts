@@ -103,7 +103,7 @@ export class IaoFacade {
       fingerprint, session: request.identity.session, response,
     };
     this.#requests.set(key, stored);
-    this.#latestByConversation.set(conversationKey(request.tenantId, request.conversationId), request.requestId);
+    this.#latestByConversation.set(conversationKey(request.tenantId, request.actorId, request.conversationId), request.requestId);
 
     stored.pending = this.#prepare(request, stored);
     try { return clone(await stored.pending); }
@@ -120,7 +120,7 @@ export class IaoFacade {
     const stored = this.#requests.get(requestKey(tenantId, requestId));
     if (!stored) throw new IaoRequestNotFoundError("IAO request not found");
     if (stored.response.status === "verified" || stored.response.status === "blocked") return clone(stored.response);
-    stored.response.stale = this.#latestByConversation.get(conversationKey(tenantId, stored.conversationId)) !== requestId;
+    stored.response.stale = this.#latestByConversation.get(conversationKey(tenantId, stored.actorId, stored.conversationId)) !== requestId;
     return clone(this.#apply(stored, result));
   }
 
@@ -199,7 +199,9 @@ function canonicalize(value: unknown): string {
   return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonicalize(record[key])}`).join(",")}}`;
 }
 function requestKey(tenantId: string, requestId: string): string { return `${tenantId}:${requestId}`; }
-function conversationKey(tenantId: string, conversationId: string): string { return `${tenantId}:${conversationId}`; }
+function conversationKey(tenantId: string, actorId: string, conversationId: string): string {
+  return `${tenantId}:${actorId}:${conversationId}`;
+}
 function forStorage(receipt: IaoReceipt): IaoReceipt { const { exported: _exported, ...safe } = receipt; return safe; }
 function deliver(response: IaoResponse, receipt?: IaoReceipt): IaoResponse {
   const copy = clone(response);
