@@ -199,10 +199,10 @@ function canonicalize(value: unknown): string {
   return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonicalize(record[key])}`).join(",")}}`;
 }
 function requestKey(tenantId: string, actorId: string, requestId: string): string {
-  return `${tenantId}:${actorId}:${requestId}`;
+  return JSON.stringify([tenantId, actorId, requestId]);
 }
 function conversationKey(tenantId: string, actorId: string, conversationId: string): string {
-  return `${tenantId}:${actorId}:${conversationId}`;
+  return JSON.stringify([tenantId, actorId, conversationId]);
 }
 function forStorage(receipt: IaoReceipt): IaoReceipt { const { exported: _exported, ...safe } = receipt; return safe; }
 function deliver(response: IaoResponse, receipt?: IaoReceipt): IaoResponse {

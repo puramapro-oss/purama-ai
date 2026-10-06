@@ -180,7 +180,33 @@ describe("KARTA IAO adapter", () => {
     const result = await new KartaRuntimeIaoPort(smarana, completion).prepare(request());
     expect(result).toMatchObject({ kind: "accepted", preview: "réponse", evidence: { proofId: RECEIPT_ID } });
     expect(smarana.buildContext).toHaveBeenCalledWith(expect.objectContaining({ idempotencyKey: REQUEST_ID, tenantId: "tenant-a", actorId: "user-a" }));
-    expect(completion.complete).toHaveBeenCalledWith(expect.objectContaining({ requestId: REQUEST_ID, message: "Bonjour" }));
+    expect(completion.complete).toHaveBeenCalledWith(expect.objectContaining({
+      requestId: REQUEST_ID, idempotencyKey: expect.stringMatching(/^iao:[0-9a-f]{64}$/), message: "Bonjour",
+    }));
+  });
+
+  it("preserves a scoped completion idempotency key across facade reconstruction", async () => {
+    const smarana = {
+      buildContext: vi.fn(async () => ({ operationId: RECEIPT_ID, context: { sources: [] } })),
+      control: vi.fn(),
+    } satisfies SmaranaIaoPort;
+    const seen = new Set<string>();
+    let computes = 0;
+    const keys: string[] = [];
+    const completion = { complete: vi.fn(async (input: Parameters<IaoCompletionPort["complete"]>[0]) => {
+      keys.push(input.idempotencyKey);
+      if (!seen.has(input.idempotencyKey)) { seen.add(input.idempotencyKey); computes += 1; }
+      return { text: "réponse", modelVersion: "local/test" };
+    }) } satisfies IaoCompletionPort;
+
+    await new IaoFacade(new KartaRuntimeIaoPort(smarana, completion)).submit(request());
+    await new IaoFacade(new KartaRuntimeIaoPort(smarana, completion)).submit(request());
+    const actorBIdentity = identity({ actorId: "user-b", session: { ...identity().session, userId: "user-b" } });
+    await new IaoFacade(new KartaRuntimeIaoPort(smarana, completion)).submit(request({ actorId: "user-b", identity: actorBIdentity }));
+
+    expect(keys[0]).toBe(keys[1]);
+    expect(keys[2]).not.toBe(keys[0]);
+    expect(computes).toBe(2);
   });
 
   it("fails closed on missing ACK and provider timeout with generic dependencies", async () => {

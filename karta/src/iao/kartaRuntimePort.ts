@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { IaoMemoryAction, IaoReceipt, IaoRequest, KartaIaoPort, KartaIaoResult } from "./iaoFacade.js";
 
 export type IaoContextSource = Readonly<{
@@ -19,7 +20,9 @@ export interface SmaranaIaoPort {
 }
 
 export interface IaoCompletionPort {
-  complete(input: Readonly<{ requestId: string; message: string; context: IaoContextPack }>): Promise<Readonly<{ text: string; modelVersion: string }>>;
+  complete(input: Readonly<{
+    requestId: string; idempotencyKey: string; message: string; context: IaoContextPack;
+  }>): Promise<Readonly<{ text: string; modelVersion: string }>>;
 }
 
 /** Thin adapter only: KARTA coordinates; SMARANA remembers; the provider computes. */
@@ -42,7 +45,8 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
       }), this.timeoutMs);
       assertUuid(prepared.operationId);
       const completion = await bounded(this.completion.complete({
-        requestId: request.requestId, message: request.prompt, context: prepared.context,
+        requestId: request.requestId, idempotencyKey: completionIdempotencyKey(request),
+        message: request.prompt, context: prepared.context,
       }), this.timeoutMs);
       if (!completion.text.trim() || completion.text.length > 256_000 || !completion.modelVersion.trim()) {
         throw new Error("memory-unavailable:compute-fabric-malformed");
@@ -66,6 +70,13 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
     if (receipt.action !== request.memoryControl.action) throw new Error("memory-unavailable:receipt-mismatch");
     return { kind: "accepted", memoryControl: receipt, evidence: evidence(request.requestId, receipt.operationId) };
   }
+}
+
+function completionIdempotencyKey(request: Pick<IaoRequest, "tenantId" | "actorId" | "requestId">): string {
+  const digest = createHash("sha256")
+    .update(JSON.stringify([request.tenantId, request.actorId, request.requestId]))
+    .digest("hex");
+  return `iao:${digest}`;
 }
 
 function bounded<T>(operation: Promise<T>, timeoutMs: number): Promise<T> {

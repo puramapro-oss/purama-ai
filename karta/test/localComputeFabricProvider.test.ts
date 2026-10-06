@@ -24,6 +24,8 @@ async function socketServer(handler: http.RequestListener): Promise<string> {
 }
 
 describe("local compute fabric provider", () => {
+  const idempotencyKey = `iao:${"a".repeat(64)}`;
+
   it("uses only authorized normal SMARANA context in relevance order", () => {
     const prompt = buildMemoryPrompt({ sources: [
       { text: "second", sensitivity: "normal", relevance: 1, authorized: true },
@@ -38,13 +40,18 @@ describe("local compute fabric provider", () => {
   });
 
   it("accepts the strict local response contract", async () => {
-    const socketPath = await socketServer((_req, res) => {
+    let body: Record<string, unknown> | undefined;
+    const socketPath = await socketServer((req, res) => {
+      const chunks: Buffer[] = [];
+      req.on("data", (chunk: Buffer) => chunks.push(chunk));
+      req.on("end", () => { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); });
       res.writeHead(200, { "content-type": "application/json" });
       res.end(JSON.stringify({ text: "local answer", engine: "llama.cpp", model: "qwen-3" }));
     });
     await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 500 }).complete({
-      requestId: "r", message: "question", context: { sources: [] },
+      requestId: "r", idempotencyKey, message: "question", context: { sources: [] },
     })).resolves.toEqual({ text: "local answer", modelVersion: "llama.cpp/qwen-3" });
+    expect(body).toMatchObject({ idempotency_key: idempotencyKey, kind: "memory" });
   });
 
   it.each([
@@ -54,7 +61,7 @@ describe("local compute fabric provider", () => {
   ])("rejects malformed or over-disclosing responses", async (payload) => {
     const socketPath = await socketServer((_req, res) => res.end(JSON.stringify(payload)));
     await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 500 }).complete({
-      requestId: "r", message: "question", context: { sources: [] },
+      requestId: "r", idempotencyKey, message: "question", context: { sources: [] },
     })).rejects.toThrow("memory-unavailable:compute-fabric");
   });
 
@@ -65,7 +72,7 @@ describe("local compute fabric provider", () => {
     });
     const startedAt = Date.now();
     await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 100 }).complete({
-      requestId: "r", message: "question", context: { sources: [] },
+      requestId: "r", idempotencyKey, message: "question", context: { sources: [] },
     })).rejects.toThrow("memory-unavailable:compute-fabric");
     expect(Date.now() - startedAt).toBeLessThan(1_000);
   });
@@ -73,7 +80,14 @@ describe("local compute fabric provider", () => {
   it("bounds the accumulated response", async () => {
     const socketPath = await socketServer((_req, res) => res.end(JSON.stringify({ text: "x".repeat(2 * 1024 * 1024) })));
     await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 1_000 }).complete({
-      requestId: "r", message: "question", context: { sources: [] },
+      requestId: "r", idempotencyKey, message: "question", context: { sources: [] },
     })).rejects.toThrow("memory-unavailable:compute-fabric");
+  });
+
+  it("rejects a completion without KARTA's scoped idempotency key", async () => {
+    const provider = new LocalComputeFabricProvider({ socketPath: "/tmp/must-not-connect.sock", timeoutMs: 100 });
+    await expect(provider.complete({
+      requestId: "r", idempotencyKey: "raw-client-id", message: "question", context: { sources: [] },
+    })).rejects.toThrow("memory-denied:compute-fabric-input");
   });
 });

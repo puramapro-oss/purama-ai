@@ -18,7 +18,9 @@ export class LocalComputeFabricProvider implements IaoCompletionPort {
     this.#maxContextChars = bounded(options.maxContextChars, 64_000, 1_000, 256_000);
   }
   async complete(input: Parameters<IaoCompletionPort["complete"]>[0]) {
+    if (!/^iao:[0-9a-f]{64}$/.test(input.idempotencyKey)) throw new Error("memory-denied:compute-fabric-input");
     const result = await requestFabric(this.#socketPath, {
+      idempotency_key: input.idempotencyKey,
       prompt: buildMemoryPrompt(input.context, input.message, this.#maxContextChars),
       kind: "memory", difficulty: 4, concurrency: 1, max_tokens: 1024,
     }, this.#timeoutMs);
