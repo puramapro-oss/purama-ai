@@ -189,7 +189,9 @@ Retourne UNIQUEMENT un JSON valide: { "prospects": [...] }`;
     }
 
     // Bump stats
-    await admin.rpc("noop").catch(() => {/* ignore */});
+    try {
+      await admin.rpc("noop");
+    } catch { /* ignore */ }
 
     return json({ inserted: inserted.length, prospects: inserted });
   } catch (err) {

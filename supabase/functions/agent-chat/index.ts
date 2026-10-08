@@ -91,8 +91,9 @@ Deno.serve(async (req) => {
       return json({ error: validation.error }, 400);
     }
     const { agent_type, session_id, message } = validation.data;
+    const resolvedAgentType = agent_type ?? "email";
 
-    if (!SYSTEM_PROMPTS[agent_type]) return json({ error: "invalid agent_type" }, 400);
+    if (!SYSTEM_PROMPTS[resolvedAgentType]) return json({ error: "invalid agent_type" }, 400);
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       db: { schema: "purama_ai" },
@@ -135,7 +136,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
         max_tokens: 3000,
-        system: SYSTEM_PROMPTS[agent_type],
+        system: SYSTEM_PROMPTS[resolvedAgentType],
         messages,
       }),
     });

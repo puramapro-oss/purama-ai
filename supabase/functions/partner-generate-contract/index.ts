@@ -150,7 +150,7 @@ Génère le contrat complet maintenant.`,
           "Content-Type": "application/pdf",
           "x-upsert": "true",
         },
-        body: pdfBytes,
+        body: new Uint8Array(pdfBytes),
       },
     );
     const signRes = await fetch(
