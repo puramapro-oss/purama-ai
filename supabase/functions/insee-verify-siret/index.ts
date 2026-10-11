@@ -3,6 +3,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
+import { rateLimit } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,6 +15,17 @@ serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
+    // Rate-limit par IP (10/h) — cette route proxy une clé API INSEE unique
+    // partagée par tout l'écosystème PURAMA (CLAUDE.md §5) ; un appelant
+    // anonyme illimité peut épuiser le quota pour ~20 apps. Les données
+    // retournées sont publiques (registre Sirene), donc pas d'exigence
+    // d'authentification ici — seulement une protection de quota.
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    const rl = rateLimit(`insee-verify-siret:${clientIp}`, 10, 3600000);
+    if (!rl.allowed) {
+      return json({ valid: false, active: false, error: 'Trop de requêtes, réessayez plus tard.' }, 429);
+    }
+
     const { siret } = await req.json();
     if (typeof siret !== 'string' || !/^\d{14}$/.test(siret)) {
       return json({ valid: false, active: false, error: 'SIRET invalide (14 chiffres).' }, 400);
