@@ -4,6 +4,7 @@ import { listActiveUserIds } from "../agents/index.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { runDailyReport } from "./dailyReport.js";
 import type { AgentType } from "../engine/types.js";
+import type { RuntimeProducer } from "../runtime.js";
 
 /** Cadences alignées sur les workflows n8n existants qu'elles remplacent (cf AUDIT-AGENTS.md). */
 const CORE_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: string }> = [
@@ -32,24 +33,77 @@ const ACTION_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: s
 
 const SCHEDULES = [...CORE_SCHEDULES, ...ACTION_SCHEDULES];
 
-export function startSchedulers(): cron.ScheduledTask[] {
-  const tasks = SCHEDULES.map(({ agentType, cronExpr, label }) =>
-    cron.schedule(cronExpr, () => void runScheduledCycle(agentType, label))
-  );
-
-  tasks.push(
-    cron.schedule(config.dailyReportCron, () => {
-      void runDailyReport().catch((err) => console.error("[scheduler] daily report échoué:", err));
-    })
-  );
-
-  return tasks;
+/** node-cron v3 keeps stopped tasks in a global registry; release ownership too. */
+export function stopCronTask(task: cron.ScheduledTask): void {
+  task.stop();
+  for (const [id, registered] of cron.getTasks()) {
+    if (registered === task) cron.getTasks().delete(id);
+  }
 }
 
-async function runScheduledCycle(agentType: AgentType, label: string): Promise<void> {
+export function createSchedulerLifecycle() {
+  let active = true;
+  const tasks = new Set<cron.ScheduledTask>();
+  const pending = new Set<Promise<void>>();
+  const lifecycle = {
+    get active() { return active; },
+    own(task: cron.ScheduledTask): cron.ScheduledTask {
+      tasks.add(task);
+      return task;
+    },
+    forget(task: cron.ScheduledTask): void {
+      stopCronTask(task);
+      tasks.delete(task);
+    },
+    run(callback: () => Promise<void>): Promise<void> {
+      if (!active) return Promise.resolve();
+      const operation = Promise.resolve().then(() => active ? callback() : undefined);
+      pending.add(operation);
+      void operation.then(() => pending.delete(operation), () => pending.delete(operation));
+      return operation;
+    },
+    stop(): void {
+      if (!active) return;
+      active = false;
+      const errors: unknown[] = [];
+      for (const task of tasks) {
+        try { stopCronTask(task); } catch (error) { errors.push(error); }
+      }
+      tasks.clear();
+      if (errors.length) throw new AggregateError(errors, "KARTA cron stop failed");
+    },
+    async drain(): Promise<void> {
+      // Producers are already stopped; no callback may join after this snapshot.
+      await Promise.allSettled([...pending]);
+    },
+  };
+  return lifecycle;
+}
+
+export function startSchedulers(): RuntimeProducer {
+  const lifecycle = createSchedulerLifecycle();
+  try {
+    for (const { agentType, cronExpr, label } of SCHEDULES) {
+      lifecycle.own(cron.schedule(cronExpr, () => {
+        void lifecycle.run(() => runScheduledCycle(agentType, label, () => lifecycle.active));
+      }));
+    }
+    lifecycle.own(cron.schedule(config.dailyReportCron, () => {
+      void lifecycle.run(runDailyReport).catch((error: unknown) =>
+        console.error("[scheduler] daily report échoué:", error));
+    }));
+    return lifecycle;
+  } catch (error) {
+    lifecycle.stop(); // Includes every task registered before a bad cron expression.
+    throw error;
+  }
+}
+
+async function runScheduledCycle(agentType: AgentType, label: string, active: () => boolean): Promise<void> {
   try {
     const userIds = await listActiveUserIds(agentType);
     for (const userId of userIds) {
+      if (!active()) return;
       await enqueueAgentCycle({ agentType, userId, trigger: { type: "cron", source: label } });
     }
   } catch (error) {

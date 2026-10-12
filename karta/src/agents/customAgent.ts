@@ -45,15 +45,23 @@ export async function listKartaEnabledCustomAgents(): Promise<CustomAgentRow[]> 
 /** Construit un AgentDefinition à la volée depuis une ligne creator_agents — aucun code statique
  * par agent : le prompt système et les outils viennent entièrement de ce que l'utilisateur (ou
  * la génération IA) a configuré. Réutilise runAgentCycle tel quel (autonomie, kill switch,
- * simulation, logs, notify) — 0 duplication du moteur. */
+ * simulation, logs, notify) — 0 duplication du moteur.
+ *
+ * Fail-closed : rejette les agents custom avec un system_prompt vide/malformé (comportement imprévisible).
+ */
 export function buildCustomAgentDefinition(row: CustomAgentRow): AgentDefinition {
   const type: CustomAgentType = `custom:${row.id}`;
+
+  // Fail-closed : un system_prompt vide/null/whitespace-only ne doit jamais s'exécuter
+  if (!row.system_prompt || !row.system_prompt.trim()) {
+    throw new Error(`Agent créé malformé (system_prompt vide): ${row.id}`);
+  }
 
   return {
     type,
     systemPrompt: row.system_prompt,
     tools: resolveCustomAgentTools(row.tools_enabled),
-    buildContext: async () => ({
+    buildContext: async (_userId, _trigger) => ({
       customAgentName: row.name,
       customAgentDescription: row.description ?? "",
     }),
