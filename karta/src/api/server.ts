@@ -8,7 +8,7 @@ import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
 import type { StaticAgentType } from "../engine/types.js";
 import type { KartaRuntime } from "../runtime.js";
-import { handleIaoRoute, type IaoRouteRuntime } from "./iaoRoutes.js";
+import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 const MAX_REQUEST_BODY_BYTES = 256 * 1024;
@@ -107,9 +107,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     return;
   }
 
-  const isIaoRequest = (req.method === "POST" && (url.pathname === "/iao/requests" || url.pathname === "/pura/requests")) ||
-    (req.method === "GET" && /^\/iao\/requests\/[^/]+$/.test(url.pathname));
-  if (isIaoRequest && await handleIaoRoute(req, res, iaoRuntime, readBody, json)) return;
+  if (isIaoPath(req.method, url.pathname) && await handleIaoRoute(req, res, iaoRuntime, readBody, json)) return;
 
   if (!isAuthorized(req)) {
     json(res, 401, { error: "Non autorisé (KARTA_ADMIN_TOKEN manquant ou invalide)" });

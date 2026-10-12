@@ -324,7 +324,42 @@ describe("KARTA IAO adapter", () => {
     }, { complete: vi.fn(() => new Promise<{ text: string; modelVersion: string }>(() => {})) }, 100);
     const pending = hanging.prepare(request());
     await vi.advanceTimersByTimeAsync(100);
-    await expect(pending).resolves.toEqual({ kind: "blocked", reason: "KARTA is unavailable", dependency: "memory-unavailable:karta-runtime" });
+    await expect(pending).resolves.toEqual({ kind: "blocked", reason: "KARTA is unavailable", dependency: "memory-unavailable:karta-runtime", effect: "uncertain" });
+  });
+
+  it("reports no effect when the context stage times out, and aborts the port on timeout", async () => {
+    vi.useFakeTimers();
+    const seen: AbortSignal[] = [];
+    const port = new KartaRuntimeIaoPort({
+      buildContext: vi.fn((input: Parameters<SmaranaIaoPort["buildContext"]>[0]) => { seen.push(input.signal!); return new Promise<never>(() => {}); }),
+      control: vi.fn(),
+    }, { complete: vi.fn(async () => { throw new Error("must not run"); }) }, 100);
+    const pending = port.prepare(request());
+    await vi.advanceTimersByTimeAsync(100);
+    await expect(pending).resolves.toEqual({ kind: "blocked", reason: "KARTA is unavailable", dependency: "memory-unavailable:karta-runtime", effect: "none" });
+    expect(seen[0]?.aborted).toBe(true);
+  });
+
+  it("reports an uncertain effect when a durable control is cancelled mid-flight and forwards the abort", async () => {
+    const seen: AbortSignal[] = [];
+    const port = new KartaRuntimeIaoPort({
+      buildContext: vi.fn(),
+      control: vi.fn((input: Parameters<SmaranaIaoPort["control"]>[0]) => { seen.push(input.signal!); return new Promise<never>(() => {}); }),
+    }, { complete: vi.fn() }, 1_000);
+    const controller = new AbortController();
+    const pending = port.prepare(request({ type: "memory-control", memoryControl: { action: "update", data: { value: "x" } } }), controller.signal);
+    controller.abort();
+    await expect(pending).resolves.toEqual({ kind: "blocked", reason: "KARTA is unavailable", dependency: "memory-unavailable:karta-runtime", effect: "uncertain" });
+    expect(seen[0]?.aborted).toBe(true);
+  });
+
+  it("rejects immediately without dispatch when the signal is already aborted", async () => {
+    const smarana = { buildContext: vi.fn(), control: vi.fn() } satisfies SmaranaIaoPort;
+    const controller = new AbortController();
+    controller.abort();
+    await expect(new KartaRuntimeIaoPort(smarana, { complete: vi.fn() }).prepare(request(), controller.signal))
+      .resolves.toMatchObject({ kind: "blocked", effect: "none" });
+    expect(smarana.buildContext).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -405,5 +440,129 @@ describe("IAO HTTP contract", () => {
     await handleIaoRoute({ method: "GET", url: `/iao/requests/${REQUEST_ID}` } as IncomingMessage, foreign.res,
       { facade, authenticator: { authenticate: async () => identity({ tenantId: "tenant-b", actorId: "user-b" }) } }, async () => ({}), foreign.sendJson);
     expect(foreign.state).toEqual({ status: 404, body: { error: "IAO request not found" } });
+  });
+
+  it("cancels through POST /iao/requests/:id/cancel scoped to the authenticated actor", async () => {
+    const pending = deferred<Awaited<ReturnType<KartaIaoPort["prepare"]>>>();
+    const facade = new IaoFacade({ prepare: vi.fn(() => pending.promise) });
+    const submitted = facade.submit(request());
+    const own = responseSink();
+    await handleIaoRoute({ method: "POST", url: `/iao/requests/${REQUEST_ID}/cancel` } as IncomingMessage, own.res,
+      { facade, authenticator: { authenticate: async () => identity() } }, async () => ({}), own.sendJson);
+    expect(own.state.status).toBe(200);
+    expect(own.state.body).toMatchObject({ status: "cancelled", effect: "uncertain" });
+
+    const foreign = responseSink();
+    await handleIaoRoute({ method: "POST", url: `/iao/requests/${REQUEST_ID}/cancel` } as IncomingMessage, foreign.res,
+      { facade, authenticator: { authenticate: async () => identity({ actorId: "user-b" }) } }, async () => ({}), foreign.sendJson);
+    expect(foreign.state).toEqual({ status: 404, body: { error: "IAO request not found" } });
+    pending.resolve({ kind: "accepted", preview: "late" });
+    await expect(submitted).resolves.toMatchObject({ status: "cancelled" });
+  });
+});
+
+describe("IAO cancellation and leases", () => {
+  it("cancels a pending request, aborts KARTA, and stays terminal when the late result lands", async () => {
+    const pending = deferred<Awaited<ReturnType<KartaIaoPort["prepare"]>>>();
+    const signals: AbortSignal[] = [];
+    const facade = new IaoFacade({ prepare: vi.fn((_input: IaoRequest, signal?: AbortSignal) => { signals.push(signal!); return pending.promise; }) });
+    const submitted = facade.submit(request());
+
+    const cancelled = facade.cancel("tenant-a", "user-a", REQUEST_ID);
+    expect(cancelled).toMatchObject({ status: "cancelled", effect: "uncertain" });
+    expect(signals[0]?.aborted).toBe(true);
+    expect(facade.cancel("tenant-a", "user-a", REQUEST_ID)).toMatchObject({ status: "cancelled", effect: "uncertain" });
+
+    pending.resolve({ kind: "accepted", preview: "late", evidence: evidence() });
+    const late = await submitted;
+    expect(late).toMatchObject({ status: "cancelled", effect: "executed", proof: { proofId: RECEIPT_ID } });
+    expect(late.preview).toBeUndefined();
+    expect(facade.get("tenant-a", "user-a", REQUEST_ID)).toMatchObject({ status: "cancelled", effect: "executed" });
+  });
+
+  it("refines the effect to none when KARTA confirms the interruption happened before any effect", async () => {
+    const pending = deferred<Awaited<ReturnType<KartaIaoPort["prepare"]>>>();
+    const facade = new IaoFacade({ prepare: vi.fn(() => pending.promise) });
+    const submitted = facade.submit(request());
+    facade.cancel("tenant-a", "user-a", REQUEST_ID);
+    pending.resolve({ kind: "blocked", reason: "KARTA is unavailable", dependency: "memory-unavailable:cancelled", effect: "none" });
+    await expect(submitted).resolves.toMatchObject({ status: "cancelled", effect: "none" });
+    expect(facade.get("tenant-a", "user-a", REQUEST_ID).blocked).toBeUndefined();
+  });
+
+  it("records a late durable receipt on a cancelled control without redelivering export content", async () => {
+    const pending = deferred<Awaited<ReturnType<KartaIaoPort["prepare"]>>>();
+    const facade = new IaoFacade({ prepare: vi.fn(() => pending.promise) });
+    const submitted = facade.submit(request({ type: "memory-control", memoryControl: { action: "export", data: {} } }));
+    facade.cancel("tenant-a", "user-a", REQUEST_ID);
+    pending.resolve({
+      kind: "accepted", evidence: evidence(),
+      memoryControl: { action: "export", operationId: RECEIPT_ID, replayed: false, exported: [{ private: "forfeited" }] },
+    });
+    const late = await submitted;
+    expect(late).toMatchObject({ status: "cancelled", effect: "executed", memoryControl: { action: "export", operationId: RECEIPT_ID } });
+    expect(JSON.stringify(late)).not.toContain("forfeited");
+    expect(facade.get("tenant-a", "user-a", REQUEST_ID).memoryControl?.exported).toBeUndefined();
+  });
+
+  it("keeps verified and blocked requests immutable under cancel", async () => {
+    const facade = new IaoFacade({ prepare: vi.fn(async () => ({ kind: "accepted" as const, preview: "ok", evidence: evidence() })) });
+    await facade.submit(request());
+    expect(facade.cancel("tenant-a", "user-a", REQUEST_ID)).toMatchObject({ status: "verified", proof: { proofId: RECEIPT_ID } });
+    expect(facade.get("tenant-a", "user-a", REQUEST_ID).effect).toBeUndefined();
+  });
+
+  it("surfaces timeout effect knowledge on blocked responses", async () => {
+    const facade = new IaoFacade({ prepare: vi.fn(async () => ({
+      kind: "blocked" as const, reason: "KARTA is unavailable", dependency: "memory-unavailable:timeout", effect: "uncertain" as const,
+    })) });
+    await expect(facade.submit(request({ type: "memory-control", memoryControl: { action: "update", data: {} } })))
+      .resolves.toMatchObject({ status: "blocked", effect: "uncertain", blocked: { dependency: "memory-unavailable:karta-runtime" } });
+  });
+
+  it("stamps updatedAt as an ISO timestamp that moves on every transition", async () => {
+    vi.useFakeTimers({ now: new Date("2026-10-12T00:00:00.000Z") });
+    const pending = deferred<Awaited<ReturnType<KartaIaoPort["prepare"]>>>();
+    const facade = new IaoFacade({ prepare: vi.fn(() => pending.promise) });
+    const submitted = facade.submit(request());
+    expect(facade.get("tenant-a", "user-a", REQUEST_ID).updatedAt).toBe("2026-10-12T00:00:00.000Z");
+    vi.setSystemTime(new Date("2026-10-12T00:00:05.000Z"));
+    pending.resolve({ kind: "accepted", preview: "ok", evidence: evidence() });
+    expect((await submitted).updatedAt).toBe("2026-10-12T00:00:05.000Z");
+  });
+
+  it("evicts terminal requests after retention but never a pending one", async () => {
+    vi.useFakeTimers({ now: new Date("2026-10-12T00:00:00.000Z") });
+    const hanging = deferred<Awaited<ReturnType<KartaIaoPort["prepare"]>>>();
+    const pendingId = "44444444-4444-4444-8444-444444444444";
+    const karta = { prepare: vi.fn((input: IaoRequest) => input.requestId === pendingId
+      ? hanging.promise
+      : Promise.resolve({ kind: "accepted" as const, preview: "ok", evidence: evidence() })) } satisfies KartaIaoPort;
+    const facade = new IaoFacade(karta, { retentionMs: 1_000 });
+    await facade.submit(request());
+    void facade.submit(request({ requestId: pendingId, identity: identity({ session: { ...identity().session, issuedAt: Date.now() - 1_000, expiresAt: Date.now() + 10 * 60_000 } }) }));
+    expect(facade.get("tenant-a", "user-a", REQUEST_ID).status).toBe("verified");
+
+    vi.setSystemTime(new Date("2026-10-12T00:00:01.500Z"));
+    expect(() => facade.get("tenant-a", "user-a", REQUEST_ID)).toThrow("IAO request not found");
+    expect(facade.get("tenant-a", "user-a", pendingId).status).toBe("draft");
+    expect(karta.prepare).toHaveBeenCalledTimes(2);
+
+    await expect(facade.submit(request())).resolves.toMatchObject({ status: "verified" });
+    expect(karta.prepare).toHaveBeenCalledTimes(3);
+    hanging.resolve({ kind: "accepted", preview: "done" });
+  });
+
+  it("bounds retained requests by evicting the oldest terminal entries first", async () => {
+    const facade = new IaoFacade({ prepare: vi.fn(async (input: IaoRequest) => ({ kind: "accepted" as const, preview: "ok", evidence: evidence(input.requestId) })) }, { maxRequests: 2 });
+    const ids = ["11111111-1111-4111-8111-111111111111", "44444444-4444-4444-8444-444444444444", "55555555-5555-4555-8555-555555555555"];
+    for (const requestId of ids) await facade.submit(request({ requestId }));
+    expect(() => facade.get("tenant-a", "user-a", ids[0]!)).toThrow("IAO request not found");
+    expect(facade.get("tenant-a", "user-a", ids[2]!).status).toBe("verified");
+  });
+
+  it("rejects out-of-range lease options", () => {
+    expect(() => new IaoFacade({ prepare: vi.fn() }, { retentionMs: 10 })).toThrow("Invalid IAO facade options");
+    expect(() => new IaoFacade({ prepare: vi.fn() }, { maxRequests: 0 })).toThrow("Invalid IAO facade options");
   });
 });

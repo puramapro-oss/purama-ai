@@ -9,6 +9,16 @@ export type IaoRouteRuntime = Readonly<{ facade: IaoFacade; authenticator: IaoRo
 export class IaoAuthenticationError extends Error { constructor() { super("IAO authentication required"); } }
 class IaoValidationError extends Error {}
 
+const SUBMIT_PATHS = new Set(["/iao/requests", "/pura/requests"]);
+const LOOKUP_PATH = /^\/iao\/requests\/([^/]+)$/;
+const CANCEL_PATH = /^\/iao\/requests\/([^/]+)\/cancel$/;
+
+/** Single source of truth for which (method, path) pairs belong to IAO. */
+export function isIaoPath(method: string | undefined, pathname: string): boolean {
+  return (method === "POST" && (SUBMIT_PATHS.has(pathname) || CANCEL_PATH.test(pathname))) ||
+    (method === "GET" && LOOKUP_PATH.test(pathname));
+}
+
 export async function handleIaoRoute(
   req: IncomingMessage,
   res: ServerResponse,
@@ -17,7 +27,7 @@ export async function handleIaoRoute(
   sendJson: (res: ServerResponse, status: number, body: unknown) => void,
 ): Promise<boolean> {
   const url = new URL(req.url ?? "/", "http://localhost");
-  if (req.method === "POST" && (url.pathname === "/iao/requests" || url.pathname === "/pura/requests")) {
+  if (req.method === "POST" && SUBMIT_PATHS.has(url.pathname)) {
     if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
     try {
       const identity = await runtime.authenticator.authenticate(req);
@@ -26,12 +36,21 @@ export async function handleIaoRoute(
     } catch (error) { sendError(res, error, sendJson); }
     return true;
   }
-  const match = url.pathname.match(/^\/iao\/requests\/([^/]+)$/);
+  const match = url.pathname.match(LOOKUP_PATH);
   if (req.method === "GET" && match) {
     if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
     try {
       const identity = await runtime.authenticator.authenticate(req);
       sendJson(res, 200, runtime.facade.get(identity.tenantId, identity.actorId, decodeURIComponent(match[1] ?? "")));
+    } catch (error) { sendError(res, error, sendJson); }
+    return true;
+  }
+  const cancel = url.pathname.match(CANCEL_PATH);
+  if (req.method === "POST" && cancel) {
+    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
+    try {
+      const identity = await runtime.authenticator.authenticate(req);
+      sendJson(res, 200, runtime.facade.cancel(identity.tenantId, identity.actorId, decodeURIComponent(cancel[1] ?? "")));
     } catch (error) { sendError(res, error, sendJson); }
     return true;
   }

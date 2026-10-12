@@ -1,7 +1,9 @@
 import { createHash } from "node:crypto";
 
-export type IaoStatus = "draft" | "partial" | "verified" | "blocked";
+export type IaoStatus = "draft" | "partial" | "verified" | "blocked" | "cancelled";
 export type IaoMemoryAction = "import" | "update" | "export" | "correct" | "erase-logical" | "erase-physical";
+/** What KARTA knows about durable side effects once a request was interrupted (cancel or timeout). */
+export type IaoEffect = "none" | "uncertain" | "executed";
 
 export type IaoSession = Readonly<{
   sessionId: string;
@@ -45,10 +47,10 @@ export type KartaEvidence = Readonly<{
 
 export type KartaIaoResult =
   | Readonly<{ kind: "accepted"; preview?: string; evidence?: KartaEvidence; memoryControl?: IaoReceipt }>
-  | Readonly<{ kind: "blocked"; reason: string; dependency?: string }>;
+  | Readonly<{ kind: "blocked"; reason: string; dependency?: string; effect?: IaoEffect }>;
 
 export interface KartaIaoPort {
-  prepare(request: IaoRequest): Promise<KartaIaoResult>;
+  prepare(request: IaoRequest, signal?: AbortSignal): Promise<KartaIaoResult>;
 }
 
 export type IaoResponse = {
@@ -57,12 +59,21 @@ export type IaoResponse = {
   tenantId: string;
   conversationId: string;
   status: IaoStatus;
+  updatedAt: string;
   preview?: string;
   proof?: KartaEvidence;
   memoryControl?: IaoReceipt;
   blocked?: { reason: string; dependency: string };
+  effect?: IaoEffect;
   stale: boolean;
 };
+
+export type IaoFacadeOptions = Readonly<{
+  /** Terminal requests stay readable this long before eviction. */
+  retentionMs?: number;
+  /** Hard bound on retained requests; only terminal ones are evicted. */
+  maxRequests?: number;
+}>;
 
 type StoredRequest = {
   actorId: string;
@@ -70,21 +81,37 @@ type StoredRequest = {
   fingerprint: string;
   session: IaoSession;
   response: IaoResponse;
+  abort: AbortController;
   pending?: Promise<IaoResponse>;
+  terminalAt?: number;
 };
 
 export class IaoRequestConflictError extends Error {}
 export class IaoRequestNotFoundError extends Error {}
 
+const DEFAULT_RETENTION_MS = 15 * 60_000;
+const DEFAULT_MAX_REQUESTS = 10_000;
+
 /** Request-scoped IAO identity. KARTA remains the only execution boundary. */
 export class IaoFacade {
   readonly #requests = new Map<string, StoredRequest>();
   readonly #latestByConversation = new Map<string, string>();
+  readonly #retentionMs: number;
+  readonly #maxRequests: number;
+  #lastSweep = 0;
 
-  constructor(private readonly karta: KartaIaoPort) {}
+  constructor(private readonly karta: KartaIaoPort, options: IaoFacadeOptions = {}) {
+    this.#retentionMs = options.retentionMs ?? DEFAULT_RETENTION_MS;
+    this.#maxRequests = options.maxRequests ?? DEFAULT_MAX_REQUESTS;
+    if (!Number.isInteger(this.#retentionMs) || this.#retentionMs < 1_000 || this.#retentionMs > 24 * 60 * 60_000 ||
+      !Number.isInteger(this.#maxRequests) || this.#maxRequests < 1 || this.#maxRequests > 1_000_000) {
+      throw new Error("Invalid IAO facade options");
+    }
+  }
 
   async submit(request: IaoRequest): Promise<IaoResponse> {
     assertIdentity(request);
+    this.#sweep();
     const key = requestKey(request.tenantId, request.actorId, request.requestId);
     const fingerprint = fingerprintRequest(request);
     const existing = this.#requests.get(key);
@@ -95,11 +122,11 @@ export class IaoFacade {
 
     const response: IaoResponse = {
       identity: "iao", requestId: request.requestId, tenantId: request.tenantId,
-      conversationId: request.conversationId, status: "draft", stale: false,
+      conversationId: request.conversationId, status: "draft", updatedAt: nowIso(), stale: false,
     };
     const stored: StoredRequest = {
       actorId: request.actorId, conversationId: request.conversationId,
-      fingerprint, session: request.identity.session, response,
+      fingerprint, session: request.identity.session, response, abort: new AbortController(),
     };
     this.#requests.set(key, stored);
     this.#latestByConversation.set(conversationKey(request.tenantId, request.actorId, request.conversationId), request.requestId);
@@ -110,60 +137,127 @@ export class IaoFacade {
   }
 
   get(tenantId: string, actorId: string, requestId: string): IaoResponse {
-    const stored = this.#requests.get(requestKey(tenantId, actorId, requestId));
-    if (!stored || stored.actorId !== actorId) throw new IaoRequestNotFoundError("IAO request not found");
-    return clone(stored.response);
+    this.#sweep();
+    return clone(this.#lookup(tenantId, actorId, requestId).response);
+  }
+
+  /** Idempotent: a terminal request is returned unchanged; a pending one becomes `cancelled` with an uncertain effect. */
+  cancel(tenantId: string, actorId: string, requestId: string): IaoResponse {
+    this.#sweep();
+    const stored = this.#lookup(tenantId, actorId, requestId);
+    const response = stored.response;
+    if (isTerminal(response)) return clone(response);
+    response.status = "cancelled";
+    response.effect = "uncertain";
+    this.#settle(stored);
+    stored.abort.abort();
+    return clone(response);
   }
 
   recordKartaResult(tenantId: string, actorId: string, requestId: string, result: KartaIaoResult): IaoResponse {
     const stored = this.#requests.get(requestKey(tenantId, actorId, requestId));
     if (!stored) throw new IaoRequestNotFoundError("IAO request not found");
-    if (stored.response.status === "verified" || stored.response.status === "blocked") return clone(stored.response);
-    stored.response.stale = this.#latestByConversation.get(conversationKey(tenantId, stored.actorId, stored.conversationId)) !== requestId;
-    return clone(this.#apply(stored, result));
+    return clone(this.#settleResult(stored, result));
+  }
+
+  #lookup(tenantId: string, actorId: string, requestId: string): StoredRequest {
+    const stored = this.#requests.get(requestKey(tenantId, actorId, requestId));
+    if (!stored || stored.actorId !== actorId) throw new IaoRequestNotFoundError("IAO request not found");
+    return stored;
   }
 
   async #prepare(request: IaoRequest, stored: StoredRequest): Promise<IaoResponse> {
+    let result: KartaIaoResult;
     try {
-      const result = await this.karta.prepare(request);
-      stored.response.stale = this.#latestByConversation.get(
-        conversationKey(request.tenantId, request.actorId, request.conversationId),
-      ) !== request.requestId;
-      return this.#apply(stored, result);
+      result = await this.karta.prepare(request, stored.abort.signal);
     } catch (error) {
-      stored.response.stale = this.#latestByConversation.get(
-        conversationKey(request.tenantId, request.actorId, request.conversationId),
-      ) !== request.requestId;
-      return this.#block(stored.response, safeDependency(error));
+      result = { kind: "blocked", reason: "KARTA is unavailable", dependency: safeDependency(error) };
     }
+    return this.#settleResult(stored, result);
   }
 
-  #apply(stored: StoredRequest, result: KartaIaoResult): IaoResponse {
+  #settleResult(stored: StoredRequest, result: KartaIaoResult): IaoResponse {
     const response = stored.response;
-    if (response.status === "verified" || response.status === "blocked") return response;
-    if (result.kind === "blocked") return this.#block(response, result.dependency);
-    const receipt = result.memoryControl === undefined ? undefined : normalizeIaoReceipt(result.memoryControl);
-    assertAccepted(result, response.requestId, stored.session, receipt);
+    if (isTerminal(response)) return this.#late(stored, result);
+    response.stale = this.#latestByConversation.get(
+      conversationKey(response.tenantId, stored.actorId, stored.conversationId),
+    ) !== response.requestId;
+    return result.kind === "blocked"
+      ? this.#block(stored, result.dependency, result.effect)
+      : this.#apply(stored, result);
+  }
+
+  /** A result landing after cancellation only refines effect knowledge; the terminal status never changes. */
+  #late(stored: StoredRequest, result: KartaIaoResult): IaoResponse {
+    const response = stored.response;
+    if (response.status !== "cancelled") return response;
+    if (result.kind === "blocked") {
+      if (result.effect === "none") { response.effect = "none"; touch(response); }
+      return response;
+    }
+    let receipt: IaoReceipt | undefined;
+    try { receipt = acceptedReceipt(result, response.requestId, stored.session); }
+    catch { return response; }
+    if (receipt) response.memoryControl = forStorage(receipt);
+    if (result.evidence) { response.proof = result.evidence; response.effect = "executed"; touch(response); }
+    return response;
+  }
+
+  #apply(stored: StoredRequest, result: Extract<KartaIaoResult, { kind: "accepted" }>): IaoResponse {
+    const response = stored.response;
+    let receipt: IaoReceipt | undefined;
+    try { receipt = acceptedReceipt(result, response.requestId, stored.session); }
+    catch (error) { return this.#block(stored, safeDependency(error)); }
     if (result.preview !== undefined) response.preview = result.preview;
     if (receipt) response.memoryControl = forStorage(receipt);
     if (result.evidence && !response.stale) {
       response.proof = result.evidence;
       response.status = "verified";
+      this.#settle(stored);
     } else if (result.preview !== undefined || result.memoryControl) {
       response.status = "partial";
+      touch(response);
     }
     return deliver(response, receipt);
   }
 
-  #block(response: IaoResponse, dependency?: string): IaoResponse {
-    if (response.status === "verified" || response.status === "blocked") return response;
+  #block(stored: StoredRequest, dependency?: string, effect?: IaoEffect): IaoResponse {
+    const response = stored.response;
+    if (isTerminal(response)) return response;
     const denied = dependency?.startsWith("memory-denied:");
     response.status = "blocked";
     response.blocked = denied
       ? { reason: "KARTA request denied", dependency: "memory-denied:karta-runtime" }
       : { reason: "KARTA is unavailable", dependency: dependency?.startsWith("memory-unavailable:") ? "memory-unavailable:karta-runtime" : "karta-runtime" };
+    if (effect) response.effect = effect;
+    this.#settle(stored);
     return response;
   }
+
+  #settle(stored: StoredRequest): void {
+    stored.terminalAt = Date.now();
+    touch(stored.response);
+  }
+
+  /** Lazy lease sweep: terminal requests expire after retention; pending ones are never evicted. */
+  #sweep(): void {
+    const now = Date.now();
+    const overCapacity = this.#requests.size > this.#maxRequests;
+    if (!overCapacity && now - this.#lastSweep < Math.min(this.#retentionMs / 4, 60_000)) return;
+    this.#lastSweep = now;
+    for (const [key, stored] of this.#requests) {
+      if (stored.terminalAt === undefined) continue;
+      const expired = now - stored.terminalAt >= this.#retentionMs;
+      if (!expired && this.#requests.size <= this.#maxRequests) continue;
+      this.#requests.delete(key);
+      const conversation = conversationKey(stored.response.tenantId, stored.actorId, stored.conversationId);
+      if (this.#latestByConversation.get(conversation) === stored.response.requestId) this.#latestByConversation.delete(conversation);
+    }
+  }
+}
+
+function isTerminal(response: IaoResponse): boolean {
+  return response.status === "verified" || response.status === "blocked" || response.status === "cancelled";
 }
 
 function assertIdentity(request: IaoRequest): void {
@@ -177,6 +271,15 @@ function assertIdentity(request: IaoRequest): void {
     session.issuedAt > now || session.expiresAt <= now || session.expiresAt - session.issuedAt > 15 * 60_000) {
     throw new Error("Invalid IAO identity");
   }
+}
+
+/** Normalizes the optional receipt and validates it against the evidence; throws on any inconsistency. */
+function acceptedReceipt(
+  result: Extract<KartaIaoResult, { kind: "accepted" }>, requestId: string, session: IaoSession,
+): IaoReceipt | undefined {
+  const receipt = result.memoryControl === undefined ? undefined : normalizeIaoReceipt(result.memoryControl);
+  assertAccepted(result, requestId, session, receipt);
+  return receipt;
 }
 
 function assertAccepted(
@@ -271,5 +374,7 @@ function safeDependency(error: unknown): string {
   if (message.startsWith("memory-unavailable:")) return "memory-unavailable:karta-runtime";
   return "karta-runtime";
 }
+function nowIso(): string { return new Date().toISOString(); }
+function touch(response: IaoResponse): void { response.updatedAt = nowIso(); }
 function clone<T>(value: T): T { return structuredClone(value); }
 function isUuid(value: string): boolean { return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value); }

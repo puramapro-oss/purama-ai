@@ -26,6 +26,8 @@ vi.mock("../src/agents/customAgent.js", () => ({ loadCustomAgent: vi.fn() }));
 vi.mock("../src/engine/approval.js", () => ({ resolvePendingAction: mocks.approve }));
 
 import { startApiServer } from "../src/api/server.js";
+import type { IaoRouteRuntime } from "../src/api/iaoRoutes.js";
+import { IaoFacade, type IaoServerIdentity, type KartaIaoResult } from "../src/iao/iaoFacade.js";
 import { KartaRuntime } from "../src/runtime.js";
 
 function deferred<T = void>() {
@@ -34,7 +36,7 @@ function deferred<T = void>() {
   return { promise, resolve };
 }
 
-function fixture() {
+function fixture(iaoRuntime?: IaoRouteRuntime) {
   const closeQueue = vi.fn(async () => {});
   const probe = vi.fn(async () => false);
   const producer = { stop() {}, async drain() {} };
@@ -46,7 +48,7 @@ function fixture() {
     schedulers: async () => producer, customSchedulers: async () => producer,
     probe, shutdownTimeoutMs: 1000, readinessTimeoutMs: 50,
   });
-  const api = startApiServer(runtime);
+  const api = startApiServer(runtime, { iaoRuntime });
   return { runtime, api, probe, closeQueue };
 }
 
@@ -157,5 +159,33 @@ describe("HTTP lifecycle admission and readiness", () => {
     approved.resolve({ ok: true, resultSummary: "done" });
     expect(await stopped).toBe(0);
     expect(f.closeQueue).toHaveBeenCalledOnce();
+  });
+});
+
+describe("HTTP routing of IAO cancellation", () => {
+  const REQUEST_ID = "11111111-1111-4111-8111-111111111111";
+  function serverIdentity(): IaoServerIdentity {
+    const now = Date.now();
+    return {
+      tenantId: "tenant-a", actorId: "user-a",
+      session: { sessionId: "22222222-2222-4222-8222-222222222222", tenantId: "tenant-a", userId: "user-a", appSlug: "purama-ai", issuedAt: now - 1_000, expiresAt: now + 60_000 },
+    };
+  }
+
+  it("routes POST /iao/requests/:id/cancel to the IAO handler ahead of admin authorization", async () => {
+    const unavailable = fixture();
+    await unavailable.runtime.start();
+    expect((await request(`/iao/requests/${REQUEST_ID}/cancel`, "POST").response)).toEqual({ status: 503, body: { error: "IAO runtime unavailable" } });
+
+    const facade = new IaoFacade({ prepare: vi.fn(() => new Promise<KartaIaoResult>(() => {})) });
+    const f = fixture({ facade, authenticator: { authenticate: async () => serverIdentity() } });
+    await f.runtime.start();
+    void facade.submit({ type: "conversation", requestId: REQUEST_ID, tenantId: "tenant-a", actorId: "user-a", conversationId: "c", prompt: "x", identity: serverIdentity() });
+    const cancelled = await request(`/iao/requests/${REQUEST_ID}/cancel`, "POST").response;
+    expect(cancelled.status).toBe(200);
+    expect(cancelled.body).toMatchObject({ status: "cancelled", effect: "uncertain" });
+    expect((await request(`/iao/requests/${REQUEST_ID}`, "GET").response).body).toMatchObject({ status: "cancelled" });
+    expect((await request("/iao/requests/unknown/cancel", "POST").response).status).toBe(404);
+    expect((await request("/iao/requests/x/cancel/extra", "POST").response).status).toBe(404);
   });
 });
