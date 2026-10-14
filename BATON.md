@@ -18,3 +18,11 @@ Prochaine etape externe : revue du commit pour integration sur une tete canoniqu
 - Correctif : requête `protocol_version=2`, politique `local_only`/`forbidden`, reçu strict lié à la clé, au digest et aux plafonds. Toute divergence échoue fermé.
 - Validation : 29/29 tests ciblés puis gate KARTA 404/404 PASS (31 fichiers, 0 skip), typecheck, lint ciblé et build verts. Le calcul d'un daemon fixture s'arrête à la déconnexion ; l'arrêt du daemon réel, sa déduplication durable et son routage interne restent `UNKNOWN`.
 - Procédure réversible : `docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md`. Ne pas injecter le runtime tant que la qualification daemon et l'intégration réelle manquent.
+
+## T03 IAO — clôture (2026-10-14)
+
+- Reprise propre sur `0b7d08707611479f444fc860e89828c953180eda`; aucun nouveau défaut produit démontré, donc aucun changement de `localComputeFabricProvider.ts`.
+- Compatibilité locale IAO/KARTA/port SMARANA vérifiée ; non-interférence AKASHA et frontières de permission VAJRA revues. Les raccords SMARANA, AKASHA, VAJRA et daemon réels restent `UNKNOWN`.
+- Validation fraîche : ciblé 69/69, KARTA 404/404, typecheck, lint ciblé et build verts. Preuves `docs/iao/t03-local-transport-20261014/closure-*`.
+- GitNexus isolé : anciennes associations étrangères de `protocol_version` non reproduites ; trois candidats seulement dans l'adaptateur, mais impact propriété et graphe global `UNKNOWN` (index tronqué). Compare base LOW / 0 processus affecté, sans certificat global.
+- Intégration réversible documentée avec l'ordre exact `a5cbbcf` puis `0b7d087`; aucun push, merge, déploiement ou daemon réel.

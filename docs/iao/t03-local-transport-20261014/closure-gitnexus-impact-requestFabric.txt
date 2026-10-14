@@ -1,0 +1,102 @@
+{
+  "target": {
+    "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:requestFabric",
+    "name": "requestFabric",
+    "type": "Function",
+    "filePath": "karta/src/integrations/localComputeFabricProvider.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 6,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 2
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 3,
+    "3": 2
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Iao",
+      "hits": 2,
+      "impact": "indirect"
+    },
+    {
+      "name": "Integrations",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Method:karta/src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider.complete#1",
+        "name": "complete",
+        "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:karta/test/localComputeFabricCancellation.test.ts",
+        "name": "localComputeFabricCancellation.test.ts",
+        "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:karta/test/localComputeFabricProvider.test.ts",
+        "name": "localComputeFabricProvider.test.ts",
+        "filePath": "karta/test/localComputeFabricProvider.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:karta/src/iao/kartaRuntimePort.ts:KartaRuntimeIaoPort.prepare#2",
+        "name": "prepare",
+        "filePath": "karta/src/iao/kartaRuntimePort.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "File:karta/test/iao-facade.test.ts",
+        "name": "iao-facade.test.ts",
+        "filePath": "karta/test/iao-facade.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:karta/src/iao/iaoFacade.ts:IaoFacade.#prepare#2",
+        "name": "#prepare",
+        "filePath": "karta/src/iao/iaoFacade.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

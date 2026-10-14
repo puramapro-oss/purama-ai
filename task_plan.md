@@ -362,3 +362,14 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - [x] Prouver l'arrêt d'un calcul fixture à la déconnexion sans prétendre qualifier le daemon réel.
 - [x] Documenter l'intégration et le retour arrière fail-closed.
 - [ ] Qualifier le daemon réel et l'intégration serveur/SMARANA/VAJRA sur la lignée propriétaire : `UNKNOWN`, hors de cette livraison locale.
+
+## T03 IAO — clôture (2026-10-14)
+
+- [x] Vérifier la tête `0b7d08707611479f444fc860e89828c953180eda` et l'absence de WIP produit.
+- [x] Revoir les contrats IAO/KARTA/SMARANA et les frontières AKASHA/VAJRA sans créer de moteur, mémoire ou orchestrateur.
+- [x] Rejouer une gate locale isolée : 69/69 ciblés, 404/404 KARTA, typecheck, lint ciblé et build.
+- [x] Réindexer GitNexus en stockage privé et analyser les symboles avant toute décision d'édition.
+- [x] Ne modifier aucun symbole produit faute de défaut supplémentaire démontré.
+- [x] Documenter la collision précédente non reproduite, l'impact propriété `UNKNOWN` et la troncature globale du graphe.
+- [x] Préparer l'intégration et le retour arrière exacts des deux commits fonctionnels.
+- [ ] Qualifier le daemon et les raccords SMARANA/AKASHA/VAJRA réels : `UNKNOWN`, hors périmètre local.

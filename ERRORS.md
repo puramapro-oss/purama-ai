@@ -56,3 +56,7 @@
 ## 2026-10-14 — T03 reçu Compute Fabric
 
 `LocalComputeFabricProvider` acceptait une réponse contenant seulement du texte et pouvait donc présenter comme succès une exécution dont la localité, les plafonds et l'absence de fallback payant n'étaient pas prouvés. Le protocole v2 exige désormais une politique locale dans la requête et un reçu strict lié à la clé/digest ; réponse ancienne ou divergente = échec fermé. La fixture vérifie le contrat client et l'arrêt de son propre calcul sur déconnexion. Le daemon réel et son intégration restent `UNKNOWN` jusqu'à qualification propriétaire.
+
+## 2026-10-14 — T03 collision GitNexus de clôture
+
+L'ancien index associait le champ `protocol_version` à des fonctions étrangères et annonçait HIGH / 7 flux. Un index frais de la tête exacte, stocké isolément, ne reproduit pas ces remappages : les trois candidats sont tous dans `localComputeFabricProvider.ts`, et le compare base annonce LOW / 0 processus. La collision stale/identifiant vide est ainsi circonscrite dans cette exécution, sans modifier GitNexus. Les accès de propriétés restent sans arêtes résolues et l'index omet encore des entrées/callees ; l'impact de ces champs et le graphe global restent `UNKNOWN`.

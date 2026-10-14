@@ -32,7 +32,7 @@ Les tests T03 avec daemon fixture démontrent le contrat client et l'arrêt d'un
 ## Intégration
 
 1. Créer un worktree propre depuis la tête canonique choisie et vérifier les verrous des propriétaires IAO, KARTA, SMARANA, AKASHA, VAJRA et Local OSS.
-2. Intégrer le commit T03 sans recopier ni réimplémenter les composants SMARANA/AKASHA/VAJRA.
+2. Intégrer les deux commits fonctionnels dans l'ordre avec `git cherry-pick a5cbbcf80b058798f93b2e4ce4a1f9dcfd716e82 0b7d08707611479f444fc860e89828c953180eda`, sans recopier ni réimplémenter les composants SMARANA/AKASHA/VAJRA. Le premier transmet l'annulation au transport ; le second impose le reçu local v2.
 3. Intégrer ensuite le commit du daemon v2 qualifié. Ne jamais inverser cet ordre en production : le client T03 doit échouer fermé face au protocole ancien.
 4. Injecter les adaptateurs SMARANA et Compute Fabric dans le `KartaRuntime` existant. Ne créer aucun moteur, store, scheduler, broker de permissions ou daemon parallèle.
 5. Rejouer les tests affectés, puis une gate KARTA complète. Conserver daemon réel, intégration serveur et environnement déployé dans des statuts distincts.
@@ -40,4 +40,6 @@ Les tests T03 avec daemon fixture démontrent le contrat client et l'arrêt d'un
 
 ## Retour arrière
 
-Le retour arrière est sans migration de données : désinjecter le runtime IAO pour revenir au `503`, puis `git revert <sha-t03-finalisation>` dans un worktree appartenant à l'intégrateur. Ne pas supprimer ni modifier les mémoires SMARANA/AKASHA et ne pas réactiver un protocole ancien par fallback. Les requêtes restées en état incertain sont réconciliées avec leur clé existante ; elles ne sont pas rejouées à l'aveugle.
+Le retour arrière est sans migration de données : désinjecter le runtime IAO pour revenir au `503`, puis exécuter `git revert 0b7d08707611479f444fc860e89828c953180eda a5cbbcf80b058798f93b2e4ce4a1f9dcfd716e82` dans un worktree appartenant à l'intégrateur. Cet ordre inverse retire d'abord le protocole v2, puis l'annulation du transport. Ne pas supprimer ni modifier les mémoires SMARANA/AKASHA et ne pas réactiver un protocole ancien par fallback. Les requêtes restées en état incertain sont réconciliées avec leur clé existante ; elles ne sont pas rejouées à l'aveugle.
+
+Le commit de clôture documentaire se retrouve par `git log -1 --format=%H -- docs/iao/t03-local-transport-20261014/RAPPORT.md`. Il peut être intégré ou omis indépendamment des deux commits fonctionnels ; il ne modifie aucun runtime.

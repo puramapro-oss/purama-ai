@@ -101,3 +101,23 @@ Portée exacte des preuves finales :
 La procédure d'intégration et de retour arrière est dans `INTEGRATION-REVERSIBLE.md`. Elle garde le runtime non injecté et les routes en `503` tant que les qualifications réelles manquent.
 
 Gate finale du delta : tests ciblés **29/29 PASS** ; package KARTA **404/404 PASS**, 31 fichiers, 0 échec, 0 skip ; typecheck, lint ciblé et build exit 0. Les sorties sont les artefacts `finalisation-*` de ce dossier.
+
+## Clôture du 2026-10-14
+
+La clôture reprend le commit `0b7d08707611479f444fc860e89828c953180eda` dans le même worktree isolé. La revue du code, des contrats et des preuves ne démontre aucun nouveau défaut du transport : `localComputeFabricProvider.ts` reste inchangé. Seuls ce rapport, la procédure et les artefacts de preuve sont complétés.
+
+Compatibilité vérifiée dans la portée locale disponible :
+
+| Composant | Preuve locale fraîche | Limite conservée |
+| --- | --- | --- |
+| IAO / KARTA | `IaoFacade` conserve l'identité serveur, l'isolation tenant/acteur/requête et les états terminaux ; `KartaRuntimeIaoPort` transmet le même signal, la clé et le digest au port SMARANA puis au fournisseur. Les 40 tests de façade et les 29 tests transport passent dans la gate ciblée 69/69. | Aucun runtime serveur injecté ni service réel testé. |
+| SMARANA | Le port injecté est appelé avant le transport ; un refus ou reçu mémoire invalide bloque avant HTTP. Aucun store ou mémoire supplémentaire n'est créé. | L'adaptateur et la persistance SMARANA réels ne sont pas présents sur cette lignée : intégration réelle **UNKNOWN**. |
+| AKASHA | La clé/digest stables et l'absence de re-dispatch local respectent le contrat de reprise sans dupliquer un ledger. Aucun fichier AKASHA ni autorité de vérité n'est modifié. | Aucun ledger AKASHA concret n'est raccordé dans ce worktree : intégration réelle **UNKNOWN**. |
+| VAJRA | Les tests locaux refusent une annulation par un autre acteur et un contexte SMARANA non autorisé avant dispatch. Le transport ne prend aucune permission depuis le contenu. | Aucun broker VAJRA concret n'est exécuté : intégration réelle **UNKNOWN**. |
+| Compute Fabric | Annulation avant dispatch, fermeture socket en vol, calcul fixture arrêté à la déconnexion, deadline absolue, budgets v2 exacts, reçu strict et zéro retry/redirection/fallback sont vérifiés. | Arrêt, budgets, déduplication et routage interne du daemon réel **UNKNOWN**. |
+
+La validation fraîche est conservée dans `closure-targeted.txt` (**69/69**), `closure-full-tests.txt` (**404/404**, 31 fichiers, 0 skip), `closure-typecheck.txt`, `closure-lint.txt` et `closure-build.txt` (exit 0). Elle utilise uniquement des sockets et fixtures locales jetables ; aucun secret, fournisseur payant, daemon réel, DB distante ou réseau de production.
+
+GitNexus 1.6.12 a été relancé sur la tête exacte avec registre et index privés sous `/private/tmp`. L'impact de `complete`, `requestFabric`, `isResponse` et `buildMemoryPrompt` est LOW. La collision précédente, qui remappait `protocol_version` vers des fonctions étrangères et produisait HIGH / 7 flux, n'est plus reproduite : l'index frais retourne exactement trois candidats, tous dans `localComputeFabricProvider.ts`. Ce résultat circonscrit l'ambiguïté d'index stale/identifiants vides observable dans les anciennes preuves, sans changement du code GitNexus ni suppression de ces preuves. L'impact des trois propriétés demeure **UNKNOWN**, car l'outil n'établit pas les accès de propriétés d'objets simples. L'analyse signale encore 751 points d'entrée candidats écartés, 1001 callees omis et 3 parcours coupés ; le graphe global demeure donc **UNKNOWN**, jamais certifié PASS. Le compare frais avec la base annonce LOW, 99 symboles et 0 processus affecté, résultat borné par ces mêmes limites.
+
+La procédure `INTEGRATION-REVERSIBLE.md` donne l'ordre exact des deux commits fonctionnels et un retour arrière sans migration. Le commit de clôture ne change que les preuves et documents. Aucun push, merge, déploiement, migration, activation ou arrêt de processus réel n'a été effectué.

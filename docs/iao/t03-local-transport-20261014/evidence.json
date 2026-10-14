@@ -8,7 +8,7 @@
     "karta/src/integrations/localComputeFabricProvider.ts": "d174dc213b749ea654a341ed64b2bd9fbd5b7e275b74daa45957b1a405feac2b",
     "karta/test/localComputeFabricProvider.test.ts": "23523c9af011377714a299cc9f83a0981a3ba5951f4855515881622d8bc1339a",
     "karta/test/localComputeFabricCancellation.test.ts": "f8de36eeb0b5fea47200a28860d2e504198f6433b8f87f8ccf69a5faaff8e307",
-    "docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md": "e4516f716c2665c27ab313e9163d775987f56e31e9d8abbfbba9fa0dc48e804b",
+    "docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md": "d99aa413431799312860a51d2d15aff7e9e02fb14e7c51100df03dd212333ffc",
     "karta/package.json": "b59229d986db80c6f545e14e2e77bad4160bdb92aca1fb17e16c5cbc1bc4687a",
     "karta/package-lock.json": "67557f836ea95aa7c353b162355de05eb4362f1237e567e7ca80480dc86aaeff",
     "karta/tsconfig.json": "dd13f7cc0c1c6c52c7f0a43c6b77068952e50be38d4d83178f18381cb98badf5",
@@ -137,6 +137,83 @@
       "command": "git diff --cached --no-ext-diff --unified=0 | gitleaks stdin --redact --no-banner --no-color",
       "exitCode": 0,
       "artifact": "finalisation-gitleaks.txt"
+    }
+  },
+  "closure": {
+    "headBeforeClosure": "0b7d08707611479f444fc860e89828c953180eda",
+    "productSourceChanged": false,
+    "scope": "local fixtures and static contract review only; real SMARANA, AKASHA, VAJRA, daemon and server integration UNKNOWN",
+    "compatibility": {
+      "IAO_KARTA": "LOCAL_PASS",
+      "SMARANA_port_contract": "LOCAL_PASS; real adapter UNKNOWN",
+      "AKASHA_non_interference": "LOCAL_PASS; real ledger UNKNOWN",
+      "VAJRA_permission_boundaries": "LOCAL_PASS; real broker UNKNOWN",
+      "compute_fabric_client": "LOCAL_PASS; real daemon UNKNOWN"
+    },
+    "validation": [
+      {
+        "command": "node node_modules/vitest/vitest.mjs run test/localComputeFabricCancellation.test.ts test/localComputeFabricProvider.test.ts test/iao-facade.test.ts --no-cache",
+        "cwd": "karta",
+        "result": "69 passed; 3 files",
+        "exitCode": 0,
+        "artifact": "closure-targeted.txt"
+      },
+      {
+        "command": "npm test -- --no-cache",
+        "cwd": "karta",
+        "result": "404 passed; 31 files; 0 failed; 0 skipped",
+        "exitCode": 0,
+        "artifact": "closure-full-tests.txt"
+      },
+      {
+        "command": "npm run typecheck",
+        "cwd": "karta",
+        "exitCode": 0,
+        "artifact": "closure-typecheck.txt"
+      },
+      {
+        "command": "node node_modules/eslint/bin/eslint.js karta/src/integrations/localComputeFabricProvider.ts karta/test/localComputeFabricProvider.test.ts karta/test/localComputeFabricCancellation.test.ts karta/src/iao/kartaRuntimePort.ts karta/src/iao/iaoFacade.ts karta/test/iao-facade.test.ts --max-warnings 0",
+        "cwd": ".",
+        "exitCode": 0,
+        "artifact": "closure-lint.txt"
+      },
+      {
+        "command": "npm run build",
+        "cwd": "karta",
+        "exitCode": 0,
+        "artifact": "closure-build.txt"
+      }
+    ],
+    "gitnexus": {
+      "version": "1.6.12",
+      "storage": "isolated under /private/tmp; shared index untouched",
+      "symbolRisk": {
+        "complete": "LOW",
+        "requestFabric": "LOW",
+        "isResponse": "LOW",
+        "buildMemoryPrompt": "LOW",
+        "protocol_version": "UNKNOWN"
+      },
+      "compareBase": "LOW; 99 symbols; 0 affected processes",
+      "previousForeignRemappingReproduced": false,
+      "globalGraph": "UNKNOWN: 751 entry-point candidates dropped, 1001 callees skipped, 3 walks cut by budget",
+      "stagedClosure": "LOW; 12 symbols; 0 affected processes"
+    },
+    "artifactSha256": {
+      "closure-targeted.txt": "d5176c16cede46d92f255047f66b5dd6d06fdd6837140436c519f13904ab8d35",
+      "closure-full-tests.txt": "6b4a53651a379cf4a3a68a46a4682410cd6905b65596ef0c843658f9776db7fe",
+      "closure-typecheck.txt": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa",
+      "closure-lint.txt": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "closure-build.txt": "cd806407967d7855ae4b40ff1a967135b6ee6786fb8a28c1310c580f7369ffb1",
+      "closure-gitnexus-index.txt": "77fce672989b2e65a50a3b5867c466b5929fa5abf22ce5e159cb1de04cc948b9",
+      "closure-gitnexus-impact-complete.txt": "2ef783b03bad297c077123c9247d7d608c6b00ce18307e3832cd34cb259f7764",
+      "closure-gitnexus-impact-requestFabric.txt": "65f7be5c677af2aaa9f1d92959643b72138c33dd3e9e03f31a4309a5dc796a4c",
+      "closure-gitnexus-impact-isResponse.txt": "4228151f0dc0d92370ff54dd67b64b70eb7b21171f95f0b3a9d8d7a49511483b",
+      "closure-gitnexus-impact-buildMemoryPrompt.txt": "735e8292e9bfca73ba149d72bcf699f856ac2f84979933f434cd8bed25eb8b22",
+      "closure-gitnexus-impact-protocol-version.txt": "503325fb088a89a0e3c1757e66b4dbe1b40d81b80dd9ebaf682b97de0626a55b",
+      "closure-gitnexus-detect-base.txt": "deafb009552523013fba6b78ea026a506520ae4628bb3351509aea10845a8232",
+      "closure-gitnexus-index-final.txt": "2fd7928558ea63b1899732f396b433fed8292d63c290db653e95de84253df9ec",
+      "closure-gitnexus-detect-staged.txt": "108d4ae258e631d6c5b1ca94ec789b21cc5285303190324784b0d76ab983df71"
     }
   }
 }
