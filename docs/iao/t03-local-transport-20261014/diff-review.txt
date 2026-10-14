@@ -1,0 +1,71 @@
+PRECOMMIT DIRECT REVIEW
+Base: 108291708a3d6858d26519704eb793d29b67cee6
+
+Scope: explicit allowlist PASS; only one product source changed.
+Tested source/config hashes: 8/8 PASS and staged bytes identical.
+New test filename references in karta/src: none.
+git diff --cached --check: exit 0.
+
+Staged paths (before adding this receipt):
+BATON.md
+ERRORS.md
+docs/iao/t03-local-transport-20261014/RAPPORT.md
+docs/iao/t03-local-transport-20261014/build.txt
+docs/iao/t03-local-transport-20261014/evidence.json
+docs/iao/t03-local-transport-20261014/full-tests.txt
+docs/iao/t03-local-transport-20261014/gitleaks.txt
+docs/iao/t03-local-transport-20261014/gitnexus-detect-changes.json
+docs/iao/t03-local-transport-20261014/gitnexus-detect-changes.txt
+docs/iao/t03-local-transport-20261014/gitnexus-empty-id.json
+docs/iao/t03-local-transport-20261014/gitnexus-final-index.txt
+docs/iao/t03-local-transport-20261014/gitnexus-index.txt
+docs/iao/t03-local-transport-20261014/lint.txt
+docs/iao/t03-local-transport-20261014/red.txt
+docs/iao/t03-local-transport-20261014/targeted-final.txt
+docs/iao/t03-local-transport-20261014/targeted.txt
+docs/iao/t03-local-transport-20261014/typecheck.txt
+karta/src/integrations/localComputeFabricProvider.ts
+karta/test/localComputeFabricCancellation.test.ts
+task_plan.md
+
+Product diff:
+diff --git a/karta/src/integrations/localComputeFabricProvider.ts b/karta/src/integrations/localComputeFabricProvider.ts
+index 9eab5ba..cfdbf52 100644
+--- a/karta/src/integrations/localComputeFabricProvider.ts
++++ b/karta/src/integrations/localComputeFabricProvider.ts
+@@ -25,7 +25,7 @@ export class LocalComputeFabricProvider implements IaoCompletionPort {
+       payload_digest: input.payloadDigest,
+       prompt: buildMemoryPrompt(input.context, input.message, this.#maxContextChars),
+       kind: "memory", difficulty: 4, concurrency: 1, max_tokens: 1024,
+-    }, this.#timeoutMs);
++    }, this.#timeoutMs, input.signal);
+     return { text: result.text, modelVersion: `${safeLabel(result.engine, "local")}/${safeLabel(result.model, "unknown")}` };
+   }
+ }
+@@ -48,14 +48,23 @@ export function buildMemoryPrompt(context: IaoContextPack, message: string, maxC
+ }
+
+ type FabricResponse = { text: string; engine?: string; model?: string };
+-function requestFabric(socketPath: string, payload: Record<string, unknown>, timeoutMs: number): Promise<FabricResponse> {
++function requestFabric(socketPath: string, payload: Record<string, unknown>, timeoutMs: number, signal?: AbortSignal): Promise<FabricResponse> {
++  if (signal?.aborted) return Promise.reject(new Error("memory-unavailable:cancelled"));
+   const body = Buffer.from(JSON.stringify(payload));
+   return new Promise((resolve, reject) => {
+     let settled = false;
+-    const finishError = () => { if (!settled) { settled = true; clearTimeout(deadline); reject(new Error("memory-unavailable:compute-fabric")); } };
++    const finishError = () => {
++      if (settled) return;
++      settled = true;
++      clearTimeout(deadline);
++      // Never expose AbortSignal.reason (it may contain private request data).
++      reject(new Error(signal?.aborted ? "memory-unavailable:cancelled" : "memory-unavailable:compute-fabric"));
++    };
++    // Node destroys the request/socket on abort and releases its signal listener on close.
++    // A disconnected socket does not prove the daemon stopped computing: KARTA owns effect knowledge.
+     const request = http.request({ socketPath, path: "/v1/complete", method: "POST", headers: {
+       "content-type": "application/json", "content-length": String(body.length),
+-    }, timeout: timeoutMs }, (response) => {
++    }, timeout: timeoutMs, signal }, (response) => {
+       const chunks: Buffer[] = [];
+       let size = 0;
+       response.on("data", (chunk: Buffer) => {

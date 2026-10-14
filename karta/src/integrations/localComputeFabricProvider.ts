@@ -25,7 +25,7 @@ export class LocalComputeFabricProvider implements IaoCompletionPort {
       payload_digest: input.payloadDigest,
       prompt: buildMemoryPrompt(input.context, input.message, this.#maxContextChars),
       kind: "memory", difficulty: 4, concurrency: 1, max_tokens: 1024,
-    }, this.#timeoutMs);
+    }, this.#timeoutMs, input.signal);
     return { text: result.text, modelVersion: `${safeLabel(result.engine, "local")}/${safeLabel(result.model, "unknown")}` };
   }
 }
@@ -48,14 +48,23 @@ export function buildMemoryPrompt(context: IaoContextPack, message: string, maxC
 }
 
 type FabricResponse = { text: string; engine?: string; model?: string };
-function requestFabric(socketPath: string, payload: Record<string, unknown>, timeoutMs: number): Promise<FabricResponse> {
+function requestFabric(socketPath: string, payload: Record<string, unknown>, timeoutMs: number, signal?: AbortSignal): Promise<FabricResponse> {
+  if (signal?.aborted) return Promise.reject(new Error("memory-unavailable:cancelled"));
   const body = Buffer.from(JSON.stringify(payload));
   return new Promise((resolve, reject) => {
     let settled = false;
-    const finishError = () => { if (!settled) { settled = true; clearTimeout(deadline); reject(new Error("memory-unavailable:compute-fabric")); } };
+    const finishError = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(deadline);
+      // Never expose AbortSignal.reason (it may contain private request data).
+      reject(new Error(signal?.aborted ? "memory-unavailable:cancelled" : "memory-unavailable:compute-fabric"));
+    };
+    // Node destroys the request/socket on abort and releases its signal listener on close.
+    // A disconnected socket does not prove the daemon stopped computing: KARTA owns effect knowledge.
     const request = http.request({ socketPath, path: "/v1/complete", method: "POST", headers: {
       "content-type": "application/json", "content-length": String(body.length),
-    }, timeout: timeoutMs }, (response) => {
+    }, timeout: timeoutMs, signal }, (response) => {
       const chunks: Buffer[] = [];
       let size = 0;
       response.on("data", (chunk: Buffer) => {
