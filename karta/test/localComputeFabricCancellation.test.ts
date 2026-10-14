@@ -46,6 +46,17 @@ function completionInput(signal?: AbortSignal): Parameters<IaoCompletionPort["co
   };
 }
 
+function attestedResponse(input = completionInput(), text = "local answer") {
+  return {
+    text, engine: "fixture", model: "local", protocol_version: 2,
+    idempotency_key: input.idempotencyKey, payload_digest: input.payloadDigest,
+    execution: {
+      locality: "local_only", paid_fallback_used: false,
+      accepted_max_tokens: 1024, accepted_concurrency: 1,
+    },
+  };
+}
+
 function request(): IaoRequest {
   return {
     type: "conversation", requestId: completionInput().requestId,
@@ -98,6 +109,33 @@ describe("IAO cancellation through the real local Unix transport", () => {
     await expect.poll(() => disconnected, { timeout: 500 }).toBe(true);
     expect(await pending).toEqual(new Error("memory-unavailable:cancelled"));
     expect(getEventListeners(controller.signal, "abort")).toHaveLength(0);
+  });
+
+  it("stops a cancellable fixture-daemon computation after the client disconnects", async () => {
+    const started = deferred<void>();
+    let ticks = 0;
+    let stopped = false;
+    const socketPath = await socketServer((req, res) => {
+      req.resume();
+      req.on("end", () => {
+        const computation = setInterval(() => { ticks++; }, 5);
+        res.on("close", () => {
+          clearInterval(computation);
+          stopped = true;
+        });
+        started.resolve();
+      });
+    });
+    const controller = new AbortController();
+    const pending = new LocalComputeFabricProvider({ socketPath, timeoutMs: 2000 })
+      .complete(completionInput(controller.signal)).catch((error: unknown) => error);
+    await started.promise;
+    controller.abort();
+    expect(await pending).toEqual(new Error("memory-unavailable:cancelled"));
+    await expect.poll(() => stopped, { timeout: 500 }).toBe(true);
+    const ticksAtStop = ticks;
+    await new Promise<void>((resolve) => setTimeout(resolve, 30));
+    expect(ticks).toBe(ticksAtStop);
   });
 
   it("closes the transport when the shorter KARTA deadline expires", async () => {
@@ -164,8 +202,13 @@ describe("IAO cancellation through the real local Unix transport", () => {
       let body = "";
       req.on("data", (chunk: Buffer) => { body += chunk.toString(); });
       req.on("end", () => {
-        bodies.push(JSON.parse(body));
-        res.end(JSON.stringify({ text: "local answer", engine: "fixture", model: "local" }));
+        const parsed = JSON.parse(body) as Record<string, unknown>;
+        bodies.push(parsed);
+        res.end(JSON.stringify(attestedResponse({
+          ...completionInput(),
+          idempotencyKey: String(parsed.idempotency_key),
+          payloadDigest: String(parsed.payload_digest),
+        })));
       });
     });
     const input = request();
@@ -201,7 +244,7 @@ describe("IAO cancellation through the real local Unix transport", () => {
   });
 
   it("releases cancellation listeners after success and ignores a later abort", async () => {
-    const socketPath = await socketServer((_req, res) => res.end(JSON.stringify({ text: "done" })));
+    const socketPath = await socketServer((_req, res) => res.end(JSON.stringify(attestedResponse(completionInput(), "done"))));
     const controller = new AbortController();
     const provider = new LocalComputeFabricProvider({ socketPath });
     const result = await provider.complete(completionInput(controller.signal));
@@ -228,7 +271,7 @@ describe("IAO cancellation through the real local Unix transport", () => {
 
   it("handles an abort immediately after dispatch starts without sending a request", async () => {
     let calls = 0;
-    const socketPath = await socketServer((_req, res) => { calls++; res.end('{"text":"too late"}'); });
+    const socketPath = await socketServer((_req, res) => { calls++; res.end(JSON.stringify(attestedResponse(completionInput(), "too late"))); });
     const controller = new AbortController();
     const pending = new LocalComputeFabricProvider({ socketPath })
       .complete(completionInput(controller.signal)).catch((error: unknown) => error);
@@ -249,7 +292,7 @@ describe("IAO cancellation through the real local Unix transport", () => {
       if (calls === 1) {
         res.on("close", () => { disconnected = true; });
         req.on("end", () => received.resolve());
-      } else res.end('{"text":"other request succeeded"}');
+      } else res.end(JSON.stringify(attestedResponse({ ...completionInput(), idempotencyKey: `iao:${"c".repeat(64)}` }, "other request succeeded")));
     });
     const controller = new AbortController();
     const provider = new LocalComputeFabricProvider({ socketPath, timeoutMs: 2000 });

@@ -1,0 +1,13 @@
+Portée staged contrôlée avant commit :
+- produit : karta/src/integrations/localComputeFabricProvider.ts
+- tests : karta/test/localComputeFabricProvider.test.ts, karta/test/localComputeFabricCancellation.test.ts
+- état et preuves : BATON.md, task_plan.md, ERRORS.md, docs/iao/t03-local-transport-20261014/
+
+Revue directe du produit : un seul fichier source change. Il ajoute le protocole v2, la politique local-only/sans fallback payant et la validation stricte du reçu lié à la clé, au digest et aux plafonds. Aucune route, queue, mémoire, permission, orchestration, URL distante ou fournisseur supplémentaire.
+
+Occurrences de protocol_version bornées aux trois fichiers T03 :
+- karta/src/integrations/localComputeFabricProvider.ts : requête, type de requête, type de réponse, validation du reçu
+- karta/test/localComputeFabricProvider.test.ts : fixture et assertion de requête
+- karta/test/localComputeFabricCancellation.test.ts : fixture
+
+Les fonctions étrangères listDeclarations, formatEUR, updateProspect et CarouselContent annoncées par GitNexus ne figurent dans aucun hunk staged.

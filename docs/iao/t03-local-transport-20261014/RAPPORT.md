@@ -80,3 +80,24 @@ Revue directe : seul l'adaptateur local change dans `karta/src`; les autres sour
 La fermeture de la connexion libère le transport local et transmet l'intention d'arrêt au service. Elle ne prouve pas que le service tue son calcul, réconcilie un effet, persiste son idempotence ou interdit tout fournisseur payant. L'API reste indisponible sans runtime explicitement injecté, selon le contrat existant. Les budgets à l'intérieur de SMARANA/Compute Fabric et le raccord serveur réel nécessitent les contrats et preuves de leurs propriétaires.
 
 Livraison locale seulement : aucun merge, push, déploiement, migration, action sur processus existant ni nettoyage. Prochaine étape d'intégration : examiner ce commit sur la tête canonique choisie, conserver les adaptateurs SMARANA livrés, puis qualifier séparément le daemon autorisé avant tout câblage réel.
+
+## Finalisation du 2026-10-14
+
+Reprise vérifiée sur `a5cbbcf80b058798f93b2e4ce4a1f9dcfd716e82`, dont le parent est la base annoncée `108291708a3d6858d26519704eb793d29b67cee6`. Les preuves historiques 399/399, typecheck, lint et build du premier commit ont été relues avant tout changement ; elles n'ont pas été assimilées à des preuves du nouveau delta.
+
+Le défaut supplémentaire reproduit est une confiance excessive envers le daemon : toute réponse JSON `{text, engine?, model?}` devenait un succès vérifié, même si le daemon n'attestait ni exécution locale, ni plafonds acceptés, ni absence de fallback payant. `finalisation-red-attestation.txt` conserve l'échec rouge. Le protocole client v2 exige désormais une politique `local_only`/`forbidden` à la requête et un reçu strict qui lie version, clé d'idempotence, digest, plafonds et `paid_fallback_used=false`. Un reçu absent, divergent ou surdéclaré échoue fermé ; aucun autre fournisseur n'est appelé.
+
+Les impacts frais avant édition de `complete`, `requestFabric` et `isResponse` sont **LOW** dans l'index privé de ce worktree. L'index reste tronqué ; son exhaustivité globale demeure **UNKNOWN**. L'ancienne alerte GitNexus HIGH n'est donc pas effacée par ces résultats ciblés. L'analyse finale staged annonce encore **HIGH / 7 flux** en attribuant les sept flux au champ `protocol_version`. Une inspection dédiée trouve cinq candidats ambigus, tous avec `uid` vide ; l'impact les remappe ensuite vers des fonctions sans rapport (`listDeclarations`, `formatEUR`, `updateProspect`, une fonction de test IAO et `CarouselContent`). Les candidats résolus sont LOW, deux restent UNKNOWN. Cette incohérence démontre une collision d'index, pas l'absence de risque : le verdict graphe demeure **UNKNOWN**. Les sorties et la revue directe du diff sont conservées dans `gitnexus-finalisation-*` et `finalisation-direct-scope.txt`.
+
+Portée exacte des preuves finales :
+
+- annulation, deadline et fermeture du transport Unix : vérifiées localement ;
+- arrêt d'un calcul : vérifié uniquement sur un daemon fixture qui annule son intervalle à la déconnexion ; **daemon réel UNKNOWN** ;
+- permissions : refus SMARANA avant HTTP et refus d'annulation par un autre acteur vérifiés dans le parcours IAO/KARTA local ; **VAJRA réel UNKNOWN** ;
+- reprise : stabilité clé+digest et absence de re-dispatch dans une même façade vérifiées ; **déduplication durable du daemon réel UNKNOWN** ;
+- budget et absence de fallback payant : demande et reçu v2 stricts vérifiés ; **application interne par le daemon réel UNKNOWN** ;
+- intégration composée locale IAO → KARTA → port SMARANA fixture → transport Unix fixture : vérifiée ; **intégration serveur/SMARANA/daemon réelle UNKNOWN**.
+
+La procédure d'intégration et de retour arrière est dans `INTEGRATION-REVERSIBLE.md`. Elle garde le runtime non injecté et les routes en `503` tant que les qualifications réelles manquent.
+
+Gate finale du delta : tests ciblés **29/29 PASS** ; package KARTA **404/404 PASS**, 31 fichiers, 0 échec, 0 skip ; typecheck, lint ciblé et build exit 0. Les sorties sont les artefacts `finalisation-*` de ce dossier.

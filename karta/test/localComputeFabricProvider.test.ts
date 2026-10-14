@@ -23,6 +23,17 @@ async function socketServer(handler: http.RequestListener): Promise<string> {
   return socketPath;
 }
 
+function attestedResponse(idempotencyKey: string, payloadDigest: string, text = "local answer") {
+  return {
+    text, engine: "llama.cpp", model: "qwen-3", protocol_version: 2,
+    idempotency_key: idempotencyKey, payload_digest: payloadDigest,
+    execution: {
+      locality: "local_only", paid_fallback_used: false,
+      accepted_max_tokens: 1024, accepted_concurrency: 1,
+    },
+  };
+}
+
 describe("local compute fabric provider", () => {
   const idempotencyKey = `iao:${"a".repeat(64)}`;
   const payloadDigest = "b".repeat(64);
@@ -47,18 +58,34 @@ describe("local compute fabric provider", () => {
       req.on("data", (chunk: Buffer) => chunks.push(chunk));
       req.on("end", () => { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); });
       res.writeHead(200, { "content-type": "application/json" });
-      res.end(JSON.stringify({ text: "local answer", engine: "llama.cpp", model: "qwen-3" }));
+      res.end(JSON.stringify(attestedResponse(idempotencyKey, payloadDigest)));
     });
     await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 500 }).complete({
       requestId: "r", idempotencyKey, payloadDigest, message: "question", context: { sources: [] },
     })).resolves.toEqual({ text: "local answer", modelVersion: "llama.cpp/qwen-3" });
-    expect(body).toMatchObject({ idempotency_key: idempotencyKey, payload_digest: payloadDigest, kind: "memory" });
+    expect(body).toMatchObject({
+      protocol_version: 2, idempotency_key: idempotencyKey, payload_digest: payloadDigest,
+      kind: "memory", max_tokens: 1024, concurrency: 1,
+      execution_policy: { locality: "local_only", paid_fallback: "forbidden" },
+    });
+  });
+
+  it("fails closed when the daemon does not attest local-only execution and accepted caps", async () => {
+    const socketPath = await socketServer((_req, res) => {
+      res.end(JSON.stringify({ text: "unattested answer", engine: "unknown", model: "unknown" }));
+    });
+    await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 500 }).complete({
+      requestId: "r", idempotencyKey, payloadDigest, message: "question", context: { sources: [] },
+    })).rejects.toThrow("memory-unavailable:compute-fabric");
   });
 
   it.each([
-    { text: "ok", unexpected: "internal" },
-    { text: "" },
-    { text: "ok", engine: 12 },
+    { ...attestedResponse(idempotencyKey, payloadDigest, "ok"), unexpected: "internal" },
+    { ...attestedResponse(idempotencyKey, payloadDigest), text: "" },
+    { ...attestedResponse(idempotencyKey, payloadDigest, "ok"), engine: 12 },
+    { ...attestedResponse(idempotencyKey, payloadDigest, "ok"), payload_digest: "c".repeat(64) },
+    { ...attestedResponse(idempotencyKey, payloadDigest, "ok"), execution: { locality: "local_only", paid_fallback_used: true, accepted_max_tokens: 1024, accepted_concurrency: 1 } },
+    { ...attestedResponse(idempotencyKey, payloadDigest, "ok"), execution: { locality: "local_only", paid_fallback_used: false, accepted_max_tokens: 2048, accepted_concurrency: 1 } },
   ])("rejects malformed or over-disclosing responses", async (payload) => {
     const socketPath = await socketServer((_req, res) => res.end(JSON.stringify(payload)));
     await expect(new LocalComputeFabricProvider({ socketPath, timeoutMs: 500 }).complete({

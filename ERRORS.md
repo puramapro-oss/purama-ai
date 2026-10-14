@@ -52,3 +52,7 @@
 ## 2026-10-14 — T03 transport local IAO
 
 `LocalComputeFabricProvider.complete()` ignorait `input.signal`. La facade devenait annulee mais le client HTTP Unix restait actif jusqu'a son propre delai. Reproduction 5 echecs (pre-abort, avant reponse, pendant flux, deadline KARTA, annulation facade) ; correction et preuves dans `docs/iao/t03-local-transport-20261014/`. Fermeture transport prouvee par serveur jetable, arret du calcul daemon non prouve.
+
+## 2026-10-14 — T03 reçu Compute Fabric
+
+`LocalComputeFabricProvider` acceptait une réponse contenant seulement du texte et pouvait donc présenter comme succès une exécution dont la localité, les plafonds et l'absence de fallback payant n'étaient pas prouvés. Le protocole v2 exige désormais une politique locale dans la requête et un reçu strict lié à la clé/digest ; réponse ancienne ou divergente = échec fermé. La fixture vérifie le contrat client et l'arrêt de son propre calcul sur déconnexion. Le daemon réel et son intégration restent `UNKNOWN` jusqu'à qualification propriétaire.

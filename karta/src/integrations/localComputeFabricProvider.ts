@@ -7,6 +7,9 @@ export type LocalComputeFabricProviderOptions = Readonly<{ socketPath?: string; 
 const DEFAULT_SOCKET = join(homedir(), ".local/share/purama-engines/compute-fabric.sock");
 const MAX_MESSAGE_CHARS = 32_000;
 const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+const FABRIC_PROTOCOL_VERSION = 2;
+const MAX_TOKENS = 1024;
+const MAX_CONCURRENCY = 1;
 
 export class LocalComputeFabricProvider implements IaoCompletionPort {
   readonly #socketPath: string;
@@ -20,12 +23,15 @@ export class LocalComputeFabricProvider implements IaoCompletionPort {
   async complete(input: Parameters<IaoCompletionPort["complete"]>[0]) {
     if (!/^iao:[0-9a-f]{64}$/.test(input.idempotencyKey)) throw new Error("memory-denied:compute-fabric-input");
     if (!/^[0-9a-f]{64}$/.test(input.payloadDigest)) throw new Error("memory-denied:compute-fabric-input");
-    const result = await requestFabric(this.#socketPath, {
+    const payload: FabricRequest = {
+      protocol_version: FABRIC_PROTOCOL_VERSION,
       idempotency_key: input.idempotencyKey,
       payload_digest: input.payloadDigest,
       prompt: buildMemoryPrompt(input.context, input.message, this.#maxContextChars),
-      kind: "memory", difficulty: 4, concurrency: 1, max_tokens: 1024,
-    }, this.#timeoutMs, input.signal);
+      kind: "memory", difficulty: 4, concurrency: MAX_CONCURRENCY, max_tokens: MAX_TOKENS,
+      execution_policy: { locality: "local_only", paid_fallback: "forbidden" },
+    };
+    const result = await requestFabric(this.#socketPath, payload, this.#timeoutMs, input.signal);
     return { text: result.text, modelVersion: `${safeLabel(result.engine, "local")}/${safeLabel(result.model, "unknown")}` };
   }
 }
@@ -47,8 +53,32 @@ export function buildMemoryPrompt(context: IaoContextPack, message: string, maxC
   ].join("\n");
 }
 
-type FabricResponse = { text: string; engine?: string; model?: string };
-function requestFabric(socketPath: string, payload: Record<string, unknown>, timeoutMs: number, signal?: AbortSignal): Promise<FabricResponse> {
+type FabricRequest = {
+  protocol_version: typeof FABRIC_PROTOCOL_VERSION;
+  idempotency_key: string;
+  payload_digest: string;
+  prompt: string;
+  kind: "memory";
+  difficulty: 4;
+  concurrency: typeof MAX_CONCURRENCY;
+  max_tokens: typeof MAX_TOKENS;
+  execution_policy: { locality: "local_only"; paid_fallback: "forbidden" };
+};
+type FabricResponse = {
+  text: string;
+  engine?: string;
+  model?: string;
+  protocol_version: typeof FABRIC_PROTOCOL_VERSION;
+  idempotency_key: string;
+  payload_digest: string;
+  execution: {
+    locality: "local_only";
+    paid_fallback_used: false;
+    accepted_max_tokens: typeof MAX_TOKENS;
+    accepted_concurrency: typeof MAX_CONCURRENCY;
+  };
+};
+function requestFabric(socketPath: string, payload: FabricRequest, timeoutMs: number, signal?: AbortSignal): Promise<FabricResponse> {
   if (signal?.aborted) return Promise.reject(new Error("memory-unavailable:cancelled"));
   const body = Buffer.from(JSON.stringify(payload));
   return new Promise((resolve, reject) => {
@@ -77,7 +107,7 @@ function requestFabric(socketPath: string, payload: Record<string, unknown>, tim
         if (settled || response.statusCode !== 200) return finishError();
         try {
           const value: unknown = JSON.parse(Buffer.concat(chunks).toString("utf8"));
-          if (!isResponse(value)) throw new Error("invalid");
+          if (!isResponse(value, payload)) throw new Error("invalid");
           settled = true; clearTimeout(deadline); resolve(value);
         } catch { finishError(); }
       });
@@ -88,12 +118,19 @@ function requestFabric(socketPath: string, payload: Record<string, unknown>, tim
     request.end(body);
   });
 }
-function isResponse(value: unknown): value is FabricResponse {
+function isResponse(value: unknown, request: FabricRequest): value is FabricResponse {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
   const item = value as Record<string, unknown>;
-  return Object.keys(item).every((key) => key === "text" || key === "engine" || key === "model") &&
+  if (typeof item.execution !== "object" || item.execution === null || Array.isArray(item.execution)) return false;
+  const execution = item.execution as Record<string, unknown>;
+  return Object.keys(item).every((key) => ["text", "engine", "model", "protocol_version", "idempotency_key", "payload_digest", "execution"].includes(key)) &&
+    Object.keys(execution).every((key) => ["locality", "paid_fallback_used", "accepted_max_tokens", "accepted_concurrency"].includes(key)) &&
     typeof item.text === "string" && Boolean(item.text.trim()) &&
-    (item.engine === undefined || typeof item.engine === "string") && (item.model === undefined || typeof item.model === "string");
+    (item.engine === undefined || typeof item.engine === "string") && (item.model === undefined || typeof item.model === "string") &&
+    item.protocol_version === FABRIC_PROTOCOL_VERSION && item.idempotency_key === request.idempotency_key &&
+    item.payload_digest === request.payload_digest && execution.locality === "local_only" &&
+    execution.paid_fallback_used === false && execution.accepted_max_tokens === request.max_tokens &&
+    execution.accepted_concurrency === request.concurrency;
 }
 function safeLabel(value: unknown, fallback: string): string { return typeof value === "string" && /^[A-Za-z0-9._:/-]{1,240}$/.test(value) ? value : fallback; }
 function bounded(value: number | undefined, fallback: number, min: number, max: number): number {

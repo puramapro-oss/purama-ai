@@ -11,3 +11,10 @@
 - Livraison : commit local `[CODEX] IAO: cancel local compute transport` ; retrouver le SHA par `git log -1 --format=%H -- docs/iao/t03-local-transport-20261014/RAPPORT.md`. Rapport : `docs/iao/t03-local-transport-20261014/RAPPORT.md`.
 
 Prochaine etape externe : revue du commit pour integration sur une tete canonique choisie, puis qualification separee du daemon. Fermeture socket verifiee ; arret du calcul, idempotence durable et budget reel UNVERIFIED. Aucune integration ni activation autorisee par ce rapport. Ne pas rejouer les preuves inchangees.
+
+## T03 IAO — finalisation protocole local v2 (2026-10-14)
+
+- Reprise confirmée sur `a5cbbcf80b058798f93b2e4ce4a1f9dcfd716e82` ; le défaut rouge était l'acceptation d'une réponse daemon sans attestation locale, plafonds ni preuve d'absence de fallback payant.
+- Correctif : requête `protocol_version=2`, politique `local_only`/`forbidden`, reçu strict lié à la clé, au digest et aux plafonds. Toute divergence échoue fermé.
+- Validation : 29/29 tests ciblés puis gate KARTA 404/404 PASS (31 fichiers, 0 skip), typecheck, lint ciblé et build verts. Le calcul d'un daemon fixture s'arrête à la déconnexion ; l'arrêt du daemon réel, sa déduplication durable et son routage interne restent `UNKNOWN`.
+- Procédure réversible : `docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md`. Ne pas injecter le runtime tant que la qualification daemon et l'intégration réelle manquent.

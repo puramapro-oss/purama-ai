@@ -351,3 +351,14 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - Validation finale : 15/15 tests cibles PASS ; gate KARTA 399/399 PASS (31 fichiers, 0 skip), typecheck, lint cible et build exit 0. Commandes et SHA-256 testes : `docs/iao/t03-local-transport-20261014/evidence.json`. Aucun provider/secret/DB reel utilise.
 - Impact produit avant edition LOW ; detect-changes staged HIGH (7 flux), sortie structuree MEDIUM (5) : collisions d identifiant vide documentees. Alerte examinee, graphe global UNKNOWN ; revue directe du scope et gate KARTA vertes. Voir rapport et preuves GitNexus.
 - Livraison : commit local `[CODEX] IAO: cancel local compute transport` ; retrouver le SHA par `git log -1 --format=%H -- docs/iao/t03-local-transport-20261014/RAPPORT.md`. Rapport : `docs/iao/t03-local-transport-20261014/RAPPORT.md`.
+
+## T03 IAO — finalisation (2026-10-14)
+
+- [x] Vérifier le SHA livré et relire les preuves du premier commit sans les rejouer comme preuves du delta.
+- [x] Refaire l'index GitNexus en stockage privé ; impacts avant édition LOW pour les trois symboles modifiés, exhaustivité globale UNKNOWN.
+- [x] Reproduire le défaut de confiance daemon : réponse sans attestation acceptée à tort.
+- [x] Exiger un reçu v2 local-only, plafonné et sans fallback payant, lié à la clé et au digest.
+- [x] Tester annulation, permissions, reprise, budgets et absence de fallback sur fixtures locales isolées.
+- [x] Prouver l'arrêt d'un calcul fixture à la déconnexion sans prétendre qualifier le daemon réel.
+- [x] Documenter l'intégration et le retour arrière fail-closed.
+- [ ] Qualifier le daemon réel et l'intégration serveur/SMARANA/VAJRA sur la lignée propriétaire : `UNKNOWN`, hors de cette livraison locale.
