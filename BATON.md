@@ -50,3 +50,24 @@ Prochaine etape externe : revue du commit pour integration sur une tete canoniqu
   erreurs/permissions/mémoire/fallback E2E restent `NOT_TESTED_PRECONDITION`.
 - Handoff différentiel :
   `docs/iao/t03-local-transport-20261014/HANDOFF-T01-RACCORDEMENT-20261027.md`.
+
+## T03 IAO — préparation adaptateur T03/T04 sans intégration (2026-10-27)
+
+- Préconditions toujours absentes : aucun SHA T04 validé et aucun candidat T01
+  admis ; édition produit et recette Ollama restent interdites.
+- Deux commits historiques propriétaires retrouvés :
+  `45e8dc13b3f74af71575fc838cd04aab2d4cc100` et
+  `3941b7ef984d7f016034df68ade46d1e8130c6b2`. Ne pas les cherry-pick en bloc :
+  leur adaptateur de complétion via `smarana.ask()` ferait doublon avec le
+  transport Compute Fabric v2 et ne satisfait pas le verrou zéro fallback.
+- Cible préparée : un seul adaptateur mémoire `SmaranaIaoPort` contre les exports
+  publics du SHA T04 final ; `LocalComputeFabricProvider` reste l'unique port de
+  complétion. Aucun delta produit, service, base ou moteur utilisé.
+- Les 69/69 T03 et 2/2 T06 historiques du même jour sont conservés sans replay.
+  Toutes les recettes réelles restent `NOT_TESTED_PRECONDITION`.
+- Gate documentaire : `git diff --check` PASS et politique canonique
+  `POLICY_OK`. `gitnexus detect-changes --scope all --repo purama-master` tenté
+  avant commit : `UNKNOWN`, index stockage 43 incompatible avec le runtime 42 ;
+  aucun symbole produit n'est modifié et aucun rebuild d'index n'a été lancé.
+- Handoff borné T01/T06/T08 :
+  `docs/iao/t03-local-transport-20261014/HANDOFF-T01-T06-T08-PREPARATION-RUNTIME-20261027.md`.

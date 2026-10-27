@@ -1,5 +1,20 @@
 # PURAMA AI — Task Plan V3
 
+## T03 IAO — finalisation raccordement local (2026-10-27)
+
+- [x] Reprendre le worktree, les contrats, propriétaires, ACK et handoffs sans
+  modifier le WIP étranger.
+- [x] Préserver les preuves historiques 69/69 T03 et 2/2 T06 sans replay.
+- [x] Identifier les anciens adaptateurs `45e8dc1`/`3941b7e` et documenter la
+  partie réutilisable sans second transport ni complétion via SMARANA.
+- [ ] Recevoir un SHA T04 validé et son ACK (`BLOCKED_EXTERNAL`).
+- [ ] Recevoir un SHA T01 admis (`BLOCKED_EXTERNAL`).
+- [ ] Après ces deux gates seulement, implémenter l'unique adaptateur mémoire
+  `SmaranaIaoPort`, analyser son impact, puis obtenir l'ACK T06.
+- [ ] Tester sur le même SHA : conversation, SSE, annulation, reprise, erreurs,
+  permissions, mémoire réelle et zéro fallback payant (`NOT_TESTED_PRECONDITION`).
+- [ ] Remettre le candidat à la QA indépendante T08.
+
 ## RÈGLE PERMANENTE (Tissma, 2026-07-26)
 **Ne jamais bloquer le développement sur le crédit Anthropic.** Il sera rechargé juste avant le vrai
 lancement, pas avant. Tout le code doit être écrit, testé structurellement et déployé avec Claude
