@@ -373,3 +373,13 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - [x] Documenter la collision précédente non reproduite, l'impact propriété `UNKNOWN` et la troncature globale du graphe.
 - [x] Préparer l'intégration et le retour arrière exacts des deux commits fonctionnels.
 - [ ] Qualifier le daemon et les raccords SMARANA/AKASHA/VAJRA réels : `UNKNOWN`, hors périmètre local.
+
+## T03 IAO — reprise T01 (2026-10-27)
+
+- [x] Reprendre le worktree exact, vérifier politique, espace, branche, HEAD, arbre et propreté.
+- [x] Inspecter les contrats IAO/KARTA et les commits/ACK propriétaires T03, T04 et T06 sans modifier leurs worktrees.
+- [x] Confirmer l'ordre de composition `T04 -> T03 -> T06` et l'absence de SHA d'adaptateur runtime T03/T04 courant.
+- [x] Rejouer uniquement les gates ciblées utiles : T03 69/69 et interface T06 2/2 PASS sur fixtures injectées.
+- [x] Préserver le candidat T01 non admissible, ses 147 entrées étrangères et le WIP documentaire T04.
+- [x] Documenter la remise et la séquence de déblocage sans créer de second cerveau ou transport.
+- [ ] Raccorder et qualifier Ollama réel : `NOT_TESTED_AUTHORITY`, bloqué par ACK T02 absent, pont T02 absent, adaptateur T03/T04 sans SHA, défaut SMARANA `source_object_ids` et contrat T07 absent.

@@ -26,3 +26,12 @@ Prochaine etape externe : revue du commit pour integration sur une tete canoniqu
 - Validation fraîche : ciblé 69/69, KARTA 404/404, typecheck, lint ciblé et build verts. Preuves `docs/iao/t03-local-transport-20261014/closure-*`.
 - GitNexus isolé : anciennes associations étrangères de `protocol_version` non reproduites ; trois candidats seulement dans l'adaptateur, mais impact propriété et graphe global `UNKNOWN` (index tronqué). Compare base LOW / 0 processus affecté, sans certificat global.
 - Intégration réversible documentée avec l'ordre exact `a5cbbcf` puis `0b7d087`; aucun push, merge, déploiement ou daemon réel.
+
+## T03 IAO — remise T01 fail-closed (2026-10-27)
+
+- HEAD produit repris propre à `1c18c1d7a98c9bdfaf094a71814db163ec55c2f2`, arbre `38e0521fdfac425e61c44b12bce55d01c1b9a63d`; contrats et ACK T03/T04/T06 réconciliés dans l'ordre `T04 -> T03 -> T06`.
+- Preuves fraîches sans delta produit : T03 ciblé 69/69 PASS ; contrat SSE T06 2/2 PASS. Ces résultats restent des preuves sur fixtures/ports injectés.
+- Candidat T01, WIP T04 et fichiers propriétaires préservés. Aucun second cerveau/transport, aucun appel au service Ollama étranger.
+- Verdict réel : `BLOCKED / READY=NO`. `ACK_T03_T04_CURRENT_RUNTIME_ADAPTER=NO_SHA_AVAILABLE`, correction SMARANA `source_object_ids` absente, ACK T02 d'usage du processus Homebrew absent et T07 non acquis.
+- Remise détaillée : `docs/iao/t03-local-transport-20261014/HANDOFF-T01-20261027.md`. Conversation, streaming, annulation, erreurs, reprise et absence de fallback payant sur Ollama réel restent `NOT_TESTED_AUTHORITY`.
+- GitNexus `detect-changes` tenté avant commit : `UNKNOWN` pour incompatibilité d'index partagé (stockage 43, runtime 42) ; revue Git directe limitée à trois fichiers documentaires, aucun symbole produit.
