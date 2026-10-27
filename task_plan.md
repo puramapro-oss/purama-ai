@@ -411,3 +411,20 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
   duplication de transport.
 - [ ] Implémenter et tester le runtime réel : `BLOCKED_PRECONDITIONS` jusqu'à
   livraison T04 validée puis admission explicite d'un candidat T01 exact.
+
+## T03 IAO — delta d'autorité (2026-10-28)
+
+- [x] Vérifier l'ACK authentique de l'avenant Linux T04 dans les deux registres
+  et le claim propriétaire, sans l'étendre à T03.
+- [x] Vérifier en lecture seule que T04 n'a pas encore livré de SHA propre :
+  HEAD de base inchangé et sept fichiers WIP préservés.
+- [x] Vérifier que le worktree T03 est propre et que la cible T01 conditionnelle
+  reste absente avec admission QA à `NO`.
+- [x] Conserver les 69/69 historiques sans replay, faute de delta produit ou de
+  composition exécutable.
+- [ ] Implémenter l'adaptateur unique : `BLOCKED` jusqu'au SHA T04 validé, à la
+  réservation explicite des chemins T03, à l'admission de composition T01 et à
+  l'ACK d'interface T06.
+- [ ] Exécuter conversation/SSE/annulation/reprise/erreurs/permissions/mémoire
+  et zéro fallback sur Ollama réel : `NOT_TESTED_PRECONDITION` jusqu'à la
+  qualification T02 du daemon existant et du pont unique.

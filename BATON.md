@@ -71,3 +71,28 @@ Prochaine etape externe : revue du commit pour integration sur une tete canoniqu
   aucun symbole produit n'est modifié et aucun rebuild d'index n'a été lancé.
 - Handoff borné T01/T06/T08 :
   `docs/iao/t03-local-transport-20261014/HANDOFF-T01-T06-T08-PREPARATION-RUNTIME-20261027.md`.
+
+## T03 IAO — réception de l'avenant T04, gates encore fermées (2026-10-28)
+
+- L'ACK propriétaire `ACK_T04_PRIVATE_POSTGRES_LIMA_20261027=YES` est désormais
+  authentique et présent dans `LOCKS.md`, `.coord/LOCKS.md` et le claim T04. Il
+  autorise T04 à exécuter son avenant Linux privé ; il ne livre pas le SHA T04
+  et n'étend aucun chemin T03.
+- Lecture seule fraîche : T04 reste au commit
+  `04b62c70a1abbe0f6dee9856a969dd39457180e6`, arbre
+  `da4db843e13426e388946cce4cc80d4c6e9bc652`, avec sept fichiers WIP. Le SHA
+  final propre, les gates PostgreSQL métier et l'ACK de réception restent
+  absents.
+- Le worktree T03 reste propre au commit
+  `7c2a322702d786d7618c94ef01a481d755d7160f`, arbre
+  `e4516c11a0bf777d0c1203cffaacd2779c84fba4`. Aucun chemin produit nouveau pour
+  l'adaptateur n'est réservé et la cible T01 conditionnelle n'est pas créée ;
+  `ACK_T01_IAO_QA_ADMISSION=NO` demeure applicable.
+- T02 ne qualifie pas encore une génération réelle : le daemon existant reste
+  partagé et son candidat durci ne peut pas être chargé sans fenêtre
+  propriétaire, sous peine de créer un second serveur. Aucun appel Ollama T03.
+- Les 69/69 historiques sont conservés sans replay. Toutes les gates runtime
+  réelles restent `NOT_TESTED_PRECONDITION`; verdict `BLOCKED / READY=NO`.
+- Gate documentaire fraîche : `git diff --check` PASS. `detect-changes` tenté
+  depuis la racine canonique : `UNKNOWN` (`rc=1`, cache npm externe possédé par
+  root, `EPERM`) ; aucun cache modifié et aucun symbole produit dans le delta.

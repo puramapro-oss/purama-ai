@@ -144,3 +144,62 @@ T01. Elles n'ont pas été rejouées inutilement.
 État des recettes réelles à cette remise : conversation, SSE, annulation,
 reprise, erreurs, permissions, mémoire et absence de fallback payant =
 `NOT_TESTED_PRECONDITION`. Aucun runtime adapter SHA n'existe encore.
+
+## Delta vérifié du 2026-10-28
+
+L'avenant PostgreSQL Linux T04 n'est plus en attente d'approbation : le bloc
+authentique `ACK_T04_PRIVATE_POSTGRES_LIMA_20261027=YES`, lié au SHA-256
+`d124da1b0615252ded00a9b9ce3db73df161e757be1facae6df5a4dee7a4e669`, est
+présent dans `LOCKS.md`, `.coord/LOCKS.md` et le claim T04. Cette autorisation
+est strictement T04 et ne constitue ni livraison, ni admission, ni transfert de
+chemin T03.
+
+Contrôles frais en lecture seule :
+
+```text
+bash scripts/policy-check.sh
+rc=0 — POLICY_OK
+
+git -C .worktrees/t04-smarana-source-object-ids-20261027 rev-parse HEAD^{commit} HEAD^{tree}
+rc=0 — 04b62c70a1abbe0f6dee9856a969dd39457180e6
+       da4db843e13426e388946cce4cc80d4c6e9bc652
+
+git -C .worktrees/t04-smarana-source-object-ids-20261027 status --short
+rc=0 — sept entrées WIP, dont quatre sources/tests et trois états ; préservées
+
+git -C .worktrees/t03-iao-local-transport-20261014 rev-parse HEAD^{commit} HEAD^{tree}
+rc=0 — 7c2a322702d786d7618c94ef01a481d755d7160f
+       e4516c11a0bf777d0c1203cffaacd2779c84fba4
+
+git -C .worktrees/t03-iao-local-transport-20261014 status --short
+rc=0 — vide avant ce delta documentaire
+
+git -C .worktrees/t03-iao-local-transport-20261014 diff --check
+rc=0 — PASS
+
+node .gitnexus/run.cjs detect-changes --scope all --repo purama-master
+rc=1 — UNKNOWN, cache npm externe possédé par root refusé avec EPERM ; aucun
+       cache modifié, aucun symbole produit dans le delta documentaire
+```
+
+État de composition :
+
+- T04 : `PARTIAL`, ACK d'exécution acquis mais SHA final et gates PostgreSQL
+  métier absents ;
+- T03 : `VERIFIED` pour la préparation documentaire seulement ; aucun symbole
+  produit modifié et aucun adaptateur runtime livré ;
+- T01 : `BLOCKED`, cible conditionnelle non créée et
+  `ACK_T01_IAO_QA_ADMISSION=NO` ;
+- T06 : `BLOCKED`, ACK final sur les SHA et chemins partagés non livré ;
+- T02/Ollama : `PARTIAL`, configuration durcie préparée mais génération réelle
+  non qualifiée sur le daemon partagé ; charger son label candidat créerait un
+  second serveur, donc reste interdit ;
+- conversation, streaming SSE, annulation, reprise, erreurs, permissions KARTA,
+  mémoire SMARANA/AKASHA et absence runtime de fallback payant :
+  `NOT_TESTED_PRECONDITION`.
+
+Verdict de remise : `BLOCKED / READY=NO`. Prochaine transition admissible : T04
+exécute les gates réelles autorisées et livre un commit propre ; T01/T06
+réservent ensuite les chemins exacts et admettent la composition bornée. T03
+pourra alors analyser l'impact GitNexus et implémenter le seul adaptateur mémoire
+décrit ci-dessus, sans créer de second transport ni appeler Ollama directement.
