@@ -35,3 +35,18 @@ Prochaine etape externe : revue du commit pour integration sur une tete canoniqu
 - Verdict réel : `BLOCKED / READY=NO`. `ACK_T03_T04_CURRENT_RUNTIME_ADAPTER=NO_SHA_AVAILABLE`, correction SMARANA `source_object_ids` absente, ACK T02 d'usage du processus Homebrew absent et T07 non acquis.
 - Remise détaillée : `docs/iao/t03-local-transport-20261014/HANDOFF-T01-20261027.md`. Conversation, streaming, annulation, erreurs, reprise et absence de fallback payant sur Ollama réel restent `NOT_TESTED_AUTHORITY`.
 - GitNexus `detect-changes` tenté avant commit : `UNKNOWN` pour incompatibilité d'index partagé (stockage 43, runtime 42) ; revue Git directe limitée à trois fichiers documentaires, aucun symbole produit.
+
+## T03 IAO — delta raccordement fail-closed (2026-10-27)
+
+- Autorité T02 actualisée : usage borné du daemon Ollama existant autorisé, mais
+  interdiction cloud durable seulement `PARTIAL` (`OLLAMA_NO_CLOUD` absent) ;
+  aucun appel T03 avant admission.
+- T04 reste non livré : correctif `source_object_ids` en WIP à
+  `04b62c70a1abbe0f6dee9856a969dd39457180e6`, VM PostgreSQL `PARTIAL`, gates
+  mémoire réelles `NOT_TESTED_ENV`, aucun commit/ACK de réception.
+- T01 reste non admissible à
+  `40721466724e8a3dd703a433f2c21a09cdaad954`, merge WIP préservé.
+- Aucun delta produit ni appel Ollama. Conversation/SSE/annulation/reprise/
+  erreurs/permissions/mémoire/fallback E2E restent `NOT_TESTED_PRECONDITION`.
+- Handoff différentiel :
+  `docs/iao/t03-local-transport-20261014/HANDOFF-T01-RACCORDEMENT-20261027.md`.

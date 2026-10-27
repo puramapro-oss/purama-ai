@@ -383,3 +383,16 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - [x] Préserver le candidat T01 non admissible, ses 147 entrées étrangères et le WIP documentaire T04.
 - [x] Documenter la remise et la séquence de déblocage sans créer de second cerveau ou transport.
 - [ ] Raccorder et qualifier Ollama réel : `NOT_TESTED_AUTHORITY`, bloqué par ACK T02 absent, pont T02 absent, adaptateur T03/T04 sans SHA, défaut SMARANA `source_object_ids` et contrat T07 absent.
+
+## T03 IAO — delta raccordement (2026-10-27)
+
+- [x] Constater le nouvel ACK T02 borné au daemon Homebrew existant, sans
+  étendre les droits start/stop/restart/download.
+- [x] Vérifier le correctif T04 en WIP, son environnement Lima `PARTIAL` et
+  l'absence de tests mémoire réels, commit candidat et réception propriétaire.
+- [x] Vérifier que T01 reste un merge WIP non admis au checkpoint
+  `40721466724e8a3dd703a433f2c21a09cdaad954`.
+- [x] Préserver T01, T04, leurs fichiers et leurs bases ; aucun appel Ollama ni
+  duplication de transport.
+- [ ] Implémenter et tester le runtime réel : `BLOCKED_PRECONDITIONS` jusqu'à
+  livraison T04 validée puis admission explicite d'un candidat T01 exact.
