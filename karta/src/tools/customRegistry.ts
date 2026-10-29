@@ -4,6 +4,7 @@ import { calendarCreateEventTool } from "./calendar.js";
 import { generatePdfTool } from "./pdf.js";
 import { webSearchTool } from "./websearch.js";
 import { sendNotificationTool } from "./notification-tool.js";
+import { robotCatalogTool, robotPlanSessionTool, robotSimulateSessionTool } from "./robotics.js";
 import type { AnyToolDefinition } from "../engine/types.js";
 
 /**
@@ -23,6 +24,9 @@ export const CUSTOM_AGENT_TOOLS: Record<string, AnyToolDefinition> = {
   generate_pdf: generatePdfTool,
   web_search: webSearchTool,
   send_notification: sendNotificationTool,
+  robot_catalog: robotCatalogTool,
+  robot_plan_session: robotPlanSessionTool,
+  robot_simulate_session: robotSimulateSessionTool,
 };
 
 export const CUSTOM_AGENT_TOOL_NAMES = Object.keys(CUSTOM_AGENT_TOOLS);

@@ -9,3 +9,4 @@ export { generatePdfTool } from "./pdf.js";
 export { webSearchTool } from "./websearch.js";
 export { sendNotificationTool } from "./notification-tool.js";
 export { delegateToAgentTool } from "./delegate.js";
+export { robotCatalogTool, robotPlanSessionTool, robotSimulateSessionTool } from "./robotics.js";

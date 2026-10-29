@@ -26,6 +26,9 @@ const REAL_TOOL_NAMES = [
   "generate_pdf",
   "web_search",
   "send_notification",
+  "robot_catalog",
+  "robot_plan_session",
+  "robot_simulate_session",
 ] as const;
 
 Deno.serve(async (req) => {
@@ -78,6 +81,11 @@ Outils réels disponibles pour "suggested_tools" — utilise EXACTEMENT ces noms
 - generate_pdf : génère un PDF téléchargeable (rapport, facture, résumé...)
 - web_search : recherche web en temps réel
 - send_notification : notifie l'utilisateur (app/email) quand une décision humaine est nécessaire
+- robot_catalog : consulte les robots envisagés et leurs limites ; aucun robot réellement connecté
+- robot_plan_session : vérifie une séance de parole, gestes nommés et pauses ; toute cible matérielle reste bloquée
+- robot_simulate_session : calcule une chronologie logicielle sur purama-simulator ; aucun son, mouvement ou contrôle physique
+
+Pour un agent robotique, son system_prompt doit distinguer préparation, simulation et action réelle. Ne jamais annoncer une compatibilité universelle, un robot installé, une maîtrise spirituelle parfaite ou une commande physique réussie. Les trois outils ci-dessus ne connectent aucun matériel. Les séances de réflexion sont facultatives et interrompables.
 
 Critères de qualité du system_prompt :
 - Tutoiement par défaut sauf si l'utilisateur précise vouvoiement
