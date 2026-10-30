@@ -8,6 +8,13 @@ process.env.ANTHROPIC_MODEL_MAIN = "claude-sonnet-4-6";
 process.env.ANTHROPIC_MODEL_FAST = "claude-haiku-4-5-20251001";
 process.env.REDIS_URL = "redis://127.0.0.1:6379";
 
+// Le parcours d'approbation appelle notify(). Simuler son indisponibilité sans
+// requête réseau : un DNS/proxy lent ne doit pas décider du résultat de ce test.
+const notificationFetch = vi.fn(async () => {
+  throw new Error("service de notification indisponible (test)");
+});
+vi.stubGlobal("fetch", notificationFetch);
+
 /** Builder chaînable minimal : chaque méthode "filtre" renvoie this, thenable direct pour
  * les updates/inserts awaités sans terminal, et single()/maybeSingle() configurables par table. */
 function makeBuilder(resolved: { data: unknown; error: unknown }) {
@@ -78,6 +85,11 @@ describe("runAgentCycle", () => {
     // Fix bloquant QA 2026-07-27 : l'action doit être journalisée dans karta_pending_actions
     // (id retourné par l'insert mocké) pour pouvoir être réellement exécutée après approbation.
     expect(result.toolsUsed[0].pendingActionId).toBe("pending-1");
+    expect(notificationFetch).toHaveBeenCalledOnce();
+    expect(notificationFetch).toHaveBeenCalledWith(
+      "https://example.invalid/functions/v1/agent-push-send",
+      expect.objectContaining({ method: "POST", signal: expect.any(AbortSignal) })
+    );
   });
 
   it("ne casse pas si l'outil décidé par Claude n'existe pas dans la définition de l'agent", async () => {

@@ -34,7 +34,8 @@ export const CUSTOM_AGENT_TOOL_NAMES = Object.keys(CUSTOM_AGENT_TOOLS);
 /** Filtre défensif : ne résout QUE les noms d'outils connus (liste blanche), ignore le reste
  * silencieusement — un nom invalide venant de Claude/du mock ne doit jamais planter l'agent. */
 export function resolveCustomAgentTools(names: string[] | null | undefined): AnyToolDefinition[] {
-  return (names ?? [])
-    .map((name) => CUSTOM_AGENT_TOOLS[name])
-    .filter((tool): tool is AnyToolDefinition => Boolean(tool));
+  if (!Array.isArray(names)) return [];
+  return [...new Set(names)]
+    .filter((name) => typeof name === "string" && Object.hasOwn(CUSTOM_AGENT_TOOLS, name))
+    .map((name) => CUSTOM_AGENT_TOOLS[name]);
 }

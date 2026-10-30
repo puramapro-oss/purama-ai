@@ -28,8 +28,9 @@ export class RobotSessionSimulator {
   async run(input: unknown, context: SimulatorContext, signal?: AbortSignal): Promise<SimulationReceipt> {
     // KARTA's global simulation mode skips tools. A live engine call may run this
     // software simulator, but can never turn it into a physical execution path.
-    if (typeof context.userId !== "string" || !context.userId.trim()
-      || !["simulation", "live"].includes(context.mode)) {
+    const userId = context?.userId;
+    if (typeof userId !== "string" || !userId.trim()
+      || !["simulation", "live"].includes(context?.mode)) {
       throw new RobotSessionError("INVALID_CONTEXT", "Contexte utilisateur KARTA requis.");
     }
     const now = this.clock();
@@ -39,25 +40,31 @@ export class RobotSessionSimulator {
       throw new RobotSessionError("NO_HARDWARE_ADAPTER", "Aucun adaptateur matériel n'est installé.");
     }
     for (const [key, entry] of this.runs) if (entry.expiresAt <= now) this.runs.delete(key);
-    const key = JSON.stringify([context.userId, request.sessionId]);
+    const key = JSON.stringify([userId, request.sessionId]);
     const hash = createHash("sha256").update(JSON.stringify(request)).digest("hex");
     const existing = this.runs.get(key);
     if (existing) {
       if (existing.hash !== hash) throw new RobotSessionError("IDEMPOTENCY_CONFLICT", "Identifiant de séance réutilisé avec un autre contenu.");
       return structuredClone(await existing.result);
     }
-    if (this.owners.has(context.userId)) throw new RobotSessionError("SESSION_BUSY", "Une simulation est déjà active pour cet utilisateur.");
+    if (this.owners.has(userId)) throw new RobotSessionError("SESSION_BUSY", "Une simulation est déjà active pour cet utilisateur.");
     if (this.runs.size >= this.capacity) throw new RobotSessionError("SIMULATOR_CAPACITY", "Capacité atteinte ; attendre l'expiration des séances.");
-    this.owners.add(context.userId);
+    this.owners.add(userId);
     const result = (async (): Promise<SimulationReceipt> => {
       const receipt: SimulationReceipt = {
         ok: true, execution: "simulation", physicalActions: 0, status: "simulated",
         sessionId: request.sessionId, targetId: "purama-simulator", events: [],
       };
+      let previousTime = now;
       try {
         for (const step of plan.steps) {
           await Promise.resolve();
-          if (signal?.aborted || this.clock() >= request.expiresAt) {
+          const stepTime = this.clock();
+          if (!Number.isSafeInteger(stepTime) || stepTime < previousTime) {
+            throw new RobotSessionError("INVALID_CLOCK", "Horloge invalide ou recul pendant la simulation.");
+          }
+          previousTime = stepTime;
+          if (signal?.aborted || stepTime >= request.expiresAt) {
             receipt.ok = false;
             receipt.status = signal?.aborted ? "cancelled" : "expired";
             break;
@@ -67,7 +74,7 @@ export class RobotSessionSimulator {
         }
         return receipt;
       } finally {
-        this.owners.delete(context.userId);
+        this.owners.delete(userId);
       }
     })();
     this.runs.set(key, { hash, expiresAt: request.expiresAt, result });

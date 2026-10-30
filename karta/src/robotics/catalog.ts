@@ -24,8 +24,8 @@ const targets: RobotTarget[] = [
   },
   {
     id: "unitree-g1-unistore", manufacturer: "Unitree", model: "G1 / UniStore", stage: "documented_interface",
-    interfaceNote: "Installation d'apps approuvées à distinguer d'un accès développeur complet ; droits, pays et versions à confirmer.",
-    sources: ["https://unistore.unitree.com/", "https://github.com/unitreerobotics/unitree-app-templates"],
+    interfaceNote: "Template UniStore officiel avec permissions et transfert de contrôle explicites. Accès développeur, édition G1, firmware, pays et approbation à confirmer ; ne prouve pas que le G1 standard est déverrouillé.",
+    sources: ["https://unistore.unitree.com/", "https://github.com/unitreerobotics/unitree-app-templates", "https://github.com/unitreerobotics/unitree-app-templates/blob/main/g1_mimic_demo/README.md"],
   },
   {
     id: "1x-neo", manufacturer: "1X", model: "NEO", stage: "documented_interface",
@@ -39,7 +39,7 @@ const targets: RobotTarget[] = [
   },
   {
     id: "boston-atlas", manufacturer: "Boston Dynamics", model: "Atlas", stage: "target",
-    interfaceNote: "Plateforme industrielle. Ne pas confondre les interfaces d'Atlas avec le SDK Spot.",
+    interfaceNote: "Plateforme industrielle avec intégration Orbit annoncée. Ne pas confondre les interfaces d'Atlas avec le SDK Spot ; accès client et commandes disponibles à qualifier.",
     sources: ["https://bostondynamics.com/products/atlas/"],
   },
   {
@@ -59,7 +59,7 @@ const targets: RobotTarget[] = [
   },
   {
     id: "agility-digit", manufacturer: "Agility Robotics", model: "Digit", stage: "documented_interface",
-    interfaceNote: "Agility Arc annonce des API industrielles ; accès client et portée exacte à obtenir avant implémentation.",
+    interfaceNote: "Agility Arc annonce l'intégration aux systèmes industriels ; documentation d'API, accès client et portée exacte à obtenir avant implémentation.",
     sources: ["https://www.agilityrobotics.com/solutions"],
   },
   {
@@ -72,14 +72,14 @@ const targets: RobotTarget[] = [
   stage: target.stage as RobotTarget["stage"],
   hardwareControlAvailable: false,
   hardwareValidation: "not_tested",
-  reviewedOn: "2026-10-29",
+  reviewedOn: "2026-10-30",
 }));
 
 targets.push({
   id: "purama-simulator", manufacturer: "PURAMA", model: "Simulateur de séances",
   stage: "simulator", hardwareControlAvailable: false, hardwareValidation: "not_applicable",
   interfaceNote: "Simulation logicielle uniquement : aucun son émis, aucun mouvement, aucune connexion à un robot.",
-  sources: [], reviewedOn: "2026-10-29",
+  sources: [], reviewedOn: "2026-10-30",
 });
 
 /** Return copies: a caller cannot mutate research targets into enabled hardware. */

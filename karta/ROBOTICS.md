@@ -28,6 +28,12 @@ agent existant ni compte de production n'est modifié automatiquement. Après re
 et déploiement des composants concernés, l'utilisateur pourra les sélectionner
 dans l'éditeur existant ; cette branche ne fournit pas un écran d'appairage robot.
 
+Les trois outils transmettent un schéma JSON détaillé au fournisseur IA. Le contexte
+de décision fournit `serverTimeEpochMs` pour calculer l'expiration sans inventer
+l'heure. La validation serveur reste obligatoire. Les outils historiques sans
+schéma gardent leur comportement. La liste d'outils ignore les propriétés héritées
+et supprime les doublons.
+
 Le moteur KARTA en mode `live` peut exécuter **le calcul du simulateur**. Le résultat
 reste une simulation. Le mode global `simulation` de KARTA est un dry-run qui saute
 tous les outils, y compris celui-ci : il ne valide pas la séance. Les mécanismes
@@ -68,6 +74,11 @@ inconnues et requêtes expirées sont refusées. `required` vaut `true` par déf
 les étapes optionnelles sont conservées, sans stratégie de dégradation matérielle
 dans cette version.
 
+Les tableaux incomplets et les propriétés à accesseur ne sont pas acceptés par
+l'API locale. L'identité est copiée avant toute suspension asynchrone. Une horloge
+non finie ou qui recule pendant une simulation provoque un échec et la libération
+du verrou de l'utilisateur.
+
 L'identité vient du contexte serveur KARTA et n'est jamais acceptée dans la séance.
 Un même utilisateur et `sessionId` rejouent le même reçu en mémoire, jusqu'à
 expiration. Réutiliser cet identifiant avec un contenu différent est refusé. Deux
@@ -82,7 +93,8 @@ n'est implémenté ou revendiqué.
 
 ## Exécution locale
 
-Depuis `karta/`, avec Node et les dépendances du fichier verrou :
+Depuis `karta/`, avec Node 22 LTS à partir de 22.12, ou Node 24 LTS, pour
+l'outillage de test (Node 24.22.1 utilisé pour cet audit) :
 
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
@@ -99,7 +111,7 @@ de test est nécessaire aux imports existants de KARTA ; ce n'est pas une clé r
 ## Cibles et interfaces à qualifier
 
 Les sources et la date de consultation sont aussi enregistrées dans
-[`src/robotics/catalog.ts`](src/robotics/catalog.ts). État de recherche au 29 octobre
+[`src/robotics/catalog.ts`](src/robotics/catalog.ts). État de recherche au 30 octobre
 2026 ; aucune de ces lignes ne signifie « connecteur PURAMA installé ».
 
 | Cible | Point de départ et limite |
@@ -153,3 +165,6 @@ sans attribution à un maître ou à une tradition.
 | Interface et générateur | Noms cohérents ; compilation et essais utilisateur à vérifier séparément |
 | Contrôle matériel | **BLOQUÉ / NON TESTÉ** : pas d'accès constructeur ni de robot de test dans cette session |
 | Déploiement | **NON EFFECTUÉ** : branche de revue uniquement |
+
+Résultats et limites de la seconde passe :
+[`ROBOTICS_AUDIT_2026-10-30.md`](ROBOTICS_AUDIT_2026-10-30.md).

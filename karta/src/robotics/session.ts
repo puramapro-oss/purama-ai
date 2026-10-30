@@ -39,10 +39,21 @@ function object(value: unknown, allowed: readonly string[], label: string): Reco
     throw new RobotSessionError("INVALID_REQUEST", `${label} doit être un objet JSON.`);
   }
   const record = value as Record<string, unknown>;
-  if (Object.keys(record).some((key) => !allowed.includes(key))) {
+  if (Reflect.ownKeys(record).some((key) => typeof key !== "string" || !allowed.includes(key))) {
     throw new RobotSessionError("UNKNOWN_FIELD", `${label} contient un champ non autorisé.`);
   }
+  for (const descriptor of Object.values(Object.getOwnPropertyDescriptors(record))) {
+    if (!descriptor.enumerable || !("value" in descriptor)) {
+      throw new RobotSessionError("INVALID_REQUEST", `${label} doit contenir uniquement des données JSON.`);
+    }
+  }
   return record;
+}
+
+export function parseCatalogRequest(input: unknown): { targetId?: string } {
+  const data = object(input, ["targetId"], "catalogue (targetId optionnel)");
+  if (data.targetId === undefined) return {};
+  return { targetId: identifier(data.targetId, "targetId") };
 }
 
 function identifier(value: unknown, label: string): string {
@@ -70,6 +81,12 @@ export function parseSessionRequest(input: unknown, now = Date.now()): SessionRe
   }
   if (!Array.isArray(data.steps) || data.steps.length === 0 || data.steps.length > SESSION_LIMITS.steps) {
     throw new RobotSessionError("INVALID_REQUEST", "La séance doit contenir entre 1 et 24 étapes.");
+  }
+  for (let index = 0; index < data.steps.length; index++) {
+    const descriptor = Object.getOwnPropertyDescriptor(data.steps, String(index));
+    if (!descriptor || !("value" in descriptor)) {
+      throw new RobotSessionError("INVALID_REQUEST", "Les étapes doivent former un tableau JSON sans trou ni accesseur.");
+    }
   }
   const seen = new Set<string>();
   let total = 0;
