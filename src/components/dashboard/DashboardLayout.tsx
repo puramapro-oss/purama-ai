@@ -18,6 +18,7 @@ const ADMIN_EMAIL = SUPER_ADMIN_EMAIL;
 const navItems = [
   { tKey: 'nav.home', icon: Home, to: '/dashboard' },
   { tKey: 'nav.agents', icon: Brain, to: '/dashboard/agents' },
+  { tKey: 'nav.robots', icon: Bot, to: '/dashboard/robots' },
   { tKey: 'nav.analytics', icon: BarChart3, to: '/dashboard/analytics' },
   { tKey: 'nav.subscription', icon: CreditCard, to: '/dashboard/billing' },
   { tKey: 'nav.social', icon: Globe2, to: '/dashboard/social' },

@@ -23,6 +23,7 @@ const AgentDetail = lazy(() => import('@/pages/AgentDetail'));
 const Pricing = lazy(() => import('@/pages/Pricing'));
 const MyAgents = lazy(() => import('@/pages/MyAgents'));
 const MyConnections = lazy(() => import('@/pages/MyConnections'));
+const Robots = lazy(() => import('@/pages/Robots'));
 const OAuthCallback = lazy(() => import('@/pages/OAuthCallback'));
 const Notifications = lazy(() => import('@/pages/Notifications'));
 const NotificationSettings = lazy(() => import('@/pages/NotificationSettings'));
@@ -163,6 +164,7 @@ export default function App() {
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
             <Route path="/dashboard/agents" element={<DashboardRoute><DashboardAgents /></DashboardRoute>} />
+            <Route path="/dashboard/robots" element={<DashboardRoute><Robots /></DashboardRoute>} />
             <Route path="/dashboard/employees" element={<DashboardRoute><MyEmployees /></DashboardRoute>} />
             <Route path="/dashboard/auto-agents" element={<Navigate to="/dashboard/agents" replace />} />
             <Route path="/dashboard/analytics" element={<DashboardRoute><DashboardAnalytics /></DashboardRoute>} />

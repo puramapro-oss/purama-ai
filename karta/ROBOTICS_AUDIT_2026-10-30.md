@@ -1,5 +1,9 @@
 # Audit PURAMA / IAO robots — 30 octobre 2026
 
+Complément ultérieur : le [parcours de connexion et son aperçu](./ROBOTICS_CONNECTIONS.md)
+ajoutent une page et 12 tests navigateur locaux réussis. Les blocages navigateur
+décrits ci-dessous correspondent à l'état de cette première passe d'audit.
+
 ## Périmètre et conclusion
 
 Audit de la première brique robotique de la PR nº 5, initialement au commit

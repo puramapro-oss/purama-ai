@@ -4,8 +4,9 @@ export default defineConfig({
   testDir: './tests',
   // docuseal-e2e.spec.ts (playwright.docuseal.config.ts) et tests/karta/** (playwright.karta.config.ts)
   // ciblent la prod avec leur propre config dédiée (baseURL, env vars requises) — jamais dans la
-  // suite locale par défaut.
-  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**'],
+  // suite locale par défaut. robotics.spec.ts utilise son build local et ses services
+  // fictifs via playwright.robotics.config.ts ; ne pas le lancer contre un autre build.
+  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**', '**/robotics.spec.ts'],
   timeout: 30_000,
   retries: 2,
   fullyParallel: true,

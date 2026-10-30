@@ -101,7 +101,7 @@ export function parseSessionRequest(input: unknown, now = Date.now()): SessionRe
     if (step.required !== undefined && typeof step.required !== "boolean") {
       throw new RobotSessionError("INVALID_REQUEST", "required doit être un booléen.");
     }
-    const required = step.required ?? true;
+    const required = typeof step.required === "boolean" ? step.required : true;
     if (step.kind === "speech") {
       if ("gesture" in step || typeof step.text !== "string" || !step.text.trim()
         || step.text.length > SESSION_LIMITS.textCharacters) {

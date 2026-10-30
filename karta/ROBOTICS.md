@@ -1,5 +1,9 @@
 # PURAMA / IAO — première brique robotique
 
+Le parcours utilisateur `/dashboard/robots` et son aperçu visuel sont décrits dans
+[ROBOTICS_CONNECTIONS.md](./ROBOTICS_CONNECTIONS.md). Il complète les outils KARTA
+ci-dessous ; les connecteurs physiques restent à développer et à qualifier.
+
 Cette version ajoute à KARTA un catalogue de cibles, un validateur de séances et un
 simulateur de chronologie. **Elle ne connecte aucun robot, ne diffuse aucun son et
 ne commande aucun moteur.** Aucun SDK constructeur ni modèle de robot n'a été
