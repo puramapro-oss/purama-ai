@@ -104,6 +104,9 @@ export const TOOL_OPTIONS = [
   { value: 'generate_pdf', label: 'Générer un PDF (rapport, facture, résumé...)' },
   { value: 'web_search', label: 'Recherche web en temps réel' },
   { value: 'send_notification', label: "Notifier l'utilisateur (app/email) quand une décision est nécessaire" },
+  { value: 'robot_catalog', label: 'Consulter les robots envisagés et leurs limites de compatibilité' },
+  { value: 'robot_plan_session', label: 'Préparer une séance pour robot (aucun robot connecté)' },
+  { value: 'robot_simulate_session', label: 'Simuler une séance PURAMA (sans son ni mouvement réel)' },
 ] as const;
 
 /** Presets de planification "zéro jargon" — l'utilisateur ne voit jamais de syntaxe cron. */
