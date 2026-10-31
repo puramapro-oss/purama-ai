@@ -1,6 +1,6 @@
 # PURAMA robots — parcours de connexion et aperçu
 
-État au 30 octobre 2026. Ce lot complète le catalogue et les outils KARTA de la PR nº 5
+État au 31 octobre 2026. Ce lot complète le catalogue et les outils KARTA de la PR nº 5
 avec une page utilisable à `/dashboard/robots`, accessible depuis le menu **Robots**.
 La route utilise la protection de session existante. Ce code n'est pas encore déployé.
 
@@ -9,8 +9,10 @@ La route utilise la protection de session existante. Ce code n'est pas encore d�
 1. Choisir l'une des 11 cibles matérielles ou le simulateur.
 2. Lire la méthode d'accès, les étapes nécessaires, les capacités disponibles dans
    PURAMA et les sources constructeur.
-3. Ouvrir le simulateur, écrire un texte, choisir un geste nommé et régler les durées.
-4. Lancer l'aperçu visuel, le mettre en pause, reprendre ou l'arrêter. Un changement
+3. Ouvrir le simulateur et composer une routine : nom, textes, gestes nommés et pauses.
+   Ajouter, réordonner ou supprimer les étapes ; régler leurs durées.
+4. Exporter un fichier de routine PURAMA et le réimporter pour le réutiliser.
+5. Lancer l'aperçu visuel, le mettre en pause, reprendre ou l'arrêter. Un changement
    de modèle ou une sortie de page détruit la séance locale et libère les minuteurs.
 
 Le catalogue matériel est une liste de cibles étudiées. Aucun scan réseau, appairage,
@@ -22,9 +24,51 @@ interface documentée par un fabricant n'est jamais présentée comme un robot c
 L'aperçu réutilise le validateur et le planificateur KARTA. Il refuse les robots
 physiques, les séances invalides, les lancements concurrents et les durées hors
 contrat. La pause fige l'avancement ; la reprise ne rattrape pas le temps suspendu.
-L'expiration ou une horloge invalide arrête l'aperçu. Le passage de l'onglet en arrière-plan
+L'expiration ou une horloge invalide arrête l'aperçu. Une fin normale atteinte avant
+ou exactement à l'expiration reste une fin, même si le tick d'affichage arrive tard.
+Cette correction permet de terminer une routine de cinq minutes. Une pause qui
+repousse sa fin après l'expiration provoque toujours un arrêt.
+Le passage de l'onglet en arrière-plan
 déclenche une pause ; le retour ne reprend pas automatiquement. Les données restent
-en mémoire dans le composant : aucun enregistrement permanent de séance n'est fourni.
+en mémoire dans le composant : seul l'export explicite permet de conserver une routine.
+Une modification après un arrêt ou une fin remet l'aperçu à zéro ; elle ne reprend
+jamais l'ancienne séance. L'édition et les fichiers sont verrouillés pendant la lecture
+de l'aperçu, y compris en pause.
+
+## Routines réutilisables
+
+Le format JSON `purama.robot.routine`, version 1, est propre à PURAMA. Il contient
+uniquement `format`, `version`, `name` et `steps`. Ce n'est pas un programme moteur
+ni un standard de connexion universel. Exemple minimal :
+
+```json
+{
+  "format": "purama.robot.routine",
+  "version": 1,
+  "name": "Accueil",
+  "steps": [
+    { "id": "welcome", "kind": "speech", "text": "Bienvenue.", "durationMs": 3000, "required": true },
+    { "id": "pause", "kind": "pause", "durationMs": 2000, "required": true }
+  ]
+}
+```
+
+Le nom est limité à 120 caractères, le fichier à 512 000 octets. Le contrat commun
+limite la routine à 24 étapes et cinq minutes, avec 1 à 60 000 ms par étape et
+2 000 caractères par texte. L'éditeur conserve les durées à la milliseconde et
+les identifiants des étapes importées. Le champ `required` est conservé ; aucune
+dégradation matérielle n'est implémentée.
+
+`src/robotics/routines.ts` valide les fichiers avec le même contrat que les séances.
+Chaque lancement crée une requête avec une expiration nouvelle et une cible choisie
+explicitement ; le fichier ne transporte ni cible, ni identité, ni droit d'accès.
+Dans l'interface, la cible reste le simulateur. Toutes les cibles physiques restent
+bloquées par le planificateur et refusées par l'aperçu.
+
+Un import invalide préserve le brouillon. Une lecture de fichier en cours verrouille
+l'édition et le lancement ; son résultat est ignoré si l'utilisateur quitte l'écran.
+L'import ne lance rien. Les fichiers sont lus et préparés dans le navigateur, sans
+envoi par ce composant. Les URL de téléchargement et minuteurs sont libérés.
 
 ## Points d'accès vérifiés dans les sources
 
@@ -46,12 +90,12 @@ PURAMA fournit le logiciel envisagé pour des robots tiers ; ce lot ne vend aucu
 
 | Contrôle | Résultat |
 | --- | --- |
-| `karta/` : suite Vitest complète | PASS : 222 tests / 28 fichiers, dont les 2 000 requêtes générées de l'audit précédent |
+| `karta/` : suite Vitest complète | PASS : 273 tests / 29 fichiers, dont 51 tests ajoutés pour les routines et les 2 000 requêtes générées de l'audit précédent |
 | `karta/` : `npm run typecheck` et `npm run build` | PASS |
-| Racine : build Vite avec les paramètres de test locaux | PASS |
+| Racine : build Vite normal et avec les paramètres de test locaux | PASS |
 | ESLint sur les fichiers de ce lot | PASS |
-| Playwright : 4 parcours sur 3 tailles d'écran | PASS : 12 tests sous Chromium 153, sans relance automatique |
-| Contrôle visuel | Captures du catalogue et de l'aperçu ordinateur/mobile examinées ; absence de débordement horizontal contrôlée |
+| Playwright : 8 parcours sur 3 tailles d'écran | PASS : 24 tests sous Chromium 153, sans relance automatique |
+| Contrôle visuel | Captures du catalogue, de l'aperçu et de l'éditeur ordinateur/mobile examinées ; absence de débordement horizontal contrôlée |
 | TypeScript global du site | PARTIEL : 141 diagnostics préexistants, aucun nouveau après comparaison au commit `c20b234` |
 | Vrais téléphones, Safari, comptes constructeur et robots | NON TESTÉ |
 
@@ -71,30 +115,39 @@ services externes restent interceptés. Ce runtime n'est pas une dépendance du 
 
 La revue React couvre le chargement différé de la page, l'état isolé par composant,
 les étiquettes des champs, les messages de statut, le nettoyage des effets et les
-comportements sur écran étroit. Le validateur partagé a reçu une expression booléenne
-équivalente, compatible avec les réglages TypeScript différents du serveur et du site.
+comportements sur écran étroit. Les contrôles de texte et de geste utilisent des
+étiquettes explicites à identifiants stables. Les tests vérifient aussi le vrai fichier
+téléchargé, son réimport, l'ordre, les fractions de seconde, le refus d'un fichier
+invalide ou trop volumineux, les 24 identifiants uniques et une lecture terminée après
+la sortie de page. Le rendu des emojis n'est pas validé par ce Chromium sans polices
+emoji ; leur contenu est conservé dans les champs et les fichiers testés.
 
 ## Analyse d'impact et dépendances restantes
 
-L'analyse initiale de `DashboardLayout` signale LOW (un appelant direct, deux symboles).
-Les références d'`App` et de la liste de navigation ne sont pas toutes résolues ; elles
-ont été contrôlées dans les sources. Après réindexation, plusieurs requêtes sur le
-validateur, le guide et la fixture de test ont retourné le même ensemble très large,
-CRITICAL (81 références directes, 104 éléments, 11 parcours), avec un type de cible
-non résolu. L'interrogation par identifiant exact a échoué. Ce signal a été annoncé ;
-il n'est pas traité comme une preuve précise de dépendances ni comme un feu vert.
-La comparaison de code et les tests fournissent les vérifications complémentaires.
-Une reconstruction complète de l'index a ensuite rétabli le ciblage du validateur :
-son contrôle final retourne LOW, trois appelants directs et six symboles concernés.
-Les parcours incomplets du graphe restent une limite de l'outil.
-La détection finale retourne HIGH : 16 fichiers / 73 symboles / 7 parcours pour ce lot,
-38 fichiers / 318 symboles / 11 parcours pour toute la branche par rapport à `main`.
-Le diff correspond aux fichiers prévus ; la branche reste en revue avant toute fusion.
+Avant modification, l'analyse de `RobotRehearsal` indique LOW : un appelant direct,
+la page `Robots`. `RobotSessionPreview` indique LOW, deux appelants directs et
+quatre symboles concernés, dans le même parcours. La méthode `tick` indique LOW,
+deux appelants directs, sans parcours résolu. Les références du gestionnaire `start`
+et de la fixture `prepare` ne sont pas résolues par le graphe ; leur utilisation dans
+le bouton et les tests a été contrôlée dans les sources. Une absence d'arête ne prouve
+pas l'absence d'utilisation.
 
-L'audit des dépendances relancé après ce lot conserve 14 alertes dans le site ; ses 141 erreurs
-TypeScript globales demandent aussi un chantier distinct. Les dépendances KARTA
-restent sans alerte déclarée, développement compris. Aucun fichier de dépendances du produit
-n'est changé par ce lot.
+La détection des changements indique HIGH : 9 fichiers / 86 symboles / 8 parcours
+pour les routines ; CRITICAL : 42 fichiers / 395 symboles / 16 parcours pour toute la
+branche par rapport à `main`. Ces résultats ont été signalés. Le diff correspond aux
+fichiers prévus. L'index annonce des parcours tronqués ; son résultat ne constitue
+pas une certification. La branche reste en revue, sans fusion ni déploiement.
+
+L'audit des dépendances du 31 octobre remonte **26 alertes dans le site** : aucune
+critique, deux élevées, 23 modérées et une faible. Le précédent résultat de 14 alertes
+n'est donc plus le résultat actuel. Les fichiers de dépendances sont inchangés par
+ce lot. Le nouvel avis [minimatch GHSA-g3hv-75wg-m249](https://github.com/isaacs/minimatch/security/advisories/GHSA-g3hv-75wg-m249)
+annonce un correctif en 11.0.1 ; `npm audit` signale le verrou actuel en 10.2.5 et
+plusieurs dépendants, notamment ESLint. La version corrigée sort de l'override majeur
+actuel ; sa migration et les autres mises à niveau restent à qualifier.
+Les 141 diagnostics TypeScript préexistants sont identiques après normalisation des
+numéros de ligne. Les dépendances KARTA restent sans alerte déclarée, développement
+compris. Ce lot ne résout donc pas l'audit global du site.
 
 Pour réaliser une première connexion matérielle, il reste à choisir le modèle et
 le firmware exacts, obtenir les accès du propriétaire, développer le connecteur et
