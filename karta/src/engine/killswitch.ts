@@ -4,9 +4,10 @@ let cachedUntil = 0;
 let cachedValue = false;
 const CACHE_MS = 5_000; // évite de spammer la DB à chaque cycle d'agent, tout en restant quasi-instantané
 
-/** Kill switch global — arrête TOUS les agents de TOUS les users. Vérifié avant chaque cycle. */
-export async function isGlobalKillSwitchActive(): Promise<boolean> {
-  if (Date.now() < cachedUntil) return cachedValue;
+/** Software dispatch gate, not a physical emergency stop. Action boundaries must
+ * bypass the cache so another worker's stop is not hidden for five seconds. */
+export async function isGlobalKillSwitchActive(forceRefresh = false): Promise<boolean> {
+  if (!forceRefresh && Date.now() < cachedUntil) return cachedValue;
 
   const { data, error } = await supabase.from("karta_global_state").select("kill_switch").eq("id", "global").single();
 

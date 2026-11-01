@@ -92,9 +92,21 @@ instance. La capacité par défaut est 100 reçus. L'expiration libère le cache
 n'est ni durable, ni distribué, ni adapté à l'exécution physique.
 
 L'API locale du simulateur accepte un `AbortSignal` et arrête la simulation entre
-deux étapes logiques ; un reçu annulé reste annulé lors d'un rejeu. KARTA ne transmet
-pas actuellement de signal d'annulation d'outil. Aucun arrêt d'urgence matériel
-n'est implémenté ou revendiqué.
+deux étapes logiques ; un reçu annulé reste annulé lors d'un rejeu. Le contrat
+d'exécution KARTA transmet désormais ce signal au simulateur. Le délai maximal
+d'un outil déclenche une demande d'annulation et interrompt le cycle avant l'outil
+suivant. Un adaptateur qui ignore le signal peut continuer : son arrêt reste non
+confirmé et le cycle ne doit pas être rejoué automatiquement. Aucun arrêt d'urgence
+matériel n'est implémenté ou revendiqué.
+
+Les permissions sont relues avant chaque outil et lors de la résolution d'une
+approbation, avec une lecture du stop global qui contourne le cache. Désactiver
+l'agent, activer son arrêt, changer le mode simulation ou réduire l'autonomie
+interrompt le cycle en cours à la prochaine frontière d'outil. Une augmentation
+d'autonomie n'élargit pas les droits du cycle déjà lancé. Ces contrôles logiciels
+ne rendent pas la lecture des droits et une action distante atomiques ; une
+révocation pendant une opération déjà lancée exige encore un mécanisme d'arrêt
+effectif propre à l'adaptateur et au contrôleur local.
 
 ## Exécution locale
 

@@ -1,6 +1,8 @@
 import { supabase } from "../db/supabase.js";
 import { resolveAgentDefinition } from "./resolveDefinition.js";
-import { executeToolStrict } from "./tool-result.js";
+import { executeToolStrict, TimeoutError, withTimeout } from "./tool-result.js";
+import { isRunnable, loadAgentState } from "./autonomy.js";
+import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { withRunSerialization } from "./run-lock.js";
 import type { AgentType, ToolCallRecord } from "./types.js";
 
@@ -108,6 +110,20 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
     const definition = await resolveAgentDefinition(pending.agent_type as AgentType);
     const tool = definition.tools.find((t) => t.name === pending.tool_name);
     if (!tool) throw new Error(`Outil "${pending.tool_name}" introuvable pour cet agent`);
+
+    // An old pending action must not bypass a newly disabled agent, simulation
+    // mode, or global stop. Approval grants this action, not override authority.
+    const state = await withTimeout(
+      loadAgentState(pending.user_id, pending.agent_type as AgentType), "refresh approval permissions", 30_000,
+      (label, ms) => new TimeoutError(label, ms)
+    );
+    const runnable = isRunnable(state);
+    if (!runnable.ok) throw new Error(`Approbation bloquée : ${runnable.reason}`);
+    if (state.simulationMode) throw new Error("Approbation bloquée : mode simulation actif");
+    if (await withTimeout(
+      isGlobalKillSwitchActive(true), "refresh approval global stop", 30_000,
+      (label, ms) => new TimeoutError(label, ms)
+    )) throw new Error("Approbation bloquée : kill switch global actif");
 
     // Contrat complet partagé avec le cycle (executeToolStrict, tool-result.ts) : un outil qui
     // retourne {ok:false}/false sans lever est un ÉCHEC d'exécution — avant ce fix il était

@@ -1,5 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+const authorization = vi.hoisted(() => ({ enabled: true, kill: false, simulation: false, globalStop: false }));
+vi.mock("../src/engine/autonomy.js", async (original) => ({
+  ...await original<typeof import("../src/engine/autonomy.js")>(),
+  loadAgentState: async () => ({ userId: "user-1", agentType: "compta", isEnabled: authorization.enabled,
+    autonomyLevel: 1, killSwitch: authorization.kill, simulationMode: authorization.simulation }),
+}));
+vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => authorization.globalStop }));
+beforeEach(() => Object.assign(authorization, { enabled: true, kill: false, simulation: false, globalStop: false }));
+
 const state = {
   pending: null as Record<string, unknown> | null,
   /** Filtres eq/lt + patch capturés par le DERNIER update karta_pending_actions. */
@@ -152,7 +161,9 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     const result = await resolvePendingAction("pending-1", "approve");
 
     expect(result.ok).toBe(true);
-    expect(executeMock).toHaveBeenCalledWith({ table: "compta_transactions" }, { userId: "user-1", agentType: "compta", mode: "live" });
+    expect(executeMock).toHaveBeenCalledWith({ table: "compta_transactions" }, {
+      userId: "user-1", agentType: "compta", mode: "live", signal: expect.any(AbortSignal),
+    });
     expect(state.pending?.status).toBe("executed");
     expect(state.run?.status).toBe("success");
     // Le patch du journal parent passe par le verrou de sérialisation du run (sous-lot 8)
@@ -193,6 +204,19 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     expect(executeMock).not.toHaveBeenCalled();
     expect(state.pending?.status).toBe("rejected");
     expect(state.run?.status).toBe("success");
+  });
+
+  it.each([
+    ["agent désactivé", { enabled: false }],
+    ["arrêt de l'agent", { kill: true }],
+    ["simulation", { simulation: true }],
+    ["arrêt global", { globalStop: true }],
+  ])("une ancienne approbation ne contourne pas %s", async (_label, change) => {
+    Object.assign(authorization, change);
+    await resolvePendingAction("pending-1", "approve");
+    expect(executeMock).not.toHaveBeenCalled();
+    expect(state.pending?.status).toBe("failed");
+    expect(state.pending?.result_summary).toContain("bloquée");
   });
 
   it("refuse de retraiter une action déjà résolue (claim atomique perdant → message précis)", async () => {

@@ -115,6 +115,9 @@ export interface ToolExecutionContext {
   userId: string;
   agentType: AgentType;
   mode: "simulation" | "live";
+  /** Cooperative cancellation. An adapter must propagate/check this signal;
+   * an aborted signal alone never proves that an external action has stopped. */
+  signal?: AbortSignal;
 }
 
 export interface ToolCallRecord {
