@@ -1,0 +1,633 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "timezone": "Europe/Paris",
+  "scope": "PURA widget and public demo lifecycle, useful context, database ownership and support escalation; isolated validation only",
+  "baseBranch": "codex/iao-stream-completion-audit-20261101",
+  "baseCommit": "edd93584949803979a287b699728e1168fc242d8",
+  "node": "v24.22.1",
+  "karta": {
+    "numTotalTests": 412,
+    "numPassedTests": 412,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "newKartaSuites": {
+    "chatEscalation.test.ts": {
+      "passed": 49
+    },
+    "chatHistoryIsolation.test.ts": {
+      "passed": 39
+    },
+    "chatRequestScope.test.ts": {
+      "passed": 17
+    },
+    "publicChatAdmission.test.ts": {
+      "passed": 11
+    }
+  },
+  "browser": {
+    "runner": "Playwright 1.59.1, Chromium 153 from @sparticuz/chromium; local fixture, React StrictMode",
+    "stats": {
+      "startTime": "2026-11-01T23:36:14.295Z",
+      "duration": 22595.387,
+      "expected": 14,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "tests": [
+      {
+        "title": "guest chat uses one model request, no history database calls and no welcome in model context",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 2784
+          }
+        ]
+      },
+      {
+        "title": "two submits in the same browser task admit one request",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 805
+          }
+        ]
+      },
+      {
+        "title": "stop aborts the stream, removes partial output and restores the editable request",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1370
+          }
+        ]
+      },
+      {
+        "title": "stop while saving a completed answer keeps the answer and does not resend",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1420
+          }
+        ]
+      },
+      {
+        "title": "logout clears private content and subsequent guest requests never persist it",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1443
+          }
+        ]
+      },
+      {
+        "title": "a stale response cannot populate a new conversation or unlock a newer request",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1549
+          }
+        ]
+      },
+      {
+        "title": "account change during conversation creation prevents a subsequent model call",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1248
+          }
+        ]
+      },
+      {
+        "title": "failure to save the user message stops before model inference",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1195
+          }
+        ]
+      },
+      {
+        "title": "failure to save the answer preserves it without another model request",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1205
+          }
+        ]
+      },
+      {
+        "title": "errors stay out of model context and real answers starting with Bienvenue stay in",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1262
+          }
+        ]
+      },
+      {
+        "title": "history uses a single bounded query and stale history messages cannot replace a new chat",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1439
+          }
+        ]
+      },
+      {
+        "title": "closing the widget aborts its pending response",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1151
+          }
+        ]
+      },
+      {
+        "title": "loading a conversation and submitting in the same task cannot overlap",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1312
+          }
+        ]
+      },
+      {
+        "title": "mobile controls remain visible and the demo can be stopped",
+        "status": "expected",
+        "runs": [
+          {
+            "status": "passed",
+            "durationMs": 1713
+          }
+        ]
+      }
+    ],
+    "visualReview": {
+      "stats": {
+        "startTime": "2026-11-01T23:36:45.103Z",
+        "duration": 7474.289,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "viewports": [
+        "1280x720",
+        "375x812"
+      ],
+      "result": "Reviewed screenshots after animation completion: readable messages, visible controls, no horizontal overflow in these fixtures."
+    }
+  },
+  "regressionBeforeFix": {
+    "case": "loading history and submitting synchronously before React renders",
+    "stats": {
+      "startTime": "2026-11-01T23:35:57.534Z",
+      "duration": 8310.84,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "observed": "The reply used previous context and replaced the loading state. The same test passes after sharing one synchronous interaction slot."
+  },
+  "checks": [
+    {
+      "cwd": "karta",
+      "command": "npm test -- --reporter=json --outputFile=<report>",
+      "exit": 0
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run typecheck",
+      "exit": 0
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run build",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "npm run build",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "npx eslint <11 changed product/unit-test files>",
+      "exit": 0,
+      "warnings": 0
+    },
+    {
+      "cwd": ".",
+      "command": "npx playwright test --config tests/chat/playwright.config.ts --reporter=json",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "git diff --cached --check",
+      "exit": 0
+    }
+  ],
+  "frontendTypes": {
+    "status": "BLOCKED_BY_BASELINE",
+    "command": "npx tsc --noEmit -p tsconfig.app.json",
+    "baselineCommit": "edd93584949803979a287b699728e1168fc242d8",
+    "baselineExit": 2,
+    "currentExit": 2,
+    "baselineDiagnostics": 103,
+    "currentDiagnostics": 103,
+    "newOrRemovedDiagnosticLocationsAndCodes": 0,
+    "comparison": "Exact multiset of file, line, column and TS code; union-type pretty-print ordering differs.",
+    "diagnosticLocationsAndCodes": [
+      "src/App.tsx(133,20): error TS2322:",
+      "src/hooks/useDailyGift.ts(50,15): error TS2769:",
+      "src/hooks/useDailyGift.ts(74,15): error TS2769:",
+      "src/hooks/useFaq.ts(9,15): error TS2769:",
+      "src/hooks/useFaq.ts(22,37): error TS2589:",
+      "src/hooks/useFaq.ts(23,15): error TS2769:",
+      "src/hooks/useLottery.ts(9,37): error TS2589:",
+      "src/hooks/useLottery.ts(10,15): error TS2769:",
+      "src/hooks/useLottery.ts(29,15): error TS2769:",
+      "src/hooks/useLottery.ts(51,15): error TS2769:",
+      "src/hooks/useLottery.ts(67,37): error TS2589:",
+      "src/hooks/useLottery.ts(68,15): error TS2769:",
+      "src/hooks/usePoints.ts(13,15): error TS2769:",
+      "src/hooks/usePoints.ts(31,15): error TS2769:",
+      "src/hooks/usePoints.ts(47,37): error TS2589:",
+      "src/hooks/usePoints.ts(48,15): error TS2769:",
+      "src/hooks/usePoints.ts(67,15): error TS2769:",
+      "src/hooks/usePoints.ts(91,15): error TS2769:",
+      "src/hooks/usePublicStats.ts(11,50): error TS2345:",
+      "src/hooks/useSubscription.ts(45,7): error TS2739:",
+      "src/hooks/useWallet.ts(12,37): error TS2589:",
+      "src/hooks/useWallet.ts(13,15): error TS2769:",
+      "src/hooks/useWallet.ts(31,15): error TS2769:",
+      "src/hooks/useWallet.ts(50,15): error TS2769:",
+      "src/hooks/useWallet.ts(71,15): error TS2769:",
+      "src/lib/opentimestamps.ts(15,1): error TS2578:",
+      "src/lib/stripe-connect.ts(61,11): error TS2769:",
+      "src/lib/stripe-connect.ts(67,32): error TS2339:",
+      "src/lib/stripe-connect.ts(68,27): error TS2339:",
+      "src/lib/stripe-connect.ts(69,27): error TS2339:",
+      "src/pages/Aide.tsx(31,70): error TS2339:",
+      "src/pages/Aide.tsx(36,39): error TS2339:",
+      "src/pages/Aide.tsx(42,13): error TS2339:",
+      "src/pages/Aide.tsx(43,13): error TS2339:",
+      "src/pages/Aide.tsx(44,13): error TS2339:",
+      "src/pages/Aide.tsx(113,52): error TS2339:",
+      "src/pages/Aide.tsx(113,82): error TS2339:",
+      "src/pages/Aide.tsx(123,38): error TS2339:",
+      "src/pages/Aide.tsx(142,101): error TS2339:",
+      "src/pages/Boutique.tsx(34,27): error TS2339:",
+      "src/pages/Boutique.tsx(35,28): error TS2339:",
+      "src/pages/Boutique.tsx(36,30): error TS2339:",
+      "src/pages/Boutique.tsx(39,53): error TS2339:",
+      "src/pages/Boutique.tsx(114,36): error TS2339:",
+      "src/pages/Boutique.tsx(117,71): error TS2339:",
+      "src/pages/Boutique.tsx(118,70): error TS2339:",
+      "src/pages/Boutique.tsx(121,29): error TS2339:",
+      "src/pages/Boutique.tsx(125,67): error TS2339:",
+      "src/pages/Boutique.tsx(126,48): error TS2339:",
+      "src/pages/Boutique.tsx(153,78): error TS2339:",
+      "src/pages/Boutique.tsx(153,96): error TS2339:",
+      "src/pages/Boutique.tsx(154,72): error TS2339:",
+      "src/pages/Boutique.tsx(156,74): error TS2339:",
+      "src/pages/Boutique.tsx(157,27): error TS2339:",
+      "src/pages/Boutique.tsx(157,53): error TS2339:",
+      "src/pages/DailyGift.tsx(17,30): error TS2339:",
+      "src/pages/DailyGift.tsx(66,74): error TS2339:",
+      "src/pages/DailyGift.tsx(142,55): error TS2339:",
+      "src/pages/DashboardBilling.tsx(46,15): error TS2339:",
+      "src/pages/DashboardBilling.tsx(47,35): error TS2339:",
+      "src/pages/DashboardOverview.tsx(70,40): error TS2339:",
+      "src/pages/DashboardOverview.tsx(71,33): error TS2339:",
+      "src/pages/DashboardOverview.tsx(389,45): error TS2339:",
+      "src/pages/DashboardOverview.tsx(394,58): error TS2339:",
+      "src/pages/DashboardOverview.tsx(394,89): error TS2339:",
+      "src/pages/DashboardOverview.tsx(396,30): error TS2339:",
+      "src/pages/DashboardOverview.tsx(399,75): error TS2339:",
+      "src/pages/DashboardOverview.tsx(400,84): error TS2339:",
+      "src/pages/Fiscal.tsx(46,23): error TS2769:",
+      "src/pages/Fiscal.tsx(49,14): error TS2339:",
+      "src/pages/Fiscal.tsx(49,41): error TS2339:",
+      "src/pages/Fiscal.tsx(50,14): error TS2339:",
+      "src/pages/Fiscal.tsx(50,32): error TS2339:",
+      "src/pages/Fiscal.tsx(51,14): error TS2339:",
+      "src/pages/Fiscal.tsx(51,45): error TS2339:",
+      "src/pages/Fiscal.tsx(52,14): error TS2339:",
+      "src/pages/Fiscal.tsx(52,55): error TS2339:",
+      "src/pages/Fiscal.tsx(74,43): error TS2769:",
+      "src/pages/Pricing.tsx(45,44): error TS2345:",
+      "src/pages/Reglement.tsx(45,15): error TS2769:",
+      "src/pages/Reglement.tsx(49,26): error TS2352:",
+      "src/pages/Tirage.tsx(40,33): error TS2339:",
+      "src/pages/Tirage.tsx(41,35): error TS2339:",
+      "src/pages/Tirage.tsx(62,31): error TS2339:",
+      "src/pages/Tirage.tsx(64,95): error TS2339:",
+      "src/pages/Tirage.tsx(145,45): error TS2339:",
+      "src/pages/Tirage.tsx(148,36): error TS2339:",
+      "src/pages/Wallet.tsx(28,34): error TS2339:",
+      "src/pages/Wallet.tsx(29,38): error TS2339:",
+      "src/pages/Wallet.tsx(30,41): error TS2339:",
+      "src/pages/Wallet.tsx(167,86): error TS2339:",
+      "src/pages/Wallet.tsx(169,30): error TS2339:",
+      "src/pages/Wallet.tsx(169,63): error TS2339:",
+      "src/pages/Wallet.tsx(173,36): error TS2339:",
+      "src/pages/Wallet.tsx(200,60): error TS2339:",
+      "src/pages/Wallet.tsx(201,29): error TS2339:",
+      "src/pages/Wallet.tsx(208,80): error TS2339:",
+      "src/pages/Wallet.tsx(208,98): error TS2339:",
+      "src/pages/Wallet.tsx(210,31): error TS2339:",
+      "src/pages/Wallet.tsx(210,63): error TS2339:",
+      "src/pages/Wallet.tsx(214,66): error TS2339:",
+      "src/pages/Wallet.tsx(215,27): error TS2339:",
+      "src/pages/Wallet.tsx(215,77): error TS2339:"
+    ]
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "indexCommit": "edd93584949803979a287b699728e1168fc242d8",
+    "preEditImpact": {
+      "ChatbotWidget": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget",
+          "name": "ChatbotWidget",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        }
+      },
+      "LiveDemoSection": {
+        "target": {
+          "id": "Function:src/components/LiveDemoSection.tsx:LiveDemoSection",
+          "name": "LiveDemoSection",
+          "type": "Function",
+          "filePath": "src/components/LiveDemoSection.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        }
+      },
+      "chatbot-route": {
+        "target": {
+          "id": "File:supabase/functions/chatbot/index.ts",
+          "name": "index.ts",
+          "type": "File",
+          "filePath": "supabase/functions/chatbot/index.ts"
+        },
+        "risk": "UNKNOWN",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+      },
+      "createOrGetConversation": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.createOrGetConversation@145:2",
+          "name": "createOrGetConversation",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        }
+      },
+      "demo-route": {
+        "target": {
+          "id": "File:supabase/functions/ai-demo/index.ts",
+          "name": "index.ts",
+          "type": "File",
+          "filePath": "supabase/functions/ai-demo/index.ts"
+        },
+        "risk": "UNKNOWN",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+      },
+      "handleEscalate": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.handleEscalate@277:2",
+          "name": "handleEscalate",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "UNKNOWN",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+      },
+      "handleSend": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.handleSend@266:2",
+          "name": "handleSend",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 2,
+          "modules_affected": 2
+        }
+      },
+      "handleSuggestionClick": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.handleSuggestionClick@273:2",
+          "name": "handleSuggestionClick",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 2,
+          "modules_affected": 2
+        }
+      },
+      "loadConversation": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.loadConversation@321:2",
+          "name": "loadConversation",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 2,
+          "modules_affected": 2
+        }
+      },
+      "loadConversationHistory": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.loadConversationHistory@115:2",
+          "name": "loadConversationHistory",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 2,
+          "modules_affected": 2
+        }
+      },
+      "runDemo": {
+        "target": {
+          "id": "Function:src/components/LiveDemoSection.tsx:LiveDemoSection.runDemo@30:2",
+          "name": "runDemo",
+          "type": "Function",
+          "filePath": "src/components/LiveDemoSection.tsx"
+        },
+        "risk": "UNKNOWN",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+      },
+      "saveMessage": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.saveMessage@163:2",
+          "name": "saveMessage",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        }
+      },
+      "sendMessage": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.sendMessage@172:2",
+          "name": "sendMessage",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 2,
+          "processes_affected": 2,
+          "modules_affected": 2
+        }
+      },
+      "startNewConversation": {
+        "target": {
+          "id": "Function:src/components/ChatbotWidget.tsx:ChatbotWidget.startNewConversation@315:2",
+          "name": "startNewConversation",
+          "type": "Function",
+          "filePath": "src/components/ChatbotWidget.tsx"
+        },
+        "risk": "UNKNOWN",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+      }
+    },
+    "stagedReport": "Changes: 21 files, 17 symbols\nAffected processes: 1\nRisk level: medium\n\nChanged symbols:\n  Interface Message → src/components/ChatbotWidget.tsx\n  Const WELCOME_MESSAGES → src/components/ChatbotWidget.tsx\n  Function ChatbotWidget → src/components/ChatbotWidget.tsx\n  Function getWelcomeMessage → src/components/ChatbotWidget.tsx\n  Property id → src/components/ChatbotWidget.tsx\n  Function loadConversationHistory → src/components/ChatbotWidget.tsx\n  Function createOrGetConversation → src/components/ChatbotWidget.tsx\n  Function saveMessage → src/components/ChatbotWidget.tsx\n  Function sendMessage → src/components/ChatbotWidget.tsx\n  Function handleSend → src/components/ChatbotWidget.tsx\n  Function handleSuggestionClick → src/components/ChatbotWidget.tsx\n  Function handleEscalate → src/components/ChatbotWidget.tsx\n  Function loadConversation → src/components/ChatbotWidget.tsx\n  Function LiveDemoSection → src/components/LiveDemoSection.tsx\n  Function runDemo → src/components/LiveDemoSection.tsx\n... and 2 more\n\nAffected execution flows:\n  • ChatbotWidget → Cn (4 steps) — changed: ChatbotWidget\n",
+    "compareMainReport": "Changes: 206 files, 653 symbols\nAffected processes: 166\nRisk level: critical\n\nChanged symbols:\n  Section ERRORS.md — Purama AI → ERRORS.md\n  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md\n  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md\n  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md\n  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md\n  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md\n  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md\n  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md\n  Section Correctifs IAO / KARTA — 19 septembre 2026 → IAO-SAFETY-REVIEW.md\n  Section Corrections → IAO-SAFETY-REVIEW.md\n  Section Validation exécutée → IAO-SAFETY-REVIEW.md\n  Section Intégration → IAO-SAFETY-REVIEW.md\n  Section Points restant ouverts → IAO-SAFETY-REVIEW.md\n  Section Références techniques → IAO-SAFETY-REVIEW.md\n  Section Complément : campagne générative et comparaison des modèles → IAO-SAFETY-REVIEW.md\n... and 638 more\n\nAffected execution flows:\n  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized\n  • CreateChefMission → UniqueStrings (6 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings, createChefMission\n  • CreateChefMission → NonEmpty (5 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty, createChefMission\n  • CreateChefMission → Visit (5 steps) — changed: hashChefBrief, normalizeChefBrief, visit, validateChefBrief, createChefMission\n  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, assertRpc, runChefWorkerCycle\n  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, rpc, runChefWorkerCycle\n  • ResolvePendingAction → ResolveCustomAgentTools (4 steps) — changed: resolvePendingAction\n  • ResolvePendingAction → Result (4 steps) — changed: result, resolvePendingAction\n  • DashboardScreen → Result (4 steps) — changed: result\n  • App → GetLevelFromXp (4 steps) — changed: SpiritualLayer, App, useAwakening\n... and 156 more\n",
+    "limits": "Callbacks and SQL/HTTP entry points have unresolved graph edges. Their consumers were manually traced and tested. No PDG/taint proof. Global main comparison includes unrelated previous branch work and must not be merged as this patch."
+  },
+  "decisions": [
+    "One synchronous interaction slot for response generation and conversation loading; independent bounded history list.",
+    "Abort and invalidate on stop, close, account change, new conversation and unmount; stale completion cannot unlock newer work.",
+    "Only actual user/assistant text enters model context; input limits shared by browser and public endpoint; no silent truncation.",
+    "Guest chat stays in page memory; authenticated database history is owner-only; no anonymous row creation.",
+    "Daily demo quota must be explicitly true before inference. Caller session IDs are not rate-limit identities.",
+    "Support requires verified account ownership, stored history and provider acceptance plus database confirmation; client-supplied email/history ignored.",
+    "Do not claim current prices, unlimited access, automatic external actions or measured savings from these tests."
+  ],
+  "limits": [
+    "Public chatbot and support rate limits remain per process; no distributed chatbot cost ledger or server-side idempotency for model calls.",
+    "Cancelling cannot undo writes or provider work already accepted; it does not promise a zero charge.",
+    "A failed/cancelled user message may remain in stored/local history; automatic retry/deduplication across requests is not implemented.",
+    "Owner-write access does not establish model provenance of assistant rows.",
+    "Support mail and confirmation DB update are not atomic. Resend idempotency is only 24 hours and requires identical payload; no automatic retry.",
+    "The migration preserves existing rows and rejects unreviewed policies, incomplete pairs or absent tables. Real schema compatibility and locking impact are unverified.",
+    "Whole frontend TypeScript is not passing: 103 baseline diagnostics remain. Fixture auth file has one Fast Refresh lint warning only.",
+    "The separate OmniRoute candidate pack 0.4.0 remains unconnected to production runtime."
+  ],
+  "notTested": [
+    "Real provider API quality or billing",
+    "Deno/Supabase deployment runtime and live RLS",
+    "Real email delivery",
+    "Real OAuth sessions",
+    "Physical phones/tablets and soft keyboards",
+    "Production behavior, performance/load and distributed budget admission"
+  ],
+  "sources": [
+    "https://resend.com/docs/dashboard/emails/idempotency-keys"
+  ],
+  "sourceSha256": {
+    "karta/test/chatEscalation.test.ts": "2fb4a5fbfecd6339c7c516ba22bec45fd649d92e89df63d8b4b660859b473604",
+    "karta/test/chatHistoryIsolation.test.ts": "29857b729f348fed1813d5096615afe23399faa60b36840e997cdd22fb5c898a",
+    "karta/test/chatRequestScope.test.ts": "2fdfb39e67512bec0c387128199c3262a0984e9f0b93523ccf16bb3a5b58f9fe",
+    "karta/test/publicChatAdmission.test.ts": "1720db0ba1b8f29d47809f5dcf890a5679f098bc5c14b3b76edb73d99f01d363",
+    "src/components/ChatbotWidget.tsx": "f20ffea1d8379b4d200d401ba754e5a3f4e1945d075689ba2d635480951275f8",
+    "src/components/LiveDemoSection.tsx": "aa5fc79e22111664e5d7c8a24d2bcf35644f76b35b05d07ef86e39a349c146e0",
+    "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+    "supabase/functions/_shared/chat-input.ts": "fc658bf4880b7c8f1b8f6c14a327b085473f959399b5256cac2c0442b8ea8cbd",
+    "supabase/functions/ai-demo/index.ts": "506770c56c5cfbe3f6488760d4d992df39830817caf0ffc29ee74e617a26014b",
+    "supabase/functions/chatbot/index.ts": "3d1c4c9744bf488c8c5b289f4127c00d901b5a5f45186c10f397b331f3804ac9",
+    "supabase/functions/escalate-chat/index.ts": "b66ff8659f216f1fa28652c8a2913cbbd5a2065f9fba3a056841eab3af13b058",
+    "supabase/migrations/20261102001000_chat_history_owner_only.sql": "b2aec379647b5807f1695bf275c3e55c119e4858f768326e58237b13522c230e",
+    "tests/chat/auth.tsx": "34854ab6f040de592fe3d93533536f11a82f945c2c013f2d253cf2955ea26320",
+    "tests/chat/harness.tsx": "70ee54b1fd4bde60fc252f2eae9de4df0f6eaac0dfeb97d7911551737e0ce3e8",
+    "tests/chat/index.html": "1380645aeb95e3bcbc6603b0791c4b3e03cce45175dabf7f3cf0c862cc10cf17",
+    "tests/chat/lifecycle.spec.ts": "d973ca76d6fc91037b55eddcd13d7bc69cdd37986180d885af42cf9a25caa341",
+    "tests/chat/playwright.config.ts": "1c27ade6f4bf72f6489020d46066bd678f3803f73d2c025322b9437e137a6b3f",
+    "tests/chat/transport.ts": "e4b06fca067b8d309c194ece97919a6e6b898458c06d40c9499776720d8262bf",
+    "tests/chat/vite.config.ts": "42648f1ddc09e4d7c0ffe17a7ddc7e1f2d0744bef0737674b399e23ee4f241e2"
+  },
+  "rawReportSha256": {
+    "simplify_karta_full.json": "56c61b7a2049807ebfcf402c23cbe6599134cd5ce67b628fb1ffc1fa2fa2ed70",
+    "simplify_browser_results.json": "5bbab8e28e314b30f97acecb9ebc5d4d691defd41699d07a1624cc4c7cb7e458",
+    "simplify_browser_race_before.json": "a05ef854a6f86167b92d2f13871faf878a46b4ff06fdd38d27de051b5da641cc",
+    "simplify_browser_visual.json": "a37a2ba08e9d05d3d60a7f8fdcc5f9a2b370528c422c6d2756f4b31d9d06a2b7",
+    "simplify_frontend_types_baseline.log": "9e886fe03a6a8241ac342394411c40571fb0af1b6dd9c4c984765cc7ccf1249d",
+    "simplify_frontend_types_final.log": "bbf5f320a1890d4b1daa757cf158bef158f667beab58945c868bed75bca3c0dc"
+  }
+}

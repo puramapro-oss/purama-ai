@@ -47,7 +47,7 @@ serve(async (req) => {
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const rateLimitResult = rateLimit(`ai-demo:${clientIp}`, 5, 3600000);
     if (!rateLimitResult.allowed) {
-      return json({ error: "Limite d'essais gratuits atteinte. Réessaie dans 1 heure, ou crée un compte pour un accès illimité." }, 429);
+      return json({ error: "Limite de démonstration atteinte. Réessayez plus tard." }, 429);
     }
 
     const { situation } = await req.json();
@@ -63,12 +63,15 @@ serve(async (req) => {
     const { data: withinDailyQuota, error: quotaError } = await supabaseAdmin.rpc(
       "increment_demo_quota",
       { p_max_per_day: MAX_DEMO_CALLS_PER_DAY }
-    );
-    if (quotaError) {
-      console.error("[ai-demo] increment_demo_quota failed:", quotaError.message);
-    } else if (withinDailyQuota === false) {
-      return json({ error: "Démo indisponible pour aujourd'hui (quota gratuit atteint). Crée un compte pour un accès illimité." }, 429);
+    ).abortSignal(req.signal);
+    if (quotaError || withinDailyQuota !== true) {
+      if (quotaError) console.error("[ai-demo] quota check failed");
+      return json({ error: withinDailyQuota === false && !quotaError
+        ? "Le quota de démonstration est atteint pour aujourd'hui."
+        : "La démonstration est momentanément indisponible." },
+        withinDailyQuota === false && !quotaError ? 429 : 503);
     }
+    req.signal.throwIfAborted();
 
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!ANTHROPIC_API_KEY) {

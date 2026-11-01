@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Mail, Loader2, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Loader2, ArrowRight, Sparkles, Square } from 'lucide-react';
 import { parseSSEStream } from '@/lib/sse';
+import { createRequestScope } from '@/lib/request-scope';
 
 /**
  * Démo publique sans inscription (brief "PRICING & OFFRE IRRÉSISTIBLE") : un vrai appel Claude via
@@ -22,14 +23,25 @@ const EXAMPLES = [
 const RENDER_FLUSH_EVERY_CHARS = 20;
 
 export function LiveDemoSection() {
+  const [requests] = useState(createRequestScope);
   const [situation, setSituation] = useState('');
   const [result, setResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lastFlushedLength = useRef(0);
+  useEffect(() => () => requests.invalidate(), [requests]);
+
+  const stopDemo = () => {
+    requests.cancel('demo');
+    setIsLoading(false);
+    setResult('');
+    setError('Rédaction arrêtée. Vous pouvez modifier votre demande.');
+  };
 
   const runDemo = async () => {
-    if (!situation.trim() || isLoading) return;
+    if (situation.trim().length < MIN_LENGTH) return;
+    const lease = requests.begin('demo');
+    if (!lease) return;
     setIsLoading(true);
     setError(null);
     setResult('');
@@ -37,7 +49,7 @@ export function LiveDemoSection() {
 
     try {
       const response = await fetch(AI_DEMO_FUNCTION_URL, {
-        method: 'POST',
+        method: 'POST', signal: lease.signal,
         headers: {
           'Content-Type': 'application/json',
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -45,26 +57,28 @@ export function LiveDemoSection() {
         body: JSON.stringify({ situation: situation.trim() }),
       });
 
+      if (!lease.current()) { await response.body?.cancel(); return; }
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Erreur ${response.status}`);
       }
 
       const content = await parseSSEStream(response, (full) => {
-        if (full.length - lastFlushedLength.current >= RENDER_FLUSH_EVERY_CHARS) {
+        if (lease.current() && full.length - lastFlushedLength.current >= RENDER_FLUSH_EVERY_CHARS) {
           lastFlushedLength.current = full.length;
           setResult(full);
         }
       });
+      if (!lease.current()) return;
       setResult(content);
 
       if (!content.trim()) {
         setError("L'IA n'a pas pu générer de réponse. Réessaie dans un instant.");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur inconnue');
+      if (lease.current()) setError(err instanceof Error ? err.message : 'Erreur inconnue');
     } finally {
-      setIsLoading(false);
+      if (lease.finish()) setIsLoading(false);
     }
   };
 
@@ -105,14 +119,16 @@ export function LiveDemoSection() {
               disabled={isLoading}
               className="flex-1 bg-secondary/50 border border-accent-cyan/20 rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 resize-none focus:outline-none focus:border-accent-cyan/50 transition-colors disabled:opacity-60"
             />
-            <button
+            {isLoading ? <button onClick={stopDemo} className="btn-primary flex items-center gap-2 px-6 py-3 h-fit self-end" aria-label="Arrêter la rédaction">
+              <Square className="w-4 h-4" />Arrêter
+            </button> : <button
               onClick={runDemo}
               disabled={isLoading || situation.trim().length < MIN_LENGTH}
               className="btn-primary flex items-center justify-center gap-2 px-6 py-3 h-fit self-end disabled:opacity-50 whitespace-nowrap"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
               {isLoading ? 'Rédaction...' : 'Générer'}
-            </button>
+            </button>}
           </div>
 
           {/* Examples */}
@@ -131,7 +147,7 @@ export function LiveDemoSection() {
 
           {error && (
             <div className="mt-4 bg-destructive/10 border border-destructive/30 rounded-lg p-4 text-sm text-destructive">
-              {error}
+              <span role="status">{error}</span>
             </div>
           )}
 
@@ -160,7 +176,7 @@ export function LiveDemoSection() {
                   className="mt-4 inline-flex items-center gap-1.5 text-accent-cyan text-sm font-semibold hover:underline"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  Débloquer les 45 employés IA — Essai 14 jours sans carte
+                  Découvrir PURAMA ONE
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}
