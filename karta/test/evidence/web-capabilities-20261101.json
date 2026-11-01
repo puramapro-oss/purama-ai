@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-01",
+  "repository": "puramapro-oss/purama-ai",
+  "baseBranch": "codex/purama-chef-hardening-20260927",
+  "baseCommit": "fd76a082874f3498b618b2543c44fa6d61bdfac7",
+  "delivery": "planning-only tool factory; no production resolver, browser, account creation or API key creation",
+  "gates": [
+    {
+      "name": "baseline KARTA/CHEF suite",
+      "command": "npm test",
+      "cwd": "karta",
+      "exitCode": 0,
+      "status": "PASS",
+      "testFiles": 34,
+      "testsPassed": 216,
+      "durationSeconds": 11.43
+    },
+    {
+      "name": "final KARTA/CHEF suite",
+      "command": "npm test",
+      "cwd": "karta",
+      "exitCode": 0,
+      "status": "PASS",
+      "testFiles": 36,
+      "testsPassed": 273,
+      "testsFailed": 0,
+      "newTests": 57,
+      "durationSeconds": 12.2
+    },
+    {
+      "name": "TypeScript",
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "cwd": "karta",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "whitespace/diff validation",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "GitNexus final diff impact",
+      "command": "gitnexus detect-changes --scope all --repo iao-web-capabilities",
+      "exitCode": 0,
+      "status": "PASS",
+      "risk": "medium",
+      "files": 7,
+      "symbols": 64,
+      "affectedProcesses": 5,
+      "note": "Flows belong to the new planner/tool; graph warns that process discovery is incomplete."
+    }
+  ],
+  "generatedChecks": {
+    "framework": "fast-check 4.10.2",
+    "totalRuns": 2000,
+    "properties": [
+      {
+        "runs": 1000,
+        "seed": 20261101,
+        "scope": "bounded context variations: authorization, effect uncertainty, route and cost invariants"
+      },
+      {
+        "runs": 1000,
+        "seed": 20261102,
+        "scope": "reject forged policy and ownership fields in model intent"
+      }
+    ],
+    "note": "Generated software cases, not necessarily unique and not website/model benchmark runs."
+  },
+  "independentReview": {
+    "result": "PASS for reviewed corrections",
+    "observedDefect": "not_started plus verified receipt could previously prepare another action",
+    "correction": "force reconciliation; no route selected",
+    "recheckedCases": [
+      "contradictory receipt",
+      "affordable authorized alternative",
+      "explicit denial forbids fallback",
+      "global account challenge remains blocking"
+    ]
+  },
+  "limitations": [
+    "Initial restricted runner attempts failed on local sockets/child processes; authorized local reruns passed. Test credentials are fictional and provider fetch is blocked by setup.ts.",
+    "No production OAuth, real browser, provider account, API key, LLM benchmark, Mac/Hostinger deployment or database migration tested.",
+    "Factory export only: not granted automatically to custom agents and no production resolver is installed.",
+    "Resolver must load canonical route-specific scopes/credentials and honor AbortSignal; timeout cannot terminate uncooperative I/O.",
+    "account.challenge is global; route-specific challenge handling remains to design.",
+    "Plans are neither authorization tickets nor budget reservations; execution must recheck live policy.",
+    "Earlier security/CHEF/OAuth PRs remain separate and unmerged."
+  ],
+  "sourceSha256": {
+    "karta/src/lib/web-capability-plan.ts": "722875f587132f1faa7d4795fdbcb3ce0774fec6eea537cb459620511adbbc95",
+    "karta/src/tools/web-access-plan.ts": "5d1234bb2a9ae07b6dac82c4459306fb3c97055cdf2366e5c9d0e4d3567611b8",
+    "karta/src/tools/registry.ts": "5ac61a4feef252f26ad2743deb86457e5f64f78f9ff498e78a65a05b119d1c06",
+    "karta/test/webCapabilityPlan.test.ts": "08d6c015447d91146bcaee77e055b9e29ab6e1dd0d720c25ebf4f6586e1a6a98",
+    "karta/test/webAccessPlanTool.test.ts": "0c52026db7dcab8aa46cd6edab25593068e5f9c20109f76643819b61a3b04158",
+    "karta/WEB_CAPABILITIES.md": "8c76dae8d489627906e5f91b1b1a33aeabac0fafd92080b332c502c05cd5e06f"
+  },
+  "testLogSha256": "87bfb611095d2d1de1437b67d430e9b841e4eb6be54fd73b3482ad0bc1ce215f",
+  "gitnexusReport": "Changes: 7 files, 64 symbols\nAffected processes: 5\nRisk level: medium\n\nChanged symbols:\n  Section IAO — accès aux services et aux sites → karta/WEB_CAPABILITIES.md\n  Section Périmètre de cette proposition → karta/WEB_CAPABILITIES.md\n  Section Existant réutilisé → karta/WEB_CAPABILITIES.md\n  Section Contrat de confiance → karta/WEB_CAPABILITIES.md\n  Section Routes à raccorder → karta/WEB_CAPABILITIES.md\n  Section Choix techniques étudiés → karta/WEB_CAPABILITIES.md\n  Section Adaptation et consommation → karta/WEB_CAPABILITIES.md\n  Section Connexions et secrets → karta/WEB_CAPABILITIES.md\n  Section Validation de ce lot → karta/WEB_CAPABILITIES.md\n  Section Conditions de livraison du mode complet → karta/WEB_CAPABILITIES.md\n  Const WEB_ACCESS_ACTIONS → karta/src/lib/web-capability-plan.ts\n  TypeAlias WebAccessAction → karta/src/lib/web-capability-plan.ts\n  Const WEB_ACCESS_METHODS → karta/src/lib/web-capability-plan.ts\n  TypeAlias WebAccessMethod → karta/src/lib/web-capability-plan.ts\n  Const MAX_WEB_CONTEXT_AGE_MS → karta/src/lib/web-capability-plan.ts\n... and 49 more\n\nAffected execution flows:\n  • Execute → Choice (4 steps) — changed: planWebCapabilityAccess, parseWebAccessIntent, choice, execute\n  • Execute → Id (4 steps) — changed: planWebCapabilityAccess, parseWebAccessIntent, id, execute\n  • Execute → Record (4 steps) — changed: planWebCapabilityAccess, parseWebAccessIntent, record, execute\n  • Execute → Amount (3 steps) — changed: planWebCapabilityAccess, amount, execute\n  • Execute → WebAccessPlanResult (3 steps) — changed: planWebCapabilityAccess, webAccessPlanResult, execute\n"
+}
