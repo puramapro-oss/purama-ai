@@ -9,3 +9,6 @@ export { generatePdfTool } from "./pdf.js";
 export { webSearchTool } from "./websearch.js";
 export { sendNotificationTool } from "./notification-tool.js";
 export { delegateToAgentTool } from "./delegate.js";
+// Planning only. The host must inject its authenticated account/permission resolver.
+// Exporting the factory does not grant web access to any agent.
+export { createWebAccessPlanTool } from "./web-access-plan.js";
