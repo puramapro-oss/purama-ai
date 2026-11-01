@@ -92,9 +92,100 @@ instance. La capacité par défaut est 100 reçus. L'expiration libère le cache
 n'est ni durable, ni distribué, ni adapté à l'exécution physique.
 
 L'API locale du simulateur accepte un `AbortSignal` et arrête la simulation entre
-deux étapes logiques ; un reçu annulé reste annulé lors d'un rejeu. KARTA ne transmet
-pas actuellement de signal d'annulation d'outil. Aucun arrêt d'urgence matériel
-n'est implémenté ou revendiqué.
+deux étapes logiques ; un reçu annulé reste annulé lors d'un rejeu. Le contrat
+d'exécution KARTA transmet désormais ce signal au simulateur. Le délai maximal
+d'un outil déclenche une demande d'annulation et interrompt le cycle avant l'outil
+suivant. Un adaptateur qui ignore le signal peut continuer : son arrêt reste non
+confirmé et le cycle ne doit pas être rejoué automatiquement. Aucun arrêt d'urgence
+matériel n'est implémenté ou revendiqué.
+
+Les permissions sont relues avant chaque outil et lors de la résolution d'une
+approbation, avec une lecture du stop global qui contourne le cache. Désactiver
+l'agent, activer son arrêt, changer le mode simulation ou réduire l'autonomie
+interrompt le cycle en cours à la prochaine frontière d'outil. Une augmentation
+d'autonomie n'élargit pas les droits du cycle déjà lancé. Ces contrôles logiciels
+ne rendent pas la lecture des droits et une action distante atomiques ; une
+révocation pendant une opération déjà lancée exige encore un mécanisme d'arrêt
+effectif propre à l'adaptateur et au contrôleur local.
+
+Pour un agent personnalisé, le chargement vérifie aussi le propriétaire et les
+deux interrupteurs `is_active` / `karta_enabled` dans `creator_agents`. Ces droits
+et la liste des outils sont relus avant chaque outil du cycle : une désactivation
+ou un retrait enregistré pendant la décision du fournisseur bloque le dispatch.
+Les tâches déjà en file et les anciennes approbations passent par le même
+résolveur. Les tests remplacent les services externes ; ils ne valident pas les
+politiques RLS ni le service de base de données de production.
+
+Le journal parent ne clôture plus une mission lorsqu'une approbation sœur est
+encore `processing`. Une erreur de comptage ou un compte absent ne signifie pas
+que toutes les actions sont terminées : l'état non terminal est conservé. Cette
+correction évite un faux succès ; elle n'ajoute pas de transaction globale entre
+les effets externes, les actions et le journal parent. Le verrou existant de
+mise à jour du journal reste opportuniste.
+
+## Vérification du 1er novembre 2026
+
+Quatre scénarios supplémentaires échouaient avant cette correction : approbation
+et rejet avec une autre action en cours, erreur de comptage et compte absent.
+Après correction : **309 tests / 32 fichiers réussis**, contrôle TypeScript et
+compilation KARTA réussis. Les services de base de données, modèles et verrous
+sont substitués ; aucun moteur n'est connecté. Commande de la suite :
+
+```sh
+SUPABASE_URL=http://127.0.0.1:9 SUPABASE_SERVICE_ROLE_KEY=test-only-not-a-secret npm test -- --maxWorkers=2
+```
+
+L'audit externe `npm audit --json` est bloqué par le contrôle automatique :
+l'envoi des noms et versions des dépendances privées à `registry.npmjs.org`
+demande une autorisation explicite. Aucun nouveau bilan de vulnérabilités n'est
+disponible. Les tests navigateur ne sont pas réexécutés dans cette passe :
+l'installation hors ligne des dépendances du site échoue, l'archive Vite 5.4.21
+étant absente du cache. Ces limites ne sont pas des tests réussis.
+
+## Robot personnel : état de compatibilité des pièces
+
+La cible reste un humanoïde bipède de 1,80 m, avec deux mains à cinq doigts
+articulés et retour tactile. Pour la variante personnelle, le vol, la nage et
+le mode véhicule du corps sont retirés. Le drone de charge reste un sous-système
+distinct dont l'intégration dorsale n'est pas démontrée. Aucun modèle Dropbear
+ou autre n'est déclaré sélectionné ou compatible par cette note.
+
+Les dossiers PURAMA de reprise et d'audit du 1er et du 3 octobre, relus le
+1er novembre, ne fournissent pas de nomenclature bipède qualifiée. Les plans,
+révisions et caractéristiques nécessaires ne peuvent pas être déduits du seul
+catalogue logiciel. Les contrôles encore ouverts sont les suivants :
+
+| Interface | Preuve nécessaire avant de déclarer la compatibilité |
+| --- | --- |
+| Structure, moteurs et mains | Plans cotés, fixations, tolérances, masses, couples continus et transitoires ; collisions et efforts calculés puis essais adaptés |
+| Batterie et distribution | Références exactes, plage de tension complète, pointes de courant, protections, chargeur, conversion et dissipation ; schéma électrique vérifié |
+| Connecteurs et bus | Brochages et polarités, niveaux logiques, protocole et firmware, terminaison, adressage et comportement en rupture de liaison |
+| Capteurs et commande | Unités, repères, latence, fraîcheur des mesures, zéros, limites articulaires et calibrations propres à chaque pièce |
+| IAO et PURAMA ONE | Adaptateur matériel effectif, capacités autorisées, identité, annulation et retours d'état ; aucun succès physique déduit de la seule acceptation d'une commande |
+| Arrêt et équilibre | Contrôleur local et dispositifs indépendants ; essais protégés de perte réseau, panne et arrêt tenant compte du risque de chute du bipède |
+
+### Contre-vérification de la référence Dropbear
+
+La [nomenclature amont](https://github.com/Hyperspawn/dropbear_bom/blob/78f932c6ede3d39ca484804ab073919881a8830e/bom.md)
+contient des A4988 annoncés 8–35 V, un support décrit « 24–48V » et une batterie
+48 V. La [fiche Allegro A4988](https://www.allegromicro.com/~/media/Files/Datasheets/A4988-Datasheet.pdf)
+donne une alimentation de puissance de 8 à 35 V. **Le support ne rend pas le
+circuit compatible avec une alimentation directe à 48 V.** Le branchement direct
+est exclu ; conversion et protections ou pilote approprié restent à dimensionner
+sur la configuration choisie. Ce constat documentaire n'est pas un essai électrique.
+
+Les [détails électriques](https://github.com/Hyperspawn/dropbear_docs/blob/1c9ebcc249b7cbbe1fa619883407236d1a632a90/docs/04-electronics/README.md)
+et [procédures d'étalonnage](https://github.com/Hyperspawn/dropbear_docs/blob/1c9ebcc249b7cbbe1fa619883407236d1a632a90/docs/08-calibration/README.md)
+sont encore annoncés à venir. Le dépôt principal distingue ses essais de marche
+simulés de la validation physique. La licence du [dépôt principal](https://github.com/Hyperspawn/Dropbear/blob/main/LICENSE)
+limite l'autorisation gratuite à un usage personnel non commercial ; vérifier les
+licences fichier par fichier et les droits avant intégration pour une entreprise.
+L'absence de vente du robot ne suffit pas à établir tous ces droits.
+
+L'objectif de personnalisation est conservé : tâches, contenus, routines et
+paramètres exposés par chaque interface. Les bornes de courant, couple, vitesse,
+température et arrêt font partie de la qualification matérielle ; elles ne sont
+pas des obstacles à supprimer pour obtenir un contrôle universel.
 
 ## Exécution locale
 

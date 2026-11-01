@@ -41,7 +41,7 @@ export async function processAgentCycleJob(data: AgentCycleJobData): Promise<Age
   }
 
   try {
-    const definition = await resolveAgentDefinition(data.agentType);
+    const definition = await resolveAgentDefinition(data.agentType, data.userId);
     const result = await runAgentCycle(data.userId, definition, data.trigger);
     if (result.status === "error") {
       if (shouldRetryCycle(result)) {

@@ -175,7 +175,7 @@ describe("runAgentCycle", () => {
     expect(result.sideEffectsCommitted).toBe(true); // tentative réelle → pas de rejeu BullMQ possible
   });
 
-  it("un outil qui pend est abandonné en échec timeout au bout de 30s (plus jamais de worker figé)", async () => {
+  it("un outil qui pend interrompt le cycle en échec timeout au bout de 30s", async () => {
     vi.useFakeTimers();
     try {
       const executed = vi.fn(() => new Promise<never>(() => {})); // pend pour toujours
@@ -190,7 +190,8 @@ describe("runAgentCycle", () => {
       await vi.advanceTimersByTimeAsync(30_500);
       const result = await cycle;
 
-      expect(result.status).toBe("success"); // cycle terminé, échec porté par l'outil
+      expect(result.status).toBe("error"); // aucune action suivante si l'arrêt n'est pas confirmé
+      expect(result.sideEffectsCommitted).toBe(true); // pas de rejeu automatique
       expect(result.toolsUsed[0].success).toBe(false);
       expect(result.toolsUsed[0].resultSummary).toContain("send_notification");
       expect(result.toolsUsed[0].resultSummary).toContain("timeout");

@@ -1,5 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+const authorization = vi.hoisted(() => ({ enabled: true, kill: false, simulation: false, globalStop: false }));
+vi.mock("../src/engine/autonomy.js", async (original) => ({
+  ...await original<typeof import("../src/engine/autonomy.js")>(),
+  loadAgentState: async () => ({ userId: "user-1", agentType: "compta", isEnabled: authorization.enabled,
+    autonomyLevel: 1, killSwitch: authorization.kill, simulationMode: authorization.simulation }),
+}));
+vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => authorization.globalStop }));
+beforeEach(() => Object.assign(authorization, { enabled: true, kill: false, simulation: false, globalStop: false }));
+
 const state = {
   pending: null as Record<string, unknown> | null,
   /** Filtres eq/lt + patch capturés par le DERNIER update karta_pending_actions. */
@@ -10,6 +19,9 @@ const state = {
   reconcileError: null as unknown,
   run: null as Record<string, unknown> | null,
   remainingPending: 0,
+  remainingProcessing: 0,
+  countError: null as { message: string } | null,
+  countUnavailable: false,
 };
 
 vi.mock("../src/db/supabase.js", () => ({
@@ -64,11 +76,25 @@ vi.mock("../src/db/supabase.js", () => ({
           }),
           select: vi.fn((_cols?: string, opts?: { count?: string }) => {
             if (opts?.count) {
-              return {
-                eq: vi.fn().mockReturnThis(),
+              let statuses: string[] | undefined;
+              const query = {
+                eq: vi.fn((column: string, value: unknown) => {
+                  if (column === "status") statuses = [String(value)];
+                  return query;
+                }),
+                in: vi.fn((column: string, values: string[]) => {
+                  if (column === "status") statuses = values;
+                  return query;
+                }),
                 then: (resolve: (v: unknown) => unknown) =>
-                  Promise.resolve({ count: state.remainingPending, error: null }).then(resolve),
+                  Promise.resolve({
+                    count: state.countUnavailable ? null
+                      : ((!statuses || statuses.includes("pending")) ? state.remainingPending : 0)
+                        + ((!statuses || statuses.includes("processing")) ? state.remainingProcessing : 0),
+                    error: state.countError,
+                  }).then(resolve),
               };
+              return query;
             }
             // FALLBACK : lecture "précise" après claim perdant (id existe ?)
             return {
@@ -141,6 +167,9 @@ function resetState(pendingStatus = "pending") {
     ],
   };
   state.remainingPending = 0;
+  state.remainingProcessing = 0;
+  state.countError = null;
+  state.countUnavailable = false;
   executeMock.mockReset();
 }
 
@@ -152,7 +181,9 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     const result = await resolvePendingAction("pending-1", "approve");
 
     expect(result.ok).toBe(true);
-    expect(executeMock).toHaveBeenCalledWith({ table: "compta_transactions" }, { userId: "user-1", agentType: "compta", mode: "live" });
+    expect(executeMock).toHaveBeenCalledWith({ table: "compta_transactions" }, {
+      userId: "user-1", agentType: "compta", mode: "live", signal: expect.any(AbortSignal),
+    });
     expect(state.pending?.status).toBe("executed");
     expect(state.run?.status).toBe("success");
     // Le patch du journal parent passe par le verrou de sérialisation du run (sous-lot 8)
@@ -195,6 +226,19 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     expect(state.run?.status).toBe("success");
   });
 
+  it.each([
+    ["agent désactivé", { enabled: false }],
+    ["arrêt de l'agent", { kill: true }],
+    ["simulation", { simulation: true }],
+    ["arrêt global", { globalStop: true }],
+  ])("une ancienne approbation ne contourne pas %s", async (_label, change) => {
+    Object.assign(authorization, change);
+    await resolvePendingAction("pending-1", "approve");
+    expect(executeMock).not.toHaveBeenCalled();
+    expect(state.pending?.status).toBe("failed");
+    expect(state.pending?.result_summary).toContain("bloquée");
+  });
+
   it("refuse de retraiter une action déjà résolue (claim atomique perdant → message précis)", async () => {
     resetState("executed"); // la ligne n'est plus 'pending' → le claim UPDATE ... WHERE status='pending' ne matche pas
     const result = await resolvePendingAction("pending-1", "approve");
@@ -209,6 +253,31 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     await resolvePendingAction("pending-1", "approve");
 
     expect(state.run?.status).toBeUndefined();
+  });
+
+  it.each(["approve", "reject"] as const)("%s ne clôture pas une mission dont une autre action est encore en cours", async (decision) => {
+    state.remainingProcessing = 1;
+    state.run!.status = "awaiting_approval";
+    executeMock.mockResolvedValue({ ok: true });
+
+    await resolvePendingAction("pending-1", decision);
+
+    expect(state.run?.status).toBe("awaiting_approval");
+    expect(state.pending?.status).toBe(decision === "approve" ? "executed" : "rejected");
+    expect(executeMock).toHaveBeenCalledTimes(decision === "approve" ? 1 : 0);
+  });
+
+  it.each(["count error", "count unavailable"] as const)("ne déduit pas un succès d'une lecture indéterminée : %s", async (failure) => {
+    state.run!.status = "awaiting_approval";
+    state.countError = failure === "count error" ? { message: "database unavailable" } : null;
+    state.countUnavailable = failure === "count unavailable";
+    executeMock.mockResolvedValue({ ok: true });
+
+    await resolvePendingAction("pending-1", "approve");
+
+    expect(state.run?.status).toBe("awaiting_approval");
+    expect(state.pending?.status).toBe("executed");
+    expect(executeMock).toHaveBeenCalledTimes(1);
   });
 });
 

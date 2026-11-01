@@ -50,7 +50,7 @@ export class TimeoutError extends Error {
 /** Outil trop lent — traité comme un échec d'exécution, jamais comme un succès silencieux. */
 export class ToolTimeoutError extends ToolResultError {
   constructor(toolName: string, timeoutMs: number) {
-    super(`${toolName} : timeout après ${timeoutMs}ms — exécution abandonnée`, null);
+    super(`${toolName} : timeout après ${timeoutMs}ms — arrêt de l'opération non confirmé`, null);
     this.name = "ToolTimeoutError";
   }
 }
@@ -115,8 +115,9 @@ export function summarizeToolResult(result: unknown): string {
 /**
  * Borne une opération dans le temps (mécanisme générique — un outil OU l'appel decide() du
  * provider). Limite assumée : le Promise.race n'interrompt pas l'opération sous-jacente (pas
- * d'AbortSignal dans les contrats) — la promesse orpheline continue en arrière-plan mais
- * l'appelant, lui, reprend la main et journalise l'échec timeout.
+ * d'annulation dans cet utilitaire) — la promesse orpheline continue en arrière-plan mais
+ * l'appelant, lui, reprend la main et journalise l'échec timeout. executeToolStrict
+ * utilise son propre contrôleur pour les outils qui coopèrent avec l'annulation.
  */
 export function withTimeout<T>(
   promise: Promise<T>,
@@ -145,13 +146,42 @@ export function withToolTimeout<T>(promise: Promise<T>, toolName: string, timeou
  * (engine/approval.ts) : timeout (30s par défaut) + cast d'effacement (callErasedTool) +
  * assertToolResult (faux succès interdits) + résumé sérialisable. Lève en cas d'échec ;
  * retourne uniquement le résumé (les 2 appelants ne consomment jamais la valeur brute).
+ * Transmet l'annulation au contexte de l'outil. Les outils et services externes
+ * qui ignorent le signal peuvent continuer : un timeout ne prouve jamais leur arrêt.
  */
 export async function executeToolStrict(
   tool: AnyToolDefinition,
   params: Record<string, unknown>,
   ctx: ToolExecutionContext
 ): Promise<string> {
-  const result = await withToolTimeout(callErasedTool(tool, params, ctx), tool.name);
-  assertToolResult(result);
-  return summarizeToolResult(result);
+  const controller = new AbortController();
+  const parentSignal = ctx.signal;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let onAbort: (() => void) | undefined;
+  try {
+    const result = await new Promise<unknown>((resolve, reject) => {
+      onAbort = () => {
+        const reason = parentSignal?.reason ?? new Error("Exécution annulée");
+        controller.abort(reason);
+        reject(reason);
+      };
+      if (parentSignal?.aborted) { onAbort(); return; }
+      parentSignal?.addEventListener("abort", onAbort, { once: true });
+      timer = setTimeout(() => {
+        const error = new ToolTimeoutError(tool.name, TOOL_TIMEOUT_MS);
+        controller.abort(error);
+        reject(error);
+      }, TOOL_TIMEOUT_MS);
+      // Keep handlers attached even if timeout wins, including late rejection.
+      Promise.resolve().then(() => {
+        controller.signal.throwIfAborted();
+        return callErasedTool(tool, params, { ...ctx, signal: controller.signal });
+      }).then(resolve, reject);
+    });
+    assertToolResult(result);
+    return summarizeToolResult(result);
+  } finally {
+    clearTimeout(timer);
+    if (onAbort) parentSignal?.removeEventListener("abort", onAbort);
+  }
 }

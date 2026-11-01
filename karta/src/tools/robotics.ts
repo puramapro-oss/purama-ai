@@ -45,6 +45,6 @@ export const robotSimulateSessionTool: ToolDefinition<Record<string, unknown>> =
   sensitive: false,
   inputSchema: robotSimulationInputSchema,
   async execute(params, ctx) {
-    return simulator.run(params, ctx);
+    return simulator.run(params, ctx, ctx.signal);
   },
 };
