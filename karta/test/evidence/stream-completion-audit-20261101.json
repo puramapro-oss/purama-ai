@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-01",
+  "scope": "Software stream completion contract; no live provider request or production deployment",
+  "baseBranch": "codex/iao-web-capabilities-20261101",
+  "baseCommit": "6b71194f70eb2163bc89bde8a986fcd97cf5d651",
+  "node": "v24.22.1",
+  "baselineKarta": {
+    "numTotalTests": 273,
+    "numPassedTests": 273,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "newRegressionCasesBeforeFix": {
+    "numTotalTests": 23,
+    "numPassedTests": 9,
+    "numFailedTests": 14,
+    "numPendingTests": 0,
+    "success": false
+  },
+  "kartaAfterFix": {
+    "numTotalTests": 296,
+    "numPassedTests": 296,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "commands": [
+    {
+      "cwd": "karta",
+      "command": "npm test -- --reporter=json --outputFile=<report>",
+      "exit": 0
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run typecheck",
+      "exit": 0
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run build",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "npm run build",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "./node_modules/.bin/eslint src/lib/sse.ts supabase/functions/_shared/anthropic-stream.ts karta/test/streamCompletionAudit.test.ts",
+      "exit": 0
+    }
+  ],
+  "generatedStreamCampaign": {
+    "suite": "iao-stream-contracts",
+    "kind": "generated software inputs, not model benchmarks",
+    "at": "2026-11-01T23:00:11.301Z",
+    "node": "v24.22.1",
+    "fastCheck": "4.10.2",
+    "expectedProperties": 4,
+    "runsPerProperty": 200,
+    "sourceHashes": {
+      "../src/lib/sse.ts": "67faebb35eecf9f50fe7dbc94ed1fd812ea72e7f75a80f912d94b5b82bd1f8c0",
+      "../supabase/functions/_shared/anthropic-stream.ts": "b80699166ca449e5b7a9126b6acbd48a016f759c1f91b44200e21e6437c78e39",
+      "../supabase/functions/_shared/sse-data.ts": "18ac71668456447f4734343a621e27660b8cc45ba51a7652d1c01cff229d3ce7",
+      "test/generative.test.ts": "42708d2bc3282915cc9fc4ca47d4048794096fdf3101d058f6020c6a7501f8df",
+      "package-lock.json": "2731a6d81e43985f80b4db123ce7a8d58de7ab95d61e8f745b0d3f039366c1ba"
+    },
+    "results": [
+      {
+        "name": "browser preserves Unicode through arbitrary valid SSE delimiters and byte chunks",
+        "seed": 20260929,
+        "numRuns": 200,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 41
+      },
+      {
+        "name": "provider to browser chain preserves content and confirmed completion",
+        "seed": 20260930,
+        "numRuns": 200,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 50
+      },
+      {
+        "name": "unconfirmed browser responses always reject, including done-shaped text",
+        "seed": 20260931,
+        "numRuns": 200,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 17
+      },
+      {
+        "name": "provider errors propagate without a false completion",
+        "seed": 20260932,
+        "numRuns": 200,
+        "numSkips": 0,
+        "failed": false,
+        "numShrinks": 0,
+        "counterexample": null,
+        "counterexamplePath": null,
+        "error": null,
+        "durationMs": 33
+      }
+    ]
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "indexCommit": "6b71194f70eb2163bc89bde8a986fcd97cf5d651",
+    "preEditImpact": {
+      "parseSSEStream": {
+        "target": {
+          "id": "Function:src/lib/sse.ts:parseSSEStream",
+          "name": "parseSSEStream",
+          "type": "Function",
+          "filePath": "src/lib/sse.ts"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 2,
+          "processes_affected": 1,
+          "modules_affected": 2
+        },
+        "byDepthCounts": {
+          "1": 2,
+          "2": 2,
+          "3": 1
+        }
+      },
+      "streamAnthropicChat": {
+        "target": {
+          "id": "Function:supabase/functions/_shared/anthropic-stream.ts:streamAnthropicChat",
+          "name": "streamAnthropicChat",
+          "type": "Function",
+          "filePath": "supabase/functions/_shared/anthropic-stream.ts"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 3,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {
+          "1": 3
+        }
+      },
+      "convert": {
+        "target": {
+          "id": "Function:supabase/functions/_shared/anthropic-stream.ts:streamAnthropicChat.convert@41:2",
+          "name": "convert",
+          "type": "Function",
+          "filePath": "supabase/functions/_shared/anthropic-stream.ts"
+        },
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1,
+          "2": 3
+        }
+      }
+    },
+    "limitations": "Process enumeration reports truncation; missing graph paths do not prove absence of callers. No PDG/taint analysis run."
+  },
+  "sourceSha256": {
+    "src/lib/sse.ts": "67faebb35eecf9f50fe7dbc94ed1fd812ea72e7f75a80f912d94b5b82bd1f8c0",
+    "supabase/functions/_shared/anthropic-stream.ts": "b80699166ca449e5b7a9126b6acbd48a016f759c1f91b44200e21e6437c78e39",
+    "karta/test/streamCompletionAudit.test.ts": "3a626a97559422a4de9653bf0633eac43af8cc4755550bed86a1f0671cd273ed"
+  },
+  "decisions": [
+    "Reject explicit incomplete/unsupported text termination reasons before successful completion.",
+    "Accept null/absent reasons for existing compatible text streams; require terminal marker as before.",
+    "Display terminal Anthropic refusal text; no automatic retry, tool execution, or provider fallback."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+    "https://developers.openai.com/api/reference/resources/chat/subresources/completions/streaming-events"
+  ],
+  "notTested": [
+    "Live Anthropic or OpenAI APIs",
+    "Real billing",
+    "Browser end-to-end",
+    "Physical mobile/tablet devices",
+    "Production deployment",
+    "Atomic multi-client reservations"
+  ]
+}

@@ -1,6 +1,7 @@
 /**
  * Convert Anthropic SSE to the existing OpenAI-compatible text stream.
- * Only message_stop is a successful completion; HTTP 200 may still contain errors.
+ * Require message_stop and reject explicit incomplete stop reasons. HTTP 200
+ * and transport completion alone do not guarantee a complete text answer.
  */
 import { createSSEDataParser } from './sse-data.ts';
 
@@ -53,6 +54,14 @@ export async function streamAnthropicChat(params: {
           const event = JSON.parse(data);
           if (!event || typeof event !== "object" || typeof event.type !== "string") throw new Error("Invalid AI stream event");
           if (event.type === "error") throw new Error("AI provider reported a stream error");
+          if (event.type === "message_delta") {
+            const stopReason = event.delta?.stop_reason;
+            // A refusal is terminal text to display, never a reason to retry.
+            // Missing reasons remain compatible with existing text-only streams.
+            if (stopReason != null && !["end_turn", "stop_sequence", "refusal"].includes(stopReason)) {
+              throw new Error("AI provider did not complete the text response");
+            }
+          }
           if (event.type === "message_stop") {
             cleanup();
             await reader.cancel().catch(() => undefined);

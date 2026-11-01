@@ -1,7 +1,8 @@
 import { createSSEDataParser } from '../../supabase/functions/_shared/sse-data.ts';
 
 /**
- * Consume OpenAI-compatible SSE. A response is complete only after [DONE].
+ * Consume text-only OpenAI-compatible SSE. [DONE] confirms transport completion;
+ * an explicit non-stop finish reason still means the text answer is incomplete.
  * Never persist a partial transport response as a successful assistant message.
  */
 export async function parseSSEStream(response: Response, onDelta: (full: string) => void): Promise<string> {
@@ -20,6 +21,10 @@ export async function parseSSEStream(response: Response, onDelta: (full: string)
         if (data === '[DONE]') return content;
         const parsed = JSON.parse(data);
         if (!parsed || typeof parsed !== 'object' || parsed.error) throw new Error('Erreur du flux de réponse');
+        const finishReason = parsed.choices?.[0]?.finish_reason;
+        if (finishReason != null && finishReason !== 'stop') {
+          throw new Error('Réponse incomplète ou interrompue par le fournisseur');
+        }
         const delta = parsed.choices?.[0]?.delta?.content;
         if (delta !== undefined && delta !== null && typeof delta !== 'string') throw new Error('Contenu de réponse invalide');
         if (delta) {
