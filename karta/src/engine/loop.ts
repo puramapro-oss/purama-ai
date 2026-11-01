@@ -4,6 +4,7 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
+import { resolveAgentDefinition } from "./resolveDefinition.js";
 import { executeToolStrict, TimeoutError, ToolTimeoutError, withTimeout } from "./tool-result.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
@@ -110,6 +111,17 @@ export async function runAgentCycle(
       if (!currentRunnable.ok) throw new Error(`Cycle interrompu : ${currentRunnable.reason}`);
       if (currentState.simulationMode !== state.simulationMode || currentState.autonomyLevel < state.autonomyLevel) {
         throw new Error("Autorisations modifiées pendant le cycle — nouveau cycle requis");
+      }
+      if (definition.type.startsWith("custom:")) {
+        // Creator switches and tool permissions live in creator_agents, not in
+        // karta_agent_state. A previously resolved definition is not a lease.
+        const currentDefinition = await withTimeout(
+          resolveAgentDefinition(definition.type, userId), "refresh custom agent permissions", 30_000,
+          (label, ms) => new TimeoutError(label, ms)
+        );
+        if (!currentDefinition.tools.some((currentTool) => currentTool.name === tool.name)) {
+          throw new Error(`Outil révoqué pour cet agent : ${tool.name}`);
+        }
       }
       if (await withTimeout(
         isGlobalKillSwitchActive(true), "refresh global stop", 30_000,

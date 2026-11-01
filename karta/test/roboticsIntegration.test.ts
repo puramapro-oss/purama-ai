@@ -6,7 +6,12 @@ import type { AgentDecision, AgentState } from "../src/engine/types.js";
 const deps = vi.hoisted(() => ({
   decide: vi.fn(), finish: vi.fn(async () => {}), loadState: vi.fn(), killSwitch: vi.fn(), pending: vi.fn(), notify: vi.fn(async () => {}),
 }));
-vi.mock("../src/db/supabase.js", () => ({ supabase: { from: vi.fn(() => { throw new Error("Unexpected DB access"); }) } }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: { from: vi.fn((table: string) => {
+  if (table !== "creator_agents") throw new Error("Unexpected DB access");
+  const builder = { select: () => builder, eq: () => builder,
+    maybeSingle: async () => ({ data: { ...row, tools_enabled: [...row.tools_enabled] }, error: null }) };
+  return builder;
+}) } }));
 vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ isMock: true, decide: deps.decide }) }));
 vi.mock("../src/engine/autonomy.js", async (importOriginal) => ({
   ...await importOriginal<typeof import("../src/engine/autonomy.js")>(),
@@ -22,12 +27,13 @@ import { buildCustomAgentDefinition } from "../src/agents/customAgent.js";
 import { executeToolStrict } from "../src/engine/tool-result.js";
 import { robotCatalogTool } from "../src/tools/robotics.js";
 
-const definition = buildCustomAgentDefinition({
+const row = {
   id: "robotics", user_id: "owner", name: "PURAMA — séances robotiques", description: null,
   system_prompt: "Décris une simulation comme telle. Ne prétends jamais avoir connecté un robot.",
   tools_enabled: ["robot_catalog", "robot_plan_session", "robot_simulate_session", "robot_motor_command"],
   karta_enabled: true, is_active: true, schedule_enabled: false, schedule_cron: null,
-});
+};
+const definition = buildCustomAgentDefinition(row);
 const state: AgentState = {
   userId: "owner", agentType: "custom:robotics", isEnabled: true,
   autonomyLevel: 2, killSwitch: false, simulationMode: false,
@@ -46,6 +52,7 @@ function decision(tool: string, input: Record<string, unknown>, requiresApproval
 
 beforeEach(() => {
   vi.clearAllMocks();
+  row.tools_enabled = ["robot_catalog", "robot_plan_session", "robot_simulate_session", "robot_motor_command"];
   deps.loadState.mockResolvedValue({ ...state });
   deps.killSwitch.mockResolvedValue(false);
   deps.pending.mockResolvedValue("pending");
@@ -105,6 +112,18 @@ describe("robotics — real KARTA integration", () => {
     const result = await runAgentCycle("owner", definition, trigger);
     expect(result.toolsUsed).toHaveLength(0);
     expect(deps.decide).not.toHaveBeenCalled();
+  });
+
+  it("honors a robot tool removed from creator_agents while the provider decides", async () => {
+    deps.decide.mockImplementation(async () => {
+      row.tools_enabled = [];
+      return decision("robot_simulate_session", params());
+    });
+    const result = await runAgentCycle("owner", definition, trigger);
+    expect(result.status).toBe("error");
+    expect(result.errorMessage).toContain("révoqué");
+    expect(result.toolsUsed).toHaveLength(0);
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("keeps the not-connected label in KARTA's 200-character catalog summary", async () => {

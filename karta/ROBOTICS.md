@@ -108,6 +108,14 @@ ne rendent pas la lecture des droits et une action distante atomiques ; une
 révocation pendant une opération déjà lancée exige encore un mécanisme d'arrêt
 effectif propre à l'adaptateur et au contrôleur local.
 
+Pour un agent personnalisé, le chargement vérifie aussi le propriétaire et les
+deux interrupteurs `is_active` / `karta_enabled` dans `creator_agents`. Ces droits
+et la liste des outils sont relus avant chaque outil du cycle : une désactivation
+ou un retrait enregistré pendant la décision du fournisseur bloque le dispatch.
+Les tâches déjà en file et les anciennes approbations passent par le même
+résolveur. Les tests remplacent les services externes ; ils ne valident pas les
+politiques RLS ni le service de base de données de production.
+
 ## Exécution locale
 
 Depuis `karta/`, avec Node 22 LTS à partir de 22.12, ou Node 24 LTS, pour

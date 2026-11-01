@@ -107,7 +107,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
   let resultSummary: string;
 
   try {
-    const definition = await resolveAgentDefinition(pending.agent_type as AgentType);
+    const definition = await resolveAgentDefinition(pending.agent_type as AgentType, pending.user_id);
     const tool = definition.tools.find((t) => t.name === pending.tool_name);
     if (!tool) throw new Error(`Outil "${pending.tool_name}" introuvable pour cet agent`);
 
