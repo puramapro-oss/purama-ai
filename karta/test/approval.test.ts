@@ -19,6 +19,9 @@ const state = {
   reconcileError: null as unknown,
   run: null as Record<string, unknown> | null,
   remainingPending: 0,
+  remainingProcessing: 0,
+  countError: null as { message: string } | null,
+  countUnavailable: false,
 };
 
 vi.mock("../src/db/supabase.js", () => ({
@@ -73,11 +76,25 @@ vi.mock("../src/db/supabase.js", () => ({
           }),
           select: vi.fn((_cols?: string, opts?: { count?: string }) => {
             if (opts?.count) {
-              return {
-                eq: vi.fn().mockReturnThis(),
+              let statuses: string[] | undefined;
+              const query = {
+                eq: vi.fn((column: string, value: unknown) => {
+                  if (column === "status") statuses = [String(value)];
+                  return query;
+                }),
+                in: vi.fn((column: string, values: string[]) => {
+                  if (column === "status") statuses = values;
+                  return query;
+                }),
                 then: (resolve: (v: unknown) => unknown) =>
-                  Promise.resolve({ count: state.remainingPending, error: null }).then(resolve),
+                  Promise.resolve({
+                    count: state.countUnavailable ? null
+                      : ((!statuses || statuses.includes("pending")) ? state.remainingPending : 0)
+                        + ((!statuses || statuses.includes("processing")) ? state.remainingProcessing : 0),
+                    error: state.countError,
+                  }).then(resolve),
               };
+              return query;
             }
             // FALLBACK : lecture "précise" après claim perdant (id existe ?)
             return {
@@ -150,6 +167,9 @@ function resetState(pendingStatus = "pending") {
     ],
   };
   state.remainingPending = 0;
+  state.remainingProcessing = 0;
+  state.countError = null;
+  state.countUnavailable = false;
   executeMock.mockReset();
 }
 
@@ -233,6 +253,31 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     await resolvePendingAction("pending-1", "approve");
 
     expect(state.run?.status).toBeUndefined();
+  });
+
+  it.each(["approve", "reject"] as const)("%s ne clôture pas une mission dont une autre action est encore en cours", async (decision) => {
+    state.remainingProcessing = 1;
+    state.run!.status = "awaiting_approval";
+    executeMock.mockResolvedValue({ ok: true });
+
+    await resolvePendingAction("pending-1", decision);
+
+    expect(state.run?.status).toBe("awaiting_approval");
+    expect(state.pending?.status).toBe(decision === "approve" ? "executed" : "rejected");
+    expect(executeMock).toHaveBeenCalledTimes(decision === "approve" ? 1 : 0);
+  });
+
+  it.each(["count error", "count unavailable"] as const)("ne déduit pas un succès d'une lecture indéterminée : %s", async (failure) => {
+    state.run!.status = "awaiting_approval";
+    state.countError = failure === "count error" ? { message: "database unavailable" } : null;
+    state.countUnavailable = failure === "count unavailable";
+    executeMock.mockResolvedValue({ ok: true });
+
+    await resolvePendingAction("pending-1", "approve");
+
+    expect(state.run?.status).toBe("awaiting_approval");
+    expect(state.pending?.status).toBe("executed");
+    expect(executeMock).toHaveBeenCalledTimes(1);
   });
 });
 

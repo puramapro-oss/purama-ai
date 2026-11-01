@@ -183,14 +183,16 @@ async function patchParentRun(pending: PendingActionRow, status: FinalStatus, re
         : t
     );
 
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from("karta_pending_actions")
       .select("id", { count: "exact", head: true })
       .eq("run_id", pending.run_id)
-      .eq("status", "pending");
+      .in("status", ["pending", "processing"]);
 
     const updates: Record<string, unknown> = { tools_used: patched };
-    if (!count) {
+    // A claimed sibling is still unfinished. A failed or missing count is not
+    // evidence that all actions completed; preserve the non-terminal run state.
+    if (!countError && count === 0) {
       const anyFailed = patched.some((t) => !t.success);
       updates.status = anyFailed ? "error" : "success";
     }
