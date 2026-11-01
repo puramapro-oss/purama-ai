@@ -1,19 +1,17 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   MessageCircle, 
   X, 
   Send, 
   Bot, 
   User, 
-  Loader2, 
   Sparkles,
-  ChevronDown,
+  Square,
   Phone,
   History,
-  Trash2,
-  AlertCircle
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,12 +20,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { parseSSEStream } from '@/lib/sse';
+import { createRequestScope, type RequestLease } from '@/lib/request-scope';
+import { prepareChatMessages, CHAT_MAX_MESSAGE_LENGTH } from '../../supabase/functions/_shared/chat-input';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   createdAt: Date;
+  kind?: 'notice';
 }
 
 interface Conversation {
@@ -37,11 +38,11 @@ interface Conversation {
 }
 
 const WELCOME_MESSAGES: Record<string, string> = {
-  '/': "Bienvenue ! 👋 Je suis Purama AI, votre assistant. Besoin d'aide pour choisir votre agent IA ?",
-  '/pricing': "Des questions sur nos tarifs ? 💰 Starter à 66€/mois ou Premium à 99€/mois - je peux tout vous expliquer !",
+  '/': "Bonjour, je suis PURA. Décrivez ce que vous souhaitez faire.",
+  '/pricing': "Je peux vous aider à comprendre les offres. Les montants et conditions à jour sont ceux de la page Tarifs.",
   '/agent': "Besoin d'aide avec cet agent ? 🤖 Je peux vous expliquer son fonctionnement en détail !",
   '/dashboard': "Besoin d'assistance avec votre tableau de bord ? 📊 Je suis là pour vous aider !",
-  '/influenceur': "Questions sur notre programme d'affiliation ? 🌟 Gagnez jusqu'à 33% de commission !",
+  '/influenceur': "Je peux vous orienter vers les conditions de partenariat applicables à votre situation.",
 };
 
 const SUGGESTION_CHIPS = [
@@ -55,23 +56,41 @@ const SUGGESTION_CHIPS = [
 const CHATBOT_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chatbot`;
 
 export function ChatbotWidget() {
+  const { user, session, loading: authLoading } = useAuth();
+  const [requests] = useState(createRequestScope);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [busyKind, setBusyKind] = useState<'reply' | 'history' | null>(null);
+  const isLoading = busyKind !== null;
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [sessionId] = useState(() => crypto.randomUUID());
   const [showHistory, setShowHistory] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [isEscalating, setIsEscalating] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
-  
+  const activeReply = useRef<{ prompt: string; assistantId?: string; completed?: boolean } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
-  const { user } = useAuth();
 
-  // Get contextual welcome message
+  // A change of account invalidates every pending operation before the next paint.
+  useLayoutEffect(() => {
+    requests.invalidate();
+    activeReply.current = null;
+    setMessages([]);
+    setConversations([]);
+    setConversationId(null);
+    setInputValue('');
+    setShowHistory(false);
+    setHistoryError(null);
+    setBusyKind(null);
+    setIsEscalating(false);
+    setDynamicSuggestions([]);
+    return () => requests.invalidate();
+  }, [requests, user?.id]);
+
   const getWelcomeMessage = useCallback(() => {
     const path = location.pathname;
     if (path.startsWith('/agent/')) return WELCOME_MESSAGES['/agent'];
@@ -79,263 +98,215 @@ export function ChatbotWidget() {
     return WELCOME_MESSAGES[path] || WELCOME_MESSAGES['/'];
   }, [location.pathname]);
 
-  // Initialize with welcome message
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      const welcomeMsg: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: getWelcomeMessage(),
-        createdAt: new Date(),
-      };
-      setMessages([welcomeMsg]);
+    if (isOpen && messages.length === 0 && busyKind !== 'history') {
+      setMessages([{ id: crypto.randomUUID(), role: 'assistant', kind: 'notice',
+        content: getWelcomeMessage(), createdAt: new Date() }]);
     }
-  }, [isOpen, getWelcomeMessage, messages.length]);
+  }, [isOpen, getWelcomeMessage, messages.length, busyKind]);
 
-  // Scroll to bottom on new messages
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-    }
+    const viewport = scrollRef.current?.querySelector<HTMLElement>('[data-radix-scroll-area-viewport]');
+    viewport?.scrollTo({ top: viewport.scrollHeight });
   }, [messages]);
 
-  // Focus input when opened
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (!isOpen) return;
+    const timer = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
-  // Load conversation history for logged-in users
+  const loadConversationHistory = useCallback(async () => {
+    if (!user) return;
+    requests.cancel('history');
+    const lease = requests.begin('history');
+    if (!lease) return;
+    setHistoryError(null);
+    try {
+      // One bounded embedded query replaces one query per conversation.
+      const { data, error } = await supabase.from('chat_conversations')
+        .select('id, created_at, chat_messages(content, created_at)')
+        .eq('user_id', user.id).eq('chat_messages.role', 'user')
+        .order('created_at', { ascending: false }).limit(10)
+        .order('created_at', { referencedTable: 'chat_messages', ascending: true })
+        .limit(1, { referencedTable: 'chat_messages' }).abortSignal(lease.signal);
+      if (!lease.current()) return;
+      if (error) throw error;
+      setConversations((data ?? []).map(conv => ({ id: conv.id,
+        createdAt: new Date(conv.created_at),
+        preview: conv.chat_messages?.[0]?.content?.slice(0, 50) || 'Nouvelle conversation',
+      })));
+    } catch {
+      if (lease.current()) setHistoryError("L'historique n'a pas pu être chargé.");
+    } finally { lease.finish(); }
+  }, [requests, user]);
+
   useEffect(() => {
-    if (user && showHistory) {
-      loadConversationHistory();
-    }
-  }, [user, showHistory]);
+    if (!authLoading && user && showHistory) void loadConversationHistory();
+    return () => requests.cancel('history');
+  }, [authLoading, user, showHistory, loadConversationHistory, requests]);
 
-  const loadConversationHistory = async () => {
-    const { data } = await supabase
-      .from('chat_conversations')
-      .select('id, created_at')
-      .eq('user_id', user?.id)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if (data) {
-      const convs: Conversation[] = await Promise.all(
-        data.map(async (conv) => {
-          const { data: msgs } = await supabase
-            .from('chat_messages')
-            .select('content')
-            .eq('conversation_id', conv.id)
-            .eq('role', 'user')
-            .order('created_at', { ascending: true })
-            .limit(1);
-
-          return {
-            id: conv.id,
-            createdAt: new Date(conv.created_at),
-            preview: msgs?.[0]?.content?.slice(0, 50) || 'Nouvelle conversation...',
-          };
-        })
-      );
-      setConversations(convs);
-    }
-  };
-
-  const createOrGetConversation = async (): Promise<string> => {
+  const createOrGetConversation = async (lease: RequestLease): Promise<string | null> => {
+    // Guests keep their conversation in this page; no anonymous database row.
+    if (!user) return null;
     if (conversationId) return conversationId;
-
-    const { data, error } = await supabase
-      .from('chat_conversations')
-      .insert({
-        user_id: user?.id || null,
-        session_id: sessionId,
-        status: 'active',
-      })
-      .select('id')
-      .single();
-
+    const { data, error } = await supabase.from('chat_conversations')
+      .insert({ user_id: user.id, session_id: crypto.randomUUID(), status: 'active' })
+      .select('id').abortSignal(lease.signal).single();
     if (error) throw error;
-    setConversationId(data.id);
+    lease.signal.throwIfAborted();
     return data.id;
   };
 
-  const saveMessage = async (convId: string, role: 'user' | 'assistant', content: string) => {
-    await supabase.from('chat_messages').insert({
-      conversation_id: convId,
-      role,
-      content,
-    });
+  const saveMessage = async (convId: string | null, role: 'user' | 'assistant', content: string,
+    lease: RequestLease) => {
+    if (!convId) return;
+    const { error } = await supabase.from('chat_messages')
+      .insert({ conversation_id: convId, role, content }).abortSignal(lease.signal);
+    if (error) throw error;
+    lease.signal.throwIfAborted();
   };
 
+  const addNotice = (content: string) => setMessages(prev => [...prev, {
+    id: crypto.randomUUID(), role: 'assistant', kind: 'notice', content, createdAt: new Date(),
+  }]);
 
-  const sendMessage = async (userMessage: string) => {
-    setIsLoading(true);
-    
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: userMessage,
-      createdAt: new Date(),
-    };
-    
-    setMessages(prev => [...prev, userMsg]);
-
-    try {
-      const convId = await createOrGetConversation();
-      await saveMessage(convId, 'user', userMessage);
-
-      // Build conversation history for the Edge Function
-      const conversationHistory = messages
-        .filter(m => m.role !== 'assistant' || !m.content.startsWith('Bienvenue'))
-        .map(m => ({ role: m.role, content: m.content }));
-      
-      // Add current message to history
-      conversationHistory.push({ role: 'user', content: userMessage });
-
-      // Call the Edge Function with streaming
-      const response = await fetch(CHATBOT_FUNCTION_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-        },
-        body: JSON.stringify({
-          messages: conversationHistory,
-          conversationId: convId,
-          sessionId,
-          pageContext: window.location.href,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Erreur ${response.status}`);
-      }
-
-      const assistantMsgId = crypto.randomUUID();
-      setMessages(prev => [...prev, {
-        id: assistantMsgId, role: 'assistant', content: '', createdAt: new Date(),
-      }]);
-      let assistantContent: string;
-      try {
-        assistantContent = await parseSSEStream(response, content => {
-          setMessages(prev => prev.map(m => m.id === assistantMsgId ? { ...m, content } : m));
-        });
-      } catch (error) {
-        setMessages(prev => prev.filter(m => m.id !== assistantMsgId));
-        throw error;
-      }
-
-      // If we got no content, show fallback
-      if (!assistantContent.trim()) {
-        assistantContent = "Je n'ai pas pu générer une réponse. Réessayez dans un instant.";
-        setMessages(prev => prev.map(m => 
-          m.id === assistantMsgId 
-            ? { ...m, content: assistantContent }
-            : m
-        ));
-      }
-
-      // Save assistant message to database
-      await saveMessage(convId, 'assistant', assistantContent);
-
-      // Reset dynamic suggestions
-      setDynamicSuggestions([]);
-    } catch (error) {
-      console.error('Chatbot error:', error);
-      
-      const errorMessage = error instanceof Error && error.message.includes('429')
-        ? "Limite de requêtes atteinte. ⏳ Réessayez dans quelques instants."
-        : "Désolé, je rencontre un problème technique. 😔 Souhaitez-vous parler à un membre de notre équipe ?";
-      
-      setMessages(prev => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          role: 'assistant',
-          content: errorMessage,
-          createdAt: new Date(),
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
+  const stopActiveRequest = () => {
+    const pending = activeReply.current;
+    requests.cancel('interaction');
+    activeReply.current = null;
+    setBusyKind(null);
+    if (pending?.completed) {
+      addNotice("L'enregistrement a été interrompu. La réponse reste disponible ici.");
+    } else if (pending) {
+      setMessages(prev => prev.filter(m => m.id !== pending.assistantId));
+      setInputValue(current => current || pending.prompt);
+      addNotice('Réponse arrêtée. Vous pouvez modifier votre demande.');
     }
   };
 
-  const handleSend = () => {
-    if (!inputValue.trim() || isLoading) return;
-    const message = inputValue.trim();
-    setInputValue('');
-    sendMessage(message);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    sendMessage(suggestion);
-  };
-
-  const handleEscalate = async () => {
-    if (!conversationId) {
-      toast.error('Aucune conversation en cours');
+  const sendMessage = async (text: string) => {
+    const userMessage = text.trim();
+    if (!userMessage || authLoading || busyKind === 'history') return;
+    // History loading and reply generation share the same synchronous slot.
+    const lease = requests.begin('interaction');
+    if (!lease) return;
+    const prepared = prepareChatMessages([...messages.filter(m => m.kind !== 'notice')
+      .map(m => ({ role: m.role, content: m.content })), { role: 'user', content: userMessage }]);
+    if (prepared.ok === false) {
+      lease.finish();
+      addNotice(prepared.error);
       return;
     }
-
+    setBusyKind('reply');
+    setInputValue('');
+    activeReply.current = { prompt: userMessage };
+    setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'user', content: userMessage, createdAt: new Date() }]);
+    let assistantId: string | undefined;
+    let responseComplete = false;
     try {
-      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/escalate-chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({
-          conversationId,
-          userEmail: user?.email,
-          userMessage: messages.filter(m => m.role === 'user').pop()?.content,
-          conversationHistory: messages.slice(-10),
-        }),
+      const convId = await createOrGetConversation(lease);
+      if (!lease.current()) return;
+      setConversationId(convId);
+      await saveMessage(convId, 'user', userMessage, lease);
+      if (!lease.current()) return;
+      const response = await fetch(CHATBOT_FUNCTION_URL, {
+        method: 'POST', signal: lease.signal,
+        headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
+        body: JSON.stringify({ messages: prepared.messages, pageContext: location.pathname }),
       });
-
-      if (resp.ok) {
-        toast.success('Un membre de notre équipe va vous contacter rapidement !');
-        setMessages(prev => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            role: 'assistant',
-            content: "J'ai transmis votre demande à notre équipe support. 📞 Un conseiller vous contactera très bientôt par email !",
-            createdAt: new Date(),
-          },
-        ]);
-      }
+      if (!lease.current()) { await response.body?.cancel(); return; }
+      if (!response.ok) throw new Error(String(response.status));
+      assistantId = crypto.randomUUID();
+      activeReply.current = { prompt: userMessage, assistantId };
+      setMessages(prev => [...prev, { id: assistantId!, role: 'assistant', content: '', createdAt: new Date() }]);
+      const content = await parseSSEStream(response, full => {
+        if (lease.current()) setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: full } : m));
+      });
+      if (!lease.current()) return;
+      if (!content.trim()) throw new Error('EMPTY_RESPONSE');
+      responseComplete = true;
+      activeReply.current = { prompt: userMessage, assistantId, completed: true };
+      await saveMessage(convId, 'assistant', content, lease);
+      if (lease.current()) setDynamicSuggestions([]);
     } catch (error) {
-      toast.error('Erreur lors de la transmission de votre demande');
+      if (!lease.current()) return;
+      if (!responseComplete) {
+        setMessages(prev => prev.filter(m => m.id !== assistantId));
+        setInputValue(current => current || userMessage);
+      }
+      addNotice(responseComplete
+        ? "La réponse est reçue, mais son enregistrement a échoué. Vous pouvez la copier ici."
+        : error instanceof Error && error.message === '429'
+          ? 'Limite temporaire atteinte. Votre demande est conservée ; réessayez plus tard.'
+          : "La réponse n'a pas abouti. Votre demande est conservée et peut être modifiée.");
+    } finally {
+      if (lease.finish()) { activeReply.current = null; setBusyKind(null); }
     }
+  };
+
+  const handleSend = () => { void sendMessage(inputValue); };
+  const handleSuggestionClick = (suggestion: string) => { void sendMessage(suggestion); };
+
+  const handleEscalate = async () => {
+    if (!conversationId || !user || !session?.access_token || isLoading) return;
+    const lease = requests.begin('support');
+    if (!lease) return;
+    setIsEscalating(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/escalate-chat`, {
+        method: 'POST', signal: lease.signal,
+        headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ conversationId }),
+      });
+      if (!lease.current()) return;
+      if (!response.ok) throw new Error('SUPPORT_FAILED');
+      toast.success('Votre demande a été transmise au support.');
+      addNotice('Votre demande a été transmise au support.');
+    } catch {
+      if (lease.current()) toast.error("La transmission au support n'a pas pu être confirmée.");
+    } finally { if (lease.finish()) setIsEscalating(false); }
   };
 
   const startNewConversation = () => {
+    requests.invalidate();
+    activeReply.current = null;
+    setBusyKind(null);
+    setIsEscalating(false);
     setConversationId(null);
     setMessages([]);
+    setInputValue('');
     setShowHistory(false);
+    setDynamicSuggestions([]);
   };
 
   const loadConversation = async (convId: string) => {
-    const { data } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('conversation_id', convId)
-      .order('created_at', { ascending: true });
-
-    if (data) {
-      setMessages(data.map(m => ({
-        id: m.id,
-        role: m.role as 'user' | 'assistant',
-        content: m.content,
-        createdAt: new Date(m.created_at),
-      })));
+    if (!user || authLoading) return;
+    requests.invalidate();
+    activeReply.current = null;
+    const lease = requests.begin('interaction');
+    if (!lease) return;
+    setBusyKind('history');
+    setIsEscalating(false);
+    setMessages([]);
+    setInputValue('');
+    setConversationId(null);
+    setShowHistory(false);
+    try {
+      const { data, error } = await supabase.from('chat_messages')
+        .select('id, role, content, created_at, chat_conversations!inner(user_id)')
+        .eq('conversation_id', convId).eq('chat_conversations.user_id', user.id)
+        .order('created_at', { ascending: true }).abortSignal(lease.signal);
+      if (!lease.current()) return;
+      if (error) throw error;
+      setMessages((data ?? []).filter(m => m.role === 'user' || m.role === 'assistant')
+        .map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content, createdAt: new Date(m.created_at) })));
       setConversationId(convId);
-      setShowHistory(false);
-    }
+    } catch {
+      if (lease.current()) addNotice("Cette conversation n'a pas pu être chargée.");
+    } finally { if (lease.finish()) setBusyKind(null); }
   };
 
   return (
@@ -351,7 +322,7 @@ export function ChatbotWidget() {
           >
             <Button
               onClick={() => { setIsOpen(true); setHasNewMessage(false); }}
-              aria-label="Ouvrir l'assistant Purama AI"
+              aria-label="Ouvrir l'assistant PURA"
               className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent shadow-lg hover:shadow-xl transition-all relative"
             >
               <MessageCircle className="w-6 h-6 text-primary-foreground" />
@@ -371,7 +342,9 @@ export function ChatbotWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-6rem)] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            role="dialog"
+            aria-label="Conversation avec PURA"
+            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100dvh-6rem)] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-primary to-accent p-4 flex items-center justify-between">
@@ -380,8 +353,8 @@ export function ChatbotWidget() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Purama AI</h3>
-                  <p className="text-xs text-white/80">Assistant IA en ligne</p>
+                  <h3 className="font-semibold text-white">PURA</h3>
+                  <p className="text-xs text-white/80">Votre assistant</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -408,7 +381,7 @@ export function ChatbotWidget() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => { stopActiveRequest(); setIsOpen(false); }}
                   aria-label="Fermer l'assistant"
                   className="text-white/80 hover:text-white hover:bg-white/20"
                 >
@@ -428,7 +401,7 @@ export function ChatbotWidget() {
                 >
                   <div className="p-3 max-h-40 overflow-y-auto">
                     <p className="text-xs font-medium text-muted-foreground mb-2">Conversations récentes</p>
-                    {conversations.length === 0 ? (
+                    {historyError ? <p role="alert" className="text-xs text-destructive">{historyError}</p> : conversations.length === 0 ? (
                       <p className="text-xs text-muted-foreground">Aucune conversation</p>
                     ) : (
                       conversations.map(conv => (
@@ -448,7 +421,8 @@ export function ChatbotWidget() {
 
             {/* Messages */}
             <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-              <div className="space-y-4">
+              <div className="space-y-4" role="log" aria-live="polite" aria-relevant="additions" aria-busy={isLoading}>
+                {busyKind === 'history' && <p role="status" className="text-sm text-muted-foreground">Chargement de la conversation…</p>}
                 {messages.map((message) => (
                   <motion.div
                     key={message.id}
@@ -518,7 +492,7 @@ export function ChatbotWidget() {
             </ScrollArea>
 
             {/* Suggestions */}
-            {!isLoading && (messages.length <= 2 || dynamicSuggestions.length > 0) && (
+            {!isLoading && !authLoading && (messages.length <= 2 || dynamicSuggestions.length > 0) && (
               <div className="px-4 pb-2">
                 <div className="flex flex-wrap gap-2">
                   {(dynamicSuggestions.length > 0 ? dynamicSuggestions : SUGGESTION_CHIPS).map((suggestion) => (
@@ -535,16 +509,22 @@ export function ChatbotWidget() {
             )}
 
             {/* Escalate Button */}
-            {messages.length > 4 && (
+            {user && conversationId && messages.length > 4 && (
               <div className="px-4 pb-2">
                 <button
                   onClick={handleEscalate}
+                  disabled={isEscalating || isLoading}
                   className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Phone className="w-3 h-3" />
-                  Parler à un humain
+                  {isEscalating ? 'Transmission…' : 'Parler à un humain'}
                 </button>
               </div>
+            )}
+            {!user && !authLoading && messages.length > 4 && (
+              <Link to="/login" className="px-4 pb-2 text-xs text-muted-foreground hover:text-primary">
+                Se connecter pour contacter le support
+              </Link>
             )}
 
             {/* Input */}
@@ -561,17 +541,26 @@ export function ChatbotWidget() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Posez votre question..."
-                  disabled={isLoading}
+                  aria-label="Votre message"
+                  maxLength={CHAT_MAX_MESSAGE_LENGTH}
+                  disabled={isLoading || authLoading}
                   className="flex-1"
                 />
-                <Button
+                {isLoading ? <Button type="button" onClick={(event) => {
+                  // React can reuse this node as the submit button before the click's default action.
+                  event.preventDefault();
+                  stopActiveRequest();
+                }} aria-label="Arrêter la réponse" variant="outline">
+                  <Square className="w-4 h-4 mr-2" />Arrêter
+                </Button> : <Button
                   type="submit"
                   size="icon"
-                  disabled={!inputValue.trim() || isLoading}
+                  aria-label="Envoyer le message"
+                  disabled={!inputValue.trim() || authLoading}
                   className="bg-gradient-to-br from-primary to-accent"
                 >
                   <Send className="w-4 h-4" />
-                </Button>
+                </Button>}
               </form>
             </div>
           </motion.div>
