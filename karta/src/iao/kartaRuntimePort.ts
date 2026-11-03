@@ -126,15 +126,26 @@ function canonicalize(value: unknown): string {
 const TIMEOUT = "memory-unavailable:timeout";
 const CANCELLED = "memory-unavailable:cancelled";
 
+/** Internal evidence that this dependency was never invoked. */
+class PreDispatchCancellation extends Error {}
+
 /** Timeout aborts the shared controller so every downstream port sees the same interruption; an aborted signal never dispatches. */
 function bounded<T>(start: () => Promise<T>, timeoutMs: number, controller: AbortController): Promise<T> {
   const { signal } = controller;
   return new Promise<T>((resolve, reject) => {
-    if (signal.aborted) { reject(new Error(CANCELLED)); return; }
+    if (signal.aborted) { reject(new PreDispatchCancellation(CANCELLED)); return; }
     const timer = setTimeout(() => { controller.abort(); reject(new Error(TIMEOUT)); }, timeoutMs);
-    const onAbort = () => { clearTimeout(timer); reject(new Error(CANCELLED)); };
+    let dispatched = false;
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(dispatched ? new Error(CANCELLED) : new PreDispatchCancellation(CANCELLED));
+    };
     signal.addEventListener("abort", onAbort, { once: true });
-    Promise.resolve().then(start).then(resolve, reject).finally(() => {
+    Promise.resolve().then(() => {
+      if (signal.aborted) throw new PreDispatchCancellation(CANCELLED);
+      dispatched = true;
+      return start();
+    }).then(resolve, reject).finally(() => {
       clearTimeout(timer);
       signal.removeEventListener("abort", onAbort);
     });
@@ -143,6 +154,7 @@ function bounded<T>(start: () => Promise<T>, timeoutMs: number, controller: Abor
 
 /** Only an interruption yields effect knowledge; a context build is a read with a durable receipt, never a user-visible effect. */
 function effectAfter(stage: Stage, error: unknown): IaoEffect | undefined {
+  if (error instanceof PreDispatchCancellation) return "none";
   const message = error instanceof Error ? error.message : "";
   if (message !== TIMEOUT && message !== CANCELLED) return undefined;
   return stage === "context" ? "none" : "uncertain";

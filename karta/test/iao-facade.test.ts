@@ -342,12 +342,19 @@ describe("KARTA IAO adapter", () => {
 
   it("reports an uncertain effect when a durable control is cancelled mid-flight and forwards the abort", async () => {
     const seen: AbortSignal[] = [];
+    const entered = deferred<void>();
     const port = new KartaRuntimeIaoPort({
       buildContext: vi.fn(),
-      control: vi.fn((input: Parameters<SmaranaIaoPort["control"]>[0]) => { seen.push(input.signal!); return new Promise<never>(() => {}); }),
+      control: vi.fn((input: Parameters<SmaranaIaoPort["control"]>[0]) => {
+        seen.push(input.signal!);
+        entered.resolve();
+        return new Promise<never>(() => {});
+      }),
     }, { complete: vi.fn() }, 1_000);
     const controller = new AbortController();
     const pending = port.prepare(request({ type: "memory-control", memoryControl: { action: "update", data: { value: "x" } } }), controller.signal);
+    await entered.promise;
+    expect(seen[0]?.aborted).toBe(false);
     controller.abort();
     await expect(pending).resolves.toEqual({ kind: "blocked", reason: "KARTA is unavailable", dependency: "memory-unavailable:karta-runtime", effect: "uncertain" });
     expect(seen[0]?.aborted).toBe(true);
@@ -360,6 +367,69 @@ describe("KARTA IAO adapter", () => {
     await expect(new KartaRuntimeIaoPort(smarana, { complete: vi.fn() }).prepare(request(), controller.signal))
       .resolves.toMatchObject({ kind: "blocked", effect: "none" });
     expect(smarana.buildContext).not.toHaveBeenCalled();
+  });
+
+  it.each(["conversation", "memory-control"] as const)("never dispatches %s cancelled before the first microtask", async (type) => {
+    const smarana = { buildContext: vi.fn(), control: vi.fn() } satisfies SmaranaIaoPort;
+    const completion = { complete: vi.fn() } satisfies IaoCompletionPort;
+    const controller = new AbortController();
+    const pending = new KartaRuntimeIaoPort(smarana, completion).prepare(request({
+      type, ...(type === "memory-control" ? { memoryControl: { action: "update" as const, data: { value: "x" } } } : {}),
+    }), controller.signal);
+    controller.abort();
+    await expect(pending).resolves.toMatchObject({ kind: "blocked", effect: "none", dependency: "memory-unavailable:karta-runtime" });
+    expect(smarana.buildContext).not.toHaveBeenCalled();
+    expect(smarana.control).not.toHaveBeenCalled();
+    expect(completion.complete).not.toHaveBeenCalled();
+  });
+
+  it("reports no effect and never dispatches an already cancelled durable control", async () => {
+    const smarana = { buildContext: vi.fn(), control: vi.fn() } satisfies SmaranaIaoPort;
+    const completion = { complete: vi.fn() } satisfies IaoCompletionPort;
+    const controller = new AbortController();
+    controller.abort();
+    await expect(new KartaRuntimeIaoPort(smarana, completion).prepare(request({
+      type: "memory-control", memoryControl: { action: "update", data: { value: "x" } },
+    }), controller.signal)).resolves.toMatchObject({ kind: "blocked", effect: "none" });
+    expect(smarana.control).not.toHaveBeenCalled();
+    expect(smarana.buildContext).not.toHaveBeenCalled();
+    expect(completion.complete).not.toHaveBeenCalled();
+  });
+
+  it("never dispatches completion when context returns after cancellation", async () => {
+    const controller = new AbortController();
+    const smarana = {
+      buildContext: vi.fn(async () => {
+        controller.abort();
+        return { operationId: RECEIPT_ID, context: { sources: [] } };
+      }), control: vi.fn(),
+    } satisfies SmaranaIaoPort;
+    const completion = { complete: vi.fn() } satisfies IaoCompletionPort;
+    await expect(new KartaRuntimeIaoPort(smarana, completion).prepare(request(), controller.signal))
+      .resolves.toMatchObject({ kind: "blocked", effect: "none" });
+    expect(smarana.buildContext).toHaveBeenCalledOnce();
+    expect(completion.complete).not.toHaveBeenCalled();
+  });
+
+  it("keeps completion uncertain when cancelled after its actual dispatch", async () => {
+    const controller = new AbortController();
+    const entered = deferred<void>();
+    let seen: AbortSignal | undefined;
+    const smarana = {
+      buildContext: vi.fn(async () => ({ operationId: RECEIPT_ID, context: { sources: [] } })), control: vi.fn(),
+    } satisfies SmaranaIaoPort;
+    const completion = { complete: vi.fn((input: Parameters<IaoCompletionPort["complete"]>[0]) => {
+      seen = input.signal;
+      entered.resolve();
+      return new Promise<never>(() => {});
+    }) } satisfies IaoCompletionPort;
+    const pending = new KartaRuntimeIaoPort(smarana, completion).prepare(request(), controller.signal);
+    await entered.promise;
+    expect(seen?.aborted).toBe(false);
+    controller.abort();
+    await expect(pending).resolves.toMatchObject({ kind: "blocked", effect: "uncertain" });
+    expect(seen?.aborted).toBe(true);
+    expect(completion.complete).toHaveBeenCalledOnce();
   });
 
   it.each([
