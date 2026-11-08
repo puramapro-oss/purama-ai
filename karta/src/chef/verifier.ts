@@ -7,6 +7,8 @@ export type ChefEvidenceKind = "test" | "build" | "typecheck" | "lint" | "securi
 export interface ChefVerificationProfile {
   name: string;
   kind: ChefEvidenceKind;
+  /** Explicit requirements checked by this trusted profile; omitted means task-only. */
+  requirementKeys?: string[];
   command: string;
   args?: string[];
   timeoutMs?: number;
@@ -18,6 +20,8 @@ export interface ChefVerificationProfile {
 export interface ChefVerificationEvidence {
   kind: ChefEvidenceKind;
   sha256: string;
+  /** Set by the trusted verifier, never inferred from command or model output. */
+  requirementKeys?: string[];
   payload: {
     profile: string;
     ok: boolean;
@@ -36,6 +40,18 @@ export interface ChefVerificationResult {
 
 export interface ChefVerifier {
   verify(cwd: string, profileNames: string[], signal?: AbortSignal): Promise<ChefVerificationResult>;
+}
+
+export function normalizeChefRequirementKeys(value: unknown): string[] {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) throw new Error("Portée des exigences invalide");
+  const keys = value.map((key: unknown) => {
+    if (typeof key !== "string" || key.trim().length === 0 || key.length > 200) {
+      throw new Error("Clé d'exigence invalide");
+    }
+    return key.trim();
+  });
+  return [...new Set(keys)].sort();
 }
 
 function safeEnv(allow: string[], extra: Record<string, string>): NodeJS.ProcessEnv {
@@ -58,7 +74,10 @@ export class CommandChefVerifier implements ChefVerifier {
       if (!/^[A-Za-z0-9._:-]{1,120}$/.test(profile.name)) throw new Error("Nom de profil invalide");
       if (this.profiles.has(profile.name)) throw new Error(`Profil de vérification dupliqué: ${profile.name}`);
       if (!profile.command) throw new Error("Commande de vérification absente");
-      this.profiles.set(profile.name, profile);
+      this.profiles.set(profile.name, {
+        ...profile,
+        requirementKeys: normalizeChefRequirementKeys(profile.requirementKeys),
+      });
     }
   }
 
@@ -139,6 +158,7 @@ export class CommandChefVerifier implements ChefVerifier {
         resolvePromise({
           kind: profile.kind,
           sha256: digest,
+          requirementKeys: [...(profile.requirementKeys ?? [])],
           payload: {
             profile: profile.name,
             ok,
