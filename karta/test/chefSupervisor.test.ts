@@ -1,7 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.js";
 import { runChefWorkerCycle } from "../src/chef/supervisor.js";
+import { verifyCommittedGitState } from "../src/chef/git-state.js";
 import type { ChefVerificationEvidence, ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
 
 vi.mock("../src/chef/git-state.js", () => ({
@@ -15,6 +16,14 @@ vi.mock("../src/chef/git-state.js", () => ({
 
 const hash = "c".repeat(64);
 const sha = "d".repeat(40);
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(verifyCommittedGitState).mockReset().mockResolvedValue({
+    kind: "receipt", sha256: "9".repeat(64),
+    payload: { profile: "git-state", ok: true, headSha: sha, clean: true },
+  });
+});
 
 function makeTask(overrides: Partial<ChefRuntimeTask> = {}): ChefRuntimeTask {
   return {
@@ -41,7 +50,7 @@ function makeControl(task: ChefRuntimeTask | null) {
     claimNext: vi.fn(async () => task),
     renewLease: vi.fn(async () => true),
     transition: vi.fn(async (input) => { transitions.push(input.target); return true; }),
-    addEvidence: vi.fn(async (_task, value) => { evidence.push(value); }),
+    addEvidence: vi.fn(async (_task, value) => { evidence.push(value); return true; }),
     recordUsage: vi.fn(async () => undefined),
     tryFinishMission: vi.fn(async () => true),
   };
@@ -60,6 +69,62 @@ const passingVerifier: ChefVerifier = {
 };
 
 describe("CHEF autonomous worker cycle", () => {
+  it("stamps every proof with the original claim rather than a refreshed generation", async () => {
+    const { control } = makeControl(makeTask());
+    const driver: ChefWorkerDriver = {
+      provider: "codex",
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "completed", summary: "done", outputSha: sha })),
+    };
+    await runChefWorkerCycle(control, driver, passingVerifier, { missionId: "mission-1", workerId: "worker-1", provider: "codex" });
+    expect(control.addEvidence).toHaveBeenCalledTimes(2);
+    for (const call of vi.mocked(control.addEvidence).mock.calls) {
+      expect(call).toEqual(["task-1", expect.any(Object), { workerId: "worker-1", attempt: 1, fencingToken: 3 }]);
+    }
+  });
+
+  it.each([1, 2])("stops when proof write %i loses the lease", async (rejectedCall) => {
+    const { control, transitions } = makeControl(makeTask());
+    vi.mocked(control.addEvidence).mockResolvedValueOnce(rejectedCall !== 1).mockResolvedValueOnce(false);
+    const driver: ChefWorkerDriver = {
+      provider: "codex",
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "completed", summary: "done", outputSha: sha })),
+    };
+    const result = await runChefWorkerCycle(control, driver, passingVerifier, { missionId: "mission-1", workerId: "worker-1", provider: "codex" });
+    expect(result.state).toBe("lost_lease");
+    expect(control.addEvidence).toHaveBeenCalledTimes(rejectedCall);
+    expect(transitions).not.toContain("verified_done");
+    expect(control.tryFinishMission).not.toHaveBeenCalled();
+  });
+
+  it("refuses to persist passing proofs if the final Git check detects a changed tree", async () => {
+    const { control, transitions, evidence } = makeControl(makeTask());
+    vi.mocked(verifyCommittedGitState).mockResolvedValueOnce({
+      kind: "receipt", sha256: "9".repeat(64), payload: { profile: "git-state", ok: true, headSha: sha },
+    }).mockRejectedValueOnce(new Error("HEAD réel différent après vérification"));
+    const driver: ChefWorkerDriver = {
+      provider: "codex",
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "completed", summary: "done", outputSha: sha })),
+    };
+    const result = await runChefWorkerCycle(control, driver, passingVerifier, { missionId: "mission-1", workerId: "worker-1", provider: "codex" });
+    expect(result.state).toBe("retryable");
+    expect(transitions).not.toContain("verified_done");
+    expect(evidence).toHaveLength(0);
+  });
+
+  it("surfaces an evidence storage outage without declaring completion", async () => {
+    const { control, transitions } = makeControl(makeTask());
+    vi.mocked(control.addEvidence).mockRejectedValueOnce(new Error("evidence database offline"));
+    const driver: ChefWorkerDriver = {
+      provider: "codex",
+      run: vi.fn(async (): Promise<ChefDriverResponse> => ({ schemaVersion: 1, status: "completed", summary: "done", outputSha: sha })),
+    };
+    await expect(runChefWorkerCycle(control, driver, passingVerifier, { missionId: "mission-1", workerId: "worker-1", provider: "codex" }))
+      .rejects.toThrow(/database offline/);
+    expect(transitions).not.toContain("verified_done");
+    expect(control.addEvidence).toHaveBeenCalledOnce();
+    expect(control.tryFinishMission).not.toHaveBeenCalled();
+  });
+
   it("does not trust worker done text: it verifies before VERIFIED_DONE", async () => {
     const task = makeTask();
     const { control, transitions, evidence } = makeControl(task);
