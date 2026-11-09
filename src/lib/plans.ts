@@ -135,10 +135,10 @@ export const OVERAGE_PACK = {
 export const PLAN_LIST: Plan[] = ['free', 'starter', 'pro', 'ultime'].map(id => PLANS[id as PlanId]);
 
 export function getPlan(planType: string | null | undefined): Plan {
-  if (!planType) return PLANS.free;
+  if (typeof planType !== 'string' || !planType) return PLANS.free;
   const normalized = planType.toLowerCase();
   if (normalized === 'enterprise') return PLANS.ultime; // legacy alias
-  if (normalized in PLANS) return PLANS[normalized as PlanId];
+  if (Object.prototype.hasOwnProperty.call(PLANS, normalized)) return PLANS[normalized as PlanId];
   return PLANS.free;
 }
 
