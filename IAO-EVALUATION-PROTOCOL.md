@@ -92,3 +92,109 @@ Priorité aux essais natifs des verrous et reprises, aux comptes sandbox fournis
 Les points ouverts de `IAO-SAFETY-REVIEW.md` demeurent : diagnostics TypeScript globaux du site, dépendances du site et du mobile, médias non récupérés, absence de tests navigateur réel et d'essais multisessions PostgreSQL natif. Il n'y a ici ni scan antivirus complet des appareils, ni garantie contre tout piratage, ni certification de toutes les applications. Les travaux non publiés des terminaux locaux Codex/GLM restent hors de visibilité de cette session.
 
 La cible raisonnable est une fiabilité mesurée sur des usages définis, des erreurs détectées et récupérables, et une progression vérifiable. Aucune campagne finie ne permet d'affirmer « tous les besoins, zéro bug, zéro latence, aucune concurrence ».
+
+## Complément du 9 novembre 2026 — Jev et sélection de moteurs
+
+Ce complément conserve une seule IAO, KARTA/KRIYA pour les missions, SMARANA/AKASHA pour
+la mémoire, VAJRA pour les droits, SATYA/PRAMANA pour les preuves et AGNI pour l'observation.
+Les moteurs ci-dessous sont des candidats spécialisés à qualifier, pas un appel simultané
+à tous les fournisseurs ni une preuve de supériorité mondiale.
+
+### Ajout logiciel Jev
+
+Le connecteur `karta/src/jev/` et la factory `createJevJudgmentTool` sont préparés dans cette
+branche, sans activation automatique. Ils valident les contrats, bornent le transport,
+permettent l'abstention et exigent des callbacks serveur d'autorisation, de réservation et
+de réconciliation. Le [contrat d'intégration](karta/src/jev/README.md) précise les limites.
+
+Les fournisseurs sont simulés dans les tests. Aucun résultat de ces tests n'est un score
+de précision, de calibration, de vitesse ou de coût réel de Jev. Le signal d'annulation,
+les quotas atomiques et les autorisations doivent être raccordés aux services canoniques
+par l'hôte avant utilisation.
+
+Validation de ce complément : **83 nouveaux tests Jev** (30 schéma, 19 transport,
+34 outil), **588 tests KARTA réussis dans 49 fichiers**, compilation et contrôle
+TypeScript KARTA réussis. [Preuve du lot](karta/test/evidence/jev-20261109.json).
+Ces résultats s'ajoutent à l'historique daté plus haut ; ils ne réexécutent pas la
+campagne étendue de 200 000 cas et ne certifient pas le site complet.
+
+### Catalogue court à comparer
+
+| Rôle proposé | Candidat identifié | Décision de qualification |
+| --- | --- | --- |
+| Jugements structurés | [Jev 1.14.0](https://docs.typesafe.ai/models) | Questions bornées, version épinglée, abstention et critères propres au cas d'usage |
+| Code et travail général | [GPT-6.1 Sol](https://developers.openai.com/api/docs/models/gpt-6.1-sol) | Vérifier l'adaptateur Responses pour les outils et la qualité sur les missions PURAMA |
+| Alternative et contre-expertise ciblée | [Claude Sonnet 5.5](https://platform.claude.com/docs/en/models/sonnet-5-5/overview) | Réutiliser le fournisseur existant ; deuxième réponse seulement si son gain est mesuré |
+| Opérations courantes bornées | [GPT-6 Luna](https://developers.openai.com/api/docs/models/gpt-6-luna) | Respecter le même seuil de qualité ; exclure les usages où le modèle économique échoue |
+| Compréhension multimodale | [Gemini 3.8 Flash](https://aistudio.google.com/docs/models/gemini-3.8-flash) | Entrées audio/vidéo/image/PDF ; sortie texte, génération média évaluée séparément dans SUTRA |
+| Alternatives API | [DeepSeek V4.1 Flash](https://api-docs.deepseek.com/quick_start/pricing/) ou [Mistral Small 4](https://docs.mistral.ai/models/mistral-small-4-0-26-03) | Comparer aux connecteurs déjà disponibles ; enregistrer versions, politique de données et coût complet |
+| Recherche des preuves AKASHA | [Qwen3 Embedding et Reranker](https://qwenlm.github.io/blog/qwen3-embedding/) | Essai sur un échantillon, sans réindexation générale avant preuve du gain |
+| Transcription | [Voxtral Mini Transcribe 3](https://docs.mistral.ai/models/voxtral-mini-transcribe-3-0) | Offre en aperçu ; ajouter seulement si une lacune du moteur vocal actuel est mesurée |
+| Escalade pour tâches difficiles | [GPT-6 Astra](https://developers.openai.com/api/docs/models/gpt-6-astra), éventuellement [Claude Fable 5.2](https://platform.claude.com/docs/en/models/fable-5-2/overview) | Budget explicite, contrats et données admissibles, amélioration de réussite démontrée |
+
+Ce tableau ne modifie aucun modèle de production, abonnement ou compte. Le moteur le
+moins cher admissible est choisi seulement **après** les contraintes de qualité, de
+droits, de données, d'outils et de délai. Un domaine non évalué reste non qualifié.
+
+### Techniques à mesurer dans les composants existants
+
+1. Recherche lexicale et vectorielle combinée, puis reclassement des passages ; vérifier
+   droits, dates et références avant génération. [Principe de recherche hybride](https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview).
+2. Cache exact lié au contrat et aux permissions, préfixes stables, déduplication des
+   opérations et réutilisation d'artefacts validés. Ne pas confondre une cache-hit logique
+   avec une preuve de fraîcheur ou d'autorisation.
+3. Effort de raisonnement ajusté à la tâche, outils chargés à la demande et transformations
+   déterministes en code. Mesurer la réussite avant de réduire l'effort. [Effort](https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost), [outils](https://www.anthropic.com/research/advanced-tool-use).
+4. Parallélisme limité aux tâches indépendantes, échéance commune et interruption des
+   travaux devenus inutiles. Comparer le coût par succès au total des appels, y compris
+   reprises, vérifications et erreurs.
+5. Traitement différé/batch des tâches non urgentes, budgets réservés puis rapprochés,
+   limites de concurrence et absence de baisse silencieuse sous le seuil de qualité.
+6. Spéculation, quantification et optimisation du cache KV seulement si PURAMA contrôle
+   l'inférence. Cela n'ajoute pas une option magique aux API distantes ; confirmer
+   exactitude, matériel et distribution du résultat. [vLLM](https://docs.vllm.ai/en/latest/features/speculative_decoding/).
+
+Pour Jev, ajouter aux scénarios réservés : catégories incomplètes, ambiguïtés, français,
+permutation des options, adversaires textuels, qualité selon niveau de confiance,
+couverture après abstention, erreurs 402/429, réponse tardive et révocation pendant la
+réconciliation. Une réponse structurée ou la concordance de deux modèles ne suffit pas
+à établir la vérité. Les critères exécutables restent contrôlés par le code et les
+critères qualitatifs par une procédure de revue calibrée.
+
+Les indicateurs restent séparés : qualité, temps utile et total p50/p95, coût par mission
+réussie, volume facturé et énergie. Les kWh d'une API distante sont **inconnus** sans
+télémétrie fournisseur adéquate ; une baisse de tokens ne mesure pas à elle seule une
+baisse d'énergie. Aucun pourcentage de gain de production n'a été calculé dans ce lot.
+
+### Révision du 9 novembre 2026 — traces privées et clôture fiable
+
+Le connecteur Jev déclare maintenant une politique serveur `metadata_only`. Le moteur
+minimise les entrées/sorties, décisions, erreurs et notifications de tout cycle protégé,
+y compris les appels ordinaires qui pourraient reprendre le même contenu. Le marqueur
+durable accompagne les approbations et les relectures d'exécution ; les objets nécessaires
+à l'action autorisée restent intacts. Le [contrat Jev](karta/src/jev/README.md) détaille
+les limites, dont les anciennes données stockées et les journaux internes des outils.
+
+Le journal fixe le premier résultat final et conditionne son écriture à l'identité du
+cycle, à son propriétaire, à l'agent, au statut initial et à une durée encore absente.
+Une perte d'accusé est réconciliée contre le résultat exact ; une erreur secondaire
+ne remplace plus une action réussie ni une approbation déjà résolue. La boucle peut
+effectuer une seule seconde tentative de clôture du même résultat, sans réexécuter
+l'outil. Si elle reste non confirmée, la reprise automatique est interdite, même pour
+un cycle sans outil et sans clé de déduplication.
+
+Les nouvelles vérifications exercent la vraie boucle, la résolution d'approbation et
+le connecteur Jev désactivé, avec fournisseurs simulés. La clôture est également testée
+avec du SQL PostgreSQL exécuté dans PGlite. Les résultats et empreintes sont consignés
+dans la [preuve complémentaire](karta/test/evidence/traces-finalization-20261109.json).
+Une vérification locale n'atteste ni le déploiement ni le succès de GitHub Actions.
+
+L'admission/réservation monétaire, la révocation effective et le consommateur métier
+des jugements Jev restent à raccorder. Les compteurs Gmail, l'usage CHEF après exécution
+et le compteur frontend ne sont pas utilisés comme substituts à ce service.
+
+Consolidation avec la PR #14 : conserver ses typages de tests, puis ajouter au double
+`logger.test.ts` la valeur SQL initiale `duration_ms: null` et la méthode `is()` (également
+dans son interface typée). Dans `loop.test.ts`, le résultat après clôture confirmée puis
+échec du suivi secondaire est désormais `success`, avec une seule écriture finale.
+Les autres fichiers de cette PR sœur ne sont pas modifiés par cette révision.
