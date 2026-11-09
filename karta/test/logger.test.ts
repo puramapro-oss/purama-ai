@@ -3,12 +3,12 @@ const h=vi.hoisted(()=>({rows:new Map<string,any>()}));
 vi.mock("../src/db/supabase.js",()=>({supabase:{from:()=>{
  let insert:any;let patch:any;const filters:Record<string,unknown>={};
  const result=async()=>{
-  if(insert){if(h.rows.has(insert.execution_key))return {data:null,error:{code:"23505"}};const row={id:"run-"+h.rows.size,...insert};h.rows.set(insert.execution_key,row);return {data:{id:row.id},error:null};}
+  if(insert){if(h.rows.has(insert.execution_key))return {data:null,error:{code:"23505"}};const row={id:"run-"+h.rows.size,duration_ms:null,...insert};h.rows.set(insert.execution_key,row);return {data:{id:row.id},error:null};}
   const row=[...h.rows.values()].find(r=>Object.entries(filters).every(([k,v])=>r[k]===v));
   if(patch&&row)Object.assign(row,patch);
   return {data:row??null,error:null};
  };
- const q:any={insert:(v:any)=>{insert=v;return q;},update:(v:any)=>{patch=v;return q;},select:()=>q,eq:(k:string,v:unknown)=>{filters[k]=v;return q;},single:result,then:(resolve:any,reject:any)=>result().then(resolve,reject)};
+ const q:any={insert:(v:any)=>{insert=v;return q;},update:(v:any)=>{patch=v;return q;},select:()=>q,eq:(k:string,v:unknown)=>{filters[k]=v;return q;},is:(k:string,v:unknown)=>{filters[k]=v;return q;},single:result,then:(resolve:any,reject:any)=>result().then(resolve,reject)};
  return q;
 }}}));
 const {startRun}=await import("../src/engine/logger.js");

@@ -76,6 +76,13 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
   description: string;
   sensitive: boolean;
   /**
+   * Server-owned trace policy, independent of the approval flag above. A tool
+   * marked metadata_only protects the whole cycle, including model summaries,
+   * errors, notifications and deferred calls. Execution/approval payloads stay
+   * intact. Omission retains the legacy trace behavior for existing tools.
+   */
+  tracePolicy?: "metadata_only";
+  /**
    * JSON Schema sent to the model and revalidated locally before execution.
    * Missing schemas are treated as "no parameters allowed" for legacy/test-only tools.
    */
@@ -102,6 +109,8 @@ export interface ToolExecutionContext {
 
 export interface ToolCallRecord {
   tool: string;
+  /** Durable server-owned marker; approval resolution must not weaken it. */
+  tracePolicy?: "metadata_only";
   paramsSummary: string;
   resultSummary: string;
   success: boolean;

@@ -144,6 +144,7 @@ export function createJevJudgmentTool(options: JevToolOptions = {}): ToolDefinit
     name: "jev_judgment",
     description: "Propose des jugements structurés Jev sur du texte autorisé : choix, score ou oui/non. Peut s'abstenir. Ne prouve pas leur exactitude et n'autorise ni dépense ni action métier.",
     sensitive: true,
+    tracePolicy: "metadata_only",
     inputSchema: {
       type: "object",
       properties: {

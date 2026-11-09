@@ -165,3 +165,36 @@ Les indicateurs restent séparés : qualité, temps utile et total p50/p95, coû
 réussie, volume facturé et énergie. Les kWh d'une API distante sont **inconnus** sans
 télémétrie fournisseur adéquate ; une baisse de tokens ne mesure pas à elle seule une
 baisse d'énergie. Aucun pourcentage de gain de production n'a été calculé dans ce lot.
+
+### Révision du 9 novembre 2026 — traces privées et clôture fiable
+
+Le connecteur Jev déclare maintenant une politique serveur `metadata_only`. Le moteur
+minimise les entrées/sorties, décisions, erreurs et notifications de tout cycle protégé,
+y compris les appels ordinaires qui pourraient reprendre le même contenu. Le marqueur
+durable accompagne les approbations et les relectures d'exécution ; les objets nécessaires
+à l'action autorisée restent intacts. Le [contrat Jev](karta/src/jev/README.md) détaille
+les limites, dont les anciennes données stockées et les journaux internes des outils.
+
+Le journal fixe le premier résultat final et conditionne son écriture à l'identité du
+cycle, à son propriétaire, à l'agent, au statut initial et à une durée encore absente.
+Une perte d'accusé est réconciliée contre le résultat exact ; une erreur secondaire
+ne remplace plus une action réussie ni une approbation déjà résolue. La boucle peut
+effectuer une seule seconde tentative de clôture du même résultat, sans réexécuter
+l'outil. Si elle reste non confirmée, la reprise automatique est interdite, même pour
+un cycle sans outil et sans clé de déduplication.
+
+Les nouvelles vérifications exercent la vraie boucle, la résolution d'approbation et
+le connecteur Jev désactivé, avec fournisseurs simulés. La clôture est également testée
+avec du SQL PostgreSQL exécuté dans PGlite. Les résultats et empreintes sont consignés
+dans la [preuve complémentaire](karta/test/evidence/traces-finalization-20261109.json).
+Une vérification locale n'atteste ni le déploiement ni le succès de GitHub Actions.
+
+L'admission/réservation monétaire, la révocation effective et le consommateur métier
+des jugements Jev restent à raccorder. Les compteurs Gmail, l'usage CHEF après exécution
+et le compteur frontend ne sont pas utilisés comme substituts à ce service.
+
+Consolidation avec la PR #14 : conserver ses typages de tests, puis ajouter au double
+`logger.test.ts` la valeur SQL initiale `duration_ms: null` et la méthode `is()` (également
+dans son interface typée). Dans `loop.test.ts`, le résultat après clôture confirmée puis
+échec du suivi secondaire est désormais `success`, avec une seule écriture finale.
+Les autres fichiers de cette PR sœur ne sont pas modifiés par cette révision.

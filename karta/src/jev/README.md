@@ -12,10 +12,40 @@ sur les tâches PURAMA. L'intégrateur doit raccorder les callbacks décrits ci-
 aux services canoniques d'identité, de permissions, de qualification et de quota.
 Ces callbacks ne sont pas implémentés par ce connecteur.
 
-Validation locale exécutée : **83 tests Jev** (30 schéma, 19 transport, 34 outil),
+Validation locale du lot initial : **83 tests Jev** (30 schéma, 19 transport, 34 outil),
 **588 tests KARTA au total dans 49 fichiers**, compilation KARTA et TypeScript réussis.
 Le fournisseur est simulé. La [preuve et les empreintes](../../test/evidence/jev-20261109.json)
 documentent le périmètre ; aucune précision ou latence de modèle n'est mesurée.
+
+Révision confidentialité/clôture : **59 tests supplémentaires**, **647/647 tests
+KARTA dans 53 fichiers**, typage et compilation réussis. La
+[preuve complémentaire](../../test/evidence/traces-finalization-20261109.json)
+identifie les sources, commandes, reproductions et limites.
+
+## Confidentialité des traces KARTA
+
+Jev déclare `tracePolicy: "metadata_only"`, une politique définie côté serveur et
+distincte du drapeau d'approbation `sensitive`. Dès que la définition d'un agent
+contient un outil protégé, ou qu'une décision cite un outil inconnu, KARTA minimise
+les traces de tout le cycle, y compris les outils ordinaires, erreurs, simulations,
+actions différées, décision du modèle et notifications. Les noms inconnus sont
+normalisés ; les objets privés ne sont pas sérialisés pour produire ces traces.
+
+Les statuts, les noms d'outils connus, les décomptes et les identifiants d'approbation
+restent disponibles. Le marqueur serveur est conservé dans `tools_used` puis vérifié
+à la résolution d'approbation, même si la définition a changé. Une lecture incertaine
+du parent entraîne une trace minimisée. La restitution d'un résultat déjà enregistré
+est aussi minimisée lorsqu'une politique protégée ou un outil inconnu est identifié.
+
+Les paramètres nécessaires à l'exécution et à l'approbation restent intacts et
+stockés dans leur circuit autorisé. Les journaux historiques en base ne sont pas
+réécrits ; leurs lectures directes par d'autres applications, les journaux internes
+des outils/fournisseurs et les règles de rétention restent à vérifier. Les outils
+existants sans politique explicite gardent leur comportement hors cycle protégé.
+
+La boucle actuelle ne renvoie pas les résultats d'outils au modèle pour une nouvelle
+décision. Un consommateur métier explicite reste donc nécessaire pour exploiter les
+jugements Jev ; leur présence dans le registre ne réalise pas ce raccordement.
 
 ## Rôle et périmètre
 
@@ -99,9 +129,9 @@ pas être interprété comme le statut global de l'outil. Les résultats indispo
   n'a été constatée pour ce projet.
 - Raccorder et tester les services d'admission/réconciliation, la révocation et les
   quotas concurrents. Les fixtures de tests ne sont pas ces services.
-- Configurer le masquage/la conservation des traces : la boucle KARTA existante peut
-  journaliser les paramètres d'outils. Ne pas introduire de données privées avant
-  d'avoir validé cette politique et les accès aux journaux.
+- Vérifier la politique de traces décrite plus haut sur le déploiement complet,
+  les accès aux paramètres d'approbation, les anciennes données et leur conservation.
+  Tous les workers exécutant ces parcours doivent prendre en charge cette politique.
 - Qualifier les résultats français, cas ambigus, options permutées, contenus adversariaux,
   calibration, taux d'abstention, coût complet et latence depuis l'infrastructure cible.
 - Ajouter explicitement l'outil à la liste autorisée de l'agent choisi seulement après
