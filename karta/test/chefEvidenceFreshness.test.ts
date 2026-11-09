@@ -93,8 +93,8 @@ describe("CHEF evidence generation", () => {
     expect((await db.query("SELECT id FROM purama_ai.chef_evidence")).rows).toHaveLength(0);
   });
 
-  it.each(["claimed", "retryable", "blocked_external", "verified_done", "cancelled", "failed"])
-    ("rejects proof writes after task state becomes %s", async (state) => {
+  it.each(["claimed", "retryable", "blocked_external", "verified_done", "cancelled", "failed"])(
+    "rejects proof writes after task state becomes %s", async (state) => {
       await db.query("UPDATE purama_ai.chef_tasks SET state=$2 WHERE id=$1", [task, state]);
       await expect(addProof()).rejects.toMatchObject({ code: "PCE01" });
     });

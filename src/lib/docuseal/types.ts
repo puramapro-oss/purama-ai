@@ -131,8 +131,8 @@ export const CreateContractInputSchema = z.object({
     name: z.string().min(1).max(200),
     phone: z.string().optional(),
   }),
-  metadata: z.record(z.unknown()).default({}),
-  variables: z.record(z.string()).optional(),
+  metadata: z.record(z.string(), z.unknown()).default({}),
+  variables: z.record(z.string(), z.string()).optional(),
   dual_signer: z.boolean().default(true),
   redirect_url: z.string().url().optional(),
 });
@@ -142,7 +142,7 @@ export type CreateContractInput = z.infer<typeof CreateContractInputSchema>;
 export const WebhookPayloadSchema = z.object({
   event_type: z.string(),
   timestamp: z.string().optional(),
-  data: z.record(z.unknown()),
+  data: z.record(z.string(), z.unknown()),
 });
 
 export const CrossAppJwtPayloadSchema = z.object({

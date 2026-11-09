@@ -58,14 +58,16 @@ export async function getConnectStatus(): Promise<{
   charges_enabled: boolean;
 } | null> {
   const { data, error } = await supabase
+    .schema('public')
     .from('connect_accounts')
     .select('onboarding_completed, payouts_enabled, charges_enabled')
-    .single();
-  if (error || !data) return { has_account: false, onboarding_completed: false, payouts_enabled: false, charges_enabled: false };
+    .maybeSingle();
+  if (error) return null;
+  if (!data) return { has_account: false, onboarding_completed: false, payouts_enabled: false, charges_enabled: false };
   return {
     has_account: true,
-    onboarding_completed: data.onboarding_completed,
-    payouts_enabled: data.payouts_enabled,
-    charges_enabled: data.charges_enabled,
+    onboarding_completed: data.onboarding_completed === true,
+    payouts_enabled: data.payouts_enabled === true,
+    charges_enabled: data.charges_enabled === true,
   };
 }
