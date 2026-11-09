@@ -2,7 +2,7 @@
 // POST { agent_id, input, trigger?: "manual"|"cron"|"webhook"|"api" }
 // If called by service-role: bypass user check (used by n8n scheduler).
 // If called by user JWT: must own the agent.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import { AgentRunSchema, validateBody } from "../_shared/validation.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";
 import { json } from "../_shared/response.ts";

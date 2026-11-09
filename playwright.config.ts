@@ -5,7 +5,8 @@ export default defineConfig({
   // docuseal-e2e.spec.ts (playwright.docuseal.config.ts) et tests/karta/** (playwright.karta.config.ts)
   // ciblent la prod avec leur propre config dédiée (baseURL, env vars requises) — jamais dans la
   // suite locale par défaut.
-  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**'],
+  // quality/** has its own isolated Supabase transport and local server (npm run test:quality).
+  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**', '**/quality/**'],
   timeout: 30_000,
   retries: 2,
   fullyParallel: true,

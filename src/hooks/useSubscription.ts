@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 import { useAuth } from './useAuth';
 import { isSuperAdmin } from '@/lib/constants';
 import { getPlan, type Plan, type PlanId } from '@/lib/plans';
@@ -14,12 +15,7 @@ export interface SubscriptionInfo {
   isLoading: boolean;
 }
 
-interface SubscriptionRow {
-  plan_type: string;
-  status: string;
-  trial_ends_at: string | null;
-  has_used_trial: boolean;
-}
+type SubscriptionRow = Pick<Tables<'subscriptions'>, 'plan_type' | 'status' | 'trial_ends_at' | 'has_used_trial'>;
 
 /**
  * Lit purama_ai.subscriptions directement (écrite par stripe-webhook ou start_trial()) plutôt que

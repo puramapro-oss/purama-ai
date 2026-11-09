@@ -1,3 +1,5 @@
+import type { P3Tables, PublicTables } from "./schema-contracts"
+
 export type Json =
   | string
   | number
@@ -12,8 +14,15 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  public: {
+    Tables: PublicTables
+    Views: { [_ in never]: never }
+    Functions: { [_ in never]: never }
+    Enums: { [_ in never]: never }
+    CompositeTypes: { [_ in never]: never }
+  }
   purama_ai: {
-    Tables: {
+    Tables: P3Tables & {
       agent_usage: {
         Row: {
           action_type: string
@@ -756,28 +765,34 @@ export type Database = {
       subscriptions: {
         Row: {
           created_at: string | null
+          has_used_trial: boolean
           id: string
           plan_type: string | null
           status: string | null
           stripe_customer_id: string | null
+          trial_ends_at: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          has_used_trial?: boolean
           id?: string
           plan_type?: string | null
           status?: string | null
           stripe_customer_id?: string | null
+          trial_ends_at?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
+          has_used_trial?: boolean
           id?: string
           plan_type?: string | null
           status?: string | null
           stripe_customer_id?: string | null
+          trial_ends_at?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -1168,6 +1183,15 @@ export type Database = {
       }
     }
     Functions: {
+      // Contracts from 20260727000000 and 20260727010000 SQL migrations.
+      start_trial: {
+        Args: { p_plan_type: string }
+        Returns: Database["purama_ai"]["Tables"]["subscriptions"]["Row"]
+      }
+      public_weekly_actions_count: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       generate_promo_code: {
         Args: { influencer_name: string }
         Returns: string
@@ -1196,7 +1220,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals["purama_ai"]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends

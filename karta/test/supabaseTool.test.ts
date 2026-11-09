@@ -1,13 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+type MockRow = Record<string, unknown>;
+type MockResult = { data: { id: string } | null; error: { message: string } | null };
+interface MockQuery {
+  update(value: MockRow): MockQuery;
+  insert(value: MockRow): MockQuery;
+  select(): MockQuery;
+  eq(key: string, value: unknown): MockQuery;
+  maybeSingle(): Promise<MockResult>;
+  single(): Promise<MockResult>;
+}
 const h = vi.hoisted(() => ({ rows: new Map<string, Record<string, unknown>>(), updates: [] as Record<string,unknown>[] }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: { from: () => {
-  let row: any; let action = ""; const filters: Record<string,unknown> = {};
-  const result = async () => {
-    if (action === "update") { const current=h.rows.get(row.id); h.updates.push({...filters}); if (current && Object.entries(filters).every(([k,v])=>current[k]===v)) { h.rows.set(row.id,row); return {data:{id:row.id},error:null}; } return {data:null,error:null}; }
-    const id=row.id??"new"; if(h.rows.has(id)) return {data:null,error:{message:"duplicate"}};
+  let row: MockRow = {}; let action = ""; const filters: Record<string,unknown> = {};
+  const result = async (): Promise<MockResult> => {
+    const id=typeof row.id === "string" ? row.id : "new";
+    if (action === "update") { const current=h.rows.get(id); h.updates.push({...filters}); if (current && Object.entries(filters).every(([k,v])=>current[k]===v)) { h.rows.set(id,row); return {data:{id},error:null}; } return {data:null,error:null}; }
+    if(h.rows.has(id)) return {data:null,error:{message:"duplicate"}};
     h.rows.set(id,{...row,id}); return {data:{id},error:null};
   };
-  const q:any={update:(v:unknown)=>{row=v;action="update";return q;},insert:(v:unknown)=>{row=v;action="insert";return q;},select:()=>q,eq:(k:string,v:unknown)=>{filters[k]=v;return q;},maybeSingle:result,single:result};
+  const q:MockQuery={update:(v)=>{row=v;action="update";return q;},insert:(v)=>{row=v;action="insert";return q;},select:()=>q,eq:(k,v)=>{filters[k]=v;return q;},maybeSingle:result,single:result};
   return q;
 } } }));
 const { supabaseUpsertTool, supabaseSelectTool } = await import("../src/tools/supabase-tool.js");
