@@ -1,25 +1,19 @@
 // POST /functions/v1/contracts-webhook
 // Receives DocuSeal webhooks on submission lifecycle events.
-// Validates HMAC signature, updates contracts + contract_signers, triggers OTS stamping.
+// Validates the configured shared-secret Bearer token, then processes bounded JSON.
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
-  DOCUSEAL_WEBHOOK_SECRET, verifyWebhookSignature, docusealFetch,
+  DOCUSEAL_WEBHOOK_SECRET, docusealFetch,
 } from "../_shared/docuseal.ts";
-
-interface WebhookPayload {
-  event_type: string;
-  timestamp?: string;
-  data: Record<string, unknown>;
-}
+import { readOtsBody } from "../_shared/ots-contract.ts";
+import { OtsHttpError } from "../_shared/ots-auth.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
   if (req.method !== "POST") return errorResponse("Method not allowed", 405);
-
-  const rawBody = await req.text();
 
   // ─── Verify shared-secret Bearer token ──────────────────────────
   // DocuSeal community uses WebhookUrl.secret as raw HTTP headers (not HMAC).
@@ -41,11 +35,28 @@ serve(async (req) => {
       return errorResponse("Invalid signature", 401);
     }
   } else {
-    console.warn("[webhook] DOCUSEAL_WEBHOOK_SECRET not set — skipping verification (dev only)");
+    return errorResponse("Webhook authentication unavailable", 503);
   }
 
-  let payload: WebhookPayload;
-  try { payload = JSON.parse(rawBody); } catch { return errorResponse("Invalid JSON", 400); }
+  let payload: Record<string, unknown>;
+  try { payload = await readOtsBody(req, 64 * 1024); }
+  catch (error) { return errorResponse(error instanceof OtsHttpError ? error.message : "Invalid JSON", error instanceof OtsHttpError ? error.status : 400); }
+  if (typeof payload.event_type !== "string" || payload.event_type.length > 64
+    || !/^[a-z]+(?:[._][a-z]+)+$/.test(payload.event_type)
+    || !payload.data || typeof payload.data !== "object" || Array.isArray(payload.data)) {
+    return errorResponse("Invalid webhook payload", 400);
+  }
+  const eventType = payload.event_type;
+  const data = payload.data as Record<string, unknown>;
+  const positiveId = (value: unknown): value is number => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+  if ((data.id !== undefined && !positiveId(data.id)) || (data.submission_id !== undefined && !positiveId(data.submission_id))) {
+    return errorResponse("Invalid webhook identifier", 400);
+  }
+  const submissionId = positiveId(data.submission_id) ? data.submission_id
+    : eventType.startsWith("submission.") && positiveId(data.id) ? data.id : null;
+  if (!positiveId(submissionId) || (eventType.startsWith("form.") && !positiveId(data.id))) {
+    return errorResponse("Missing webhook identifier", 400);
+  }
 
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -53,20 +64,10 @@ serve(async (req) => {
     { db: { schema: "purama_ai" } },
   );
 
-  const eventType = payload.event_type;
-  const data = payload.data as Record<string, unknown>;
-  console.log(`[webhook] event=${eventType}`, { data_keys: Object.keys(data) });
+  console.log(`[webhook] event=${eventType}`);
 
   try {
-    // Find the contract by submission_id
-    const submissionId = typeof data.submission_id === "number" ? data.submission_id
-                      : typeof data.id === "number" && eventType.startsWith("submission.") ? data.id
-                      : null;
-    if (!submissionId) {
-      console.warn("[webhook] no submission_id in payload", data);
-      return corsResponse({ ok: true, skip: "no submission_id" });
-    }
-
+    // The submission identifier is validated before creating the privileged client.
     const { data: contract } = await supabaseAdmin
       .from("contracts")
       .select("id, status, user_id, app_slug, template_slug")
@@ -117,7 +118,7 @@ serve(async (req) => {
           .from("contract_signers")
           .select("signed")
           .eq("contract_id", contract.id);
-        const allSigned = signers?.every(s => s.signed) ?? false;
+        const allSigned = Array.isArray(signers) && signers.length > 0 && signers.every((s: { signed: boolean }) => s.signed);
 
         if (allSigned) {
           // Fetch combined PDF URL from DocuSeal

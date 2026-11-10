@@ -1,0 +1,1150 @@
+{
+  "summary": {
+    "changed_count": 58,
+    "affected_count": 45,
+    "changed_files": 25,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Function:src/components/auth/ProtectedRoute.tsx:ProtectedRoute",
+      "name": "ProtectedRoute",
+      "type": "Function",
+      "filePath": "src/components/auth/ProtectedRoute.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/dashboard/ExecutionCounter.tsx:ExecutionCounter",
+      "name": "ExecutionCounter",
+      "type": "Function",
+      "filePath": "src/components/dashboard/ExecutionCounter.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/dashboard/ExecutionCounter.tsx:ExecutionCounter.fn@23:12.t@37:4",
+      "name": "t",
+      "type": "Function",
+      "filePath": "src/components/dashboard/ExecutionCounter.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab",
+      "name": "AgentChatTab",
+      "type": "Function",
+      "filePath": "src/components/voice/AgentChatTab.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab.submit@60:2",
+      "name": "submit",
+      "type": "Function",
+      "filePath": "src/components/voice/AgentChatTab.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab.handleSend@90:2",
+      "name": "handleSend",
+      "type": "Function",
+      "filePath": "src/components/voice/AgentChatTab.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useCustomAgentKartaState",
+      "name": "useCustomAgentKartaState",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useCustomAgentKartaState.queryFn@49:4",
+      "name": "queryFn",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useUpdateCustomAgentKartaState",
+      "name": "useUpdateCustomAgentKartaState",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useUpdateCustomAgentKartaState.mutationFn@70:4",
+      "name": "mutationFn",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useUpdateCustomAgentKartaState.onSuccess@87:4",
+      "name": "onSuccess",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useCustomAgentKartaRuns",
+      "name": "useCustomAgentKartaRuns",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useCustomAgentKartaRuns.queryFn@99:4",
+      "name": "queryFn",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useCustomAgentPendingActions",
+      "name": "useCustomAgentPendingActions",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useCreatorAgentKarta.ts:useCustomAgentPendingActions.queryFn@122:4",
+      "name": "queryFn",
+      "type": "Function",
+      "filePath": "src/hooks/useCreatorAgentKarta.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice",
+      "name": "useVoice",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.updateSettings@63:2",
+      "name": "updateSettings",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.startLevelMonitor@73:2",
+      "name": "startLevelMonitor",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.startLevelMonitor@73:40.tick@84:6",
+      "name": "tick",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.stopLevelMonitor@99:2",
+      "name": "stopLevelMonitor",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.stopRecording@143:2",
+      "name": "stopRecording",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.cancelRecording@169:2",
+      "name": "cancelRecording",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.stopSpeaking@178:2",
+      "name": "stopSpeaking",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.speak@188:2",
+      "name": "speak",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/hooks/useVoice.tsx:useVoice.speak@188:28.watch@221:6",
+      "name": "watch",
+      "type": "Function",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.isTranscribing@241:4",
+      "name": "isTranscribing",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.startRecording@242:4",
+      "name": "startRecording",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.stopRecording@243:4",
+      "name": "stopRecording",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.cancelRecording@244:4",
+      "name": "cancelRecording",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.audioLevel@245:4",
+      "name": "audioLevel",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.isSpeaking@246:4",
+      "name": "isSpeaking",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.speak@247:4",
+      "name": "speak",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.stopSpeaking@248:4",
+      "name": "stopSpeaking",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.updateSettings@250:4",
+      "name": "updateSettings",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/hooks/useVoice.tsx:useVoice.loadingSettings@251:4",
+      "name": "loadingSettings",
+      "type": "Property",
+      "filePath": "src/hooks/useVoice.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail",
+      "name": "CreatorAgentDetail",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.submitMessage@100:2",
+      "name": "submitMessage",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.submitMessage@100:24.user_id@104:6",
+      "name": "user_id",
+      "type": "Property",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.submitMessage@100:24.role@107:6",
+      "name": "role",
+      "type": "Property",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.submitMessage@100:24.content@108:6",
+      "name": "content",
+      "type": "Property",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.handleSendChat@124:2",
+      "name": "handleSendChat",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.handleSave@132:2",
+      "name": "handleSave",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.handleTriggerNow@144:2",
+      "name": "handleTriggerNow",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.toggleTool@154:2",
+      "name": "toggleTool",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail.handleDelete@163:2",
+      "name": "handleDelete",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat",
+      "name": "LegalAgentChat",
+      "type": "Function",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:2",
+      "name": "submitMessage",
+      "type": "Function",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.id@49:6",
+      "name": "id",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.session_id@51:6",
+      "name": "session_id",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.role@52:6",
+      "name": "role",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.documents_referenced@55:6",
+      "name": "documents_referenced",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.cases_referenced@56:6",
+      "name": "cases_referenced",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.sources_cited@57:6",
+      "name": "sources_cited",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.confidence@58:6",
+      "name": "confidence",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.disclaimer_shown@59:6",
+      "name": "disclaimer_shown",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.created_at@60:6",
+      "name": "created_at",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:src/pages/LegalAgentChat.tsx:LegalAgentChat.submitMessage@46:24.sources_cited@70:8",
+      "name": "sources_cited",
+      "type": "Property",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat.newSession@90:2",
+      "name": "newSession",
+      "type": "Function",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_2_agentchattab",
+      "name": "AgentChatTab \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_3_agentchattab",
+      "name": "AgentChatTab \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_4_agentchattab",
+      "name": "AgentChatTab \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_5_agentchattab",
+      "name": "AgentChatTab \u2192 StopLevelMonitor",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "cancelRecording",
+          "step": 3
+        },
+        {
+          "symbol": "stopLevelMonitor",
+          "step": 5
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_6_agentchattab",
+      "name": "AgentChatTab \u2192 Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_15_executioncounter",
+      "name": "ExecutionCounter \u2192 Sb",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "ExecutionCounter",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_16_agentchattab",
+      "name": "AgentChatTab \u2192 Sb",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_37_executioncounter",
+      "name": "ExecutionCounter \u2192 StartOfMonthISO",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "ExecutionCounter",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_51_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_52_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_53_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_54_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 StopLevelMonitor",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancelRecording",
+          "step": 3
+        },
+        {
+          "symbol": "stopLevelMonitor",
+          "step": 5
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_55_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_63_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 Sb",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_73_executioncounter",
+      "name": "ExecutionCounter \u2192 IsSuperAdmin",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "ExecutionCounter",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_74_executioncounter",
+      "name": "ExecutionCounter \u2192 GetPlan",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "ExecutionCounter",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_77_handledelete",
+      "name": "HandleDelete \u2192 Sb",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "handleDelete",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_79_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_80_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_81_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_82_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 StopLevelMonitor",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancelRecording",
+          "step": 3
+        },
+        {
+          "symbol": "stopLevelMonitor",
+          "step": 5
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_83_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_89_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 Sb",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_103_legalagentchat",
+      "name": "LegalAgentChat \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_104_legalagentchat",
+      "name": "LegalAgentChat \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_105_legalagentchat",
+      "name": "LegalAgentChat \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_106_legalagentchat",
+      "name": "LegalAgentChat \u2192 StopLevelMonitor",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancelRecording",
+          "step": 3
+        },
+        {
+          "symbol": "stopLevelMonitor",
+          "step": 5
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_107_legalagentchat",
+      "name": "LegalAgentChat \u2192 Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "stopSpeaking",
+          "step": 3
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_110_legalagentchat",
+      "name": "LegalAgentChat \u2192 Sb",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_190_executioncounter",
+      "name": "ExecutionCounter \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "ExecutionCounter",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_194_handlesave",
+      "name": "HandleSave \u2192 AddToRemoveQueue",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "handleSave",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_198_agentchattab",
+      "name": "AgentChatTab \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_206_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_231_handlesave",
+      "name": "HandleSave \u2192 Result",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "handleSave",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_233_agentchattab",
+      "name": "AgentChatTab \u2192 UseAuth",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "AgentChatTab",
+          "step": 1
+        },
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_241_voicesettingscard",
+      "name": "VoiceSettingsCard \u2192 UseAuth",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_262_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_273_creatoragentdetail",
+      "name": "CreatorAgentDetail \u2192 UseAuth",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "useCustomAgentKartaState",
+          "step": 2
+        },
+        {
+          "symbol": "CreatorAgentDetail",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_291_handlesave",
+      "name": "HandleSave \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "handleSave",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_292_handlesave",
+      "name": "HandleSave \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "handleSave",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_293_handlesave",
+      "name": "HandleSave \u2192 Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "handleSave",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_329_legalagentchat",
+      "name": "LegalAgentChat \u2192 UseAuth",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_380_legalagentchat",
+      "name": "LegalAgentChat \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "useVoice",
+          "step": 2
+        },
+        {
+          "symbol": "LegalAgentChat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_497_handledelete",
+      "name": "HandleDelete \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "handleDelete",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_499_handlesave",
+      "name": "HandleSave \u2192 From",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "handleSave",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}

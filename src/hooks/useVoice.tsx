@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   transcribeAudio,
   synthesizeSpeech,
@@ -10,6 +10,7 @@ import {
   type VoiceSettings,
 } from '@/lib/voice';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope } from '@/hooks/useRequestScope';
 
 export interface UseVoice {
   // Recording / STT
@@ -31,8 +32,14 @@ export interface UseVoice {
 
 export function useVoice(): UseVoice {
   const { user } = useAuth();
-  const [settings, setSettings] = useState<VoiceSettings>({ ...DEFAULT_VOICE_SETTINGS });
-  const [loadingSettings, setLoadingSettings] = useState(true);
+  const userId = user?.id ?? null;
+  const scopeKey = JSON.stringify([userId]);
+  const captureScope = useRequestScope(scopeKey);
+  const [loadedSettings, setLoadedSettings] = useState<{ key: string; value: VoiceSettings } | null>(null);
+  const settings = loadedSettings?.key === scopeKey ? loadedSettings.value : DEFAULT_VOICE_SETTINGS;
+  const loadingSettings = Boolean(userId) && loadedSettings?.key !== scopeKey;
+  const settingsRevisionRef = useRef(0);
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -46,29 +53,57 @@ export function useVoice(): UseVoice {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const rafRef = useRef<number | null>(null);
   const audioElRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+  const speechWatchRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const speechRequestRef = useRef(0);
+  const recordingRequestRef = useRef(0);
+  const recordingPendingRef = useRef(false);
+  const stopPromiseRef = useRef<Promise<string | null> | null>(null);
+  const finishRecordingRef = useRef<((value: string | null) => void) | null>(null);
 
-  // Load settings
   useEffect(() => {
-    if (!user) {
-      setLoadingSettings(false);
-      return;
-    }
-    let cancelled = false;
-    getVoiceSettings(user.id)
-      .then(s => { if (!cancelled) setSettings(s); })
-      .catch(() => {})
-      .finally(() => { if (!cancelled) setLoadingSettings(false); });
-    return () => { cancelled = true; };
-  }, [user?.id]);
+    if (!userId) return;
+    const isCurrent = captureScope();
+    const revision = settingsRevisionRef.current;
+    getVoiceSettings(userId)
+      .then(value => {
+        if (isCurrent() && revision === settingsRevisionRef.current) {
+          setLoadedSettings({ key: scopeKey, value });
+        }
+      })
+      .catch(() => {
+        if (isCurrent() && revision === settingsRevisionRef.current) {
+          setLoadedSettings({ key: scopeKey, value: { ...DEFAULT_VOICE_SETTINGS } });
+        }
+      });
+  }, [userId, scopeKey, captureScope]);
 
   const updateSettings = useCallback(async (patch: Partial<VoiceSettings>) => {
-    if (!user) {
-      setSettings(prev => ({ ...prev, ...patch }));
+    const isCurrent = captureScope();
+    if (!isCurrent()) return;
+    const changes = { ...patch };
+    if (!userId) {
+      setLoadedSettings(previous => ({
+        key: scopeKey,
+        value: { ...(previous?.key === scopeKey ? previous.value : DEFAULT_VOICE_SETTINGS), ...changes },
+      }));
       return;
     }
-    const next = await saveVoiceSettings(user.id, patch);
-    setSettings(next);
-  }, [user?.id]);
+    // Preserve local write order, and never start a queued request after its owner left.
+    const operation = saveQueueRef.current.then(async () => {
+      if (!isCurrent()) return;
+      try {
+        const value = await saveVoiceSettings(userId, changes);
+        if (!isCurrent()) return;
+        settingsRevisionRef.current += 1;
+        setLoadedSettings({ key: scopeKey, value });
+      } catch (error) {
+        if (isCurrent()) throw error;
+      }
+    });
+    saveQueueRef.current = operation.catch(() => {});
+    await operation;
+  }, [userId, scopeKey, captureScope]);
 
   // ---------- Audio level monitoring (waveform) ----------
   const startLevelMonitor = useCallback((stream: MediaStream) => {
@@ -109,32 +144,44 @@ export function useVoice(): UseVoice {
 
   // ---------- Recording ----------
   const startRecording = useCallback(async () => {
-    if (isRecording) return;
+    const isCurrent = captureScope();
+    if (!isCurrent() || isRecording || recorderRef.current || recordingPendingRef.current || stopPromiseRef.current) return;
+    const request = ++recordingRequestRef.current;
+    recordingPendingRef.current = true;
+    let stream: MediaStream | null = null;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (!isCurrent() || request !== recordingRequestRef.current) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
       streamRef.current = stream;
       const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
         ? 'audio/webm;codecs=opus'
-        : MediaRecorder.isTypeSupported('audio/webm')
-          ? 'audio/webm'
-          : '';
+        : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
       const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       chunksRef.current = [];
-      recorder.ondataavailable = e => {
-        if (e.data && e.data.size > 0) chunksRef.current.push(e.data);
+      recorder.ondataavailable = event => {
+        if (isCurrent() && request === recordingRequestRef.current && event.data?.size > 0) {
+          chunksRef.current.push(event.data);
+        }
       };
       recorder.start();
       recorderRef.current = recorder;
       setIsRecording(true);
       startLevelMonitor(stream);
-    } catch (e) {
-      console.error('[useVoice] mic denied', e);
-      throw e;
+    } catch (error) {
+      stream?.getTracks().forEach(track => track.stop());
+      if (streamRef.current === stream) streamRef.current = null;
+      if (isCurrent() && request === recordingRequestRef.current) throw error;
+    } finally {
+      if (request === recordingRequestRef.current) recordingPendingRef.current = false;
     }
-  }, [isRecording, startLevelMonitor]);
+  }, [captureScope, isRecording, startLevelMonitor]);
 
-  const teardownRecording = useCallback(() => {
-    streamRef.current?.getTracks().forEach(t => t.stop());
+  const teardownRecording = useCallback((recorder?: MediaRecorder) => {
+    if (recorder && recorderRef.current !== recorder) return;
+    streamRef.current?.getTracks().forEach(track => track.stop());
     streamRef.current = null;
     recorderRef.current = null;
     stopLevelMonitor();
@@ -142,113 +189,124 @@ export function useVoice(): UseVoice {
   }, [stopLevelMonitor]);
 
   const stopRecording = useCallback(async (): Promise<string | null> => {
+    if (stopPromiseRef.current) return stopPromiseRef.current;
     const recorder = recorderRef.current;
-    if (!recorder) return null;
-    return new Promise<string | null>((resolve) => {
-      recorder.onstop = async () => {
-        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' });
-        teardownRecording();
-        if (blob.size < 200) {
-          resolve(null);
-          return;
+    const isCurrent = captureScope();
+    const request = recordingRequestRef.current;
+    if (!recorder || !isCurrent()) return null;
+    const current = () => isCurrent() && request === recordingRequestRef.current;
+    const pending = new Promise<string | null>(resolve => {
+      const finish = (value: string | null) => {
+        if (finishRecordingRef.current === finish) {
+          finishRecordingRef.current = null;
+          stopPromiseRef.current = null;
         }
+        resolve(value);
+      };
+      finishRecordingRef.current = finish;
+      recorder.onstop = async () => {
+        if (!current()) { finish(null); return; }
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' });
+        teardownRecording(recorder);
+        if (blob.size < 200) { finish(null); return; }
         setIsTranscribing(true);
         try {
           const text = await transcribeAudio(blob, settings.language);
-          resolve(text);
-        } catch (e) {
-          console.error('[useVoice] transcribe failed', e);
-          resolve(null);
+          finish(current() ? text : null);
+        } catch {
+          finish(null);
         } finally {
-          setIsTranscribing(false);
+          if (current()) setIsTranscribing(false);
         }
       };
-      try { recorder.stop(); } catch { teardownRecording(); resolve(null); }
     });
-  }, [settings.language, teardownRecording]);
+    stopPromiseRef.current = pending;
+    try { recorder.stop(); } catch { teardownRecording(recorder); finishRecordingRef.current?.(null); }
+    return pending;
+  }, [captureScope, settings.language, teardownRecording]);
 
   const cancelRecording = useCallback(() => {
+    recordingRequestRef.current += 1;
+    recordingPendingRef.current = false;
+    finishRecordingRef.current?.(null);
     const recorder = recorderRef.current;
-    if (!recorder) return;
-    recorder.onstop = null;
-    try { recorder.stop(); } catch { /* noop */ }
+    if (recorder) {
+      recorder.onstop = null;
+      try { recorder.stop(); } catch { /* already stopped */ }
+    }
     teardownRecording();
+    setIsTranscribing(false);
   }, [teardownRecording]);
 
   // ---------- TTS ----------
-  const stopSpeaking = useCallback(() => {
-    audioElRef.current?.pause();
-    if (audioElRef.current) {
-      audioElRef.current.src = '';
-      audioElRef.current = null;
+  const releaseAudio = useCallback(() => {
+    const audio = audioElRef.current;
+    audioElRef.current = null;
+    if (audio) {
+      audio.onended = null;
+      audio.onerror = null;
+      audio.pause();
+      audio.src = '';
     }
-    stopBrowserSpeak();
-    setIsSpeaking(false);
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+    audioUrlRef.current = null;
   }, []);
 
+  const stopSpeaking = useCallback(() => {
+    speechRequestRef.current += 1;
+    releaseAudio();
+    if (speechWatchRef.current !== null) clearInterval(speechWatchRef.current);
+    speechWatchRef.current = null;
+    stopBrowserSpeak();
+    setIsSpeaking(false);
+  }, [releaseAudio]);
+
   const speak = useCallback(async (text: string) => {
+    const inScope = captureScope();
+    if (!inScope()) return;
     stopSpeaking();
     if (!text || !text.trim()) return;
+    const request = speechRequestRef.current;
+    const current = () => inScope() && request === speechRequestRef.current;
     setIsSpeaking(true);
     try {
       const blob = await synthesizeSpeech(text, {
-        provider: settings.provider,
-        voice_id: settings.voice_id,
-        speed: settings.speed,
+        provider: settings.provider, voice_id: settings.voice_id, speed: settings.speed,
       });
+      if (!current()) return;
       if (blob && blob.size > 0) {
         const url = URL.createObjectURL(blob);
+        audioUrlRef.current = url;
         const audio = new Audio(url);
         audioElRef.current = audio;
-        audio.onended = () => {
-          URL.revokeObjectURL(url);
-          setIsSpeaking(false);
-        };
-        audio.onerror = () => {
-          URL.revokeObjectURL(url);
-          setIsSpeaking(false);
-        };
+        audio.onended = () => { if (current()) stopSpeaking(); };
+        audio.onerror = () => { if (current()) stopSpeaking(); };
         await audio.play();
         return;
       }
-    } catch (e) {
-      console.warn('[useVoice] TTS failed, falling back', e);
+    } catch {
+      if (!current()) return;
+      releaseAudio();
     }
-    // Fallback to browser SpeechSynthesis
+    if (!current()) return;
     const ok = browserSpeak(text, settings.language === 'fr' ? 'fr-FR' : settings.language);
-    if (!ok) setIsSpeaking(false);
-    else {
-      // Watch for end
-      const watch = setInterval(() => {
-        if (typeof window !== 'undefined' && !window.speechSynthesis.speaking) {
-          clearInterval(watch);
-          setIsSpeaking(false);
-        }
-      }, 250);
-    }
-  }, [settings, stopSpeaking]);
+    if (!ok) { setIsSpeaking(false); return; }
+    speechWatchRef.current = setInterval(() => {
+      if (!current() || !window.speechSynthesis.speaking) stopSpeaking();
+    }, 250);
+  }, [captureScope, settings, stopSpeaking, releaseAudio]);
 
-  // Cleanup on unmount
-  useEffect(() => {
+  // A changed identity and unmount both invalidate work before the next paint.
+  useLayoutEffect(() => {
+    saveQueueRef.current = Promise.resolve();
     return () => {
       cancelRecording();
       stopSpeaking();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [scopeKey, cancelRecording, stopSpeaking]);
 
   return {
-    isRecording,
-    isTranscribing,
-    startRecording,
-    stopRecording,
-    cancelRecording,
-    audioLevel,
-    isSpeaking,
-    speak,
-    stopSpeaking,
-    settings,
-    updateSettings,
-    loadingSettings,
+    isRecording, isTranscribing, startRecording, stopRecording, cancelRecording, audioLevel,
+    isSpeaking, speak, stopSpeaking, settings, updateSettings, loadingSettings,
   };
 }

@@ -1,0 +1,218 @@
+[
+  {
+    "target": "AgentChatTab",
+    "file": "src/components/voice/AgentChatTab.tsx",
+    "risk": "HIGH",
+    "summary": {
+      "direct": 3,
+      "processes_affected": 3,
+      "modules_affected": 1
+    }
+  },
+  {
+    "target": "handleSend",
+    "file": "src/components/voice/AgentChatTab.tsx",
+    "risk": "HIGH",
+    "summary": {
+      "direct": 1,
+      "processes_affected": 4,
+      "modules_affected": 2
+    }
+  },
+  {
+    "target": "newSession",
+    "file": "src/components/voice/AgentChatTab.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "submit",
+    "file": "src/components/voice/AgentChatTab.tsx",
+    "risk": "HIGH",
+    "summary": {
+      "direct": 2,
+      "processes_affected": 4,
+      "modules_affected": 2
+    }
+  },
+  {
+    "target": "CreatorAgentDetail",
+    "file": "src/pages/CreatorAgentDetail.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "handleDelete",
+    "file": "src/pages/CreatorAgentDetail.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "handleSave",
+    "file": "src/pages/CreatorAgentDetail.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "handleSendChat",
+    "file": "src/pages/CreatorAgentDetail.tsx",
+    "risk": "LOW",
+    "summary": {
+      "direct": 1,
+      "processes_affected": 1,
+      "modules_affected": 1
+    }
+  },
+  {
+    "target": "handleTriggerNow",
+    "file": "src/pages/CreatorAgentDetail.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "submitMessage",
+    "file": "src/pages/CreatorAgentDetail.tsx",
+    "risk": "LOW",
+    "summary": {
+      "direct": 2,
+      "processes_affected": 1,
+      "modules_affected": 1
+    }
+  },
+  {
+    "target": "ExecutionCounter",
+    "file": "src/components/dashboard/ExecutionCounter.tsx",
+    "risk": "LOW",
+    "summary": {
+      "direct": 1,
+      "processes_affected": 0,
+      "modules_affected": 2
+    }
+  },
+  {
+    "target": "LegalAgentChat",
+    "file": "src/pages/LegalAgentChat.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "handleSend",
+    "file": "src/pages/LegalAgentChat.tsx",
+    "risk": "LOW",
+    "summary": {
+      "direct": 1,
+      "processes_affected": 1,
+      "modules_affected": 1
+    }
+  },
+  {
+    "target": "newSession",
+    "file": "src/pages/LegalAgentChat.tsx",
+    "risk": "UNKNOWN",
+    "summary": {
+      "direct": 0,
+      "processes_affected": 0,
+      "modules_affected": 0
+    }
+  },
+  {
+    "target": "submitMessage",
+    "file": "src/pages/LegalAgentChat.tsx",
+    "risk": "LOW",
+    "summary": {
+      "direct": 2,
+      "processes_affected": 1,
+      "modules_affected": 1
+    }
+  },
+  {
+    "target": "ProtectedRoute",
+    "file": "src/components/auth/ProtectedRoute.tsx",
+    "risk": "LOW",
+    "summary": {
+      "direct": 2,
+      "processes_affected": 1,
+      "modules_affected": 1
+    }
+  },
+  {
+    "target": "cancelRecording",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "UNKNOWN",
+    "summary": null
+  },
+  {
+    "target": "speak",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "UNKNOWN",
+    "summary": null
+  },
+  {
+    "target": "startRecording",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "UNKNOWN",
+    "summary": null
+  },
+  {
+    "target": "stopRecording",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "UNKNOWN",
+    "summary": null
+  },
+  {
+    "target": "stopSpeaking",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "UNKNOWN",
+    "summary": null
+  },
+  {
+    "target": "teardownRecording",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "HIGH",
+    "summary": {
+      "direct": 2,
+      "processes_affected": 4,
+      "modules_affected": 3
+    }
+  },
+  {
+    "target": "updateSettings",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "UNKNOWN",
+    "summary": null
+  },
+  {
+    "target": "useVoice",
+    "file": "src/hooks/useVoice.tsx",
+    "risk": "CRITICAL",
+    "summary": {
+      "direct": 4,
+      "processes_affected": 8,
+      "modules_affected": 3
+    }
+  }
+]

@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 
@@ -228,26 +228,52 @@ describe("CHEF evidence generation", () => {
     expect((await db.query("SELECT id FROM purama_ai.chef_evidence")).rows).toHaveLength(0);
   });
 
-  it("preserves pre-migration rows without certifying them as current evidence", async () => {
-    const legacy = new PGlite();
-    try {
-      await legacy.exec(`CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
-        CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
-        CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;`);
-      for (const file of [
-        "008_chef_control_plane.sql", "009_chef_hardening.sql", "010_chef_reliability.sql",
-        "011_chef_runtime_policy.sql", "012_chef_mission_ingest.sql", "013_chef_independent_review.sql",
-        "014_chef_file_ownership.sql", "015_chef_mission_file_ownership.sql", "016_chef_scoped_evidence.sql",
-      ]) {
-        await legacy.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
+  describe("legacy evidence migration", () => {
+    let setup: Promise<PGlite> | undefined;
+
+    async function legacyFixture() {
+      const legacy = new PGlite();
+      try {
+        await legacy.exec(`CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
+          CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
+          CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;`);
+        for (const file of [
+          "008_chef_control_plane.sql", "009_chef_hardening.sql", "010_chef_reliability.sql",
+          "011_chef_runtime_policy.sql", "012_chef_mission_ingest.sql", "013_chef_independent_review.sql",
+          "014_chef_file_ownership.sql", "015_chef_mission_file_ownership.sql", "016_chef_scoped_evidence.sql",
+        ]) {
+          await legacy.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
+        }
+        await legacy.query("INSERT INTO auth.users(id) VALUES($1)", [uid]);
+        await legacy.query("INSERT INTO purama_ai.chef_missions(id,user_id,brief_id,brief_hash,goal,repo,state) VALUES($1,$2,'legacy',$3,'goal','repo','active')", [mission, uid, "a".repeat(64)]);
+        await legacy.query("INSERT INTO purama_ai.chef_requirements(id,mission_id,requirement_key,description,critical) VALUES($1,$2,'R1','legacy',false)", [requirement, mission]);
+        await legacy.query("INSERT INTO purama_ai.chef_tasks(id,mission_id,task_key,title,instructions,state,brief_hash,attempt,fencing_token,access_mode,verification_profiles) VALUES($1,$2,'legacy','legacy','legacy','verified_done',$3,1,1,'read',ARRAY['acceptance'])", [task, mission, "a".repeat(64)]);
+        await legacy.query("INSERT INTO purama_ai.chef_task_requirements VALUES($1,$2)", [task, requirement]);
+        await legacy.query(`INSERT INTO purama_ai.chef_evidence(task_id,requirement_id,kind,payload)
+          VALUES($1,$2,'test','{"ok":true,"scopeVersion":1,"requirementKeys":["R1"]}')`, [task, requirement]);
+        return legacy;
+      } catch (error) {
+        await legacy.close();
+        throw error;
       }
-      await legacy.query("INSERT INTO auth.users(id) VALUES($1)", [uid]);
-      await legacy.query("INSERT INTO purama_ai.chef_missions(id,user_id,brief_id,brief_hash,goal,repo,state) VALUES($1,$2,'legacy',$3,'goal','repo','active')", [mission, uid, "a".repeat(64)]);
-      await legacy.query("INSERT INTO purama_ai.chef_requirements(id,mission_id,requirement_key,description,critical) VALUES($1,$2,'R1','legacy',false)", [requirement, mission]);
-      await legacy.query("INSERT INTO purama_ai.chef_tasks(id,mission_id,task_key,title,instructions,state,brief_hash,attempt,fencing_token,access_mode,verification_profiles) VALUES($1,$2,'legacy','legacy','legacy','verified_done',$3,1,1,'read',ARRAY['acceptance'])", [task, mission, "a".repeat(64)]);
-      await legacy.query("INSERT INTO purama_ai.chef_task_requirements VALUES($1,$2)", [task, requirement]);
-      await legacy.query(`INSERT INTO purama_ai.chef_evidence(task_id,requirement_id,kind,payload)
-        VALUES($1,$2,'test','{"ok":true,"scopeVersion":1,"requirementKeys":["R1"]}')`, [task, requirement]);
+    }
+
+    // Bootstrap a fresh database in the hook budget, retaining late setup for cleanup.
+    beforeEach(async () => {
+      setup = legacyFixture();
+      await setup;
+    });
+    afterEach(async () => {
+      const pending = setup;
+      setup = undefined;
+      // The fixture closes on setup failure; a close failure must still fail this hook.
+      if (pending) await pending.then(legacy => legacy.close(), () => undefined);
+    });
+
+    it("preserves pre-migration rows without certifying them as current evidence", async () => {
+      const pending = setup;
+      if (!pending) throw new Error("Legacy database fixture was not initialized");
+      const legacy = await pending;
       expect((await legacy.query("SELECT * FROM purama_ai.chef_missing_requirements($1)", [mission])).rows).toHaveLength(0);
       await legacy.exec(await readFile(new URL("../migrations/017_chef_evidence_generation.sql", import.meta.url), "utf8"));
       expect((await legacy.query("SELECT attempt,fencing_token,worker_id FROM purama_ai.chef_evidence")).rows)
@@ -256,8 +282,6 @@ describe("CHEF evidence generation", () => {
       await legacy.query("UPDATE purama_ai.chef_tasks SET state='verifying',lease_owner='worker',lease_expires_at=clock_timestamp()+interval '1 hour' WHERE id=$1", [task]);
       await expect(legacy.query("SELECT purama_ai.chef_transition_task($1,'worker',1,'verified_done')", [task]))
         .rejects.toThrow(/requires.*evidence/i);
-    } finally {
-      await legacy.close();
-    }
+    });
   });
 });

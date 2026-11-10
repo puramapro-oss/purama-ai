@@ -52,7 +52,12 @@ export function buildCustomAgentDefinition(row: CustomAgentRow): AgentDefinition
   return {
     type,
     systemPrompt: row.system_prompt,
-    tools: resolveCustomAgentTools(row.tools_enabled),
+    // Copy the descriptors: the shared registry and business payloads remain
+    // untouched while personal agents keep private content out of run traces.
+    tools: resolveCustomAgentTools(row.tools_enabled).map(tool => ({
+      ...tool,
+      tracePolicy: "metadata_only" as const,
+    })),
     buildContext: async () => ({
       customAgentName: row.name,
       customAgentDescription: row.description ?? "",

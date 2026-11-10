@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-10T01:58:25.137268+00:00",
+  "pid": 38163,
+  "metadata": "38163     1 Tue Nov 10 02:49:46 2026     /Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "cwd": [
+    "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code"
+  ],
+  "hasPlaywrightTemporaryProfile": true,
+  "action": "SIGTERM_OWN_ORPHAN_BROWSER",
+  "verifiedAt": "2026-11-10T01:58:54.060593+00:00",
+  "remainingProcesses": "",
+  "allExited": true
+}

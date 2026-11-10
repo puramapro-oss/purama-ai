@@ -1,0 +1,114 @@
+{
+  "startedAt": "2026-11-10T01:12:19.051Z",
+  "source": "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code",
+  "sourceSha256": {
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7",
+    "src/components/voice/AgentChatTab.tsx": "66b5ece18bc2aa6b8749abad1e865c0e236823ee40d76f54f1d780ab4e621805",
+    "src/pages/LegalAgentChat.tsx": "90be82036f3b6e4f96ffdc0ba7c2c4d2fab5d3d44493f372b0f89721b56a64a2",
+    "src/pages/CreatorAgentDetail.tsx": "0ed5fd825ac3450005b923bdfb778ee1f90c63c85d3fc91722d401cf1f9ea49f"
+  },
+  "node": "v22.23.4",
+  "backend": "simulated",
+  "externalRequests": [],
+  "checks": [
+    {
+      "name": "account change rejects the previous email response",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "account change clears configuration before the next account can save",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "voice outside the route shows defaults while a new identity loads",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n'VOICE_A' !== 'nova'\n"
+    },
+    {
+      "name": "voice outside the route rejects a save response from the previous identity",
+      "status": "FAIL",
+      "message": "expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('voice')\nExpected substring: \"VOICE_B\"\nReceived string:    \"{\\\"settings\\\":{\\\"provider\\\":\\\"openai\\\",\\\"voice_id\\\":\\\"VOICE_A_SAVED\\\",\\\"speed\\\":1,\\\"auto_play\\\":false,\\\"enabled\\\":true,\\\"language\\\":\\\"fr\\\"},\\\"loading\\\":false}\"\nTimeout: 5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByTestId('voice')\n    9 × locator resolved to <output data-testid=\"voice\">{\"settings\":{\"provider\":\"openai\",\"voice_id\":\"VOIC…</output>\n      - unexpected value \"{\"settings\":{\"provider\":\"openai\",\"voice_id\":\"VOICE_A_SAVED\",\"speed\":1,\"auto_play\":false,\"enabled\":true,\"language\":\"fr\"},\"loading\":false}\"\n"
+    },
+    {
+      "name": "usage outside the route hides the previous account while loading",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "usage reloads when the same identity changes email",
+      "status": "FAIL",
+      "message": "page.waitForFunction: Timeout 6000ms exceeded."
+    },
+    {
+      "name": "same account refresh and query changes preserve current form state",
+      "status": "FAIL",
+      "message": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('button', { name: 'Counter 0' })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for getByRole('button', { name: 'Counter 0' })\n"
+    },
+    {
+      "name": "dynamic agent navigation rejects the previous agent response",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "voice rejects an old A response even after an A-B-A identity cycle",
+      "status": "FAIL",
+      "message": "expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('voice')\nExpected substring: \"CURRENT_A\"\nReceived string:    \"{\\\"settings\\\":{\\\"provider\\\":\\\"openai\\\",\\\"voice_id\\\":\\\"STALE_A\\\",\\\"speed\\\":1,\\\"auto_play\\\":false,\\\"enabled\\\":true,\\\"language\\\":\\\"fr\\\"},\\\"loading\\\":false}\"\nTimeout: 5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByTestId('voice')\n    9 × locator resolved to <output data-testid=\"voice\">{\"settings\":{\"provider\":\"openai\",\"voice_id\":\"STAL…</output>\n      - unexpected value \"{\"settings\":{\"provider\":\"openai\",\"voice_id\":\"STALE_A\",\"speed\":1,\"auto_play\":false,\"enabled\":true,\"language\":\"fr\"},\"loading\":false}\"\n"
+    },
+    {
+      "name": "voice save still updates the current identity",
+      "status": "PASS"
+    },
+    {
+      "name": "late speech from the previous identity cannot start audio",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "microphone permission returned after identity change releases its tracks",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "speech returned after unmount cannot start audio",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "current speech plays and stopping it revokes its object URL",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "agent chat ignores history from a previous session",
+      "status": "FAIL",
+      "message": "locator.click: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Nouveau/ })\u001b[22m\n"
+    },
+    {
+      "name": "legal chat hides old history while another session loads",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    }
+  ],
+  "bundleSha256": "ce00c3f315d65f6ba4f0e481ab6a15b874c3ecb77a29a6cc94f6ee279c3cf106",
+  "browser": "157.0.8103.39",
+  "finishedAt": "2026-11-10T01:13:13.805Z",
+  "pageErrors": [],
+  "sourceSha256After": {
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7",
+    "src/components/voice/AgentChatTab.tsx": "66b5ece18bc2aa6b8749abad1e865c0e236823ee40d76f54f1d780ab4e621805",
+    "src/pages/LegalAgentChat.tsx": "90be82036f3b6e4f96ffdc0ba7c2c4d2fab5d3d44493f372b0f89721b56a64a2",
+    "src/pages/CreatorAgentDetail.tsx": "0ed5fd825ac3450005b923bdfb778ee1f90c63c85d3fc91722d401cf1f9ea49f"
+  },
+  "sourceUnchanged": true,
+  "status": "FAIL"
+}

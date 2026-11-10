@@ -4,6 +4,7 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { isRunnable, loadAgentState } from "./autonomy.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
+import { shouldMinimizeToolTrace, summarizeToolError, summarizeToolResult } from "./tool-trace.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import type { AgentType } from "./types.js";
 
@@ -30,13 +31,22 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
   if (decision !== "approve" && decision !== "reject") return { ok: false, error: "Décision invalide" };
   // Durable compare-and-set in PostgreSQL, before any external effect. Missing
   // migration, duplicate request or uncertain prior attempt all fail closed.
-  const claimed = await supabase.rpc("karta_claim_pending_action", { p_id: id, p_decision: decision });
+  let claimed: { data: unknown; error: unknown };
+  try {
+    claimed = await supabase.rpc("karta_claim_pending_action", { p_id: id, p_decision: decision });
+  } catch {
+    // A transport rejection gives no proof of whether the claim committed.
+    // Report the same safe refusal and never dispatch or reset it to pending.
+    return { ok: false, error: "Action indisponible : vérifier l'état du cycle et les autorisations" };
+  }
   if (claimed.error) return { ok: false, error: "Action indisponible : vérifier l'état du cycle et les autorisations" };
   const pending = (Array.isArray(claimed.data) ? claimed.data[0] : claimed.data) as PendingActionRow | undefined;
   if (!pending) return { ok: false, error: "Action déjà traitée ou en cours : vérifier son résultat avant de la répéter" };
 
   let status: FinalStatus = decision === "reject" ? "rejected" : "failed";
   let resultSummary = "Rejetée par l'utilisateur : aucune action effectuée";
+  // Definition/admission failures have no established safe trace policy.
+  let privateTrace = true;
   if (decision === "approve") {
     try {
       const state = await loadAgentState(pending.user_id, pending.agent_type as AgentType);
@@ -44,8 +54,10 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
         status = "cancelled";
         resultSummary = "Action annulée : arrêt ou autorisation modifiée";
       } else {
-        const definition = await resolveAgentDefinition(pending.agent_type as AgentType);
+        const definition = await resolveAgentDefinition(pending.agent_type as AgentType, pending.user_id);
         const tool = definition.tools.find(t => t.name === pending.tool_name);
+        privateTrace = definition.tools.some(shouldMinimizeToolTrace) || shouldMinimizeToolTrace(tool) ||
+          await parentRequiresPrivateTrace(pending, definition.tools);
         if (!tool) throw new Error("Outil introuvable pour cet agent");
         validateToolParams(tool, pending.tool_params);
         // Recheck after definition loading, immediately before dispatch.
@@ -59,12 +71,12 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
           });
           assertToolResult(result);
           status = "executed";
-          resultSummary = summarize(result);
+          resultSummary = summarizeToolResult(result, privateTrace);
         }
       }
     } catch (error) {
       status = "failed";
-      resultSummary = error instanceof Error ? error.message : "Échec de l'outil";
+      resultSummary = summarizeToolError(error, privateTrace, "Échec de l'outil");
     }
   }
   try {
@@ -102,16 +114,33 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
     : { ok: false, error: resultSummary };
 }
 
+/** Preserve the original cycle's privacy even if its tool definition changed.
+ * An unreadable/ambiguous trace may reduce diagnostics, never privacy. */
+async function parentRequiresPrivateTrace(pending: PendingActionRow, tools: readonly { name: string }[]): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.from("karta_runs").select("tools_used")
+      .eq("id", pending.run_id).eq("user_id", pending.user_id).eq("agent_type", pending.agent_type).single();
+    if (error || !data || !Array.isArray(data.tools_used)) return true;
+    let matchingAction = false;
+    for (const entry of data.tools_used as unknown[]) {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return true;
+      const record = entry as Record<string, unknown>;
+      if (record.tracePolicy !== undefined || !tools.some(tool => tool.name === record.tool)) return true;
+      if (record.pendingActionId === pending.id) {
+        if (matchingAction || record.tool !== pending.tool_name) return true;
+        matchingAction = true;
+      }
+    }
+    return !matchingAction;
+  } catch {
+    return true;
+  }
+}
+
 async function finalizePendingAction(pending: PendingActionRow, status: FinalStatus, resultSummary: string): Promise<void> {
   // Resolving the action and patching the parent's JSON happen in one transaction.
   const { error } = await supabase.rpc("karta_finalize_pending_action", {
     p_id: pending.id, p_status: status, p_summary: resultSummary.slice(0, 500),
   });
   if (error) throw new Error("Finalisation indisponible");
-}
-
-function summarize(result: unknown): string {
-  if (result === undefined || result === null) return "ok";
-  if (typeof result === "string") return result.slice(0, 200);
-  try { return JSON.stringify(result).slice(0, 200); } catch { return "Résultat non sérialisable"; }
 }

@@ -13,7 +13,15 @@
     "test:desktop": "playwright test --project=desktop",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test:quality": "playwright test --config tests/quality/playwright.config.ts",
-    "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check"
+    "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check",
+    "test:founder": "node --test tests/founder-dashboard/client.test.mjs tests/founder-dashboard/server.test.mjs",
+    "test:founder:types": "tsc --noEmit -p tests/founder-dashboard/tsconfig.json",
+    "test:founder:browser": "node tests/founder-dashboard/browser/run.mjs",
+    "test:commerce:plans": "node --test tests/quality/commerce-ui-plans.test.mjs",
+    "test:commerce:handlers": "deno test --no-remote --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,STRIPE_SECRET_KEY --config tests/commerce/deno.json tests/commerce",
+    "test:account-isolation": "node tests/quality/account-isolation/run.mjs",
+    "test:contracts-ots": "node tests/contracts-ots/run.mjs",
+    "test:contracts-ots:browser": "node tests/contracts-ots/browser/run.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

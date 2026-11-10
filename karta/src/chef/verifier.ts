@@ -82,15 +82,19 @@ export class CommandChefVerifier implements ChefVerifier {
   }
 
   async verify(cwdInput: string, profileNames: string[], signal?: AbortSignal): Promise<ChefVerificationResult> {
+    if (signal?.aborted) throw new Error("Vérification CHEF annulée");
     const cwd = assertAllowedCwd(cwdInput, this.allowedRoots);
     if (profileNames.length === 0) return { ok: false, evidence: [], error: "Aucun profil de vérification" };
     if (new Set(profileNames).size !== profileNames.length) return { ok: false, evidence: [], error: "Profil de vérification dupliqué" };
 
     const evidence: ChefVerificationEvidence[] = [];
     for (const name of profileNames) {
+      if (signal?.aborted) throw new Error("Vérification CHEF annulée");
       const profile = this.profiles.get(name);
       if (!profile) return { ok: false, evidence, error: `Profil inconnu: ${name}` };
       const result = await this.runProfile(cwd, profile, signal);
+      // Recheck after every async boundary, including the final profile.
+      if (signal?.aborted) throw new Error("Vérification CHEF annulée");
       evidence.push(result);
       if (!result.payload.ok) {
         return { ok: false, evidence, error: `Vérification échouée: ${name}` };
@@ -100,6 +104,7 @@ export class CommandChefVerifier implements ChefVerifier {
   }
 
   private async runProfile(cwd: string, profile: ChefVerificationProfile, signal?: AbortSignal): Promise<ChefVerificationEvidence> {
+    if (signal?.aborted) throw new Error(`Vérification annulée: ${profile.name}`);
     const maxOutput = profile.maxOutputBytes ?? 2 * 1024 * 1024;
     const timeoutMs = profile.timeoutMs ?? 20 * 60 * 1000;
 
@@ -140,7 +145,6 @@ export class CommandChefVerifier implements ChefVerifier {
         terminate();
         fail(new Error(`Vérification annulée: ${profile.name}`));
       };
-      signal?.addEventListener("abort", onAbort, { once: true });
       const cleanup = () => {
         clearTimeout(timer);
         signal?.removeEventListener("abort", onAbort);
@@ -151,6 +155,10 @@ export class CommandChefVerifier implements ChefVerifier {
       child.on("error", fail);
       child.on("close", (code, signalName) => {
         if (settled) return;
+        if (signal?.aborted) {
+          fail(new Error(`Vérification annulée: ${profile.name}`));
+          return;
+        }
         settled = true;
         cleanup();
         const ok = code === 0;
@@ -168,6 +176,8 @@ export class CommandChefVerifier implements ChefVerifier {
           },
         });
       });
+      signal?.addEventListener("abort", onAbort, { once: true });
+      if (signal?.aborted) onAbort();
     });
   }
 }

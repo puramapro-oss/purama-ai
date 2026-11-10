@@ -12,3 +12,6 @@ export { delegateToAgentTool } from "./delegate.js";
 // Planning only. The host must inject its authenticated account/permission resolver.
 // Exporting the factory does not grant web access to any agent.
 export { createWebAccessPlanTool } from "./web-access-plan.js";
+// Optional judgments only. The host must bind permission, qualification and budget callbacks.
+// This export does not enable Jev or add it to any agent's tool allowlist.
+export { createJevJudgmentTool } from "./jev.js";

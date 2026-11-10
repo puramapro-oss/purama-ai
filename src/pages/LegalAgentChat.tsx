@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Send, Loader2, Plus, MessageSquare, Scale, BookOpen, Headphones } from 'lucide-react';
@@ -14,6 +14,7 @@ import {
   type LegalChatMessage,
 } from '@/lib/legal';
 import { useVoice } from '@/hooks/useVoice';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import { MicButton } from '@/components/voice/MicButton';
 import { SpeakButton } from '@/components/voice/SpeakButton';
 import { VoiceMode } from '@/components/voice/VoiceMode';
@@ -21,34 +22,58 @@ import { VoiceMode } from '@/components/voice/VoiceMode';
 export default function LegalAgentChat() {
   const { user } = useAuth();
   const voice = useVoice();
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
-  const [sessionId, setSessionId] = useState<string>('');
-  const [messages, setMessages] = useState<LegalChatMessage[]>([]);
-  const [sessions, setSessions] = useState<Array<{ session_id: string; title: string; created_at: string }>>([]);
-  const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
+  const userId = user?.id ?? null;
+  const accountKey = JSON.stringify([userId]);
+  const captureAccount = useRequestScope(accountKey);
+  const [sessionId, setSessionId] = useScopedState<string>(accountKey, '');
+  const conversationKey = JSON.stringify([userId, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
+  const [messages, setMessages] = useScopedState<LegalChatMessage[]>(conversationKey, []);
+  const [sessions, setSessions] = useScopedState<Array<{ session_id: string; title: string; created_at: string }>>(accountKey, []);
+  const [input, setInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const messageRevision = useRef(0);
+  const { cancelRecording, stopSpeaking } = voice;
+  useLayoutEffect(() => () => {
+    cancelRecording();
+    stopSpeaking();
+  }, [conversationKey, cancelRecording, stopSpeaking]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) return;
-    listChatSessions(user.id).then(setSessions).catch(() => {});
+    if (!userId) return;
+    const isCurrent = captureAccount();
+    let active = true;
+    listChatSessions(userId).then(value => {
+      if (active && isCurrent()) setSessions(value);
+    }).catch(() => {});
     setSessionId(newSessionId());
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId, captureAccount, setSessions, setSessionId]);
 
   useEffect(() => {
-    if (!user || !sessionId) return;
-    listChatMessages(user.id, sessionId).then(setMessages).catch(() => {});
-  }, [user?.id, sessionId]);
+    if (!userId || !sessionId) return;
+    const isCurrent = captureConversation();
+    const revision = messageRevision.current;
+    let active = true;
+    listChatMessages(userId, sessionId).then(value => {
+      if (active && isCurrent() && revision === messageRevision.current) setMessages(value);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [userId, sessionId, captureConversation, setMessages]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   const submitMessage = async (userMsg: string): Promise<string | null> => {
-    if (!userMsg.trim() || !user) return null;
+    const isCurrent = captureConversation();
+    if (!userMsg.trim() || !userId || !sessionId || !isCurrent()) return null;
+    messageRevision.current += 1;
     const tempUser: LegalChatMessage = {
       id: 'tmp-' + Date.now(),
-      user_id: user.id,
+      user_id: userId,
       session_id: sessionId,
       role: 'user',
       content: userMsg,
@@ -63,6 +88,7 @@ export default function LegalAgentChat() {
     setMessages(prev => [...prev, tempUser]);
     try {
       const result = await sendChatMessage(sessionId, userMsg);
+      if (!isCurrent()) return null;
       const assistantMsg: LegalChatMessage = {
         ...tempUser,
         id: 'tmp-asst-' + Date.now(),
@@ -71,9 +97,12 @@ export default function LegalAgentChat() {
         sources_cited: result.sources,
       };
       setMessages(prev => [...prev, assistantMsg]);
-      listChatSessions(user.id).then(setSessions).catch(() => {});
+      listChatSessions(userId).then(value => {
+        if (isCurrent()) setSessions(value);
+      }).catch(() => {});
       return result.reply;
     } catch (e) {
+      if (!isCurrent()) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
@@ -82,15 +111,18 @@ export default function LegalAgentChat() {
 
   const handleSend = async () => {
     if (!input.trim() || sending) return;
+    const isCurrent = captureConversation();
+    if (!isCurrent()) return;
     const userMsg = input.trim();
     setInput('');
     setSending(true);
-    try { await submitMessage(userMsg); } finally { setSending(false); }
+    try { await submitMessage(userMsg); } finally { if (isCurrent()) setSending(false); }
   };
 
   const newSession = () => {
+    cancelRecording();
+    stopSpeaking();
     setSessionId(newSessionId());
-    setMessages([]);
   };
 
   return (

@@ -1,0 +1,227 @@
+{
+  "baseCommit": "5c790c60d907cb2123c37a8077549d048742166b",
+  "sourceFiles": [
+    {
+      "path": "src/components/influencer/ReferralBanner.tsx",
+      "beforeSha256": "f53c99e98887529433635a28fecf02ea46e64b4086ca504acaf54f24262c5e79",
+      "afterSha256": "7062fc91d20699d11bbde69cebf0e62855d61c7a35082cff02e27b2863fb2c78"
+    },
+    {
+      "path": "src/pages/InfluencerDashboard.tsx",
+      "beforeSha256": "205a31974ede8967ff869be957123100347d252408a5c693b0f48ba79e3f8d3d",
+      "afterSha256": "34bbbe0b3de257fef347304fe674c9be17702f4d671747d6f5a2f36dca7d8b60"
+    },
+    {
+      "path": "src/utils/generateContractPdf.ts",
+      "beforeSha256": "9443eebcfafe2b4e3e375ee43d7a458d8764216d4e887153dcf6a9d0d0fdce69",
+      "afterSha256": "b824d1d361b33dd2d7e6d60174c5c43d9bcc6882dff2ad2ca22c0242a5c849be"
+    }
+  ],
+  "commands": [
+    {
+      "name": "targeted_lint",
+      "exit": 0,
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "src/components/influencer/ReferralBanner.tsx",
+        "src/pages/InfluencerDashboard.tsx",
+        "src/utils/generateContractPdf.ts"
+      ],
+      "cwd": "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code",
+      "logSha256": "fa13de358d728f5a69ac642101d9dcec11af56bc9901bfe710e61549b03788b2",
+      "log": "\n/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code/src/components/influencer/ReferralBanner.tsx\n  33:6  warning  React Hook useEffect has a missing dependency: 'getStoredReferral'. Either include it or remove the dependency array  react-hooks/exhaustive-deps\n\n\u2716 1 problem (0 errors, 1 warning)\n\n"
+    },
+    {
+      "name": "pdf_before",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/evidence/referral-copy/generate-before-node.mjs"
+      ],
+      "cwd": "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code",
+      "exit": 0,
+      "runnerSha256": "e2c2bf3f0311d04affc4e1c15e840cd708d162c9d579aca5763f0e291e96ce34",
+      "log": "SYNTHETIC_BEFORE_GENERATED\n"
+    },
+    {
+      "name": "pdf_after",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/evidence/referral-copy/generate-after-node.mjs"
+      ],
+      "cwd": "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code",
+      "exit": 0,
+      "runnerSha256": "2484ca1310e203ce8c7f3d63db90f9f8137e5836e8c45c0cb5700131f38a3548",
+      "log": "SYNTHETIC_AFTER_GENERATED\n"
+    }
+  ],
+  "firstNodeHarnessAttempt": {
+    "status": "HARNESS_EXPORT_SHAPE_ERROR",
+    "log": "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code/tests/quality/account-isolation/.pdf-before.cjs:39\n  const doc = new import_jspdf.default();\n              ^\n\nTypeError: import_jspdf.default is not a constructor\n    at generateContractPdf (/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code/tests/quality/account-isolation/.pdf-before.cjs:39:15)\n    at file:///Users/matissdornier/purama-patches/iao-account-isolation-20261110/evidence/referral-copy/generate-before.mjs:1:865\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n\nNode.js v22.23.4\n",
+    "resolution": "Same installed jsPDF constructor exposed through a Node-only export-shape adapter; production dependency unchanged."
+  },
+  "searchAfter": {
+    "command": [
+      "rg",
+      "-n",
+      "-e",
+      "premi\u00e8re ann\u00e9e",
+      "-e",
+      "-50[[:space:]]*%",
+      "src/components/influencer/ReferralBanner.tsx",
+      "src/pages/InfluencerDashboard.tsx",
+      "src/utils/generateContractPdf.ts"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "historicalSignedOriginalRecovery": {
+    "status": "BLOQU\u00c9",
+    "reason": "The current read model exposes neither the original signed PDF nor a versioned snapshot of accepted conditions. No original or signature was fabricated."
+  },
+  "storedSignaturesOrDataChanged": false,
+  "livePdfRegenerationPerformed": false,
+  "providerOrPaymentCalls": false,
+  "globalTestsOrBuildRerunForThisDelta": false,
+  "impactLog": "{\"target\":\"ReferralBanner\",\"risk\":\"LOW\",\"summary\":{\"direct\":1,\"processes_affected\":1,\"modules_affected\":1}}\n{\"target\":\"InfluencerDashboard\",\"risk\":\"UNKNOWN\",\"summary\":{\"direct\":0,\"processes_affected\":0,\"modules_affected\":0}}\n{\"target\":\"generateContractPdf\",\"risk\":\"LOW\",\"summary\":{\"direct\":1,\"processes_affected\":0,\"modules_affected\":1}}\n",
+  "gitNexusFinal": {
+    "summary": {
+      "changed_count": 6,
+      "affected_count": 7,
+      "changed_files": 7,
+      "risk_level": "high"
+    },
+    "changed_symbols": [
+      {
+        "id": "Function:src/components/influencer/ReferralBanner.tsx:ReferralBanner",
+        "name": "ReferralBanner",
+        "type": "Function",
+        "filePath": "src/components/influencer/ReferralBanner.tsx",
+        "change_type": "touched"
+      },
+      {
+        "id": "Function:src/pages/InfluencerDashboard.tsx:InfluencerDashboard",
+        "name": "InfluencerDashboard",
+        "type": "Function",
+        "filePath": "src/pages/InfluencerDashboard.tsx",
+        "change_type": "touched"
+      },
+      {
+        "id": "Function:src/pages/InfluencerDashboard.tsx:InfluencerDashboard.handleDownloadContract@107:2",
+        "name": "handleDownloadContract",
+        "type": "Function",
+        "filePath": "src/pages/InfluencerDashboard.tsx",
+        "change_type": "touched"
+      },
+      {
+        "id": "Interface:src/utils/generateContractPdf.ts:ContractData",
+        "name": "ContractData",
+        "type": "Interface",
+        "filePath": "src/utils/generateContractPdf.ts",
+        "change_type": "touched"
+      },
+      {
+        "id": "Property:src/utils/generateContractPdf.ts:ContractData.commissionRate",
+        "name": "commissionRate",
+        "type": "Property",
+        "filePath": "src/utils/generateContractPdf.ts",
+        "change_type": "touched"
+      },
+      {
+        "id": "Function:src/utils/generateContractPdf.ts:generateContractPdf",
+        "name": "generateContractPdf",
+        "type": "Function",
+        "filePath": "src/utils/generateContractPdf.ts",
+        "change_type": "touched"
+      }
+    ],
+    "affected_processes": [
+      {
+        "id": "proc_44_index",
+        "name": "Index \u2192 UseReferralTracking",
+        "process_type": "intra_community",
+        "step_count": 3,
+        "changed_steps": [
+          {
+            "symbol": "ReferralBanner",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "id": "proc_178_index",
+        "name": "Index \u2192 Getter",
+        "process_type": "cross_community",
+        "step_count": 5,
+        "changed_steps": [
+          {
+            "symbol": "ReferralBanner",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "id": "proc_179_index",
+        "name": "Index \u2192 Getter",
+        "process_type": "cross_community",
+        "step_count": 5,
+        "changed_steps": [
+          {
+            "symbol": "ReferralBanner",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "id": "proc_187_index",
+        "name": "Index \u2192 Getter",
+        "process_type": "cross_community",
+        "step_count": 5,
+        "changed_steps": [
+          {
+            "symbol": "ReferralBanner",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "id": "proc_313_influencerdashboard",
+        "name": "InfluencerDashboard \u2192 UseAuth",
+        "process_type": "cross_community",
+        "step_count": 3,
+        "changed_steps": [
+          {
+            "symbol": "InfluencerDashboard",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "proc_358_index",
+        "name": "Index \u2192 From",
+        "process_type": "cross_community",
+        "step_count": 4,
+        "changed_steps": [
+          {
+            "symbol": "ReferralBanner",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "id": "proc_508_influencerdashboard",
+        "name": "InfluencerDashboard \u2192 Cn",
+        "process_type": "cross_community",
+        "step_count": 3,
+        "changed_steps": [
+          {
+            "symbol": "InfluencerDashboard",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  },
+  "gitNexusFinalSource": "detect_changes on staged source and evidence, before appending this receipt metadata"
+}
