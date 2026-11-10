@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './public/fixtures';
 
 test.describe('Accessibilité — Basiques', () => {
   test('Landing — dark mode par défaut (bg sombre)', async ({ page }) => {
@@ -9,10 +9,9 @@ test.describe('Accessibilité — Basiques', () => {
     });
     // Dark mode: RGB values should be low
     const match = bgColor.match(/\d+/g);
-    if (match) {
-      const [r, g, b] = match.map(Number);
-      expect(r + g + b).toBeLessThan(150); // Very dark
-    }
+    expect(match).not.toBeNull();
+    const [r, g, b] = match!.map(Number);
+    expect(r + g + b).toBeLessThan(150); // Very dark
   });
 
   test('Pages ont des headings structurés', async ({ page }) => {
@@ -26,25 +25,20 @@ test.describe('Accessibilité — Basiques', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const imagesWithoutAlt = await page.locator('img:not([alt])').count();
-    // Allow max 2 decorative images without alt
-    expect(imagesWithoutAlt).toBeLessThanOrEqual(2);
+    // Decorative images must still provide an empty alt attribute.
+    expect(imagesWithoutAlt).toBe(0);
   });
 
   test('Boutons interactifs ont du texte accessible', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
-    const buttons = page.locator('button');
+    const buttons = page.locator('button:visible');
     const count = await buttons.count();
 
-    for (let i = 0; i < Math.min(count, 20); i++) {
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
       const btn = buttons.nth(i);
-      if (await btn.isVisible()) {
-        const text = await btn.textContent();
-        const ariaLabel = await btn.getAttribute('aria-label');
-        const title = await btn.getAttribute('title');
-        // At least one accessible identifier
-        expect(text?.trim() || ariaLabel || title).toBeTruthy();
-      }
+      await expect(btn).toHaveAccessibleName(/\S/);
     }
   });
 });

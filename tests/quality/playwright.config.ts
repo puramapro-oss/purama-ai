@@ -14,6 +14,7 @@ export default defineConfig({
     ...devices['Desktop Chrome'],
     launchOptions: process.env.PLAYWRIGHT_EXECUTABLE_PATH ? {
       executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH,
+      args: ['--no-zygote', '--disable-gpu'],
     } : {},
   },
   webServer: {

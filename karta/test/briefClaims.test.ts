@@ -91,6 +91,10 @@ beforeAll(async () => {
   await db.exec("GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA purama_ai TO service_role; GRANT SELECT ON purama_ai.karta_runs TO authenticated;");
   await db.exec(await readFile(new URL("../migrations/018_karta_brief_claims.sql", import.meta.url), "utf8"));
   await db.exec(await readFile(new URL("../migrations/019_karta_approval_parent_guard.sql", import.meta.url), "utf8"));
+  await db.exec(await readFile(new URL("../migrations/020_execution_fingerprints.sql", import.meta.url), "utf8"));
+  await db.exec(await readFile(new URL("../migrations/026_pending_action_execution_origin.sql", import.meta.url), "utf8"));
+  // Reapplying the additive brief schema must preserve the later guards.
+  await db.exec(await readFile(new URL("../migrations/018_karta_brief_claims.sql", import.meta.url), "utf8"));
 });
 afterAll(async () => { await db?.close(); });
 beforeEach(async () => {

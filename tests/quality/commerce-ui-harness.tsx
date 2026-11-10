@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from '../../src/hooks/useAuth';
+import { AuthProvider } from '../../src/components/auth/AuthProvider';
+import { useAuth } from '../../src/hooks/useAuth';
 import { useSubscription } from '../../src/hooks/useSubscription';
 
 export function SubscriptionProbe() {

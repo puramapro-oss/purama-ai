@@ -1,14 +1,15 @@
 // POST /functions/v1/contracts-webhook
 // Receives DocuSeal webhooks on submission lifecycle events.
-// Validates HMAC signature, updates contracts + contract_signers, triggers OTS stamping.
+// Authenticates Bearer or exact-body HMAC, updates contracts and acknowledges OTS delivery.
 
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
   DOCUSEAL_WEBHOOK_SECRET, docusealFetch,
 } from "../_shared/docuseal.ts";
-import { verifyBearerSecret, verifyDocusealWebhook } from "../_shared/webhook-security.ts";
+import { hasHmacSignatureFormat, verifyBearerSecret, verifyDocusealWebhook } from "../_shared/webhook-security.ts";
 import { readRequestText, RequestBodyError } from "../_shared/request-body.ts";
+import { deliverOtsStamp, StampDeliveryError } from "../_shared/ots-delivery.ts";
 
 interface WebhookPayload {
   event_type: string;
@@ -33,7 +34,7 @@ Deno.serve(async (req) => {
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   if (!supabaseUrl || !serviceRoleKey) return errorResponse("Webhook storage unavailable", 503);
   if (!verifyBearerSecret(req.headers.get("authorization"), DOCUSEAL_WEBHOOK_SECRET) &&
-      !req.headers.get("x-docuseal-signature")) {
+      !hasHmacSignatureFormat(req.headers.get("x-docuseal-signature"))) {
     return errorResponse("Unauthorized", 401);
   }
   let rawBody: string;
@@ -94,6 +95,9 @@ Deno.serve(async (req) => {
     if (!contract) {
       console.warn(`[webhook] contract not found for submission ${submissionId}`);
       return corsResponse({ ok: true, skip: "contract not found" });
+    }
+    if (typeof contract.id !== "string" || typeof contract.status !== "string") {
+      return errorResponse("Invalid contract state", 500);
     }
 
     // ─── Handle each event type ─────────────────────────────────────
@@ -186,16 +190,14 @@ Deno.serve(async (req) => {
           });
           if (eventError) return errorResponse("Contract audit record failed", 500);
 
-          // Trigger OTS stamping async (fire-and-forget)
-          if (supabaseUrl && submission.combined_document_url) {
-            fetch(`${supabaseUrl}/functions/v1/contracts-ots-stamp`, {
-              method: "POST",
-              headers: {
-                "Authorization": `Bearer ${serviceRoleKey}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ contract_id: contract.id }),
-            }).catch(e => console.error("[webhook] OTS stamp trigger failed:", e));
+          // Every completed contract needs a delivery result, even when the
+          // metadata omits a URL: the stamper resolves the signed PDF itself.
+          // Already-signed contracts remain eligible when a delivery is retried.
+          try {
+            await deliverOtsStamp(supabaseUrl, serviceRoleKey, contract.id, { signal: req.signal });
+          } catch (error) {
+            console.error("[webhook] timestamp delivery failed");
+            return errorResponse("Timestamp delivery failed", error instanceof StampDeliveryError ? error.status : 502);
           }
         } else {
           const { error: eventError } = await supabaseAdmin.from("contract_events").insert({
@@ -270,8 +272,8 @@ Deno.serve(async (req) => {
     }
 
     return corsResponse({ ok: true, contract_id: contract.id });
-  } catch (err) {
-    console.error("[webhook] processing error:", err);
+  } catch {
+    console.error("[webhook] processing failed");
     return errorResponse("Webhook processing failed", 500);
   }
 });

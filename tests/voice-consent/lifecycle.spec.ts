@@ -29,6 +29,32 @@ async function startModeTurn(page: Page, agentView = false) {
   await expect.poll(() => count(page, 'transcribe')).toBe(1);
 }
 
+async function openAgentChat(page: Page) {
+  await page.evaluate(() => window.voiceHarness.setAgentView(true));
+  const input = page.getByPlaceholder('Parle à Email IA…');
+  await expect(input).toBeVisible();
+  return input;
+}
+
+async function startInlineDictation(page: Page) {
+  await page.getByRole('button', { name: 'Dicter un message', exact: true }).click();
+  await expect.poll(() => count(page, 'media')).toBe(1);
+  await page.evaluate(() => window.voiceHarness.resolve('media'));
+  await page.getByRole('button', { name: "Arrêter l'enregistrement", exact: true }).click();
+  await expect.poll(() => count(page, 'transcribe')).toBe(1);
+}
+
+async function prepareAutomaticReply(page: Page, reply: string) {
+  const input = page.getByPlaceholder('Parle à Email IA…');
+  await input.fill('Question de cette conversation');
+  await input.press('Enter');
+  await expect.poll(() => count(page, 'backend')).toBe(1);
+  await page.evaluate(reply => window.voiceHarness.resolve('backend', {
+    data: { reply, tokens: 1 }, error: null,
+  }), reply);
+  await expect.poll(() => count(page, 'synthesize')).toBe(1);
+}
+
 test.beforeEach(async ({ page }) => {
   await page.route('**/*', route => {
     const url = new URL(route.request().url());
@@ -248,4 +274,51 @@ test('normal voice turn returns to idle after playback ends', async ({ page }) =
   await expect.poll(() => page.evaluate(() => window.voiceHarness.played.length)).toBe(1);
   await page.evaluate(() => window.voiceHarness.audios[0].queuedEnd?.());
   await expect(page.getByText('Appuie pour parler', { exact: true })).toBeVisible();
+});
+
+test('conversation scope: New conversation refuses an old inline dictation result', async ({ page }) => {
+  const input = await openAgentChat(page);
+  await startInlineDictation(page);
+  await page.getByRole('button', { name: 'Nouvelle', exact: true }).click();
+  await expect(input).toHaveValue('');
+  await page.evaluate(() => window.voiceHarness.resolve('transcribe', 'DICTEE_ANCIENNE_CONVERSATION'));
+  await settle(page);
+  await expect(input).toHaveValue('');
+  expect(await count(page, 'backend')).toBe(0);
+  expect(await count(page, 'synthesize')).toBe(0);
+});
+
+test('conversation scope: New conversation refuses old automatic speech', async ({ page }) => {
+  await openAgentChat(page);
+  await prepareAutomaticReply(page, 'REPONSE_ANCIENNE_CONVERSATION');
+  await page.getByRole('button', { name: 'Nouvelle', exact: true }).click();
+  await expect(page.getByText('REPONSE_ANCIENNE_CONVERSATION', { exact: true })).toHaveCount(0);
+  expect(await page.evaluate(() => window.voiceHarness.played.length)).toBe(0);
+  await page.evaluate(() => window.voiceHarness.resolve('synthesize'));
+  await settle(page);
+  expect(await page.evaluate(() => window.voiceHarness.played.length)).toBe(0);
+  expect(await page.evaluate(() => window.voiceHarness.browserSpoken)).toEqual([]);
+});
+
+test('conversation scope: current dictation preserves edits made while transcription is pending', async ({ page }) => {
+  const input = await openAgentChat(page);
+  await startInlineDictation(page);
+  await input.fill('BROUILLON_COURANT');
+  await expect(input).toHaveValue('BROUILLON_COURANT');
+  await page.evaluate(() => window.voiceHarness.resolve('transcribe', 'DICTEE_COURANTE'));
+  await expect(input).toHaveValue('BROUILLON_COURANT DICTEE_COURANTE');
+  expect(await page.evaluate(() => window.voiceHarness.stoppedTracks)).toBe(1);
+  expect(await count(page, 'backend')).toBe(0);
+});
+
+test('conversation scope: current automatic speech and draft survive ordinary rerenders', async ({ page }) => {
+  const input = await openAgentChat(page);
+  await prepareAutomaticReply(page, 'REPONSE_COURANTE');
+  await input.fill('BROUILLON_A_CONSERVER');
+  await expect(input).toHaveValue('BROUILLON_A_CONSERVER');
+  await page.evaluate(() => window.voiceHarness.resolve('synthesize'));
+  await expect.poll(() => page.evaluate(() => window.voiceHarness.played.length)).toBe(1);
+  await expect(input).toHaveValue('BROUILLON_A_CONSERVER');
+  await expect(page.getByText('REPONSE_COURANTE', { exact: true })).toBeVisible();
+  expect(await count(page, 'synthesize')).toBe(1);
 });

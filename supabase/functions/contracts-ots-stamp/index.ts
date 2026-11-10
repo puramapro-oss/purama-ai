@@ -1,7 +1,7 @@
 // Signed webhook service or authenticated administrator only.
 import { CORS_HEADERS, corsResponse, errorResponse } from "../_shared/docuseal.ts";
 import { authorizeOts, OtsHttpError, validContractId } from "../_shared/ots-auth.ts";
-import { signedPdf } from "../_shared/ots-pdf.ts";
+import { fetchSignedPdf, OtsDocumentError } from "../_shared/ots-document.ts";
 import { ots } from "../_shared/ots-library.ts";
 import { loadOtsContract, requireUnchangedContract, readOtsBody } from "../_shared/ots-contract.ts";
 
@@ -14,10 +14,12 @@ Deno.serve(async (req) => {
     if (!validContractId(body.contract_id)) throw new OtsHttpError(400, "Invalid contract_id");
     const contract = await loadOtsContract(initialAccess.client, body.contract_id);
     if (contract.status !== "signed") throw new OtsHttpError(409, "Contract must be signed");
-    const pdf = await signedPdf(contract.docuseal_submission_id);
+    const pdf = await fetchSignedPdf(contract.docuseal_submission_id, req.signal);
     const beforeStamp = await authorizeOts(req, true);
     requireUnchangedContract(contract, await loadOtsContract(beforeStamp.client, contract.id));
-    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", pdf));
+    pdf.assertCurrent();
+    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", pdf.bytes));
+    pdf.assertCurrent();
     const hashHex = Array.from(hash).map(byte => byte.toString(16).padStart(2, "0")).join("");
     const proof = await ots.stampDigest(hash);
     const finalAccess = await authorizeOts(req, true);
@@ -34,7 +36,7 @@ Deno.serve(async (req) => {
     if (!written) throw new OtsHttpError(409, "Contract changed; retry verification");
     return corsResponse({ ok: true, hash: hashHex, pending_bitcoin_confirmation: true });
   } catch (error) {
-    if (error instanceof OtsHttpError) return errorResponse(error.message, error.status);
+    if (error instanceof OtsHttpError || error instanceof OtsDocumentError) return errorResponse(error.message, error.status);
     return errorResponse("Proof stamping unavailable", 502);
   }
 });

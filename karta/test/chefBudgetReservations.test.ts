@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import { CHEF_RECONCILIATION_MIGRATIONS } from "./migration-fixtures.js";
 import { PGlite } from "@electric-sql/pglite";
 import { hashChefBrief, normalizeChefBrief, type ChefBrief, type ChefBriefTask } from "../src/chef/brief.js";
 
@@ -90,8 +91,7 @@ beforeAll(async () => {
     CREATE ROLE service_role BYPASSRLS;
     GRANT USAGE ON SCHEMA purama_ai TO service_role;
   `);
-  const files = (await readdir(new URL("../migrations/", import.meta.url)))
-    .filter(file => /^0(0[89]|1[0-7]|2[1-4])_/.test(file)).sort();
+  const files = CHEF_RECONCILIATION_MIGRATIONS;
   for (const file of files) await db.exec(await readFile(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
 });
 afterAll(async () => { await db?.close(); });

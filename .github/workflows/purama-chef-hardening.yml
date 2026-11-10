@@ -38,7 +38,7 @@ jobs:
         run: npm audit --audit-level=high --omit=dev
 
   site:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +51,7 @@ jobs:
           deno-version: v2.9.6
       - run: npm ci --no-audit
       - run: npm run test:dependencies
+      - run: npm run lint
       - run: npm run test:contracts-auth
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
@@ -62,6 +63,9 @@ jobs:
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium
+      - run: npx tsc --noEmit -p tests/public/tsconfig.json
+      - run: npm run test:public
+      - run: npm run test:chat
       - run: npm run test:quality
       - run: npm run test:founder:browser
       - run: npm run test:account-isolation
@@ -69,5 +73,7 @@ jobs:
       - run: npm run test:wellbeing
       - run: npm run test:voice-consent
       - run: npm run test:ui-state
+      - run: npm run test:async-ui
+      - run: npm run test:mobile-auth
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev

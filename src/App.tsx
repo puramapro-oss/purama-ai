@@ -5,7 +5,7 @@ import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 import { Loader2 } from 'lucide-react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import { AuthProvider } from '@/hooks/useAuth';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
 import { CookieConsent } from '@/components/CookieConsent';

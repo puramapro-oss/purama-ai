@@ -2,8 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'node:path';
 export default defineConfig({
+  cacheDir: "node_modules/.vite-ui-state",
   plugins: [react()],
-  resolve: { alias: [
+  resolve: { dedupe: ["react", "react-dom"], alias: [
     { find: '@/hooks/useAuth', replacement: resolve('tests/ui-state/auth-state.ts') },
     { find: '@/integrations/supabase/client', replacement: resolve('tests/ui-state/transport.ts') },
     { find: 'npm:zod@4.6.7', replacement: resolve('node_modules/zod/index.js') },

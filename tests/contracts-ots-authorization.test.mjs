@@ -168,7 +168,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
         calls.docs.push({ url, init });
         if (options.cancelDuringSubmission) contract.status = 'cancelled';
         if (options.replaceSubmissionDuringSubmission) contract.docuseal_submission_id = 99;
-        return Response.json({ combined_document_url: pdfUrl });
+        return Response.json(options.submissionMetadata ?? { combined_document_url: pdfUrl });
       }
       if (url === 'https://db.example.invalid/functions/v1/contracts-ots-stamp') {
         calls.internal.push({ url, init });
@@ -524,6 +524,13 @@ test('webhook persistence: a failed lookup is never acknowledged as a missing co
   assert.doesNotMatch(await response.text(), /private-/);
   assert.equal(h.calls.events.length + h.calls.updates.length + h.calls.internal.length, 0);
 });
+for (const contract of [{ id: null }, { status: null }]) {
+  test(`webhook persistence: malformed stored state ${JSON.stringify(contract)} fails before any write`, async () => {
+    const h = await harness({ contract }, 'contracts-webhook');
+    assert.equal((await h.handler(lifecycleRequest())).status, 500);
+    assert.equal(h.calls.events.length + h.calls.updates.length + h.calls.internal.length + h.calls.signerUpdates.length, 0);
+  });
+}
 test('webhook persistence: failed signer reads cannot produce a success or a signed contract', async () => {
   const h = await harness({ status: 'sent', signerReadError: true }, 'contracts-webhook');
   const response = await h.handler(lifecycleRequest());
@@ -664,3 +671,87 @@ test('authenticated completion delivers the internal credential to the actual st
   assert.equal(stamp.calls.events[0].actor_type, 'service');
   assert.equal(stamp.calls.auth.length + stamp.calls.roles.length, 0);
 });
+
+test('OTS delivery: the real stamper proof-write failure is retryable, never acknowledged', async () => {
+  const stamp = await harness({ status: 'sent', updateError: true });
+  let pendingStamp;
+  const webhook = await harness({ contractState: stamp.contract,
+    internalHandler: req => { pendingStamp = stamp.handler(req); return pendingStamp; },
+  }, 'contracts-webhook');
+  const response = await webhook.handler(lifecycleRequest());
+  assert.equal(response.status, 502);
+  assert.equal((await pendingStamp).status, 500);
+  assert.equal(stamp.calls.updates.length, 1);
+  assert.equal(stamp.contract.ots_proof, 'old-proof');
+  assert.equal(stamp.calls.events.length, 0);
+  assert.equal(stamp.contract.status, 'signed', 'contract writes precede delivery and are not atomic');
+  assert.doesNotMatch(await response.text(), /private-|Proof update failed/);
+});
+
+test('OTS delivery: retry of an already-signed contract can persist the proof after a failure', async () => {
+  const options = { status: 'sent', updateError: true };
+  const stamp = await harness(options);
+  const webhook = await harness({ contractState: stamp.contract,
+    internalHandler: req => stamp.handler(req),
+  }, 'contracts-webhook');
+  assert.equal((await webhook.handler(lifecycleRequest())).status, 502);
+  assert.equal(stamp.contract.status, 'signed');
+  options.updateError = false;
+  assert.equal((await webhook.handler(lifecycleRequest())).status, 200);
+  assert.notEqual(stamp.contract.ots_proof, 'old-proof');
+  assert.equal(stamp.calls.events.length, 1);
+  assert.equal(webhook.calls.internal.length, 2);
+  assert.equal(webhook.calls.events.length, 2, 'delivery retries can duplicate signed audit events');
+});
+
+for (const status of [401, 409, 500]) {
+  test(`OTS delivery: internal HTTP ${status} becomes a generic retryable failure`, async () => {
+    const h = await harness({ status: 'sent', internalHandler: () => new Response('provider-private-detail', { status }) }, 'contracts-webhook');
+    const response = await h.handler(lifecycleRequest());
+    assert.equal(response.status, 502);
+    assert.doesNotMatch(await response.text(), /provider-private-detail/);
+    assert.doesNotMatch(JSON.stringify(h.calls.errors), /provider-private-detail/);
+  });
+}
+
+test('OTS delivery: a rejected internal transport becomes a generic retryable failure', async () => {
+  const h = await harness({ status: 'sent', internalHandler: () => Promise.reject(new Error('provider-private-detail')) }, 'contracts-webhook');
+  const response = await h.handler(lifecycleRequest());
+  assert.equal(response.status, 502);
+  assert.doesNotMatch(await response.text(), /provider-private-detail/);
+  assert.doesNotMatch(JSON.stringify(h.calls.errors), /provider-private-detail/);
+});
+
+test('OTS delivery: a transport ignoring abort settles within the real delivery deadline', { timeout: 18_000 }, async () => {
+  const h = await harness({ status: 'sent', internalHandler: () => new Promise(() => {}) }, 'contracts-webhook');
+  const started = performance.now();
+  const response = await h.handler(lifecycleRequest());
+  assert.equal(response.status, 504);
+  assert.ok(performance.now() - started < 17_000);
+  assert.equal(h.calls.internal[0].init.signal.aborted, true);
+});
+
+test('OTS delivery: every completed contract requests stamping even without metadata PDF URL', async () => {
+  const h = await harness({ status: 'sent', submissionMetadata: {} }, 'contracts-webhook');
+  assert.equal((await h.handler(lifecycleRequest())).status, 200);
+  assert.equal(h.calls.internal.length, 1, 'the stamper resolves its own signed document URL');
+});
+
+for (const header of ['', 'wrong', 'sha256=wrong', 'g'.repeat(64), '0'.repeat(63), '0'.repeat(65)]) {
+  test(`HMAC admission: malformed header ${JSON.stringify(header)} cannot consume a stalled body`, async () => {
+    const h = await harness({}, 'contracts-webhook');
+    let reads = 0;
+    const stream = new ReadableStream({ pull() { reads++; } }, { highWaterMark: 0 });
+    const req = new Request('https://edge.example.invalid/webhook', {
+      method: 'POST', headers: { 'x-docuseal-signature': header }, body: stream, duplex: 'half',
+    });
+    let timer;
+    try {
+      const response = await Promise.race([h.handler(req), new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Malformed signature consumed request body')), 250);
+      })]);
+      assert.equal(response.status, 401); assert.equal(reads, 0); assert.equal(req.bodyUsed, false);
+      assert.equal(h.calls.clients.length, 0); noStampEffects(h.calls);
+    } finally { clearTimeout(timer); await req.body?.cancel(); }
+  });
+}

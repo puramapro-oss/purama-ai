@@ -20,6 +20,19 @@ function decodeHex(value: string): Uint8Array | null {
   return bytes;
 }
 
+function decodeHmacSignature(signatureHeader: string | null): Uint8Array | null {
+  if (!signatureHeader) return null;
+  const normalized = signatureHeader.startsWith(SIGNATURE_PREFIX)
+    ? signatureHeader.slice(SIGNATURE_PREFIX.length)
+    : signatureHeader;
+  return decodeHex(normalized);
+}
+
+/** Syntax admission only; the bounded exact body must still authenticate. */
+export function hasHmacSignatureFormat(signatureHeader: string | null): boolean {
+  return decodeHmacSignature(signatureHeader) !== null;
+}
+
 /** Constant-time comparison for a raw shared secret transported as a bearer token. */
 export function verifyBearerSecret(authorization: string | null, secret: string): boolean {
   if (!authorization || !secret) return false;
@@ -36,11 +49,8 @@ export async function verifyHmacSignature(
   signatureHeader: string | null,
   secret: string,
 ): Promise<boolean> {
-  if (!signatureHeader || !secret) return false;
-  const normalized = signatureHeader.startsWith(SIGNATURE_PREFIX)
-    ? signatureHeader.slice(SIGNATURE_PREFIX.length)
-    : signatureHeader;
-  const received = decodeHex(normalized);
+  if (!secret) return false;
+  const received = decodeHmacSignature(signatureHeader);
   if (!received) return false;
 
   const encoder = new TextEncoder();

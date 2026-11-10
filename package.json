@@ -17,7 +17,7 @@
     "test:wellbeing": "playwright test --config tests/wellbeing/playwright.config.ts",
     "test:voice-consent": "playwright test --config tests/voice-consent/playwright.config.ts",
     "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check",
-    "test:contracts-auth": "node --test --test-concurrency=1 tests/contracts-ots-auth.mjs",
+    "test:contracts-auth": "node --experimental-vm-modules --test --test-concurrency=1 tests/contracts-ots-auth.mjs tests/contracts-ots-integrity.mjs tests/opentimestamps-content.mjs",
     "test:ui-state": "playwright test --config tests/ui-state/playwright.config.ts",
     "test:founder": "node --test tests/founder-dashboard/client.test.mjs tests/founder-dashboard/server.test.mjs",
     "test:founder:types": "tsc --noEmit -p tests/founder-dashboard/tsconfig.json",
@@ -28,7 +28,11 @@
     "test:contracts-ots": "node tests/contracts-ots/run.mjs",
     "test:contracts-ots:browser": "node tests/contracts-ots/browser/run.mjs",
     "test:contracts-content": "node --experimental-vm-modules --test --test-concurrency=1 tests/opentimestamps-content.test.mjs",
-    "test:contracts-security": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts supabase/functions/_shared/request-body.test.ts tests/docuseal-read-boundaries.test.mjs"
+    "test:contracts-security": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts supabase/functions/_shared/request-body.test.ts tests/docuseal-read-boundaries.test.mjs supabase/functions/_shared/ots-delivery.test.ts",
+    "test:public": "playwright test --config playwright.config.ts",
+    "test:chat": "playwright test --config tests/chat/playwright.config.ts",
+    "test:async-ui": "playwright test --config tests/async-ui/playwright.config.ts",
+    "test:mobile-auth": "playwright test --config tests/mobile-auth/playwright.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

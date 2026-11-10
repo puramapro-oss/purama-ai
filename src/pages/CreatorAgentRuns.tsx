@@ -16,6 +16,7 @@ import {
 
 export default function CreatorAgentRuns() {
   const { user } = useAuth();
+  const userId = user?.id;
   const [runs, setRuns] = useState<CreatorAgentRun[]>([]);
   const [agents, setAgents] = useState<CreatorAgent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,22 +24,28 @@ export default function CreatorAgentRuns() {
   const [agentFilter, setAgentFilter] = useState<string>('all');
 
   useEffect(() => {
-    if (!user) return;
+    setLoading(Boolean(userId));
+    setRuns([]);
+    setAgents([]);
+    if (!userId) return;
+    let active = true;
     (async () => {
       try {
         const [r, a] = await Promise.all([
-          listRuns(user.id, { limit: 200 }),
-          listMyAgents(user.id),
+          listRuns(userId, { limit: 200 }),
+          listMyAgents(userId),
         ]);
+        if (!active) return;
         setRuns(r);
         setAgents(a);
       } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+        if (active) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     })();
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId]);
 
   const filtered = runs.filter(r => {
     if (statusFilter !== 'all' && r.status !== statusFilter) return false;

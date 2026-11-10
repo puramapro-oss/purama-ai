@@ -1,3 +1,5 @@
+> État historique du commit d’origine. La [réconciliation des deux historiques](../../docs/qa/ots-reconciliation-58a85a9-20261110.md) décrit le contrat courant, les nouvelles preuves et les limites restantes.
+
 # IAO — réconciliation des contrats, 10 novembre 2026
 
 **Statut : PARTIEL.** Le lot corrige les défauts reproduits ci-dessous. Il ne qualifie pas encore une mise en production : la CI du compte est bloquée et les fournisseurs, la passerelle hébergée et l'atomicité des événements restent à vérifier.
