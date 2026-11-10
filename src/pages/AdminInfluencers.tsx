@@ -28,22 +28,18 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { useInfluencerAdmin, Influencer, Commission } from '@/hooks/useInfluencer';
+import { useInfluencerAdmin, Influencer, INFLUENCER_PAYMENT_UNAVAILABLE } from '@/hooks/useInfluencer';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 export default function AdminInfluencers() {
-  const { allInfluencers, allCommissions, isLoading, markCommissionPaid } = useInfluencerAdmin();
+  const { allInfluencers, allCommissions, isLoading } = useInfluencerAdmin();
   const [search, setSearch] = useState('');
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
-  const [showPayDialog, setShowPayDialog] = useState(false);
-  const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
 
   const filteredInfluencers = allInfluencers.filter(inf => 
     inf.promo_code.toLowerCase().includes(search.toLowerCase()) ||
@@ -58,14 +54,6 @@ export default function AdminInfluencers() {
 
   const getInfluencerCommissions = (influencerId: string) => {
     return allCommissions.filter(c => c.influencer_id === influencerId);
-  };
-
-  const handlePayCommission = () => {
-    if (selectedCommission) {
-      markCommissionPaid.mutate(selectedCommission.id);
-      setShowPayDialog(false);
-      setSelectedCommission(null);
-    }
   };
 
   if (isLoading) {
@@ -99,6 +87,11 @@ export default function AdminInfluencers() {
           </div>
         </div>
 
+        <div role="status" className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+          <p className="font-medium">{INFLUENCER_PAYMENT_UNAVAILABLE}</p>
+          <p className="mt-1 text-muted-foreground">Les montants et statuts historiques restent consultables.</p>
+        </div>
+
         {/* Stats */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <Card className="glass-effect">
@@ -127,7 +120,7 @@ export default function AdminInfluencers() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Commissions payées</p>
+                  <p className="text-sm text-muted-foreground">Revenus enregistrés</p>
                   <p className="text-2xl font-bold">{totalRevenue.toFixed(0)}€</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-blue-500 opacity-50" />
@@ -242,12 +235,10 @@ export default function AdminInfluencers() {
                             {pendingCommissions.length > 0 && (
                               <Button
                                 size="sm"
-                                onClick={() => {
-                                  setSelectedCommission(pendingCommissions[0]);
-                                  setShowPayDialog(true);
-                                }}
+                                disabled
+                                title={INFLUENCER_PAYMENT_UNAVAILABLE}
                               >
-                                Payer ({pendingCommissions.length})
+                                Paiement indisponible ({pendingCommissions.length})
                               </Button>
                             )}
                           </div>
@@ -336,36 +327,6 @@ export default function AdminInfluencers() {
           </DialogContent>
         </Dialog>
 
-        {/* Pay Dialog */}
-        <Dialog open={showPayDialog} onOpenChange={setShowPayDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirmer le paiement</DialogTitle>
-              <DialogDescription>
-                Marquer cette commission comme payée ?
-              </DialogDescription>
-            </DialogHeader>
-            {selectedCommission && (
-              <div className="p-4 bg-secondary/50 rounded-lg">
-                <p className="text-lg font-bold text-green-500">
-                  {Number(selectedCommission.commission_amount).toFixed(2)}€
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Commission sur une vente de {Number(selectedCommission.sale_amount).toFixed(2)}€
-                </p>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowPayDialog(false)}>
-                Annuler
-              </Button>
-              <Button onClick={handlePayCommission} disabled={markCommissionPaid.isPending}>
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Confirmer le paiement
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

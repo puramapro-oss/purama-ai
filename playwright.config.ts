@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  // Deno and Node integration tests have their own runners and use *.test.*.
+  testMatch: '**/*.spec.ts',
   // docuseal-e2e.spec.ts (playwright.docuseal.config.ts) et tests/karta/** (playwright.karta.config.ts)
   // ciblent la prod avec leur propre config dédiée (baseURL, env vars requises) — jamais dans la
   // suite locale par défaut.

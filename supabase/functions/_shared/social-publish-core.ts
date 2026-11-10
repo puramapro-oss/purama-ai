@@ -1,9 +1,23 @@
-// Shared publish execution logic used by both:
-//  - social-publish (immediate publish at request time)
-//  - social-publish-scheduled (cron consumer for posts whose scheduled_at is due)
-//
-// Isolated from Deno/Supabase client wiring so it can be unit-tested with
-// plain in-memory stubs (no real network, no real Supabase client).
+// One execution path for immediate and scheduled publications. A failed HTTP
+// request is not evidence that the remote side effect did not happen.
+
+export type PublishStatus =
+  | "published"
+  | "partial"
+  | "failed"
+  | "publish_unconfirmed";
+
+export interface SocialAccountTarget {
+  platform: string;
+  zernio_account_id: string;
+  zernio_profile_id: string;
+}
+
+export interface SocialAccountRef extends SocialAccountTarget {
+  user_id: string;
+  is_active: boolean;
+  publishing_verified_at: string | null;
+}
 
 export interface SocialPostRow {
   id: string;
@@ -11,120 +25,190 @@ export interface SocialPostRow {
   content_text: string | null;
   content_media_urls: string[] | null;
   target_platforms: string[];
+  // Freeze destinations when publication is requested. Reconnecting an
+  // account must not silently redirect an older scheduled publication.
+  target_accounts: SocialAccountTarget[] | null;
 }
 
-export interface SocialAccountRef {
+export interface PlatformPublishResult {
   platform: string;
-  zernio_profile_id: string;
+  accountId: string;
+  status: string;
+  postId?: string;
+  postUrl?: string;
+}
+
+export interface ProviderPublishResult {
+  status: PublishStatus;
+  externalPostId?: string;
+  platformResults: PlatformPublishResult[];
+  response: Record<string, unknown>;
+  error?: string;
+}
+
+/** Only use for a locally rejected operation, before sending any request. */
+export class PublishNotStartedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PublishNotStartedError";
+  }
 }
 
 export interface PublishDeps {
-  /** Loads the user's active connected accounts for the given platforms. */
-  fetchAccounts: (
-    userId: string,
-    platforms: string[],
-  ) => Promise<SocialAccountRef[]>;
-  /** Performs the real publish call against the social platform aggregator. */
-  publish: (params: {
+  fetchAccounts(userId: string, platforms: string[]): Promise<SocialAccountRef[]>;
+  publish(params: {
+    postId: string;
     text: string;
     mediaUrls?: string[];
-    platforms: string[];
-    profileIds: string[];
-  }) => Promise<Record<string, unknown>>;
-  markPublished: (
-    postId: string,
-    result: Record<string, unknown>,
-  ) => Promise<void>;
-  markFailed: (postId: string, message: string) => Promise<void>;
-  /**
-   * Called when the external publish (Zernio) call genuinely SUCCEEDED but
-   * the follow-up DB write (markPublished) then failed. This must never
-   * result in status='failed' — a future retry would re-publish a post that
-   * is already live on the real platform (double-post). Optional so callers
-   * that don't need the distinction (none should exist in production) still
-   * type-check; when omitted the anomaly is only logged.
-   */
-  markPublishAnomaly?: (
-    postId: string,
-    result: Record<string, unknown>,
-    writeError: string,
-  ) => Promise<void>;
+    targets: SocialAccountTarget[];
+  }): Promise<ProviderPublishResult>;
+  markResult(post: SocialPostRow, result: ProviderPublishResult): Promise<void>;
+  markFailed(post: SocialPostRow, message: string): Promise<void>;
+  markPublishAnomaly(
+    post: SocialPostRow,
+    message: string,
+    result?: ProviderPublishResult,
+  ): Promise<void>;
+  now?: () => number;
 }
 
 export interface PublishOutcome {
   postId: string;
-  status: "published" | "failed" | "publish_unconfirmed";
+  status: PublishStatus;
+  // This path never authorizes an automatic repost, including a failed one.
+  retryable: false;
   error?: string;
+  externalPostId?: string;
+  platformResults?: PlatformPublishResult[];
 }
 
-/**
- * Executes the real publish for a single social_posts row and persists the
- * final state. Never throws — always resolves with the outcome, and never
- * leaves the row silently unresolved.
- *
- * Two distinct failure classes are handled on purpose (contre-audit finding):
- *  - failure BEFORE/DURING the external publish call: nothing was actually
- *    posted, so status='failed' (safe to retry later) is correct.
- *  - failure AFTER the external publish call succeeded (i.e. the DB write in
- *    markPublished itself throws): the post IS live on the real platform.
- *    Marking 'failed' here would let a future retry re-publish it. This path
- *    never calls markFailed and returns 'publish_unconfirmed' instead.
- */
+export function validatePublishAccounts(
+  post: SocialPostRow,
+  accounts: SocialAccountRef[],
+  now = Date.now(),
+): SocialAccountTarget[] {
+  const platforms = post.target_platforms;
+  const targets = post.target_accounts;
+  if (
+    !Array.isArray(platforms) || !platforms.length ||
+    new Set(platforms).size !== platforms.length ||
+    !Array.isArray(targets) || targets.length !== platforms.length
+  ) {
+    throw new PublishNotStartedError(
+      "Destinations de publication non vérifiées. Préparez une nouvelle publication.",
+    );
+  }
+  if (platforms.includes("twitter")) {
+    // No server-side funding reservation exists in this repository. X can
+    // auto-top-up a provider balance; a client flag is not a spending permit.
+    throw new PublishNotStartedError(
+      "La publication sur X attend un financement vérifié côté serveur. Choisissez les autres réseaux.",
+    );
+  }
+  const seen = new Set<string>();
+  for (const target of targets) {
+    if (
+      !target || !platforms.includes(target.platform) ||
+      seen.has(target.platform) ||
+      typeof target.zernio_account_id !== "string" || !target.zernio_account_id ||
+      typeof target.zernio_profile_id !== "string" || !target.zernio_profile_id
+    ) {
+      throw new PublishNotStartedError("Destination de publication invalide.");
+    }
+    seen.add(target.platform);
+    const matches = accounts.filter((account) =>
+      account.user_id === post.user_id && account.platform === target.platform &&
+      account.zernio_account_id === target.zernio_account_id &&
+      account.zernio_profile_id === target.zernio_profile_id &&
+      account.is_active === true
+    );
+    const verifiedAt = matches.length === 1 && matches[0].publishing_verified_at
+      ? Date.parse(matches[0].publishing_verified_at)
+      : Number.NaN;
+    if (!Number.isFinite(verifiedAt) || verifiedAt > now) {
+      throw new PublishNotStartedError(
+        "Un compte ciblé est déconnecté, a changé ou n'a pas encore été vérifié côté serveur.",
+      );
+    }
+  }
+  return targets;
+}
+
 export async function executeSocialPublish(
   post: SocialPostRow,
   deps: PublishDeps,
 ): Promise<PublishOutcome> {
-  let result: Record<string, unknown>;
-  try {
-    const accounts = await deps.fetchAccounts(
-      post.user_id,
-      post.target_platforms,
-    );
-    if (!accounts.length) {
-      throw new Error(
-        "Aucun compte social actif pour les plateformes ciblées",
-      );
+  const unconfirmed = async (
+    message: string,
+    result?: ProviderPublishResult,
+  ): Promise<PublishOutcome> => {
+    try {
+      await deps.markPublishAnomaly(post, message, result);
+    } catch {
+      // The durable pre-send claim remains publishing. The consumer must
+      // never turn that state back into scheduled, even if this write fails.
+      console.error("[social-publish] Could not persist uncertain outcome", post.id);
     }
+    return {
+      postId: post.id,
+      status: "publish_unconfirmed",
+      retryable: false,
+      error: message,
+      externalPostId: result?.externalPostId,
+      platformResults: result?.platformResults,
+    };
+  };
 
-    const profileIds = accounts.map((a) => a.zernio_profile_id);
-    const platforms = accounts.map((a) => a.platform);
+  const failedBeforeSend = async (message: string): Promise<PublishOutcome> => {
+    try {
+      await deps.markFailed(post, message);
+    } catch {
+      return unconfirmed("Publication non envoyée ; enregistrement de l'échec non confirmé.");
+    }
+    return { postId: post.id, status: "failed", retryable: false, error: message };
+  };
 
+  let targets: SocialAccountTarget[];
+  try {
+    const accounts = await deps.fetchAccounts(post.user_id, post.target_platforms);
+    targets = validatePublishAccounts(post, accounts, deps.now?.() ?? Date.now());
+  } catch (error) {
+    return failedBeforeSend(
+      error instanceof PublishNotStartedError
+        ? error.message
+        : "Vérification des comptes impossible ; aucune publication envoyée.",
+    );
+  }
+
+  let result: ProviderPublishResult;
+  try {
     result = await deps.publish({
+      postId: post.id,
       text: post.content_text || "",
-      mediaUrls:
-        post.content_media_urls && post.content_media_urls.length
-          ? post.content_media_urls
-          : undefined,
-      platforms,
-      profileIds,
+      mediaUrls: post.content_media_urls?.length ? post.content_media_urls : undefined,
+      targets,
     });
-  } catch (e) {
-    // Nothing was published (or the publish call itself failed) — safe to
-    // mark failed, a future retry cannot double-post.
-    const message = e instanceof Error ? e.message : String(e);
-    await deps.markFailed(post.id, message);
-    return { postId: post.id, status: "failed", error: message };
+  } catch (error) {
+    if (error instanceof PublishNotStartedError) return failedBeforeSend(error.message);
+    return unconfirmed(
+      "Réponse du fournisseur non confirmée. Une publication peut avoir eu lieu ; aucun renvoi automatique.",
+    );
   }
 
   try {
-    await deps.markPublished(post.id, result);
-    return { postId: post.id, status: "published" };
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    console.error(
-      `[social-publish-core] ANOMALIE post-succes: publication Zernio reussie pour post ${post.id} mais l'ecriture DB 'published' a echoue (${message}). NE PAS retenter automatiquement (risque de double-post) — verification manuelle requise.`,
+    await deps.markResult(post, result);
+  } catch {
+    return unconfirmed(
+      "Résultat fournisseur reçu, mais son enregistrement n'est pas confirmé. Aucun renvoi automatique.",
+      result,
     );
-    if (deps.markPublishAnomaly) {
-      try {
-        await deps.markPublishAnomaly(post.id, result, message);
-      } catch (anomalyError) {
-        const anomalyMessage =
-          anomalyError instanceof Error ? anomalyError.message : String(anomalyError);
-        console.error(
-          `[social-publish-core] ANOMALIE post-succes: l'ecriture de l'anomalie elle-meme a echoue pour post ${post.id} (${anomalyMessage}). La ligne reste en 'publishing' — verification manuelle requise.`,
-        );
-      }
-    }
-    return { postId: post.id, status: "publish_unconfirmed", error: message };
   }
+  return {
+    postId: post.id,
+    status: result.status,
+    retryable: false,
+    error: result.error,
+    externalPostId: result.externalPostId,
+    platformResults: result.platformResults,
+  };
 }

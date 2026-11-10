@@ -1,153 +1,68 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
-import { Resend } from "https://esm.sh/resend@2.0.0";
+import {
+  normalizeStripeReconciliationEvent,
+  persistStripeReconciliationEvent,
+} from "../_shared/stripe-reconciliation.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const logStep = (step: string, details?: Record<string, unknown>) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
-
-// Generate commission email HTML
-function generateCommissionEmailHtml(data: {
-  beneficiaryName: string;
-  commissionAmount: number;
-  saleAmount: number;
-  promoCode: string;
-  planType: string;
-}): string {
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nouvelle commission Agentia</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0a0a0f;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0f;">
-    <tr>
-      <td style="padding: 40px 20px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
-          <!-- Header -->
-          <tr>
-            <td style="padding: 32px 32px 24px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                <tr>
-                  <td>
-                    <span style="font-size: 24px; font-weight: bold; background: linear-gradient(135deg, #00d4ff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                      Agentia
-                    </span>
-                  </td>
-                  <td align="right">
-                    <span style="display: inline-block; padding: 6px 12px; background-color: #22c55e22; color: #22c55e; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                      💰 Nouvelle commission
-                    </span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          
-          <!-- Content -->
-          <tr>
-            <td style="padding: 0 32px 32px;">
-              <h1 style="margin: 0 0 16px; font-size: 28px; font-weight: 600; color: #ffffff;">
-                Félicitations ${data.beneficiaryName} ! 🎉
-              </h1>
-              <p style="margin: 0 0 24px; font-size: 18px; line-height: 1.6; color: #a1a1aa;">
-                Vous avez généré une nouvelle vente grâce à votre code <strong style="color: #00d4ff;">${data.promoCode}</strong> !
-              </p>
-              
-              <!-- Stats Box -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.3); margin-bottom: 24px;">
-                <tr>
-                  <td style="padding: 24px;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                      <tr>
-                        <td width="50%" style="padding-right: 12px;">
-                          <p style="margin: 0 0 4px; font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Commission gagnée</p>
-                          <p style="margin: 0; font-size: 32px; font-weight: bold; color: #22c55e;">+${data.commissionAmount.toFixed(2)}€</p>
-                        </td>
-                        <td width="50%" style="padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.1);">
-                          <p style="margin: 0 0 4px; font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px;">Valeur de la vente</p>
-                          <p style="margin: 0; font-size: 24px; font-weight: 600; color: #ffffff;">${data.saleAmount.toFixed(2)}€</p>
-                          <p style="margin: 4px 0 0; font-size: 12px; color: #a1a1aa;">Abonnement ${data.planType}</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-              
-              <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.6; color: #71717a;">
-                Cette commission est actuellement en attente de validation. Une fois le premier paiement confirmé, elle sera validée et ajoutée à votre prochain versement.
-              </p>
-              
-              <a href="https://purama-ai.purama.dev/influenceur/dashboard" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #00d4ff, #a855f7); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-                Voir mon tableau de bord →
-              </a>
-            </td>
-          </tr>
-          
-          <!-- Footer -->
-          <tr>
-            <td style="padding: 24px 32px; border-top: 1px solid rgba(255,255,255,0.1);">
-              <p style="margin: 0; font-size: 12px; color: #71717a; text-align: center;">
-                Merci d'être partenaire Agentia !<br>
-                <a href="https://purama-ai.purama.dev/influenceur/dashboard" style="color: #a855f7; text-decoration: none;">Gérer mon compte influenceur</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-  `;
-}
 
 // Map Stripe product IDs vers les PlanId réels de src/lib/plans.ts (1 seule source de vérité —
 // ERRORS.md 2026-07-27 : l'ancien mapping pointait vers des produits Stripe différents de ceux
 // utilisés par le checkout réel, et 'premium'/'enterprise' ne correspondaient à AUCUNE clé de PLANS,
 // ce qui faisait silencieusement retomber tout abonné payant sur le quota Découverte/Free).
 const planMapping: Record<string, string> = {
-  'prod_UHwPcnEEVEDf4K': 'starter',
-  'prod_UHwPSU2o4DW6Ej': 'pro', // "Premium" (nom affiché) = PlanId 'pro'
-  'prod_UHwPBOGTleT37J': 'ultime',
+  "prod_UHwPcnEEVEDf4K": "starter",
+  "prod_UHwPSU2o4DW6Ej": "pro", // "Premium" (nom affiché) = PlanId 'pro'
+  "prod_UHwPBOGTleT37J": "ultime",
 };
 
-// Plan prices for commission calculation (monthly price in EUR) — cf src/lib/plans.ts PLANS
-const planPrices: Record<string, number> = {
-  'starter': 33,
-  'pro': 99,
-  'ultime': 199,
-};
+type SubscriptionOwner = { user_id: string; stripe_customer_id: string | null };
 
-// Taille du pack de dépassement — cf OVERAGE_PACK.actions dans src/lib/plans.ts (1 seule source de
-// vérité déclarée ; dupliquée ici car cette fonction Deno n'importe pas src/lib).
-const OVERAGE_PACK_ACTIONS = 2000;
+function stripeId(value: unknown): string | null {
+  if (typeof value === "string" && value.length > 0) return value;
+  if (
+    value && typeof value === "object" && "id" in value &&
+    typeof value.id === "string"
+  ) return value.id;
+  return null;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 405,
+    });
+  }
 
   const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
   const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
-  
-  if (!stripeKey || !webhookSecret) {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!stripeKey || !webhookSecret || !supabaseUrl || !supabaseServiceKey) {
     logStep("ERROR: Missing environment variables");
-    return new Response(JSON.stringify({ error: "Server configuration error" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ error: "Server configuration error" }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 503,
+      },
+    );
   }
 
   // httpClient explicite requis en environnement Deno/edge (cf ERRORS.md 2026-07-27)
@@ -156,11 +71,11 @@ serve(async (req) => {
     httpClient: Stripe.createFetchHttpClient(),
     timeout: 10_000,
   });
-  
+
   const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
+    supabaseUrl,
+    supabaseServiceKey,
+    { db: { schema: "purama_ai" }, auth: { persistSession: false } },
   );
 
   try {
@@ -177,10 +92,18 @@ serve(async (req) => {
     let event: Stripe.Event;
 
     try {
-      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret, undefined, Stripe.createSubtleCryptoProvider());
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        webhookSecret,
+        undefined,
+        Stripe.createSubtleCryptoProvider(),
+      );
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      logStep("ERROR: Webhook signature verification failed", { error: errorMessage });
+      logStep("ERROR: Webhook signature verification failed", {
+        error: errorMessage,
+      });
       return new Response(JSON.stringify({ error: "Invalid signature" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
@@ -189,340 +112,217 @@ serve(async (req) => {
 
     logStep("Event received", { type: event.type, id: event.id });
 
+    // Acknowledge financial events only after durable, authenticated evidence has
+    // been recorded. This journal confers no commission or permission to transfer.
+    // Database failures and conflicting replays must make Stripe retry (non-2xx).
+    const observation = normalizeStripeReconciliationEvent(event);
+    const receipt = observation
+      ? await persistStripeReconciliationEvent(supabaseClient, observation)
+      : null;
+
+    // The legacy subscription table belongs to the platform account. There is
+    // no connected-account/customer mapping here. Keep the facts without ever
+    // retrieving an acct_* object with the platform's credentials or mutating
+    // platform subscriptions on its behalf.
+    const configuredLiveMode = /^(sk|rk)_live_/.test(stripeKey)
+      ? true
+      : /^(sk|rk)_test_/.test(stripeKey)
+      ? false
+      : null;
+    if (
+      event.account ||
+      (configuredLiveMode !== null && event.livemode !== configuredLiveMode)
+    ) {
+      return new Response(
+        JSON.stringify({
+          received: true,
+          ...(receipt ?? {}),
+          application: "deferred",
+          reason: event.account
+            ? "connected_account_not_mapped"
+            : "provider_mode_mismatch",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
+    }
+
+    // Read the current provider object for every subscription application. A
+    // delayed webhook must not replay an old status after a newer payment. The
+    // legacy table still has no subscription_id/version: multiple subscriptions
+    // for one customer need the canonical engine's reconciliation.
+    const syncSubscription = async (
+      subscriptionId: string,
+      checkout?: Stripe.Checkout.Session,
+    ) => {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const customerId = stripeId(subscription.customer);
+      const checkoutCustomerId = checkout ? stripeId(checkout.customer) : null;
+      if (!customerId || (checkout && checkoutCustomerId !== customerId)) {
+        throw new Error(
+          "Subscription customer identity is missing or inconsistent",
+        );
+      }
+      const subscriptionUserId = subscription.metadata?.user_id || null;
+      const checkoutUserId = checkout?.metadata?.user_id || null;
+      if (
+        subscriptionUserId && checkoutUserId &&
+        subscriptionUserId !== checkoutUserId
+      ) {
+        throw new Error("Conflicting server user attribution");
+      }
+      const userId = checkoutUserId || subscriptionUserId;
+      const { data: byCustomer, error: customerError } = await supabaseClient
+        .from("subscriptions")
+        .select("user_id, stripe_customer_id")
+        .eq("stripe_customer_id", customerId)
+        .maybeSingle();
+      if (customerError) throw new Error("Subscription customer lookup failed");
+
+      let owner: SubscriptionOwner | null = byCustomer;
+      if (userId) {
+        const { data: byUser, error: userError } = await supabaseClient
+          .from("subscriptions")
+          .select("user_id, stripe_customer_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+        if (userError) throw new Error("Subscription user lookup failed");
+        if (
+          !byUser || (byCustomer && byCustomer.user_id !== userId) ||
+          (byUser.stripe_customer_id &&
+            byUser.stripe_customer_id !== customerId)
+        ) {
+          throw new Error(
+            "Subscription customer does not match the attributed user",
+          );
+        }
+        owner = byUser;
+      }
+      if (!owner) {
+        throw new Error("Subscription has no stable user/customer binding");
+      }
+
+      const items = subscription.items.data;
+      const productId = items.length === 1 && !subscription.items.has_more
+        ? stripeId(items[0].price.product)
+        : null;
+      const planType = productId ? planMapping[productId] : undefined;
+      if (!planType) {
+        throw new Error(
+          "Unknown or ambiguous subscription product; reconciliation required",
+        );
+      }
+      const status = subscription.status;
+      if (
+        ![
+          "active",
+          "trialing",
+          "past_due",
+          "unpaid",
+          "canceled",
+          "incomplete",
+          "incomplete_expired",
+          "paused",
+        ].includes(status)
+      ) {
+        throw new Error("Unknown subscription status; reconciliation required");
+      }
+
+      // Compare the previous binding as well as user_id: concurrent replacement
+      // of a customer must fail visibly instead of overwriting another binding.
+      let update = supabaseClient.from("subscriptions").update({
+        plan_type: status === "canceled" ? "free" : planType,
+        status,
+        stripe_customer_id: customerId,
+        updated_at: new Date().toISOString(),
+      }).eq("user_id", owner.user_id);
+      update = owner.stripe_customer_id
+        ? update.eq("stripe_customer_id", owner.stripe_customer_id)
+        : update.is("stripe_customer_id", null);
+      const { data: updated, error: updateError } = await update.select(
+        "user_id",
+      ).single();
+      if (updateError || !updated || updated.user_id !== owner.user_id) {
+        throw new Error("Subscription update was not confirmed");
+      }
+      logStep("Subscription synchronized", {
+        userId: owner.user_id,
+        planType,
+        status,
+      });
+    };
+
     // Handle the event
     switch (event.type) {
-      case 'checkout.session.completed': {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const session = event.data.object as Stripe.Checkout.Session;
-        logStep("Checkout session completed", { 
-          sessionId: session.id, 
+        logStep("Checkout session completed", {
+          sessionId: session.id,
           customerId: session.customer,
-          customerEmail: session.customer_email,
-          metadata: session.metadata
         });
 
-        if (session.mode === 'subscription' && session.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-          const productId = subscription.items.data[0]?.price.product as string;
-          const planType = planMapping[productId] || 'pro';
-          const customerEmail = session.customer_email || session.customer_details?.email;
-
-          // Extract influencer info from metadata
-          const referralCode = session.metadata?.referral_code;
-          const influencerId = session.metadata?.influencer_id;
-          const clientUserId = session.metadata?.user_id;
-
-          if (customerEmail) {
-            // Find user by email
-            const { data: userData } = await supabaseClient.auth.admin.listUsers();
-            const user = userData?.users?.find(u => u.email === customerEmail);
-
-            if (user) {
-              // Update subscription in database
-              const { error: updateError } = await supabaseClient
-                .from('subscriptions')
-                .update({
-                  plan_type: planType,
-                  status: 'active',
-                  stripe_customer_id: session.customer as string,
-                  updated_at: new Date().toISOString(),
-                })
-                .eq('user_id', user.id);
-
-              if (updateError) {
-                logStep("ERROR: Failed to update subscription", { error: updateError.message });
-              } else {
-                logStep("Subscription updated successfully", { userId: user.id, planType });
-              }
-
-              // Handle influencer commission if referral was used
-              if (influencerId && referralCode) {
-                logStep("Processing influencer commission", { influencerId, referralCode });
-
-                // Get influencer data
-                const { data: influencer } = await supabaseClient
-                  .from('influencers')
-                  .select('*')
-                  .eq('id', influencerId)
-                  .single();
-
-                if (influencer && influencer.user_id === user.id) {
-                  // Auto-parrainage (F5, QA-T5-p3) : le webhook est la 2e ligne de défense
-                  // — create-checkout refuse déjà la remise, mais un referral_code/
-                  // influencer_id auto-attribué par un appel direct à l'Edge Function
-                  // (hors UI) ne doit jamais générer de commission sur ses propres achats.
-                  logStep("Self-referral commission refused", { influencerId, userId: user.id });
-                } else if (influencer) {
-                  // Calculate commission (annual subscription value * commission rate)
-                  const monthlyPrice = planPrices[planType] || 99;
-                  const annualValue = monthlyPrice * 12;
-                  const commissionRate = influencer.commission_rate / 100;
-                  const commissionAmount = annualValue * commissionRate;
-
-                  logStep("Commission calculation", {
-                    monthlyPrice,
-                    annualValue,
-                    commissionRate,
-                    commissionAmount
-                  });
-
-                  // Create commission record. UNIQUE(subscription_id) (fix F5, QA-T5-p3 —
-                  // 0 idempotence) : Stripe peut redélivrer le MÊME event.id après un
-                  // timeout/erreur réseau côté receveur — sans garde, chaque redélivraison
-                  // recréait une commission pour le MÊME abonnement (subscription_id est
-                  // stable par session : une seule commission possible par abonnement).
-                  const { error: commissionError } = await supabaseClient
-                    .from('commissions')
-                    .insert({
-                      influencer_id: influencerId,
-                      client_id: user.id,
-                      sale_amount: annualValue,
-                      commission_amount: commissionAmount,
-                      status: 'pending',
-                      subscription_id: session.subscription as string,
-                    });
-
-                  if (commissionError?.code === '23505') {
-                    logStep("Commission already recorded (webhook redelivery, idempotent)", { subscriptionId: session.subscription });
-                  } else if (commissionError) {
-                    logStep("ERROR: Failed to create commission", { error: commissionError.message });
-                  } else {
-                    logStep("Commission created successfully", { commissionAmount });
-
-                    // Update influencer stats
-                    const { error: statsError } = await supabaseClient
-                      .from('influencers')
-                      .update({
-                        total_revenue: influencer.total_revenue + commissionAmount,
-                        total_sales: influencer.total_sales + 1,
-                        updated_at: new Date().toISOString(),
-                      })
-                      .eq('id', influencerId);
-
-                    if (statsError) {
-                      logStep("ERROR: Failed to update influencer stats", { error: statsError.message });
-                    } else {
-                      logStep("Influencer stats updated", { 
-                        newTotalRevenue: influencer.total_revenue + commissionAmount,
-                        newTotalSales: influencer.total_sales + 1
-                      });
-                    }
-
-                    // Send notification to influencer
-                    await supabaseClient
-                      .from('notifications')
-                      .insert({
-                        user_id: influencer.user_id,
-                        type: 'task_completed',
-                        title: 'Nouvelle vente !',
-                        message: `Vous avez gagné ${commissionAmount.toFixed(2)}€ de commission grâce à votre code ${referralCode}`,
-                        action_url: '/influenceur/dashboard',
-                      });
-
-                    logStep("Notification sent to influencer");
-
-                    // Send email notification to influencer
-                    const resendApiKey = Deno.env.get('RESEND_API_KEY');
-                    if (resendApiKey) {
-                      try {
-                        // Get influencer's email from profile
-                        const { data: influencerProfile } = await supabaseClient
-                          .from('profiles')
-                          .select('email')
-                          .eq('user_id', influencer.user_id)
-                          .single();
-
-                        if (influencerProfile?.email) {
-                          const resend = new Resend(resendApiKey);
-                          
-                          const emailHtml = generateCommissionEmailHtml({
-                            beneficiaryName: influencer.beneficiary_name || 'Partenaire',
-                            commissionAmount,
-                            saleAmount: annualValue,
-                            promoCode: referralCode,
-                            planType: planType.charAt(0).toUpperCase() + planType.slice(1),
-                          });
-
-                          const { error: emailError } = await resend.emails.send({
-                            from: 'Agentia <notifications@resend.dev>',
-                            to: [influencerProfile.email],
-                            subject: `💰 Nouvelle commission: +${commissionAmount.toFixed(2)}€`,
-                            html: emailHtml,
-                          });
-
-                          if (emailError) {
-                            logStep("ERROR: Failed to send commission email", { error: emailError });
-                          } else {
-                            logStep("Commission email sent to influencer", { email: influencerProfile.email });
-                          }
-                        }
-                      } catch (emailErr) {
-                        logStep("ERROR: Email sending failed", { error: String(emailErr) });
-                      }
-                    }
-                  }
-                }
-              }
-            } else {
-              logStep("User not found for email", { email: customerEmail });
-            }
+        if (session.mode === "subscription") {
+          const subscriptionId = stripeId(session.subscription);
+          if (!subscriptionId) {
+            throw new Error("Checkout has no valid subscription reference");
           }
-        } else if (session.mode === 'payment' && session.metadata?.type === 'overage_pack') {
-          // Pack de dépassement +2000 actions = 19€ (brief PRICING & OFFRE IRRÉSISTIBLE).
-          // Crédité au mois en cours (period_start = 1er du mois courant), cf getUsageSnapshot() (src/lib/usage.ts).
-          const userId = session.metadata.user_id;
-          if (userId) {
-            const now = new Date();
-            const periodStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString().slice(0, 10);
-
-            const { error: creditError } = await supabaseClient
-              .from('overage_credits')
-              .insert({
-                user_id: userId,
-                actions: OVERAGE_PACK_ACTIONS,
-                period_start: periodStart,
-                stripe_session_id: session.id,
-              });
-
-            if (creditError) {
-              logStep("ERROR: Failed to credit overage pack", { error: creditError.message });
-            } else {
-              logStep("Overage pack credited", { userId, periodStart, sessionId: session.id });
-            }
-          } else {
-            logStep("ERROR: overage_pack session missing user_id metadata", { sessionId: session.id });
+          await syncSubscription(subscriptionId, session);
+        } else if (
+          session.mode === "payment" &&
+          session.metadata?.type === "overage_pack" &&
+          session.payment_status === "paid"
+        ) {
+          // The SQL writer serializes on the economic Checkout Session identity,
+          // verifies the already-recorded paid event and preserves earlier credits.
+          // Several event IDs for one session must never grant the pack twice.
+          const { data: credit, error: creditError } = await supabaseClient.rpc(
+            "apply_stripe_overage_credit",
+            { p_event_id: event.id, p_livemode: event.livemode },
+          );
+          const result = credit && typeof credit === "object"
+            ? credit as Record<string, unknown>
+            : {};
+          if (
+            creditError || result.credited !== true ||
+            result.session_id !== session.id ||
+            typeof result.duplicate !== "boolean"
+          ) {
+            throw new Error("Overage credit was not durably confirmed");
           }
+          logStep("Overage pack credited", {
+            sessionId: session.id,
+            duplicate: result.duplicate,
+          });
         }
         break;
       }
 
-      case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
-        const productId = subscription.items.data[0]?.price.product as string;
-        const planType = planMapping[productId] || 'pro';
-        const status = subscription.status === 'active' ? 'active' : subscription.status;
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted": {
+        const subscriptionId = stripeId(event.data.object);
+        if (!subscriptionId) throw new Error("Missing subscription identity");
+        await syncSubscription(subscriptionId);
+        break;
+      }
 
-        logStep("Subscription updated", { customerId, productId, planType, status });
-
-        // Find user by stripe_customer_id
-        const { data: subscriptionData } = await supabaseClient
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', customerId)
-          .single();
-
-        if (subscriptionData) {
-          const { error: updateError } = await supabaseClient
-            .from('subscriptions')
-            .update({
-              plan_type: planType,
-              status: status,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', subscriptionData.user_id);
-
-          if (updateError) {
-            logStep("ERROR: Failed to update subscription", { error: updateError.message });
-          } else {
-            logStep("Subscription updated successfully", { userId: subscriptionData.user_id, planType });
-          }
-        } else {
-          logStep("No subscription found for customer", { customerId });
+      case "invoice.payment_failed": {
+        // A one-off invoice must not downgrade a subscription merely because it
+        // shares a customer. Read a proven subscription reference (legacy/Basil)
+        // and synchronize its current provider state instead of forcing past_due.
+        const subscriptionId = observation?.source_facts.subscription_id;
+        if (typeof subscriptionId === "string") {
+          await syncSubscription(subscriptionId);
         }
         break;
       }
 
-      case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
-
-        logStep("Subscription deleted", { customerId });
-
-        // Find and update user subscription to free
-        const { data: subscriptionData } = await supabaseClient
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', customerId)
-          .single();
-
-        if (subscriptionData) {
-          const { error: updateError } = await supabaseClient
-            .from('subscriptions')
-            .update({
-              plan_type: 'free',
-              status: 'canceled',
-              updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', subscriptionData.user_id);
-
-          if (updateError) {
-            logStep("ERROR: Failed to update subscription", { error: updateError.message });
-          } else {
-            logStep("Subscription reverted to free", { userId: subscriptionData.user_id });
-          }
-        }
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
-        const customerId = invoice.customer as string;
-
-        logStep("Payment failed", { customerId, invoiceId: invoice.id });
-
-        // Update subscription status to past_due
-        const { data: subscriptionData } = await supabaseClient
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', customerId)
-          .single();
-
-        if (subscriptionData) {
-          const { error: updateError } = await supabaseClient
-            .from('subscriptions')
-            .update({
-              status: 'past_due',
-              updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', subscriptionData.user_id);
-
-          if (updateError) {
-            logStep("ERROR: Failed to update subscription status", { error: updateError.message });
-          } else {
-            logStep("Subscription marked as past_due", { userId: subscriptionData.user_id });
-          }
-        }
-        break;
-      }
-
-      case 'invoice.payment_succeeded': {
-        // Validate commission after successful payment (not just checkout)
-        const invoice = event.data.object as Stripe.Invoice;
-        const subscriptionId = invoice.subscription as string;
-        
-        if (subscriptionId && invoice.billing_reason === 'subscription_create') {
-          logStep("First invoice paid, validating commission", { subscriptionId });
-
-          // Find commission with this subscription ID
-          const { data: commission, error: findError } = await supabaseClient
-            .from('commissions')
-            .select('*')
-            .eq('subscription_id', subscriptionId)
-            .eq('status', 'pending')
-            .maybeSingle();
-
-          if (commission && !findError) {
-            // Update commission to validated
-            const { error: updateError } = await supabaseClient
-              .from('commissions')
-              .update({ status: 'validated' })
-              .eq('id', commission.id);
-
-            if (!updateError) {
-              logStep("Commission validated", { commissionId: commission.id });
-            }
-          }
-        }
+      case "invoice.paid":
+      case "invoice.payment_succeeded": {
+        // Initial and recurring invoices are durably recorded above. Do not validate
+        // an old annual estimate after one payment, or invent a new recurring right.
         break;
       }
 
@@ -530,16 +330,24 @@ serve(async (req) => {
         logStep("Unhandled event type", { type: event.type });
     }
 
-    return new Response(JSON.stringify({ received: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({ received: true, ...(receipt ?? {}) }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in stripe-webhook", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Webhook processing failed; event not acknowledged",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 503,
+      },
+    );
   }
 });

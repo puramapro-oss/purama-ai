@@ -282,10 +282,11 @@ export function useReferralTracking() {
   };
 }
 
+export const INFLUENCER_PAYMENT_UNAVAILABLE =
+  'Paiement indisponible : aucun prestataire de virement n’est raccordé. Une commission ne peut être marquée payée sans confirmation du prestataire.';
+
 // Admin hook for managing all influencers
 export function useInfluencerAdmin() {
-  const queryClient = useQueryClient();
-
   const { data: allInfluencers = [], isLoading } = useQuery({
     queryKey: ['admin-influencers'],
     queryFn: async () => {
@@ -313,21 +314,13 @@ export function useInfluencerAdmin() {
   });
 
   const markCommissionPaid = useMutation({
-    mutationFn: async (commissionId: string) => {
-      const { error } = await supabase
-        .from('commissions')
-        .update({
-          status: 'paid',
-          payment_date: new Date().toISOString(),
-        })
-        .eq('id', commissionId);
-
-      if (error) throw error;
+    // Keep the public mutation shape for a future server-confirmed settlement
+    // endpoint. A browser click cannot establish that money has been transferred.
+    mutationFn: async (_commissionId: string): Promise<never> => {
+      throw new Error(INFLUENCER_PAYMENT_UNAVAILABLE);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-commissions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-influencers'] });
-      toast.success('Commission marquée comme payée');
+    onError: (error: Error) => {
+      toast.error('Paiement non confirmé', { description: error.message });
     },
   });
 

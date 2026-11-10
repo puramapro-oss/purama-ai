@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plug, Unlink, Loader2, Sparkles, ExternalLink, Globe2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,50 +11,62 @@ import {
   type Platform,
   type SocialAccount,
   type AutopilotConfig,
+  type SocialPublication,
   listAccounts,
+  listPublications,
   getConnectUrl,
   disconnectAccount,
   getAutopilotConfig,
   updateAutopilotConfig,
 } from '@/lib/social';
+import { publicationLabel } from '@/lib/social-publish-request';
 
 export default function SocialSettings() {
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [config, setConfig] = useState<AutopilotConfig | null>(null);
+  const [publications, setPublications] = useState<SocialPublication[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyPlatform, setBusyPlatform] = useState<Platform | null>(null);
 
-  const refresh = async () => {
+  const refresh = useCallback(async (): Promise<SocialAccount[]> => {
     setLoading(true);
     try {
-      const [acc, cfg] = await Promise.all([listAccounts(), getAutopilotConfig()]);
+      const [acc, cfg, posts] = await Promise.all([listAccounts(), getAutopilotConfig(), listPublications()]);
       setAccounts(acc ?? []);
       setConfig(cfg);
+      setPublications(posts ?? []);
+      return acc ?? [];
     } catch (e) {
       toast.error('Erreur de chargement', {
         description: e instanceof Error ? e.message : String(e),
       });
+      return [];
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    refresh();
-
     // Show toast on OAuth callback redirect
     const params = new URLSearchParams(window.location.search);
     const connected = params.get('connected');
     const error = params.get('error');
-    if (connected) {
-      toast.success(`✅ ${PLATFORM_META[connected as Platform]?.label ?? connected} connecté !`);
-      window.history.replaceState({}, '', window.location.pathname);
-    }
+    const callbackStatus = params.get('status');
+    void refresh().then((freshAccounts) => {
+      if (!connected) return;
+      if (freshAccounts.some((account) => account.platform === connected && account.is_active && account.publishing_verified_at && !account.disconnect_pending)) {
+        toast.success(`${PLATFORM_META[connected as Platform]?.label ?? connected} connecté`);
+      } else {
+        toast.warning('Connexion à vérifier', { description: 'Ce compte n’est pas encore confirmé dans la liste.' });
+      }
+    });
+    if (callbackStatus === 'cancelled') toast.info('Connexion annulée', { description: 'Aucune nouvelle connexion n’a été activée.' });
+    if (callbackStatus === 'already_processed') toast.info('Demande déjà traitée', { description: 'La liste affiche l’état actuel de vos comptes.' });
     if (error) {
       toast.error('Connexion impossible', { description: error });
-      window.history.replaceState({}, '', window.location.pathname);
     }
-  }, []);
+    if (connected || error || callbackStatus) window.history.replaceState({}, '', window.location.pathname);
+  }, [refresh]);
 
   const connectedMap = new Map<Platform, SocialAccount>(
     accounts.map((a) => [a.platform as Platform, a]),
@@ -64,9 +76,12 @@ export default function SocialSettings() {
     setBusyPlatform(platform);
     try {
       const result = await getConnectUrl(platform);
-      const url = (result as { url?: string; auth_url?: string }).url
-        || (result as { auth_url?: string }).auth_url;
+      const url = result.authUrl || result.url || result.auth_url;
       if (!url) throw new Error("Aucune URL d'authentification reçue");
+      const destination = new URL(url);
+      if (destination.protocol !== 'https:' || destination.username || destination.password) {
+        throw new Error("URL d'authentification invalide");
+      }
       window.location.href = url;
     } catch (e) {
       toast.error('Connexion impossible', {
@@ -79,8 +94,14 @@ export default function SocialSettings() {
   const handleDisconnect = async (platform: Platform) => {
     setBusyPlatform(platform);
     try {
-      await disconnectAccount(platform);
-      toast.success(`${PLATFORM_META[platform].label} déconnecté`);
+      const result = await disconnectAccount(platform);
+      if (result.success && result.provider_disconnected) {
+        toast.success(`${PLATFORM_META[platform].label} déconnecté`);
+      } else {
+        toast.warning('Déconnexion à confirmer', {
+          description: result.message || 'Publication désactivée dans PURAMA ; déconnexion du fournisseur à confirmer.',
+        });
+      }
       await refresh();
     } catch (e) {
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
@@ -98,7 +119,7 @@ export default function SocialSettings() {
       setConfig(updated);
     } catch (e) {
       toast.error('Échec sauvegarde', { description: e instanceof Error ? e.message : String(e) });
-      setConfig(config);
+      try { setConfig(await getAutopilotConfig()); } catch { setConfig(config); }
     }
   };
 
@@ -115,7 +136,7 @@ export default function SocialSettings() {
               Mes réseaux sociaux
             </h1>
             <p className="text-sm text-muted-foreground">
-              Connecte tes comptes : tout contenu généré par les agents PURAMA AI peut être publié partout en un clic.
+              Connecte et vérifie tes comptes pour publier le contenu préparé avec PURAMA. Les formats et droits dépendent de chaque réseau.
             </p>
           </div>
         </div>
@@ -124,7 +145,7 @@ export default function SocialSettings() {
       {/* Platforms grid */}
       <section>
         <h2 className="text-lg font-orbitron font-semibold text-foreground mb-4">
-          14 plateformes supportées
+          Connexions aux réseaux
         </h2>
         {loading ? (
           <div className="flex justify-center py-12">
@@ -135,7 +156,8 @@ export default function SocialSettings() {
             {ALL_PLATFORMS.map((platform, idx) => {
               const meta = PLATFORM_META[platform];
               const account = connectedMap.get(platform);
-              const isConnected = !!account;
+              const isConnected = account?.is_active === true && !!account.publishing_verified_at && !account.disconnect_pending;
+              const disconnectPending = account?.disconnect_pending === true;
               const isBusy = busyPlatform === platform;
               return (
                 <motion.div
@@ -180,14 +202,22 @@ export default function SocialSettings() {
                         )}
                       </div>
 
-                      {isConnected && account.account_name && (
+                      {account && (account.account_name || account.account_username) && (
                         <div className="text-xs text-muted-foreground truncate">
                           {account.account_username || account.account_name}
                         </div>
                       )}
 
-                      <div className="flex justify-end">
-                        {isConnected ? (
+                      {account && !isConnected && (
+                        <p className="text-xs text-amber-500">
+                          {disconnectPending ? 'Déconnexion en attente de confirmation.' : account.is_active ? 'Compte à vérifier avant publication.' : 'Publication désactivée.'}
+                        </p>
+                      )}
+                      {platform === 'twitter' && (
+                        <p className="text-xs text-amber-500">Publication X suspendue : financement à vérifier côté serveur.</p>
+                      )}
+                      <div className="flex justify-end gap-2 flex-wrap">
+                        {account && (account.is_active || disconnectPending || !account.disconnect_completed_at) && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -199,15 +229,16 @@ export default function SocialSettings() {
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
                               <>
-                                <Unlink className="w-4 h-4 mr-1" /> Déconnecter
+                                <Unlink className="w-4 h-4 mr-1" /> {disconnectPending || !account.is_active ? 'Vérifier la déconnexion' : 'Déconnecter'}
                               </>
                             )}
                           </Button>
-                        ) : (
+                        )}
+                        {!isConnected && !disconnectPending && (
                           <Button
                             size="sm"
                             onClick={() => handleConnect(platform)}
-                            disabled={isBusy}
+                            disabled={isBusy || platform === 'twitter'}
                             className="bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground"
                           >
                             {isBusy ? (
@@ -242,7 +273,7 @@ export default function SocialSettings() {
                   Autopilot
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  Publie automatiquement tout contenu généré par les agents PURAMA AI sur tes réseaux connectés.
+                  Transmet le contenu préparé par les agents participants aux comptes vérifiés, puis suit la confirmation du fournisseur.
                 </p>
               </div>
             </div>
@@ -253,22 +284,11 @@ export default function SocialSettings() {
               <div className="space-y-4">
                 <ToggleRow
                   label="Activer l'autopilot"
-                  description="Tout contenu généré par un agent IA est publié automatiquement."
+                  description="Envoyer automatiquement le contenu préparé vers les destinations choisies."
                   checked={config.autopilot_enabled}
                   onChange={(v) => updateConfig({ autopilot_enabled: v })}
                 />
-                <ToggleRow
-                  label="Caption IA automatique"
-                  description="Claude réécrit la caption pour maximiser l'engagement."
-                  checked={config.auto_caption}
-                  onChange={(v) => updateConfig({ auto_caption: v })}
-                />
-                <ToggleRow
-                  label="Hashtags automatiques"
-                  description="Génère 5-10 hashtags pertinents par publication."
-                  checked={config.auto_hashtags}
-                  onChange={(v) => updateConfig({ auto_hashtags: v })}
-                />
+                <p className="text-xs text-muted-foreground">Le texte et les hashtags déjà préparés sont conservés. La publication ne déclenche aucune génération IA payante supplémentaire.</p>
 
                 <div className="pt-2">
                   <p className="text-xs text-muted-foreground mb-2">
@@ -280,6 +300,7 @@ export default function SocialSettings() {
                       return (
                         <button
                           key={p}
+                          disabled={p === 'twitter' && !active}
                           type="button"
                           onClick={() => {
                             const next = active
@@ -305,8 +326,39 @@ export default function SocialSettings() {
         </Card>
       </section>
 
+      <section aria-labelledby="publication-history-title" className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <h2 id="publication-history-title" className="text-lg font-orbitron font-semibold">Historique des publications</h2>
+          <Button variant="outline" size="sm" onClick={refresh} disabled={loading}>Actualiser</Button>
+        </div>
+        <p className="text-xs text-muted-foreground">Les 50 dernières demandes. Une publication à confirmer n'est jamais renvoyée automatiquement.</p>
+        {!loading && publications.length === 0 && <p className="text-sm text-muted-foreground">Aucune demande enregistrée.</p>}
+        <div className="space-y-3">
+          {publications.map((publication) => (
+            <Card key={publication.id}>
+              <CardContent className="p-4 space-y-2">
+                <div className="flex justify-between gap-4 text-sm">
+                  <strong>{publication.status === 'draft' ? 'Brouillon' : publication.status === 'publishing' ? 'Publication à confirmer' : publicationLabel(publication.status)}</strong>
+                  <time className="text-xs text-muted-foreground" dateTime={publication.created_at}>{new Date(publication.created_at).toLocaleString('fr-FR')}</time>
+                </div>
+                <p className="text-sm whitespace-pre-wrap break-words line-clamp-3">{publication.content_text || 'Publication avec média'}</p>
+                <p className="text-xs text-muted-foreground">{publication.target_platforms.map((platform) => PLATFORM_META[platform as Platform]?.label ?? platform).join(', ')}</p>
+                {publication.error_message && <p className="text-xs text-amber-500">{publication.error_message}</p>}
+                {Array.isArray(publication.platform_results) && publication.platform_results.length > 0 && (
+                  <ul aria-label="Résultat par réseau" className="text-xs text-muted-foreground">
+                    {publication.platform_results.map((result, index) => (
+                      <li key={`${result.platform}-${result.accountId}-${index}`}>{PLATFORM_META[result.platform as Platform]?.label ?? result.platform} : {result.status === 'published' ? 'publié' : result.status === 'failed' ? 'échec confirmé' : 'à confirmer'}</li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
       <p className="text-xs text-muted-foreground text-center">
-        Propulsé par Zernio — 14 plateformes, 1 API.{' '}
+        Connexions gérées avec Zernio. L'abonnement du fournisseur et les droits des plateformes doivent être configurés.{' '}
         <a
           href="https://zernio.com"
           target="_blank"

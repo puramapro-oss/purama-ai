@@ -2,6 +2,7 @@
 // Wraps Supabase edge functions: social-connect, social-callback, social-accounts,
 // social-publish, social-autopilot-config.
 import { supabase } from '@/integrations/supabase/client';
+import { readPublicationResult, stablePublicationRequestId, type PublicationResult } from './social-publish-request';
 
 export type Platform =
   | 'youtube'
@@ -28,6 +29,9 @@ export interface SocialAccount {
   account_name: string | null;
   account_username: string | null;
   is_active: boolean;
+  publishing_verified_at: string | null;
+  disconnect_pending: boolean;
+  disconnect_completed_at: string | null;
   connected_at: string;
   metadata: Record<string, unknown>;
 }
@@ -42,6 +46,7 @@ export interface AutopilotConfig {
 }
 
 export interface PublishParams {
+  clientRequestId?: string;
   content: string;
   mediaUrls?: string[];
   contentType?: 'text' | 'image' | 'video' | 'carousel' | 'reel';
@@ -49,6 +54,18 @@ export interface PublishParams {
   platforms?: Platform[];
   scheduledAt?: string;
   forceCaption?: boolean;
+}
+
+export interface SocialPublication {
+  id: string;
+  content_text: string | null;
+  target_platforms: string[];
+  status: PublicationResult['status'] | 'draft' | 'publishing';
+  scheduled_at: string | null;
+  published_at: string | null;
+  created_at: string;
+  error_message: string | null;
+  platform_results: PublicationResult['platform_results'];
 }
 
 export const PLATFORM_META: Record<
@@ -83,13 +100,22 @@ async function invoke<T>(name: string, options: {
     method: options.method,
   });
   if (error) {
-    const message = (error as { message?: string }).message || 'Edge function error';
+    let message = (error as { message?: string }).message || 'Requête sociale indisponible';
+    const context = (error as { context?: unknown }).context;
+    if (context instanceof Response) {
+      try {
+        const body: unknown = await context.clone().json();
+        if (body && typeof body === 'object' && 'error' in body && typeof body.error === 'string') {
+          message = body.error;
+        }
+      } catch { /* Keep the transport message when no structured error exists. */ }
+    }
     throw new Error(message);
   }
   return data as T;
 }
 
-export async function getConnectUrl(platform: Platform): Promise<{ url?: string; auth_url?: string }> {
+export async function getConnectUrl(platform: Platform): Promise<{ authUrl?: string; url?: string; auth_url?: string }> {
   return invoke('social-connect', {
     method: 'POST',
     body: { platform },
@@ -100,7 +126,18 @@ export async function listAccounts(): Promise<SocialAccount[]> {
   return invoke<SocialAccount[]>('social-accounts', { method: 'GET' });
 }
 
-export async function disconnectAccount(platform: Platform): Promise<{ success: boolean }> {
+export async function listPublications(): Promise<SocialPublication[]> {
+  // The authenticated route uses the same server-selected schema as writes.
+  return invoke<SocialPublication[]>('social-publish', { method: 'GET' });
+}
+
+export async function disconnectAccount(platform: Platform): Promise<{
+  success: boolean;
+  provider_disconnected?: boolean;
+  local_disconnected?: boolean;
+  requires_provider_disconnect?: boolean;
+  message?: string;
+}> {
   // supabase-js invoke does not directly pass query params on DELETE; use functions URL.
   const { data: { session } } = await supabase.auth.getSession();
   const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string) || '';
@@ -120,11 +157,15 @@ export async function disconnectAccount(platform: Platform): Promise<{ success: 
   return res.json();
 }
 
-export async function publishEverywhere(params: PublishParams) {
-  return invoke<{ success: boolean; post_id: string; zernio: unknown }>('social-publish', {
+export async function publishEverywhere(params: PublishParams): Promise<PublicationResult> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user.id) throw new Error('Connectez-vous pour publier votre contenu.');
+  const clientRequestId = params.clientRequestId ?? await stablePublicationRequestId(params, session.user.id);
+  const result = await invoke<unknown>('social-publish', {
     method: 'POST',
-    body: params,
+    body: { ...params, clientRequestId },
   });
+  return readPublicationResult(result);
 }
 
 export async function getAutopilotConfig(): Promise<AutopilotConfig> {
@@ -149,8 +190,12 @@ export async function maybeAutopilot(params: PublishParams): Promise<boolean> {
   try {
     const cfg = await getAutopilotConfig();
     if (!cfg?.autopilot_enabled) return false;
-    await publishEverywhere(params);
-    return true;
+    const result = await publishEverywhere({
+      ...params,
+      platforms: params.platforms ?? (cfg.default_platforms?.length ? cfg.default_platforms : undefined),
+      forceCaption: false,
+    });
+    return result.status === 'published';
   } catch (e) {
     console.warn('[autopilot] silent failure:', e);
     return false;
