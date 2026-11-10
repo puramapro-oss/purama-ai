@@ -142,7 +142,8 @@ function providerResult(text = 'Réponse fictive') {
 }
 function endedStream() { return new Response('data: {"type":"message_stop"}\n\n'); }
 
-function runtime(options: { provider?: Provider; failHistory?: string; allowTavily?: boolean } = {}) {
+function runtime(options: { provider?: Provider; failHistory?: string; allowTavily?: boolean;
+  env?: Record<string, string | undefined> } = {}) {
   const db = database(options.failHistory);
   let handler: Handler | undefined;
   const register = (fn: Handler) => { handler = fn; };
@@ -196,8 +197,10 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
     };
     runInNewContext(compiled, {
       module, exports: module.exports, require: requireModule,
-      Deno: { serve: register, env: { get: (name: string) => name.endsWith('_URL')
-        ? 'https://example.invalid' : 'test-only-not-a-secret' } },
+      Deno: { serve: register, env: { get: (name: string) => {
+        if (options.env && Object.hasOwn(options.env, name)) return options.env[name];
+        return name.endsWith('_URL') ? 'https://example.invalid' : 'test-only-not-a-secret';
+      } } },
       fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
       ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout,
@@ -286,6 +289,39 @@ describe('real provider request construction', () => {
     expect(h.modelBodies).toHaveLength(1);
     policyIs(h.modelBodies[0]!.system, 'task');
     expect(h.modelBodies[0]!.messages[0]!.role).toBe('user');
+    expect(h.unexpected).toEqual([]);
+  });
+});
+
+describe.each(['agent-chat', 'chat'])('%s server model selection', name => {
+  function modelRequest(extra: Row = {}) {
+    return request({ ...(name === 'agent-chat' ? chatBody()
+      : { messages: [{ role: 'user', content: chatBody().message }] }), ...extra });
+  }
+  it.each([
+    { label: 'configured', value: 'server-configured-model', expected: 'server-configured-model' },
+    { label: 'unset', value: undefined, expected: 'claude-sonnet-4-6' },
+  ])('uses the server main model when configuration is $label', async ({ value, expected }) => {
+    const h = edge(name, { env: { ANTHROPIC_MODEL_MAIN: value } });
+    const response = await h.handler(modelRequest());
+    expect(response.status).toBe(200);
+    expect(h.modelBodies).toHaveLength(1);
+    expect(h.modelBodies[0]!.model).toBe(expected);
+    policyIs(h.modelBodies[0]!.system, 'conversation');
+    if (name === 'agent-chat') {
+      expect(h.modelBodies[0]).toMatchObject({ max_tokens: 3000 });
+      expect(await response.json()).toEqual({ reply: 'Réponse fictive', tokens: 1 });
+    } else {
+      expect(await response.text()).toContain('[DONE]');
+    }
+    expect(h.unexpected).toEqual([]);
+  });
+  it('does not let a client model override the server configuration', async () => {
+    const h = edge(name, { env: { ANTHROPIC_MODEL_MAIN: 'server-configured-model' } });
+    const response = await h.handler(modelRequest({ model: 'client-selected-model' }));
+    expect(response.status).toBe(200);
+    expect(h.modelBodies).toHaveLength(1);
+    expect(h.modelBodies[0]!.model).toBe('server-configured-model');
     expect(h.unexpected).toEqual([]);
   });
 });
