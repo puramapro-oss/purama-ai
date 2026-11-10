@@ -186,3 +186,175 @@ OAuth en production, ni fonctionnement de Stagehand ou d'un site tiers.
 Ce lot ne fusionne aucune PR préalable, ne modifie aucune production et n'annonce
 pas le mode complet comme disponible. Les droits, l'accès aux comptes et les
 sites cibles devront être effectivement raccordés et testés.
+
+## Recherche personnalisée et sources — lot du 10 novembre 2026
+
+L'outil existant `web_search` reste le point d'accès à Tavily. Ce lot prolonge
+la correction de réponse et de transport de la PR #26, au commit de départ
+`a65151540557719ec8adb1bc755f2d05d9e63d3f`. Il ne crée ni moteur de recherche,
+ni registre de preuves, ni mémoire ou fournisseur supplémentaire.
+
+### Contrat compatible
+
+Un appel historique `{ "query": "question" }` conserve exactement la sortie
+`{ results: [{ title, url, snippet }] }`. Le format enrichi est demandé avec
+`response_format: "evidence"`. Les agents statiques et le registre d'agents
+personnalisés utilisent le même objet `webSearchTool`.
+
+| Paramètre optionnel | Portée |
+| --- | --- |
+| `response_format` | `legacy` ou `evidence` ; ancien format par défaut |
+| `language` | Code court tel que `fr`, `en`, `zh-cn` ; préférence de classement, sans exclusion automatique des autres langues |
+| `time_range` | `day`, `week`, `month`, `year` ; fenêtre demandée de publication, sans garantie sur les résultats dépourvus de date |
+| `max_age_hours` | Entier de 0 à 720 ; âge maximal demandé de la copie du fournisseur, distinct de la date du document |
+| `include_domains` | De 1 à 10 domaines explicites ; mode fournisseur restrictif |
+| `exclude_domains` | De 1 à 10 domaines explicites ; exclusion incompatible avec une inclusion entièrement couverte refusée |
+
+Les listes sont validées et normalisées, y compris les noms de domaine
+internationaux. Elles ne constituent pas une autorisation réseau pour un futur
+lecteur de pages. Le validateur refuse URL, chemins, ports, identifiants, tableaux
+creux, propriétés héritées, accesseurs au premier niveau et champs non reconnus avant le transport.
+Une copie des paramètres propres est réalisée avant les attentes asynchrones.
+Les détails d'une entrée invalide ne sont pas recopiés dans l'erreur publique.
+
+Le mode enrichi demande explicitement une recherche `basic`, sans paramètres
+automatiques, réponse générée, page brute ni images. Il conserve la limite de
+cinq résultats, le délai total de 30 secondes et la borne de 1 Mio. Il ajoute
+les métadonnées de date et de consommation disponibles dans la réponse du
+fournisseur, sans seconde requête ni nouvelle dépendance.
+
+### Nature et traçabilité des résultats
+
+En mode enrichi, `results` garde la projection titre/URL/extrait ; un objet
+`evidence` ajoute les informations suivantes :
+
+- Identifiant local de récupération et identifiants de source délimités par
+  cette récupération. Un identifiant transmis par le fournisseur ne remplace
+  jamais ces identifiants internes.
+- Heure de réception locale (`retrieved_at`), fournisseur, filtres demandés et
+  compteur de résultats. Cette heure n'est ni une date de publication ni une
+  preuve de lecture de la page source.
+- État explicite `content_kind: "search_excerpt"`,
+  `verification_status: "unverified"`, `page_read_by_karta: false`.
+- Identifiant de requête fournisseur et crédits déclarés lorsqu'ils ont une
+  forme valide ; `null` lorsque la donnée est absente ou inexploitable. Les
+  crédits déclarés ne sont pas une facture vérifiée ni un débit du quota ONE.
+- Pour chaque source, rang du fournisseur et extraits distincts conservés,
+  avec la date estimée fournie lorsqu'elle est interprétable. Une date absente,
+  impossible ou ambiguë reste inconnue. Une date limitée au jour conserve cette
+  précision et n'acquiert pas artificiellement une heure.
+
+Les occurrences d'une même URL normalisée sont regroupées dans le format
+enrichi. L'URL d'origine de la première occurrence reste affichable et les
+extraits différents restent associés à cette même source. Les paramètres,
+leur ordre, les signatures, fragments, schémas et la casse du chemin ne sont
+pas supprimés arbitrairement. Le regroupement ne prétend pas reconnaître les
+articles recopiés sur plusieurs sites, ni établir l'indépendance des sources.
+
+Les scores de pertinence, les réponses générées et les champs inconnus du
+fournisseur ne sont pas transmis comme autorité. Une citation doit ensuite
+être rattachée à l'affirmation qu'elle soutient par l'intégration IAO et
+SATYA/PRAMANA. Les extraits sont des données externes non fiables : leur contenu
+ne donne aucune permission d'exécuter une action.
+
+### Confidentialité et canal de réponse
+
+`tracePolicy: "metadata_only"` réutilise le mécanisme central de KARTA. La
+requête, les résultats, la décision et les erreurs privées sont exclus des
+traces et notifications automatiques de diagnostic du cycle protégé, y compris
+pour les agents statiques. Le retour d'un ancien run est également minimisé.
+
+La protection n'efface pas les journaux historiques déjà stockés. Elle ne
+supprime pas les paramètres métier nécessaires aux approbations, la requête
+envoyée à Tavily ni les envois explicitement demandés via d'autres outils.
+Le `trigger_source` doit rester un identifiant technique contrôlé par le serveur.
+Le contenu nécessaire à une réponse utilisateur doit passer par un canal métier
+autorisé ; il ne faut pas réactiver les logs privés pour l'afficher.
+
+### Raccordement à Mon quotidien
+
+Le parcours cible conserve ONE/AETHER pour l'interface, IAO pour la compréhension
+et la synthèse, SMARANA/AKASHA pour les préférences autorisées, KARTA/KRIYA pour
+les actions, ONE ID/VAJRA pour les droits et PURA Capsule pour le partage choisi.
+Les paramètres de recherche n'importent pas automatiquement un profil privé.
+La langue et les critères peuvent être modifiés ou désactivés par la personne.
+
+La boucle inspectée appelle le modèle avant les outils puis produit une trace ;
+elle ne réinjecte pas leurs résultats dans un nouvel appel de synthèse. Ce lot
+ne constitue donc pas encore une réponse sourcée dans ONE. Les étapes de
+réception restantes sont :
+
+1. Identifier le checkout ONE actif et son adaptateur serveur ; dériver le compte
+   et l'espace depuis la session, jamais depuis un `userId` libre du navigateur.
+2. Transmettre le résultat métier à IAO et SATYA/PRAMANA sans stockage public ni
+   fuite intercompte. Relier chaque affirmation importante aux extraits ou aux
+   pages effectivement lues ; rendre visibles contradictions et données inconnues.
+3. Raccorder le coût aux réservations et quotas communs, puis l'annulation au
+   transport. Le délai interne ne prouve pas une annulation immédiate depuis ONE.
+4. Tester recherche, sources, comparaison, arrêt, rechargement, changement de
+   compte et reprise sur mobile et clavier. Une permission ou un prix périmé
+   doit être revérifié avant toute action.
+5. Qualifier une première action de faible impact et une Capsule sans transfert
+   de secrets ou de permissions, puis mesurer temps, coût et taux de résultat
+   correct sur des usages réels.
+
+### Vérification et références
+
+Le reçu [websearch-personalization-20261110.json](test/evidence/websearch-personalization-20261110.json)
+conserve les commandes, résultats, empreintes et limites du lot. Les tests
+utilisent le vrai outil, le registre et la boucle ; les fournisseurs, modèles,
+stockages et notifications sont simulés. Aucune clé Tavily réelle n'était
+disponible dans l'environnement de ce lot. Qualité, latence, prix effectif et
+fonctionnement en production restent **NON TESTÉS**.
+
+Sources officielles consultées le 10 novembre 2026 :
+
+- [Contrat Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search).
+- [Pratiques de recherche Tavily](https://docs.tavily.com/documentation/best-practices/best-practices-search).
+- [Sécurité des agents OWASP](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html).
+- [Critères d'accessibilité WCAG 2.2](https://www.w3.org/TR/WCAG22/).
+
+## Réconciliation de la recherche — 10 novembre 2026, qualification finale
+
+Le candidat consolidé de la PR #36 (`1a49ad6`) avait omis le lot de recherche
+personnalisée `25db804` : 71 des 75 contrôles restaurés échouaient. Ce lot est
+réintégré dans le même outil. Le correctif concurrent `2cc3bdef` de la PR #26
+est également repris : ses neuf tests de nettoyage et son reçu historique sont
+conservés, avec une attente explicite d'annulation immédiate du transport lors
+d'un échec terminal. Le test local qui recouvrait ce scénario a été retiré.
+
+Le contrôle des tableaux intervient désormais avant tout accès par itérateur
+ou accesseur ; les octets de chaque bloc reçu sont copiés ; une échéance
+monotone empêche la restitution d'un résultat tardif. Le propriétaire de la
+réponse demande l'annulation des corps encore ouverts après un échec, sans
+attendre qu'un producteur non coopératif termine son nettoyage. Aucun second
+moteur, registre de preuves, mémoire, abonnement ni fournisseur n'est ajouté.
+
+La campagne de composition passe **202/202 tests sur 12 fichiers**, sans test
+ignoré dans cette sélection. La compilation est **PASS**. Le résultat du dernier
+contrôle TypeScript, les tentatives interrompues, les empreintes et la limite
+d'analyse des dépendances sont consignés dans le
+[reçu de réconciliation](test/evidence/websearch-reconciliation-20261110.json).
+La tentative élargie de KARTA reste **BLOQUÉE** par des workers PGlite arrêtés
+par SIGKILL ; son champ JSON `success` ne constitue pas une qualification.
+L'index GitNexus n'a pas pu être construit : impact automatique **UNKNOWN**,
+avec revue manuelle et indépendante du périmètre, sans conclusion de risque faible.
+
+Le [reçu de recherche réelle](test/evidence/websearch-live-20261110.json)
+remplace, pour cette nouvelle passe seulement, l'ancienne limite « fournisseur
+réel non testé ». La version finale du véritable outil et de son validateur,
+assemblée en isolation avec la clé existante, a obtenu HTTP 200 et cinq sources
+W3C. Deux appels de qualification au total ont chacun déclaré un crédit ; les
+contrôles du quota inclus et de l'absence de consommation hors forfait ont passé.
+Cela ne constitue ni un benchmark, ni une facture vérifiée, ni une preuve de
+raccordement ou de déploiement de ONE.
+
+Le dernier export ONE inspecté est `4a75640`, arbre `74ff642`. Le composant
+`ServiceLaunch` préparé n'y est pas monté, la page de service annonce le
+raccordement restant, et les scénarios de Mon quotidien sont locaux. Le runtime
+IAO natif trouvé dans la lignée active T3 possède une autre composition que la
+boucle KARTA de ce candidat. Le raccordement doit reprendre cette autorité
+serveur/session/espace et l'admission de module existantes, puis relier sources,
+synthèse, quotas et arrêt. Ajouter un second appel de modèle dans le worker ne
+prouverait pas ce raccordement. Le parcours ONE de bout en bout demeure
+**NON TESTÉ** ; les travaux actifs d'identité et de transport ne sont pas écrasés.
