@@ -1,0 +1,176 @@
+import { test, expect, type Page, type Route } from '<candidate>/repo/node_modules/@playwright/test/index.mjs';
+
+// UI-only contract tests: every backend request is intercepted. These fixtures do
+// not validate authentication, database permissions, transactions or deployment.
+test.use({ serviceWorkers: 'block' });
+
+const USER_ID = '11111111-1111-4111-8111-111111111111';
+const OTHER_ID = '22222222-2222-4222-8222-222222222222';
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+type MissionStatus = 'ouverte' | 'prete' | 'en_cours' | 'terminee' | 'annulee';
+interface MissionFixture {
+  id: string;
+  organizer_id: string;
+  version: number;
+  title: string;
+  description: string;
+  status: MissionStatus;
+  min_participants: number;
+  max_participants: number | null;
+  missions_collectives_participants: Array<{ user_id: string; joined_at: string }>;
+}
+interface MutationRequest {
+  missionId?: string;
+  action?: string;
+  body: Record<string, unknown>;
+}
+interface FixtureState {
+  missions: MissionFixture[];
+  posts: MutationRequest[];
+  listReads: number;
+  profileWrites: Record<string, unknown>[];
+  onMutation?: (route: Route, request: MutationRequest) => Promise<void>;
+}
+
+function mission(overrides: Partial<MissionFixture> = {}): MissionFixture {
+  return {
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    organizer_id: OTHER_ID,
+    version: 4,
+    title: 'Préparer les colis',
+    description: 'Une mission de test locale.',
+    status: 'ouverte',
+    min_participants: 2,
+    max_participants: 4,
+    missions_collectives_participants: [{ user_id: OTHER_ID, joined_at: '2026-01-01T10:00:00Z' }],
+    ...overrides,
+  };
+}
+
+function stateFor(missions: MissionFixture[]): FixtureState {
+  return { missions, posts: [], listReads: 0, profileWrites: [] };
+}
+
+async function json(route: Route, data: unknown, status = 200) {
+  await route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(data) });
+}
+
+async function setup(page: Page, state: FixtureState) {
+  const baseURL = test.info().project.use.baseURL;
+  if (!baseURL) throw new Error('Les tests UI nécessitent un baseURL loopback explicite.');
+  const frontend = new URL(baseURL);
+  if (!['http:', 'https:'].includes(frontend.protocol) || !['localhost', '127.0.0.1'].includes(frontend.hostname)) {
+    throw new Error('Les tests UI sont limités à un serveur local contrôlé.');
+  }
+  const expiresAt = Math.floor(Date.now() / 1000) + 3600;
+  const token = [
+    Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url'),
+    Buffer.from(JSON.stringify({ sub: USER_ID, aud: 'authenticated', role: 'authenticated', exp: expiresAt })).toString('base64url'),
+    'local-ui-fixture',
+  ].join('.');
+  const user = {
+    id: USER_ID, aud: 'authenticated', role: 'authenticated',
+    email: 'ui-fixture@example.invalid', app_metadata: {}, user_metadata: {},
+    created_at: '2026-01-01T00:00:00Z',
+  };
+  await page.addInitScript(({ session }) => {
+    // Seed the test session under the storage key requested by this build. No
+    // real session or credential is read, and all backend traffic is mocked.
+    const originalGetItem = Storage.prototype.getItem;
+    Storage.prototype.getItem = function (key: string) {
+      if (this === localStorage && /^sb-.+-auth-token$/.test(key) && !originalGetItem.call(this, key)) {
+        this.setItem(key, JSON.stringify(session));
+      }
+      return originalGetItem.call(this, key);
+    };
+    localStorage.setItem('purama_ai_intro_seen', '1');
+    localStorage.setItem('cookie_consent', JSON.stringify({ essential: true, analytics: false, timestamp: Date.now() }));
+    sessionStorage.setItem('purama_affirmation_shown', 'true');
+  }, { session: { access_token: token, refresh_token: 'local-ui-fixture', token_type: 'bearer', expires_in: 3600, expires_at: expiresAt, user } });
+
+  await page.route('**/*', async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (url.pathname.startsWith('/auth/v1/')) return json(route, user);
+    if (url.pathname.startsWith('/rest/v1/')) return json(route, []);
+    if (url.pathname.endsWith('/functions/v1/entraide-profil')) {
+      if (request.method() === 'PUT') {
+        state.profileWrites.push(request.postDataJSON());
+        return json(route, { profil: request.postDataJSON() });
+      }
+      return json(route, { profil: state.profileWrites.at(-1) ?? null });
+    }
+    if (url.pathname.endsWith('/functions/v1/entraide-matches')) return json(route, { matches: [] });
+    if (url.pathname.endsWith('/functions/v1/entraide-contact')) return json(route, { requests: [] });
+    const match = url.pathname.match(/\/functions\/v1\/entraide-missions(?:\/([^/]+)\/([^/]+))?$/);
+    if (match) {
+      if (request.method() === 'GET') {
+        state.listReads += 1;
+        return json(route, { missions: state.missions });
+      }
+      const mutation = { missionId: match[1], action: match[2], body: request.postDataJSON() };
+      state.posts.push(mutation);
+      if (state.onMutation) return state.onMutation(route, mutation);
+      const current = state.missions.find((item) => item.id === mutation.missionId);
+      if (!current) return json(route, { error: 'mission_not_found', message: 'Mission introuvable.' }, 404);
+      if (mutation.action === 'join') {
+        current.missions_collectives_participants.push({ user_id: USER_ID, joined_at: '2026-01-02T10:00:00Z' });
+      } else if (mutation.action === 'leave') {
+        current.missions_collectives_participants = current.missions_collectives_participants.filter((item) => item.user_id !== USER_ID);
+      } else if (mutation.action === 'start') current.status = 'en_cours';
+      else if (mutation.action === 'complete') current.status = 'terminee';
+      else if (mutation.action === 'cancel') current.status = 'annulee';
+      current.version += 1;
+      return json(route, { mission: current, replayed: false });
+    }
+    if (url.pathname.startsWith('/functions/v1/')) return json(route, {});
+    if (url.origin === frontend.origin) return route.continue();
+    // Never let this UI fixture use a live account, third-party service or API.
+    return route.abort('blockedbyclient');
+  });
+  await page.goto('/dashboard/entraide');
+  await expect(page.getByRole('heading', { name: "Réseau d'Entraide" })).toBeVisible();
+}
+
+async function openMissions(page: Page) {
+  await page.getByRole('button', { name: 'Missions Collectives', exact: true }).click();
+}
+
+
+test('les commandes et la reprise restent accessibles sur 375 pixels sans débordement horizontal', async ({ page }) => {
+  const fixture = mission({
+    organizer_id: USER_ID, status: 'prete',
+    missions_collectives_participants: [
+      { user_id: USER_ID, joined_at: '2026-01-01T10:00:00Z' },
+      { user_id: OTHER_ID, joined_at: '2026-01-01T11:00:00Z' },
+    ],
+  });
+  const state = stateFor([fixture]);
+  state.onMutation = async (route) => {
+    await json(route, { error: 'internal_error', message: 'Le résultat de la demande n’a pas été confirmé.' }, 500);
+  };
+  await setup(page, state);
+  await openMissions(page);
+  const card = page.getByRole('article', { name: `Mission : ${fixture.title}` });
+  await card.getByRole('button', { name: 'Démarrer', exact: true }).click();
+  const retry = card.getByRole('button', { name: 'Réessayer la demande', exact: true });
+  const abandon = card.getByRole('button', { name: 'Abandonner la reprise', exact: true });
+  await expect(retry).toBeEnabled();
+  for (const button of [retry, abandon]) {
+    await button.scrollIntoViewIfNeeded();
+    await expect(button).toBeInViewport();
+    const box = await button.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(376);
+  }
+  const widths = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    document: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(widths.document).toBeLessThanOrEqual(widths.viewport + 1);
+  await abandon.click();
+  await expect(card.getByRole('button', { name: 'Annuler', exact: true })).toBeEnabled();
+  expect(state.posts).toHaveLength(1);
+});

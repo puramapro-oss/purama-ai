@@ -281,6 +281,87 @@ test('a late trigger failure rolls back participants, version and request reserv
   }
 });
 
+test('failure inserting the initial owner participant leaves no mission or request reservation', async () => {
+  const requestId = randomUUID();
+  await db.admin.query(`
+    CREATE FUNCTION purama_ai.test_fail_initial_participant() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+      IF current_setting('purama_test.fail_initial_participant',true)='on' THEN
+        RAISE EXCEPTION USING ERRCODE='P0001', MESSAGE='injected_initial_participant_failure';
+      END IF;
+      RETURN NEW;
+    END $$;
+    CREATE TRIGGER test_fail_initial_participant BEFORE INSERT ON purama_ai.missions_collectives_participants
+      FOR EACH ROW EXECUTE FUNCTION purama_ai.test_fail_initial_participant();
+  `);
+  try {
+    await rejectsCode(db.asActor(ACTORS.owner, async (client) => {
+      await client.query("SELECT set_config('purama_test.fail_initial_participant','on',true)");
+      return rpc(client, { requestId, action: 'create', payload: payload() });
+    }), 'injected_initial_participant_failure');
+    for (const table of ['missions_collectives', 'missions_collectives_participants', 'entraide_mission_requests']) {
+      assert.equal((await db.admin.query(`SELECT * FROM purama_ai.${table}`)).rowCount, 0, `${table} must roll back`);
+    }
+    const retried = await create({}, ACTORS.owner, requestId);
+    assert.equal(retried.replayed, false);
+    assert.equal(retried.mission.version, 1);
+    assert.deepEqual(members(retried), [ACTORS.owner]);
+    for (const table of ['missions_collectives', 'missions_collectives_participants', 'entraide_mission_requests']) {
+      assert.equal((await db.admin.query(`SELECT * FROM purama_ai.${table}`)).rowCount, 1, `${table} must contain only the successful retry`);
+    }
+  } finally {
+    await db.admin.query('DROP TRIGGER test_fail_initial_participant ON purama_ai.missions_collectives_participants; DROP FUNCTION purama_ai.test_fail_initial_participant()');
+  }
+});
+
+test('concurrent complete and cancel at one version commit one terminal state and reject the stale command', async () => {
+  const initial = await create();
+  const id = initial.mission.id;
+  await invoke(ACTORS.b, { action: 'join', missionId: id });
+  const started = await invoke(ACTORS.owner, { action: 'start', missionId: id, expectedVersion: 2 });
+  const before = await snapshot(id);
+  const commands = ['complete', 'cancel'].map((action) => ({
+    actor: ACTORS.owner,
+    command: { requestId: randomUUID(), action, missionId: id, expectedVersion: started.mission.version },
+  }));
+  const { results, waiters } = await concurrentOnMission(id, commands);
+  assert.equal(waiters.length, 2);
+  assert.equal(results.filter((result) => result.ok).length, 1);
+  const winnerIndex = results.findIndex((result) => result.ok);
+  const winner = results[winnerIndex];
+  const winnerCommand = commands[winnerIndex].command;
+  const rejected = results.find((result) => !result.ok);
+  assert.equal(rejected.error.code, 'P0001');
+  assert.equal(rejected.error.message, 'stale_mission');
+  assert.equal(winner.response.replayed, false);
+  const end = await snapshot(id);
+  assert.equal(end.mission.status, winnerCommand.action === 'complete' ? 'terminee' : 'annulee');
+  assert.equal(end.mission.version, started.mission.version + 1);
+  assert.equal(winner.response.mission.status, end.mission.status);
+  assert.equal(winner.response.mission.version, end.mission.version);
+  assert.deepEqual(end.participants, before.participants);
+  assert.equal(end.mission.organizer_id, ACTORS.owner);
+  const terminalRequests = await db.admin.query(
+    'SELECT request_id,action FROM purama_ai.entraide_mission_requests WHERE actor_id=$1 AND request_id=ANY($2::uuid[])',
+    [ACTORS.owner, commands.map((item) => item.command.requestId)],
+  );
+  assert.deepEqual(terminalRequests.rows, [{ request_id: winnerCommand.requestId, action: winnerCommand.action }]);
+  for (const [actor, action, reason] of [
+    [ACTORS.owner, 'start', 'not_ready'],
+    [ACTORS.owner, 'complete', 'not_in_progress'],
+    [ACTORS.owner, 'cancel', 'already_closed'],
+    [ACTORS.c, 'join', 'mission_not_recruiting'],
+    [ACTORS.b, 'leave', 'mission_closed'],
+  ]) {
+    await rejectsCode(invoke(actor, {
+      action, missionId: id,
+      expectedVersion: ['start', 'complete', 'cancel'].includes(action) ? end.mission.version : null,
+    }), reason);
+    assert.deepEqual(await snapshot(id), end);
+    assert.equal((await db.admin.query('SELECT * FROM purama_ai.entraide_mission_requests')).rowCount, 4);
+  }
+});
+
 test('two PostgreSQL connections competing for the last place yield one winner and no overbooking', async () => {
   const initial = await create({ max_participants: 2 });
   const id = initial.mission.id;

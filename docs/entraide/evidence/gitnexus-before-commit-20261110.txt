@@ -1,0 +1,37 @@
+GitNexus 1.6.12, refreshed index (index-only), 10 November 2026.
+Command: gitnexus detect-changes --scope all --repo .
+Final staged product sources plus qualification evidence.
+The HIGH signal was reviewed before commit; see gitnexus-triage-20261110.json.
+This bounded static graph is not a runtime proof.
+
+Changes: 29 files, 49 symbols
+Affected processes: 8
+Risk level: high
+
+Changed symbols:
+  TypeAlias Table → src/lib/entraide-client.ts
+  Property Row → src/lib/entraide-client.ts
+  TypeAlias ProfileRow → src/lib/entraide-client.ts
+  TypeAlias MissionRow → src/lib/entraide-client.ts
+  TypeAlias ContactRow → src/lib/entraide-client.ts
+  TypeAlias EntraideDatabase → src/lib/entraide-client.ts
+  Const entraideSupabase → src/lib/entraide-client.ts
+  Function getMutualAidProfile → src/lib/entraide.ts
+  Interface CollectiveMission → src/pages/Entraide.tsx
+  TypeAlias MissionAction → src/pages/Entraide.tsx
+  Interface MissionActionAttempt → src/pages/Entraide.tsx
+  Interface CreateMissionAttempt → src/pages/Entraide.tsx
+  Interface MissionMutationResponse → src/pages/Entraide.tsx
+  Const MISSION_STATUS_LABELS → src/pages/Entraide.tsx
+  Const MISSION_ACTION_LABELS → src/pages/Entraide.tsx
+... and 34 more
+
+Affected execution flows:
+  • ProcessAgentCycleJob → Decide (3 steps) — changed: Row
+  • ProcessAgentCycleJob → Finish (3 steps) — changed: Row
+  • RunMissionAction → MissionRequestError (3 steps) — changed: runMissionAction, postMissionRequest, MissionRequestError
+  • HandleScheduledConsumerRequest → FetchAccounts (3 steps) — changed: Row
+  • HandleScheduledConsumerRequest → MarkFailed (3 steps) — changed: Row
+  • HandleScheduledConsumerRequest → MarkPublished (3 steps) — changed: Row
+  • HandleScheduledConsumerRequest → Publish (3 steps) — changed: Row
+  • Entraide → Cn (3 steps) — changed: Entraide

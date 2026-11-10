@@ -6,7 +6,9 @@ Supabase account, model API, or production credential is used.
 
 ## Run
 
-Use Node 22 and a fresh PostgreSQL 15 service. `DATABASE_URL` must identify its
+The CI workflow targets Node 22 and PostgreSQL 15. The 23-test qualification on
+10 November 2026 passed on native PostgreSQL 18.4 with Node 26.0.0; the CI matrix
+has not yet produced an executable job result. `DATABASE_URL` must identify its
 administrative connection on `localhost`, `127.0.0.1`, `::1`, or the CI service
 hostname `postgres`. The connection needs permission to create a test database
 and the roles `anon`, `authenticated`, and `service_role` if absent.
@@ -35,6 +37,8 @@ does not validate real JWT issuance, PostgREST, or provider authentication.
 - Voluntary departures during active missions, including the organiser.
 - Stored response replay, conflicting requests and actor-scoped request keys.
 - Late trigger failure with rollback of membership, version and request state.
+- Failure creating the initial owner membership rolls back mission creation.
+- Concurrent completion/cancellation at one version commits one terminal state.
 - Last-place competition, simultaneous join/leave and duplicate/conflicting
   request keys with distinct PostgreSQL backends.
 

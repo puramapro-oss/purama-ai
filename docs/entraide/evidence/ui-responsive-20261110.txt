@@ -1,0 +1,10 @@
+(node:52685) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:52689) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓  1 ../ui-responsive/mobile.spec.ts:141:5 › les commandes et la reprise restent accessibles sur 375 pixels sans débordement horizontal (8.9s)
+
+  1 passed (16.6s)

@@ -1,0 +1,27 @@
+{
+  "baseline_commit": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+  "baseline_count": 140,
+  "candidate_count": 103,
+  "baseline_entraide_count": 37,
+  "candidate_entraide_count": 0,
+  "baseline_other_count": 103,
+  "candidate_other_count": 103,
+  "other_exactly_identical": true,
+  "other_removed": [],
+  "other_added": [],
+  "candidate_source_unchanged_during_check": true,
+  "same_typescript_version": true,
+  "same_command": true,
+  "candidate_exit_code": 2,
+  "command": [
+    "node",
+    "--max-old-space-size=3072",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json",
+    "--pretty",
+    "false"
+  ],
+  "typescript_version": "5.8.3"
+}
