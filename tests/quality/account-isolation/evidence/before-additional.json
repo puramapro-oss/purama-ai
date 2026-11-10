@@ -1,0 +1,84 @@
+{
+  "startedAt": "2026-11-10T01:48:29.050Z",
+  "source": "/Users/matissdornier/purama-patches/iao-integrated-20261110/code",
+  "sourceSha256": {
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7",
+    "src/components/voice/AgentChatTab.tsx": "66b5ece18bc2aa6b8749abad1e865c0e236823ee40d76f54f1d780ab4e621805",
+    "src/pages/LegalAgentChat.tsx": "90be82036f3b6e4f96ffdc0ba7c2c4d2fab5d3d44493f372b0f89721b56a64a2",
+    "src/pages/CreatorAgentDetail.tsx": "0ed5fd825ac3450005b923bdfb778ee1f90c63c85d3fc91722d401cf1f9ea49f",
+    "src/hooks/useCreatorAgentKarta.ts": "2a07ca1184b23eef0b14fc84bc90ef33fb188712eb9725b019dfa90fbc352a3f"
+  },
+  "node": "v22.23.4",
+  "backend": "simulated",
+  "externalRequests": [],
+  "checks": [
+    {
+      "name": "agent chat ignores history from a previous session",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "creator cache never displays the previous principal in the real QueryClient",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "creator cache invalidation follows the actual writer after identity changes",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n4 !== 3\n"
+    },
+    {
+      "name": "voice refuses an overlapping recorder until its transcription settles",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n2 !== 1\n"
+    },
+    {
+      "name": "legal chat cannot start a follow-up request after its account leaves",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "creator missing response finishes loading and retry can recover",
+      "status": "FAIL",
+      "message": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"introuvable\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "name": "creator rejected response finishes loading and allows navigation back",
+      "status": "FAIL",
+      "message": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Impossible\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "name": "creator old delete completion cannot navigate away from the next agent",
+      "status": "FAIL",
+      "message": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByTestId('path')\nExpected: \"/agents/beta\"\nReceived: \"/dashboard/creator-agent\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByTestId('path')\n    8 × locator resolved to <output data-testid=\"path\">/dashboard/creator-agent</output>\n      - unexpected value \"/dashboard/creator-agent\"\n"
+    },
+    {
+      "name": "agent initial history cannot replace a newer optimistic send",
+      "status": "FAIL",
+      "message": "expect(locator).toBeVisible() failed\n\nLocator: getByText('CURRENT_QUESTION', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for getByText('CURRENT_QUESTION', { exact: true })\n"
+    }
+  ],
+  "bundleSha256": "b0a27d402aa111631d3c998d6530cab9783e4c66d41aa91f67c44c9d4f1ca8ce",
+  "browser": "157.0.8103.39",
+  "finishedAt": "2026-11-10T01:49:15.637Z",
+  "selectedChecks": 9,
+  "filter": "creator cache|overlapping recorder|follow-up request|creator missing|creator rejected|old delete|initial history|previous session",
+  "pageErrors": [],
+  "sourceSha256After": {
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7",
+    "src/components/voice/AgentChatTab.tsx": "66b5ece18bc2aa6b8749abad1e865c0e236823ee40d76f54f1d780ab4e621805",
+    "src/pages/LegalAgentChat.tsx": "90be82036f3b6e4f96ffdc0ba7c2c4d2fab5d3d44493f372b0f89721b56a64a2",
+    "src/pages/CreatorAgentDetail.tsx": "0ed5fd825ac3450005b923bdfb778ee1f90c63c85d3fc91722d401cf1f9ea49f",
+    "src/hooks/useCreatorAgentKarta.ts": "2a07ca1184b23eef0b14fc84bc90ef33fb188712eb9725b019dfa90fbc352a3f"
+  },
+  "sourceUnchanged": true,
+  "status": "FAIL"
+}

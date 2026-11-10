@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
 
@@ -53,6 +53,29 @@ async function fixture(schemas: readonly Schema[]) {
     await db.close();
     throw error;
   }
+}
+
+/**
+ * A new database belongs to each test. Retain the setup promise so cleanup
+ * also closes a database that finishes initializing after a hook timeout.
+ */
+function freshDatabaseForEach(schemas: readonly Schema[]) {
+  let setup: Promise<PGlite> | undefined;
+  beforeEach(async () => {
+    setup = fixture(schemas);
+    await setup;
+  });
+  afterEach(async () => {
+    const pending = setup;
+    setup = undefined;
+    // fixture() already closes on setup failure. Do not hide a close failure.
+    if (pending) await pending.then(db => db.close(), () => undefined);
+  });
+  return () => {
+    const pending = setup;
+    if (!pending) throw new Error('Database fixture was not initialized');
+    return pending;
+  };
 }
 
 async function asRole<T>(db: PGlite, role: DbRole, userId: string | null, work: () => Promise<T>) {
@@ -246,22 +269,24 @@ describe('migration preflight refuses an unreviewed schema', () => {
       error: /Unexpected chat history relation type/ },
   ];
 
-  it.each(cases)('rolls back both schemas when $label', async ({ setup, error }) => {
-    const db = await fixture(['public', 'purama_ai']);
-    try {
+  describe('with both historical schemas', () => {
+    const database = freshDatabaseForEach(['public', 'purama_ai']);
+    it.each(cases)('rolls back both schemas when $label', async ({ setup, error }) => {
+      const db = await database();
       await db.exec(setup);
       const before = await accessSnapshot(db);
       await expect(db.exec(migration)).rejects.toThrow(error);
       await db.exec('ROLLBACK');
       expect(await accessSnapshot(db)).toEqual(before);
-    } finally { await db.close(); }
+    });
   });
 
-  it('refuses to report success when neither schema contains chat history', async () => {
-    const db = await fixture([]);
-    try {
+  describe('without chat history tables', () => {
+    const database = freshDatabaseForEach([]);
+    it('refuses to report success when neither schema contains chat history', async () => {
+      const db = await database();
       await expect(db.exec(migration)).rejects.toThrow(/No chat history tables found/);
       await db.exec('ROLLBACK');
-    } finally { await db.close(); }
+    });
   });
 });

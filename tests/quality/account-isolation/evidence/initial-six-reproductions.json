@@ -1,0 +1,91 @@
+{
+  "startedAt": "2026-11-10T01:01:57.688Z",
+  "source": "/Users/matissdornier/purama-patches/iao-integrated-20261110/code",
+  "sourceSha256": {
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7"
+  },
+  "node": "v22.23.4",
+  "sourceMutation": false,
+  "backend": "simulated",
+  "externalRequests": [],
+  "checks": [
+    {
+      "name": "old account email response overwrites current account",
+      "status": "REPRODUCED",
+      "currentAccount": "B",
+      "visibleDataOwner": "A"
+    },
+    {
+      "name": "loaded accounting configuration from A is saved to B during B load",
+      "status": "REPRODUCED",
+      "currentAccount": "B",
+      "submittedDataOwner": "A",
+      "write": {
+        "name": "saveCompta",
+        "args": [
+          "B",
+          {
+            "company_name": "PRIVATE_COMPANY_A",
+            "legal_form": "sarl",
+            "fiscal_regime": "is",
+            "tva_regime": "reel_normal",
+            "bridge_accounts": [],
+            "invoice_prefix": "A",
+            "invoice_next_number": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "voice retains account A settings while B loads",
+      "status": "REPRODUCED",
+      "currentAccount": "B",
+      "visibleSettingsOwner": "A",
+      "loading": false
+    },
+    {
+      "name": "in flight voice save from A overwrites B after B is loaded",
+      "status": "REPRODUCED",
+      "currentAccount": "B",
+      "visibleSettingsOwner": "A"
+    },
+    {
+      "name": "usage snapshot remains visible from account A while B loads",
+      "status": "REPRODUCED",
+      "currentAccount": "B",
+      "visibleDataOwner": "A"
+    },
+    {
+      "name": "usage email dependency not refreshed for the same user id",
+      "status": "REPRODUCED",
+      "sameAccountEmailChanged": true,
+      "usageCalls": [
+        {
+          "name": "usage",
+          "args": [
+            "A",
+            "a@example.test"
+          ],
+          "settled": true
+        }
+      ]
+    }
+  ],
+  "bundleSha256": "efcf8a575fad92f4f9a5eaa15059ab5a077a57c04c0a21edd06e3aef806eaa4d",
+  "browser": "157.0.8103.39",
+  "finishedAt": "2026-11-10T01:02:08.571Z",
+  "pageErrors": [],
+  "sourceSha256After": {
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7"
+  },
+  "sourceUnchanged": true,
+  "status": "REPRODUCED"
+}

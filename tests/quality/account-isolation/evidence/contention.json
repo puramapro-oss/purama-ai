@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-11-10T01:55:05.528053+00:00",
+  "firstBrowser": "PARTIAL_TIMEOUT_180_SECONDS",
+  "firstBuild": "PARTIAL_TIMEOUT_180_SECONDS",
+  "observedLoadAverage": [
+    33.44,
+    20.74,
+    11.74
+  ],
+  "observedProcesses": [
+    {
+      "name": "mds_stores",
+      "cpuPercent": 65.4,
+      "rssMiB": 990
+    },
+    {
+      "name": "vite node",
+      "cpuPercent": 9.7,
+      "rssMiB": 271
+    }
+  ],
+  "systemProcessesModified": false,
+  "nextAttempt": "sequential",
+  "navigationTimeoutMsBefore": 6000,
+  "navigationTimeoutMsAfter": 30000,
+  "businessAssertionsChanged": false
+}

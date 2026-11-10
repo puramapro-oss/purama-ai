@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.app.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true
+  },
+  "include": [
+    "../../src/pages/AdminDashboard.tsx",
+    "../../src/lib/founder-dashboard.ts",
+    "../../src/vite-env.d.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "status": "PASS",
+  "startedAt": "2026-11-10T01:55:09.168Z",
+  "source": "/Users/matissdornier/purama-patches/iao-account-isolation-20261110/code",
+  "sourceSha256": {
+    "src/components/auth/ProtectedRoute.tsx": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "91ea988d823955b3d573a142c74c6b10f59b29ffd2eccee7e3bdeebf7270f51b",
+    "src/hooks/useVoice.tsx": "824d07aa6b000ad475f520b6a2bc16b1bda258ee6258f36bcedf093a13b02225",
+    "src/components/voice/AgentChatTab.tsx": "e4e662f8112a6b103ae661a9144fbb3fb74e66244686fdba9d1acc38a49bf977",
+    "src/pages/LegalAgentChat.tsx": "1b81473287b775e5c5c5373a6e8248c782a8f91b2cc4b674ca8c3d1a4903be39",
+    "src/pages/CreatorAgentDetail.tsx": "eb47709fd73c3e149802bfaf60c0fb4dc35a0323434d9cfe29adb8a946b4b7c4",
+    "src/hooks/useCreatorAgentKarta.ts": "cd14f84e4927cb5c8c5f3b77b0b505e6ba8b13d0ef3291f94ca82cc6b1bd7939",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84"
+  },
+  "node": "v22.23.4",
+  "backend": "simulated",
+  "externalRequests": [],
+  "checks": [
+    {
+      "name": "account change rejects the previous email response",
+      "status": "PASS"
+    },
+    {
+      "name": "account change clears configuration before the next account can save",
+      "status": "PASS",
+      "legitimateSave": {
+        "name": "saveCompta",
+        "args": [
+          "B",
+          {
+            "company_name": "PRIVATE_COMPANY_B",
+            "legal_form": "sarl",
+            "fiscal_regime": "is",
+            "tva_regime": "reel_normal",
+            "bridge_accounts": [],
+            "invoice_prefix": "B",
+            "invoice_next_number": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "voice outside the route shows defaults while a new identity loads",
+      "status": "PASS"
+    },
+    {
+      "name": "voice outside the route rejects a save response from the previous identity",
+      "status": "PASS"
+    },
+    {
+      "name": "usage outside the route hides the previous account while loading",
+      "status": "PASS"
+    },
+    {
+      "name": "usage reloads when the same identity changes email",
+      "status": "PASS"
+    },
+    {
+      "name": "same account refresh and query changes preserve current form state",
+      "status": "PASS"
+    },
+    {
+      "name": "dynamic agent navigation rejects the previous agent response",
+      "status": "PASS"
+    },
+    {
+      "name": "voice rejects an old A response even after an A-B-A identity cycle",
+      "status": "PASS"
+    },
+    {
+      "name": "voice save still updates the current identity",
+      "status": "PASS"
+    },
+    {
+      "name": "late speech from the previous identity cannot start audio",
+      "status": "PASS"
+    },
+    {
+      "name": "microphone permission returned after identity change releases its tracks",
+      "status": "PASS"
+    },
+    {
+      "name": "speech returned after unmount cannot start audio",
+      "status": "PASS"
+    },
+    {
+      "name": "current speech plays and stopping it revokes its object URL",
+      "status": "PASS"
+    },
+    {
+      "name": "agent chat ignores history from a previous session",
+      "status": "PASS"
+    },
+    {
+      "name": "legal chat hides old history while another session loads",
+      "status": "PASS"
+    },
+    {
+      "name": "usage is safe on an anonymous mount and after logout",
+      "status": "PASS"
+    },
+    {
+      "name": "creator cache never displays the previous principal in the real QueryClient",
+      "status": "PASS",
+      "cacheKeys": [
+        [
+          "custom-agent-karta-state",
+          "A",
+          "shared-agent"
+        ],
+        [
+          "custom-agent-karta-runs",
+          "A",
+          "shared-agent",
+          20
+        ],
+        [
+          "custom-agent-pending-actions",
+          "A",
+          "shared-agent"
+        ],
+        [
+          "custom-agent-karta-state",
+          "B",
+          "shared-agent"
+        ],
+        [
+          "custom-agent-karta-runs",
+          "B",
+          "shared-agent",
+          20
+        ],
+        [
+          "custom-agent-pending-actions",
+          "B",
+          "shared-agent"
+        ]
+      ]
+    },
+    {
+      "name": "creator cache invalidation follows the actual writer after identity changes",
+      "status": "PASS",
+      "previousMutationDidNotRefetchB": true,
+      "currentMutationRefetchedB": true,
+      "refreshNeeded": false
+    },
+    {
+      "name": "voice refuses an overlapping recorder until its transcription settles",
+      "status": "PASS",
+      "transcription": "CURRENT_TRANSCRIPT",
+      "secondRecordingAllowedAfterCompletion": true
+    },
+    {
+      "name": "legal chat cannot start a follow-up request after its account leaves",
+      "status": "PASS"
+    },
+    {
+      "name": "creator missing response finishes loading and retry can recover",
+      "status": "PASS"
+    },
+    {
+      "name": "creator rejected response finishes loading and allows navigation back",
+      "status": "PASS"
+    },
+    {
+      "name": "creator old delete completion cannot navigate away from the next agent",
+      "status": "PASS"
+    },
+    {
+      "name": "agent initial history cannot replace a newer optimistic send",
+      "status": "PASS"
+    }
+  ],
+  "bundleBytes": 2431931,
+  "bundleSha256": "17192e09988ed586153b769b89cd59825e9862cef21fe3232c8e67c503a200fd",
+  "browser": "157.0.8103.39",
+  "finishedAt": "2026-11-10T01:56:47.576Z",
+  "selectedChecks": 25,
+  "filter": null,
+  "pageErrors": [],
+  "sourceSha256After": {
+    "src/components/auth/ProtectedRoute.tsx": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/components/dashboard/ExecutionCounter.tsx": "91ea988d823955b3d573a142c74c6b10f59b29ffd2eccee7e3bdeebf7270f51b",
+    "src/hooks/useVoice.tsx": "824d07aa6b000ad475f520b6a2bc16b1bda258ee6258f36bcedf093a13b02225",
+    "src/components/voice/AgentChatTab.tsx": "e4e662f8112a6b103ae661a9144fbb3fb74e66244686fdba9d1acc38a49bf977",
+    "src/pages/LegalAgentChat.tsx": "1b81473287b775e5c5c5373a6e8248c782a8f91b2cc4b674ca8c3d1a4903be39",
+    "src/pages/CreatorAgentDetail.tsx": "eb47709fd73c3e149802bfaf60c0fb4dc35a0323434d9cfe29adb8a946b4b7c4",
+    "src/hooks/useCreatorAgentKarta.ts": "cd14f84e4927cb5c8c5f3b77b0b505e6ba8b13d0ef3291f94ca82cc6b1bd7939",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84"
+  },
+  "sourceUnchanged": true
+}

@@ -1,0 +1,577 @@
+{
+  "scope": "Isolated KARTA consolidation for personal IAO agents; not a production or whole-PURAMA certification",
+  "date_utc": "2026-11-10",
+  "runtime": {
+    "node": "24.22.1",
+    "vitest": "5.0.3"
+  },
+  "upstream": {
+    "repository": "puramapro-oss/purama-ai",
+    "base_pr": 14,
+    "base_commit": "d003159bdf3216b155f747b0f8fa93b3a92e5b3a",
+    "base_tree": "18e7a1412e16ac5a890e6f6a643ac7a1b51af508",
+    "local_baseline_commit": "539f79a2a176c5a62a1f6c975d4132d0a661ee49",
+    "local_baseline_is_remote_main": false,
+    "snapshot_files_verified": 729
+  },
+  "reuse": [
+    {
+      "pr": 7,
+      "sha": "caeff811a3ba75dd766cc02555ed196e3807663f",
+      "included": "Owner, activation and allowed-tool guards adapted to PR14 claim/finalize contracts",
+      "excluded": "Robot catalog, alternate executor/timeouts and legacy claim protocol"
+    },
+    {
+      "pr": 13,
+      "sha": "7658be81e937b33a0b5aa3dab6d7939857a8aca8",
+      "included": "Engine trace minimization, first-outcome finalization and coherent regression tests",
+      "excluded": "Jev connector and unrelated changes"
+    }
+  ],
+  "new_behavior": [
+    "Custom tool descriptors copied with metadata_only; custom cycles without tools also private",
+    "Typed terminal custom authorization refusal; sanitized retryable pre-execution read failure",
+    "Authority and tool selection reloaded before every custom dispatch; existing stop checks follow",
+    "Sanitized initial cycle errors and rejected approval-claim promise"
+  ],
+  "baseline": {
+    "command": "npm test",
+    "exit_code": 0,
+    "test_files": 46,
+    "tests": 505,
+    "passed": 505,
+    "duration_seconds": 39.85
+  },
+  "before_after": {
+    "authorization_before": {
+      "report_sha256": "ca34ad87fd7635a8063339448313dcab686a33a534729e11a5d716a9cd6c5c1a",
+      "started_utc": "2026-11-10T00:36:12.918000+00:00",
+      "tests": 30,
+      "passed": 8,
+      "failed": 22,
+      "skipped": 0,
+      "success": false,
+      "state": "PR14 plus imported privacy engine, before custom authority changes; 30 initial scenarios"
+    },
+    "authorization_after": {
+      "report_sha256": "5869a4deee7dd6bb6331110ae4e66a9d5ecdd60d3fc9f2631ee1780f6b6427fc",
+      "started_utc": "2026-11-10T00:36:51.873000+00:00",
+      "tests": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "success": true
+    },
+    "admission_before": {
+      "report_sha256": "4b213722dfc95696096e6b2795029821bb04734a4dd874d95505a8210f062609",
+      "started_utc": "2026-11-10T00:43:05.389000+00:00",
+      "tests": 10,
+      "passed": 1,
+      "failed": 9,
+      "skipped": 0,
+      "success": false
+    },
+    "admission_and_extended_authorization_after": {
+      "report_sha256": "8ecbde662e2bfe323b98f5cb9d189c81706690784b324d48ad7be610fec22b2e",
+      "started_utc": "2026-11-10T00:43:22.733000+00:00",
+      "tests": 48,
+      "passed": 48,
+      "failed": 0,
+      "skipped": 0,
+      "success": true
+    }
+  },
+  "final": {
+    "report_sha256": "e4fa3020d82d0cd2bfb64e6c8f9a5c9d88e544cf18568cc13486311d0b1b3255",
+    "started_utc": "2026-11-10T00:43:53.823000+00:00",
+    "tests": 612,
+    "passed": 612,
+    "failed": 0,
+    "skipped": 0,
+    "success": true,
+    "test_files": 52,
+    "duration_seconds": 45.75,
+    "command": "npm test -- --reporter=default --reporter=json --outputFile=<report-path>",
+    "exit_code": 0,
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "exit_code": 0
+    }
+  },
+  "suites": [
+    {
+      "file": "karta/test/actionAgentsMock.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/agentsRegistry.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/apiSafety.test.ts",
+      "tests": 9,
+      "passed": 9,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/approval.test.ts",
+      "tests": 15,
+      "passed": 15,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/approvalTracePrivacy.test.ts",
+      "tests": 20,
+      "passed": 20,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/autonomy.test.ts",
+      "tests": 7,
+      "passed": 7,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chatEscalation.test.ts",
+      "tests": 49,
+      "passed": 49,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chatHistoryIsolation.test.ts",
+      "tests": 39,
+      "passed": 39,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chatRequestScope.test.ts",
+      "tests": 17,
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefBrief.test.ts",
+      "tests": 9,
+      "passed": 9,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefControlPlane.test.ts",
+      "tests": 8,
+      "passed": 8,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefCostGovernor.test.ts",
+      "tests": 7,
+      "passed": 7,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefDriver.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefEvidenceAdapter.test.ts",
+      "tests": 20,
+      "passed": 20,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefEvidenceFreshness.test.ts",
+      "tests": 31,
+      "passed": 31,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefEvidenceGate.test.ts",
+      "tests": 17,
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefGitState.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefHardening.test.ts",
+      "tests": 15,
+      "passed": 15,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefIndependentReview.test.ts",
+      "tests": 2,
+      "passed": 2,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefMission.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefProtocol.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefRuntimePolicy.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefSupervisor.test.ts",
+      "tests": 10,
+      "passed": 10,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefVerificationGitIntegration.test.ts",
+      "tests": 3,
+      "passed": 3,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/chefVerifier.test.ts",
+      "tests": 3,
+      "passed": 3,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/connectPermissions.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/customAgent.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/customAuthorization.test.ts",
+      "tests": 38,
+      "passed": 38,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/customRegistry.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/cycleAdmissionPrivacy.test.ts",
+      "tests": 10,
+      "passed": 10,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/generative.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/gmail-token-crypto.test.ts",
+      "tests": 3,
+      "passed": 3,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/gmailTool.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/logger.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/loggerCycleFinalization.test.ts",
+      "tests": 6,
+      "passed": 6,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/loggerFinalization.test.ts",
+      "tests": 11,
+      "passed": 11,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/loop.test.ts",
+      "tests": 14,
+      "passed": 14,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/loopTracePrivacy.test.ts",
+      "tests": 22,
+      "passed": 22,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/mockClaude.test.ts",
+      "tests": 7,
+      "passed": 7,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/publicChatAdmission.test.ts",
+      "tests": 11,
+      "passed": 11,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/real-claude.test.ts",
+      "tests": 4,
+      "passed": 4,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/runtimeHardening.test.ts",
+      "tests": 3,
+      "passed": 3,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/sseConsumer.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/sseFraming.test.ts",
+      "tests": 10,
+      "passed": 10,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/streamCompletionAudit.test.ts",
+      "tests": 23,
+      "passed": 23,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/streaming.test.ts",
+      "tests": 10,
+      "passed": 10,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/stripeIsolation.test.ts",
+      "tests": 3,
+      "passed": 3,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/supabaseTool.test.ts",
+      "tests": 5,
+      "passed": 5,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/toolResult.test.ts",
+      "tests": 16,
+      "passed": 16,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "tests": 17,
+      "passed": 17,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/webAccessPlanTool.test.ts",
+      "tests": 10,
+      "passed": 10,
+      "status": "passed"
+    },
+    {
+      "file": "karta/test/webCapabilityPlan.test.ts",
+      "tests": 47,
+      "passed": 47,
+      "status": "passed"
+    }
+  ],
+  "files_verified": [
+    {
+      "path": "karta/src/agents/customAgent.ts",
+      "sha256": "dd25f0b96fb57d30997428fcf535f432edb321cde3014aca7697c90e85e86257",
+      "git_blob": "bcda1d7cf143ee81626b811aa019b09e4031ebe7"
+    },
+    {
+      "path": "karta/src/engine/approval.ts",
+      "sha256": "d718a6fab1976e802dba8e160d23354b61032c19e8243e104df1d4ee72c3527e",
+      "git_blob": "7284f47873e89e6734e37d7db6ea34f58c83ea2a"
+    },
+    {
+      "path": "karta/src/engine/logger.ts",
+      "sha256": "3c4f7cc6a3edb1f3af49c43be948be2fdc9fc1eede298a666a3763dc133adeeb",
+      "git_blob": "b297ef5b213c9041814ac525b699efe20b085e10"
+    },
+    {
+      "path": "karta/src/engine/loop.ts",
+      "sha256": "0737c30e1ddd7bb6e9ae72d05514f4d94fa5eba11c15566116e878bc5c95cb4d",
+      "git_blob": "bd653f3ffae26a5cc8bbbad7a6945ceef92f2730"
+    },
+    {
+      "path": "karta/src/engine/resolveDefinition.ts",
+      "sha256": "73d23ad505d357fc24d43dd3d7b12cfefef3e8db8dfb9257fce34ed88bf23625",
+      "git_blob": "1c438bf73e82ee217bbaea04fbe281f29c083c47"
+    },
+    {
+      "path": "karta/src/engine/tool-trace.ts",
+      "sha256": "56f24f26e355fe0e72ff3bb15321ab5a578e46d2e2b5e7a51c69c7c2b309b51e",
+      "git_blob": "953646e95ea6cfd0cd2f8d230122518a7579ffd6"
+    },
+    {
+      "path": "karta/src/engine/types.ts",
+      "sha256": "67f6a22c13506a529be17656b83120836a3d807de5eaef44c31d1661da5086c6",
+      "git_blob": "982ffacd2ea0eeeb790f6cf5abd3e21df364e76b"
+    },
+    {
+      "path": "karta/src/queue/worker.ts",
+      "sha256": "f5155d0a32b246f61f3ad8ff3b5ec2d2ed047c8f89365d5466ce665bdc1f01c5",
+      "git_blob": "c7cc4ace5e44bbbaead9a5787e478f6d435c3840"
+    },
+    {
+      "path": "karta/test/approvalTracePrivacy.test.ts",
+      "sha256": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+      "git_blob": "53865731bc494b201e6570199dcf1213cff4af23"
+    },
+    {
+      "path": "karta/test/customAuthorization.test.ts",
+      "sha256": "04d00896ec5a6d55f04f6c870fe839648ddc224fd74d09a311a36d4cde90ed80",
+      "git_blob": "4e66c4f488678f8a03a0f9e535f938a34b4d5919"
+    },
+    {
+      "path": "karta/test/cycleAdmissionPrivacy.test.ts",
+      "sha256": "792b61bd91b627d40421e274e77306c4cd12941b44541f563fc03ef68097ae3b",
+      "git_blob": "06ad9fff39d65c468cfbe97125565c929de58c83"
+    },
+    {
+      "path": "karta/test/logger.test.ts",
+      "sha256": "1c4ae55915f47f4b3d204096d78054ecfcfe0f3fbec3540b93bb5d8af5b81eb5",
+      "git_blob": "1e5a4ffeb3f47bef398fff3aafe66b9681a37c9d"
+    },
+    {
+      "path": "karta/test/loggerCycleFinalization.test.ts",
+      "sha256": "51e63589bb9048c9485d1370c9335dd6ae7b5d160f303a07e9effd325da29e38",
+      "git_blob": "f05a08b0795eb130e9c173c2630be6d827390fbf"
+    },
+    {
+      "path": "karta/test/loggerFinalization.test.ts",
+      "sha256": "755c0eb820a9d77df129c415198daf006f560004afead9b35ba19c326ceaed49",
+      "git_blob": "dede960791355648a82a50a355439cd1c098e5ab"
+    },
+    {
+      "path": "karta/test/loop.test.ts",
+      "sha256": "c9b0efbb568c8436a3a29672b350ead93d9616de419757caf3af7526007ce345",
+      "git_blob": "31910f8583bdcd4fc4d947f553c118172c140145"
+    },
+    {
+      "path": "karta/test/loopTracePrivacy.test.ts",
+      "sha256": "9481cfcac31b745bd1239c178ece5951d0f9435629ee3519a57ee1e3dc4f79a2",
+      "git_blob": "8370605c3cee8d3bdeb7b67be221f333b02706dc"
+    }
+  ],
+  "independent_static_review": {
+    "result": "PASS for examined changes after admission error correction",
+    "reviewer_reran_tests": false
+  },
+  "gitnexus": {
+    "prepatch_impacts": 12,
+    "test_double_impacts": 3,
+    "highest_prepatch_risk": "CRITICAL",
+    "all_changed_product_symbols_examined_before_edit": true,
+    "comparison_base": "baseline-pr14, not remote main",
+    "final_detection": {
+      "status": "PARTIEL: scope and execution verified; process graph has confirmed false positives and completeness limits",
+      "checks_executed": [
+        "all",
+        "staged",
+        "compare"
+      ],
+      "comparison_base": "baseline-pr14",
+      "tool_summary": {
+        "changed_count": 340,
+        "affected_count": 196,
+        "changed_files": 16,
+        "risk_level": "critical"
+      },
+      "result_partial_flags": {
+        "all": false,
+        "staged": false,
+        "compare": false
+      },
+      "result_truncated_flags": {
+        "all": false,
+        "staged": false,
+        "compare": false
+      },
+      "changed_symbols_product": 65,
+      "changed_symbols_tests": 275,
+      "unexpected_changed_symbol_files": [],
+      "changed_files_without_mapped_symbol": [
+        "karta/test/loop.test.ts"
+      ],
+      "confirmed_false_positive_samples": [
+        {
+          "reported": "AgentChatTab → Getter",
+          "invalid_edge": "src/lib/request-scope.ts:cancel → local getter in karta/test/approvalTracePrivacy.test.ts",
+          "source_evidence": "cancel only uses the AbortController map; getter is declared inside one Vitest callback and is not exported"
+        },
+        {
+          "reported": "DashboardScreen → Result",
+          "invalid_edge": "mobile/hooks/usePoints.ts:fetchPoints → local result in karta/test/logger.test.ts",
+          "source_evidence": "fetchPoints uses the mobile Supabase client; result is a lexical closure inside vi.mock for KARTA test database"
+        },
+        {
+          "reported": "Finish → AddToRemoveQueue",
+          "invalid_edge": "karta/src/engine/logger.ts:finish → src/hooks/use-toast.ts:update",
+          "source_evidence": "finish calls supabase.from(\"karta_runs\").update(completion); it has no import or call to the UI toast updater"
+        }
+      ],
+      "index_process_generation_limits": {
+        "entryPointCandidatesDropped": 736,
+        "entryPointCandidates": 936,
+        "calleesDropped": 1151,
+        "walksCutByBudget": 10,
+        "crossLanguagePropertySitesUnlinked": 68
+      },
+      "interpretation": "CRITICAL is the automatic label based solely on 196 counted processes, not a verified count of affected business flows. No changed symbol is outside the 16 intended files. The tool cannot certify complete absence of other dependencies; the prepatch targeted impacts and root-executed tests are separate evidence.",
+      "remote_main_comparison": "NOT PERFORMED: no remote main object/ref in this isolated local repository. baseline-pr14 is the verified PR14 snapshot, not main."
+    },
+    "instructions_identical_to_original": true
+  },
+  "limitations": [
+    "Model/provider and queue operations are explicit inert doubles; no business provider calls or paid model calls were performed.",
+    "PGlite tests do not establish multi-connection native PostgreSQL, live RLS/roles, Redis recovery or deployment state.",
+    "Revocation is rechecked before effects, not atomic with a later external provider effect.",
+    "Metadata-only protects the examined engine traces; approval business parameters remain available to the authorized execution path and provider-internal logs are outside this proof.",
+    "PURAMA ONE live checkout, local worktree ownership/locks, end-to-end UX and production latency/load remain unverified."
+  ]
+}

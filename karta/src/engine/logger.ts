@@ -1,9 +1,16 @@
 import { supabase } from "../db/supabase.js";
+import { isDeepStrictEqual } from "node:util";
 import type { AgentTrigger, AgentType, ToolCallRecord, AgentRunResult } from "./types.js";
 
 export interface RunLogHandle {
   runId: string;
   existingResult?: AgentRunResult;
+  /**
+   * First outcome wins. It is copied before the first write; concurrent calls
+   * share that write, and a retry only reconciles that same frozen outcome.
+   * A successful close is never rewritten, even if a later caller passes a
+   * different result after a bookkeeping failure.
+   */
   finish: (outcome: {
     status: AgentRunResult["status"];
     decision: string;
@@ -67,28 +74,92 @@ export async function startRun(
   }
 
   const runId = data.id as string;
+  let firstCompletion: CompletionPatch | undefined;
+  let finalized = false;
+  let inFlight: Promise<void> | undefined;
 
   return {
     runId,
-    finish: async (outcome) => {
-      const { error: updateError } = await supabase
-        .from("karta_runs")
-        .update({
+    finish: (outcome) => {
+      if (finalized) return Promise.resolve();
+      if (!firstCompletion) {
+        firstCompletion = {
           status: outcome.status,
           mode: outcome.status === "simulated" ? "simulation" : mode,
           decision: outcome.decision,
-          tools_used: outcome.toolsUsed,
+          // Copy the exact JSON sent to PostgreSQL, including omission of
+          // undefined optional fields, so a lost acknowledgement can reconcile.
+          tools_used: JSON.parse(JSON.stringify(outcome.toolsUsed)) as ToolCallRecord[],
           result_summary: outcome.resultSummary,
           error_message: outcome.errorMessage ?? null,
           claude_mock: outcome.mock,
           duration_ms: Date.now() - startedAt,
           finished_at: new Date().toISOString(),
-        })
-        .eq("id", runId);
-
-      if (updateError) {
-        throw new Error(`startRun(${agentType}).finish: ${updateError.message}`);
+        };
       }
+      if (inFlight) return inFlight;
+      const completion = firstCompletion;
+      const attempt = (async () => {
+        try {
+          const updated = await supabase.from("karta_runs").update(completion)
+            .eq("id", runId).eq("user_id", userId).eq("agent_type", agentType)
+            .eq("status", "running").is("duration_ms", null)
+            .select("id").single();
+          if (!updated.error && updated.data?.id === runId) {
+            finalized = true;
+            return;
+          }
+        } catch {
+          // A transport error does not tell us whether PostgreSQL committed.
+        }
+
+        // duration_ms is set by the initial close and is never cleared by the
+        // approval finalizer. It keeps this CAS closed when approvals later
+        // move the status back to "running". Zero affected rows is not success.
+        try {
+          const stored = await supabase.from("karta_runs")
+            .select("status,mode,decision,tools_used,result_summary,error_message,claude_mock,duration_ms,finished_at")
+            .eq("id", runId).eq("user_id", userId).eq("agent_type", agentType).single();
+          if (!stored.error && matchesCompletion(stored.data, completion)) {
+            finalized = true;
+            return;
+          }
+        } catch {
+          // Preserve the first payload for an explicit reconciliation retry.
+        }
+        throw new Error("Clôture du journal non confirmée : vérifier le résultat avant toute reprise");
+      })();
+      inFlight = attempt;
+      // Avoid a floating rejected Promise from finally(); both handlers settle.
+      void attempt.then(
+        () => { if (inFlight === attempt) inFlight = undefined; },
+        () => { if (inFlight === attempt) inFlight = undefined; }
+      );
+      return attempt;
     },
   };
+}
+
+interface CompletionPatch {
+  status: AgentRunResult["status"];
+  mode: "simulation" | "live";
+  decision: string;
+  tools_used: ToolCallRecord[];
+  result_summary: string;
+  error_message: string | null;
+  claude_mock: boolean;
+  duration_ms: number;
+  finished_at: string;
+}
+
+function matchesCompletion(value: unknown, expected: CompletionPatch): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const actual = value as Record<string, unknown>;
+  return actual.status === expected.status && actual.mode === expected.mode
+    && actual.decision === expected.decision && actual.result_summary === expected.result_summary
+    && actual.error_message === expected.error_message && actual.claude_mock === expected.claude_mock
+    && actual.duration_ms === expected.duration_ms
+    && isDeepStrictEqual(actual.tools_used, expected.tools_used)
+    && (typeof actual.finished_at === "string" || actual.finished_at instanceof Date)
+    && new Date(actual.finished_at).getTime() === new Date(expected.finished_at).getTime();
 }

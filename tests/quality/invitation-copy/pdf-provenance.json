@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-11-10T02:23:23.335836+00:00",
+  "status": "PASS",
+  "checks": {
+    "baselineSignedStampFromSyntheticTimestamp": true,
+    "baselineYearDiscountPromise": true,
+    "afterExplicitlyUnsigned": true,
+    "afterNoSyntheticPastSignatureDate": true,
+    "afterNoElectronicSignatureStamp": true,
+    "afterNoHistoricalContractCreationDate": true,
+    "afterNoUnadmittedPromotion": true,
+    "invitationIdentityPreserved": true,
+    "originalCopyRequired": true
+  },
+  "generatedWith": "Actual repository generator and installed jsPDF; Node-only CJS export-shape adapter, same constructor; no mocked PDF API",
+  "beforePdf": {
+    "path": "audit-20261110/inventory-evidence/lint-audit/referral-copy-evidence/pdf-before/contrat-affiliation-agentia-qa_no_provider.pdf",
+    "sha256": "49324bb4e27d94873c5604a3b872a33669d3b2bfcc35e265079e1b6ffd01929f"
+  },
+  "afterPdf": {
+    "path": "audit-20261110/inventory-evidence/lint-audit/referral-copy-evidence/pdf-after/recapitulatif-affiliation-qa_no_provider.pdf",
+    "sha256": "4414feeb49e2ff6003d4dd6807b5330c12b83f687c12137eda315e1b9a8d3e55"
+  },
+  "afterPageCount": 1,
+  "renderedWith": "pdftoppm -scale-to 1400 -png",
+  "syntheticOnly": true,
+  "existingSignaturesOrContractsMutated": false,
+  "noPromotionTextMirrorTestAdded": true,
+  "visualReview": {
+    "status": "PASS",
+    "pageCount": 1,
+    "renderer": "MuPDF via PyMuPDF",
+    "imageSha256": "fbc466541b90825a4cf1a0aa6b87104bf93170debaf85a375beb60a074c3d1dc",
+    "note": "All final-page text and footer inspected; no clipping or overlap. Poppler image retained separately because its local standard-font substitution produced inaccurate glyph spacing."
+  },
+  "historicalSignedOriginalRecovery": {
+    "status": "BLOQU\u00c9",
+    "reason": "The current read model exposes neither the original signed PDF nor a versioned snapshot of accepted conditions. No original or signature was fabricated."
+  }
+}

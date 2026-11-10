@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -24,5 +25,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <>{children}</>;
+  // A protected page owns its local state for one principal and one resource path.
+  // Refreshing the same account or query string preserves that state.
+  return <Fragment key={JSON.stringify([user.id, location.pathname])}>{children}</Fragment>;
 }

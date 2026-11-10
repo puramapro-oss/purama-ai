@@ -6,18 +6,19 @@ interface MockQuery extends PromiseLike<MockResult> {
  update(value: MockRow): MockQuery;
  select(): MockQuery;
  eq(key: string, value: unknown): MockQuery;
+ is(key: string, value: unknown): MockQuery;
  single(): Promise<MockResult>;
 }
 const h=vi.hoisted(()=>({rows:new Map<string,MockRow>()}));
 vi.mock("../src/db/supabase.js",()=>({supabase:{from:()=>{
  let insert: MockRow | undefined;let patch: MockRow | undefined;const filters:Record<string,unknown>={};
  const result=async(): Promise<MockResult>=>{
-  if(insert){const key=typeof insert.execution_key==="string"?insert.execution_key:"run-"+h.rows.size;if(h.rows.has(key))return {data:null,error:{code:"23505"}};const row={id:"run-"+h.rows.size,...insert};h.rows.set(key,row);return {data:{id:row.id},error:null};}
+  if(insert){const key=typeof insert.execution_key==="string"?insert.execution_key:"run-"+h.rows.size;if(h.rows.has(key))return {data:null,error:{code:"23505"}};const row={id:"run-"+h.rows.size,duration_ms:null,...insert};h.rows.set(key,row);return {data:{id:row.id},error:null};}
   const row=[...h.rows.values()].find(r=>Object.entries(filters).every(([k,v])=>r[k]===v));
   if(patch&&row)Object.assign(row,patch);
   return {data:row??null,error:null};
  };
- const q:MockQuery={insert:(v)=>{insert=v;return q;},update:(v)=>{patch=v;return q;},select:()=>q,eq:(k,v)=>{filters[k]=v;return q;},single:result,then:(resolve,reject)=>result().then(resolve,reject)};
+ const q:MockQuery={insert:(v)=>{insert=v;return q;},update:(v)=>{patch=v;return q;},select:()=>q,eq:(k,v)=>{filters[k]=v;return q;},is:(k,v)=>{filters[k]=v;return q;},single:result,then:(resolve,reject)=>result().then(resolve,reject)};
  return q;
 }}}));
 const {startRun}=await import("../src/engine/logger.js");

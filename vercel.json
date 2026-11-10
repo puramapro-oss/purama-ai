@@ -10,7 +10,8 @@
     "deploymentEnabled": {
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
-      "audit/commerce-payments-20261110": false
+      "audit/commerce-payments-20261110": false,
+      "audit/iao-integrated-20261110": false
     }
   }
 }
