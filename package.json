@@ -18,6 +18,7 @@
     "test:quality": "playwright test --config tests/quality/playwright.config.ts",
     "test:wellbeing": "playwright test --config tests/wellbeing/playwright.config.ts",
     "test:voice-consent": "playwright test --config tests/voice-consent/playwright.config.ts",
+    "test:voice-settings": "node --test --test-concurrency=1 tests/voice-settings-concurrency.mjs",
     "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check",
     "test:contracts-auth": "node --experimental-vm-modules --test --test-concurrency=1 tests/contracts-ots-auth.mjs tests/contracts-ots-integrity.mjs tests/opentimestamps-content.mjs",
     "test:cross-app-jwt": "node --test --test-concurrency=1 tests/cross-app-jwt/node-runtime.mjs",
