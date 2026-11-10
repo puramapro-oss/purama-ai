@@ -8,6 +8,7 @@ import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
 import { minimizeRunTrace, PRIVATE_TRACE, shouldMinimizeToolTrace, summarizeToolError, summarizeToolParams, summarizeToolResult } from "./tool-trace.js";
+import { prepareAgentTriggerContext } from "./trigger-context.js";
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
@@ -35,7 +36,7 @@ export async function runAgentCycle(
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = trigger.type === "delegation" || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
@@ -45,7 +46,13 @@ export async function runAgentCycle(
   let completionAttempted = false;
 
   try {
-    const context = await definition.buildContext(userId, trigger);
+    // Resolve durable approval facts before consuming a one-shot business brief.
+    const triggerContext = await prepareAgentTriggerContext(userId, definition.type, trigger);
+    privateTrace ||= triggerContext.privateTrace;
+    const context = { ...await definition.buildContext(userId, trigger) };
+    // Business data may not impersonate this server-owned execution context.
+    delete context.kartaTrigger;
+    if (triggerContext.modelContext) context.kartaTrigger = triggerContext.modelContext;
     const decision = await getClaudeClient().decide({
       systemPrompt: definition.systemPrompt, context, tools: definition.tools, agentType: definition.type,
     });
@@ -114,6 +121,19 @@ export async function runAgentCycle(
         for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push(traceRecord(skipped, "Non exécutée après un échec", "skipped"));
         break;
       }
+      const resolvedAction = triggerContext.guardToolCall(call.tool, call.params);
+      if (resolvedAction === "already_executed") {
+        toolsUsed.push(traceRecord(call, "Action déjà exécutée et confirmée : aucune nouvelle exécution", "skipped"));
+        continue;
+      }
+      if (resolvedAction === "rejected") {
+        toolsUsed.push(traceRecord(call, "Action rejetée par son propriétaire : aucune exécution", "rejected"));
+        cancelled = true;
+        for (const skipped of decision.toolCalls.slice(index + 1)) {
+          toolsUsed.push(traceRecord(skipped, "Non exécutée après répétition d'une action rejetée", "skipped"));
+        }
+        break;
+      }
       try {
         validateToolParams(tool, call.params);
       } catch (validationError) {
@@ -132,6 +152,7 @@ export async function runAgentCycle(
       if (needsApproval) {
         const pendingActionId = await createPendingAction({
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
+          trigger: triggerContext.executionTrigger,
         });
         toolsUsed.push(traceRecord(call, "En attente de validation humaine", "pending", pendingActionId));
         for (const deferred of decision.toolCalls.slice(index + 1)) {
@@ -142,7 +163,7 @@ export async function runAgentCycle(
       try {
         effectStarted = true;
         const result = await tool.execute(call.params, {
-          userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
+          userId, agentType: definition.type, mode: "live", trigger: triggerContext.executionTrigger, operationId: `${run.runId}:${index}`,
         });
         assertToolResult(result);
         toolsUsed.push(traceRecord(call, summarizeToolResult(result, privateTrace), "executed"));
@@ -206,5 +227,7 @@ export async function runAgentCycle(
 
 function summarizeToolsUsed(tools: ToolCallRecord[]): string {
   const count = (outcome: ToolCallRecord["outcome"]) => tools.filter(t => t.outcome === outcome).length;
-  return `${count("executed")}/${tools.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)`;
+  const rejected = count("rejected");
+  return `${count("executed")}/${tools.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)` +
+    (rejected > 0 ? `, ${rejected} rejetée(s)` : "");
 }

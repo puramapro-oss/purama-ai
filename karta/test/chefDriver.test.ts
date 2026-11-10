@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { mkdtemp, rm, symlink } from "node:fs/promises";
+import { access, mkdtemp, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ProcessChefDriver, assertAllowedCwd, validateDriverResponse } from "../src/chef/driver.js";
@@ -83,5 +83,29 @@ describe("CHEF process driver", () => {
       timeoutMs: 5_000,
     });
     await expect(driver.run(request())).rejects.toThrow(/sans réponse JSON/);
+  });
+
+  it("does not start a process or its side effect when the signal is already aborted", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "chef-pre-aborted-"));
+    tempDirs.push(cwd);
+    const driver = new ProcessChefDriver({
+      provider: "codex",
+      command: process.execPath,
+      args: ["-e", [
+        "process.stdin.resume();",
+        "process.stdin.on('end', () => {",
+        "require('node:fs').writeFileSync('unexpected-execution', 'local test marker');",
+        "console.log(JSON.stringify({schemaVersion:1,status:'completed',summary:'should not execute'}));",
+        "});",
+      ].join("")],
+      allowedRoots: [cwd],
+      timeoutMs: 5_000,
+    });
+    const cancelled = new AbortController();
+    cancelled.abort();
+    const outcome = await driver.run(request(cwd), cancelled.signal).catch(error => error as Error);
+    await expect(access(join(cwd, "unexpected-execution"))).rejects.toMatchObject({ code: "ENOENT" });
+    expect(outcome).toBeInstanceOf(Error);
+    expect((outcome as Error).message).toMatch(/annulé/);
   });
 });

@@ -24,6 +24,9 @@ export interface ChefBriefTask {
   priority?: number;
   maxAttempts?: number;
   verificationProfiles?: string[];
+  /** Admission envelopes per attempt. Omitted means unknown, never zero. */
+  estimatedTokens?: number;
+  estimatedCostMicros?: number;
 }
 
 export interface ChefBrief {
@@ -108,6 +111,12 @@ export function validateChefBrief(input: ChefBrief): void {
     if (task.maxAttempts !== undefined && (!Number.isInteger(task.maxAttempts) || task.maxAttempts < 1 || task.maxAttempts > 20)) {
       throw new Error("maxAttempts invalide");
     }
+    for (const key of ["estimatedTokens", "estimatedCostMicros"] as const) {
+      const value = task[key];
+      if (value !== undefined && (!Number.isSafeInteger(value) || value < 0)) {
+        throw new Error(`${key} invalide`);
+      }
+    }
     uniqueStrings(task.dependsOn, `dependsOn(${taskKey})`);
     const linked = uniqueStrings(task.requirementKeys, `requirementKeys(${taskKey})`);
     const verificationProfiles = uniqueStrings(task.verificationProfiles, `verificationProfiles(${taskKey})`);
@@ -184,6 +193,8 @@ export function normalizeChefBrief(input: ChefBrief): ChefBrief {
         priority: task.priority ?? 0,
         maxAttempts: task.maxAttempts ?? 3,
         verificationProfiles: [...(task.verificationProfiles ?? [])].sort(),
+        ...(task.estimatedTokens !== undefined ? { estimatedTokens: task.estimatedTokens } : {}),
+        ...(task.estimatedCostMicros !== undefined ? { estimatedCostMicros: task.estimatedCostMicros } : {}),
       }))
       .sort((a, b) => a.key.localeCompare(b.key)),
   };

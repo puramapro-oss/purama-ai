@@ -1,4 +1,5 @@
 import type { ChefDriverProvider, ChefDriverResponse, ChefWorkerDriver } from "./driver.js";
+import { createHash } from "node:crypto";
 import { captureCleanGitBaseline, verifyCommittedGitState } from "./git-state.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
 
@@ -23,6 +24,22 @@ export interface ChefEvidenceClaim {
   attempt: number;
 }
 
+export interface ChefClaimUsage {
+  eventKey: string;
+  missionId: string;
+  taskId: string;
+  workerId: string;
+  provider: ChefDriverProvider;
+  model?: string;
+  attempt: number;
+  fencingToken: number;
+  /** Final totals for a dimension, or null when the provider did not report it. */
+  inputTokens: number | null;
+  outputTokens: number | null;
+  cachedInputTokens: number | null;
+  costMicros: number | null;
+}
+
 export interface ChefControlPlane {
   housekeeping?(missionId: string): Promise<void>;
   heartbeat(input: { workerId: string; provider: ChefDriverProvider; model?: string; state: "idle" | "claimed" | "running" | "verifying" | "blocked" | "failed"; taskId?: string }): Promise<void>;
@@ -30,7 +47,8 @@ export interface ChefControlPlane {
   renewLease(input: { taskId: string; workerId: string; fencingToken: number; leaseSeconds: number }): Promise<boolean>;
   transition(input: { taskId: string; workerId: string; fencingToken: number; target: "running" | "verifying" | "verified_done" | "retryable" | "blocked_human" | "blocked_external" | "failed"; error?: string; outputSha?: string }): Promise<boolean>;
   addEvidence(taskId: string, evidence: ChefVerificationEvidence, claim: ChefEvidenceClaim): Promise<boolean>;
-  recordUsage(input: { eventKey: string; missionId: string; taskId: string; workerId: string; provider: ChefDriverProvider; model?: string; inputTokens: number; outputTokens: number; cachedInputTokens: number; costMicros: number }): Promise<void>;
+  /** False means a capped dimension is still unknown; its reservation remains held. */
+  recordUsage(input: ChefClaimUsage): Promise<boolean>;
   tryFinishMission(missionId: string): Promise<boolean>;
 }
 
@@ -51,14 +69,19 @@ export interface ChefWorkerCycleOptions {
 
 function usageEventKey(task: ChefRuntimeTask, response: ChefDriverResponse): string {
   const usage = response.usage;
+  const fingerprint = createHash("sha256").update(JSON.stringify({
+    model: usage?.model ?? null,
+    inputTokens: usage?.inputTokens ?? null,
+    outputTokens: usage?.outputTokens ?? null,
+    cachedInputTokens: usage?.cachedInputTokens ?? null,
+    costMicros: usage?.costMicros ?? null,
+  })).digest("hex");
   return [
     "chef-usage",
     task.id,
     task.attempt,
     task.fencingToken,
-    usage?.model ?? "unknown",
-    usage?.inputTokens ?? 0,
-    usage?.outputTokens ?? 0,
+    fingerprint,
   ].join("|");
 }
 
@@ -95,8 +118,21 @@ export async function runChefWorkerCycle(
     fencingToken: task.fencingToken,
     attempt: task.attempt,
   });
+  // These paths have not called the driver. Zero is a known observation here,
+  // unlike missing provider metrics after an execution or timeout.
+  const settleBeforeExecution = async () => {
+    const settled = await control.recordUsage({
+      eventKey: `chef-no-execution|${task.id}|${task.attempt}|${task.fencingToken}`,
+      missionId: task.missionId, taskId: task.id, workerId: options.workerId,
+      provider: options.provider, model: options.model,
+      attempt: task.attempt, fencingToken: task.fencingToken,
+      inputTokens: 0, outputTokens: 0, cachedInputTokens: 0, costMicros: 0,
+    });
+    if (!settled) throw new Error("Réservation sans exécution non réconciliée");
+  };
 
   if (task.briefHash.length !== 64) {
+    await settleBeforeExecution();
     await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
       target: "failed", error: "Brief hash invalide",
@@ -110,6 +146,7 @@ export async function runChefWorkerCycle(
       const baseline = await captureCleanGitBaseline({ cwd: task.cwd, expectedBranch: task.branch });
       if (task.baseSha && baseline.headSha.toLowerCase() !== task.baseSha.toLowerCase()) {
         const error = "Base Git assignée devenue obsolète : replanification requise";
+        await settleBeforeExecution();
         const blocked = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
           target: "blocked_external", error,
@@ -121,6 +158,7 @@ export async function runChefWorkerCycle(
       executionBaseSha = baseline.headSha;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Préflight Git impossible";
+      await settleBeforeExecution();
       const blocked = await control.transition({
         taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
         target: "blocked_human", error: message.slice(0, 10_000),
@@ -131,11 +169,25 @@ export async function runChefWorkerCycle(
     }
   }
 
-  const running = await control.transition({
-    taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken, target: "running",
-  });
-  if (!running) return { state: "lost_lease", taskId: task.id, error: "Claim périmé avant exécution" };
-  await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "running", taskId: task.id });
+  let running: boolean;
+  try {
+    running = await control.transition({
+      taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken, target: "running",
+    });
+  } catch (error) {
+    await settleBeforeExecution();
+    throw error;
+  }
+  if (!running) {
+    await settleBeforeExecution();
+    return { state: "lost_lease", taskId: task.id, error: "Claim périmé avant exécution" };
+  }
+  try {
+    await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "running", taskId: task.id });
+  } catch (error) {
+    await settleBeforeExecution();
+    throw error;
+  }
 
   const abort = new AbortController();
   let lostLease = false;
@@ -208,34 +260,38 @@ export async function runChefWorkerCycle(
         : { state: "lost_lease", taskId: task.id, error: message };
     }
 
-    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
-
-    if (response.usage) {
-      try {
-        await control.recordUsage({
+    // Accounting is bound to this attempt even if its lease was lost meanwhile.
+    // A late receipt may settle its own reservation; it cannot complete another claim.
+    try {
+        const accounted = await control.recordUsage({
           eventKey: usageEventKey(task, response),
           missionId: task.missionId,
           taskId: task.id,
           workerId: options.workerId,
           provider: options.provider,
-          model: response.usage.model ?? options.model,
-          inputTokens: response.usage.inputTokens,
-          outputTokens: response.usage.outputTokens,
-          cachedInputTokens: response.usage.cachedInputTokens ?? 0,
-          costMicros: response.usage.costMicros ?? 0,
+          model: response.usage?.model ?? options.model,
+          attempt: task.attempt,
+          fencingToken: task.fencingToken,
+          inputTokens: response.usage?.inputTokens ?? null,
+          outputTokens: response.usage?.outputTokens ?? null,
+          cachedInputTokens: response.usage?.cachedInputTokens ?? null,
+          costMicros: response.usage?.costMicros ?? null,
         });
-      } catch (error) {
+        if (!accounted) throw new Error("Usage fournisseur incomplet : réservation conservée, réconciliation requise");
+    } catch (error) {
         stopRenewal();
         const message = error instanceof Error ? error.message : "Comptabilité d'usage indisponible";
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: message };
         const blocked = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-          target: "blocked_external", error: message.slice(0, 10_000),
+          target: "blocked_external", error: message.slice(0, 10_000), outputSha: response.outputSha,
         }).catch(() => false);
         return blocked
           ? { state: "blocked_external", taskId: task.id, error: message }
           : { state: "lost_lease", taskId: task.id, error: message };
-      }
     }
+
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
 
     if (response.status === "blocked_human" || response.status === "blocked_external") {
       stopRenewal();

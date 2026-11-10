@@ -6,22 +6,31 @@ import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { shouldMinimizeToolTrace, summarizeToolError, summarizeToolResult } from "./tool-trace.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
-import type { AgentType } from "./types.js";
+import { restoreAgentExecutionTrigger, snapshotAgentExecutionTrigger } from "./trigger-context.js";
+import type { AgentTrigger, AgentType } from "./types.js";
 
 interface CreatePendingActionInput {
   userId: string; runId: string; agentType: AgentType; toolName: string; toolParams: Record<string, unknown>;
+  trigger?: AgentTrigger;
 }
 
 export async function createPendingAction(input: CreatePendingActionInput): Promise<string> {
-  const { data, error } = await supabase.from("karta_pending_actions").insert({
-    user_id: input.userId, run_id: input.runId, agent_type: input.agentType, tool_name: input.toolName, tool_params: input.toolParams,
-  }).select("id").single();
-  if (error) throw new Error(`createPendingAction(${input.toolName}): ${error.message}`);
-  return data.id as string;
+  const executionTrigger = snapshotAgentExecutionTrigger(input.trigger, input.agentType);
+  try {
+    const { data, error } = await supabase.from("karta_pending_actions").insert({
+      user_id: input.userId, run_id: input.runId, agent_type: input.agentType, tool_name: input.toolName, tool_params: input.toolParams,
+      execution_trigger: executionTrigger ?? null,
+    }).select("id").single();
+    if (error || !data || typeof data.id !== "string") throw new Error();
+    return data.id;
+  } catch {
+    throw new Error("Création de l’action indisponible : vérifier son état avant toute reprise");
+  }
 }
 
 interface PendingActionRow {
   id: string; user_id: string; run_id: string; agent_type: string; tool_name: string; tool_params: Record<string, unknown>; status: string;
+  execution_trigger?: unknown;
 }
 export type ResolveDecision = "approve" | "reject";
 export type ResolveResult = { ok: true; resultSummary: string } | { ok: false; error: string };
@@ -49,6 +58,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
   let privateTrace = true;
   if (decision === "approve") {
     try {
+      const executionTrigger = restoreAgentExecutionTrigger(pending.execution_trigger, pending.agent_type as AgentType);
       const state = await loadAgentState(pending.user_id, pending.agent_type as AgentType);
       if (await isGlobalKillSwitchActive(true) || !isRunnable(state).ok || state.simulationMode) {
         status = "cancelled";
@@ -56,7 +66,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
       } else {
         const definition = await resolveAgentDefinition(pending.agent_type as AgentType, pending.user_id);
         const tool = definition.tools.find(t => t.name === pending.tool_name);
-        privateTrace = definition.tools.some(shouldMinimizeToolTrace) || shouldMinimizeToolTrace(tool) ||
+        privateTrace = executionTrigger?.type === "delegation" || definition.tools.some(shouldMinimizeToolTrace) || shouldMinimizeToolTrace(tool) ||
           await parentRequiresPrivateTrace(pending, definition.tools);
         if (!tool) throw new Error("Outil introuvable pour cet agent");
         validateToolParams(tool, pending.tool_params);
@@ -67,7 +77,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
           resultSummary = "Action annulée : arrêt ou autorisation modifiée";
         } else {
           const result = await tool.execute(pending.tool_params, {
-            userId: pending.user_id, agentType: pending.agent_type as AgentType, mode: "live", operationId: pending.id,
+            userId: pending.user_id, agentType: pending.agent_type as AgentType, mode: "live", trigger: executionTrigger, operationId: pending.id,
           });
           assertToolResult(result);
           status = "executed";
