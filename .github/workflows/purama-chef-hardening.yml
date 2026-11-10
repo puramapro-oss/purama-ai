@@ -27,11 +27,13 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: karta/package-lock.json
-      - run: npm ci
+      - run: npm ci --no-audit
+      - run: node ../scripts/generate-supabase-contracts.mjs --check
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
-      - run: npm audit --audit-level=high --omit=dev
+      - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
+        run: npm audit --audit-level=high --omit=dev
 
   site:
     runs-on: ubuntu-latest
@@ -42,7 +44,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit
+      - run: npm run test:dependencies
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
-      - run: npm audit --audit-level=high --omit=dev
+      - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
+        run: npm audit --audit-level=high --omit=dev
