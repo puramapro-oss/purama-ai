@@ -23,10 +23,10 @@ Deno.test("partial completion never marks the whole contract signed or triggers 
   equal((await webhook(request(undefined, "form.completed"))).status, 200); equal(state.contract.status, "sent");
   equal(state.requests.some(x => x.url.endsWith("/contracts-ots-stamp")), false);
 });
-Deno.test("an absent or empty signer set never counts as total completion", async () => {
+Deno.test("an absent or empty signer set refuses completion with 409", async () => {
   for (const signers of [null, []]) {
     reset(); state.contract.status = "sent"; Object.assign(state, { signers });
-    equal((await webhook(request(undefined, "form.completed"))).status, 200); equal(state.contract.status, "sent");
+    equal((await webhook(request(undefined, "form.completed"))).status, 409); equal(state.contract.status, "sent");
     equal(state.requests.some(x => x.url.endsWith("/contracts-ots-stamp")), false);
   }
 });

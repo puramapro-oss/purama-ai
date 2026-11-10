@@ -1,0 +1,160 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn exec The following package was not found and will be installed: node@22.23.4
+(node:99) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:106) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: stamp: missing bearer is refused before any contract access
+ok 1 - stamp: missing bearer is refused before any contract access
+  ---
+  duration_ms: 165.481973
+  type: 'test'
+  ...
+# Subtest: stamp: an arbitrary bearer cannot reach another contract through service authority
+ok 2 - stamp: an arbitrary bearer cannot reach another contract through service authority
+  ---
+  duration_ms: 61.242692
+  type: 'test'
+  ...
+# Subtest: stamp: an authenticated ordinary user is not an administrator
+ok 3 - stamp: an authenticated ordinary user is not an administrator
+  ---
+  duration_ms: 46.91939
+  type: 'test'
+  ...
+# Subtest: stamp: body-supplied roles and user IDs never grant authority
+ok 4 - stamp: body-supplied roles and user IDs never grant authority
+  ---
+  duration_ms: 37.785885
+  type: 'test'
+  ...
+# Subtest: stamp: a non-boolean role result null cannot authorize
+ok 5 - stamp: a non-boolean role result null cannot authorize
+  ---
+  duration_ms: 41.50921
+  type: 'test'
+  ...
+# Subtest: stamp: a non-boolean role result "true" cannot authorize
+ok 6 - stamp: a non-boolean role result "true" cannot authorize
+  ---
+  duration_ms: 39.616796
+  type: 'test'
+  ...
+# Subtest: stamp: a non-boolean role result 1 cannot authorize
+ok 7 - stamp: a non-boolean role result 1 cannot authorize
+  ---
+  duration_ms: 28.42059
+  type: 'test'
+  ...
+# Subtest: stamp: a non-boolean role result {"admin":true} cannot authorize
+ok 8 - stamp: a non-boolean role result {"admin":true} cannot authorize
+  ---
+  duration_ms: 36.306342
+  type: 'test'
+  ...
+# Subtest: stamp: identity errors cannot authorize even if a user object is present
+ok 9 - stamp: identity errors cannot authorize even if a user object is present
+  ---
+  duration_ms: 27.30192
+  type: 'test'
+  ...
+# Subtest: stamp: authThrows fails closed without provider or contract activity
+ok 10 - stamp: authThrows fails closed without provider or contract activity
+  ---
+  duration_ms: 31.38829
+  type: 'test'
+  ...
+# Subtest: stamp: roleError fails closed without provider or contract activity
+ok 11 - stamp: roleError fails closed without provider or contract activity
+  ---
+  duration_ms: 26.650701
+  type: 'test'
+  ...
+# Subtest: stamp: roleThrows fails closed without provider or contract activity
+ok 12 - stamp: roleThrows fails closed without provider or contract activity
+  ---
+  duration_ms: 27.963424
+  type: 'test'
+  ...
+# Subtest: stamp: absent server credential is a configuration refusal
+ok 13 - stamp: absent server credential is a configuration refusal
+  ---
+  duration_ms: 24.981443
+  type: 'test'
+  ...
+# Subtest: stamp: empty server credential is a configuration refusal
+ok 14 - stamp: empty server credential is a configuration refusal
+  ---
+  duration_ms: 25.74507
+  type: 'test'
+  ...
+# Subtest: stamp: a token that only shares the service credential prefix is refused
+ok 15 - stamp: a token that only shares the service credential prefix is refused
+  ---
+  duration_ms: 32.519951
+  type: 'test'
+  ...
+# Subtest: stamp: a verified administrator keeps the complete existing stamping path
+ok 16 - stamp: a verified administrator keeps the complete existing stamping path
+  ---
+  duration_ms: 37.094692
+  type: 'test'
+  ...
+# Subtest: stamp: the exact configured service bearer preserves the webhook contract
+ok 17 - stamp: the exact configured service bearer preserves the webhook contract
+  ---
+  duration_ms: 26.173213
+  type: 'test'
+  ...
+# Subtest: webhook: absent shared secret refuses before reading the body or data
+ok 18 - webhook: absent shared secret refuses before reading the body or data
+  ---
+  duration_ms: 27.491124
+  type: 'test'
+  ...
+# Subtest: webhook: empty shared secret refuses before reading the body or data
+ok 19 - webhook: empty shared secret refuses before reading the body or data
+  ---
+  duration_ms: 19.924562
+  type: 'test'
+  ...
+# Subtest: webhook: missing signature refuses without mutation or send
+ok 20 - webhook: missing signature refuses without mutation or send
+  ---
+  duration_ms: 19.513094
+  type: 'test'
+  ...
+# Subtest: webhook: invalid signature refuses without mutation or send
+ok 21 - webhook: invalid signature refuses without mutation or send
+  ---
+  duration_ms: 22.493063
+  type: 'test'
+  ...
+# Subtest: webhook: a valid configured signature retains its existing service stamping request
+ok 22 - webhook: a valid configured signature retains its existing service stamping request
+  ---
+  duration_ms: 29.133672
+  type: 'test'
+  ...
+# Subtest: contracts-ots-stamp: preflight and unsupported methods have no effects
+ok 23 - contracts-ots-stamp: preflight and unsupported methods have no effects
+  ---
+  duration_ms: 16.144222
+  type: 'test'
+  ...
+# Subtest: contracts-webhook: preflight and unsupported methods have no effects
+ok 24 - contracts-webhook: preflight and unsupported methods have no effects
+  ---
+  duration_ms: 18.695816
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1381.332955

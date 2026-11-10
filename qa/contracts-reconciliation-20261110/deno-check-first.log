@@ -1,0 +1,7 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+Download https://deno.land/std@0.190.0/http/server.ts
+error: Import 'https://deno.land/std@0.190.0/http/server.ts' failed.
+    0: error sending request for url (https://deno.land/std@0.190.0/http/server.ts): client error (Connect): Connection refused
+    1: client error (Connect)
+    2: Connection refused
+    at file:///workspace/scratch/221cb4a2f349/iao-ci-current/repo/supabase/functions/contracts-ots-stamp/index.ts:6:23

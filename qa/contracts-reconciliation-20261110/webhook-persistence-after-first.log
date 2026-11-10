@@ -1,0 +1,44 @@
+(node:12) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ webhook persistence: a failed lookup is never acknowledged as a missing contract (127.157521ms)
+✔ webhook persistence: failed signer reads cannot produce a success or a signed contract (32.033994ms)
+✔ webhook persistence: [] is not proof that all signers signed (29.967273ms)
+✔ webhook persistence: null is not proof that all signers signed (22.166712ms)
+✔ webhook persistence: only boolean true is a completed signature (false) (22.862987ms)
+✔ webhook persistence: only boolean true is a completed signature ("true") (17.699708ms)
+✔ webhook persistence: only boolean true is a completed signature (1) (23.062407ms)
+✔ webhook persistence: only boolean true is a completed signature ({}) (26.662446ms)
+✔ webhook persistence: only boolean true is a completed signature (null) (16.375068ms)
+✔ webhook persistence: form.viewed refuses signer write error before later effects (14.971549ms)
+✔ webhook persistence: form.viewed refuses signer missing signer before later effects (16.241507ms)
+✔ webhook persistence: form.viewed limits signer writes to the selected contract (17.866328ms)
+✔ webhook persistence: form.completed refuses signer write error before later effects (16.80854ms)
+✔ webhook persistence: form.completed refuses signer missing signer before later effects (22.067832ms)
+✔ webhook persistence: form.completed limits signer writes to the selected contract (34.792675ms)
+✔ webhook persistence: form.declined refuses signer write error before later effects (17.319697ms)
+✔ webhook persistence: form.declined refuses signer missing signer before later effects (15.069205ms)
+✔ webhook persistence: form.declined limits signer writes to the selected contract (15.137337ms)
+✔ webhook persistence: form.viewed refuses a failed contract write (15.847696ms)
+✔ webhook persistence: form.completed refuses a failed contract write (15.557348ms)
+✔ webhook persistence: form.declined refuses a failed contract write (14.427451ms)
+✔ webhook persistence: submission.expired refuses a failed contract write (14.058166ms)
+✔ webhook persistence: form.viewed refuses a failed audit insert (19.758903ms)
+✔ webhook persistence: form.completed refuses a failed audit insert (17.36852ms)
+✔ webhook persistence: form.declined refuses a failed audit insert (16.60265ms)
+✔ webhook persistence: submission.created refuses a failed audit insert (17.510885ms)
+✔ webhook persistence: submission.expired refuses a failed audit insert (17.277523ms)
+✔ webhook persistence: form.started refuses a failed audit insert (26.192852ms)
+✔ webhook persistence: failed partial-signature audit insert cannot be acknowledged (16.160685ms)
+✔ webhook persistence: cancelDuringSubmission prevents a late completion from overwriting the contract (15.701224ms)
+✔ webhook persistence: replaceSubmissionDuringSubmission prevents a late completion from overwriting the contract (17.543534ms)
+✔ webhook persistence: a completed event cannot revive a cancelled contract (17.353517ms)
+✔ webhook persistence: a completed event cannot revive a declined contract (15.029586ms)
+✔ webhook persistence: a completed event cannot revive a expired contract (16.394697ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1294.880211
