@@ -1,0 +1,77 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> vite_react_shadcn_ts@0.0.0 test:contracts-security
+> node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs supabase/functions/_shared/webhook-security.test.ts
+
+✔ bearer authentication accepts only the exact configured value (2.291854ms)
+✔ HMAC authentication accepts prefixed and bare signatures (20.535499ms)
+✔ HMAC authentication rejects tampering and malformed encodings (3.380429ms)
+✔ webhook authentication supports configured bearer or HMAC transport (5.728149ms)
+✔ only explicit local environments may opt into the development exception (0.807186ms)
+(node:38) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ rejects unauthenticated credential null before any contract effects (190.220965ms)
+✔ rejects unauthenticated credential "" before any contract effects (40.682408ms)
+✔ rejects unauthenticated credential "invalid-token" before any contract effects (44.348996ms)
+✔ rejects unauthenticated credential "test-service-never-livex" before any contract effects (29.491691ms)
+✔ rejects unauthenticated credential "fake.jwt.service_role" before any contract effects (31.106122ms)
+✔ ordinary user cannot elevate via metadata, body identity or role (28.717877ms)
+✔ fails closed on invalidated user (21.132281ms)
+✔ fails closed on removed role (19.766014ms)
+✔ fails closed on different role (30.202766ms)
+✔ fails closed on role lookup failure (22.294803ms)
+✔ fails closed on auth provider failure (19.942525ms)
+✔ fails closed on missing service configuration (17.995058ms)
+✔ fails closed on missing service URL (22.962037ms)
+✔ allows verified current admin and clears stale Bitcoin confirmation (49.069472ms)
+✔ allows exact internal credential and clears stale Bitcoin confirmation (40.42718ms)
+✔ handles preflight without data access and refuses unsupported methods (31.777624ms)
+✔ rejects malformed input null before contract access (19.168812ms)
+✔ rejects malformed input [] before contract access (18.213759ms)
+✔ rejects malformed input {} before contract access (18.361526ms)
+✔ rejects malformed input {"contract_id":42} before contract access (18.254225ms)
+✔ rejects malformed input {"contract_id":"not-a-uuid"} before contract access (18.602178ms)
+✔ rejects malformed input "{" before contract access (17.174547ms)
+✔ refuses stamping a draft contract before provider access (16.626989ms)
+✔ refuses stamping a sent contract before provider access (15.735233ms)
+✔ refuses stamping a opened contract before provider access (24.082702ms)
+✔ refuses stamping a declined contract before provider access (19.658743ms)
+✔ refuses stamping a cancelled contract before provider access (15.30759ms)
+✔ refuses stamping a expired contract before provider access (17.78837ms)
+✔ does not report success after missing contract (16.180971ms)
+✔ does not report success after database read error (24.663092ms)
+✔ does not report success after missing submission (14.825103ms)
+✔ does not report success after missing signed PDF (14.786832ms)
+✔ does not report success after provider PDF error (13.998612ms)
+✔ does not report success after provider PDF exception (16.61731ms)
+✔ does not report success after provider stamp exception (22.998095ms)
+✔ does not report success after proof write error (34.966864ms)
+✔ does not report success after audit write error (19.077922ms)
+✔ does not overwrite a contract changed during PDF retrieval: cancelDuringFetch (14.907028ms)
+✔ does not overwrite a contract changed during PDF retrieval: replaceSubmissionDuringFetch (15.189378ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ does not persist or report a pending proof when every calendar failed (17.969199ms)
+✔ forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid/signed.pdf (16.370907ms)
+✔ forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid.attacker.invalid/signed.pdf (15.716458ms)
+✔ forwards PDF credentials only to the exact configured origin: https://files.example.invalid/signed.pdf (19.454388ms)
+✔ rejects unsafe PDF location before fetching: http://files.example.invalid/signed.pdf (17.924465ms)
+✔ rejects unsafe PDF location before fetching: https://user@files.example.invalid/signed.pdf (13.824646ms)
+✔ rejects unsafe PDF location before fetching: data:application/pdf;base64,AA== (15.413119ms)
+✔ reused webhook guard fails closed without a secret in undefined (20.791641ms)
+✔ reused webhook guard fails closed without a secret in production (17.109024ms)
+✔ reused webhook guard fails closed without a secret in staging (23.738074ms)
+✔ reused webhook guard rejects an invalid provider credential before privileged reads (27.335291ms)
+✔ reused webhook guard preserves authenticated bearer delivery (16.964944ms)
+✔ reused webhook guard preserves authenticated hmac delivery (30.984354ms)
+✔ authenticated completion delivers the internal credential to the actual stamp handler (30.230919ms)
+ℹ tests 58
+ℹ suites 0
+ℹ pass 58
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2819.175058

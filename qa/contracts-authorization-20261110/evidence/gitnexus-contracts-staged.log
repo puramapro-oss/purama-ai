@@ -1,0 +1,21 @@
+Changes: 25 files, 140 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Const root → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Const baseline → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Const require → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Const ts → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Const file → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Const code → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Const contractId → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Function harness → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property docs → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property fetches → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property reads → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property stamps → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property writes → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property docuseal_submission_id → qa/contracts-authorization-20261110/reproduce-before.mjs
+  Property id → qa/contracts-authorization-20261110/reproduce-before.mjs
+... and 125 more

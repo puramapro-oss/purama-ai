@@ -1,0 +1,168 @@
+(node:13) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ hashContent preserves binary bytes and the view boundary with WebCrypto=true (152.75175ms)
+✖ hashContent preserves binary bytes and the view boundary with WebCrypto=false (34.97573ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✖ stampContract hashes the exact PDF bytes for Uint8Array view (46.711915ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✖ stampContract hashes the exact PDF bytes for ArrayBuffer (32.204633ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ existing UTF-8 string stamping remains byte-compatible (19.167058ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ browser Base64 encoding preserves the library number-array proof without Buffer (18.078654ms)
+Expected digest 0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a
+File does not match original!
+✖ contract verification accepts the raw-byte digest produced by the Edge handler (48.201422ms)
+✔ contract verification preserves existing proofs of the legacy Base64 text (35.485728ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✖ stampHash rejects a receipt when every calendar failed (75.03026ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✖ stampContract rejects a receipt when every calendar failed (19.75904ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 3
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1298.500696
+
+✖ failing tests:
+
+test at tests/opentimestamps-content.test.mjs:76:3
+✖ hashContent preserves binary bytes and the view boundary with WebCrypto=true (152.75175ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'c41a37b14594c543ee08b15ca9f5d5d306cea0940b14fa47c327665e29a35f45'
+  - '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:80:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'c41a37b14594c543ee08b15ca9f5d5d306cea0940b14fa47c327665e29a35f45',
+    expected: '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:76:3
+✖ hashContent preserves binary bytes and the view boundary with WebCrypto=false (34.97573ms)
+  TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received an instance of ArrayBuffer
+      at Hash.update (node:internal/crypto/hash:194:11)
+      at Module.hashContent (/workspace/scratch/221cb4a2f349/purama-ai/src/lib/opentimestamps.ts:27:48)
+      at async TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:81:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    code: 'ERR_INVALID_ARG_TYPE'
+  }
+
+test at tests/opentimestamps-content.test.mjs:88:3
+✖ stampContract hashes the exact PDF bytes for Uint8Array view (46.711915ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f'
+  - '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:92:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f',
+    expected: '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:88:3
+✖ stampContract hashes the exact PDF bytes for ArrayBuffer (32.204633ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f'
+  - '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:92:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f',
+    expected: '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:110:1
+✖ contract verification accepts the raw-byte digest produced by the Edge handler (48.201422ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:119:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:134:3
+✖ stampHash rejects a receipt when every calendar failed (75.03026ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:136:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /calendar/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:134:3
+✖ stampContract rejects a receipt when every calendar failed (19.75904ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:136:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /calendar/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }

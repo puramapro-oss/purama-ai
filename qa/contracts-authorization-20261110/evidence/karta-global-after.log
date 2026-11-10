@@ -1,0 +1,17 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 --testTimeout=30000 --hookTimeout=90000
+
+
+ RUN  v5.0.3 /workspace/scratch/221cb4a2f349/purama-ai/karta
+
+
+ Test Files  64 passed (64)
+      Tests  930 passed (930)
+   Start at  05:22:15
+   Duration  134.85s (tests 92%, import 5%, transform 2%, setup 1%)
+
+    Isolate  64 workers spawned · ~200ms startup each (spawn + environment, per file)
+             at least ~12.63s faster with isolate: false — reuses workers across files instead of one per file
+

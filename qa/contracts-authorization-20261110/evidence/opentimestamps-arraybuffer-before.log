@@ -1,0 +1,83 @@
+(node:13) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✖ stampContract keeps one ArrayBuffer snapshot if the caller mutates its buffer during hashing (153.250982ms)
+✖ hashContent snapshots an ArrayBuffer before awaiting the Node crypto fallback (28.267377ms)
+Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+File does not match original!
+Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+File does not match original!
+✖ legacy verification keeps its ArrayBuffer snapshot across the raw-proof attempt (30.524188ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1144.153131
+
+✖ failing tests:
+
+test at tests/opentimestamps-content.test.mjs:98:3
+✖ stampContract keeps one ArrayBuffer snapshot if the caller mutates its buffer during hashing (153.250982ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc'
+  - '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:106:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc',
+    expected: '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:109:1
+✖ hashContent snapshots an ArrayBuffer before awaiting the Node crypto fallback (28.267377ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc'
+  - '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:114:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc',
+    expected: '0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/opentimestamps-content.test.mjs:152:1
+✖ legacy verification keeps its ArrayBuffer snapshot across the raw-proof attempt (30.524188ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/purama-ai/tests/opentimestamps-content.test.mjs:163:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

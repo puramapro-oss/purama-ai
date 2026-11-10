@@ -1,0 +1,12 @@
+
+  GitNexus Analyzer (1.6.12)
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+{"level":40,"time":1794285815746,"name":"gitnexus","msg":"[scope-resolution] 134 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (typescript), data (javascript/typescript), env (typescript), DOCUSEAL_API_TOKEN (javascript), DOCUSEAL_API_URL (javascript), base (javascript), internal (javascript), reads (javascript), updates (javascript), accent (typescript), …"}
+{"level":40,"time":1794285815920,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":795,"entryPointsUnexplored":0,"walksCutByBudget":16,"tracesDepthCapped":0,"calleesDropped":1291,"processesDropped":0},"msg":"[processes] 531 flows reported, but whole flows are MISSING: 795 of 995 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 1291 callee(s) skipped at maxBranching, 16 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+{"level":30,"time":1794285826368,"name":"gitnexus","msg":"name-fallback resolution: 4 call sites (3 distinct caller-file/name pairs), 0 refused as impossible (guessed/refused by language: javascript 4/0)"}
+
+  Repository indexed successfully (47.2s)
+
+  9,892 nodes | 23,278 edges | 335 clusters | 531 flows
+  /workspace/scratch/221cb4a2f349/purama-ai
+
