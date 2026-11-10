@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import { useAuth } from './useAuth';
 import { isSuperAdmin } from '@/lib/constants';
-import { getPlan, type Plan, type PlanId } from '@/lib/plans';
+import { getPlan, type PlanId } from '@/lib/plans';
 
 export interface SubscriptionInfo {
   planId: PlanId;
@@ -64,9 +64,11 @@ export function useSubscription() {
   }
 
   const row = query.data;
-  const isTrialing = row?.status === 'trialing' && !!row.trial_ends_at && new Date(row.trial_ends_at) > new Date();
+  const hasValidTrial = row?.status === 'trialing' && !!row.trial_ends_at && new Date(row.trial_ends_at) > new Date();
   const isActive = row?.status === 'active';
-  const planId: PlanId = row?.plan_type && (isActive || isTrialing) ? (row.plan_type as PlanId) : 'free';
+  const plan = getPlan(isActive || hasValidTrial ? row?.plan_type : 'free');
+  const planId = plan.id;
+  const isTrialing = hasValidTrial && planId !== 'free';
 
   return {
     planId,
@@ -77,7 +79,7 @@ export function useSubscription() {
     trialEndsAt: isTrialing ? row!.trial_ends_at : null,
     hasUsedTrial: row?.has_used_trial ?? false,
     isLoading: query.isLoading,
-    plan: getPlan(planId),
+    plan,
     refresh,
     hasSubscription: planId !== 'free',
     isStarter: planId === 'starter',

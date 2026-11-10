@@ -51,13 +51,11 @@ export function ReferralBanner() {
             </div>
             <div>
               <p className="font-medium">
-                🎉 Offre spéciale : <strong>-50%</strong> sur votre première année !
+                Invitation PURAMA : consultez les prix et conditions avant paiement.
               </p>
-              {referral.influencerName && (
-                <p className="text-sm opacity-90">
-                  Grâce à {referral.influencerName}
-                </p>
-              )}
+              <p className="text-sm opacity-90">
+                {referral.influencerName ? `Invitation de ${referral.influencerName}` : `Code : ${referral.code}`}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -67,7 +65,7 @@ export function ReferralBanner() {
               className="bg-white/20 hover:bg-white/30 text-white border-0"
               asChild
             >
-              <a href="/pricing">Profiter de l'offre</a>
+              <a href="/pricing">Voir les prix</a>
             </Button>
             <Button
               size="icon"

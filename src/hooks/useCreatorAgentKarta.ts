@@ -43,15 +43,16 @@ const agentTypeFor = (agentId: string) => `custom:${agentId}`;
 
 export function useCustomAgentKartaState(agentId: string | undefined) {
   const { user } = useAuth();
+  const userId = user?.id;
 
   return useQuery({
-    queryKey: ['custom-agent-karta-state', agentId],
-    enabled: !!user && !!agentId,
+    queryKey: ['custom-agent-karta-state', userId, agentId],
+    enabled: !!userId && !!agentId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('karta_agent_state')
         .select('*')
-        .eq('user_id', user!.id)
+        .eq('user_id', userId!)
         .eq('agent_type', agentTypeFor(agentId!))
         .maybeSingle();
 
@@ -65,17 +66,18 @@ export function useCustomAgentKartaState(agentId: string | undefined) {
  * la ligne est auto-créée (valeurs par défaut sûres : niveau 1, simulation) au 1er cycle si absente. */
 export function useUpdateCustomAgentKartaState(agentId: string | undefined) {
   const { user } = useAuth();
+  const userId = user?.id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (
       patch: Partial<Pick<CustomKartaState, 'is_enabled' | 'autonomy_level' | 'kill_switch' | 'simulation_mode'>>,
     ) => {
-      if (!user || !agentId) throw new Error('Non authentifié');
+      if (!userId || !agentId) throw new Error('Non authentifié');
 
       const { error } = await supabase.from('karta_agent_state').upsert(
         {
-          user_id: user.id,
+          user_id: userId,
           agent_type: agentTypeFor(agentId),
           ...patch,
           updated_at: new Date().toISOString(),
@@ -84,24 +86,28 @@ export function useUpdateCustomAgentKartaState(agentId: string | undefined) {
       );
 
       if (error) throw error;
+      // Bind cache invalidation to the owner of this write, even if the hook
+      // receives a new identity while the request is in flight.
+      return { userId, agentId };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['custom-agent-karta-state', agentId] });
+    onSuccess: (owner) => {
+      queryClient.invalidateQueries({ queryKey: ['custom-agent-karta-state', owner.userId, owner.agentId] });
     },
   });
 }
 
 export function useCustomAgentKartaRuns(agentId: string | undefined, limit = 20) {
   const { user } = useAuth();
+  const userId = user?.id;
 
   return useQuery({
-    queryKey: ['custom-agent-karta-runs', agentId, limit],
-    enabled: !!user && !!agentId,
+    queryKey: ['custom-agent-karta-runs', userId, agentId, limit],
+    enabled: !!userId && !!agentId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('karta_runs')
         .select('*')
-        .eq('user_id', user!.id)
+        .eq('user_id', userId!)
         .eq('agent_type', agentTypeFor(agentId!))
         .order('started_at', { ascending: false })
         .limit(limit);
@@ -115,16 +121,17 @@ export function useCustomAgentKartaRuns(agentId: string | undefined, limit = 20)
 /** Actions en attente de validation humaine pour cet agent créé (même mécanisme que les employés fixes). */
 export function useCustomAgentPendingActions(agentId: string | undefined) {
   const { user } = useAuth();
+  const userId = user?.id;
 
   return useQuery({
-    queryKey: ['custom-agent-pending-actions', agentId],
-    enabled: !!user && !!agentId,
+    queryKey: ['custom-agent-pending-actions', userId, agentId],
+    enabled: !!userId && !!agentId,
     refetchInterval: 15000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('karta_pending_actions')
         .select('*')
-        .eq('user_id', user!.id)
+        .eq('user_id', userId!)
         .eq('agent_type', agentTypeFor(agentId!))
         .eq('status', 'pending')
         .order('created_at', { ascending: false });

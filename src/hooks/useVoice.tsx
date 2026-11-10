@@ -10,6 +10,7 @@ import {
   type VoiceSettings,
 } from '@/lib/voice';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope } from '@/hooks/useRequestScope';
 import { createRequestScope, type RequestLease } from '@/lib/request-scope';
 
 export interface UseVoice {
@@ -30,7 +31,9 @@ export interface UseVoice {
 export function useVoice(): UseVoice {
   const { user } = useAuth();
   const userId = user?.id;
+  const captureScope = useRequestScope(JSON.stringify([userId]));
   const [operations] = useState(createRequestScope);
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
   const mountedRef = useRef(false);
   const [settings, setSettings] = useState<VoiceSettings>({ ...DEFAULT_VOICE_SETTINGS });
   const [loadingSettings, setLoadingSettings] = useState(true);
@@ -250,6 +253,7 @@ export function useVoice(): UseVoice {
   // Revoke operations before paint on account changes and on unmount.
   useLayoutEffect(() => {
     mountedRef.current = true;
+    saveQueueRef.current = Promise.resolve();
     cancelRecording();
     stopSpeaking();
     setSettings({ ...DEFAULT_VOICE_SETTINGS });
@@ -275,22 +279,33 @@ export function useVoice(): UseVoice {
   }, [operations, userId]);
 
   const updateSettings = useCallback(async (patch: Partial<VoiceSettings>) => {
-    if (!mountedRef.current) return;
+    const isCurrent = captureScope();
+    if (!mountedRef.current || !isCurrent()) return;
+    const changes = { ...patch };
     operations.cancel('settings');
     if (!userId) {
-      setSettings(prev => ({ ...prev, ...patch }));
+      setSettings(prev => ({ ...prev, ...changes }));
       setLoadingSettings(false);
       return;
     }
-    const lease = operations.begin('settings');
-    if (!lease) return;
-    try {
-      const next = await saveVoiceSettings(userId, patch);
-      if (lease.current()) setSettings(next);
-    } finally {
-      if (lease.current()) { setLoadingSettings(false); lease.finish(); }
-    }
-  }, [operations, userId]);
+    // Serialize server writes as well as UI updates. A queued write belongs to
+    // the lifetime that requested it, including an A -> B -> A account cycle.
+    const operation = saveQueueRef.current.then(async () => {
+      if (!isCurrent()) return;
+      const lease = operations.begin('settings');
+      if (!lease) return;
+      try {
+        const next = await saveVoiceSettings(userId, changes);
+        if (lease.current() && isCurrent()) setSettings(next);
+      } catch (error) {
+        if (isCurrent()) throw error;
+      } finally {
+        if (lease.current()) { setLoadingSettings(false); lease.finish(); }
+      }
+    });
+    saveQueueRef.current = operation.catch(() => {});
+    await operation;
+  }, [captureScope, operations, userId]);
 
   useEffect(() => {
     if (!settings.enabled) { cancelRecording(); stopSpeaking(); }

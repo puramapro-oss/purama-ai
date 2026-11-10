@@ -285,8 +285,6 @@ export function useReferralTracking() {
 
 // Admin hook for managing all influencers
 export function useInfluencerAdmin() {
-  const queryClient = useQueryClient();
-
   const { data: allInfluencers = [], isLoading } = useQuery({
     queryKey: ['admin-influencers'],
     queryFn: async () => {
@@ -313,29 +311,9 @@ export function useInfluencerAdmin() {
     },
   });
 
-  const markCommissionPaid = useMutation({
-    mutationFn: async (commissionId: string) => {
-      const { error } = await supabase
-        .from('commissions')
-        .update({
-          status: 'paid',
-          payment_date: new Date().toISOString(),
-        })
-        .eq('id', commissionId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-commissions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-influencers'] });
-      toast.success('Commission marquée comme payée');
-    },
-  });
-
   return {
     allInfluencers,
     allCommissions,
     isLoading,
-    markCommissionPaid,
   };
 }

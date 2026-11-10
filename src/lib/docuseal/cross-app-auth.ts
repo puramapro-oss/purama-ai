@@ -46,6 +46,11 @@ export async function verifyCrossAppJwt(
   const parts = token.split('.');
   if (parts.length !== 3) throw new Error('Invalid JWT format');
   const [encodedHeader, encodedPayload, encodedSignature] = parts;
+  const header: unknown = JSON.parse(new TextDecoder().decode(base64UrlDecode(encodedHeader)));
+  if (typeof header !== 'object' || header === null || Array.isArray(header)
+    || !('alg' in header) || header.alg !== 'HS256') {
+    throw new Error('Invalid JWT alg');
+  }
 
   const signingInput = `${encodedHeader}.${encodedPayload}`;
   const receivedSig = base64UrlDecode(encodedSignature);

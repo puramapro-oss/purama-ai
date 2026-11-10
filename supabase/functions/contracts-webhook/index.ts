@@ -2,7 +2,6 @@
 // Receives DocuSeal webhooks on submission lifecycle events.
 // Authenticates Bearer or exact-body HMAC, updates contracts and acknowledges OTS delivery.
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
@@ -18,7 +17,7 @@ interface WebhookPayload {
   data: Record<string, unknown>;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
   if (req.method !== "POST") {
     const response = errorResponse("Method not allowed", 405);

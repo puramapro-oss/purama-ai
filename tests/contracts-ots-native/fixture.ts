@@ -1,6 +1,11 @@
-import OpenTimestamps from "../../node_modules/opentimestamps/index.js";
-import notary from "../../node_modules/opentimestamps/src/notary.js";
-import calendar from "../../node_modules/opentimestamps/src/calendar.js";
+import DetachedTimestampFile from "../../node_modules/opentimestamps/src/detached-timestamp-file.js";
+import Ops from "../../node_modules/opentimestamps/src/ops.js";
+import Context from "../../node_modules/opentimestamps/src/context.js";
+import Timestamp from "../../node_modules/opentimestamps/src/timestamp.js";
+import Notary from "../../node_modules/opentimestamps/src/notary.js";
+import { createOtsClient, type OtsLibrary } from "../../src/lib/ots-core.ts";
+import type { OtsContract } from "../../supabase/functions/_shared/ots-contract.ts";
+const library = { DetachedTimestampFile, Ops, Context, Timestamp, Notary };
 
 // Network and database ports only. The tests import the actual edge handlers.
 export const SERVICE = "fixture-service-credential";
@@ -11,10 +16,12 @@ export const CONTRACT = "33333333-3333-4333-8333-333333333333";
 export const PDF = new TextEncoder().encode("%PDF-1.7 synthetic signed document");
 export const handlers: Array<(req: Request) => Promise<Response>> = [];
 export function serve(handler: (req: Request) => Promise<Response>) { handlers.push(handler); }
+// Capture registration in the isolated Deno worker; no server is started.
+Object.defineProperty(Deno, "serve", { value: serve });
 
 type FixtureRow = Record<string, unknown>;
 type FixtureResult = {
-  data: FixtureRow | FixtureRow[] | null;
+  data: FixtureRow | FixtureRow[] | OtsContract | null;
   error: { message: string } | null;
 };
 
@@ -131,26 +138,14 @@ export function createClient(_url: string, key: string, options?: { global?: { h
   };
 }
 
-// Reuse the actual locked 0.4.9 implementation in native Deno. Only calendar
-// I/O is replaced; real Merkle construction, attestations and serialization run.
-const OTS = {
-  ...OpenTimestamps,
-  stamp: async (detached: unknown) => {
-    state.stampCalls++;
-    const original = calendar.RemoteCalendar.prototype.submit;
-    calendar.RemoteCalendar.prototype.submit = async (commitment: number[]) => {
-      if (state.allCalendarsFail) throw new Error("fixture-calendar-unavailable");
-      const result = OpenTimestamps.DetachedTimestampFile.fromHash(
-        new OpenTimestamps.Ops.OpSHA256(), commitment,
-      ).timestamp;
-      result.attestations.push(new notary.PendingAttestation("https://alice.btc.calendar.opentimestamps.org"));
-      return result;
-    };
-    try { await OpenTimestamps.stamp(detached); }
-    finally { calendar.RemoteCalendar.prototype.submit = original; }
-  },
+// Execute the portable production transport and actual locked upstream primitives.
+// Only HTTP responses are simulated; no parsing, digest or attestation assertion is stubbed.
+const actual = createOtsClient(library as OtsLibrary);
+export const ots = {
+  ...actual,
+  stampDigest: async (hash: Uint8Array) => { state.stampCalls++; return actual.stampDigest(hash); },
 };
-export default OTS;
+export default library;
 
 export function installNetworkFixture() {
   globalThis.fetch = async (input: string | URL | Request, init?: RequestInit) => {
@@ -167,7 +162,14 @@ export function installNetworkFixture() {
       state.afterPdf?.();
       return new Response(PDF, { headers: { "Content-Type": "application/pdf", "Content-Length": String(PDF.length) } });
     }
-    if (url.endsWith("/digest")) { state.stampCalls++; return new Response(new Uint8Array([1, 2, 3])); }
+    if (url.endsWith("/digest")) {
+      if (state.allCalendarsFail) throw new Error("fixture-calendar-unavailable");
+      if (!(init?.body instanceof Uint8Array)) throw new Error("Expected a binary OTS commitment");
+      const timestamp = DetachedTimestampFile.fromHash(new Ops.OpSHA256(), Array.from(init.body)).timestamp;
+      timestamp.attestations.push(new Notary.PendingAttestation("https://alice.btc.calendar.opentimestamps.org"));
+      const output = new Context.StreamSerialization(); timestamp.serialize(output);
+      return new Response(new Uint8Array(output.getOutput()));
+    }
     if (url.includes("/timestamp/")) return new Response(null, { status: 404 });
     if (url.startsWith("https://blockstream.info/api/block-height/")) return new Response("cd".repeat(32));
     if (url.startsWith("https://blockstream.info/api/block/")) {

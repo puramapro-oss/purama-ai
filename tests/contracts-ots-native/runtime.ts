@@ -1,6 +1,6 @@
 // Explicitly executed by Deno; the filename avoids Playwright test discovery.
 import { handlers, reset, state, SERVICE, ANON, CONTRACT, ADMIN, PDF, installNetworkFixture } from "./fixture.ts";
-import OpenTimestamps from "../../node_modules/opentimestamps/index.js";
+import OpenTimestamps from "./fixture.ts";
 
 Deno.env.set("SUPABASE_URL", "https://supabase.fixture.invalid");
 Deno.env.set("SUPABASE_SERVICE_ROLE_KEY", SERVICE);
@@ -84,10 +84,12 @@ Deno.test("native authorized stamper respects cancellation before reading its bo
 });
 for (const url of ["https://docuseal.fixture.invalid/signed.pdf","https://docuseal.fixture.invalid.attacker.invalid/signed.pdf","https://storage.fixture.invalid/signed.pdf"]) {
   Deno.test(`native PDF fetch protects exact token origin and redirects: ${url}`,async()=>{
-    reset();state.pdfUrl=url;equal((await stamp(request(SERVICE))).status,200);
-    const fetched=state.requests.find(x=>x.url===url)!;
-    equal(fetched.redirect,"error");
-    equal(fetched.token,new URL(url).origin==="https://docuseal.fixture.invalid"?"fixture-docuseal-private-token":null);
+    reset();state.pdfUrl=url;
+    const trusted=new URL(url).origin==="https://docuseal.fixture.invalid";
+    equal((await stamp(request(SERVICE))).status,trusted?200:502);
+    const fetched=state.requests.find(x=>x.url===url);
+    if(trusted){equal(fetched?.redirect,"error");equal(fetched?.token,"fixture-docuseal-private-token");}
+    else {equal(fetched,undefined);equal(state.stampCalls,0);equal(state.writes.length,0);}
   });
 }
 for (const url of ["http://storage.fixture.invalid/signed.pdf","https://user@storage.fixture.invalid/signed.pdf","data:application/pdf;base64,AA=="]) {
@@ -109,7 +111,7 @@ Deno.test("native real library soft failure cannot persist an unattested proof",
 });
 for (const failure of ["pdfFailure","updateFailure","eventsFailure"] as const) {
   Deno.test(`native failure ${failure} is not reported as success`,async()=>{
-    reset();state[failure]=true;const response=await stamp(request(SERVICE));equal(response.status,500);
+    reset();state[failure]=true;const response=await stamp(request(SERVICE));equal(response.status,failure==="pdfFailure"?502:500);
     equal((await response.text()).includes("fixture-private"),false);
   });
 }

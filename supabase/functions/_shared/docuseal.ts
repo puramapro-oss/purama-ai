@@ -22,11 +22,87 @@ export class DocusealError extends Error {
   }
 }
 
+/** Read-only metadata: one request, a total 10s deadline and at most 1 MiB.
+ * Writes keep their existing transport: an uncertain write cannot be retried
+ * or interpreted as absent merely because this read budget has expired.
+ */
+async function readDocusealJson<T>(path: string): Promise<T> {
+  if (!DOCUSEAL_TOKEN) throw new DocusealError("DocuSeal credential unavailable", 503, null);
+  const controller = new AbortController();
+  const deadline = performance.now() + 10_000;
+  let response: Response | undefined;
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  let rejectDeadline: (error: DocusealError) => void = () => {};
+  const expired = new Promise<never>((_, reject) => { rejectDeadline = reject; });
+  void expired.catch(() => {});
+  const timeoutError = () => new DocusealError("DocuSeal read deadline exceeded", 504, null);
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; rejectDeadline(timeoutError()); controller.abort(); }, 10_000);
+  const bounded = async <V>(work: Promise<V>): Promise<V> => {
+    if (performance.now() >= deadline) throw timeoutError();
+    const value = await Promise.race([work, expired]);
+    if (performance.now() >= deadline) throw timeoutError();
+    return value;
+  };
+  const cancel = (body: ReadableStream<Uint8Array> | null | undefined) => {
+    try { void Promise.resolve(body?.cancel()).catch(() => {}); } catch { /* Best effort, never a second wait. */ }
+  };
+  try {
+    response = await bounded<Response>(fetch(`${DOCUSEAL_URL}${path}`, {
+      method: "GET",
+      headers: { "X-Auth-Token": DOCUSEAL_TOKEN, "Content-Type": "application/json", "Accept": "application/json" },
+      redirect: "error", credentials: "omit", signal: controller.signal,
+    }).then(value => { if (controller.signal.aborted) cancel(value.body); return value; }));
+    if (response.redirected) throw new DocusealError("DocuSeal redirect rejected", 502, null);
+    const maximum = 1024 * 1024;
+    const declared = response.headers.get("content-length");
+    if (declared !== null && (!/^\d+$/.test(declared) || !Number.isSafeInteger(Number(declared)) || Number(declared) > maximum)) {
+      throw new DocusealError("DocuSeal response size rejected", 502, null);
+    }
+    if (response.status === 204) return {} as T;
+    reader = response.body?.getReader();
+    const decoder = new TextDecoder("utf-8", { fatal: true });
+    const parts: string[] = [];
+    let bytes = 0, emptyChunks = 0;
+    while (reader) {
+      const part = await bounded(reader.read());
+      if (part.done) break;
+      bytes += part.value.byteLength;
+      if (bytes > maximum || (part.value.byteLength === 0 && ++emptyChunks > 64)) {
+        throw new DocusealError("DocuSeal response size rejected", 502, null);
+      }
+      parts.push(decoder.decode(part.value, { stream: true }));
+    }
+    parts.push(decoder.decode());
+    const text = parts.join("");
+    let data: unknown;
+    try { data = JSON.parse(text); }
+    catch {
+      if (response.ok) throw new DocusealError("Invalid DocuSeal JSON response", 502, null);
+      data = text;
+    }
+    if (!response.ok) throw new DocusealError(`DocuSeal GET ${path} → ${response.status}`, response.status, data);
+    return data as T;
+  } catch (error) {
+    controller.abort();
+    if (reader) {
+      try { void Promise.resolve(reader.cancel()).catch(() => {}); } catch { /* The deadline also bounds cleanup. */ }
+    } else cancel(response?.body);
+    if (timedOut || performance.now() >= deadline) throw timeoutError();
+    if (error instanceof DocusealError) throw error;
+    throw new DocusealError("DocuSeal read unavailable", 502, null);
+  } finally {
+    clearTimeout(timer);
+    try { reader?.releaseLock(); } catch { /* A pending read is already observed by the deadline race. */ }
+  }
+}
+
 export async function docusealFetch<T>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   path: string,
   body?: unknown,
 ): Promise<T> {
+  if (method === "GET") return readDocusealJson<T>(path);
   const res = await fetch(`${DOCUSEAL_URL}${path}`, {
     method,
     headers: {
@@ -88,6 +164,11 @@ export async function verifyCrossAppJwt(
   const parts = token.split(".");
   if (parts.length !== 3) throw new Error("Invalid JWT format");
   const [encHeader, encPayload, encSig] = parts;
+  const header: unknown = JSON.parse(new TextDecoder().decode(base64UrlDecode(encHeader)));
+  if (typeof header !== "object" || header === null || Array.isArray(header)
+    || !("alg" in header) || header.alg !== "HS256") {
+    throw new Error("Invalid JWT alg");
+  }
   const signingInput = `${encHeader}.${encPayload}`;
 
   const receivedSig = base64UrlDecode(encSig);
@@ -99,11 +180,21 @@ export async function verifyCrossAppJwt(
   if (!valid) throw new Error("Invalid JWT signature");
 
   const payloadJson = new TextDecoder().decode(base64UrlDecode(encPayload));
-  const payload = JSON.parse(payloadJson) as CrossAppJwtPayload;
+  const payloadRaw: unknown = JSON.parse(payloadJson);
+  if (typeof payloadRaw !== "object" || payloadRaw === null || Array.isArray(payloadRaw)) {
+    throw new Error("Invalid JWT payload");
+  }
+  const payload = payloadRaw as Partial<CrossAppJwtPayload>;
   if (payload.aud !== "purama-contracts-hub") throw new Error("Invalid JWT aud");
+  if (typeof payload.iss !== "string" || payload.iss.trim().length === 0) throw new Error("Invalid JWT iss");
+  if (typeof payload.app_slug !== "string" || payload.app_slug.trim().length === 0) throw new Error("Invalid JWT app_slug");
+  if (typeof payload.iat !== "number" || !Number.isFinite(payload.iat)) throw new Error("Invalid JWT iat");
+  if (typeof payload.exp !== "number" || !Number.isFinite(payload.exp)) throw new Error("Invalid JWT exp");
+  if (payload.jti !== undefined && typeof payload.jti !== "string") throw new Error("Invalid JWT jti");
   const now = Math.floor(Date.now() / 1000);
   if (payload.exp + 30 < now) throw new Error("JWT expired");
-  return payload;
+  if (payload.iat - 30 > now) throw new Error("JWT iat in future");
+  return payload as CrossAppJwtPayload;
 }
 
 async function hmacSha256Bytes(secret: string, data: string): Promise<Uint8Array> {

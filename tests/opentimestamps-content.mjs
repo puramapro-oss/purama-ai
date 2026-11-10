@@ -1,76 +1,7 @@
 import assert from 'node:assert/strict';
-import { createHash, webcrypto } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
-import vm from 'node:vm';
+import { createHash } from 'node:crypto';
 import test from 'node:test';
-import ts from 'typescript';
-import OpenTimestamps from 'opentimestamps';
-
-const require = createRequire(import.meta.url);
-const { PendingAttestation } = require('opentimestamps/src/notary.js');
-const { RemoteCalendar } = require('opentimestamps/src/calendar.js');
-const Timestamp = require('opentimestamps/src/timestamp.js');
-const libRoot = fileURLToPath(new URL('../src/lib/', import.meta.url));
-const calendar = 'https://alice.btc.calendar.opentimestamps.org';
-const pdf = new Uint8Array([37, 80, 68, 70, 0, 128, 255, 10]);
-const digest = bytes => createHash('sha256').update(bytes).digest('hex');
-
-// Execute the existing TypeScript libraries. The real OpenTimestamps library
-// builds/serializes its nonce and operation tree; only calendar I/O is replaced.
-async function library({ allCalendarsFail = false, withWebCrypto = true, withBuffer = true } = {}) {
-  const provider = {
-    ...OpenTimestamps,
-    stamp: async detached => {
-      const original = RemoteCalendar.prototype.submit;
-      RemoteCalendar.prototype.submit = async commitment => {
-        if (allCalendarsFail) throw new Error('calendar unavailable');
-        const timestamp = new Timestamp(commitment);
-        timestamp.attestations.push(new PendingAttestation(calendar));
-        return timestamp;
-      };
-      try { await OpenTimestamps.stamp(detached); } finally { RemoteCalendar.prototype.submit = original; }
-    },
-    // Keep the actual verify() digest comparison. No block/chain verification or
-    // calendar upgrade is attempted: this fixture remains explicitly pending.
-    upgradeTimestamp: async () => {},
-    verifyTimestamp: async () => ({}),
-  };
-  const context = vm.createContext({
-    TextEncoder, Uint8Array, ArrayBuffer, atob, btoa,
-    ...(withBuffer ? { Buffer } : {}),
-    ...(withWebCrypto ? { crypto: webcrypto } : {}),
-  });
-  const cache = new Map();
-  function load(file) {
-    if (cache.has(file)) return cache.get(file);
-    const source = ts.transpileModule(readFileSync(file, 'utf8'), {
-      fileName: file,
-      compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
-    }).outputText;
-    const module = new vm.SourceTextModule(source, {
-      context, identifier: file,
-      importModuleDynamically: async specifier => {
-        assert.equal(specifier, 'crypto');
-        return import('node:crypto');
-      },
-    });
-    cache.set(file, module);
-    return module;
-  }
-  const entry = load(resolve(libRoot, 'docuseal/ots-stamper.ts'));
-  await entry.link((specifier, parent) => {
-    if (specifier === 'opentimestamps') {
-      return new vm.SyntheticModule(['default'], function () { this.setExport('default', provider); }, { context });
-    }
-    assert.ok(specifier.startsWith('.'));
-    return load(resolve(dirname(parent.identifier), `${specifier}.ts`));
-  });
-  await entry.evaluate();
-  return { contracts: entry.namespace, ots: cache.get(resolve(libRoot, 'opentimestamps.ts')).namespace };
-}
+import { library, OpenTimestamps, PendingAttestation, calendar, pdf, digest } from './ots-content-fixture.mjs';
 
 for (const withWebCrypto of [true, false]) {
   test(`hashContent preserves binary bytes and the view boundary with WebCrypto=${withWebCrypto}`, async () => {

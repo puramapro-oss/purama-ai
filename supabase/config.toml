@@ -29,3 +29,15 @@ verify_jwt = false
 
 [functions.ai-demo]
 verify_jwt = false
+
+# User/service JWTs are still checked by the platform and by each OTS handler.
+[functions.contracts-ots-stamp]
+verify_jwt = true
+
+[functions.contracts-ots-verify]
+verify_jwt = true
+
+# DocuSeal presents its dedicated shared secret, not a Supabase JWT.
+# The handler fails closed if the secret is absent or does not match.
+[functions.contracts-webhook]
+verify_jwt = false

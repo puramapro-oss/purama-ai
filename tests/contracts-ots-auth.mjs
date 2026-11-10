@@ -29,8 +29,9 @@ function harness(kind, options = {}) {
     DOCUSEAL_WEBHOOK_SECRET: WEBHOOK,
     ...options.env,
   };
-  const contract = { id: CONTRACT, user_id: USER, status: kind === 'contracts-ots-stamp' ? 'signed' : 'sent', app_slug: 'fixture',
+  const contract = { id: CONTRACT, user_id: USER, status: kind === 'contracts-webhook' ? 'sent' : 'signed', app_slug: 'fixture',
     template_slug: 'fixture', docuseal_submission_id: 123, ots_stamp_hash: null,
+    ots_proof: null, ots_verified_at: null, ots_block_height: null, ots_btc_timestamp: null,
     pdf_original_url: null };
   function createClient(url, credential, config) {
     calls.clients.push({ url, credentialKind: credential === SERVICE ? 'service' : 'other', schema: config?.db?.schema });
@@ -44,15 +45,14 @@ function harness(kind, options = {}) {
             error: options.authError ? { message: 'invalid identity' } : null };
         },
       },
-      async rpc(name, args) {
-        calls.roles.push({ name, args });
+      schema(schema) {
+        assert.equal(schema, 'public');
+        return { rpc: async (name, args) => {
+        calls.roles.push({ name, args, schema });
         if (options.roleThrows) throw new Error('simulated role outage');
         return { data: Object.hasOwn(options, 'roleValue') ? options.roleValue : false,
           error: options.roleError ? { message: 'role lookup failed' } : null };
-      },
-      schema(name) {
-        assert.equal(name, 'public', 'administrator authority must use public.has_role');
-        return { rpc: (rpcName, args) => this.rpc(rpcName, args) };
+        } };
       },
       from(table) {
         calls.tables.push(table);
@@ -63,20 +63,28 @@ function harness(kind, options = {}) {
         function execute(single = false) {
           if (resolved) return resolved;
           if (operation !== 'select') calls.writes.push({ table, operation, value, filters: [...filters] });
-          const updated = operation === 'update' && table === 'contracts'
-            && filters.every(([key, expected]) => contract[key] === expected);
-          if (updated) Object.assign(contract, value);
-          const signer = { id: 'fixture-signer', contract_id: CONTRACT, docuseal_submitter_id: 456 };
-          const signerUpdated = operation === 'update' && table === 'contract_signers'
-            && filters.every(([key, expected]) => signer[key] === expected);
-          const data = updated ? { id: contract.id } : signerUpdated ? { id: signer.id } : operation !== 'select' ? null : table === 'contracts'
-            ? (single ? { ...contract } : [{ ...contract }]) : table === 'contract_signers' ? [{ signed: true }] : null;
+          let data = null;
+          if (table === 'contracts') {
+            // Model both eq() and is(null) filters before confirming a row.
+            // Reads return a snapshot so a later write cannot mutate that snapshot.
+            const matches = filters.every(([key, expected]) => contract[key] === expected);
+            if (operation === 'select') data = matches ? (single ? { ...contract } : [{ ...contract }]) : (single ? null : []);
+            else if (operation === 'update' && matches) {
+              Object.assign(contract, value);
+              data = { id: CONTRACT };
+            }
+          } else if (table === 'contract_signers') {
+            const signer = { id: 'fixture-signer-456', contract_id: CONTRACT, docuseal_submitter_id: 456 };
+            data = operation === 'select' ? [{ signed: true }]
+              : filters.every(([key, expected]) => signer[key] === expected) ? { id: signer.id } : null;
+          }
           resolved = Promise.resolve({ data, error: null });
           return resolved;
         }
         const query = {
           select() { return query; },
           eq(key, val) { filters.push([key, val]); return query; },
+          is(key, val) { filters.push([key, val]); return query; },
           maybeSingle() { return execute(true); },
           update(row) { operation = 'update'; value = row; return query; },
           insert(row) { operation = 'insert'; value = row; return query; },
@@ -86,10 +94,11 @@ function harness(kind, options = {}) {
       },
     };
   }
-  const providerFetch = async (input, init = {}) => {
-    const url = String(input);
+  const providerFetch = async (url, init = {}) => {
+    url = String(url);
     calls.fetches.push({ url, init });
     if (url === 'https://docuseal.example.invalid/api/submissions/123/documents'
+      || url === 'https://docuseal.example.invalid/api/submissions/123/documents?merge=true'
       || url === 'https://docuseal.example.invalid/api/submissions/123') {
       return Response.json({ combined_document_url: 'https://docuseal.example.invalid/signed.pdf' });
     }
@@ -102,10 +111,10 @@ function harness(kind, options = {}) {
   const ots = {
     Ops: { OpSHA256: class {} },
     DetachedTimestampFile: { fromHash(_operation, bytes) {
-      return { hash: new Uint8Array(bytes), timestamp: { allAttestations: () => new Map([['fixture-pending', true]]) },
-        serializeToBytes: () => new Uint8Array([1, 2, 3]) };
+      return { hash: new Uint8Array(bytes), serializeToBytes: () => new Uint8Array([1, 2, 3]) };
     } },
     async stamp(detached) { calls.stamps.push(detached.hash); },
+    async stampDigest(hash) { calls.stamps.push(hash); return 'AQID'; },
   };
   const cache = new Map();
   function load(file) {
@@ -120,13 +129,15 @@ function harness(kind, options = {}) {
       if (specifier.includes('/http/server.ts')) return { serve: (value) => { handler = value; } };
       if (specifier.startsWith('npm:@supabase/supabase-js')) return { createClient };
       if (specifier.startsWith('npm:opentimestamps')) return ots;
+      if (specifier.endsWith('/ots-library.ts')) return { ots };
       if (specifier.startsWith('.')) return load(resolve(dirname(file), specifier));
       throw new Error('Unexpected import blocked by the test');
     };
     runInNewContext(compiled, { module, exports: module.exports, require: requireModule,
-      Deno: { env: { get: (name) => env[name] } },
-      fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL, performance, AbortController,
-      TextEncoder, TextDecoder, Uint8Array, atob, btoa, setTimeout, clearTimeout,
+      Deno: { env: { get: (name) => env[name] }, serve: (value) => { handler = value; } },
+      fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL,
+      TextEncoder, TextDecoder, Uint8Array, ArrayBuffer, atob, btoa,
+      AbortController, performance, setTimeout, clearTimeout,
       console: { error() {}, warn() {}, log() {} },
     }, { filename: file });
     return module.exports;
@@ -218,12 +229,18 @@ test('stamp: a verified administrator keeps the complete existing stamping path'
   const h = harness('contracts-ots-stamp', { user: true, roleValue: true });
   const response = await h.handler(stampRequest());
   assert.equal(response.status, 200);
-  assert.equal(h.calls.auth.length, 1);
-  assert.equal(h.calls.roles.length, 1);
+  assert.equal(h.calls.auth.length, 3, 'identity rechecked after PDF retrieval and before persistence');
+  assert.equal(h.calls.roles.length, 3, 'administrator role rechecked at all three boundaries');
+  assert.ok(h.calls.roles.every(call => call.schema === 'public'), 'every authorization check uses public.has_role');
   assert.equal(h.calls.stamps.length, 1);
   const update = h.calls.writes.find(x => x.table === 'contracts');
   assert.equal(update.value.ots_stamp_hash, createHash('sha256').update(PDF).digest('hex'));
   assert.equal(update.value.ots_proof, 'AQID');
+  for (const [field, expected] of [['id', CONTRACT], ['user_id', USER], ['status', 'signed'],
+    ['docuseal_submission_id', 123], ['ots_stamp_hash', null], ['ots_proof', null]]) {
+    assert.ok(update.filters.some(([name, value]) => name === field && value === expected),
+      `proof persistence must retain the original ${field} guard`);
+  }
   assert.equal(h.calls.writes.filter(x => x.table === 'contract_events').length, 1);
 });
 test('stamp: the exact configured service bearer preserves the webhook contract', async () => {

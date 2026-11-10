@@ -1,24 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { webcrypto, createHmac } from 'node:crypto';
-import vm from 'node:vm';
 import test from 'node:test';
-import ts from 'typescript';
-import OpenTimestamps from 'opentimestamps';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const { PendingAttestation } = require('opentimestamps/src/notary.js');
-const { RemoteCalendar } = require('opentimestamps/src/calendar.js');
-const functionsRoot = fileURLToPath(new URL('../supabase/functions/', import.meta.url));
-const contractId = '00000000-0000-4000-8000-000000000001';
-const serviceKey = 'test-service-never-live';
-const webhookSecret = 'test-webhook-never-live';
-const docusealToken = 'test-docuseal-never-live';
-const docusealOrigin = 'https://docuseal.example.invalid';
-const defaultPdfUrl = 'https://files.example.invalid/signed.pdf';
+import { createHmac } from 'node:crypto';
+import { harness, request, noStampEffects, OpenTimestamps, contractId, serviceKey, webhookSecret, docusealToken, docusealOrigin, defaultPdfUrl, foreignPdfUrl } from './ots-edge-fixture.mjs';
 
 for (const authorization of [null, 'Bearer wrong', `Bearer ${webhookSecret}x`, `Bearer ${webhookSecret.slice(0, -1)}x`]) {
   test(`unauthorized webhook never reads body: ${authorization}`, async () => {
@@ -51,176 +34,6 @@ for (const authorization of [null, 'Bearer wrong', `Bearer ${webhookSecret}x`, `
   });
 }
 
-// Run the complete, actual Edge entry points and local helper modules. Only
-// external services and serve() are substituted. No provider request is sent.
-async function harness(options = {}, entry = 'contracts-ots-stamp') {
-  let handler;
-  const calls = { clients: [], auth: [], roles: [], contractReads: [], updates: [], events: [],
-    docs: [], pdf: [], stamps: [], internal: [], errors: [] };
-  const contract = options.contractState ?? (options.noContract ? null : {
-    id: contractId, user_id: 'contract-owner', status: options.status ?? 'signed',
-    docuseal_submission_id: options.noSubmission ? null : 42,
-    ots_stamp_hash: 'old-hash', ots_proof: 'old-proof', ots_verified_at: '2026-10-01T00:00:00Z',
-    ots_block_height: 123, ots_btc_timestamp: '2026-10-01T00:00:00Z', ...options.contract,
-  });
-  const environment = {
-    SUPABASE_URL: 'https://db.example.invalid', SUPABASE_SERVICE_ROLE_KEY: serviceKey,
-    DOCUSEAL_API_URL: docusealOrigin, DOCUSEAL_API_TOKEN: docusealToken,
-    DOCUSEAL_WEBHOOK_SECRET: webhookSecret, ...options.env,
-  };
-  const pdfUrl = options.pdfUrl ?? defaultPdfUrl;
-  const createClient = (url, key, settings) => {
-    calls.clients.push({ url, key, settings });
-    return {
-      auth: { getUser: async token => {
-        calls.auth.push(token);
-        if (options.authThrows) throw new Error('provider-private-auth-detail');
-        const id = token === 'admin-token' ? 'server-admin' : token === 'member-token' ? 'ordinary-member' : null;
-        return { data: { user: id ? { id, user_metadata: { role: 'admin' } } : null },
-          error: options.authError ? { message: 'private-auth-detail' } : null };
-      } },
-      rpc: async (name, args) => {
-        assert.equal(name, 'has_role');
-        assert.equal(args._role, 'admin');
-        calls.roles.push([['user_id', args._user_id], ['role', args._role]]);
-        return {
-          data: args._user_id === 'server-admin' && !options.noRole && (options.role ?? 'admin') === 'admin',
-          error: options.roleError ? { message: 'private-role-detail' } : null,
-        };
-      },
-      schema(name) {
-        assert.equal(name, 'public', 'administrator authority must use public.has_role');
-        return { rpc: (rpcName, args) => this.rpc(rpcName, args) };
-      },
-      from: table => {
-        const filters = [];
-        let patch;
-        const execute = async () => {
-          if (table === 'user_roles') {
-            calls.roles.push(filters);
-            return { data: filters.some(([key, value]) => key === 'user_id' && value === 'server-admin') && !options.noRole
-              ? { role: options.role ?? 'admin' } : null, error: options.roleError ? { message: 'private-role-detail' } : null };
-          }
-          if (table === 'contracts' && patch) {
-            calls.updates.push({ filters, patch });
-            if (options.updateError) return { data: null, error: { message: 'private-update-detail' } };
-            const matches = contract && filters.every(([key, value]) => contract[key] === value);
-            if (!matches) return { data: null, error: null };
-            Object.assign(contract, patch);
-            return { data: { id: contract.id }, error: null };
-          }
-          if (table === 'contracts') {
-            calls.contractReads.push(filters);
-            return { data: contract ? { ...contract } : null, error: options.loadError ? { message: 'private-load-detail' } : null };
-          }
-          if (table === 'contract_signers') {
-            const signer = { id: 'fixture-signer', contract_id: contractId, docuseal_submitter_id: 7 };
-            return { data: patch ? filters.every(([key, value]) => signer[key] === value) ? { id: signer.id } : null : [{ signed: true }], error: null };
-          }
-          throw new Error(`Unexpected table: ${table}`);
-        };
-        const builder = {
-          select() { return builder; },
-          eq(key, value) { filters.push([key, value]); return builder; },
-          update(value) { patch = value; return builder; },
-          insert(value) {
-            assert.equal(table, 'contract_events');
-            calls.events.push(value);
-            return Promise.resolve({ error: options.eventError ? { message: 'private-event-detail' } : null });
-          },
-          maybeSingle: execute,
-          then(resolvePromise, rejectPromise) { return execute().then(resolvePromise, rejectPromise); },
-        };
-        return builder;
-      },
-    };
-  };
-  const context = vm.createContext({
-    Request, Response, Headers, URL, Uint8Array, TextEncoder, TextDecoder,
-    crypto: webcrypto, atob, btoa, setTimeout, clearTimeout, performance, AbortController,
-    console: { error: (...args) => calls.errors.push(args), warn() {}, log() {} },
-    Deno: { env: { get: key => environment[key] } },
-    fetch: async (input, init) => {
-      const url = String(input);
-      if (url === `${docusealOrigin}/api/submissions/42/documents`) {
-        calls.docs.push({ url, init });
-        return Response.json(options.noPdf ? {} : { combined_document_url: pdfUrl });
-      }
-      if (url === `${docusealOrigin}/api/submissions/42`) {
-        calls.docs.push({ url, init });
-        return Response.json({ combined_document_url: pdfUrl });
-      }
-      if (url === 'https://db.example.invalid/functions/v1/contracts-ots-stamp') {
-        calls.internal.push({ url, init });
-        if (options.internalHandler) return options.internalHandler(new Request(url, init));
-        return Response.json({ ok: true });
-      }
-      if (url !== pdfUrl) throw new Error(`Unexpected network destination: ${url}`);
-      calls.pdf.push({ url, init });
-      if (options.pdfThrows) throw new Error('provider-private-pdf-detail');
-      if (options.cancelDuringFetch) contract.status = 'cancelled';
-      if (options.replaceSubmissionDuringFetch) contract.docuseal_submission_id = 99;
-      return new Response(new Uint8Array([37, 80, 68, 70]), { status: options.pdfStatus ?? 200 });
-    },
-  });
-  const external = {
-    'https://deno.land/std@0.190.0/http/server.ts': { serve: value => { handler = value; } },
-    'npm:@supabase/supabase-js@2.91.0': { createClient },
-    'npm:opentimestamps@0.4.9': { default: {
-      ...OpenTimestamps,
-      stamp: async detached => {
-        calls.stamps.push(detached);
-        if (options.stampThrows) throw new Error('provider-private-stamp-detail');
-        if (options.allCalendarsFail) {
-          // Exercise the actual library's soft-failure behavior without network.
-          const original = RemoteCalendar.prototype.submit;
-          RemoteCalendar.prototype.submit = async () => { throw new Error('calendar unavailable'); };
-          try { await OpenTimestamps.stamp(detached); } finally { RemoteCalendar.prototype.submit = original; }
-          return;
-        }
-        detached.timestamp.attestations.push(new PendingAttestation('https://alice.btc.calendar.opentimestamps.org'));
-      },
-    } },
-  };
-  const cache = new Map();
-  function localModule(file) {
-    if (cache.has(file)) return cache.get(file);
-    const code = ts.transpileModule(readFileSync(file, 'utf8'), {
-      fileName: file,
-      compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
-    }).outputText;
-    const module = new vm.SourceTextModule(code, { context, identifier: file });
-    cache.set(file, module);
-    return module;
-  }
-  const module = localModule(resolve(functionsRoot, entry, 'index.ts'));
-  await module.link((specifier, parent) => {
-    if (external[specifier]) {
-      const exports = external[specifier];
-      return new vm.SyntheticModule(Object.keys(exports), function () {
-        for (const [name, value] of Object.entries(exports)) this.setExport(name, value);
-      }, { context });
-    }
-    const file = resolve(dirname(parent.identifier), specifier);
-    assert.ok(specifier.startsWith('.') && file.startsWith(functionsRoot), `Unexpected import: ${specifier}`);
-    return localModule(file);
-  });
-  await module.evaluate();
-  return { handler, calls, contract };
-}
-
-function request(token = 'admin-token', body = { contract_id: contractId }, method = 'POST') {
-  const headers = new Headers({ 'Content-Type': 'application/json' });
-  if (token !== null) headers.set('Authorization', `Bearer ${token}`);
-  return new Request('https://edge.example.invalid/stamp', {
-    method, headers, ...(method === 'POST' ? { body: typeof body === 'string' ? body : JSON.stringify(body) } : {}),
-  });
-}
-function noStampEffects(calls) {
-  for (const name of ['contractReads', 'docs', 'pdf', 'stamps', 'updates', 'events', 'internal']) {
-    assert.equal(calls[name].length, 0, `Unexpected ${name}`);
-  }
-}
 
 for (const token of [null, '', 'invalid-token', `${serviceKey}x`, 'fake.jwt.service_role']) {
   test(`rejects unauthenticated credential ${JSON.stringify(token)} before any contract effects`, async () => {
@@ -234,7 +47,7 @@ test('ordinary user cannot elevate via metadata, body identity or role', async (
   const response = await h.handler(request('member-token', { contract_id: contractId, user_id: 'server-admin', role: 'admin' }));
   assert.equal(response.status, 403);
   assert.deepEqual(h.calls.auth, ['member-token']);
-  assert.ok(h.calls.roles[0].some(([key, value]) => key === 'user_id' && value === 'ordinary-member'));
+  assert.equal(h.calls.roles[0].args._user_id, 'ordinary-member');
   noStampEffects(h.calls);
 });
 for (const [label, options, status] of [
@@ -296,12 +109,12 @@ for (const status of ['draft', 'sent', 'opened', 'declined', 'cancelled', 'expir
 }
 for (const [label, options, status] of [
   ['missing contract', { noContract: true }, 404],
-  ['database read error', { loadError: true }, 500],
-  ['missing submission', { noSubmission: true }, 400],
-  ['missing signed PDF', { noPdf: true }, 404],
+  ['database read error', { loadError: true }, 503],
+  ['missing submission', { noSubmission: true }, 409],
+  ['missing signed PDF', { noPdf: true }, 502],
   ['provider PDF error', { pdfStatus: 503 }, 502],
-  ['provider PDF exception', { pdfThrows: true }, 500],
-  ['provider stamp exception', { stampThrows: true }, 500],
+  ['provider PDF exception', { pdfThrows: true }, 502],
+  ['provider stamp exception', { stampThrows: true }, 502],
   ['proof write error', { updateError: true }, 500],
   ['audit write error', { eventError: true }, 500],
 ]) {
@@ -329,13 +142,17 @@ test('does not persist or report a pending proof when every calendar failed', as
   assert.equal(h.calls.updates.length + h.calls.events.length, 0);
   assert.equal(h.contract.ots_proof, 'old-proof');
 });
-for (const pdfUrl of [`${docusealOrigin}/signed.pdf`, `${docusealOrigin}.attacker.invalid/signed.pdf`, defaultPdfUrl]) {
-  test(`forwards PDF credentials only to the exact configured origin: ${pdfUrl}`, async () => {
+for (const pdfUrl of [defaultPdfUrl, `${docusealOrigin}.attacker.invalid/signed.pdf`, foreignPdfUrl]) {
+  test(`PDF credentials and requests are limited to the exact configured origin: ${pdfUrl}`, async () => {
     const h = await harness({ pdfUrl });
-    assert.equal((await h.handler(request())).status, 200);
-    const sent = new Headers(h.calls.pdf[0].init.headers);
-    assert.equal(sent.get('X-Auth-Token'), new URL(pdfUrl).origin === docusealOrigin ? docusealToken : null);
-    assert.equal(h.calls.pdf[0].init.redirect, 'error');
+    const trusted = new URL(pdfUrl).origin === docusealOrigin;
+    assert.equal((await h.handler(request())).status, trusted ? 200 : 502);
+    if (trusted) {
+      assert.equal(new Headers(h.calls.pdf[0].init.headers).get('X-Auth-Token'), docusealToken);
+      assert.equal(h.calls.pdf[0].init.redirect, 'error');
+    } else {
+      assert.equal(h.calls.pdf.length + h.calls.stamps.length + h.calls.updates.length, 0);
+    }
   });
 }
 for (const pdfUrl of ['http://files.example.invalid/signed.pdf', 'https://user@files.example.invalid/signed.pdf', 'data:application/pdf;base64,AA==']) {
@@ -398,7 +215,7 @@ for (const failure of ['pdfThrows', 'stampThrows']) {
   test(`provider-private details are absent from response and logs: ${failure}`, async () => {
     const h = await harness({ [failure]: true });
     const response = await h.handler(request());
-    assert.equal(response.status, 500);
+    assert.equal(response.status, 502);
     assert.doesNotMatch(await response.text(), /private-/);
     assert.doesNotMatch(h.calls.errors.map(args => args.map(String).join(' ')).join(' '), /private-/);
   });
