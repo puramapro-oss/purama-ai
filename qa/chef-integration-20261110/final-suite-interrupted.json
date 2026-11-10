@@ -1,9 +1,0 @@
-{
-  "status": "INTERRUPTED",
-  "finished_at": "2026-11-10T03:47:37.667089+00:00",
-  "session_exit_code": 130,
-  "reason": "Shared cgroup reached 8589877248 of 8589934592 bytes; cumulative oom_kill increased from 41 to 44 during this run. Hook/test deadlines were delayed beyond 72 s. Interrupted own exec session, no other task signalled.",
-  "causal_limit": "The memory and OOM counters cover the shared cgroup; individual killed processes are not identified.",
-  "test_totals": "Incomplete run; no complete count or PASS claimed",
-  "followup": "Separate SQL fixtures from test bodies, then validate all files with sequential isolated process batches."
-}

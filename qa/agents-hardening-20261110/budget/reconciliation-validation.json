@@ -1,0 +1,725 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-11-10T04:52:11.125977+00:00",
+  "base_pr": 27,
+  "base_commit": "5f8d23d46b1aaa103eccb944406eb3e189388c1c",
+  "donor_pr": 21,
+  "donor_commit": "b826af125ce296d3808d3b71b93fd084e63dbdb7",
+  "scope": "CHEF admission and claim-bound usage; no other PR21 runtime merged",
+  "runtime": {
+    "node": "v24.22.1",
+    "vitest": "5.0.3",
+    "typescript": "5.9.3",
+    "pglite": "0.5.8",
+    "os": "Linux",
+    "max_workers": 1
+  },
+  "baseline": {
+    "runtime_tests": 16,
+    "passed": 2,
+    "failed": 14,
+    "admission": {
+      "cap": 100,
+      "first_estimate": 70,
+      "first_receipt": null,
+      "second_estimate": 70,
+      "second_admitted": true
+    }
+  },
+  "final_tests": {
+    "tests": 980,
+    "passed": 980,
+    "failed": 0,
+    "pending": 0,
+    "files": 68,
+    "success": true
+  },
+  "new_migration": "karta/migrations/024_chef_claim_budget_reconciliation.sql",
+  "migration_order": "Existing base and 019/020, then existing 021/022/023, then additive 024. PR21 018 is NOT introduced into the migration directory.",
+  "upgrade_executed": "Exact PR21 018 source applied in isolated PGlite, active reservation created, then PR27 021/022/023 and new 024. Original reservation preserved; unknown receipt blocks second70 under100; receipt20 admits second70 and bills20 once.",
+  "historical_data_gate": "Unreserved capped historical claims and ambiguous mixed old cost receipts fail the transaction without resetting counters. Real historical data require operator reconciliation before migration.",
+  "source_sha256": {
+    "karta/migrations/024_chef_claim_budget_reconciliation.sql": "0d2dd0d725b80ff783928d5246b5b234e9a1d32510d4978a1df8e9634a4b5f6a",
+    "karta/src/chef/control-plane.ts": "c1e6d49247b1735abba43794b6417a2c11fbbfee986397e6b959bbe675988f10",
+    "karta/src/chef/supervisor.ts": "471f0e86af9c031cab49d6f0a2ea8d734921e1c778997c5df425e0121b83774c",
+    "karta/test/chefBudgetAccounting.test.ts": "1febc751e001e1b77217e113140093ef95c27d64bde40860c5322ed73d5a7dd8",
+    "karta/test/chefBudgetAdapter.test.ts": "53c08cb6a19e224ee19d0403661f2b1eaf221a43d87097b348f8c78aa9e54ca1",
+    "karta/test/chefBudgetMigration.test.ts": "894a2ac356a46b9ce09718ce9a7fc298a214c91621b1b419654f564542382cdd",
+    "karta/test/chefBudgetReservations.test.ts": "7907f27facd9305603a0871aef6132da62e8930357882cc857cf33e0e99d1b6c",
+    "karta/test/chefSupervisor.test.ts": "a06aea88e80dfdd4b9bf5581f816e254c911c949e9f0f63a21dbd7e293bbecc5",
+    "karta/test/chefVerificationGitIntegration.test.ts": "831840f0b3bd034c593f3cfbbfdf2d2bf0ad179369b01e4bc4262305c21548b0"
+  },
+  "preserved": {
+    "base": "5f8d23d46b1aaa103eccb944406eb3e189388c1c",
+    "files": [
+      {
+        "path": ".github/workflows/purama-chef-hardening.yml",
+        "unchanged": true,
+        "sha256": "c1d48e17da18af2cd464053f9d466d23e92cc26550f56aa68876f024d6fdb260"
+      },
+      {
+        "path": "package.json",
+        "unchanged": true,
+        "sha256": "ed5f45824875ff2fe7ea3a1d319d023f89e5af9d8a112515b4825e7e6821f057"
+      },
+      {
+        "path": "package-lock.json",
+        "unchanged": true,
+        "sha256": "7d6aa7a9cc26f6cdb8738d06eff6de1c3bcd77031ccd1ae5789ef3ba0d511d63"
+      },
+      {
+        "path": "tests/dependency-compat.cjs",
+        "unchanged": true,
+        "sha256": "bf273f26919c25e08c27cfb28757a015f88470dbf7a7f066fb8e67d050c478f3"
+      },
+      {
+        "path": "karta/migrations/019_karta_approval_parent_guard.sql",
+        "unchanged": true,
+        "sha256": "43d09f703d604a5eac3b10b68fede7367b9abb6eb904a469feb1c53ba4300849"
+      },
+      {
+        "path": "karta/migrations/020_execution_fingerprints.sql",
+        "unchanged": true,
+        "sha256": "2c6a11b6565cea29e3714d15ffee13ee30d148e25efa9ec9a6b5006224d78d0c"
+      },
+      {
+        "path": "karta/migrations/021_chef_budget_admission.sql",
+        "unchanged": true,
+        "sha256": "83f4dce22bbe6db490027b4645f5cf1628efa92907bf0833926eb886b1376863"
+      },
+      {
+        "path": "karta/migrations/022_chef_mission_estimates.sql",
+        "unchanged": true,
+        "sha256": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f"
+      },
+      {
+        "path": "karta/migrations/023_chef_process_quarantine.sql",
+        "unchanged": true,
+        "sha256": "997475e67e60519f4ec8f50a2a73d1795695cf7b44ce968f8afa955c337217fb"
+      },
+      {
+        "path": "karta/src/chef/process.ts",
+        "unchanged": true,
+        "sha256": "9487675a1eefc86da844a8f421b5150a63d5b64e115da8464042cfc1a1988895"
+      },
+      {
+        "path": "karta/src/chef/driver.ts",
+        "unchanged": true,
+        "sha256": "8758e958ecf06ab98509dcd025deb36f8f5d7ff230db77e65b0d94f54ab340ac"
+      },
+      {
+        "path": "karta/src/chef/worker-main.ts",
+        "unchanged": true,
+        "sha256": "aaf37a98265b58421738517ce7c9f794480c7f843be2e62bdab09befca9df852"
+      }
+    ]
+  },
+  "commands": {
+    "baseline-budget-runtime": {
+      "label": "baseline-budget-runtime",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef/karta",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/chefBudgetAccounting.test.ts",
+        "test/chefBudgetAdapter.test.ts",
+        "--config",
+        "vitest.reconcile.config.ts",
+        "--configLoader",
+        "runner",
+        "--maxWorkers",
+        "1",
+        "--testTimeout",
+        "30000",
+        "--hookTimeout",
+        "120000",
+        "--reporter=json",
+        "--outputFile",
+        "../.git/chef-reconcile-evidence/baseline-budget-runtime-vitest.json"
+      ],
+      "started_utc": "2026-11-10T04:38:05.860861+00:00",
+      "finished_utc": "2026-11-10T04:38:08.714872+00:00",
+      "duration_seconds": 2.854,
+      "exit_code": 1,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/baseline-budget-runtime.log",
+      "log_sha256": "ae2c6f41316e326e9958e598b1faeb05ac21dc0c324dc4066773de2bfbea6d6b"
+    },
+    "baseline-budget-admission": {
+      "label": "baseline-budget-admission",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+      "command": [
+        "node",
+        ".git/chef-reconcile-evidence/reproduce-admission.mjs"
+      ],
+      "started_utc": "2026-11-10T04:39:20.617588+00:00",
+      "finished_utc": "2026-11-10T04:39:24.623340+00:00",
+      "duration_seconds": 4.006,
+      "exit_code": 1,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/baseline-budget-admission.log",
+      "log_sha256": "4252b4412da6ab92248f305f9b60491a9eb6057d9d245f04e3bd62e71b133ee5"
+    },
+    "targeted-budget-tests": {
+      "label": "targeted-budget-tests",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef/karta",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/chefBudgetAccounting.test.ts",
+        "test/chefBudgetAdapter.test.ts",
+        "test/chefBudgetReservations.test.ts",
+        "test/chefBudgetMigration.test.ts",
+        "test/chefSupervisor.test.ts",
+        "test/chefVerificationGitIntegration.test.ts",
+        "--config",
+        "vitest.reconcile.config.ts",
+        "--configLoader",
+        "runner",
+        "--maxWorkers",
+        "1",
+        "--testTimeout",
+        "30000",
+        "--hookTimeout",
+        "120000",
+        "--reporter=json",
+        "--outputFile",
+        "../.git/chef-reconcile-evidence/targeted-budget-tests-vitest.json"
+      ],
+      "started_utc": "2026-11-10T04:43:50.593914+00:00",
+      "finished_utc": "2026-11-10T04:44:04.933070+00:00",
+      "duration_seconds": 14.339,
+      "exit_code": 0,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/targeted-budget-tests.log",
+      "log_sha256": "3f56bfcfc5b21aa7aa0143a1eab5a687cd849b1b616459634448fa76d72dff5f"
+    },
+    "reconciled-budget-admission": {
+      "label": "reconciled-budget-admission",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+      "command": [
+        "node",
+        ".git/chef-reconcile-evidence/reproduce-admission.mjs",
+        "--reconciled"
+      ],
+      "started_utc": "2026-11-10T04:43:30.535566+00:00",
+      "finished_utc": "2026-11-10T04:43:34.527823+00:00",
+      "duration_seconds": 3.992,
+      "exit_code": 0,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/reconciled-budget-admission.log",
+      "log_sha256": "3a903a1268c4187158410966a58d879e8a824d6b9cbcc08e85b442cf7825a18f"
+    },
+    "donor-upgrade-budget": {
+      "label": "donor-upgrade-budget",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+      "command": [
+        "node",
+        ".git/chef-reconcile-evidence/upgrade-donor-admission.mjs"
+      ],
+      "started_utc": "2026-11-10T04:49:25.835772+00:00",
+      "finished_utc": "2026-11-10T04:49:30.416073+00:00",
+      "duration_seconds": 4.584,
+      "exit_code": 0,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/donor-upgrade-budget.log",
+      "log_sha256": "91c814930691fc7e923b507afeb63e5a8dcfbc8d2edf1fbd1087637f3cb1cb0c"
+    },
+    "karta-full-tests": {
+      "label": "karta-full-tests",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef/karta",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.reconcile.config.ts",
+        "--configLoader",
+        "runner",
+        "--maxWorkers",
+        "1",
+        "--testTimeout",
+        "30000",
+        "--hookTimeout",
+        "120000",
+        "--reporter=json",
+        "--outputFile",
+        "../.git/chef-reconcile-evidence/karta-full-tests-vitest.json"
+      ],
+      "started_utc": "2026-11-10T04:46:34.202245+00:00",
+      "finished_utc": "2026-11-10T04:49:11.173161+00:00",
+      "duration_seconds": 156.971,
+      "exit_code": 0,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/karta-full-tests.log",
+      "log_sha256": "473eb181d5bdd90747c45aec9db3db5ca0b7b46484ebab1bec4edc22e4b4afe4"
+    },
+    "typecheck": {
+      "label": "typecheck",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef/karta",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "started_utc": "2026-11-10T04:45:57.891789+00:00",
+      "finished_utc": "2026-11-10T04:46:04.397859+00:00",
+      "duration_seconds": 6.506,
+      "exit_code": 0,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build": {
+      "label": "build",
+      "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef/karta",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "started_utc": "2026-11-10T04:51:12.660111+00:00",
+      "finished_utc": "2026-11-10T04:51:17.691372+00:00",
+      "duration_seconds": 5.031,
+      "exit_code": 0,
+      "timeout": false,
+      "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "report": {
+    "path": "qa/agents-hardening-20261110/budget/reconciliation-karta-tests.json.gz",
+    "gzip_sha256": "6da57d4ed95d3dd2a089ab4fbbae5b902878dac54995f0820b71c37a5647d931",
+    "uncompressed_sha256": "1aae8166a287d03583c06ec44b50ba48263451ea6e5e6cc7d5618b184f1bc819",
+    "bytes": 40534
+  },
+  "not_tested": [
+    "Native PostgreSQL concurrent sessions for combined migration024",
+    "Production migrations",
+    "Provider calls and real invoices",
+    "Production Redis/PostgREST deployment",
+    "Full product UI/browser flow"
+  ],
+  "external_effects": {
+    "remote_git_writes": 0,
+    "production_migrations": 0,
+    "provider_calls": 0,
+    "payments": 0,
+    "outreach": 0
+  },
+  "gitnexus": {
+    "before_edit": "Runtime impact LOW, direct worker cycle/adapter callers; SQL targets not indexed (UNKNOWN), manually reviewed and covered by PGlite.",
+    "staged": {
+      "files": 13,
+      "symbols": 120,
+      "affected_processes": 5,
+      "risk": "MEDIUM",
+      "exit_code": 0
+    },
+    "compare_main": {
+      "commit": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+      "files": 409,
+      "symbols": 2149,
+      "affected_processes": 377,
+      "risk": "CRITICAL",
+      "exit_code": 0,
+      "scope": "Includes pre-existing branch changes; listing capped"
+    },
+    "initial_compare_failure": "The local main branch was absent in the isolated clone. The published main ref was fetched, local main created at d116dc8a6429ea76c67167a195eb3f723f2251fb, and the comparison completed successfully.",
+    "limits": [
+      "FTS disabled to bound local resources",
+      "SQL/RPC edges incomplete",
+      "Process extraction reports truncated branches",
+      "Generic rpc symbol can over-approximate flows; no application UI source changed"
+    ],
+    "commands": {
+      "gitnexus-analyze": {
+        "label": "gitnexus-analyze",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=256",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "analyze",
+          ".",
+          "--index-only",
+          "--workers",
+          "1",
+          "--skip-fts",
+          "--name",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:35:07.712024+00:00",
+        "finished_utc": "2026-11-10T04:35:51.957530+00:00",
+        "duration_seconds": 44.246,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/gitnexus-analyze.log",
+        "log_sha256": "550140dcf2adb67240284eea336f5693f6a00bc6a6dc0a066b0e3f5f3888b0ec"
+      },
+      "gitnexus-budget-query": {
+        "label": "gitnexus-budget-query",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "query",
+          "CHEF budget admission usage reservation quarantine",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:36:05.495521+00:00",
+        "finished_utc": "2026-11-10T04:36:06.594853+00:00",
+        "duration_seconds": 1.099,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/gitnexus-budget-query.log",
+        "log_sha256": "814b98f9e6c5ff262cd3133707189d2036c8d6deb821d8a1ec622bcfa866d674"
+      },
+      "impact-cycle": {
+        "label": "impact-cycle",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "runChefWorkerCycle",
+          "-d",
+          "upstream",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:36:44.136308+00:00",
+        "finished_utc": "2026-11-10T04:36:45.376363+00:00",
+        "duration_seconds": 1.24,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-cycle.log",
+        "log_sha256": "62d83bc995d022d2bce1fbfd4060c08068e9ea96777d6cb36f9a40fbf44be5f4"
+      },
+      "impact-usage-key": {
+        "label": "impact-usage-key",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "usageEventKey",
+          "-d",
+          "upstream",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:37:06.037228+00:00",
+        "finished_utc": "2026-11-10T04:37:07.820517+00:00",
+        "duration_seconds": 1.783,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-usage-key.log",
+        "log_sha256": "6fa4f1f3eb07dec0b3b6fd76d85ea4f3f6ee21c9e07b22722ea7ab6f35d7b467"
+      },
+      "impact-record-usage": {
+        "label": "impact-record-usage",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "recordUsage",
+          "--file",
+          "karta/src/chef/control-plane.ts",
+          "-d",
+          "upstream",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:37:07.209115+00:00",
+        "finished_utc": "2026-11-10T04:37:08.283827+00:00",
+        "duration_seconds": 1.075,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-record-usage.log",
+        "log_sha256": "51d95fa7c6f595db8168d4d29553595e88e170b2291938f956a7303bafc21963"
+      },
+      "impact-claim-sql": {
+        "label": "impact-claim-sql",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "chef_claim_next_task",
+          "-d",
+          "upstream",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:37:15.238707+00:00",
+        "finished_utc": "2026-11-10T04:37:16.787602+00:00",
+        "duration_seconds": 1.549,
+        "exit_code": 1,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-claim-sql.log",
+        "log_sha256": "2786358c40649fc9dacb10a4f120aa8796c0b86168e7617301f75cda2f0dfacf"
+      },
+      "impact-record-sql": {
+        "label": "impact-record-sql",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "chef_record_usage",
+          "-d",
+          "upstream",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:37:15.219177+00:00",
+        "finished_utc": "2026-11-10T04:37:16.695628+00:00",
+        "duration_seconds": 1.476,
+        "exit_code": 1,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-record-sql.log",
+        "log_sha256": "4d2712a2982e1b91a34e7ef6a2e98ebeae4cbafe4272b0e513fa114ce5bc9ed9"
+      },
+      "impact-fixture": {
+        "label": "impact-fixture",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "makeControl",
+          "--file",
+          "karta/test/chefSupervisor.test.ts",
+          "-d",
+          "upstream",
+          "--include-tests",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:38:25.678576+00:00",
+        "finished_utc": "2026-11-10T04:38:27.618359+00:00",
+        "duration_seconds": 1.94,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-fixture.log",
+        "log_sha256": "ea99da421bec4cd1a707e06a56d0fd65f7a0ccd165e1bfe6b4b1ee39f47cc7ab"
+      },
+      "impact-git-fixture": {
+        "label": "impact-git-fixture",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "chefVerificationGitIntegration.test.ts",
+          "-d",
+          "upstream",
+          "--include-tests",
+          "-r",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:39:21.843655+00:00",
+        "finished_utc": "2026-11-10T04:39:23.289347+00:00",
+        "duration_seconds": 1.446,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/impact-git-fixture.log",
+        "log_sha256": "a4082ae50d5cfe73efc1cd3bcfb9af0a98d6169ff010e60c9f2ed077268d4185"
+      },
+      "gitnexus-final-analyze": {
+        "label": "gitnexus-final-analyze",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=256",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "analyze",
+          ".",
+          "--index-only",
+          "--workers",
+          "1",
+          "--skip-fts",
+          "--name",
+          "chef-reconcile-20261110"
+        ],
+        "started_utc": "2026-11-10T04:53:36.766265+00:00",
+        "finished_utc": "2026-11-10T04:53:59.054030+00:00",
+        "duration_seconds": 22.288,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/gitnexus-final-analyze.log",
+        "log_sha256": "8f71f3c8e3e44c5b341fad9106d67830e2cf0e0df7360ff99b8a40df37b18542"
+      },
+      "gitnexus-staged": {
+        "label": "gitnexus-staged",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "staged",
+          "--repo",
+          "chef-reconcile-20261110",
+          "--limit",
+          "100"
+        ],
+        "started_utc": "2026-11-10T04:55:04.047639+00:00",
+        "finished_utc": "2026-11-10T04:55:05.421141+00:00",
+        "duration_seconds": 1.374,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/gitnexus-staged.log",
+        "log_sha256": "26fcb03c8daeec65b5ae5ce497b045433d0f470c99a9276f9f247cd038391b1a"
+      },
+      "gitnexus-main": {
+        "label": "gitnexus-main",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "compare",
+          "--base-ref",
+          "main",
+          "--repo",
+          "chef-reconcile-20261110",
+          "--limit",
+          "100"
+        ],
+        "started_utc": "2026-11-10T04:55:04.047698+00:00",
+        "finished_utc": "2026-11-10T04:55:05.326517+00:00",
+        "duration_seconds": 1.279,
+        "exit_code": 1,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/gitnexus-main.log",
+        "log_sha256": "d426d6646ea519db3203d58923a72b03f5ae35c9a87211d9c860f23792766af8"
+      },
+      "gitnexus-main-resolved": {
+        "label": "gitnexus-main-resolved",
+        "cwd": "/workspace/scratch/6a3b4f291e34/reconcile-chef",
+        "command": [
+          "node",
+          "--max-old-space-size=192",
+          "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "compare",
+          "--base-ref",
+          "main",
+          "--repo",
+          "chef-reconcile-20261110",
+          "--limit",
+          "100"
+        ],
+        "started_utc": "2026-11-10T04:56:23.964878+00:00",
+        "finished_utc": "2026-11-10T04:56:26.265774+00:00",
+        "duration_seconds": 2.301,
+        "exit_code": 0,
+        "timeout": false,
+        "log": "/workspace/scratch/6a3b4f291e34/reconcile-chef/.git/chef-reconcile-evidence/gitnexus-main-resolved.log",
+        "log_sha256": "469e7139ac24dd2a217a2252c084d6c52e62973310b57e1045e0d8d8ec57ebdf"
+      }
+    }
+  },
+  "independent_review": {
+    "path": "/workspace/scratch/6a3b4f291e34/repo-audit/chef-final-review.json",
+    "sha256": "7aaf6cc8552d33b16d17e0b5fbfc0fd361190e7eee76dbe834c651c4280112f9",
+    "review": {
+      "reviewed_at": "2026-11-10T04:55:23.572149+00:00",
+      "base": "5f8d23d46b1aaa103eccb944406eb3e189388c1c",
+      "scope": "Read-only review: migration 024, supervisor, control-plane and regression cases. No new suite executed.",
+      "conclusion": "No blocking defect identified in reviewed budget integration",
+      "source_receipt_matches": [
+        {
+          "path": "karta/migrations/024_chef_claim_budget_reconciliation.sql",
+          "sha256": "0d2dd0d725b80ff783928d5246b5b234e9a1d32510d4978a1df8e9634a4b5f6a",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/src/chef/control-plane.ts",
+          "sha256": "c1e6d49247b1735abba43794b6417a2c11fbbfee986397e6b959bbe675988f10",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/src/chef/supervisor.ts",
+          "sha256": "471f0e86af9c031cab49d6f0a2ea8d734921e1c778997c5df425e0121b83774c",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/test/chefBudgetAccounting.test.ts",
+          "sha256": "1febc751e001e1b77217e113140093ef95c27d64bde40860c5322ed73d5a7dd8",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/test/chefBudgetAdapter.test.ts",
+          "sha256": "53c08cb6a19e224ee19d0403661f2b1eaf221a43d87097b348f8c78aa9e54ca1",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/test/chefBudgetMigration.test.ts",
+          "sha256": "894a2ac356a46b9ce09718ce9a7fc298a214c91621b1b419654f564542382cdd",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/test/chefBudgetReservations.test.ts",
+          "sha256": "7907f27facd9305603a0871aef6132da62e8930357882cc857cf33e0e99d1b6c",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/test/chefSupervisor.test.ts",
+          "sha256": "a06aea88e80dfdd4b9bf5581f816e254c911c949e9f0f63a21dbd7e293bbecc5",
+          "matches_test_receipt": true
+        },
+        {
+          "path": "karta/test/chefVerificationGitIntegration.test.ts",
+          "sha256": "831840f0b3bd034c593f3cfbbfdf2d2bf0ad179369b01e4bc4262305c21548b0",
+          "matches_test_receipt": true
+        }
+      ],
+      "protected_files_unchanged": 12,
+      "tests_observed_in_existing_receipt": {
+        "tests": 980,
+        "passed": 980,
+        "failed": 0,
+        "pending": 0,
+        "files": 68,
+        "success": true
+      },
+      "reviewed_invariants": [
+        "Unknown cost remains NULL; explicit zero only for confirmed non-execution or provider receipt.",
+        "Reservations survive lease loss, retry and quarantine.",
+        "Adapter requires an actual boolean ACK.",
+        "Receipts bind mission/task/worker/provider/attempt/fencing token; settled dimensions cannot change or charge twice.",
+        "Late receipts settle only their recorded claim; they do not authorize completion or remove quarantine.",
+        "Capped historical gaps or mixed known/unknown legacy costs fail migration transactionally.",
+        "New claim uses mission serialization and preserves PR27 quarantine guards."
+      ],
+      "limits": [
+        "No PostgreSQL native, multi-connection concurrency or production migration execution in this review.",
+        "Provider final charges can exceed admission estimates; new work is then paused, not retroactively prevented.",
+        "Actual legacy data must satisfy migration history guards; no production data were inspected.",
+        "980 test PASS and typecheck come from continuity verification, not a newly run duplicate suite."
+      ]
+    }
+  }
+}

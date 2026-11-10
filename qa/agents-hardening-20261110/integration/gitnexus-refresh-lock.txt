@@ -1,0 +1,20 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+
+Index lock: OS socket lock unavailable here — using the file lock.
+
+Another gitnexus analyze (pid 31 on 7350dec724ee) is refreshing this index — waiting for it to finish.
+
+Still waiting for analyze pid 31 (15s elapsed).
+
+Still waiting for analyze pid 31 (30s elapsed).
+
+Still waiting for analyze pid 31 (45s elapsed).
+
+Still waiting for analyze pid 31 (60s elapsed).
+
+Still waiting for analyze pid 31 (76s elapsed).
+
+Still waiting for analyze pid 31 (91s elapsed).

@@ -30,18 +30,16 @@ test.describe('Onboarding — Embauche ton premier employé IA', () => {
     await page.getByRole('button', { name: /commencer/i }).click();
 
     // Étape "pick" : 4 employés faciles proposés
-    await expect(page.getByText(/choisis-en un pour commencer/i)).toBeVisible();
+    await expect(page.getByText(/choisis un employé pour essayer/i)).toBeVisible();
 
     // Étape "confirm"
     const firstAgentButton = page.locator('div[role="dialog"] button').first();
     await firstAgentButton.click();
-    await expect(page.getByText(/tu valides toujours avant/i)).toBeVisible();
+    await expect(page.getByText(/examiner les propositions avant/i)).toBeVisible();
 
     // Étape "working" → "result" (déclenchement réel via karta-trigger, décision mock TODO_LIVE_TEST)
     await page.getByRole('button', { name: /^embaucher /i }).click();
-    await expect(page.getByText(/travaille…/)).toBeVisible();
-
-    await expect(page.getByText(/a terminé sa 1ère tâche/i)).toBeVisible({ timeout: 25_000 });
-    await expect(page.getByText(/TODO_LIVE_TEST/i).first()).toBeVisible();
+    await expect(page.getByText(/a terminé la simulation/i)).toBeVisible({ timeout: 25_000 });
+    await expect(page.getByText(/mode démonstration/i).first()).toBeVisible();
   });
 });

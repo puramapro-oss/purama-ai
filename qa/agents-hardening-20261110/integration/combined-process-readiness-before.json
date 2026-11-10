@@ -1,0 +1,16 @@
+{
+  "check": "combined-process-readiness-before",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/chefProcess.test.ts",
+    "--maxWorkers=1",
+    "--testTimeout=30000",
+    "-t",
+    "kills a surviving descendant"
+  ],
+  "exit": 0,
+  "elapsed_seconds": 2.68,
+  "tail": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv5.0.3 \u001b[39m\u001b[90m/Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/karta\u001b[39m\n\n \u001b[32m\u2713\u001b[39m test/chefProcess.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m4 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 731\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[32m\u2713\u001b[39m CHEF owned POSIX process group \u001b[2m(5)\u001b[22m\n     \u001b[33m\u001b[2m\u2713\u001b[22m\u001b[39m kills a surviving descendant in the owned group after its leader exits\u001b[33m 727\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m4 skipped\u001b[39m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 04:31:19\n\u001b[2m   Duration \u001b[22m 1.31s\u001b[2m (tests 85%, transform 10%, import 2%, setup 2%, worker 1%)\u001b[22m\n\n"
+}

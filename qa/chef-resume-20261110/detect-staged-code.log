@@ -1,0 +1,15 @@
+(node:8) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  GitNexus Detect Changes (1.6.12)
+file:///home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435
+            throw new Error(`Repository "${repoParam}" not found. Available: ${labels.join(', ')}`);
+                  ^
+
+Error: Repository "purama-resume-20261110" not found. Available: iao-public-chat, iao-frontend, iao-frontend-14d16, iao-mobile-auth-14d16, iao-next-pass-fixed-20261110-14d16, iao-public-chat-14d16, iao-verify-atomic-20261110-14d16, iao-voice-scope-14d16, one-reconciled-20261110-14d16, iao-stamp-atomic-20261110, purama-iao33-contracts, purama-one-reconcile, purama-ai (/workspace/scratch/29af233a360b/purama-resume-20261110), iao-commerce-compat-1644, one-delta-20261110-1644, purama-one-reconcile-35c60f15-20261110, akasha-chat-quota, akasha-model-selection, akasha-runtime-repair, iao-stream-reliability, purama-ai-refinement, iao-usage-reliability, ledger-consolidation, purama-ai (/workspace/scratch/4a55b3d75c46/resume-20261110/ci/iao-candidate), iao-pr33-reconcile-4a55, sutra-pr11-4a55, continuation-chef-20261110, continuation-entraide-20261110, continuation-iao36-reconcile-20261110, continuation-one-20261110, iao-reconciled-20261110, iao-resume-cb46, purama-ai (/workspace/scratch/ce7124b9f7f6/purama-ai-scheduler)
+    at LocalBackend.selectToolRepository (file:///home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)
+    at async LocalBackend.callTool (file:///home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)
+    at async detectChangesCommand (file:///home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/tool.js:293:20)
+    at async Command.<anonymous> (file:///home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)
+
+Node.js v22.23.4

@@ -1,0 +1,28 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+test/chefWorkerShutdown.test.ts(19,3): error TS2322: Type 'Set<SignalsListener>' is not assignable to type 'Set<(...args: unknown[]) => void>'.
+  Type 'SignalsListener' is not assignable to type '(...args: unknown[]) => void'.
+    Types of parameters 'signal' and 'args' are incompatible.
+      Type 'unknown' is not assignable to type 'Signals'.
+test/chefWorkerShutdown.test.ts(20,3): error TS2322: Type 'Set<SignalsListener>' is not assignable to type 'Set<(...args: unknown[]) => void>'.
+  Type 'SignalsListener' is not assignable to type '(...args: unknown[]) => void'.
+    Types of parameters 'signal' and 'args' are incompatible.
+      Type 'unknown' is not assignable to type 'Signals'.
+test/chefWorkerShutdown.test.ts(30,86): error TS2345: Argument of type 'SignalsListener' is not assignable to parameter of type '(...args: unknown[]) => void'.
+  Types of parameters 'signal' and 'args' are incompatible.
+    Type 'unknown' is not assignable to type 'Signals'.
+test/chefWorkerShutdown.test.ts(30,96): error TS2554: Expected 1 arguments, but got 0.
+test/chefWorkerShutdown.test.ts(31,84): error TS2345: Argument of type 'SignalsListener' is not assignable to parameter of type '(...args: unknown[]) => void'.
+  Types of parameters 'signal' and 'args' are incompatible.
+    Type 'unknown' is not assignable to type 'Signals'.
+test/chefWorkerShutdown.test.ts(31,94): error TS2554: Expected 1 arguments, but got 0.
+test/chefWorkerShutdown.test.ts(49,84): error TS2345: Argument of type 'SignalsListener' is not assignable to parameter of type '(...args: unknown[]) => void'.
+  Types of parameters 'signal' and 'args' are incompatible.
+    Type 'unknown' is not assignable to type 'Signals'.
+test/chefWorkerShutdown.test.ts(51,5): error TS2554: Expected 1 arguments, but got 0.
+test/chefWorkerShutdown.test.ts(53,97): error TS2345: Argument of type 'SignalsListener' is not assignable to parameter of type '(...args: unknown[]) => void'.
+  Types of parameters 'signal' and 'args' are incompatible.
+    Type 'unknown' is not assignable to type 'Signals'.

@@ -6,7 +6,7 @@ import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { shouldMinimizeToolTrace, summarizeToolError, summarizeToolResult } from "./tool-trace.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
-import { restoreAgentExecutionTrigger, snapshotAgentExecutionTrigger } from "./trigger-context.js";
+import { restoreAgentExecutionTrigger, snapshotAgentExecutionTrigger } from "./execution-origin.js";
 import type { AgentTrigger, AgentType } from "./types.js";
 
 interface CreatePendingActionInput {

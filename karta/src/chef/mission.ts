@@ -19,12 +19,16 @@ export async function createChefMission(brief: ChefBrief, options: CreateChefMis
 
   const maxParallel = options.maxParallel ?? 4;
   if (!Number.isInteger(maxParallel) || maxParallel < 1 || maxParallel > 64) throw new Error("maxParallel invalide");
-  for (const [label, value] of [
-    ["tokenBudget", options.tokenBudget],
-    ["costBudgetMicros", options.costBudgetMicros],
+  for (const [label, value, estimateKey] of [
+    ["tokenBudget", options.tokenBudget, "estimatedTokens"],
+    ["costBudgetMicros", options.costBudgetMicros, "estimatedCostMicros"],
   ] as const) {
     if (value !== undefined && value !== null && (!Number.isSafeInteger(value) || value < 0)) {
       throw new Error(`${label} invalide`);
+    }
+    if (value !== undefined && value !== null) {
+      const missing = normalized.tasks.find(task => task[estimateKey] === undefined);
+      if (missing) throw new Error(`${estimateKey} requis pour ${missing.key} avec ${label}`);
     }
   }
 

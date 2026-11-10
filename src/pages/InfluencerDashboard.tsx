@@ -112,11 +112,9 @@ export default function InfluencerDashboard() {
       beneficiaryName: influencer.beneficiary_name || 'Affilié',
       promoCode: influencer.promo_code,
       commissionRate: influencer.commission_rate,
-      contractSignedAt: influencer.contract_signed_at,
-      createdAt: influencer.created_at,
     });
     
-    toast.success('Contrat téléchargé !');
+    toast.info('Téléchargement du récapitulatif non signé lancé.');
   };
 
   const handleUpdateBank = () => {
@@ -206,7 +204,7 @@ export default function InfluencerDashboard() {
                   </div>
                   <div className="text-center p-4 rounded-lg bg-secondary/50">
                     <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />
-                    <p className="font-bold text-lg">-50%</p>
+                    <p className="font-bold text-lg">Invitation</p>
                     <p className="text-sm text-muted-foreground">Pour vos abonnés</p>
                   </div>
                 </div>
@@ -348,7 +346,7 @@ export default function InfluencerDashboard() {
                       <h4>Article 5 - Code promo</h4>
                       <p>
                         Votre code promo unique : <strong>{influencer.promo_code}</strong><br/>
-                        Ce code offre -50% sur la première année d'abonnement à vos abonnés.
+                        Les prix et conditions applicables à cette invitation sont présentés avant paiement.
                       </p>
                       
                       <p className="text-sm text-muted-foreground mt-6">
@@ -508,7 +506,7 @@ export default function InfluencerDashboard() {
             <div className="flex items-center justify-between text-sm flex-wrap gap-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="outline">Code: {influencer.promo_code}</Badge>
-                <Badge variant="secondary">-50% pour vos abonnés</Badge>
+                <Badge variant="secondary">Conditions avant paiement</Badge>
                 {influencer.contract_status === 'signed' && (
                   <Button 
                     variant="ghost" 
@@ -517,7 +515,7 @@ export default function InfluencerDashboard() {
                     className="h-6 text-xs"
                   >
                     <Download className="w-3 h-3 mr-1" />
-                    Télécharger contrat
+                    Récapitulatif non signé
                   </Button>
                 )}
               </div>
@@ -530,6 +528,11 @@ export default function InfluencerDashboard() {
                 )}
               </div>
             </div>
+          {influencer.contract_status === 'signed' && (
+            <p className="text-sm text-muted-foreground">
+              Ce téléchargement est un récapitulatif actuel non signé. La copie historique du contrat doit être récupérée depuis le document original.
+            </p>
+          )}
           </CardContent>
         </Card>
 

@@ -1,9 +1,9 @@
 import { enqueueAgentCycle } from "../queue/queues.js";
+import { CORE_DELEGATION_AGENTS, MAX_DELEGATION_DEPTH, MAX_DELEGATION_REASON_LENGTH } from "../engine/execution-origin.js";
 import type { AgentTrigger, AgentType, ToolDefinition } from "../engine/types.js";
 
-const VALID_AGENT_TYPES: AgentType[] = ["email", "compta", "legal", "partner"];
-// Reconciled from 477dc24: keep the existing queue/execution-key contract.
-export const MAX_DELEGATION_DEPTH = 3;
+const VALID_AGENT_TYPES = CORE_DELEGATION_AGENTS;
+export { MAX_DELEGATION_DEPTH };
 
 interface DelegationTrace {
   depth: number;
@@ -25,7 +25,7 @@ export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reaso
     type: "object",
     properties: {
       targetAgent: { type: "string", enum: [...VALID_AGENT_TYPES] },
-      reason: { type: "string", minLength: 1, maxLength: 2000 },
+      reason: { type: "string", minLength: 1, maxLength: MAX_DELEGATION_REASON_LENGTH },
     },
     required: ["targetAgent", "reason"],
     additionalProperties: false,
@@ -36,7 +36,7 @@ export const delegateToAgentTool: ToolDefinition<{ targetAgent: AgentType; reaso
       throw new Error(`Agent cible invalide: ${params.targetAgent}`);
     }
     if (!VALID_AGENT_TYPES.includes(ctx.agentType)) throw new Error("Agent source de délégation invalide");
-    if (typeof params.reason !== "string" || !params.reason.trim() || params.reason.length > 2000 || params.reason.includes("\0")) {
+    if (typeof params.reason !== "string" || !params.reason.trim() || params.reason.length > MAX_DELEGATION_REASON_LENGTH || params.reason.includes("\0")) {
       throw new Error("Motif de délégation invalide");
     }
     if (params.targetAgent === ctx.agentType) throw new Error("Auto-délégation interdite");

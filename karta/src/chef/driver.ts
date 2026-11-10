@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { runChefProcess } from "./process.js";
 import { realpathSync } from "node:fs";
 import { isAbsolute, relative } from "node:path";
 
@@ -142,9 +142,6 @@ export class ProcessChefDriver implements ChefWorkerDriver {
   }
 
   async run(request: ChefDriverRequest, signal?: AbortSignal): Promise<ChefDriverResponse> {
-    // An already aborted signal never emits another abort event for a new
-    // listener. Refuse it before spawning any process or sending instructions.
-    if (signal?.aborted) throw new Error("Worker CHEF annulé avant exécution");
     if (request.provider !== this.provider) throw new Error("Provider du driver incohérent");
     const cwd = assertAllowedCwd(request.cwd, this.options.allowedRoots);
     if (!Number.isSafeInteger(request.fencingToken) || request.fencingToken < 0) throw new Error("fencingToken invalide");
@@ -171,103 +168,31 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       }
     );
 
-    const response = await new Promise<ChefDriverResponse>((resolvePromise, rejectPromise) => {
-      const child = spawn(this.options.command, this.options.args ?? [], {
-        cwd,
-        env,
-        shell: false,
-        stdio: ["pipe", "pipe", "pipe"],
-      });
-
-      let stdout = "";
-      let stderr = "";
-      let settled = false;
-      let killedForOutput = false;
-
-      const finishReject = (error: Error) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        rejectPromise(error);
-      };
-      const finishResolve = (value: ChefDriverResponse) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        resolvePromise(value);
-      };
-      const terminate = () => {
-        if (!child.killed) child.kill("SIGTERM");
-        setTimeout(() => {
-          if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL");
-        }, 2_000).unref();
-      };
-      const append = (current: string, chunk: Buffer, label: string) => {
-        const next = current + chunk.toString("utf8");
-        if (Buffer.byteLength(next, "utf8") > this.options.maxOutputBytes) {
-          killedForOutput = true;
-          terminate();
-          throw new Error(`Sortie ${label} du worker trop volumineuse`);
-        }
-        return next;
-      };
-
-      child.stdout.on("data", (chunk: Buffer) => {
-        try { stdout = append(stdout, chunk, "stdout"); } catch (error) { finishReject(error as Error); }
-      });
-      child.stderr.on("data", (chunk: Buffer) => {
-        try { stderr = append(stderr, chunk, "stderr"); } catch (error) { finishReject(error as Error); }
-      });
-
-      const timeout = setTimeout(() => {
-        terminate();
-        finishReject(new Error("Worker CHEF expiré"));
-      }, this.options.timeoutMs);
-      timeout.unref();
-
-      const onAbort = () => {
-        terminate();
-        finishReject(new Error("Worker CHEF annulé"));
-      };
-      const cleanup = () => {
-        clearTimeout(timeout);
-        signal?.removeEventListener("abort", onAbort);
-      };
-
-      child.on("error", (error) => finishReject(error));
-      child.on("close", (code, signalName) => {
-        if (settled || killedForOutput) return;
-        if (signal?.aborted) {
-          finishReject(new Error("Worker CHEF annulé"));
-          return;
-        }
-        if (code !== 0) {
-          finishReject(new Error(`Worker CHEF échoué (code=${code ?? "null"}, signal=${signalName ?? "none"})`));
-          return;
-        }
-        const lines = stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-        let parsed: unknown;
-        for (let index = lines.length - 1; index >= 0; index--) {
-          try { parsed = JSON.parse(lines[index]); break; } catch { /* logs autorisés avant le JSON final */ }
-        }
-        if (parsed === undefined) {
-          finishReject(new Error("Worker CHEF terminé sans réponse JSON valide"));
-          return;
-        }
-        try { finishResolve(validateDriverResponse(parsed)); } catch (error) { finishReject(error as Error); }
-      });
-
-      child.stdin.on("error", (error) => finishReject(error));
-      signal?.addEventListener("abort", onAbort, { once: true });
-      if (signal?.aborted) {
-        onAbort();
-        return;
-      }
-      child.stdin.end(JSON.stringify(request) + "\n");
+    const result = await runChefProcess({
+      command: this.options.command,
+      args: this.options.args,
+      cwd,
+      env,
+      input: JSON.stringify(request) + "\n",
+      signal,
+      timeoutMs: this.options.timeoutMs,
+      maxOutputBytes: this.options.maxOutputBytes,
+      label: "worker CHEF",
+      abortMessage: "Worker CHEF annulé",
+      timeoutMessage: "Worker CHEF expiré",
     });
-    // Cancellation can arrive after the child promise settles, before this
+    // Cancellation can arrive after the process promise settles, before this
     // async method resumes. A late response must not restore a cancelled run.
     if (signal?.aborted) throw new Error("Worker CHEF annulé");
-    return response;
+    if (result.exitCode !== 0) {
+      throw new Error(`Worker CHEF échoué (code=${result.exitCode ?? "null"}, signal=${result.signal ?? "none"})`);
+    }
+    const lines = result.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    let parsed: unknown;
+    for (let index = lines.length - 1; index >= 0; index--) {
+      try { parsed = JSON.parse(lines[index]); break; } catch { /* logs autorisés avant le JSON final */ }
+    }
+    if (parsed === undefined) throw new Error("Worker CHEF terminé sans réponse JSON valide");
+    return validateDriverResponse(parsed);
   }
 }

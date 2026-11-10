@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "https://esm.sh/@supabase/supabase-js@2.91.0": "./payout-provider-fixture.ts",
+    "https://esm.sh/resend@2.0.0": "./payout-provider-fixture.ts",
+    "https://esm.sh/stripe@18.5.0": "./subscription-provider-fixture.ts",
+    "npm:@supabase/supabase-js@2.91.0": "./subscription-provider-fixture.ts"
+  }
+}

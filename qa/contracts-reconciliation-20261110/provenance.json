@@ -1,0 +1,31 @@
+{
+  "status": "PARTIEL",
+  "captured_at": "2026-11-10T15:00:14Z",
+  "base": "8631305fe0a4e0208566191b795ef876d9b5dfbe",
+  "base_tree": "16d4f2b45afc7ba05f8c74ef71e1b209c7bcac0e",
+  "reused_contracts_source": "3cd01de34447003ac7aad4a6ad54cf7524b77a67",
+  "local_branch": "fix/reconcile-contracts-on-iao33-20261110",
+  "remote_target_branch": "audit/iao-integrated-20261110-14d16",
+  "remote_target_pr": 33,
+  "remote_parent_pr27": "69843348ff85cd637537bce094f8cffa989c1d8f",
+  "node_validation_version": "v22.23.4",
+  "node_sources_unchanged_count": 483,
+  "karta_and_dependency_lock_unchanged": true,
+  "supabase_sdk_installed": "2.91.0",
+  "deno": "2.9.6",
+  "deno_helpers_status": "PASS",
+  "deno_handlers_status": "BLOQUE_IMPORT_CONNECTION_REFUSED",
+  "ci_run_checked": 42762512839,
+  "ci_check_ids": [
+    129651327259,
+    129651327588
+  ],
+  "ci_status": "BLOQUE_FACTURATION_COMPTE",
+  "pr23_entraide": "c9337987ae1f3c820b8947bd3da4e6f1721c57c4",
+  "pr23_files_overlap_with_this_patch": [],
+  "no_production_deployment": true,
+  "no_provider_payment_or_message_sent": true,
+  "tested_base": "0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+  "tested_base_tree": "dde936db94d0d21880656de8ce76d9558fdc692a",
+  "tested_sources_after_rebase_unchanged": 482
+}

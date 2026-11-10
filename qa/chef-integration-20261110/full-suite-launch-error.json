@@ -1,6 +1,0 @@
-{
-  "status": "NOT_EXECUTED",
-  "reason": "Optional /usr/bin/time executable is unavailable; subprocess launch failed before Vitest execution",
-  "tests_executed": 0,
-  "action": "Use Python child resource accounting and launch the same Vitest command directly"
-}

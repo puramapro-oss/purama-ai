@@ -1,19 +1,17 @@
 import { supabase } from "../db/supabase.js";
-import { consumeBrief } from "../engine/memory.js";
 import { buildGmailInboxContext, gmailCreateDraftTool, gmailSendTool } from "../tools/gmail.js";
 import { calendarCreateEventTool } from "../tools/calendar.js";
 import { supabaseSelectTool, supabaseUpsertTool } from "../tools/supabase-tool.js";
 import { generatePdfTool } from "../tools/pdf.js";
 import { webSearchTool } from "../tools/websearch.js";
 import { sendNotificationTool } from "../tools/notification-tool.js";
-import type { AgentDefinition } from "../engine/types.js";
+import type { AgentContextInput, AgentDefinition } from "../engine/types.js";
 
-/** Contexte "brief en attente" — pattern partagé par les agents pilotés à la demande via
- * karta_agent_memory (l'utilisateur dépose un brief depuis "Mes employés IA", l'agent le
- * consomme au cycle suivant). `items` est le nom de champ générique lu par le mock Claude
- * (cf claude/mock.ts) pour décider s'il y a quelque chose à traiter. */
-async function briefDrivenContext(userId: string, agentType: AgentDefinition["type"]): Promise<Record<string, unknown>> {
-  const brief = await consumeBrief(userId, agentType);
+/** KARTA supplies an exclusively acquired brief (or a read-only simulation preview).
+ * Building context itself never removes memory. `items` is also understood by
+ * the mock Claude client. Calling this builder outside a prepared cycle is inert. */
+async function briefDrivenContext(prepared?: AgentContextInput): Promise<Record<string, unknown>> {
+  const brief = prepared?.pendingBrief;
   return brief ? { items: [{ brief }] } : { items: [], reason: "aucun brief en attente" };
 }
 
@@ -32,7 +30,8 @@ export const campagnesParCourrielAgent: AgentDefinition = {
 brief de campagne est en attente, rédige un brouillon d'email de campagne (gmail_create_draft)
 cohérent avec le brief. Ne l'envoie jamais toi-même sans validation.`,
   tools: [gmailCreateDraftTool, sendNotificationTool],
-  buildContext: (userId) => briefDrivenContext(userId, "campagnes-par-courriel"),
+  pendingBriefKey: "pending_brief",
+  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
 };
 
 export const coldOutreachAgent: AgentDefinition = {
@@ -41,7 +40,8 @@ export const coldOutreachAgent: AgentDefinition = {
 Purama. Quand un brief de cible est en attente, utilise web_search pour identifier un angle
 pertinent puis rédige un brouillon de prospection personnalisé (gmail_create_draft).`,
   tools: [webSearchTool, gmailCreateDraftTool, sendNotificationTool],
-  buildContext: (userId) => briefDrivenContext(userId, "pro-de-la-sensibilisation-au-froid"),
+  pendingBriefKey: "pending_brief",
+  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
 };
 
 export const newsletterGenieAgent: AgentDefinition = {
@@ -50,7 +50,8 @@ export const newsletterGenieAgent: AgentDefinition = {
 sujet est en attente, utilise web_search pour des idées de contenu à jour puis rédige un
 brouillon de newsletter (gmail_create_draft).`,
   tools: [webSearchTool, gmailCreateDraftTool, sendNotificationTool],
-  buildContext: (userId) => briefDrivenContext(userId, "newsletter-genie"),
+  pendingBriefKey: "pending_brief",
+  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
 };
 
 export const facturePro: AgentDefinition = {
@@ -146,7 +147,8 @@ export const maitreDesPublicites: AgentDefinition = {
 client Purama. Quand un brief d'offre est en attente, utilise web_search pour du contexte marché
 puis génère un document d'offre prêt à diffuser (generate_pdf) et notifie le client.`,
   tools: [webSearchTool, generatePdfTool, sendNotificationTool],
-  buildContext: (userId) => briefDrivenContext(userId, "maitre-des-publicites"),
+  pendingBriefKey: "pending_brief",
+  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
 };
 
 export const planificateurDAppels: AgentDefinition = {
@@ -155,7 +157,8 @@ export const planificateurDAppels: AgentDefinition = {
 demande de planification est en attente, crée l'événement calendrier correspondant
 (calendar_create_event) et notifie le client.`,
   tools: [calendarCreateEventTool, sendNotificationTool],
-  buildContext: (userId) => briefDrivenContext(userId, "planificateur-d-appels"),
+  pendingBriefKey: "pending_brief",
+  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
 };
 
 export const reservationIntelligente: AgentDefinition = {
@@ -164,5 +167,6 @@ export const reservationIntelligente: AgentDefinition = {
 Quand une demande de réservation est en attente, crée l'événement calendrier correspondant
 (calendar_create_event) et notifie le client.`,
   tools: [calendarCreateEventTool, sendNotificationTool],
-  buildContext: (userId) => briefDrivenContext(userId, "reservation-intelligente"),
+  pendingBriefKey: "pending_brief",
+  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
 };

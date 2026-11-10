@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { runChefWorkerCycle, type ChefControlPlane, type ChefRuntimeTask } from "../src/chef/supervisor.js";
 import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js";
 import type { ChefVerifier } from "../src/chef/verifier.js";
+import { ChefProcessStopUnconfirmedError } from "../src/chef/process.js";
 
 const task: ChefRuntimeTask = {
   id: "budget-task", missionId: "budget-mission", briefHash: "a".repeat(64), instructions: "Read only",
@@ -83,6 +84,50 @@ describe("CHEF budget accounting at the worker boundary", () => {
     await expect(f.run()).rejects.toThrow("heartbeat lost");
     expect(f.driver.run).not.toHaveBeenCalled();
     expect(f.control.recordUsage).toHaveBeenCalledWith(expect.objectContaining({ inputTokens: 0, outputTokens: 0, costMicros: 0 }));
+  });
+
+  it("settles known zero before releasing a claim obtained during shutdown", async () => {
+    const f = fixture({ schemaVersion: 1, status: "completed", summary: "unused" });
+    const cancel = new AbortController();
+    vi.mocked(f.control.claimNext).mockImplementation(async () => { cancel.abort(); return task; });
+    const result = await runChefWorkerCycle(f.control, f.driver, f.verifier, {
+      missionId: task.missionId, workerId: "budget-worker", provider: "codex", signal: cancel.signal,
+    });
+    expect(result).toMatchObject({ state: "retryable" });
+    expect(f.driver.run).not.toHaveBeenCalled();
+    expect(f.control.recordUsage).toHaveBeenCalledWith(expect.objectContaining({
+      attempt: 2, fencingToken: 9, inputTokens: 0, outputTokens: 0, costMicros: 0,
+    }));
+    expect(vi.mocked(f.control.recordUsage).mock.invocationCallOrder[0])
+      .toBeLessThan(vi.mocked(f.control.transition).mock.invocationCallOrder[0]);
+  });
+
+  it("retains unknown consumption after shutdown of a driver that already started", async () => {
+    const f = fixture({ schemaVersion: 1, status: "completed", summary: "unused" });
+    const cancel = new AbortController();
+    vi.mocked(f.driver.run).mockImplementation(async () => {
+      cancel.abort();
+      throw new Error("process stopped with no provider receipt");
+    });
+    const result = await runChefWorkerCycle(f.control, f.driver, f.verifier, {
+      missionId: task.missionId, workerId: "budget-worker", provider: "codex", signal: cancel.signal,
+    });
+    expect(result).toMatchObject({ state: "retryable" });
+    expect(f.control.recordUsage).not.toHaveBeenCalled();
+    expect(f.verifier.verify).not.toHaveBeenCalled();
+  });
+
+  it("persists quarantine before releasing an unconfirmed process without settling its cost to zero", async () => {
+    const f = fixture({ schemaVersion: 1, status: "completed", summary: "unused" });
+    f.control.quarantineProcess = vi.fn(async () => true);
+    vi.mocked(f.driver.run).mockRejectedValueOnce(new ChefProcessStopUnconfirmedError("descendant still alive"));
+    expect(await f.run()).toMatchObject({ state: "blocked_external", haltWorker: true });
+    expect(f.control.quarantineProcess).toHaveBeenCalledWith(task.id,
+      { workerId: "budget-worker", attempt: 2, fencingToken: 9 }, "descendant still alive");
+    expect(f.control.recordUsage).not.toHaveBeenCalled();
+    const blockedCall = vi.mocked(f.control.transition).mock.calls.findIndex(([input]) => input.target === "blocked_external");
+    expect(vi.mocked(f.control.quarantineProcess).mock.invocationCallOrder[0])
+      .toBeLessThan(vi.mocked(f.control.transition).mock.invocationCallOrder[blockedCall]);
   });
 
   it("does not infer zero from a driver exception after execution began", async () => {

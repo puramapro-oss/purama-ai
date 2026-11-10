@@ -1,0 +1,1248 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-10T16:33:02.871937+00:00",
+  "status": {
+    "local_scoped_qualification": "PASS",
+    "commercial_release_readiness": "PARTIEL",
+    "hosted_CI": "NON TESTÉ",
+    "production_and_live_providers": "NON TESTÉ",
+    "GitNexus_graph_completeness": "PARTIEL"
+  },
+  "base": "58a85a9f7ae0c20abc37158ea0901243e0bf2acd",
+  "baseline_original33": "0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+  "donors": [
+    {
+      "pr": 29,
+      "head": "8f38de97fe6b2e6f0358ff44bfa8973f0382372e",
+      "relation": "parallel branch; targeted guarantees composed"
+    },
+    {
+      "pr": 32,
+      "head": "3cd01de34447003ac7aad4a6ad54cf7524b77a67",
+      "relation": "binary/snapshot assertions preserved with bounded core"
+    },
+    {
+      "pr": 34,
+      "head": "5fe914ce98f69665cd04c8b640b6feb748b355fd",
+      "parent": "8631305fe0a4e0208566191b795ef876d9b5dfbe",
+      "exact_paths": 6
+    },
+    {
+      "pr": 35,
+      "head": "959aa4173b180eeb2c41158857e126e4c0e923b4",
+      "parent": "58a85a9f7ae0c20abc37158ea0901243e0bf2acd",
+      "exact_paths": 2
+    }
+  ],
+  "scope": {
+    "review_paths_including_this_pair": 108,
+    "code_test_control_and_inherited_donor_proof_paths": 106,
+    "source_hashes_excluding_this_QA_pair_to_avoid_circular_digest": [
+      {
+        "path": ".github/workflows/purama-chef-hardening.yml",
+        "sha256": "4b201bd042854b9b1d1513588f7cc40630511c0464ee4c923ae3449b1e3d5930"
+      },
+      {
+        "path": "karta/src/agents/customAgent.ts",
+        "sha256": "56017f8f35a3f95bc2391f5459a3e30f757e4a3e906805ca48abcadf2f372875"
+      },
+      {
+        "path": "karta/src/engine/loop.ts",
+        "sha256": "e0a1b80da3697cd49170ddbb87ad2d3a59c55330c222b2a3b53c10ad7c5507ad"
+      },
+      {
+        "path": "karta/src/scheduler/customAgents.ts",
+        "sha256": "1d5b5f68083c385e8435938c8124254a4567927f1aa9b541ed4c76dc9b5ee687"
+      },
+      {
+        "path": "karta/test/assistantPolicy.test.ts",
+        "sha256": "c8e4c1ac35afa545857617cc65c2eefe50fd32faa4a6b76267974836562757ac"
+      },
+      {
+        "path": "karta/test/commercePrivileges.test.ts",
+        "sha256": "e53e2e13642640305d5c430605ab1d4822de976ac58185f19f4709133bce0eb3"
+      },
+      {
+        "path": "karta/test/customAgentScanAbort.test.ts",
+        "sha256": "d61ae014b3d856064d2cdd8e3e589482d3f6076149e32011b4d2aa870bd14a54"
+      },
+      {
+        "path": "karta/test/customAgentScheduler.test.ts",
+        "sha256": "b9d644216f828dde016a132d6ffbbf2dc521117392cd76d539f7d78e585786bc"
+      },
+      {
+        "path": "karta/test/customAgentSchedulerCron.test.ts",
+        "sha256": "8828fb740e4fd0b9830c9be7285d19f307d9d2cebeabd15a8fc1965530432ccc"
+      },
+      {
+        "path": "karta/test/customAuthorization.test.ts",
+        "sha256": "0f9882278e83e70099e95fd114a1077da2b0d0c5e648e7af80d35718c09fa838"
+      },
+      {
+        "path": "karta/test/evidence/custom-agent-scheduler-20261110.json",
+        "sha256": "7a1257435e50f3cc775183086d670c60163d3a1fb6e77136c29b7d5e318c5c7a"
+      },
+      {
+        "path": "package.json",
+        "sha256": "7f69cd26b17b3692cf4a8a010a9d17bf705bf13fd28e19a5b11f86b9824de200"
+      },
+      {
+        "path": "playwright.config.ts",
+        "sha256": "68e04e4ad6f6eb139503cdab45e7390110e86e3eedb468137155b0f3a275e227"
+      },
+      {
+        "path": "src/components/auth/ProtectedRoute.tsx",
+        "sha256": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f"
+      },
+      {
+        "path": "src/components/dashboard/ExecutionCounter.tsx",
+        "sha256": "91ea988d823955b3d573a142c74c6b10f59b29ffd2eccee7e3bdeebf7270f51b"
+      },
+      {
+        "path": "src/components/influencer/ReferralBanner.tsx",
+        "sha256": "7062fc91d20699d11bbde69cebf0e62855d61c7a35082cff02e27b2863fb2c78"
+      },
+      {
+        "path": "src/components/shared/SpiritualLayer.tsx",
+        "sha256": "3353d86a8dc22235a0a332af920133c1d108ee7a549409b1a9209bb66995e0c8"
+      },
+      {
+        "path": "src/components/voice/AgentChatTab.tsx",
+        "sha256": "8f23873f852ecfa00ee192de846688374d87f38a7898b94f1b2de1379512e338"
+      },
+      {
+        "path": "src/hooks/useCreatorAgentKarta.ts",
+        "sha256": "cd14f84e4927cb5c8c5f3b77b0b505e6ba8b13d0ef3291f94ca82cc6b1bd7939"
+      },
+      {
+        "path": "src/hooks/useInfluencer.ts",
+        "sha256": "3897308be50e96a9f4d37322ed80f16b51d81380f28456bbd7c9001e32d4762b"
+      },
+      {
+        "path": "src/hooks/useRequestScope.ts",
+        "sha256": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84"
+      },
+      {
+        "path": "src/hooks/useSubscription.ts",
+        "sha256": "a568c709da14ebc0c6240c8ed6b050be70c8911793885d86120b18ce1dcdfec6"
+      },
+      {
+        "path": "src/hooks/useVoice.tsx",
+        "sha256": "671ebfb2112b31ae14f79cdd2e878b1b6853535a7d22adaccfc8486ca6863585"
+      },
+      {
+        "path": "src/lib/founder-dashboard.ts",
+        "sha256": "46346b12a0fef48bb1fa48fcfa01c94d1f9ccae7dfc45a53b7cff076211aedc3"
+      },
+      {
+        "path": "src/lib/opentimestamps.ts",
+        "sha256": "71c35db12d9ffd39608020cf15e8d980a92c924b8137794cdbcdddba008a8f8d"
+      },
+      {
+        "path": "src/lib/ots-core.ts",
+        "sha256": "dde2de71d44c0e1d9bb658d4ae2bb51904a03506f37415530e45395340721e54"
+      },
+      {
+        "path": "src/lib/plans.ts",
+        "sha256": "3542920fcb1d42c9d42a2a89ff0ebccda2ace9139a2ad6b6ca6db90d0d79d8ca"
+      },
+      {
+        "path": "src/pages/AdminContracts.tsx",
+        "sha256": "d17da3a92799e670f194343fba240b7eba6251ead5b6fb0cae211f5b90ccee3d"
+      },
+      {
+        "path": "src/pages/AdminDashboard.tsx",
+        "sha256": "8721b47f388571f184db88dccf9962e48dc667fe77e74cda62b9eafaa51f5bdf"
+      },
+      {
+        "path": "src/pages/AdminInfluencers.tsx",
+        "sha256": "0b3ba466b56cd7a0de4bcc6fa0bb48d0758770eada4e9f48b288071708e3358a"
+      },
+      {
+        "path": "src/pages/CreatorAgentDetail.tsx",
+        "sha256": "203c839142534747b0a244936729b989c7fbb0cbdb33149b337942864f69e279"
+      },
+      {
+        "path": "src/pages/DashboardBilling.tsx",
+        "sha256": "cd9597065ede8b9cf7072de7d427026e3afdc0522ba624ab2ca00b4bdeb61e78"
+      },
+      {
+        "path": "src/pages/InfluencerDashboard.tsx",
+        "sha256": "34bbbe0b3de257fef347304fe674c9be17702f4d671747d6f5a2f36dca7d8b60"
+      },
+      {
+        "path": "src/pages/LegalAgentChat.tsx",
+        "sha256": "347b9eed1609ec7088d923b8af932fe55ccf5742c3e2ddb6d52584155bddb30c"
+      },
+      {
+        "path": "src/pages/Pricing.tsx",
+        "sha256": "5c608cfe141c16716adc6354bd54fae2962d1c229c0666cb3d61ee9d60c1735f"
+      },
+      {
+        "path": "src/types/ots-primitives.d.ts",
+        "sha256": "01d45b3b4a6990088c4757963ad949637880b951f397e89e52d83472a96abe1b"
+      },
+      {
+        "path": "src/utils/generateContractPdf.ts",
+        "sha256": "b824d1d361b33dd2d7e6d60174c5c43d9bcc6882dff2ad2ca22c0242a5c849be"
+      },
+      {
+        "path": "supabase/config.toml",
+        "sha256": "b912f34a3218dfc5e99a331a3178cb9c7c2628cc87c2de9c4fc3c108b8e55b10"
+      },
+      {
+        "path": "supabase/functions/_shared/docuseal.ts",
+        "sha256": "878a1afe786a29b38a4b4422acc953ec3ed68f1e999f2cc286b5e7b9e7a98390"
+      },
+      {
+        "path": "supabase/functions/_shared/ots-auth.ts",
+        "sha256": "2bf737b49fa67942be0ce1c070ebcc1f1bfb9796dbf93e54f23b2b8d5473f06b"
+      },
+      {
+        "path": "supabase/functions/_shared/ots-contract.ts",
+        "sha256": "bc0ea2e93a14e55090d77f2d6278250fae62912e7137509acfd68969426ad304"
+      },
+      {
+        "path": "supabase/functions/_shared/ots-library.ts",
+        "sha256": "4ea4830cb48933beff3b0a77ae290ffd4028f0707090d920e89d3fb29cbcc260"
+      },
+      {
+        "path": "supabase/functions/_shared/ots-pdf.ts",
+        "sha256": "ca54f526dda62b9b17f6ed09c14ff353ecda24e86d7c2d66920c1c2231fb5d53"
+      },
+      {
+        "path": "supabase/functions/_shared/stripe-subscription-state.ts",
+        "sha256": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5"
+      },
+      {
+        "path": "supabase/functions/agent-chat/index.ts",
+        "sha256": "36241f217a5963a183d1717943f6832d6811fc3a9068280a8757e425c3e8cc8b"
+      },
+      {
+        "path": "supabase/functions/check-subscription/index.ts",
+        "sha256": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97"
+      },
+      {
+        "path": "supabase/functions/contracts-ots-stamp/index.ts",
+        "sha256": "bed4d0d0e4abb5c532c3d7ce2edb0ebee841915ae2b111b6dd1c58f08d1f4d48"
+      },
+      {
+        "path": "supabase/functions/contracts-ots-verify/index.ts",
+        "sha256": "e1168bcce1f13c90ac1232d97f2f2de587b534ea6af1914249349d5bcbb4550b"
+      },
+      {
+        "path": "supabase/functions/contracts-webhook/index.ts",
+        "sha256": "388a39c125b33bec3e5739b14ace647505ab765daf67caef53bf97f10681f347"
+      },
+      {
+        "path": "supabase/functions/founder-dashboard/handler.ts",
+        "sha256": "83a3099ad23410ba39f41dc17c4caa3582fc54b40fea89563d577476b62a45f5"
+      },
+      {
+        "path": "supabase/functions/founder-dashboard/index.ts",
+        "sha256": "f2e5783a90ce4370b8f1c00bc683f1b60db8d325471fedaee976b7622b89376b"
+      },
+      {
+        "path": "supabase/functions/founder-dashboard/reader.ts",
+        "sha256": "521a5e4688fcb7c66e90b800129c5273dd1e77b2bdbc3718214416317630079b"
+      },
+      {
+        "path": "supabase/functions/process-influencer-payments/index.ts",
+        "sha256": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489"
+      },
+      {
+        "path": "supabase/migrations/20261110000100_commerce_privileges.sql",
+        "sha256": "4d9f7f48f14977d8e677801cbb4ff0d10728608a6887073bd2e7b8efd4a71d9a"
+      },
+      {
+        "path": "tests/commerce/deno.json",
+        "sha256": "2711ee2bd3ccbc05d6a0f6cb77dd4a0ff1c072e420d4f1316c540867059b9c39"
+      },
+      {
+        "path": "tests/commerce/payout-handler.test.ts",
+        "sha256": "f945d2fe10023e147b8317d14de2dc38cde9a586722dada829af79e8ea85a73a"
+      },
+      {
+        "path": "tests/commerce/payout-provider-fixture.ts",
+        "sha256": "8c0a437939856f9ca7d749c43f75157da75887a8056ebdea97f712240b533a69"
+      },
+      {
+        "path": "tests/commerce/serve-capture.ts",
+        "sha256": "3b835346701691f482dabf3cee56891c5c97dda4731466b5b45ea358b568ebf7"
+      },
+      {
+        "path": "tests/commerce/subscription-handler.test.ts",
+        "sha256": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836"
+      },
+      {
+        "path": "tests/commerce/subscription-provider-fixture.ts",
+        "sha256": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77"
+      },
+      {
+        "path": "tests/commerce/subscription-state.test.ts",
+        "sha256": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02"
+      },
+      {
+        "path": "tests/contracts-ots-auth.mjs",
+        "sha256": "00d369ec9cf55c891d75b057610d0e8ef280e36f923067b848875cdb3df3bcdf"
+      },
+      {
+        "path": "tests/contracts-ots-authorization.test.mjs",
+        "sha256": "950dc3d5687adf155058fb71092de91d30ba5ff3e0770ff7103dec796fbaef92"
+      },
+      {
+        "path": "tests/contracts-ots/README.md",
+        "sha256": "9c66e4dc66eac35e83008b11d984a64b7d6a969bb7653f2f026cfcef9b09edf4"
+      },
+      {
+        "path": "tests/contracts-ots/admission.test.ts",
+        "sha256": "5bb99f4a7b4a164497e3590eb281bfa37d73628aa0a9336e8cc0193d60a450e1"
+      },
+      {
+        "path": "tests/contracts-ots/body.test.ts",
+        "sha256": "1bef52e48f7ceee832a0f0db9b11b46baca1b2471f8e13a9029defd6c01fd65c"
+      },
+      {
+        "path": "tests/contracts-ots/browser/README.md",
+        "sha256": "69b5b38f82bb54a03b3155f44f7c8cb41f90c09d9596812ca70461cc88cef451"
+      },
+      {
+        "path": "tests/contracts-ots/browser/backend.js",
+        "sha256": "a643a37a41d61ce3299fd7acd0ce37be9bd00fa4e957cb22be9dfce1b088d133"
+      },
+      {
+        "path": "tests/contracts-ots/browser/entry.jsx",
+        "sha256": "ec9abcf133d807dfd20bf6f23f0e6aef5b28988e2b9945eb2b5685482dfc1bdb"
+      },
+      {
+        "path": "tests/contracts-ots/browser/run.mjs",
+        "sha256": "9083dea3bbb147d60953021350ff143991dfe65c34c8eabd71fdfabca2c1bb12"
+      },
+      {
+        "path": "tests/contracts-ots/client.test.mjs",
+        "sha256": "95d71a8c78359f458f8cbaf916f7645f4c2cb2e6ac4712a643f1f14af38889a8"
+      },
+      {
+        "path": "tests/contracts-ots/crypto.test.mjs",
+        "sha256": "d5b1593ddbceeec9a2d04b868ad90ac957e1fc1489fee4f3f23a524ffb752146"
+      },
+      {
+        "path": "tests/contracts-ots/deno.json",
+        "sha256": "b0055cfbd1f1ee5e0257e891c550dae502d6658b217495d0b731532b2d6ab7c3"
+      },
+      {
+        "path": "tests/contracts-ots/fixture.ts",
+        "sha256": "23a4a5b7dc429130b62e70ca46392edc6e96fc95300c880c4d3bc393ff1957bc"
+      },
+      {
+        "path": "tests/contracts-ots/ots-runtime-fixture.ts",
+        "sha256": "fcc4435b58bddc3575329ad31b260a7acdcecbb490529b02ec97b9801f3291c1"
+      },
+      {
+        "path": "tests/contracts-ots/run.mjs",
+        "sha256": "667b831a80c2e5c23b346663e3ba089a59864200bb4d6678b7f0654ce9a59211"
+      },
+      {
+        "path": "tests/contracts-ots/runtime-deno.test.ts",
+        "sha256": "8905d96b89a13503ad74842594ea3fd47a1ce1e53d380504e4e0aea6774df67e"
+      },
+      {
+        "path": "tests/contracts-ots/upstream-fixtures.json",
+        "sha256": "20b3e3a6c6aabd5496c8ae00ef4a499a46df61a2fcf5106a89c836dc6047dc4b"
+      },
+      {
+        "path": "tests/contracts-ots/webhook.test.ts",
+        "sha256": "e1f38fdba2579480a5f1d22bf875e6f41c1fcb2c49f24f6667a08fa66a0b03be"
+      },
+      {
+        "path": "tests/docuseal-read-boundaries.test.mjs",
+        "sha256": "5d8533b9ebb50ffd4dcc70274c046ca978cb2cab6a2d4168da808f3e00e7ddbe"
+      },
+      {
+        "path": "tests/founder-dashboard/browser/.gitignore",
+        "sha256": "40a46bc75b7ecabee1e3ec58944b40c456fbd86ebea4bbaa27b6b8f42cf9fe47"
+      },
+      {
+        "path": "tests/founder-dashboard/browser/auth-mock.jsx",
+        "sha256": "46d99f2e193f468c8c6d21aa592747e69aed39929e455e82226a41cadfd6411d"
+      },
+      {
+        "path": "tests/founder-dashboard/browser/harness.jsx",
+        "sha256": "3820f722855cf685e64276467a464fe98e3b561caeb470371ac80a215ea8a904"
+      },
+      {
+        "path": "tests/founder-dashboard/browser/index.html",
+        "sha256": "5bf7fe6ff80be654cf8fa200b65022da31ab3ffaf946cba41da7ed9b018f03ca"
+      },
+      {
+        "path": "tests/founder-dashboard/browser/run.mjs",
+        "sha256": "2ff919ecb0132ad0cd5ef21d0da9df40b7d256095e8de686f3fd0dd6bf566e12"
+      },
+      {
+        "path": "tests/founder-dashboard/browser/supabase-mock.js",
+        "sha256": "f323b00b3c765654835fe71beb385f8437b71bb6b42559b362bd8b05937ef65c"
+      },
+      {
+        "path": "tests/founder-dashboard/client.test.mjs",
+        "sha256": "564996a84cf5dbb1bb490a583717c4c9ea4e85e3f3381e2fe7fe4d3333f60b65"
+      },
+      {
+        "path": "tests/founder-dashboard/server.test.mjs",
+        "sha256": "a1e78db80afd8a1020db4490d0eda796aaafc235ad8052a1aaf57b2a7630830d"
+      },
+      {
+        "path": "tests/founder-dashboard/tsconfig.json",
+        "sha256": "390ad652d61c617ea7806ab91c703b40d6db6436d1623b66ef1f9d3e23ab1d41"
+      },
+      {
+        "path": "tests/opentimestamps-content.test.mjs",
+        "sha256": "4a4f7c0c8240f7a720bf94d08fda727bc966a58aeeffad7b16fd5e39448b322e"
+      },
+      {
+        "path": "tests/quality/account-isolation/README.md",
+        "sha256": "8cf4201a4abd7f078fabcfd22f7e394170b748502620e69e371df8c863cf75b9"
+      },
+      {
+        "path": "tests/quality/account-isolation/api.js",
+        "sha256": "2c0da902d60515357486e008d7d5fcaf1a4bf21667fc636d4c5e434830eec64f"
+      },
+      {
+        "path": "tests/quality/account-isolation/auth.jsx",
+        "sha256": "521c7dedb62eaced00e0a16d1da09480d68c13a33f0547cb13a9864e94d9230a"
+      },
+      {
+        "path": "tests/quality/account-isolation/children.jsx",
+        "sha256": "1338933f6106bf6af03f20f072e224e88e44114e4c1b674d1fdb06297fa13d4f"
+      },
+      {
+        "path": "tests/quality/account-isolation/entry.jsx",
+        "sha256": "7b2c9637cbf74648a2f3c18e097d99234b961bdb21fcdcce652d429a42172838"
+      },
+      {
+        "path": "tests/quality/account-isolation/run.mjs",
+        "sha256": "1b3c81f9bdbff5cc53f65af814c881476961ebdd2829763a56a41039130aa9ea"
+      },
+      {
+        "path": "tests/quality/account-isolation/supabase.js",
+        "sha256": "2d3023d9d4eb264ada84744a3d870e8265378d74c7cc1b14d610cecd3621978b"
+      },
+      {
+        "path": "tests/quality/commerce-ui-harness.html",
+        "sha256": "27b44df17d924dc207eaff609a4d0a74fd8aa7857cd4dba999e1f3f77df76d94"
+      },
+      {
+        "path": "tests/quality/commerce-ui-harness.tsx",
+        "sha256": "deab13668588eb1574dc4ba34ba5827be0a5afbcc140f75aa50a04074e4527c8"
+      },
+      {
+        "path": "tests/quality/commerce-ui-plans.test.mjs",
+        "sha256": "00e52ff5df881fccc2ab53a778087178ac50eacbc4775ffaf92080f0dc987166"
+      },
+      {
+        "path": "tests/quality/commerce-ui.spec.ts",
+        "sha256": "bf967328df87bcc45ae8e8704a89c3fa3f0a0920266e3a682f5ba08c5a1fadf1"
+      },
+      {
+        "path": "tests/quality/vite.config.ts",
+        "sha256": "2ebe6d392da7f6c006379c5841de74ecdaea3b69b84615921e10978f6f4e6920"
+      },
+      {
+        "path": "tests/ui-state/playwright.config.ts",
+        "sha256": "a26d700f3a0b93793b868c83cdfa7d31580ac4e5b165cb609d897fbd38a9cfa5"
+      },
+      {
+        "path": "tests/voice-consent/playwright.config.ts",
+        "sha256": "a8578d1ece33088d79db6cbadbcc59c3ac065380abc9611faa007d80a81b0da7"
+      },
+      {
+        "path": "tests/wellbeing/playwright.config.ts",
+        "sha256": "879da686c9a99a8d7b577a5f4ca4fdd7bf26342e28687d84fa2528851f6c89c3"
+      },
+      {
+        "path": "vercel.json",
+        "sha256": "3f2c2ebffa745be3bec7bbdd27c03427dd2eab4d41ba140a2fc5fbc936bce4ae"
+      }
+    ],
+    "inherited58_proofs_preserved": 63,
+    "inherited34_proof_files": 1,
+    "inherited_evidence_not_counted_as_our_execution": true,
+    "lockfiles_unchanged": true
+  },
+  "counts": {
+    "executed_test_identifiers": 2014,
+    "node_deno_karta": 1890,
+    "browser": 124,
+    "native_postgresql_checks_separate": 12,
+    "native_Deno_HTTP_checks_separate": 3,
+    "definition": "Each executed file+case identifier counted once. Different files can cover overlapping risks; this is not an independent-risk count.",
+    "excluded_from_addition": [
+      "targeted24 PR34/35 already in1507",
+      "earlier1483 and targeted46",
+      "earlier37 OTS and40 commerce subsets",
+      "content15 and DocuSeal21 already in179",
+      "cold-cache3 and browser reruns",
+      "198/339 discovery counts",
+      "63+1 inherited evidence files"
+    ]
+  },
+  "functional_suites": [
+    {
+      "suite": "KARTA complete",
+      "cases": 1507,
+      "status": "PASS",
+      "receipt": "iao34-35-karta-full.json",
+      "log": "iao34-35-karta-full.log",
+      "log_sha256": "16de08f99eb7e5205f900435f860980433bafebd75e454f25a66c3e6badd6df4",
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=2"
+      ],
+      "cwd": "karta",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:28:50.440220+00:00",
+      "finished_utc": "2026-11-10T16:29:46.714608+00:00"
+    },
+    {
+      "suite": "Commerce plans",
+      "cases": 17,
+      "status": "PASS",
+      "receipt": "iao58-plans.json",
+      "log": "iao58-plans.log",
+      "log_sha256": "e3830650a3655beb29d9d371e83999cf6d2aa00694c7fb1c5d147085555841bd",
+      "command": [
+        "npm",
+        "run",
+        "test:commerce:plans"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:48:59.796664+00:00",
+      "finished_utc": "2026-11-10T15:49:00.268614+00:00"
+    },
+    {
+      "suite": "Commerce handlers",
+      "cases": 42,
+      "status": "PASS",
+      "receipt": "iao58-commerce.json",
+      "log": "iao58-commerce.log",
+      "log_sha256": "75c060468b2590d74f32a38841e3ff9dc862b88d96f08347fb6271db457afd9a",
+      "command": [
+        "npm",
+        "run",
+        "test:commerce:handlers"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:48:58.712149+00:00",
+      "finished_utc": "2026-11-10T15:48:59.234068+00:00"
+    },
+    {
+      "suite": "Founder client/server",
+      "cases": 47,
+      "status": "PASS",
+      "receipt": "iao58-founder.json",
+      "log": "iao58-founder.log",
+      "log_sha256": "0598999d4b0ac04e48faf46853a76f922c35465e3602ea2b335049a6c6342f51",
+      "command": [
+        "npm",
+        "run",
+        "test:founder"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:48:59.243192+00:00",
+      "finished_utc": "2026-11-10T15:48:59.789291+00:00"
+    },
+    {
+      "suite": "OTS Deno handlers",
+      "cases": 42,
+      "status": "PASS",
+      "receipt": "iao58-final-ots.json",
+      "log": "iao58-final-ots.log",
+      "log_sha256": "324c4db5291bb18fa25229d88505155b5fb95a499a2c5279aa196d2f8e7d93eb",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-ots"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:10:35.635348+00:00",
+      "finished_utc": "2026-11-10T16:10:38.880668+00:00"
+    },
+    {
+      "suite": "OTS Node crypto/client",
+      "cases": 24,
+      "status": "PASS",
+      "receipt": "iao58-final-ots.json",
+      "log": "iao58-final-ots.log",
+      "log_sha256": "324c4db5291bb18fa25229d88505155b5fb95a499a2c5279aa196d2f8e7d93eb",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-ots"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:10:35.635348+00:00",
+      "finished_utc": "2026-11-10T16:10:38.880668+00:00"
+    },
+    {
+      "suite": "OTS real Deno npm bridge",
+      "cases": 3,
+      "status": "PASS",
+      "receipt": "iao58-final-ots.json",
+      "log": "iao58-final-ots.log",
+      "log_sha256": "324c4db5291bb18fa25229d88505155b5fb95a499a2c5279aa196d2f8e7d93eb",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-ots"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:10:35.635348+00:00",
+      "finished_utc": "2026-11-10T16:10:38.880668+00:00"
+    },
+    {
+      "suite": "OTS authority fixture",
+      "cases": 24,
+      "status": "PASS",
+      "receipt": "iao58-final-auth.json",
+      "log": "iao58-final-auth.log",
+      "log_sha256": "8775f9482e09690ec9ec4308c8c04ea994dcdaff156218f833e76c1a780ec289",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-auth"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:10:35.635814+00:00",
+      "finished_utc": "2026-11-10T16:10:37.313411+00:00"
+    },
+    {
+      "suite": "OTS/HTTP/webhook/DocuSeal security",
+      "cases": 179,
+      "status": "PASS",
+      "receipt": "iao58-final-security.json",
+      "log": "iao58-final-security.log",
+      "log_sha256": "15a2a27a8bb7ab84b2683f6fa265f9430d93a5063c51a6eff0bdf785e3c4ba65",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-security"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:10:37.317560+00:00",
+      "finished_utc": "2026-11-10T16:10:48.634959+00:00"
+    },
+    {
+      "suite": "Dependency compatibility",
+      "cases": 5,
+      "status": "PASS",
+      "receipt": "dependency-compat.json",
+      "log": "dependency-compat.log",
+      "log_sha256": "796ba5ba31d6741acb6c2bc13ccb2064e689a5ace80e89451c90d1cf993f7371",
+      "command": [
+        "npm",
+        "run",
+        "test:dependencies"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": null,
+      "finished_utc": "2026-11-10T15:03:00.378165+00:00"
+    }
+  ],
+  "browser_suites": [
+    {
+      "suite": "account-isolation",
+      "cases": 25,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/account-reconciled-results.json",
+      "receipt_sha256": "2bdd1071ba8324731b13c9ac016e0f97a1cf2f05ea167c3e1732d7f4a195a815"
+    },
+    {
+      "suite": "founder",
+      "cases": 16,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/founder-results.json",
+      "receipt_sha256": "6eacf7013cbac03d930e4e5394170ab92839bea5cceca09569dc24297d237961"
+    },
+    {
+      "suite": "AdminContracts OTS",
+      "cases": 7,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/ots-results.json",
+      "receipt_sha256": "ba27d268f3ddf90d9ca0ce4f99581ba0010d085162d474810c79a3135556188a"
+    },
+    {
+      "suite": "commerce",
+      "cases": 29,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/mac-raw/commerce-final-results.json",
+      "receipt_sha256": "0f883d7db77599504dcae3f8b17ffb2035fc3216ffa4389b32a6d170232cc380"
+    },
+    {
+      "suite": "voice-consent",
+      "cases": 17,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/mac-raw/voice-native-results.json",
+      "receipt_sha256": "ff111d9f133dd9d720411baac4a1e53ef9c8708962ca841bb6f0ffb77815810d"
+    },
+    {
+      "suite": "ui-state",
+      "cases": 9,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/mac-raw/ui-state-native-results.json",
+      "receipt_sha256": "4212072c61a74a6c29bba2d475a0ac99d41bb2b8fcf88aab168d826f19eefbed"
+    },
+    {
+      "suite": "wellbeing",
+      "cases": 21,
+      "status": "PASS",
+      "receipt": "iao-mac-browser-evidence/mac-raw/wellbeing-fixed-results.json",
+      "receipt_sha256": "608f628ca629b939c982fb699aad1f001f8b56ea5f940aee9a16426e71fe4e1b"
+    }
+  ],
+  "browser_execution": {
+    "chrome": "157.0.8103.39",
+    "os": "macOS",
+    "node": "26.12.1",
+    "retries_skips_flaky": 0,
+    "precompiled_on": "Linux",
+    "mac_build_or_install": false,
+    "provider_transports": "synthetic; external network blocked",
+    "raw_files_hash_verified": 173,
+    "raw_uncompressed_bytes": 2265257,
+    "source_binding_receipt": "iao-final-browser-source-equivalence.json",
+    "baseline_account_cases": {
+      "pass": 14,
+      "fail": 11
+    },
+    "reconciled_account_cases": {
+      "pass": 25,
+      "fail": 0
+    },
+    "wellbeing_before": {
+      "pass": 20,
+      "fail": 1
+    },
+    "wellbeing_after": {
+      "pass": 21,
+      "fail": 0
+    }
+  },
+  "PR34_PR35_counterproof": {
+    "cases": 24,
+    "before": {
+      "pass": 6,
+      "fail": 18,
+      "unhandled_rejection": 1
+    },
+    "after": {
+      "pass": 24,
+      "fail": 0
+    },
+    "same_test_source_hashes": true,
+    "49_existing_cases_skipped_only_in_targeted_filter": true,
+    "all_cases_then_in_full1507": true,
+    "before_receipt": "iao34-35-before.json",
+    "after_receipt": "iao34-35-after-targeted.json",
+    "independent_read_reviews": [
+      "pr34-independent-review.json",
+      "pr35-independent-review.json"
+    ]
+  },
+  "native_postgresql": {
+    "version": "18.6",
+    "synthetic_only": true,
+    "loopback_only": true,
+    "checks": [
+      {
+        "name": "native server is PostgreSQL18.6",
+        "status": "PASS"
+      },
+      {
+        "name": "all three corrections compose without deleting either feature",
+        "status": "PASS"
+      },
+      {
+        "name": "client financial writes remain forbidden after new migrations",
+        "status": "PASS"
+      },
+      {
+        "name": "credit function is unavailable to anonymous and client roles",
+        "status": "PASS"
+      },
+      {
+        "name": "eight concurrent identical payments create one immutable credit",
+        "status": "PASS"
+      },
+      {
+        "name": "conflicting replay and reused event cannot grant another credit",
+        "status": "PASS"
+      },
+      {
+        "name": "outreach reservation RPC rejects client authority",
+        "status": "PASS"
+      },
+      {
+        "name": "four concurrent outreach reservations produce one owner",
+        "status": "PASS"
+      },
+      {
+        "name": "tenant and duplicate-recipient admission remain blocked",
+        "status": "PASS"
+      },
+      {
+        "name": "four concurrent send admissions allow one provider attempt",
+        "status": "PASS"
+      },
+      {
+        "name": "unknown send outcome cannot be automatically replayed",
+        "status": "PASS"
+      },
+      {
+        "name": "commerce reapplication preserves credits and outreach records",
+        "status": "PASS"
+      }
+    ],
+    "cluster_stopped_no_residual_pid": true,
+    "receipt": "native-iao-loopback-execution.json",
+    "SQL_source_hashes": [
+      {
+        "path": "supabase/migrations/20260122152902_ec0f2a0a-f327-4f43-88ee-e867cf4d1995.sql",
+        "sha256": "dc271db08e6c6e18592f6905f252dbaf2e4a6c2bd75ba4f5b48fa857a4b6e23e",
+        "current_sha256": "dc271db08e6c6e18592f6905f252dbaf2e4a6c2bd75ba4f5b48fa857a4b6e23e"
+      },
+      {
+        "path": "supabase/migrations/20260122235510_766a8ba1-97fb-4567-8b4b-7acb02073bd7.sql",
+        "sha256": "f88cf7632e90ac3b06ff2d2776bb971b512ac071af701c9708a8f557ccb39d6b",
+        "current_sha256": "f88cf7632e90ac3b06ff2d2776bb971b512ac071af701c9708a8f557ccb39d6b"
+      },
+      {
+        "path": "supabase/migrations/20260123003417_746171fd-e667-4de4-8c28-fb7473a4a8a6.sql",
+        "sha256": "d4e86a1b933b43cf2bc7a59615ef2921258185900503d10e1311bfc4c2f13cdd",
+        "current_sha256": "d4e86a1b933b43cf2bc7a59615ef2921258185900503d10e1311bfc4c2f13cdd"
+      },
+      {
+        "path": "supabase/migrations/20260123003822_5bd584df-38a4-460c-8938-bce168706e63.sql",
+        "sha256": "03090509f0d27beca2019a588afe1e6236cd29797b8982c52cdd8b3497228046",
+        "current_sha256": "03090509f0d27beca2019a588afe1e6236cd29797b8982c52cdd8b3497228046"
+      },
+      {
+        "path": "p3_schema.sql",
+        "sha256": "c37d6608cc05748e5b4bb7ffe5490c5dadfaebe973befe3f9cf1106212cce4fc",
+        "current_sha256": "c37d6608cc05748e5b4bb7ffe5490c5dadfaebe973befe3f9cf1106212cce4fc"
+      },
+      {
+        "path": "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql",
+        "sha256": "586178ff7ceb246b06bfc6764ad1e43140e967f63548126616c6b51001a44ef0",
+        "current_sha256": "586178ff7ceb246b06bfc6764ad1e43140e967f63548126616c6b51001a44ef0"
+      },
+      {
+        "path": "supabase/migrations/20260406230000_partner_agent.sql",
+        "sha256": "0ed15f03d105f3aff2caa5fb5e9901194671f6b7119fa555ed0db5c8a57db18f",
+        "current_sha256": "0ed15f03d105f3aff2caa5fb5e9901194671f6b7119fa555ed0db5c8a57db18f"
+      },
+      {
+        "path": "supabase/migrations/20260727020000_overage_credits.sql",
+        "sha256": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+        "current_sha256": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3"
+      },
+      {
+        "path": "supabase/migrations/20261110000100_commerce_privileges.sql",
+        "sha256": "4d9f7f48f14977d8e677801cbb4ff0d10728608a6887073bd2e7b8efd4a71d9a",
+        "current_sha256": "4d9f7f48f14977d8e677801cbb4ff0d10728608a6887073bd2e7b8efd4a71d9a"
+      },
+      {
+        "path": "supabase/migrations/20261110000200_overage_credit_idempotency.sql",
+        "sha256": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+        "current_sha256": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff"
+      },
+      {
+        "path": "supabase/migrations/20261110030000_partner_outreach_reservations.sql",
+        "sha256": "e93f400c9075204c7a7468e6c4ad323fca58cec73f765d51ba5c3473b41e1501",
+        "current_sha256": "e93f400c9075204c7a7468e6c4ad323fca58cec73f765d51ba5c3473b41e1501"
+      }
+    ]
+  },
+  "DocuSeal_GET": {
+    "source_sha256": "878a1afe786a29b38a4b4422acc953ec3ed68f1e999f2cc286b5e7b9e7a98390",
+    "total_deadline_ms": 10000,
+    "max_bytes": 1048576,
+    "strict_utf8": true,
+    "retry_added": false,
+    "write_transport_unchanged": true,
+    "same_final_tests_before": {
+      "tests": 21,
+      "pass": 7,
+      "fail": 14,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "same_final_tests_after": {
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "native_Deno_HTTP": {
+      "deno": "2.9.6",
+      "rows": [
+        {
+          "path": "/normal",
+          "status": "success",
+          "data": {
+            "fixture": true
+          },
+          "elapsedMs": 16.576314
+        },
+        {
+          "path": "/headers-stall",
+          "status": 504,
+          "elapsedMs": 10001.400095
+        },
+        {
+          "path": "/body-stall",
+          "status": 504,
+          "elapsedMs": 10001.507487
+        }
+      ]
+    },
+    "native_server_closed": true,
+    "receipt": "docuseal-read-final-receipt.json"
+  },
+  "static_build_and_type_gates": [
+    {
+      "receipt": "iao34-35-karta-types.json",
+      "log": "iao34-35-karta-types.log",
+      "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "karta",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:28:50.440264+00:00",
+      "finished_utc": "2026-11-10T16:28:56.285775+00:00"
+    },
+    {
+      "receipt": "iao34-35-karta-build.json",
+      "log": "iao34-35-karta-build.log",
+      "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "karta",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:28:56.290992+00:00",
+      "finished_utc": "2026-11-10T16:28:59.381486+00:00"
+    },
+    {
+      "receipt": "iao58-site-types.json",
+      "log": "iao58-site-types.log",
+      "log_sha256": "4435cb4e136be051363db680b712f78db762f7cd10c55a335d75518724f28383",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:51:22.145981+00:00",
+      "finished_utc": "2026-11-10T15:51:34.749627+00:00"
+    },
+    {
+      "receipt": "iao58-founder-types.json",
+      "log": "iao58-founder-types.log",
+      "log_sha256": "55d0c54038851da1fd22b0890ceab6ee4eddec2a108530fa72be2d1130cb3d32",
+      "command": [
+        "npm",
+        "run",
+        "test:founder:types"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:51:22.974637+00:00",
+      "finished_utc": "2026-11-10T15:51:24.702811+00:00"
+    },
+    {
+      "receipt": "iao58-site-production-build.json",
+      "log": "iao58-site-production-build.log",
+      "log_sha256": "df604bb4cd05f155e3b7cacac83390553e328ddfb7be78947960710ac178590d",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:03:03.991488+00:00",
+      "finished_utc": "2026-11-10T16:03:15.238366+00:00"
+    },
+    {
+      "receipt": "iao34-35-final-lint.json",
+      "log": "iao34-35-final-lint.log",
+      "log_sha256": "bd6a9c3b19d9da8ffd6d08180f1231e06817ccd5cf2d67b93cff6da98e25bdf6",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:29:41.319973+00:00",
+      "finished_utc": "2026-11-10T16:29:48.984680+00:00"
+    },
+    {
+      "receipt": "iao34-35-final-actionlint.json",
+      "log": "iao34-35-final-actionlint.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": [
+        "actionlint",
+        ".github/workflows/purama-chef-hardening.yml"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:30:46.645752+00:00",
+      "finished_utc": "2026-11-10T16:30:46.668430+00:00"
+    },
+    {
+      "receipt": "database-contracts.json",
+      "log": "database-contracts.log",
+      "log_sha256": "10835946fb1b0bf4174ebf2120b3d600622edc4af72f0fb2f954115ee5db908b",
+      "command": [
+        "npm",
+        "run",
+        "check:database-contracts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": null,
+      "finished_utc": "2026-11-10T15:03:02.729452+00:00"
+    },
+    {
+      "receipt": "iao58-final-otypes.json",
+      "log": "iao58-final-otypes.log",
+      "log_sha256": "96a12af8fcdebf83ed30f419cf1a147e4be33eaa6cefeefc9ecf39f35bdf3695",
+      "command": [
+        "deno",
+        "check",
+        "--no-config",
+        "--no-lock",
+        "--cached-only",
+        "--no-remote",
+        "--node-modules-dir=manual",
+        "supabase/functions/contracts-ots-stamp/index.ts",
+        "supabase/functions/contracts-ots-verify/index.ts",
+        "supabase/functions/contracts-webhook/index.ts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:10:38.886141+00:00",
+      "finished_utc": "2026-11-10T16:10:39.966857+00:00"
+    },
+    {
+      "receipt": "iao58-types-ots-payout.json",
+      "log": "iao58-types-ots-payout.log",
+      "log_sha256": "cc70850f60e1555ee2403cb8db63bc740be5e73a9feba0ea75f5e4d86620e7e7",
+      "command": [
+        "deno",
+        "check",
+        "--no-config",
+        "--no-lock",
+        "--cached-only",
+        "--no-remote",
+        "--node-modules-dir=manual",
+        "supabase/functions/contracts-ots-stamp/index.ts",
+        "supabase/functions/contracts-ots-verify/index.ts",
+        "supabase/functions/contracts-webhook/index.ts",
+        "supabase/functions/process-influencer-payments/index.ts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:51:21.067037+00:00",
+      "finished_utc": "2026-11-10T15:51:22.141124+00:00"
+    },
+    {
+      "receipt": "iao58-types-subscription.json",
+      "log": "iao58-types-subscription.log",
+      "log_sha256": "563713a36582cab002e943e90fc85c8e3311df0d0a6cea59a5dba9b604c7bf2d",
+      "command": [
+        "deno",
+        "check",
+        "--no-config",
+        "--no-lock",
+        "--cached-only",
+        "--no-remote",
+        "--node-modules-dir=manual",
+        "--import-map",
+        "<external-evidence>/stripe-official-types-map-with-node.json",
+        "supabase/functions/check-subscription/index.ts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:51:21.799064+00:00",
+      "finished_utc": "2026-11-10T15:51:22.968816+00:00"
+    },
+    {
+      "receipt": "iao58-types-founder.json",
+      "log": "iao58-types-founder.log",
+      "log_sha256": "d30a708ba4de108eb7fef8685ade9dd08c2b2c9ec460285ef3a8634d9eff1094",
+      "command": [
+        "deno",
+        "check",
+        "--no-config",
+        "--no-lock",
+        "--cached-only",
+        "--no-remote",
+        "--node-modules-dir=manual",
+        "--import-map",
+        "<external-evidence>/founder-real-types-native-map.json",
+        "supabase/functions/founder-dashboard/index.ts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T15:51:21.069379+00:00",
+      "finished_utc": "2026-11-10T15:51:21.793397+00:00"
+    },
+    {
+      "receipt": "iao35-agent-chat-types.json",
+      "log": "iao35-agent-chat-types.log",
+      "log_sha256": "d32655e1f5d7627be525777f66b26b2c79b9f80a400790193a5eed50bee4aa74",
+      "command": [
+        "deno",
+        "check",
+        "--no-config",
+        "--no-lock",
+        "--cached-only",
+        "--no-remote",
+        "--node-modules-dir=manual",
+        "supabase/functions/agent-chat/index.ts"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "started_utc": "2026-11-10T16:28:50.442329+00:00",
+      "finished_utc": "2026-11-10T16:28:52.448604+00:00"
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 32,
+    "generated_dist_warnings": 3
+  },
+  "typecheck_endpoints": {
+    "qualified_locally": 7,
+    "included_in_CI": 7,
+    "paths": [
+      "contracts-ots-stamp",
+      "contracts-ots-verify",
+      "contracts-webhook",
+      "check-subscription",
+      "process-influencer-payments",
+      "founder-dashboard",
+      "agent-chat"
+    ],
+    "official_local_type_resolution": [
+      "Stripe18.5.0 with exact locked Node types",
+      "Supabase2.91.0 for founder reader type import"
+    ],
+    "original_deno_land_esm_sh_transport": "NON TESTÉ; initial resolution failures retained; no product lockfile changed"
+  },
+  "playwright_discovery": {
+    "baseline_default_collection": 339,
+    "candidate_default_collection": 198,
+    "baseline_files": 13,
+    "candidate_files": 9,
+    "default_retained_cases_exact": 198,
+    "removed_default_occurrences": 141,
+    "removed_distinct_case_definitions": 47,
+    "all_removed_definitions_present_in_dedicated_configs": true,
+    "removed_by_project": {
+      "desktop": 47,
+      "tablet": 47,
+      "mobile": 47
+    },
+    "removed_by_file": {
+      "ui-state/ownership.spec.ts": 24,
+      "ui-state/submission.spec.ts": 3,
+      "voice-consent/lifecycle.spec.ts": 51,
+      "wellbeing/consent.spec.ts": 63
+    },
+    "dedicated_collections": {
+      "voice-consent": 17,
+      "ui-state": 9,
+      "wellbeing": 21
+    },
+    "routing": "The three suites use their own Vite harness/config/loopback ports and are now excluded from the generic production-preview collection. Their47 definitions are all retained and their dedicated CI commands are unchanged. The141 difference is47 definitions x3 generic projects, not removedNode tests.",
+    "execution_limits": "Collection is not execution. The47 dedicated cases passed in real Chrome using their dedicated DesktopChrome configurations. Their94 additional generic tablet/mobile project variants were not executed or claimed in this audit. The remaining198 default cases were discovered only.",
+    "node_suites": "Standalone commerce/OTS/founder/auth/content/DocuSeal Node or Deno tests are excluded separately and retain their own executed scripts. They do not account for the339→198 numerical delta."
+  },
+  "assertion_preservation": {
+    "original_OTS_cases": 37,
+    "original_OTS_calls_exact": 36,
+    "original_OTS_strengthened": 1,
+    "new_OTS_cases": 5,
+    "binary_cases": 15,
+    "binary_AST_templates_exact": 11,
+    "auth24_filter_guard_restored_and_six_snapshot_assertions_added": true,
+    "explicit_status_adaptations": [
+      {
+        "scenario": "database read error",
+        "before": 500,
+        "after": 503
+      },
+      {
+        "scenario": "missing submission",
+        "before": 400,
+        "after": 409
+      },
+      {
+        "scenario": "missing signed PDF",
+        "before": 404,
+        "after": 502
+      },
+      {
+        "scenario": "provider PDF exception",
+        "before": 500,
+        "after": 502
+      },
+      {
+        "scenario": "provider stamp exception",
+        "before": 500,
+        "after": 502
+      }
+    ],
+    "foreign_PDF_old_positive_replaced_by_strict_refusal": "HTTP502 with zero PDF fetch/stamp/write/audit; exact configured origin success preserved",
+    "actor_type_correction": "service is valid TEXT with no CHECK in the actual SQL schema; previous incompatibility claim withdrawn",
+    "full_adaptation_matrix": "iao-final-reconciliation-matrix.json"
+  },
+  "toolchains": {
+    "linux_node": "24.22.1",
+    "Deno": "2.9.6",
+    "Vitest": "5.0.3",
+    "PostgreSQL": "18.6",
+    "GitNexus": "1.6.12",
+    "actionlint": "1.7.12"
+  },
+  "remaining_limits": [
+    "Hosted CI has not been run on this candidate; earlier billing/access failures are not diagnosed anew by local tests.",
+    "No production deployment, real payment/payout, provider webhook delivery or current Bitcoin/calendar availability verified.",
+    "Unavailable influencer payout mechanism fails closed with503; this is not a qualified money movement.",
+    "Audit failure after a persisted contract/proof returns an error but does not prove transactional rollback.",
+    "198 default Playwright cases only collected;94 extra generic tablet/mobile variants not executed; no Safari or load qualification.",
+    "GitNexus FTS unavailable, process-budget/listing truncation and missing stable symbol UID limit graph completeness; impacts were reviewed with exact source diffs.",
+    "This QA pair records selected results and hashes. Complete raw receipts are external; durable publication is a separate gate, not assumed here."
+  ],
+  "publication_by_this_agent": false
+}

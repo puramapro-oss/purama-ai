@@ -2,6 +2,7 @@ import { ProcessChefDriver, type ChefDriverProvider } from "./driver.js";
 import { SupabaseChefControlPlane } from "./control-plane.js";
 import { runChefWorkerCycle } from "./supervisor.js";
 import { CommandChefVerifier, type ChefVerificationProfile } from "./verifier.js";
+import { ChefProcessStopUnconfirmedError } from "./process.js";
 
 function required(name: string): string {
   const value = process.env[name];
@@ -99,8 +100,15 @@ async function main(): Promise<void> {
           provider: selectedProvider,
           model: process.env.CHEF_MODEL,
           leaseSeconds,
+          signal: abort.signal,
         });
         consecutiveInfraFailures = 0;
+
+        if (result.state === "blocked_external" && "haltWorker" in result && result.haltWorker) {
+          console.error(`[chef-worker] arrêt non confirmé, intervention requise: ${result.error}`);
+          process.exitCode = 3;
+          break;
+        }
 
         if (result.state === "failed") {
           process.exitCode = 2;
@@ -112,6 +120,13 @@ async function main(): Promise<void> {
           await sleep(idleMs, abort.signal);
         }
       } catch (error) {
+        if (error instanceof ChefProcessStopUnconfirmedError) {
+          // This includes failure to persist the block after the claim was lost.
+          // A generic infrastructure retry would restart work while a process may survive.
+          console.error(`[chef-worker] arrêt non confirmé, intervention requise: ${error.message}`);
+          process.exitCode = 3;
+          break;
+        }
         if (abort.signal.aborted) break;
         consecutiveInfraFailures += 1;
         const message = error instanceof Error ? error.message : "erreur runtime inconnue";

@@ -1,0 +1,53 @@
+{
+  "baseline": "cb5accbeac30bf43872c0a7a19233a619faed4ca",
+  "tool": "GitNexus 1.6.12",
+  "repo": "iao-stamp-atomic-20261110",
+  "calls": [
+    {
+      "name": "stamp",
+      "chunk_id": "4697b4",
+      "wall_time_seconds": 0.724927206,
+      "exit_code": 1,
+      "original_token_count": 67,
+      "output": "\n  GitNexus Impact (1.6.12)\n{\n  \"error\": \"Target 'supabase/functions/contracts-ots-stamp/index.ts' not found\",\n  \"target\": {\n    \"name\": \"supabase/functions/contracts-ots-stamp/index.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n"
+    },
+    {
+      "name": "fixture",
+      "chunk_id": "84bf18",
+      "wall_time_seconds": 0.565833698,
+      "exit_code": 0,
+      "original_token_count": 237,
+      "output": "\n  GitNexus Impact (1.6.12)\n{\n  \"target\": {\n    \"id\": \"Function:tests/contracts-ots/fixture.ts:createClient\",\n    \"name\": \"createClient\",\n    \"type\": \"Function\",\n    \"filePath\": \"tests/contracts-ots/fixture.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {}\n}\n"
+    },
+    {
+      "name": "auth",
+      "chunk_id": "6d2d5a",
+      "wall_time_seconds": 0.594505633,
+      "exit_code": 0,
+      "original_token_count": 221,
+      "output": "\n  GitNexus Impact (1.6.12)\n{\n  \"target\": {\n    \"id\": \"Function:tests/contracts-ots-auth.mjs:harness\",\n    \"name\": \"harness\",\n    \"type\": \"Function\",\n    \"filePath\": \"tests/contracts-ots-auth.mjs\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"File:tests/contracts-ots-auth.mjs\",\n        \"name\": \"contracts-ots-auth.mjs\",\n        \"filePath\": \"tests/contracts-ots-auth.mjs\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n"
+    },
+    {
+      "name": "authorization",
+      "chunk_id": "7c2d9d",
+      "wall_time_seconds": 0.576069936,
+      "exit_code": 0,
+      "original_token_count": 239,
+      "output": "\n  GitNexus Impact (1.6.12)\n{\n  \"target\": {\n    \"id\": \"Function:tests/contracts-ots-authorization.test.mjs:harness\",\n    \"name\": \"harness\",\n    \"type\": \"Function\",\n    \"filePath\": \"tests/contracts-ots-authorization.test.mjs\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"File:tests/contracts-ots-authorization.test.mjs\",\n        \"name\": \"contracts-ots-authorization.test.mjs\",\n        \"filePath\": \"tests/contracts-ots-authorization.test.mjs\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n"
+    }
+  ],
+  "resolved_file_uid_followup": {
+    "target": "File:supabase/functions/contracts-ots-stamp/index.ts",
+    "exit_code": 0,
+    "risk": "LOW",
+    "direct_importers": [
+      "tests/contracts-ots/admission.test.ts",
+      "tests/contracts-ots/webhook.test.ts"
+    ]
+  },
+  "limits": [
+    "FTS unavailable",
+    "Process graph truncated",
+    "Dynamic imports are not all resolved; UNKNOWN is not evidence of no callers"
+  ]
+}

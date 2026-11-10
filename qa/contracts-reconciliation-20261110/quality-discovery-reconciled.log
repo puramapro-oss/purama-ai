@@ -1,0 +1,56 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> vite_react_shadcn_ts@0.0.0 test:quality
+> playwright test --config tests/quality/playwright.config.ts --list
+
+Listing tests:
+  contracts.spec.ts:15:1 › contract validation preserves defaults and arbitrary metadata after Zod migration
+  contracts.spec.ts:22:1 › contract validation rejects malformed identifiers, contacts, and variable values
+  contracts.spec.ts:33:1 › webhook validation requires a record and retains provider payload values
+  contracts.spec.ts:41:1 › cross-application claims require the contracts-hub audience and finite timestamps
+  database-pages.spec.ts:44:1 › router preserves public navigation, unknown routes, and protected redirects
+  database-pages.spec.ts:56:1 › fiscal profile reads and saves in public without claiming a fabricated annual income
+  database-pages.spec.ts:78:1 › fiscal load failure is visible and retry restores the form
+  database-pages.spec.ts:92:1 › fiscal save failure releases the button and reports the failure
+  database-pages.spec.ts:104:1 › published rules use public and render a nullable publication date honestly
+  database-pages.spec.ts:117:1 › failed rules request is not displayed as an empty publication list
+  database-pages.spec.ts:129:1 › dedicated application schema remains selected for wallet reads
+  database-pages.spec.ts:136:1 › Connect account reads use public and nullable provider flags remain disabled
+  database-pages.spec.ts:151:1 › Connect database failure returns an unknown status instead of a missing account
+  database-pages.spec.ts:163:1 › Connect empty database result reports that no account exists
+  database-pages.spec.ts:176:3 › billing rejects an invalid session URL: {"url":42}
+  database-pages.spec.ts:176:3 › billing rejects an invalid session URL: {"url":"javascript:window.invalidRedirect=true"}
+  database-pages.spec.ts:191:1 › billing follows a valid HTTPS session returned by its server
+  karta-briefs.spec.ts:118:1 › six supported agents expose a bounded, labelled brief form on mobile
+  karta-briefs.spec.ts:135:1 › double click sends one immutable request and stores only recovery identifiers
+  karta-briefs.spec.ts:167:1 › a missing acknowledgement retries the same submission, request and frozen text
+  karta-briefs.spec.ts:191:1 › reload recovers a committed submission without retaining its text or posting it again
+  karta-briefs.spec.ts:223:1 › an uncertain retry keeps its request identity even though the mission already exists
+  karta-briefs.spec.ts:247:1 › simulation preserves the pending mission; approval and uncertain effects never offer a replay
+  karta-briefs.spec.ts:268:1 › reads pause after the bounded window and refreshing never submits a mission
+  karta-briefs.spec.ts:291:1 › a busy slot is visible and a failed read is not displayed as an empty history
+  karta-briefs.spec.ts:311:1 › a late acknowledgement cannot attach to the form of a different account
+  karta-briefs.spec.ts:340:1 › employee settings, approval and statistics failures remain visible
+  karta-briefs.spec.ts:350:1 › NUL is rejected before network and a confirmed invalid admission releases the original text
+  karta-briefs.spec.ts:374:1 › confirmed tracking survives two real reloads outside the bounded list without blocking a new mission
+  karta-briefs.spec.ts:417:1 › an accepted but unconfirmed dispatch reuses its original request after reload
+  karta-briefs.spec.ts:448:1 › a conflict after reload keeps the rejected text and error when the original mission is recovered
+  karta-ui.spec.ts:94:1 › unknown and malformed states never become completion or an active state; legacy simulation stays explicit
+  karta-ui.spec.ts:103:1 › running and executing keep polling until the matching execution completes
+  karta-ui.spec.ts:131:3 › onboarding presents awaiting_approval honestly after running, including metadata-only traces
+  karta-ui.spec.ts:131:3 › onboarding presents error honestly after running, including metadata-only traces
+  karta-ui.spec.ts:131:3 › onboarding presents cancelled honestly after running, including metadata-only traces
+  karta-ui.spec.ts:131:3 › onboarding presents simulated honestly after running, including metadata-only traces
+  karta-ui.spec.ts:131:3 › onboarding presents partial honestly after running, including metadata-only traces
+  karta-ui.spec.ts:131:3 › onboarding presents skipped honestly after running, including metadata-only traces
+  karta-ui.spec.ts:145:1 › a run from another request, owner, or agent cannot finish a new request
+  karta-ui.spec.ts:163:1 › a response arriving after closing the modal cannot attach its run to a new attempt
+  karta-ui.spec.ts:191:1 › an old server acknowledgement without execution identity stays unconfirmed
+  karta-ui.spec.ts:205:1 › unknown status stays unconfirmed and polling stops at the waiting limit
+  karta-ui.spec.ts:223:1 › a rejected admission cannot become a successful task or start result polling
+  karta-ui.spec.ts:233:1 › activity history distinguishes final, active, pending, simulation, and unknown states
+  partner-outreach.spec.ts:170:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response
+  partner-outreach.spec.ts:238:1 › an unknown approval result stays a warning with no success claim or automatic resend
+  partner-outreach.spec.ts:252:1 › a refused draft version is shown as blocked rather than approved or sent
+  partner-outreach.spec.ts:262:1 › a sent status without provider proof cannot become a success toast
+Total: 49 tests in 5 files

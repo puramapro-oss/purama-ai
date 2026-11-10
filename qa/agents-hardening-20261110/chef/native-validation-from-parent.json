@@ -1,0 +1,46 @@
+{
+  "provenance": "Observed and reported by parent /root after execution of qa/agents-hardening-20261110/integration/native-postgres.py on an isolated PostgreSQL 18 cluster. Raw integration report to be attached by parent.",
+  "postgresMajor": 18,
+  "scope": "CHEF process quarantine only",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "three_session_reader_writer_queue",
+      "status": "PASS",
+      "deadlockSqlstateObserved": false,
+      "details": "PostgreSQL resolved the queue order without 40P01."
+    },
+    {
+      "name": "concurrent_direct_quarantine_then_claim",
+      "status": "PASS",
+      "rejectionSqlstate": "PCQ01",
+      "candidate": {
+        "state": "ready",
+        "attempt": 0,
+        "fencingToken": 0
+      },
+      "journalRetainedAfterMissionDeletion": true
+    },
+    {
+      "name": "concurrent_expired_lease_quarantine_then_claim",
+      "status": "PASS",
+      "rejectionSqlstate": "PCQ01",
+      "candidate": {
+        "state": "ready",
+        "attempt": 0,
+        "fencingToken": 0
+      },
+      "journalRetainedAfterMissionDeletion": true
+    },
+    {
+      "name": "expiry_nonblocking_advisory_recovery",
+      "status": "PASS",
+      "duringSharedContention": 0,
+      "afterRelease": 1,
+      "activeExclusionRetained": true
+    }
+  ],
+  "changesAfterNativeReview": "None in product source. The hypothesized three-transaction deadlock was not confirmed; no speculative fix was made.",
+  "deployment": "Not performed",
+  "overallIntegrationSuite": "Separate billing concurrency issue was reported by parent and assigned to billing agent; do not infer overall PASS from this component report."
+}

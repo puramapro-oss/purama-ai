@@ -1,6 +1,7 @@
 // Frontend client for the Legal Agent module.
 // All tables live in the `purama_ai` schema.
 import { supabase } from '@/integrations/supabase/client';
+import { createSessionId } from '@/lib/session-id';
 
 type AnyTable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 const sb = () => (supabase as unknown as { from: (t: string) => AnyTable });
@@ -323,10 +324,14 @@ export async function updateLegalConfig(
 export async function sendChatMessage(
   sessionId: string,
   message: string,
+  signal?: AbortSignal,
 ): Promise<{ reply: string; sources: Array<{ type: string; reference: string; url?: string }> }> {
+  signal?.throwIfAborted();
   const { data, error } = await supabase.functions.invoke('legal-chat', {
     body: { session_id: sessionId, message },
+    signal,
   });
+  signal?.throwIfAborted();
   if (error) throw error;
   return data as { reply: string; sources: Array<{ type: string; reference: string; url?: string }> };
 }
@@ -558,6 +563,5 @@ export function formatEUR(n: number | null | undefined): string {
 }
 
 export function newSessionId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-  return 'session-' + Math.random().toString(36).slice(2);
+  return createSessionId();
 }

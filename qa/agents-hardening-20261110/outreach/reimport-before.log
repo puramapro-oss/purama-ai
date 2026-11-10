@@ -1,0 +1,105 @@
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta
+
+ ↓ test/partnerOutreach.test.ts > retains pending approval and reports it honestly without an email send
+ ↓ test/partnerOutreach.test.ts > approves exactly the frozen preview even if the editable legacy email row was changed
+ ↓ test/partnerOutreach.test.ts > twenty simultaneous approval clicks dispatch the same frozen email only once
+ ↓ test/partnerOutreach.test.ts > refuses another user's approval even with a forged user_id and the exact version
+ ↓ test/partnerOutreach.test.ts > binds approval to both the email and its version, rejecting a different or stale draft
+ ↓ test/partnerOutreach.test.ts > rechecks status='rejected',has_replied=true after preview and before an approved send
+ ↓ test/partnerOutreach.test.ts > rechecks has_replied=true after preview and before an approved send
+ ↓ test/partnerOutreach.test.ts > rechecks email='changed@example.invalid' after preview and before an approved send
+ ↓ test/partnerOutreach.test.ts > rechecks is_active=false after preview and before an approved send
+ ↓ test/partnerOutreach.test.ts > rechecks sender_email='changed@example.invalid' after preview and before an approved send
+ ↓ test/partnerOutreach.test.ts > does not interpret a configuration change as approval for an already pending email
+ ↓ test/partnerOutreach.test.ts > does not equate approval with delivery or resend after an uncertain approval attempt
+ ↓ test/partnerOutreach.test.ts > rejects malformed approval requests before calling providers
+ ↓ test/partnerOutreach.test.ts > uses the explicitly configured model without selecting another tier
+ ↓ test/partnerOutreach.test.ts > rejects an empty model configuration before any external API call
+ ↓ test/partnerOutreach.test.ts > twenty simultaneous requests reserve one action and one provider send
+ ↓ test/partnerOutreach.test.ts > blocks a rejected/unsubscribed contact, including after a pipeline reset
+ ↓ test/partnerOutreach.test.ts > preserves suppression after deletion and reimport with changed email casing
+ ↓ test/partnerOutreach.test.ts > blocks replied contacts and inactive agents before paid drafting
+ ↓ test/partnerOutreach.test.ts > rechecks approval changed at onDraft
+ ↓ test/partnerOutreach.test.ts > rechecks approval changed at onReady
+ ↓ test/partnerOutreach.test.ts > rechecks opposition received while generation was running
+ ↓ test/partnerOutreach.test.ts > late provider acceptance cannot undo a reply or schedule a new follow-up
+ ↓ test/partnerOutreach.test.ts > keeps timeout uncertain and never sends a second time
+ ↓ test/partnerOutreach.test.ts > keeps missing_id uncertain and never sends a second time
+ ↓ test/partnerOutreach.test.ts > keeps server_error uncertain and never sends a second time
+ ↓ test/partnerOutreach.test.ts > does not claim success or resend after acknowledgement lost before_commit
+ ↓ test/partnerOutreach.test.ts > does not claim success or resend after acknowledgement lost after_commit
+ ↓ test/partnerOutreach.test.ts > keeps an uncertain dispatch reserved after prospect deletion and reimport of the same identity
+ × test/partnerOutreach.test.ts > blocks ok attempts after deletion and reimport under a new ID with the same normalized email 375ms
+   → expected { ok: true, status: 'sent', …(3) } to match object { status: 'blocked', …(1) }
+(4 matching properties omitted from actual)
+ × test/partnerOutreach.test.ts > blocks timeout attempts after deletion and reimport under a new ID with the same normalized email 175ms
+   → expected { ok: false, status: 'unknown', …(3) } to match object { status: 'blocked', …(1) }
+(3 matching properties omitted from actual)
+ ↓ test/partnerOutreach.test.ts > does not automatically retry a known provider rejection
+ ↓ test/partnerOutreach.test.ts > uses authenticated identity and refuses another account's prospect
+ ↓ test/partnerOutreach.test.ts > rejects missing authentication and unauthorized step names without calls
+ ↓ test/partnerOutreach.test.ts > serializes the daily cap across different prospects and counts legacy sends
+ ↓ test/partnerOutreach.test.ts > counts pre-migration outreach towards the daily cap
+ ↓ test/partnerOutreach.test.ts > does not replay a historical attempt whose provider outcome was never persisted
+ ↓ test/partnerOutreach.test.ts > fences a stale generation claim and reserves the same action on safe recovery
+ ↓ test/partnerOutreach.test.ts > requires provider proof and the dispatch owner's token to finish
+ ↓ test/partnerOutreach.test.ts > client permissions for anon > cannot reserve, approve, inspect another frozen payload, alter evidence, or erase suppressions
+ ↓ test/partnerOutreach.test.ts > client permissions for authenticated > cannot reserve, approve, inspect another frozen payload, alter evidence, or erase suppressions
+ ↓ test/partnerOutreach.test.ts > reapplies the migration without losing evidence or reopening client permissions
+ ↓ test/partnerOutreach.test.ts > the presentation layer rejects unproved sent statuses and unknown schemas
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/partnerOutreach.test.ts > blocks ok attempts after deletion and reimport under a new ID with the same normalized email
+AssertionError: expected { ok: true, status: 'sent', …(3) } to match object { status: 'blocked', …(1) }
+(4 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "reason": "previous_attempt_requires_review",
+-   "status": "blocked",
++   "status": "sent",
+  }
+
+ ❯ test/partnerOutreach.test.ts:363:75
+    361|   const imported="00000000-0000-4000-8000-000000000099";
+    362|   await db.query("INSERT INTO purama_ai.partner_prospects(id,user_id,n…
+    363|   expect(await (await h.handler(request({prospect_id:imported}))).json…
+       |                                                                           ^
+    364|   expect(h.sends()).toHaveLength(1);
+    365|   expect(h.drafts()).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/partnerOutreach.test.ts > blocks timeout attempts after deletion and reimport under a new ID with the same normalized email
+AssertionError: expected { ok: false, status: 'unknown', …(3) } to match object { status: 'blocked', …(1) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "reason": "previous_attempt_requires_review",
+-   "status": "blocked",
++   "reason": "reconciliation_required",
++   "status": "unknown",
+  }
+
+ ❯ test/partnerOutreach.test.ts:363:75
+    361|   const imported="00000000-0000-4000-8000-000000000099";
+    362|   await db.query("INSERT INTO purama_ai.partner_prospects(id,user_id,n…
+    363|   expect(await (await h.handler(request({prospect_id:imported}))).json…
+       |                                                                           ^
+    364|   expect(h.sends()).toHaveLength(1);
+    365|   expect(h.drafts()).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 41 skipped (43)
+   Start at  03:10:40
+   Duration  13.31s (tests 95%, transform 4%, import 1%)

@@ -1,0 +1,52 @@
+(node:61114) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WebServer] (node:61360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:61690) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:61690) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:61690) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/quality/partner-outreach.spec.ts:162:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response (34.1s)
+(node:61962) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:61962) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:61962) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/quality/partner-outreach.spec.ts:228:1 › an unknown approval result stays a warning with no success claim or automatic resend (9.0s)
+  ✓  3 tests/quality/partner-outreach.spec.ts:242:1 › a refused draft version is shown as blocked rather than approved or sent (7.7s)
+  ✓  4 tests/quality/partner-outreach.spec.ts:252:1 › a sent status without provider proof cannot become a success toast (7.5s)
+
+
+  1) tests/quality/partner-outreach.spec.ts:162:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog', { name: 'Valider l’email' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Valider l’email' })
+
+
+      149 |   await page.getByRole('button', { name: 'Premier email de partenariat', exact: true }).click();
+      150 |   const dialog = page.getByRole('dialog', { name: 'Valider l’email' });
+    > 151 |   await expect(dialog).toBeVisible();
+          |                        ^
+      152 |   await expect(page.getByText('En attente de validation', { exact: true })).toBeVisible();
+      153 |   await expect(page.getByText('Le brouillon est enregistré. Aucun email n’a été envoyé.', { exact: true })).toBeVisible();
+      154 |   return dialog;
+        at openApproval (/Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/tests/quality/partner-outreach.spec.ts:151:24)
+        at /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/tests/quality/partner-outreach.spec.ts:165:20
+
+    Error Context: test-results/partner-outreach-pending-p-ebb73-the-provider-proof-response/error-context.md
+
+  1 failed
+    tests/quality/partner-outreach.spec.ts:162:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response
+  3 passed (1.4m)

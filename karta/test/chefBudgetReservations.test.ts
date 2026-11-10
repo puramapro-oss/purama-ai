@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import { CHEF_RECONCILIATION_MIGRATIONS } from "./migration-fixtures.js";
 import { PGlite } from "@electric-sql/pglite";
 import { hashChefBrief, normalizeChefBrief, type ChefBrief, type ChefBriefTask } from "../src/chef/brief.js";
 
@@ -90,13 +91,12 @@ beforeAll(async () => {
     CREATE ROLE service_role BYPASSRLS;
     GRANT USAGE ON SCHEMA purama_ai TO service_role;
   `);
-  const files = (await readdir(new URL("../migrations/", import.meta.url)))
-    .filter(file => /^0(0[89]|1[0-8])_/.test(file)).sort();
+  const files = CHEF_RECONCILIATION_MIGRATIONS;
   for (const file of files) await db.exec(await readFile(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
 });
 afterAll(async () => { await db?.close(); });
 beforeEach(async () => {
-  await db.exec("RESET ROLE; TRUNCATE purama_ai.chef_missions,auth.users CASCADE;");
+  await db.exec("RESET ROLE; TRUNCATE purama_ai.chef_process_quarantines,purama_ai.chef_workers,purama_ai.chef_missions,auth.users CASCADE;");
   await db.query("INSERT INTO auth.users(id) VALUES($1)", [userId]);
 });
 
@@ -133,9 +133,7 @@ describe("CHEF attempt-bound admission budgets", () => {
 
   it.each([{ tokens: 0 }, { cost: 0 }, { tokens: 100, cost: 100 }])(
     "refuses unknown estimates for capped dimensions: %j", async limits => {
-      const mission = await create([task("A")], limits);
-      await heartbeat("unknown-worker");
-      expect(await claim(mission, "unknown-worker")).toBeUndefined();
+      await expect(create([task("A")], limits)).rejects.toThrow(/requires estimated/);
       expect((await db.query("SELECT count(*)::int AS n FROM purama_ai.chef_budget_reservations")).rows[0]).toEqual({ n: 0 });
     }
   );
@@ -207,7 +205,7 @@ describe("CHEF attempt-bound admission budgets", () => {
     expect(await claim(mission, "unrelated")).toMatchObject({ task_key: "B" });
   });
 
-  it("keeps a crashed claim reserved across housekeeping and prevents an old worker settling a new attempt", async () => {
+  it("keeps a crashed claim reserved and never clears process quarantine with a late receipt", async () => {
     const mission = await create([task("A", { estimatedTokens: 60, estimatedCostMicros: 60 })], { tokens: 100, cost: 100 });
     await heartbeat("old-worker"); await heartbeat("new-worker");
     const old = (await claim(mission, "old-worker"))!;
@@ -218,13 +216,13 @@ describe("CHEF attempt-bound admission budgets", () => {
     await expect(settle(old, "wrong-claim-receipt", { input: 1, output: 1, cost: 2 }, { fencing_token: old.fencing_token + 1 }))
       .rejects.toThrow(/claim does not match/);
     expect(await settle(old, "late-old-receipt", { input: 10, output: 0, cost: 10 })).toBe(true);
-    const next = (await claim(mission, "new-worker"))!;
-    expect(next.attempt).toBe(old.attempt + 1);
-    await expect(settle(next, "wrong-worker-receipt", { input: 1, output: 1, cost: 2 }, { lease_owner: old.lease_owner }))
-      .rejects.toThrow(/claim does not match/);
+    // A final provider receipt proves consumption, never process death.
+    // PR27's durable quarantine remains authoritative after reconciliation.
+    expect((await db.query("SELECT count(*)::int AS n FROM purama_ai.chef_process_quarantines")).rows[0]).toEqual({ n: 1 });
+    await db.query("SELECT purama_ai.chef_unblock_task($1,'receipt restored')", [old.id]);
+    await expect(claim(mission, "new-worker")).rejects.toThrow(/quarantine/);
     expect(await settle(old, "late-old-receipt", { input: 10, output: 0, cost: 10 })).toBe(true);
-    expect((await db.query("SELECT actual_cost_micros FROM purama_ai.chef_budget_reservations WHERE task_id=$1 AND fencing_token=$2", [next.id, next.fencing_token])).rows[0])
-      .toEqual({ actual_cost_micros: null });
+    expect((await db.query("SELECT count(*)::int AS n FROM purama_ai.chef_budget_reservations")).rows[0]).toEqual({ n: 1 });
     expect(await totals(mission)).toMatchObject({ tokens_used: 10, cost_used_micros: 10 });
   });
 
@@ -239,6 +237,11 @@ describe("CHEF attempt-bound admission budgets", () => {
     const next = (await claim(mission, "resume-worker"))!;
     expect(next.attempt).toBe(c.attempt);
     expect(next.fencing_token).toBeGreaterThan(c.fencing_token);
+    await expect(settle(next, "wrong-worker-receipt", { input: 1, output: 1, cost: 2 }, { lease_owner: c.lease_owner }))
+      .rejects.toThrow(/claim does not match/);
+    expect(await settle(c, "restored-receipt", { input: 0, output: 0, cost: 0 })).toBe(true);
+    expect((await db.query("SELECT actual_cost_micros FROM purama_ai.chef_budget_reservations WHERE task_id=$1 AND fencing_token=$2", [next.id, next.fencing_token])).rows[0])
+      .toEqual({ actual_cost_micros: null });
   });
 
   it("enforces accounting in SQL completion independently of the application", async () => {

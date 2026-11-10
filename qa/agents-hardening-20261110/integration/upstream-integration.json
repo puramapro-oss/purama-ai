@@ -1,0 +1,59 @@
+{
+  "initial_base": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "integrated_base": "27815bcc9660adcc925f1a6c2b8651ff04ff5062",
+  "base_tree": "1ecd6a71d345dc2c4d959e6be8bcd459afc0fa09",
+  "upstream_paths": [
+    "IAO-EVALUATION-PROTOCOL.md",
+    "karta/migrations/019_karta_approval_parent_guard.sql",
+    "karta/migrations/020_execution_fingerprints.sql",
+    "karta/src/api/server.ts",
+    "karta/src/engine/approval-continuation.ts",
+    "karta/src/engine/logger.ts",
+    "karta/src/engine/loop.ts",
+    "karta/src/lib/canonical-json.ts",
+    "karta/src/queue/delivery-guard.ts",
+    "karta/src/queue/delivery-identity.ts",
+    "karta/src/queue/queues.ts",
+    "karta/src/queue/worker.ts",
+    "karta/test/apiDeliveryIdentity.test.ts",
+    "karta/test/approval.test.ts",
+    "karta/test/approvalContinuation.test.ts",
+    "karta/test/approvalParentGuard.test.ts",
+    "karta/test/evidence/aether-execution-status-20261110.json",
+    "karta/test/evidence/aether-pr20-brief-integration.patch",
+    "karta/test/queueDeliveryIdentity.test.ts",
+    "src/components/onboarding/HireFirstEmployeeModal.tsx",
+    "src/hooks/useKartaEmployees.ts",
+    "src/integrations/supabase/types.ts",
+    "src/lib/karta-run-status.ts",
+    "src/pages/MyEmployees.tsx",
+    "tests/karta/onboarding.spec.ts",
+    "tests/quality/karta-ui.spec.ts"
+  ],
+  "integration_method": "Applied the non-overlapping upstream diff to the isolated worktree and index; publication commit will use the integrated base as its parent. Existing branch history is not rewritten.",
+  "migration_renumbering": [
+    {
+      "from": "018_chef_budget_admission.sql",
+      "to": "021_chef_budget_admission.sql",
+      "sha256": "83f4dce22bbe6db490027b4645f5cf1628efa92907bf0833926eb886b1376863",
+      "content_identical": true
+    },
+    {
+      "from": "019_chef_mission_estimates.sql",
+      "to": "022_chef_mission_estimates.sql",
+      "sha256": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f",
+      "content_identical": true
+    },
+    {
+      "from": "020_chef_process_quarantine.sql",
+      "to": "023_chef_process_quarantine.sql",
+      "sha256": "997475e67e60519f4ec8f50a2a73d1795695cf7b44ce968f8afa955c337217fb",
+      "content_identical": true
+    }
+  ],
+  "test_fixture_changes": [
+    "Explicit CHEF migration list in chefProcessQuarantine.test.ts",
+    "Service workers blocked and WebSockets closed in karta-ui.spec.ts; test scenarios and assertions unchanged"
+  ],
+  "runtime_scope": "CHEF runtime and existing outreach/credit paths; the PR20 engine/brief integration proposal is not applied."
+}

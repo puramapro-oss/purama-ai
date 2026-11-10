@@ -87,8 +87,7 @@ export function minimizeRunTrace(
     status: result.status,
     decision: PRIVATE_TRACE.decision,
     toolsUsed: safeRecords,
-    resultSummary: `${count("executed")}/${safeRecords.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)` +
-      (count("rejected") > 0 ? `, ${count("rejected")} rejetée(s)` : ""),
+    resultSummary: `${count("executed")}/${safeRecords.length} action(s) exécutée(s), ${count("pending")} en attente, ${count("simulated")} simulée(s), ${count("failed")} en échec, ${count("skipped")} ignorée(s)`,
     ...(result.errorMessage !== undefined ? { errorMessage: PRIVATE_TRACE.error } : {}),
     mock: result.mock === true,
     ...(typeof result.retryable === "boolean" ? { retryable: result.retryable } : {}),

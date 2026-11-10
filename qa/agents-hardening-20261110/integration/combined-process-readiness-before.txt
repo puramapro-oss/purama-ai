@@ -1,0 +1,11 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/karta
+
+ ✓ test/chefProcess.test.ts (5 tests | 4 skipped) 731ms
+   ✓ CHEF owned POSIX process group (5)
+     ✓ kills a surviving descendant in the owned group after its leader exits 727ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 4 skipped (5)
+   Start at  04:31:19
+   Duration  1.31s (tests 85%, transform 10%, import 2%, setup 2%, worker 1%)

@@ -1,0 +1,8 @@
+{
+  "private_cluster": "/private/tmp/purama-iao-native-221cb4a2-d2z4vy9v",
+  "directory_exists": false,
+  "socket_exists": false,
+  "pg_ctl_status_exit": 4,
+  "pg_ctl_status": "pg_ctl: directory \"/private/tmp/purama-iao-native-221cb4a2-d2z4vy9v/data\" does not exist",
+  "matching_processes": []
+}

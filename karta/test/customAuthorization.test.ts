@@ -34,6 +34,7 @@ type PendingRow = {
 };
 
 const h = vi.hoisted(() => ({
+  admission: vi.fn(),
   row: null as CustomAgentRow | null,
   pending: null as PendingRow | null,
   readError: null as string | null,
@@ -153,7 +154,10 @@ vi.mock("../src/engine/autonomy.js", async original => ({
 }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => false }));
 vi.mock("../src/engine/logger.js", () => ({
-  startRun: async () => ({ runId: "run-authority-test", finish: h.finish, existingResult: h.existing }),
+  startRun: async () => {
+    await h.admission();
+    return { runId: "run-authority-test", finish: h.finish, existingResult: h.existing };
+  },
 }));
 vi.mock("../src/engine/notify.js", () => ({ notify: h.notify }));
 vi.mock("../src/claude/index.js", () => ({
@@ -667,5 +671,107 @@ describe("custom agents enable metadata-only traces by default without changing 
     expect(h.finish).not.toHaveBeenCalled();
     expect(h.notify).not.toHaveBeenCalled();
     expectPrivateTraceAbsent(result);
+  });
+});
+
+
+describe("custom authority immediately before the provider request", () => {
+  it("keeps the positive worker path live after both admission checks", async () => {
+    const result = await processJob();
+    expect(result.status).toBe("success");
+    expect(h.decide).toHaveBeenCalledOnce();
+    expect(h.probe).toHaveBeenCalledOnce();
+  });
+
+  it.each(["is_active", "karta_enabled", "owner"] as const)(
+    "does not call the provider after %s changes while startRun is waiting", async kind => {
+      const reached = latch();
+      const resume = latch();
+      h.admission.mockImplementationOnce(async () => { reached.release(); await resume.promise; });
+      const running = processJob();
+      await reached.promise;
+      expect(h.reads).toHaveLength(1);
+      revoke(kind);
+      resume.release();
+      const result = await running;
+      expect(result).toMatchObject({ status: "cancelled", retryable: false, toolsUsed: [] });
+      expect(h.decide).not.toHaveBeenCalled();
+      expect(h.probe).not.toHaveBeenCalled();
+      expect(h.finish).toHaveBeenCalledExactlyOnceWith(result);
+      expect(h.record).toHaveBeenCalledExactlyOnceWith(owner, agentType, "cancelled", expect.any(String));
+    }
+  );
+
+  it("rechecks authority after awaiting context without contacting the provider", async () => {
+    const definition = await resolveAgentDefinition(agentType, owner);
+    const reached = latch();
+    const resume = latch();
+    definition.buildContext = async () => {
+      reached.release();
+      await resume.promise;
+      return { privateContext: "synthetic context retained locally" };
+    };
+    const running = runAgentCycle(owner, definition, trigger, "context-window-key");
+    await reached.promise;
+    revoke("is_active");
+    resume.release();
+    const result = await running;
+    expect(result).toMatchObject({ status: "cancelled", retryable: false, toolsUsed: [] });
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.probe).not.toHaveBeenCalled();
+  });
+
+  it("keeps a failed post-claim authority read distinct from refusal and never replays its closed key", async () => {
+    const privateFailure = "PRIVATE_PREMODEL_AUTHORITY_FAILURE";
+    h.admission.mockImplementationOnce(async () => { h.readError = privateFailure; });
+    await expect(processJob()).rejects.toBeInstanceOf(UnrecoverableError);
+    expect(h.finish).toHaveBeenCalledOnce();
+    const closed = h.finish.mock.calls[0][0] as AgentRunResult;
+    expect(closed).toMatchObject({ status: "error", retryable: false, toolsUsed: [] });
+    expect(JSON.stringify(closed)).not.toContain(privateFailure);
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.probe).not.toHaveBeenCalled();
+    h.readError = null;
+    h.existing = structuredClone(closed);
+    await expect(processJob()).rejects.toBeInstanceOf(UnrecoverableError);
+    expect(h.finish).toHaveBeenCalledOnce();
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.probe).not.toHaveBeenCalled();
+  });
+
+  it("retains existing retry semantics for a pre-provider read failure without a durable execution key", async () => {
+    const definition = await resolveAgentDefinition(agentType, owner);
+    definition.buildContext = async () => {
+      h.readError = "PRIVATE_DIRECT_PREMODEL_AUTHORITY_FAILURE";
+      return {};
+    };
+    const result = await runAgentCycle(owner, definition, trigger);
+    expect(result).toMatchObject({ status: "error", retryable: true, toolsUsed: [] });
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_DIRECT_PREMODEL_AUTHORITY_FAILURE");
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.probe).not.toHaveBeenCalled();
+  });
+
+  it("reconciles a cancelled close once and preserves it after bookkeeping failure and reactivation", async () => {
+    h.admission.mockImplementationOnce(async () => { revoke("is_active"); });
+    let first: AgentRunResult | undefined;
+    h.finish.mockImplementation(async (outcome: AgentRunResult) => {
+      first ??= structuredClone(outcome);
+      h.existing = structuredClone(first);
+      if (h.finish.mock.calls.length === 1) throw new Error("Synthetic lost close acknowledgement");
+    });
+    h.record.mockRejectedValueOnce(new Error("Synthetic secondary state failure"));
+    const cancelled = await processJob();
+    expect(cancelled).toMatchObject({ status: "cancelled", retryable: false, toolsUsed: [] });
+    expect(h.finish).toHaveBeenCalledTimes(2);
+    expect(h.finish.mock.calls[1][0]).toEqual(h.finish.mock.calls[0][0]);
+    expect(h.record).toHaveBeenCalledOnce();
+    currentRow().is_active = true;
+    const repeated = await processJob();
+    expect(repeated).toEqual(cancelled);
+    expect(h.finish).toHaveBeenCalledTimes(2);
+    expect(h.record).toHaveBeenCalledOnce();
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.probe).not.toHaveBeenCalled();
   });
 });

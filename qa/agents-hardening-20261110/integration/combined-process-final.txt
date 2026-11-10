@@ -1,0 +1,37 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/karta
+
+ ❯ test/chefProcess.test.ts (5 tests | 1 failed) 5827ms
+   ❯ CHEF owned POSIX process group (5)
+     ✓ preserves ordinary output and exit status 1181ms
+     ✓ does not reject cancellation until the direct process has actually closed 873ms
+     ✓ kills a surviving descendant in the owned group after its leader exits 1651ms
+     × reports an unconfirmed stop when the owned group cannot be signalled 1024ms
+     ✓ bounds combined stdout and stderr and stops on overflow 1090ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chefProcess.test.ts > CHEF owned POSIX process group > reports an unconfirmed stop when the owned group cannot be signalled
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/chefProcess.test.ts:106:54
+    104|       signal: cancel.signal, terminationGraceMs: 25, terminationConfir…
+    105|     })).catch((error: unknown) => error);
+    106|     await vi.waitFor(() => expect(existsSync(ready)).toBe(true));
+       |                                                      ^
+    107|     const pid = Number(await readFile(ready, "utf8"));
+    108|     const originalKill = process.kill.bind(process);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  04:33:40
+   Duration  9.15s (tests 89%, transform 7%, setup 2%, worker 1%, import 1%)

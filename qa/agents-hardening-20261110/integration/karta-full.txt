@@ -1,0 +1,239 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/karta
+
+ ✓ test/partnerOutreach.test.ts (47 tests) 10057ms
+ ✓ test/customAuthorization.test.ts (38 tests) 76ms
+ ❯ test/overageCredit.test.ts (38 tests | 1 failed) 19381ms
+   ✓ legacy overage: real webhook and PostgreSQL credit boundary (37)
+     ✓ credits a confirmed session once and retains the signed payment month on redelivery 375ms
+     ✓ serializes a burst of deliveries into one credit under the real SQL unique constraint 288ms
+     ✓ does not grant completed Checkout credits with unpaid status 22ms
+     ✓ does not grant completed Checkout credits with no_payment_required status 14ms
+     ✓ waits for delayed payment success and grants once in the successful event month 43ms
+     ✓ does not acknowledge an inconsistent delayed success as a credit 26ms
+     ✓ ignores delayed failures and unrelated async sessions without issuing credits 17ms
+     ✓ requires signature verification before crediting: null 24ms
+     ✓ requires signature verification before crediting: fixture-invalid 16ms
+     ✓ rejects invalid owner before any persistent credit 20ms
+     ✓ rejects missing payment intent before any persistent credit 76ms
+     ✓ rejects invalid amount before any persistent credit 49ms
+     ✓ rejects fractional amount before any persistent credit 32ms
+     ✓ rejects invalid currency before any persistent credit 54ms
+     ✓ rejects incomplete session before any persistent credit 36ms
+     ✓ rejects missing timestamp before any persistent credit 41ms
+     ✓ rejects time before creation before any persistent credit 55ms
+     ✓ rejects mode mismatch before any persistent credit 51ms
+     ✓ supports an expanded payment intent without trusting its other fields 55ms
+     ✓ returns a retryable error on persistence failure and grants once on retry 71ms
+     ✓ requires a persisted receipt and safely retries after a lost acknowledgement 98ms
+     ✓ rejects reuse of a session for another user through the real webhook 118ms
+     ✓ rejects a conflicting session payload atomically: {"p_actions":2001} 166ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_amount_total":1800} 77ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_currency":"usd"} 57ms
+     ✓ rejects a conflicting session payload atomically: {"p_stripe_payment_intent_id":"pi_other"} 56ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_livemode":true} 45ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_confirmed_at":"2026-11-01T00:00:01Z"} 51ms
+     ✓ accepts another event ID for the same evidenced payment without replacing its first receipt 64ms
+     ✓ rejects reusing a payment event for a different session 161ms
+     ✓ forbids credit RPC access from anon 32ms
+     ✓ forbids credit RPC access from authenticated 23ms
+     ✓ forbids credit RPC access from public_only 14ms
+     ✓ cannot be bypassed by a client direct insert despite broad historical table grants 20ms
+     ✓ enforces session uniqueness even for direct trusted inserts outside the helper 18ms
+     ✓ keeps historical credits intact and refuses to invent missing payment evidence on replay 18ms
+     ✓ can reapply the migration without changing credits or payment proof 30ms
+   × stops the migration on historical duplicate sessions without deleting or rewriting a credit 5871ms
+ ✓ test/chefSupervisor.test.ts (20 tests) 1494ms
+   ✓ CHEF autonomous worker cycle (20)
+     ✓ waits for a timed-out worker to finish before the retryable transition 1158ms
+ ✓ test/chefProcessQuarantine.test.ts (18 tests) 8793ms
+ ✓ test/chefHardening.test.ts (15 tests) 4336ms
+ ✓ test/chatEscalation.test.ts (49 tests) 158ms
+ ✓ test/webCapabilityPlan.test.ts (47 tests) 244ms
+ ✓ test/chefEvidenceFreshness.test.ts (31 tests) 13169ms
+   ✓ CHEF evidence generation (31)
+     ✓ preserves pre-migration rows without certifying them as current evidence 4712ms
+stderr | test/loopTracePrivacy.test.ts > private tool traces through the real agent cycle > retains executed evidence and forbids replay after bookkeeping fails
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loopTracePrivacy.test.ts (22 tests) 568ms
+ ❯ test/chatHistoryIsolation.test.ts (39 tests | 2 failed | 10 skipped) 210105ms
+   ❯ stored chat ownership: public only (10)
+     ↓ preserves historical anonymous and owned rows
+     ↓ denies anonymous reads and inserts even with a known conversation and session
+     ↓ lets each authenticated user read only their own history
+     ↓ preserves creation, RETURNING, user/assistant messages and status updates for the owner
+     ↓ denies cross-user and anonymous conversation creation or message insertion
+     ↓ rejects system messages and ownership transfers by authenticated clients
+     ↓ does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients
+     ↓ does not authorize an authenticated role without a user identity
+     ↓ preserves administrative read/write/delete rights, including anonymous historical rows
+     ↓ can be applied twice without changing the resulting policies or privileges
+   ✓ stored chat ownership: purama_ai only (10)
+     ✓ preserves historical anonymous and owned rows 38ms
+     ✓ denies anonymous reads and inserts even with a known conversation and session 29ms
+     ✓ lets each authenticated user read only their own history 25ms
+     ✓ preserves creation, RETURNING, user/assistant messages and status updates for the owner 45ms
+     ✓ denies cross-user and anonymous conversation creation or message insertion 22ms
+     ✓ rejects system messages and ownership transfers by authenticated clients 41ms
+     ✓ does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients 45ms
+     ✓ does not authorize an authenticated role without a user identity 29ms
+     ✓ preserves administrative read/write/delete rights, including anonymous historical rows 36ms
+     ✓ can be applied twice without changing the resulting policies or privileges 61ms
+   ✓ stored chat ownership: both schemas (10)
+     ✓ preserves historical anonymous and owned rows 36ms
+     ✓ denies anonymous reads and inserts even with a known conversation and session 126ms
+     ✓ lets each authenticated user read only their own history 72ms
+     ✓ preserves creation, RETURNING, user/assistant messages and status updates for the owner 38ms
+     ✓ denies cross-user and anonymous conversation creation or message insertion 48ms
+     ✓ rejects system messages and ownership transfers by authenticated clients 47ms
+     ✓ does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients 10ms
+     ✓ does not authorize an authenticated role without a user identity 16ms
+     ✓ preserves administrative read/write/delete rights, including anonymous historical rows 61ms
+     ✓ can be applied twice without changing the resulting policies or privileges 99ms
+   ❯ migration preflight refuses an unreviewed schema (9)
+     × rolls back both schemas when only conversations remain 13277ms
+     × rolls back both schemas when only messages remain 7351ms
+     ✓ rolls back both schemas when an extra permissive conversation policy… 4994ms
+     ✓ rolls back both schemas when an extra permissive message policy exis… 3793ms
+     ✓ rolls back both schemas when a required policy is missing 4327ms
+     ✓ rolls back both schemas when a known name has an unexpected policy c… 4274ms
+     ✓ rolls back both schemas when a known name is unexpectedly restrictive 2794ms
+     ✓ rolls back both schemas when a table was replaced by a view 3263ms
+     ✓ refuses to report success when neither schema contains chat history 2473ms
+ ✓ test/approvalTracePrivacy.test.ts (20 tests) 26ms
+ ✓ test/chefBudgetAdmission.test.ts (18 tests) 6671ms
+ ✓ test/loggerFinalization.test.ts (11 tests) 4579ms
+ ✓ test/chefEstimates.test.ts (44 tests) 7822ms
+ ✓ test/cycleAdmissionPrivacy.test.ts (10 tests) 34ms
+ ✓ test/chefControlPlane.test.ts (8 tests) 10206ms
+   ✓ PURAMA CHEF durable control plane (8)
+     ✓ claims one task at most once under concurrent workers 428ms
+ ✓ test/approval.test.ts (15 tests) 5328ms
+ ✓ test/walletRpcPermissions.test.ts (17 tests) 4280ms
+ ✓ test/webAccessPlanTool.test.ts (10 tests) 26ms
+ ✓ test/chefEvidenceGate.test.ts (17 tests) 6656ms
+ ✓ test/chefProcess.test.ts (5 tests) 1592ms
+   ✓ CHEF owned POSIX process group (5)
+     ✓ kills a surviving descendant in the owned group after its leader exits 605ms
+     ✓ reports an unconfirmed stop when the owned group cannot be signalled 349ms
+ ✓ test/chefEvidenceAdapter.test.ts (20 tests) 148ms
+stderr | test/loggerCycleFinalization.test.ts > a committed cycle remains final when secondary bookkeeping fails > preserves a newer approval resolution that occurs during notification
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > forbids automatic replay without tools or an execution key after an uncertain close
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of success without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of awaiting_approval without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+ ✓ test/loggerCycleFinalization.test.ts (6 tests) 18ms
+stderr | test/loop.test.ts > cycle outcomes and interruption > preserves committed success and forbids replay after a bookkeeping failure
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loop.test.ts (14 tests) 16ms
+ ✓ test/generative.test.ts (4 tests) 220ms
+ ✓ test/chefMission.test.ts (5 tests) 4721ms
+ ✓ test/publicChatAdmission.test.ts (11 tests) 407ms
+ ✓ test/chefBrief.test.ts (9 tests) 27ms
+ ✓ test/chefDriver.test.ts (6 tests) 295ms
+ ✓ test/streamCompletionAudit.test.ts (23 tests) 86ms
+ ✓ test/chefWorkerShutdown.test.ts (4 tests) 137ms
+ ✓ test/chefQuarantineAdapter.test.ts (15 tests) 11ms
+ ✓ test/runtimeHardening.test.ts (3 tests) 3352ms
+ ✓ test/gmailTool.test.ts (5 tests) 64ms
+ ✓ test/chefVerificationGitIntegration.test.ts (3 tests) 1868ms
+   ✓ CHEF Git checks around actual verification (3)
+     ✓ handles a unchanged worktree after the verifier 707ms
+     ✓ handles a dirty worktree after the verifier 551ms
+     ✓ handles a new-commit worktree after the verifier 608ms
+ ✓ test/chefIndependentReview.test.ts (2 tests) 2863ms
+ ✓ test/streaming.test.ts (10 tests) 142ms
+ ✓ test/chefRuntimePolicy.test.ts (4 tests) 3064ms
+ ✓ test/chatRequestScope.test.ts (17 tests) 8ms
+ ✓ test/logger.test.ts (4 tests) 30ms
+ ✓ test/supabaseTool.test.ts (5 tests) 7ms
+ ✓ test/chefGitState.test.ts (4 tests) 1380ms
+   ✓ CHEF git state verifier (4)
+     ✓ accepts an exact clean committed HEAD 470ms
+     ✓ requires the final HEAD to descend from the assigned base 453ms
+ ✓ test/mockClaude.test.ts (7 tests) 6ms
+ ✓ test/chefCostGovernor.test.ts (7 tests) 6ms
+ ✓ test/chefVerifier.test.ts (4 tests) 239ms
+ ✓ test/connectPermissions.test.ts (4 tests) 2173ms
+ ✓ test/customAgent.test.ts (4 tests) 6ms
+stdout | test/apiSafety.test.ts
+[api] KARTA écoute sur :0
+
+stderr | test/apiSafety.test.ts > does not expose internal exception details
+[api] requête échouée
+
+ ✓ test/apiSafety.test.ts (9 tests) 29ms
+ ✓ test/actionAgentsMock.test.ts (4 tests) 6ms
+ ✓ test/agentsRegistry.test.ts (4 tests) 6ms
+ ✓ test/chefProtocol.test.ts (5 tests) 6ms
+ ✓ test/autonomy.test.ts (7 tests) 5ms
+ ✓ test/customRegistry.test.ts (4 tests) 5ms
+ ✓ test/sseFraming.test.ts (10 tests) 6ms
+ ✓ test/real-claude.test.ts (4 tests) 5ms
+ ✓ test/gmail-token-crypto.test.ts (3 tests) 6ms
+ ✓ test/sseConsumer.test.ts (5 tests) 61ms
+ ✓ test/stripeIsolation.test.ts (3 tests) 6ms
+ ✓ test/toolResult.test.ts (16 tests) 8ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chatHistoryIsolation.test.ts > stored chat ownership: public only
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ test/chatHistoryIsolation.test.ts:85:3
+     83| ])('stored chat ownership: $label', ({ schemas }) => {
+     84|   let db: PGlite;
+     85|   beforeAll(async () => { db = await fixture(schemas); await db.exec(m…
+       |   ^
+     86|   afterAll(async () => { await db?.close(); });
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > rolls back both schemas when only conversations remain
+ FAIL  test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > rolls back both schemas when only messages remain
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/chatHistoryIsolation.test.ts:249:17
+    247|   ];
+    248|
+    249|   it.each(cases)('rolls back both schemas when $label', async ({ setup…
+       |                 ^
+    250|     const db = await fixture(['public', 'purama_ai']);
+    251|     try {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/overageCredit.test.ts:328:1
+    326| });
+    327|
+    328| it('stops the migration on historical duplicate sessions without delet…
+       | ^
+    329|   const db = await database(false);
+    330|   try {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  2 failed | 58 passed (60)
+      Tests  3 failed | 800 passed | 10 skipped (813)
+   Start at  03:30:27
+   Duration  393.98s (tests 91%, import 7%, transform 2%)
+
+    Isolate  60 workers spawned · ~365ms startup each (spawn + environment, per file)
+             at least ~21.53s faster with isolate: false — reuses workers across files instead of one per file

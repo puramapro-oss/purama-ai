@@ -1,0 +1,19 @@
+{
+  "base_commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "repository_alias": "purama-agents-hardening-20261110",
+  "gitnexus_version": "1.6.12",
+  "before_edit": true,
+  "commands": [
+    "npx --no-install gitnexus impact logStep --file supabase/functions/stripe-webhook/index.ts --repo purama-agents-hardening-20261110 --direction upstream",
+    "npx --no-install gitnexus impact --uid File:supabase/functions/stripe-webhook/index.ts --repo purama-agents-hardening-20261110 --direction upstream"
+  ],
+  "observed": [
+    { "target": "logStep", "risk": "LOW", "impactedCount": 1, "direct": 1, "processes_affected": 0, "modules_affected": 0, "caller": "File:supabase/functions/stripe-webhook/index.ts" },
+    { "target": "File:supabase/functions/stripe-webhook/index.ts", "risk": "UNKNOWN", "impactedCount": 0, "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused." }
+  ],
+  "functional_risk": "CRITICAL: payment-confirmed credit assignment",
+  "parent_notified_before_edit": true,
+  "user_risk_notice_confirmed_by_parent_before_edit": true,
+  "scope": "legacy overage webhook, dedicated helper, new SQL migration, isolated tests; no price, quota, plan or production change",
+  "limitations": ["Anonymous endpoint callback not resolved as a standalone function", "External Stripe delivery is outside the resolved call graph"]
+}

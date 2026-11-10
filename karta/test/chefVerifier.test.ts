@@ -1,7 +1,30 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { mkdtemp, rm } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { CommandChefVerifier } from "../src/chef/verifier.js";
 
+const tempDirs: string[] = [];
+afterEach(async () => {
+  await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+});
+
 describe("CHEF deterministic verifier", () => {
+  it("never starts a check or produces PASS from an already cancelled signal", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "chef-verify-preabort-"));
+    tempDirs.push(cwd);
+    const marker = join(cwd, "should-not-exist");
+    const verifier = new CommandChefVerifier([{
+      name: "unit", kind: "test", command: process.execPath,
+      args: ["-e", `require('node:fs').writeFileSync(${JSON.stringify(marker)},'started')`],
+    }], [cwd]);
+    const cancel = new AbortController();
+    cancel.abort();
+    await expect(verifier.verify(cwd, ["unit"], cancel.signal)).rejects.toThrow(/annulée/);
+    expect(existsSync(marker)).toBe(false);
+  });
+
   it("fails closed if no verification profile is attached", async () => {
     const verifier = new CommandChefVerifier([], [process.cwd()]);
     await expect(verifier.verify(process.cwd(), [])).resolves.toMatchObject({ ok: false });

@@ -1,0 +1,15 @@
+{
+  "base": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "unchanged_production_files": {
+    "karta/src/chef/driver.ts": "1f5bdc43be62e5355800569197aad32273f7d3632b2988e0b542b83a0e4b6aaf",
+    "karta/src/chef/verifier.ts": "146c9825d116a97b151e025a0943e96bd12269eeecc5884d06e8312544ac22cf",
+    "karta/src/chef/process.ts": "9cca9f058a2e2fd294815b2ba7c571ec1a667232caf3efc756e53ca4a43e3906",
+    "karta/src/chef/control-plane.ts": "c1e6d49247b1735abba43794b6417a2c11fbbfee986397e6b959bbe675988f10",
+    "karta/src/chef/worker-main.ts": "aaf37a98265b58421738517ce7c9f794480c7f843be2e62bdab09befca9df852",
+    "karta/src/chef/git-state.ts": "a89ae88361c1cf806f10f1e093799fa193b3eae56d0893fb305198bebe904d6a"
+  },
+  "changed_production_file": "karta/src/chef/supervisor.ts",
+  "supervisor_sha256": "a3e66a1909f10fbefdf6cf6cbb8716e388a5f46874cdf925e46cd2697acdc1bd",
+  "test_fixture_source": "7cef7e57268ba2326d256d10277434a751ae1275",
+  "test_fixture_blob": "b7597af775f9eb56c0e3fe9a54ed6b94848cb5f9"
+}

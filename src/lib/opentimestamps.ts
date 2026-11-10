@@ -1,48 +1,33 @@
-// ─── Purama · OpenTimestamps (V4.1 — remplace OriginStamp retired mai 2025) ───
-//
-// Horodatage blockchain Bitcoin gratuit et open source.
-// Ancre un hash SHA-256 dans la blockchain Bitcoin via les calendriers
-// OpenTimestamps publics (calendar.bitcoin.ts.eternitywall.com, etc.).
-//
-// Usage côté client/serveur :
-//   import { stampHash, verifyProof, hashContent } from '@/lib/opentimestamps';
-//   const proof = await stampHash(regulationText);
-//   const { verified, blockHeight, timestamp } = await verifyProof(text, proof);
-//
-// Terme UI : "Preuve blockchain Purama" (jamais "OpenTimestamps" ni "Bitcoin").
-// ───────────────────────────────────────────────────────────────────────────
+// Public API retained; proof operations stay in upstream OpenTimestamps 0.4.9.
+// The package entrypoint's legacy request/uuid transport is never imported.
+import DetachedTimestampFile from 'opentimestamps/src/detached-timestamp-file.js';
+import Ops from 'opentimestamps/src/ops.js';
+import Context from 'opentimestamps/src/context.js';
+import Timestamp from 'opentimestamps/src/timestamp.js';
+import Notary from 'opentimestamps/src/notary.js';
+import { createOtsClient, type OtsLibrary } from './ots-core';
 
-import OpenTimestamps from 'opentimestamps';
+const ots = createOtsClient({ DetachedTimestampFile, Ops, Context, Timestamp, Notary } as OtsLibrary);
 
-/**
- * Produit un hash SHA-256 hex d'un contenu texte.
- * Utilise SubtleCrypto côté navigateur, fallback Node.js côté serveur/edge.
- */
-export async function hashContent(data: string): Promise<Uint8Array> {
+export type OtsContent = string | ArrayBuffer | Uint8Array;
+// Preserve the binary-content public type introduced by the concurrent branch.
+export type HashableContent = OtsContent;
+
+export async function hashContent(data: OtsContent): Promise<Uint8Array> {
+  // Snapshot binary input before any await. Hash the original PDF bytes,
+  // not the Base64 text used to transport them.
+  const bytes = typeof data === 'string'
+    ? new TextEncoder().encode(data)
+    : data instanceof Uint8Array ? new Uint8Array(data) : new Uint8Array(data.slice(0));
   if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.subtle) {
-    const bytes = new TextEncoder().encode(data);
-    const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
-    return new Uint8Array(digest);
+    return new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', bytes));
   }
-  // Node.js / Deno fallback
   const { createHash } = await import('crypto');
-  return new Uint8Array(createHash('sha256').update(data).digest());
+  return new Uint8Array(createHash('sha256').update(bytes).digest());
 }
 
-/**
- * Horodate un contenu sur la blockchain Bitcoin.
- * Retourne une preuve base64 à stocker en DB.
- * La preuve devient "confirmée Bitcoin" après ~2-6 heures (attente d'un bloc).
- */
-export async function stampHash(data: string): Promise<string> {
-  const hash = await hashContent(data);
-  const detachedFile = OpenTimestamps.DetachedTimestampFile.fromHash(
-    new OpenTimestamps.Ops.OpSHA256(),
-    hash,
-  );
-  await OpenTimestamps.stamp(detachedFile);
-  const bytes = detachedFile.serializeToBytes();
-  return toBase64(bytes);
+export async function stampHash(data: OtsContent): Promise<string> {
+  return ots.stampDigest(await hashContent(data));
 }
 
 export interface VerifyResult {
@@ -52,44 +37,13 @@ export interface VerifyResult {
   pending?: boolean;
 }
 
-/**
- * Vérifie qu'un contenu a bien été horodaté sur Bitcoin.
- * Si la preuve n'a pas encore été confirmée par un bloc, retourne pending:true.
- */
-export async function verifyProof(data: string, proofBase64: string): Promise<VerifyResult> {
+export async function verifyProof(data: OtsContent, proofBase64: string): Promise<VerifyResult> {
   const hash = await hashContent(data);
-  const detachedOriginal = OpenTimestamps.DetachedTimestampFile.fromHash(
-    new OpenTimestamps.Ops.OpSHA256(),
-    hash,
-  );
-  const detachedProof = OpenTimestamps.DetachedTimestampFile.deserialize(fromBase64(proofBase64));
   try {
-    const result = await OpenTimestamps.verify(detachedProof, detachedOriginal);
-    if (result && result.bitcoin) {
-      return {
-        verified: true,
-        blockHeight: result.bitcoin.height,
-        timestamp: new Date(result.bitcoin.timestamp * 1000),
-      };
-    }
+    const result = await ots.verifyDigest(hash, proofBase64, true);
+    if (result.bitcoin) return { verified: true, blockHeight: result.bitcoin.height, timestamp: new Date(result.bitcoin.timestamp * 1000) };
     return { verified: false, pending: true };
   } catch {
     return { verified: false };
   }
-}
-
-// ─── Helpers base64 (compatibles navigateur + Node/Deno) ─────────────────
-function toBase64(bytes: Uint8Array): string {
-  if (typeof Buffer !== 'undefined') return Buffer.from(bytes).toString('base64');
-  let bin = '';
-  for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
-
-function fromBase64(base64: string): Uint8Array {
-  if (typeof Buffer !== 'undefined') return new Uint8Array(Buffer.from(base64, 'base64'));
-  const bin = atob(base64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
 }

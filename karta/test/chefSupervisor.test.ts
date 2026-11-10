@@ -1,4 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { existsSync } from "node:fs";
+import { mkdtemp, rm } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { ProcessChefDriver } from "../src/chef/driver.js";
+import { ChefProcessStopUnconfirmedError } from "../src/chef/process.js";
 import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.js";
 import { runChefWorkerCycle } from "../src/chef/supervisor.js";
@@ -16,6 +22,11 @@ vi.mock("../src/chef/git-state.js", () => ({
 
 const hash = "c".repeat(64);
 const sha = "d".repeat(40);
+const tempDirs: string[] = [];
+
+afterEach(async () => {
+  await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -69,6 +80,142 @@ const passingVerifier: ChefVerifier = {
 };
 
 describe("CHEF autonomous worker cycle", () => {
+  it("does not claim work after an already requested daemon shutdown", async () => {
+    const { control } = makeControl(makeTask());
+    const cancel = new AbortController();
+    cancel.abort();
+    const driver: ChefWorkerDriver = { provider: "codex", run: vi.fn() };
+    const result = await runChefWorkerCycle(control, driver, passingVerifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex", signal: cancel.signal,
+    });
+    expect(result.state).toBe("idle");
+    expect(control.claimNext).not.toHaveBeenCalled();
+    expect(driver.run).not.toHaveBeenCalled();
+  });
+
+  it("releases a claim obtained during shutdown without starting its worker", async () => {
+    const { control, transitions } = makeControl(makeTask());
+    const cancel = new AbortController();
+    vi.mocked(control.claimNext).mockImplementation(async () => { cancel.abort(); return makeTask(); });
+    const driver: ChefWorkerDriver = { provider: "codex", run: vi.fn() };
+    const result = await runChefWorkerCycle(control, driver, passingVerifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex", signal: cancel.signal,
+    });
+    expect(result.state).toBe("retryable");
+    expect(transitions).toEqual(["retryable"]);
+    expect(driver.run).not.toHaveBeenCalled();
+  });
+
+  it.skipIf(process.platform === "win32")("propagates shutdown to a running real process before releasing the task", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "chef-cycle-stop-"));
+    tempDirs.push(cwd);
+    const ready = join(cwd, "ready");
+    const stopped = join(cwd, "stopped");
+    const script = `const fs=require('node:fs');
+      process.on('SIGTERM',()=>{fs.writeFileSync(${JSON.stringify(stopped)},'stopped');process.exit(0)});
+      fs.writeFileSync(${JSON.stringify(ready)},'ready');setInterval(()=>{},1000);`;
+    const driver = new ProcessChefDriver({
+      provider: "codex", command: process.execPath, args: ["-e", script], allowedRoots: [cwd], timeoutMs: 5_000,
+    });
+    const { control, transitions } = makeControl(makeTask({ cwd, accessMode: "read" }));
+    const cancel = new AbortController();
+    const pending = runChefWorkerCycle(control, driver, passingVerifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex", signal: cancel.signal,
+    });
+    await vi.waitFor(() => expect(existsSync(ready)).toBe(true));
+    cancel.abort();
+    const result = await pending;
+    expect(result.state).toBe("retryable");
+    expect(existsSync(stopped)).toBe(true);
+    expect(transitions).toEqual(["running", "retryable"]);
+    expect(passingVerifier.verify).not.toHaveBeenCalled();
+  });
+
+  it.skipIf(process.platform === "win32")("waits for a timed-out worker to finish before the retryable transition", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "chef-cycle-timeout-"));
+    tempDirs.push(cwd);
+    const lastEffect = join(cwd, "last-effect");
+    const script = `process.on('SIGTERM',()=>{});
+      setTimeout(()=>{require('node:fs').writeFileSync(${JSON.stringify(lastEffect)},'finished');process.exit(0);},900);`;
+    const driver = new ProcessChefDriver({
+      provider: "codex", command: process.execPath, args: ["-e", script], allowedRoots: [cwd], timeoutMs: 500,
+    });
+    const { control } = makeControl(makeTask({ cwd, accessMode: "read" }));
+    let effectPresentAtRetry = false;
+    vi.mocked(control.transition).mockImplementation(async (input) => {
+      if (input.target === "retryable") effectPresentAtRetry = existsSync(lastEffect);
+      return true;
+    });
+    const result = await runChefWorkerCycle(control, driver, passingVerifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex",
+    });
+    expect(result).toMatchObject({ state: "retryable", error: "Worker CHEF expiré" });
+    expect(effectPresentAtRetry).toBe(true);
+    expect(passingVerifier.verify).not.toHaveBeenCalled();
+  });
+
+  it.each(["driver", "verifier"] as const)("blocks and halts when %s cannot confirm process termination", async (source) => {
+    const { control, transitions } = makeControl(makeTask({ accessMode: "read" }));
+    control.quarantineProcess = vi.fn(async () => true);
+    const error = new ChefProcessStopUnconfirmedError("arrêt du groupe non confirmé");
+    const driver: ChefWorkerDriver = {
+      provider: "codex",
+      run: vi.fn(async () => {
+        if (source === "driver") throw error;
+        return { schemaVersion: 1, status: "completed", summary: "done" } as ChefDriverResponse;
+      }),
+    };
+    const verifier: ChefVerifier = { verify: vi.fn(async () => { throw error; }) };
+    const result = await runChefWorkerCycle(control, driver, verifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex",
+    });
+    expect(result).toMatchObject({ state: "blocked_external", haltWorker: true, error: error.message });
+    expect(control.quarantineProcess).toHaveBeenCalledWith("task-1", { workerId: "worker-1", fencingToken: 3, attempt: 1 }, error.message);
+    expect(control.transition).toHaveBeenLastCalledWith(expect.objectContaining({ target: "blocked_external", error: error.message }));
+    const blockIndex = vi.mocked(control.transition).mock.calls.findIndex(([input]) => input.target === "blocked_external");
+    expect(vi.mocked(control.quarantineProcess).mock.invocationCallOrder[0])
+      .toBeLessThan(vi.mocked(control.transition).mock.invocationCallOrder[blockIndex]);
+    expect(transitions).not.toContain("retryable");
+    expect(transitions).not.toContain("verified_done");
+    expect(control.tryFinishMission).not.toHaveBeenCalled();
+  });
+
+  it("preserves the unsafe-stop error if the durable block cannot be recorded", async () => {
+    const { control, transitions } = makeControl(makeTask({ accessMode: "read" }));
+    control.quarantineProcess = vi.fn(async () => true);
+    vi.mocked(control.transition).mockImplementation(async (input) => {
+      transitions.push(input.target);
+      if (input.target === "blocked_external") throw new Error("database unavailable");
+      return true;
+    });
+    const driver: ChefWorkerDriver = {
+      provider: "codex", run: vi.fn(async () => { throw new ChefProcessStopUnconfirmedError("arrêt non confirmé"); }),
+    };
+    await expect(runChefWorkerCycle(control, driver, passingVerifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex",
+    })).rejects.toThrow(ChefProcessStopUnconfirmedError);
+    expect(transitions).not.toContain("retryable");
+    expect(transitions).not.toContain("verified_done");
+  });
+
+  it.each(["unavailable", "refused", "offline"] as const)("does not release task exclusion when quarantine persistence is %s", async (failure) => {
+    const { control, transitions } = makeControl(makeTask({ accessMode: "read" }));
+    if (failure !== "unavailable") {
+      control.quarantineProcess = vi.fn(async () => {
+        if (failure === "offline") throw new Error("database unavailable");
+        return false;
+      });
+    }
+    const driver: ChefWorkerDriver = {
+      provider: "codex", run: vi.fn(async () => { throw new ChefProcessStopUnconfirmedError("arrêt non confirmé"); }),
+    };
+    await expect(runChefWorkerCycle(control, driver, passingVerifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex",
+    })).rejects.toThrow(/quarantaine durable/);
+    expect(transitions).toEqual(["running"]);
+    expect(control.tryFinishMission).not.toHaveBeenCalled();
+  });
+
   it("stamps every proof with the original claim rather than a refreshed generation", async () => {
     const { control } = makeControl(makeTask());
     const driver: ChefWorkerDriver = {

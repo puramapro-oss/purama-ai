@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/agent/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "--max-old-space-size=512",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.json"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-resume-20261110/karta",
+  "started_at": "2026-11-10T21:45:55.877511+00:00",
+  "timeout_seconds": 120,
+  "timed_out": false,
+  "interrupted": false,
+  "exit_code": 0,
+  "elapsed_seconds": 8.021
+}

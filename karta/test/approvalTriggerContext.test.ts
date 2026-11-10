@@ -114,7 +114,7 @@ const pending = async () => (await database().query<Pending>("SELECT id,run_id,e
 beforeAll(async () => {
   h.db = new PGlite();
   await database().exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT nullif(current_setting(''request.jwt.claim.sub'',true),'''')::uuid'; CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;");
-  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "007_runtime_hardening.sql", "019_pending_action_execution_trigger.sql", "019_pending_action_execution_trigger.sql"]) {
+  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "007_runtime_hardening.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "026_pending_action_execution_origin.sql", "026_pending_action_execution_origin.sql"]) {
     await database().exec(await readFile(new URL("../migrations/" + name, import.meta.url), "utf8"));
   }
 });
@@ -149,7 +149,7 @@ describe("durable approval origins with actual SQL and engine modules", () => {
     expect(h.enqueue).toHaveBeenCalledTimes(2);
   });
 
-  it("preserves the same original reason and lineage across two approvals and skips the completed delegation", async () => {
+  it("preserves the original lineage across two explicit approvals but refuses the second automatic continuation", async () => {
     const origin = original(); origin.payload!.extraSecret = "NEVER_PERSIST";
     expect((await run(origin, "original-delegated-cycle")).status).toBe("awaiting_approval");
     const first = (await pending())[0];
@@ -169,8 +169,9 @@ describe("durable approval origins with actual SQL and engine modules", () => {
       type: "delegation", source: "legal", payload: { reason: "Suite de la tâche", kartaDelegation: { depth: 2, lineage: ["partner", "legal", "compta"] } },
     } });
     const resumed = await run(queued(2).trigger, "second-approval-resume");
-    expect(resumed.status).toBe("success");
-    expect(resumed.toolsUsed.map(action => action.outcome)).toEqual(["skipped"]);
+    expect(resumed).toMatchObject({ status: "error", retryable: false });
+    expect(resumed.toolsUsed).toEqual([]);
+    expect(h.decide).toHaveBeenCalledTimes(2);
     expect(h.enqueue).toHaveBeenCalledTimes(3);
     expect(await pending()).toHaveLength(2);
     const traces = await database().query("SELECT decision,tools_used,result_summary,error_message FROM purama_ai.karta_runs");

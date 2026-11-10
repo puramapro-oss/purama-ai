@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Loader2, Bot, Sparkles, Plus, Headphones } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { createRequestScope } from '@/lib/request-scope';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import { useVoice } from '@/hooks/useVoice';
 import { MicButton } from './MicButton';
 import { SpeakButton } from './SpeakButton';
@@ -29,40 +31,76 @@ interface Props {
 
 export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [] }: Props) {
   const { user } = useAuth();
+  const userId = user?.id ?? null;
+  const [requests] = useState(createRequestScope);
   const voice = useVoice();
-  const [sessionId, setSessionId] = useState<string>('');
-  const [messages, setMessages] = useState<AgentChatMessage[]>([]);
-  const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+  const { cancelRecording, stopSpeaking } = voice;
+  const resourceKey = JSON.stringify([userId, agentType]);
+  const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
+  const conversationKey = JSON.stringify([userId, agentType, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [messages, setMessages] = useScopedState<AgentChatMessage[]>(conversationKey, []);
+  const [input, setInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const voiceReplyRef = useRef<string | null>(null);
 
-  useEffect(() => { setSessionId(newAgentSessionId()); }, []);
+  useEffect(() => { setSessionId(newAgentSessionId()); }, [resourceKey, setSessionId]);
 
-  useEffect(() => {
-    if (!user || !sessionId) return;
-    listAgentChatMessages(user.id, agentType, sessionId).then(setMessages).catch(() => {});
-  }, [user?.id, agentType, sessionId]);
+  useLayoutEffect(() => {
+    // Voice requests have their own scope and must expire with this conversation.
+    cancelRecording();
+    stopSpeaking();
+    setMessages([]);
+    setInput('');
+    setSending(false);
+    setVoiceModeOpen(false);
+    voiceReplyRef.current = null;
+    if (!userId || !sessionId) return;
+    const request = requests.begin('messages');
+    if (!request) return;
+    listAgentChatMessages(userId, agentType, sessionId)
+      .then(next => { if (request.current()) setMessages(next); })
+      .catch(() => {})
+      .finally(() => request.finish());
+    return () => requests.invalidate();
+  }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   // Auto-play last assistant message when voice settings.auto_play
+  const { speak } = voice;
+  const autoPlay = voice.settings.auto_play;
   useEffect(() => {
-    if (!voice.settings.auto_play || voiceModeOpen) return;
+    if (!autoPlay || voiceModeOpen) return;
     const last = messages[messages.length - 1];
-    if (last && last.role === 'assistant') {
-      voice.speak(last.content);
+    if (last && last.user_id === userId && last.agent_type === agentType && last.session_id === sessionId
+      && last.role === 'assistant' && last.id !== voiceReplyRef.current) {
+      voiceReplyRef.current = last.id;
+      void speak(last.content);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages.length]);
+  }, [messages, autoPlay, voiceModeOpen, speak, userId, agentType, sessionId]);
 
-  const submit = async (text: string): Promise<string | null> => {
-    if (!text.trim() || !user) return null;
+  const submit = async (text: string, signal?: AbortSignal): Promise<string | null> => {
+    const isCurrent = captureConversation();
+    if (!text.trim() || !userId || !sessionId || !isCurrent() || signal?.aborted) return null;
+    const request = requests.begin('send');
+    if (!request) return null;
+    // A snapshot requested before this turn must not erase the optimistic message.
+    requests.cancel('messages');
+    const cancel = () => {
+      if (!request.current()) return;
+      requests.cancel('send');
+      setSending(false);
+    };
+    signal?.addEventListener('abort', cancel, { once: true });
+    setSending(true);
     const tempUser: AgentChatMessage = {
       id: 'tmp-' + Date.now(),
-      user_id: user.id,
+      user_id: userId,
       agent_type: agentType,
       session_id: sessionId,
       role: 'user',
@@ -72,19 +110,27 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await sendAgentChatMessage(agentType, sessionId, text.trim());
+      const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), request.signal);
+      if (!request.current()) return null;
+      const replyId = 'tmp-asst-' + Date.now();
+      // VoiceMode owns playback for its turn, even if the modal closes before effects run.
+      if (signal) voiceReplyRef.current = replyId;
       setMessages(prev => [...prev, {
         ...tempUser,
-        id: 'tmp-asst-' + Date.now(),
+        id: replyId,
         role: 'assistant',
         content: res.reply,
         tokens: res.tokens,
       }]);
       return res.reply;
     } catch (e) {
+      if (!request.current()) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
+    } finally {
+      signal?.removeEventListener('abort', cancel);
+      if (request.finish()) setSending(false);
     }
   };
 
@@ -92,13 +138,13 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     if (!input.trim() || sending) return;
     const text = input.trim();
     setInput('');
-    setSending(true);
-    try { await submit(text); } finally { setSending(false); }
+    await submit(text);
   };
 
   const newSession = () => {
+    cancelRecording();
+    stopSpeaking();
     setSessionId(newAgentSessionId());
-    setMessages([]);
   };
 
   return (
@@ -244,7 +290,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
         agentName={agentName}
         agentEmoji={agentEmoji}
         agentColor={agentColor}
-        onSend={async (text) => submit(text)}
+        onSend={submit}
       />
     </>
   );

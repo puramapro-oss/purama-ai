@@ -1,0 +1,60 @@
+[
+  {
+    "name": "webhook-extended",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "supabase/functions/contracts-webhook/index.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "read-request-text",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "readRequestText",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "body-error",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "RequestBodyError",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "authorization-harness",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "harness",
+      "--file",
+      "tests/contracts-ots-authorization.test.mjs",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests"
+    ],
+    "exit": 0
+  }
+]

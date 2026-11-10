@@ -1,0 +1,25 @@
+{
+  "source_index_commit": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+  "source_index_time": "2026-11-10T21:22:52.704Z",
+  "source_index": "/workspace/scratch/cb46f4d9a0df/iao-final-review/.gitnexus",
+  "copy": "/workspace/scratch/29af233a360b/purama-resume-20261110/.gitnexus",
+  "same_before_after_copy": true,
+  "files": {
+    "lbug": {
+      "sha256": "e18a0b00ab04693154fb3576baadca156576773dd8b8e4eb085b83cd7cdd4975",
+      "bytes": 150282240
+    },
+    "meta.json": {
+      "sha256": "3be7873daef2c78c78f84244a8d986561030d4d0bc6eeddb5b1fb66197328cd4",
+      "bytes": 141801,
+      "relocated_sha256": "75ba52888b7c53bf08ede254e8e4f098c52b62f13a6dea309fb3a330977e3537"
+    },
+    "gitnexus.json": {
+      "sha256": "3be7873daef2c78c78f84244a8d986561030d4d0bc6eeddb5b1fb66197328cd4",
+      "bytes": 141801,
+      "relocated_sha256": "75ba52888b7c53bf08ede254e8e4f098c52b62f13a6dea309fb3a330977e3537"
+    }
+  },
+  "note": "Snapshot of the previous consolidation index, not a fresh current-tree analysis. CHEF source blobs match baseline 1a49. LastCommit and metadata are preserved honestly.",
+  "relocation": "Only repoPath/storagePath of the isolated snapshot are updated to their actual new location; indexed commit/time/branch are preserved. Source index not modified."
+}

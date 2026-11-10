@@ -1,0 +1,102 @@
+{
+  "parent": "cb5accbeac30bf43872c0a7a19233a619faed4ca",
+  "cwd": "/workspace/scratch/221cb4a2f349/continue-iao/repo",
+  "versions": {
+    "node": "24.22.1",
+    "deno": "2.9.6",
+    "postgres": "18.4 (Homebrew)"
+  },
+  "gates": [
+    {
+      "name": "Node contracts/security/content/crypto/client",
+      "command": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-auth.mjs tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs tests/contracts-ots/crypto.test.mjs tests/contracts-ots/client.test.mjs supabase/functions/_shared/webhook-security.test.ts supabase/functions/_shared/request-body.test.ts tests/docuseal-read-boundaries.test.mjs",
+      "exit_code": 0,
+      "passed": 229,
+      "failed": 0,
+      "log": "node-atomic.log.gz"
+    },
+    {
+      "name": "Deno actual handlers with closed fixtures",
+      "command": "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --no-remote --no-npm --allow-env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,DOCUSEAL_API_URL,DOCUSEAL_API_TOKEN,DOCUSEAL_WEBHOOK_SECRET --config tests/contracts-ots/deno.json tests/contracts-ots/admission.test.ts tests/contracts-ots/webhook.test.ts tests/contracts-ots/body.test.ts",
+      "exit_code": 0,
+      "passed": 43,
+      "failed": 0,
+      "log": "deno-atomic.log.gz"
+    },
+    {
+      "name": "Native PostgreSQL complete final execution",
+      "command": "python3 tests/contracts-ots/native-postgres.py CHECKOUT --pg-bin /opt/homebrew/opt/postgresql@18/bin --output native-results.json",
+      "exit_code": 0,
+      "passed": 29,
+      "failed": 0,
+      "log": "native-final.json",
+      "scope": "Real disposable native SQL server, actual migrations; synthetic auth identities, no provider or production"
+    },
+    {
+      "name": "App TypeScript",
+      "command": "npm run typecheck",
+      "exit_code": 0,
+      "log": "typecheck.log.gz"
+    },
+    {
+      "name": "Production Deno handler types",
+      "command": "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno check --no-config --no-lock --cached-only --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts",
+      "exit_code": 0,
+      "log": "deno-production-check.log.gz",
+      "scope": "Real npm imports already cached, no new remote resolution"
+    },
+    {
+      "name": "Targeted ESLint",
+      "command": "node node_modules/eslint/bin/eslint.js supabase/functions/contracts-ots-stamp/index.ts tests/contracts-ots/fixture.ts tests/contracts-ots/admission.test.ts tests/contracts-ots-auth.mjs tests/contracts-ots-authorization.test.mjs",
+      "exit_code": 0,
+      "log": "lint-targeted.log.gz"
+    },
+    {
+      "name": "Vite build with bounded heap",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 npm run build",
+      "exit_code": 0,
+      "log": "build-bounded.log.gz"
+    },
+    {
+      "name": "Independent private server closure",
+      "status": "PASS",
+      "log": "native-independent-closure.json"
+    }
+  ],
+  "failed_attempts": [
+    {
+      "name": "Native attempt 1",
+      "exit_code": 1,
+      "completed_checks_before_harness_failure": 24,
+      "cause": "JSON parser expected one line; json_agg of two events used a multiline value",
+      "log": "native-first-attempt.json.gz"
+    },
+    {
+      "name": "Native attempt 2",
+      "exit_code": 1,
+      "completed_checks_before_harness_failure": 28,
+      "cause": "Shared concurrency collector expects backend_pid, fixture initially emitted pid",
+      "log": "native-second-attempt.json.gz"
+    },
+    {
+      "name": "First build",
+      "command": "npm run build",
+      "exit_code": 137,
+      "observation": "Killed",
+      "log": "build-first-attempt.log.gz"
+    }
+  ],
+  "inspected_not_run": [
+    {
+      "name": "check:database-contracts",
+      "reason": "Generator only loads p3_schema.sql and 20260422180000_v4_1_stripe_connect_opentimestamps.sql and generates tables; it covers neither contracts migration nor RPCs. No regeneration."
+    }
+  ],
+  "limits": [
+    "No deployed database or provider tested",
+    "No browser gate run for this delta",
+    "No hosted CI rerun",
+    "Verify and webhook transaction gaps unchanged",
+    "Each successful restamp still has its own audit; not exactly-once delivery"
+  ]
+}

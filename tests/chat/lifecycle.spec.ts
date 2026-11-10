@@ -1,9 +1,7 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 import type { Plan } from './transport';
 
 test.beforeEach(async ({ page }) => {
-  await page.route('**/*', route => route.request().url().startsWith('http://127.0.0.1:4175/')
-    ? route.continue() : route.abort());
   await page.goto('/tests/chat/index.html');
   await page.getByRole('button', { name: "Ouvrir l'assistant PURA" }).click();
   await expect(page.getByRole('dialog')).toContainText('Décrivez ce que vous souhaitez faire.');

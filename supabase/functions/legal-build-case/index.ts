@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Legal Agent — Build a complete case file from facts (Claude)
 // POST { title, type, facts, parties }
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
@@ -70,26 +71,24 @@ Deno.serve(async (req) => {
       ? `Profil client: ${cfg.user_type} ${cfg.company_name ?? ""} ${cfg.siren ? `SIREN ${cfg.siren}` : ""}, ${cfg.city ?? ""}`
       : "";
 
-    const systemPrompt = `Tu es un avocat français spécialisé. Tu reçois un dossier brut et tu dois le monter complètement en analysant la situation, identifiant la stratégie, les arguments, les risques, la jurisprudence, et la probabilité de succès.
+    const systemPrompt = `Tu es un assistant IA de préparation de dossier juridique. Analyse les faits fournis, les arguments, les pièces manquantes, les risques et les sources vérifiables. Ne te présente pas comme avocat; ne fabrique ni jurisprudence ni probabilité de succès.
 
 Tu retournes UNIQUEMENT un JSON valide :
 {
   "ai_analysis": "Analyse complète du dossier en 3-5 paragraphes",
   "ai_strategy": "Stratégie recommandée étape par étape",
-  "ai_arguments": ["Argument 1", "Argument 2", ...],
-  "ai_risks": ["Risque 1", "Risque 2", ...],
-  "ai_jurisprudence": [
-    { "reference": "Cass. soc. 25 nov. 2020, n° 19-12.665", "court": "Cour de cassation", "date": "2020-11-25", "summary": "...", "relevance": "Pertinent car..." }
-  ],
-  "ai_success_probability": 75,
-  "ai_estimated_amount": 12500,
-  "deadlines": [{"date":"2026-06-30","description":"Délai de réponse","type":"procedure"}],
-  "prescription_date": "2027-04-06",
-  "prescription_type": "Action en paiement (5 ans, art. 2224 C. civ.)",
+  "ai_arguments": [],
+  "ai_risks": [],
+  "ai_jurisprudence": [],
+  "ai_success_probability": null,
+  "ai_estimated_amount": null,
+  "deadlines": [],
+  "prescription_date": null,
+  "prescription_type": null,
   "priority": "normal"
 }
 
-Sois précis, cite les articles de loi exacts dans les arguments, et donne des montants réalistes.`;
+Complète les arguments et risques à partir des faits fournis. Cite uniquement des références étayées. Les montants et délais inconnus restent null ou vides; n'invente pas les faits manquants. Explicite les calculs et hypothèses dans ai_analysis. ai_success_probability reste null: aucun modèle de probabilité validé n'est disponible.`;
 
     const userMessage = `${profileContext}
 
@@ -114,7 +113,7 @@ Monte ce dossier maintenant.`;
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4000,
-        system: systemPrompt,
+        system: buildAssistantSystemPrompt(systemPrompt, "task"),
         messages: [{ role: "user", content: userMessage }],
       }),
     });
@@ -148,7 +147,8 @@ Monte ce dossier maintenant.`;
         ai_arguments: (analysis.ai_arguments as string[]) ?? [],
         ai_risks: (analysis.ai_risks as string[]) ?? [],
         ai_jurisprudence: (analysis.ai_jurisprudence as unknown[]) ?? [],
-        ai_success_probability: (analysis.ai_success_probability as number) ?? null,
+        // No calibrated outcome model supports a numerical legal success rate.
+        ai_success_probability: null,
         ai_estimated_amount: (analysis.ai_estimated_amount as number) ?? null,
         deadlines: (analysis.deadlines as unknown[]) ?? [],
         prescription_date: (analysis.prescription_date as string) ?? null,

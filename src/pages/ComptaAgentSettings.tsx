@@ -20,23 +20,41 @@ import {
 
 export default function ComptaAgentSettings() {
   const { user } = useAuth();
+  const userId = user?.id;
   const [config, setConfig] = useState<ComptaConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [loadVersion, setLoadVersion] = useState(0);
   const [saving, setSaving] = useState(false);
   const [bridging, setBridging] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    setLoading(Boolean(userId));
+    setLoadError(false);
+    setConfig(null);
+    if (!userId) return;
+    let active = true;
     (async () => {
-      try { setConfig(await getComptaConfig(user.id)); }
-      catch (e) { toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) }); }
-      finally { setLoading(false); }
+      try {
+        const next = await getComptaConfig(userId);
+        if (active) setConfig(next);
+      }
+      catch (e) { if (active) setLoadError(true); }
+      finally { if (active) setLoading(false); }
     })();
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId, loadVersion]);
 
-  if (loading || !config) {
+  if (loading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>;
   }
+  if (loadError || !config) {
+    return <div className="space-y-4 py-20 text-center" role="alert">
+      <p>Impossible de charger les paramètres.</p>
+      <Button onClick={() => setLoadVersion(value => value + 1)}>Réessayer</Button>
+    </div>;
+  }
+
 
   const update = (patch: Partial<ComptaConfig>) => setConfig({ ...config, ...patch });
 

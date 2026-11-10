@@ -1,0 +1,70 @@
+{
+  "target": {
+    "id": "Function:karta/src/chef/brief.ts:validateChefBrief",
+    "name": "validateChefBrief",
+    "type": "Function",
+    "filePath": "karta/src/chef/brief.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 3,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 2
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 3,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/brief.ts:normalizeChefBrief",
+        "name": "normalizeChefBrief",
+        "filePath": "karta/src/chef/brief.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/brief.ts:hashChefBrief",
+        "name": "hashChefBrief",
+        "filePath": "karta/src/chef/brief.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/mission.ts:createChefMission",
+        "name": "createChefMission",
+        "filePath": "karta/src/chef/mission.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Impact (1.6.12)

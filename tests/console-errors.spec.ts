@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './public/fixtures';
 
 const PAGES = ['/', '/pricing', '/login', '/signup', '/ecosystem'];
 
@@ -8,9 +8,6 @@ test.describe('Console — 0 erreur JS critique', () => {
       const errors: string[] = [];
 
       page.on('pageerror', (err) => {
-        // Ignore known non-critical errors
-        const msg = err.message.toLowerCase();
-        if (msg.includes('recaptcha') || msg.includes('gtag') || msg.includes('analytics') || msg.includes('posthog') || msg.includes('sentry')) return;
         errors.push(err.message);
       });
 

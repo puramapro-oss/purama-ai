@@ -1,0 +1,62 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1794322602028,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "target": {
+    "id": "Function:supabase/functions/_shared/request-body.ts:readRequestText",
+    "name": "readRequestText",
+    "type": "Function",
+    "filePath": "supabase/functions/_shared/request-body.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 3,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 3,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 3
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:supabase/functions/_shared/request-body.test.ts",
+        "name": "request-body.test.ts",
+        "filePath": "supabase/functions/_shared/request-body.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:supabase/functions/contracts-ots-stamp/index.ts",
+        "name": "index.ts",
+        "filePath": "supabase/functions/contracts-ots-stamp/index.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:supabase/functions/contracts-webhook/index.ts",
+        "name": "index.ts",
+        "filePath": "supabase/functions/contracts-webhook/index.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

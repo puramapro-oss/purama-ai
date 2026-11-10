@@ -1,0 +1,14 @@
+{
+  "parent": "cb5accbeac30bf43872c0a7a19233a619faed4ca",
+  "sha256": {
+    "supabase/functions/contracts-ots-stamp/index.ts": "9979cdd8b5b5badc358729eb2a577c6327d1e260d058f9eb2a69fc22b9cff710",
+    "supabase/migrations/20261110180000_contract_ots_audit_atomicity.sql": "af369fff8db94477cb0afa6e76613a4b192e74f61fea7500b7871f9eb91c1f5c",
+    "tests/contracts-ots/native-postgres.py": "8e189430ef7246f9d70e0db552917004c4cfe39a05ca82a4c1e563c2fa44db64",
+    "tests/contracts-ots/fixture.ts": "36665ee9baa2dd7867e01d0f46fa50b5a4d6f19814ff7890dbddef8150b8e93e",
+    "tests/contracts-ots/admission.test.ts": "bf89ea56644ef4e91748409821352f0a715d3ed0e3e833697eeebe56a592c266",
+    "tests/contracts-ots-auth.mjs": "e32ebaf737a2a75980c5e17d886ec170d5919b9a2f912a84cd6c1a775dabd695",
+    "tests/contracts-ots-authorization.test.mjs": "fd51aea9ecb84e19b27a966df570f4140b740132d3acfcf4c70b47a1251690ce",
+    "package-lock.json": "7d6aa7a9cc26f6cdb8738d06eff6de1c3bcd77031ccd1ae5789ef3ba0d511d63",
+    "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c"
+  }
+}

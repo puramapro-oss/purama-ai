@@ -1,0 +1,44 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:src/lib/docuseal/ots-stamper.ts:stampContract",
+    "name": "stampContract",
+    "kind": "Function",
+    "filePath": "src/lib/docuseal/ots-stamper.ts",
+    "startLine": 17,
+    "endLine": 31
+  },
+  "epistemic": "exact",
+  "incoming": {},
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:src/lib/docuseal/ots-stamper.ts:bufferToBase64",
+        "name": "bufferToBase64",
+        "filePath": "src/lib/docuseal/ots-stamper.ts"
+      },
+      {
+        "uid": "Function:src/lib/docuseal/ots-stamper.ts:bufferToHex",
+        "name": "bufferToHex",
+        "filePath": "src/lib/docuseal/ots-stamper.ts"
+      },
+      {
+        "uid": "Function:src/lib/opentimestamps.ts:hashContent",
+        "name": "hashContent",
+        "filePath": "src/lib/opentimestamps.ts"
+      }
+    ],
+    "uses": [
+      {
+        "uid": "Interface:src/lib/docuseal/ots-stamper.ts:StampResult",
+        "name": "StampResult",
+        "filePath": "src/lib/docuseal/ots-stamper.ts"
+      }
+    ]
+  },
+  "processes": []
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Context (1.6.12)
+{"level":40,"time":1794320892691,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

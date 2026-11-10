@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { applyOveragePayment } from "./overage.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -355,31 +356,17 @@ serve(async (req) => {
             }
           }
         } else if (session.mode === 'payment' && session.metadata?.type === 'overage_pack') {
-          // Pack de dépassement +2000 actions = 19€ (brief PRICING & OFFRE IRRÉSISTIBLE).
-          // Crédité au mois en cours (period_start = 1er du mois courant), cf getUsageSnapshot() (src/lib/usage.ts).
-          const userId = session.metadata.user_id;
-          if (userId) {
-            const now = new Date();
-            const periodStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString().slice(0, 10);
-
-            const { error: creditError } = await supabaseClient
-              .from('overage_credits')
-              .insert({
-                user_id: userId,
-                actions: OVERAGE_PACK_ACTIONS,
-                period_start: periodStart,
-                stripe_session_id: session.id,
-              });
-
-            if (creditError) {
-              logStep("ERROR: Failed to credit overage pack", { error: creditError.message });
-            } else {
-              logStep("Overage pack credited", { userId, periodStart, sessionId: session.id });
-            }
-          } else {
-            logStep("ERROR: overage_pack session missing user_id metadata", { sessionId: session.id });
-          }
+          const result = await applyOveragePayment(event, OVERAGE_PACK_ACTIONS,
+            parameters => supabaseClient.rpc('credit_overage_pack', parameters));
+          logStep("Overage payment processed", { sessionId: session.id, ...result });
         }
+        break;
+      }
+
+      case 'checkout.session.async_payment_succeeded': {
+        const result = await applyOveragePayment(event, OVERAGE_PACK_ACTIONS,
+          parameters => supabaseClient.rpc('credit_overage_pack', parameters));
+        logStep("Delayed overage payment processed", { eventId: event.id, ...result });
         break;
       }
 

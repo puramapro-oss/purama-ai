@@ -1,0 +1,12 @@
+{
+  "old_base": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "publication_base": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "inherited_changed_paths": [
+    "supabase/functions/_shared/request-body.test.ts",
+    "supabase/functions/_shared/request-body.ts"
+  ],
+  "karta_tree_before": "3c0e5a09bb425c4f6634ab68e76c99d041a1dff4",
+  "karta_tree_after": "3c0e5a09bb425c4f6634ab68e76c99d041a1dff4",
+  "supervisor_sha256": "a3e66a1909f10fbefdf6cf6cbb8716e388a5f46874cdf925e46cd2697acdc1bd",
+  "scope": "The two upstream body-reader files are taken unchanged. Prior local receipts retain their real 1a49 base. Hosted CI will qualify the final composition."
+}

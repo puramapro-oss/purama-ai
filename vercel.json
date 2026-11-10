@@ -9,7 +9,13 @@
   "git": {
     "deploymentEnabled": {
       "audit/dependency-security-20261109": false,
-      "repair/iao-quality-20261109": false
+      "repair/iao-quality-20261109": false,
+      "fix/iao-websearch-validation-20261110": false,
+      "audit/iao-release-consolidation-20261110": false,
+      "audit/iao-integrated-20261110-14d16": false,
+      "codex/iao-compassion-consent-20261110": false,
+      "codex/chef-cancellation-20261110": false,
+      "audit/iao-reconciled-20261110": false
     }
   }
 }

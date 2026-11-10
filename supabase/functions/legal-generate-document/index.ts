@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Legal Agent — Generate a complete legal document via Claude
 // POST { type, brief, variables?, related_contact?, related_contact_email? }
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -108,7 +109,7 @@ Adresse: ${cfg.address ?? "—"}, ${cfg.postal_code ?? ""} ${cfg.city ?? ""}
 Activité: ${cfg.activity_description ?? "—"}`
       : "(profil non renseigné)";
 
-    const systemPrompt = `Tu es un avocat français expert. Tu rédiges un document juridique COMPLET, conforme au droit français en vigueur, prêt à signer.
+    const systemPrompt = `Tu es un assistant IA de rédaction juridique. Prépare un projet de document français complet à partir des faits fournis, avec les hypothèses et points restant à vérifier. Ne présente pas le projet comme juridiquement validé ou prêt à signer.
 
 Profil de l'émetteur :
 ${profileContext}
@@ -129,8 +130,8 @@ Le content_html doit être au format **Markdown** (pas du HTML strict — c'est 
 - Articles numérotés
 - Bloc signature à la fin
 - Mentions légales obligatoires
-- Citations exactes des textes (Code, articles)
-- Aucun placeholder type [INSÉRER X] : si une info manque, utiliser une valeur par défaut raisonnable et le mentionner dans ai_analysis.`;
+- Références étayées des textes (Code, articles); signale celles restant à vérifier
+- Si une identité, un montant, une date ou une autre donnée manque, écris « à compléter » et liste précisément le manque dans ai_analysis. N'invente jamais une valeur par défaut pour un fait absent.`;
 
     const userMessage = `Type: ${typeLabel}
 Contrepartie: ${body.related_contact ?? "(à définir)"} ${body.related_contact_email ? `<${body.related_contact_email}>` : ""}
@@ -152,7 +153,7 @@ Génère le document complet maintenant.`;
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 8000,
-        system: systemPrompt,
+        system: buildAssistantSystemPrompt(systemPrompt, "task"),
         messages: [{ role: "user", content: userMessage }],
       }),
     });

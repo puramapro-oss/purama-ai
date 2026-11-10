@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Anthropic from "https://esm.sh/@anthropic-ai/sdk@0.32.1";
@@ -30,8 +31,8 @@ async function generateCaption(params: {
   const msg = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 600,
-    system:
-      `Tu es un expert viral en réseaux sociaux. À partir du contenu fourni, génère une caption engageante (max 2-3 phrases, ton naturel, hooks forts) et 5 à 10 hashtags pertinents (sans le #). Réponds STRICTEMENT en JSON: {"caption": "...", "hashtags": ["...", "..."]}. Aucun markdown, aucune explication.`,
+    system: buildAssistantSystemPrompt(
+      `Tu es un expert viral en réseaux sociaux. À partir du contenu fourni, génère une caption engageante (max 2-3 phrases, ton naturel, hooks forts) et 5 à 10 hashtags pertinents (sans le #). Réponds STRICTEMENT en JSON: {"caption": "...", "hashtags": ["...", "..."]}. Aucun markdown, aucune explication.`, "task"),
     messages: [
       {
         role: "user",

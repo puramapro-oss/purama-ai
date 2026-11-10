@@ -31,8 +31,13 @@ export async function startRun(
   agentType: AgentType,
   trigger: AgentTrigger,
   mode: "simulation" | "live",
-  executionKey?: string
+  executionKey?: string,
+  executionFingerprint?: string
 ): Promise<RunLogHandle> {
+  if (executionFingerprint !== undefined
+    && (!executionKey || !/^[0-9a-f]{64}$/.test(executionFingerprint))) {
+    throw new Error("Identité de demande non vérifiable");
+  }
   const startedAt = Date.now();
 
   const { data, error } = await supabase
@@ -45,6 +50,7 @@ export async function startRun(
       mode,
       status: "running",
       ...(executionKey ? { execution_key: executionKey } : {}),
+      ...(executionFingerprint !== undefined ? { execution_fingerprint: executionFingerprint } : {}),
     })
     .select("id")
     .single();
@@ -55,6 +61,20 @@ export async function startRun(
         .eq("execution_key", executionKey).eq("user_id", userId).eq("agent_type", agentType).single();
       if (prior.error || !prior.data) throw new Error("Impossible de vérifier l'exécution précédente");
       const row = prior.data;
+      if (executionFingerprint !== undefined && row.execution_fingerprint !== executionFingerprint) {
+        // A unique key alone cannot prove that a retried request has the same
+        // content. Never return an unrelated success or disclose its payload.
+        return {
+          runId: row.id,
+          existingResult: {
+            status: "error", decision: "Demande non exécutée", toolsUsed: [],
+            resultSummary: "Identité déjà réservée avec un contenu différent ou non vérifiable",
+            errorMessage: "Vérifier la demande précédente avant toute nouvelle action",
+            mock: false, retryable: false,
+          },
+          finish: async () => { throw new Error("Une exécution déjà réservée ne doit pas être réécrite"); },
+        };
+      }
       const known = ["success", "error", "awaiting_approval", "skipped", "cancelled", "simulated", "partial"].includes(row.status);
       return {
         runId: row.id,
