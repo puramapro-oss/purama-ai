@@ -70,6 +70,10 @@ transformée en réussite ni masquée comme une simple perte de bail.
 
 1. Identifier la version réellement déployée et vérifier l'application préalable
    des migrations 008 à 015. Inventorier les missions ouvertes et leurs profils.
+   Vérifier aussi les autres branches CHEF avant toute fusion : l'inspection T1
+   du 8 novembre a trouvé des migrations différentes portant déjà les numéros
+   016/017. La présente séquence ne doit pas être appliquée telle quelle sur cette
+   autre lignée. Voir les incompatibilités dans `../DEPENDENCY_QUALITY.md`.
 2. Suspendre les nouvelles prises de tâches, laisser terminer ou arrêter proprement
    les travailleurs, et disposer d'une sauvegarde restaurable.
 3. Appliquer dans l'ordre `016_chef_scoped_evidence.sql` puis
@@ -108,15 +112,19 @@ eux seuls les tests du contrat courant.
 Avant le correctif, 25 des 29 nouveaux cas ont échoué sur le comportement ancien.
 Le complément sur les reprises a reproduit huit autres cas avant leur correction,
 dont le renouvellement tardif et la transition avec un jeton NULL.
-Validation locale du 8 novembre 2026 sur cette branche :
+Validation locale réexécutée le 10 novembre 2026 sous Node 22.23.4 :
 
 | Contrôle | Résultat |
 |---|---|
 | `npm test` dans `karta` | PASS — 488 tests, 45 fichiers ; 47 cas supplémentaires pour ce complément, 76 ajoutés au total dans la PR |
 | `npm run typecheck` | PASS |
 | `npm run build` | PASS |
-| `npm audit --audit-level=high --omit=dev` | PASS au seuil demandé ; 1 vulnérabilité modérée `qs` préexistante reste signalée |
+| `npm audit --audit-level=low --omit=dev` dans `karta` | PASS — 0 vulnérabilité connue signalée après mise à jour de `qs` 6.16.0 vers 6.17.1 |
 | Services réels et fonctionnement 24 h/24 | NON TESTÉ |
+
+Ce résultat d'audit concerne uniquement les dépendances de production de KARTA.
+L'application racine conserve des alertes et des erreurs TypeScript préexistantes ;
+le bilan distinct figure dans `../DEPENDENCY_QUALITY.md`.
 
 Les tests SQL utilisent PGlite ; l'adaptateur utilise un double
 Supabase. Un résultat local vert ne prouve donc pas une exécution de bout en bout

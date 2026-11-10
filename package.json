@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "playwright test",
-    "test:desktop": "playwright test --project=desktop"
+    "test:desktop": "playwright test --project=desktop",
+    "test:dependencies": "node --test tests/dependency-compat.cjs",
+    "typecheck:app": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -102,6 +104,22 @@
     "qs": "^6.14.1",
     "uuid": "^11.1.1",
     "brace-expansion": "^5.0.8",
-    "minimatch": "^10.0.3"
+    "minimatch": "^10.0.3",
+    "opentimestamps": {
+      "minimatch": {
+        ".": "^3.1.5",
+        "brace-expansion": "^1.1.21"
+      }
+    },
+    "request": {
+      ".": "npm:@cypress/request@^4.0.1",
+      "tough-cookie": "^5.0.0"
+    },
+    "bitcore-lib": {
+      "bn.js": "^4.12.5"
+    },
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "^6.1.6"
+    }
   }
 }
