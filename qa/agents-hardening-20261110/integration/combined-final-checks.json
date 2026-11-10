@@ -1,0 +1,92 @@
+[
+  {
+    "check": "combined-process-verified",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "test/chefProcess.test.ts",
+      "--maxWorkers=1"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 3.28
+  },
+  {
+    "check": "combined-karta-types-verified",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 9.73
+  },
+  {
+    "check": "combined-browser-verified",
+    "command": [
+      "node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=tests/quality/playwright.config.ts",
+      "tests/quality/karta-ui.spec.ts",
+      "tests/quality/partner-outreach.spec.ts",
+      "--workers=1",
+      "--timeout=90000"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 107.04,
+    "quality_port": 48716
+  },
+  {
+    "check": "combined-gitnexus-index",
+    "command": [
+      "npx",
+      "--yes",
+      "gitnexus@1.6.12",
+      "analyze",
+      "--index-only",
+      "--name",
+      "purama-agents-integrated-mac-20261110",
+      "--workers",
+      "1"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 128.92
+  },
+  {
+    "check": "combined-gitnexus-detect-staged",
+    "command": [
+      "npx",
+      "--yes",
+      "gitnexus@1.6.12",
+      "detect-changes",
+      "--scope",
+      "staged",
+      "--repo",
+      "purama-agents-integrated-mac-20261110",
+      "--limit",
+      "500"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 11.48
+  },
+  {
+    "check": "combined-gitnexus-detect-main",
+    "command": [
+      "npx",
+      "--yes",
+      "gitnexus@1.6.12",
+      "detect-changes",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "origin/main",
+      "--repo",
+      "purama-agents-integrated-mac-20261110",
+      "--limit",
+      "500"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 9.49
+  }
+]

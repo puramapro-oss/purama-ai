@@ -1,0 +1,35 @@
+{
+  "commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "observations": [
+    {
+      "test": "preaborted driver never runs",
+      "expected": "rejected, no effect",
+      "actual": "completed",
+      "sideEffectObserved": true,
+      "pass": false
+    },
+    {
+      "test": "preaborted verifier never runs",
+      "expected": "rejected or ok=false, no effect",
+      "actual": true,
+      "sideEffectObserved": true,
+      "pass": false
+    },
+    {
+      "test": "cancellation returns only after worker can no longer act",
+      "expected": "no effect after rejected promise",
+      "actual": "Worker CHEF annulé",
+      "markerAtRejection": false,
+      "markerAfterRejection": true,
+      "lateAfterRejectionMs": 445,
+      "pass": false
+    },
+    {
+      "test": "cancellation stops descendant processes",
+      "expected": "no descendant effect after cancel",
+      "actual": "Worker CHEF annulé",
+      "descendantEffectObserved": true,
+      "pass": false
+    }
+  ]
+}

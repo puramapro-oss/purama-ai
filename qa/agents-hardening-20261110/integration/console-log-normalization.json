@@ -1,0 +1,170 @@
+{
+  "operation": "Remove terminal ANSI presentation, trailing whitespace and redundant final blank lines from console logs only. No result values or JSON proof files changed. Raw Mac logs remain in the isolated validation checkouts.",
+  "files": [
+    {
+      "path": "qa/agents-hardening-20261110/billing/karta-typecheck.txt",
+      "raw_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8",
+      "published_sha256": "94daa1d5163e132fac6d71cdb88af004fe8c9d6f7b3a70a2222b01d5bb47de62"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/billing/vitest-overage-native-fix.txt",
+      "raw_sha256": "6f93cf9b08eed5715c1ca6c44c74826285f530d713281fdd485f3d5437d594bf",
+      "published_sha256": "d530b8eb0b474001bb8fb8bdaecef1b652d6b662a8a58468f89e207e4d2869ec"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/billing/vitest-overage.txt",
+      "raw_sha256": "ca54c8aca4ad98d504f6551bdd9017ded411258ee17774fb3c6fb4cb829011fe",
+      "published_sha256": "5a4afee9d164536168c757030f6e6e4787bd729228c80b211b8971c76bd24db6"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/budget/mac-baseline.txt",
+      "raw_sha256": "99a515d97d8f6e8b48187327298e40caa804fd7f89bdb63354b9e16df2300a9f",
+      "published_sha256": "f066690dcd5ed095d0ae5893a8fb99e1ddfe5a11c8bc6a3eb8ef341ce98b2fcd"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/budget/mac-budget.txt",
+      "raw_sha256": "ea103bda00d8db898e4a1d44ede1aa79cc6d5431d6cdb234f57339eab55a22cd",
+      "published_sha256": "f747e3bfdc17c17730067cd74938adf353da60e75c00a4826e20b7fbe739841f"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/budget/vitest-budget.txt",
+      "raw_sha256": "5b4c514f7b0675eee4e609f26df1f4d63431affb15b979b79176feb5f390d513",
+      "published_sha256": "ce5ccdc6c73236a84879cac9fa04262454d89e6048cc4eb5e83c2e8167f6dead"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/estimates/vitest-estimates.txt",
+      "raw_sha256": "3d31d76d3879ba482a828fb3ef25bf3cc1949324e157dc57a6a0b27e848dfd7e",
+      "published_sha256": "df96b4d12e87b6962ace10b1c29f2cc74767f49605b61f5208ece0aacd587cd9"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/app-typecheck.txt",
+      "raw_sha256": "18613ddbee6bb1383ee22d4a41b90885223169ef27a680cb63aac1cdd738279f",
+      "published_sha256": "c9d3ea7e21a7f507880ee6bcbe44f62864a9ce14c596e3810989e4ff2cbfc0d2"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/baseline-app-typecheck.txt",
+      "raw_sha256": "18613ddbee6bb1383ee22d4a41b90885223169ef27a680cb63aac1cdd738279f",
+      "published_sha256": "c9d3ea7e21a7f507880ee6bcbe44f62864a9ce14c596e3810989e4ff2cbfc0d2"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/billing-final.txt",
+      "raw_sha256": "3345c258bd86034e5ee831be98a1abeb2f88add235e547fe61ea8a1916a7c21e",
+      "published_sha256": "a5adf31e531f96dc77cbb718cd024797a1c0d64472595bece53f5e6d541b929b"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/browser-outreach-final.txt",
+      "raw_sha256": "04d30a8b8e98891025bced35a6d76a4c15d5db6d8f9539abd8559dc967505dd6",
+      "published_sha256": "c3477fd36b03c7b73210ef439a1635d2daae007748d9ab85a24b7a44549e3721"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/browser-outreach.txt",
+      "raw_sha256": "6bf14502266192e06e4cae8c5ae7bd00eff71385503cd07e5234d5a072f85362",
+      "published_sha256": "249de6a63270682d1b8d23c60d605423a1ec9c89711ae68561890bbcbcd8a2c4"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/browser-preview-diagnostic.txt",
+      "raw_sha256": "e0f57bde92932c027b3f2fd544f66a668c46ea85bb14dfa6ff410e698e05e9cc",
+      "published_sha256": "27abefc4bfdeacf47e0d7938185b6ce9e4b8b6d950cc77fd9a47b705b07e705c"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/karta-build.txt",
+      "raw_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746",
+      "published_sha256": "4c9cc1ae6dc61506f9a70b133dc2c1e1eabd318dc28d4ab162b5e0f7a7398c25"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/karta-final-typecheck.txt",
+      "raw_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7",
+      "published_sha256": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/karta-full.txt",
+      "raw_sha256": "81803acec96af0a9fdb6460c626ed788f2bc8b4d46cb61d59fe0d6702da7e654",
+      "published_sha256": "2fe7c1f101e8bac80d09fc306faecb5c0a7d8847fd11b202bc7dd946595017db"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/karta-recheck.txt",
+      "raw_sha256": "0a7c9d6a2f7f3dbbace4eef9bd97ee99663713859a067dd8f6e0a5c214a4ccb1",
+      "published_sha256": "369caf1af554f4073ba53bbc2500a442307665a47b0594ebe68972eaa24a4d04"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/karta-typecheck.txt",
+      "raw_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7",
+      "published_sha256": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/outreach/final-test.log",
+      "raw_sha256": "febd2dfa916c4b207ac876bb0222b5c940ab6af08088643353e650563ede9ab8",
+      "published_sha256": "22e5453576fb1787740eb144d70fb8dab2f571791ed072489d3af6119f03679d"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/outreach/reimport-before.log",
+      "raw_sha256": "6fbfb4a79358499f3881d7ab8a65e6af5afd84e7c13f46f882f5c932c3365b38",
+      "published_sha256": "5964f8b8299a2068f4a041fc4769e5f2e4f257c97afe4d7d50f9fd61fba6ec6a"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/gitnexus-index.txt",
+      "raw_sha256": "bc88a528d16568c94a18dbe7173d60d984a26b665a3a8ef7028cf490e5177cda",
+      "published_sha256": "92a376bdadb8d941419c67de2fc723a06c4cdbbe980223aedcc8798a231477c9"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-browser.txt",
+      "raw_sha256": "4b4dc9b82ba92fe01d72426fae3d74fcebc0e2cbd5a9f4362551126740782b83",
+      "published_sha256": "37d1ec6c4f8ebc7adf0955b2d0f1272885f9ff0f275cdf51a920c0539d6cf7bf"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-gitnexus-index.txt",
+      "raw_sha256": "5ea62a6ff38521a91961653852367a789e3035e78fc13ae4bf6e178bd8e68aaf",
+      "published_sha256": "e8423854376ed07d03346923dd8d0caeddbd303988ffc0ea250fe0bbb6d19652"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-karta-build.txt",
+      "raw_sha256": "62c5076d5c141d2825f050903a7e40cfc2100cacc55c106f67b8c686770bb6ed",
+      "published_sha256": "cd806407967d7855ae4b40ff1a967135b6ee6786fb8a28c1310c580f7369ffb1"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-karta-final-typecheck.txt",
+      "raw_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7",
+      "published_sha256": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-karta-full.txt",
+      "raw_sha256": "38a94d08dd3f709bfdd3189223cc595baa908a6566b664f5ef21727272726f2a",
+      "published_sha256": "b0f794647df6c1693d8947956492e49cc119a85261326beaed54222a8dc98e8d"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-karta-typecheck.txt",
+      "raw_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7",
+      "published_sha256": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-karta-types-verified.txt",
+      "raw_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7",
+      "published_sha256": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-process-final.txt",
+      "raw_sha256": "8b200367dd4829f1e643f7eec637a1afe430c9c10dab7e4c31e501fe62c2e285",
+      "published_sha256": "1080973e96a44d66f6de1a9d6e0571d03d03a3b8689d1b711c903edcbfa49e7a"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-process-readiness-before.txt",
+      "raw_sha256": "e346d7d4c6969d9eb4b606fef0b8a46ded60726169e879d6544fb5e3b4a18afc",
+      "published_sha256": "3d58744369f9c7957cdc94835b0c23256fd3144cb5942ea37bc4d299c4393089"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/combined-process-verified.txt",
+      "raw_sha256": "bf9a579c4491b41b875404e8df8cf3a4573ed5cde5a8bb5b16a238c2757e8d0f",
+      "published_sha256": "badad7f9482245336bcc162c637d4fb222dd5b5fe2e4fca6f8658f4f6f3fa76a"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/gitnexus-final-index.txt",
+      "raw_sha256": "59341c385645dce01a793173b525ff0fdf770e82b75adebbc37e6edb3a47a1be",
+      "published_sha256": "6b5f4d50a3353a0669e94fc32a95fa9fb10c9401070234460acf5d9fc9356d89"
+    },
+    {
+      "path": "qa/agents-hardening-20261110/integration/gitnexus-refresh-lock.txt",
+      "raw_sha256": "1056909522f453d28a8e1c2727aa47721b15646972293069ef77620c49e74948",
+      "published_sha256": "bc51dd6d64f21d00b03ea2998acbf5e74d9f525ec0783b7644dfffc0fcc0cc70"
+    }
+  ]
+}

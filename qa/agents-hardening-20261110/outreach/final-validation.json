@@ -1,0 +1,58 @@
+{
+  "recorded_at_utc": "2026-11-10T02:16:22.813606+00:00",
+  "checkout": "/workspace/scratch/1d67ec79327f/purama-ai-agent-hardening",
+  "base_commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "scope": "partner outreach only",
+  "validation": [
+    {
+      "kind": "regression_before_recipient_history_fix",
+      "command": "./node_modules/.bin/vitest run test/partnerOutreach.test.ts --maxWorkers 1 --pool threads --reporter verbose -t 'new ID with the same normalized email'",
+      "cwd": "karta",
+      "exit_code": 1,
+      "failed": 2,
+      "skipped": 41,
+      "duration_seconds": 13.31,
+      "log": "reimport-before.log",
+      "expected_failure": true
+    },
+    {
+      "kind": "final_tests",
+      "command": "./node_modules/.bin/vitest run test/partnerOutreach.test.ts --maxWorkers 1 --pool threads --reporter verbose",
+      "cwd": "karta",
+      "exit_code": 0,
+      "passed": 47,
+      "failed": 0,
+      "duration_seconds": 7.25,
+      "log": "final-test.log"
+    },
+    {
+      "kind": "strict_targeted_types",
+      "command": "./node_modules/.bin/tsc --noEmit --strict --target ES2022 --module NodeNext --moduleResolution NodeNext --skipLibCheck --types node ../supabase/functions/partner-send-outreach/handler.ts ../src/lib/partner-outreach-result.ts test/partnerOutreach.test.ts",
+      "cwd": "karta",
+      "exit_code": 0,
+      "log": "final-types.log"
+    },
+    {
+      "kind": "scoped_diff_check",
+      "command": "git diff --check -- <outreach scope>",
+      "exit_code": 0
+    }
+  ],
+  "source_sha256": {
+    "supabase/functions/partner-send-outreach/index.ts": "5f9ad9cfa137da0d0e4f770f5c934f2b72ad3afbba299a47edf3d394690f7aec",
+    "supabase/functions/partner-send-outreach/handler.ts": "958df640f4d013552916e2ef9286e78084772744f43a11f04eaf9c9e76c415d7",
+    "supabase/migrations/20261110030000_partner_outreach_reservations.sql": "e93f400c9075204c7a7468e6c4ad323fca58cec73f765d51ba5c3473b41e1501",
+    "src/lib/partner.ts": "cb3e348fce182e7a9af5a940b8826e95e6c5a1f47f07bf93db2136d09d573f3d",
+    "src/lib/partner-outreach-result.ts": "71e42312e12e75fe7d34e2475491b21a60b5dafcad78854948b5bb1d8ee3d4f8",
+    "src/pages/PartnerAgentProspects.tsx": "277b4bede3bd661403fe5ab54e5c40428c3fa67b39a9d9fac2c4be538602ed3a",
+    "karta/test/partnerOutreach.test.ts": "fa981b07bd57fe60eb3011f9a82f7d55d7bbc5214b22ac124f4f49822c79a6dd"
+  },
+  "external_emails_sent": 0,
+  "real_provider_calls": 0,
+  "remote_migration_applied": false,
+  "deployment_performed": false,
+  "n8n_modified": false,
+  "browser_flow_tested": false,
+  "production_multiconnection_load_tested": false,
+  "frontend_full_typecheck": "Owned by parent agent; not claimed by this targeted check"
+}

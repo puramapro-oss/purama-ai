@@ -1,0 +1,28 @@
+(node:77728) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 18 tests using 1 worker
+
+(node:77752) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓   1 tests/quality/karta-ui.spec.ts:94:1 › unknown and malformed states never become completion or an active state; legacy simulation stays explicit (63ms)
+  ✓   2 tests/quality/karta-ui.spec.ts:103:1 › running and executing keep polling until the matching execution completes (15.0s)
+  ✓   3 tests/quality/karta-ui.spec.ts:131:3 › onboarding presents awaiting_approval honestly after running, including metadata-only traces (5.8s)
+  ✓   4 tests/quality/karta-ui.spec.ts:131:3 › onboarding presents error honestly after running, including metadata-only traces (6.2s)
+  ✓   5 tests/quality/karta-ui.spec.ts:131:3 › onboarding presents cancelled honestly after running, including metadata-only traces (5.8s)
+  ✓   6 tests/quality/karta-ui.spec.ts:131:3 › onboarding presents simulated honestly after running, including metadata-only traces (6.0s)
+  ✓   7 tests/quality/karta-ui.spec.ts:131:3 › onboarding presents partial honestly after running, including metadata-only traces (6.1s)
+  ✓   8 tests/quality/karta-ui.spec.ts:131:3 › onboarding presents skipped honestly after running, including metadata-only traces (6.1s)
+  ✓   9 tests/quality/karta-ui.spec.ts:145:1 › a run from another request, owner, or agent cannot finish a new request (8.2s)
+  ✓  10 tests/quality/karta-ui.spec.ts:163:1 › a response arriving after closing the modal cannot attach its run to a new attempt (7.3s)
+  ✓  11 tests/quality/karta-ui.spec.ts:191:1 › an old server acknowledgement without execution identity stays unconfirmed (6.3s)
+  ✓  12 tests/quality/karta-ui.spec.ts:205:1 › unknown status stays unconfirmed and polling stops at the waiting limit (3.3s)
+  ✓  13 tests/quality/karta-ui.spec.ts:223:1 › a rejected admission cannot become a successful task or start result polling (3.8s)
+  ✓  14 tests/quality/karta-ui.spec.ts:233:1 › activity history distinguishes final, active, pending, simulation, and unknown states (2.4s)
+[outreach-preview-diagnostic] {"playwrightFrameUrl":"","locationHref":"about:srcdoc","documentUrl":"about:srcdoc","readyState":"complete","origin":"null","scriptExecuted":false}
+  ✓  15 tests/quality/partner-outreach.spec.ts:170:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response (4.3s)
+  ✓  16 tests/quality/partner-outreach.spec.ts:238:1 › an unknown approval result stays a warning with no success claim or automatic resend (3.2s)
+  ✓  17 tests/quality/partner-outreach.spec.ts:252:1 › a refused draft version is shown as blocked rather than approved or sent (2.8s)
+  ✓  18 tests/quality/partner-outreach.spec.ts:262:1 › a sent status without provider proof cannot become a success toast (3.1s)
+
+  18 passed (1.7m)

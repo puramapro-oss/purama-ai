@@ -1,0 +1,38 @@
+
+  GitNexus Detect Changes (1.6.12)
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 290 files, 2488 symbols
+Affected processes: 356
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Exécution durable, reprise vérifiée et états honnêtes — 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Demande durable et refus des conflits → IAO-EVALUATION-PROTOCOL.md
+  Section Approbation avant effet, puis reprise vérifiée → IAO-EVALUATION-PROTOCOL.md
+  Section Interface et contrat de données → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement avec les travaux parallèles → IAO-EVALUATION-PROTOCOL.md
+  Section Vérification finale du lot → IAO-EVALUATION-PROTOCOL.md
+... and 2473 more
+
+Affected execution flows:
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized
+  • AgentChatTab → Getter (6 steps) — changed: getter, cancel
+  • Ecosystem → Query (5 steps) — changed: query
+  • Ecosystem → From (5 steps) — changed: from
+  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: ChefProcessStopUnconfirmedError, runChefWorkerCycle, tryFinishMission, housekeeping
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: assertRpc, runChefWorkerCycle, tryFinishMission, housekeeping
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: runChefWorkerCycle, tryFinishMission, housekeeping, rpc
+  • HandleRequest → RequestError (3 steps) — changed: RequestError, handleRequest, readBody
+  • LoadApprovalContinuation → Encode (3 steps) — changed: encode, canonicalJson, loadApprovalContinuation
+  • VoiceSettingsCard → Getter (6 steps) — changed: getter, cancel
+... and 346 more

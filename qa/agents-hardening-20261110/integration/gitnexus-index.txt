@@ -1,0 +1,19 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+
+Index lock: OS socket lock unavailable here — using the file lock.
+{"level":40,"time":1794279002891,"name":"gitnexus","msg":"[scope-resolution] 75 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (typescript), data (javascript/typescript), env (typescript), base (javascript), SUPABASE_SERVICE_ROLE_KEY (typescript), SUPABASE_URL (typescript), accent (typescript), action (typescript), action_payload (typescript), action_type (typescript), …"}
+{"level":40,"time":1794279003144,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":767,"entryPointsUnexplored":0,"walksCutByBudget":12,"tracesDepthCapped":0,"calleesDropped":1179,"processesDropped":0},"msg":"[processes] 535 flows reported, but whole flows are MISSING: 767 of 967 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 1179 callee(s) skipped at maxBranching, 12 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+
+Incremental: changed=14, added=58, deleted=0 (skipping wipe + 640 unchanged file rows preserved)
+
+Incremental: +11 importer(s) added to writable set (BFS depth ≤ 4)
+
+Parse cache: pruned 23 stale chunk entries
+
+  Repository indexed successfully (27.6s)
+
+  9,295 nodes | 21,295 edges | 307 clusters | 535 flows
+  /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening

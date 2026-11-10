@@ -1,0 +1,26 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/karta
+
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > reserves 70 before admitting another 70 against a shared budget of 100 224ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > admits two estimates that exactly fit the remaining shared budget 155ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > also reserves token estimates when the currency budget is unlimited 222ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > requires both the cost and token dimensions to fit 133ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > adds already-consumed cost to all active estimates 96ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > selects an affordable task when a higher-priority one does not fit 97ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > refuses an unknown cost estimate under a configured budget 79ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > refuses an unknown tokens estimate under a configured budget 80ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > preserves unbounded legacy missions without estimates 59ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > distinguishes an explicit zero estimate from an absent estimate 96ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not treat an active legacy task with missing cost as free capacity 112ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > keeps the full current estimate despite cumulative usage from an older attempt 115ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > releases admission capacity after verified completion, retaining actual recorded usage 163ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not pause affordable work assigned to another provider 90ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > preserves worker-session, worktree and max_parallel admission restrictions 114ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not overflow bigint while deciding that an estimate exceeds remaining capacity 79ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > rejects a null lease and keeps the claim RPC server-only 88ms
+ ✓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > can reapply the additive migration without changing existing claims 87ms
+
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+   Start at  03:07:32
+   Duration  9.59s (tests 98%, import 1%, transform 1%)

@@ -1,0 +1,37 @@
+[
+  {
+    "check": "combined-app-typecheck",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.app.json"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 133.5
+  },
+  {
+    "check": "combined-app-build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 82.04
+  },
+  {
+    "check": "combined-native-postgres",
+    "command": [
+      "python3",
+      "/Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/qa/agents-hardening-20261110/integration/native-postgres.py",
+      "/Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc",
+      "--quarantine",
+      "--output",
+      "/Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/qa/agents-hardening-20261110/integration/combined-native-postgres-results.json"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 43.13
+  }
+]

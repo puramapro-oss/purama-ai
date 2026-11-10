@@ -1,0 +1,12 @@
+{
+  "error": "Target 'chef_create_mission' not found",
+  "target": {
+    "name": "chef_create_mission"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Impact (1.6.12)

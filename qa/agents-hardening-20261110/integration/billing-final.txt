@@ -1,0 +1,12 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/karta
+
+ ✓ test/overageCredit.test.ts (38 tests) 21137ms
+   ✓ legacy overage: real webhook and PostgreSQL credit boundary (37)
+     ✓ credits a confirmed session once and retains the signed payment month on redelivery 574ms
+   ✓ stops the migration on historical duplicate sessions without deleting or rewriting a credit 7787ms
+
+ Test Files  1 passed (1)
+      Tests  38 passed (38)
+   Start at  03:50:03
+   Duration  23.71s (tests 92%, import 6%, transform 2%)

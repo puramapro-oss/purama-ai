@@ -1,6 +1,9 @@
 // Frontend client for the Partner Agent module.
 // All tables live in the `purama_ai` schema (default of the supabase client).
 import { supabase } from '@/integrations/supabase/client';
+import { parseOutreachResult, type OutreachResult, type OutreachStep } from './partner-outreach-result';
+export { outreachFeedback, outreachStepForStatus } from './partner-outreach-result';
+export type { OutreachResult, OutreachApproval, OutreachStep } from './partner-outreach-result';
 
 type AnyTable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 const sb = () => (supabase as unknown as { from: (t: string) => AnyTable });
@@ -118,7 +121,7 @@ export interface PartnerEmail {
   replied_at: string | null;
   bounced: boolean;
   resend_message_id: string | null;
-  status: 'draft' | 'pending_approval' | 'approved' | 'sent' | 'failed';
+  status: 'draft' | 'pending_approval' | 'approved' | 'sending' | 'sent' | 'failed' | 'unknown' | 'blocked';
   approved_at: string | null;
   created_at: string;
 }
@@ -373,11 +376,21 @@ export async function findProspects(
 // =============================================================
 // SEND outreach email (delegated to edge function — Claude + Resend)
 // =============================================================
-export async function sendOutreach(prospectId: string): Promise<void> {
-  const { error } = await supabase.functions.invoke('partner-send-outreach', {
-    body: { prospect_id: prospectId },
+export async function sendOutreach(prospectId: string, type: OutreachStep = 'outreach'): Promise<OutreachResult> {
+  const { data, error } = await supabase.functions.invoke('partner-send-outreach', {
+    body: { prospect_id: prospectId, type },
   });
   if (error) throw error;
+  return parseOutreachResult(data);
+}
+
+/** Approve only the exact immutable draft/version returned for this account. */
+export async function approveOutreach(emailId: string, approvalVersion: string): Promise<OutreachResult> {
+  const { data, error } = await supabase.functions.invoke('partner-send-outreach', {
+    body: { action: 'approve', email_id: emailId, approval_version: approvalVersion },
+  });
+  if (error) throw error;
+  return parseOutreachResult(data);
 }
 
 // =============================================================

@@ -1,0 +1,229 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/karta
+
+ ✓ test/overageCredit.test.ts (38 tests) 19763ms
+   ✓ legacy overage: real webhook and PostgreSQL credit boundary (37)
+     ✓ credits a confirmed session once and retains the signed payment month on redelivery 359ms
+   ✓ stops the migration on historical duplicate sessions without deleting or rewriting a credit 6155ms
+ ✓ test/partnerOutreach.test.ts (47 tests) 18171ms
+   ✓ retains pending approval and reports it honestly without an email send 503ms
+   ✓ approves exactly the frozen preview even if the editable legacy email row was changed 458ms
+   ✓ twenty simultaneous approval clicks dispatch the same frozen email only once 576ms
+stderr | test/approvalContinuation.test.ts > verified approval continuation through the real loop and SQL-finalized receipts > forbids replay after an uncertain approval insert, even when closing fails: true
+[loop] journalisation indisponible ; reprise automatique interdite
+
+ ✓ test/approvalContinuation.test.ts (38 tests) 26921ms
+   ✓ verified approval continuation through the real loop and SQL-finalized receipts (38)
+     ✓ supplies the verified receipt and remaining steps to the model without replaying the effect 429ms
+ ✓ test/approvalParentGuard.test.ts (48 tests) 33612ms
+   ✓ baseline 006 without the parent guard (1)
+     ✓ admits an orphan approval before its unchanged finalizer discovers the absent journal entry 759ms
+   ✓ 019 checks the parent before approval admission (47)
+     ✓ refuses an orphan before reject can change it to executing 410ms
+     ✓ refuses an invalid parent binding or closure: running 480ms
+     ✓ refuses an invalid parent binding or closure: unconfirmed 358ms
+     ✓ refuses a malformed negative duration before approve 312ms
+     ✓ does not execute a mock parent when the agent is now live 435ms
+     ✓ still permits rejection of a valid simulation parent 344ms
+     ✓ still permits rejection of a valid mock parent 338ms
+     ✓ refuses a missing parent even in a legacy fixture without the foreign key 302ms
+     ✓ fails closed for a malformed or ambiguous journal: object 416ms
+     ✓ fails closed for a malformed or ambiguous journal: string 447ms
+     ✓ fails closed for a malformed or ambiguous journal: null_entry 338ms
+     ✓ fails closed for a malformed or ambiguous journal: missing_entry 344ms
+     ✓ fails closed for a malformed or ambiguous journal: other_id 335ms
+     ✓ fails closed for a malformed or ambiguous journal: other_tool 384ms
+     ✓ admits and finalizes a valid approve using the unchanged 006 finalizer 481ms
+     ✓ admits the next approval after partial resolution clears finished_at but preserves the initial closure 448ms
+     ✓ does not expose approval admission to anon 352ms
+ ✓ test/chatHistoryIsolation.test.ts (39 tests) 108783ms
+   ✓ migration preflight refuses an unreviewed schema (9)
+     ✓ rolls back both schemas when only conversations remain 12633ms
+     ✓ rolls back both schemas when only messages remain 8389ms
+     ✓ rolls back both schemas when an extra permissive conversation policy… 6722ms
+     ✓ rolls back both schemas when an extra permissive message policy exis… 8428ms
+     ✓ rolls back both schemas when a required policy is missing 8613ms
+     ✓ rolls back both schemas when a known name has an unexpected policy c… 7879ms
+     ✓ rolls back both schemas when a known name is unexpectedly restrictive 8435ms
+     ✓ rolls back both schemas when a table was replaced by a view 6836ms
+     ✓ refuses to report success when neither schema contains chat history 7267ms
+ ✓ test/chefEvidenceFreshness.test.ts (31 tests) 25398ms
+   ✓ CHEF evidence generation (31)
+     ✓ refuses completion when only a prior attempt has successful evidence 644ms
+     ✓ does not cover an updated task generation with its previous proof 323ms
+     ✓ accepts a fresh proof and preserves coverage after the lease owner is cleared 609ms
+     ✓ rejects stale or missing claim metadata {"attempt":1,"token":1,"worker":"other"} atomically 347ms
+     ✓ also refuses completion after expiry inside an older transaction 324ms
+     ✓ rejects an old token even when the attempt number is reused after unblocking 332ms
+     ✓ does not let freshness bypass success or scope checks {"ok":false,"scopeVersion":1,"requirementKeys":["R1"]} 478ms
+     ✓ preserves pre-migration rows without certifying them as current evidence 6137ms
+ ✓ test/chefControlPlane.test.ts (8 tests) 12143ms
+   ✓ PURAMA CHEF durable control plane (8)
+     ✓ claims one task at most once under concurrent workers 418ms
+ ✓ test/chefProcessQuarantine.test.ts (18 tests) 13409ms
+   ✓ CHEF durable process quarantine on the full migration chain (18)
+     ✓ records once before releasing active locks and blocks another mission in the same repo 380ms
+ ✓ test/chefEstimates.test.ts (44 tests) 11370ms
+ ✓ test/chefBudgetAdmission.test.ts (18 tests) 9203ms
+ ✓ test/chefEvidenceGate.test.ts (17 tests) 12471ms
+ ✓ test/approval.test.ts (15 tests) 18562ms
+ ✓ test/chefMission.test.ts (5 tests) 11637ms
+ ✓ test/loggerFinalization.test.ts (11 tests) 10397ms
+ ✓ test/chefHardening.test.ts (15 tests) 11029ms
+   ✓ PURAMA CHEF operational hardening (15)
+     ✓ lets implementation finish, but blocks mission completion until critical review exists 356ms
+ ✓ test/walletRpcPermissions.test.ts (17 tests) 15040ms
+ ✓ test/chefRuntimePolicy.test.ts (4 tests) 13054ms
+ ✓ test/chefIndependentReview.test.ts (2 tests) 16173ms
+   ✓ CHEF independent review gate (2)
+     ✓ does not accept self-review from the same implementation task 462ms
+     ✓ accepts concrete proof and review only when they come from distinct verified tasks 328ms
+ ✓ test/connectPermissions.test.ts (4 tests) 22741ms
+ ✓ test/chefVerificationGitIntegration.test.ts (3 tests) 11507ms
+   ✓ CHEF Git checks around actual verification (3)
+     ✓ handles a unchanged worktree after the verifier 4736ms
+     ✓ handles a dirty worktree after the verifier 3021ms
+     ✓ handles a new-commit worktree after the verifier 3743ms
+ ❯ test/chefProcess.test.ts (5 tests | 1 failed) 4556ms
+   ❯ CHEF owned POSIX process group (5)
+     ✓ preserves ordinary output and exit status 1158ms
+     ✓ does not reject cancellation until the direct process has actually closed 953ms
+     × kills a surviving descendant in the owned group after its leader exits 1026ms
+     ✓ reports an unconfirmed stop when the owned group cannot be signalled 841ms
+     ✓ bounds combined stdout and stderr and stops on overflow 565ms
+ ✓ test/chefSupervisor.test.ts (20 tests) 2467ms
+   ✓ CHEF autonomous worker cycle (20)
+     ✓ propagates shutdown to a running real process before releasing the task 990ms
+     ✓ waits for a timed-out worker to finish before the retryable transition 1359ms
+ ✓ test/chefGitState.test.ts (4 tests) 6467ms
+   ✓ CHEF git state verifier (4)
+     ✓ accepts an exact clean committed HEAD 1621ms
+     ✓ rejects a worker that lies about its output SHA 1099ms
+     ✓ rejects uncommitted or untracked output 1683ms
+     ✓ requires the final HEAD to descend from the assigned base 2060ms
+stderr | test/loopTracePrivacy.test.ts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1705:16)
+
+stderr | test/loopTracePrivacy.test.ts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1705:16)
+
+stderr | test/loopTracePrivacy.test.ts > private tool traces through the real agent cycle > retains executed evidence and forbids replay after bookkeeping fails
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loopTracePrivacy.test.ts (22 tests) 138ms
+ ✓ test/publicChatAdmission.test.ts (11 tests) 1144ms
+   ✓ does not call a paid model when the daily quota cannot be proven: {"data":true,"error":{"message":"unavailable"}} 639ms
+ ✓ test/chefDriver.test.ts (6 tests) 1476ms
+   ✓ CHEF process driver (6)
+     ✓ sends model instructions over stdin and accepts only a strict JSON result 685ms
+     ✓ fails closed when a worker exits without a valid JSON result 745ms
+ ✓ test/webCapabilityPlan.test.ts (47 tests) 515ms
+ ✓ test/chefVerifier.test.ts (4 tests) 1409ms
+   ✓ CHEF deterministic verifier (4)
+     ✓ records reproducible evidence for a passing deterministic check 505ms
+     ✓ stops the verification chain at the first failed gate 831ms
+ ✓ test/generative.test.ts (4 tests) 1160ms
+   ✓ browser preserves Unicode through arbitrary valid SSE delimiters and byte chunks 686ms
+ ✓ test/chatEscalation.test.ts (49 tests) 1091ms
+   ✓ allows preflight and rejects non-POST methods without downstream work 362ms
+ ✓ test/chefEvidenceAdapter.test.ts (20 tests) 947ms
+   ✓ CHEF explicit evidence scope (20)
+     ✓ gets coverage from trusted profile configuration, never process output 865ms
+ ✓ test/chefWorkerShutdown.test.ts (4 tests) 500ms
+   ✓ CHEF daemon shutdown (4)
+     ✓ forwards SIGTERM to the active cycle and does not start another one 332ms
+ ✓ test/streamCompletionAudit.test.ts (23 tests) 625ms
+   ✓ does not accept finish_reason=length as a complete text answer 431ms
+ ✓ test/customAuthorization.test.ts (38 tests) 122ms
+ ✓ test/queueDeliveryIdentity.test.ts (27 tests) 14037ms
+   ✓ durable queue delivery identity (18)
+     ✓ reuses the same confirmed run after queue retention, and executes a genuinely new mission 499ms
+     ✓ scopes the business key to both user and agent 447ms
+ ✓ test/runtimeHardening.test.ts (3 tests) 23474ms
+ ✓ test/streaming.test.ts (10 tests) 886ms
+   ✓ streams text followed by a confirmed completion 583ms
+ ✓ test/gmailTool.test.ts (5 tests) 420ms
+   ✓ gmail_send hardening (5)
+     ✓ réserve atomiquement une place seulement après une authentification disponible 386ms
+ ✓ test/sseConsumer.test.ts (5 tests) 315ms
+ ✓ test/cycleAdmissionPrivacy.test.ts (10 tests) 74ms
+ ✓ test/logger.test.ts (4 tests) 84ms
+ ✓ test/chefBrief.test.ts (9 tests) 247ms
+ ✓ test/webAccessPlanTool.test.ts (10 tests) 100ms
+ ✓ test/approvalTracePrivacy.test.ts (20 tests) 72ms
+stderr | test/loggerCycleFinalization.test.ts > a committed cycle remains final when secondary bookkeeping fails > preserves a newer approval resolution that occurs during notification
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > forbids automatic replay without tools or an execution key after an uncertain close
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of success without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of awaiting_approval without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+ ✓ test/loggerCycleFinalization.test.ts (6 tests) 98ms
+stderr | test/loop.test.ts > cycle outcomes and interruption > preserves committed success and forbids replay after a bookkeeping failure
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loop.test.ts (14 tests) 50ms
+stdout | test/apiDeliveryIdentity.test.ts
+[api] KARTA écoute sur :0
+
+ ✓ test/apiDeliveryIdentity.test.ts (4 tests) 116ms
+stdout | test/apiSafety.test.ts
+[api] KARTA écoute sur :0
+
+stderr | test/apiSafety.test.ts > does not expose internal exception details
+[api] requête échouée
+
+ ✓ test/apiSafety.test.ts (9 tests) 97ms
+ ✓ test/chefQuarantineAdapter.test.ts (15 tests) 38ms
+ ✓ test/toolResult.test.ts (16 tests) 33ms
+ ✓ test/chatRequestScope.test.ts (17 tests) 19ms
+ ✓ test/supabaseTool.test.ts (5 tests) 35ms
+ ✓ test/sseFraming.test.ts (10 tests) 61ms
+ ✓ test/stripeIsolation.test.ts (3 tests) 33ms
+ ✓ test/gmail-token-crypto.test.ts (3 tests) 61ms
+ ✓ test/agentsRegistry.test.ts (4 tests) 51ms
+ ✓ test/chefProtocol.test.ts (5 tests) 47ms
+ ✓ test/mockClaude.test.ts (7 tests) 31ms
+ ✓ test/chefCostGovernor.test.ts (7 tests) 36ms
+ ✓ test/actionAgentsMock.test.ts (4 tests) 43ms
+ ✓ test/customAgent.test.ts (4 tests) 35ms
+ ✓ test/customRegistry.test.ts (4 tests) 21ms
+ ✓ test/real-claude.test.ts (4 tests) 16ms
+ ✓ test/autonomy.test.ts (7 tests) 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chefProcess.test.ts > CHEF owned POSIX process group > kills a surviving descendant in the owned group after its leader exits
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/chefProcess.test.ts:80:54
+     78|     const cancel = new AbortController();
+     79|     const pending = runChefProcess(options(cwd, script, { signal: canc…
+     80|     await vi.waitFor(() => expect(existsSync(pulse)).toBe(true));
+       |                                                      ^
+     81|     cancel.abort();
+     82|     const error = await pending;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 63 passed (64)
+      Tests  1 failed | 929 passed (930)
+   Start at  04:19:19
+   Duration  603.89s (tests 92%, import 5%, transform 2%)
+
+    Isolate  64 workers spawned · ~1.19s startup each (spawn + environment, per file)
+             at least ~75.19s faster with isolate: false — reuses workers across files instead of one per file
