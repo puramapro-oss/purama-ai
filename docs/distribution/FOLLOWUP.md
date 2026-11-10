@@ -132,6 +132,70 @@ collecteur LCP. Le risque reste **critical**. La comparaison cumulative avec
 tronquée à 1 000 symboles. Les limites globales de parcours de l'index restent
 présentes ; ce résultat n'est pas une preuve exhaustive de tous les chemins.
 
+## Corrections révélées par la CI
+
+Le premier lancement hébergé de cette PR, au commit
+`82ddfc62afd6b2f4b89e43e953b1d57481d5a35c`, a exécuté le vrai job KARTA :
+1 636 tests ont réussi et un a échoué, sur 1 637 cas dans 94 fichiers. Vitest
+5.0.3 a terminé normalement avec le code 1 ; le journal ne signale pas de crash
+ou d'arrêt de worker. Preuve :
+[run 42920364921](https://github.com/puramapro-oss/purama-ai/actions/runs/42920364921).
+
+Le répertoire KARTA et son job étaient identiques à la base PR33, mais le test
+`karta/test/assistantPolicy.test.ts` charge réellement le handler
+`supabase/functions/creator-agent-chat/index.ts`. Son scénario positif des vingt
+derniers messages réaffectait l'agent à un utilisateur étranger, puis attendait
+HTTP 200. La nouvelle autorisation propriétaire renvoie correctement 403 avant
+de lire l'historique ; cette fixture n'exerçait donc plus le chemin annoncé.
+
+La correction retire seulement cette réaffectation. Le propriétaire initial
+reste celui de la requête, tandis que toutes les assertions sont conservées :
+HTTP 200, les vingt messages dans l'ordre chronologique, le refus récent,
+l'assemblage de la politique et l'absence de contenu privé étranger. Les lignes
+d'historique d'autres comptes restent dans la fixture. Les 19 contrôles dédiés
+du handler continuent à vérifier séparément le refus des agents étrangers, même
+publics, avant lecture, écriture ou inférence.
+
+L'impact de ce callback de test reste UNKNOWN dans le graphe. Son entrée est
+confirmée littéralement : commande npm, sélection Vitest, chargement et
+transpilation du handler, enregistrement `Deno.serve` et invocation réelle du
+handler par le test. Aucun changement du code produit KARTA, du workflow, d'un
+seuil ou d'une assertion n'est nécessaire pour cette correction.
+
+Le même lancement du site réussit les 45 exécutions navigateur de distribution,
+les 156 exécutions publiques et les 14 cas du chat. Il s'arrête ensuite sur la
+suite qualité : 77 succès et un échec. Les suites situées après cette étape ne
+sont pas qualifiées par ce lancement.
+
+Dans `tests/quality/database-pages.spec.ts`, le cas de navigation attendait une
+URL terminant par `/signup`. Le lien de connexion conserve maintenant sa
+destination, y compris la destination par défaut `/dashboard`, et produisait
+correctement `/signup?next=%2Fdashboard`. La correction attend cette URL exacte,
+avec l'origine du serveur de test. Elle n'autorise pas une requête quelconque
+par une expression régulière élargie. Les étapes de page introuvable et de route
+protégée, ainsi que l'attente `/login` qui suit, restent inchangées et doivent
+être exécutées lors de la reprise du cas complet. Cette reprise a réussi avec
+la vraie configuration qualité : un cas complet PASS, sans retry ni skip.
+
+La baseline locale du fichier KARTA reproduit 54 succès et le même échec ; après
+la suppression unique, ses 55 cas passent avec Vitest 5.0.3. Ces résultats ciblés
+ne sont pas présentés comme une nouvelle exécution locale des 1 637 cas KARTA ou
+des 78 cas qualité. La CI du commit de correction doit exécuter les gates complets.
+
+Les deux File UID ont été vérifiés avec le paramètre `target_uid`. Les premières
+recherches utilisant `target` étaient des recherches par nom infructueuses et
+restent conservées comme diagnostics. Pour KARTA, l'invocation correcte intervient
+après l'édition sur l'index antérieur, dont le hash correspond au blob `82ddfc6` ;
+elle n'est pas présentée comme exécutée avant l'édition. Les deux impacts restent
+UNKNOWN, avec leurs points d'entrée littéraux et leurs preuves d'exécution.
+
+Après ces corrections, la revue cumulative contre `90d8` couvre 50 fichiers,
+587 symboles et les mêmes 44 flux, avec le risque critical conservé. Le delta de
+cinq fichiers depuis `82dd` ne matérialise que cinq sections documentaires et
+aucun flux dans le graphe : son score low ne qualifie pas les callbacks des
+deux tests. La comparaison avec `main` reste partielle, avec 7 059 symboles,
+529 flux et une liste tronquée à 1 000 symboles.
+
 ## Statut de livraison
 
 Les résultats locaux sont figés dans le manifeste au moment du commit. L'état

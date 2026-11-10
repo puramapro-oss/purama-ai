@@ -97,7 +97,7 @@ Le rapprochement est ciblé. Le merge global qui produisait 72 conflits n'a pas
 - les contrôles de contexte du détail Creator Agent et le générateur actuel
   d'identifiants de session ;
 - la pause facultative à consentement explicite de la consolidation ;
-- les sources KARTA, les contrats commerciaux, les quotas et les migrations
+- le code produit KARTA, les contrats commerciaux, les quotas et les migrations
   préexistantes ;
 - les contrôles CI existants et leurs configurations navigateur.
 
@@ -112,6 +112,12 @@ ajoute les outils de test et fait évoluer un transitif partagé,
 `@jridgewell/sourcemap-codec` de 1.5.0 à 1.6.0, pour satisfaire `magic-string`
 apporté par les tests. Cette résolution satisfait aussi les parents existants ;
 le lock exact est utilisé pour la compilation et les qualifications.
+
+La CI intégrée a également révélé une fixture KARTA qui charge le vrai handler
+Creator Agent hors de son répertoire. Son scénario positif d'historique conserve
+maintenant le propriétaire attendu. Ses assertions et ses messages étrangers de
+contrôle restent présents ; les cas de refus d'accès non propriétaire sont
+exercés par la suite dédiée du handler.
 
 Les six migrations héritées de l'ancienne base de sécurité de PR25 ne sont pas
 absorbées dans ce port ciblé. Leur travail et leur historique restent dans leur

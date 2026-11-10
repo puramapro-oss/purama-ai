@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "captured_at": "2026-11-10T23:02:14.201074+00:00",
+  "captured_at": "2026-11-10T23:32:29.325664+00:00",
   "scope": "Selective distribution delta on PR33, not all PURAMA branches or production",
   "source": {
     "base": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
@@ -8,7 +8,9 @@
     "initial_distribution": "d5bd08c47fedd12e6eab1b74cd8ef5a6aed60a40",
     "initial_distribution_pr": 25,
     "default_branch_compared": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
-    "branch": "codex/distribution-integrated-20261110"
+    "branch": "codex/distribution-integrated-20261110",
+    "followup_base": "82ddfc62afd6b2f4b89e43e953b1d57481d5a35c",
+    "pull_request": 42
   },
   "checks": [
     {
@@ -156,6 +158,28 @@
         "tests/performance.spec.ts"
       ],
       "evidence": "Commands completed after all three public test edits; hosted CI retains full gates."
+    },
+    {
+      "name": "targeted KARTA policy fixture",
+      "status": "PASS",
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "report_sha256": "19b32baa689d97bc02935b68046a00de916c802097eea78e8923f94126aa5a0b",
+      "log_sha256": "63691833f308224b7354fdd4b44a2c60810c20a6fa153b5f1fe2f5c0285484c9",
+      "scope": "Targeted followup after initial hosted CI; not a full suite rerun"
+    },
+    {
+      "name": "complete quality navigation case",
+      "status": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "report_sha256": "9b4b132f4777387c153c2452a299a9e90f60df662a68af1eebc510430ec71205",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Targeted followup after initial hosted CI; not a full suite rerun"
     }
   ],
   "auth_subset": {
@@ -258,13 +282,88 @@
       "integration-pricing-test-impact-supplement-after-rebuild.json": "497faa265f181dcfde6e1220e9b1346363e6704341ab12a330777abd28c114c4",
       "integration-graph-after-rebuild-execution.log": "d6adac35656d8fb8cdc51008db812ba0f272f6381e6aa9121293426cf4e2f708",
       "integration-processes-owned-after-rebuild.json": "1bfe02ee960bcbe21c16941f66efe373505be7f05d0b5553a5ff5fd5c9da1498"
+    },
+    "ci_followup_check": {
+      "status": "PARTIEL_STATIC_COVERAGE",
+      "full_rebuild_exit": 0,
+      "identity_checks_passed": 6,
+      "empty_id_nodes": 0,
+      "backend_disposed": true,
+      "since_82dd": {
+        "changed_files": 5,
+        "changed_count": 5,
+        "affected_count": 0,
+        "risk_level": "low",
+        "qualification": "Five documentation sections materialized in final precommit read; this score does not qualify either test callback"
+      },
+      "cumulative_since_90d8": {
+        "changed_files": 50,
+        "changed_count": 587,
+        "affected_count": 44,
+        "risk_level": "critical",
+        "affected_flows_unchanged_from_prior_review": true
+      },
+      "main_comparison": {
+        "changed_files": 768,
+        "changed_count": 7059,
+        "affected_count": 529,
+        "risk_level": "critical",
+        "listed_symbols": 1000,
+        "truncated": true
+      },
+      "test_impacts": "UNKNOWN File nodes, literal runner and handler/router entry points verified",
+      "invocation_correction": "Use target_uid for a File UID. Initial target name lookups retained; corrected KARTA call occurred after editing against indexed pre-change contents.",
+      "documentation_metadata_finalized_after_graph_capture": true,
+      "full_rebuild_seconds": 56.506,
+      "evidence_sha256": {
+        "hosted-followup-final-review.json": "34f592edc1c0a150f81cd75f0ae142bdce45b14f6dafef0799bda295a6d83452",
+        "hosted-followup-final-graph-raw.json": "06bd5c6c404ce69ea2123afdf6d6671d7bf916114674fc50a42d408929e404b1",
+        "hosted-followup-final-detect-owned.json": "367ab1aec19d709b87cd6f77cdae2dea7093071e662d776513fd050b69cbe59c",
+        "hosted-followup-final-detect-cumulative.json": "06ec0a634f682b14b62d6346f967b958c205a3ccdb7b9b5d62303d4851df2a71",
+        "hosted-followup-final-detect-main.json": "f18b9034c440e97f1cb04f944647af4365324bbdb9e66a7fcd67e4f3ca1b39b7",
+        "hosted-followup-final-proof-hashes.json": "6191a8a9fda6dae6a289524e1183ef5da132e75c5aff6dd2c6b345b00c288598"
+      },
+      "precommit_metadata_finalization": {
+        "owned_report_sha256": "2247a87998e51b266365a270ecddf82f8d2892d8283f715e101e5c30c2f57ee4",
+        "cumulative_report_sha256": "06ec0a634f682b14b62d6346f967b958c205a3ccdb7b9b5d62303d4851df2a71",
+        "main_report_sha256": "cd0ebeeba7e68a9f61b0e0a6326964943626f69a6c475de54f73d8663752196b",
+        "five_symbols_all_type_Section": true
+      }
     }
   },
   "hosted_ci": {
-    "status": "PENDING_AT_CAPTURE",
+    "status": "PARTIEL_AT_CAPTURE",
+    "pull_request": 42,
     "must_verify_published_sha": true,
-    "previous_base_run": 42881227306,
-    "previous_base_success_is_not_candidate_proof": true
+    "initial_run": 42920364921,
+    "initial_sha": "82ddfc62afd6b2f4b89e43e953b1d57481d5a35c",
+    "initial_merge_sha": "6834ba28d51dc261b1ca304eb4318cb7d8a04def",
+    "initial_tree": "b32f190331cb30daac9b9e2e47fd7be9e2bea630",
+    "initial_checkout_tree_matches_candidate": true,
+    "initial_conclusion": "failure",
+    "initial_karta": {
+      "passed": 1636,
+      "failed": 1,
+      "total": 1637,
+      "reason": "Positive history fixture changed owner to stranger; handler correctly refused before history",
+      "log_sha256": "d3f56756af037465a11e24a2206b964846c3e27eff9ef57f3632406d83ae4c59"
+    },
+    "initial_site": {
+      "distribution_unit_passed": 330,
+      "distribution_sql_runner_passed": 32,
+      "distribution_sql_scenarios_passed": 31,
+      "worker_passed": 25,
+      "chat_handler_passed": 19,
+      "distribution_browser_passed": 45,
+      "public_browser_passed": 156,
+      "chat_browser_passed": 14,
+      "quality_passed": 77,
+      "quality_failed": 1,
+      "reason": "Signup link now preserves exact next=/dashboard; old URL regex omitted continuation",
+      "later_browser_suites_not_executed": 8,
+      "log_sha256": "429cf34639e45b3edff79cb433545191833e7fedc76ab41a2669d804759f0d5b"
+    },
+    "followup": "Both discriminating targeted reruns pass. Complete hosted run must be verified after publishing the correction commit and recorded in PR42."
   },
   "diagnostics_preserved": [
     "Original account-lifecycle and RPC baseline failures",
@@ -274,7 +373,10 @@
     "Cloud browser download failed; matching browser run succeeded on Mac",
     "Initial GitNexus inconsistent identities and global flow truncation",
     "Six public DOM assertions read early snapshots; assertions now await actual required content without removing criteria",
-    "Initial public run interrupted at89/7/60; final targeted run20/21 and unchanged isolated desktop LCP1/1 retained separately"
+    "Initial public run interrupted at89/7/60; final targeted run20/21 and unchanged isolated desktop LCP1/1 retained separately",
+    "Initial hosted CI:1636/1637 KARTA and77/78 quality; two incompatible inherited test fixtures, corrected without changing product or assertions",
+    "KARTA local discriminating fixture baseline54/55 followed by55/55; full quality navigation case1/1 after exact URL assertion",
+    "Corrected File UID impact invocation; original name lookup diagnostics and actual chronology retained"
   ],
   "limits": [
     "Synthetic provider responses in browser tests; no real OAuth or AI provider execution",
@@ -334,6 +436,10 @@
     {
       "path": ".github/workflows/purama-chef-hardening.yml",
       "sha256": "3da624c44b8349054c5f058b940b446f38c6f23a808cefbe7b577775bebd7b87"
+    },
+    {
+      "path": "karta/test/assistantPolicy.test.ts",
+      "sha256": "8b62d4ad3e787e08664dc4ed54d81ac49b4b898de932f3a014df835c53570b19"
     },
     {
       "path": "package-lock.json",
@@ -504,6 +610,10 @@
       "sha256": "b981a56deccceeece47cc48c18db0b1d41c78f047b7b17c6c8ce75678d4413df"
     },
     {
+      "path": "tests/quality/database-pages.spec.ts",
+      "sha256": "292446c61dd4caf43e1f56b1cb2102b7ebded82cc3467b1768e91b84d157b881"
+    },
+    {
       "path": "tests/service-worker-distribution.test.mjs",
       "sha256": "8f65017dbc40078f38ece34b23dc363bf128610d86987a593f9a65eda6a6a920"
     },
@@ -566,5 +676,15 @@
       "less than 4000 ms"
     ],
     "observation_window_ms": 5000
+  },
+  "qualification_reuse": {
+    "unchanged_original_code_test_configuration_inputs": 45,
+    "changed_followup_test_files": [
+      "karta/test/assistantPolicy.test.ts",
+      "tests/quality/database-pages.spec.ts"
+    ],
+    "product_inputs_changed_since_initial_ci": false,
+    "workflow_changed_since_initial_ci": false,
+    "basis": "Only two existing test expectations/fixtures and documentation change after82dd. KARTA fixture is excluded from UI content paths and distribution Vitest; no product file, dependency lock, test threshold, retry or skip changed."
   }
 }
