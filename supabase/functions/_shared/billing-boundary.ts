@@ -40,7 +40,13 @@ export async function billingKey(value: string): Promise<string> {
   return `purama-${Array.from(new Uint8Array(bytes), n => n.toString(16).padStart(2, "0")).join("")}`;
 }
 
-type Client = ReturnType<typeof createClient>;
+function createBillingDatabase(url: string, key: string, requestFetch: typeof fetch) {
+  return createClient(url, key, {
+    db: { schema: "purama_ai" }, auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: requestFetch },
+  });
+}
+
+type Client = ReturnType<typeof createBillingDatabase>;
 export interface BillingContext {
   db: Client;
   stripe: Stripe;
@@ -85,9 +91,7 @@ export async function withBillingRequest(req: Request, work: (context: BillingCo
       const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
       if (!stripeKey || !supabaseUrl || !serviceKey) throw new BillingError(503, "billing_configuration", "La facturation est momentanément indisponible.");
       billingOrigin();
-      const db = createClient(supabaseUrl, serviceKey, {
-        db: { schema: "purama_ai" }, auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: boundedFetch },
-      });
+      const db = createBillingDatabase(supabaseUrl, serviceKey, boundedFetch);
       const { data, error } = await db.auth.getUser(token);
       check();
       if (error || !data.user?.id || !data.user.email) throw new BillingError(401, "unauthenticated", "Connecte-toi pour accéder à la facturation.");

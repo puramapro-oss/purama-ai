@@ -14,13 +14,13 @@ Les garde-fous testés concernent les essais, la création du checkout, le porta
 | Frontières checkout/portail | PASS | 40 tests sur les vrais fichiers et leurs imports, exécutés avec fournisseurs inertes |
 | Activation des droits après checkout | PASS | 65 tests du vrai handler et du helper overage ; CAS, reçu d'écriture, identité, rejeu, paiement différé |
 | Suite billing combinée | PASS | 105/105, zéro échec, Node 22.23.4 ; `npm run test:billing` |
-| Types checkout/portail avec SDK épinglés | PASS local limité | Deno 2.9.6, déclarations npm officielles Stripe 18.5.0 / Supabase 2.91.0 ; import map local et adaptateur `serve` natif. Ne remplace pas la résolution de modules de production |
+| Types checkout/portail avec SDK épinglés | PARTIEL, contrôle local insuffisant | Le contrôle avec import map local passait, mais la résolution native CI a révélé 10 incompatibilités de types. Les fabriques de clients Supabase sont désormais concrètes ; nouveau passage CI requis |
 | Types webhook, frontend, compilation et navigateur de cette version | EN ATTENTE CI | Tentatives locales interrompues (code 137 ; service esbuild arrêté). Aucune réussite déduite de ces interruptions |
-| Essai atomique SQL | Repris de PR28, à revalider en CI | 28 tests PGlite et 6 tests PostgreSQL natifs versionnés ; les anciens rapports conservent leur commit de référence et ne valent pas comme nouvelle exécution |
+| Essai atomique SQL | PASS CI sur bce8742 | Job subscription-concurrency du run 42910128642 : 6/6 tests, PostgreSQL 18.6 ; KARTA réussi. Le checkout CI aea87cbb possède exactement le même arbre f7890339 que bce8742 |
 | CI complète de la consolidation avant modification | PASS historique | PR33, run 42881227306 ; ce résultat n'est pas attribué au nouveau correctif |
 | Production et fournisseurs réels | NON TESTÉ | Aucune migration, aucun paiement, aucun email et aucun déploiement réalisés |
 
-Les résultats du nouveau run CI doivent être consignés avec son SHA avant toute promotion. Le job PostgreSQL utilise son service éphémère de test ; les fixtures de paiement interdisent réseau et envois réels.
+Le premier run 42910128642 a réussi KARTA et PostgreSQL mais échoué au contrôle de types du site. Le correctif de typage conserve les 105 tests billing réussis. Les résultats du run suivant doivent être consignés avec son SHA avant toute promotion. Le job PostgreSQL utilise son service éphémère de test ; les fixtures de paiement interdisent réseau et envois réels.
 
 ## Défauts reproduits et correction
 

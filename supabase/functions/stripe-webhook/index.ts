@@ -176,11 +176,15 @@ function subscriptionRow(data: unknown, error: unknown): SubscriptionRow | undef
   return row;
 }
 
+function createWebhookDatabase(url: string, key: string) {
+  return createClient(url, key, { db: { schema: 'purama_ai' }, auth: { persistSession: false } });
+}
+
 /** Only called after signature verification. Email is never an ownership proof. */
 async function completeSubscriptionCheckout(
   session: Stripe.Checkout.Session,
   stripe: Stripe,
-  database: ReturnType<typeof createClient>,
+  database: ReturnType<typeof createWebhookDatabase>,
 ) {
   stripeObjectId(session, 'cs');
   const customerId = stripeObjectId(session.customer, 'cus');
@@ -213,7 +217,7 @@ async function completeSubscriptionCheckout(
   // A stale checkout must not choose between multiple open subscriptions.
   const page = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 100 });
   if (page.has_more !== false || !Array.isArray(page.data)) throw new Error('checkout_subscription_list_incomplete');
-  const open = page.data.filter(entry => !['canceled', 'incomplete_expired'].includes(entry.status));
+  const open = page.data.filter((entry: Stripe.Subscription) => !['canceled', 'incomplete_expired'].includes(entry.status));
   if (open.length !== 1 || open[0].id !== subscriptionId || open[0].status !== subscription.status
     || stripeObjectId(open[0].customer, 'cus') !== customerId) {
     throw new Error('checkout_subscriptions_ambiguous');
@@ -306,10 +310,9 @@ serve(async (req) => {
     maxNetworkRetries: 0,
   });
   
-  const supabaseClient = createClient(
+  const supabaseClient = createWebhookDatabase(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
   );
 
   try {
