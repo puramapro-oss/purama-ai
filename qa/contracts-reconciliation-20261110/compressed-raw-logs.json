@@ -1,0 +1,98 @@
+[
+  {
+    "original_name": "contracts-before.log",
+    "gzip_name": "contracts-before.log.gz",
+    "sha256_original": "1ffcafa104d6e6099b634dab190cbf46bc1d359f12eb287f7d51fe6dbc8361c5",
+    "sha256_gzip": "1efab0492bc76e56390079cbfa6884fc25765e2b356ee999de3027bf8036c924",
+    "raw_bytes": 37640,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "http-admission-before.log",
+    "gzip_name": "http-admission-before.log.gz",
+    "sha256_original": "33a6dcebf08f1e2ea30f8607eafbe1c4f57171e1c34590fbe3c95820928246ce",
+    "sha256_gzip": "29fe2e0cf9c8417010946baf34c152e9ca86e9065a42b1d83a443cfc5ee652bd",
+    "raw_bytes": 8118,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "public-role-schema-before.log",
+    "gzip_name": "public-role-schema-before.log.gz",
+    "sha256_original": "6caf185ec97860a88069c1cb84ce2db8c50941f9ad091031aebc0ed193904703",
+    "sha256_gzip": "d31342ee335fbccf8572f26d0b0ccabac4f6b153cda6f2d53381a356993c859c",
+    "raw_bytes": 1205,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "webhook-persistence-before.log",
+    "gzip_name": "webhook-persistence-before.log.gz",
+    "sha256_original": "68a7d013fb76f193c85c556d34fb3c5a2bb70fe7df03fea08c976f43316cb136",
+    "sha256_gzip": "1fb0278e067004d334422216f90654e17f5292d4e1481efca042cdcc164c0b1e",
+    "raw_bytes": 25592,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-before.log",
+    "gzip_name": "gitnexus-before.log.gz",
+    "sha256_original": "9beca31039ca035c952e57a62a74a8cf447b51b1674e5a35112242bfb37a0709",
+    "sha256_gzip": "17fcef934f9f8c87bbc77f8fec764c3fb03b3f5d22500ba5f62d96093180b9da",
+    "raw_bytes": 2684,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-final-index.log",
+    "gzip_name": "gitnexus-final-index.log.gz",
+    "sha256_original": "35991d8351b5901abc648478b6ccb1b5d506fed9d6b92531cafeacf828a26788",
+    "sha256_gzip": "ae9ee12c08ad821ae856a26e4a068cd7784baeef48c07117c739f89fa5a9bf14",
+    "raw_bytes": 3032,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "typecheck-final.log",
+    "gzip_name": "typecheck-final.log.gz",
+    "sha256_original": "4435cb4e136be051363db680b712f78db762f7cd10c55a335d75518724f28383",
+    "sha256_gzip": "75acdba665fe1c1a47b641783f51111799a27d0b4dcf89855e75e6777e70b3ba",
+    "raw_bytes": 176,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-staged-final.log",
+    "gzip_name": "gitnexus-staged-final.log.gz",
+    "sha256_original": "28af9d84b0a69fbd2c963a34d5cf9e4793d64be4f2c04c73481df674842a0f65",
+    "sha256_gzip": "16363bdce499293c616af9cfc6f2eb186c145185e2326a30da46f7de76078ea0",
+    "raw_bytes": 1500,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-main-final.log",
+    "gzip_name": "gitnexus-main-final.log.gz",
+    "sha256_original": "e7f277ae0ebe6179a2561b5ab74d8d0c5d782297a611d51fa32492d904bbca7e",
+    "sha256_gzip": "9826c9badc59179b1484c84797e8f6315a960521b3cfe19c0f4047a03ae4e9db",
+    "raw_bytes": 2922,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-reconciled-staged.log",
+    "gzip_name": "gitnexus-reconciled-staged.log.gz",
+    "sha256_original": "09ca86c0da4679e5ad6eded0d45b7885aa88f3e26110b123b34ef7ac77fa7a10",
+    "sha256_gzip": "78cf6e05ee0d649e6ac2e87eed3ac0585138d9a2deffebcfb6adfd2e64691ea2",
+    "raw_bytes": 809,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-reconciled-base.log",
+    "gzip_name": "gitnexus-reconciled-base.log.gz",
+    "sha256_original": "91528792bb9a92c8c474f5a145ce4a0f6ee6f6e41baea485ea8e6d4ca831f575",
+    "sha256_gzip": "72bd79e9f9c0c0f70dad3609614627c433b7d0ced2d6c1279fa58bcd4ba5bd3b",
+    "raw_bytes": 1648,
+    "compression_preserves_bytes": true
+  },
+  {
+    "original_name": "gitnexus-reconciled-main.log",
+    "gzip_name": "gitnexus-reconciled-main.log.gz",
+    "sha256_original": "9c2c329be8a172b44d5b49353875e381f53f6fe9db073c96f1af5b0c9b4f9d14",
+    "sha256_gzip": "fd1f26a3009dc1a5877cc3327c555b5896b642267e744450d6b866518a7e9515",
+    "raw_bytes": 2922,
+    "compression_preserves_bytes": true
+  }
+]

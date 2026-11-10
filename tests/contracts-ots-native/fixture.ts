@@ -34,11 +34,13 @@ export const state = {
   documentMetadata: undefined as Record<string, unknown> | undefined,
   pdfFailure: false,
   updateFailure: false,
+  proofUpdateFailure: false,
   eventsFailure: false,
   authFailure: false,
   afterPdf: undefined as (() => void) | undefined,
   afterVerify: undefined as (() => void) | undefined,
   bitcoin: undefined as { height: number; timestamp: number } | undefined,
+  internalHandler: undefined as ((request: Request) => Promise<Response>) | undefined,
 };
 
 export function reset() {
@@ -48,8 +50,8 @@ export function reset() {
       ots_block_height: null, ots_btc_timestamp: null, pdf_original_url: null },
     allCalendarsFail: false, administrator: true, authCalls: 0, clients: [], writes: [], requests: [], signers: [], stampCalls: 0,
     verifyCalls: 0, deserializeCalls: 0, pdfUrl: "https://docuseal.fixture.invalid/signed.pdf", documentMetadata: undefined,
-    pdfFailure: false, updateFailure: false, eventsFailure: false, authFailure: false,
-    afterPdf: undefined, afterVerify: undefined, bitcoin: undefined,
+    pdfFailure: false, updateFailure: false, proofUpdateFailure: false, eventsFailure: false, authFailure: false,
+    afterPdf: undefined, afterVerify: undefined, bitcoin: undefined, internalHandler: undefined,
   });
 }
 
@@ -73,6 +75,10 @@ export function createClient(_url: string, key: string, options?: { global?: { h
       return { data: { user: id && !state.authFailure ? { id } : null }, error: id && !state.authFailure ? null : { message: "fixture-private-auth-error" } };
     } },
     rpc: async (_name: string, args: Record<string, unknown>) => ({ data: args._user_id === ADMIN && state.administrator, error: null }),
+    schema(name: string) {
+      if (name !== "public") throw new Error("Authority RPC must use the public schema");
+      return { rpc: (rpcName: string, args: Record<string, unknown>) => this.rpc(rpcName, args) };
+    },
     from: <Table extends string>(table: Table) => {
       type Row = Table extends "contract_signers" ? { signed: boolean } : FixtureRow;
       const filters: Array<[string, unknown]> = [];
@@ -80,6 +86,12 @@ export function createClient(_url: string, key: string, options?: { global?: { h
       const execute = (): FixtureResult => {
         if (table === "user_roles") return { data: identity(authorization) === ADMIN && state.administrator ? { role: "admin" } : null, error: null };
         if (table === "contract_signers" && operation === "select") return { data: state.signers, error: null };
+        if (table === "contract_signers" && operation === "update") {
+          const signer: FixtureRow = { id: "fixture-signer", contract_id: CONTRACT, docuseal_submitter_id: 17 };
+          if (!service || !filters.every(([key, value]) => signer[key] === value)) return { data: null, error: null };
+          state.writes.push({ table, values, service });
+          return { data: { id: signer.id }, error: null };
+        }
         if (operation === "insert") {
           if (state.eventsFailure) return { data: null, error: { message: "fixture-private-event-error" } };
           state.writes.push({ table, values, service });
@@ -88,7 +100,9 @@ export function createClient(_url: string, key: string, options?: { global?: { h
         const matches = visible() && filters.every(([key, value]) => state.contract[key] === value);
         if (!matches) return { data: null, error: null };
         if (operation === "update") {
-          if (state.updateFailure) return { data: null, error: { message: "fixture-private-database-error" } };
+          if (state.updateFailure || (state.proofUpdateFailure && values.ots_proof !== undefined)) {
+            return { data: null, error: { message: "fixture-private-database-error" } };
+          }
           state.writes.push({ table, values, service }); Object.assign(state.contract, values);
         }
         return { data: structuredClone(state.contract), error: null };
@@ -142,7 +156,9 @@ export function installNetworkFixture() {
   globalThis.fetch = async (input: string | URL | Request, init?: RequestInit) => {
     const url = String(input); const headers = new Headers(init?.headers);
     state.requests.push({ url, redirect: init?.redirect, token: headers.get("X-Auth-Token"), authorization: headers.get("authorization"), body: typeof init?.body === "string" ? init.body : null });
-    if (url === "https://supabase.fixture.invalid/functions/v1/contracts-ots-stamp") return Response.json({ ok: true });
+    if (url === "https://supabase.fixture.invalid/functions/v1/contracts-ots-stamp") {
+      return state.internalHandler ? state.internalHandler(new Request(url, init)) : Response.json({ ok: true });
+    }
     if (url.startsWith("https://docuseal.fixture.invalid/api/submissions/")) {
       return Response.json(state.documentMetadata ?? { combined_document_url: state.pdfUrl });
     }

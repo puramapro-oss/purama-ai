@@ -49,6 +49,7 @@ jobs:
       - run: npm ci --no-audit
       - run: npm run test:dependencies
       - run: npm run test:contracts-auth
+      - run: npm run test:contracts-security
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium

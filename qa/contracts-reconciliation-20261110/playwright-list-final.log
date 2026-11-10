@@ -1,0 +1,342 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+Listing tests:
+  [desktop] › accessibility.spec.ts:4:3 › Accessibilité — Basiques › Landing — dark mode par défaut (bg sombre)
+  [desktop] › accessibility.spec.ts:18:3 › Accessibilité — Basiques › Pages ont des headings structurés
+  [desktop] › accessibility.spec.ts:25:3 › Accessibilité — Basiques › Images ont des attributs alt
+  [desktop] › accessibility.spec.ts:33:3 › Accessibilité — Basiques › Boutons interactifs ont du texte accessible
+  [desktop] › chat/lifecycle.spec.ts:25:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [desktop] › chat/lifecycle.spec.ts:37:1 › two submits in the same browser task admit one request
+  [desktop] › chat/lifecycle.spec.ts:48:1 › stop aborts the stream, removes partial output and restores the editable request
+  [desktop] › chat/lifecycle.spec.ts:59:1 › stop while saving a completed answer keeps the answer and does not resend
+  [desktop] › chat/lifecycle.spec.ts:73:1 › logout clears private content and subsequent guest requests never persist it
+  [desktop] › chat/lifecycle.spec.ts:88:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [desktop] › chat/lifecycle.spec.ts:101:1 › account change during conversation creation prevents a subsequent model call
+  [desktop] › chat/lifecycle.spec.ts:115:1 › failure to save the user message stops before model inference
+  [desktop] › chat/lifecycle.spec.ts:123:1 › failure to save the answer preserves it without another model request
+  [desktop] › chat/lifecycle.spec.ts:131:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  [desktop] › chat/lifecycle.spec.ts:141:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  [desktop] › chat/lifecycle.spec.ts:159:1 › closing the widget aborts its pending response
+  [desktop] › chat/lifecycle.spec.ts:166:1 › loading a conversation and submitting in the same task cannot overlap
+  [desktop] › chat/lifecycle.spec.ts:185:1 › mobile controls remain visible and the demo can be stopped
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › / — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /pricing — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /login — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /signup — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /ecosystem — pas d'erreur console critique
+  [desktop] › forms-validation.spec.ts:4:3 › Formulaires — Validation › Login — champs vides bloqués
+  [desktop] › forms-validation.spec.ts:22:3 › Formulaires — Validation › Signup — bouton désactivé sans accepter CGU
+  [desktop] › forms-validation.spec.ts:42:3 › Formulaires — Validation › Forgot password — formulaire présent
+  [desktop] › navigation.spec.ts:4:3 › Navigation — Liens & Boutons › Landing page — tous les CTAs sont cliquables
+  [desktop] › navigation.spec.ts:13:3 › Navigation — Liens & Boutons › Login page — formulaire présent
+  [desktop] › navigation.spec.ts:26:3 › Navigation — Liens & Boutons › Signup page — formulaire complet
+  [desktop] › navigation.spec.ts:37:3 › Navigation — Liens & Boutons › Pricing — cartes visibles
+  [desktop] › navigation.spec.ts:45:3 › Navigation — Liens & Boutons › Footer links — mentions légales, CGV, CGU
+  [desktop] › navigation.spec.ts:56:3 › Navigation — Liens & Boutons › Navigation — redirect non-auth vers login
+  [desktop] › performance.spec.ts:4:3 › Performance — Temps de chargement › Landing page charge en < 5s
+  [desktop] › performance.spec.ts:12:3 › Performance — Temps de chargement › Login page charge en < 3s
+  [desktop] › performance.spec.ts:20:3 › Performance — Temps de chargement › Pricing page charge en < 3s
+  [desktop] › performance.spec.ts:30:3 › Performance — Web Vitals basiques › LCP < 4s sur landing
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › / retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /login retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /signup retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /pricing retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /mentions-legales retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-de-confidentialite retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgv retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgu retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-cookies retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /ecosystem retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /parrainage retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /concours retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /classement retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /forge retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /influenceur/inscription retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:39:3 › Page 404 › /page-inexistante affiche 404
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › / — 0 Lorem ipsum
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /pricing — 0 Lorem ipsum
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /ecosystem — 0 Lorem ipsum
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /parrainage — 0 Lorem ipsum
+  [desktop] › pwa.spec.ts:4:3 › PWA — Manifest & Service Worker › manifest.json accessible
+  [desktop] › pwa.spec.ts:14:3 › PWA — Manifest & Service Worker › Landing page a le lien manifest
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › / — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /pricing — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /login — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /signup — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /ecosystem — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /parrainage — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:19:3 › Responsive — Éléments visibles › Landing page — hero visible
+  [desktop] › responsive.spec.ts:29:3 › Responsive — Éléments visibles › Login — formulaire bien dimensionné
+  [desktop] › ui-state/ownership.spec.ts:35:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft
+  [desktop] › ui-state/ownership.spec.ts:59:3 › partner: late A config cannot overwrite loaded B
+  [desktop] › ui-state/ownership.spec.ts:35:3 › email: account switch never saves A's settings as B; same-account refresh preserves draft
+  [desktop] › ui-state/ownership.spec.ts:59:3 › email: late A config cannot overwrite loaded B
+  [desktop] › ui-state/ownership.spec.ts:35:3 › compta: account switch never saves A's settings as B; same-account refresh preserves draft
+  [desktop] › ui-state/ownership.spec.ts:59:3 › compta: late A config cannot overwrite loaded B
+  [desktop] › ui-state/ownership.spec.ts:73:1 › legal: late history A cannot replace selected conversation B
+  [desktop] › ui-state/ownership.spec.ts:83:1 › legal: new conversation stays empty after old history resolves
+  [desktop] › ui-state/submission.spec.ts:7:1 › legal: a late submitted answer from A cannot enter selected conversation B
+  [desktop] › voice-consent/lifecycle.spec.ts:41:1 › all session helpers satisfy the real server UUID schema
+  [desktop] › voice-consent/lifecycle.spec.ts:50:1 › UUID fallback remains valid when randomUUID is unavailable
+  [desktop] › voice-consent/lifecycle.spec.ts:59:1 › already revoked requests never invoke a chat backend
+  [desktop] › voice-consent/lifecycle.spec.ts:75:1 › cancelling during token lookup prevents a delayed TTS request
+  [desktop] › voice-consent/lifecycle.spec.ts:91:1 › cancelling audio encoding prevents a delayed transcription request
+  [desktop] › voice-consent/lifecycle.spec.ts:108:1 › Stop suppresses a late TTS success and its browser fallback
+  [desktop] › voice-consent/lifecycle.spec.ts:121:1 › a failed TTS response after Stop cannot start browser speech
+  [desktop] › voice-consent/lifecycle.spec.ts:132:1 › only the latest speech request may play
+  [desktop] › voice-consent/lifecycle.spec.ts:145:1 › Stop releases the audio URL and stale end events cannot stop newer playback
+  [desktop] › voice-consent/lifecycle.spec.ts:159:1 › unmount prevents late speech from playing
+  [desktop] › voice-consent/lifecycle.spec.ts:168:1 › cancelling a pending microphone permission stops the eventual stream
+  [desktop] › voice-consent/lifecycle.spec.ts:179:1 › cancel resolves a pending recorder-stop promise without sending audio
+  [desktop] › voice-consent/lifecycle.spec.ts:191:1 › a normal capture still returns the transcript and releases the microphone
+  [desktop] › voice-consent/lifecycle.spec.ts:204:1 › closing the mode during transcription prevents the chat call
+  [desktop] › voice-consent/lifecycle.spec.ts:213:1 › closing an actual agent chat aborts its reply and prevents autoplay after a late success
+  [desktop] › voice-consent/lifecycle.spec.ts:229:1 › account change invalidates a voice reply before it can be spoken
+  [desktop] › voice-consent/lifecycle.spec.ts:241:1 › normal voice turn returns to idle after playback ends
+  [desktop] › wellbeing/consent.spec.ts:18:1 › a login never opens a practice; explicit choice, stop and Escape work
+  [desktop] › wellbeing/consent.spec.ts:38:1 › spiritual content is explicitly selected, reversible and not saved
+  [desktop] › wellbeing/consent.spec.ts:52:1 › account transition closes an open pause and guest use remains optional
+  [desktop] › wellbeing/consent.spec.ts:65:1 › French and English copy work; other languages are clearly tagged as fallback
+  [desktop] › wellbeing/consent.spec.ts:76:1 › breathing timer genuinely pauses, resumes and stops without awarding completion
+  [desktop] › wellbeing/consent.spec.ts:96:1 › timer completion is distinguished from user-confirmed practice; hidden tab pauses
+  [desktop] › wellbeing/consent.spec.ts:113:1 › journal is session-only by default, without daily quotas or forced gratitude
+  [desktop] › wellbeing/consent.spec.ts:123:1 › device retention is explicit, scoped by account, and revocable
+  [desktop] › wellbeing/consent.spec.ts:146:1 › a denied storage deletion is reported honestly and can be retried
+  [desktop] › wellbeing/consent.spec.ts:164:1 › failed note persistence preserves the draft instead of reporting success
+  [desktop] › wellbeing/consent.spec.ts:177:1 › unowned legacy notes and wrong-owner retained data never cross accounts
+  [desktop] › wellbeing/consent.spec.ts:190:1 › deleting a saved note works by keyboard; guest drafts cannot be retained
+  [desktop] › wellbeing/consent.spec.ts:205:1 › activity API retains compatibility without spiritual rank, persistence or financial credit
+  [desktop] › wellbeing/consent.spec.ts:216:1 › small viewport and reduced motion retain operable controls
+  [desktop] › wellbeing/consent.spec.ts:228:1 › two tabs preserve independently added notes without stale overwrites
+  [desktop] › wellbeing/consent.spec.ts:244:1 › a stale tab rebases its append and never resurrects a deleted note
+  [desktop] › wellbeing/consent.spec.ts:266:1 › storage changes synchronize the other tab without clearing its draft
+  [desktop] › wellbeing/consent.spec.ts:287:1 › a queued append cannot recreate retention revoked before its lock is granted
+  [desktop] › wellbeing/consent.spec.ts:312:1 › conflicting retention activation preserves local notes and does not replace the other tab
+  [desktop] › wellbeing/consent.spec.ts:329:1 › without Web Locks durable storage fails closed while session notes remain usable
+  [desktop] › wellbeing/consent.spec.ts:340:1 › clearing storage in another tab preserves notes that were only in session
+  [tablet] › accessibility.spec.ts:4:3 › Accessibilité — Basiques › Landing — dark mode par défaut (bg sombre)
+  [tablet] › accessibility.spec.ts:18:3 › Accessibilité — Basiques › Pages ont des headings structurés
+  [tablet] › accessibility.spec.ts:25:3 › Accessibilité — Basiques › Images ont des attributs alt
+  [tablet] › accessibility.spec.ts:33:3 › Accessibilité — Basiques › Boutons interactifs ont du texte accessible
+  [tablet] › chat/lifecycle.spec.ts:25:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [tablet] › chat/lifecycle.spec.ts:37:1 › two submits in the same browser task admit one request
+  [tablet] › chat/lifecycle.spec.ts:48:1 › stop aborts the stream, removes partial output and restores the editable request
+  [tablet] › chat/lifecycle.spec.ts:59:1 › stop while saving a completed answer keeps the answer and does not resend
+  [tablet] › chat/lifecycle.spec.ts:73:1 › logout clears private content and subsequent guest requests never persist it
+  [tablet] › chat/lifecycle.spec.ts:88:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [tablet] › chat/lifecycle.spec.ts:101:1 › account change during conversation creation prevents a subsequent model call
+  [tablet] › chat/lifecycle.spec.ts:115:1 › failure to save the user message stops before model inference
+  [tablet] › chat/lifecycle.spec.ts:123:1 › failure to save the answer preserves it without another model request
+  [tablet] › chat/lifecycle.spec.ts:131:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  [tablet] › chat/lifecycle.spec.ts:141:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  [tablet] › chat/lifecycle.spec.ts:159:1 › closing the widget aborts its pending response
+  [tablet] › chat/lifecycle.spec.ts:166:1 › loading a conversation and submitting in the same task cannot overlap
+  [tablet] › chat/lifecycle.spec.ts:185:1 › mobile controls remain visible and the demo can be stopped
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › / — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /pricing — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /login — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /signup — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /ecosystem — pas d'erreur console critique
+  [tablet] › forms-validation.spec.ts:4:3 › Formulaires — Validation › Login — champs vides bloqués
+  [tablet] › forms-validation.spec.ts:22:3 › Formulaires — Validation › Signup — bouton désactivé sans accepter CGU
+  [tablet] › forms-validation.spec.ts:42:3 › Formulaires — Validation › Forgot password — formulaire présent
+  [tablet] › navigation.spec.ts:4:3 › Navigation — Liens & Boutons › Landing page — tous les CTAs sont cliquables
+  [tablet] › navigation.spec.ts:13:3 › Navigation — Liens & Boutons › Login page — formulaire présent
+  [tablet] › navigation.spec.ts:26:3 › Navigation — Liens & Boutons › Signup page — formulaire complet
+  [tablet] › navigation.spec.ts:37:3 › Navigation — Liens & Boutons › Pricing — cartes visibles
+  [tablet] › navigation.spec.ts:45:3 › Navigation — Liens & Boutons › Footer links — mentions légales, CGV, CGU
+  [tablet] › navigation.spec.ts:56:3 › Navigation — Liens & Boutons › Navigation — redirect non-auth vers login
+  [tablet] › performance.spec.ts:4:3 › Performance — Temps de chargement › Landing page charge en < 5s
+  [tablet] › performance.spec.ts:12:3 › Performance — Temps de chargement › Login page charge en < 3s
+  [tablet] › performance.spec.ts:20:3 › Performance — Temps de chargement › Pricing page charge en < 3s
+  [tablet] › performance.spec.ts:30:3 › Performance — Web Vitals basiques › LCP < 4s sur landing
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › / retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /login retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /signup retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /pricing retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /mentions-legales retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-de-confidentialite retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgv retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgu retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-cookies retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /ecosystem retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /parrainage retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /concours retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /classement retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /forge retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /influenceur/inscription retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:39:3 › Page 404 › /page-inexistante affiche 404
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › / — 0 Lorem ipsum
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /pricing — 0 Lorem ipsum
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /ecosystem — 0 Lorem ipsum
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /parrainage — 0 Lorem ipsum
+  [tablet] › pwa.spec.ts:4:3 › PWA — Manifest & Service Worker › manifest.json accessible
+  [tablet] › pwa.spec.ts:14:3 › PWA — Manifest & Service Worker › Landing page a le lien manifest
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › / — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /pricing — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /login — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /signup — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /ecosystem — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /parrainage — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:19:3 › Responsive — Éléments visibles › Landing page — hero visible
+  [tablet] › responsive.spec.ts:29:3 › Responsive — Éléments visibles › Login — formulaire bien dimensionné
+  [tablet] › ui-state/ownership.spec.ts:35:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft
+  [tablet] › ui-state/ownership.spec.ts:59:3 › partner: late A config cannot overwrite loaded B
+  [tablet] › ui-state/ownership.spec.ts:35:3 › email: account switch never saves A's settings as B; same-account refresh preserves draft
+  [tablet] › ui-state/ownership.spec.ts:59:3 › email: late A config cannot overwrite loaded B
+  [tablet] › ui-state/ownership.spec.ts:35:3 › compta: account switch never saves A's settings as B; same-account refresh preserves draft
+  [tablet] › ui-state/ownership.spec.ts:59:3 › compta: late A config cannot overwrite loaded B
+  [tablet] › ui-state/ownership.spec.ts:73:1 › legal: late history A cannot replace selected conversation B
+  [tablet] › ui-state/ownership.spec.ts:83:1 › legal: new conversation stays empty after old history resolves
+  [tablet] › ui-state/submission.spec.ts:7:1 › legal: a late submitted answer from A cannot enter selected conversation B
+  [tablet] › voice-consent/lifecycle.spec.ts:41:1 › all session helpers satisfy the real server UUID schema
+  [tablet] › voice-consent/lifecycle.spec.ts:50:1 › UUID fallback remains valid when randomUUID is unavailable
+  [tablet] › voice-consent/lifecycle.spec.ts:59:1 › already revoked requests never invoke a chat backend
+  [tablet] › voice-consent/lifecycle.spec.ts:75:1 › cancelling during token lookup prevents a delayed TTS request
+  [tablet] › voice-consent/lifecycle.spec.ts:91:1 › cancelling audio encoding prevents a delayed transcription request
+  [tablet] › voice-consent/lifecycle.spec.ts:108:1 › Stop suppresses a late TTS success and its browser fallback
+  [tablet] › voice-consent/lifecycle.spec.ts:121:1 › a failed TTS response after Stop cannot start browser speech
+  [tablet] › voice-consent/lifecycle.spec.ts:132:1 › only the latest speech request may play
+  [tablet] › voice-consent/lifecycle.spec.ts:145:1 › Stop releases the audio URL and stale end events cannot stop newer playback
+  [tablet] › voice-consent/lifecycle.spec.ts:159:1 › unmount prevents late speech from playing
+  [tablet] › voice-consent/lifecycle.spec.ts:168:1 › cancelling a pending microphone permission stops the eventual stream
+  [tablet] › voice-consent/lifecycle.spec.ts:179:1 › cancel resolves a pending recorder-stop promise without sending audio
+  [tablet] › voice-consent/lifecycle.spec.ts:191:1 › a normal capture still returns the transcript and releases the microphone
+  [tablet] › voice-consent/lifecycle.spec.ts:204:1 › closing the mode during transcription prevents the chat call
+  [tablet] › voice-consent/lifecycle.spec.ts:213:1 › closing an actual agent chat aborts its reply and prevents autoplay after a late success
+  [tablet] › voice-consent/lifecycle.spec.ts:229:1 › account change invalidates a voice reply before it can be spoken
+  [tablet] › voice-consent/lifecycle.spec.ts:241:1 › normal voice turn returns to idle after playback ends
+  [tablet] › wellbeing/consent.spec.ts:18:1 › a login never opens a practice; explicit choice, stop and Escape work
+  [tablet] › wellbeing/consent.spec.ts:38:1 › spiritual content is explicitly selected, reversible and not saved
+  [tablet] › wellbeing/consent.spec.ts:52:1 › account transition closes an open pause and guest use remains optional
+  [tablet] › wellbeing/consent.spec.ts:65:1 › French and English copy work; other languages are clearly tagged as fallback
+  [tablet] › wellbeing/consent.spec.ts:76:1 › breathing timer genuinely pauses, resumes and stops without awarding completion
+  [tablet] › wellbeing/consent.spec.ts:96:1 › timer completion is distinguished from user-confirmed practice; hidden tab pauses
+  [tablet] › wellbeing/consent.spec.ts:113:1 › journal is session-only by default, without daily quotas or forced gratitude
+  [tablet] › wellbeing/consent.spec.ts:123:1 › device retention is explicit, scoped by account, and revocable
+  [tablet] › wellbeing/consent.spec.ts:146:1 › a denied storage deletion is reported honestly and can be retried
+  [tablet] › wellbeing/consent.spec.ts:164:1 › failed note persistence preserves the draft instead of reporting success
+  [tablet] › wellbeing/consent.spec.ts:177:1 › unowned legacy notes and wrong-owner retained data never cross accounts
+  [tablet] › wellbeing/consent.spec.ts:190:1 › deleting a saved note works by keyboard; guest drafts cannot be retained
+  [tablet] › wellbeing/consent.spec.ts:205:1 › activity API retains compatibility without spiritual rank, persistence or financial credit
+  [tablet] › wellbeing/consent.spec.ts:216:1 › small viewport and reduced motion retain operable controls
+  [tablet] › wellbeing/consent.spec.ts:228:1 › two tabs preserve independently added notes without stale overwrites
+  [tablet] › wellbeing/consent.spec.ts:244:1 › a stale tab rebases its append and never resurrects a deleted note
+  [tablet] › wellbeing/consent.spec.ts:266:1 › storage changes synchronize the other tab without clearing its draft
+  [tablet] › wellbeing/consent.spec.ts:287:1 › a queued append cannot recreate retention revoked before its lock is granted
+  [tablet] › wellbeing/consent.spec.ts:312:1 › conflicting retention activation preserves local notes and does not replace the other tab
+  [tablet] › wellbeing/consent.spec.ts:329:1 › without Web Locks durable storage fails closed while session notes remain usable
+  [tablet] › wellbeing/consent.spec.ts:340:1 › clearing storage in another tab preserves notes that were only in session
+  [mobile] › accessibility.spec.ts:4:3 › Accessibilité — Basiques › Landing — dark mode par défaut (bg sombre)
+  [mobile] › accessibility.spec.ts:18:3 › Accessibilité — Basiques › Pages ont des headings structurés
+  [mobile] › accessibility.spec.ts:25:3 › Accessibilité — Basiques › Images ont des attributs alt
+  [mobile] › accessibility.spec.ts:33:3 › Accessibilité — Basiques › Boutons interactifs ont du texte accessible
+  [mobile] › chat/lifecycle.spec.ts:25:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [mobile] › chat/lifecycle.spec.ts:37:1 › two submits in the same browser task admit one request
+  [mobile] › chat/lifecycle.spec.ts:48:1 › stop aborts the stream, removes partial output and restores the editable request
+  [mobile] › chat/lifecycle.spec.ts:59:1 › stop while saving a completed answer keeps the answer and does not resend
+  [mobile] › chat/lifecycle.spec.ts:73:1 › logout clears private content and subsequent guest requests never persist it
+  [mobile] › chat/lifecycle.spec.ts:88:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [mobile] › chat/lifecycle.spec.ts:101:1 › account change during conversation creation prevents a subsequent model call
+  [mobile] › chat/lifecycle.spec.ts:115:1 › failure to save the user message stops before model inference
+  [mobile] › chat/lifecycle.spec.ts:123:1 › failure to save the answer preserves it without another model request
+  [mobile] › chat/lifecycle.spec.ts:131:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  [mobile] › chat/lifecycle.spec.ts:141:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  [mobile] › chat/lifecycle.spec.ts:159:1 › closing the widget aborts its pending response
+  [mobile] › chat/lifecycle.spec.ts:166:1 › loading a conversation and submitting in the same task cannot overlap
+  [mobile] › chat/lifecycle.spec.ts:185:1 › mobile controls remain visible and the demo can be stopped
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › / — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /pricing — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /login — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /signup — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /ecosystem — pas d'erreur console critique
+  [mobile] › forms-validation.spec.ts:4:3 › Formulaires — Validation › Login — champs vides bloqués
+  [mobile] › forms-validation.spec.ts:22:3 › Formulaires — Validation › Signup — bouton désactivé sans accepter CGU
+  [mobile] › forms-validation.spec.ts:42:3 › Formulaires — Validation › Forgot password — formulaire présent
+  [mobile] › navigation.spec.ts:4:3 › Navigation — Liens & Boutons › Landing page — tous les CTAs sont cliquables
+  [mobile] › navigation.spec.ts:13:3 › Navigation — Liens & Boutons › Login page — formulaire présent
+  [mobile] › navigation.spec.ts:26:3 › Navigation — Liens & Boutons › Signup page — formulaire complet
+  [mobile] › navigation.spec.ts:37:3 › Navigation — Liens & Boutons › Pricing — cartes visibles
+  [mobile] › navigation.spec.ts:45:3 › Navigation — Liens & Boutons › Footer links — mentions légales, CGV, CGU
+  [mobile] › navigation.spec.ts:56:3 › Navigation — Liens & Boutons › Navigation — redirect non-auth vers login
+  [mobile] › performance.spec.ts:4:3 › Performance — Temps de chargement › Landing page charge en < 5s
+  [mobile] › performance.spec.ts:12:3 › Performance — Temps de chargement › Login page charge en < 3s
+  [mobile] › performance.spec.ts:20:3 › Performance — Temps de chargement › Pricing page charge en < 3s
+  [mobile] › performance.spec.ts:30:3 › Performance — Web Vitals basiques › LCP < 4s sur landing
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › / retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /login retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /signup retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /pricing retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /mentions-legales retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-de-confidentialite retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgv retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgu retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-cookies retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /ecosystem retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /parrainage retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /concours retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /classement retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /forge retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /influenceur/inscription retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:39:3 › Page 404 › /page-inexistante affiche 404
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › / — 0 Lorem ipsum
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /pricing — 0 Lorem ipsum
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /ecosystem — 0 Lorem ipsum
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /parrainage — 0 Lorem ipsum
+  [mobile] › pwa.spec.ts:4:3 › PWA — Manifest & Service Worker › manifest.json accessible
+  [mobile] › pwa.spec.ts:14:3 › PWA — Manifest & Service Worker › Landing page a le lien manifest
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › / — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /pricing — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /login — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /signup — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /ecosystem — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /parrainage — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:19:3 › Responsive — Éléments visibles › Landing page — hero visible
+  [mobile] › responsive.spec.ts:29:3 › Responsive — Éléments visibles › Login — formulaire bien dimensionné
+  [mobile] › ui-state/ownership.spec.ts:35:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft
+  [mobile] › ui-state/ownership.spec.ts:59:3 › partner: late A config cannot overwrite loaded B
+  [mobile] › ui-state/ownership.spec.ts:35:3 › email: account switch never saves A's settings as B; same-account refresh preserves draft
+  [mobile] › ui-state/ownership.spec.ts:59:3 › email: late A config cannot overwrite loaded B
+  [mobile] › ui-state/ownership.spec.ts:35:3 › compta: account switch never saves A's settings as B; same-account refresh preserves draft
+  [mobile] › ui-state/ownership.spec.ts:59:3 › compta: late A config cannot overwrite loaded B
+  [mobile] › ui-state/ownership.spec.ts:73:1 › legal: late history A cannot replace selected conversation B
+  [mobile] › ui-state/ownership.spec.ts:83:1 › legal: new conversation stays empty after old history resolves
+  [mobile] › ui-state/submission.spec.ts:7:1 › legal: a late submitted answer from A cannot enter selected conversation B
+  [mobile] › voice-consent/lifecycle.spec.ts:41:1 › all session helpers satisfy the real server UUID schema
+  [mobile] › voice-consent/lifecycle.spec.ts:50:1 › UUID fallback remains valid when randomUUID is unavailable
+  [mobile] › voice-consent/lifecycle.spec.ts:59:1 › already revoked requests never invoke a chat backend
+  [mobile] › voice-consent/lifecycle.spec.ts:75:1 › cancelling during token lookup prevents a delayed TTS request
+  [mobile] › voice-consent/lifecycle.spec.ts:91:1 › cancelling audio encoding prevents a delayed transcription request
+  [mobile] › voice-consent/lifecycle.spec.ts:108:1 › Stop suppresses a late TTS success and its browser fallback
+  [mobile] › voice-consent/lifecycle.spec.ts:121:1 › a failed TTS response after Stop cannot start browser speech
+  [mobile] › voice-consent/lifecycle.spec.ts:132:1 › only the latest speech request may play
+  [mobile] › voice-consent/lifecycle.spec.ts:145:1 › Stop releases the audio URL and stale end events cannot stop newer playback
+  [mobile] › voice-consent/lifecycle.spec.ts:159:1 › unmount prevents late speech from playing
+  [mobile] › voice-consent/lifecycle.spec.ts:168:1 › cancelling a pending microphone permission stops the eventual stream
+  [mobile] › voice-consent/lifecycle.spec.ts:179:1 › cancel resolves a pending recorder-stop promise without sending audio
+  [mobile] › voice-consent/lifecycle.spec.ts:191:1 › a normal capture still returns the transcript and releases the microphone
+  [mobile] › voice-consent/lifecycle.spec.ts:204:1 › closing the mode during transcription prevents the chat call
+  [mobile] › voice-consent/lifecycle.spec.ts:213:1 › closing an actual agent chat aborts its reply and prevents autoplay after a late success
+  [mobile] › voice-consent/lifecycle.spec.ts:229:1 › account change invalidates a voice reply before it can be spoken
+  [mobile] › voice-consent/lifecycle.spec.ts:241:1 › normal voice turn returns to idle after playback ends
+  [mobile] › wellbeing/consent.spec.ts:18:1 › a login never opens a practice; explicit choice, stop and Escape work
+  [mobile] › wellbeing/consent.spec.ts:38:1 › spiritual content is explicitly selected, reversible and not saved
+  [mobile] › wellbeing/consent.spec.ts:52:1 › account transition closes an open pause and guest use remains optional
+  [mobile] › wellbeing/consent.spec.ts:65:1 › French and English copy work; other languages are clearly tagged as fallback
+  [mobile] › wellbeing/consent.spec.ts:76:1 › breathing timer genuinely pauses, resumes and stops without awarding completion
+  [mobile] › wellbeing/consent.spec.ts:96:1 › timer completion is distinguished from user-confirmed practice; hidden tab pauses
+  [mobile] › wellbeing/consent.spec.ts:113:1 › journal is session-only by default, without daily quotas or forced gratitude
+  [mobile] › wellbeing/consent.spec.ts:123:1 › device retention is explicit, scoped by account, and revocable
+  [mobile] › wellbeing/consent.spec.ts:146:1 › a denied storage deletion is reported honestly and can be retried
+  [mobile] › wellbeing/consent.spec.ts:164:1 › failed note persistence preserves the draft instead of reporting success
+  [mobile] › wellbeing/consent.spec.ts:177:1 › unowned legacy notes and wrong-owner retained data never cross accounts
+  [mobile] › wellbeing/consent.spec.ts:190:1 › deleting a saved note works by keyboard; guest drafts cannot be retained
+  [mobile] › wellbeing/consent.spec.ts:205:1 › activity API retains compatibility without spiritual rank, persistence or financial credit
+  [mobile] › wellbeing/consent.spec.ts:216:1 › small viewport and reduced motion retain operable controls
+  [mobile] › wellbeing/consent.spec.ts:228:1 › two tabs preserve independently added notes without stale overwrites
+  [mobile] › wellbeing/consent.spec.ts:244:1 › a stale tab rebases its append and never resurrects a deleted note
+  [mobile] › wellbeing/consent.spec.ts:266:1 › storage changes synchronize the other tab without clearing its draft
+  [mobile] › wellbeing/consent.spec.ts:287:1 › a queued append cannot recreate retention revoked before its lock is granted
+  [mobile] › wellbeing/consent.spec.ts:312:1 › conflicting retention activation preserves local notes and does not replace the other tab
+  [mobile] › wellbeing/consent.spec.ts:329:1 › without Web Locks durable storage fails closed while session notes remain usable
+  [mobile] › wellbeing/consent.spec.ts:340:1 › clearing storage in another tab preserves notes that were only in session
+Total: 339 tests in 13 files

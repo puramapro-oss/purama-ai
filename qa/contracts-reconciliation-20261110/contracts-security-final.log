@@ -1,0 +1,1020 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn exec The following package was not found and will be installed: node@22.23.4
+(node:35) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:42) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: body reader: exact UTF-8 survives chunk boundaries, including the HMAC BOM
+ok 1 - body reader: exact UTF-8 survives chunk boundaries, including the HMAC BOM
+  ---
+  duration_ms: 7.839321
+  type: 'test'
+  ...
+# Subtest: body reader: an empty request returns an empty string
+ok 2 - body reader: an empty request returns an empty string
+  ---
+  duration_ms: 0.428944
+  type: 'test'
+  ...
+# Subtest: body reader: the byte limit permits exactly the maximum
+ok 3 - body reader: the byte limit permits exactly the maximum
+  ---
+  duration_ms: 0.552981
+  type: 'test'
+  ...
+# Subtest: body reader: excessive bytes are refused {}
+ok 4 - body reader: excessive bytes are refused {}
+  ---
+  duration_ms: 1.282247
+  type: 'test'
+  ...
+# Subtest: body reader: excessive bytes are refused {"content-length":"5"}
+ok 5 - body reader: excessive bytes are refused {"content-length":"5"}
+  ---
+  duration_ms: 0.73204
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length -1 is refused
+ok 6 - body reader: invalid Content-Length -1 is refused
+  ---
+  duration_ms: 0.536035
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 1.5 is refused
+ok 7 - body reader: invalid Content-Length 1.5 is refused
+  ---
+  duration_ms: 0.457828
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length NaN is refused
+ok 8 - body reader: invalid Content-Length NaN is refused
+  ---
+  duration_ms: 0.372519
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 1e2 is refused
+ok 9 - body reader: invalid Content-Length 1e2 is refused
+  ---
+  duration_ms: 0.710878
+  type: 'test'
+  ...
+# Subtest: body reader: invalid Content-Length 9007199254740992 is refused
+ok 10 - body reader: invalid Content-Length 9007199254740992 is refused
+  ---
+  duration_ms: 1.021125
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 2 must match "abc"
+ok 11 - body reader: declared length 2 must match "abc"
+  ---
+  duration_ms: 0.35304
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 4 must match "abc"
+ok 12 - body reader: declared length 4 must match "abc"
+  ---
+  duration_ms: 0.456025
+  type: 'test'
+  ...
+# Subtest: body reader: declared length 1 must match ""
+ok 13 - body reader: declared length 1 must match ""
+  ---
+  duration_ms: 0.292479
+  type: 'test'
+  ...
+# Subtest: body reader: a declared body cannot be absent
+ok 14 - body reader: a declared body cannot be absent
+  ---
+  duration_ms: 0.202835
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 255 is refused
+ok 15 - body reader: invalid UTF-8 255 is refused
+  ---
+  duration_ms: 0.348754
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 192,175 is refused
+ok 16 - body reader: invalid UTF-8 192,175 is refused
+  ---
+  duration_ms: 0.238469
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 226,130 is refused
+ok 17 - body reader: invalid UTF-8 226,130 is refused
+  ---
+  duration_ms: 0.324047
+  type: 'test'
+  ...
+# Subtest: body reader: invalid UTF-8 237,160,128 is refused
+ok 18 - body reader: invalid UTF-8 237,160,128 is refused
+  ---
+  duration_ms: 0.280201
+  type: 'test'
+  ...
+# Subtest: body reader: empty chunks cannot keep a request alive indefinitely
+ok 19 - body reader: empty chunks cannot keep a request alive indefinitely
+  ---
+  duration_ms: 1.695929
+  type: 'test'
+  ...
+# Subtest: body reader: an immediately resolving stream still observes the absolute deadline
+ok 20 - body reader: an immediately resolving stream still observes the absolute deadline
+  ---
+  duration_ms: 5.354757
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=resolve
+ok 21 - body reader: a stalled read times out even when cancel=resolve
+  ---
+  duration_ms: 14.843376
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=reject
+ok 22 - body reader: a stalled read times out even when cancel=reject
+  ---
+  duration_ms: 13.982783
+  type: 'test'
+  ...
+# Subtest: body reader: a stalled read times out even when cancel=never
+ok 23 - body reader: a stalled read times out even when cancel=never
+  ---
+  duration_ms: 14.220761
+  type: 'test'
+  ...
+# Subtest: body reader: a pre-aborted request is refused and cancelled
+ok 24 - body reader: a pre-aborted request is refused and cancelled
+  ---
+  duration_ms: 0.843177
+  type: 'test'
+  ...
+# Subtest: body reader: abort during a stalled read cannot wait for the producer
+ok 25 - body reader: abort during a stalled read cannot wait for the producer
+  ---
+  duration_ms: 0.612361
+  type: 'test'
+  ...
+# Subtest: body reader: read failures are sanitized and locks released
+ok 26 - body reader: read failures are sanitized and locks released
+  ---
+  duration_ms: 0.365469
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"maxBytes":0} fail immediately
+ok 27 - body reader: invalid internal limits {"maxBytes":0} fail immediately
+  ---
+  duration_ms: 0.188784
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"maxBytes":null} fail immediately
+ok 28 - body reader: invalid internal limits {"maxBytes":null} fail immediately
+  ---
+  duration_ms: 0.165238
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"timeoutMs":0} fail immediately
+ok 29 - body reader: invalid internal limits {"timeoutMs":0} fail immediately
+  ---
+  duration_ms: 0.089404
+  type: 'test'
+  ...
+# Subtest: body reader: invalid internal limits {"timeoutMs":2147483648} fail immediately
+ok 30 - body reader: invalid internal limits {"timeoutMs":2147483648} fail immediately
+  ---
+  duration_ms: 0.081182
+  type: 'test'
+  ...
+# (node:50) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: bearer authentication accepts only the exact configured value
+ok 31 - bearer authentication accepts only the exact configured value
+  ---
+  duration_ms: 0.688835
+  type: 'test'
+  ...
+# Subtest: HMAC authentication accepts prefixed and bare signatures
+ok 32 - HMAC authentication accepts prefixed and bare signatures
+  ---
+  duration_ms: 5.542309
+  type: 'test'
+  ...
+# Subtest: HMAC authentication rejects tampering and malformed encodings
+ok 33 - HMAC authentication rejects tampering and malformed encodings
+  ---
+  duration_ms: 0.967905
+  type: 'test'
+  ...
+# Subtest: webhook authentication supports configured bearer or HMAC transport
+ok 34 - webhook authentication supports configured bearer or HMAC transport
+  ---
+  duration_ms: 1.719444
+  type: 'test'
+  ...
+# Subtest: only explicit local environments may opt into the development exception
+ok 35 - only explicit local environments may opt into the development exception
+  ---
+  duration_ms: 0.190937
+  type: 'test'
+  ...
+# (node:62) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:62) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+# Subtest: rejects unauthenticated credential null before any contract effects
+ok 36 - rejects unauthenticated credential null before any contract effects
+  ---
+  duration_ms: 119.869969
+  type: 'test'
+  ...
+# Subtest: rejects unauthenticated credential "" before any contract effects
+ok 37 - rejects unauthenticated credential "" before any contract effects
+  ---
+  duration_ms: 45.830337
+  type: 'test'
+  ...
+# Subtest: rejects unauthenticated credential "invalid-token" before any contract effects
+ok 38 - rejects unauthenticated credential "invalid-token" before any contract effects
+  ---
+  duration_ms: 43.38606
+  type: 'test'
+  ...
+# Subtest: rejects unauthenticated credential "test-service-never-livex" before any contract effects
+ok 39 - rejects unauthenticated credential "test-service-never-livex" before any contract effects
+  ---
+  duration_ms: 32.009894
+  type: 'test'
+  ...
+# Subtest: rejects unauthenticated credential "fake.jwt.service_role" before any contract effects
+ok 40 - rejects unauthenticated credential "fake.jwt.service_role" before any contract effects
+  ---
+  duration_ms: 28.182908
+  type: 'test'
+  ...
+# Subtest: authorization SDK: the real Supabase transport selects public.has_role and keeps contract data in purama_ai
+ok 41 - authorization SDK: the real Supabase transport selects public.has_role and keeps contract data in purama_ai
+  ---
+  duration_ms: 34.383721
+  type: 'test'
+  ...
+# Subtest: ordinary user cannot elevate via metadata, body identity or role
+ok 42 - ordinary user cannot elevate via metadata, body identity or role
+  ---
+  duration_ms: 26.877041
+  type: 'test'
+  ...
+# Subtest: fails closed on invalidated user
+ok 43 - fails closed on invalidated user
+  ---
+  duration_ms: 24.846268
+  type: 'test'
+  ...
+# Subtest: fails closed on removed role
+ok 44 - fails closed on removed role
+  ---
+  duration_ms: 29.528955
+  type: 'test'
+  ...
+# Subtest: fails closed on different role
+ok 45 - fails closed on different role
+  ---
+  duration_ms: 22.504339
+  type: 'test'
+  ...
+# Subtest: fails closed on role lookup failure
+ok 46 - fails closed on role lookup failure
+  ---
+  duration_ms: 22.939293
+  type: 'test'
+  ...
+# Subtest: fails closed on auth provider failure
+ok 47 - fails closed on auth provider failure
+  ---
+  duration_ms: 27.561779
+  type: 'test'
+  ...
+# Subtest: fails closed on role provider failure
+ok 48 - fails closed on role provider failure
+  ---
+  duration_ms: 22.047462
+  type: 'test'
+  ...
+# Subtest: fails closed on missing service configuration
+ok 49 - fails closed on missing service configuration
+  ---
+  duration_ms: 22.273532
+  type: 'test'
+  ...
+# Subtest: fails closed on missing service URL
+ok 50 - fails closed on missing service URL
+  ---
+  duration_ms: 21.519289
+  type: 'test'
+  ...
+# Subtest: allows verified current admin and clears stale Bitcoin confirmation
+ok 51 - allows verified current admin and clears stale Bitcoin confirmation
+  ---
+  duration_ms: 42.110803
+  type: 'test'
+  ...
+# Subtest: allows exact internal credential and clears stale Bitcoin confirmation
+ok 52 - allows exact internal credential and clears stale Bitcoin confirmation
+  ---
+  duration_ms: 24.655551
+  type: 'test'
+  ...
+# Subtest: handles preflight without data access and refuses unsupported methods
+ok 53 - handles preflight without data access and refuses unsupported methods
+  ---
+  duration_ms: 29.534313
+  type: 'test'
+  ...
+# Subtest: rejects malformed input null before contract access
+ok 54 - rejects malformed input null before contract access
+  ---
+  duration_ms: 19.135536
+  type: 'test'
+  ...
+# Subtest: rejects malformed input [] before contract access
+ok 55 - rejects malformed input [] before contract access
+  ---
+  duration_ms: 19.306264
+  type: 'test'
+  ...
+# Subtest: rejects malformed input {} before contract access
+ok 56 - rejects malformed input {} before contract access
+  ---
+  duration_ms: 23.940937
+  type: 'test'
+  ...
+# Subtest: rejects malformed input {"contract_id":42} before contract access
+ok 57 - rejects malformed input {"contract_id":42} before contract access
+  ---
+  duration_ms: 19.092442
+  type: 'test'
+  ...
+# Subtest: rejects malformed input {"contract_id":"not-a-uuid"} before contract access
+ok 58 - rejects malformed input {"contract_id":"not-a-uuid"} before contract access
+  ---
+  duration_ms: 27.237252
+  type: 'test'
+  ...
+# Subtest: rejects malformed input "{" before contract access
+ok 59 - rejects malformed input "{" before contract access
+  ---
+  duration_ms: 21.306999
+  type: 'test'
+  ...
+# Subtest: refuses stamping a draft contract before provider access
+ok 60 - refuses stamping a draft contract before provider access
+  ---
+  duration_ms: 20.955482
+  type: 'test'
+  ...
+# Subtest: refuses stamping a sent contract before provider access
+ok 61 - refuses stamping a sent contract before provider access
+  ---
+  duration_ms: 32.105338
+  type: 'test'
+  ...
+# Subtest: refuses stamping a opened contract before provider access
+ok 62 - refuses stamping a opened contract before provider access
+  ---
+  duration_ms: 20.552265
+  type: 'test'
+  ...
+# Subtest: refuses stamping a declined contract before provider access
+ok 63 - refuses stamping a declined contract before provider access
+  ---
+  duration_ms: 24.171695
+  type: 'test'
+  ...
+# Subtest: refuses stamping a cancelled contract before provider access
+ok 64 - refuses stamping a cancelled contract before provider access
+  ---
+  duration_ms: 19.128666
+  type: 'test'
+  ...
+# Subtest: refuses stamping a expired contract before provider access
+ok 65 - refuses stamping a expired contract before provider access
+  ---
+  duration_ms: 19.585633
+  type: 'test'
+  ...
+# Subtest: does not report success after missing contract
+ok 66 - does not report success after missing contract
+  ---
+  duration_ms: 22.058699
+  type: 'test'
+  ...
+# Subtest: does not report success after database read error
+ok 67 - does not report success after database read error
+  ---
+  duration_ms: 20.300898
+  type: 'test'
+  ...
+# Subtest: does not report success after missing submission
+ok 68 - does not report success after missing submission
+  ---
+  duration_ms: 28.467175
+  type: 'test'
+  ...
+# Subtest: does not report success after missing signed PDF
+ok 69 - does not report success after missing signed PDF
+  ---
+  duration_ms: 24.477374
+  type: 'test'
+  ...
+# Subtest: does not report success after provider PDF error
+ok 70 - does not report success after provider PDF error
+  ---
+  duration_ms: 21.562795
+  type: 'test'
+  ...
+# Subtest: does not report success after provider PDF exception
+ok 71 - does not report success after provider PDF exception
+  ---
+  duration_ms: 25.903677
+  type: 'test'
+  ...
+# Subtest: does not report success after provider stamp exception
+ok 72 - does not report success after provider stamp exception
+  ---
+  duration_ms: 33.022706
+  type: 'test'
+  ...
+# Subtest: does not report success after proof write error
+ok 73 - does not report success after proof write error
+  ---
+  duration_ms: 31.966148
+  type: 'test'
+  ...
+# Subtest: does not report success after audit write error
+ok 74 - does not report success after audit write error
+  ---
+  duration_ms: 25.418198
+  type: 'test'
+  ...
+# Subtest: does not overwrite a contract changed during PDF retrieval: cancelDuringFetch
+ok 75 - does not overwrite a contract changed during PDF retrieval: cancelDuringFetch
+  ---
+  duration_ms: 18.416256
+  type: 'test'
+  ...
+# Subtest: does not overwrite a contract changed during PDF retrieval: replaceSubmissionDuringFetch
+ok 76 - does not overwrite a contract changed during PDF retrieval: replaceSubmissionDuringFetch
+  ---
+  duration_ms: 22.407804
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: does not persist or report a pending proof when every calendar failed
+ok 77 - does not persist or report a pending proof when every calendar failed
+  ---
+  duration_ms: 20.412285
+  type: 'test'
+  ...
+# Subtest: forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid/signed.pdf
+ok 78 - forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid/signed.pdf
+  ---
+  duration_ms: 22.950249
+  type: 'test'
+  ...
+# Subtest: forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid.attacker.invalid/signed.pdf
+ok 79 - forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid.attacker.invalid/signed.pdf
+  ---
+  duration_ms: 25.431298
+  type: 'test'
+  ...
+# Subtest: forwards PDF credentials only to the exact configured origin: https://files.example.invalid/signed.pdf
+ok 80 - forwards PDF credentials only to the exact configured origin: https://files.example.invalid/signed.pdf
+  ---
+  duration_ms: 24.375602
+  type: 'test'
+  ...
+# Subtest: rejects unsafe PDF location before fetching: http://files.example.invalid/signed.pdf
+ok 81 - rejects unsafe PDF location before fetching: http://files.example.invalid/signed.pdf
+  ---
+  duration_ms: 19.484761
+  type: 'test'
+  ...
+# Subtest: rejects unsafe PDF location before fetching: https://user@files.example.invalid/signed.pdf
+ok 82 - rejects unsafe PDF location before fetching: https://user@files.example.invalid/signed.pdf
+  ---
+  duration_ms: 22.947425
+  type: 'test'
+  ...
+# Subtest: rejects unsafe PDF location before fetching: data:application/pdf;base64,AA==
+ok 83 - rejects unsafe PDF location before fetching: data:application/pdf;base64,AA==
+  ---
+  duration_ms: 21.140149
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-webhook refuses excessive body bytes before contract access
+ok 84 - HTTP admission: contracts-webhook refuses excessive body bytes before contract access
+  ---
+  duration_ms: 22.051138
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-webhook refuses invalid UTF-8 instead of accepting replacement text
+ok 85 - HTTP admission: contracts-webhook refuses invalid UTF-8 instead of accepting replacement text
+  ---
+  duration_ms: 24.126446
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-webhook enforces the declared body length
+ok 86 - HTTP admission: contracts-webhook enforces the declared body length
+  ---
+  duration_ms: 20.233567
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-webhook refuses pre-aborted bodies
+ok 87 - HTTP admission: contracts-webhook refuses pre-aborted bodies
+  ---
+  duration_ms: 24.46799
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-ots-stamp refuses excessive body bytes before contract access
+ok 88 - HTTP admission: contracts-ots-stamp refuses excessive body bytes before contract access
+  ---
+  duration_ms: 21.598077
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-ots-stamp refuses invalid UTF-8 instead of accepting replacement text
+ok 89 - HTTP admission: contracts-ots-stamp refuses invalid UTF-8 instead of accepting replacement text
+  ---
+  duration_ms: 19.925423
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-ots-stamp enforces the declared body length
+ok 90 - HTTP admission: contracts-ots-stamp enforces the declared body length
+  ---
+  duration_ms: 24.109742
+  type: 'test'
+  ...
+# Subtest: HTTP admission: contracts-ots-stamp refuses pre-aborted bodies
+ok 91 - HTTP admission: contracts-ots-stamp refuses pre-aborted bodies
+  ---
+  duration_ms: 16.446176
+  type: 'test'
+  ...
+# Subtest: HTTP admission: an invalid bearer without HMAC never consumes the webhook body
+ok 92 - HTTP admission: an invalid bearer without HMAC never consumes the webhook body
+  ---
+  duration_ms: 22.116977
+  type: 'test'
+  ...
+# Subtest: HTTP admission: the real webhook deadline resolves a stalled request without late effects
+ok 93 - HTTP admission: the real webhook deadline resolves a stalled request without late effects
+  ---
+  duration_ms: 5027.553352
+  type: 'test'
+  ...
+# Subtest: webhook persistence: a failed lookup is never acknowledged as a missing contract
+ok 94 - webhook persistence: a failed lookup is never acknowledged as a missing contract
+  ---
+  duration_ms: 158.623945
+  type: 'test'
+  ...
+# Subtest: webhook persistence: failed signer reads cannot produce a success or a signed contract
+ok 95 - webhook persistence: failed signer reads cannot produce a success or a signed contract
+  ---
+  duration_ms: 100.734242
+  type: 'test'
+  ...
+# Subtest: webhook persistence: [] is not proof that all signers signed
+ok 96 - webhook persistence: [] is not proof that all signers signed
+  ---
+  duration_ms: 86.499236
+  type: 'test'
+  ...
+# Subtest: webhook persistence: null is not proof that all signers signed
+ok 97 - webhook persistence: null is not proof that all signers signed
+  ---
+  duration_ms: 57.839047
+  type: 'test'
+  ...
+# Subtest: webhook persistence: only boolean true is a completed signature (false)
+ok 98 - webhook persistence: only boolean true is a completed signature (false)
+  ---
+  duration_ms: 59.508564
+  type: 'test'
+  ...
+# Subtest: webhook persistence: only boolean true is a completed signature ("true")
+ok 99 - webhook persistence: only boolean true is a completed signature ("true")
+  ---
+  duration_ms: 37.581973
+  type: 'test'
+  ...
+# Subtest: webhook persistence: only boolean true is a completed signature (1)
+ok 100 - webhook persistence: only boolean true is a completed signature (1)
+  ---
+  duration_ms: 57.98138
+  type: 'test'
+  ...
+# Subtest: webhook persistence: only boolean true is a completed signature ({})
+ok 101 - webhook persistence: only boolean true is a completed signature ({})
+  ---
+  duration_ms: 41.934933
+  type: 'test'
+  ...
+# Subtest: webhook persistence: only boolean true is a completed signature (null)
+ok 102 - webhook persistence: only boolean true is a completed signature (null)
+  ---
+  duration_ms: 42.204297
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.viewed refuses signer write error before later effects
+ok 103 - webhook persistence: form.viewed refuses signer write error before later effects
+  ---
+  duration_ms: 50.403615
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.viewed refuses signer missing signer before later effects
+ok 104 - webhook persistence: form.viewed refuses signer missing signer before later effects
+  ---
+  duration_ms: 33.93888
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.viewed limits signer writes to the selected contract
+ok 105 - webhook persistence: form.viewed limits signer writes to the selected contract
+  ---
+  duration_ms: 40.192674
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.completed refuses signer write error before later effects
+ok 106 - webhook persistence: form.completed refuses signer write error before later effects
+  ---
+  duration_ms: 34.405942
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.completed refuses signer missing signer before later effects
+ok 107 - webhook persistence: form.completed refuses signer missing signer before later effects
+  ---
+  duration_ms: 65.471534
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.completed limits signer writes to the selected contract
+ok 108 - webhook persistence: form.completed limits signer writes to the selected contract
+  ---
+  duration_ms: 44.761128
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.declined refuses signer write error before later effects
+ok 109 - webhook persistence: form.declined refuses signer write error before later effects
+  ---
+  duration_ms: 32.013066
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.declined refuses signer missing signer before later effects
+ok 110 - webhook persistence: form.declined refuses signer missing signer before later effects
+  ---
+  duration_ms: 22.836299
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.declined limits signer writes to the selected contract
+ok 111 - webhook persistence: form.declined limits signer writes to the selected contract
+  ---
+  duration_ms: 17.615755
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.viewed refuses a failed contract write
+ok 112 - webhook persistence: form.viewed refuses a failed contract write
+  ---
+  duration_ms: 22.282077
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.completed refuses a failed contract write
+ok 113 - webhook persistence: form.completed refuses a failed contract write
+  ---
+  duration_ms: 17.867784
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.declined refuses a failed contract write
+ok 114 - webhook persistence: form.declined refuses a failed contract write
+  ---
+  duration_ms: 32.478725
+  type: 'test'
+  ...
+# Subtest: webhook persistence: submission.expired refuses a failed contract write
+ok 115 - webhook persistence: submission.expired refuses a failed contract write
+  ---
+  duration_ms: 34.759422
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.viewed refuses a failed audit insert
+ok 116 - webhook persistence: form.viewed refuses a failed audit insert
+  ---
+  duration_ms: 28.270784
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.completed refuses a failed audit insert
+ok 117 - webhook persistence: form.completed refuses a failed audit insert
+  ---
+  duration_ms: 28.015401
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.declined refuses a failed audit insert
+ok 118 - webhook persistence: form.declined refuses a failed audit insert
+  ---
+  duration_ms: 23.431443
+  type: 'test'
+  ...
+# Subtest: webhook persistence: submission.created refuses a failed audit insert
+ok 119 - webhook persistence: submission.created refuses a failed audit insert
+  ---
+  duration_ms: 19.610702
+  type: 'test'
+  ...
+# Subtest: webhook persistence: submission.expired refuses a failed audit insert
+ok 120 - webhook persistence: submission.expired refuses a failed audit insert
+  ---
+  duration_ms: 35.953466
+  type: 'test'
+  ...
+# Subtest: webhook persistence: form.started refuses a failed audit insert
+ok 121 - webhook persistence: form.started refuses a failed audit insert
+  ---
+  duration_ms: 24.562341
+  type: 'test'
+  ...
+# Subtest: webhook persistence: failed partial-signature audit insert cannot be acknowledged
+ok 122 - webhook persistence: failed partial-signature audit insert cannot be acknowledged
+  ---
+  duration_ms: 30.173803
+  type: 'test'
+  ...
+# Subtest: webhook persistence: cancelDuringSubmission prevents a late completion from overwriting the contract
+ok 123 - webhook persistence: cancelDuringSubmission prevents a late completion from overwriting the contract
+  ---
+  duration_ms: 19.071983
+  type: 'test'
+  ...
+# Subtest: webhook persistence: replaceSubmissionDuringSubmission prevents a late completion from overwriting the contract
+ok 124 - webhook persistence: replaceSubmissionDuringSubmission prevents a late completion from overwriting the contract
+  ---
+  duration_ms: 23.382629
+  type: 'test'
+  ...
+# Subtest: webhook persistence: a completed event cannot revive a cancelled contract
+ok 125 - webhook persistence: a completed event cannot revive a cancelled contract
+  ---
+  duration_ms: 18.134134
+  type: 'test'
+  ...
+# Subtest: webhook persistence: a completed event cannot revive a declined contract
+ok 126 - webhook persistence: a completed event cannot revive a declined contract
+  ---
+  duration_ms: 21.952551
+  type: 'test'
+  ...
+# Subtest: webhook persistence: a completed event cannot revive a expired contract
+ok 127 - webhook persistence: a completed event cannot revive a expired contract
+  ---
+  duration_ms: 18.010789
+  type: 'test'
+  ...
+# Subtest: webhook persistence: late form.declined cannot replace terminal state signed
+ok 128 - webhook persistence: late form.declined cannot replace terminal state signed
+  ---
+  duration_ms: 16.445048
+  type: 'test'
+  ...
+# Subtest: webhook persistence: late form.declined cannot replace terminal state cancelled
+ok 129 - webhook persistence: late form.declined cannot replace terminal state cancelled
+  ---
+  duration_ms: 22.915037
+  type: 'test'
+  ...
+# Subtest: webhook persistence: late form.declined cannot replace terminal state expired
+ok 130 - webhook persistence: late form.declined cannot replace terminal state expired
+  ---
+  duration_ms: 18.104821
+  type: 'test'
+  ...
+# Subtest: webhook persistence: late submission.expired cannot replace terminal state signed
+ok 131 - webhook persistence: late submission.expired cannot replace terminal state signed
+  ---
+  duration_ms: 24.169142
+  type: 'test'
+  ...
+# Subtest: webhook persistence: late submission.expired cannot replace terminal state cancelled
+ok 132 - webhook persistence: late submission.expired cannot replace terminal state cancelled
+  ---
+  duration_ms: 18.669428
+  type: 'test'
+  ...
+# Subtest: webhook persistence: late submission.expired cannot replace terminal state declined
+ok 133 - webhook persistence: late submission.expired cannot replace terminal state declined
+  ---
+  duration_ms: 25.761844
+  type: 'test'
+  ...
+# Subtest: reused webhook guard fails closed without a secret in undefined
+ok 134 - reused webhook guard fails closed without a secret in undefined
+  ---
+  duration_ms: 20.396714
+  type: 'test'
+  ...
+# Subtest: reused webhook guard fails closed without a secret in production
+ok 135 - reused webhook guard fails closed without a secret in production
+  ---
+  duration_ms: 23.687298
+  type: 'test'
+  ...
+# Subtest: reused webhook guard fails closed without a secret in staging
+ok 136 - reused webhook guard fails closed without a secret in staging
+  ---
+  duration_ms: 21.471839
+  type: 'test'
+  ...
+# Subtest: reused webhook guard fails closed without a secret in development
+ok 137 - reused webhook guard fails closed without a secret in development
+  ---
+  duration_ms: 22.595748
+  type: 'test'
+  ...
+# Subtest: reused webhook guard fails closed without a secret in local
+ok 138 - reused webhook guard fails closed without a secret in local
+  ---
+  duration_ms: 31.70999
+  type: 'test'
+  ...
+# Subtest: reused webhook guard fails closed without a secret in test
+ok 139 - reused webhook guard fails closed without a secret in test
+  ---
+  duration_ms: 20.73337
+  type: 'test'
+  ...
+# Subtest: reused webhook guard rejects an invalid provider credential before privileged reads
+ok 140 - reused webhook guard rejects an invalid provider credential before privileged reads
+  ---
+  duration_ms: 21.150777
+  type: 'test'
+  ...
+# Subtest: reused webhook guard preserves authenticated bearer delivery
+ok 141 - reused webhook guard preserves authenticated bearer delivery
+  ---
+  duration_ms: 20.302202
+  type: 'test'
+  ...
+# Subtest: reused webhook guard preserves authenticated hmac delivery
+ok 142 - reused webhook guard preserves authenticated hmac delivery
+  ---
+  duration_ms: 39.117299
+  type: 'test'
+  ...
+# Subtest: authenticated completion delivers the internal credential to the actual stamp handler
+ok 143 - authenticated completion delivers the internal credential to the actual stamp handler
+  ---
+  duration_ms: 56.298743
+  type: 'test'
+  ...
+# (node:74) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:74) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+# Subtest: hashContent preserves binary bytes and the view boundary with WebCrypto=true
+ok 144 - hashContent preserves binary bytes and the view boundary with WebCrypto=true
+  ---
+  duration_ms: 80.592592
+  type: 'test'
+  ...
+# Subtest: hashContent preserves binary bytes and the view boundary with WebCrypto=false
+ok 145 - hashContent preserves binary bytes and the view boundary with WebCrypto=false
+  ---
+  duration_ms: 24.574099
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: stampContract hashes the exact PDF bytes for Uint8Array view
+ok 146 - stampContract hashes the exact PDF bytes for Uint8Array view
+  ---
+  duration_ms: 24.136292
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: stampContract hashes the exact PDF bytes for ArrayBuffer
+ok 147 - stampContract hashes the exact PDF bytes for ArrayBuffer
+  ---
+  duration_ms: 21.916737
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: stampContract keeps one Uint8Array snapshot if the caller mutates its buffer during hashing
+ok 148 - stampContract keeps one Uint8Array snapshot if the caller mutates its buffer during hashing
+  ---
+  duration_ms: 17.498799
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: stampContract keeps one ArrayBuffer snapshot if the caller mutates its buffer during hashing
+ok 149 - stampContract keeps one ArrayBuffer snapshot if the caller mutates its buffer during hashing
+  ---
+  duration_ms: 14.212192
+  type: 'test'
+  ...
+# Subtest: hashContent snapshots an ArrayBuffer before awaiting the Node crypto fallback
+ok 150 - hashContent snapshots an ArrayBuffer before awaiting the Node crypto fallback
+  ---
+  duration_ms: 17.016706
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: existing UTF-8 string stamping remains byte-compatible
+ok 151 - existing UTF-8 string stamping remains byte-compatible
+  ---
+  duration_ms: 16.899309
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: browser Base64 encoding preserves the serialized proof without Buffer
+ok 152 - browser Base64 encoding preserves the serialized proof without Buffer
+  ---
+  duration_ms: 21.893713
+  type: 'test'
+  ...
+# Subtest: contract verification accepts the raw-byte digest produced by the Edge handler
+ok 153 - contract verification accepts the raw-byte digest produced by the Edge handler
+  ---
+  duration_ms: 18.912598
+  type: 'test'
+  ...
+# Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+# File does not match original!
+# Subtest: contract verification preserves existing proofs of the legacy Base64 text
+ok 154 - contract verification preserves existing proofs of the legacy Base64 text
+  ---
+  duration_ms: 12.996866
+  type: 'test'
+  ...
+# Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+# File does not match original!
+# Subtest: legacy verification keeps its ArrayBuffer snapshot across the raw-proof attempt
+ok 155 - legacy verification keeps its ArrayBuffer snapshot across the raw-proof attempt
+  ---
+  duration_ms: 13.854044
+  type: 'test'
+  ...
+# Expected digest 0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a
+# File does not match original!
+# Expected digest 0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a
+# File does not match original!
+# Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+# File does not match original!
+# Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+# File does not match original!
+# Subtest: contract verification rejects altered bytes in both raw and legacy formats
+ok 156 - contract verification rejects altered bytes in both raw and legacy formats
+  ---
+  duration_ms: 20.936936
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: stampHash rejects a receipt when every calendar failed
+ok 157 - stampHash rejects a receipt when every calendar failed
+  ---
+  duration_ms: 13.683417
+  type: 'test'
+  ...
+# Submitting to remote calendar https://a.pool.opentimestamps.org
+# Submitting to remote calendar https://b.pool.opentimestamps.org
+# Submitting to remote calendar https://a.pool.eternitywall.com
+# Submitting to remote calendar https://ots.btc.catallaxy.com
+# Subtest: stampContract rejects a receipt when every calendar failed
+ok 158 - stampContract rejects a receipt when every calendar failed
+  ---
+  duration_ms: 11.584324
+  type: 'test'
+  ...
+1..158
+# tests 158
+# suites 0
+# pass 158
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10515.808731

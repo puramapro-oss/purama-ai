@@ -1,3 +1,5 @@
+> État historique du lot initial. La [réconciliation des deux historiques](ots-reconciliation-58a85a9-20261110.md) décrit le contrat courant, les nouvelles preuves et les limites restantes.
+
 # Réconciliation OTS et webhook DocuSeal — 10 novembre 2026
 
 ## Origine et périmètre

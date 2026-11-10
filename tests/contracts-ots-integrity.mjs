@@ -88,6 +88,10 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
           error: options.roleError ? { message: 'private-role-detail' } : null,
         };
       },
+      schema(name) {
+        assert.equal(name, 'public', 'administrator authority must use public.has_role');
+        return { rpc: (rpcName, args) => this.rpc(rpcName, args) };
+      },
       from: table => {
         const filters = [];
         let patch;
@@ -109,7 +113,10 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
             calls.contractReads.push(filters);
             return { data: contract ? { ...contract } : null, error: options.loadError ? { message: 'private-load-detail' } : null };
           }
-          if (table === 'contract_signers') return { data: [{ signed: true }], error: null };
+          if (table === 'contract_signers') {
+            const signer = { id: 'fixture-signer', contract_id: contractId, docuseal_submitter_id: 7 };
+            return { data: patch ? filters.every(([key, value]) => signer[key] === value) ? { id: signer.id } : null : [{ signed: true }], error: null };
+          }
           throw new Error(`Unexpected table: ${table}`);
         };
         const builder = {
@@ -130,7 +137,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
   };
   const context = vm.createContext({
     Request, Response, Headers, URL, Uint8Array, TextEncoder, TextDecoder,
-    crypto: webcrypto, atob, btoa, setTimeout, clearTimeout,
+    crypto: webcrypto, atob, btoa, setTimeout, clearTimeout, performance, AbortController,
     console: { error: (...args) => calls.errors.push(args), warn() {}, log() {} },
     Deno: { env: { get: key => environment[key] } },
     fetch: async (input, init) => {
@@ -357,15 +364,14 @@ test('reused webhook guard rejects an invalid provider credential before privile
   noStampEffects(h.calls);
 });
 for (const transport of ['bearer', 'hmac']) {
-  test(`existing webhook contract accepts Bearer and rejects unsupported HMAC-only delivery: ${transport}`, async () => {
+  test(`reconciled webhook contract accepts authenticated ${transport} delivery`, async () => {
     const h = await harness({}, 'contracts-webhook');
     const body = JSON.stringify({ event_type: 'submission.created', data: { id: 42 } });
     const headers = transport === 'bearer' ? { Authorization: `Bearer ${webhookSecret}` }
       : { 'x-docuseal-signature': `sha256=${createHmac('sha256', webhookSecret).update(body).digest('hex')}` };
-    assert.equal((await h.handler(webhookRequest(headers))).status, transport === 'bearer' ? 200 : 401);
-    assert.equal(h.calls.events.length, transport === 'bearer' ? 1 : 0);
+    assert.equal((await h.handler(webhookRequest(headers))).status, 200);
+    assert.equal(h.calls.events.length, 1);
     assert.equal(h.calls.internal.length, 0);
-    if (transport === 'hmac') noStampEffects(h.calls);
   });
 }
 test('authenticated completion delivers the internal credential to the actual stamp handler', async () => {

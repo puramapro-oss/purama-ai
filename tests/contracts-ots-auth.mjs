@@ -50,6 +50,10 @@ function harness(kind, options = {}) {
         return { data: Object.hasOwn(options, 'roleValue') ? options.roleValue : false,
           error: options.roleError ? { message: 'role lookup failed' } : null };
       },
+      schema(name) {
+        assert.equal(name, 'public', 'administrator authority must use public.has_role');
+        return { rpc: (rpcName, args) => this.rpc(rpcName, args) };
+      },
       from(table) {
         calls.tables.push(table);
         let operation = 'select';
@@ -62,7 +66,10 @@ function harness(kind, options = {}) {
           const updated = operation === 'update' && table === 'contracts'
             && filters.every(([key, expected]) => contract[key] === expected);
           if (updated) Object.assign(contract, value);
-          const data = updated ? { id: contract.id } : operation !== 'select' ? null : table === 'contracts'
+          const signer = { id: 'fixture-signer', contract_id: CONTRACT, docuseal_submitter_id: 456 };
+          const signerUpdated = operation === 'update' && table === 'contract_signers'
+            && filters.every(([key, expected]) => signer[key] === expected);
+          const data = updated ? { id: contract.id } : signerUpdated ? { id: signer.id } : operation !== 'select' ? null : table === 'contracts'
             ? (single ? { ...contract } : [{ ...contract }]) : table === 'contract_signers' ? [{ signed: true }] : null;
           resolved = Promise.resolve({ data, error: null });
           return resolved;
@@ -118,7 +125,7 @@ function harness(kind, options = {}) {
     };
     runInNewContext(compiled, { module, exports: module.exports, require: requireModule,
       Deno: { env: { get: (name) => env[name] } },
-      fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL,
+      fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL, performance, AbortController,
       TextEncoder, TextDecoder, Uint8Array, atob, btoa, setTimeout, clearTimeout,
       console: { error() {}, warn() {}, log() {} },
     }, { filename: file });

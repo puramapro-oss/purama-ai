@@ -1,0 +1,19 @@
+{
+  "processes": [],
+  "process_symbols": [],
+  "definitions": [],
+  "timing": {
+    "bm25": 1.2,
+    "vector": 4.8,
+    "merge": 0,
+    "symbol_lookup": 0,
+    "ranking": 0,
+    "formatting": 0,
+    "wall": 6.4
+  },
+  "warning": "FTS extension failed to load — keyword search degraded (load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts). Run `gitnexus doctor` for details, then `gitnexus analyze --repair-fts` with network access to reinstall. (resolved: purama-iao33-contracts/branch:fix/reconcile-contracts-on-iao33-20261110, indexed 2026-11-10T14:27:20.417Z)"
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Query (1.6.12)
+{"level":40,"time":1794320891802,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

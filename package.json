@@ -19,7 +19,8 @@
     "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check",
     "test:contracts-auth": "node --test --test-concurrency=1 tests/contracts-ots-auth.mjs",
     "test:ui-state": "playwright test --config tests/ui-state/playwright.config.ts",
-    "test:async-ui": "playwright test --config tests/async-ui/playwright.config.ts"
+    "test:async-ui": "playwright test --config tests/async-ui/playwright.config.ts",
+    "test:contracts-security": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts supabase/functions/_shared/request-body.test.ts supabase/functions/_shared/ots-delivery.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

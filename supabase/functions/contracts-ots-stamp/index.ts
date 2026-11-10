@@ -7,6 +7,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import OpenTimestamps from "npm:opentimestamps@0.4.9";
 import { CORS_HEADERS, corsResponse, errorResponse, docusealFetch, DOCUSEAL_URL, DOCUSEAL_TOKEN } from "../_shared/docuseal.ts";
+import { verifyBearerSecret } from "../_shared/webhook-security.ts";
 import { readOtsBody, OtsHttpError } from "../_shared/ots-body.ts";
 
 serve(async (req) => {
@@ -14,12 +15,12 @@ serve(async (req) => {
   if (req.method !== "POST") return errorResponse("Method not allowed", 405);
 
   const authHeader = req.headers.get("authorization");
-  const bearer = authHeader?.match(/^Bearer\s+(\S+)$/);
-  if (!bearer) return errorResponse("Missing Authorization", 401);
+  const bearer = authHeader?.match(/^Bearer ([^\s]+)$/);
+  if (!bearer) return errorResponse("Missing or invalid Authorization", 401);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  if (!supabaseUrl || !serviceRoleKey) return errorResponse("Stamp authentication not configured", 503);
+  if (!supabaseUrl || !serviceRoleKey) return errorResponse("Stamping unavailable", 503);
 
   try {
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
@@ -27,35 +28,36 @@ serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // Preserve PR33's exact service credential and server-owned administrator
-    // role RPC. Client metadata, body identities and truthy role values confer
-    // no authority. Authorization precedes contract and provider operations.
-    const token = bearer[1];
-    let serviceCaller = token.length === serviceRoleKey.length;
-    if (serviceCaller) {
-      let difference = 0;
-      for (let i = 0; i < token.length; i++) difference |= token.charCodeAt(i) ^ serviceRoleKey.charCodeAt(i);
-      serviceCaller = difference === 0;
-    }
+    // The gateway's JWT check does not grant administrative contract rights.
+    // Accept the exact internal credential, or verify a user and their current
+    // server-owned role before reading contract data or invoking providers.
+    const isService = verifyBearerSecret(authHeader, serviceRoleKey);
     let actorId: string | null = null;
-    if (!serviceCaller) {
+    if (!isService) {
       try {
-        const { data, error } = await supabaseAdmin.auth.getUser(token);
-        if (error || !data?.user) return errorResponse("Unauthenticated", 401);
-        const { data: isAdmin, error: roleError } = await supabaseAdmin.rpc("has_role", {
-          _user_id: data.user.id, _role: "admin",
+        const { data: auth, error: authError } = await supabaseAdmin.auth.getUser(bearer[1]);
+        if (authError || !auth?.user) return errorResponse("Unauthenticated", 401);
+        // Preserve PR #33's server-side role function, also used by contract RLS.
+        // Only an actual boolean true authorizes the authenticated identity.
+        const { data: isAdmin, error: roleError } = await supabaseAdmin.schema("public").rpc("has_role", {
+          _user_id: auth.user.id, _role: "admin",
         });
         if (roleError) return errorResponse("Authorization unavailable", 503);
-        if (isAdmin !== true) return errorResponse("Administrator access required", 403);
-        actorId = data.user.id;
+        if (isAdmin !== true) return errorResponse("Admin access required", 403);
+        actorId = auth.user.id;
       } catch {
         return errorResponse("Authorization unavailable", 503);
       }
     }
 
     let body: unknown;
-    try { body = await readOtsBody(req); }
-    catch (error) { return errorResponse(error instanceof OtsHttpError ? error.message : "Invalid JSON", error instanceof OtsHttpError ? error.status : 400); }
+    try {
+      body = await readOtsBody(req);
+    } catch (error) {
+      return error instanceof OtsHttpError
+        ? errorResponse(error.message, error.status)
+        : errorResponse("Invalid JSON");
+    }
     const contractId = body && typeof body === "object" && !Array.isArray(body)
       ? (body as { contract_id?: unknown }).contract_id : undefined;
     if (typeof contractId !== "string" || !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(contractId)) {
@@ -135,7 +137,7 @@ serve(async (req) => {
       contract_id: contractId,
       event_type: "ots_stamped",
       actor_id: actorId,
-      actor_type: serviceCaller ? "service" : "user",
+      actor_type: isService ? "service" : "user",
       payload: { hash: hashHex, proof_size: proofBytes.length },
     });
     if (eventError) return errorResponse("Stamp audit record failed", 500);

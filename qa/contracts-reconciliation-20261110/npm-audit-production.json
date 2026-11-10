@@ -1,0 +1,96 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "bitcore-lib": {
+      "name": "bitcore-lib",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "elliptic"
+      ],
+      "effects": [
+        "opentimestamps"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/bitcore-lib"
+      ],
+      "fixAvailable": {
+        "name": "opentimestamps",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "elliptic": {
+      "name": "elliptic",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1112030,
+          "name": "elliptic",
+          "dependency": "elliptic",
+          "title": "Elliptic Uses a Cryptographic Primitive with a Risky Implementation",
+          "url": "https://github.com/advisories/GHSA-848j-6mx2-7j84",
+          "severity": "low",
+          "cwe": [
+            "CWE-1240"
+          ],
+          "cvss": {
+            "score": 5.6,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L"
+          },
+          "range": "<=6.6.1"
+        }
+      ],
+      "effects": [
+        "bitcore-lib"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/elliptic"
+      ],
+      "fixAvailable": {
+        "name": "opentimestamps",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "opentimestamps": {
+      "name": "opentimestamps",
+      "severity": "low",
+      "isDirect": true,
+      "via": [
+        "bitcore-lib"
+      ],
+      "effects": [],
+      "range": ">=0.4.6",
+      "nodes": [
+        "node_modules/opentimestamps"
+      ],
+      "fixAvailable": {
+        "name": "opentimestamps",
+        "version": "0.0.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 3,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 3
+    },
+    "dependencies": {
+      "prod": 430,
+      "dev": 188,
+      "optional": 78,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 633
+    }
+  }
+}

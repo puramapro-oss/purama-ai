@@ -1,0 +1,208 @@
+[
+  {
+    "name": "query",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "query",
+      "signed contract PDF stamping authorization",
+      "-r",
+      "purama-iao33-contracts"
+    ],
+    "exit": 0,
+    "seconds": 0.934,
+    "path": "../gitnexus-impact-query.log"
+  },
+  {
+    "name": "context",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "context",
+      "stampContract",
+      "-r",
+      "purama-iao33-contracts"
+    ],
+    "exit": 0,
+    "seconds": 1.003,
+    "path": "../gitnexus-impact-context.log"
+  },
+  {
+    "name": "hashContent",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "hashContent",
+      "--file",
+      "src/lib/opentimestamps.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 0.971,
+    "path": "../gitnexus-impact-hashContent.log"
+  },
+  {
+    "name": "stampHash",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "stampHash",
+      "--file",
+      "src/lib/opentimestamps.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 0.907,
+    "path": "../gitnexus-impact-stampHash.log"
+  },
+  {
+    "name": "verifyProof",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "verifyProof",
+      "--file",
+      "src/lib/opentimestamps.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 0.972,
+    "path": "../gitnexus-impact-verifyProof.log"
+  },
+  {
+    "name": "stampContract",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "stampContract",
+      "--file",
+      "src/lib/docuseal/ots-stamper.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 0.944,
+    "path": "../gitnexus-impact-stampContract.log"
+  },
+  {
+    "name": "verifyContractProof",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "verifyContractProof",
+      "--file",
+      "src/lib/docuseal/ots-stamper.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 0.899,
+    "path": "../gitnexus-impact-verifyContractProof.log"
+  },
+  {
+    "name": "bufferToBase64",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "bufferToBase64",
+      "--file",
+      "src/lib/docuseal/ots-stamper.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 1.006,
+    "path": "../gitnexus-impact-bufferToBase64.log"
+  },
+  {
+    "name": "stamp-handler",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "supabase/functions/contracts-ots-stamp/index.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 1.211,
+    "path": "../gitnexus-impact-stamp-handler.log"
+  },
+  {
+    "name": "webhook-handler",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "supabase/functions/contracts-webhook/index.ts",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 1.283,
+    "path": "../gitnexus-impact-webhook-handler.log"
+  },
+  {
+    "name": "auth-harness",
+    "command": [
+      "npx",
+      "--offline",
+      "gitnexus@1.6.12",
+      "impact",
+      "harness",
+      "--file",
+      "tests/contracts-ots-auth.mjs",
+      "-r",
+      "purama-iao33-contracts",
+      "--include-tests",
+      "--limit",
+      "100"
+    ],
+    "exit": 0,
+    "seconds": 1.345,
+    "path": "../gitnexus-impact-auth-harness.log"
+  }
+]
