@@ -1,0 +1,451 @@
+{
+  "schema_version": 1,
+  "work_item": "web-search-reconciliation-20261110",
+  "repository": "puramapro-oss/purama-ai",
+  "pull_request": 36,
+  "parent_commit": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "parent_tree": "fe3368ed274a79d56b1dce3496914f9f85ae0e6d",
+  "reused_commits": [
+    "25db8049a68b458ec70e161efaefdc6eb23d3562",
+    "2cc3bdef83c9bf51bb1a6c8318cbd5e0107e7137"
+  ],
+  "omission_reproduced": {
+    "tests": 75,
+    "passed_before": 4,
+    "failed_before": 71,
+    "passed_after_reintegration": 75,
+    "note": "Same three restored test files, before new hardening cases."
+  },
+  "changes": [
+    "Restore the existing optional evidence format, explicit search preferences and metadata-only trace policy missing from the consolidated candidate.",
+    "Validate and copy own enumerable domain array entries before the shared validator; never invoke a supplied iterator or index getter.",
+    "Copy each received byte chunk so a producer cannot corrupt previous chunks by reusing a buffer.",
+    "Enforce the monotonic deadline before accepting headers, each read and the final result, even if a timer callback is delayed.",
+    "Request cancellation on every terminal error without awaiting a non-cooperative cleanup; retain ownership of late response bodies and release the reader.",
+    "Reconcile concurrent cleanup tests from PR26; remove the redundant local HTTP503 case and explicitly expect immediate transport abort on known failures.",
+    "Stub the unused queue import in the web-search test fixture so it does not attempt an incidental Redis connection."
+  ],
+  "preserved": [
+    "Single existing webSearchTool and registries; no second engine or proof store.",
+    "Legacy request and title/url/snippet response by default.",
+    "Five results maximum, 1MiB response cap, 30-second deadline, no automatic retry.",
+    "Current ESLint control-character comment and all unrelated PR36 source changes."
+  ],
+  "qualification": {
+    "targeted_status": "PASS",
+    "tests": {
+      "numTotalTests": 202,
+      "numPassedTests": 202,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    },
+    "test_files": [
+      {
+        "file": "test/actionAgentsMock.test.ts",
+        "assertions": 4,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/agentsRegistry.test.ts",
+        "assertions": 4,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/approvalTracePrivacy.test.ts",
+        "assertions": 20,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/customRegistry.test.ts",
+        "assertions": 4,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/loop.test.ts",
+        "assertions": 14,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/loopTracePrivacy.test.ts",
+        "assertions": 22,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/webSearchCleanup.test.ts",
+        "assertions": 9,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/webSearchEvidence.test.ts",
+        "assertions": 59,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/webSearchInputBoundary.test.ts",
+        "assertions": 16,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/webSearchPrivacy.test.ts",
+        "assertions": 6,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/webSearchTransportIntegrity.test.ts",
+        "assertions": 3,
+        "states": [
+          "passed"
+        ]
+      },
+      {
+        "file": "test/webSearchValidation.test.ts",
+        "assertions": 41,
+        "states": [
+          "passed"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "name": "targeted-composed",
+        "command": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/webSearchEvidence.test.ts",
+          "test/webSearchInputBoundary.test.ts",
+          "test/webSearchPrivacy.test.ts",
+          "test/webSearchTransportIntegrity.test.ts",
+          "test/webSearchValidation.test.ts",
+          "test/webSearchCleanup.test.ts",
+          "test/actionAgentsMock.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "test/loop.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/customRegistry.test.ts",
+          "--maxWorkers=1",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile.json=/workspace/scratch/6d86d08874e2/qa-current/targeted-composed.json"
+        ],
+        "exit_code": 0,
+        "seconds": 36.379,
+        "log_sha256": "8c9a685ed3ae3fe40c83253935be6bf960465fa6edd12df7f844830a2312f016"
+      },
+      {
+        "name": "typecheck-composed",
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "exit_code": 137,
+        "seconds": 2.425,
+        "log_sha256": "f59576b612d418c669f28cf1fd4e825f77ee56d6d9107abe5b0754a0b30b13d7"
+      },
+      {
+        "name": "build-composed",
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "exit_code": 0,
+        "seconds": 3.332,
+        "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746"
+      }
+    ],
+    "typecheck_final": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 4.08,
+      "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8",
+      "reason": "Use the repository default command that previously passed; restrictive heap variants failed. No source or test modification."
+    },
+    "typecheck_status": "PASS",
+    "build_status": "PASS",
+    "source_unchanged_during_tests": true,
+    "source_hashes": {
+      "test/webSearchEvidence.test.ts": "2e1af7a718d14e1937852080b83a37742a3e15e8c24e3d3ece770dca54a76407",
+      "test/webSearchInputBoundary.test.ts": "16ebb9a3ddee38e1d0cb669d240e2ebafe4950005475007815f2435036c98379",
+      "test/webSearchPrivacy.test.ts": "61f7774aa3545f6b1b3f14c0104627f74627bf729cf07b6eae925eec3d4bf780",
+      "test/webSearchTransportIntegrity.test.ts": "9640640a877d51a5232482d4988adc07f6cd90ec3dfe848e4a8fd46720b57cec",
+      "test/webSearchValidation.test.ts": "4ede9ab4ce9d34fd59ff12e4a93dcde29f4553b973c6678e8ec72a2e3a91121b",
+      "test/webSearchCleanup.test.ts": "de975ff3bce9c1dbad74ca5feda0fc42a61bad349b781173b2dddcdbad7daf52",
+      "test/actionAgentsMock.test.ts": "22fecb6272ee3947c7ac571b38ac84ab26ddbc5830bab4868466ca3414cc5196",
+      "test/agentsRegistry.test.ts": "5e3a2fde6e1d5ef2e48d67ef6e38098813b513412a3cc48cd9c84153e5d79ea1",
+      "test/approvalTracePrivacy.test.ts": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+      "test/loop.test.ts": "c9b0efbb568c8436a3a29672b350ead93d9616de419757caf3af7526007ce345",
+      "test/loopTracePrivacy.test.ts": "9481cfcac31b745bd1239c178ece5951d0f9435629ee3519a57ee1e3dc4f79a2",
+      "test/customRegistry.test.ts": "38c4e83de5e13c26084c7902437168c9e18db6159a64458c07403bf3e819d471",
+      "src/tools/websearch.ts": "c977a62eb9d6e2dcc8b7e3045e3f9a8d818c58b3e3c8bcc0cdde1d6a3f6336d9",
+      "src/engine/tool-input.ts": "9722d4b5a12b9f8485cbd46874e8c2fe58b2afa22a1e706481ba60b671fb813e",
+      "src/engine/tool-trace.ts": "56f24f26e355fe0e72ff3bb15321ab5a578e46d2e2b5e7a51c69c7c2b309b51e",
+      "src/engine/loop.ts": "0fc74eeb8049db8f5232f126fb7a0cd863f532b74379851ad71cc0e10faf4801",
+      "src/engine/approval.ts": "44a81626a488c5dd11d2c6c3d34cbfb953cefb13fc6d64c995bfc193602fc227",
+      "src/tools/customRegistry.ts": "023c0406cdeeaa7ae177ff233b2e8c6d702f469c38dd96937c5c2234fce9abcd",
+      "src/agents/legalAgent.ts": "99491f3d8d9ddb0a6ed014a1951a4ae44e308406237a2b2f53327b6af5a30dc6",
+      "src/agents/partnerAgent.ts": "5820bac889606d03dce42eedd6f22e3eda683367e1590ba12e585476a35735ea",
+      "src/agents/actionAgents.ts": "4d0ee153c0ac425b1b7093b56c1eacbe77db6d135872038de37d0406463ffef4",
+      "package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+      "package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+      "vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+      "test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
+    },
+    "finished_at_utc": "2026-11-10T22:01:02Z"
+  },
+  "typecheck_attempts": [
+    {
+      "command": [
+        "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=8",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "node_version": "v22.23.4",
+      "exit_code": -6,
+      "seconds": 6.121,
+      "reason": "Retry the final typecheck gate after its compiler process was killed (exit137); no assertions or source changed."
+    },
+    {
+      "command": [
+        "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+        "--max-old-space-size=384",
+        "--max-semi-space-size=4",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "node_version": "v22.23.4",
+      "exit_code": -9,
+      "seconds": 111.942,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Match CI Node22; the 256MiB heap attempt reported a V8 heap exhaustion, so raise old-space to384MiB while reducing semi-space to4MiB. Source and tests unchanged."
+    }
+  ],
+  "live_provider": {
+    "status": "PASS",
+    "receipt": "websearch-live-20261110.json",
+    "latest_http_status": 200,
+    "latest_results": 5,
+    "latest_declared_credits": 1,
+    "total_search_calls": 2,
+    "total_declared_credits": 2,
+    "included_quota_guard": true,
+    "paygo_unchanged_observed": true,
+    "production_deployment": false
+  },
+  "broad_regression_attempt": {
+    "status": "BLOQUE",
+    "phase": "Before the final body-ownership cleanup and concurrent cleanup-test import; not a final comprehensive qualification.",
+    "files": 98,
+    "collected_tests": 1721,
+    "passed_tests": 1348,
+    "remaining_not_qualified": 373,
+    "reason": "Several PGlite workers exited with SIGKILL. A representative retry with a single WASM compilation task and Liftoff-only also failed. Cause is not proven; no SQL assertion was weakened or skipped to obtain success.",
+    "json_reporter_caveat": "Vitest5 may report success:true while a worker exited and assertions remain pending. Exit status and every assertion state are required.",
+    "no_counts_added_to_targeted": true
+  },
+  "impact": {
+    "status": "BLOQUE",
+    "risk": "UNKNOWN",
+    "reason": "Four bounded index attempts failed or were killed. Required impact, query, context and detect-changes calls were executed but no usable repository index existed. No LOW risk or clean graph is claimed.",
+    "required_calls": [
+      [
+        {
+          "command": [
+            "impact",
+            "webSearchTool",
+            "--direction",
+            "upstream",
+            "--repo",
+            "purama-web-stream-6d86",
+            "--file",
+            "karta/src/tools/websearch.ts"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Impact (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794346813056,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        },
+        {
+          "command": [
+            "impact",
+            "execute",
+            "--direction",
+            "upstream",
+            "--repo",
+            "purama-web-stream-6d86",
+            "--file",
+            "karta/src/tools/websearch.ts"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Impact (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794346820559,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        },
+        {
+          "command": [
+            "query",
+            "web search tool execution tracing",
+            "--repo",
+            "purama-web-stream-6d86"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Query (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794346822376,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        },
+        {
+          "command": [
+            "context",
+            "webSearchTool",
+            "--repo",
+            "purama-web-stream-6d86",
+            "--file",
+            "karta/src/tools/websearch.ts"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Context (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794346824719,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        }
+      ],
+      [
+        {
+          "symbol": "domainFilters",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Impact (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794347047266,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        },
+        {
+          "symbol": "searchParams",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Impact (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794347047575,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        },
+        {
+          "symbol": "readSearchResponse",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Impact (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794347047866,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        }
+      ],
+      [
+        {
+          "command": [
+            "node",
+            "--max-old-space-size=512",
+            "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+            "detect-changes",
+            "--scope",
+            "staged",
+            "--repo",
+            "purama-web-stream-6d86"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Detect Changes (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794347886078,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        },
+        {
+          "command": [
+            "node",
+            "--max-old-space-size=512",
+            "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+            "detect-changes",
+            "--scope",
+            "compare",
+            "--base-ref",
+            "main",
+            "--repo",
+            "purama-web-stream-6d86"
+          ],
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "\n  GitNexus Detect Changes (1.6.12)\nGitNexus: No indexed repositories found. Run: gitnexus analyze\n{\"level\":50,\"time\":1794347886340,\"name\":\"gitnexus\",\"msg\":\"GitNexus: No indexed repositories found. Run: gitnexus analyze\"}\n"
+        }
+      ]
+    ],
+    "manual_review": {
+      "direct_agents": [
+        "legal",
+        "partner",
+        "outbound",
+        "content",
+        "offer"
+      ],
+      "registry_paths": [
+        "karta/src/tools/customRegistry.ts",
+        "karta/src/tools/registry.ts"
+      ],
+      "shared_paths": [
+        "karta/src/engine/loop.ts",
+        "karta/src/engine/tool-trace.ts",
+        "karta/src/engine/approval.ts"
+      ],
+      "independent_review": "The three demonstrable buffer/domain/deadline defects and late-body cleanup issue were reproduced and corrected. Final cleanup reviewed without an additional demonstrated blocker."
+    }
+  },
+  "integration_boundary": {
+    "one_source_commit": "4a75640b01833472152a71107d80e2825ed917b0",
+    "one_source_tree": "74ff642dd897b48aada1435a3c3051a465c8aeb6",
+    "one_export_sha256": "c9c4d70168deb7a15cf65dcff3a13d2fdac6938baaf9740f5b63156b9349b3a1",
+    "observed": "Service page still states that the service needs connecting; ServiceLaunch is not mounted, the inspected export has no app/api route, and Mon quotidien scenarios remain local examples. The IAO completion runtime found in the active T3 lineage is distinct from this consolidated branch.",
+    "remaining": [
+      "Canonical ONE server/session/tenant/PDP composition and module admission with existing T1/T3 ownership.",
+      "Wire web results to the canonical IAO response path, source-grounded synthesis, common quota reservations and cancellation.",
+      "Verify the browser-to-provider-to-user flow and account isolation on the actual composed runtime."
+    ],
+    "status": "BLOQUE",
+    "production": "NON TESTE"
+  },
+  "publication": {
+    "target": "existing draft PR36",
+    "merge": false,
+    "deployment": false,
+    "automatic_ci": "The existing PR workflow will run on the updated head; final status is separate from the local targeted proof."
+  },
+  "recorded_at_utc": "2026-11-10T22:07:07.385932+00:00",
+  "qualified_original_parent": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "concurrent_integration": {
+    "new_parent": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+    "saved_stash": "7ca36ccac8710afcaf41dab595a0954efb3c785a",
+    "qualified_inputs_unchanged": true,
+    "concurrent_files_preserved": [
+      "supabase/functions/_shared/request-body.ts",
+      "supabase/functions/_shared/request-body.test.ts"
+    ]
+  },
+  "prior_ci": {
+    "head": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+    "run_id": 42908955997,
+    "status": "completed",
+    "conclusion": "success",
+    "not_claimed_for_new_head": true
+  }
+}

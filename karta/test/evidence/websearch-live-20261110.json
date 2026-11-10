@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "latest_qualification": {
+    "status": "PASS",
+    "started_at": "2026-11-10T21:53:40.847Z",
+    "finished_at": "2026-11-10T21:53:42.856Z",
+    "elapsed_ms": 1994,
+    "search_and_preflight_ms": 1249,
+    "endpoint": "https://api.tavily.com/search",
+    "http_status": 200,
+    "search_requests": 1,
+    "response_format": "evidence",
+    "query_class": "public_W3C_accessibility_standard",
+    "language": "fr",
+    "include_domains": [
+      "w3.org"
+    ],
+    "provider_result_count": 5,
+    "unique_result_count": 5,
+    "duplicate_urls_grouped": 0,
+    "source_urls": [
+      "https://www.w3.org/Translations/WCAG22-fr",
+      "https://www.w3.org/press-releases/2025/wcag22-iso-pas",
+      "https://www.w3.org/TR/WCAG22",
+      "https://www.w3.org/WAI/standards-guidelines/wcag",
+      "https://www.w3.org/WAI/WCAG22/Understanding"
+    ],
+    "provider_reported_credits": 1,
+    "included_quota_guard_passed": true,
+    "paygo_usage_unchanged": true,
+    "source_hashes": {
+      "src/tools/websearch.ts": "c977a62eb9d6e2dcc8b7e3045e3f9a8d818c58b3e3c8bcc0cdde1d6a3f6336d9",
+      "src/engine/tool-input.ts": "9722d4b5a12b9f8485cbd46874e8c2fe58b2afa22a1e706481ba60b671fb813e"
+    },
+    "bundle_sha256": "aafccebad425dd1a12837ead6f8c650453793b4cd39744d8af3f64a51d090b38",
+    "limits": [
+      "Isolated bundle of the actual tool and validator; application config replaced with the existing Tavily key only.",
+      "Not a ONE browser, production deployment, cancellation, citation-grounding, quota reservation or multi-tenant test."
+    ]
+  },
+  "previous_qualification": {
+    "status": "PASS",
+    "started_at": "2026-11-10T21:45:16.215Z",
+    "finished_at": "2026-11-10T21:45:21.525Z",
+    "elapsed_ms": 5305,
+    "search_and_preflight_ms": 4126,
+    "endpoint": "https://api.tavily.com/search",
+    "http_status": 200,
+    "search_requests": 1,
+    "response_format": "evidence",
+    "query_class": "public_W3C_accessibility_standard",
+    "language": "fr",
+    "include_domains": [
+      "w3.org"
+    ],
+    "provider_result_count": 5,
+    "unique_result_count": 5,
+    "duplicate_urls_grouped": 0,
+    "source_urls": [
+      "https://www.w3.org/Translations/WCAG22-fr",
+      "https://www.w3.org/press-releases/2025/wcag22-iso-pas",
+      "https://www.w3.org/TR/WCAG22",
+      "https://www.w3.org/WAI/standards-guidelines/wcag",
+      "https://www.w3.org/WAI/WCAG22/Understanding"
+    ],
+    "provider_reported_credits": 1,
+    "included_quota_guard_passed": true,
+    "paygo_usage_unchanged": true,
+    "source_hashes": {
+      "src/tools/websearch.ts": "172b9f9835a099736f873bb238fc294b3aff9c8d0a3e5522e933fc06fa8c0bc7",
+      "src/engine/tool-input.ts": "9722d4b5a12b9f8485cbd46874e8c2fe58b2afa22a1e706481ba60b671fb813e"
+    },
+    "bundle_sha256": "808e6e4ded99d6a1143feb10a09361eb5a9be886a08544db68c83a288ce30036",
+    "limits": [
+      "Isolated bundle of the actual tool and validator; application config replaced with the existing Tavily key only.",
+      "Not a ONE browser, production deployment, cancellation, citation-grounding, quota reservation or multi-tenant test."
+    ]
+  },
+  "total_search_requests": 2,
+  "total_provider_reported_credits": 2,
+  "note": "One bounded basic request per source revision. No automatic retry, production rollout, plan change or paid fallback."
+}
