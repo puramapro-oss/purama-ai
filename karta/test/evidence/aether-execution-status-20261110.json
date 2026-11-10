@@ -1,0 +1,900 @@
+{
+  "date": "2026-11-10",
+  "scope": "Incremental durable-delivery, approval-continuation and honest UI-status correction; not a deployed PURAMA ONE certification",
+  "repository": "puramapro-oss/purama-ai",
+  "branch": "audit/aether-karta-consolidation-20261110",
+  "canonical_base_commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "canonical_base_tree": "ed1b45f4bf3fcab8e06a9a7c99dfcecbfb244eb6",
+  "local_baseline_commit": "ad94bf0cb4b2f8952f8015f5f171304fdcccb8a2",
+  "verified_source_tree_before_documentation": "52db384d5db9d599199709742a27402d0014e235",
+  "runtime": {
+    "node": "24.22.1",
+    "vitest": "5.0.3",
+    "typescript_frontend": "5.8.3",
+    "playwright_project": "1.59.1",
+    "browser_attempt": "Firefox 153.0 / revision 1538 (project Playwright expects 1511); coherent runtime 1.62.1 also attempted during memory pressure, no page proven"
+  },
+  "behavior": [
+    "Stable scoped user/agent/business-key identity survives transport eviction; ordinary new requests receive distinct nonces",
+    "Canonical fingerprint is copied before awaits; retained BullMQ payload and durable journal are checked; SQL unique execution_key plus fingerprint comparison remains the atomic claim",
+    "Known payload conflicts return HTTP 409; both trigger routes return a server-computed executionKey",
+    "An owned, finalized approval receipt and coherent parent journal are loaded centrally before model/context work",
+    "The exact resolved tool and JSON-equivalent parameters cannot execute or create a new approval in the admitted first continuation",
+    "Ambiguous prior effects and second-generation continuations without recorded ancestry stop before model and effects",
+    "Continuation business parameters never become engine telemetry; a fixed server-owned suspension explanation remains visible",
+    "UI tracks only the server executionKey with owner and agent checks, continues active states and bounds waiting to 20 seconds",
+    "Shared UI classification distinguishes terminal, active, approval, simulated and unknown states; late modal responses cannot attach to a new attempt",
+    "Supabase table types reflect nullable execution_key and execution_fingerprint from migrations 006 and 020",
+    "Reuse PR20 migration019 unchanged: parent ownership, journal binding, finalization, live mode and stops are checked before an approved effect",
+    "Mark approval insertion as an uncertain durable write before awaiting its acknowledgement, preventing automatic replay by direct callers on a lost response"
+  ],
+  "before_after": {
+    "approval_initial_29_before": {
+      "report_sha256": "b0f1d2876d29582c55ba7d4c5f3707c6e637aab59502466441b1c01650b0f7e7",
+      "tests": 29,
+      "passed": 1,
+      "failed": 28,
+      "skipped": 0,
+      "success": false,
+      "files": 1
+    },
+    "approval_extended_36_after": {
+      "report_sha256": "0b10c43734a5a96db6ec58ea1d95e93221b7187c33617aab78687fbb246292f4",
+      "tests": 36,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0,
+      "success": true,
+      "files": 1
+    },
+    "interpretation": "Initial 29 continuation scenarios: 1 passed and 28 failed before correction. Seven conservative-history scenarios then passed with them (36). Two later lost-insert-acknowledgement regressions failed before the effectStarted barrier and pass in the current 38-case file. The 36 pending entries in the selected pre-fix run were filtered out, not executed. Counts are not additive.",
+    "approval_extended_38_final": {
+      "report_sha256": "a680977b5a8ebc87c112ab879782b3318502ff411c1677b7e6935472959fbabf",
+      "tests": 38,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "success": true,
+      "files": 1,
+      "scope": "approvalContinuation.test.ts within the final full report"
+    },
+    "uncertain_approval_insert_before": {
+      "report_sha256": "d34e6b2a400229baebc087348a3d948879b0463827a3bd4615b4bc3cd668b365",
+      "tests": 38,
+      "passed": 0,
+      "failed": 2,
+      "skipped": 36,
+      "success": false,
+      "files": 1,
+      "selected_tests": 2,
+      "selected_passed": 0,
+      "selected_failed": 2,
+      "unselected_tests": 36
+    }
+  },
+  "targeted_final": {
+    "report_sha256": "64b71527e04321cc02ee227ad630dca8b8f14d14be82fa9f551333aaad4e6d2f",
+    "tests": 132,
+    "passed": 132,
+    "failed": 0,
+    "skipped": 0,
+    "success": true,
+    "files": 5,
+    "duration_seconds": 10.57,
+    "exit_code": 0,
+    "command": "NODE_OPTIONS=--max-old-space-size=1024 timeout --signal=TERM --kill-after=5s 120s ./node_modules/.bin/vitest run test/approvalParentGuard.test.ts test/approval.test.ts test/approvalContinuation.test.ts test/queueDeliveryIdentity.test.ts test/apiDeliveryIdentity.test.ts --maxWorkers=2 --reporter=default --reporter=json --outputFile=<report-path>",
+    "breakdown": {
+      "approval_parent_guard_reused_from_PR20": 48,
+      "existing_approval_suite_adapted": 15,
+      "approval_continuation_including_uncertain_insert": 38,
+      "delivery_and_migrations": 27,
+      "http_contract": 4
+    }
+  },
+  "full_backend_final": {
+    "report_sha256": "a680977b5a8ebc87c112ab879782b3318502ff411c1677b7e6935472959fbabf",
+    "tests": 729,
+    "passed": 729,
+    "failed": 0,
+    "skipped": 0,
+    "success": true,
+    "files": 56,
+    "duration_seconds": 56.11,
+    "process_duration_seconds": 56.64,
+    "exit_code": 0,
+    "command": "NODE_OPTIONS=--max-old-space-size=1024 timeout --signal=TERM --kill-after=5s 180s ./node_modules/.bin/vitest run --maxWorkers=2 --reporter=default --reporter=json --outputFile=<report-path>",
+    "additional_cases_since_baseline": 117,
+    "additional_cases_reused_from_PR20": 48,
+    "additional_cases_created_in_this_lot": 69,
+    "baseline_case_count": 612,
+    "existing_approval_suite_updated_to_new_claim_contract": true,
+    "test_file_count": 56,
+    "suites": [
+      {
+        "file": "karta/test/actionAgentsMock.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/agentsRegistry.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/apiDeliveryIdentity.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/apiSafety.test.ts",
+        "tests": 9,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/approval.test.ts",
+        "tests": 15,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/approvalContinuation.test.ts",
+        "tests": 38,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/approvalParentGuard.test.ts",
+        "tests": 48,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/approvalTracePrivacy.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/autonomy.test.ts",
+        "tests": 7,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chatEscalation.test.ts",
+        "tests": 49,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chatHistoryIsolation.test.ts",
+        "tests": 39,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chatRequestScope.test.ts",
+        "tests": 17,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefBrief.test.ts",
+        "tests": 9,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefControlPlane.test.ts",
+        "tests": 8,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefCostGovernor.test.ts",
+        "tests": 7,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefDriver.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefEvidenceAdapter.test.ts",
+        "tests": 20,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefEvidenceFreshness.test.ts",
+        "tests": 31,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefEvidenceGate.test.ts",
+        "tests": 17,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefGitState.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefHardening.test.ts",
+        "tests": 15,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefIndependentReview.test.ts",
+        "tests": 2,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefMission.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefProtocol.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefRuntimePolicy.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefSupervisor.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefVerificationGitIntegration.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/chefVerifier.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/connectPermissions.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/customAgent.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/customAuthorization.test.ts",
+        "tests": 38,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/customRegistry.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/cycleAdmissionPrivacy.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/generative.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/gmail-token-crypto.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/gmailTool.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/logger.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/loggerCycleFinalization.test.ts",
+        "tests": 6,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/loggerFinalization.test.ts",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/loop.test.ts",
+        "tests": 14,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/loopTracePrivacy.test.ts",
+        "tests": 22,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/mockClaude.test.ts",
+        "tests": 7,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/publicChatAdmission.test.ts",
+        "tests": 11,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/queueDeliveryIdentity.test.ts",
+        "tests": 27,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/real-claude.test.ts",
+        "tests": 4,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/runtimeHardening.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/sseConsumer.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/sseFraming.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/streamCompletionAudit.test.ts",
+        "tests": 23,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/streaming.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/stripeIsolation.test.ts",
+        "tests": 3,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/supabaseTool.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/toolResult.test.ts",
+        "tests": 16,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/walletRpcPermissions.test.ts",
+        "tests": 17,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/webAccessPlanTool.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "file": "karta/test/webCapabilityPlan.test.ts",
+        "tests": 47,
+        "status": "passed"
+      }
+    ]
+  },
+  "compilation": {
+    "karta_typecheck": {
+      "exit_code": 0,
+      "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8",
+      "scope": "Final source23 snapshot including reused PR20 parent guard test"
+    },
+    "karta_build": {
+      "exit_code": 0,
+      "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746",
+      "scope": "Final source23 snapshot including reused PR20 parent guard test"
+    },
+    "frontend_typecheck": {
+      "exit_code": 0,
+      "log_sha256": "4435cb4e136be051363db680b712f78db762f7cd10c55a335d75518724f28383"
+    },
+    "frontend_build": {
+      "exit_code": 0,
+      "log_sha256": "b60a6fe0f2de1fc4fdece5b58728d32117a7edc0b990f63bf272e55ed96d5271"
+    }
+  },
+  "frontend": {
+    "typecheck_exit_code": 0,
+    "build_exit_code": 0,
+    "eslint": {
+      "files": 4,
+      "errors": 0,
+      "warnings": 0,
+      "exit_code": 0
+    },
+    "status_contract": {
+      "executed": 1,
+      "passed": 1,
+      "source": "tests/quality/karta-ui.spec.ts; pure test executed by the UI reviewer"
+    },
+    "browser": {
+      "status": "BLOQUE_AVANT_PAGE",
+      "application_scenarios_executed": 0,
+      "application_scenarios_prepared": 13,
+      "runner_exit_code": 1,
+      "failure": "browserContext.newPage: Test timeout of 30000ms exceeded while setting up page",
+      "report_sha256": "877568af1b023696bb3845e3f06596a7fda745f871afaa4a1d1aa53e330f59ee",
+      "chromium": "Unavailable; official full and headless downloads returned invalid archives",
+      "retries_after_final_page_failure": 0
+    }
+  },
+  "resource_incidents": {
+    "initial_full_run": "Interrupted with exit130 during memory pressure after unrelated existing tests exceeded their ordinary timeouts; no PASS inferred",
+    "queue_sql_attempts": "Two targeted runner attempts ended with SIGKILL before assertions; all27 cases subsequently passed in targeted and full final runs",
+    "memory_observation": "Shared cgroup reached8GiB with OOM counters increasing. Other shared work was not interrupted. No test timeout was increased.",
+    "test_transport_fix": "The new approval receipt test now mocks the queue import, preventing an unintended localhost Redis connection during module loading. Final full run contains no ECONNREFUSED or unhandled-error marker."
+  },
+  "migration": {
+    "file": "karta/migrations/020_execution_fingerprints.sql",
+    "executed_in": "PGlite local database only",
+    "replay_and_format_cases": 9,
+    "status": "PASS",
+    "production_applied": false,
+    "rollout": "Stop/drain old workers; qualify and apply019 then020 once on the reviewed target (019 may already be present identically through PR20); start v2 workers and producers; then qualify API/UI. Do not run old and new workers together.",
+    "rollback": "Do not hand v2 queued jobs to an old worker. Preserve execution claims and reconcile the queue before resuming.",
+    "parent_guard_file": "karta/migrations/019_karta_approval_parent_guard.sql",
+    "parent_guard_sql_cases": 48,
+    "combined_019_and_020_executed_in": [
+      "approvalContinuation.test.ts",
+      "queueDeliveryIdentity.test.ts"
+    ],
+    "collision_resolution": "Renamed our new migration018 to020 after observing existing018 and019 in PR20. No020 path occurred in the20 frozen open PR heads examined; unseen local WIP and future branches are not covered."
+  },
+  "limitations": [
+    "No authenticated end-to-end deployment, native multi-connection PostgreSQL, Redis or real business provider validation",
+    "An action identity binds a request, not arbitrary semantically equivalent operations across distinct missions",
+    "Automatic continuation is intentionally suspended if other parent effects or earlier continuation ancestry cannot be proven",
+    "Distinct missions for the same user/agent are not globally serialized; PR7 fixed-TTL locking was not imported",
+    "Fingerprint/claim protection requires retained durable journals; deleting those receipts is not an idempotency-preserving operation",
+    "The frontend browser setup failed before the application page; compilation and pure status tests do not prove the 13 browser flows",
+    "The local main ref is absent; the meaningful static comparison is to the verified prior remote commit, not an integration certification against main",
+    "The two Mac bridge status endpoints returned MCP -32603 in this session; the real ONE checkout/runtime remains unverified",
+    "Full integration of PR20 brief lifecycle is not executed here. A reviewable virtual patch suspends approval continuation for pendingBriefKey agents before claiming a different brief; it does not invent missing ancestry or SQL transitions."
+  ],
+  "files_verified": [
+    {
+      "path": "karta/migrations/019_karta_approval_parent_guard.sql",
+      "sha256": "43d09f703d604a5eac3b10b68fede7367b9abb6eb904a469feb1c53ba4300849",
+      "git_blob": "fdb00f1d1842192715979727379245406efd76f8"
+    },
+    {
+      "path": "karta/migrations/020_execution_fingerprints.sql",
+      "sha256": "2c6a11b6565cea29e3714d15ffee13ee30d148e25efa9ec9a6b5006224d78d0c",
+      "git_blob": "98739dc2aff127cebf9dcb99a338c05e4d045195"
+    },
+    {
+      "path": "karta/src/api/server.ts",
+      "sha256": "f173dfa7051c02c34e31bc0b643bb8161f81bf746b5288fb44a501c79222c894",
+      "git_blob": "945a39e5ab5f20badba2cf6abeb06ddf442f23d3"
+    },
+    {
+      "path": "karta/src/engine/approval-continuation.ts",
+      "sha256": "dbd84fef7baa7d75d99cd6ce19a4b36abfa11c1a643e074554fa8fd4d4028dd3",
+      "git_blob": "164c406c5d51a0bb7a16720df43a4d9f7e8e437e"
+    },
+    {
+      "path": "karta/src/engine/logger.ts",
+      "sha256": "dca6ac1ea9c4d6ab8074533de959f88fd9cfbe1abc5aaad02a9032d8dd2ce0f8",
+      "git_blob": "995860e0ad12c8b7f9ddbd3f0218fa8111d8d8a6"
+    },
+    {
+      "path": "karta/src/engine/loop.ts",
+      "sha256": "493182e2b5188d3230415b0bbd172bcca102858ece8333e8ed72f2bb34183a1d",
+      "git_blob": "566764cd4fd9cc5f526420cfe585c50f135536a6"
+    },
+    {
+      "path": "karta/src/lib/canonical-json.ts",
+      "sha256": "089ba5d0f948363c6cf2a81ae20d2e2ffecd94967936a5427575b709e36c56a0",
+      "git_blob": "cf61a4e24505295a8b5c45bd1ecbce7900c1fc69"
+    },
+    {
+      "path": "karta/src/queue/delivery-guard.ts",
+      "sha256": "f810cdbd516f5c4b605e93d592d69733c3612d6f7b60a8d8f01c61c631ac13dd",
+      "git_blob": "e9b720beb8987cbb96ba1a02777567684be079cc"
+    },
+    {
+      "path": "karta/src/queue/delivery-identity.ts",
+      "sha256": "54eb725692ffbd88fbb4c9c209bb7463856b22e4d04be019b996f5ca9a929637",
+      "git_blob": "d3eb2eb9ce046e35966c3ec750a8149791ee8f97"
+    },
+    {
+      "path": "karta/src/queue/queues.ts",
+      "sha256": "b47107f2aad41b7cc9fb42be07ae88113c0b60b42e9ecd9b57fb34d504f0af05",
+      "git_blob": "3efa12c6e299ff888512f047d5521694b7839315"
+    },
+    {
+      "path": "karta/src/queue/worker.ts",
+      "sha256": "4d6ef6650ef21503ce2a244716e18b59e909dff1dab838af306f6da2637ac46f",
+      "git_blob": "2b324ff69bb7a787554852e67c9cf5423a268084"
+    },
+    {
+      "path": "karta/test/apiDeliveryIdentity.test.ts",
+      "sha256": "c849f885defe62383dbf1ec05b5d554c3ee8c5373d89d5c09171e442be4dbd91",
+      "git_blob": "dbae776c2cdff3865a613b103cf3e6f85cb0cfb5"
+    },
+    {
+      "path": "karta/test/approval.test.ts",
+      "sha256": "bb889694a23739838520ecd899723501ff22904b2f2c93d472121e2dc19911d7",
+      "git_blob": "7871f0b4140d4bf2a0f901277cb3d89305be8c8f"
+    },
+    {
+      "path": "karta/test/approvalContinuation.test.ts",
+      "sha256": "619b5008556979e2fc71cd9709b67c0aa072fe616a3abaf0b9c6b70a019fe26b",
+      "git_blob": "334c481da1aa15116d114df90feddc196bebd035"
+    },
+    {
+      "path": "karta/test/approvalParentGuard.test.ts",
+      "sha256": "d0acc521b4f15a9e24cc1709c3e691318266cf8767aed6797c51e9304b70e023",
+      "git_blob": "703474853ce627464341af85d2b89acf03ee84d1"
+    },
+    {
+      "path": "karta/test/queueDeliveryIdentity.test.ts",
+      "sha256": "dba0e39cbc54a9c6b7db8459afa93a1afd6f06e85f56af4180a7dca3acbd0a78",
+      "git_blob": "ce151e7d5a6bd21c6d38998a53d7ec7e485c5ac8"
+    },
+    {
+      "path": "src/components/onboarding/HireFirstEmployeeModal.tsx",
+      "sha256": "f97511541e21a46809f1cb72900c442b74127d45406cd6e4ce188e36e682d060",
+      "git_blob": "c16cfa15619f97380a7a70239f30f460ce6b08b0"
+    },
+    {
+      "path": "src/hooks/useKartaEmployees.ts",
+      "sha256": "f27c7c951b0a9e7ecb8fb6f07274f94199863dcf7b99d8a1adfa433ee4edb46c",
+      "git_blob": "d40e9f08a1daebff8bd183ed19d0a92dbfabe860"
+    },
+    {
+      "path": "src/integrations/supabase/types.ts",
+      "sha256": "daee3ad416d63dcac6a8260c7ba696434a32c230bbf8460ee1938e1b9b4a78c2",
+      "git_blob": "7986ffd2f30a63f43f2525b01d69b17d9ef3c54b"
+    },
+    {
+      "path": "src/lib/karta-run-status.ts",
+      "sha256": "51f722b9dcc64137c560e055f19de4a8f09ad38b233f0bba8723fe678f56f047",
+      "git_blob": "d32d9d480077b0906e4098c474a41180e4c0d619"
+    },
+    {
+      "path": "src/pages/MyEmployees.tsx",
+      "sha256": "e0ca49890a1d2bd266397cef3db49297c249d60e6e71c8d3cf56fea9a50e95d7",
+      "git_blob": "448bd468028363d9239d10162044ca649ff699b7"
+    },
+    {
+      "path": "tests/karta/onboarding.spec.ts",
+      "sha256": "ac0aa9cf820a481c8feb05511fbde39c04c9e88351d8242a1f2c582dd6b5b187",
+      "git_blob": "315e3103db62188d0d167d0d7e218fb679c818d1"
+    },
+    {
+      "path": "tests/quality/karta-ui.spec.ts",
+      "sha256": "7467e2f729263738c0795c55cf1b0d1dda026c089787542ce561bcf334255236",
+      "git_blob": "444a32d7de06c4aa11323f2294df39106305d7e7"
+    }
+  ],
+  "paid_model_or_business_provider_calls": false,
+  "production_deployment_performed": false,
+  "live_migrations_performed": false,
+  "parallel_work": {
+    "observed_at": "2026-11-10T02:37:26.253Z",
+    "open_pr_heads": [
+      {
+        "number": 20,
+        "sha": "d553ff2e784a82685d16f59727c55d5499d0db9e"
+      },
+      {
+        "number": 19,
+        "sha": "73be455cb94ea18159f8390ad1091d277e2f50f0"
+      },
+      {
+        "number": 18,
+        "sha": "8063016b84b3513af1e52efea79d58dbbaff5682"
+      },
+      {
+        "number": 17,
+        "sha": "39b9cff012514ca63078199bb672aca2d662e7c3"
+      },
+      {
+        "number": 16,
+        "sha": "ef9aa78312aa092fc2ad02d33aea4b27d6cca303"
+      },
+      {
+        "number": 15,
+        "sha": "e859a4235d6af4d0f07fb52eb9ade3734adfa5b5"
+      },
+      {
+        "number": 14,
+        "sha": "d003159bdf3216b155f747b0f8fa93b3a92e5b3a"
+      },
+      {
+        "number": 13,
+        "sha": "7658be81e937b33a0b5aa3dab6d7939857a8aca8"
+      },
+      {
+        "number": 12,
+        "sha": "87ea6753b91794b1aadab0d36418b82f2b83f3b0"
+      },
+      {
+        "number": 11,
+        "sha": "68a713c8e463373570ec5865a1b2fcfc781c5729"
+      },
+      {
+        "number": 10,
+        "sha": "b040af6dd7abe202a4dd7996f0ffad41c1b742bf"
+      },
+      {
+        "number": 9,
+        "sha": "ec2aafb8db1cdde377bedaa410e8d8d99df8da58"
+      },
+      {
+        "number": 8,
+        "sha": "edd93584949803979a287b699728e1168fc242d8"
+      },
+      {
+        "number": 7,
+        "sha": "caeff811a3ba75dd766cc02555ed196e3807663f"
+      },
+      {
+        "number": 6,
+        "sha": "6b71194f70eb2163bc89bde8a986fcd97cf5d651"
+      },
+      {
+        "number": 5,
+        "sha": "d48672fd6c0b9e058431095b4f9d0e41fd1fc67c"
+      },
+      {
+        "number": 4,
+        "sha": "878deec19db5959c832039d92313672d8a2bd9f6"
+      },
+      {
+        "number": 3,
+        "sha": "ca155cdc412d65b78146c3cccc8b44f62e0db5b5"
+      },
+      {
+        "number": 2,
+        "sha": "fd76a082874f3498b618b2543c44fa6d61bdfac7"
+      },
+      {
+        "number": 1,
+        "sha": "f18624e0a0072140946effc6827c588d3c152d4c"
+      }
+    ],
+    "pr20": {
+      "head": "d553ff2e784a82685d16f59727c55d5499d0db9e",
+      "tree": "4699ce084b1364932f6410ac0d91f3252e76497a",
+      "parents": [
+        "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+        "7658be81e937b33a0b5aa3dab6d7939857a8aca8"
+      ],
+      "changed_files_from_1daf": 27,
+      "changed_files_from_pr_base": 42,
+      "exact_reuse": {
+        "karta/migrations/019_karta_approval_parent_guard.sql": "fdb00f1d1842192715979727379245406efd76f8",
+        "karta/test/approvalParentGuard.test.ts": "703474853ce627464341af85d2b89acf03ee84d1"
+      },
+      "small_logic_reuse": "effectStarted = true before createPendingAction; proven by two failing-before regressions",
+      "not_imported": "Migration018, brief lifecycle, Jev integration and other PR20 files are not merged into this branch"
+    },
+    "virtual_brief_merge": {
+      "patch": "karta/test/evidence/aether-pr20-brief-integration.patch",
+      "patch_sha256": "004e44f89e2b637fd7b6e757b27ba8bca031e7852188343b0a78f3c2171247c5",
+      "contract": {
+        "status": "PROPOSAL_ONLY_NOT_APPLIED_NOT_EXECUTED",
+        "pr20Head": "d553ff2e784a82685d16f59727c55d5499d0db9e",
+        "pr20LoopBlob": "04c61b5b7c5de6a02c5321056c57d7e3218ab798",
+        "preserved": [
+          "PR20 brief acquisition/preview/arm/settle contract",
+          "fresh authorization and stop checks",
+          "PR20 effectStarted before pending-approval creation",
+          "new scoped delivery fingerprint passed to startRun",
+          "verified first-level approval continuation for agents without pendingBriefKey",
+          "exact canonical repeat guard and privacy policy"
+        ],
+        "explicitRestriction": "Automatic approval continuation for a definition with pendingBriefKey fails before brief acquisition and model dispatch, because PR20 has no verified transfer/ancestry contract for a partial approved brief. This is a proposed restrictive integration boundary, not a full implementation of continuing brief-driven missions.",
+        "futureJoinRequirement": "A separately reviewed SQL transition would need to bind the original brief_id, parent receipt, resolved action and new run; preserve the one-current-claim constraint; forbid acquiring unrelated memory; make closure settle that same brief; and keep first-generation/repeated-action guards. No such transition is included.",
+        "dependencies": [
+          "Our approval-continuation.ts and canonical-json.ts",
+          "Our logger/startRun executionFingerprint parameter, worker/delivery identity contract and migration020",
+          "PR20 AgentContextInput + pendingBriefKey + buildContext prepared argument",
+          "PR20 brief.ts, actionAgents.ts and removal of destructive takePendingBrief",
+          "PR20 migration018 for the optional brief runtime, and migration019 for approval admission"
+        ],
+        "sql019Then020StaticReview": {
+          "compatible": true,
+          "explanation": "019 replaces karta_claim_pending_action and its grants; 020 only adds nullable execution_fingerprint plus karta_runs_execution_fingerprint_format. It does not replace that RPC, alter pending actions, remove its closure/owner/tool/stop checks, or touch the baseline unique execution_key index. Existing rows with null fingerprint pass the new check.",
+          "dependsOn": "006_execution_claims.sql supplies execution_key; migration018 is not a dependency of either019 or020.",
+          "executionVerified": true,
+          "executionScope": "Subsequent root execution in delivery and continuation suites, included in the729/729 local PGlite campaign; no native multi-connection qualification"
+        },
+        "reusableTest": {
+          "path": "approvalParentGuard.test.ts",
+          "blobSha": "703474853ce627464341af85d2b89acf03ee84d1",
+          "imports": [
+            "vitest",
+            "node:fs/promises",
+            "@electric-sql/pglite"
+          ],
+          "migrations": [
+            "001_karta_core.sql",
+            "002_karta_global_kill_switch.sql",
+            "005_karta_pending_actions.sql",
+            "006_execution_claims.sql",
+            "019_karta_approval_parent_guard.sql"
+          ],
+          "noDependencyOn": [
+            "018_karta_brief_claims.sql",
+            "engine/loop.ts",
+            "brief.ts",
+            "provider credentials"
+          ],
+          "testCasesDefined": 48,
+          "executedInThisReview": false,
+          "subsequentRootExecution": "48/48 passed in combined targeted and full campaigns"
+        },
+        "baseKind": "CURRENT_REPOSITORY_LOOP_WITH_APPROVAL_INSERT_BARRIER",
+        "baseSha256": "493182e2b5188d3230415b0bbd172bcca102858ece8333e8ed72f2bb34183a1d",
+        "targetSha256": "ba160cb5080ffdee16867c5ce021afa39fce92da999c559f40b2f0b21aca9c7a",
+        "patchApplicability": "PASS_IN_TEMPORARY_COPY",
+        "runtimeStatus": "NON_TESTE",
+        "appliedToRepository": false,
+        "patchSha256": "004e44f89e2b637fd7b6e757b27ba8bca031e7852188343b0a78f3c2171247c5",
+        "unifiedContextLines": 0,
+        "requiredApplyFlag": "--unidiff-zero",
+        "patchCheckCommand": [
+          "git",
+          "apply",
+          "--check",
+          "--unidiff-zero",
+          "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-proposal.patch"
+        ],
+        "patchApplyCommand": [
+          "git",
+          "apply",
+          "--unidiff-zero",
+          "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-proposal.patch"
+        ]
+      },
+      "apply_check": {
+        "status": "PATCH_APPLICABILITY_PASS_PROPOSAL_NOT_APPLIED_TO_REPOSITORY",
+        "runtimeStatus": "NON_TESTE",
+        "basePath": "/workspace/scratch/2b4ee4b3ae54/aether2-iao/karta/src/engine/loop.ts",
+        "baseSnapshot": "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-base.ts",
+        "baseSha256": "493182e2b5188d3230415b0bbd172bcca102858ece8333e8ed72f2bb34183a1d",
+        "baseGitBlob": "566764cd4fd9cc5f526420cfe585c50f135536a6",
+        "targetPath": "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-proposal.ts",
+        "targetSha256": "ba160cb5080ffdee16867c5ce021afa39fce92da999c559f40b2f0b21aca9c7a",
+        "targetGitBlob": "0437c27317e58a7d44d9551c38850e5247686fa4",
+        "patchPath": "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-proposal.patch",
+        "patchSha256": "004e44f89e2b637fd7b6e757b27ba8bca031e7852188343b0a78f3c2171247c5",
+        "checkCommand": [
+          "git",
+          "apply",
+          "--check",
+          "--unidiff-zero",
+          "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-proposal.patch"
+        ],
+        "checkExitCode": 0,
+        "checkStdout": "",
+        "checkStderr": "",
+        "appliedInTemporaryCopyOnly": true,
+        "appliedCopySha256": "ba160cb5080ffdee16867c5ce021afa39fce92da999c559f40b2f0b21aca9c7a",
+        "temporaryCopyRemoved": true,
+        "repositorySourceUnchanged": true,
+        "existingApprovalInsertBarrierPreserved": true,
+        "unifiedContextLines": 0,
+        "requiredApplyFlag": "--unidiff-zero",
+        "applyCommand": [
+          "git",
+          "apply",
+          "--unidiff-zero",
+          "/workspace/scratch/2b4ee4b3ae54/aether3-notes/migration-review/loop.integration-proposal.patch"
+        ],
+        "applyExitCode": 0,
+        "patchTrailingWhitespaceLines": []
+      }
+    }
+  },
+  "gitnexus": {
+    "performedAt": "2026-11-10T02:49:13.761771+00:00",
+    "source23Tree": "52db384d5db9d599199709742a27402d0014e235",
+    "source23Count": 23,
+    "source23HashDifferences": [],
+    "frozenStaged25Tree": "cabac6d664820b25336637599cf4a6ae09af4d20",
+    "currentIndexTree": "cabac6d664820b25336637599cf4a6ae09af4d20",
+    "unchangedIndexTree": true,
+    "baselineLocalCommit": "ad94bf0cb4b2f8952f8015f5f171304fdcccb8a2",
+    "canonicalRemoteBaseline": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+    "head": "ad94bf0cb4b2f8952f8015f5f171304fdcccb8a2",
+    "trackedFilesChecked": 750,
+    "trackedFilesChanged": [],
+    "instructionFilesChecked": 12,
+    "instructionsIdentical": true,
+    "instructionHashes": {
+      ".claude/skills/business/SKILL.md": "c4f9c70dcaf164ef72147ee508e799d86b3c41b8169a0de23ab0b1b0baafef39",
+      ".claude/skills/design-code/SKILL.md": "0fb62b14d84ab2103e45e570a259448c444a13c60d72c574db83a0a72e2778d0",
+      ".claude/skills/gitnexus/gitnexus-cli/SKILL.md": "58f9f765306b285c661b86777e2097b3efb43dabe9e19d42f795e88faf9081a2",
+      ".claude/skills/gitnexus/gitnexus-debugging/SKILL.md": "d8090c85e2c8faffd4767fc2dcc52aeb3f3dab3dc7218bc96b29dacf53635d64",
+      ".claude/skills/gitnexus/gitnexus-exploring/SKILL.md": "21b18eee1f679efff654bf45f9dc32a495c81c014d210ac7e778c58a2a204dbd",
+      ".claude/skills/gitnexus/gitnexus-guide/SKILL.md": "746d057790de5b034d19d603dfa77eb9b596407918025481b4b29214efee2581",
+      ".claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md": "09e529505da155532059a3656557811f99bafff0f05c8f9e6e47bb96edc340d3",
+      ".claude/skills/gitnexus/gitnexus-refactoring/SKILL.md": "544841cf90c9ebe92a2f3018b034593c2bfd8617f968412d3599a22725e3c73e",
+      ".claude/skills/purama-system/SKILL.md": "2ec78c484699d21e5905f5e2644a38b0c935696eb3aad3cc665d99afff3e77d0",
+      ".claude/skills/spiritual/SKILL.md": "3fc0c279088c2b5402dbee169ecc88f67e8d302fe0a9ac6f79040f9b46979cab",
+      ".claude/skills/wealth-engine/SKILL.md": "d923ea88c4fc23b1b4c934fb9a87a7ac453f15412c1090b84ebb56f212869665",
+      "AGENTS.md": "e5b415ac8b2c643075bb9832cf211d9fc8952cc069b4a57265173a0dd2234e56"
+    },
+    "stagedCount": 25,
+    "unstagedPaths": [],
+    "scopeGate": "PASS",
+    "gateSummary": {
+      "changed_count": 351,
+      "affected_count": 88,
+      "changed_files": 25,
+      "risk_level": "critical"
+    },
+    "mainGate": {
+      "status": "BLOQUÉ",
+      "error": "Git diff failed: Command failed: git -c core.quotePath=false diff --ignore-cr-at-eol --no-ext-diff --color=never --src-prefix=a/ --dst-prefix=b/ main -U0\nfatal: ambiguous argument 'main': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n",
+      "refCreated": false,
+      "downloadAttempted": false
+    },
+    "graphStats": {
+      "nodes": 9051,
+      "edges": 21383,
+      "clusters": 298,
+      "flows": 528
+    },
+    "processGenerationTruncations": [
+      {
+        "truncated": true,
+        "entryPointCandidatesDropped": 746,
+        "entryPointsUnexplored": 0,
+        "walksCutByBudget": 14,
+        "tracesDepthCapped": 0,
+        "calleesDropped": 1243,
+        "processesDropped": 0
+      }
+    ],
+    "changedStepNameCounts": {
+      "query": 75,
+      "handleRequest": 8,
+      "startRun": 3,
+      "encode": 1,
+      "canonicalJson": 1,
+      "loadApprovalContinuation": 1,
+      "HireFirstEmployeeModal": 1,
+      "usePollLatestRun": 1,
+      "MyEmployees": 1
+    },
+    "stagedFilesWithoutSymbolCoverage": [
+      "karta/migrations/019_karta_approval_parent_guard.sql",
+      "karta/migrations/020_execution_fingerprints.sql",
+      "karta/test/approval.test.ts",
+      "karta/test/evidence/aether-execution-status-20261110.json",
+      "tests/karta/onboarding.spec.ts"
+    ],
+    "provisionalDocs": [
+      "IAO-EVALUATION-PROTOCOL.md",
+      "karta/test/evidence/aether-execution-status-20261110.json"
+    ],
+    "commitCreated": false,
+    "pushPerformed": false,
+    "mcpClosed": true,
+    "scopeNote": "Frozen source23 plus two provisional documents; final documentation and a proposal-only .patch are applied afterward. No runtime source changed after this gate. Final publication tree is checked separately to avoid a self-referential tree hash."
+  }
+}

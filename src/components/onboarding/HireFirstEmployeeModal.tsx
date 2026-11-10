@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, CheckCircle2, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, Loader2, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -9,12 +9,14 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { getKartaRunStatus } from '@/lib/karta-run-status';
 import {
   useEmployeeAgents,
   useUpdateKartaAgentState,
   useTriggerKartaAgent,
   usePollLatestRun,
   type ActionAgentSlug,
+  type KartaRunTracking,
 } from '@/hooks/useKartaEmployees';
 
 // Les 4 employés les plus simples à essayer : 0 connexion externe requise (Gmail OAuth...),
@@ -42,19 +44,22 @@ export function HireFirstEmployeeModal({
 
   const [step, setStep] = useState<Step>('pick');
   const [selected, setSelected] = useState<ActionAgentSlug | null>(null);
-  const [sinceIso, setSinceIso] = useState<string | null>(null);
+  const [tracking, setTracking] = useState<KartaRunTracking | null>(null);
+  const [trackingUnavailable, setTrackingUnavailable] = useState(false);
   const [triggerError, setTriggerError] = useState<string | null>(null);
   const [pollTimedOut, setPollTimedOut] = useState(false);
+  const attemptGeneration = useRef(0);
 
-  // `selected`/`sinceIso` doivent rester stables une fois posés (pas de gating sur `step`) : les
-  // faire dépendre de `step` change la queryKey de usePollLatestRun au moment précis où l'on passe
-  // à 'result', ce qui réinitialise `run.data` à undefined et laisse la modale vide (bug trouvé par
-  // le test Playwright réel du 2026-07-27 — cf tests/karta/onboarding.spec.ts).
-  const run = usePollLatestRun(selected, sinceIso);
+  // Keep the request identity stable when showing its result, including when polling stops.
+  // Clearing the key on the result step would also clear run.data and leave the modal empty.
+  const run = usePollLatestRun(selected, tracking, open && !pollTimedOut && !trackingUnavailable);
+  const runStatus = getKartaRunStatus(run.data);
 
   useEffect(() => {
-    if (run.data && step === 'working') setStep('result');
-  }, [run.data, step]);
+    if (run.data && step === 'working' && (runStatus.phase === 'complete' || runStatus.phase === 'approval')) {
+      setStep('result');
+    }
+  }, [run.data, runStatus.phase, step]);
 
   useEffect(() => {
     if (step !== 'working') return;
@@ -68,13 +73,21 @@ export function HireFirstEmployeeModal({
 
   const selectedAgent = agents.find((a) => a.slug === selected);
 
-  function reset() {
+  const reset = useCallback(() => {
+    attemptGeneration.current += 1;
     setStep('pick');
     setSelected(null);
-    setSinceIso(null);
+    setTracking(null);
+    setTrackingUnavailable(false);
     setTriggerError(null);
     setPollTimedOut(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    if (!open) reset();
+  }, [open, reset]);
+
+  useEffect(() => () => { attemptGeneration.current += 1; }, []);
 
   function handleClose(next: boolean) {
     if (!next) reset();
@@ -83,23 +96,40 @@ export function HireFirstEmployeeModal({
 
   async function handleHire() {
     if (!selected) return;
+    const generation = ++attemptGeneration.current;
+    const attemptId = crypto.randomUUID();
+    const agentType = selected;
     setTriggerError(null);
+    setTracking(null);
+    setTrackingUnavailable(false);
+    setPollTimedOut(false);
     setStep('working');
 
     try {
       await updateState.mutateAsync({
-        agentType: selected,
+        agentType,
         patch: { is_enabled: true, autonomy_level: 1, simulation_mode: true },
       });
+      if (generation !== attemptGeneration.current) return;
 
-      const now = new Date().toISOString();
-      setSinceIso(now);
-      await trigger.mutateAsync(selected);
+      const queued = await trigger.mutateAsync(agentType);
+      if (generation !== attemptGeneration.current) return;
+      if (queued.executionKey) {
+        setTracking({ attemptId, executionKey: queued.executionKey });
+      } else {
+        setTrackingUnavailable(true);
+      }
     } catch (e) {
+      if (generation !== attemptGeneration.current) return;
       setTriggerError(e instanceof Error ? e.message : 'Impossible de démarrer ton employé.');
       setStep('confirm');
     }
   }
+
+  const needsFollowUp = trackingUnavailable || pollTimedOut || run.isError
+    || (!!run.data && runStatus.phase === 'unknown');
+  const WorkingIcon = needsFollowUp ? AlertTriangle : (run.data ? runStatus.icon : Loader2);
+  const ResultIcon = runStatus.icon;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -111,7 +141,7 @@ export function HireFirstEmployeeModal({
                 <Sparkles className="w-5 h-5 text-accent-cyan" /> Embauche ton premier employé IA
               </DialogTitle>
               <DialogDescription>
-                Choisis-en un pour commencer. Il travaille en 2 minutes, sans rien connecter.
+                Choisis un employé pour essayer une première tâche en simulation.
               </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-2 gap-3 mt-2">
@@ -145,8 +175,8 @@ export function HireFirstEmployeeModal({
               <div className="flex items-start gap-2 p-3 rounded-lg bg-accent-cyan/10 border border-accent-cyan/20">
                 <ShieldCheck className="w-4 h-4 text-accent-cyan flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-muted-foreground">
-                  Il te <strong className="text-foreground">propose</strong> ses actions, tu valides toujours avant
-                  qu'il fasse quoi que ce soit — 100% sécurisé, désactivable à tout moment.
+                  La première tâche est une <strong className="text-foreground">simulation</strong>. Tu peux
+                  examiner les propositions avant d’activer les actions réelles et arrêter l’employé à tout moment.
                 </p>
               </div>
               {triggerError && <p className="text-xs text-destructive">{triggerError}</p>}
@@ -167,53 +197,54 @@ export function HireFirstEmployeeModal({
           </>
         )}
 
-        {step === 'working' && selectedAgent && !pollTimedOut && (
-          <div className="flex flex-col items-center text-center py-8 gap-4">
-            <Loader2 className="w-10 h-10 text-accent-cyan animate-spin" />
-            <div>
-              <p className="font-semibold text-foreground">{selectedAgent.name} travaille…</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Première tâche en cours sur tes vraies données. Quelques secondes.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {step === 'working' && selectedAgent && pollTimedOut && (
-          <div className="flex flex-col items-center text-center py-8 gap-4">
-            <CheckCircle2 className="w-10 h-10 text-accent-emerald" />
-            <div>
-              <p className="font-semibold text-foreground">C'est parti — {selectedAgent.name} est embauché</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Sa première tâche prend un peu plus de temps que prévu. Retrouve le résultat dans
-                ta timeline dès qu'il a terminé.
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                handleClose(false);
-                navigate('/dashboard/employees');
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-accent-cyan text-background font-semibold text-sm hover:opacity-90 transition-opacity"
-            >
-              Voir mon équipe <ArrowRight className="w-4 h-4" />
-            </button>
+        {step === 'working' && selectedAgent && (
+          <div role="status" className="flex flex-col items-center text-center py-8 gap-4">
+            <WorkingIcon className={`w-10 h-10 ${needsFollowUp ? 'text-yellow-500' : 'text-accent-cyan animate-spin'}`} />
+            <DialogHeader className="text-center">
+              <DialogTitle className="text-base">
+                {trackingUnavailable ? 'Suivi de la tâche indisponible'
+                  : run.isError ? 'Impossible de vérifier le résultat'
+                    : pollTimedOut ? 'La tâche prend plus de temps que prévu'
+                      : run.data ? `${selectedAgent.name} ${runStatus.title}`
+                        : tracking ? `${selectedAgent.name} va démarrer…` : `Démarrage de ${selectedAgent.name}…`}
+              </DialogTitle>
+              <DialogDescription>
+                {trackingUnavailable || run.isError
+                  ? 'Le résultat n’est pas confirmé. Consulte l’activité avant de lancer une autre tâche.'
+                  : pollTimedOut ? 'L’attente est terminée ici. Consulte l’activité pour connaître le résultat avant de relancer la tâche.'
+                    : run.data ? runStatus.description : 'La première simulation est en préparation.'}
+              </DialogDescription>
+            </DialogHeader>
+            {needsFollowUp && (
+              <button
+                onClick={() => {
+                  handleClose(false);
+                  navigate('/dashboard/employees?tab=activite');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-accent-cyan text-background font-semibold text-sm hover:opacity-90 transition-opacity"
+              >
+                Consulter l’activité <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
         )}
 
         {step === 'result' && selectedAgent && run.data && (
           <>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-accent-emerald">
-                <CheckCircle2 className="w-5 h-5" /> {selectedAgent.name} a terminé sa 1ère tâche
+              <DialogTitle className={`flex items-center gap-2 ${runStatus.className}`}>
+                <ResultIcon className="w-5 h-5" /> {selectedAgent.name} {runStatus.title}
               </DialogTitle>
+              <DialogDescription>{runStatus.label}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3 mt-2">
               <div className="p-3 rounded-lg bg-secondary/50 border border-border">
-                <p className="text-sm text-foreground">{run.data.decision || run.data.result_summary}</p>
+                <p className="text-sm text-foreground">
+                  {run.data.error_message || run.data.result_summary || run.data.decision || runStatus.description}
+                </p>
                 {run.data.claude_mock && (
                   <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500 mt-2">
-                    [MOCK] TODO_LIVE_TEST — sera remplacé par une vraie décision Claude au lancement
+                    Mode démonstration
                   </Badge>
                 )}
               </div>
@@ -224,7 +255,7 @@ export function HireFirstEmployeeModal({
                 }}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-accent-cyan text-background font-semibold text-sm hover:opacity-90 transition-opacity"
               >
-                Voir mon équipe <ArrowRight className="w-4 h-4" />
+                {runStatus.phase === 'approval' ? 'Voir les actions à valider' : 'Voir mon équipe'} <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </>

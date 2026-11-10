@@ -5,6 +5,7 @@ import { startRun, type RunLogHandle } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
 import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js";
+import { APPROVAL_CONTINUATION_GUIDANCE, ApprovalContinuationError, loadApprovalContinuation } from "./approval-continuation.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
@@ -12,7 +13,8 @@ import { minimizeRunTrace, PRIVATE_TRACE, shouldMinimizeToolTrace, summarizeTool
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
-  userId: string, definition: AgentDefinition, trigger: AgentTrigger, executionKey?: string
+  userId: string, definition: AgentDefinition, trigger: AgentTrigger,
+  executionKey?: string, executionFingerprint?: string
 ): Promise<AgentRunResult> {
   const cycleStartedAt = new Date().toISOString();
 
@@ -29,14 +31,14 @@ export async function runAgentCycle(
       return { status: "skipped", decision: runnable.reason, toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
     }
     mode = state.simulationMode ? "simulation" : "live";
-    run = await startRun(userId, definition.type, trigger, mode, executionKey);
+    run = await startRun(userId, definition.type, trigger, mode, executionKey, executionFingerprint);
   } catch {
     // Admission errors remain thrown for the existing queue retry contract.
     // Do not pass raw database/provider content to callers or worker logs.
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
@@ -47,17 +49,28 @@ export async function runAgentCycle(
   let briefArmed = false;
 
   try {
+    const continuation = await loadApprovalContinuation(userId, definition.type, trigger);
+    // A resolved action does not transfer its original brief to this new run.
+    // Preserve the receipt for reconciliation instead of consuming another mission.
+    if (continuation && definition.pendingBriefKey !== undefined) throw new ApprovalContinuationError();
+    const expectedBriefId = requestedBriefId(trigger);
+    if (expectedBriefId && definition.pendingBriefKey === undefined) {
+      throw new Error("Cet agent ne reçoit pas de mission par ce parcours");
+    }
     const brief = definition.pendingBriefKey === undefined ? undefined : await (
       mode === "simulation" ? peekPendingBrief : claimPendingBrief
-    )({ userId, agentType: definition.type, runId: run.runId, key: definition.pendingBriefKey });
+    )({ userId, agentType: definition.type, runId: run.runId, key: definition.pendingBriefKey,
+      ...(expectedBriefId ? { expectedBriefId } : {}) });
     const noBrief = definition.pendingBriefKey !== undefined && brief === null;
-    const context = noBrief ? {} : brief
+    const baseContext = noBrief ? {} : brief
       ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
       : await definition.buildContext(userId, trigger);
+    const context = continuation ? { ...baseContext, approvalResume: continuation.context } : baseContext;
     const decision = noBrief ? {
       summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
     } : await getClaudeClient().decide({
-      systemPrompt: definition.systemPrompt, context, tools: definition.tools, agentType: definition.type,
+      systemPrompt: definition.systemPrompt + (continuation ? APPROVAL_CONTINUATION_GUIDANCE : ""),
+      context, tools: definition.tools, agentType: definition.type,
     });
     // One private/unknown call protects the entire decision, including earlier
     // and deferred calls where the model could repeat the same private content.
@@ -131,6 +144,12 @@ export async function runAgentCycle(
         failed = true;
         for (const skipped of decision.toolCalls.slice(index + 1)) toolsUsed.push(
           traceRecord(skipped, "Non exécutée après une validation de paramètres échouée", "skipped"));
+        break;
+      }
+
+      if (continuation?.repeatsResolvedAction(call.tool, call.params)) {
+        cancelled = true;
+        skipRemaining("Action déjà résolue : aucune nouvelle exécution ni approbation");
         break;
       }
 
@@ -218,13 +237,15 @@ export async function runAgentCycle(
       console.error("[loop] suivi secondaire indisponible ; résultat final conservé");
       return finalizedOutcome;
     }
-    const outcome: AgentRunResult = minimizeRunTrace({
+    let outcome: AgentRunResult = minimizeRunTrace({
       status: "error", decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed),
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
       // A durable execution key is already claimed. No automatic replay of it,
       // even when logging fails after a completed external action.
-      retryable: !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
+      retryable: !(error instanceof ApprovalContinuationError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
+    // This fixed server-owned explanation is safe even for private continuations.
+    if (error instanceof ApprovalContinuationError) outcome = { ...outcome, errorMessage: error.message };
     if (!completionAttempted) {
       await run.finish(outcome).catch(() => {
         // A durable brief can only become available in the confirmed closing
@@ -238,6 +259,16 @@ export async function runAgentCycle(
     await recordRunOutcome(userId, definition.type, "error", cycleStartedAt).catch(() => undefined);
     return outcome;
   }
+}
+
+function requestedBriefId(trigger: AgentTrigger): string | undefined {
+  if (trigger.source !== "brief-api") return undefined;
+  const id = trigger.payload?.submissionId;
+  if (trigger.type !== "manual" || typeof id !== "string"
+    || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    throw new Error("Identité de mission non vérifiable");
+  }
+  return id;
 }
 
 function summarizeToolsUsed(tools: ToolCallRecord[]): string {
