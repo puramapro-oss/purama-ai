@@ -17,13 +17,19 @@ export interface ChefRuntimeTask {
   allowedPaths: string[];
 }
 
+export interface ChefEvidenceClaim {
+  workerId: string;
+  fencingToken: number;
+  attempt: number;
+}
+
 export interface ChefControlPlane {
   housekeeping?(missionId: string): Promise<void>;
   heartbeat(input: { workerId: string; provider: ChefDriverProvider; model?: string; state: "idle" | "claimed" | "running" | "verifying" | "blocked" | "failed"; taskId?: string }): Promise<void>;
   claimNext(input: { missionId: string; workerId: string; provider: ChefDriverProvider; leaseSeconds: number }): Promise<ChefRuntimeTask | null>;
   renewLease(input: { taskId: string; workerId: string; fencingToken: number; leaseSeconds: number }): Promise<boolean>;
   transition(input: { taskId: string; workerId: string; fencingToken: number; target: "running" | "verifying" | "verified_done" | "retryable" | "blocked_human" | "blocked_external" | "failed"; error?: string; outputSha?: string }): Promise<boolean>;
-  addEvidence(taskId: string, evidence: ChefVerificationEvidence): Promise<void>;
+  addEvidence(taskId: string, evidence: ChefVerificationEvidence, claim: ChefEvidenceClaim): Promise<boolean>;
   recordUsage(input: { eventKey: string; missionId: string; taskId: string; workerId: string; provider: ChefDriverProvider; model?: string; inputTokens: number; outputTokens: number; cachedInputTokens: number; costMicros: number }): Promise<void>;
   tryFinishMission(missionId: string): Promise<boolean>;
 }
@@ -84,6 +90,11 @@ export async function runChefWorkerCycle(
     leaseSeconds,
   });
   if (!task) return { state: "idle" };
+  const evidenceClaim = Object.freeze({
+    workerId: options.workerId,
+    fencingToken: task.fencingToken,
+    attempt: task.attempt,
+  });
 
   if (task.briefHash.length !== 64) {
     await control.transition({
@@ -259,16 +270,16 @@ export async function runChefWorkerCycle(
       return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
     }
 
+    let gitEvidence: ChefVerificationEvidence | undefined;
     if (task.accessMode === "write" && response.outputSha) {
       try {
-        const gitEvidence = await verifyCommittedGitState({
+        gitEvidence = await verifyCommittedGitState({
           cwd: task.cwd,
           expectedHeadSha: response.outputSha,
           expectedBranch: task.branch,
           baseSha: executionBaseSha,
           allowedPaths: task.allowedPaths,
         });
-        await control.addEvidence(task.id, gitEvidence);
       } catch (error) {
         const message = error instanceof Error ? error.message : "État Git invalide";
         stopRenewal();
@@ -304,7 +315,36 @@ export async function runChefWorkerCycle(
       return ok ? { state: "retryable", taskId: task.id, error: message } : { state: "lost_lease", taskId: task.id, error: message };
     }
 
-    for (const evidence of verification.evidence) await control.addEvidence(task.id, evidence);
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
+
+    // Observe Git again after the checks. This detects a changed final HEAD/worktree;
+    // it is not a claim that commands executed inside an immutable snapshot.
+    if (task.accessMode === "write" && response.outputSha) {
+      try {
+        gitEvidence = await verifyCommittedGitState({
+          cwd: task.cwd,
+          expectedHeadSha: response.outputSha,
+          expectedBranch: task.branch,
+          baseSha: executionBaseSha,
+          allowedPaths: task.allowedPaths,
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "État Git modifié pendant la vérification";
+        stopRenewal();
+        const ok = await control.transition({
+          taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+          target: "retryable", error: message.slice(0, 10_000),
+        });
+        return ok ? { state: "retryable", taskId: task.id, error: message } : { state: "lost_lease", taskId: task.id, error: message };
+      }
+    }
+
+    for (const evidence of [...(gitEvidence ? [gitEvidence] : []), ...verification.evidence]) {
+      if (lostLease || !await control.addEvidence(task.id, evidence, evidenceClaim)) {
+        loseLease();
+        return { state: "lost_lease", taskId: task.id, error: "Claim périmé lors de l'enregistrement des preuves" };
+      }
+    }
 
     if (!verification.ok) {
       stopRenewal();

@@ -42,7 +42,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - id: install
+        run: npm ci
+      - run: npm run test:dependencies
       - run: npm run build
-      - run: npx tsc --noEmit
-      - run: npm audit --audit-level=high --omit=dev
+      - run: npm run typecheck:app
+      - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm audit --audit-level=high --omit=dev

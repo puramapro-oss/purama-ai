@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { supabase } from "../db/supabase.js";
 import type { ChefDriverProvider } from "./driver.js";
-import type { ChefControlPlane, ChefRuntimeTask } from "./supervisor.js";
-import type { ChefVerificationEvidence } from "./verifier.js";
+import type { ChefControlPlane, ChefEvidenceClaim, ChefRuntimeTask } from "./supervisor.js";
+import { normalizeChefRequirementKeys, type ChefVerificationEvidence } from "./verifier.js";
 
 export interface SupabaseChefControlPlaneOptions {
   repo: string;
@@ -176,36 +176,76 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     return result.data === true;
   }
 
-  async addEvidence(taskId: string, evidence: ChefVerificationEvidence): Promise<void> {
-    const links = await supabase
-      .from("chef_task_requirements")
-      .select("requirement_id")
-      .eq("task_id", taskId);
-    assertRpc(links.error, "chef_task_requirements");
+  async addEvidence(taskId: string, evidence: ChefVerificationEvidence, claim: ChefEvidenceClaim): Promise<boolean> {
+    if (!claim || typeof claim.workerId !== "string" || claim.workerId.trim().length === 0) {
+      throw new Error("Claim de preuve CHEF invalide");
+    }
+    const generation = {
+      worker_id: claim.workerId,
+      fencing_token: safeInt(claim.fencingToken, "fencingToken"),
+      attempt: safeInt(claim.attempt, "attempt"),
+    };
+    if (generation.fencing_token === 0 || generation.attempt === 0) throw new Error("Génération de preuve CHEF invalide");
+    const requirementKeys = normalizeChefRequirementKeys(evidence.requirementKeys);
+    const requirementIds: string[] = [];
+    if (requirementKeys.length > 0) {
+      const links = await supabase
+        .from("chef_task_requirements")
+        .select("requirement_id, requirement:chef_requirements!inner(requirement_key)")
+        .eq("task_id", taskId);
+      assertRpc(links.error, "chef_task_requirements");
 
-    const requirementIds = (links.data ?? [])
-      .map((row) => row.requirement_id)
-      .filter((value): value is string => typeof value === "string");
+      const linkedByKey = new Map<string, string>();
+      for (const row of links.data ?? []) {
+        const requirement: unknown = row.requirement;
+        if (!requirement || typeof requirement !== "object" || Array.isArray(requirement)) {
+          throw new Error("Réponse exigences CHEF invalide");
+        }
+        const key = (requirement as Record<string, unknown>).requirement_key;
+        if (typeof key !== "string" || typeof row.requirement_id !== "string") {
+          throw new Error("Réponse exigences CHEF invalide");
+        }
+        if (linkedByKey.has(key) && linkedByKey.get(key) !== row.requirement_id) {
+          throw new Error(`Clé d'exigence ambiguë: ${key}`);
+        }
+        linkedByKey.set(key, row.requirement_id);
+      }
+      for (const key of requirementKeys) {
+        const id = linkedByKey.get(key);
+        if (!id) throw new Error(`Exigence non liée à la tâche: ${key}`);
+        if (evidence.payload.ok === true) requirementIds.push(id);
+      }
+    }
+
+    // Reserved metadata is derived here, not trusted from an evidence payload.
+    // Legacy fan-out rows have no scopeVersion and cannot satisfy the SQL gate.
+    const payload = { ...evidence.payload, scopeVersion: 1, requirementKeys };
 
     const rows = [
       {
+        ...generation,
         task_id: taskId,
         requirement_id: null,
         kind: evidence.kind,
         sha256: evidence.sha256,
-        payload: evidence.payload,
+        payload,
       },
       ...requirementIds.map((requirementId) => ({
+        ...generation,
         task_id: taskId,
         requirement_id: requirementId,
         kind: evidence.kind,
         sha256: evidence.sha256,
-        payload: evidence.payload,
+        payload,
       })),
     ];
 
     const result = await supabase.from("chef_evidence").insert(rows);
+    // The INSERT trigger checks the claim while holding the task row lock.
+    // Never refresh and restamp a stale worker's evidence with a new generation.
+    if (result.error?.code === "PCE01") return false;
     assertRpc(result.error, "chef_evidence");
+    return true;
   }
 
   async recordUsage(input: {
