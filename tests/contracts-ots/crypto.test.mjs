@@ -18,7 +18,10 @@ const library = {
   Notary: require('opentimestamps/src/notary.js'),
 };
 const source = readFileSync(new URL('../../src/lib/ots-core.ts', import.meta.url), 'utf8');
-const emitted = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
+const compile = text => ts.transpileModule(text, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
+const deadline = compile(readFileSync(new URL('../../src/lib/request-deadline.ts', import.meta.url), 'utf8'));
+const deadlineUrl = `data:text/javascript;base64,${Buffer.from(deadline).toString('base64')}`;
+const emitted = compile(source).replace('"./request-deadline.ts"', JSON.stringify(deadlineUrl));
 const core = await import(`data:text/javascript;base64,${Buffer.from(emitted).toString('base64')}`);
 const client = core.createOtsClient(library);
 const fixtures = JSON.parse(readFileSync(new URL('./upstream-fixtures.json', import.meta.url), 'utf8')).fixtures;

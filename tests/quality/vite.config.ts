@@ -5,7 +5,7 @@ import { qualityHost, qualityPort } from './quality-environment';
 
 export default defineConfig(env => {
   const config = mergeConfig(applicationConfig(env), {
-    cacheDir: "node_modules/.vite-quality",
+    cacheDir: fileURLToPath(new URL('./.cache/vite', import.meta.url)),
     resolve: { dedupe: ["react", "react-dom"] },
     define: {
       'import.meta.env.VITE_SUPABASE_URL': JSON.stringify('https://supabase.example.invalid'),

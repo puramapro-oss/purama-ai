@@ -26,7 +26,7 @@ const docusealToken = 'test-docuseal-never-live';
 const docusealOrigin = 'https://docuseal.example.invalid';
 const defaultPdfUrl = `${docusealOrigin}/signed.pdf`;
 const foreignPdfUrl = 'https://files.example.invalid/signed.pdf';
-const otsCore = fileURLToPath(new URL('../src/lib/ots-core.ts', import.meta.url));
+const portableFiles = new Set(['ots-core.ts', 'request-deadline.ts'].map(file => fileURLToPath(new URL(`../src/lib/${file}`, import.meta.url))));
 
 for (const authorization of [null, 'Bearer wrong', `Bearer ${webhookSecret}x`, `Bearer ${webhookSecret.slice(0, -1)}x`]) {
   test(`unauthorized webhook never reads body: ${authorization}`, async () => {
@@ -272,7 +272,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       }, { context });
     }
     const file = resolve(dirname(parent.identifier), specifier);
-    assert.ok(specifier.startsWith('.') && (file.startsWith(functionsRoot) || file === otsCore), `Unexpected import: ${specifier}`);
+    assert.ok(specifier.startsWith('.') && (file.startsWith(functionsRoot) || portableFiles.has(file)), `Unexpected import: ${specifier}`);
     return localModule(file);
   });
   await module.evaluate();
@@ -765,4 +765,38 @@ test('PDF bounds: an expired rejected transport reports the deadline before a de
   assert.equal(response.status, 504);
   noPdfEffects(h);
   assert.doesNotMatch(await response.text(), /private-/);
+});
+
+test('PDF bounds: exactly 64 000 metadata bytes remain valid under the retained cap', async () => {
+  const json = JSON.stringify({ id: 42, combined_document_url: defaultPdfUrl });
+  const metadata = json + ' '.repeat(metadataByteLimit - new TextEncoder().encode(json).length);
+  const h = await harness({ documentsFetch: () => new Response(metadata, {
+    headers: { 'content-length': String(metadataByteLimit) },
+  }) });
+  const response = await h.handler(request(serviceKey));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).ok, true);
+  assert.equal(h.calls.docs.length, 1);
+  assert.equal(h.calls.pdf.length, 1);
+});
+
+test('PDF bounds: malformed metadata UTF-8 prevents the PDF request and every proof effect', async () => {
+  const prefix = new TextEncoder().encode(`{"id":42,"combined_document_url":"${defaultPdfUrl}","note":"`);
+  const metadata = new Uint8Array([...prefix, 255, 34, 125]);
+  const h = await harness({ documentsFetch: () => new Response(metadata) });
+  assert.equal((await h.handler(request(serviceKey))).status, 502);
+  assert.equal(h.calls.docs.length, 1);
+  assert.equal(h.calls.pdf.length, 0);
+  noPdfEffects(h);
+});
+
+test('PDF bounds: ownership changed during retrieval prevents hashing, stamping and persistence', async () => {
+  let h;
+  h = await harness({ pdfFetch: () => {
+    h.contract.user_id = 'new-contract-owner';
+    return new Response('%PDF-1.7 synthetic signed document');
+  } });
+  assert.equal((await h.handler(request(serviceKey))).status, 409);
+  assert.equal(h.calls.pdf.length, 1);
+  noPdfEffects(h);
 });

@@ -73,7 +73,7 @@ async function library({ allCalendarsFail = false, withWebCrypto = true, withBuf
       return new vm.SyntheticModule(['default'], function () { this.setExport('default', value); }, { context });
     }
     assert.ok(specifier.startsWith('.'));
-    return load(resolve(dirname(parent.identifier), `${specifier}.ts`));
+    return load(resolve(dirname(parent.identifier), /\.[cm]?[jt]s$/.test(specifier) ? specifier : `${specifier}.ts`));
   });
   await entry.evaluate();
   return { contracts: entry.namespace, ots: cache.get(resolve(libRoot, 'opentimestamps.ts')).namespace };

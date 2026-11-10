@@ -40,7 +40,7 @@ async function prepare(page: Page, subscription: unknown = activeSubscription, a
       }));
     }
   }, { authenticated, user });
-  await page.route('**/*', async route => {
+  await page.context().route('**/*', async route => {
     const request = route.request();
     const url = new URL(request.url());
     if (url.origin === origin) return route.continue();
@@ -52,6 +52,7 @@ async function prepare(page: Page, subscription: unknown = activeSubscription, a
     if (url.pathname.endsWith('/public_weekly_actions_count')) return json(route, 0);
     return json(route, []);
   });
+  await page.context().routeWebSocket('**/*', route => route.close());
   return writes;
 }
 

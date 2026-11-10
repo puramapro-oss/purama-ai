@@ -26,7 +26,7 @@ const docusealToken = 'test-docuseal-never-live';
 const docusealOrigin = 'https://docuseal.example.invalid';
 const defaultPdfUrl = `${docusealOrigin}/signed.pdf`;
 const foreignPdfUrl = 'https://files.example.invalid/signed.pdf';
-const otsCore = fileURLToPath(new URL('../src/lib/ots-core.ts', import.meta.url));
+const portableFiles = new Set(['ots-core.ts', 'request-deadline.ts'].map(file => fileURLToPath(new URL(`../src/lib/${file}`, import.meta.url))));
 
 // Run the complete, actual Edge entry points and local helper modules. Only
 // external services and serve() are substituted. No provider request is sent.
@@ -223,7 +223,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       }, { context });
     }
     const file = resolve(dirname(parent.identifier), specifier);
-    assert.ok(specifier.startsWith('.') && (file.startsWith(functionsRoot) || file === otsCore), `Unexpected import: ${specifier}`);
+    assert.ok(specifier.startsWith('.') && (file.startsWith(functionsRoot) || portableFiles.has(file)), `Unexpected import: ${specifier}`);
     return localModule(file);
   });
   await module.evaluate();

@@ -1,6 +1,6 @@
 // Explicitly executed by Deno; the filename avoids Playwright test discovery.
 import { handlers, reset, state, SERVICE, ANON, CONTRACT, ADMIN, PDF, installNetworkFixture } from "./fixture.ts";
-import OpenTimestamps from "../../node_modules/opentimestamps/index.js";
+import OpenTimestamps from "./fixture.ts";
 
 Deno.env.set("SUPABASE_URL", "https://supabase.fixture.invalid");
 Deno.env.set("SUPABASE_SERVICE_ROLE_KEY", SERVICE);

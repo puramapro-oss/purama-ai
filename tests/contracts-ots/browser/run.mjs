@@ -59,12 +59,17 @@ async function resolveOts(page, id, response) {
 }
 const confirmed = height => ({ status: 200, body: { verified: true, block_height: height, btc_timestamp: '2024-04-20T00:09:27.000Z' } });
 async function check(name, action) {
-  const context = await browser.newContext();
+  const context = await browser.newContext({ serviceWorkers: 'block' });
   await context.route('**/*', route => {
     const url = new URL(route.request().url());
-    if (url.origin === origin) return route.continue();
+    if (url.origin === origin && ['GET', 'HEAD'].includes(route.request().method())) return route.continue();
     result.externalRequests.push(url.origin);
     return route.abort();
+  });
+  await context.routeWebSocket('**/*', route => {
+    const url = new URL(route.url());
+    if (url.origin !== origin.replace('http:', 'ws:')) result.externalRequests.push(url.origin);
+    route.close();
   });
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
@@ -118,7 +123,7 @@ try {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   origin = 'http://127.0.0.1:' + server.address().port;
   const executablePath = process.env.PLAYWRIGHT_EXECUTABLE_PATH;
-  browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
+  browser = await chromium.launch({ headless: true, args: ['--no-zygote', '--disable-gpu', '--disable-background-networking', '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1'], ...(executablePath ? { executablePath } : {}) });
   result.browser = browser.version();
 
   await check('mounted current verification displays the confirmed block', async page => {

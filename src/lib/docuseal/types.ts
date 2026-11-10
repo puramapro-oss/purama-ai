@@ -146,11 +146,11 @@ export const WebhookPayloadSchema = z.object({
 });
 
 export const CrossAppJwtPayloadSchema = z.object({
-  iss: z.string(),
+  iss: z.string().refine(value => value.trim().length > 0, 'Issuer must not be blank'),
   aud: z.literal('purama-contracts-hub'),
-  app_slug: z.string(),
-  iat: z.number(),
-  exp: z.number(),
+  app_slug: z.string().refine(value => value.trim().length > 0, 'Application slug must not be blank'),
+  iat: z.number().finite(),
+  exp: z.number().finite(),
   jti: z.string().optional(),
 });
 

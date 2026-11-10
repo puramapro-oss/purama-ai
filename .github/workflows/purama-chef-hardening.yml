@@ -53,8 +53,10 @@ jobs:
       - run: npm run test:dependencies
       - run: npm run lint
       - run: npm run test:contracts-auth
+      - run: npm run test:cross-app-jwt
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
+      - run: npm run test:contracts-native
       - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts
       - run: npm run test:commerce:plans
       - run: npm run test:commerce:handlers

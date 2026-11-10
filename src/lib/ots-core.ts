@@ -2,6 +2,7 @@
 // Only upstream OTS parsers, operations, Merkle nodes and attestation checks are used.
 // Browser/Deno fetch cannot pin DNS like SUTRA's Node adapter: HTTPS authorities
 // below are trusted, redirects are forbidden, and no caller-selected host is fetched.
+import { cancelResponseQuietly, createRequestDeadline, RequestDeadlineError } from "./request-deadline.ts";
 
 export interface OtsAttestation {
   uri?: string;
@@ -75,37 +76,37 @@ export async function readOtsResponse(url: URL, body?: Uint8Array, maxBytes = 10
     calendarOrigin(url.origin);
     if (body ? url.pathname !== "/digest" : !/^\/timestamp\/[a-f0-9]{2,8192}$/.test(url.pathname)) return fail("OTS_INVALID_URL");
   }
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 10_000);
+  const deadline = createRequestDeadline(10_000);
   try {
-    const response = await fetch(url, { method: body ? "POST" : "GET", body: body ? new Uint8Array(body) : undefined,
-      redirect: "error", credentials: "omit", signal: controller.signal,
+    const response = await deadline.fetch(url, { method: body ? "POST" : "GET", body: body ? new Uint8Array(body) : undefined,
+      redirect: "error", credentials: "omit",
       headers: { Accept: "application/vnd.opentimestamps.v1, application/json, text/plain", ...(body ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) } });
-    if (response.redirected) return fail("OTS_REDIRECT_REJECTED");
-    if (response.status === 404 && url.pathname.startsWith("/timestamp/")) { await response.body?.cancel(); return null; }
-    if (response.status !== 200) { await response.body?.cancel(); return fail("OTS_HTTP_REJECTED"); }
+    if (response.redirected) { cancelResponseQuietly(response.body); return fail("OTS_REDIRECT_REJECTED"); }
+    if (response.status === 404 && url.pathname.startsWith("/timestamp/")) { cancelResponseQuietly(response.body); deadline.check(); return null; }
+    if (response.status !== 200) { cancelResponseQuietly(response.body); return fail("OTS_HTTP_REJECTED"); }
     const declared = response.headers.get("content-length");
-    if (declared && (!/^\d+$/.test(declared) || Number(declared) > maxBytes)) { await response.body?.cancel(); return fail("OTS_RESPONSE_TOO_LARGE"); }
+    if (declared && (!/^\d+$/.test(declared) || Number(declared) > maxBytes)) { cancelResponseQuietly(response.body); return fail("OTS_RESPONSE_TOO_LARGE"); }
     const reader = response.body?.getReader();
     if (!reader) return fail("OTS_EMPTY_RESPONSE");
     const chunks: Uint8Array[] = []; let size = 0;
     try {
       for (;;) {
-        const { value, done } = await reader.read();
+        const { value, done } = await deadline.wait(() => reader.read());
         if (done) break;
         size += value.length;
-        if (size > maxBytes) { await reader.cancel(); return fail("OTS_RESPONSE_TOO_LARGE"); }
-        chunks.push(value);
+        if (size > maxBytes) return fail("OTS_RESPONSE_TOO_LARGE");
+        if (value.length) chunks.push(value);
       }
-    } finally { reader.releaseLock(); }
+    } catch (error) { cancelResponseQuietly(reader); throw error; }
+    finally { try { reader.releaseLock(); } catch { /* A non-cooperative pending read can still hold its lock. */ } }
     if (declared && !response.headers.get("content-encoding") && size !== Number(declared)) return fail("OTS_INVALID_RESPONSE");
     const bytes = new Uint8Array(size); let offset = 0;
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
-    return bytes;
+    deadline.check(); return bytes;
   } catch (error) {
     if (error instanceof OtsError) throw error;
-    return fail(controller.signal.aborted ? "OTS_TIMEOUT" : "OTS_REQUEST_FAILED");
-  } finally { clearTimeout(timer); }
+    return fail(error instanceof RequestDeadlineError ? "OTS_TIMEOUT" : "OTS_REQUEST_FAILED");
+  } finally { deadline.close(); }
 }
 
 function nodes(root: OtsTimestamp): OtsTimestamp[] {

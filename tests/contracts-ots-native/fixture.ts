@@ -1,10 +1,11 @@
-import OpenTimestamps from "../../node_modules/opentimestamps/index.js";
+import DetachedTimestampFile from "../../node_modules/opentimestamps/src/detached-timestamp-file.js";
+import Ops from "../../node_modules/opentimestamps/src/ops.js";
 import notary from "../../node_modules/opentimestamps/src/notary.js";
-import calendar from "../../node_modules/opentimestamps/src/calendar.js";
 import Context from "../../node_modules/opentimestamps/src/context.js";
 import Timestamp from "../../node_modules/opentimestamps/src/timestamp.js";
 import { createOtsClient, type OtsLibrary } from "../../src/lib/ots-core.ts";
 import type { OtsContract } from "../../supabase/functions/_shared/ots-contract.ts";
+const OpenTimestamps = { DetachedTimestampFile, Ops, Context, Timestamp, Notary: notary };
 
 // Network and database ports only. The tests import the actual edge handlers.
 export const SERVICE = "fixture-service-credential";
@@ -167,26 +168,9 @@ export function createClient(_url: string, key: string, options?: { global?: { h
   };
 }
 
-// Reuse the actual locked 0.4.9 implementation in native Deno. Only calendar
-// I/O is replaced; real Merkle construction, attestations and serialization run.
-const OTS = {
-  ...OpenTimestamps,
-  stamp: async (detached: unknown) => {
-    state.stampCalls++;
-    const original = calendar.RemoteCalendar.prototype.submit;
-    calendar.RemoteCalendar.prototype.submit = async (commitment: number[]) => {
-      if (state.allCalendarsFail) throw new Error("fixture-calendar-unavailable");
-      const result = OpenTimestamps.DetachedTimestampFile.fromHash(
-        new OpenTimestamps.Ops.OpSHA256(), commitment,
-      ).timestamp;
-      result.attestations.push(new notary.PendingAttestation("https://alice.btc.calendar.opentimestamps.org"));
-      return result;
-    };
-    try { await OpenTimestamps.stamp(detached); }
-    finally { calendar.RemoteCalendar.prototype.submit = original; }
-  },
-};
-export default OTS;
+// Import only the actual locked primitives. The legacy main entry also loads
+// unused transport/Bluebird code and requests unrelated native permissions.
+export default OpenTimestamps;
 
 // Observe one logical stamp while running the published bounded core and real
 // upstream proof primitives. Only HTTP calendar replies are synthetic.

@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
+import type { SupabaseClient } from "npm:@supabase/supabase-js@2.91.0";
 import type { DashboardReader } from "./handler.ts";
 
 type ReadTable<Row> = { Row: Row; Insert: never; Update: never; Relationships: [] };

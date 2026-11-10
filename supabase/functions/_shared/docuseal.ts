@@ -164,6 +164,11 @@ export async function verifyCrossAppJwt(
   const parts = token.split(".");
   if (parts.length !== 3) throw new Error("Invalid JWT format");
   const [encHeader, encPayload, encSig] = parts;
+  const header: unknown = JSON.parse(new TextDecoder().decode(base64UrlDecode(encHeader)));
+  if (typeof header !== "object" || header === null || Array.isArray(header)
+    || !("alg" in header) || header.alg !== "HS256") {
+    throw new Error("Invalid JWT alg");
+  }
   const signingInput = `${encHeader}.${encPayload}`;
 
   const receivedSig = base64UrlDecode(encSig);
@@ -175,11 +180,21 @@ export async function verifyCrossAppJwt(
   if (!valid) throw new Error("Invalid JWT signature");
 
   const payloadJson = new TextDecoder().decode(base64UrlDecode(encPayload));
-  const payload = JSON.parse(payloadJson) as CrossAppJwtPayload;
+  const payloadRaw: unknown = JSON.parse(payloadJson);
+  if (typeof payloadRaw !== "object" || payloadRaw === null || Array.isArray(payloadRaw)) {
+    throw new Error("Invalid JWT payload");
+  }
+  const payload = payloadRaw as Partial<CrossAppJwtPayload>;
   if (payload.aud !== "purama-contracts-hub") throw new Error("Invalid JWT aud");
+  if (typeof payload.iss !== "string" || payload.iss.trim().length === 0) throw new Error("Invalid JWT iss");
+  if (typeof payload.app_slug !== "string" || payload.app_slug.trim().length === 0) throw new Error("Invalid JWT app_slug");
+  if (typeof payload.iat !== "number" || !Number.isFinite(payload.iat)) throw new Error("Invalid JWT iat");
+  if (typeof payload.exp !== "number" || !Number.isFinite(payload.exp)) throw new Error("Invalid JWT exp");
+  if (payload.jti !== undefined && typeof payload.jti !== "string") throw new Error("Invalid JWT jti");
   const now = Math.floor(Date.now() / 1000);
   if (payload.exp + 30 < now) throw new Error("JWT expired");
-  return payload;
+  if (payload.iat - 30 > now) throw new Error("JWT iat in future");
+  return payload as CrossAppJwtPayload;
 }
 
 async function hmacSha256Bytes(secret: string, data: string): Promise<Uint8Array> {

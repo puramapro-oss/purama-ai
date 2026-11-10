@@ -35,8 +35,9 @@ const agent=id=>({id,user_id:'A',name:'PRIVATE_AGENT_'+id,description:'fixture',
 async function check(name,type,fn){
  if(filter&&!filter.test(name))return;
  selectedChecks++;
- const context=await browser.newContext();
- await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin===origin)return route.continue();result.externalRequests.push(url.origin);return route.abort();});
+ const context=await browser.newContext({serviceWorkers:'block'});
+ await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin===origin&&['GET','HEAD'].includes(route.request().method()))return route.continue();result.externalRequests.push(url.origin);return route.abort();});
+ await context.routeWebSocket('**/*',route=>{const url=new URL(route.url());if(url.origin!==origin.replace('http:','ws:'))result.externalRequests.push(url.origin);route.close();});
  const page=await context.newPage();page.on('pageerror',e=>errors.push({name,message:e.message}));page.setDefaultTimeout(6000);page.setDefaultNavigationTimeout(30000);
  await page.addInitScript(()=>{
    window.__audioCreated=0;window.__audioPlayed=0;window.__audioPaused=0;window.__urlsCreated=0;window.__urlsRevoked=0;window.__tracksStopped=0;window.__recordersCreated=0;window.__microRequests=0;
@@ -60,7 +61,7 @@ try{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));origin='http://127.0.0.1:'+server.address().port;
  await checkpoint();
  const executablePath=process.env.PLAYWRIGHT_EXECUTABLE_PATH;
- browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});result.browser=browser.version();
+ browser=await chromium.launch({headless:true,args:['--no-zygote', '--disable-gpu', '--disable-background-networking', '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1'],...(executablePath?{executablePath}:{})});result.browser=browser.version();
 
  await check('account change rejects the previous email response','emails',async page=>{
  await pending(page,'emails',['A']);await switchTo(page,'B');await pending(page,'emails',['B']);await resolve(page,'emails',['B'],[email('B')]);await expect(page.getByText('PRIVATE_EMAIL_B')).toBeVisible();await resolve(page,'emails',['A'],[email('A')]);await tick(page);assert.equal(await page.getByText('PRIVATE_EMAIL_A').count(),0);await expect(page.getByText('PRIVATE_EMAIL_B')).toBeVisible();});
@@ -148,5 +149,5 @@ try{
  await pending(page,'agentMessages',['A','compta','session-1']);await page.locator('textarea').fill('CURRENT_QUESTION');await page.locator('textarea').press('Enter');await pending(page,'agentSend',['compta','session-1','CURRENT_QUESTION']);await resolve(page,'agentMessages',['A','compta','session-1'],[]);await tick(page);await expect(page.getByText('CURRENT_QUESTION',{exact:true})).toBeVisible();await resolve(page,'agentSend',['compta','session-1','CURRENT_QUESTION'],{reply:'CURRENT_REPLY',tokens:10});await expect(page.getByText('CURRENT_REPLY',{exact:true})).toBeVisible();});
 
 } catch(error){result.fatal=error.stack;} finally{
- await browser?.close();await new Promise(resolve=>server?server.close(resolve):resolve());result.finishedAt=new Date().toISOString();result.selectedChecks=selectedChecks;result.filter=filter?.source??null;result.pageErrors=errors;result.sourceSha256After=await digest();result.sourceUnchanged=JSON.stringify(result.sourceSha256)===JSON.stringify(result.sourceSha256After);result.status=!result.fatal&&result.sourceUnchanged&&!errors.length&&!result.externalRequests.length&&selectedChecks>0&&result.checks.length===selectedChecks&&result.checks.every(x=>x.status==='PASS')?'PASS':'FAIL';await checkpoint();console.log(JSON.stringify({status:result.status,pass:result.checks.filter(x=>x.status==='PASS').length,fail:result.checks.filter(x=>x.status==='FAIL').length,pageErrors:errors,fatal:result.fatal,sourceUnchanged:result.sourceUnchanged}));if(result.status!=='PASS')process.exitCode=1;
+ await browser?.close();await new Promise(resolve=>server?server.close(resolve):resolve());result.finishedAt=new Date().toISOString();result.selectedChecks=selectedChecks;result.filter=filter?.source??null;result.pageErrors=errors;result.sourceSha256After=await digest();result.sourceUnchanged=JSON.stringify(result.sourceSha256)===JSON.stringify(result.sourceSha256After);result.status=!result.fatal&&result.sourceUnchanged&&!errors.length&&!result.externalRequests.length&&(!filter?selectedChecks===25:selectedChecks>0)&&result.checks.length===selectedChecks&&result.checks.every(x=>x.status==='PASS')?'PASS':'FAIL';await checkpoint();console.log(JSON.stringify({status:result.status,pass:result.checks.filter(x=>x.status==='PASS').length,fail:result.checks.filter(x=>x.status==='FAIL').length,pageErrors:errors,fatal:result.fatal,sourceUnchanged:result.sourceUnchanged}));if(result.status!=='PASS')process.exitCode=1;
 }
