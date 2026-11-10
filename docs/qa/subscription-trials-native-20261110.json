@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "purpose": "Qualification locale native de start_trial : contre-exemples historiques et admission atomique concurrente",
+  "runtime": {
+    "node": "v20.20.2",
+    "pg": "8.23.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "postgres": "postgres (PostgreSQL) 18.4 (Homebrew)"
+  },
+  "files": [
+    {
+      "path": "karta/test/subscriptionTrial.native.mjs",
+      "sha256": "2803977607b761a6fe05567c104250c7ec8ee7bcf6075dd5cc50ae4216b74f2e"
+    },
+    {
+      "path": "karta/test/fixtures/subscriptions.sql",
+      "sha256": "36fa8e8982021b8152407d1539b3f83883e16f3221e817422d8832a0694b5114"
+    },
+    {
+      "path": "supabase/migrations/20260727000000_subscriptions_security_and_trial.sql",
+      "sha256": "d896da9d463026292c5df56877207caff60104f7ce8a4ccaeb27d38314e1bb0e"
+    },
+    {
+      "path": "supabase/migrations/20261110043500_trial_admission_atomic.sql",
+      "sha256": "fefd2f8420b5ef5dfd7f0f263109284d839601b81adbab70472d46c8c89672e0"
+    }
+  ],
+  "hashes": {
+    "copied_files_match_local_sha256": true,
+    "local_files_unchanged_after_run": true
+  },
+  "tests": {
+    "status": "PASS",
+    "exit_code": 0,
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms": 669.75,
+    "cases": [
+      {
+        "number": 1,
+        "name": "historical function permits two concurrent first trials",
+        "status": "PASS"
+      },
+      {
+        "number": 2,
+        "name": "historical function overwrites a paid subscription committed after its read",
+        "status": "PASS"
+      },
+      {
+        "number": 3,
+        "name": "atomic admission has one winner with existing row=false",
+        "status": "PASS"
+      },
+      {
+        "number": 4,
+        "name": "atomic admission has one winner with existing row=true",
+        "status": "PASS"
+      },
+      {
+        "number": 5,
+        "name": "atomic admission preserves a concurrent provider status=active",
+        "status": "PASS"
+      },
+      {
+        "number": 6,
+        "name": "atomic admission preserves a concurrent provider status=trialing",
+        "status": "PASS"
+      }
+    ],
+    "stdout_tap": "TAP version 13\n# Subtest: historical function permits two concurrent first trials\nok 1 - historical function permits two concurrent first trials\n  ---\n  duration_ms: 124.518417\n  ...\n# Subtest: historical function overwrites a paid subscription committed after its read\nok 2 - historical function overwrites a paid subscription committed after its read\n  ---\n  duration_ms: 47.855875\n  ...\n# Subtest: atomic admission has one winner with existing row=false\nok 3 - atomic admission has one winner with existing row=false\n  ---\n  duration_ms: 58.990291\n  ...\n# Subtest: atomic admission has one winner with existing row=true\nok 4 - atomic admission has one winner with existing row=true\n  ---\n  duration_ms: 57.492917\n  ...\n# Subtest: atomic admission preserves a concurrent provider status=active\nok 5 - atomic admission preserves a concurrent provider status=active\n  ---\n  duration_ms: 45.410084\n  ...\n# Subtest: atomic admission preserves a concurrent provider status=trialing\nok 6 - atomic admission preserves a concurrent provider status=trialing\n  ---\n  duration_ms: 46.76875\n  ...\n1..6\n# tests 6\n# suites 0\n# pass 6\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 669.75\n",
+    "stderr": ""
+  },
+  "scope_limits": [
+    "Fixtures synthétiques ; aucune connexion à une base existante, aucun déploiement.",
+    "Aucune installation, aucune modification des sources partagées.",
+    "Exécution native Mac sous Node20.20.2 et pg8.23.0 ; la qualification CI Node22/pg8.23.1 n'est pas couverte par ce résultat."
+  ],
+  "isolation": {
+    "root_mode": "0o700",
+    "tcp_listeners": 0,
+    "listen_addresses": "",
+    "inet_server_addr": null
+  },
+  "cleanup": {
+    "stop_exit": 0,
+    "status_exit": 3,
+    "pid_absent": true,
+    "removed": true,
+    "independent_recheck_passed": true
+  }
+}
