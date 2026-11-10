@@ -3,8 +3,10 @@ name: PURAMA CHEF hardening
 on:
   push:
     branches:
+      - main
       - codex/purama-chef-hardening-20260927
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -50,7 +52,7 @@ jobs:
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:quality -- karta-briefs.spec.ts karta-ui.spec.ts
+      - run: npm run test:quality
       - run: npm run test:wellbeing
       - run: npm run test:voice-consent
       - run: npm run test:ui-state
