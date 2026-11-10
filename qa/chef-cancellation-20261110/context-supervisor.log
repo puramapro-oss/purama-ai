@@ -1,0 +1,146 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+    "name": "runChefWorkerCycle",
+    "kind": "Function",
+    "filePath": "karta/src/chef/supervisor.ts",
+    "startLine": 69,
+    "endLine": 371
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:karta/test/chefSupervisor.test.ts",
+        "name": "chefSupervisor.test.ts",
+        "filePath": "karta/test/chefSupervisor.test.ts"
+      },
+      {
+        "uid": "File:karta/test/chefVerificationGitIntegration.test.ts",
+        "name": "chefVerificationGitIntegration.test.ts",
+        "filePath": "karta/test/chefVerificationGitIntegration.test.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/worker-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/worker-main.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/chef/git-state.ts:captureCleanGitBaseline",
+        "name": "captureCleanGitBaseline",
+        "filePath": "karta/src/chef/git-state.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/git-state.ts:verifyCommittedGitState",
+        "name": "verifyCommittedGitState",
+        "filePath": "karta/src/chef/git-state.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.loseLease@145:2",
+        "name": "loseLease",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.stopRenewal@174:2",
+        "name": "stopRenewal",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Function:karta/src/chef/supervisor.ts:usageEventKey",
+        "name": "usageEventKey",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Method:karta/src/chef/control-plane.ts:SupabaseChefControlPlane.addEvidence#3",
+        "name": "addEvidence",
+        "filePath": "karta/src/chef/control-plane.ts"
+      }
+    ],
+    "uses": [
+      {
+        "uid": "Interface:karta/src/chef/supervisor.ts:ChefControlPlane",
+        "name": "ChefControlPlane",
+        "filePath": "karta/src/chef/supervisor.ts"
+      },
+      {
+        "uid": "Interface:karta/src/chef/supervisor.ts:ChefWorkerCycleOptions",
+        "name": "ChefWorkerCycleOptions",
+        "filePath": "karta/src/chef/supervisor.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Method:karta/src/chef/control-plane.ts:SupabaseChefControlPlane.housekeeping#1",
+        "name": "housekeeping",
+        "filePath": "karta/src/chef/control-plane.ts"
+      }
+    ]
+  },
+  "processes": [
+    {
+      "id": "proc_7_runchefworkercycle",
+      "name": "RunChefWorkerCycle → AssertRpc",
+      "step_index": 1,
+      "step_count": 4
+    },
+    {
+      "id": "proc_8_runchefworkercycle",
+      "name": "RunChefWorkerCycle → Rpc",
+      "step_index": 1,
+      "step_count": 4
+    }
+  ]
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Context (1.6.12)

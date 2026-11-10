@@ -1,0 +1,17 @@
+
+> karta-engine@1.0.0 test
+> vitest run test/chefCancellation.test.ts test/chefSupervisorCancellation.test.ts test/chefDriver.test.ts test/chefVerifier.test.ts test/chefSupervisor.test.ts test/chefVerificationGitIntegration.test.ts
+
+
+ RUN  v5.0.1 /workspace/scratch/29af233a360b/purama-ai-context-20261110/karta
+
+
+ Test Files  6 passed (6)
+      Tests  29 passed (29)
+   Start at  02:47:55
+   Duration  4.68s (tests 69%, transform 17%, import 7%, setup 3%, worker 3%)
+
+    Isolate  6 workers spawned · ~622ms startup each (spawn + environment, per file)
+             at least ~1.24s faster with isolate: false — reuses workers across files instead of one per file
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

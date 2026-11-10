@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=2",
+    "test/chefCancellation.test.ts",
+    "test/chefSupervisorCancellation.test.ts",
+    "test/chefDriver.test.ts",
+    "test/chefVerifier.test.ts",
+    "test/chefSupervisor.test.ts",
+    "test/chefVerificationGitIntegration.test.ts"
+  ],
+  "cwd": "karta",
+  "checked_at": "2026-11-10T02:09:54.571204+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_timeout_seconds": 180,
+  "node": "v22.23.4",
+  "base_commit": "b040af6dd7abe202a4dd7996f0ffad41c1b742bf",
+  "test_timeout_ms": 5000
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--scope",
+    "staged",
+    "--repo",
+    "purama-ai-context-20261110",
+    "--limit",
+    "100"
+  ],
+  "exit_code": 124,
+  "checked_at": "2026-11-10T02:03:52.362860+00:00"
+}

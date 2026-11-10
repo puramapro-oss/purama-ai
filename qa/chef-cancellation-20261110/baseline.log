@@ -1,0 +1,165 @@
+
+> karta-engine@1.0.0 test
+> vitest run test/chefCancellation.test.ts
+
+
+ RUN  v5.0.1 /workspace/scratch/29af233a360b/purama-ai-context-20261110/karta
+
+ ❯ test/chefCancellation.test.ts (7 tests | 5 failed) 429ms
+   ❯ CHEF cancellation at process and verification boundaries (7)
+     × does not spawn a worker for a signal already cancelled before run 74ms
+     × does not spawn a verifier or create a success for a signal already cancelled 46ms
+     × does not return a completed worker if cancellation arrives before run resumes 53ms
+     × does not publish overall success if cancellation arrives after the final profile closes 38ms
+     × rechecks cancellation after a successful profile before spawning the next one 129ms
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 2 passed (7)
+   Start at  02:42:38
+   Duration  885ms (tests 68%, transform 24%, import 5%, setup 2%, worker 1%)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not spawn a worker for a signal already cancelled before run
+AssertionError: expected 'resolved' to be 'rejected' // Object.is equality
+
+Expected: "rejected"
+Received: "resolved"
+
+ ❯ expectCancellation test/chefCancellation.test.ts:87:30
+     85|
+     86| function expectCancellation(result: Awaited<ReturnType<typeof outcome>…
+     87|   expect.soft(result.status).toBe("rejected");
+       |                              ^
+     88|   if (result.status === "rejected") {
+     89|     expect(result.error).toBeInstanceOf(Error);
+ ❯ test/chefCancellation.test.ts:126:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not spawn a worker for a signal already cancelled before run
+AssertionError: expected [ ChildProcess{ …(17), …(2) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ test/chefCancellation.test.ts:128:38
+    126|     expectCancellation(result);
+    127|     if (result.status === "rejected") expect((result.error as Error).m…
+    128|     expect(processBoundary.children).toHaveLength(0);
+       |                                      ^
+    129|   });
+    130|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not spawn a verifier or create a success for a signal already cancelled
+AssertionError: expected 'resolved' to be 'rejected' // Object.is equality
+
+Expected: "rejected"
+Received: "resolved"
+
+ ❯ expectCancellation test/chefCancellation.test.ts:87:30
+     85|
+     86| function expectCancellation(result: Awaited<ReturnType<typeof outcome>…
+     87|   expect.soft(result.status).toBe("rejected");
+       |                              ^
+     88|   if (result.status === "rejected") {
+     89|     expect(result.error).toBeInstanceOf(Error);
+ ❯ test/chefCancellation.test.ts:139:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not spawn a verifier or create a success for a signal already cancelled
+AssertionError: expected [ ChildProcess{ …(17), …(2) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ test/chefCancellation.test.ts:141:38
+    139|     expectCancellation(result);
+    140|     if (result.status === "rejected") expect((result.error as Error).m…
+    141|     expect(processBoundary.children).toHaveLength(0);
+       |                                      ^
+    142|   });
+    143|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not return a completed worker if cancellation arrives before run resumes
+AssertionError: expected 'resolved' to be 'rejected' // Object.is equality
+
+Expected: "rejected"
+Received: "resolved"
+
+ ❯ expectCancellation test/chefCancellation.test.ts:87:30
+     85|
+     86| function expectCancellation(result: Awaited<ReturnType<typeof outcome>…
+     87|   expect.soft(result.status).toBe("rejected");
+       |                              ^
+     88|   if (result.status === "rejected") {
+     89|     expect(result.error).toBeInstanceOf(Error);
+ ❯ test/chefCancellation.test.ts:188:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not publish overall success if cancellation arrives after the final profile closes
+AssertionError: expected 'resolved' to be 'rejected' // Object.is equality
+
+Expected: "rejected"
+Received: "resolved"
+
+ ❯ expectCancellation test/chefCancellation.test.ts:87:30
+     85|
+     86| function expectCancellation(result: Awaited<ReturnType<typeof outcome>…
+     87|   expect.soft(result.status).toBe("rejected");
+       |                              ^
+     88|   if (result.status === "rejected") {
+     89|     expect(result.error).toBeInstanceOf(Error);
+ ❯ test/chefCancellation.test.ts:204:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > rechecks cancellation after a successful profile before spawning the next one
+AssertionError: expected 'resolved' to be 'rejected' // Object.is equality
+
+Expected: "rejected"
+Received: "resolved"
+
+ ❯ expectCancellation test/chefCancellation.test.ts:87:30
+     85|
+     86| function expectCancellation(result: Awaited<ReturnType<typeof outcome>…
+     87|   expect.soft(result.status).toBe("rejected");
+       |                              ^
+     88|   if (result.status === "rejected") {
+     89|     expect(result.error).toBeInstanceOf(Error);
+ ❯ test/chefCancellation.test.ts:223:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > rechecks cancellation after a successful profile before spawning the next one
+AssertionError: expected [ ChildProcess{ …(17), …(2) }, …(1) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ test/chefCancellation.test.ts:224:38
+    222|     expect(controller.signal.aborted).toBe(true);
+    223|     expectCancellation(result);
+    224|     expect(processBoundary.children).toHaveLength(1);
+       |                                      ^
+    225|   });
+    226| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯

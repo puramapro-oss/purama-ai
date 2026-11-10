@@ -142,6 +142,7 @@ export class ProcessChefDriver implements ChefWorkerDriver {
   }
 
   async run(request: ChefDriverRequest, signal?: AbortSignal): Promise<ChefDriverResponse> {
+    if (signal?.aborted) throw new Error("Worker CHEF annulé");
     if (request.provider !== this.provider) throw new Error("Provider du driver incohérent");
     const cwd = assertAllowedCwd(request.cwd, this.options.allowedRoots);
     if (!Number.isSafeInteger(request.fencingToken) || request.fencingToken < 0) throw new Error("fencingToken invalide");
@@ -168,7 +169,7 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       }
     );
 
-    return await new Promise<ChefDriverResponse>((resolvePromise, rejectPromise) => {
+    const response = await new Promise<ChefDriverResponse>((resolvePromise, rejectPromise) => {
       const child = spawn(this.options.command, this.options.args ?? [], {
         cwd,
         env,
@@ -226,8 +227,6 @@ export class ProcessChefDriver implements ChefWorkerDriver {
         terminate();
         finishReject(new Error("Worker CHEF annulé"));
       };
-      signal?.addEventListener("abort", onAbort, { once: true });
-
       const cleanup = () => {
         clearTimeout(timeout);
         signal?.removeEventListener("abort", onAbort);
@@ -236,6 +235,10 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       child.on("error", (error) => finishReject(error));
       child.on("close", (code, signalName) => {
         if (settled || killedForOutput) return;
+        if (signal?.aborted) {
+          finishReject(new Error("Worker CHEF annulé"));
+          return;
+        }
         if (code !== 0) {
           finishReject(new Error(`Worker CHEF échoué (code=${code ?? "null"}, signal=${signalName ?? "none"})`));
           return;
@@ -253,7 +256,16 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       });
 
       child.stdin.on("error", (error) => finishReject(error));
+      signal?.addEventListener("abort", onAbort, { once: true });
+      if (signal?.aborted) {
+        onAbort();
+        return;
+      }
       child.stdin.end(JSON.stringify(request) + "\n");
     });
+    // Cancellation can arrive after the child promise settles, before this
+    // async method resumes. A late response must not restore a cancelled run.
+    if (signal?.aborted) throw new Error("Worker CHEF annulé");
+    return response;
   }
 }

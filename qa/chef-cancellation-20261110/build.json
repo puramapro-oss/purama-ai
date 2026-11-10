@@ -1,0 +1,11 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "cwd": "karta",
+  "checked_at": "2026-11-10T01:49:01.301351+00:00",
+  "exit_code": 0,
+  "node": "v24.22.1"
+}

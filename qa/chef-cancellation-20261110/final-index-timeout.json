@@ -1,0 +1,15 @@
+{
+  "command": [
+    "npx",
+    "--yes",
+    "gitnexus",
+    "analyze",
+    "--index-only",
+    "--name",
+    "purama-ai-context-20261110"
+  ],
+  "status": "timed_out",
+  "timeout_seconds": 240,
+  "known_analyzer_children_terminated": [],
+  "note": "Original wrapper raised TimeoutExpired before saving captured output; no successful reindex claimed."
+}

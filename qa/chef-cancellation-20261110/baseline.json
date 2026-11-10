@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "test/chefCancellation.test.ts"
+  ],
+  "cwd": "karta",
+  "checked_at": "2026-11-10T01:42:39.659887+00:00",
+  "exit_code": 1,
+  "base_commit": "e8f1ce2e16aacdfdb6108a2fa33bea70c198b94e",
+  "node": "v24.22.1",
+  "expected": "5 regression failures, 2 passing active-cancellation controls before source correction"
+}

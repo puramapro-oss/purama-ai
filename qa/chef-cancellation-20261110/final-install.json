@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "ci",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "karta",
+  "exit_code": 0,
+  "checked_at": "2026-11-10T01:56:01.348606+00:00",
+  "base_commit": "b040af6dd7abe202a4dd7996f0ffad41c1b742bf"
+}

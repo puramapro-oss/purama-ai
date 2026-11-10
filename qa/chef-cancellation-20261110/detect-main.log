@@ -1,0 +1,39 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 215 files, 1285 symbols
+Affected processes: 250
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Correctifs IAO / KARTA — 19 septembre 2026 → IAO-SAFETY-REVIEW.md
+  Section Corrections → IAO-SAFETY-REVIEW.md
+  Section Validation exécutée → IAO-SAFETY-REVIEW.md
+  Section Intégration → IAO-SAFETY-REVIEW.md
+  Section Points restant ouverts → IAO-SAFETY-REVIEW.md
+  Section Références techniques → IAO-SAFETY-REVIEW.md
+  Section Complément : campagne générative et comparaison des modèles → IAO-SAFETY-REVIEW.md
+... and 1270 more
+
+Affected execution flows:
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized
+  • CreateChefMission → UniqueStrings (6 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings, createChefMission
+  • CreateChefMission → NonEmpty (5 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty, createChefMission
+  • CreateChefMission → Visit (5 steps) — changed: hashChefBrief, normalizeChefBrief, visit, validateChefBrief, createChefMission
+  • Ecosystem → From (5 steps) — changed: from
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, assertRpc, runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc
+  • ResolvePendingAction → ResolveCustomAgentTools (4 steps) — changed: resolvePendingAction
+  • ResolvePendingAction → Result (4 steps) — changed: resolvePendingAction, result
+  • DashboardScreen → Result (4 steps) — changed: result
+... and 240 more
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Detect Changes (1.6.12)

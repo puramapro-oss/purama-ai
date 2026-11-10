@@ -1,0 +1,30 @@
+Changes: 5 files, 13 symbols
+Affected processes: 7
+Risk level: high
+
+Changed symbols:
+  Class ProcessChefDriver → karta/src/chef/driver.ts
+  Method run → karta/src/chef/driver.ts
+  Function runChefWorkerCycle → karta/src/chef/supervisor.ts
+  Class CommandChefVerifier → karta/src/chef/verifier.ts
+  Method verify → karta/src/chef/verifier.ts
+  Property error → karta/src/chef/verifier.ts
+  Property evidence → karta/src/chef/verifier.ts
+  Property ok → karta/src/chef/verifier.ts
+  Property error → karta/src/chef/verifier.ts
+  Property evidence → karta/src/chef/verifier.ts
+  Property ok → karta/src/chef/verifier.ts
+  Method runProfile → karta/src/chef/verifier.ts
+  Function cleanup → karta/src/chef/verifier.ts
+
+Affected execution flows:
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: runChefWorkerCycle
+  • OnAbort → Cleanup (3 steps) — changed: cleanup
+  • Run → Terminate (3 steps) — changed: run
+  • RunProfile → Terminate (3 steps) — changed: runProfile
+  • RunProfile → Cleanup (3 steps) — changed: cleanup, runProfile
+  • RunProfile → AddToRemoveQueue (5 steps) — changed: runProfile
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Detect Changes (1.6.12)

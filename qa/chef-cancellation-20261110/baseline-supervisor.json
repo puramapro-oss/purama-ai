@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "test/chefSupervisorCancellation.test.ts"
+  ],
+  "cwd": "karta",
+  "checked_at": "2026-11-10T01:46:33.103084+00:00",
+  "exit_code": 1,
+  "base_commit": "e8f1ce2e16aacdfdb6108a2fa33bea70c198b94e",
+  "node": "v24.22.1",
+  "expected": "1 regression failure before source correction; cancelled cycle must not finish"
+}

@@ -1,0 +1,61 @@
+{
+  "target": {
+    "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+    "name": "runChefWorkerCycle",
+    "type": "Function",
+    "filePath": "karta/src/chef/supervisor.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/worker-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/worker-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:karta/src/chef/worker-main.ts",
+        "name": "worker-main.ts",
+        "filePath": "karta/src/chef/worker-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Impact (1.6.12)

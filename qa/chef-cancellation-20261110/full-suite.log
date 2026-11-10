@@ -1,0 +1,35 @@
+
+> karta-engine@1.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 /workspace/scratch/29af233a360b/purama-ai-context-20261110/karta
+
+ ❯ test/chatHistoryIsolation.test.ts (39 tests | 1 failed) 38213ms
+   ❯ migration preflight refuses an unreviewed schema (9)
+     × refuses to report success when neither schema contains chat history 5268ms
+
+ Test Files  1 failed | 46 passed (47)
+      Tests  1 failed | 495 passed (496)
+   Start at  02:48:51
+   Duration  58.82s (tests 92%, import 4%, transform 3%, setup 1%)
+
+    Isolate  47 workers spawned · ~248ms startup each (spawn + environment, per file)
+             at least ~5.59s faster with isolate: false — reuses workers across files instead of one per file
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > refuses to report success when neither schema contains chat history
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/chatHistoryIsolation.test.ts:260:3
+    258|   });
+    259|
+    260|   it('refuses to report success when neither schema contains chat hist…
+       |   ^
+    261|     const db = await fixture([]);
+    262|     try {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
