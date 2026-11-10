@@ -217,7 +217,8 @@
       "vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
       "test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
     },
-    "finished_at_utc": "2026-11-10T22:01:02Z"
+    "finished_at_utc": "2026-11-10T22:01:02Z",
+    "qualified_commit_before_ci_formatting": "26abc70684a873e2ec31caf2c0cb1b706ba6591d"
   },
   "typecheck_attempts": [
     {
@@ -447,5 +448,29 @@
     "status": "completed",
     "conclusion": "success",
     "not_claimed_for_new_head": true
+  },
+  "ci_formatting_repair": {
+    "failing_run": 42912018195,
+    "failing_job": 130164813101,
+    "rule": "no-unexpected-multiline",
+    "file": "karta/test/webSearchEvidence.test.ts",
+    "change": "Put the opening parenthesis of each chained it.each invocation on the same line; keep all cases and assertions unchanged.",
+    "production_source_unchanged": true,
+    "sha256_after": "71d906c3419838dc0b747e8f9f9d1da388b972d0d088d3d18b933f4348d15c41",
+    "targeted_tests": 59,
+    "passed": 59,
+    "not_added_to_202": true
+  },
+  "verified_ci_karta_before_formatting": {
+    "head": "26abc70684a873e2ec31caf2c0cb1b706ba6591d",
+    "run_id": 42912018195,
+    "job_id": 130164813514,
+    "runner_id": 1000003445,
+    "checkout_sha": "478eb19ecc891baea0d6833a563331be98ccd6c5",
+    "test_files": 99,
+    "tests": 1730,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "site_status": "FAIL — two test formatting errors; new head CI is a separate gate"
   }
 }

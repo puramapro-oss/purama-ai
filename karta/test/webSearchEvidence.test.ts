@@ -83,14 +83,14 @@ describe("web search evidence handoff", () => {
     expect(output.evidence?.verification_status).toBe("unverified");
   });
 
-  it.each([undefined, null, "", "unknown", "2026-02-31", "next Tuesday", 1794282490099, { date: "2026-11-10" }])
-    ("keeps an absent or unsupported date unknown: %j", async published_date => {
+  it.each([undefined, null, "", "unknown", "2026-02-31", "next Tuesday", 1794282490099, { date: "2026-11-10" }])(
+    "keeps an absent or unsupported date unknown: %j", async published_date => {
       transport.mockResolvedValue(Response.json({ results: [{ ...hit, published_date }] }));
       expect((await search()).evidence?.sources[0].excerpts[0].provider_published_at).toBeNull();
     });
 
-  it.each([undefined, null, -1, "1", { total: 1 }, Number.MAX_VALUE])
-    ("does not invent or coerce provider credits: %j", async credits => {
+  it.each([undefined, null, -1, "1", { total: 1 }, Number.MAX_VALUE])(
+    "does not invent or coerce provider credits: %j", async credits => {
       transport.mockResolvedValue(Response.json({ results: [hit], usage: { credits } }));
       expect((await search()).evidence?.provider_reported_credits).toBeNull();
     });
