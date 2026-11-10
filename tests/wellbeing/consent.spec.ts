@@ -15,6 +15,74 @@ async function addNote(page: Page, text: string) {
   await page.getByRole('button', { name: 'Enregistrer la note', exact: true }).click();
 }
 
+async function escapeOnDialogMount(page: Page, alreadyPrevented = false, selector = '[role="dialog"]') {
+  await page.evaluate(({ prevented, selector }) => {
+    // Deliver the key in the mount microtask, while Radix's layer callback can
+    // still retain its initial index. No sleep or changed application timer.
+    const observer = new MutationObserver(() => {
+      const dialog = document.querySelector(selector);
+      const target = dialog?.querySelector('button');
+      if (!target) return;
+      observer.disconnect();
+      target.focus();
+      const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+      if (prevented) event.preventDefault();
+      target.dispatchEvent(event);
+      (window as unknown as { immediateEscape: { delivered: boolean; prevented: boolean } }).immediateEscape = {
+        delivered: true, prevented: event.defaultPrevented,
+      };
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }, { prevented: alreadyPrevented, selector });
+}
+
+test('reopened pause handles Escape in the mount microtask without waiting for passive effects', async ({ page }) => {
+  await page.clock.install();
+  await page.goto(path);
+  const trigger = page.getByRole('button', { name: 'Pause facultative' });
+  await trigger.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await escapeOnDialogMount(page);
+  await trigger.click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  expect(await page.evaluate(() => (window as unknown as { immediateEscape: unknown }).immediateEscape))
+    .toEqual({ delivered: true, prevented: true });
+});
+
+test('pause leaves an already-prevented Escape to the control that consumed it', async ({ page }) => {
+  await page.goto(path);
+  await escapeOnDialogMount(page, true);
+  await page.getByRole('button', { name: 'Pause facultative' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { immediateEscape: unknown }).immediateEscape))
+    .toEqual({ delivered: true, prevented: true });
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('pause does not consume an immediate Escape belonging to a real nested Radix dialog', async ({ page }) => {
+  await page.goto(path + '?nested-dialog');
+  await page.getByRole('button', { name: 'Pause facultative' }).click();
+  const outer = page.getByRole('dialog', { name: 'Un moment à ton rythme', exact: true });
+  await expect(outer).toBeVisible();
+  await escapeOnDialogMount(page, false, '[data-testid="nested-pause-dialog"]');
+  await page.getByRole('button', { name: 'Ouvrir le dialogue imbriqué', exact: true }).click();
+  const inner = page.getByRole('dialog', { name: 'Dialogue imbriqué de test', exact: true });
+  await expect(inner).toBeVisible();
+  await expect(outer).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { immediateEscape: unknown }).immediateEscape))
+    .toEqual({ delivered: true, prevented: false });
+  await page.getByRole('button', { name: 'Fermer le dialogue imbriqué', exact: true }).click();
+  await expect(inner).toHaveCount(0);
+  await expect(outer).toBeVisible();
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click();
+  await expect(outer).toHaveCount(0);
+});
+
 test('a login never opens a practice; explicit choice, stop and Escape work', async ({ page }) => {
   await page.clock.install();
   await page.goto(path);
