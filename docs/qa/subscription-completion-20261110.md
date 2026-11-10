@@ -14,13 +14,14 @@ Les garde-fous testés concernent les essais, la création du checkout, le porta
 | Frontières checkout/portail | PASS | 40 tests sur les vrais fichiers et leurs imports, exécutés avec fournisseurs inertes |
 | Activation des droits après checkout | PASS | 65 tests du vrai handler et du helper overage ; CAS, reçu d'écriture, identité, rejeu, paiement différé |
 | Suite billing combinée | PASS | 105/105, zéro échec, Node 22.23.4 ; `npm run test:billing` |
-| Types checkout/portail avec SDK épinglés | PARTIEL, contrôle local insuffisant | Le contrôle avec import map local passait, mais la résolution native CI a révélé 10 incompatibilités de types. Les fabriques de clients Supabase sont désormais concrètes ; nouveau passage CI requis |
-| Types webhook, frontend, compilation et navigateur de cette version | EN ATTENTE CI | Tentatives locales interrompues (code 137 ; service esbuild arrêté). Aucune réussite déduite de ces interruptions |
+| Types SDK natifs, frontend, compilation | PASS CI sur 94e5987 | Run 42910859958, contrôle Deno avec modules réels, types et build. Les 10 incompatibilités détectées au premier run ont été corrigées avec des fabriques Supabase concrètes |
+| Parcours navigateur et contrôles préexistants | PASS CI sur 94e5987 | Run 42910859958 complet : site, KARTA et PostgreSQL réussis. 92 cas qualité, 156 parcours publics sur trois tailles Chromium, autres suites conservées. Les interruptions locales ne sont pas comptées comme réussites |
+| Complément DashboardBilling | PARTIEL lors de la préparation | Types de 271 fichiers et découverte de 29 cas PASS ; exécution navigateur à confirmer sur le commit suivant. Le résultat courant est dans les checks de la PR28 |
 | Essai atomique SQL | PASS CI sur bce8742 | Job subscription-concurrency du run 42910128642 : 6/6 tests, PostgreSQL 18.6 ; KARTA réussi. Le checkout CI aea87cbb possède exactement le même arbre f7890339 que bce8742 |
 | CI complète de la consolidation avant modification | PASS historique | PR33, run 42881227306 ; ce résultat n'est pas attribué au nouveau correctif |
 | Production et fournisseurs réels | NON TESTÉ | Aucune migration, aucun paiement, aucun email et aucun déploiement réalisés |
 
-Le premier run 42910128642 a réussi KARTA et PostgreSQL mais échoué au contrôle de types du site. Le correctif de typage conserve les 105 tests billing réussis. Les résultats du run suivant doivent être consignés avec son SHA avant toute promotion. Le job PostgreSQL utilise son service éphémère de test ; les fixtures de paiement interdisent réseau et envois réels.
+Le premier run 42910128642 a réussi KARTA et PostgreSQL mais échoué au contrôle de types du site. Le run suivant [42910859958](https://github.com/puramapro-oss/purama-ai/actions/runs/42910859958) est entièrement réussi sur 94e5987326f3aa39eb904586a7fe74fbb3410849 : 1665 tests KARTA, 105 billing, 6 PostgreSQL natifs et toutes les suites site. Le checkout CI 088fff6f possède le même arbre a09ef86e6421a0222041a9b109ced0efc58382f4. Le complément DashboardBilling fait l’objet d’une nouvelle CI ; vérifier son SHA avant promotion. Les compteurs ci-dessus sont des preuves par version, pas une promesse pour un commit ultérieur. Le job PostgreSQL utilise son service éphémère de test ; les fixtures de paiement interdisent réseau et envois réels.
 
 ## Défauts reproduits et correction
 
@@ -35,6 +36,8 @@ Les retours utilisent `PURAMA_BILLING_ORIGIN` validée côté serveur, ou l'orig
 Une intention UUID de checkout est conservée lors d'un réessai du même écran, utilisateur et tarif. La clé Stripe est dérivée par SHA-256 ; elle ne révèle pas directement l'identité. Changer d'utilisateur ou de tarif crée une nouvelle intention. Les clients historiques sans UUID restent compatibles mais ne disposent pas de cette protection entre requêtes indépendantes.
 
 Le serveur checkout/portail borne l'ensemble auth/DB/Stripe à 15 secondes et l'entrée checkout à 4096 octets / 5 secondes. Après interruption ou expiration, les continuations vérifient leur validité avant les effets suivants. Cela ne peut pas annuler une opération déjà acceptée par Stripe ; une reprise conserve donc la même intention. L'écran Pricing borne son attente à 20 secondes et ignore les résultats d'un ancien compte, y compris A → B → A.
+
+Le tableau de facturation applique aussi une portée de compte, un verrou synchrone entre portail et achat de pack, un délai de 20 secondes et un domaine Stripe propre à chaque action. L’intention du pack est conservée lors d’un réessai dans le même montage et compte. Une lecture d’abonnement échouée affiche un état indisponible et une reprise explicite, sans présenter un abonnement gratuit comme confirmé. Ses 29 nouveaux cas attendent la CI du complément.
 
 Le webhook vérifie l'identité exacte via `getUserById`, l'appartenance customer/subscription, le produit et l'état fournisseur. Un formulaire terminé mais impayé n'accorde aucun droit. Le paiement différé reprend le même chemin. Les écritures sont confirmées et conditionnelles ; une erreur ou un reçu incohérent est renvoyé en erreur pour permettre un réessai. L'essai consommé n'est jamais réinitialisé.
 

@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Loader2, ExternalLink, Crown, Receipt, Zap } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,6 +15,8 @@ import { getUsageSnapshot, formatExecutions } from '@/lib/usage';
 import { OVERAGE_PACK } from '@/lib/plans';
 import { isSuperAdmin } from '@/lib/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
+import { createRequestDeadline, RequestDeadlineError } from '@/lib/request-deadline';
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('fr-FR', {
@@ -32,34 +34,9 @@ const formatDateTime = (iso: string) =>
     minute: '2-digit',
   });
 
-/** Ouvre une session Stripe (portail client ou checkout) renvoyée par une edge function, ou affiche l'erreur FR. */
-async function redirectToStripe(
-  invoke: () => ReturnType<typeof supabase.functions.invoke>,
-  setLoading: (b: boolean) => void,
-  errorTitle: string,
-  notFoundMessage: string,
-) {
-  setLoading(true);
-  try {
-    const { data, error } = await invoke();
-    if (error) throw error;
-    if (typeof data !== 'object' || data === null || !('url' in data) || typeof data.url !== 'string' || !data.url) {
-      throw new Error(notFoundMessage);
-    }
-    const redirect = new URL(data.url);
-    if (redirect.protocol !== 'https:') throw new Error('URL de paiement non sécurisée');
-    window.location.href = redirect.href;
-  } catch (err) {
-    console.error(err);
-    toast.error(errorTitle, { description: err instanceof Error ? err.message : undefined });
-  } finally {
-    setLoading(false);
-  }
-}
-
 export default function DashboardBilling() {
   const { user } = useAuth();
-  const { planId, plan, subscriptionEnd, isTrialing, trialEndsAt, isLoading: subLoading, isPro } =
+  const { planId, plan, subscriptionEnd, isTrialing, trialEndsAt, isLoading: subLoading, isError: subError, isPro, refresh: refreshSubscription } =
     useSubscription();
   const { data: agents = [] } = useAgents();
   const { selectedAgentIds } = useAgentSelections();
@@ -74,10 +51,25 @@ export default function DashboardBilling() {
     refetchInterval: 60_000,
   });
 
-  const [portalLoading, setPortalLoading] = useState(false);
-  const [overageLoading, setOverageLoading] = useState(false);
+  const accountKey = user?.id ?? 'signed-out';
+  const captureScope = useRequestScope(accountKey);
+  const [loadingAction, setLoadingAction] = useScopedState<'portal' | 'overage' | null>(accountKey, null);
+  const pending = useRef<{ current: () => boolean; deadline: ReturnType<typeof createRequestDeadline> } | null>(null);
+  const overageIntent = useRef<{ userId: string; requestId: string } | null>(null);
+  useLayoutEffect(() => {
+    overageIntent.current = null;
+    setLoadingAction(null);
+    return () => {
+      const request = pending.current;
+      pending.current = null;
+      request?.deadline.close();
+    };
+  }, [accountKey, setLoadingAction]);
+  const portalLoading = loadingAction === 'portal';
+  const overageLoading = loadingAction === 'overage';
+  const billingDisabled = loadingAction !== null || !user || subLoading || subError;
 
-  const planLabel = plan.name.toUpperCase();
+  const planLabel = subError ? 'ABONNEMENT INDISPONIBLE' : plan.name.toUpperCase();
   const planPrice = `${plan.monthly_price}€`;
   const agentCap = plan.agents_included === -1 ? agents.length : plan.agents_included;
   const usedAgents = selectedAgentIds.length;
@@ -88,6 +80,7 @@ export default function DashboardBilling() {
     const returnedFromCheckout = searchParams.get('overage_success') === 'true';
     const canceledCheckout = searchParams.get('overage_canceled') === 'true';
     if (!returnedFromCheckout && !canceledCheckout) return;
+    overageIntent.current = null;
 
     toast.info('Retour du paiement', {
       description: returnedFromCheckout
@@ -103,21 +96,52 @@ export default function DashboardBilling() {
     setSearchParams(nextSearchParams, { replace: true });
   }, [searchParams, setSearchParams, queryClient, user?.id]);
 
-  const openCustomerPortal = () =>
-    redirectToStripe(
-      () => supabase.functions.invoke('customer-portal'),
-      setPortalLoading,
-      "Impossible d'ouvrir le portail de facturation",
-      'URL du portail introuvable',
-    );
-
-  const buyOveragePack = () =>
-    redirectToStripe(
-      () => supabase.functions.invoke('create-checkout', { body: { priceId: OVERAGE_PACK.price_id } }),
-      setOverageLoading,
-      "Impossible de lancer l'achat du pack",
-      'URL de paiement introuvable',
-    );
+  const redirectToStripe = async (action: 'portal' | 'overage') => {
+    // A ref closes the gap before React commits the disabled button.
+    if (!user || subLoading || subError || pending.current?.current()) return;
+    const current = captureScope();
+    if (!current()) return;
+    const deadline = createRequestDeadline(20_000);
+    const request = { current, deadline };
+    pending.current = request;
+    setLoadingAction(action);
+    try {
+      let body: { priceId: string; requestId: string } | undefined;
+      if (action === 'overage') {
+        if (overageIntent.current?.userId !== user.id) {
+          overageIntent.current = { userId: user.id, requestId: crypto.randomUUID() };
+        }
+        body = { priceId: OVERAGE_PACK.price_id, requestId: overageIntent.current.requestId };
+      }
+      const { data, error } = await deadline.wait(() => supabase.functions.invoke(
+        action === 'portal' ? 'customer-portal' : 'create-checkout', body ? { body } : undefined,
+      ));
+      if (!current()) return;
+      if (error) throw error;
+      const url: unknown = (data as { url?: unknown } | null)?.url;
+      if (typeof url !== 'string' || !url.trim()) throw new Error('URL de facturation introuvable');
+      const redirect = new URL(url);
+      const hostname = action === 'portal' ? 'billing.stripe.com' : 'checkout.stripe.com';
+      if (redirect.protocol !== 'https:' || redirect.hostname !== hostname || redirect.port || redirect.username || redirect.password) {
+        throw new Error('URL de facturation non sécurisée');
+      }
+      deadline.check();
+      if (current()) window.location.assign(redirect.href);
+    } catch (error) {
+      if (!current()) return;
+      toast.error(action === 'portal' ? "Impossible d'ouvrir le portail de facturation" : "Impossible de lancer l'achat du pack", {
+        description: error instanceof RequestDeadlineError
+          ? 'La facturation met trop de temps à répondre. Réessaie dans un instant.'
+          : error instanceof Error ? error.message : 'Réessaie dans un instant.',
+      });
+    } finally {
+      deadline.close();
+      if (pending.current === request) pending.current = null;
+      if (current()) setLoadingAction(null);
+    }
+  };
+  const openCustomerPortal = () => redirectToStripe('portal');
+  const buyOveragePack = () => redirectToStripe('overage');
 
   // Recent usage history (top 20)
   const history = raw.slice(0, 20);
@@ -128,6 +152,14 @@ export default function DashboardBilling() {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-orbitron font-bold text-foreground">Abonnement & Utilisation</h1>
+      {subError && (
+        <div role="alert" className="rounded-lg border border-destructive/30 p-4 text-sm">
+          <p>Impossible de vérifier ton abonnement. Réessaie avant de lancer une opération de facturation.</p>
+          <button onClick={refreshSubscription} disabled={subLoading} className="btn-secondary mt-3 px-3 py-2 disabled:opacity-60">
+            Réessayer
+          </button>
+        </div>
+      )}
 
       {/* Current Plan */}
       <Card
@@ -138,11 +170,13 @@ export default function DashboardBilling() {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
               <span className="px-3 py-1 rounded-full bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground text-xs font-bold flex items-center gap-1 w-fit">
-                {(isPro || planId === 'ultime') && <Crown className="w-3 h-3" />} {planLabel}
-                {isTrialing && <span className="opacity-80">· ESSAI</span>}
+                {!subError && (isPro || planId === 'ultime') && <Crown className="w-3 h-3" />} {planLabel}
+                {!subError && isTrialing && <span className="opacity-80">· ESSAI</span>}
               </span>
               <h2 className="text-3xl font-orbitron font-bold text-foreground mt-3">
-                {subLoading ? (
+                {subError ? (
+                  <span className="text-base">Tarif indisponible</span>
+                ) : subLoading ? (
                   <Loader2 className="w-7 h-7 animate-spin" />
                 ) : (
                   <>
@@ -152,7 +186,9 @@ export default function DashboardBilling() {
                 )}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                {isTrialing && trialEndsAt
+                {subError
+                  ? 'État de l’abonnement indisponible'
+                  : isTrialing && trialEndsAt
                   ? `Essai gratuit jusqu'au ${formatDate(trialEndsAt)} — aucune carte enregistrée`
                   : subscriptionEnd
                     ? `Renouvellement le ${formatDate(subscriptionEnd)}`
@@ -168,7 +204,7 @@ export default function DashboardBilling() {
               {planId !== 'free' && (
                 <button
                   onClick={openCustomerPortal}
-                  disabled={portalLoading}
+                  disabled={billingDisabled}
                   className="btn-secondary text-xs px-4 py-2 flex items-center justify-center gap-1.5 disabled:opacity-60"
                 >
                   {portalLoading ? (
@@ -212,7 +248,7 @@ export default function DashboardBilling() {
               </div>
               <button
                 onClick={buyOveragePack}
-                disabled={overageLoading}
+                disabled={billingDisabled}
                 className="btn-secondary text-xs px-4 py-2 flex items-center justify-center gap-1.5 disabled:opacity-60 whitespace-nowrap"
               >
                 {overageLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
