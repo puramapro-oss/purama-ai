@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import type { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
@@ -39,51 +39,86 @@ interface Profile {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [{ session, revision }, setAuthState] = useState<{ session: Session | null; revision: number }>({ session: null, revision: 0 });
+  const user = session?.user ?? null;
+  const userId = user?.id ?? null;
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const mounted = useRef(true);
+  const sessionEstablished = useRef(false);
+  const sessionRevision = useRef(0);
+  const profileRequest = useRef(0);
+  const activeUserId = useRef<string | null>(null);
 
-  const fetchProfile = async (userId: string) => {
+  const applySession = useCallback((nextSession: Session | null) => {
+    if (!mounted.current) return;
+    const nextUserId = nextSession?.user.id ?? null;
+    sessionEstablished.current = true;
+    sessionRevision.current += 1;
+    profileRequest.current += 1;
+    if (nextUserId === null || activeUserId.current !== nextUserId) setProfile(null);
+    activeUserId.current = nextUserId;
+    setAuthState({ session: nextSession, revision: sessionRevision.current });
+    setLoading(false);
+  }, []);
+
+  const fetchProfile = useCallback(async (requestedUserId: string) => {
+    if (!mounted.current || activeUserId.current !== requestedUserId) return;
+    const request = ++profileRequest.current;
+    const authRevision = sessionRevision.current;
+    const isCurrent = () => mounted.current
+      && sessionRevision.current === authRevision
+      && profileRequest.current === request
+      && activeUserId.current === requestedUserId;
+
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", userId)
+        .eq("id", requestedUserId)
         .single();
-      if (!error && data) {
-        setProfile(data as Profile);
+      if (isCurrent()) {
+        setProfile(!error && data?.id === requestedUserId ? data as Profile : null);
       }
     } catch {
-      // Profile might not exist yet
+      // A missing/failed current profile must not leave stale account data visible.
+      if (isCurrent()) setProfile(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    let active = true;
+    mounted.current = true;
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
+      (_event, nextSession) => {
+        // Supabase invokes this inside its auth lock. Only publish state here.
+        if (active) applySession(nextSession);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    void supabase.auth.getSession().then(({ data, error }) => {
+      // An auth event or explicit sign-out supersedes this startup snapshot.
+      if (active && !sessionEstablished.current) {
+        applySession(error ? null : data.session);
       }
-      setLoading(false);
+    }).catch(() => {
+      if (active && !sessionEstablished.current) applySession(null);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      active = false;
+      mounted.current = false;
+      sessionRevision.current += 1;
+      profileRequest.current += 1;
+      subscription.unsubscribe();
+    };
+  }, [applySession]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void fetchProfile(userId);
+    return () => { profileRequest.current += 1; };
+  }, [userId, revision, fetchProfile]);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
@@ -146,15 +181,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    // Invalidate reads immediately; a late completion must not erase a new sign-in.
+    applySession(null);
     await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-    setProfile(null);
   };
 
-  const refreshProfile = async () => {
-    if (user) await fetchProfile(user.id);
-  };
+  const refreshProfile = useCallback(async () => {
+    const currentUserId = activeUserId.current;
+    if (currentUserId) await fetchProfile(currentUserId);
+  }, [fetchProfile]);
 
   return (
     <AuthContext.Provider value={{ user, session, loading, profile, signUp, signIn, signInWithGoogle, signOut, refreshProfile }}>

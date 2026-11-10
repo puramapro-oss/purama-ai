@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext", "moduleResolution": "Bundler", "jsx": "react-jsx",
+    "strict": true, "skipLibCheck": true, "noEmit": true,
+    "baseUrl": "../..",
+    "paths": {
+      "@/lib/supabase": ["tests/mobile-auth/mocks/supabase.ts"],
+      "react-native": ["tests/mobile-auth/mocks/react-native.ts"],
+      "expo-web-browser": ["tests/mobile-auth/mocks/expo-web-browser.ts"],
+      "expo-linking": ["tests/mobile-auth/mocks/expo-linking.ts"]
+    },
+    "types": ["vite/client", "node"]
+  },
+  "include": ["../../mobile/hooks/useAuth.tsx", "harness.tsx", "mocks/*.ts", "*.spec.ts"]
+}
