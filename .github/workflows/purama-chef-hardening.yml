@@ -50,6 +50,7 @@ jobs:
       - run: npm run test:dependencies
       - run: npm run lint
       - run: npm run test:contracts-auth
+      - run: npm run test:cross-app-jwt
       - run: npm run test:contracts-security
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
