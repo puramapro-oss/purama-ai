@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readRequestText, RequestBodyError } from './request-body.ts';
+import { readBoundedBytes, readRequestText, RequestBodyError } from './request-body.ts';
 
 const encoder = new TextEncoder();
 function streamed(chunks: Uint8Array[], headers: Record<string, string> = {}) {
@@ -125,6 +125,36 @@ test('body reader: read failures are sanitized and locks released', async () => 
   await assert.rejects(readRequestText(request), (error: unknown) => error instanceof RequestBodyError && error.status === 400 && !error.message.includes('private'));
   assert.equal(request.body?.locked, false);
 });
+for (const adapter of ['text', 'bytes'] as const) {
+  for (const interruption of ['none', 'deadline', 'abort-handoff'] as const) {
+    test(`body reader: rejected read ${adapter} preserves ${interruption} priority`, async t => {
+      let clock = 0;
+      t.mock.method(performance, 'now', () => clock);
+      const controller = new AbortController();
+      let reads = 0;
+      const body = new ReadableStream<Uint8Array>({
+        pull(stream) {
+          reads += 1;
+          if (interruption === 'deadline') clock = 5_001;
+          stream.error(new Error('private producer detail'));
+          if (interruption === 'abort-handoff') queueMicrotask(() => controller.abort());
+        },
+      }, { highWaterMark: 0 });
+      const request = new Request('https://body.example.invalid', {
+        method: 'POST', body, signal: controller.signal, duplex: 'half',
+      } as RequestInit);
+      const pending = adapter === 'text'
+        ? readRequestText(request, { maxBytes: 4_096, timeoutMs: 5_000 })
+        : readBoundedBytes(request, { maxBytes: 4_096, deadline: 5_000 });
+      await assert.rejects(pending, (error: unknown) => error instanceof RequestBodyError
+        && error.status === (interruption === 'none' ? 400 : 408)
+        && !error.message.includes('private'));
+      assert.equal(reads, 1);
+      assert.equal(request.body?.locked, false);
+      assert.equal(controller.signal.aborted, interruption === 'abort-handoff');
+    });
+  }
+}
 for (const limits of [{ maxBytes: 0 }, { maxBytes: Number.NaN }, { timeoutMs: 0 }, { timeoutMs: 2_147_483_648 }]) {
   test(`body reader: invalid internal limits ${JSON.stringify(limits)} fail immediately`, async () => {
     await assert.rejects(readRequestText(streamed([]), limits), RangeError);

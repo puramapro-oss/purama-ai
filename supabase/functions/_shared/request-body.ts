@@ -173,6 +173,9 @@ async function consumeBoundedBody<T>(
       const cancelled = reader ? reader.cancel() : request.body?.cancel();
       void Promise.resolve(cancelled).catch(() => {});
     } catch { /* A hostile stream cannot prevent the bounded response. */ }
+    // A rejected read can reach this branch after interruption, before the
+    // deadline timer or the stopped promise wins the asynchronous handoff.
+    checkCurrent();
     if (error instanceof RequestBodyError) throw error;
     throw new RequestBodyError(400, "Invalid request body");
   } finally {
