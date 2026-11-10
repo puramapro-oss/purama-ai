@@ -4,11 +4,13 @@
  * and transport completion alone do not guarantee a complete text answer.
  */
 import { createSSEDataParser } from './sse-data.ts';
+import { buildAssistantSystemPrompt } from './assistant-policy.ts';
 
 export async function streamAnthropicChat(params: {
   apiKey: string; model: string; systemPrompt: string;
   messages: Array<{ role: string; content: string }>;
   maxTokens?: number; signal?: AbortSignal; timeoutMs?: number;
+  context?: unknown;
 }): Promise<Response> {
   const timeoutMs = params.timeoutMs ?? 120_000;
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error("Invalid stream timeout");
@@ -25,7 +27,8 @@ export async function streamAnthropicChat(params: {
       headers: { "x-api-key": params.apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: params.model, max_tokens: params.maxTokens ?? 1024,
-        system: params.systemPrompt, messages: params.messages, stream: true,
+        system: buildAssistantSystemPrompt(params.systemPrompt, 'conversation', params.context),
+        messages: params.messages, stream: true,
       }),
     });
   } catch (error) { cleanup(); throw error; }

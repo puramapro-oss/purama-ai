@@ -36,6 +36,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   const [sending, setSending] = useState(false);
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const voiceReplyRef = useRef<string | null>(null);
 
   useEffect(() => { setSessionId(newAgentSessionId()); }, []);
 
@@ -52,14 +53,14 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   useEffect(() => {
     if (!voice.settings.auto_play || voiceModeOpen) return;
     const last = messages[messages.length - 1];
-    if (last && last.role === 'assistant') {
+    if (last && last.role === 'assistant' && last.id !== voiceReplyRef.current) {
       voice.speak(last.content);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages.length]);
 
-  const submit = async (text: string): Promise<string | null> => {
-    if (!text.trim() || !user) return null;
+  const submit = async (text: string, signal?: AbortSignal): Promise<string | null> => {
+    if (!text.trim() || !user || signal?.aborted) return null;
     const tempUser: AgentChatMessage = {
       id: 'tmp-' + Date.now(),
       user_id: user.id,
@@ -72,16 +73,21 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await sendAgentChatMessage(agentType, sessionId, text.trim());
+      const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), signal);
+      if (signal?.aborted) return null;
+      const replyId = 'tmp-asst-' + Date.now();
+      // VoiceMode owns playback for its turn, even if the modal closes before effects run.
+      if (signal) voiceReplyRef.current = replyId;
       setMessages(prev => [...prev, {
         ...tempUser,
-        id: 'tmp-asst-' + Date.now(),
+        id: replyId,
         role: 'assistant',
         content: res.reply,
         tokens: res.tokens,
       }]);
       return res.reply;
     } catch (e) {
+      if (signal?.aborted) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
@@ -244,7 +250,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
         agentName={agentName}
         agentEmoji={agentEmoji}
         agentColor={agentColor}
-        onSend={async (text) => submit(text)}
+        onSend={submit}
       />
     </>
   );

@@ -14,6 +14,8 @@
     "test:dependencies": "node --test tests/dependency-compat.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test:quality": "playwright test --config tests/quality/playwright.config.ts",
+    "test:wellbeing": "playwright test --config tests/wellbeing/playwright.config.ts",
+    "test:voice-consent": "playwright test --config tests/voice-consent/playwright.config.ts",
     "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check"
   },
   "dependencies": {

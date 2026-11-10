@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Creator Agent — Generate a custom agent definition from a natural language description
 // POST { description }
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -81,7 +82,8 @@ Outils réels disponibles pour "suggested_tools" — utilise EXACTEMENT ces noms
 
 Critères de qualité du system_prompt :
 - Tutoiement par défaut sauf si l'utilisateur précise vouvoiement
-- Démarre par "Tu es un [rôle expert] avec [crédibilité]"
+- Démarre par une identité explicite d’assistant IA et son domaine de tâche; ne lui invente ni diplôme, ni vécu, ni autorité spirituelle
+- Respecte la liberté de choix, les confidences et le refus; aucune influence cachée ni promesse de guérison, de richesse ou de résultat universel
 - Inclut les contraintes de format : "Tu retournes...", "Tu structures...", "Tu utilises..."
 - Inclut le ton et la voix
 - Inclut les choses à NE PAS faire
@@ -103,7 +105,7 @@ Génère la config de cet agent maintenant.`;
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 2000,
-        system: systemPrompt,
+        system: buildAssistantSystemPrompt(systemPrompt, "task"),
         messages: [{ role: "user", content: userMessage }],
       }),
     });

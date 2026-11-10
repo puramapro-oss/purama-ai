@@ -1,12 +1,22 @@
 export interface ChatInputMessage { role: 'user' | 'assistant'; content: string }
 export const CHAT_MAX_MESSAGE_LENGTH = 2_000;
+export interface ChatInputLimits {
+  maxMessages?: number;
+  maxMessageLength?: number;
+  maxTotalLength?: number;
+}
 
 /** Shared preflight; preserve the full conversation or report its limit. */
-export function prepareChatMessages(value: unknown):
+export function prepareChatMessages(value: unknown, limits: ChatInputLimits = {}):
   { ok: true; messages: ChatInputMessage[] } | { ok: false; error: string } {
+  const maxMessages = limits.maxMessages ?? 20;
+  const maxMessageLength = limits.maxMessageLength ?? CHAT_MAX_MESSAGE_LENGTH;
+  const maxTotalLength = limits.maxTotalLength ?? 20_000;
+  if (![maxMessages, maxMessageLength, maxTotalLength].every(n => Number.isSafeInteger(n) && n > 0))
+    throw new TypeError('Invalid server chat limits');
   if (!Array.isArray(value) || value.length === 0)
     return { ok: false, error: 'Écrivez un message pour commencer.' };
-  if (value.length > 20)
+  if (value.length > maxMessages)
     return { ok: false, error: 'Cette conversation a atteint sa limite. Ouvrez une nouvelle conversation pour continuer.' };
   let total = 0;
   const messages: ChatInputMessage[] = [];
@@ -14,10 +24,11 @@ export function prepareChatMessages(value: unknown):
     if (!item || typeof item !== 'object' || !['user', 'assistant'].includes(item.role)
       || typeof item.content !== 'string' || !item.content.trim())
       return { ok: false, error: 'Le format de la conversation est invalide.' };
-    if (item.content.length > CHAT_MAX_MESSAGE_LENGTH)
-      return { ok: false, error: 'Un message dépasse 2 000 caractères.' };
+    if (item.content.length > maxMessageLength)
+      return { ok: false, error: maxMessageLength === CHAT_MAX_MESSAGE_LENGTH
+        ? 'Un message dépasse 2 000 caractères.' : `Un message dépasse ${maxMessageLength} caractères.` };
     total += item.content.length;
-    if (total > 20_000)
+    if (total > maxTotalLength)
       return { ok: false, error: 'Cette conversation est trop longue. Ouvrez une nouvelle conversation pour continuer.' };
     messages.push({ role: item.role, content: item.content });
   }

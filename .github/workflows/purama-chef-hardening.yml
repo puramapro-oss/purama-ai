@@ -48,5 +48,8 @@ jobs:
       - run: npm run test:dependencies
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:wellbeing
+      - run: npm run test:voice-consent
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
