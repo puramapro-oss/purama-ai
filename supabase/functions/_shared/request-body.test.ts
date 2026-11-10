@@ -91,6 +91,34 @@ test('body reader: abort during a stalled read cannot wait for the producer', { 
   await refuses(pending, 408);
   assert.equal(request.body?.locked, false);
 });
+for (const interruption of ['abort', 'deadline']) {
+  test(`body reader: final handoff honors ${interruption} before returning text`, async t => {
+    let clock = 0;
+    t.mock.method(performance, 'now', () => clock);
+    const controller = new AbortController();
+    let reads = 0;
+    let interrupted = false;
+    const body = new ReadableStream<Uint8Array>({
+      pull(stream) {
+        if (reads++ === 0) { stream.enqueue(encoder.encode('complete body')); return; }
+        // The final read completes first. Interruption runs while consume() is
+        // handing its result through the race to the public reader.
+        queueMicrotask(() => queueMicrotask(() => {
+          interrupted = true;
+          if (interruption === 'abort') controller.abort();
+          else clock = 5_001;
+        }));
+        stream.close();
+      },
+    }, { highWaterMark: 0 });
+    const request = new Request('https://body.example.invalid', {
+      method: 'POST', body, signal: controller.signal, duplex: 'half',
+    } as RequestInit);
+    await refuses(readRequestText(request), 408);
+    assert.equal(interrupted, true);
+    assert.equal(request.body?.locked, false);
+  });
+}
 test('body reader: read failures are sanitized and locks released', async () => {
   const body = new ReadableStream<Uint8Array>({ pull(controller) { controller.error(new Error('private producer detail')); } });
   const request = new Request('https://body.example.invalid', { method: 'POST', body, duplex: 'half' } as RequestInit);

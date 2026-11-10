@@ -164,7 +164,10 @@ async function consumeBoundedBody<T>(
     };
     // One subscription for the entire stream, not one retained Promise reaction
     // per chunk. This also bounds a pending read that ignores cancellation.
-    return await Promise.race([consume(), stopped]);
+    const result = await Promise.race([consume(), stopped]);
+    // Interruption can win during the completed reader's asynchronous handoff.
+    checkCurrent();
+    return result;
   } catch (error) {
     try {
       const cancelled = reader ? reader.cancel() : request.body?.cancel();
