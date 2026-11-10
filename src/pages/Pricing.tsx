@@ -33,7 +33,11 @@ export default function Pricing() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const nav = useNavigate();
-  const { planId: currentPlanId, hasUsedTrial, refresh: refreshSubscription } = useSubscription();
+  const {
+    planId: currentPlanId, hasUsedTrial, hasSubscription, isTrialing,
+    isLoading: subscriptionLoading, isError: subscriptionError,
+    refresh: refreshSubscription,
+  } = useSubscription();
 
   const success = searchParams.get('success');
   const canceled = searchParams.get('canceled');
@@ -48,7 +52,9 @@ export default function Pricing() {
       refreshSubscription();
       nav('/dashboard');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      const message = e && typeof e === 'object' && 'message' in e && typeof e.message === 'string'
+        ? e.message : 'Impossible de démarrer l’essai. Réessaie dans un instant.';
+      toast.error('Erreur', { description: message });
     } finally {
       setLoadingPlan(null);
     }
@@ -81,12 +87,17 @@ export default function Pricing() {
       nav(`/login?next=${encodeURIComponent('/pricing')}`);
       return;
     }
+    if (loadingPlan || subscriptionLoading || subscriptionError) return;
     if (plan.id === 'free') {
       toast.success('Tu es déjà sur le plan Découverte 🎉');
       return;
     }
-    if (plan.id === (currentPlanId as PlanId)) {
+    if (plan.id === (currentPlanId as PlanId) && !isTrialing) {
       toast.success(`Tu es déjà sur le plan ${plan.name} 🎉`);
+      return;
+    }
+    if (hasSubscription && !isTrialing) {
+      nav('/dashboard/billing');
       return;
     }
     if (!hasUsedTrial) {
@@ -135,6 +146,15 @@ export default function Pricing() {
             🛡️ Garantie : tes employés IA te font gagner du temps le 1er mois ou remboursé
           </p>
         </motion.div>
+
+        {user && subscriptionError && (
+          <div role="alert" className="max-w-3xl mx-auto mb-6 rounded-lg border border-destructive/40 p-4">
+            <p>Impossible de vérifier ton abonnement. Réessaie avant de choisir une offre.</p>
+            <Button variant="outline" className="mt-3" onClick={refreshSubscription}>
+              Réessayer
+            </Button>
+          </div>
+        )}
 
         {/* Bandeau vert /financer — UPDATE-BRIEF point 1 */}
         <motion.a
@@ -240,18 +260,22 @@ export default function Pricing() {
 
                 <Button
                   onClick={() => handlePlanClick(plan)}
-                  disabled={loadingPlan === plan.id || plan.id === currentPlanId}
+                  disabled={!!loadingPlan || (!!user && (subscriptionLoading || subscriptionError || (plan.id === currentPlanId && !isTrialing)))}
                   className={`w-full mb-5 ${
                     plan.highlight ? 'bg-accent-purple hover:bg-accent-purple/90' : ''
                   }`}
                   variant={plan.id === 'free' ? 'outline' : 'default'}
                 >
                   {loadingPlan === plan.id && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  {plan.id === currentPlanId
+                  {user && subscriptionLoading
+                    ? 'Vérification de ton abonnement…'
+                    : user && plan.id === currentPlanId && !isTrialing
                     ? 'Plan actuel'
                     : plan.id === 'free'
                       ? 'Commencer gratuitement'
-                      : hasUsedTrial
+                      : hasSubscription && !isTrialing
+                        ? 'Gérer mon abonnement'
+                        : hasUsedTrial
                         ? "S'abonner"
                         : 'Essai 14 jours, sans carte'}
                 </Button>

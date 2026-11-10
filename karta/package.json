@@ -10,6 +10,7 @@
     "start": "node dist/index.js",
     "reseed:agents": "tsx scripts/reseed-agents.ts",
     "test": "vitest run",
+    "test:subscriptions:postgres": "node --test test/subscriptionTrial.native.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "chef:worker": "tsx src/chef/worker-main.ts"
@@ -29,6 +30,7 @@
     "@types/node": "^22.10.5",
     "@types/pdfkit": "^0.13.9",
     "fast-check": "4.10.2",
+    "pg": "8.23.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^8.3.7",
