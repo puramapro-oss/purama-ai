@@ -1,0 +1,327 @@
+{
+  "recorded_at": "2026-11-10T15:09:57.124215+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "8631305fe0a4e0208566191b795ef876d9b5dfbe",
+  "source_origin_commit": "0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+  "source_origin_scheduler_blob_sha": "6413ec9e3c4242f484899f12b5d54bac720f15ea",
+  "base_note": "8631305 retains the newer CI change on top of PR33. No historical consolidation is attributed to this scheduler patch.",
+  "status": "PARTIAL: local correction and verification; production not deployed or tested",
+  "environment": {
+    "node": "24.22.1",
+    "typescript": "5.9.3",
+    "vitest": "5.0.3",
+    "node_cron": "4.6.0",
+    "dependencies": "npm ci --no-audit --no-fund; unchanged lockfile"
+  },
+  "changed_source_scope": [
+    "karta/src/agents/customAgent.ts",
+    "karta/src/scheduler/customAgents.ts",
+    "karta/test/customAgentScheduler.test.ts",
+    "karta/test/customAgentSchedulerCron.test.ts",
+    "karta/test/customAgentScanAbort.test.ts"
+  ],
+  "source_sha256": {
+    "karta/src/agents/customAgent.ts": "56017f8f35a3f95bc2391f5459a3e30f757e4a3e906805ca48abcadf2f372875",
+    "karta/src/scheduler/customAgents.ts": "1d5b5f68083c385e8435938c8124254a4567927f1aa9b541ed4c76dc9b5ee687",
+    "karta/test/customAgentScheduler.test.ts": "b9d644216f828dde016a132d6ffbbf2dc521117392cd76d539f7d78e585786bc",
+    "karta/test/customAgentSchedulerCron.test.ts": "8828fb740e4fd0b9830c9be7285d19f307d9d2cebeabd15a8fc1965530432ccc",
+    "karta/test/customAgentScanAbort.test.ts": "d61ae014b3d856064d2cdd8e3e589482d3f6076149e32011b4d2aa870bd14a54"
+  },
+  "verification": [
+    {
+      "name": "original scheduler diagnostic",
+      "result": "Four defects reproduced on byte-identical PR33 source; two nominal controls passed",
+      "evidence": {
+        "recordedAt": "2026-11-10T14:45:53.173Z",
+        "runtime": "v24.22.1",
+        "repository": "puramapro-oss/purama-ai",
+        "commit": "0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+        "gitBlobSha": "6413ec9e3c4242f484899f12b5d54bac720f15ea",
+        "sourceUnchanged": true,
+        "verdict": "Four scheduler defects reproduced; no correction applied.",
+        "checks": [
+          {
+            "id": "control_valid_schedule",
+            "status": "PASS",
+            "enqueues": 1,
+            "dedupeIdentityPresent": true
+          },
+          {
+            "id": "control_initial_failure_caught",
+            "status": "PASS",
+            "loggedErrors": 1
+          },
+          {
+            "id": "periodic_failure_detaches_promise",
+            "status": "REPRODUCED",
+            "childExitCode": 1,
+            "injectedErrorObserved": true,
+            "unhandledRejectionMode": "strict"
+          },
+          {
+            "id": "stop_leaves_agent_schedule_active",
+            "status": "REPRODUCED",
+            "scanStopped": true,
+            "agentScheduleStopped": false,
+            "enqueuesAfterStop": 1
+          },
+          {
+            "id": "late_scan_registers_after_stop",
+            "status": "REPRODUCED",
+            "liveAgentTimersAfterStop": 1,
+            "enqueuesAfterStop": 1
+          },
+          {
+            "id": "overlapping_scan_applies_stale_snapshot",
+            "status": "REPRODUCED",
+            "concurrentReads": 2,
+            "newestSnapshotAgentCount": 0,
+            "activeTimersAfterOlderSnapshot": 1
+          }
+        ],
+        "limitations": [
+          "node-cron, Supabase and BullMQ are inert dependency doubles.",
+          "The original scheduler source is executed after native TypeScript type stripping.",
+          "No production connection, deployment, notification, email or paid API call.",
+          "No GitNexus impact tool was available; product source was not modified."
+        ]
+      }
+    },
+    {
+      "name": "initial Vitest regression suite before product changes",
+      "command": "npm test -- test/customAgentScheduler.test.ts",
+      "cwd": "karta",
+      "exit_code": 1,
+      "result": "9 failed, 2 passed, one unhandled rejection. This was the initial 11-case version; final tests were expanded and strengthened."
+    },
+    {
+      "name": "final scoped suite",
+      "command": "npm test -- test/agentsRegistry.test.ts test/customAgent.test.ts test/customAuthorization.test.ts test/queueDeliveryIdentity.test.ts test/customAgentScheduler.test.ts test/customAgentSchedulerCron.test.ts test/customAgentScanAbort.test.ts",
+      "cwd": "karta",
+      "exit_code": 0,
+      "test_files": 7,
+      "tests_passed": 91,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 2.62,
+      "counting_note": "Includes 18 added tests (13 lifecycle, 3 real node-cron, 2 signal forwarding). The 18 are not added to the 91."
+    },
+    {
+      "name": "TypeScript KARTA including existing caller index.ts",
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exit_code": 0
+    },
+    {
+      "name": "KARTA compilation",
+      "command": "npm run build",
+      "cwd": "karta",
+      "exit_code": 0
+    },
+    {
+      "name": "patch whitespace",
+      "command": "git diff --check",
+      "cwd": ".",
+      "exit_code": 0
+    }
+  ],
+  "impact_before_edits": {
+    "impact-refresh.json": {
+      "target": {
+        "id": "Function:karta/src/scheduler/customAgents.ts:refreshCustomAgentSchedules",
+        "name": "refreshCustomAgentSchedules",
+        "type": "Function",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 2,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "raw_json_sha256": "494a4ac8cd59cff6d34040e2c2dc5822ed46c2cf19e93de583522b73df7f7583"
+    },
+    "impact-start.json": {
+      "target": {
+        "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler",
+        "name": "startCustomAgentScheduler",
+        "type": "Function",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 1,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "raw_json_sha256": "8280615b3ed12dce0c2ae882c13e05b5eaa1903aa5101c936979c306e5244987"
+    },
+    "impact-list-custom-agents.json": {
+      "target": {
+        "id": "Function:karta/src/agents/customAgent.ts:listKartaEnabledCustomAgents",
+        "name": "listKartaEnabledCustomAgents",
+        "type": "Function",
+        "filePath": "karta/src/agents/customAgent.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 3,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "raw_json_sha256": "12d0b755773961bb2cb63e12f65b97078a59a6b626a0ade6989b8d1d5276d635"
+    },
+    "impact-refresh-deadline.json": {
+      "target": {
+        "id": "Function:karta/src/scheduler/customAgents.ts:refreshSchedules",
+        "name": "refreshSchedules",
+        "type": "Function",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 3,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "raw_json_sha256": "769f1c5f4ba2080bc79d786b472338df83917936f176a2ae820599b75d8d775e"
+    }
+  },
+  "raw_logs": {
+    "vitest-before.txt": {
+      "sha256": "7088a88510e7c14e711f26c74672a1950413f46513458b31714d3d4b94b2d009",
+      "content": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 test\n> vitest run test/customAgentScheduler.test.ts\n\n\n RUN  v5.0.3 /workspace/scratch/ce7124b9f7f6/purama-ai-scheduler/karta\n\n ❯ test/customAgentScheduler.test.ts (11 tests | 9 failed) 34ms\n   ❯ custom-agent scheduler lifecycle (11)\n     × catches a periodic scan failure and allows the next scan to recover 4ms\n     × shares an in-flight scan instead of applying out-of-order snapshots 1ms\n     × destroys all timers on stop and rejects already-queued callbacks 3ms\n     × does not register an agent when a scan resolves after stop 1ms\n     × reuses the active controller if startup is called twice 2ms\n     × isolates restarts from an old scan and an old stop handle 1ms\n     × invalidates retired timer callbacks during reconfiguration 1ms\n     × handles a failed enqueue without exposing the provider error 1ms\n     × keeps callbacks inert even if asynchronous timer destruction fails 1ms\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > catches a periodic scan failure and allows the next scan to recover\nAssertionError: expected undefined to be an instance of Promise\n ❯ test/customAgentScheduler.test.ts:77:20\n     75|     state.list.mockReturnValueOnce(failure);\n     76|     const result = interval.callback();\n     77|     expect(result).toBeInstanceOf(Promise);\n       |                    ^\n     78|     await expect(result).resolves.toBeUndefined();\n     79|     expect(console.error).toHaveBeenCalled();\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > shares an in-flight scan instead of applying out-of-order snapshots\nAssertionError: expected \"vi.fn()\" to be called 1 times, but got 2 times\n ❯ test/customAgentScheduler.test.ts:104:24\n    102|     const first = refreshCustomAgentSchedules();\n    103|     const second = refreshCustomAgentSchedules();\n    104|     expect(state.list).toHaveBeenCalledTimes(1);\n       |                        ^\n    105|     pending.resolve([agent]);\n    106|     await Promise.all([first, second]);\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > destroys all timers on stop and rejects already-queued callbacks\nAssertionError: expected false to be true // Object.is equality\n\n- Expected\n+ Received\n\n- true\n+ false\n\n ❯ test/customAgentScheduler.test.ts:116:77\n    114|     const callbacks = state.tasks.map(task => task.callback);\n    115|     controller.stop();\n    116|     expect(state.tasks.every(task => task.destroy.mock.calls.length ==…\n       |                                                                             ^\n    117|     for (const callback of callbacks) await callback();\n    118|     await refreshCustomAgentSchedules();\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > does not register an agent when a scan resolves after stop\nAssertionError: expected [ { …(4) }, { …(4) } ] to have a length of 1 but got 2\n\n- Expected\n+ Received\n\n- 1\n+ 2\n\n ❯ test/customAgentScheduler.test.ts:131:25\n    129|     pending.resolve([agent]);\n    130|     await flush();\n    131|     expect(state.tasks).toHaveLength(1);\n       |                         ^\n    132|     expect(state.tasks[0].destroy).toHaveBeenCalledTimes(1);\n    133|   });\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > reuses the active controller if startup is called twice\nAssertionError: expected { expression: '*/5 * * * *', …(3) } to be { expression: '*/5 * * * *', …(3) } // Object.is equality\n\nCompared values have no visual difference.\n\n ❯ test/customAgentScheduler.test.ts:140:20\n    138|     const second = startCustomAgentScheduler();\n    139|     await flush();\n    140|     expect(second).toBe(first);\n       |                    ^\n    141|     expect(state.list).toHaveBeenCalledTimes(1);\n    142|     expect(state.tasks).toHaveLength(2);\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > isolates restarts from an old scan and an old stop handle\nAssertionError: expected [ { …(4) }, { …(4) }, { …(4) } ] to have a length of 2 but got 3\n\n- Expected\n+ Received\n\n- 2\n+ 3\n\n ❯ test/customAgentScheduler.test.ts:157:25\n    155|     pending.resolve([agent]);\n    156|     await flush();\n    157|     expect(state.tasks).toHaveLength(2);\n       |                         ^\n    158|     first.stop();\n    159|     expect(state.tasks[1].destroy).not.toHaveBeenCalled();\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > invalidates retired timer callbacks during reconfiguration\nAssertionError: expected \"vi.fn()\" to be called 1 times, but got 0 times\n ❯ test/customAgentScheduler.test.ts:173:30\n    171|     state.list.mockResolvedValue([{ ...agent, schedule_cron: \"0 * * * …\n    172|     await refreshCustomAgentSchedules();\n    173|     expect(oldTimer.destroy).toHaveBeenCalledTimes(1);\n       |                              ^\n    174|     await oldTimer.callback();\n    175|     expect(state.enqueue).not.toHaveBeenCalled();\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > handles a failed enqueue without exposing the provider error\nTypeError: You must provide a Promise to expect() when using .resolves, not 'undefined'.\n ❯ test/customAgentScheduler.test.ts:186:96\n    184|     const controller = startCustomAgentScheduler();\n    185|     await flush();\n    186|     await expect(state.tasks.find(task => task.expression === agent.sc…\n       |                                                                                                ^\n    187|     expect(console.error).toHaveBeenCalledTimes(1);\n    188|     expect(JSON.stringify(vi.mocked(console.error).mock.calls)).not.to…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯\n\n FAIL  test/customAgentScheduler.test.ts > custom-agent scheduler lifecycle > keeps callbacks inert even if asynchronous timer destruction fails\nAssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times\n\nReceived:\n\n  1st vi.fn() call:\n\n    Array [\n      Object {\n        \"agentType\": \"custom:agent-test\",\n        \"trigger\": Object {\n          \"payload\": Object {\n            \"slot\": \"2026-11-10T14:56\",\n          },\n          \"source\": \"custom-agent:Agent privé\",\n          \"type\": \"cron\",\n        },\n        \"userId\": \"user-test\",\n      },\n      Object {\n        \"dedupeKey\": \"cron|custom:agent-test|user-test|2026-11-10T14:56\",\n      },\n    ]\n\n\nNumber of calls: 1\n\n ❯ test/customAgentScheduler.test.ts:201:31\n    199|     await flush();\n    200|     await timer.callback();\n    201|     expect(state.enqueue).not.toHaveBeenCalled();\n       |                               ^\n    202|     expect(console.error).toHaveBeenCalledTimes(1);\n    203|     expect(JSON.stringify(vi.mocked(console.error).mock.calls)).not.to…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯\n\n⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯\n\nVitest caught 1 unhandled error during the test run.\nThis might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.\n\n⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯\nError: PRIVATE_DATABASE_DETAIL\n ❯ test/customAgentScheduler.test.ts:73:36\n     71|     // An observed rejection tests the scheduler callback without lett…\n     72|     // terminate the entire runner before the failed assertion is repo…\n     73|     const failure = Promise.reject(new Error(\"PRIVATE_DATABASE_DETAIL\"…\n       |                                    ^\n     74|     void failure.catch(() => undefined);\n     75|     state.list.mockReturnValueOnce(failure);\n ❯ node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20\n\nThis error originated in \"test/customAgentScheduler.test.ts\" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.\nThe last test to run before this error was \"also handles the initial failure without detaching a rejected promise\". This means either:\n- the error was thrown while Vitest was running this test, or\n- the error was thrown after the test completed, and this was the most recent test at that point.\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n\n Test Files  1 failed (1)\n      Tests  9 failed | 2 passed (11)\n     Errors  1 error\n   Start at  15:56:49\n   Duration  278ms (transform 46%, tests 33%, import 8%, setup 7%, worker 5%)\n\n"
+    },
+    "vitest-final-release.txt": {
+      "sha256": "e19b130f51867103ddf7d8a173d56d8c7f2cffb572ce33130ab31a3fb45d18ad",
+      "content": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 test\n> vitest run test/agentsRegistry.test.ts test/customAgent.test.ts test/customAuthorization.test.ts test/queueDeliveryIdentity.test.ts test/customAgentScheduler.test.ts test/customAgentSchedulerCron.test.ts test/customAgentScanAbort.test.ts\n\n\n RUN  v5.0.3 /workspace/scratch/ce7124b9f7f6/purama-ai-scheduler/karta\n\n\n Test Files  7 passed (7)\n      Tests  91 passed (91)\n   Start at  16:05:47\n   Duration  2.62s (tests 64%, import 20%, transform 14%, setup 1%, worker 1%)\n\n    Isolate  7 workers spawned · ~132ms startup each (spawn + environment, per file)\n             at least ~330ms faster with isolate: false — reuses workers across files instead of one per file\n\n"
+    },
+    "typecheck-final-release.txt": {
+      "sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8",
+      "content": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 typecheck\n> tsc --noEmit -p tsconfig.json\n\n"
+    },
+    "build-final-release.txt": {
+      "sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746",
+      "content": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 build\n> tsc -p tsconfig.build.json\n\n"
+    }
+  },
+  "risk_limits": [
+    "Scheduler scan timeout is 30 seconds. The exact AbortSignal reaches the database query; a late non-cooperative response is prevented from changing the registry.",
+    "Stopping the scheduler prevents new timer callbacks. It cannot retract a queue submission already started or cancel a job already accepted by the queue.",
+    "Unit tests substitute database and queue dependencies. Three tests use real installed node-cron timers and registry.",
+    "No live Supabase, Redis, provider, email, payment, production migration, deployment or real mission was exercised.",
+    "Full KARTA suite was not rerun for this narrow change; scoped neighboring tests, whole KARTA typecheck and build passed.",
+    "GitNexus call-graph impacts were LOW before edits. Full-text search was unavailable and process graph was capped; absence of a graph path is not proof of absence.",
+    "Core worker execution, model routing, financial rules and existing CI are outside this patch."
+  ],
+  "impact_after_cold_reindex": {
+    "impact-stop-log-cold.json": {
+      "target": {
+        "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler.refreshSafely@114:2",
+        "name": "refreshSafely",
+        "type": "Function",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 2,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "raw_json_sha256": "f96e3edac48e61e3d04bd0f41f6522b4d3229f998be39c467904e8c675613ee6"
+    },
+    "impact-parent-cold.json": {
+      "target": {
+        "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler",
+        "name": "startCustomAgentScheduler",
+        "type": "Function",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 1,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "raw_json_sha256": "8280615b3ed12dce0c2ae882c13e05b5eaa1903aa5101c936979c306e5244987"
+    },
+    "impact-stop-log-qualified.json": {
+      "target": {
+        "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler.refreshSafely@114:2",
+        "name": "refreshSafely",
+        "type": "Function",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "LOW",
+      "impacted_count": 2,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "raw_json_sha256": "f96e3edac48e61e3d04bd0f41f6522b4d3229f998be39c467904e8c675613ee6"
+    }
+  },
+  "analysis_anomaly": {
+    "observed_unqualified_result": {
+      "target": {
+        "name": "refreshSafely",
+        "type": "",
+        "filePath": "karta/src/scheduler/customAgents.ts"
+      },
+      "risk": "CRITICAL",
+      "impactedCount": 143,
+      "summary": {
+        "direct": 102,
+        "processes_affected": 14,
+        "modules_affected": 9
+      }
+    },
+    "old_result_sha256": "2569f1932225bfc685eca535de477f38db7131284a411b56f338baa2ea1d5d0a",
+    "handling": "Publication paused. The generated index was preserved, then rebuilt from scratch without editing product source or instructions. Qualified UID and enclosing-parent queries now resolve to the actual scheduler function and LOW risk. The specific internal cause of the earlier missing target id/type was not proven.",
+    "first_force_reindex_exit_code": 1,
+    "cold_reindex_exit_code": 0,
+    "cold_reindex_log_sha256": "d499eb8f90bca6ab43128b7a7d6887f65a10137c7f794f0479f87cb58e839151",
+    "qualified_callback_uid": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler.refreshSafely@114:2"
+  },
+  "review": {
+    "independent_reviewer": "seo_verification",
+    "findings": "No blocking defect in lifecycle and timeout review. Intentional stop logging was corrected and asserted in final tests.",
+    "root_review": "Source diff, caller compatibility and final 91-test result reviewed independently."
+  },
+  "change_analysis": {
+    "staged_command": "npm exec --offline --yes --package=gitnexus@1.6.12 -- gitnexus detect_changes --scope staged",
+    "staged_exit_code": 0,
+    "staged_result": {
+      "changed_files": 6,
+      "changed_symbols": 53,
+      "affected_processes": 3,
+      "risk": "MEDIUM",
+      "listing_capped": true,
+      "raw_output_sha256": "8845224b8c3fea570c552223eb56d305b48b17acdc8ead8b45ef81068ab7a2b8"
+    },
+    "default_branch_command": "npm exec --offline --yes --package=gitnexus@1.6.12 -- gitnexus detect_changes --scope compare --base-ref origin/main",
+    "default_branch_exit_code": 0,
+    "default_branch_result": {
+      "changed_files": 504,
+      "changed_symbols": 4472,
+      "affected_processes": 453,
+      "risk": "CRITICAL",
+      "preexisting_changed_files_between_base_and_main": 500,
+      "raw_output_sha256": "8bbc31a558fdceb9999baf7c7b36f77b29f4ac75c05d8b75015ad3c209660e1e"
+    },
+    "scope_note": "The local change consists of 6 staged files on top of 8631305. The CRITICAL comparison against main includes the pre-existing IAO consolidation and is not this patch’s individual blast radius. The staged analysis reports MEDIUM. Generic stop/destroy names connect to UI flows in the graph; manual caller review and targeted tests supplement this graph output."
+  },
+  "publication": {
+    "commit_created": false,
+    "pushed": false,
+    "deployed": false,
+    "status": "Prepared and staged for root review; no deployment claim"
+  }
+}
