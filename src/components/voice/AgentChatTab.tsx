@@ -33,6 +33,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   const userId = user?.id;
   const [requests] = useState(createRequestScope);
   const voice = useVoice();
+  const { cancelRecording, stopSpeaking } = voice;
   const [sessionId, setSessionId] = useState(newAgentSessionId);
   const [messages, setMessages] = useState<AgentChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -42,6 +43,9 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   const voiceReplyRef = useRef<string | null>(null);
 
   useLayoutEffect(() => {
+    // Voice requests have their own scope and must expire with this conversation.
+    cancelRecording();
+    stopSpeaking();
     setMessages([]);
     setInput('');
     setSending(false);
@@ -55,7 +59,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
       .catch(() => {})
       .finally(() => request.finish());
     return () => requests.invalidate();
-  }, [userId, agentType, sessionId, requests]);
+  }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
