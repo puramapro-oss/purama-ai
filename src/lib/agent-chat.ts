@@ -1,5 +1,6 @@
 // Universal Agent Chat client (Email / Compta / Partner)
 import { supabase } from '@/integrations/supabase/client';
+import { createSessionId } from '@/lib/session-id';
 
 export type AgentChatType = 'email' | 'compta' | 'partner';
 
@@ -18,7 +19,7 @@ type AnyTable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 const sb = () => (supabase as unknown as { from: (t: string) => AnyTable });
 
 export function newAgentSessionId(): string {
-  return `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  return createSessionId();
 }
 
 export async function listAgentChatMessages(
@@ -67,10 +68,14 @@ export async function sendAgentChatMessage(
   agentType: AgentChatType,
   sessionId: string,
   message: string,
+  signal?: AbortSignal,
 ): Promise<{ reply: string; tokens: number | null }> {
+  signal?.throwIfAborted();
   const { data, error } = await supabase.functions.invoke('agent-chat', {
     body: { agent_type: agentType, session_id: sessionId, message },
+    signal,
   });
+  signal?.throwIfAborted();
   if (error) throw error;
   return data as { reply: string; tokens: number | null };
 }

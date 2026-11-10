@@ -44,8 +44,8 @@ export default function LegalAgentChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const submitMessage = async (userMsg: string): Promise<string | null> => {
-    if (!userMsg.trim() || !user) return null;
+  const submitMessage = async (userMsg: string, signal?: AbortSignal): Promise<string | null> => {
+    if (!userMsg.trim() || !user || signal?.aborted) return null;
     const tempUser: LegalChatMessage = {
       id: 'tmp-' + Date.now(),
       user_id: user.id,
@@ -62,7 +62,8 @@ export default function LegalAgentChat() {
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const result = await sendChatMessage(sessionId, userMsg);
+      const result = await sendChatMessage(sessionId, userMsg, signal);
+      if (signal?.aborted) return null;
       const assistantMsg: LegalChatMessage = {
         ...tempUser,
         id: 'tmp-asst-' + Date.now(),
@@ -74,6 +75,7 @@ export default function LegalAgentChat() {
       listChatSessions(user.id).then(setSessions).catch(() => {});
       return result.reply;
     } catch (e) {
+      if (signal?.aborted) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
@@ -269,7 +271,7 @@ export default function LegalAgentChat() {
         agentName="Agent Juridique"
         agentEmoji="⚖️"
         agentColor="#6D28D9"
-        onSend={async (text) => submitMessage(text)}
+        onSend={submitMessage}
       />
     </div>
   );

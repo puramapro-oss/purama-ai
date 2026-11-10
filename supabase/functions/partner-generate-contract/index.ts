@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Partner Agent — Generate a partnership contract via DocuSeal
 // POST { prospect_id }
 // 1. Fetch prospect + sender config (signature image url)
@@ -74,7 +75,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 3000,
-        system: `Tu rédiges un contrat de partenariat français complet et conforme.
+        system: buildAssistantSystemPrompt(`Tu prépares un projet de contrat de partenariat français à faire vérifier; sa conformité n’est pas établie par la génération du texte.
 Tu retournes UNIQUEMENT le contenu du contrat en texte brut (pas de markdown), structuré en articles numérotés, prêt à être imprimé sur PDF.
 Le contrat doit inclure :
 - Identité des parties (Purama et le partenaire)
@@ -89,7 +90,7 @@ Le contrat doit inclure :
 - Article 9 : Responsabilité et garanties
 - Article 10 : Loi applicable et juridiction (droit français)
 - Bloc signature pour les deux parties
-Pas de placeholder type [INSÉRER X], utilise les valeurs ci-dessous.`,
+Utilise uniquement les valeurs ci-dessous. Pour une donnée absente, indique « à compléter » et ne déclare pas le projet prêt à signer.`, "task"),
         messages: [{
           role: "user",
           content: `Émetteur :

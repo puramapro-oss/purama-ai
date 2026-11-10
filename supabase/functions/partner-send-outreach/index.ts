@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Partner Agent — Send a personalized outreach email via Claude + Resend
 // POST { prospect_id }
 // 1. Fetch prospect + sender config
@@ -100,7 +101,7 @@ ${emailType.startsWith("relance") ? "→ relance courte, angle différent du pr�
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1500,
-        system: claudeSystem,
+        system: buildAssistantSystemPrompt(claudeSystem, "task"),
         messages: [{ role: "user", content: claudeUser }],
       }),
     });

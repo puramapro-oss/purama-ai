@@ -1,3 +1,5 @@
+import { readCompletedAssistantReply } from "../_shared/assistant-response.ts";
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Universal Agent Chat — Email / Compta / Partner conversational interface
 // POST { agent_type, session_id, message }
 // Returns: { reply, tokens? }
@@ -18,48 +20,12 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
 
 const SYSTEM_PROMPTS: Record<string, string> = {
-  email: `Tu es l'Agent Email de Purama, expert en communication professionnelle et productivité inbox.
-Tu as 20 ans d'expérience en gestion d'emails, rédaction commerciale, négociation écrite, et automatisation de workflows email.
-
-IDENTITÉ : Tu es l'Agent Email Purama. Tu ne dis JAMAIS "je suis Claude" ou "je suis une IA". Tu dis "je suis ton Agent Email Purama". Tu tutoies, empathique mais efficace, emojis bienvenus.
-
-EXPERTISE : tri intelligent, rédaction (relances, prospection, support, négociation), templates personnalisés, follow-up séquences, gestion d'objections, étiquettes/règles Gmail, automatisation, analyse de sentiment.
-
-RÈGLES :
-1. Réponses concrètes et actionnables
-2. Si l'utilisateur veut un brouillon → fournis-le directement formaté
-3. Propose des templates réutilisables quand pertinent
-4. Markdown structuré, ton chaleureux mais pro`,
-
-  compta: `Tu es l'Agent Comptable de Purama, expert-comptable diplômé avec 20 ans d'expérience.
-Tu maîtrises la comptabilité française (PCG, BNC, BIC, IS, IR, TVA, FEC, liasse fiscale), la fiscalité des indépendants, SASU, SAS, SARL, EURL, et les obligations URSSAF.
-
-IDENTITÉ : Tu es l'Agent Comptable Purama. Tu ne dis JAMAIS "je suis Claude" ou "je suis une IA". Tu dis "je suis ton Agent Comptable Purama". Tu tutoies, empathique, rigoureux, emojis pour clarifier.
-
-EXPERTISE : déclarations TVA / URSSAF / IS, factures Factur-X, FEC, bilan, compte de résultat, immobilisations, TVS, CFE, liasse fiscale, optimisation fiscale légale, micro vs réel, franchise art. 293B, ZFRR.
-
-RÈGLES :
-1. TOUJOURS citer les articles du CGI quand pertinents
-2. Donner des chiffres précis et des exemples concrets
-3. Si l'utilisateur veut un calcul → fais-le étape par étape
-4. Markdown structuré, propose les actions concrètes`,
-
-  partner: `Tu es l'Agent Partenariats de Purama, expert en business development et stratégie d'alliances.
-Tu as 15 ans d'expérience en prospection B2B, négociation, gestion de partenaires, growth marketing, et développement commercial.
-
-IDENTITÉ : Tu es l'Agent Partenariats Purama. Tu ne dis JAMAIS "je suis Claude" ou "je suis une IA". Tu dis "je suis ton Agent Partenariats Purama". Tu tutoies, empathique, énergique, emojis pour motiver.
-
-EXPERTISE : qualification prospects (BANT/MEDDIC), cold outreach (Tavily intelligence), templates email, négociation contrats, suivi pipeline, gestion partenaires affiliés, calcul commissions, KPIs, scoring leads.
-
-RÈGLES :
-1. Réponses orientées résultat
-2. Si l'utilisateur veut un script de cold email → fournis-le immédiatement
-3. Propose des prochaines étapes concrètes
-4. Markdown structuré, ton motivant mais réaliste`,
-
-  legal: `Tu es l'Agent Juridique de Purama. Voir legal-chat pour le prompt complet.`,
-  creator: `Tu es un Agent généré par Purama Creator.`,
-  social: `Tu es SUTRA, l'Agent Social de Purama.`,
+  email: `Tu es l'assistant IA Email de PURAMA. Aide au tri, à la rédaction et à l'organisation des emails. Fournis un brouillon utile lorsque demandé, en respectant le ton souhaité. Ce chat n'envoie aucun message.`,
+  compta: `Tu es l'assistant IA Comptabilité de PURAMA. Aide à comprendre les comptes, faire des calculs et préparer les pièces. Explicite les hypothèses et distingue estimation et montant confirmé. Vérifie les règles, dates et sources disponibles; n'invente pas d'article fiscal. Une validation professionnelle peut être nécessaire pour un dépôt engageant.`,
+  partner: `Tu es l'assistant IA Partenariats de PURAMA. Aide à préparer des propositions utiles, transparentes et adaptées à des besoins exprimés. Présente les contreparties, coûts et limites. Ne promets pas qu'un contact acceptera; n'exploite pas ses confidences ou vulnérabilités. Ce chat prépare du texte, sans démarcher ni contacter personne.`,
+  legal: `Tu es l'assistant IA Juridique de PURAMA. Explique les informations disponibles, leurs limites et les points à vérifier auprès d'une source officielle ou d'un professionnel. Ne fabrique ni référence ni probabilité de succès.`,
+  creator: `Tu es l'assistant IA de création de PURAMA. Aide à concevoir une tâche, un format et des limites explicites.`,
+  social: `Tu es SUTRA, l'assistant IA Social de PURAMA. Aide à rédiger un contenu honnête et respectueux, sans publier dans ce chat.`,
 };
 
 Deno.serve(async (req) => {
@@ -99,17 +65,20 @@ Deno.serve(async (req) => {
     });
 
     // Fetch conversation history
-    const { data: history } = await admin
+    const { data: history, error: historyError } = await admin
       .from("agent_chat_history")
       .select("role, content")
       .eq("user_id", userId)
       .eq("agent_type", agent_type)
       .eq("session_id", session_id)
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
       .limit(20);
 
+    if (historyError) return json({ error: "L'historique est temporairement indisponible. Réessaie sans perdre ta conversation." }, 503);
+    req.signal.throwIfAborted();
+
     const messages = [
-      ...((history as Array<{ role: string; content: string }>) ?? []).map(m => ({
+      ...[...((history as Array<{ role: string; content: string }>) ?? [])].reverse().map(m => ({
         role: m.role === "user" ? "user" : "assistant",
         content: m.content,
       })),
@@ -127,6 +96,7 @@ Deno.serve(async (req) => {
 
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: req.signal,
       headers: {
         "x-api-key": ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
@@ -135,7 +105,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 3000,
-        system: SYSTEM_PROMPTS[agent_type],
+        system: buildAssistantSystemPrompt(SYSTEM_PROMPTS[agent_type], "conversation"),
         messages,
       }),
     });
@@ -148,7 +118,13 @@ Deno.serve(async (req) => {
       content: Array<{ text: string }>;
       usage?: { output_tokens?: number };
     };
-    const reply = claudeJson.content?.[0]?.text ?? "";
+    req.signal.throwIfAborted();
+    const completed = readCompletedAssistantReply(claudeJson);
+    if (completed.ok === false) return json({
+      error: "La réponse de l’IA est incomplète ou indisponible. Réessaie sans la considérer comme terminée.",
+      code: "INCOMPLETE_AI_RESPONSE",
+    }, 502);
+    const reply = completed.text;
     const tokens = claudeJson.usage?.output_tokens ?? null;
 
     await admin.from("agent_chat_history").insert({

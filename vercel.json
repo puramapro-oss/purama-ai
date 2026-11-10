@@ -9,7 +9,8 @@
   "git": {
     "deploymentEnabled": {
       "audit/dependency-security-20261109": false,
-      "repair/iao-quality-20261109": false
+      "repair/iao-quality-20261109": false,
+      "codex/iao-compassion-consent-20261110": false
     }
   }
 }

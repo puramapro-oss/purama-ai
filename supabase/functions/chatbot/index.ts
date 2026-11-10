@@ -59,7 +59,7 @@ serve(async (req) => {
     const lastUserMessage = messages.filter(m => m.role === "user").pop()?.content || "";
 
     // Search knowledge base for relevant answers
-    let knowledgeContext = "";
+    let knowledgeContext: Array<{ question: string; reponse: string }> = [];
     if (lastUserMessage) {
       const searchTerms: string[] = lastUserMessage.toLowerCase().split(/\s+/).filter((w: string) => w.length > 2);
       
@@ -76,25 +76,25 @@ serve(async (req) => {
         }).slice(0, 3);
 
         if (matches.length > 0) {
-          knowledgeContext = `\n\n## Base de connaissances pertinente\n${matches.map((kb: { question: string; reponse: string }) => 
-            `**Q:** ${kb.question}\n**R:** ${kb.reponse}`
-          ).join("\n\n")}`;
+          knowledgeContext = matches.map((kb: { question: string; reponse: string }) => ({
+            question: kb.question, reponse: kb.reponse,
+          }));
         }
       }
     }
 
-    // Add page context to system prompt
-    let contextualPrompt = SYSTEM_PROMPT;
+    // Keep retrieved content out of the instruction-bearing role string.
+    const context: { knowledge: typeof knowledgeContext; pagePath?: string } = { knowledge: knowledgeContext };
     if (typeof pageContext === "string" && /^\/[a-zA-Z0-9/_-]{0,200}$/.test(pageContext)) {
-      contextualPrompt += `\nChemin de page (donnée de contexte) : ${JSON.stringify(pageContext)}`;
+      context.pagePath = pageContext;
     }
-    contextualPrompt += knowledgeContext;
 
     const response = await streamAnthropicChat({
       signal: req.signal,
       apiKey: ANTHROPIC_API_KEY,
       model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
-      systemPrompt: contextualPrompt,
+      systemPrompt: SYSTEM_PROMPT,
+      context,
       messages,
     });
 

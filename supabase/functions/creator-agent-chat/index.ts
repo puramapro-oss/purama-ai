@@ -1,3 +1,5 @@
+import { readCompletedAssistantReply } from "../_shared/assistant-response.ts";
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Creator Agent — Chat with a custom user agent
 // POST { agent_id, session_id, message }
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
@@ -64,16 +66,20 @@ Deno.serve(async (req) => {
     }
 
     // Fetch chat history (last 20 turns) for this session
-    const { data: history } = await admin
+    const { data: history, error: historyError } = await admin
       .from("creator_agent_chats")
       .select("role, content")
+      .eq("user_id", userId)
       .eq("agent_id", agent_id)
       .eq("session_id", session_id)
-      .order("created_at", { ascending: true })
+      .order("created_at", { ascending: false })
       .limit(20);
 
+    if (historyError) return json({ error: "L'historique est temporairement indisponible. Réessaie sans perdre ta conversation." }, 503);
+    req.signal.throwIfAborted();
+
     const messages = [
-      ...((history as Array<{ role: string; content: string }>) ?? []).map(m => ({
+      ...[...((history as Array<{ role: string; content: string }>) ?? [])].reverse().map(m => ({
         role: m.role === "user" ? "user" : "assistant",
         content: m.content,
       })),
@@ -92,6 +98,7 @@ Deno.serve(async (req) => {
     const t0 = Date.now();
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: req.signal,
       headers: {
         "x-api-key": ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
@@ -101,7 +108,7 @@ Deno.serve(async (req) => {
         model: agent.model,
         max_tokens: agent.max_tokens,
         temperature: Number(agent.temperature),
-        system: agent.system_prompt,
+        system: buildAssistantSystemPrompt(agent.system_prompt, "conversation"),
         messages,
       }),
     });
@@ -114,7 +121,13 @@ Deno.serve(async (req) => {
       content: Array<{ text: string }>;
       usage: { input_tokens: number; output_tokens: number };
     };
-    const reply = claudeJson.content?.[0]?.text ?? "";
+    req.signal.throwIfAborted();
+    const completed = readCompletedAssistantReply(claudeJson);
+    if (completed.ok === false) return json({
+      error: "La réponse de l’IA est incomplète ou indisponible. Réessaie sans la considérer comme terminée.",
+      code: "INCOMPLETE_AI_RESPONSE",
+    }, 502);
+    const reply = completed.text;
     const tokensIn = claudeJson.usage?.input_tokens ?? 0;
     const tokensOut = claudeJson.usage?.output_tokens ?? 0;
     const duration = Date.now() - t0;
