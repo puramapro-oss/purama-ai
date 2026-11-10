@@ -54,6 +54,7 @@ vi.mock("../src/engine/resolveDefinition.js", () => ({
 }));
 
 import { runAgentCycle } from "../src/engine/loop.js";
+import { ApprovalContinuationError, loadApprovalContinuation } from "../src/engine/approval-continuation.js";
 import { delegateToAgentTool } from "../src/tools/delegate.js";
 
 const owner = "00000000-0000-4000-8000-000000000001";
@@ -319,5 +320,62 @@ describe("server origin stays independent of model and tool mutations", () => {
     expect(firstOrigin).toEqual(expected);
     expect(h.second).toHaveBeenCalledExactlyOnceWith({}, expect.objectContaining({ trigger: expected }));
     expect(JSON.stringify([result, h.finish.mock.calls, h.notify.mock.calls])).not.toContain(privateMarker);
+  });
+});
+
+describe("bounded approval continuation parameters", () => {
+  const excessiveReceipts: Array<{ name: string; params: () => Record<string, unknown> }> = [
+    { name: "UTF-8 byte limit", params: () => ({ text: "x".repeat(65_537) }) },
+    { name: "JSON depth limit", params: () => {
+      let value: Record<string, unknown> = {};
+      for (let depth = 0; depth < 17; depth++) value = { nested: value };
+      return value;
+    } },
+    { name: "JSON node limit", params: () => ({ values: Array.from({ length: 4_095 }, () => null) }) },
+  ];
+
+  it.each(excessiveReceipts)("refuses a receipt beyond the $name before context, inference or effects", async ({ params: makeParams }) => {
+    h.pendingRow!.tool_params = makeParams();
+    h.decision!.toolCalls = [{ tool: "inert_second", params: {} }];
+    const result = await run(resume());
+    expect(result).toMatchObject({ status: "error", retryable: false });
+    expect(result.errorMessage).toContain("Reprise automatique suspendue");
+    expect(h.buildContext).not.toHaveBeenCalled();
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(h.second).not.toHaveBeenCalled();
+    expect(h.pending).not.toHaveBeenCalled();
+  });
+
+  it.each(excessiveReceipts)("refuses candidate parameters beyond the $name instead of treating them as a new action", async ({ params: makeParams }) => {
+    const continuation = await loadApprovalContinuation(owner, currentDefinition().type, resume());
+    expect(continuation).toBeDefined();
+    expect(() => continuation!.repeatsResolvedAction("inert_effect", makeParams())).toThrow(ApprovalContinuationError);
+  });
+
+  it("stops the whole decision when schema-valid candidate parameters exceed the byte budget", async () => {
+    h.decision!.toolCalls = [
+      { tool: "inert_effect", params: { ...params, text: "é".repeat(32_769) } },
+      { tool: "inert_second", params: {} },
+    ];
+    const result = await run(resume());
+    expect(h.decide).toHaveBeenCalledOnce();
+    expect(result).toMatchObject({ status: "error", retryable: false });
+    expect(result.errorMessage).toContain("Reprise automatique suspendue");
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(h.second).not.toHaveBeenCalled();
+    expect(h.pending).not.toHaveBeenCalled();
+    expect(JSON.stringify([result, h.finish.mock.calls, h.notify.mock.calls])).not.toContain(privateMarker);
+  });
+
+  it("preserves ordinary approval for different schema-valid parameters exactly at the byte limit", async () => {
+    const candidate = { text: "x".repeat(65_516), code: 7 };
+    expect(Buffer.byteLength(JSON.stringify(candidate))).toBe(65_536);
+    h.needsApproval = true;
+    h.decision!.toolCalls = [{ tool: "inert_effect", params: candidate }];
+    const result = await run(resume());
+    expect(result.status).toBe("awaiting_approval");
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(h.pending).toHaveBeenCalledOnce();
   });
 });
