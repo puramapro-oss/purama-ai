@@ -29,7 +29,7 @@ function harness(kind, options = {}) {
     DOCUSEAL_WEBHOOK_SECRET: WEBHOOK,
     ...options.env,
   };
-  const contract = { id: CONTRACT, user_id: USER, status: 'sent', app_slug: 'fixture',
+  const contract = { id: CONTRACT, user_id: USER, status: kind === 'contracts-ots-stamp' ? 'signed' : 'sent', app_slug: 'fixture',
     template_slug: 'fixture', docuseal_submission_id: 123, ots_stamp_hash: null,
     pdf_original_url: null };
   function createClient(url, credential, config) {
@@ -50,6 +50,10 @@ function harness(kind, options = {}) {
         return { data: Object.hasOwn(options, 'roleValue') ? options.roleValue : false,
           error: options.roleError ? { message: 'role lookup failed' } : null };
       },
+      schema(name) {
+        assert.equal(name, 'public', 'administrator authority must use the existing public.has_role function');
+        return { rpc: (rpcName, args) => this.rpc(rpcName, args) };
+      },
       from(table) {
         calls.tables.push(table);
         let operation = 'select';
@@ -59,7 +63,10 @@ function harness(kind, options = {}) {
         function execute(single = false) {
           if (resolved) return resolved;
           if (operation !== 'select') calls.writes.push({ table, operation, value, filters: [...filters] });
-          const data = operation !== 'select' ? null : table === 'contracts'
+          const signer = { id: 'fixture-signer', contract_id: CONTRACT, docuseal_submitter_id: 456 };
+          const data = operation === 'update' && table === 'contracts' && filters.every(([key, val]) => contract[key] === val)
+            ? { id: contract.id } : operation === 'update' && table === 'contract_signers' && filters.every(([key, val]) => signer[key] === val)
+            ? { id: signer.id } : operation !== 'select' ? null : table === 'contracts'
             ? (single ? contract : [contract]) : table === 'contract_signers' ? [{ signed: true }] : null;
           resolved = Promise.resolve({ data, error: null });
           return resolved;
@@ -76,7 +83,8 @@ function harness(kind, options = {}) {
       },
     };
   }
-  const providerFetch = async (url, init = {}) => {
+  const providerFetch = async (input, init = {}) => {
+    const url = String(input);
     calls.fetches.push({ url, init });
     if (url === 'https://docuseal.example.invalid/api/submissions/123/documents'
       || url === 'https://docuseal.example.invalid/api/submissions/123') {
@@ -91,7 +99,9 @@ function harness(kind, options = {}) {
   const ots = {
     Ops: { OpSHA256: class {} },
     DetachedTimestampFile: { fromHash(_operation, bytes) {
-      return { hash: new Uint8Array(bytes), serializeToBytes: () => new Uint8Array([1, 2, 3]) };
+      return { hash: new Uint8Array(bytes),
+        timestamp: { allAttestations: () => new Map([['inert-fixture', true]]) },
+        serializeToBytes: () => new Uint8Array([1, 2, 3]) };
     } },
     async stamp(detached) { calls.stamps.push(detached.hash); },
   };
@@ -113,7 +123,7 @@ function harness(kind, options = {}) {
     };
     runInNewContext(compiled, { module, exports: module.exports, require: requireModule,
       Deno: { env: { get: (name) => env[name] } },
-      fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL,
+      fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL, performance, setTimeout, clearTimeout,
       TextEncoder, TextDecoder, Uint8Array, atob, btoa,
       console: { error() {}, warn() {}, log() {} },
     }, { filename: file });

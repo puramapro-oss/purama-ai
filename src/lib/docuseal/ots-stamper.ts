@@ -15,13 +15,13 @@ export interface StampResult {
  * Returns proof to store in contracts.ots_proof.
  */
 export async function stampContract(pdfContent: ArrayBuffer | Uint8Array | string): Promise<StampResult> {
-  const textContent = typeof pdfContent === 'string'
+  // Keep the displayed hash and proof on one immutable snapshot across awaits.
+  const content = typeof pdfContent === 'string'
     ? pdfContent
-    : await bufferToBase64(pdfContent);
-
-  const hashBytes = await hashContent(textContent);
+    : new Uint8Array(pdfContent instanceof Uint8Array ? pdfContent : new Uint8Array(pdfContent));
+  const hashBytes = await hashContent(content);
   const stampHashHex = bufferToHex(hashBytes);
-  const proofBase64 = await stampHash(textContent);
+  const proofBase64 = await stampHash(content);
 
   return {
     stampHash: stampHashHex,
@@ -38,10 +38,14 @@ export async function verifyContractProof(
   pdfContent: ArrayBuffer | Uint8Array | string,
   proofBase64: string,
 ): Promise<VerifyResult> {
-  const textContent = typeof pdfContent === 'string'
+  const content = typeof pdfContent === 'string'
     ? pdfContent
-    : await bufferToBase64(pdfContent);
-  return verifyProof(textContent, proofBase64);
+    : new Uint8Array(pdfContent instanceof Uint8Array ? pdfContent : new Uint8Array(pdfContent));
+  const result = await verifyProof(content, proofBase64);
+  if (typeof content === 'string' || result.verified || result.pending) return result;
+  // Older versions stamped the Base64 text of binary PDFs. Keep those existing
+  // proofs verifiable while all new stamps use the original PDF bytes.
+  return verifyProof(await bufferToBase64(content), proofBase64);
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────

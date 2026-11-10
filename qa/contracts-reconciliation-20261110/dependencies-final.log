@@ -1,0 +1,47 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn exec The following package was not found and will be installed: node@22.23.4
+(node:131) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:138) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:138) [DEP0128] DeprecationWarning: Invalid 'main' field in '/workspace/scratch/221cb4a2f349/iao-ci-current/repo/node_modules/opentimestamps/package.json' of 'open-timestamps.js'. Please either fix that or report it to the module author
+# Subtest: OpenTimestamps can load with its HTTP dependencies
+ok 1 - OpenTimestamps can load with its HTTP dependencies
+  ---
+  duration_ms: 194.669151
+  type: 'test'
+  ...
+# Subtest: calendar whitelist accepts known hosts and rejects lookalikes
+ok 2 - calendar whitelist accepts known hosts and rejects lookalikes
+  ---
+  duration_ms: 2.033356
+  type: 'test'
+  ...
+# Subtest: pending proof round-trips without losing its digest or calendar
+ok 3 - pending proof round-trips without losing its digest or calendar
+  ---
+  duration_ms: 3.101852
+  type: 'test'
+  ...
+# Subtest: Bitcore retains exact integer arithmetic and byte conversion
+ok 4 - Bitcore retains exact integer arithmetic and byte conversion
+  ---
+  duration_ms: 0.5593
+  type: 'test'
+  ...
+# Subtest: HTTP fork preserves promise, binary body, cookies and rejection contracts
+ok 5 - HTTP fork preserves promise, binary body, cookies and rejection contracts
+  ---
+  duration_ms: 36.972713
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 375.797629

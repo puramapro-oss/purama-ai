@@ -6,7 +6,7 @@ export default defineConfig({
   // ciblent la prod avec leur propre config dédiée (baseURL, env vars requises) — jamais dans la
   // suite locale par défaut.
   // quality/** has its own isolated Supabase transport and local server (npm run test:quality).
-  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**', '**/quality/**'],
+  testIgnore: ['**/docuseal-e2e.spec.ts', '**/karta/**', '**/quality/**', '**/contracts-ots-authorization.test.mjs', '**/opentimestamps-content.test.mjs'],
   timeout: 30_000,
   retries: 2,
   fullyParallel: true,
