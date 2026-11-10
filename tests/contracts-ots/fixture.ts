@@ -61,6 +61,31 @@ export function createClient(_url: string, key: string, options?: { global?: { h
     (identity(authorization) === ADMIN && state.administrator);
   return {
     rpc: async (name: string, args: Record<string, unknown>) => {
+      if (name === "persist_contract_ots_verification") {
+        if (!service || options?.db?.schema !== "purama_ai") throw new Error("Verification requires the service persistence boundary");
+        const fields = { id: "p_contract_id", user_id: "p_user_id", status: "p_status", docuseal_submission_id: "p_submission_id",
+          ots_stamp_hash: "p_previous_hash", ots_proof: "p_previous_proof", ots_verified_at: "p_previous_verified_at",
+          ots_block_height: "p_previous_block_height", ots_btc_timestamp: "p_previous_btc_timestamp" };
+        if (!Object.entries(fields).every(([field, argument]) => state.contract[field] === args[argument])) return { data: null, error: null };
+        // HTTP port only: native verification-atomicity.mjs executes the actual
+        // migration for rollback, privileges, actor validation and row locking.
+        if (state.updateFailure || state.eventsFailure) return { data: null, error: { message: "fixture-private-transaction-error" } };
+        if (state.contract.ots_verified_at && state.contract.ots_proof === args.p_proof
+          && state.contract.ots_block_height === args.p_block_height
+          && Date.parse(String(state.contract.ots_btc_timestamp)) === Date.parse(String(args.p_btc_timestamp))) {
+          return { data: state.contract.id, error: null };
+        }
+        const values = { ots_proof: args.p_proof, ots_verified_at: new Date().toISOString(),
+          ots_block_height: args.p_block_height, ots_btc_timestamp: args.p_btc_timestamp };
+        Object.assign(state.contract, values);
+        state.writes.push({ table: "contracts", values, service });
+        state.writes.push({ table: "contract_events", service, values: {
+          contract_id: args.p_contract_id, event_type: "ots_verified",
+          payload: { block_height: args.p_block_height, btc_timestamp: args.p_btc_timestamp },
+          actor_id: args.p_actor_id, actor_type: args.p_actor_type,
+        } });
+        return { data: state.contract.id, error: null };
+      }
       if (name !== "persist_contract_ots_stamp") throw new Error("Unexpected mutation RPC");
       state.stampRpcs.push({ name, args, service, authorization });
       const matches = (service || (identity(authorization) === ADMIN && state.administrator)) &&
