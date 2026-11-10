@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { createRequestScope } from '@/lib/request-scope';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import { useVoice } from '@/hooks/useVoice';
 import { MicButton } from './MicButton';
 import { SpeakButton } from './SpeakButton';
@@ -30,17 +31,22 @@ interface Props {
 
 export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [] }: Props) {
   const { user } = useAuth();
-  const userId = user?.id;
+  const userId = user?.id ?? null;
   const [requests] = useState(createRequestScope);
   const voice = useVoice();
   const { cancelRecording, stopSpeaking } = voice;
-  const [sessionId, setSessionId] = useState(newAgentSessionId);
-  const [messages, setMessages] = useState<AgentChatMessage[]>([]);
-  const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+  const resourceKey = JSON.stringify([userId, agentType]);
+  const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
+  const conversationKey = JSON.stringify([userId, agentType, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [messages, setMessages] = useScopedState<AgentChatMessage[]>(conversationKey, []);
+  const [input, setInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const voiceReplyRef = useRef<string | null>(null);
+
+  useEffect(() => { setSessionId(newAgentSessionId()); }, [resourceKey, setSessionId]);
 
   useLayoutEffect(() => {
     // Voice requests have their own scope and must expire with this conversation.
@@ -59,7 +65,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
       .catch(() => {})
       .finally(() => request.finish());
     return () => requests.invalidate();
-  }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking]);
+  }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -79,7 +85,8 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   }, [messages, autoPlay, voiceModeOpen, speak, userId, agentType, sessionId]);
 
   const submit = async (text: string, signal?: AbortSignal): Promise<string | null> => {
-    if (!text.trim() || !userId || !sessionId || signal?.aborted) return null;
+    const isCurrent = captureConversation();
+    if (!text.trim() || !userId || !sessionId || !isCurrent() || signal?.aborted) return null;
     const request = requests.begin('send');
     if (!request) return null;
     // A snapshot requested before this turn must not erase the optimistic message.
@@ -135,8 +142,9 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   };
 
   const newSession = () => {
+    cancelRecording();
+    stopSpeaking();
     setSessionId(newAgentSessionId());
-    setMessages([]);
   };
 
   return (

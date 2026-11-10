@@ -1,3 +1,5 @@
+> Qualification historique du donneur PR33 `90d8f303`. Ses seuils et résultats ne qualifient pas la composition actuelle. Celle-ci conserve la persistance atomique preuve/audit de PR36, 64 000 octets de métadonnées, 16 MiB de PDF, un budget de 10 secondes et HTTP 504 à échéance. Ses preuves sont consignées séparément.
+
 # Reconciliation of PR36 into the PR33 candidate
 
 This integration starts at PR33 `a11b2d8298c5cd7f8ed8be3427a1c6b676310e3f`

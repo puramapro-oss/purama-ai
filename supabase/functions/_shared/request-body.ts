@@ -14,6 +14,20 @@ interface BodyLimits {
   timeoutMs?: number;
 }
 
+interface BodySource {
+  headers: Headers;
+  body: ReadableStream<Uint8Array> | null;
+  signal: AbortSignal;
+}
+
+interface ByteLimits {
+  maxBytes: number;
+  /** Absolute monotonic deadline, shared with any preceding transport phases. */
+  deadline: number;
+  /** False when fetch decoded an entity whose Content-Length describes encoded bytes. */
+  matchContentLength?: boolean;
+}
+
 /**
  * The deadline covers the whole stream, including an unresolved read. Check
  * the monotonic clock between reads too: immediate chunks must not starve it.
@@ -28,22 +42,62 @@ export async function readRequestText(request: Request, limits: BodyLimits = {})
     throw new RangeError("Invalid request body limits");
   }
 
-  const deadline = performance.now() + timeoutMs;
+  const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
+  const text: string[] = [];
+  return await consumeBoundedBody(request, { maxBytes, deadline: performance.now() + timeoutMs }, {
+    write: bytes => { text.push(decoder.decode(bytes, { stream: true })); },
+    finish: () => { text.push(decoder.decode()); return text.join(""); },
+  });
+}
+
+/** Binary adapter over the same deadline, byte accounting and cancellation path. */
+export async function readBoundedBytes(source: BodySource, limits: ByteLimits): Promise<Uint8Array<ArrayBuffer>> {
+  let buffer = new Uint8Array(0);
+  let size = 0;
+  return await consumeBoundedBody(source, limits, {
+    write: bytes => {
+      const required = size + bytes.byteLength;
+      if (required > buffer.byteLength) {
+        // No object per fragment: geometric allocation stays within the byte cap.
+        const capacity = Math.min(limits.maxBytes, Math.max(required, buffer.byteLength * 2, 1024));
+        const grown = new Uint8Array(capacity);
+        grown.set(buffer.subarray(0, size));
+        buffer = grown;
+      }
+      // Snapshot before the next read: a producer may reuse its backing buffer.
+      buffer.set(bytes, size);
+      size = required;
+    },
+    finish: () => buffer.subarray(0, size),
+  });
+}
+
+async function consumeBoundedBody<T>(
+  request: BodySource,
+  limits: ByteLimits,
+  output: { write: (bytes: Uint8Array) => void; finish: () => T },
+): Promise<T> {
+  const { maxBytes, deadline } = limits;
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || !Number.isFinite(deadline)) {
+    throw new RangeError("Invalid body limits");
+  }
   let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let interruption: RequestBodyError | undefined;
   let rejectStopped: (error: RequestBodyError) => void = () => {};
   const stopped = new Promise<never>((_, reject) => { rejectStopped = reject; });
-  // A pre-aborted request or early header refusal can precede the first race.
+  // A pre-aborted request or early header refusal can precede the sole race.
   void stopped.catch(() => {});
-  let failure: RequestBodyError | undefined;
   const stop = (error: RequestBodyError) => {
-    if (!failure) { failure = error; rejectStopped(error); }
+    if (interruption) return;
+    interruption = error;
+    rejectStopped(error);
   };
   const abort = () => stop(new RequestBodyError(408, "Request body interrupted"));
   const checkCurrent = () => {
-    if (request.signal.aborted) abort();
-    if (!failure && performance.now() >= deadline) stop(new RequestBodyError(408, "Request body deadline exceeded"));
-    if (failure) throw failure;
+    if (interruption) throw interruption;
+    if (request.signal.aborted) throw new RequestBodyError(408, "Request body interrupted");
+    if (performance.now() >= deadline) throw new RequestBodyError(408, "Request body deadline exceeded");
   };
 
   try {
@@ -55,51 +109,63 @@ export async function readRequestText(request: Request, limits: BodyLimits = {})
         throw new RequestBodyError(400, "Invalid Content-Length");
       }
       declared = Number(length);
-      if (declared > maxBytes) throw new RequestBodyError(413, "Request body too large");
+      if (limits.matchContentLength !== false && declared > maxBytes) {
+        throw new RequestBodyError(413, "Request body too large");
+      }
     }
     if (!request.body) {
-      if (declared !== undefined && declared !== 0) throw new RequestBodyError(400, "Incomplete request body");
+      if (limits.matchContentLength !== false && declared !== undefined && declared !== 0) {
+        throw new RequestBodyError(400, "Incomplete request body");
+      }
       checkCurrent();
-      return "";
+      const result = output.finish();
+      checkCurrent();
+      return result;
     }
 
-    reader = request.body.getReader();
-    const bodyReader = reader;
+    const bodyReader = request.body.getReader();
+    reader = bodyReader;
     request.signal.addEventListener("abort", abort, { once: true });
     if (request.signal.aborted) abort();
     timer = setTimeout(
       () => stop(new RequestBodyError(408, "Request body deadline exceeded")),
       Math.max(0, deadline - performance.now()),
     );
-    const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
-    const text: string[] = [];
     let size = 0;
     let emptyChunks = 0;
 
-    const consume = async () => {
+    const consume = async (): Promise<T> => {
       while (true) {
         checkCurrent();
         const part = await bodyReader.read();
+        // A timed-out read may still resolve after cancellation was requested.
+        // The recorded interruption must win before any accounting/output.
         checkCurrent();
         if (part.done) {
-          if (declared !== undefined && declared !== size) throw new RequestBodyError(400, "Incomplete request body");
-          text.push(decoder.decode());
-          const result = text.join("");
+          if (limits.matchContentLength !== false && declared !== undefined && declared !== size) {
+            throw new RequestBodyError(400, "Incomplete request body");
+          }
+          checkCurrent();
+          const result = output.finish();
           checkCurrent();
           return result;
         }
         if (!(part.value instanceof Uint8Array)) throw new RequestBodyError(400, "Invalid request body chunk");
         size += part.value.byteLength;
         if (size > maxBytes) throw new RequestBodyError(413, "Request body too large");
-        if (declared !== undefined && size > declared) throw new RequestBodyError(400, "Content-Length mismatch");
+        if (limits.matchContentLength !== false && declared !== undefined && size > declared) {
+          throw new RequestBodyError(400, "Content-Length mismatch");
+        }
         if (part.value.byteLength === 0 && ++emptyChunks > 64) {
           throw new RequestBodyError(400, "Invalid empty request stream");
         }
-        text.push(decoder.decode(part.value, { stream: true }));
+        output.write(part.value);
       }
     };
-    // One stop reaction for the whole consumer, not one per completed chunk.
+    // One subscription for the entire stream, not one retained Promise reaction
+    // per chunk. This also bounds a pending read that ignores cancellation.
     const result = await Promise.race([consume(), stopped]);
+    // Interruption can win during the completed reader's asynchronous handoff.
     checkCurrent();
     return result;
   } catch (error) {
@@ -107,6 +173,9 @@ export async function readRequestText(request: Request, limits: BodyLimits = {})
       const cancelled = reader ? reader.cancel() : request.body?.cancel();
       void Promise.resolve(cancelled).catch(() => {});
     } catch { /* A hostile stream cannot prevent the bounded response. */ }
+    // A rejected read can reach this branch after interruption, before the
+    // deadline timer or the stopped promise wins the asynchronous handoff.
+    checkCurrent();
     if (error instanceof RequestBodyError) throw error;
     throw new RequestBodyError(400, "Invalid request body");
   } finally {

@@ -1,0 +1,38 @@
+{
+  "parent": "cb5accbeac30bf43872c0a7a19233a619faed4ca",
+  "status": "PASS_LOCAL_BOUNDED",
+  "product_paths": [
+    "supabase/functions/contracts-ots-stamp/index.ts",
+    "supabase/migrations/20261110180000_contract_ots_audit_atomicity.sql"
+  ],
+  "source_hashes_rechecked": true,
+  "native_source_hashes_rechecked": true,
+  "native": {
+    "checks": 29,
+    "exit_code": 0,
+    "distinct_concurrent_backends": 4,
+    "lock_waiters_observed": 3,
+    "proofs_committed": 1,
+    "audits_committed": 1
+  },
+  "node": {
+    "tests": 229,
+    "exit_code": 0
+  },
+  "deno_handlers": {
+    "tests": 43,
+    "exit_code": 0
+  },
+  "typecheck_exit_code": 0,
+  "deno_production_check_exit_code": 0,
+  "targeted_lint_exit_code": 0,
+  "build_bounded_exit_code": 0,
+  "build_initial_exit_code": 137,
+  "default_branch_compare_ref": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+  "default_branch_compare_risk": "CRITICAL_INHERITED_SCOPE_ONLY",
+  "independent_server_shutdown": true,
+  "production_migration_applied": false,
+  "endpoint_deployed": false,
+  "ui_files_changed": false,
+  "global_merge_performed": false
+}

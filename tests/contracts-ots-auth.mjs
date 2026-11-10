@@ -19,7 +19,7 @@ const PDF = new Uint8Array([37, 80, 68, 70, 45, 102, 105, 99, 116, 105, 111, 110
 
 function harness(kind, options = {}) {
   let handler;
-  const calls = { clients: [], auth: [], roles: [], tables: [], writes: [], fetches: [], stamps: [] };
+  const calls = { clients: [], auth: [], roles: [], tables: [], writes: [], fetches: [], stamps: [], stampRpcs: [] };
   const env = {
     SUPABASE_URL: 'https://database.example.invalid',
     SUPABASE_ANON_KEY: 'fixture-anon-credential',
@@ -37,6 +37,23 @@ function harness(kind, options = {}) {
     calls.clients.push({ url, credentialKind: credential === SERVICE ? 'service' : 'other', schema: config?.db?.schema });
     if (!credential) throw new Error('Client credential missing');
     return {
+      async rpc(name, args) {
+        assert.equal(name, 'persist_contract_ots_stamp');
+        calls.stampRpcs.push({ name, args, credentialKind: credential === SERVICE ? 'service' : 'other' });
+        const filters = [['id', args.p_contract_id], ['user_id', args.p_user_id], ['status', 'signed'],
+          ['docuseal_submission_id', args.p_submission_id], ['ots_stamp_hash', args.p_previous_hash], ['ots_proof', args.p_previous_proof]];
+        if (!filters.every(([key, value]) => contract[key] === value)) return { data: null, error: null };
+        const value = { ots_stamp_hash: args.p_hash, ots_proof: args.p_proof,
+          ots_verified_at: null, ots_block_height: null, ots_btc_timestamp: null };
+        Object.assign(contract, value);
+        calls.writes.push({ table: 'contracts', operation: 'update', value, filters });
+        calls.writes.push({ table: 'contract_events', operation: 'insert', value: {
+          contract_id: contract.id, event_type: 'ots_stamped',
+          payload: { hash: args.p_hash, proof_size: atob(args.p_proof).length },
+          actor_id: credential === SERVICE ? null : USER, actor_type: credential === SERVICE ? 'service' : 'user',
+        }, filters: [] });
+        return { data: contract.id, error: null };
+      },
       auth: {
         async getUser(token) {
           calls.auth.push(token);
@@ -74,9 +91,10 @@ function harness(kind, options = {}) {
               data = { id: CONTRACT };
             }
           } else if (table === 'contract_signers') {
-            const signer = { id: 'fixture-signer-456', contract_id: CONTRACT, docuseal_submitter_id: 456 };
             data = operation === 'select' ? [{ signed: true }]
-              : filters.every(([key, expected]) => signer[key] === expected) ? { id: signer.id } : null;
+              : filters.some(([key, val]) => key === 'contract_id' && val === CONTRACT)
+                && filters.some(([key, val]) => key === 'docuseal_submitter_id' && val === 456)
+                ? { id: 'fixture-signer-456' } : null;
           }
           resolved = Promise.resolve({ data, error: null });
           return resolved;

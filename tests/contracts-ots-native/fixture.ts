@@ -1,11 +1,11 @@
 import DetachedTimestampFile from "../../node_modules/opentimestamps/src/detached-timestamp-file.js";
 import Ops from "../../node_modules/opentimestamps/src/ops.js";
+import notary from "../../node_modules/opentimestamps/src/notary.js";
 import Context from "../../node_modules/opentimestamps/src/context.js";
 import Timestamp from "../../node_modules/opentimestamps/src/timestamp.js";
-import Notary from "../../node_modules/opentimestamps/src/notary.js";
 import { createOtsClient, type OtsLibrary } from "../../src/lib/ots-core.ts";
 import type { OtsContract } from "../../supabase/functions/_shared/ots-contract.ts";
-const library = { DetachedTimestampFile, Ops, Context, Timestamp, Notary };
+const OpenTimestamps = { DetachedTimestampFile, Ops, Context, Timestamp, Notary: notary };
 
 // Network and database ports only. The tests import the actual edge handlers.
 export const SERVICE = "fixture-service-credential";
@@ -16,12 +16,11 @@ export const CONTRACT = "33333333-3333-4333-8333-333333333333";
 export const PDF = new TextEncoder().encode("%PDF-1.7 synthetic signed document");
 export const handlers: Array<(req: Request) => Promise<Response>> = [];
 export function serve(handler: (req: Request) => Promise<Response>) { handlers.push(handler); }
-// Capture registration in the isolated Deno worker; no server is started.
 Object.defineProperty(Deno, "serve", { value: serve });
 
-type FixtureRow = Record<string, unknown>;
+type FixtureRow = Record<string, unknown> & Partial<OtsContract>;
 type FixtureResult = {
-  data: FixtureRow | FixtureRow[] | OtsContract | null;
+  data: FixtureRow | FixtureRow[] | null;
   error: { message: string } | null;
 };
 
@@ -31,6 +30,7 @@ export const state = {
   authCalls: 0,
   clients: [] as Array<{ service: boolean; authorization: string }>,
   writes: [] as Array<{ table: string; values: Record<string, unknown>; service: boolean }>,
+  stampRpcs: [] as Array<{ name: string; args: Record<string, unknown>; service: boolean; authorization: string }>,
   requests: [] as Array<{ url: string; redirect: RequestRedirect | undefined; token: string | null; authorization: string | null; body: string | null }>,
   signers: [] as Array<{ signed: boolean }>,
   allCalendarsFail: false,
@@ -55,7 +55,7 @@ export function reset() {
     contract: { id: CONTRACT, user_id: OWNER, status: "signed", docuseal_submission_id: 17,
       ots_stamp_hash: "ab".repeat(32), ots_proof: btoa("fixture-proof"), ots_verified_at: null,
       ots_block_height: null, ots_btc_timestamp: null, pdf_original_url: null },
-    allCalendarsFail: false, administrator: true, authCalls: 0, clients: [], writes: [], requests: [], signers: [], stampCalls: 0,
+    allCalendarsFail: false, administrator: true, authCalls: 0, clients: [], writes: [], stampRpcs: [], requests: [], signers: [], stampCalls: 0,
     verifyCalls: 0, deserializeCalls: 0, pdfUrl: "https://docuseal.fixture.invalid/signed.pdf", documentMetadata: undefined,
     pdfFailure: false, updateFailure: false, proofUpdateFailure: false, eventsFailure: false, authFailure: false,
     afterPdf: undefined, afterVerify: undefined, bitcoin: undefined, internalHandler: undefined,
@@ -75,16 +75,46 @@ export function createClient(_url: string, key: string, options?: { global?: { h
   state.clients.push({ service, authorization });
   const visible = () => service || identity(authorization) === state.contract.user_id ||
     (identity(authorization) === ADMIN && state.administrator);
+  const rpc = async (name: string, args: Record<string, unknown>, schema: string | undefined) => {
+    if (schema !== "public" || name !== "has_role" || args._role !== "admin") {
+      throw new Error("Authority RPC must use public.has_role with the administrator role");
+    }
+    return { data: args._user_id === ADMIN && state.administrator, error: null };
+  };
   return {
     auth: { getUser: async (token?: string) => {
       state.authCalls++;
       const id = identity(token ? `Bearer ${token}` : authorization);
       return { data: { user: id && !state.authFailure ? { id } : null }, error: id && !state.authFailure ? null : { message: "fixture-private-auth-error" } };
     } },
-    rpc: async (_name: string, args: Record<string, unknown>) => ({ data: args._user_id === ADMIN && state.administrator, error: null }),
+    rpc: async (name: string, args: Record<string, unknown>) => {
+      if (name !== "persist_contract_ots_stamp") return rpc(name, args, options?.db?.schema);
+      if (options?.db?.schema !== "purama_ai") throw new Error("Mutation RPC must use the application schema");
+      state.stampRpcs.push({ name, args, service, authorization });
+      const matches = (service || (identity(authorization) === ADMIN && state.administrator)) &&
+        state.contract.id === args.p_contract_id && state.contract.user_id === args.p_user_id &&
+        state.contract.status === "signed" && state.contract.docuseal_submission_id === args.p_submission_id &&
+        state.contract.ots_stamp_hash === args.p_previous_hash && state.contract.ots_proof === args.p_previous_proof;
+      if (!matches) return { data: null, error: null };
+      // Port the donor's transactional fixture: a failed persistence RPC cannot
+      // mutate proof or audit. The SQL transaction is qualified by its native bench.
+      if (state.updateFailure || state.proofUpdateFailure || state.eventsFailure) {
+        return { data: null, error: { message: "fixture-private-transaction-error" } };
+      }
+      const values = { ots_stamp_hash: args.p_hash, ots_proof: args.p_proof,
+        ots_verified_at: null, ots_block_height: null, ots_btc_timestamp: null };
+      Object.assign(state.contract, values);
+      state.writes.push({ table: "contracts", values, service });
+      state.writes.push({ table: "contract_events", service, values: {
+        contract_id: args.p_contract_id, event_type: "ots_stamped",
+        payload: { hash: args.p_hash, proof_size: atob(String(args.p_proof)).length },
+        actor_id: service ? null : identity(authorization), actor_type: service ? "service" : "user",
+      } });
+      return { data: state.contract.id, error: null };
+    },
     schema(name: string) {
       if (name !== "public") throw new Error("Authority RPC must use the public schema");
-      return { rpc: (rpcName: string, args: Record<string, unknown>) => this.rpc(rpcName, args) };
+      return { rpc: (rpcName: string, args: Record<string, unknown>) => rpc(rpcName, args, name) };
     },
     from: <Table extends string>(table: Table) => {
       type Row = Table extends "contract_signers" ? { signed: boolean } : FixtureRow;
@@ -138,14 +168,18 @@ export function createClient(_url: string, key: string, options?: { global?: { h
   };
 }
 
-// Execute the portable production transport and actual locked upstream primitives.
-// Only HTTP responses are simulated; no parsing, digest or attestation assertion is stubbed.
-const actual = createOtsClient(library as OtsLibrary);
+// Import only the actual locked primitives. The legacy main entry also loads
+// unused transport/Bluebird code and requests unrelated native permissions.
+export default OpenTimestamps;
+
+// Observe one logical stamp while running the published bounded core and real
+// upstream proof primitives. Only HTTP calendar replies are synthetic.
+const actualOts = createOtsClient({ DetachedTimestampFile: OpenTimestamps.DetachedTimestampFile,
+  Ops: OpenTimestamps.Ops, Context, Timestamp, Notary: notary } as OtsLibrary);
 export const ots = {
-  ...actual,
-  stampDigest: async (hash: Uint8Array) => { state.stampCalls++; return actual.stampDigest(hash); },
+  ...actualOts,
+  stampDigest: async (hash: Uint8Array) => { state.stampCalls++; return await actualOts.stampDigest(hash); },
 };
-export default library;
 
 export function installNetworkFixture() {
   globalThis.fetch = async (input: string | URL | Request, init?: RequestInit) => {
@@ -164,11 +198,14 @@ export function installNetworkFixture() {
     }
     if (url.endsWith("/digest")) {
       if (state.allCalendarsFail) throw new Error("fixture-calendar-unavailable");
-      if (!(init?.body instanceof Uint8Array)) throw new Error("Expected a binary OTS commitment");
-      const timestamp = DetachedTimestampFile.fromHash(new Ops.OpSHA256(), Array.from(init.body)).timestamp;
-      timestamp.attestations.push(new Notary.PendingAttestation("https://alice.btc.calendar.opentimestamps.org"));
-      const output = new Context.StreamSerialization(); timestamp.serialize(output);
-      return new Response(new Uint8Array(output.getOutput()));
+      if (!(init?.body instanceof Uint8Array)) throw new Error("Unexpected calendar request body");
+      const receipt = OpenTimestamps.DetachedTimestampFile.fromHash(
+        new OpenTimestamps.Ops.OpSHA256(), Array.from(init.body),
+      ).timestamp;
+      receipt.attestations.push(new notary.PendingAttestation(new URL(url).origin));
+      const encoded = new Context.StreamSerialization();
+      receipt.serialize(encoded);
+      return new Response(new Uint8Array(encoded.getOutput()));
     }
     if (url.includes("/timestamp/")) return new Response(null, { status: 404 });
     if (url.startsWith("https://blockstream.info/api/block-height/")) return new Response("cd".repeat(32));

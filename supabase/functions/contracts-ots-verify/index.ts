@@ -1,6 +1,6 @@
 import { CORS_HEADERS, corsResponse, errorResponse } from "../_shared/docuseal.ts";
 import { authorizeOts, otsAdminClient, OtsHttpError, validContractId } from "../_shared/ots-auth.ts";
-import { loadOtsContract, requireUnchangedContract, conditionOnSnapshot } from "../_shared/ots-contract.ts";
+import { loadOtsContract, requireUnchangedContract } from "../_shared/ots-contract.ts";
 import { ots } from "../_shared/ots-library.ts";
 import { proofFromBase64, OtsError } from "../../../src/lib/ots-core.ts";
 
@@ -22,16 +22,20 @@ Deno.serve(async (req) => {
     if (!result.bitcoin) return corsResponse({ verified: false, pending: true, message: "Bitcoin confirmation pending" });
     const { height, timestamp } = result.bitcoin;
     const btcTimestamp = new Date(timestamp * 1000).toISOString();
-    if (!contract.ots_verified_at || contract.ots_block_height !== height || contract.ots_proof !== result.proof) {
-      const update = otsAdminClient().from("contracts").update({ ots_verified_at: new Date().toISOString(), ots_block_height: height,
-        ots_btc_timestamp: btcTimestamp, ots_proof: result.proof });
-      const { data: written, error } = await conditionOnSnapshot(update, contract).select("id").maybeSingle();
-      if (error) throw new OtsHttpError(500, "Proof persistence failed");
-      if (!written) throw new OtsHttpError(409, "Contract changed; retry verification");
-      const { error: eventError } = await otsAdminClient().from("contract_events").insert({ contract_id: id, event_type: "ots_verified",
-        payload: { block_height: height, btc_timestamp: btcTimestamp }, actor_id: finalAccess.userId, actor_type: finalAccess.service ? "system" : "user" });
-      if (eventError) throw new OtsHttpError(500, "Proof audit event persistence failed");
-    }
+    // Cryptographic verification remains in this authenticated Edge function.
+    // Every confirmed response checks the complete snapshot under a row lock,
+    // including when the initial result already matched. The RPC's no-op keeps
+    // identical confirmations from producing another update or audit event.
+    const { data: written, error } = await otsAdminClient().rpc("persist_contract_ots_verification", {
+      p_contract_id: contract.id, p_user_id: contract.user_id, p_status: contract.status,
+      p_submission_id: contract.docuseal_submission_id, p_previous_hash: contract.ots_stamp_hash,
+      p_previous_proof: contract.ots_proof, p_previous_verified_at: contract.ots_verified_at,
+      p_previous_block_height: contract.ots_block_height, p_previous_btc_timestamp: contract.ots_btc_timestamp,
+      p_proof: result.proof, p_block_height: height, p_btc_timestamp: btcTimestamp,
+      p_actor_id: finalAccess.userId, p_actor_type: finalAccess.service ? "system" : "user",
+    });
+    if (error) throw new OtsHttpError(500, "Proof persistence failed");
+    if (!written) throw new OtsHttpError(409, "Contract changed; retry verification");
     return corsResponse({ verified: true, block_height: height, btc_timestamp: btcTimestamp, blockstream_url: `https://blockstream.info/block-height/${height}` });
   } catch (error) {
     if (error instanceof OtsHttpError) return errorResponse(error.message, error.status);

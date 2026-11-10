@@ -1,3 +1,5 @@
+// Selected unchanged OTS/deadline/inbound-body cases from PR33 90d8f303.
+// PDF guarantees remain in contracts-ots-integrity.mjs under the stricter 16 MiB/10 s policy.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -5,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import vm from 'node:vm';
 import ts from 'typescript';
-import { createHash } from 'node:crypto';
+
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const calendar = new URL('https://alice.btc.calendar.opentimestamps.org/timestamp/aa');
@@ -55,8 +57,8 @@ async function harness(route, { onBinaryCopy, promiseImplementation, decoderImpl
     await module.evaluate(); return module.namespace;
   }
   return {
-    calls, timers, ots: await entry('src/lib/ots-core.ts'), pdf: await entry('supabase/functions/_shared/ots-pdf.ts'),
-    deadline: cache.get(resolve(root, 'src/lib/request-deadline.ts')).namespace,
+    calls, timers, ots: await entry('src/lib/ots-core.ts'),
+    deadline: cache.get(resolve(root, 'src/lib/request-deadline.ts'))?.namespace ?? await entry('src/lib/request-deadline.ts'),
     body: await entry('supabase/functions/_shared/request-body.ts'),
     advance(milliseconds, fireTimers = true) {
       clock += milliseconds;
@@ -152,125 +154,6 @@ test('OTS: a valid response retains its exact bytes and transport restrictions',
   assert.equal(h.calls[0].init.redirect, 'error'); assert.equal(h.calls[0].init.credentials, 'omit'); assert.equal(h.timers.size, 0);
 });
 
-test('PDF: metadata fetch is bounded even when abort is ignored', async () => {
-  const h = await harness(never); const pending = h.pdf.signedPdf(42); await flush();
-  assert.deepEqual([...h.timers.values()].map(timer => timer.due), [15_000]);
-  h.advance(15_000); assert.equal((await rejects(pending, /Signed document unavailable/)).status, 502);
-});
-test('PDF: body read and non-cooperative cancellation cannot exceed the deadline', async () => {
-  const body = response({ read: never, cancel: never }); const h = await harness(async () => body);
-  const pending = h.pdf.signedPdf(42); await flush(); h.advance(15_000);
-  assert.equal((await rejects(pending, /Signed document unavailable/)).status, 502); assert.equal(body.state.cancels, 1);
-});
-test('PDF: metadata and document share one deadline without restarting the budget', async () => {
-  let h; const body = response({ read: async () => { h.advance(6_000, false); return { done: true }; }, cancel: never });
-  h = await harness(async input => {
-    if (String(input).includes('/api/')) { h.advance(9_000, false); return Response.json({ combined_document_url: `${origin}/signed.pdf` }); }
-    return body;
-  });
-  assert.equal((await rejects(h.pdf.signedPdf(42), /Signed document unavailable/)).status, 502);
-  assert.equal(h.calls.length, 2); assert.equal(body.state.cancels, 1);
-});
-test('PDF: late metadata fetch after timeout is cancelled without reading it', async () => {
-  const port = deferred(); const body = response({ cancel: never }); const h = await harness(() => port.promise);
-  const pending = h.pdf.signedPdf(42); await flush(); h.advance(15_000); await rejects(pending, /Signed document unavailable/);
-  port.resolve(body); await flush(); assert.equal(body.state.cancels, 1); assert.equal(body.state.reads, 0);
-});
-for (const [label, options] of [
-  ['oversized metadata', { headers: { 'content-length': '64001' } }],
-  ['failed metadata', { status: 503 }],
-]) {
-  test(`PDF: ${label} does not wait for cancellation`, async () => {
-    const body = response({ ...options, cancel: never }); const h = await harness(async () => body);
-    assert.equal((await rejects(h.pdf.signedPdf(42), /Signed document/)).status, 502); assert.equal(body.state.cancels, 1);
-  });
-}
-test('PDF: exact-origin metadata and complete signed bytes succeed without external network', async () => {
-  const bytes = new TextEncoder().encode('%PDF-1.7 synthetic signed document');
-  const h = await harness(async input => String(input).includes('/api/')
-    ? Response.json({ id: 42, combined_document_url: `${origin}/signed.pdf` }) : new Response(bytes));
-  assert.deepEqual(await h.pdf.signedPdf(42), bytes); assert.equal(h.calls.length, 2); assert.equal(h.timers.size, 0);
-  for (const call of h.calls) { assert.equal(call.init.redirect, 'error'); assert.equal(call.init.credentials, 'omit'); }
-});
-test('PDF: the final binary copy is included in the total deadline', async () => {
-  let h; const bytes = new TextEncoder().encode('%PDF-1.7 synthetic signed document');
-  h = await harness(async input => String(input).includes('/api/')
-    ? Response.json({ id: 42, combined_document_url: `${origin}/signed.pdf` }) : new Response(bytes),
-  { onBinaryCopy: () => h.advance(15_001, false) });
-  assert.equal((await rejects(h.pdf.signedPdf(42), /Signed document unavailable/)).status, 502);
-});
-
-test('PDF: reusing an upstream byte buffer cannot change already consumed bytes', async () => {
-  const reused = new Uint8Array(1); let reads = 0;
-  const prefix = new TextEncoder().encode('%PDF-');
-  const expected = new Uint8Array(prefix.length + 2_049); expected.set(prefix);
-  for (let i = 0; i < 2_049; i++) expected[prefix.length + i] = i % 251;
-  const body = response({ read: async () => {
-    if (reads++ === 0) return { done: false, value: prefix };
-    if (reads <= 2_050) { reused[0] = (reads - 2) % 251; return { done: false, value: reused }; }
-    return { done: true };
-  } });
-  const h = await harness(async input => String(input).includes('/api/')
-    ? Response.json({ combined_document_url: `${origin}/signed.pdf` }) : body);
-  const actual = await h.pdf.signedPdf(42);
-  assert.equal(actual.length, expected.length);
-  assert.equal(createHash('sha256').update(actual).digest('hex'), createHash('sha256').update(expected).digest('hex'));
-});
-
-for (const declared of ['6', '8']) {
-  test(`PDF: identity Content-Length ${declared} must match the seven consumed bytes`, async () => {
-    const h = await harness(async input => String(input).includes('/api/')
-      ? Response.json({ combined_document_url: `${origin}/signed.pdf` })
-      : new Response('%PDF-AB', { headers: { 'content-length': declared, 'content-encoding': 'identity' } }));
-    assert.equal((await rejects(h.pdf.signedPdf(42), /Signed document/)).status, 502);
-  });
-}
-
-test('PDF: encoded Content-Length does not replace the decoded byte limit', async () => {
-  const h = await harness(async input => String(input).includes('/api/')
-    ? Response.json({ combined_document_url: `${origin}/signed.pdf` })
-    : new Response('%PDF-AB', { headers: { 'content-length': String(20 * 1024 * 1024 + 1), 'content-encoding': 'gzip' } }));
-  assert.equal(new TextDecoder().decode(await h.pdf.signedPdf(42)), '%PDF-AB');
-});
-
-test('PDF: metadata with invalid UTF-8 is refused before the PDF request', async () => {
-  const prefix = new TextEncoder().encode(`{"id":42,"combined_document_url":"${origin}/signed.pdf","note":"`);
-  const metadata = new Uint8Array([...prefix, 255, 34, 125]);
-  const h = await harness(async input => String(input).includes('/api/') ? new Response(metadata) : new Response('%PDF-AB'));
-  assert.equal((await rejects(h.pdf.signedPdf(42), /Signed document/)).status, 502);
-  assert.equal(h.calls.length, 1);
-});
-
-test('PDF: a request cancelled before retrieval makes no provider request', async () => {
-  const controller = new AbortController(); controller.abort();
-  const h = await harness(async input => String(input).includes('/api/')
-    ? Response.json({ combined_document_url: `${origin}/signed.pdf` }) : new Response('%PDF-AB'));
-  assert.equal((await rejects(h.pdf.signedPdf(42, controller.signal), /Signed document/)).status, 502);
-  assert.equal(h.calls.length, 0);
-});
-
-for (const phase of ['metadata headers', 'metadata body', 'PDF headers', 'PDF body']) {
-  test(`PDF: incoming cancellation settles a non-cooperative ${phase} operation`, async () => {
-    const controller = new AbortController(); const body = response({ read: never, cancel: never });
-    const h = await harness(async input => {
-      if (String(input).includes('/api/')) {
-        if (phase === 'metadata headers') return never();
-        if (phase === 'metadata body') return body;
-        return Response.json({ combined_document_url: `${origin}/signed.pdf` });
-      }
-      return phase === 'PDF headers' ? never() : body;
-    });
-    const pending = h.pdf.signedPdf(42, controller.signal);
-    try {
-      await flush(); controller.abort();
-      assert.equal((await rejects(pending, /Signed document/)).status, 502);
-      assert.ok(h.calls.every(call => call.init.signal.aborted));
-      if (phase.endsWith('body')) assert.equal(body.state.cancels, 1);
-      assert.equal(h.timers.size, 0);
-    } finally { h.advance(15_000); await pending.catch(() => {}); }
-  });
-}
-
 test('OTS: completed chunks do not accumulate pending deadline reactions', async t => {
   async function sample(count) {
     let reactions = 0, atCompletion = 0, reads = 0;
@@ -360,52 +243,42 @@ test('request body: absence of a body still checks the terminal deadline', async
   assert.equal(error.status, 408);
 });
 
-test('PDF: exactly 20 MiB preserves every binary byte', async () => {
-  const bytes = new Uint8Array(20 * 1024 * 1024).fill(165); bytes.set(new TextEncoder().encode('%PDF-'));
-  const expected = createHash('sha256').update(bytes).digest('hex');
-  const h = await harness(async input => String(input).includes('/api/')
-    ? Response.json({ combined_document_url: `${origin}/signed.pdf` })
-    : new Response(bytes, { headers: { 'content-length': String(bytes.length) } }));
-  const actual = await h.pdf.signedPdf(42);
-  assert.equal(actual.length, bytes.length);
-  assert.equal(createHash('sha256').update(actual).digest('hex'), expected);
-});
-
-test('PDF: exactly 64,000 metadata bytes remain valid', async () => {
-  const json = JSON.stringify({ id: 42, combined_document_url: `${origin}/signed.pdf` });
-  const metadata = json + ' '.repeat(64_000 - json.length);
-  const h = await harness(async input => String(input).includes('/api/')
-    ? new Response(metadata, { headers: { 'content-length': '64000' } }) : new Response('%PDF-AB'));
-  assert.equal(new TextDecoder().decode(await h.pdf.signedPdf(42)), '%PDF-AB');
-});
-
-for (const phase of ['metadata', 'PDF']) {
-  for (const encoding of [undefined, 'gzip', 'br']) {
-    test(`PDF: decoded ${phase} overflow is refused with encoding=${encoding ?? 'identity'} and no trusted length`, async () => {
-      const maximum = phase === 'metadata' ? 64_000 : 20 * 1024 * 1024;
-      let remaining = maximum + 1;
-      const chunk = new Uint8Array(65_536); chunk.set(new TextEncoder().encode('%PDF-'));
-      const oversized = response({ headers: encoding ? { 'content-encoding': encoding, 'content-length': '3' } : {},
-        read: async () => {
-          const length = Math.min(remaining, chunk.length); remaining -= length;
-          return length ? { done: false, value: chunk.subarray(0, length) } : { done: true };
-        } });
-      const h = await harness(async input => String(input).includes('/api/')
-        ? phase === 'metadata' ? oversized : Response.json({ combined_document_url: `${origin}/signed.pdf` }) : oversized);
-      assert.equal((await rejects(h.pdf.signedPdf(42), /Signed document too large/)).status, 502);
-      assert.equal(oversized.state.cancels, 1);
-      if (phase === 'metadata') assert.equal(h.calls.length, 1);
-    });
-  }
+for (const phase of ['fetch', 'read']) {
+  test(`OTS: a late ${phase} rejection preserves deadline priority before the timer`, async () => {
+    let h;
+    const rejectLate = () => { h.advance(10_001, false); return Promise.reject(new Error('private-late-port-detail')); };
+    h = await harness(phase === 'fetch' ? rejectLate : async () => response({ read: rejectLate }));
+    await rejects(h.ots.readOtsResponse(calendar), /^OTS_TIMEOUT$/);
+  });
 }
 
-for (const [phase, declared] of [['metadata', '3'], ['metadata', '64001'], ['PDF', '3']]) {
-  test(`PDF: compressed ${phase} wire length ${declared} is independent of decoded bytes`, async () => {
-    const metadata = JSON.stringify({ id: 42, combined_document_url: `${origin}/signed.pdf` });
-    const headers = { 'content-encoding': 'br', 'content-length': declared };
-    const h = await harness(async input => String(input).includes('/api/')
-      ? new Response(metadata, phase === 'metadata' ? { headers } : undefined)
-      : new Response('%PDF-AB', phase === 'PDF' ? { headers } : undefined));
-    assert.equal(new TextDecoder().decode(await h.pdf.signedPdf(42)), '%PDF-AB');
+test('OTS: a transport failure before expiry retains its request-failure classification', async () => {
+  let h;
+  h = await harness(() => { h.advance(9_999, false); return Promise.reject(new Error('private-port-detail')); });
+  await rejects(h.ots.readOtsResponse(calendar), /^OTS_REQUEST_FAILED$/);
+});
+
+for (const interruption of ['deadline', 'abort']) {
+  test(`deadline: ${interruption} during response handoff cancels the unclaimed body`, async () => {
+    const body = response();
+    const controller = new AbortController();
+    let h;
+    h = await harness(() => {
+      const pending = Promise.resolve(body);
+      // The producer's reaction queues interruption after the eager cleanup
+      // observer but before the wait continuation can transfer the response.
+      void pending.then(() => queueMicrotask(() => {
+        if (interruption === 'deadline') h.advance(10_001, false);
+        else controller.abort();
+      }));
+      return pending;
+    });
+    const deadline = h.deadline.createRequestDeadline(10_000, controller.signal);
+    try {
+      await rejects(deadline.fetch(calendar, {}), interruption === 'deadline' ? /Request deadline exceeded/ : /Request cancelled/);
+      assert.equal(body.state.cancels, 1);
+      assert.equal(body.state.reads, 0);
+      assert.equal(h.calls[0].init.signal.aborted, true);
+    } finally { deadline.close(); }
   });
 }

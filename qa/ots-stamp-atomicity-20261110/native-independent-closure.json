@@ -1,0 +1,17 @@
+{
+  "cluster": "/private/tmp/purama-iao-native-221cb4a2-d2z4vy9v",
+  "exists": false,
+  "socketExists": false,
+  "pgCtlStatusExit": 4,
+  "pgCtlStatusStdout": "",
+  "pgCtlStatusStderr": "pg_ctl: directory \"/private/tmp/purama-iao-native-221cb4a2-d2z4vy9v/data\" does not exist",
+  "clientPids": [
+    41211,
+    41212,
+    41213,
+    41214
+  ],
+  "clientPsExit": 1,
+  "clientPsOutput": "",
+  "independentObserver": "runtime_unblock"
+}

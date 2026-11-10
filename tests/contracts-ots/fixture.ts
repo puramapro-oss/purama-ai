@@ -15,6 +15,7 @@ export const state = {
   administrator: true,
   authCalls: 0,
   clients: [] as Array<{ service: boolean; authorization: string }>,
+  stampRpcs: [] as Array<{ name: string; args: Record<string, unknown>; service: boolean; authorization: string }>,
   writes: [] as Array<{ table: string; values: Record<string, unknown>; service: boolean }>,
   requests: [] as Array<{ url: string; redirect: RequestRedirect | undefined; token: string | null; authorization: string | null; body: string | null }>,
   signers: [] as Array<{ signed: boolean }>,
@@ -38,7 +39,7 @@ export function reset() {
     contract: { id: CONTRACT, user_id: OWNER, status: "signed", docuseal_submission_id: 17,
       ots_stamp_hash: "ab".repeat(32), ots_proof: btoa("fixture-proof"), ots_verified_at: null,
       ots_block_height: null, ots_btc_timestamp: null, pdf_original_url: null },
-    administrator: true, authCalls: 0, clients: [], writes: [], requests: [], signers: [], stampCalls: 0,
+    administrator: true, authCalls: 0, clients: [], stampRpcs: [], writes: [], requests: [], signers: [], stampCalls: 0,
     verifyCalls: 0, deserializeCalls: 0, pdfUrl: "https://docuseal.fixture.invalid/signed.pdf", documentMetadata: undefined,
     pdfFailure: false, updateFailure: false, eventsFailure: false, authFailure: false,
     afterPdf: undefined, afterVerify: undefined, internalStamp: undefined, bitcoin: undefined,
@@ -59,6 +60,53 @@ export function createClient(_url: string, key: string, options?: { global?: { h
   const visible = () => service || identity(authorization) === state.contract.user_id ||
     (identity(authorization) === ADMIN && state.administrator);
   return {
+    rpc: async (name: string, args: Record<string, unknown>) => {
+      if (name === "persist_contract_ots_verification") {
+        if (!service || options?.db?.schema !== "purama_ai") throw new Error("Verification requires the service persistence boundary");
+        const fields = { id: "p_contract_id", user_id: "p_user_id", status: "p_status", docuseal_submission_id: "p_submission_id",
+          ots_stamp_hash: "p_previous_hash", ots_proof: "p_previous_proof", ots_verified_at: "p_previous_verified_at",
+          ots_block_height: "p_previous_block_height", ots_btc_timestamp: "p_previous_btc_timestamp" };
+        if (!Object.entries(fields).every(([field, argument]) => state.contract[field] === args[argument])) return { data: null, error: null };
+        // HTTP port only: native verification-atomicity.mjs executes the actual
+        // migration for rollback, privileges, actor validation and row locking.
+        if (state.updateFailure || state.eventsFailure) return { data: null, error: { message: "fixture-private-transaction-error" } };
+        if (state.contract.ots_verified_at && state.contract.ots_proof === args.p_proof
+          && state.contract.ots_block_height === args.p_block_height
+          && Date.parse(String(state.contract.ots_btc_timestamp)) === Date.parse(String(args.p_btc_timestamp))) {
+          return { data: state.contract.id, error: null };
+        }
+        const values = { ots_proof: args.p_proof, ots_verified_at: new Date().toISOString(),
+          ots_block_height: args.p_block_height, ots_btc_timestamp: args.p_btc_timestamp };
+        Object.assign(state.contract, values);
+        state.writes.push({ table: "contracts", values, service });
+        state.writes.push({ table: "contract_events", service, values: {
+          contract_id: args.p_contract_id, event_type: "ots_verified",
+          payload: { block_height: args.p_block_height, btc_timestamp: args.p_btc_timestamp },
+          actor_id: args.p_actor_id, actor_type: args.p_actor_type,
+        } });
+        return { data: state.contract.id, error: null };
+      }
+      if (name !== "persist_contract_ots_stamp") throw new Error("Unexpected mutation RPC");
+      state.stampRpcs.push({ name, args, service, authorization });
+      const matches = (service || (identity(authorization) === ADMIN && state.administrator)) &&
+        state.contract.id === args.p_contract_id && state.contract.user_id === args.p_user_id &&
+        state.contract.status === "signed" && state.contract.docuseal_submission_id === args.p_submission_id &&
+        state.contract.ots_stamp_hash === args.p_previous_hash && state.contract.ots_proof === args.p_previous_proof;
+      if (!matches) return { data: null, error: null };
+      // This models a single failed RPC for HTTP tests. The actual migration's
+      // rollback, privileges, actor and races are tested by native-postgres.py.
+      if (state.updateFailure || state.eventsFailure) return { data: null, error: { message: "fixture-private-transaction-error" } };
+      const values = { ots_stamp_hash: args.p_hash, ots_proof: args.p_proof,
+        ots_verified_at: null, ots_block_height: null, ots_btc_timestamp: null };
+      Object.assign(state.contract, values);
+      state.writes.push({ table: "contracts", values, service });
+      state.writes.push({ table: "contract_events", service, values: {
+        contract_id: args.p_contract_id, event_type: "ots_stamped",
+        payload: { hash: args.p_hash, proof_size: atob(String(args.p_proof)).length },
+        actor_id: service ? null : identity(authorization), actor_type: service ? "service" : "user",
+      } });
+      return { data: state.contract.id, error: null };
+    },
     auth: { getUser: async (token?: string) => {
       state.authCalls++;
       const id = identity(token ? `Bearer ${token}` : authorization);

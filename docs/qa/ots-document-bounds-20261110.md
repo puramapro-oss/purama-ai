@@ -1,39 +1,28 @@
-# Historique du donneur PDF 6961206 — remplacé par la composition actuelle
-
-> Le texte conservé ci-dessous décrit exclusivement la contribution
-> `6961206dbf18e3c77695e4e5b26bccd2ec220cfe`, issue de la base `49959aea`.
-> Ses plafonds, chemins de code et résultats sont historiques ; ils ne
-> constituent pas la qualification de la composition finale.
-
-La composition actuelle conserve un seul lecteur binaire, `ots-pdf.ts`.
-Le second lecteur `ots-document.ts` n'est pas présent dans son arbre. Les
-plafonds conservés sont **64 000 octets de métadonnées**, **20 MiB de PDF** et
-une **fenêtre monotone de 15 secondes**, commune à la récupération du PDF et
-aux contrôles avant l'estampillage. Le budget des requêtes OpenTimestamps
-reste distinct ; il ne devient pas un délai global de toute vérification.
-
-La composition maintient l'origine exacte autorisée, le préfixe `%PDF-`, la
-réautorisation, la comparaison du contrat inchangé et l'écriture conditionnelle
-de preuve. La lecture texte entrante conserve son contrôle de secret, ses
-limites propres et une seule course avec l'arrêt pour tout le flux. Les
-garanties utiles du donneur sont rapprochées des suites actuelles sous ces
-politiques ; les 31 nouveaux cas annoncés ci-dessous ne sont pas présentés
-comme 31 identités de tests inchangées dans la composition.
-
-La preuve courante et les limites de validation sont définies dans
-`resume-evidence/iao-final-union/HANDOFF.json` et les reçus de cette même
-qualification. Les nombres historiques ci-dessous ne sont ni ajoutés aux
-résultats courants, ni réutilisés comme des exécutions nouvelles. Aucun de ces
-contrôles locaux n'établit une exécution unique, une transaction distribuée ou
-l'annulation physique d'un effet distant déjà commencé.
-
----
-
-# Récupération bornée du PDF signé — candidat historique du 10 novembre 2026
+# Récupération bornée du PDF signé — candidat du 10 novembre 2026
 
 Base exacte : `49959aea13568b6c9ef44f968afc815275778e24`. Ce correctif est préparé
 dans une copie locale distincte. Il ne modifie pas les preuves de qualification
 du gel précédent et ne constitue pas un déploiement.
+
+## Composition avec la qualification PR36
+
+Les sections suivantes conservent le compte rendu du donneur `6961206d` et ses
+mesures historiques. La composition avec le candidat `280c887b` retient le
+collecteur binaire et le budget commun de 10 secondes, tout en conservant les
+admissions plus strictes de PR36 : métadonnées plafonnées à **64 000 octets**,
+identifiant entier positif, origine DocuSeal HTTPS exacte, absence de userinfo,
+fragment et antislash, identifiant de métadonnées concordant, repli vers un seul
+document et signature `%PDF-`. Le PDF reste plafonné à **16 MiB**.
+
+Le handler conserve ses trois autorisations et relectures de contrat, puis la
+RPC `persist_contract_ots_stamp` atomique avec le JWT final. Il transmet le signal
+entrant au téléchargement et revérifie l'échéance avant et après le hachage.
+L'ancienne API `signedPdf` délègue au même collecteur ; aucune seconde boucle de
+téléchargement n'est conservée. Les données positives des tests du donneur sont
+adaptées au préfixe PDF valide, avec leurs assertions binaires et d'absence
+d'effets conservées. Les reçus de la composition sont distincts des mesures
+historiques ci-dessous ; ils ne sont pas des preuves de déploiement.
+
 
 ## Défaut constaté et périmètre
 

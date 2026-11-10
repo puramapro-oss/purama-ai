@@ -56,9 +56,8 @@ Deno.serve(async (req) => {
     return errorResponse("Invalid request body", 400);
   }
   if (
-    !payload || typeof payload !== "object" || Array.isArray(payload) ||
-    typeof payload.event_type !== "string" || payload.event_type.length > 64 ||
-    !/^[a-z]+(?:[._][a-z]+)+$/.test(payload.event_type) ||
+    !payload || typeof payload !== "object" || Array.isArray(payload) || typeof payload.event_type !== "string" ||
+    payload.event_type.length > 64 || !/^[a-z]+(?:[._][a-z]+)+$/.test(payload.event_type) ||
     !payload.data || typeof payload.data !== "object" || Array.isArray(payload.data)
   ) {
     return errorResponse("Invalid webhook payload", 400);
@@ -66,26 +65,25 @@ Deno.serve(async (req) => {
 
   const eventType = payload.event_type;
   const data = payload.data as Record<string, unknown>;
-  // Reject malformed provider IDs before a privileged database client exists.
-  for (const field of ["submission_id", "id"]) {
-    if (data[field] !== undefined &&
-        (typeof data[field] !== "number" || !Number.isSafeInteger(data[field]) || data[field] <= 0)) {
-      return errorResponse("Invalid webhook identifier", 400);
-    }
+  const positiveId = (value: unknown): value is number => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+  if ((data.id !== undefined && !positiveId(data.id)) || (data.submission_id !== undefined && !positiveId(data.submission_id))) {
+    return errorResponse("Invalid webhook identifier", 400);
   }
-  const submissionId = typeof data.submission_id === "number" ? data.submission_id
-    : eventType.startsWith("submission.") && typeof data.id === "number" ? data.id : null;
-  if (submissionId === null || (eventType.startsWith("form.") && typeof data.id !== "number")) {
+  const submissionId = positiveId(data.submission_id) ? data.submission_id
+    : eventType.startsWith("submission.") && positiveId(data.id) ? data.id : null;
+  if (!positiveId(submissionId) || (eventType.startsWith("form.") && !positiveId(data.id))) {
     return errorResponse("Missing webhook identifier", 400);
   }
-  console.log(`[webhook] event=${eventType}`, { data_keys: Object.keys(data) });
+
+
+  console.log(`[webhook] event=${eventType}`);
 
   try {
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
       db: { schema: "purama_ai" },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    // The validated submission ID is required before creating this client.
+    // Identifiers are validated before the privileged client is created.
     const { data: contract, error: loadError } = await supabaseAdmin
       .from("contracts")
       .select("id, status, user_id, app_slug, template_slug")

@@ -37,24 +37,49 @@ export function createRequestDeadline(timeoutMs: number, signal?: AbortSignal) {
   }
   async function wait<T>(operation: () => Promise<T>): Promise<T> {
     check();
-    const value = await new Promise<T>((resolve, reject) => {
-      const stop = (reason: unknown) => { pending.delete(stop); reject(reason); };
-      pending.add(stop);
-      try {
-        void Promise.resolve(operation()).then(result => { pending.delete(stop); resolve(result); }, stop);
-      } catch (reason) { stop(reason); }
-    });
+    let value: T;
+    try {
+      value = await new Promise<T>((resolve, reject) => {
+        const stop = (reason: unknown) => { pending.delete(stop); reject(reason); };
+        pending.add(stop);
+        try {
+          void Promise.resolve(operation()).then(result => { pending.delete(stop); resolve(result); }, stop);
+        } catch (reason) { stop(reason); }
+      });
+    } catch (reason) {
+      // Rejection can run before the timer after the monotonic deadline passed.
+      // Preserve any recorded cancellation or expiry before the transport error.
+      check();
+      throw reason;
+    }
     // Covers immediate promises/empty chunks that starve the timer task queue.
     check(); return value;
   }
   async function fetchWithin(input: URL, init: RequestInit): Promise<Response> {
-    return wait(() => {
-      const pending = fetch(input, { ...init, signal: controller.signal });
-      void pending.then(response => {
-        if (failure || closed || now() >= endsAt) cancelResponseQuietly(response.body);
-      }, () => {});
-      return pending;
-    });
+    let unclaimed: Response | undefined;
+    const discard = () => {
+      const response = unclaimed;
+      unclaimed = undefined;
+      if (response) cancelResponseQuietly(response.body);
+    };
+    try {
+      const response = await wait(() => {
+        const pending = fetch(input, { ...init, signal: controller.signal });
+        void pending.then(response => {
+          unclaimed = response;
+          if (failure || closed || now() >= endsAt) discard();
+        }, () => {});
+        return pending;
+      });
+      check();
+      unclaimed = undefined;
+      return response;
+    } catch (reason) {
+      // Expiry may happen between the eager observer and the await continuation.
+      // The caller never received this body, so cleanup remains our responsibility.
+      discard();
+      throw reason;
+    }
   }
   function close(): void {
     closed = true; clearTimeout(timer);

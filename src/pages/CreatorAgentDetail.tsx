@@ -27,6 +27,7 @@ import {
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { createRequestScope } from '@/lib/request-scope';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import {
   getAgent, updateAgent, deleteAgent,
   chatWithAgent, listChatMessages,
@@ -44,28 +45,37 @@ import { PendingActionsList } from '@/components/karta/PendingActionsList';
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const userId = user?.id;
+  const userId = user?.id ?? null;
+  const resourceKey = JSON.stringify([userId, id]);
+  const captureResource = useRequestScope(resourceKey);
   const [requests] = useState(createRequestScope);
   const nav = useNavigate();
-  const [agent, setAgent] = useState<CreatorAgent | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
-  const [loadVersion, setLoadVersion] = useState(0);
+  const [agent, setAgent] = useScopedState<CreatorAgent | null>(resourceKey, null);
+  const [loading, setLoading] = useScopedState(resourceKey, true);
+  const [loadError, setLoadError] = useScopedState<string | null>(resourceKey, null);
+  const [loadVersion, setLoadVersion] = useScopedState(resourceKey, 0);
   const voice = useVoice();
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
 
   // Chat
-  const [sessionId, setSessionId] = useState<string>('');
-  const [messages, setMessages] = useState<CreatorAgentChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  const [sending, setSending] = useState(false);
+  const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
+  const conversationKey = JSON.stringify([userId, id, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [messages, setMessages] = useScopedState<CreatorAgentChatMessage[]>(conversationKey, []);
+  const [chatInput, setChatInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
+  const { cancelRecording, stopSpeaking } = voice;
+  useLayoutEffect(() => () => {
+    cancelRecording();
+    stopSpeaking();
+  }, [conversationKey, cancelRecording, stopSpeaking]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Runs
-  const [runs, setRuns] = useState<CreatorAgentRun[]>([]);
+  const [runs, setRuns] = useScopedState<CreatorAgentRun[]>(resourceKey, []);
 
   // Settings
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useScopedState(resourceKey, false);
 
   // Exécution réelle (KARTA)
   const { data: kartaState, isError: kartaStateError } = useCustomAgentKartaState(id);
@@ -77,13 +87,9 @@ export default function CreatorAgentDetail() {
   useLayoutEffect(() => {
     setAgent(null);
     setSessionId('');
-    setMessages([]);
-    setChatInput('');
     setRuns([]);
-    setSending(false);
     setSaving(false);
-    setVoiceModeOpen(false);
-    setLoadError(false);
+    setLoadError(null);
     setLoading(Boolean(id && userId));
     if (!id || !userId) return;
     const request = requests.begin('agent');
@@ -92,17 +98,21 @@ export default function CreatorAgentDetail() {
       try {
         const a = await getAgent(id);
         if (!request.current()) return;
-        if (!a || a.id !== id) throw new Error('Agent indisponible');
+        if (!a) {
+          setLoadError('Cet agent est introuvable ou inaccessible.');
+          return;
+        }
+        if (a.id !== id) throw new Error('Agent indisponible');
         setAgent(a);
         setSessionId(newSessionId());
       } catch {
-        if (request.current()) setLoadError(true);
+        if (request.current()) setLoadError('Impossible de charger cet agent. Réessaie dans quelques instants.');
       } finally {
         if (request.finish()) setLoading(false);
       }
     })();
     return () => requests.invalidate();
-  }, [id, userId, loadVersion, requests]);
+  }, [id, userId, loadVersion, requests, setAgent, setSessionId, setRuns, setSaving, setLoadError, setLoading]);
 
   const loadedAgentId = agent?.id;
   useLayoutEffect(() => {
@@ -117,7 +127,7 @@ export default function CreatorAgentDetail() {
       requests.cancel('messages');
       requests.cancel('send');
     };
-  }, [id, userId, loadedAgentId, sessionId, requests]);
+  }, [id, userId, loadedAgentId, sessionId, requests, setMessages]);
 
   useEffect(() => {
     if (!userId || !id) return;
@@ -128,14 +138,15 @@ export default function CreatorAgentDetail() {
       .catch(() => {})
       .finally(() => request.finish());
     return () => requests.cancel('runs');
-  }, [userId, id, loadVersion, requests]);
+  }, [userId, id, loadVersion, requests, setRuns]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   const submitMessage = async (msg: string, signal?: AbortSignal): Promise<string | null> => {
-    if (!msg.trim() || !id || !userId || !sessionId || agent?.id !== id || agent.user_id !== userId || signal?.aborted) return null;
+    const isCurrent = captureConversation();
+    if (!msg.trim() || !id || !userId || !sessionId || agent?.id !== id || agent.user_id !== userId || !isCurrent() || signal?.aborted) return null;
     const request = requests.begin('send');
     if (!request) return null;
     requests.cancel('messages');
@@ -181,7 +192,8 @@ export default function CreatorAgentDetail() {
   };
 
   const handleSave = async () => {
-    if (!agent || agent.id !== id || agent.user_id !== userId) return;
+    const isCurrent = captureResource();
+    if (!agent || agent.id !== id || agent.user_id !== userId || !isCurrent()) return;
     const request = requests.begin('save');
     if (!request) return;
     setSaving(true);
@@ -197,7 +209,8 @@ export default function CreatorAgentDetail() {
   };
 
   const handleTriggerNow = async () => {
-    if (!id || agent?.id !== id || agent.user_id !== userId) return;
+    const isCurrent = captureResource();
+    if (!id || agent?.id !== id || agent.user_id !== userId || !isCurrent()) return;
     const request = requests.begin('trigger');
     if (!request) return;
     try {
@@ -219,7 +232,8 @@ export default function CreatorAgentDetail() {
   };
 
   const handleDelete = async () => {
-    if (!agent || agent.id !== id || agent.user_id !== userId) return;
+    const isCurrent = captureResource();
+    if (!agent || agent.id !== id || agent.user_id !== userId || !isCurrent()) return;
     if (!confirm(`Supprimer "${agent.name}" et tout son historique ?`)) return;
     const request = requests.begin('delete');
     if (!request) return;
@@ -238,7 +252,7 @@ export default function CreatorAgentDetail() {
   }
   if (loadError || !agent) {
     return <div className="space-y-4 py-20 text-center" role="alert">
-      <p>Impossible de charger cet agent.</p>
+      <p>{loadError ?? 'Cet agent est introuvable ou inaccessible.'}</p>
       <Button onClick={() => setLoadVersion(value => value + 1)}>Réessayer</Button>
       <div><Link to="/dashboard/creator-agent" className="text-sm underline">Retour aux agents</Link></div>
     </div>;
