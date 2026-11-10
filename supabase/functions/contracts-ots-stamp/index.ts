@@ -6,9 +6,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import OpenTimestamps from "npm:opentimestamps@0.4.9";
-import { CORS_HEADERS, corsResponse, errorResponse, docusealFetch, DOCUSEAL_URL, DOCUSEAL_TOKEN } from "../_shared/docuseal.ts";
+import { CORS_HEADERS, corsResponse, errorResponse } from "../_shared/docuseal.ts";
 import { verifyBearerSecret } from "../_shared/webhook-security.ts";
 import { readOtsBody, OtsHttpError } from "../_shared/ots-body.ts";
+import { fetchSignedPdf, OtsDocumentError } from "../_shared/ots-document.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
@@ -73,32 +74,17 @@ serve(async (req) => {
     if (!contract) return errorResponse("Contract not found", 404);
     if (contract.status !== "signed") return errorResponse("Contract is not signed", 409);
 
-    // Fetch signed PDF content (need raw bytes)
-    let pdfBytes: ArrayBuffer;
-    if (contract.docuseal_submission_id) {
-      type DSDocs = { documents?: Array<{ url?: string }>; combined_document_url?: string };
-      const docs = await docusealFetch<DSDocs>("GET", `/api/submissions/${contract.docuseal_submission_id}/documents`);
-      const url = docs.combined_document_url ?? docs.documents?.[0]?.url;
-      if (!url) return errorResponse("No signed PDF available", 404);
-      const pdfUrl = new URL(url);
-      const sameOrigin = pdfUrl.origin === new URL(DOCUSEAL_URL).origin;
-      if (pdfUrl.username || pdfUrl.password ||
-          (pdfUrl.protocol !== "https:" && !(sameOrigin && pdfUrl.protocol === "http:"))) {
-        return errorResponse("Invalid PDF location", 502);
-      }
-      const res = await fetch(pdfUrl, {
-        headers: sameOrigin ? { "X-Auth-Token": DOCUSEAL_TOKEN } : {},
-        // A redirect must never forward the DocuSeal credential to another host.
-        redirect: "error",
-      });
-      if (!res.ok) return errorResponse(`Failed to fetch PDF: ${res.status}`, 502);
-      pdfBytes = await res.arrayBuffer();
-    } else {
+    // Metadata and raw PDF bytes share one deadline and fixed byte budgets.
+    const submissionId = contract.docuseal_submission_id;
+    if (!submissionId || (typeof submissionId !== "string" && typeof submissionId !== "number")) {
       return errorResponse("No submission linked", 400);
     }
+    const pdf = await fetchSignedPdf(submissionId, req.signal);
 
     // SHA-256 hash
-    const hashBuf = await crypto.subtle.digest("SHA-256", pdfBytes);
+    pdf.assertCurrent();
+    const hashBuf = await crypto.subtle.digest("SHA-256", pdf.bytes);
+    pdf.assertCurrent();
     const hashHex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
 
     // Stamp via OpenTimestamps
@@ -143,7 +129,8 @@ serve(async (req) => {
     if (eventError) return errorResponse("Stamp audit record failed", 500);
 
     return corsResponse({ ok: true, hash: hashHex, pending_bitcoin_confirmation: true });
-  } catch {
+  } catch (error) {
+    if (error instanceof OtsDocumentError) return errorResponse(error.message, error.status);
     // Provider errors may contain private URLs or response bodies.
     console.error("[ots-stamp] operation failed");
     return errorResponse("Stamping failed", 500);

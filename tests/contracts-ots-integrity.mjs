@@ -56,7 +56,7 @@ for (const authorization of [null, 'Bearer wrong', `Bearer ${webhookSecret}x`, `
 async function harness(options = {}, entry = 'contracts-ots-stamp') {
   let handler;
   const calls = { clients: [], auth: [], roles: [], contractReads: [], updates: [], events: [],
-    docs: [], pdf: [], stamps: [], internal: [], errors: [] };
+    docs: [], pdf: [], digests: [], stamps: [], internal: [], errors: [] };
   const contract = options.contractState ?? (options.noContract ? null : {
     id: contractId, user_id: 'contract-owner', status: options.status ?? 'signed',
     docuseal_submission_id: options.noSubmission ? null : 42,
@@ -135,15 +135,28 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       },
     };
   };
+  const trackedSubtle = new Proxy(webcrypto.subtle, {
+    get(target, key) {
+      const value = Reflect.get(target, key, target);
+      if (typeof value !== 'function') return value;
+      return (...args) => {
+        if (key === 'digest') calls.digests.push({ algorithm: args[0], bytes: args[1].byteLength });
+        return Reflect.apply(value, target, args);
+      };
+    },
+  });
   const context = vm.createContext({
     Request, Response, Headers, URL, Uint8Array, TextEncoder, TextDecoder,
-    crypto: webcrypto, atob, btoa, setTimeout, clearTimeout, performance, AbortController,
+    crypto: new Proxy(webcrypto, { get: (target, key) => key === 'subtle' ? trackedSubtle : Reflect.get(target, key, target) }),
+    atob, btoa, setTimeout: options.setTimeout ?? setTimeout, clearTimeout,
+    performance: options.performance ?? performance, AbortController,
     console: { error: (...args) => calls.errors.push(args), warn() {}, log() {} },
     Deno: { env: { get: key => environment[key] } },
     fetch: async (input, init) => {
       const url = String(input);
       if (url === `${docusealOrigin}/api/submissions/42/documents`) {
         calls.docs.push({ url, init });
+        if (options.documentsFetch) return options.documentsFetch(init);
         return Response.json(options.noPdf ? {} : { combined_document_url: pdfUrl });
       }
       if (url === `${docusealOrigin}/api/submissions/42`) {
@@ -160,6 +173,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       if (options.pdfThrows) throw new Error('provider-private-pdf-detail');
       if (options.cancelDuringFetch) contract.status = 'cancelled';
       if (options.replaceSubmissionDuringFetch) contract.docuseal_submission_id = 99;
+      if (options.pdfFetch) return options.pdfFetch(init);
       return new Response(new Uint8Array([37, 80, 68, 70]), { status: options.pdfStatus ?? 200 });
     },
   });
@@ -401,5 +415,258 @@ for (const failure of ['pdfThrows', 'stampThrows']) {
     assert.equal(response.status, 500);
     assert.doesNotMatch(await response.text(), /private-/);
     assert.doesNotMatch(h.calls.errors.map(args => args.map(String).join(' ')).join(' '), /private-/);
+  });
+}
+
+// Download policy is internal: these are byte counts, never character counts or
+// caller-controlled HTTP options. A synthetic clock avoids real 10 s waits.
+const pdfByteLimit = 16 * 1024 * 1024;
+const metadataByteLimit = 256 * 1024;
+function downloadClock() {
+  const clock = { value: 0 };
+  clock.performance = { now: () => clock.value };
+  clock.setTimeout = (callback, delay) => setTimeout(() => {
+    clock.value += delay;
+    callback();
+  }, 1);
+  return clock;
+}
+async function boundedResult(operation) {
+  let timer;
+  try {
+    return await Promise.race([operation, new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('PDF download exceeded synthetic test guard')), 300);
+    })]);
+  } finally { clearTimeout(timer); }
+}
+function noPdfEffects(h) {
+  assert.equal(h.calls.digests.length, 0, 'an incomplete PDF must not be hashed');
+  assert.equal(h.calls.stamps.length, 0, 'an incomplete PDF must not be stamped');
+  assert.equal(h.calls.updates.length + h.calls.events.length, 0);
+  assert.equal(h.contract.ots_proof, 'old-proof');
+}
+function pdfStream(chunks, { headers = {}, cancel = () => {}, beforeRead = () => {} } = {}) {
+  let index = 0;
+  return new Response(new ReadableStream({
+    pull(controller) {
+      beforeRead(index);
+      if (index < chunks.length) controller.enqueue(chunks[index++]);
+      else controller.close();
+    },
+    cancel,
+  }, { highWaterMark: 0 }), { headers });
+}
+
+test('PDF bounds: preserves raw binary bytes instead of decoding UTF-8', async () => {
+  const bytes = new Uint8Array([37, 80, 68, 70, 0, 255, 254, 128, 0, 13, 10]);
+  const h = await harness({ pdfFetch: () => pdfStream([bytes.subarray(0, 5), bytes.subarray(5)]) });
+  const response = await h.handler(request(serviceKey));
+  assert.equal(response.status, 200);
+  const expected = Buffer.from(await webcrypto.subtle.digest('SHA-256', bytes)).toString('hex');
+  assert.equal((await response.json()).hash, expected);
+});
+
+test('PDF bounds: fragmented bytes snapshot a reused provider buffer across growth', async () => {
+  const expectedBytes = Uint8Array.from({ length: 65_537 }, (_, index) => index % 256);
+  const reused = new Uint8Array(1); let offset = 0;
+  const response = new Response(new ReadableStream({
+    pull(controller) {
+      if (offset === expectedBytes.length) { controller.close(); return; }
+      reused[0] = expectedBytes[offset++];
+      controller.enqueue(reused);
+    },
+  }, { highWaterMark: 0 }));
+  const h = await harness({ pdfFetch: () => response });
+  const result = await h.handler(request(serviceKey));
+  assert.equal(result.status, 200); assert.equal(response.body.locked, false);
+  assert.equal((await result.json()).hash, Buffer.from(await webcrypto.subtle.digest('SHA-256', expectedBytes)).toString('hex'));
+});
+
+test('PDF bounds: accepts exactly 16 MiB without changing the binary hash', async () => {
+  const bytes = new Uint8Array(pdfByteLimit); bytes[0] = 255; bytes[bytes.length - 1] = 128;
+  const h = await harness({ pdfFetch: () => pdfStream([bytes], { headers: { 'content-length': String(bytes.length) } }) });
+  const response = await h.handler(request(serviceKey));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).hash, Buffer.from(await webcrypto.subtle.digest('SHA-256', bytes)).toString('hex'));
+});
+
+for (const declared of [false, true]) {
+  test(`PDF bounds: rejects PDF bytes above 16 MiB with declared=${declared}`, async () => {
+    let cancelled = 0; let reads = 0;
+    const response = pdfStream([new Uint8Array(declared ? 1 : pdfByteLimit + 1)], {
+      headers: declared ? { 'content-length': String(pdfByteLimit + 1) } : {},
+      beforeRead: () => { reads++; }, cancel: () => { cancelled++; },
+    });
+    const h = await harness({ pdfFetch: () => response });
+    assert.equal((await h.handler(request(serviceKey))).status, 502);
+    noPdfEffects(h);
+    assert.equal(cancelled, 1); assert.equal(response.body.locked, false);
+    if (declared) assert.equal(reads, 0, 'oversized declared body must not be read');
+  });
+}
+
+for (const declared of ['1', '5']) {
+  test(`PDF bounds: rejects an incomplete or inconsistent PDF length ${declared}`, async () => {
+    const h = await harness({ pdfFetch: () => pdfStream([new Uint8Array([37, 80, 68])], { headers: { 'content-length': declared } }) });
+    assert.equal((await h.handler(request(serviceKey))).status, 502);
+    noPdfEffects(h);
+  });
+}
+
+for (const declared of [false, true]) {
+  test(`PDF bounds: rejects metadata above 256 KiB with declared=${declared}`, async () => {
+    const data = JSON.stringify({ combined_document_url: defaultPdfUrl, padding: declared ? '' : 'x'.repeat(metadataByteLimit) });
+    let cancelled = 0;
+    const metadata = pdfStream([new TextEncoder().encode(data)], {
+      headers: declared ? { 'content-length': String(metadataByteLimit + 1) } : {},
+      cancel: () => { cancelled++; },
+    });
+    const h = await harness({ documentsFetch: () => metadata });
+    assert.equal((await h.handler(request(serviceKey))).status, 502);
+    assert.equal(h.calls.pdf.length, 0); noPdfEffects(h);
+    assert.equal(cancelled, 1); assert.equal(metadata.body.locked, false);
+  });
+}
+
+for (const phase of ['metadata headers', 'PDF headers', 'metadata body', 'PDF body']) {
+  test(`PDF bounds: one deadline stops stalled ${phase}`, async () => {
+    const clock = downloadClock(); let cancelled = 0; let signal; let response;
+    const stall = init => {
+      signal = init.signal;
+      if (phase.endsWith('headers')) return new Promise(() => {});
+      response = new Response(new ReadableStream({ cancel() { cancelled++; } }, { highWaterMark: 0 }));
+      return response;
+    };
+    const h = await harness({ performance: clock.performance, setTimeout: clock.setTimeout,
+      ...(phase.startsWith('metadata') ? { documentsFetch: stall } : { pdfFetch: stall }),
+    });
+    assert.equal((await boundedResult(h.handler(request(serviceKey)))).status, 504);
+    assert.equal(signal.aborted, true); noPdfEffects(h);
+    if (response) { assert.equal(cancelled, 1); assert.equal(response.body.locked, false); }
+  });
+}
+
+for (const phase of ['metadata headers', 'metadata body', 'PDF headers', 'PDF body', 'PDF end']) {
+  test(`PDF bounds: monotonic expiry rejects immediate ${phase} before a delayed timer`, async () => {
+    const clock = { value: 0, now() { return this.value; } }; let response; let reads = 0;
+    const metadata = JSON.stringify({ combined_document_url: defaultPdfUrl });
+    const expire = () => { clock.value = 10_001; };
+    const h = await harness({ performance: clock,
+      documentsFetch: () => {
+        if (phase === 'metadata headers') expire();
+        return pdfStream([new TextEncoder().encode(metadata)], { beforeRead: () => { if (phase === 'metadata body') expire(); } });
+      },
+      pdfFetch: () => {
+        if (phase === 'PDF headers') expire();
+        response = pdfStream([new Uint8Array([37, 80, 68, 70])], { beforeRead: index => {
+          reads++;
+          if (phase === 'PDF body' || (phase === 'PDF end' && index === 1)) expire();
+        } });
+        return response;
+      },
+    });
+    assert.equal((await boundedResult(h.handler(request(serviceKey)))).status, 504);
+    noPdfEffects(h);
+    if (phase.startsWith('metadata')) assert.equal(h.calls.pdf.length, 0);
+    if (phase === 'PDF headers') assert.equal(reads, 0);
+    if (response) assert.equal(response.body.locked, false);
+  });
+}
+
+test('PDF bounds: metadata and PDF consume one budget without resetting it', async () => {
+  const clock = { value: 0, now() { return this.value; } };
+  const h = await harness({ performance: clock,
+    documentsFetch: () => {
+      clock.value = 4_000;
+      return pdfStream([new TextEncoder().encode(JSON.stringify({ combined_document_url: defaultPdfUrl }))], {
+        beforeRead: () => { clock.value = 7_000; },
+      });
+    },
+    pdfFetch: () => {
+      clock.value = 8_000;
+      return pdfStream([new Uint8Array([37, 80, 68, 70])], { beforeRead: () => { clock.value = 10_001; } });
+    },
+  });
+  assert.equal((await h.handler(request(serviceKey))).status, 504);
+  noPdfEffects(h);
+});
+
+for (const phase of ['metadata', 'PDF headers', 'PDF body']) {
+  test(`PDF bounds: caller cancellation during ${phase} prevents hashing and stamping`, async () => {
+    const abort = new AbortController(); let response; let cancelled = 0;
+    const h = await harness({
+      documentsFetch: () => {
+        if (phase === 'metadata') abort.abort();
+        return Response.json({ combined_document_url: defaultPdfUrl });
+      },
+      pdfFetch: () => {
+        if (phase === 'PDF headers') abort.abort();
+        response = pdfStream([new Uint8Array([37, 80, 68, 70])], {
+          beforeRead: () => { if (phase === 'PDF body') abort.abort(); }, cancel: () => { cancelled++; },
+        });
+        return response;
+      },
+    });
+    assert.equal((await boundedResult(h.handler(new Request(request(serviceKey), { signal: abort.signal })))).status, 503);
+    noPdfEffects(h);
+    if (phase === 'metadata') assert.equal(h.calls.pdf.length, 0);
+    if (response) { assert.equal(cancelled, 1); assert.equal(response.body.locked, false); }
+  });
+}
+
+for (const cancellation of ['pending', 'rejected']) {
+  test(`PDF bounds: ${cancellation} stream cancellation cannot delay a timeout`, async () => {
+    const clock = downloadClock(); let cancelled = 0;
+    const response = new Response(new ReadableStream({ cancel() {
+      cancelled++;
+      return cancellation === 'pending' ? new Promise(() => {}) : Promise.reject(new Error('private-cancel-detail'));
+    } }, { highWaterMark: 0 }));
+    const h = await harness({ performance: clock.performance, setTimeout: clock.setTimeout, pdfFetch: () => response });
+    const result = await boundedResult(h.handler(request(serviceKey)));
+    assert.equal(result.status, 504); noPdfEffects(h);
+    assert.equal(cancelled, 1); assert.equal(response.body.locked, false);
+    assert.doesNotMatch(await result.text(), /private-/);
+  });
+}
+
+test('PDF bounds: a response arriving after timeout is cancelled without late effects', async () => {
+  const clock = downloadClock(); let resolveLate; let cancelled = 0;
+  const h = await harness({ performance: clock.performance, setTimeout: clock.setTimeout,
+    pdfFetch: () => new Promise(resolve => { resolveLate = resolve; }),
+  });
+  assert.equal((await boundedResult(h.handler(request(serviceKey)))).status, 504);
+  const response = new Response(new ReadableStream({ cancel() { cancelled++; } }, { highWaterMark: 0 }));
+  resolveLate(response);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(cancelled, 1); assert.equal(response.body.locked, false); noPdfEffects(h);
+});
+
+for (const phase of ['metadata', 'PDF']) {
+  test(`PDF bounds: decoded ${phase} is not rejected by an oversized encoded length`, async () => {
+    const decoded = phase === 'metadata'
+      ? new TextEncoder().encode(JSON.stringify({ combined_document_url: defaultPdfUrl }))
+      : new Uint8Array([37, 80, 68, 70, 255]);
+    const response = pdfStream([decoded], { headers: { 'content-encoding': 'gzip', 'content-length': String(pdfByteLimit + 1) } });
+    const h = await harness(phase === 'metadata' ? { documentsFetch: () => response } : { pdfFetch: () => response });
+    assert.equal((await h.handler(request(serviceKey))).status, 200);
+    assert.equal(h.calls.stamps.length, 1); assert.equal(response.body.locked, false);
+  });
+  test(`PDF bounds: decoded ${phase} is not compared to its encoded Content-Length`, async () => {
+    const decoded = phase === 'metadata'
+      ? new TextEncoder().encode(JSON.stringify({ combined_document_url: defaultPdfUrl }))
+      : new Uint8Array([37, 80, 68, 70, 255, 0, 128]);
+    const response = pdfStream([decoded], { headers: { 'content-encoding': 'gzip', 'content-length': '3' } });
+    const h = await harness(phase === 'metadata' ? { documentsFetch: () => response } : { pdfFetch: () => response });
+    assert.equal((await h.handler(request(serviceKey))).status, 200);
+    assert.equal(h.calls.stamps.length, 1); assert.equal(response.body.locked, false);
+  });
+  test(`PDF bounds: decoded ${phase} still obeys its byte cap`, async () => {
+    const decoded = phase === 'metadata'
+      ? new TextEncoder().encode(JSON.stringify({ combined_document_url: defaultPdfUrl, padding: 'x'.repeat(metadataByteLimit) }))
+      : new Uint8Array(pdfByteLimit + 1);
+    const response = pdfStream([decoded], { headers: { 'content-encoding': 'br', 'content-length': '3' } });
+    const h = await harness(phase === 'metadata' ? { documentsFetch: () => response } : { pdfFetch: () => response });
+    assert.equal((await h.handler(request(serviceKey))).status, 502); noPdfEffects(h);
+    assert.equal(response.body.locked, false);
   });
 }
