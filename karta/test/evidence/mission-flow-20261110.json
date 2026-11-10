@@ -1,0 +1,3814 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-10T04:15:48.239101+00:00",
+  "scope": "KARTA user brief admission, exact dispatch, execution and status; consolidation with published delivery identity and continuation guards.",
+  "status": {
+    "localValidation": "PASS",
+    "overallDelivery": "PARTIEL",
+    "browserExecution": "BLOQUÉ",
+    "productionQualification": "NON TESTÉ"
+  },
+  "repository": "puramapro-oss/purama-ai",
+  "baseCommit": "d553ff2e784a82685d16f59727c55d5499d0db9e",
+  "additionalParentCommit": "27815bcc9660adcc925f1a6c2b8651ff04ff5062",
+  "defaultBranch": {
+    "name": "main",
+    "verifiedSha": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+    "localTrackingRef": "origin/main"
+  },
+  "runtime": {
+    "nodeVersion": "v24.22.1",
+    "sqlHarness": "PGlite, one connection per fresh process",
+    "networkBoundaries": "Model, business provider, Supabase HTTP authentication and Redis transport are substituted at the tested boundaries."
+  },
+  "completeCampaign": {
+    "completedAt": "2026-11-10T03:57:29.848569+00:00",
+    "reportSha256": "a3f773bdaa57c6b546319a35339b6466d985b2b39aa4934019ad832894b13ef7",
+    "totalTests": 1065,
+    "passedTests": 1065,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "testFiles": 68,
+    "allFilesExecutedExactlyOnce": true,
+    "partition": {
+      "unitFiles": [
+        "test/actionAgentsMock.test.ts",
+        "test/agentsRegistry.test.ts",
+        "test/apiDeliveryIdentity.test.ts",
+        "test/apiSafety.test.ts",
+        "test/approvalTracePrivacy.test.ts",
+        "test/autonomy.test.ts",
+        "test/brief.test.ts",
+        "test/briefSubmissionClient.test.ts",
+        "test/chatEscalation.test.ts",
+        "test/chatRequestScope.test.ts",
+        "test/chefBrief.test.ts",
+        "test/chefCostGovernor.test.ts",
+        "test/chefDriver.test.ts",
+        "test/chefEvidenceAdapter.test.ts",
+        "test/chefGitState.test.ts",
+        "test/chefProtocol.test.ts",
+        "test/chefSupervisor.test.ts",
+        "test/chefVerificationGitIntegration.test.ts",
+        "test/chefVerifier.test.ts",
+        "test/customAgent.test.ts",
+        "test/customRegistry.test.ts",
+        "test/cycleAdmissionPrivacy.test.ts",
+        "test/generative.test.ts",
+        "test/gmail-token-crypto.test.ts",
+        "test/gmailTool.test.ts",
+        "test/jev-client.test.ts",
+        "test/jev-schema.test.ts",
+        "test/jev-tool.test.ts",
+        "test/kartaTriggerEdge.test.ts",
+        "test/logger.test.ts",
+        "test/loggerCycleFinalization.test.ts",
+        "test/loop.test.ts",
+        "test/loopBriefLifecycle.test.ts",
+        "test/loopJevTracePrivacy.test.ts",
+        "test/loopTracePrivacy.test.ts",
+        "test/mockClaude.test.ts",
+        "test/publicChatAdmission.test.ts",
+        "test/real-claude.test.ts",
+        "test/sseConsumer.test.ts",
+        "test/sseFraming.test.ts",
+        "test/streamCompletionAudit.test.ts",
+        "test/streaming.test.ts",
+        "test/stripeIsolation.test.ts",
+        "test/supabaseTool.test.ts",
+        "test/toolResult.test.ts",
+        "test/webAccessPlanTool.test.ts",
+        "test/webCapabilityPlan.test.ts"
+      ],
+      "sqlFiles": [
+        "test/approval.test.ts",
+        "test/approvalContinuation.test.ts",
+        "test/approvalParentGuard.test.ts",
+        "test/briefClaims.test.ts",
+        "test/briefDatabaseCycle.test.ts",
+        "test/briefSubmission.test.ts",
+        "test/briefSubmissionFlow.test.ts",
+        "test/chatHistoryIsolation.test.ts",
+        "test/chefControlPlane.test.ts",
+        "test/chefEvidenceFreshness.test.ts",
+        "test/chefEvidenceGate.test.ts",
+        "test/chefHardening.test.ts",
+        "test/chefIndependentReview.test.ts",
+        "test/chefMission.test.ts",
+        "test/chefRuntimePolicy.test.ts",
+        "test/connectPermissions.test.ts",
+        "test/customAuthorization.test.ts",
+        "test/loggerFinalization.test.ts",
+        "test/queueDeliveryIdentity.test.ts",
+        "test/runtimeHardening.test.ts",
+        "test/walletRpcPermissions.test.ts"
+      ],
+      "allExpectedFiles": [
+        "test/actionAgentsMock.test.ts",
+        "test/agentsRegistry.test.ts",
+        "test/apiDeliveryIdentity.test.ts",
+        "test/apiSafety.test.ts",
+        "test/approval.test.ts",
+        "test/approvalContinuation.test.ts",
+        "test/approvalParentGuard.test.ts",
+        "test/approvalTracePrivacy.test.ts",
+        "test/autonomy.test.ts",
+        "test/brief.test.ts",
+        "test/briefClaims.test.ts",
+        "test/briefDatabaseCycle.test.ts",
+        "test/briefSubmission.test.ts",
+        "test/briefSubmissionClient.test.ts",
+        "test/briefSubmissionFlow.test.ts",
+        "test/chatEscalation.test.ts",
+        "test/chatHistoryIsolation.test.ts",
+        "test/chatRequestScope.test.ts",
+        "test/chefBrief.test.ts",
+        "test/chefControlPlane.test.ts",
+        "test/chefCostGovernor.test.ts",
+        "test/chefDriver.test.ts",
+        "test/chefEvidenceAdapter.test.ts",
+        "test/chefEvidenceFreshness.test.ts",
+        "test/chefEvidenceGate.test.ts",
+        "test/chefGitState.test.ts",
+        "test/chefHardening.test.ts",
+        "test/chefIndependentReview.test.ts",
+        "test/chefMission.test.ts",
+        "test/chefProtocol.test.ts",
+        "test/chefRuntimePolicy.test.ts",
+        "test/chefSupervisor.test.ts",
+        "test/chefVerificationGitIntegration.test.ts",
+        "test/chefVerifier.test.ts",
+        "test/connectPermissions.test.ts",
+        "test/customAgent.test.ts",
+        "test/customAuthorization.test.ts",
+        "test/customRegistry.test.ts",
+        "test/cycleAdmissionPrivacy.test.ts",
+        "test/generative.test.ts",
+        "test/gmail-token-crypto.test.ts",
+        "test/gmailTool.test.ts",
+        "test/jev-client.test.ts",
+        "test/jev-schema.test.ts",
+        "test/jev-tool.test.ts",
+        "test/kartaTriggerEdge.test.ts",
+        "test/logger.test.ts",
+        "test/loggerCycleFinalization.test.ts",
+        "test/loggerFinalization.test.ts",
+        "test/loop.test.ts",
+        "test/loopBriefLifecycle.test.ts",
+        "test/loopJevTracePrivacy.test.ts",
+        "test/loopTracePrivacy.test.ts",
+        "test/mockClaude.test.ts",
+        "test/publicChatAdmission.test.ts",
+        "test/queueDeliveryIdentity.test.ts",
+        "test/real-claude.test.ts",
+        "test/runtimeHardening.test.ts",
+        "test/sseConsumer.test.ts",
+        "test/sseFraming.test.ts",
+        "test/streamCompletionAudit.test.ts",
+        "test/streaming.test.ts",
+        "test/stripeIsolation.test.ts",
+        "test/supabaseTool.test.ts",
+        "test/toolResult.test.ts",
+        "test/walletRpcPermissions.test.ts",
+        "test/webAccessPlanTool.test.ts",
+        "test/webCapabilityPlan.test.ts"
+      ]
+    },
+    "sourceSnapshotCount": 648,
+    "changedDuringValidation": [],
+    "gates": [
+      {
+        "name": "unit",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/actionAgentsMock.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/apiDeliveryIdentity.test.ts",
+          "test/apiSafety.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "test/autonomy.test.ts",
+          "test/brief.test.ts",
+          "test/briefSubmissionClient.test.ts",
+          "test/chatEscalation.test.ts",
+          "test/chatRequestScope.test.ts",
+          "test/chefBrief.test.ts",
+          "test/chefCostGovernor.test.ts",
+          "test/chefDriver.test.ts",
+          "test/chefEvidenceAdapter.test.ts",
+          "test/chefGitState.test.ts",
+          "test/chefProtocol.test.ts",
+          "test/chefSupervisor.test.ts",
+          "test/chefVerificationGitIntegration.test.ts",
+          "test/chefVerifier.test.ts",
+          "test/customAgent.test.ts",
+          "test/customRegistry.test.ts",
+          "test/cycleAdmissionPrivacy.test.ts",
+          "test/generative.test.ts",
+          "test/gmail-token-crypto.test.ts",
+          "test/gmailTool.test.ts",
+          "test/jev-client.test.ts",
+          "test/jev-schema.test.ts",
+          "test/jev-tool.test.ts",
+          "test/kartaTriggerEdge.test.ts",
+          "test/logger.test.ts",
+          "test/loggerCycleFinalization.test.ts",
+          "test/loop.test.ts",
+          "test/loopBriefLifecycle.test.ts",
+          "test/loopJevTracePrivacy.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/mockClaude.test.ts",
+          "test/publicChatAdmission.test.ts",
+          "test/real-claude.test.ts",
+          "test/sseConsumer.test.ts",
+          "test/sseFraming.test.ts",
+          "test/streamCompletionAudit.test.ts",
+          "test/streaming.test.ts",
+          "test/stripeIsolation.test.ts",
+          "test/supabaseTool.test.ts",
+          "test/toolResult.test.ts",
+          "test/webAccessPlanTool.test.ts",
+          "test/webCapabilityPlan.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/unit.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 24.161,
+        "tests": {
+          "numTotalTests": 637,
+          "numPassedTests": 637,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/actionAgentsMock.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/apiDeliveryIdentity.test.ts",
+          "test/apiSafety.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "test/autonomy.test.ts",
+          "test/brief.test.ts",
+          "test/briefSubmissionClient.test.ts",
+          "test/chatEscalation.test.ts",
+          "test/chatRequestScope.test.ts",
+          "test/chefBrief.test.ts",
+          "test/chefCostGovernor.test.ts",
+          "test/chefDriver.test.ts",
+          "test/chefEvidenceAdapter.test.ts",
+          "test/chefGitState.test.ts",
+          "test/chefProtocol.test.ts",
+          "test/chefSupervisor.test.ts",
+          "test/chefVerificationGitIntegration.test.ts",
+          "test/chefVerifier.test.ts",
+          "test/customAgent.test.ts",
+          "test/customRegistry.test.ts",
+          "test/cycleAdmissionPrivacy.test.ts",
+          "test/generative.test.ts",
+          "test/gmail-token-crypto.test.ts",
+          "test/gmailTool.test.ts",
+          "test/jev-client.test.ts",
+          "test/jev-schema.test.ts",
+          "test/jev-tool.test.ts",
+          "test/kartaTriggerEdge.test.ts",
+          "test/logger.test.ts",
+          "test/loggerCycleFinalization.test.ts",
+          "test/loop.test.ts",
+          "test/loopBriefLifecycle.test.ts",
+          "test/loopJevTracePrivacy.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/mockClaude.test.ts",
+          "test/publicChatAdmission.test.ts",
+          "test/real-claude.test.ts",
+          "test/sseConsumer.test.ts",
+          "test/sseFraming.test.ts",
+          "test/streamCompletionAudit.test.ts",
+          "test/streaming.test.ts",
+          "test/stripeIsolation.test.ts",
+          "test/supabaseTool.test.ts",
+          "test/toolResult.test.ts",
+          "test/webAccessPlanTool.test.ts",
+          "test/webCapabilityPlan.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "ecb4e5ebf78091d208163bfc265cf053e4b4b8672acdbe5bd4d18a10b4402af6",
+        "reportSha256": "aa373e5c166befd340abf6095e1e76b5a5c7bafab97450c074e14b4f8eacfeae"
+      },
+      {
+        "name": "sql-01-approval.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approval.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-01-approval.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 5.289,
+        "tests": {
+          "numTotalTests": 15,
+          "numPassedTests": 15,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/approval.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "a746db31624a90c14cb25eda019dbe52aac9d5e051b3249f44bffbef5015f340",
+        "reportSha256": "6543637a160a20644fc5abdc7464216f380e77ac4ed1031eb0de1929c30e39de"
+      },
+      {
+        "name": "sql-02-approvalContinuation.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approvalContinuation.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-02-approvalContinuation.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 9.464,
+        "tests": {
+          "numTotalTests": 38,
+          "numPassedTests": 38,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/approvalContinuation.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "4116374618e4af87d8f08f036e75252ff7e97a1d4d43196d731590bed1676b54",
+        "reportSha256": "fefc170c6e10f8bc715d8a985f1f26393bbecca2f04c0a55c28320926f5527d8"
+      },
+      {
+        "name": "sql-03-approvalParentGuard.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/approvalParentGuard.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-03-approvalParentGuard.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 10.614,
+        "tests": {
+          "numTotalTests": 48,
+          "numPassedTests": 48,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/approvalParentGuard.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "2c31f0dbbd1932f7d5260200b2db81bb9b8d12969dd57b97ed46fa89091056c7",
+        "reportSha256": "d48a7fe1be7a3669e1d54ff628df2260c7bd5d926193f05db1def96bffc3ab3a"
+      },
+      {
+        "name": "sql-04-briefClaims.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefClaims.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-04-briefClaims.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 12.555,
+        "tests": {
+          "numTotalTests": 57,
+          "numPassedTests": 57,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/briefClaims.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "7735547981deb050b14883c7abdf424d9e29a4d4e8082a1b1090859fef3b4777",
+        "reportSha256": "943a679a8b41425081eab85218b64a89be9ed5830c3079f25dc3e103ba03b802"
+      },
+      {
+        "name": "sql-05-briefDatabaseCycle.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefDatabaseCycle.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-05-briefDatabaseCycle.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 12.257,
+        "tests": {
+          "numTotalTests": 8,
+          "numPassedTests": 8,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/briefDatabaseCycle.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "95c656fb5a61aa95560b46f2556b2885658934d4d9865217f195c8f4413caa15",
+        "reportSha256": "ff5a00d4d4f9c2b2a5c1691a40feb33176d6fd34c58702d6d870edd2a0d69317"
+      },
+      {
+        "name": "sql-06-briefSubmission.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefSubmission.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-06-briefSubmission.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 10.963,
+        "tests": {
+          "numTotalTests": 31,
+          "numPassedTests": 31,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/briefSubmission.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "351b391179b54f30d1d74dbb21b1a94f751df6c09a25b0ba74de57e960c1276b",
+        "reportSha256": "a2c078954a2e2d0e4825be7fe6a56a5313de71a466cf68ee1c95ea16dfea3c47"
+      },
+      {
+        "name": "sql-07-briefSubmissionFlow.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefSubmissionFlow.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-07-briefSubmissionFlow.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 12.111,
+        "tests": {
+          "numTotalTests": 10,
+          "numPassedTests": 10,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/briefSubmissionFlow.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "c2cf7f30950fb3adb3c8c52a7634e749112dfb91e93a71f20e567f801e664770",
+        "reportSha256": "fb5a613b95c6dabcf1987e744ae0ca12e56d2a11fc32fa826dadd6352a2051dd"
+      },
+      {
+        "name": "sql-08-chatHistoryIsolation.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chatHistoryIsolation.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-08-chatHistoryIsolation.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 43.232,
+        "tests": {
+          "numTotalTests": 39,
+          "numPassedTests": 39,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chatHistoryIsolation.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "251d4e60265b4e2a054f3b19817df7b5e1037c1867e57ecd0c4ce8f347689e81",
+        "reportSha256": "9e05bd137bf2150d3330a96919ea932b2f4941ca3f27832c2365ddeb8611de54"
+      },
+      {
+        "name": "sql-09-chefControlPlane.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefControlPlane.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-09-chefControlPlane.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 7.384,
+        "tests": {
+          "numTotalTests": 8,
+          "numPassedTests": 8,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefControlPlane.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "185d59311b87d1336f8dd21aab2a0a7547c7ba183ae4f93ff52f00de6e6938cb",
+        "reportSha256": "1ae85f528b6daae4d8175a22378b3b59333b0a1b45ed1dc778e513961fff6cf3"
+      },
+      {
+        "name": "sql-10-chefEvidenceFreshness.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefEvidenceFreshness.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-10-chefEvidenceFreshness.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 13.047,
+        "tests": {
+          "numTotalTests": 31,
+          "numPassedTests": 31,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefEvidenceFreshness.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "62a927af828731e73009a2c0dd38bb6b815505babed0109bf38656ace99556f6",
+        "reportSha256": "7b78061e641e7797378414ccfd50e5c0cd683bf452d50865602cea7794ea4816"
+      },
+      {
+        "name": "sql-11-chefEvidenceGate.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefEvidenceGate.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-11-chefEvidenceGate.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 8.016,
+        "tests": {
+          "numTotalTests": 17,
+          "numPassedTests": 17,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefEvidenceGate.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "af378a22224dc3c2345a5a2dd0230e0f0f652a80604594991bcb5c9d3de49d1e",
+        "reportSha256": "5fc43cdc7180cf38750a161535cc3fcf0b734259be5446987584cb75783aaaa5"
+      },
+      {
+        "name": "sql-12-chefHardening.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefHardening.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-12-chefHardening.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 10.196,
+        "tests": {
+          "numTotalTests": 15,
+          "numPassedTests": 15,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefHardening.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "04b5f2eba23ea2cfbbae11380411b19a1958be7019ad2795618cb9f5eb1a7794",
+        "reportSha256": "284ef7d85d31e8c03e09334b43e25365a44d7d77034e19f473fd1d5476282204"
+      },
+      {
+        "name": "sql-13-chefIndependentReview.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefIndependentReview.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-13-chefIndependentReview.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 28.99,
+        "tests": {
+          "numTotalTests": 2,
+          "numPassedTests": 2,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefIndependentReview.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "1d8904f8793945d67981fd896ff9711ac77f3ea01c06fe8778a058dcdd92bf97",
+        "reportSha256": "881587e63dd2ab5c670a376fa3d76e5a9856592c3324e81ebe3caa5f03bcbfe5"
+      },
+      {
+        "name": "sql-14-chefMission.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefMission.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-14-chefMission.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 8.539,
+        "tests": {
+          "numTotalTests": 5,
+          "numPassedTests": 5,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefMission.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "e99456817cfa92ee41daf7600d0eec0e1131627af52dc7c4291a101d485e4737",
+        "reportSha256": "9ac3d0e59bcde1bd3be3b5345c5058ce043f0ebde312d74d779492d0281937d0"
+      },
+      {
+        "name": "sql-15-chefRuntimePolicy.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/chefRuntimePolicy.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-15-chefRuntimePolicy.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 7.539,
+        "tests": {
+          "numTotalTests": 4,
+          "numPassedTests": 4,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/chefRuntimePolicy.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "6722088b2b5b1bd1a85c51a247772c07ab5f9b866cb8aad876c0946f48a1962e",
+        "reportSha256": "6b2e7b2c6872a76a59f904046636a945e55b1dd5a8cd52bd9408d5a03152505c"
+      },
+      {
+        "name": "sql-16-connectPermissions.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/connectPermissions.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-16-connectPermissions.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 6.32,
+        "tests": {
+          "numTotalTests": 4,
+          "numPassedTests": 4,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/connectPermissions.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "9a61acc9053da9c4df925dce760d33b3313a732ed89b5ed14ddd679b467fae83",
+        "reportSha256": "0ec7cf10206b7ac5a48ad7c7013fbd1ac1d7e920369ab7f76d95b77d5ae395e3"
+      },
+      {
+        "name": "sql-17-customAuthorization.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/customAuthorization.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-17-customAuthorization.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 3.462,
+        "tests": {
+          "numTotalTests": 38,
+          "numPassedTests": 38,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/customAuthorization.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "caa56fa8f3886a5bee09f989d40bcc862e4a102328516fd6ec49ada9092f8c7e",
+        "reportSha256": "1a44373c4e9264f911bc1dfcd8b3c09ee6173861f1a93ee5e617faf066397915"
+      },
+      {
+        "name": "sql-18-loggerFinalization.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/loggerFinalization.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-18-loggerFinalization.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 6.741,
+        "tests": {
+          "numTotalTests": 11,
+          "numPassedTests": 11,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/loggerFinalization.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "81f755bcf0489602263b4355040732ca93965ebc05d0b5ef0696c907dd161d57",
+        "reportSha256": "95d40a85aac7a6f55fa42f78110020ae22de82d446b0f74e5d2fae32f96ee305"
+      },
+      {
+        "name": "sql-19-queueDeliveryIdentity.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/queueDeliveryIdentity.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-19-queueDeliveryIdentity.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 10.453,
+        "tests": {
+          "numTotalTests": 27,
+          "numPassedTests": 27,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/queueDeliveryIdentity.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "ea11928dd052028b2289c705cd27ab56887a5e98648e7cf61a6407bb6c141b41",
+        "reportSha256": "26fa7a9e02ce43d40fa91883797fe78a69e8101be49fefe74e9f5043488ec846"
+      },
+      {
+        "name": "sql-20-runtimeHardening.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/runtimeHardening.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-20-runtimeHardening.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 9.4,
+        "tests": {
+          "numTotalTests": 3,
+          "numPassedTests": 3,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/runtimeHardening.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "149503d59ab1b284dc4bf0bbd96608f2382ba452b6b5468016381012e4f4f508",
+        "reportSha256": "f97c17152cd530db8adce665c74ddbcaa2526d137964fe25aa4dd08c48bdbc16"
+      },
+      {
+        "name": "sql-21-walletRpcPermissions.test",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/walletRpcPermissions.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-gates/sql-21-walletRpcPermissions.test.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 8.677,
+        "tests": {
+          "numTotalTests": 17,
+          "numPassedTests": 17,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          "test/walletRpcPermissions.test.ts"
+        ],
+        "failedFiles": [],
+        "logSha256": "8f03961c8a15b0f893b09497f8eb74aedb4939e51539c65dec6f58227f3f236e",
+        "reportSha256": "c733f02897d8c2012058ae0561ed164c595939626258dbf3a562de56afb93bbf"
+      },
+      {
+        "name": "engine-typecheck",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "-p",
+          "tsconfig.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 16.657,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "engine-build",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tsconfig.build.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 13.133,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "frontend-typecheck",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "-p",
+          "tsconfig.app.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 34.38,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "frontend-build",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 22.857,
+        "logSha256": "1e699c767a29897389e6fc1826e6d36c874a6934865562a6574508eae8a5372a"
+      },
+      {
+        "name": "frontend-lint",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/eslint/bin/eslint.js",
+          "src/hooks/useKartaEmployees.ts",
+          "src/pages/MyEmployees.tsx",
+          "src/components/karta/BriefMissionDialog.tsx",
+          "src/components/onboarding/HireFirstEmployeeModal.tsx",
+          "src/lib/karta-run-status.ts",
+          "--max-warnings",
+          "0"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 6.696,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "database-contracts",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "scripts/generate-supabase-contracts.mjs",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 6.985,
+        "logSha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3"
+      },
+      {
+        "name": "browser-scenarios-discovery",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "--config",
+          "tests/quality/playwright.config.ts",
+          "tests/quality/karta-ui.spec.ts",
+          "tests/quality/karta-briefs.spec.ts",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 3.567,
+        "logSha256": "3b2f2187b147128128bf536bae0b1aff7e9790d6d009d63bbe0bfecd247f826e",
+        "qualification": "Discovery only; no browser scenario executed by this command.",
+        "outputSummary": "Total: 26 tests in 2 files"
+      },
+      {
+        "name": "diff-check",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 0.018,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "finalTargetedCampaign": {
+    "completedAt": "2026-11-10T04:09:33.397571+00:00",
+    "reportSha256": "f19e0cc3c987dd12507c3d54cf37330a6f102356466c10549d76832110887e0e",
+    "passedTests": 46,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "changedSinceCompleteCampaign": [
+      "karta/migrations/021_brief_submission.sql",
+      "karta/test/briefSubmission.test.ts",
+      "src/components/karta/BriefMissionDialog.tsx",
+      "tests/quality/karta-briefs.spec.ts"
+    ],
+    "changedDuringValidation": [],
+    "gates": [
+      {
+        "name": "briefSubmission",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefSubmission.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-final/briefSubmission.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 16.079,
+        "tests": {
+          "numTotalTests": 32,
+          "numPassedTests": 32,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          {
+            "name": "test/briefSubmission.test.ts",
+            "status": "passed",
+            "total": 32,
+            "message": "",
+            "failures": []
+          }
+        ],
+        "logSha256": "fd43d334327cccbf8516930cb6f84ded60cf22d40de80ae06054540ad3b7c833",
+        "reportSha256": "c0b481708966357489719de90e1807dac56ee85fec3433ebf83ed78915d53fa8"
+      },
+      {
+        "name": "briefSubmissionFlow",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefSubmissionFlow.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-final/briefSubmissionFlow.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 15.532,
+        "tests": {
+          "numTotalTests": 10,
+          "numPassedTests": 10,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          {
+            "name": "test/briefSubmissionFlow.test.ts",
+            "status": "passed",
+            "total": 10,
+            "message": "",
+            "failures": []
+          }
+        ],
+        "logSha256": "428192aee23603384634b403b1a9c96c4e994ec5b4c4a3283697d72cfbc9f124",
+        "reportSha256": "b6cbf8878112909d6ab357c8b3fc3700fdeb3739e0f8303b7be4e14ed4b7c035"
+      },
+      {
+        "name": "briefSubmissionClient",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/briefSubmissionClient.test.ts",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-mission-final/briefSubmissionClient.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 0.924,
+        "tests": {
+          "numTotalTests": 4,
+          "numPassedTests": 4,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "success": true
+        },
+        "testFiles": [
+          {
+            "name": "test/briefSubmissionClient.test.ts",
+            "status": "passed",
+            "total": 4,
+            "message": "",
+            "failures": []
+          }
+        ],
+        "logSha256": "c3c5fb309234e43c60135fccd427ce84c6017d2dfda64d33935ad8e766612adc",
+        "reportSha256": "f1c144c89e7034855dd3bd1c9cb3fe0d905195729bac21b5cf4f727b577e7a95"
+      },
+      {
+        "name": "engine-typecheck",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "-p",
+          "tsconfig.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110/karta",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 12.991,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "frontend-typecheck",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "-p",
+          "tsconfig.app.json"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 25.758,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "frontend-build",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vite/bin/vite.js",
+          "build"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 20.868,
+        "logSha256": "c2626cf15d6b8ee5b8ae9c0e12afb1c9fe14bf6f0f8df6c7f78f3f157ba6447e"
+      },
+      {
+        "name": "frontend-lint",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/eslint/bin/eslint.js",
+          "src/hooks/useKartaEmployees.ts",
+          "src/pages/MyEmployees.tsx",
+          "src/components/karta/BriefMissionDialog.tsx",
+          "src/components/onboarding/HireFirstEmployeeModal.tsx",
+          "src/lib/karta-run-status.ts",
+          "--max-warnings",
+          "0"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 3.107,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "browser-scenarios-discovery",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "--config",
+          "tests/quality/playwright.config.ts",
+          "tests/quality/karta-ui.spec.ts",
+          "tests/quality/karta-briefs.spec.ts",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 2.684,
+        "logSha256": "87653eb3f0ea29ede2fb66a6ac325b299f0cf18e3ec346410b7a6bd9abbc6da5",
+        "qualification": "Discovery only; no browser scenario executed by this command.",
+        "outputSummary": "Total: 28 tests in 2 files"
+      },
+      {
+        "name": "diff-check",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "cwd": "/workspace/scratch/12c6ceb4a52a/iao-brief-ui-20261110",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationSeconds": 0.017,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "countingRule": "1065 tests passed in one complete 68-file campaign. Four files then changed. A targeted 46-test campaign and frontend checks passed afterward. The latest per-file inventory is 1066; it is not a fresh complete 1066-test campaign. Targeted counts overlap the complete campaign and must not be added to it.",
+  "latestPerFile": {
+    "test/actionAgentsMock.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/agentsRegistry.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/apiDeliveryIdentity.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/apiSafety.test.ts": {
+      "status": "passed",
+      "total": 9,
+      "campaign": "complete"
+    },
+    "test/approvalTracePrivacy.test.ts": {
+      "status": "passed",
+      "total": 20,
+      "campaign": "complete"
+    },
+    "test/autonomy.test.ts": {
+      "status": "passed",
+      "total": 7,
+      "campaign": "complete"
+    },
+    "test/brief.test.ts": {
+      "status": "passed",
+      "total": 18,
+      "campaign": "complete"
+    },
+    "test/briefSubmissionClient.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "final-targeted"
+    },
+    "test/chatEscalation.test.ts": {
+      "status": "passed",
+      "total": 49,
+      "campaign": "complete"
+    },
+    "test/chatRequestScope.test.ts": {
+      "status": "passed",
+      "total": 17,
+      "campaign": "complete"
+    },
+    "test/chefBrief.test.ts": {
+      "status": "passed",
+      "total": 9,
+      "campaign": "complete"
+    },
+    "test/chefCostGovernor.test.ts": {
+      "status": "passed",
+      "total": 7,
+      "campaign": "complete"
+    },
+    "test/chefDriver.test.ts": {
+      "status": "passed",
+      "total": 5,
+      "campaign": "complete"
+    },
+    "test/chefEvidenceAdapter.test.ts": {
+      "status": "passed",
+      "total": 20,
+      "campaign": "complete"
+    },
+    "test/chefGitState.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/chefProtocol.test.ts": {
+      "status": "passed",
+      "total": 5,
+      "campaign": "complete"
+    },
+    "test/chefSupervisor.test.ts": {
+      "status": "passed",
+      "total": 10,
+      "campaign": "complete"
+    },
+    "test/chefVerificationGitIntegration.test.ts": {
+      "status": "passed",
+      "total": 3,
+      "campaign": "complete"
+    },
+    "test/chefVerifier.test.ts": {
+      "status": "passed",
+      "total": 3,
+      "campaign": "complete"
+    },
+    "test/customAgent.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/customRegistry.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/cycleAdmissionPrivacy.test.ts": {
+      "status": "passed",
+      "total": 10,
+      "campaign": "complete"
+    },
+    "test/generative.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/gmail-token-crypto.test.ts": {
+      "status": "passed",
+      "total": 3,
+      "campaign": "complete"
+    },
+    "test/gmailTool.test.ts": {
+      "status": "passed",
+      "total": 5,
+      "campaign": "complete"
+    },
+    "test/jev-client.test.ts": {
+      "status": "passed",
+      "total": 19,
+      "campaign": "complete"
+    },
+    "test/jev-schema.test.ts": {
+      "status": "passed",
+      "total": 30,
+      "campaign": "complete"
+    },
+    "test/jev-tool.test.ts": {
+      "status": "passed",
+      "total": 34,
+      "campaign": "complete"
+    },
+    "test/kartaTriggerEdge.test.ts": {
+      "status": "passed",
+      "total": 87,
+      "campaign": "complete"
+    },
+    "test/logger.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/loggerCycleFinalization.test.ts": {
+      "status": "passed",
+      "total": 6,
+      "campaign": "complete"
+    },
+    "test/loop.test.ts": {
+      "status": "passed",
+      "total": 14,
+      "campaign": "complete"
+    },
+    "test/loopBriefLifecycle.test.ts": {
+      "status": "passed",
+      "total": 35,
+      "campaign": "complete"
+    },
+    "test/loopJevTracePrivacy.test.ts": {
+      "status": "passed",
+      "total": 3,
+      "campaign": "complete"
+    },
+    "test/loopTracePrivacy.test.ts": {
+      "status": "passed",
+      "total": 22,
+      "campaign": "complete"
+    },
+    "test/mockClaude.test.ts": {
+      "status": "passed",
+      "total": 7,
+      "campaign": "complete"
+    },
+    "test/publicChatAdmission.test.ts": {
+      "status": "passed",
+      "total": 11,
+      "campaign": "complete"
+    },
+    "test/real-claude.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/sseConsumer.test.ts": {
+      "status": "passed",
+      "total": 5,
+      "campaign": "complete"
+    },
+    "test/sseFraming.test.ts": {
+      "status": "passed",
+      "total": 10,
+      "campaign": "complete"
+    },
+    "test/streamCompletionAudit.test.ts": {
+      "status": "passed",
+      "total": 23,
+      "campaign": "complete"
+    },
+    "test/streaming.test.ts": {
+      "status": "passed",
+      "total": 10,
+      "campaign": "complete"
+    },
+    "test/stripeIsolation.test.ts": {
+      "status": "passed",
+      "total": 3,
+      "campaign": "complete"
+    },
+    "test/supabaseTool.test.ts": {
+      "status": "passed",
+      "total": 5,
+      "campaign": "complete"
+    },
+    "test/toolResult.test.ts": {
+      "status": "passed",
+      "total": 16,
+      "campaign": "complete"
+    },
+    "test/webAccessPlanTool.test.ts": {
+      "status": "passed",
+      "total": 10,
+      "campaign": "complete"
+    },
+    "test/webCapabilityPlan.test.ts": {
+      "status": "passed",
+      "total": 47,
+      "campaign": "complete"
+    },
+    "test/approval.test.ts": {
+      "status": "passed",
+      "total": 15,
+      "campaign": "complete"
+    },
+    "test/approvalContinuation.test.ts": {
+      "status": "passed",
+      "total": 38,
+      "campaign": "complete"
+    },
+    "test/approvalParentGuard.test.ts": {
+      "status": "passed",
+      "total": 48,
+      "campaign": "complete"
+    },
+    "test/briefClaims.test.ts": {
+      "status": "passed",
+      "total": 57,
+      "campaign": "complete"
+    },
+    "test/briefDatabaseCycle.test.ts": {
+      "status": "passed",
+      "total": 8,
+      "campaign": "complete"
+    },
+    "test/briefSubmission.test.ts": {
+      "status": "passed",
+      "total": 32,
+      "campaign": "final-targeted"
+    },
+    "test/briefSubmissionFlow.test.ts": {
+      "status": "passed",
+      "total": 10,
+      "campaign": "final-targeted"
+    },
+    "test/chatHistoryIsolation.test.ts": {
+      "status": "passed",
+      "total": 39,
+      "campaign": "complete"
+    },
+    "test/chefControlPlane.test.ts": {
+      "status": "passed",
+      "total": 8,
+      "campaign": "complete"
+    },
+    "test/chefEvidenceFreshness.test.ts": {
+      "status": "passed",
+      "total": 31,
+      "campaign": "complete"
+    },
+    "test/chefEvidenceGate.test.ts": {
+      "status": "passed",
+      "total": 17,
+      "campaign": "complete"
+    },
+    "test/chefHardening.test.ts": {
+      "status": "passed",
+      "total": 15,
+      "campaign": "complete"
+    },
+    "test/chefIndependentReview.test.ts": {
+      "status": "passed",
+      "total": 2,
+      "campaign": "complete"
+    },
+    "test/chefMission.test.ts": {
+      "status": "passed",
+      "total": 5,
+      "campaign": "complete"
+    },
+    "test/chefRuntimePolicy.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/connectPermissions.test.ts": {
+      "status": "passed",
+      "total": 4,
+      "campaign": "complete"
+    },
+    "test/customAuthorization.test.ts": {
+      "status": "passed",
+      "total": 38,
+      "campaign": "complete"
+    },
+    "test/loggerFinalization.test.ts": {
+      "status": "passed",
+      "total": 11,
+      "campaign": "complete"
+    },
+    "test/queueDeliveryIdentity.test.ts": {
+      "status": "passed",
+      "total": 27,
+      "campaign": "complete"
+    },
+    "test/runtimeHardening.test.ts": {
+      "status": "passed",
+      "total": 3,
+      "campaign": "complete"
+    },
+    "test/walletRpcPermissions.test.ts": {
+      "status": "passed",
+      "total": 17,
+      "campaign": "complete"
+    }
+  },
+  "latestPerFileTestCount": 1066,
+  "finalSourceSha256": {
+    ".github/workflows/purama-chef-hardening.yml": "3ed28859fab7b170fc3282b883a976970e030adb7c2bb81e82e0c457a6c470cc",
+    "components.json": "9820835141c54e5b5dfbb68b3c3790db73c9ebfb967884ae3fccd058d698a1a6",
+    "infra/docuseal/docker-compose.yml": "c2965957d8f3cd0dcaeaf0d8bfca44fda8669a462c18802605e6417c84041f8d",
+    "infra/docuseal/scripts/upload-templates.mjs": "4e2b6362d6cfde7927a1ed625544df588b1904b50f3ec12077e5b03a891f7888",
+    "karta/docker-compose.yml": "9227dc362ba27df206b06a22a73261cbb1ccfd39cfdbc99678bdb629f707e57b",
+    "karta/migrations/001_karta_core.sql": "668f63ef71fbc80c20a555ffb938964deb8f40470c91ca4753314919bc287e2d",
+    "karta/migrations/002_karta_global_kill_switch.sql": "08bd79d96ac3bef4c6bbd9f5b21c71a7f510a1713619d4e84a513dc58502e6a3",
+    "karta/migrations/003_karta_crm_leads.sql": "f922240c9b4bc4dc629f24c6a6d755fcb2c3fee604e5d166967706266e9d3b1f",
+    "karta/migrations/004_karta_custom_agents.sql": "be5819c9903b039b23c939e6caaef6cbad685d2393481353dd65620b68714bad",
+    "karta/migrations/005_karta_pending_actions.sql": "ba70a7dc15e62b68a58350f35672153ff853877c9bc7577983e3a14a0829d88e",
+    "karta/migrations/006_execution_claims.sql": "f76d3a598e11f340dfd0cd8706d17a8f372a1222f8a0de26e6a1f5c66a904f60",
+    "karta/migrations/007_runtime_hardening.sql": "80796b60b50fb1df761d1ab56addf7cedd87eda4909c1e8116def32069c8067b",
+    "karta/migrations/008_chef_control_plane.sql": "d3887f7e8e703bdb9a8b6ae2e05b03166cd978a18b2d8cc6c411d96aeeb8d714",
+    "karta/migrations/009_chef_hardening.sql": "e39b89765dec5518dffac02f1df357887fd5695ae21dc1b11f381394b2a6909f",
+    "karta/migrations/010_chef_reliability.sql": "e0e01f5d751a2147dc9f4903981bd72f0201ef023684bed63b30d66fb2e9bc68",
+    "karta/migrations/011_chef_runtime_policy.sql": "68b7c97ed879a961f9e7fa07febf56d934da45f4f548cf24401fbc8990c6cfaa",
+    "karta/migrations/012_chef_mission_ingest.sql": "db81833188cadfd045d57b3ea6b8fe186b251741e188b7b6396661f79bc15256",
+    "karta/migrations/013_chef_independent_review.sql": "ee9ff63cb4aa7bc66e1f5c91fca75d1df19709ea72fa8429612dcb83ffecfe2a",
+    "karta/migrations/014_chef_file_ownership.sql": "9a2cffeb016a0b79e844b29e301596b4cbb093e095123e023d7c1d0c3df38372",
+    "karta/migrations/015_chef_mission_file_ownership.sql": "f52b7255d5eee592c3baa417c6108215d67cd451272b1f9d8397eb617a3d5a67",
+    "karta/migrations/016_chef_scoped_evidence.sql": "a0ec6a17093cd381354ac2f4d811444df1b684396e5b672e8cd2d7a9eaa6a56b",
+    "karta/migrations/017_chef_evidence_generation.sql": "1f649de88f787bd3d0a4e4b98eb799579426cfd372c416749ec24b0b7c6ddf76",
+    "karta/migrations/018_karta_brief_claims.sql": "1f0d9bdf3c6fe638be2d2e618526fb2f2793ee0d97f91d69a66caa9a0cb4746c",
+    "karta/migrations/019_karta_approval_parent_guard.sql": "43d09f703d604a5eac3b10b68fede7367b9abb6eb904a469feb1c53ba4300849",
+    "karta/migrations/020_execution_fingerprints.sql": "2c6a11b6565cea29e3714d15ffee13ee30d148e25efa9ec9a6b5006224d78d0c",
+    "karta/migrations/021_brief_submission.sql": "55b242e92810ecd79fcbf8e5579a2b2dabca1d96480030d940be22050e3827b8",
+    "karta/package-lock.json": "f94deb0fab4f5239044b29265a1e62ad191dcd5ff56792e6afdbc95434e0c0f1",
+    "karta/package.json": "f02b5a660bd555c196731f53febed5b8424795a31acb34c92bb949795b3e8880",
+    "karta/scripts/agents-catalog.ts": "65d2194472ee9c6997e70ca3c2b3cb9a59e4e7d684a2c6ea0e696900f9133dca",
+    "karta/scripts/reseed-agents.ts": "7f56f9e4fe62590e2ae0c4d9a036eacecc57edd80fe0d6e676e4b6081dfb03c9",
+    "karta/src/agents/actionAgents.ts": "4d0ee153c0ac425b1b7093b56c1eacbe77db6d135872038de37d0406463ffef4",
+    "karta/src/agents/comptaAgent.ts": "b0e00b06a27dfeea00b46ec85a4543d2ceb5f5e4256cb1138c76935285998e0f",
+    "karta/src/agents/customAgent.ts": "dd25f0b96fb57d30997428fcf535f432edb321cde3014aca7697c90e85e86257",
+    "karta/src/agents/emailAgent.ts": "c5b60e32727860ad6248c89a317d3e17a8f047a5cabf01ecedb6570f56d7b523",
+    "karta/src/agents/index.ts": "be7dcae6d4f119d34b106c748e82fd1da8c6a5661ac8b1f20ae7d11b198e2b55",
+    "karta/src/agents/legalAgent.ts": "99491f3d8d9ddb0a6ed014a1951a4ae44e308406237a2b2f53327b6af5a30dc6",
+    "karta/src/agents/partnerAgent.ts": "5820bac889606d03dce42eedd6f22e3eda683367e1590ba12e585476a35735ea",
+    "karta/src/api/server.ts": "ebee1e557490ccfc793735d8880b87466725363171542f4d4369248facbd4109",
+    "karta/src/chef/brief.ts": "1fbd2ac58cd59b22bbfe2e9e3da935d97c5c7f1fd3dc3933fbf7916bd8ad62ef",
+    "karta/src/chef/control-plane.ts": "9ffedb7717eaa469bf8684792f8b1a8d26053cbad49045042486a5602e192023",
+    "karta/src/chef/cost-governor.ts": "b9c9025cd07b9a31759cac73fe397f8308d77880b5a4239ffa29fdfe404b669b",
+    "karta/src/chef/driver.ts": "ad618d192bfc2302722e9a7b57545f0a3cb9a75c35d679512ce521a3e85bbe98",
+    "karta/src/chef/git-state.ts": "a89ae88361c1cf806f10f1e093799fa193b3eae56d0893fb305198bebe904d6a",
+    "karta/src/chef/mission.ts": "dfecda4fae5a08f272daee083f6f2c0d6e9e1586a0c7e25758b22cad6ddea679",
+    "karta/src/chef/protocol.ts": "5d2811c03c95eb3b7ba439244b57119a7ce3c3ad38ec63ffdc1cfd8603c99778",
+    "karta/src/chef/supervisor.ts": "7909f0b9e8eef79151a27fc2c479d519232a58657023d24afc18a9e9e9566608",
+    "karta/src/chef/verifier.ts": "a90b28784948fad6f9253dbf104a82f3d05c14616fe60111048410906ad38914",
+    "karta/src/chef/worker-main.ts": "7fc0d91e9e2da0f671c5ae5d88f8f501eea3754fcaf5f1999cd9423ee9f8e42e",
+    "karta/src/claude/index.ts": "db10342ccc97b7bed4074c25b03482a27012a5bde9444f98cce5e40a37961a4a",
+    "karta/src/claude/mock.ts": "6aba9fc52dc5e7e793d8b7e80dadc1e840acffa8ab8fb284ab4bc179317e7d60",
+    "karta/src/claude/real.ts": "0ee103db35586f422f55654db14f3cb0189eaab55b7466178ca1650252e1ec31",
+    "karta/src/claude/types.ts": "773a5b65ee72187cb4279dc05d1140f1290aede2215cb8f62b9994bf9d14cb55",
+    "karta/src/config.ts": "a7fef77d187c2e3b9749f212bf0083bf5d9ddada9e11dadd200d3567fde06a36",
+    "karta/src/db/supabase.ts": "5968f8e84fff6aaf50994de380c50b1cc2451e69a9e16890f42239632e97ce95",
+    "karta/src/engine/approval-continuation.ts": "dbd84fef7baa7d75d99cd6ce19a4b36abfa11c1a643e074554fa8fd4d4028dd3",
+    "karta/src/engine/approval.ts": "d718a6fab1976e802dba8e160d23354b61032c19e8243e104df1d4ee72c3527e",
+    "karta/src/engine/autonomy.ts": "20e3060d758ea43d87be6fa0f44aa4f394c37fa230d304f329e4383f0d25db00",
+    "karta/src/engine/brief-submission.ts": "418e6ae3e845650e3b88a037c08d1237e121472c25b111c8f58c35c50b5bb290",
+    "karta/src/engine/brief.ts": "7e6119cc82c803529694758a602d5f6b97d777401d8702d9375771b2d2be549a",
+    "karta/src/engine/killswitch.ts": "a9f717d17b1c073dacefd8e02f0709fe5db490dc5430313b2b566ac227527936",
+    "karta/src/engine/logger.ts": "dca6ac1ea9c4d6ab8074533de959f88fd9cfbe1abc5aaad02a9032d8dd2ce0f8",
+    "karta/src/engine/loop.ts": "e97af3ec12011874e990a0d0181be24a722d746a220074880d5dbce15cd0efd8",
+    "karta/src/engine/memory.ts": "48e4736ae0518b47d40daf6e42ddb8273b67a6f4383c181196da814929368350",
+    "karta/src/engine/notify.ts": "d5a68b63a3810f13e366843a196ba0970bb26ceef65db0962d4fafe8cc52ac43",
+    "karta/src/engine/resolveDefinition.ts": "73d23ad505d357fc24d43dd3d7b12cfefef3e8db8dfb9257fce34ed88bf23625",
+    "karta/src/engine/tool-input.ts": "9722d4b5a12b9f8485cbd46874e8c2fe58b2afa22a1e706481ba60b671fb813e",
+    "karta/src/engine/tool-result.ts": "ff6fd3ed9f9dcd82743812926e15ff9033f0c2da55319cb8b5d2f9d335236971",
+    "karta/src/engine/tool-trace.ts": "56f24f26e355fe0e72ff3bb15321ab5a578e46d2e2b5e7a51c69c7c2b309b51e",
+    "karta/src/engine/types.ts": "0d2ef2a8f73cbaf155ee4ab34b1c2daa788bc21891c6940f62c9e06b913d1ea0",
+    "karta/src/index.ts": "62b63f361daaf9d3d251a4387e05a5173f609ec342474e596e1b58dd94820c6f",
+    "karta/src/jev/client.ts": "610e09d5bab83f178d06e5ace703d1cd21d53db9617b214f5f589b76f0ded398",
+    "karta/src/jev/schema.ts": "cc16af5dfb2e9b31882fb8dfb32f12028b6ebddab5f63d1a92e39253ffd759a2",
+    "karta/src/lib/canonical-json.ts": "089ba5d0f948363c6cf2a81ae20d2e2ffecd94967936a5427575b709e36c56a0",
+    "karta/src/lib/gmail-token-crypto.ts": "52291587e710b1a4b6c5b20077824149e31fe326fa31f0431059b020ffb12afa",
+    "karta/src/lib/web-capability-plan.ts": "722875f587132f1faa7d4795fdbcb3ce0774fec6eea537cb459620511adbbc95",
+    "karta/src/queue/delivery-guard.ts": "f810cdbd516f5c4b605e93d592d69733c3612d6f7b60a8d8f01c61c631ac13dd",
+    "karta/src/queue/delivery-identity.ts": "54eb725692ffbd88fbb4c9c209bb7463856b22e4d04be019b996f5ca9a929637",
+    "karta/src/queue/queues.ts": "b47107f2aad41b7cc9fb42be07ae88113c0b60b42e9ecd9b57fb34d504f0af05",
+    "karta/src/queue/redis.ts": "4b58799cd5079cfdc496abeb5548f05beeb34c9a297100b327ad68ec2af4780a",
+    "karta/src/queue/worker.ts": "4d6ef6650ef21503ce2a244716e18b59e909dff1dab838af306f6da2637ac46f",
+    "karta/src/scheduler/cron.ts": "1ffd9be9ce8a69beeef51ee21b08a33ea9208f4194f550d6c1c6bef98a7ffb08",
+    "karta/src/scheduler/customAgents.ts": "75f1c0687970856fad484a3920b1fd841368b3fb6ccde0f2f75924a90502694e",
+    "karta/src/scheduler/dailyReport.ts": "54fedeb047492bc20c3144c936f552f050d4fe959a11c56c6ddbf53c34b8cd07",
+    "karta/src/tools/apollo.ts": "0c2f819f26bad8f46d4f1eaf2008ae80a1a054e52d7dbdd88ab85048e45288d5",
+    "karta/src/tools/calendar.ts": "170b41dde0aa60f677a8efa200841cc5ccdac4972f633460b72b67488d6e51fe",
+    "karta/src/tools/customRegistry.ts": "023c0406cdeeaa7ae177ff233b2e8c6d702f469c38dd96937c5c2234fce9abcd",
+    "karta/src/tools/delegate.ts": "dd45dab667d3a10652fb816e568ab5fbec4ff0eb6d6e89acec362aaa23e9e5c9",
+    "karta/src/tools/docuseal.ts": "8d508db21243a6e91806a63a247a469066b0fbd278bb9cb4df0955c6f516bb0f",
+    "karta/src/tools/gmail.ts": "3236cd68828ce338b794d51a93954eb1e19c1c7cd83268aaf3d00b728ace0ce0",
+    "karta/src/tools/jev.ts": "60732a5bdef3a3e574a42d55ec18842e076555f728fd0e09ff2cd6defba7333c",
+    "karta/src/tools/notification-tool.ts": "5f9732df79ecef460ae373793e9a80a0d9743e5f3cb536d0494da7ab512d76f6",
+    "karta/src/tools/pdf.ts": "ca5df19e72da834b525d507c505d704de083a802f83bd1b7336c2139fa725aac",
+    "karta/src/tools/registry.ts": "b793e2c65142520e3f7ec513aac8d422a37ad390dd8ad1279623deebe1ea64de",
+    "karta/src/tools/stripe-tool.ts": "bdc53091082f78d07476e97dd379c92bd054ee1ffd1f3b27f80d4fcad2f511c6",
+    "karta/src/tools/supabase-tool.ts": "67fe1b6776a4586f5f37b338ecad6d812f3db4cc76c9b1a62fec5fa3680c7e87",
+    "karta/src/tools/web-access-plan.ts": "5d1234bb2a9ae07b6dac82c4459306fb3c97055cdf2366e5c9d0e4d3567611b8",
+    "karta/src/tools/websearch.ts": "ecf5da2076d6c1a2a9952be6435b33885afade2103e86b5b332995480bff39af",
+    "karta/src/tools/zernio.ts": "067ec44effc0f1f21607810678dde616c82e38593ef4f326305e471feb4a1cf1",
+    "karta/test/actionAgentsMock.test.ts": "22fecb6272ee3947c7ac571b38ac84ab26ddbc5830bab4868466ca3414cc5196",
+    "karta/test/agentsRegistry.test.ts": "5e3a2fde6e1d5ef2e48d67ef6e38098813b513412a3cc48cd9c84153e5d79ea1",
+    "karta/test/apiDeliveryIdentity.test.ts": "c849f885defe62383dbf1ec05b5d554c3ee8c5373d89d5c09171e442be4dbd91",
+    "karta/test/apiSafety.test.ts": "6bef39fe6de4fbdf7a14085750d9ecbb899dbffab4c1a10c1ec145abeec8cd23",
+    "karta/test/approval.test.ts": "bb889694a23739838520ecd899723501ff22904b2f2c93d472121e2dc19911d7",
+    "karta/test/approvalContinuation.test.ts": "619b5008556979e2fc71cd9709b67c0aa072fe616a3abaf0b9c6b70a019fe26b",
+    "karta/test/approvalParentGuard.test.ts": "d0acc521b4f15a9e24cc1709c3e691318266cf8767aed6797c51e9304b70e023",
+    "karta/test/approvalTracePrivacy.test.ts": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+    "karta/test/autonomy.test.ts": "e5a0d76e960f52f93bb6451278db36363b7873223e3033d05280e0715b47e7cc",
+    "karta/test/brief.test.ts": "eee065e24c15e9388f16c88fb3bfb430718f371b981ecb072708171307c4d2c0",
+    "karta/test/briefClaims.test.ts": "d742b738205df7f5cb5c37dd7396057347bb4a918441c44390ac6b32b02243a0",
+    "karta/test/briefDatabaseCycle.test.ts": "6517018c9fe9df617614ae921674b91cf81378382bd0795e5b936747e1456c8f",
+    "karta/test/briefSubmission.test.ts": "3a489e7fc91a2f65f93757951f7791a88a58695ed3ab41912188dd8fadfb354f",
+    "karta/test/briefSubmissionClient.test.ts": "318307b2b329bff6d839f03293f6302824ca1faa1f2096a0f376a054d539fd9b",
+    "karta/test/briefSubmissionFlow.test.ts": "80850b6af77f716a17c9973f51cef133559b6fe906081ea498c26144c24d7d93",
+    "karta/test/chatEscalation.test.ts": "2fb4a5fbfecd6339c7c516ba22bec45fd649d92e89df63d8b4b660859b473604",
+    "karta/test/chatHistoryIsolation.test.ts": "29857b729f348fed1813d5096615afe23399faa60b36840e997cdd22fb5c898a",
+    "karta/test/chatRequestScope.test.ts": "2fdfb39e67512bec0c387128199c3262a0984e9f0b93523ccf16bb3a5b58f9fe",
+    "karta/test/chefBrief.test.ts": "0462b9ac48bc37b4085d08fd522886ba1dd11191051ddb750ae85b24bfef9c6c",
+    "karta/test/chefControlPlane.test.ts": "356784bc5d0979ba005cfab13d8173fab5dd8af1eb65ce1b4f0ac22657f9117e",
+    "karta/test/chefCostGovernor.test.ts": "b9261deed222048a4dba4220efc3862da69bb98f74263bf603a0e00ae9b9c84e",
+    "karta/test/chefDriver.test.ts": "09abc5ecb842d7076fa56d7117f77cdd4d9ae3a598e9671c60828b60e5c49f9b",
+    "karta/test/chefEvidenceAdapter.test.ts": "b5b5ef523055ac241d0f9316c79688fc54f213c7c684668550d2f9e01a092575",
+    "karta/test/chefEvidenceFreshness.test.ts": "24303f929012f579d64a41f5a5210661793ca0ced441156d631cb1151f81c4f0",
+    "karta/test/chefEvidenceGate.test.ts": "56d4333c826bdb5c5547e09afac6f1c01482da4227205e8ad8e2ebc77c6f5969",
+    "karta/test/chefGitState.test.ts": "d89c2358428f6ade2ab4dc20c0236fa8391784957f2365f1f6a4028b8a303151",
+    "karta/test/chefHardening.test.ts": "8fafdb65c561e25b006e258da18f967ed0fc61e6738b341e8c72ed5c003cd611",
+    "karta/test/chefIndependentReview.test.ts": "8b1dd80e1eed6222c4fe9a965452d6b7dbf5d35e22ce89d400fdc01ff28bfa80",
+    "karta/test/chefMission.test.ts": "7616c50e217205cb96f189c14b7a7492025188fae26268ae1894c93fbe2e23e0",
+    "karta/test/chefProtocol.test.ts": "89d86199cc36be049024b8783296960642755ccfb4965d9f9afbc16322b1c429",
+    "karta/test/chefRuntimePolicy.test.ts": "011daed32c143e4a010b9593aba68df72b87e1d613e609e430df86d29506f0c1",
+    "karta/test/chefSupervisor.test.ts": "e8e62965124b871e9992168c777f4d8509da0eaf43dab50b5abf3bbc01b05559",
+    "karta/test/chefVerificationGitIntegration.test.ts": "02de26fbe4b05c890b0e9df9d9165fc5fd2ea49c3e203eed455adbccc65545b3",
+    "karta/test/chefVerifier.test.ts": "394f1fd8bc2aec8ed1af9bcde430579f587cfeb8e725c368840bdcdb86a84349",
+    "karta/test/connectPermissions.test.ts": "d6be74d4c51bc24e2e5e3488f70e45c6d8b7e8208facc07d51e33c241cb9dfa5",
+    "karta/test/customAgent.test.ts": "325ef10bb81b6cd7343142b35c95ac3713e222f3f2341c45013a2db6f110a82a",
+    "karta/test/customAuthorization.test.ts": "04d00896ec5a6d55f04f6c870fe839648ddc224fd74d09a311a36d4cde90ed80",
+    "karta/test/customRegistry.test.ts": "38c4e83de5e13c26084c7902437168c9e18db6159a64458c07403bf3e819d471",
+    "karta/test/cycleAdmissionPrivacy.test.ts": "792b61bd91b627d40421e274e77306c4cd12941b44541f563fc03ef68097ae3b",
+    "karta/test/generative.test.ts": "42708d2bc3282915cc9fc4ca47d4048794096fdf3101d058f6020c6a7501f8df",
+    "karta/test/gmail-token-crypto.test.ts": "19a7f099188a7ff6d50014cda11b03594d5af3e7bd0abe6269dffd05797a3879",
+    "karta/test/gmailTool.test.ts": "5508b81a89b41e6227833cc07c7c62aa6f8f88ae1339c7d2baebd1b42478e095",
+    "karta/test/jev-client.test.ts": "218351e71434a73fd32650f6e5454b4d3a00322024b3159ed8615ab15b735da7",
+    "karta/test/jev-schema.test.ts": "5bb7c143167e98325d057da54b14744bb4564aa92204c298e0a35d04124e6c0d",
+    "karta/test/jev-tool.test.ts": "d87eb889a55fdf5201d5b189a2b0c526afd25db9de2047794e1d28dc6dc29523",
+    "karta/test/kartaTriggerEdge.test.ts": "43c5649db9497e1799987df1624ecc8d3a3a81c49d6588998d465d585a75a04f",
+    "karta/test/logger.test.ts": "1c4ae55915f47f4b3d204096d78054ecfcfe0f3fbec3540b93bb5d8af5b81eb5",
+    "karta/test/loggerCycleFinalization.test.ts": "51e63589bb9048c9485d1370c9335dd6ae7b5d160f303a07e9effd325da29e38",
+    "karta/test/loggerFinalization.test.ts": "755c0eb820a9d77df129c415198daf006f560004afead9b35ba19c326ceaed49",
+    "karta/test/loop.test.ts": "c9b0efbb568c8436a3a29672b350ead93d9616de419757caf3af7526007ce345",
+    "karta/test/loopBriefLifecycle.test.ts": "7c03662c23c50bd7f0ddc7839197615c566fac7c342e72a07913eb0dce070b30",
+    "karta/test/loopJevTracePrivacy.test.ts": "0b762fc968e1c504c477ebb9af2957fb1ce455cb3bb4f280b38b78bd071fb4e3",
+    "karta/test/loopTracePrivacy.test.ts": "9481cfcac31b745bd1239c178ece5951d0f9435629ee3519a57ee1e3dc4f79a2",
+    "karta/test/mockClaude.test.ts": "ec536b52e6bae91d0a188f41495121e4617209ee3b5ae2d780a6844d3e64c1e2",
+    "karta/test/publicChatAdmission.test.ts": "1720db0ba1b8f29d47809f5dcf890a5679f098bc5c14b3b76edb73d99f01d363",
+    "karta/test/queueDeliveryIdentity.test.ts": "dba0e39cbc54a9c6b7db8459afa93a1afd6f06e85f56af4180a7dca3acbd0a78",
+    "karta/test/real-claude.test.ts": "584ae5f16dcbe3ed9177c87ea334dc3a7ca39f85c8fcf68277518c554cac2258",
+    "karta/test/runtimeHardening.test.ts": "58f2fb69546b029c2369bf2a1ad74f911069071f3b7a0364b1d8b608ca0ba3a8",
+    "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac",
+    "karta/test/sseConsumer.test.ts": "018c567bd4f18ab21c79aa4f66630052d95bbb1d3b1ca4253528a95cb5611767",
+    "karta/test/sseFraming.test.ts": "fe0214fb8e94e26a093fbe970159116e8895ec0d6e1bdac6e2e824f70e878b85",
+    "karta/test/streamCompletionAudit.test.ts": "3a626a97559422a4de9653bf0633eac43af8cc4755550bed86a1f0671cd273ed",
+    "karta/test/streaming.test.ts": "1655830589904825e9c7df888e285b987146adeb23ffa73fe9016e6930373334",
+    "karta/test/stripeIsolation.test.ts": "b0be0a80abaed4fad07522e315a2e208c5f3098fddcdeeccbdc0c0183ae22572",
+    "karta/test/supabaseTool.test.ts": "d78e86585dbe85e586ff497c2f961b0fe809aa1f6a84ef682478e5d0bac1529f",
+    "karta/test/toolResult.test.ts": "d832688736f0722ae3e86ab589efa9cd397719b817dcae6d8c6f792fd7d74a7d",
+    "karta/test/walletRpcPermissions.test.ts": "92c34e7b923511fb338cfbca5ea738ff0c455e9cc98f4819a400eb868cbb818b",
+    "karta/test/webAccessPlanTool.test.ts": "0c52026db7dcab8aa46cd6edab25593068e5f9c20109f76643819b61a3b04158",
+    "karta/test/webCapabilityPlan.test.ts": "08d6c015447d91146bcaee77e055b9e29ab6e1dd0d720c25ebf4f6586e1a6a98",
+    "karta/tsconfig.build.json": "727041493e4c3be0c2f0bfd744a808f68378f4df1b319b52e641b02626c923c9",
+    "karta/tsconfig.json": "dd13f7cc0c1c6c52c7f0a43c6b77068952e50be38d4d83178f18381cb98badf5",
+    "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+    "mobile/.eas/workflows/full-deploy.yaml": "c502f81c78b18e7aa08e307f11924657af52c90e8e210898e7f8747696e56502",
+    "mobile/.github/workflows/build-submit.yml": "4c860a56fa4254d6e7e895b339dda705b05e40d87b83ebd9c52e2ca12cdfbf71",
+    "mobile/.github/workflows/ota-update.yml": "17cfc631ac2b2660cc59e166739ffc0d54c8bd3dddbb1b8b00d6d296aa0b1b4c",
+    "mobile/.maestro/agent-chat.yaml": "6e99d0c2203bba069abee83ce0f3da411a15c5fd2ee89ed06dab6d6af8131e2e",
+    "mobile/.maestro/agents.yaml": "6405d2281d989e5f1060419ce04c311719354a07a27e92a5b11ddafa70ff95f5",
+    "mobile/.maestro/auth.yaml": "05dc40c5f20e43e8921e24225b5fb2af24a63f5fc065b6c77a15b542bef4fdf9",
+    "mobile/.maestro/daily-gift.yaml": "bf3578e11813470f1d3148ff900cf057b1304560f93524fa91a6bc598209faf4",
+    "mobile/.maestro/error-handling.yaml": "13c0c07155df462b2869118a4db40706c34164d2d1f07079084cb82a7525b37c",
+    "mobile/.maestro/navigation.yaml": "78c0ed3f15397a22160e32db063ba2231faf0acf5eb7fa14563886e5d4e71485",
+    "mobile/.maestro/onboarding.yaml": "73db41f610130a0395246be8cd384ba1237d04f059f2d061b999f1313287d8b2",
+    "mobile/.maestro/settings.yaml": "50a73a70add5fc950e5dfe015c6f31df36657e07654dddc58f17313172bb8eca",
+    "mobile/.maestro/signup.yaml": "b5cc34b2049f4d6383a3f1cbc264d6eba772b6f985291da8394ca52717336ff8",
+    "mobile/.maestro/wallet.yaml": "1eb46cf8bd3cbccdfbd0ead3eafdc59e82a8a53e7717654a89d9d58eb80aaf81",
+    "mobile/app.json": "76a4959dffd64fc2454a78210bf3cd1b15db6671739332bb5610e050571d6cf4",
+    "mobile/app/(auth)/_layout.tsx": "8f2a771ab73b121897dd06e306cf67df847827c519a9fda0b73b7f3a59632c53",
+    "mobile/app/(auth)/forgot-password.tsx": "03ea2df404598da742e96443e2880f8a8c852efaa5e5ce6fe9d86ddd904a61c8",
+    "mobile/app/(auth)/login.tsx": "7cca35236b399c8ec9961cd5a6d22844816d95a5a2951dcc4fdaa67b0cec003c",
+    "mobile/app/(auth)/signup.tsx": "af1b1c73084902196ee85942334fe86f7181cbfa58e0a706266cc629317ada21",
+    "mobile/app/(tabs)/_layout.tsx": "b4e0b91d546de2ba30137a8c4101827c8d3954fe95b9df6a182f0a0f45caf53f",
+    "mobile/app/(tabs)/agents.tsx": "d98f3cec706ddab56e2e165fa7d6906a0ac614bdee6a055fa887fdff3696ec66",
+    "mobile/app/(tabs)/index.tsx": "2b660078267c270ea7e2792a8f7e1a1ff77bac713d6a2bbcdb2f338d0705e39b",
+    "mobile/app/(tabs)/points.tsx": "f9fa1dc6460ee53d8ec6301cbe44c8173c3ef8dc196c0a5c6ecc5533f5c37863",
+    "mobile/app/(tabs)/settings.tsx": "c7bad63cc5e16479079a28a4b646e5460bb054ca1de5cd3f118a0946de747ab5",
+    "mobile/app/(tabs)/wallet.tsx": "877629403e4483ea7dc3c767539480e90d7319183a7382de6944a9854e7e4eb2",
+    "mobile/app/_layout.tsx": "27a357cf1688044a93b63d9f2fadb1e359f3a723e68d34de943481228e7ca791",
+    "mobile/app/agent/[slug].tsx": "c4ac892f6a3b87f4946b7b3ed02c85e2339dc1d91034ab93dcda016a6a97fb2e",
+    "mobile/app/auth/callback.tsx": "6135a830b116aec7df8d226c537f5197466170c614d3cc8215fd71fb01edb565",
+    "mobile/app/index.tsx": "80981772df3cc5e74edd52737d3f02e093c59dda88b58acc0d93b2a746a15f7d",
+    "mobile/components/ui/Badge.tsx": "8c7b30f055e88bf0afcb3f063feec1bd374a5d5bb5d6a8bc8711a5edfbdddf73",
+    "mobile/components/ui/Button.tsx": "08ebed8628c99e907d5f4158bb72623518c536dddb4244c599353a3ce8667379",
+    "mobile/components/ui/EmptyState.tsx": "8c91d741d2cc3d757c0fd2fbf527e3b0d1d893e4712af36c40680674d1bc689a",
+    "mobile/components/ui/GlassCard.tsx": "9512d77f9bdd52804b39bfb243db56b2eec0aec30fd8c46257db3d5ec97c81c6",
+    "mobile/components/ui/Input.tsx": "f36571701d86fccb34507d7a97f684eebb558bf6cacf05b7b073f367d081442e",
+    "mobile/components/ui/LoadingScreen.tsx": "e065ea64c49d9712e70eb9457e7f5e006963a073fbe99c7de9f57e87e6eaed04",
+    "mobile/eas.json": "564c5589ac750287479fa30acbeae70dd4e67292f5c9d645985571be4bfa409b",
+    "mobile/global.css": "cc1a7ad0d019ddb1d32d0ecb588ba0ac26ce41d8625dd6c366348b25f83a28ec",
+    "mobile/hooks/useAgents.ts": "1348ae31dca8d6431c80a66480ad08e017a24cccd21c43679faad1480c0aa236",
+    "mobile/hooks/useAuth.tsx": "7955d218d0023c1a70ea6da16ab7a25f3845a47333322d6d33c0eeca4241f49b",
+    "mobile/hooks/useDailyGift.ts": "4623a23c95539efeb116bd6b8d99909e1d65fbb0cfda364e498db0d9e3d8d0aa",
+    "mobile/hooks/usePoints.ts": "39e3e8dd59f15dfbec567caccfff5bc5191ce79c03f49afb0f14873448dc1ee6",
+    "mobile/hooks/useWallet.ts": "d198a5ddd2bdd8754834ec6d84bbeff2de64eee0bf77ec3a54f98ec98375d5a7",
+    "mobile/lib/constants.ts": "e516302f5859c89bdc6592a81752f6cc18aae9f0156065c619f0ac2c53e8f602",
+    "mobile/lib/supabase.ts": "53f4c152a0ca3888eafa18af1d5c87a277ac842f59f114ca1449a14d016b17cc",
+    "mobile/lib/utils.ts": "afa364ef252a648c579c88498773a766a8b271be0d63ecc46a9ce90549b08dfa",
+    "mobile/nativewind-env.d.ts": "ba93dc3eac6e58df36919fd4905c4cf02cae566cbb7849c3e3de3451f8ac28ff",
+    "mobile/package-lock.json": "7160c20c83e2309746bbe84eebd667416789c7511c3022fa75b44030b16e785f",
+    "mobile/package.json": "6e7ece7d64087811a5ddef4daa8f466540b8cc658ebc213ff1f32454d12fa524",
+    "mobile/scripts/generate-icons.mjs": "aa5ecc74de6f4cbd7cd53ef77f27c5b3d19e9993fda5919885275a74d6161517",
+    "mobile/store-config/store.config.json": "44058edd4f7832eef8db4ea5416090d5d028b025eaefa714a6365eb3a237d800",
+    "mobile/tsconfig.json": "719c1416f577c08ad19fa80e28d68d37bf4c9218122e76ce72ac18d45d66bb0d",
+    "n8n/compta-agent-workflow.json": "fe7b0624752c8891e62bb7e07daa32e8e4b71eb7eb9d4bc60fc5d7e32c8ccd7b",
+    "n8n/compta-deadline-watcher.json": "2df5f4d308bb9eccd1f6bbcc984219752c4dacf9819a6ad7fc8e58992943459d",
+    "n8n/compta-monthly-report.json": "733fbaa4b4d5d75449040c883ee191e0a85ade5e876c378b585c741f5a89e915",
+    "n8n/compta-prepare-declarations.json": "7e32fd4b544b8929672c615c9a54a387590bba7f7e2c820291a9cda8e9651cd7",
+    "n8n/creator-agent-scheduler.json": "a8f7793112186c31999d93de1f954a4ae8db006e66a55734bbaaab6535f49886",
+    "n8n/email-agent-workflow.json": "1308c8cfb2dfaaea59f7c2f7312afd51da03de2786aa778ecb0e2da3f44a0630",
+    "n8n/legal-deadline-watcher.json": "a2d22d54c3daa274a24f74bd1874a82deb237cf77444606e14999973bf405130",
+    "n8n/legal-document-renewal.json": "6a4940a747e64412310a4d9eb94fb4914946f0a43f5eb483273eeb346eeb0566",
+    "n8n/legal-recouvrement.json": "ba7c5ace2ed5eec2aaece792c611b0558e81e00e4e1623cb803690aa7b4003c9",
+    "n8n/legal-rgpd-audit.json": "1c191fbf805268b1c9166aef293c963939d4b11bc108f8a74ea82ca3d69e7322",
+    "n8n/legal-veille.json": "64a61d776a175a39c3a7755ad60a7cd04dc4ed2c4fc296601fecc1eee58e5d8e",
+    "n8n/partner-outreach-scheduler.json": "ec2ceab4735e6ef90b517c07cdec9cc8f662a5ef2f6c7cdfc202cd5d83803d38",
+    "n8n/partner-relances.json": "7a7073761879a9d2e729d208f08b21fa36a3c8a300f9047c4428600fe794206f",
+    "n8n/partner-reply-handler.json": "81e9d56b183686ed2b0071448325d731e180020e22686400e95e895c2e75a886",
+    "n8n/partner-weekly-report.json": "427ea02f082800045eafa4b760a82ccb60d95cf39ad0ca7ef39fad4b048f9146",
+    "p3_schema.sql": "c37d6608cc05748e5b4bb7ffe5490c5dadfaebe973befe3f9cf1106212cce4fc",
+    "package-lock.json": "4f1e9ee761eb85a9876d44f07f02c846b4ba88b6ceafdc7e9c560ec6b571de9c",
+    "package.json": "21297ffb2a437f9febe8244febd1b703e90f76d09580f23501e65291c96ee201",
+    "playwright.config.ts": "592f3378519fa1b1d4d2468b00b896053335d2112ef16084a79039acbd1aff5e",
+    "playwright.docuseal.config.ts": "dc335a17eabc545eeb112222d881cda87db13e425f6c4f2fc6d4428973e43f8a",
+    "playwright.karta.config.ts": "9404d816adb875a40e909bc6cb3a0a6fe2367c74095d9c80c12059c6887fb0b8",
+    "public/manifest.json": "569bf509b38dd6fcf0e6286efc2cd47f768ee646cae472f4dcc0768aecc9bc24",
+    "scripts/generate-supabase-contracts.mjs": "b4ca5e2bf5e564500152a43604add2a70fe7d7283f9177ddb1aca378ac0e45e8",
+    "src/App.css": "38391e7585b277ee81079615424f5f7259042bdd0724e8badbc6a21d02704455",
+    "src/App.tsx": "099992c4dc8fb8146fb96ea2951eba24a06085905dc802a34ad27fb71ce9c513",
+    "src/components/AIAgents.tsx": "0e80ce30614a9be36e5d39a8aff9b26616c967bf6a394d9963db479893e46410",
+    "src/components/About.tsx": "0e57573575a3ca7b17181a40fcda4548eb1253964f2bdedab03d352fa695ab98",
+    "src/components/AgentComparator.tsx": "b497a785d1531b1368511b62cb1de449349877f8f921ba45b885202fe29daced",
+    "src/components/AnimatedStarfield.tsx": "fd960d4b3012563d2299cab8b6ab65936f3c7b981cd9eb02665e6701d0749982",
+    "src/components/AnimationShowcase.tsx": "1a98d45700531899cc7cc2c28e588d998f941f2fc9716e2e6a87d4dc5406e1ab",
+    "src/components/Awards.tsx": "cddb606b3e1c5530bafb83f0bb29d0e34bf95e21b5424672b160893c3b048c29",
+    "src/components/ChatbotWidget.tsx": "f20ffea1d8379b4d200d401ba754e5a3f4e1945d075689ba2d635480951275f8",
+    "src/components/CommunityHighlights.tsx": "3f206e1b9e11e4949260db229849e34a992f8a09064c73f25fdb21994f4550e0",
+    "src/components/Contact.tsx": "5aec54cdbb3a221611fe1e6229d4b2b7ddf19dac8c7d07b8231444271d1fd018",
+    "src/components/CookieConsent.tsx": "5349309e63ec0579deb63b60d8e1b21d4800aa2f6f2ecbc7172fc4740586816c",
+    "src/components/Features.tsx": "84ed09a295555682d1405ff225faa1a8f4735fcf90c05e878f57b35391935506",
+    "src/components/Footer.tsx": "0cef630938ea486e6de4327dc2dfe04839ffd828718e88af3a66742325dad711",
+    "src/components/GlassCard.tsx": "77cb7419d07ad4472e4e7ad8247306a6832185b22a017488b45d7b2df43c0a97",
+    "src/components/Hero.tsx": "fb85c8fe0f17c230483d482a38112dce1f7077f541816468b3bd607480a4694f",
+    "src/components/LiveDemoSection.tsx": "aa5fc79e22111664e5d7c8a24d2bcf35644f76b35b05d07ef86e39a349c146e0",
+    "src/components/OriginForgeDemo.tsx": "5be961f85faff665bf3504bc6408c0fc3326ae989c320bfd41e563990216d735",
+    "src/components/OriginForgeHero.tsx": "97fe713c94ba2f5d03fa4a990d4ebd4368f346f77bed610b58855af6c58ebec9",
+    "src/components/OriginForgeSocialProof.tsx": "f4ae998a25b338b24c0b2bea15eaa82679ed26154914ca536b01b81cec534c7a",
+    "src/components/Portfolio.tsx": "27fc71105878e5267f3f0183ad90958278fb30c53ecfccedf9b3c1f60b5b2afe",
+    "src/components/Pricing.tsx": "c2f68e108a8cda77dae0beaf7608bb7c27e4a9b2b449744679add1717eef1d70",
+    "src/components/PricingSection.tsx": "37b0a55b337aae23941ff540805693aab64dbf0d029958b42081e6a5ef6e0cf6",
+    "src/components/PublicActionsCounter.tsx": "618e4736daf421073d8dcef91da0c0f325124563912fa72e5037e8a599ffbf30",
+    "src/components/PuramaComptaSection.tsx": "9bb3e770a6660cdeaab3953c2d8517851bb7823e2f9f3087d38cbca8607a1541",
+    "src/components/ROICalculator.tsx": "9a1f35213c74e241a495cdb2ffbae4d93c51fb14484c4bda8991a8ad4b739f8e",
+    "src/components/Team.tsx": "38f9440a1394f9fc4037679699e72bc4ad9ced3a616353671ce8805be5a225a7",
+    "src/components/agent/AgentUsageForm.tsx": "9e78019b50e63bd69461537ec7cd793280a9940f75f73e98be55248389d45a91",
+    "src/components/agent/ConnectionRequiredAlert.tsx": "cc16229e2b173ef229888a79fd6990a2eb837dcbecd1362946c153e0460a7fc7",
+    "src/components/agent/DynamicAgentForm.tsx": "5a02f93331cabbb8f4761c62ecf7c3ce8f47f9693ae261095374f2421a106ac6",
+    "src/components/agent/PuramaSocialAgent.tsx": "bb07529ac60addc807876e9b80212deafcddd5c87185cbaa776e87c2125c306d",
+    "src/components/auth/ProtectedRoute.tsx": "b7a1281508bc589ff4e8d49b61cae3b60ac2ef1a7e7a1b2e8d686325e1de077b",
+    "src/components/brand/PuramaBackground.tsx": "a22f5469b3e45981c7b83fc0eeff126d7bb16b1710095a7ee52bbb576b562d23",
+    "src/components/contracts/UserContractsSection.tsx": "7b515a588d9623115778599d79e16c4c0febd2b2803299ee8bc6886c2c011e23",
+    "src/components/dashboard/AgentCard.tsx": "97fc6f1a81a9924f996d7f0644f81d1b5c9fcb1c1e28e8cf0dc6434c645d153b",
+    "src/components/dashboard/AgentFilters.tsx": "6a03a92d295112f48e522c6239f7bcd4df974afcf5491a98e9f72ae71f418097",
+    "src/components/dashboard/DashboardHeader.tsx": "9530452a26acf647fc05f650c7f96d830487dc2f9641822546b1f3ca7714a426",
+    "src/components/dashboard/DashboardLayout.tsx": "b687e36c581d67b88650024b39686dfc41ec7dbb16f1a97b5863cc1a866e83e2",
+    "src/components/dashboard/ExecutionCounter.tsx": "c450de2d976774f92b3bcb551a8696b439b2a5eaa5cf263dc8988ad6f3af0571",
+    "src/components/figma/ImageWithFallback.tsx": "41e6507e67679ceab07cb3a63e70563c6825208f267696afa336f81e212f144d",
+    "src/components/influencer/AchievementBadges.tsx": "c86af41592a041f4217b201e2bf531fab58fa1180be3937cbcfd03304a7bbca5",
+    "src/components/influencer/InfluencerLeaderboard.tsx": "42c0ea19b9e9363d04ac35b4dbe5f4402cae7ec1d1cd65e32bf1011c5aba4e94",
+    "src/components/influencer/PerformanceCharts.tsx": "911edc4d16d88d711c08cf9cc360fd9f7e3260047b414592d5e584a0430febef",
+    "src/components/influencer/ReferralBanner.tsx": "f53c99e98887529433635a28fecf02ea46e64b4086ca504acaf54f24262c5e79",
+    "src/components/influencer/TierBadge.tsx": "e6669c623e2721fc23563363e79b3edf3d3cc7a7744fcbe9bb3d9d80d1911029",
+    "src/components/influencer/TierProgress.tsx": "a85503c95b2d3a58cfb7ff0424d02bd717b9af7aeca0aa3ca0a1b27b54ba104c",
+    "src/components/influencer/TierUpgradeConfetti.tsx": "141d5e63dac59cb45c8c45f968d81326c371a6ca6e5f3e21ffc36e760c1be017",
+    "src/components/karta/BriefMissionDialog.tsx": "06167998841d2e05d03b111670c6c8efd408f5d284aa9b9c82521427635565c4",
+    "src/components/karta/PendingActionsList.tsx": "4f34702ced2c86795d4a2303355eb366a5c23997b2bdb08e2ce42d261bb1a8f4",
+    "src/components/notifications/NotificationCenter.tsx": "85ab861676979c0fd54f574fce3610977c1790529abaaab2ddefc1d9437b6849",
+    "src/components/onboarding/HireFirstEmployeeModal.tsx": "f97511541e21a46809f1cb72900c442b74127d45406cd6e4ce188e36e682d060",
+    "src/components/pwa/InstallBanner.tsx": "d14b3f6142593c6753702116b3cb6cf6696e3e5d5915ded7592d516bb015d2cf",
+    "src/components/pwa/ServiceWorkerRegistration.tsx": "4e10c79e68b2eeba16b82a616c818e42eb8b09449df3d9c99fcfeb693662a184",
+    "src/components/shared/CinematicIntro.tsx": "e0ca857853dc7cf0cb34336460449a9b3638a4e36d0a33d63a83be88e8afc304",
+    "src/components/shared/MagneticButton.tsx": "f3f6f1b1b8741dce3f9d14a6e507e30eb6a2d4b55fc63fea55c3fc23b19e4dda",
+    "src/components/shared/ShareButtons.tsx": "a49f40e374aee50ce18a5fadb3ad807b79c0dcc36c90283546515a4b6eaeb45a",
+    "src/components/shared/SpiritualLayer.tsx": "b05f32e7367836601d4c6d19c694f5a3055e5065b9820507afde7a3e3866df7e",
+    "src/components/shared/TextScramble.tsx": "56c0b9daa25dd98c293ce63718aa9da2ae1a0cc2e394591ca9c897fb18ca35a5",
+    "src/components/shared/TutorialOverlay.tsx": "50a2b7a60f822394a530264ddccbc3393cf9624e0f10075de7589bde0910ced3",
+    "src/components/social/PublishEverywhereButton.tsx": "7b3f2820406d8d46eb8434bfb55218aa1b24effaa8ec5908b847c40dfbf99705",
+    "src/components/ui/accordion.tsx": "9587b5ca80cf0aa68bc2a4e6baacebbe07eab14e1c66c6b6420033aeca9219d1",
+    "src/components/ui/alert-dialog.tsx": "c8b01137c7552e63c9ccf2c38ef92e5417bd6616b6980d56d3015db027465283",
+    "src/components/ui/alert.tsx": "6352c232d36b2aeb20cce9692fecd98a472c8bb0b8c3f8a45446c433382e2da7",
+    "src/components/ui/aspect-ratio.tsx": "d72c73d629e37995a0a71647d851d68d6fdcd7ec120797f36ab83a8ee89f2cab",
+    "src/components/ui/avatar.tsx": "4a8bc00e5514912c54d414e207266fa100906aec2754d590adcc8ccc46d4c5c9",
+    "src/components/ui/badge.tsx": "b851d9ba385c4d60de471c5f43da38067298bbcc3470807e992acb224041c75c",
+    "src/components/ui/breadcrumb.tsx": "e5589a54c1ed42101bb24cd67bbc72469fbfbe6b694c46e006424375ad77183e",
+    "src/components/ui/button.tsx": "99e5091c618896c9a46eba931d23814039709f9a1d150c4ac99217c1bba044fd",
+    "src/components/ui/calendar.tsx": "845a0b0fdec33d8d49ab8ed05dd29a12c10b5bbcf60f24d0b9fc0a731ab18621",
+    "src/components/ui/card.tsx": "bdfb74248321c52e89c2129d9d8088a56a3e33dd7850a7c9b0563a7b5ac937a0",
+    "src/components/ui/carousel.tsx": "561cab7fcb619deed3532d027cbf18ef8e3ebae9def4206b0d36bd22b8474c3a",
+    "src/components/ui/chart.tsx": "a759d32aa240fa6e929f204b04252e45d6ae458558eebd37dccf4ae9e05ab5e2",
+    "src/components/ui/checkbox.tsx": "178f8177bedb1704b4dd3e748f4826848981c8af43178c04e1a276a7f017cf1f",
+    "src/components/ui/collapsible.tsx": "fbe07841b794e0d7d08e87ddaaafadf1dc0c63ecc8389cd2c5b4a0a3f5500df1",
+    "src/components/ui/command.tsx": "4be2c759bafbc3b962837c39d1aeb12070008113965cb801f3ca5a6344f22582",
+    "src/components/ui/context-menu.tsx": "2d294c5e421c41b817f1644f2d54bfdde628cffae2682e69ca504ae754739ad6",
+    "src/components/ui/dialog.tsx": "8e755711b3fd5e8d7339baea7627da546293fe2df1a88775729c2857e0de4b57",
+    "src/components/ui/drawer.tsx": "3739cdfc80503412db604efb3ac0149db5f7cd5fec18508839d18dec195720e1",
+    "src/components/ui/dropdown-menu.tsx": "b1ede0a4144b64853dc7ba62d184c09df479482eada86f936ce5b3d0b67a9a19",
+    "src/components/ui/form.tsx": "7f6f3b157f0c08880937ae41d5e61647703c7163c3d8444656de711fb0576faf",
+    "src/components/ui/hover-card.tsx": "8d606e166ef5f9bc4fc3efb1f6ce2f4bb376177a2c6fef16f67f87ad2d13d005",
+    "src/components/ui/input-otp.tsx": "a301658db5430d30108004cf05cb9469457a882f93dc057097f777ade4ca5423",
+    "src/components/ui/input.tsx": "aacef8933fe99ab553e12a82c874a23c97e2b5602eb6f00018454fa0a8d4f7f2",
+    "src/components/ui/label.tsx": "d5dc9497cbb28a5401b864bd44a15f010c302584fbe8e07e015dbe443f103753",
+    "src/components/ui/menubar.tsx": "9a44756ba91e4c486b30574910b72f58c136c7a9281ccf0c13bf366962c7cdaf",
+    "src/components/ui/navigation-menu.tsx": "92736fbbe66e31d1b981d10436f9048c76f4b91d8b89e93b679ef2eb54204770",
+    "src/components/ui/pagination.tsx": "ac9da1e191c3485524c1e8d8cdbe0b9fa4ea2729c9554f796e2516485c839260",
+    "src/components/ui/popover.tsx": "ee5f78ece57c9e8eb5f9b4186e2bb9ebe46b69b52f03f1edd9a601883bc64772",
+    "src/components/ui/progress.tsx": "bdc4847f05de3aea1276966e0df9b4a293297f0ca7d7b430a1cb16cf5626728f",
+    "src/components/ui/radio-group.tsx": "995ec983735b204597f11ae5dd22ba0175dfc633da2ddecf222847bbca387adb",
+    "src/components/ui/resizable.tsx": "a31af34c14c7c86612d1c2e51c90da59e0edae37dab5210bc1dd2c91dc2f3edd",
+    "src/components/ui/scroll-area.tsx": "998181a10164aa6e508210064ba61b2f772a92958d7bb2141867007f0ebd9783",
+    "src/components/ui/select.tsx": "a2b62120a033b36c8d6c4a1693aa9231645fa69251740e15eacec24c1eea4d82",
+    "src/components/ui/separator.tsx": "6c271e740c3d7b54947bb727383e5355788f0176b7b683c3bb970cad9883dded",
+    "src/components/ui/sheet.tsx": "e7d726b34d0f3214f597a844c7f2c4fc869933f7433eddb74e7fd2eb92500be3",
+    "src/components/ui/sidebar.tsx": "5754b54ecb6151d7a138426a44a1057a4937ac5a173dfbd1f596a6c9d75b851b",
+    "src/components/ui/skeleton.tsx": "a229c310b9cbcb01ddd5e580865a6f14a19061aff7f6a97ef82a40b6a83583a4",
+    "src/components/ui/slider.tsx": "b81a683197551322cd8f13653bc955ad4c3bca6fe62376d33acb2bcd04361d02",
+    "src/components/ui/sonner.tsx": "720fa5658777a469a3096e2fbb59b8f3453c744aab53a35d9ad47c873177b4ca",
+    "src/components/ui/switch.tsx": "99cda942c2d215d8f25dd33ae06ed1278bcf912b262ed0e907b04f35881ac507",
+    "src/components/ui/table.tsx": "fab18d9eeb84781f534330ff4b2c2cbe3a93f9bdf5c449debff2f682a83a4876",
+    "src/components/ui/tabs.tsx": "b313d08a8c85e586a282b615cf30ce0b6ec1eca3ea92149b731f14b4082f4d71",
+    "src/components/ui/textarea.tsx": "1b43012d40d2fc4363ddee86c0988f6668cd2dc8d5a022352fd950d5ad340d0d",
+    "src/components/ui/toast.tsx": "8f4db67ae4633904c3cccee6629a1061472bb23f5368e5b7e72a306cc494f9d3",
+    "src/components/ui/toaster.tsx": "600d661340ddc3ee7b5f9088684e1b3072cf60c9275b2f84bf4860dc29fe0fba",
+    "src/components/ui/toggle-group.tsx": "a3ea231230c8fff22ff6e0b457e71addf961fe1f80deaba0c80d17e649d34bf3",
+    "src/components/ui/toggle.tsx": "fb0f786bce638fd414f220e31ad3c902f5c6e25eee9c95ac955cacd50638d6ff",
+    "src/components/ui/tooltip.tsx": "bd9361649477cf9496f4b48415a2eafb9ae1ebca81af58a29b61b1516adc88c1",
+    "src/components/ui/use-toast.ts": "d48c4c490e5101aa42ceed9b8ca49642d66152ba11daf7ee6c29bee0f5172c37",
+    "src/components/voice/AgentChatTab.tsx": "66b5ece18bc2aa6b8749abad1e865c0e236823ee40d76f54f1d780ab4e621805",
+    "src/components/voice/MicButton.tsx": "d40208e3cdbb66dddfc32e57ac654341cf4936f47ac5e2ace30622bc1c89139a",
+    "src/components/voice/SpeakButton.tsx": "70afd2c41384e243a85465516c6f008486153faa6851b958b3a97727876a828d",
+    "src/components/voice/VoiceMode.tsx": "6ca552eeb869ff307879a42cf31b16d45316171c5ee9951630c21b50535b677a",
+    "src/components/voice/VoiceSettingsCard.tsx": "7b3ca8da224608e60978751bfc7e2104bcc25916d6b438af8a2f49906c0b1448",
+    "src/config/agentConfigs.ts": "d545d65b166b028beaff7c4d7253e625cb986d620c937a0a2727b8235da0d066",
+    "src/hooks/use-mobile.tsx": "21eff740f9e5c965c7f0782925a7e8f67ddfcdf0f58b6613550f99c3e1c454e9",
+    "src/hooks/use-toast.ts": "0602ac84d95719f2a27075ce60333db73128e09c0b07365dce7f9c77441c9d7c",
+    "src/hooks/useAgent.ts": "ed018675740e5f4508ea3cfdb0e4787840faf67aa160943ffb9664275bba92c2",
+    "src/hooks/useAgentExecution.ts": "9d80f3b86875c942ab1e6fb6b21d04fcbfeb94f2daa2292db234b2e9c49c6ee6",
+    "src/hooks/useAgentSelections.ts": "1adb598193004e996db6c4bc55e176f737a685f2cb968187a8022892fc5c2205",
+    "src/hooks/useAgentStats.ts": "faccfb96f4141541c11326d7a13e18e4fbb30d38ebd34432b9ee2cfd2272dd40",
+    "src/hooks/useAgents.ts": "95486e9edb4b27975768fb22cd6bc5190c55abd4e0805e6878b33cb78b5aea51",
+    "src/hooks/useAuth.tsx": "2f664883d543aff7049418b49232f97f8af600ba31881ec4f6401384deffb662",
+    "src/hooks/useAwakening.ts": "6015e1fec67f47f4ff3691319a76e7679890733a2c8ebfc26cef89427039a27c",
+    "src/hooks/useCardSpotlight.ts": "b2a0eed000c04732bdbe0bc221892376a9fb35e7a7c0a36bf639f7faa6f188bb",
+    "src/hooks/useClassement.ts": "d6fb49114c0f96cef12cc44112efabc56e2175147fc57fcf0cba1bb64a563ab0",
+    "src/hooks/useConcours.ts": "faafd322d4db12c7a17c96879b2aedee7aa026f7e20cc4ef238ee3cbe68c7e6a",
+    "src/hooks/useCreatorAgentKarta.ts": "2a07ca1184b23eef0b14fc84bc90ef33fb188712eb9725b019dfa90fbc352a3f",
+    "src/hooks/useDailyGift.ts": "887a6d24a5aef97b7a7ffd2803ce8ee5c51160e05c5bd978944009d52aa59605",
+    "src/hooks/useFaq.ts": "2c7ccf3f436890c617d5e03a80f83a0a33721c89339548c41beb5cdd7aeee10e",
+    "src/hooks/useInfluencer.ts": "628f320c376c7831358edac2da6dc51794373bd16e1403623505f1b76435a3aa",
+    "src/hooks/useKartaEmployees.ts": "ac76772f8aacd11041fc14dd10b1a3ebead915f016777a81f899a4e01b51e65f",
+    "src/hooks/useLottery.ts": "c9b28f1725f8f1ada7719fd9c4db35baa1b3591d45a6614c3f5df607ddf81f98",
+    "src/hooks/useNotifications.ts": "9395a07656f6500b853043d357c7f9409f5657c7d0dc77b4ec1b76a64194374c",
+    "src/hooks/usePoints.ts": "db16d9895a4256112b73803b63877bc3823572e4d61cec1b68e858168b341ff5",
+    "src/hooks/useProfile.ts": "2811418b3146621603a0f1e61e983353dd7adc31933e6c1d5cb6c1704dd98ab2",
+    "src/hooks/usePublicStats.ts": "59af36a1e312754b9bd2c6c6cbd93b60d82cf4ca33754d32ebc3ec0902a289fe",
+    "src/hooks/useReferral.ts": "d43d25c6a595b71cf1035ab05d8aa93bc3b36ef01cfc08ef0c39affee5e78d49",
+    "src/hooks/useSubscription.ts": "c0fdb171ddaa76bd77eaba1f97812696007f30bc1830fecd63783bddfa898465",
+    "src/hooks/useUserConnections.ts": "97ffef82cb8876a439e0d350b7744792f4d6fdee887258b80547ccea86c01d8c",
+    "src/hooks/useVoice.tsx": "e76a68e65dd1d54730524fd854c6c60b933068ce134e20341482ebbbdaba16a7",
+    "src/hooks/useWallet.ts": "0fe2c4140e1f521d4cf4c6b0c156719ed01da40c64710b4f0edbdaa7b4bc9f84",
+    "src/i18n/index.ts": "d72d49338a9efe67a220f1d4cf48a576643ecae7e73507efdac52fb2344b9ef0",
+    "src/i18n/locales/ar.json": "445ab1a970fba131b8af14ec37ee21f1fb021bedee3e16b58dea8198119f3ff0",
+    "src/i18n/locales/de.json": "7f349811e131b8f7093b2d0aeca2920aeff243b871afeb212ec8678926ec48db",
+    "src/i18n/locales/en.json": "1138baf8761737c520cf8eb33fc38f100a20083c4769901face63e561705c2e1",
+    "src/i18n/locales/es.json": "1d76f8164a3a169d5d9742968ca11d29581e460a3e8ce4df2df8f0f7273c6a2d",
+    "src/i18n/locales/fr.json": "b9533f40e4ca539f7f380524177f6128388facd742ad10749c09eaaaa00e00d1",
+    "src/i18n/locales/hi.json": "35bb470eea94d61cccccfddbff95e0d9c58f6243d08fc061141e91384015502d",
+    "src/i18n/locales/it.json": "d0e23e5cc3896ed71f44f93534dd57481c73ded25886b464675221136cfbe106",
+    "src/i18n/locales/ja.json": "53d308902bd66c63a4936504b1b508757d6afe1cffd5274744e0e957db42177c",
+    "src/i18n/locales/ko.json": "22e88a01ccdbbfe54794cb09c9118e43de7c5a21e37e60243ecd887141c093fe",
+    "src/i18n/locales/nl.json": "dfee5af28ca3e6de5ef31bd9076a21cdde24f3ae6f1b14d7979255b2b5c9c518",
+    "src/i18n/locales/pl.json": "6153cabe7a6d9c386bc3b4c167d90829e4ebe58eda3b946d539c4f8d27f6b1b9",
+    "src/i18n/locales/pt.json": "0b9ba9e3fcdc54aade4d4f5bd71bfbd4f4ac6466a7e89433326d0fc0b4a05b75",
+    "src/i18n/locales/ru.json": "a5e57beecdabceada02e2e9cca04efb8a6cc11593ed05db597f27c3be9194a2e",
+    "src/i18n/locales/sv.json": "3bfb49135e4c9569d56ac1eac64793309b4da332cf2fad54a6f8d4cf7f9e65cf",
+    "src/i18n/locales/tr.json": "6bf5c639069843a89bca014a028b2c0f8ef12d5ad94d680b58c440299a005b70",
+    "src/i18n/locales/zh.json": "cd991455112d108c10c41d1a8c3da37cbd9a91e982c6cb8431d80b2d6e66e0bd",
+    "src/index.css": "f94df822464b8a221a720174dbd55cc3d61581e9ab1e995d417d60c95bf00d11",
+    "src/integrations/supabase/client.ts": "c4c92076076fe01f4ad7747bc1085ceb000e60307258b0529148fb607296f076",
+    "src/integrations/supabase/schema-contracts.ts": "fa5c7bfb9c0a8de5361291457e5d27278ab18b01be6403681f7999529a5dcb3a",
+    "src/integrations/supabase/types.ts": "c2598020f0333ba31eaf787a14c640a48359c83e8fcf9f796c0ecfbe53d7c5ce",
+    "src/lib/agent-chat.ts": "9c11038d181a457052cedb20ae21145086d857025cfa840166dbb8f5622f345c",
+    "src/lib/aides.ts": "b61b4721e2e64c3b843bfda54b24af034a37a6aee61f24365344019348da9ce2",
+    "src/lib/brand/app-config.ts": "15c308be8c139e574a3bc65d1bb426895bade13af68f375db4b46c8093654b5e",
+    "src/lib/brand/motion.ts": "a92ffa300892aa02b83ac36d64e5ef110b6e57b8a1fb92ae54d27d54b6d5cfed",
+    "src/lib/brand/palette-generator.ts": "7424e00a80e2e357a121e281320a433a41a4eaf3848636db894e305c3abebc7e",
+    "src/lib/brand/purama-adn.ts": "5c6eef1578c25b241607853327ca0b107bf8a8cf973e0957e32caab1ad1f4ce2",
+    "src/lib/compta.ts": "9374a1436d7451500ca39b4684207a7130ba8fb9f884cb1ac8349d69bc74df7b",
+    "src/lib/constants.ts": "143c29a172663f07181ffa8d885eda615873061d9d4cbe93528e7e1ec84e7f62",
+    "src/lib/creator-agent.ts": "6aa84f4bfdc7aec5ed93f2ea029171c51e059d7472974afbe3f14929c0ccdb9f",
+    "src/lib/docuseal/client.ts": "389c92e38c92c72d4e13f68b104af392c855a3ead1973a5e1a0e1f11ff06996e",
+    "src/lib/docuseal/cross-app-auth.ts": "5c8f159d1773be7eb50b124fb640584fc740d00ea690f734a94537735518beb2",
+    "src/lib/docuseal/index.ts": "e36109b5718a39f47b028dbb304ab2690e946ee71b3de9c0e9c5cbecd3da4ad4",
+    "src/lib/docuseal/ots-stamper.ts": "dfd723bb6622fb8bff16976ec4530febc221bf1775ff7deaf5c97a8053ea0f6a",
+    "src/lib/docuseal/pdf-generator.ts": "83f4f329cbaeb16ffa4c1cabe20a65d936b0629eb8fcc39fef57f6d3b5c4c8c5",
+    "src/lib/docuseal/templates.ts": "cd62a85cc96a3601dbc1bc8f41184678d8f7ff674dd661768f8723ebe5893afa",
+    "src/lib/docuseal/types.ts": "2d27bac472846c665243e8d39a49b88206d22fa54d73ab87602be84296ead10a",
+    "src/lib/docuseal/webhook-validator.ts": "4bb10415422878f8ebb31acf7e57f166f78906bc03a5811897104bb3d32b8f92",
+    "src/lib/email-agent.ts": "6eea3d344c716d54bbc12866df74f823bbd4d0f1dcd768ea2982a5077377ca06",
+    "src/lib/insee.ts": "944da30757e404b29fef75aef2cd459e7c8f3bcca05e4fcc724f5fa0114bea82",
+    "src/lib/karta-run-status.ts": "51f722b9dcc64137c560e055f19de4a8f09ad38b233f0bba8723fe678f56f047",
+    "src/lib/legal.ts": "d10e558a22be9a986daa2e907ff001ac669924f380433512129a40e8829b290a",
+    "src/lib/modes.ts": "fd0edfe69cf8d6b35621190b2622c8c7b6eb034045c122994fc75990214d7a20",
+    "src/lib/opentimestamps.ts": "04a104b4ab2ae7aa5c332849e530bbd59d1488a6cb03f451f73d96fb03a3cdae",
+    "src/lib/partner.ts": "671b1ea91a8f2e8c2334deafbec33a6878a4f08cf1c51ec8ffbe51e7414acd22",
+    "src/lib/plans.ts": "820ea4cc068d218b36de4dbf7b775adc88f7dddcac80a29d6f51c47d57dc970e",
+    "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+    "src/lib/social.ts": "bb9099face8d3f0b5f30c881b48929c65ae7266336b85f71a9327f17747690cc",
+    "src/lib/sse.ts": "67faebb35eecf9f50fe7dbc94ed1fd812ea72e7f75a80f912d94b5b82bd1f8c0",
+    "src/lib/stripe-connect.ts": "d4022d777704f617600d41c2d1d9fd790bd084ec0c5dc35e08bc70830f8ea836",
+    "src/lib/usage.ts": "a0e6b025befdae470659f8b7ac09369717498129e2ef2fd7e431c2e27d225750",
+    "src/lib/utils.ts": "29e35320d95c09c76514feae9c36275c51dabd9eb713192792b1e70f823adc20",
+    "src/lib/voice.ts": "363cf54e694036009753ef760e2770c88fed0f071027b81b92354f83d75737d6",
+    "src/main.tsx": "7698543c7c2a9728c33c022ac4d2318efe46d71209294a9b1bcfa2142a23e602",
+    "src/pages/AdminContracts.tsx": "de2a3a5882b8058080f68e6df2599321835870bee5ae1d31af0f160a2ab180ee",
+    "src/pages/AdminDashboard.tsx": "e269219519e50c38a06f6cebb5a97d5000e53f916ca37721b3986892ed6f926e",
+    "src/pages/AdminInfluencers.tsx": "f5fef9b4c930d3a274e63d18cf340f12ed086444ac3f7efb3e12dd92bf75b04e",
+    "src/pages/AgentDetail.tsx": "ee48baf689d13167d72fb8988cac307d4c38ae2a7a70809a29472e127ae8baf7",
+    "src/pages/Aide.tsx": "612089cc248764db0b6e90c98c5e384deb7faca6bdf589cd4ebf65c52b0780f2",
+    "src/pages/AmbassadeurRejoindre.tsx": "dca2d081b494dd9277ded734c8122e32be149d6c7a7c2833c99c76c36428725d",
+    "src/pages/Boutique.tsx": "a9155044186ac533b30536a6c555ad1706b393e147da3dba039929e5b72ef83b",
+    "src/pages/Breathe.tsx": "4e06e1bf083b2311dc86ac6e7ae55301c277109874d82a76ec6694385895743d",
+    "src/pages/CGU.tsx": "545035e487df266b5aa60fd290dc28e22e16d1540cc5fb8431e71aee57f6bf26",
+    "src/pages/CGV.tsx": "229511680d006a82fa8ba441d0b74f27e724e2843e3ff84ccc8c03fea0201aae",
+    "src/pages/Classement.tsx": "2bf9ab3520ccd94ba105aee4d05eb745313a27038c443d043fa5016e2722fcbd",
+    "src/pages/ComptaAgent.tsx": "60d703340be3f05c7a5e97560d87f107b3bc297353180087d4f7e94ed5eef93f",
+    "src/pages/ComptaAgentDeclarations.tsx": "4fee774a95a67563e462e65be577a84cd6fd19eb552b386205284583661a161d",
+    "src/pages/ComptaAgentInvoices.tsx": "da8e7f2c0c1dc67a03fe6f5a73b492e07bfdb5b94ca21e2b1b8e9b2c2b06502f",
+    "src/pages/ComptaAgentReports.tsx": "1f2938da856715a69d223f69e48444c1b96ccf2a61e26d8bbc08acafb3bd9ded",
+    "src/pages/ComptaAgentSettings.tsx": "7af761994229f7ace7e7692d300c0615acdf5f0e55d15c999629f02fae3ed93a",
+    "src/pages/ComptaAgentTransactions.tsx": "bd92a909eb8be1973fac97f11598093cf1efa7eae2f85bebfa6b09c3facdb6e6",
+    "src/pages/Concours.tsx": "fb47565ac98038da6581f6998ede7d61f95d19b33320233cbaeae8180cfebc80",
+    "src/pages/CreatorAgent.tsx": "883986ffe0925418ab2be8f43095c8928e8de0c16e3d6eabd52976f32084d425",
+    "src/pages/CreatorAgentDetail.tsx": "0ed5fd825ac3450005b923bdfb778ee1f90c63c85d3fc91722d401cf1f9ea49f",
+    "src/pages/CreatorAgentNew.tsx": "3214a6c10ee2ec4653c96621edf493ea60ec1038bb6b4bee31607f5700ebd0f0",
+    "src/pages/CreatorAgentRuns.tsx": "35447714dea6b99174054332e6fdc7385c641711cd9f85eec974ead2b1d44d23",
+    "src/pages/CreatorAgentTemplates.tsx": "9873123b12de0f3d0dcd0fc72d461d8b09f77b3c730c7a05bf0f249569dab1b4",
+    "src/pages/DailyGift.tsx": "69f4b3b4aef78c74ba4213e40e697f530e3e75a5e797d2e10811ccb2e13d4a19",
+    "src/pages/Dashboard.tsx": "bdfdc2d082b190153147b9ea17fc6dbbc93b98e7696cc51b5e9fba2dd38a4da9",
+    "src/pages/DashboardAgents.tsx": "d6bbff3d79dad0fb39842c6861a30672703ad1fac3547d3bf70e498372ce0f3e",
+    "src/pages/DashboardAnalytics.tsx": "0104cfeb4ab81d35f8aba1a1813a7efe1198ff6acef435934d4469d149be460f",
+    "src/pages/DashboardBilling.tsx": "7a3079bb4e282e52a5deb2add21b0ab55552fdc060a39ce74a77804402cab4af",
+    "src/pages/DashboardOverview.tsx": "b6f898e32d715a40e8fefb68a0185c71193c1460c0733da0430ed3087b805e24",
+    "src/pages/DashboardSettings.tsx": "9127bc66cbb5acd19c14f4764f81752b89f23381b4c32113b500e2e1eebbb64a",
+    "src/pages/Ecosystem.tsx": "1ebcae139658262b05c4ff53d847fadbfcfd85bf924cbe807da4258c4a1af95c",
+    "src/pages/EmailAgent.tsx": "5419bb7909925e2db5830df71c9dff81ccc409768ec1f17124d7b4d63f229f17",
+    "src/pages/EmailAgentLogs.tsx": "61b3da4136e1d95054c4c4aa3552f0ae0c555e7267aafb8d99bd2dffd429888e",
+    "src/pages/EmailAgentMemory.tsx": "9fddbc86cf36964ef881b28f05f2114c942b1ab7150f8546ff1360c0d3d0bc86",
+    "src/pages/EmailAgentRules.tsx": "2097f53f1e69eef1e74a8f230c3060f6faba6fd533b515dc4cc93d2145c57765",
+    "src/pages/EmailAgentSettings.tsx": "8a2e2de424cee9010dd336ac6bd992c628570e23636e3fa5ef276a282b82a2fc",
+    "src/pages/EmailAgentTemplates.tsx": "47c9c4f174771347c11b618f3159cdb545177d39d5a839d74fad0ce054514616",
+    "src/pages/Financer.tsx": "ded6a73748e99905d7746dc10cbb38a2a27220f1b679aa5ad23ae2ad6f4da028",
+    "src/pages/Fiscal.tsx": "c0c00cd25758feb75b91c2c4adb5b311d15fe87a7742f54c72856cd27c9ea87f",
+    "src/pages/Forge.tsx": "4f10bd5ac82f12eadafc356d8fc2dd08dbe10bb00885815911b42797d497a67a",
+    "src/pages/ForgotPassword.tsx": "84b6e90e4330437d2f4ff32d2ac588e2811e521216fead1c0711ea309fa4d6a5",
+    "src/pages/GoRedirect.tsx": "ea1af23ce5e99568e5f71a98509f05b0daffe227e10a3f54b277a2b68a5ac5d6",
+    "src/pages/Gratitude.tsx": "396126ea29ee0f632e1270273904488c70d7393fbb23cf742a97e2da2325efb9",
+    "src/pages/Guide.tsx": "5b5da1d69464bf9c4e0101ad7d3fb4c5a1e769f4070d0cfafc783aa0451fd2c9",
+    "src/pages/Index.tsx": "d48b47ddcbc5d1bb201ea23a6a556a99eaa50f6cebb1c2c724facb8854705d6d",
+    "src/pages/InfluencerDashboard.tsx": "205a31974ede8967ff869be957123100347d252408a5c693b0f48ba79e3f8d3d",
+    "src/pages/InfluencerSignup.tsx": "8ced50dac542ec89cc5ddd9b67584a4d5620090c7ead420f6b60ea264953d403",
+    "src/pages/LegalAgent.tsx": "20340a8261242cf72c1b2c62cf7188006a2ec568c2f75ab825477b9133a434ed",
+    "src/pages/LegalAgentCases.tsx": "d65b3515582cf79336d2ab62168bd1c875e84d74558d2553e71e2178d80f5122",
+    "src/pages/LegalAgentChat.tsx": "90be82036f3b6e4f96ffdc0ba7c2c4d2fab5d3d44493f372b0f89721b56a64a2",
+    "src/pages/LegalAgentDocuments.tsx": "0b2f52ae618b96b6f543e2ee7084270453f555c071d4f5ddad69a8d6e1986b74",
+    "src/pages/LegalAgentImpayes.tsx": "9bab422cbe9f4546a3813a49d1613f78d403195e5c5dd655f78503352c165466",
+    "src/pages/LegalAgentVeille.tsx": "a8fa0b1a2b877d7db43c1f3b496e51981e71f252c7e06147608659da4c5d3ca7",
+    "src/pages/Login.tsx": "af45ef1201fb1e0c4f4f2e921b8450de290a610190d9022dad104f36ae530825",
+    "src/pages/MentionsLegales.tsx": "cbad0f562240d1f77d8b73d4517b13dc61cb93a617225855aca3ce5cf42c3b81",
+    "src/pages/MyAgents.tsx": "8550838eaabf181c0d5cd0fe922726424f826a9774488abdf1387e2fd2f9f69f",
+    "src/pages/MyConnections.tsx": "82d806021c5992af1fcb81d1db90d9bc1f5e2c472888ccb2427c9aab9683d54e",
+    "src/pages/MyEmployees.tsx": "12571783e595e56c00d9724bd7bb1d277a048ee3ff6d97115a803b030ec87e83",
+    "src/pages/NotFound.tsx": "e9447ea5891cffd15c5eddce9e7697aad431be840d290ef24d2ed1c01479b341",
+    "src/pages/NotificationSettings.tsx": "453177ad1a76f0898b347d8112379cb2dd9651ea3fa82d09b3648d13f25ae59d",
+    "src/pages/Notifications.tsx": "d1475c95fb8e1328ec7421545a1362464bfb04455cbe90340d9430fcbfce389b",
+    "src/pages/OAuthCallback.tsx": "c5a8f3142de7ac76aab134c86fcd7084722c3090b687f695bd21088da3bac5b8",
+    "src/pages/Parrainage.tsx": "f7cff1d175f0905756b45491effb8fcad628894a70d68f75c6b680305da003cb",
+    "src/pages/PartnerAgent.tsx": "7d4154391fa7a78acc7473b0acaaf18292d5efbd13d460e7c7288cc94a3d80de",
+    "src/pages/PartnerAgentEmails.tsx": "cd4991926ec14c62e559e15f2024e814f7b34e5391c1f16e9b436557e9270db9",
+    "src/pages/PartnerAgentPartners.tsx": "09f9f004ff5fd820863c112de7988773096676483888825ef0a90b1259dd85c7",
+    "src/pages/PartnerAgentProspects.tsx": "8e6e8e22cbef57b00a8ec2c4c9bcb256b399b9be5f59f1992aa52dc79edc4605",
+    "src/pages/PartnerAgentSettings.tsx": "a210f17aa37b220a28823f125666559f02d51b29eef7c77b4fb35fea6efbb768",
+    "src/pages/PolitiqueConfidentialite.tsx": "eb1728acab00032b167c4684150fdeb5dd0b13a29524bd8f1019b1019c43e98e",
+    "src/pages/PolitiqueCookies.tsx": "19928f375de1a5f6f6f361f357426621dd3bca1530b71acd34aec44a3ffebee9",
+    "src/pages/Pricing.tsx": "90de57de9aaad7afb70521c251dac79e8b7e35bc9af566ee0d5be1c33dba0600",
+    "src/pages/PuramaCompta.tsx": "cf7803e623f74453e633fe5a05a54f39ff0cd1e9cfd497b129d36d05b7ad7342",
+    "src/pages/Reglement.tsx": "23b153c2757f7b935ce10a7573138beccc432063838cb4b56e7ce05b6533beb7",
+    "src/pages/ResetPassword.tsx": "38a64b80882ed1398083b5270dab7acb6da1271dabf7840cf9961aa5985847bf",
+    "src/pages/Signup.tsx": "97e3b55285b280d17574ba6e54d863f66a28caf0c3ea7abf819d67745176529b",
+    "src/pages/SocialAgent.tsx": "917b68876dbc406ad738b87ce6b1a92360042deb8acdb2a8125c7c2e03478802",
+    "src/pages/SocialSettings.tsx": "347717c27c5d0e03d296fa461af9cf6d96a2a217827c2f96894cf99eff914b6b",
+    "src/pages/Tirage.tsx": "5cd86ee3f200150953c75f58b5b0dc09ebf2815c75f3798bd395ebc23e6f6680",
+    "src/pages/Wallet.tsx": "55312b13f66e990aff2ffec0be0c543cce39b7025bc7c2731ab51b0900852fd8",
+    "src/utils/generateContractPdf.ts": "9443eebcfafe2b4e3e375ee43d7a458d8764216d4e887153dcf6a9d0d0fdce69",
+    "src/vite-env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+    "supabase/functions/_shared/anthropic-stream.ts": "b80699166ca449e5b7a9126b6acbd48a016f759c1f91b44200e21e6437c78e39",
+    "supabase/functions/_shared/chat-input.ts": "fc658bf4880b7c8f1b8f6c14a327b085473f959399b5256cac2c0442b8ea8cbd",
+    "supabase/functions/_shared/docuseal.ts": "f4caa85c5166e7380e2cd103a774ad31b07f366f77db722ee92202014fa82c76",
+    "supabase/functions/_shared/gmail-token-crypto.ts": "9fdcdd328f5adf1bd48a92a2850d5cc4b2d156e97a57dc64a23f88f3ccacca91",
+    "supabase/functions/_shared/rate-limit.ts": "493a6740b995811637ca0a4e9bc497c575cafd91d0374bb34387c03c0118d757",
+    "supabase/functions/_shared/response.ts": "c9858646a6e6fc9ac037175229c49977ebc8a9c53aa89ba625c8bb734c71ff0a",
+    "supabase/functions/_shared/sse-data.ts": "18ac71668456447f4734343a621e27660b8cc45ba51a7652d1c01cff229d3ce7",
+    "supabase/functions/_shared/validation.test.ts": "e32c9b9222ce50bb5dd6ef324f05d16b9e7550bb6f4a332f00dfc1044a88d731",
+    "supabase/functions/_shared/validation.ts": "aa30d1dd41abf52f42ed00ed402706c1fe85341a9f25e9d9579351e4bf154380",
+    "supabase/functions/_shared/zernio.ts": "0ffacb9c6ace4abfabb96e05c8a8aaa21e37202872e16928ce98080f72796f52",
+    "supabase/functions/agent-chat/index.ts": "11a0ece77efe1b40b45b46456fb280b761ebda08bf67ecf7b872ed861a3698c8",
+    "supabase/functions/agent-proxy/index.ts": "63a0d98eed549f91408c48d993d2639938ec43a8f37a7596780828092aaa4009",
+    "supabase/functions/agent-push-send/index.ts": "861d873572cc3339e0ef771bf97196e630025b084cc9ebc5a8d35560350b4664",
+    "supabase/functions/ai-demo/index.ts": "506770c56c5cfbe3f6488760d4d992df39830817caf0ffc29ee74e617a26014b",
+    "supabase/functions/chat/index.ts": "bcfa6e1acbfa31b88a46b7eaff39f2b1936d26da31d025483597eeed7a85d3f7",
+    "supabase/functions/chatbot/index.ts": "3d1c4c9744bf488c8c5b289f4127c00d901b5a5f45186c10f397b331f3804ac9",
+    "supabase/functions/check-subscription/index.ts": "370f8b4acfe3ad812b0609e1b86f0ad3a71da634ea4025f646fda132b7291243",
+    "supabase/functions/compta-bridge-connect/index.ts": "9ebac826556d3ddc55427038d43d3b66a2736fb6ba34fe1f87675a88a0f13778",
+    "supabase/functions/compta-invoice-facturx/index.ts": "e79d5c3dc30d73c5a3c823d5e95a9db56c5493b89ed611343c68cc2433ae960b",
+    "supabase/functions/connect-account-session/index.ts": "596efe5dd35d79966de4be998bb20b29360b664be2a7308f21a15287be168e62",
+    "supabase/functions/contracts-cancel/index.ts": "e4ea2489f0abdc3ef8e649956780104d3e176ecd09e06caa96b738269c824f15",
+    "supabase/functions/contracts-create/index.ts": "a8cdea506465f5ec944d65566ac85688a10a437d2bea752c0f1e5514476ac809",
+    "supabase/functions/contracts-get/index.ts": "79edd6080f595508091a096518da5fddcd57aeaad876c0a554ac058e18e5b931",
+    "supabase/functions/contracts-list-user/index.ts": "591cf46135b9a942835112bdefd5ff4bbc7ff1c4112bf9bf423869e27af224a1",
+    "supabase/functions/contracts-ots-stamp/index.ts": "7fd710219e2f5cc559b91b856cfdb048754d07455f685618feedeb2f9ad21d85",
+    "supabase/functions/contracts-ots-verify/index.ts": "cf88c55dde54dcaca41df918cbf2f5e0f8d362abe7ebbcb25f3b6363b5765307",
+    "supabase/functions/contracts-webhook/index.ts": "33418d575482d4ddcbc258d5c2c29af4595ba792bc85db06db6ba2c179d02d0f",
+    "supabase/functions/create-checkout/index.ts": "96be88e66263953c972de39df8c653ac567577487dca456ad25b976127a47bfc",
+    "supabase/functions/creator-agent-chat/index.ts": "cabb0880caf398ccbab9035485d642adebf402379eaf2e03e8ab43e63b5e71d5",
+    "supabase/functions/creator-agent-generate/index.ts": "752083b9f0fe8c1935035aff712943da3774a8c42840babacd75cf5805a1eacd",
+    "supabase/functions/creator-agent-run/index.ts": "6eb9df41820ba02720cbd1d1a11b5cc6fb6500ec57b993e89c185f28938eb253",
+    "supabase/functions/customer-portal/index.ts": "ea700b6f07bc1068e42578aedb5c8d85ec8d0013115efd650af1d69befcce425",
+    "supabase/functions/daily-report/deno.json": "ef999af8c7367ccda52b963f3f74b34fc5a487756c8afd50d598d2ff56fafe7b",
+    "supabase/functions/daily-report/index.ts": "8489e87188a6ee3bd7c5bac87f96dc7df27d893550be8e3320133101e3e9e464",
+    "supabase/functions/email-agent-gmail-oauth/index.ts": "1415e283b645ad82dbb963cc4b01b58e8b11ad9b4ee78551cf14c2f67134884e",
+    "supabase/functions/email-agent-send-draft/index.ts": "1a15cb32dcc00906f1e859f9b6c2dacd99e14ab7e7c64e3eff369aa409bbf460",
+    "supabase/functions/escalate-chat/index.ts": "b66ff8659f216f1fa28652c8a2913cbbd5a2065f9fba3a056841eab3af13b058",
+    "supabase/functions/insee-verify-siret/index.ts": "2af24a63ce2dca6a2d33d72cc3ad76978db8e496216ec7f76f0787b9fe1607a9",
+    "supabase/functions/karta-resolve-pending-action/index.ts": "2007bd95b0005a2da97dffeb491813de60f824b222f1facd3626ca45f99e260b",
+    "supabase/functions/karta-trigger-custom/index.ts": "e8b230ef2abbb33f6327a8eb8fa0d98ffceaa2c1e83f2df5ee85d99653451067",
+    "supabase/functions/karta-trigger/index.ts": "82806c5723434d51dd34f718af0ea92f415da6dc5a88cf4c9bc684bd363d5042",
+    "supabase/functions/legal-build-case/index.ts": "3eb3f6c778cd80c1b4c9a22d24de08a5ee27ba7ab0e27df436a1c175e3635716",
+    "supabase/functions/legal-chat/index.ts": "48bef871f163f812495defb93fce25ecb670c4505110c6481713b1d3eaae3faa",
+    "supabase/functions/legal-generate-document/index.ts": "7b62877264b07015bfbe1e56256285e23175501015ce60ea34c66ca2424fda55",
+    "supabase/functions/legal-send-signature/index.ts": "93019f57b51dbd944e54dc94186a900c616285f552e004809dca8ca19b860b56",
+    "supabase/functions/oauth-google/index.ts": "4046764c7dfe055e0cd4003c0ab2c7c875e0611e42f870ca1e0663be9fe26807",
+    "supabase/functions/partner-find-prospects/index.ts": "8a2d1caa01dc9740071d7da0b9536c26e0b833d8dfa1dc8ce76cc181c00503ba",
+    "supabase/functions/partner-generate-contract/index.ts": "d9279ebb1c4f28eea2765623ad7f46505313cf17779c656e63dfd649af5b1ebe",
+    "supabase/functions/partner-send-outreach/index.ts": "f3591f2b4d22599102bf6f6e7c00888240e82b26e0598bfac8e9418185503ef3",
+    "supabase/functions/prime-trigger-palier/index.ts": "ff7bf123c9d42744b3011e3030c0012eb0daffd16553d4caaf46ad54ace504d8",
+    "supabase/functions/process-influencer-payments/index.ts": "7c6f912bbcf2673c714a02617867be849d6c8919b76495d33b635c5396937477",
+    "supabase/functions/process-tier-queue/index.ts": "2d864282246bf5d03492fe4e4b669ded3c168990de0e5ce4e14f2f58a804e8dc",
+    "supabase/functions/reglement-publish/index.ts": "67baa00f3d9930ce9e807b281c87eafb7ede53350ffdd5b78a56140805c032e5",
+    "supabase/functions/reglement-verify/index.ts": "8ebb23b11f47fbd18566a963a3f532a250543323b816aeae1affc1dacd55e45a",
+    "supabase/functions/send-notification/deno.json": "ef999af8c7367ccda52b963f3f74b34fc5a487756c8afd50d598d2ff56fafe7b",
+    "supabase/functions/send-notification/index.ts": "a4afd6b43651a665be581ab8de963d17eb808bef9c7ef73e7e8a8d0b93007f53",
+    "supabase/functions/social-accounts/index.ts": "c458f6f81811ea3843ef1ca6ac33bd33cf11871bf92afb52af39516d40a6ee0e",
+    "supabase/functions/social-autopilot-config/index.ts": "25e3fab6962ab2cb3bb3aba050c5077f2e5cb28cc1c81b8dad71646f90c5d27f",
+    "supabase/functions/social-callback/index.ts": "7d264de2241170d2cd43b416abc6fc5a769e714b0fccbc857c07762db349f44a",
+    "supabase/functions/social-connect/index.ts": "068c578e0409d4c4cad948eff6a3721d62bba89c6f454a392d41b610723e8e69",
+    "supabase/functions/social-publish/index.ts": "fad06584e0f378797465abf35dc45aaf1aa9f788c7257700327e8e34d325ea8a",
+    "supabase/functions/stripe-webhook/index.ts": "00793517832c51cccc5ee139d80387569ba93c565d66ef48524d7e208ac61f40",
+    "supabase/functions/voice-tts/index.ts": "8b38809beb6b64e299578e83ddefe8ec5785775ed3c54c881b3342f0d4304f0c",
+    "supabase/migrations/20260122152902_ec0f2a0a-f327-4f43-88ee-e867cf4d1995.sql": "dc271db08e6c6e18592f6905f252dbaf2e4a6c2bd75ba4f5b48fa857a4b6e23e",
+    "supabase/migrations/20260122153101_54511b2f-72e8-494c-8435-5b5229a8d914.sql": "27de95bf6f2f8b50c6419ca3d1ab1e31dc3562a4a1bf11befcf8766682d41b09",
+    "supabase/migrations/20260122153358_23d6d27f-f653-432f-a106-58b10044486f.sql": "be29832d1716d8843e61bb9f5e2aef508580f89da136c1db3e061e96a6f89dc3",
+    "supabase/migrations/20260122210648_fbb424f7-444b-4b20-a928-60400e193096.sql": "c31d5aed918470742deaf18b109225aafb53c29ee364876f2994136abfecf483",
+    "supabase/migrations/20260122220606_b16f6034-6be4-472b-bc83-57d8767a4721.sql": "29dd70fcb7a979305412d969394c65304976c561f7283ffc7bfd4eec462e146e",
+    "supabase/migrations/20260122220643_0fe9ed52-483d-4eb7-ac5c-50943c1fde77.sql": "d05f892f06185258629691e98f07b60471d0796542f50e1c9a92d3f3c6a2ff09",
+    "supabase/migrations/20260122233530_625a0c95-9239-45d7-ba24-689ce4f85c7e.sql": "93f8928fe229454fa019e2bfe31b2ffb93f423126fa4c4f3aa9ad9ec440bd48f",
+    "supabase/migrations/20260122233913_8ce4c3aa-f424-48df-8ab9-bf25a4fc9536.sql": "a00f189673388c2f69afb2cfb97f450bf1ee14df68f0cc9696f96ba6b8656ad7",
+    "supabase/migrations/20260122235510_766a8ba1-97fb-4567-8b4b-7acb02073bd7.sql": "f88cf7632e90ac3b06ff2d2776bb971b512ac071af701c9708a8f557ccb39d6b",
+    "supabase/migrations/20260123003417_746171fd-e667-4de4-8c28-fb7473a4a8a6.sql": "d4e86a1b933b43cf2bc7a59615ef2921258185900503d10e1311bfc4c2f13cdd",
+    "supabase/migrations/20260123003822_5bd584df-38a4-460c-8938-bce168706e63.sql": "03090509f0d27beca2019a588afe1e6236cd29797b8982c52cdd8b3497228046",
+    "supabase/migrations/20260123004051_a7f2b437-5889-40f9-abca-064a7768839e.sql": "5d7d1f531622d77cf8c0e60ce8d898b130573d0be8d36e172c2228b8047e517c",
+    "supabase/migrations/20260123005730_0e85ec11-21c9-4170-9768-b446b0c34c27.sql": "39bb9d41ccb6a41c178c8546610497debb2a00825dc4efbeee2ec4dd4abebbf9",
+    "supabase/migrations/20260126165116_ee9d00be-a8ea-4e88-9736-cbf3d08268de.sql": "3a90b05cb3e26e3bed4422e04d8935e138d9729bd84c02b687518a7fba47eb9f",
+    "supabase/migrations/20260126205451_a9f597b3-490f-4aff-a41e-fcb52b6f4464.sql": "a85e07d6a248c6e2d3f48b520ac940562f1d9faae26e266da84281b4f82b66f6",
+    "supabase/migrations/20260213170302_59ae11f5-7136-4c2b-b81f-57a9d85cfa26.sql": "aad1bec74214b5d2876b6e9e3ce2608a616898322e350566e07a006b815e3731",
+    "supabase/migrations/20260406120000_social_autopilot.sql": "66e17261816d10ec02e686e64500559379fe4ebf539fe14809fa04b45affe251",
+    "supabase/migrations/20260406210000_email_agent.sql": "7665c631663bb6d2c252543d16af553c31a88b1692963b12f22c9da15fb7c458",
+    "supabase/migrations/20260406220000_compta_agent.sql": "c3dbab05ef39ef74b8da3289e6fc62e316ed2de8c67d5b14617c0899d9ee91c6",
+    "supabase/migrations/20260406230000_partner_agent.sql": "0ed15f03d105f3aff2caa5fb5e9901194671f6b7119fa555ed0db5c8a57db18f",
+    "supabase/migrations/20260406240000_legal_agent.sql": "4d6b444ab6e7befccffcff735a904f06a806b78be4492c8adadc796788d05dc9",
+    "supabase/migrations/20260407000000_creator_agent.sql": "4829738c945e05e4f496a20de52edd119660db99df26f86d17211b0ef3fc3d2d",
+    "supabase/migrations/20260407100000_voice_chat.sql": "43a91af873750d0fcff6f5c4736ad3add399a6f3f89d02458e314b89fa51562d",
+    "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql": "586178ff7ceb246b06bfc6764ad1e43140e967f63548126616c6b51001a44ef0",
+    "supabase/migrations/20260422180100_v4_1_helpers_rpc.sql": "19e8ae80451944d1789d8ab6a4e4282604d66bd28dd8e5d437c74f1d51af5931",
+    "supabase/migrations/20260423110000_docuseal_contracts.sql": "8e3fa4d4306688d9b9315805f061d53458524a9e27e5d9754f5762ec73a4bbcf",
+    "supabase/migrations/20260423113000_contracts_crons.sql": "11a3dc5500c034af4218ebe142e59ec78cec8e85bedf115e06e226cea3868ab8",
+    "supabase/migrations/20260727000000_subscriptions_security_and_trial.sql": "d896da9d463026292c5df56877207caff60104f7ce8a4ccaeb27d38314e1bb0e",
+    "supabase/migrations/20260727010000_public_weekly_actions_count.sql": "af6be36561397194a08d384ccebd730bcfe76ed0ca0faf0f29d824bd43727c0d",
+    "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+    "supabase/migrations/20260727030000_ai_demo_daily_quota.sql": "87e1f40873d7edbaaaa2915b7c92c7bfaebba19087a24809f013bd105c231546",
+    "supabase/migrations/20260919160000_connect_accounts_server_writes.sql": "157a04a9f9ab6a2bfccdf84852c88b7ab68484da10fc3c0deafd693be1a97e9d",
+    "supabase/migrations/20261102001000_chat_history_owner_only.sql": "b2aec379647b5807f1695bf275c3e55c119e4858f768326e58237b13522c230e",
+    "supabase/migrations/20261108200100_wallet_rpc_service_only.sql": "f90acfd7832c8a5d362d2e8eca009212bc9897a3ade879c2ec1ebcb0d1e0cb0a",
+    "tailwind.config.ts": "a8dc39c918691eb6b4f03c99e01009630d17a8b27f9b2b962ca773342b96b38e",
+    "tests/accessibility.spec.ts": "7ad9c202bbe015c6f265a84a4ddb1a63236ff9a1ab9b67e733cfafa806295b65",
+    "tests/chat/auth.tsx": "34854ab6f040de592fe3d93533536f11a82f945c2c013f2d253cf2955ea26320",
+    "tests/chat/harness.tsx": "70ee54b1fd4bde60fc252f2eae9de4df0f6eaac0dfeb97d7911551737e0ce3e8",
+    "tests/chat/lifecycle.spec.ts": "d973ca76d6fc91037b55eddcd13d7bc69cdd37986180d885af42cf9a25caa341",
+    "tests/chat/playwright.config.ts": "1c27ade6f4bf72f6489020d46066bd678f3803f73d2c025322b9437e137a6b3f",
+    "tests/chat/transport.ts": "e4b06fca067b8d309c194ece97919a6e6b898458c06d40c9499776720d8262bf",
+    "tests/chat/vite.config.ts": "42648f1ddc09e4d7c0ffe17a7ddc7e1f2d0744bef0737674b399e23ee4f241e2",
+    "tests/console-errors.spec.ts": "0df9bd238282381ea14f3340a3f1449a12ae96261988d24e2a0ef8236b6e2bbe",
+    "tests/docuseal-e2e.spec.ts": "bf2b1a056c067a51416efdf6284786eb256a3667d9f612c790ca79996a7a5cef",
+    "tests/forms-validation.spec.ts": "0d57b7ad1ce24116a76810cd053da5a9fff1f5927abcb0f45727ddfb3807b2d2",
+    "tests/karta/creator-agent.spec.ts": "ee0b7309c28821f032affa7d5b2769bfa795b369f58fe00145ba1a525763d6dc",
+    "tests/karta/employees.spec.ts": "66156b6be8343b6e83e9085078ff0c7f3de9bf6770a25a384d29599303c735c5",
+    "tests/karta/helpers.ts": "6a4240d4414e81040ce2dd0cb2758f747215892af422aca9dd8351b511847c39",
+    "tests/karta/onboarding.spec.ts": "ac0aa9cf820a481c8feb05511fbde39c04c9e88351d8242a1f2c582dd6b5b187",
+    "tests/navigation.spec.ts": "291055d63e1489d9df7fe3671d3195af58b13eaa47aec34cdbffb3e8571e2468",
+    "tests/performance.spec.ts": "4b60a15c02556cde46e640b471ff011c224b2335526ee224533c06939c9f3532",
+    "tests/public-pages.spec.ts": "6bfd90e6831030a069fe39aa029922a19123f3e05a9ae4a4cecbd045db54d2dd",
+    "tests/pwa.spec.ts": "c583de5a8242f42e9391bad2cf15b2174beee993d155b15a63ada37b2e13f648",
+    "tests/quality/contracts.spec.ts": "55960ea4daa2d19e7fc39a36915aee94142c3aa8ab1009395e87a4457bfb2e98",
+    "tests/quality/database-pages.spec.ts": "d1bd11c3d1d425a150823e64074394f8968bae56bd35755e2e600ec69b30eb0f",
+    "tests/quality/karta-briefs.spec.ts": "401a5737ed62a68c7773c56e38f72ec021aaa542234cb85417e21cd11a138628",
+    "tests/quality/karta-ui.spec.ts": "7467e2f729263738c0795c55cf1b0d1dda026c089787542ce561bcf334255236",
+    "tests/quality/playwright.config.ts": "8c4eb71f06c9a15fccc8dede7ad0122a1fcf014c1ec43275f5a9e7d0e1317c31",
+    "tests/quality/vite.config.ts": "d95fe74268b235cd55a6a4a809ee07ae6d1be9fbf1e5e52e54e7b980bb523f35",
+    "tests/responsive.spec.ts": "6f42f1e5f6201cefec964ad2442da56ddf704eaaa5e8bb9bac2ee969abab3798",
+    "tsconfig.app.json": "3d44641a0151484d5adb5c764a4766a8e31076d2fd557dbe8c6e1c87863058f7",
+    "tsconfig.json": "3a667cdf83b8335029de6380d1dc190d298d976df6c16259d562786ef13e3f07",
+    "tsconfig.node.json": "a96b9ba5e40d95b92adf56431fdf9cbe25b5c2557621f0666615bff6889dfc50",
+    "vercel.json": "d33a7fa7e6ab8bf52c4f5ca569c7282ef26ef6c0b65857b0da97af03efa8a110",
+    "vite.config.ts": "50ee94ff7474e2ec5ba0fd738e0b3677df9db2c3091151868fab78c2109d30d5"
+  },
+  "completeCampaignSourceOverrides": {
+    "karta/migrations/021_brief_submission.sql": "8ff655d4c5c7f65c712daa10b77029dc5525a96d23d86650db2d193fe9bb7896",
+    "karta/test/briefSubmission.test.ts": "5fbb1629777cbce626d6816d45115a8aebe633a38fdc78b0039f24ba79007ad5",
+    "src/components/karta/BriefMissionDialog.tsx": "2d8f571418558036647df45e38d4c1ee952f5576029415ffabc436e554d510f4",
+    "tests/quality/karta-briefs.spec.ts": "0c14cc218a404808de1ea57ab6d66d483e983499d19f2e09ace3f7da885561e8"
+  },
+  "sourceSnapshotExplanation": "The complete source map is recovered from finalSourceSha256 by replacing the four completeCampaignSourceOverrides. Both campaigns checked 648 code/configuration files and observed no mutation during their gates. Documentation and evidence are outside this source snapshot.",
+  "verifiedScenarios": [
+    "Real local HTTP API -> admission RPC SQL -> delivery identity -> worker -> loop -> logger -> receipt close -> public status, with inert external effects.",
+    "Lost SQL or queue acknowledgement retains the admitted brief and its stable delivery identity.",
+    "A reused submission identity with different text or owner is rejected; another pending brief is not overwritten.",
+    "An exact requested brief cannot fall back to another ready or pending brief.",
+    "Simulation reads without consumption, and a later explicit live dispatch preserves its distinct delivery identity.",
+    "An uncertain external effect requires reconciliation and cannot automatically replay.",
+    "A resolved old approval cannot consume a fresh brief; automatic continuation of these brief missions remains suspended.",
+    "The pending slot is kept in the 20-item status list; an older omitted receipt remains accessible by its exact identifier.",
+    "Service-only RPC privileges, restrictive pending_brief RLS and owner/agent isolation are exercised in the local SQL harness.",
+    "The proxy tests validate strict action schemas, bounded body and response reads, owner derivation, projected DTOs, timeout and error handling."
+  ],
+  "reviewFindingsAndCorrections": [
+    {
+      "finding": "Unconfirmed accepted delivery could discard requestId.",
+      "correction": "Keep submissionId and requestId; recover into a text-free retry using the same identity.",
+      "verification": "Frontend typecheck/build/lint PASS; browser regression prepared but not executed."
+    },
+    {
+      "finding": "A mission outside the latest list could be lost after another reload.",
+      "correction": "Keep a separate account/agent-scoped tracking identity without storing text.",
+      "verification": "Frontend typecheck/build/lint PASS; two-reload browser regression prepared but not executed."
+    },
+    {
+      "finding": "Recovering the original submission could silently erase a rejected retyped draft and its conflict.",
+      "correction": "Preserve conflict and selectable text until explicit abandonment.",
+      "verification": "Frontend typecheck/build/lint PASS; browser regression prepared but not executed."
+    },
+    {
+      "finding": "Twenty updated receipts could hide an older pending slot.",
+      "correction": "Order pending first, then latest activity, preserving the limit of 20.",
+      "verification": "Final SQL file: 32/32 PASS, including this regression."
+    }
+  ],
+  "browser": {
+    "status": "BLOQUÉ",
+    "preparedScenarios": 28,
+    "preparedFiles": [
+      "tests/quality/karta-ui.spec.ts",
+      "tests/quality/karta-briefs.spec.ts"
+    ],
+    "discovery": "PASS",
+    "scenarioExecutionInThisCampaign": "NON TESTÉ",
+    "attempt": "Bounded Firefox smoke attempt did not reach a page; browser_smoke_timeout after 25 seconds. No application page or visual assertion was observed.",
+    "interpretation": "The tool/runtime blocker is not proof of an application defect or proof of browser correctness."
+  },
+  "edgeRuntime": {
+    "adaptedTypescriptCheck": "PASS, actual source with local package resolution and virtual Deno declarations; 0 diagnostics",
+    "nativeDenoAndDeployment": "NON TESTÉ"
+  },
+  "jev": {
+    "preserved": true,
+    "liveEnabled": false,
+    "productionQualified": false,
+    "note": "Existing schema, transport, tool and loop tests are included in the complete campaign; no paid provider call."
+  },
+  "knownLimitations": [
+    "No PostgreSQL native multi-connection contention qualification, real Redis/BullMQ cluster, Supabase/PostgREST authenticated round trip, deployed Edge runtime or external provider call.",
+    "No migration applied, no main branch merge and no production deployment by this work.",
+    "No full automatic continuation of brief missions after approval; the existing durable receipt remains for reconciliation.",
+    "Idempotency relies on retaining durable admission/execution records and preserving request identities; it is not semantic deduplication across different missions.",
+    "The proxy limiter is per-instance memory, not a distributed quota reservation or a commercial quota guarantee.",
+    "PR21 uses conflicting migration numbers and a separate continuation context; it is not imported without contract reconciliation.",
+    "Local gate durations are not product latency benchmarks. No universal capability, uniqueness, power, price or speed ranking is established."
+  ],
+  "validationIncident": {
+    "status": "Not counted as PASS",
+    "description": "An earlier grouped targeted run reached a 30-second PGlite beforeAll timeout and was interrupted. It reported 12 passed and 31 pending. The SQL file then passed alone; all PGlite files were subsequently run in fresh successive processes, without increasing the test timeout."
+  },
+  "ciAtPreparation": {
+    "status": "BLOQUÉ",
+    "commit": "d553ff2e784a82685d16f59727c55d5499d0db9e",
+    "run": "https://github.com/puramapro-oss/purama-ai/actions/runs/42743422707",
+    "observations": [
+      "Site and KARTA jobs reported failure with empty steps arrays.",
+      "KARTA log returned 404 BlobNotFound.",
+      "Check-runs had empty summaries and two annotations each.",
+      "The connector does not support the annotations endpoint; this is a capability limitation, not an automatic approval rejection."
+    ],
+    "cause": "Not established from accessible evidence.",
+    "newCommitCheck": "Must be recorded in PR metadata after publication; no remote success is inferred from local tests."
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "repositoryAlias": "iao-brief-ui-20261110",
+    "preEditReports": [
+      {
+        "arguments": [
+          "startApiServer",
+          "--file",
+          "karta/src/api/server.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/api/server.ts:startApiServer",
+            "name": "startApiServer",
+            "type": "Function",
+            "filePath": "karta/src/api/server.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [],
+          "affected_modules": [],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "File:karta/src/index.ts",
+                "name": "index.ts",
+                "filePath": "karta/src/index.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "handleRequest",
+          "--file",
+          "karta/src/api/server.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/api/server.ts:handleRequest",
+            "name": "handleRequest",
+            "type": "Function",
+            "filePath": "karta/src/api/server.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 0,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [],
+          "affected_modules": [
+            {
+              "name": "Api",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:karta/src/api/server.ts:startApiServer.server@61:2",
+                "name": "server",
+                "filePath": "karta/src/api/server.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "startRun",
+          "--file",
+          "karta/src/engine/logger.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/engine/logger.ts:startRun",
+            "name": "startRun",
+            "type": "Function",
+            "filePath": "karta/src/engine/logger.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 3,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 0,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1,
+            "2": 1,
+            "3": 1
+          },
+          "affected_processes": [],
+          "affected_modules": [
+            {
+              "name": "Engine",
+              "hits": 2,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:karta/src/engine/loop.ts:runAgentCycle",
+                "name": "runAgentCycle",
+                "filePath": "karta/src/engine/loop.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "2": [
+              {
+                "depth": 2,
+                "id": "Function:karta/src/queue/worker.ts:startAgentCycleWorker",
+                "name": "startAgentCycleWorker",
+                "filePath": "karta/src/queue/worker.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "3": [
+              {
+                "depth": 3,
+                "id": "File:karta/src/index.ts",
+                "name": "index.ts",
+                "filePath": "karta/src/index.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "runAgentCycle",
+          "--file",
+          "karta/src/engine/loop.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/engine/loop.ts:runAgentCycle",
+            "name": "runAgentCycle",
+            "type": "Function",
+            "filePath": "karta/src/engine/loop.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 2,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 0,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1,
+            "2": 1
+          },
+          "affected_processes": [],
+          "affected_modules": [
+            {
+              "name": "Engine",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:karta/src/queue/worker.ts:startAgentCycleWorker",
+                "name": "startAgentCycleWorker",
+                "filePath": "karta/src/queue/worker.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "2": [
+              {
+                "depth": 2,
+                "id": "File:karta/src/index.ts",
+                "name": "index.ts",
+                "filePath": "karta/src/index.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "jobIdFromDedupeKey",
+          "--file",
+          "karta/src/queue/queues.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/queue/queues.ts:jobIdFromDedupeKey",
+            "name": "jobIdFromDedupeKey",
+            "type": "Function",
+            "filePath": "karta/src/queue/queues.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 9,
+          "risk": "HIGH",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 1,
+            "modules_affected": 4
+          },
+          "byDepthCounts": {
+            "1": 1,
+            "2": 5,
+            "3": 3
+          },
+          "affected_processes": [
+            {
+              "name": "handleRequest",
+              "type": "Function",
+              "filePath": "karta/src/api/server.ts",
+              "affected_process_count": 7,
+              "total_hits": 7,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Scheduler",
+              "hits": 5,
+              "impact": "direct"
+            },
+            {
+              "name": "Api",
+              "hits": 2,
+              "impact": "indirect"
+            },
+            {
+              "name": "Engine",
+              "hits": 1,
+              "impact": "indirect"
+            },
+            {
+              "name": "Pages",
+              "hits": 1,
+              "impact": "indirect"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:karta/src/queue/queues.ts:enqueueAgentCycle",
+                "name": "enqueueAgentCycle",
+                "filePath": "karta/src/queue/queues.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "2": [
+              {
+                "depth": 2,
+                "id": "Function:karta/src/api/server.ts:handleRequest",
+                "name": "handleRequest",
+                "filePath": "karta/src/api/server.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_30_handlerequest",
+                    "label": "HandleRequest → RequestError",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_145_handlerequest",
+                    "label": "HandleRequest → Result",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_207_handlerequest",
+                    "label": "HandleRequest → Getter",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_213_handlerequest",
+                    "label": "HandleRequest → Getter",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_0_handlerequest",
+                    "label": "HandleRequest → AddToRemoveQueue",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_206_handlerequest",
+                    "label": "HandleRequest → Getter",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_444_handlerequest",
+                    "label": "HandleRequest → From",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              },
+              {
+                "depth": 2,
+                "id": "Function:karta/src/engine/approval.ts:resolvePendingAction",
+                "name": "resolvePendingAction",
+                "filePath": "karta/src/engine/approval.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 2,
+                "id": "Function:karta/src/scheduler/cron.ts:runScheduledCycle",
+                "name": "runScheduledCycle",
+                "filePath": "karta/src/scheduler/cron.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 2,
+                "id": "Function:karta/src/scheduler/customAgents.ts:refreshCustomAgentSchedules.task@38:4",
+                "name": "task",
+                "filePath": "karta/src/scheduler/customAgents.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 2,
+                "id": "Method:karta/src/tools/delegate.ts:delegateToAgentTool.execute#2",
+                "name": "execute",
+                "filePath": "karta/src/tools/delegate.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "3": [
+              {
+                "depth": 3,
+                "id": "Function:karta/src/api/server.ts:startApiServer.server@61:2",
+                "name": "server",
+                "filePath": "karta/src/api/server.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 3,
+                "id": "Function:karta/src/scheduler/cron.ts:startSchedulers",
+                "name": "startSchedulers",
+                "filePath": "karta/src/scheduler/cron.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 3,
+                "id": "Function:karta/src/scheduler/customAgents.ts:refreshCustomAgentSchedules",
+                "name": "refreshCustomAgentSchedules",
+                "filePath": "karta/src/scheduler/customAgents.ts",
+                "relationType": "USES",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "enqueueAgentCycle",
+          "--file",
+          "karta/src/queue/queues.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/queue/queues.ts:enqueueAgentCycle",
+            "name": "enqueueAgentCycle",
+            "type": "Function",
+            "filePath": "karta/src/queue/queues.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 10,
+          "risk": "HIGH",
+          "riskSharedAxes": "MEDIUM",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 5,
+            "processes_affected": 1,
+            "modules_affected": 4
+          },
+          "byDepthCounts": {
+            "1": 5,
+            "2": 3,
+            "3": 2
+          },
+          "affected_processes": [
+            {
+              "name": "handleRequest",
+              "type": "Function",
+              "filePath": "karta/src/api/server.ts",
+              "affected_process_count": 7,
+              "total_hits": 7,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Scheduler",
+              "hits": 4,
+              "impact": "direct"
+            },
+            {
+              "name": "Api",
+              "hits": 2,
+              "impact": "direct"
+            },
+            {
+              "name": "Pages",
+              "hits": 2,
+              "impact": "indirect"
+            },
+            {
+              "name": "Engine",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:karta/src/api/server.ts:handleRequest",
+                "name": "handleRequest",
+                "filePath": "karta/src/api/server.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_213_handlerequest",
+                    "label": "HandleRequest → Getter",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_0_handlerequest",
+                    "label": "HandleRequest → AddToRemoveQueue",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_206_handlerequest",
+                    "label": "HandleRequest → Getter",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_444_handlerequest",
+                    "label": "HandleRequest → From",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_30_handlerequest",
+                    "label": "HandleRequest → RequestError",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_145_handlerequest",
+                    "label": "HandleRequest → Result",
+                    "processType": "cross_community",
+                    "step": 1
+                  },
+                  {
+                    "id": "proc_207_handlerequest",
+                    "label": "HandleRequest → Getter",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              },
+              {
+                "depth": 1,
+                "id": "Function:karta/src/engine/approval.ts:resolvePendingAction",
+                "name": "resolvePendingAction",
+                "filePath": "karta/src/engine/approval.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 1,
+                "id": "Function:karta/src/scheduler/cron.ts:runScheduledCycle",
+                "name": "runScheduledCycle",
+                "filePath": "karta/src/scheduler/cron.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 1,
+                "id": "Function:karta/src/scheduler/customAgents.ts:refreshCustomAgentSchedules.task@38:4",
+                "name": "task",
+                "filePath": "karta/src/scheduler/customAgents.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 1,
+                "id": "Method:karta/src/tools/delegate.ts:delegateToAgentTool.execute#2",
+                "name": "execute",
+                "filePath": "karta/src/tools/delegate.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "2": [
+              {
+                "depth": 2,
+                "id": "Function:karta/src/api/server.ts:startApiServer.server@61:2",
+                "name": "server",
+                "filePath": "karta/src/api/server.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 2,
+                "id": "Function:karta/src/scheduler/cron.ts:startSchedulers",
+                "name": "startSchedulers",
+                "filePath": "karta/src/scheduler/cron.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 2,
+                "id": "Function:karta/src/scheduler/customAgents.ts:refreshCustomAgentSchedules",
+                "name": "refreshCustomAgentSchedules",
+                "filePath": "karta/src/scheduler/customAgents.ts",
+                "relationType": "USES",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ],
+            "3": [
+              {
+                "depth": 3,
+                "id": "File:karta/src/index.ts",
+                "name": "index.ts",
+                "filePath": "karta/src/index.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              },
+              {
+                "depth": 3,
+                "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler",
+                "name": "startCustomAgentScheduler",
+                "filePath": "karta/src/scheduler/customAgents.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "startAgentCycleWorker",
+          "--file",
+          "karta/src/queue/worker.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/queue/worker.ts:startAgentCycleWorker",
+            "name": "startAgentCycleWorker",
+            "type": "Function",
+            "filePath": "karta/src/queue/worker.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [],
+          "affected_modules": [],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "File:karta/src/index.ts",
+                "name": "index.ts",
+                "filePath": "karta/src/index.ts",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "HireFirstEmployeeModal",
+          "--file",
+          "src/components/onboarding/HireFirstEmployeeModal.tsx",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/components/onboarding/HireFirstEmployeeModal.tsx:HireFirstEmployeeModal",
+            "name": "HireFirstEmployeeModal",
+            "type": "Function",
+            "filePath": "src/components/onboarding/HireFirstEmployeeModal.tsx"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 1,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [
+            {
+              "name": "DashboardOverview",
+              "type": "Function",
+              "filePath": "src/pages/DashboardOverview.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Pages",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:src/pages/DashboardOverview.tsx:DashboardOverview",
+                "name": "DashboardOverview",
+                "filePath": "src/pages/DashboardOverview.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_299_dashboardoverview",
+                    "label": "DashboardOverview → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "useTriggerKartaAgent",
+          "--file",
+          "src/hooks/useKartaEmployees.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/hooks/useKartaEmployees.ts:useTriggerKartaAgent",
+            "name": "useTriggerKartaAgent",
+            "type": "Function",
+            "filePath": "src/hooks/useKartaEmployees.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 2,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 2,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1,
+            "2": 1
+          },
+          "affected_processes": [
+            {
+              "name": "HireFirstEmployeeModal",
+              "type": "Function",
+              "filePath": "src/components/onboarding/HireFirstEmployeeModal.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            },
+            {
+              "name": "DashboardOverview",
+              "type": "Function",
+              "filePath": "src/pages/DashboardOverview.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Pages",
+              "hits": 2,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:src/components/onboarding/HireFirstEmployeeModal.tsx:HireFirstEmployeeModal",
+                "name": "HireFirstEmployeeModal",
+                "filePath": "src/components/onboarding/HireFirstEmployeeModal.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_227_hirefirstemployeemod",
+                    "label": "HireFirstEmployeeModal → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ],
+            "2": [
+              {
+                "depth": 2,
+                "id": "Function:src/pages/DashboardOverview.tsx:DashboardOverview",
+                "name": "DashboardOverview",
+                "filePath": "src/pages/DashboardOverview.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_299_dashboardoverview",
+                    "label": "DashboardOverview → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "usePollLatestRun",
+          "--file",
+          "src/hooks/useKartaEmployees.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/hooks/useKartaEmployees.ts:usePollLatestRun",
+            "name": "usePollLatestRun",
+            "type": "Function",
+            "filePath": "src/hooks/useKartaEmployees.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 2,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 2,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1,
+            "2": 1
+          },
+          "affected_processes": [
+            {
+              "name": "HireFirstEmployeeModal",
+              "type": "Function",
+              "filePath": "src/components/onboarding/HireFirstEmployeeModal.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            },
+            {
+              "name": "DashboardOverview",
+              "type": "Function",
+              "filePath": "src/pages/DashboardOverview.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Pages",
+              "hits": 2,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:src/components/onboarding/HireFirstEmployeeModal.tsx:HireFirstEmployeeModal",
+                "name": "HireFirstEmployeeModal",
+                "filePath": "src/components/onboarding/HireFirstEmployeeModal.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_227_hirefirstemployeemod",
+                    "label": "HireFirstEmployeeModal → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ],
+            "2": [
+              {
+                "depth": 2,
+                "id": "Function:src/pages/DashboardOverview.tsx:DashboardOverview",
+                "name": "DashboardOverview",
+                "filePath": "src/pages/DashboardOverview.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_299_dashboardoverview",
+                    "label": "DashboardOverview → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "RunRow",
+          "--file",
+          "src/pages/MyEmployees.tsx",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/pages/MyEmployees.tsx:RunRow",
+            "name": "RunRow",
+            "type": "Function",
+            "filePath": "src/pages/MyEmployees.tsx"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 1,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [
+            {
+              "name": "MyEmployees",
+              "type": "Function",
+              "filePath": "src/pages/MyEmployees.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Hooks",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:src/pages/MyEmployees.tsx:MyEmployees",
+                "name": "MyEmployees",
+                "filePath": "src/pages/MyEmployees.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_355_myemployees",
+                    "label": "MyEmployees → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "MyEmployees",
+          "--file",
+          "src/pages/MyEmployees.tsx",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/pages/MyEmployees.tsx:MyEmployees",
+            "name": "MyEmployees",
+            "type": "Function",
+            "filePath": "src/pages/MyEmployees.tsx"
+          },
+          "direction": "upstream",
+          "impactedCount": 0,
+          "risk": "UNKNOWN",
+          "riskSharedAxes": "UNKNOWN",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+          "epistemic": "exact",
+          "summary": {
+            "direct": 0,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {},
+          "affected_processes": [],
+          "affected_modules": [],
+          "byDepth": {}
+        }
+      },
+      {
+        "arguments": [
+          "EmployeeCard",
+          "--file",
+          "src/pages/MyEmployees.tsx",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/pages/MyEmployees.tsx:EmployeeCard",
+            "name": "EmployeeCard",
+            "type": "Function",
+            "filePath": "src/pages/MyEmployees.tsx"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 1,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [
+            {
+              "name": "MyEmployees",
+              "type": "Function",
+              "filePath": "src/pages/MyEmployees.tsx",
+              "affected_process_count": 1,
+              "total_hits": 1,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Hooks",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ],
+          "byDepth": {
+            "1": [
+              {
+                "depth": 1,
+                "id": "Function:src/pages/MyEmployees.tsx:MyEmployees",
+                "name": "MyEmployees",
+                "filePath": "src/pages/MyEmployees.tsx",
+                "relationType": "CALLS",
+                "confidence": 0.85,
+                "processes": [
+                  {
+                    "id": "proc_355_myemployees",
+                    "label": "MyEmployees → UseAuth",
+                    "processType": "cross_community",
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "arguments": [
+          "claimPendingBrief",
+          "--file",
+          "karta/src/engine/brief.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/engine/brief.ts:claimPendingBrief",
+            "name": "claimPendingBrief",
+            "type": "Function",
+            "filePath": "karta/src/engine/brief.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 0,
+          "risk": "UNKNOWN",
+          "riskSharedAxes": "UNKNOWN",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+          "epistemic": "exact",
+          "summary": {
+            "direct": 0,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {},
+          "affected_processes": [],
+          "affected_modules": [],
+          "byDepth": {}
+        }
+      },
+      {
+        "arguments": [
+          "peekPendingBrief",
+          "--file",
+          "karta/src/engine/brief.ts",
+          "--direction",
+          "upstream",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--limit",
+          "12"
+        ],
+        "exitCode": 0,
+        "result": {
+          "target": {
+            "id": "Function:karta/src/engine/brief.ts:peekPendingBrief",
+            "name": "peekPendingBrief",
+            "type": "Function",
+            "filePath": "karta/src/engine/brief.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 0,
+          "risk": "UNKNOWN",
+          "riskSharedAxes": "UNKNOWN",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+          "epistemic": "exact",
+          "summary": {
+            "direct": 0,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {},
+          "affected_processes": [],
+          "affected_modules": [],
+          "byDepth": {}
+        }
+      }
+    ],
+    "additionalPreEditObservations": [
+      {
+        "symbol": "Database",
+        "risk": "MEDIUM",
+        "affectedSymbols": 61,
+        "note": "Typed brief_id addition; six direct importing files reviewed."
+      },
+      {
+        "symbol": "BriefMissionSession",
+        "risk": "LOW",
+        "affectedSymbols": 3,
+        "directCallers": 1,
+        "flows": 2
+      },
+      {
+        "symbol": "dispatch",
+        "file": "src/components/karta/BriefMissionDialog.tsx",
+        "risk": "HIGH",
+        "affectedSymbols": 5,
+        "directCallers": 3,
+        "flows": 2
+      },
+      {
+        "symbol": "karta_brief_status_rows",
+        "risk": "UNKNOWN",
+        "note": "SQL symbol not resolved by the graph; manual review and SQL regression used."
+      }
+    ],
+    "finalIndex": {
+      "exitCode": 0,
+      "durationSeconds": 14.7,
+      "nodes": 10049,
+      "edges": 25031,
+      "clusters": 352,
+      "flows": 619,
+      "fts": false,
+      "entryPointsDropped": 799,
+      "calleesDropped": 1675,
+      "walksCutByBudget": 40
+    },
+    "limitations": "FTS disabled; truncated process discovery and generic homonym links. Graph results do not demonstrate complete runtime reachability. HIGH warnings were communicated before edits.",
+    "precommitReports": [
+      {
+        "scope": "staged",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/root/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "staged",
+          "--repo",
+          "iao-brief-ui-20261110"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 1.163,
+        "stdout": "Changes: 37 files, 388 symbols\nAffected processes: 272\nRisk level: critical\n\nChanged symbols:\n  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md\n  Section Validation locale du 10 novembre 2026 — consignes durables et approbations → IAO-EVALUATION-PROTOCOL.md\n  Section Exécution durable, reprise vérifiée et états honnêtes — 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n  Section Demande durable et refus des conflits → IAO-EVALUATION-PROTOCOL.md\n  Section Approbation avant effet, puis reprise vérifiée → IAO-EVALUATION-PROTOCOL.md\n  Section Interface et contrat de données → IAO-EVALUATION-PROTOCOL.md\n  Section Rapprochement avec les travaux parallèles → IAO-EVALUATION-PROTOCOL.md\n  Section Vérification finale du lot → IAO-EVALUATION-PROTOCOL.md\n  Section Réception et mise en service restantes → IAO-EVALUATION-PROTOCOL.md\n  Function startApiServer → karta/src/api/server.ts\n  Function server → karta/src/api/server.ts\n  Function handleRequest → karta/src/api/server.ts\n  Property agentType → karta/src/api/server.ts\n  Section Missions saisies par l’utilisateur : admission, exécution et suivi → karta/src/engine/BRIEF-SUBMISSION.md\n  Section Parcours → karta/src/engine/BRIEF-SUBMISSION.md\n... and 373 more\n\nAffected execution flows:\n  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest\n  • Ecosystem → Bind (7 steps) — changed: bind, execute, from\n  • Ecosystem → Identifier (7 steps) — changed: execute, from, identifier\n  • Ecosystem → Query (5 steps) — changed: query\n  • RunChefWorkerCycle → Rpc (4 steps) — changed: rpc\n  • HandleRequest → RequestError (3 steps) — changed: handleRequest\n  • LoadApprovalContinuation → Encode (3 steps) — changed: encode, canonicalJson, loadApprovalContinuation\n  • PuramaCompta → Bind (7 steps) — changed: bind, execute, from\n  • PuramaCompta → Identifier (7 steps) — changed: execute, from, identifier\n  • PuramaCompta → Query (5 steps) — changed: query\n... and 262 more\n",
+        "stderr": "\n  GitNexus Detect Changes (1.6.12)\n"
+      },
+      {
+        "scope": "compare",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/root/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "compare",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--base-ref",
+          "origin/main"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 2.452,
+        "stdout": "LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.\n\nChanges: 300 files, 1971 symbols\nAffected processes: 491\nRisk level: critical\n\nChanged symbols:\n  Section ERRORS.md — Purama AI → ERRORS.md\n  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md\n  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md\n  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md\n  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md\n  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md\n  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md\n  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md\n  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md\n  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md\n  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md\n  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md\n  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md\n  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n... and 1956 more\n\nAffected execution flows:\n  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized\n  • Ecosystem → Bind (7 steps) — changed: bind, execute, from\n  • Ecosystem → Identifier (7 steps) — changed: execute, from, identifier\n  • Execute → JevValidationError (7 steps) — changed: JevValidationError, execute, validateJevRequest, exactKeys, keys, field, fail\n  • CreateChefMission → UniqueStrings (6 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings, createChefMission\n  • CreateChefMission → Getter (6 steps) — changed: getter, hashChefBrief, normalizeChefBrief, visit, validateChefBrief, createChefMission\n  • CreateChefMission → Getter (6 steps) — changed: hashChefBrief, normalizeChefBrief, visit, validateChefBrief, createChefMission, getter\n  • CreateChefMission → NonEmpty (5 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty, createChefMission\n  • CreateChefMission → Getter (5 steps) — changed: normalizeChefBrief, visit, validateChefBrief, createChefMission, getter\n  • Ecosystem → Query (5 steps) — changed: query\n... and 481 more\n",
+        "stderr": "\n  GitNexus Detect Changes (1.6.12)\n"
+      },
+      {
+        "scope": "staged",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/root/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "staged",
+          "--repo",
+          "iao-brief-ui-20261110"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 2.241,
+        "stdout": "Changes: 37 files, 581 symbols\nAffected processes: 272\nRisk level: critical\n\nChanged symbols:\n  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md\n  Section Validation locale du 10 novembre 2026 — consignes durables et approbations → IAO-EVALUATION-PROTOCOL.md\n  Section Exécution durable, reprise vérifiée et états honnêtes — 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n  Section Demande durable et refus des conflits → IAO-EVALUATION-PROTOCOL.md\n  Section Approbation avant effet, puis reprise vérifiée → IAO-EVALUATION-PROTOCOL.md\n  Section Interface et contrat de données → IAO-EVALUATION-PROTOCOL.md\n  Section Rapprochement avec les travaux parallèles → IAO-EVALUATION-PROTOCOL.md\n  Section Vérification finale du lot → IAO-EVALUATION-PROTOCOL.md\n  Section Réception et mise en service restantes → IAO-EVALUATION-PROTOCOL.md\n  Function startApiServer → karta/src/api/server.ts\n  Function server → karta/src/api/server.ts\n  Function handleRequest → karta/src/api/server.ts\n  Property agentType → karta/src/api/server.ts\n  Section Missions saisies par l’utilisateur : admission, exécution et suivi → karta/src/engine/BRIEF-SUBMISSION.md\n  Section Parcours → karta/src/engine/BRIEF-SUBMISSION.md\n... and 566 more\n\nAffected execution flows:\n  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest\n  • Ecosystem → Bind (7 steps) — changed: bind, execute, from\n  • Ecosystem → Identifier (7 steps) — changed: execute, from, identifier\n  • Ecosystem → Query (5 steps) — changed: query\n  • RunChefWorkerCycle → Rpc (4 steps) — changed: rpc\n  • HandleRequest → RequestError (3 steps) — changed: handleRequest\n  • LoadApprovalContinuation → Encode (3 steps) — changed: encode, canonicalJson, loadApprovalContinuation\n  • PuramaCompta → Bind (7 steps) — changed: bind, execute, from\n  • PuramaCompta → Identifier (7 steps) — changed: execute, from, identifier\n  • PuramaCompta → Query (5 steps) — changed: query\n... and 262 more\n",
+        "stderr": "\n  GitNexus Detect Changes (1.6.12)\n"
+      },
+      {
+        "scope": "compare",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "/root/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "compare",
+          "--repo",
+          "iao-brief-ui-20261110",
+          "--base-ref",
+          "origin/main"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 1.28,
+        "stdout": "LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.\n\nChanges: 300 files, 1726 symbols\nAffected processes: 491\nRisk level: critical\n\nChanged symbols:\n  Section ERRORS.md — Purama AI → ERRORS.md\n  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md\n  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md\n  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md\n  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md\n  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md\n  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md\n  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md\n  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md\n  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md\n  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md\n  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md\n  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md\n  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md\n... and 1711 more\n\nAffected execution flows:\n  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized\n  • Ecosystem → Bind (7 steps) — changed: bind, execute, from\n  • Ecosystem → Identifier (7 steps) — changed: execute, from, identifier\n  • Execute → JevValidationError (7 steps) — changed: execute, JevValidationError, validateJevRequest, exactKeys, keys, field, fail\n  • CreateChefMission → UniqueStrings (6 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings, createChefMission\n  • CreateChefMission → Getter (6 steps) — changed: getter, hashChefBrief, normalizeChefBrief, visit, validateChefBrief, createChefMission\n  • CreateChefMission → Getter (6 steps) — changed: hashChefBrief, normalizeChefBrief, visit, validateChefBrief, createChefMission, getter\n  • CreateChefMission → NonEmpty (5 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty, createChefMission\n  • CreateChefMission → Getter (5 steps) — changed: normalizeChefBrief, visit, validateChefBrief, createChefMission, getter\n  • Ecosystem → Query (5 steps) — changed: query\n... and 481 more\n",
+        "stderr": "\n  GitNexus Detect Changes (1.6.12)\n"
+      }
+    ],
+    "precommitInterpretation": "Both staged reviews reported 37 files and CRITICAL; the default-main comparison reported 300 files and CRITICAL, including inherited work. Symbol counts differ between reports after documentation/evidence edits; the raw counts are retained, not presented as an exhaustive or stable call graph. The exact staged path set equals the 37 reviewed expected paths, and the final 648 code/configuration hashes remain unchanged. CRITICAL results were communicated before publication; the PR remains draft.",
+    "postDocumentationIndexAttempt": {
+      "status": "Interrupted while waiting for an existing index lock",
+      "codeChanged": false,
+      "note": "The successful final-source index and subsequent detect-changes reports remain the evidence. No other lock or process was removed."
+    }
+  },
+  "technicalReferences": [
+    "https://docs.bullmq.io/guide/jobs/job-ids",
+    "https://docs.bullmq.io/patterns/idempotent-jobs",
+    "https://www.postgresql.org/docs/current/sql-select.html",
+    "https://docs.postgrest.org/en/v16/references/api/functions.html",
+    "https://docs.postgrest.org/en/stable/references/schema_cache.html"
+  ],
+  "independentEvidenceReview": {
+    "status": "PASS",
+    "scope": "Cross-check of full and final Vitest reports, counts, 68-file uniqueness, four changed files, reconstructed baseline snapshot, all 648 current hashes and honest browser/production wording. Read-only review; no source mutation or extra test run."
+  }
+}

@@ -1,0 +1,29 @@
+import { describe, expect, it, vi } from "vitest";
+
+const h = vi.hoisted(() => ({ value: "BRIEF_MUST_SURVIVE_INFERENCE_FAILURE" as string | null }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: { from: () => {
+  const q = { select: () => q, eq: () => q,
+    maybeSingle: async () => ({ data: { memory_value: h.value }, error: null }),
+    upsert: async (row: { memory_value: string | null }) => { h.value = row.memory_value; return { error: null }; },
+  };
+  return q;
+} } }));
+vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ decide: async () => { throw new Error("inference unavailable"); } }) }));
+vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => false }));
+vi.mock("../src/engine/autonomy.js", () => ({
+  loadAgentState: async () => ({ isEnabled: true, killSwitch: false, simulationMode: false, autonomyLevel: 3 }),
+  isRunnable: () => ({ ok: true }), requiresHumanApproval: () => false, recordRunOutcome: async () => undefined,
+}));
+vi.mock("../src/engine/logger.js", () => ({ startRun: async () => ({ runId: "brief-red-run", finish: async () => undefined }) }));
+vi.mock("../src/engine/approval.js", () => ({ createPendingAction: async () => "unused" }));
+vi.mock("../src/engine/notify.js", () => ({ notify: async () => undefined }));
+const { runAgentCycle } = await import("../src/engine/loop.js");
+const { newsletterGenieAgent } = await import("../src/agents/actionAgents.js");
+
+describe("pending brief retention after inference failure", () => {
+  it("preserves the user's instruction when the model fails before any action", async () => {
+    const result = await runAgentCycle("brief-user", newsletterGenieAgent, { type: "manual", source: "brief-retention-test" });
+    expect(result.status).toBe("error");
+    expect(h.value).toBe("BRIEF_MUST_SURVIVE_INFERENCE_FAILURE");
+  });
+});

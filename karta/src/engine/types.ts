@@ -76,6 +76,13 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
   description: string;
   sensitive: boolean;
   /**
+   * Server-owned trace policy, independent of the approval flag above. A tool
+   * marked metadata_only protects the whole cycle, including model summaries,
+   * errors, notifications and deferred calls. Execution/approval payloads stay
+   * intact. Omission retains the legacy trace behavior for existing tools.
+   */
+  tracePolicy?: "metadata_only";
+  /**
    * JSON Schema sent to the model and revalidated locally before execution.
    * Missing schemas are treated as "no parameters allowed" for legacy/test-only tools.
    */
@@ -102,6 +109,8 @@ export interface ToolExecutionContext {
 
 export interface ToolCallRecord {
   tool: string;
+  /** Durable server-owned marker; approval resolution must not weaken it. */
+  tracePolicy?: "metadata_only";
   paramsSummary: string;
   resultSummary: string;
   success: boolean;
@@ -120,10 +129,22 @@ export interface AgentDecision {
   mock: boolean;
 }
 
+/** Context prepared by KARTA, never copied from untrusted trigger fields. */
+export interface AgentContextInput {
+  pendingBrief?: string;
+}
+
 export interface AgentDefinition {
   type: AgentType;
+  /**
+   * Opt in to durable, exclusive acquisition of this pending memory key.
+   * KARTA prepares the brief before inference and durably marks possible
+   * effects. PostgreSQL reconciles it in the run's closing transaction.
+   * A cycle with no pending brief skips inference; simulation only previews.
+   */
+  pendingBriefKey?: string;
   /** Construit le contexte (mémoire + données réelles) à passer au cerveau Claude. */
-  buildContext: (userId: string, trigger: AgentTrigger) => Promise<Record<string, unknown>>;
+  buildContext: (userId: string, trigger: AgentTrigger, prepared?: AgentContextInput) => Promise<Record<string, unknown>>;
   /** Prompt système spécifique à l'agent. */
   systemPrompt: string;
   /** Outils disponibles pour cet agent. */
