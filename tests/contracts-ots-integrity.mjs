@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createHmac } from 'node:crypto';
+import { createHmac, webcrypto } from 'node:crypto';
 import { harness, request, noStampEffects, OpenTimestamps, contractId, serviceKey, webhookSecret, docusealToken, docusealOrigin, defaultPdfUrl, foreignPdfUrl } from './ots-edge-fixture.mjs';
 
 for (const authorization of [null, 'Bearer wrong', `Bearer ${webhookSecret}x`, `Bearer ${webhookSecret.slice(0, -1)}x`]) {
@@ -220,3 +220,53 @@ for (const failure of ['pdfThrows', 'stampThrows']) {
     assert.doesNotMatch(h.calls.errors.map(args => args.map(String).join(' ')).join(' '), /private-/);
   });
 }
+
+test('incoming cancellation during PDF retrieval prevents a stamp and persistence', async () => {
+  const controller = new AbortController(); const h = await harness();
+  const pending = h.handler(new Request(request(), { signal: controller.signal }));
+  for (let i = 0; i < 100 && h.calls.pdf.length === 0; i++) await Promise.resolve();
+  assert.equal(h.calls.pdf.length, 1, 'fixture must reach the PDF response before cancellation');
+  controller.abort();
+  assert.equal((await pending).status, 502);
+  assert.equal(h.calls.stamps.length + h.calls.updates.length + h.calls.events.length, 0);
+});
+
+test('incoming cancellation while hashing prevents the first external stamp effect', async () => {
+  const controller = new AbortController(); let hashes = 0;
+  const h = await harness({ crypto: { getRandomValues: array => webcrypto.getRandomValues(array), subtle: { digest: async (...args) => {
+    hashes++; const hash = await webcrypto.subtle.digest(...args); controller.abort(); return hash;
+  } } } });
+  const result = await h.handler(new Request(request(), { signal: controller.signal }));
+  assert.equal(hashes, 1);
+  assert.equal(h.calls.stamps.length + h.calls.updates.length + h.calls.events.length, 0);
+  assert.equal(result.status, 408);
+  assert.equal(h.contract.ots_proof, 'old-proof');
+});
+
+for (const phase of ['reauthorization', 'hashing']) {
+  test(`the signed-document window still applies after ${phase} and before the first stamp`, async () => {
+    let clock = 0, hashes = 0;
+    const h = await harness({ performance: { now: () => clock },
+      onAuthorization: count => { if (phase === 'reauthorization' && count === 2) clock = 15_001; },
+      crypto: { getRandomValues: array => webcrypto.getRandomValues(array), subtle: { digest: async (...args) => {
+        hashes++; const hash = await webcrypto.subtle.digest(...args);
+        if (phase === 'hashing') clock = 15_001;
+        return hash;
+      } } } });
+    const result = await h.handler(request());
+    assert.equal(h.calls.stamps.length + h.calls.updates.length + h.calls.events.length, 0);
+    assert.equal(result.status, 502);
+    assert.equal(hashes, phase === 'hashing' ? 1 : 0);
+    assert.equal(h.contract.ots_proof, 'old-proof');
+  });
+}
+
+test('stamping hashes the exact signed binary bytes, including non-UTF-8 octets', async () => {
+  const bytes = new Uint8Array([...new TextEncoder().encode('%PDF-'), 0, 128, 255, 10]);
+  const expected = Buffer.from(await webcrypto.subtle.digest('SHA-256', bytes)).toString('hex');
+  const h = await harness({ pdfBytes: bytes });
+  const result = await h.handler(request());
+  assert.equal(result.status, 200);
+  assert.equal((await result.json()).hash, expected);
+  assert.equal(Buffer.from(h.calls.stamps[0].fileDigest()).toString('hex'), expected);
+});
