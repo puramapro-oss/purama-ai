@@ -4,6 +4,7 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun, type RunLogHandle } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
+import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
@@ -35,7 +36,7 @@ export async function runAgentCycle(
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
@@ -43,10 +44,19 @@ export async function runAgentCycle(
   let effectStarted = false;
   let finalizedOutcome: AgentRunResult | undefined;
   let completionAttempted = false;
+  let briefArmed = false;
 
   try {
-    const context = await definition.buildContext(userId, trigger);
-    const decision = await getClaudeClient().decide({
+    const brief = definition.pendingBriefKey === undefined ? undefined : await (
+      mode === "simulation" ? peekPendingBrief : claimPendingBrief
+    )({ userId, agentType: definition.type, runId: run.runId, key: definition.pendingBriefKey });
+    const noBrief = definition.pendingBriefKey !== undefined && brief === null;
+    const context = noBrief ? {} : brief
+      ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
+      : await definition.buildContext(userId, trigger);
+    const decision = noBrief ? {
+      summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
+    } : await getClaudeClient().decide({
       systemPrompt: definition.systemPrompt, context, tools: definition.tools, agentType: definition.type,
     });
     // One private/unknown call protects the entire decision, including earlier
@@ -102,7 +112,7 @@ export async function runAgentCycle(
         }
       }
       // The fresh definition read must precede the final stop/state checks.
-      const latest = await loadAgentState(userId, definition.type);
+      let latest = await loadAgentState(userId, definition.type);
       if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || (mode === "live" && latest.simulationMode)) {
         cancelled = true;
         skipRemaining("Action annulée : arrêt ou autorisation modifiée");
@@ -124,12 +134,30 @@ export async function runAgentCycle(
         break;
       }
 
-      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (simulation) {
         toolsUsed.push(traceRecord(call, "Simulée : aucune action réelle", "simulated"));
         continue;
       }
+      if (brief && !briefArmed) {
+        // A lost acknowledgement may still have committed the barrier. Keep
+        // the claim out of automatic replay even if this await then fails.
+        effectStarted = true;
+        await armPendingBrief({ userId, agentType: definition.type, runId: run.runId });
+        briefArmed = true;
+        // Acquisition/arming adds a database round trip. Respect a stop or a
+        // lowered autonomy level that arrived while that write was pending.
+        latest = await loadAgentState(userId, definition.type);
+        if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || latest.simulationMode) {
+          cancelled = true;
+          skipRemaining("Action annulée : arrêt ou autorisation modifiée");
+          break;
+        }
+      }
+      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (needsApproval) {
+        // Pending approval creation is itself durable work: its response can
+        // be lost after commit, so it must not allow an automatic duplicate.
+        effectStarted = true;
         const pendingActionId = await createPendingAction({
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
         });
@@ -154,7 +182,10 @@ export async function runAgentCycle(
       }
     }
     const pending = toolsUsed.some(t => t.outcome === "pending");
-    const status: AgentRunResult["status"] = failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
+    // A live brief with no proposed action is still waiting for treatment.
+    // Do not label the user's mission successful merely because inference ran.
+    const unhandledBrief = Boolean(brief) && !simulation && decision.toolCalls.length === 0;
+    const status: AgentRunResult["status"] = noBrief || unhandledBrief ? "skipped" : failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
     const outcome: AgentRunResult = minimizeRunTrace({
       status, decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed), mock,
       retryable: false,
@@ -195,7 +226,12 @@ export async function runAgentCycle(
       retryable: !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
     if (!completionAttempted) {
-      await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
+      await run.finish(outcome).catch(() => {
+        // A durable brief can only become available in the confirmed closing
+        // transaction. Never assume that happened after a lost response.
+        if (definition.pendingBriefKey !== undefined) outcome.retryable = false;
+        console.error("[loop] journalisation indisponible ; reprise automatique interdite");
+      });
     } else {
       console.error("[loop] clôture non confirmée après réconciliation ; reprise automatique interdite");
     }

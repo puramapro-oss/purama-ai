@@ -129,10 +129,22 @@ export interface AgentDecision {
   mock: boolean;
 }
 
+/** Context prepared by KARTA, never copied from untrusted trigger fields. */
+export interface AgentContextInput {
+  pendingBrief?: string;
+}
+
 export interface AgentDefinition {
   type: AgentType;
+  /**
+   * Opt in to durable, exclusive acquisition of this pending memory key.
+   * KARTA prepares the brief before inference and durably marks possible
+   * effects. PostgreSQL reconciles it in the run's closing transaction.
+   * A cycle with no pending brief skips inference; simulation only previews.
+   */
+  pendingBriefKey?: string;
   /** Construit le contexte (mémoire + données réelles) à passer au cerveau Claude. */
-  buildContext: (userId: string, trigger: AgentTrigger) => Promise<Record<string, unknown>>;
+  buildContext: (userId: string, trigger: AgentTrigger, prepared?: AgentContextInput) => Promise<Record<string, unknown>>;
   /** Prompt système spécifique à l'agent. */
   systemPrompt: string;
   /** Outils disponibles pour cet agent. */

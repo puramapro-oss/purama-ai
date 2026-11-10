@@ -1,0 +1,732 @@
+{
+  "scope": "IAO KARTA: Jev reconciliation, durable private briefs and approval parent guard",
+  "createdAtUtc": "2026-11-10T02:18:51.982159+00:00",
+  "baseCommit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "baseBranch": "audit/aether-karta-consolidation-20261110",
+  "jevSourceCommit": "7658be81e937b33a0b5aa3dab6d7939857a8aca8",
+  "node": "24.22.1",
+  "dependencies": {
+    "vitest": "5.0.3",
+    "typescript": "5.9.3",
+    "@electric-sql/pglite": "0.5.8"
+  },
+  "localStatus": "PASS",
+  "validation": {
+    "commands": [
+      {
+        "stage": "tests",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--pool=threads",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "--reporter=json",
+          "--outputFile=/tmp/iao-brief-full-tests.json"
+        ],
+        "exitCode": 0,
+        "seconds": 132.616,
+        "log": "/tmp/iao-brief-tests.log"
+      },
+      {
+        "stage": "typecheck",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "-p",
+          "tsconfig.json"
+        ],
+        "exitCode": 0,
+        "seconds": 7.017,
+        "log": "/tmp/iao-brief-typecheck.log"
+      },
+      {
+        "stage": "build",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "tsconfig.build.json"
+        ],
+        "exitCode": 0,
+        "seconds": 4.278,
+        "log": "/tmp/iao-brief-build.log"
+      }
+    ],
+    "sourceUnchanged": true,
+    "sourceFiles": 151
+  },
+  "testSummary": {
+    "total": 864,
+    "passed": 864,
+    "failed": 0,
+    "skipped": 0,
+    "files": 61,
+    "rawReportSha256": "be6a4b72e373ded5af54e22eaae52aecfa82f29d138f99d1494a0b6f080aa1a6",
+    "perFile": [
+      {
+        "path": "karta/test/actionAgentsMock.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/agentsRegistry.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/apiSafety.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/approval.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/approvalParentGuard.test.ts",
+        "status": "passed",
+        "tests": 48,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/approvalTracePrivacy.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/autonomy.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/brief.test.ts",
+        "status": "passed",
+        "tests": 18,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/briefClaims.test.ts",
+        "status": "passed",
+        "tests": 57,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/briefDatabaseCycle.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chatEscalation.test.ts",
+        "status": "passed",
+        "tests": 49,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chatHistoryIsolation.test.ts",
+        "status": "passed",
+        "tests": 39,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chatRequestScope.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefBrief.test.ts",
+        "status": "passed",
+        "tests": 9,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefControlPlane.test.ts",
+        "status": "passed",
+        "tests": 8,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefCostGovernor.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefDriver.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefEvidenceAdapter.test.ts",
+        "status": "passed",
+        "tests": 20,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefEvidenceFreshness.test.ts",
+        "status": "passed",
+        "tests": 31,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefEvidenceGate.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefGitState.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefHardening.test.ts",
+        "status": "passed",
+        "tests": 15,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefIndependentReview.test.ts",
+        "status": "passed",
+        "tests": 2,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefMission.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefProtocol.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefRuntimePolicy.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefSupervisor.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefVerificationGitIntegration.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/chefVerifier.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/connectPermissions.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/customAgent.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/customAuthorization.test.ts",
+        "status": "passed",
+        "tests": 38,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/customRegistry.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/cycleAdmissionPrivacy.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/generative.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/gmail-token-crypto.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/gmailTool.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/jev-client.test.ts",
+        "status": "passed",
+        "tests": 19,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/jev-schema.test.ts",
+        "status": "passed",
+        "tests": 30,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/jev-tool.test.ts",
+        "status": "passed",
+        "tests": 34,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/logger.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/loggerCycleFinalization.test.ts",
+        "status": "passed",
+        "tests": 6,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/loggerFinalization.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/loop.test.ts",
+        "status": "passed",
+        "tests": 14,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/loopBriefLifecycle.test.ts",
+        "status": "passed",
+        "tests": 35,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/loopJevTracePrivacy.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/loopTracePrivacy.test.ts",
+        "status": "passed",
+        "tests": 22,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/mockClaude.test.ts",
+        "status": "passed",
+        "tests": 7,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/publicChatAdmission.test.ts",
+        "status": "passed",
+        "tests": 11,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/real-claude.test.ts",
+        "status": "passed",
+        "tests": 4,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/runtimeHardening.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/sseConsumer.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/sseFraming.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/streamCompletionAudit.test.ts",
+        "status": "passed",
+        "tests": 23,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/streaming.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/stripeIsolation.test.ts",
+        "status": "passed",
+        "tests": 3,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/supabaseTool.test.ts",
+        "status": "passed",
+        "tests": 5,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/toolResult.test.ts",
+        "status": "passed",
+        "tests": 16,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/walletRpcPermissions.test.ts",
+        "status": "passed",
+        "tests": 17,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/webAccessPlanTool.test.ts",
+        "status": "passed",
+        "tests": 10,
+        "failed": 0
+      },
+      {
+        "path": "karta/test/webCapabilityPlan.test.ts",
+        "status": "passed",
+        "tests": 47,
+        "failed": 0
+      }
+    ]
+  },
+  "regressions": {
+    "briefBeforeCorrection": {
+      "commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+      "exitCode": 1,
+      "source": "brief-regression-before-20261110.test.ts.txt",
+      "testReport": {
+        "numTotalTestSuites": 2,
+        "numPassedTestSuites": 0,
+        "numFailedTestSuites": 2,
+        "numPendingTestSuites": 0,
+        "numTotalTests": 1,
+        "numPassedTests": 0,
+        "numFailedTests": 1,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "snapshot": {
+          "added": 0,
+          "failure": false,
+          "filesAdded": 0,
+          "filesRemoved": 0,
+          "filesRemovedList": [],
+          "filesUnmatched": 0,
+          "filesUpdated": 0,
+          "matched": 0,
+          "total": 0,
+          "unchecked": 0,
+          "uncheckedKeysByFile": [],
+          "unmatched": 0,
+          "updated": 0,
+          "didUpdate": false
+        },
+        "startTime": 1794275460496,
+        "success": false,
+        "testResults": [
+          {
+            "assertionResults": [
+              {
+                "ancestorTitles": [
+                  "pending brief retention after inference failure"
+                ],
+                "fullName": "pending brief retention after inference failure preserves the user's instruction when the model fails before any action",
+                "status": "failed",
+                "title": "preserves the user's instruction when the model fails before any action",
+                "duration": 59.00924699999996,
+                "failureMessages": [
+                  "AssertionError: expected null to be 'BRIEF_MUST_SURVIVE_INFERENCE_FAILURE' // Object.is equality\n    at /workspace/scratch/12c6ceb4a52a/iao-brief-20261110/karta/test/loopBriefLifecycle.test.ts:27:21\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///workspace/scratch/12c6ceb4a52a/iao-brief-20261110/karta/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:20"
+                ],
+                "meta": {},
+                "tags": [],
+                "benchmarks": []
+              }
+            ],
+            "startTime": 1794275463419,
+            "endTime": 1794275463478.0093,
+            "status": "failed",
+            "message": "",
+            "name": "/workspace/scratch/12c6ceb4a52a/iao-brief-20261110/karta/test/loopBriefLifecycle.test.ts"
+          }
+        ]
+      },
+      "qualification": "Real runAgentCycle and newsletter definition; model and Supabase boundary doubled. The test store accepts the former clear and records loss before the model failure; this is not a production database reproduction."
+    },
+    "orphanApprovalBeforeCorrection": {
+      "migration": "006_execution_claims.sql",
+      "test": "baseline 006 without the parent guard admits an orphan approval before its unchanged finalizer discovers the absent journal entry",
+      "qualification": "Real SQL admits an executing row with an empty parent journal; real finalizer then refuses. Migration019 refuses before admission. No provider effect dispatched in this regression test."
+    }
+  },
+  "impactBeforeEdits": {
+    "runAgentCycle": {
+      "risk": "LOW",
+      "directCaller": "startAgentCycleWorker"
+    },
+    "consumeBrief": {
+      "risk": "LOW",
+      "directCaller": "briefDrivenContext"
+    },
+    "briefDrivenContext": {
+      "risk": "MEDIUM",
+      "directCallers": 6
+    },
+    "AgentDefinition": {
+      "risk": "CRITICAL",
+      "directReferences": 38,
+      "warningGivenBeforeEdit": true
+    },
+    "approvalSql": {
+      "risk": "UNKNOWN",
+      "reason": "SQL function not indexed; manual RPC and transaction review"
+    },
+    "resolvePendingAction": {
+      "risk": "LOW",
+      "impactedSymbols": 5
+    },
+    "indexLimitations": [
+      "Full-text search disabled",
+      "Some dynamic property/RPC edges absent; checked with source reads"
+    ]
+  },
+  "featuresVerified": [
+    "Jev source restored without overwriting consolidated custom authority",
+    "Six real agent definitions use prepared context",
+    "No inference with no brief",
+    "Read-only simulation",
+    "Durable same-run acquisition and bounded transport retries",
+    "Three live acquisitions maximum per brief",
+    "No automatic replay after a recorded effect barrier",
+    "Newer pending input preserved",
+    "Private payload excluded from run journal and anonymous/authenticated receipt access",
+    "Approval parent and exact journal link required before admission",
+    "Simulated/mock parent cannot approve effects",
+    "Second approval remains possible with finished_at null",
+    "Account deletion cascade with transferred receipts"
+  ],
+  "limitations": [
+    "No production migration or deployment",
+    "No native PostgreSQL multi-session or distributed BullMQ load test; PGlite uses one backend",
+    "No real paid provider calls or live Jev activation",
+    "No semantic qualification or global model ranking",
+    "No user-facing brief submission path added; existing frontend only triggers agent type",
+    "Partial/ambiguous work requires reconciliation; original multi-step mission is not automatically reconstructed after approval",
+    "No historical log cleanup or periodic receipt purge"
+  ],
+  "runtimeSourceSha256": {
+    "karta/migrations/001_karta_core.sql": "668f63ef71fbc80c20a555ffb938964deb8f40470c91ca4753314919bc287e2d",
+    "karta/migrations/002_karta_global_kill_switch.sql": "08bd79d96ac3bef4c6bbd9f5b21c71a7f510a1713619d4e84a513dc58502e6a3",
+    "karta/migrations/003_karta_crm_leads.sql": "f922240c9b4bc4dc629f24c6a6d755fcb2c3fee604e5d166967706266e9d3b1f",
+    "karta/migrations/004_karta_custom_agents.sql": "be5819c9903b039b23c939e6caaef6cbad685d2393481353dd65620b68714bad",
+    "karta/migrations/005_karta_pending_actions.sql": "ba70a7dc15e62b68a58350f35672153ff853877c9bc7577983e3a14a0829d88e",
+    "karta/migrations/006_execution_claims.sql": "f76d3a598e11f340dfd0cd8706d17a8f372a1222f8a0de26e6a1f5c66a904f60",
+    "karta/migrations/007_runtime_hardening.sql": "80796b60b50fb1df761d1ab56addf7cedd87eda4909c1e8116def32069c8067b",
+    "karta/migrations/008_chef_control_plane.sql": "d3887f7e8e703bdb9a8b6ae2e05b03166cd978a18b2d8cc6c411d96aeeb8d714",
+    "karta/migrations/009_chef_hardening.sql": "e39b89765dec5518dffac02f1df357887fd5695ae21dc1b11f381394b2a6909f",
+    "karta/migrations/010_chef_reliability.sql": "e0e01f5d751a2147dc9f4903981bd72f0201ef023684bed63b30d66fb2e9bc68",
+    "karta/migrations/011_chef_runtime_policy.sql": "68b7c97ed879a961f9e7fa07febf56d934da45f4f548cf24401fbc8990c6cfaa",
+    "karta/migrations/012_chef_mission_ingest.sql": "db81833188cadfd045d57b3ea6b8fe186b251741e188b7b6396661f79bc15256",
+    "karta/migrations/013_chef_independent_review.sql": "ee9ff63cb4aa7bc66e1f5c91fca75d1df19709ea72fa8429612dcb83ffecfe2a",
+    "karta/migrations/014_chef_file_ownership.sql": "9a2cffeb016a0b79e844b29e301596b4cbb093e095123e023d7c1d0c3df38372",
+    "karta/migrations/015_chef_mission_file_ownership.sql": "f52b7255d5eee592c3baa417c6108215d67cd451272b1f9d8397eb617a3d5a67",
+    "karta/migrations/016_chef_scoped_evidence.sql": "a0ec6a17093cd381354ac2f4d811444df1b684396e5b672e8cd2d7a9eaa6a56b",
+    "karta/migrations/017_chef_evidence_generation.sql": "1f649de88f787bd3d0a4e4b98eb799579426cfd372c416749ec24b0b7c6ddf76",
+    "karta/migrations/018_karta_brief_claims.sql": "1f0d9bdf3c6fe638be2d2e618526fb2f2793ee0d97f91d69a66caa9a0cb4746c",
+    "karta/migrations/019_karta_approval_parent_guard.sql": "43d09f703d604a5eac3b10b68fede7367b9abb6eb904a469feb1c53ba4300849",
+    "karta/package-lock.json": "f94deb0fab4f5239044b29265a1e62ad191dcd5ff56792e6afdbc95434e0c0f1",
+    "karta/package.json": "f02b5a660bd555c196731f53febed5b8424795a31acb34c92bb949795b3e8880",
+    "karta/scripts/agents-catalog.ts": "65d2194472ee9c6997e70ca3c2b3cb9a59e4e7d684a2c6ea0e696900f9133dca",
+    "karta/scripts/reseed-agents.ts": "7f56f9e4fe62590e2ae0c4d9a036eacecc57edd80fe0d6e676e4b6081dfb03c9",
+    "karta/src/agents/actionAgents.ts": "4d0ee153c0ac425b1b7093b56c1eacbe77db6d135872038de37d0406463ffef4",
+    "karta/src/agents/comptaAgent.ts": "b0e00b06a27dfeea00b46ec85a4543d2ceb5f5e4256cb1138c76935285998e0f",
+    "karta/src/agents/customAgent.ts": "dd25f0b96fb57d30997428fcf535f432edb321cde3014aca7697c90e85e86257",
+    "karta/src/agents/emailAgent.ts": "c5b60e32727860ad6248c89a317d3e17a8f047a5cabf01ecedb6570f56d7b523",
+    "karta/src/agents/index.ts": "be7dcae6d4f119d34b106c748e82fd1da8c6a5661ac8b1f20ae7d11b198e2b55",
+    "karta/src/agents/legalAgent.ts": "99491f3d8d9ddb0a6ed014a1951a4ae44e308406237a2b2f53327b6af5a30dc6",
+    "karta/src/agents/partnerAgent.ts": "5820bac889606d03dce42eedd6f22e3eda683367e1590ba12e585476a35735ea",
+    "karta/src/api/server.ts": "52e21277abe6ff6e78ea761dc399d3a24ea4eb91fc1ec43d2eeffa80871fc19e",
+    "karta/src/chef/brief.ts": "1fbd2ac58cd59b22bbfe2e9e3da935d97c5c7f1fd3dc3933fbf7916bd8ad62ef",
+    "karta/src/chef/control-plane.ts": "9ffedb7717eaa469bf8684792f8b1a8d26053cbad49045042486a5602e192023",
+    "karta/src/chef/cost-governor.ts": "b9c9025cd07b9a31759cac73fe397f8308d77880b5a4239ffa29fdfe404b669b",
+    "karta/src/chef/driver.ts": "ad618d192bfc2302722e9a7b57545f0a3cb9a75c35d679512ce521a3e85bbe98",
+    "karta/src/chef/git-state.ts": "a89ae88361c1cf806f10f1e093799fa193b3eae56d0893fb305198bebe904d6a",
+    "karta/src/chef/mission.ts": "dfecda4fae5a08f272daee083f6f2c0d6e9e1586a0c7e25758b22cad6ddea679",
+    "karta/src/chef/protocol.ts": "5d2811c03c95eb3b7ba439244b57119a7ce3c3ad38ec63ffdc1cfd8603c99778",
+    "karta/src/chef/supervisor.ts": "7909f0b9e8eef79151a27fc2c479d519232a58657023d24afc18a9e9e9566608",
+    "karta/src/chef/verifier.ts": "a90b28784948fad6f9253dbf104a82f3d05c14616fe60111048410906ad38914",
+    "karta/src/chef/worker-main.ts": "7fc0d91e9e2da0f671c5ae5d88f8f501eea3754fcaf5f1999cd9423ee9f8e42e",
+    "karta/src/claude/index.ts": "db10342ccc97b7bed4074c25b03482a27012a5bde9444f98cce5e40a37961a4a",
+    "karta/src/claude/mock.ts": "6aba9fc52dc5e7e793d8b7e80dadc1e840acffa8ab8fb284ab4bc179317e7d60",
+    "karta/src/claude/real.ts": "0ee103db35586f422f55654db14f3cb0189eaab55b7466178ca1650252e1ec31",
+    "karta/src/claude/types.ts": "773a5b65ee72187cb4279dc05d1140f1290aede2215cb8f62b9994bf9d14cb55",
+    "karta/src/config.ts": "a7fef77d187c2e3b9749f212bf0083bf5d9ddada9e11dadd200d3567fde06a36",
+    "karta/src/db/supabase.ts": "5968f8e84fff6aaf50994de380c50b1cc2451e69a9e16890f42239632e97ce95",
+    "karta/src/engine/approval.ts": "d718a6fab1976e802dba8e160d23354b61032c19e8243e104df1d4ee72c3527e",
+    "karta/src/engine/autonomy.ts": "20e3060d758ea43d87be6fa0f44aa4f394c37fa230d304f329e4383f0d25db00",
+    "karta/src/engine/brief.ts": "92209f4be7b36a4431bc77cfc1fbb1cd193d97c9414d7b4f52ac26677f982872",
+    "karta/src/engine/killswitch.ts": "a9f717d17b1c073dacefd8e02f0709fe5db490dc5430313b2b566ac227527936",
+    "karta/src/engine/logger.ts": "3c4f7cc6a3edb1f3af49c43be948be2fdc9fc1eede298a666a3763dc133adeeb",
+    "karta/src/engine/loop.ts": "9560904310c4be9dd03967807fc1bda0bbe5ca64a3f3a59582844981ce78d5a4",
+    "karta/src/engine/memory.ts": "48e4736ae0518b47d40daf6e42ddb8273b67a6f4383c181196da814929368350",
+    "karta/src/engine/notify.ts": "d5a68b63a3810f13e366843a196ba0970bb26ceef65db0962d4fafe8cc52ac43",
+    "karta/src/engine/resolveDefinition.ts": "73d23ad505d357fc24d43dd3d7b12cfefef3e8db8dfb9257fce34ed88bf23625",
+    "karta/src/engine/tool-input.ts": "9722d4b5a12b9f8485cbd46874e8c2fe58b2afa22a1e706481ba60b671fb813e",
+    "karta/src/engine/tool-result.ts": "ff6fd3ed9f9dcd82743812926e15ff9033f0c2da55319cb8b5d2f9d335236971",
+    "karta/src/engine/tool-trace.ts": "56f24f26e355fe0e72ff3bb15321ab5a578e46d2e2b5e7a51c69c7c2b309b51e",
+    "karta/src/engine/types.ts": "0d2ef2a8f73cbaf155ee4ab34b1c2daa788bc21891c6940f62c9e06b913d1ea0",
+    "karta/src/index.ts": "62b63f361daaf9d3d251a4387e05a5173f609ec342474e596e1b58dd94820c6f",
+    "karta/src/jev/client.ts": "610e09d5bab83f178d06e5ace703d1cd21d53db9617b214f5f589b76f0ded398",
+    "karta/src/jev/schema.ts": "cc16af5dfb2e9b31882fb8dfb32f12028b6ebddab5f63d1a92e39253ffd759a2",
+    "karta/src/lib/gmail-token-crypto.ts": "52291587e710b1a4b6c5b20077824149e31fe326fa31f0431059b020ffb12afa",
+    "karta/src/lib/web-capability-plan.ts": "722875f587132f1faa7d4795fdbcb3ce0774fec6eea537cb459620511adbbc95",
+    "karta/src/queue/queues.ts": "8e1b53634ee6e806524f6900e3cfe1b76cd637c255cb304461bc038ff1134ace",
+    "karta/src/queue/redis.ts": "4b58799cd5079cfdc496abeb5548f05beeb34c9a297100b327ad68ec2af4780a",
+    "karta/src/queue/worker.ts": "f5155d0a32b246f61f3ad8ff3b5ec2d2ed047c8f89365d5466ce665bdc1f01c5",
+    "karta/src/scheduler/cron.ts": "1ffd9be9ce8a69beeef51ee21b08a33ea9208f4194f550d6c1c6bef98a7ffb08",
+    "karta/src/scheduler/customAgents.ts": "75f1c0687970856fad484a3920b1fd841368b3fb6ccde0f2f75924a90502694e",
+    "karta/src/scheduler/dailyReport.ts": "54fedeb047492bc20c3144c936f552f050d4fe959a11c56c6ddbf53c34b8cd07",
+    "karta/src/tools/apollo.ts": "0c2f819f26bad8f46d4f1eaf2008ae80a1a054e52d7dbdd88ab85048e45288d5",
+    "karta/src/tools/calendar.ts": "170b41dde0aa60f677a8efa200841cc5ccdac4972f633460b72b67488d6e51fe",
+    "karta/src/tools/customRegistry.ts": "023c0406cdeeaa7ae177ff233b2e8c6d702f469c38dd96937c5c2234fce9abcd",
+    "karta/src/tools/delegate.ts": "dd45dab667d3a10652fb816e568ab5fbec4ff0eb6d6e89acec362aaa23e9e5c9",
+    "karta/src/tools/docuseal.ts": "8d508db21243a6e91806a63a247a469066b0fbd278bb9cb4df0955c6f516bb0f",
+    "karta/src/tools/gmail.ts": "3236cd68828ce338b794d51a93954eb1e19c1c7cd83268aaf3d00b728ace0ce0",
+    "karta/src/tools/jev.ts": "60732a5bdef3a3e574a42d55ec18842e076555f728fd0e09ff2cd6defba7333c",
+    "karta/src/tools/notification-tool.ts": "5f9732df79ecef460ae373793e9a80a0d9743e5f3cb536d0494da7ab512d76f6",
+    "karta/src/tools/pdf.ts": "ca5df19e72da834b525d507c505d704de083a802f83bd1b7336c2139fa725aac",
+    "karta/src/tools/registry.ts": "b793e2c65142520e3f7ec513aac8d422a37ad390dd8ad1279623deebe1ea64de",
+    "karta/src/tools/stripe-tool.ts": "bdc53091082f78d07476e97dd379c92bd054ee1ffd1f3b27f80d4fcad2f511c6",
+    "karta/src/tools/supabase-tool.ts": "67fe1b6776a4586f5f37b338ecad6d812f3db4cc76c9b1a62fec5fa3680c7e87",
+    "karta/src/tools/web-access-plan.ts": "5d1234bb2a9ae07b6dac82c4459306fb3c97055cdf2366e5c9d0e4d3567611b8",
+    "karta/src/tools/websearch.ts": "ecf5da2076d6c1a2a9952be6435b33885afade2103e86b5b332995480bff39af",
+    "karta/src/tools/zernio.ts": "067ec44effc0f1f21607810678dde616c82e38593ef4f326305e471feb4a1cf1",
+    "karta/test/actionAgentsMock.test.ts": "22fecb6272ee3947c7ac571b38ac84ab26ddbc5830bab4868466ca3414cc5196",
+    "karta/test/agentsRegistry.test.ts": "5e3a2fde6e1d5ef2e48d67ef6e38098813b513412a3cc48cd9c84153e5d79ea1",
+    "karta/test/apiSafety.test.ts": "6bef39fe6de4fbdf7a14085750d9ecbb899dbffab4c1a10c1ec145abeec8cd23",
+    "karta/test/approval.test.ts": "43145dc07b75e472063d45d4d7dde974dd1b174d28160d8c878e965b3bdabef7",
+    "karta/test/approvalParentGuard.test.ts": "d0acc521b4f15a9e24cc1709c3e691318266cf8767aed6797c51e9304b70e023",
+    "karta/test/approvalTracePrivacy.test.ts": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+    "karta/test/autonomy.test.ts": "e5a0d76e960f52f93bb6451278db36363b7873223e3033d05280e0715b47e7cc",
+    "karta/test/brief.test.ts": "eee065e24c15e9388f16c88fb3bfb430718f371b981ecb072708171307c4d2c0",
+    "karta/test/briefClaims.test.ts": "d742b738205df7f5cb5c37dd7396057347bb4a918441c44390ac6b32b02243a0",
+    "karta/test/briefDatabaseCycle.test.ts": "6517018c9fe9df617614ae921674b91cf81378382bd0795e5b936747e1456c8f",
+    "karta/test/chatEscalation.test.ts": "2fb4a5fbfecd6339c7c516ba22bec45fd649d92e89df63d8b4b660859b473604",
+    "karta/test/chatHistoryIsolation.test.ts": "29857b729f348fed1813d5096615afe23399faa60b36840e997cdd22fb5c898a",
+    "karta/test/chatRequestScope.test.ts": "2fdfb39e67512bec0c387128199c3262a0984e9f0b93523ccf16bb3a5b58f9fe",
+    "karta/test/chefBrief.test.ts": "0462b9ac48bc37b4085d08fd522886ba1dd11191051ddb750ae85b24bfef9c6c",
+    "karta/test/chefControlPlane.test.ts": "356784bc5d0979ba005cfab13d8173fab5dd8af1eb65ce1b4f0ac22657f9117e",
+    "karta/test/chefCostGovernor.test.ts": "b9261deed222048a4dba4220efc3862da69bb98f74263bf603a0e00ae9b9c84e",
+    "karta/test/chefDriver.test.ts": "09abc5ecb842d7076fa56d7117f77cdd4d9ae3a598e9671c60828b60e5c49f9b",
+    "karta/test/chefEvidenceAdapter.test.ts": "b5b5ef523055ac241d0f9316c79688fc54f213c7c684668550d2f9e01a092575",
+    "karta/test/chefEvidenceFreshness.test.ts": "24303f929012f579d64a41f5a5210661793ca0ced441156d631cb1151f81c4f0",
+    "karta/test/chefEvidenceGate.test.ts": "56d4333c826bdb5c5547e09afac6f1c01482da4227205e8ad8e2ebc77c6f5969",
+    "karta/test/chefGitState.test.ts": "d89c2358428f6ade2ab4dc20c0236fa8391784957f2365f1f6a4028b8a303151",
+    "karta/test/chefHardening.test.ts": "8fafdb65c561e25b006e258da18f967ed0fc61e6738b341e8c72ed5c003cd611",
+    "karta/test/chefIndependentReview.test.ts": "8b1dd80e1eed6222c4fe9a965452d6b7dbf5d35e22ce89d400fdc01ff28bfa80",
+    "karta/test/chefMission.test.ts": "7616c50e217205cb96f189c14b7a7492025188fae26268ae1894c93fbe2e23e0",
+    "karta/test/chefProtocol.test.ts": "89d86199cc36be049024b8783296960642755ccfb4965d9f9afbc16322b1c429",
+    "karta/test/chefRuntimePolicy.test.ts": "011daed32c143e4a010b9593aba68df72b87e1d613e609e430df86d29506f0c1",
+    "karta/test/chefSupervisor.test.ts": "e8e62965124b871e9992168c777f4d8509da0eaf43dab50b5abf3bbc01b05559",
+    "karta/test/chefVerificationGitIntegration.test.ts": "02de26fbe4b05c890b0e9df9d9165fc5fd2ea49c3e203eed455adbccc65545b3",
+    "karta/test/chefVerifier.test.ts": "394f1fd8bc2aec8ed1af9bcde430579f587cfeb8e725c368840bdcdb86a84349",
+    "karta/test/connectPermissions.test.ts": "d6be74d4c51bc24e2e5e3488f70e45c6d8b7e8208facc07d51e33c241cb9dfa5",
+    "karta/test/customAgent.test.ts": "325ef10bb81b6cd7343142b35c95ac3713e222f3f2341c45013a2db6f110a82a",
+    "karta/test/customAuthorization.test.ts": "04d00896ec5a6d55f04f6c870fe839648ddc224fd74d09a311a36d4cde90ed80",
+    "karta/test/customRegistry.test.ts": "38c4e83de5e13c26084c7902437168c9e18db6159a64458c07403bf3e819d471",
+    "karta/test/cycleAdmissionPrivacy.test.ts": "792b61bd91b627d40421e274e77306c4cd12941b44541f563fc03ef68097ae3b",
+    "karta/test/generative.test.ts": "42708d2bc3282915cc9fc4ca47d4048794096fdf3101d058f6020c6a7501f8df",
+    "karta/test/gmail-token-crypto.test.ts": "19a7f099188a7ff6d50014cda11b03594d5af3e7bd0abe6269dffd05797a3879",
+    "karta/test/gmailTool.test.ts": "5508b81a89b41e6227833cc07c7c62aa6f8f88ae1339c7d2baebd1b42478e095",
+    "karta/test/jev-client.test.ts": "218351e71434a73fd32650f6e5454b4d3a00322024b3159ed8615ab15b735da7",
+    "karta/test/jev-schema.test.ts": "5bb7c143167e98325d057da54b14744bb4564aa92204c298e0a35d04124e6c0d",
+    "karta/test/jev-tool.test.ts": "d87eb889a55fdf5201d5b189a2b0c526afd25db9de2047794e1d28dc6dc29523",
+    "karta/test/logger.test.ts": "1c4ae55915f47f4b3d204096d78054ecfcfe0f3fbec3540b93bb5d8af5b81eb5",
+    "karta/test/loggerCycleFinalization.test.ts": "51e63589bb9048c9485d1370c9335dd6ae7b5d160f303a07e9effd325da29e38",
+    "karta/test/loggerFinalization.test.ts": "755c0eb820a9d77df129c415198daf006f560004afead9b35ba19c326ceaed49",
+    "karta/test/loop.test.ts": "c9b0efbb568c8436a3a29672b350ead93d9616de419757caf3af7526007ce345",
+    "karta/test/loopBriefLifecycle.test.ts": "7c03662c23c50bd7f0ddc7839197615c566fac7c342e72a07913eb0dce070b30",
+    "karta/test/loopJevTracePrivacy.test.ts": "0b762fc968e1c504c477ebb9af2957fb1ce455cb3bb4f280b38b78bd071fb4e3",
+    "karta/test/loopTracePrivacy.test.ts": "9481cfcac31b745bd1239c178ece5951d0f9435629ee3519a57ee1e3dc4f79a2",
+    "karta/test/mockClaude.test.ts": "ec536b52e6bae91d0a188f41495121e4617209ee3b5ae2d780a6844d3e64c1e2",
+    "karta/test/publicChatAdmission.test.ts": "1720db0ba1b8f29d47809f5dcf890a5679f098bc5c14b3b76edb73d99f01d363",
+    "karta/test/real-claude.test.ts": "584ae5f16dcbe3ed9177c87ea334dc3a7ca39f85c8fcf68277518c554cac2258",
+    "karta/test/runtimeHardening.test.ts": "58f2fb69546b029c2369bf2a1ad74f911069071f3b7a0364b1d8b608ca0ba3a8",
+    "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac",
+    "karta/test/sseConsumer.test.ts": "018c567bd4f18ab21c79aa4f66630052d95bbb1d3b1ca4253528a95cb5611767",
+    "karta/test/sseFraming.test.ts": "fe0214fb8e94e26a093fbe970159116e8895ec0d6e1bdac6e2e824f70e878b85",
+    "karta/test/streamCompletionAudit.test.ts": "3a626a97559422a4de9653bf0633eac43af8cc4755550bed86a1f0671cd273ed",
+    "karta/test/streaming.test.ts": "1655830589904825e9c7df888e285b987146adeb23ffa73fe9016e6930373334",
+    "karta/test/stripeIsolation.test.ts": "b0be0a80abaed4fad07522e315a2e208c5f3098fddcdeeccbdc0c0183ae22572",
+    "karta/test/supabaseTool.test.ts": "d78e86585dbe85e586ff497c2f961b0fe809aa1f6a84ef682478e5d0bac1529f",
+    "karta/test/toolResult.test.ts": "d832688736f0722ae3e86ab589efa9cd397719b817dcae6d8c6f792fd7d74a7d",
+    "karta/test/walletRpcPermissions.test.ts": "92c34e7b923511fb338cfbca5ea738ff0c455e9cc98f4819a400eb868cbb818b",
+    "karta/test/webAccessPlanTool.test.ts": "0c52026db7dcab8aa46cd6edab25593068e5f9c20109f76643819b61a3b04158",
+    "karta/test/webCapabilityPlan.test.ts": "08d6c015447d91146bcaee77e055b9e29ab6e1dd0d720c25ebf4f6586e1a6a98",
+    "karta/tsconfig.build.json": "727041493e4c3be0c2f0bfd744a808f68378f4df1b319b52e641b02626c923c9",
+    "karta/tsconfig.json": "dd13f7cc0c1c6c52c7f0a43c6b77068952e50be38d4d83178f18381cb98badf5",
+    "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158"
+  },
+  "preCommitChecks": {
+    "staged": {
+      "files": 27,
+      "symbols": 448,
+      "affectedProcesses": 11,
+      "risk": "HIGH",
+      "outputSha256": "872bbc9a200b26afbf94fc636faa98f22bf0cdf4aee178490477d0932d88ebd2"
+    },
+    "main": {
+      "files": 274,
+      "symbols": 1787,
+      "affectedProcesses": 370,
+      "risk": "CRITICAL",
+      "outputSha256": "f51ce3ec9e6e739b6593a90d5776636b43f55a6716faa3ebaa976a51a3e5ab60"
+    },
+    "defaultMainVerified": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+    "scopeQualification": "Main comparison includes inherited branch changes. Graph coverage is incomplete; dynamic RPC/property edges require source review. The staged scope is the 27 expected files.",
+    "riskWarningGiven": true
+  }
+}

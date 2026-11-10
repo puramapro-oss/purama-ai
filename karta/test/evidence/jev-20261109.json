@@ -1,0 +1,299 @@
+{
+  "date_utc": "2026-11-09",
+  "base_commit": "87ea6753b91794b1aadab0d36418b82f2b83f3b0",
+  "scope": "Optional version-pinned Jev schema, transport and native KARTA factory; no automatic activation.",
+  "runtime_node": "v24.22.1",
+  "suite": {
+    "command": "npm test -- --reporter=default --reporter=json --outputFile=/tmp/iao-jev-suite-20261109.json",
+    "cwd": "karta",
+    "success": true,
+    "total_tests": 588,
+    "passed": 588,
+    "failed": 0,
+    "files": 49,
+    "start_utc": "2026-11-09T19:49:55.154000+00:00"
+  },
+  "jev_cases": {
+    "karta/test/jev-schema.test.ts": 30,
+    "karta/test/jev-client.test.ts": 19,
+    "karta/test/jev-tool.test.ts": 34
+  },
+  "file_results": [
+    {
+      "path": "karta/test/actionAgentsMock.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/agentsRegistry.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/apiSafety.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "karta/test/approval.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "path": "karta/test/autonomy.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "karta/test/chatEscalation.test.ts",
+      "status": "passed",
+      "tests": 49
+    },
+    {
+      "path": "karta/test/chatHistoryIsolation.test.ts",
+      "status": "passed",
+      "tests": 39
+    },
+    {
+      "path": "karta/test/chatRequestScope.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "path": "karta/test/chefBrief.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "karta/test/chefControlPlane.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "karta/test/chefCostGovernor.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "karta/test/chefDriver.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "karta/test/chefEvidenceAdapter.test.ts",
+      "status": "passed",
+      "tests": 20
+    },
+    {
+      "path": "karta/test/chefEvidenceFreshness.test.ts",
+      "status": "passed",
+      "tests": 31
+    },
+    {
+      "path": "karta/test/chefEvidenceGate.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "path": "karta/test/chefGitState.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/chefHardening.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "path": "karta/test/chefIndependentReview.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "path": "karta/test/chefMission.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "karta/test/chefProtocol.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "karta/test/chefRuntimePolicy.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/chefSupervisor.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "karta/test/chefVerificationGitIntegration.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "karta/test/chefVerifier.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "karta/test/connectPermissions.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/customAgent.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/customRegistry.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/generative.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/gmail-token-crypto.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "karta/test/gmailTool.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "karta/test/jev-client.test.ts",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "path": "karta/test/jev-schema.test.ts",
+      "status": "passed",
+      "tests": 30
+    },
+    {
+      "path": "karta/test/jev-tool.test.ts",
+      "status": "passed",
+      "tests": 34
+    },
+    {
+      "path": "karta/test/logger.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/loop.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "path": "karta/test/mockClaude.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "karta/test/publicChatAdmission.test.ts",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "path": "karta/test/real-claude.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "karta/test/runtimeHardening.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "karta/test/sseConsumer.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "karta/test/sseFraming.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "karta/test/streamCompletionAudit.test.ts",
+      "status": "passed",
+      "tests": 23
+    },
+    {
+      "path": "karta/test/streaming.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "karta/test/stripeIsolation.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "karta/test/supabaseTool.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "karta/test/toolResult.test.ts",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "path": "karta/test/walletRpcPermissions.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "path": "karta/test/webAccessPlanTool.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "karta/test/webCapabilityPlan.test.ts",
+      "status": "passed",
+      "tests": 47
+    }
+  ],
+  "typecheck": {
+    "command": "npm run typecheck",
+    "cwd": "karta",
+    "exit_code": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "cwd": "karta",
+    "exit_code": 0
+  },
+  "source_sha256": {
+    "karta/src/jev/schema.ts": "cc16af5dfb2e9b31882fb8dfb32f12028b6ebddab5f63d1a92e39253ffd759a2",
+    "karta/src/jev/client.ts": "610e09d5bab83f178d06e5ace703d1cd21d53db9617b214f5f589b76f0ded398",
+    "karta/src/tools/jev.ts": "ad0ffad5de31b39a0619d93d3f4b5fb6c3c277c0fa8cbc54b6ae83987ac64b7e",
+    "karta/src/tools/registry.ts": "b793e2c65142520e3f7ec513aac8d422a37ad390dd8ad1279623deebe1ea64de",
+    "karta/test/jev-schema.test.ts": "5bb7c143167e98325d057da54b14744bb4564aa92204c298e0a35d04124e6c0d",
+    "karta/test/jev-client.test.ts": "218351e71434a73fd32650f6e5454b4d3a00322024b3159ed8615ab15b735da7",
+    "karta/test/jev-tool.test.ts": "d87eb889a55fdf5201d5b189a2b0c526afd25db9de2047794e1d28dc6dc29523"
+  },
+  "review": "Independent review found a revocation/expiry window during settlement. Corrected and covered; no further blocking finding within this diff.",
+  "network": "Unit setup blocks unexpected fetch; Jev fetch is simulated with real Response/ReadableStream objects. No live inference.",
+  "activation": "Disabled by default. No agent allowlist changed. Authenticated host admission, atomic reservation, qualification, revocation and reconciliation callbacks still require runtime wiring.",
+  "limitations": [
+    "No live model accuracy, calibration, latency, cost or energy benchmark",
+    "No production deployment or universal superiority claim",
+    "No canonical quota/permission service implemented by this connector",
+    "Host must settle late admission leases and ambiguous costs",
+    "Existing raw tool-parameter logs require a data handling policy before activation",
+    "Frontend/global application gates are outside this KARTA change",
+    "Extended 200000-case campaign not rerun"
+  ]
+}
