@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -7,6 +7,7 @@ import {
   FlaskConical,
 } from 'lucide-react';
 import { useVoice } from '@/hooks/useVoice';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import { MicButton } from '@/components/voice/MicButton';
 import { SpeakButton } from '@/components/voice/SpeakButton';
 import { VoiceMode } from '@/components/voice/VoiceMode';
@@ -44,23 +45,36 @@ export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const nav = useNavigate();
-  const [agent, setAgent] = useState<CreatorAgent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const userId = user?.id ?? null;
+  const resourceKey = JSON.stringify([userId, id]);
+  const captureResource = useRequestScope(resourceKey);
+  const [agent, setAgent] = useScopedState<CreatorAgent | null>(resourceKey, null);
+  const [loading, setLoading] = useScopedState(resourceKey, true);
+  const [loadError, setLoadError] = useScopedState<string | null>(resourceKey, null);
+  const [loadAttempt, setLoadAttempt] = useScopedState(resourceKey, 0);
   const voice = useVoice();
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
 
   // Chat
-  const [sessionId, setSessionId] = useState<string>('');
-  const [messages, setMessages] = useState<CreatorAgentChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  const [sending, setSending] = useState(false);
+  const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
+  const conversationKey = JSON.stringify([userId, id, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
+  const [messages, setMessages] = useScopedState<CreatorAgentChatMessage[]>(conversationKey, []);
+  const [chatInput, setChatInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const messageRevision = useRef(0);
+  const { cancelRecording, stopSpeaking } = voice;
+  useLayoutEffect(() => () => {
+    cancelRecording();
+    stopSpeaking();
+  }, [conversationKey, cancelRecording, stopSpeaking]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Runs
-  const [runs, setRuns] = useState<CreatorAgentRun[]>([]);
+  const [runs, setRuns] = useScopedState<CreatorAgentRun[]>(resourceKey, []);
 
   // Settings
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useScopedState(resourceKey, false);
 
   // Exécution réelle (KARTA)
   const { data: kartaState, isError: kartaStateError } = useCustomAgentKartaState(id);
@@ -70,39 +84,62 @@ export default function CreatorAgentDetail() {
   const { data: pendingActions = [] } = useCustomAgentPendingActions(id);
 
   useEffect(() => {
-    if (!id) return;
+    if (!userId || !id) return;
+    const isCurrent = captureResource();
+    let active = true;
+    setLoading(true);
+    setLoadError(null);
     (async () => {
       try {
         const a = await getAgent(id);
+        if (!active || !isCurrent()) return;
         setAgent(a);
-        setSessionId(newSessionId());
+        if (a) setSessionId(newSessionId());
+        else setLoadError('Cet agent est introuvable ou inaccessible.');
       } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+        if (active && isCurrent()) {
+          setLoadError('Impossible de charger cet agent. Réessaie dans quelques instants.');
+          toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+        }
       } finally {
-        setLoading(false);
+        if (active && isCurrent()) setLoading(false);
       }
     })();
-  }, [id]);
+    return () => { active = false; };
+  }, [userId, id, loadAttempt, captureResource, setAgent, setSessionId, setLoading, setLoadError]);
 
   useEffect(() => {
-    if (!id || !sessionId) return;
-    listChatMessages(id, sessionId).then(setMessages).catch(() => {});
-  }, [id, sessionId]);
+    if (!userId || !id || !sessionId) return;
+    const isCurrent = captureConversation();
+    const revision = messageRevision.current;
+    let active = true;
+    listChatMessages(id, sessionId).then(value => {
+      if (active && isCurrent() && revision === messageRevision.current) setMessages(value);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [userId, id, sessionId, captureConversation, setMessages]);
 
   useEffect(() => {
-    if (!user || !id) return;
-    listRuns(user.id, { agent_id: id, limit: 50 }).then(setRuns).catch(() => {});
-  }, [user?.id, id]);
+    if (!userId || !id) return;
+    const isCurrent = captureResource();
+    let active = true;
+    listRuns(userId, { agent_id: id, limit: 50 }).then(value => {
+      if (active && isCurrent()) setRuns(value);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [userId, id, captureResource, setRuns]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   const submitMessage = async (msg: string, signal?: AbortSignal): Promise<string | null> => {
-    if (!msg.trim() || !id || !user || signal?.aborted) return null;
+    const isCurrent = captureConversation();
+    if (!msg.trim() || !id || !userId || !sessionId || !isCurrent() || signal?.aborted) return null;
+    messageRevision.current += 1;
     const tempUser: CreatorAgentChatMessage = {
       id: 'tmp-' + Date.now(),
-      user_id: user.id,
+      user_id: userId,
       agent_id: id,
       session_id: sessionId,
       role: 'user',
@@ -113,11 +150,11 @@ export default function CreatorAgentDetail() {
     setMessages(prev => [...prev, tempUser]);
     try {
       const res = await chatWithAgent(id, sessionId, msg, signal);
-      if (signal?.aborted) return null;
+      if (!isCurrent() || signal?.aborted) return null;
       setMessages(prev => [...prev, { ...tempUser, id: 'tmp-asst-' + Date.now(), role: 'assistant', content: res.reply, tokens: res.tokens }]);
       return res.reply;
     } catch (e) {
-      if (signal?.aborted) return null;
+      if (!isCurrent() || signal?.aborted) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
@@ -126,31 +163,37 @@ export default function CreatorAgentDetail() {
 
   const handleSendChat = async () => {
     if (!chatInput.trim() || sending) return;
+    const isCurrent = captureConversation();
+    if (!isCurrent()) return;
     const msg = chatInput.trim();
     setChatInput('');
     setSending(true);
-    try { await submitMessage(msg); } finally { setSending(false); }
+    try { await submitMessage(msg); } finally { if (isCurrent()) setSending(false); }
   };
 
   const handleSave = async () => {
-    if (!agent) return;
+    const isCurrent = captureResource();
+    if (!agent || !userId || agent.user_id !== userId || !isCurrent()) return;
     setSaving(true);
     try {
       const updated = await updateAgent(agent.id, agent);
+      if (!isCurrent()) return;
       setAgent(updated);
       toast.success('✅ Enregistré');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setSaving(false); }
+      if (isCurrent()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally { if (isCurrent()) setSaving(false); }
   };
 
   const handleTriggerNow = async () => {
-    if (!id) return;
+    const isCurrent = captureResource();
+    if (!id || !userId || !agent || agent.user_id !== userId || !isCurrent()) return;
     try {
       await triggerKarta.mutateAsync(id);
+      if (!isCurrent()) return;
       toast.success('Agent déclenché', { description: 'Regarde son activité ci-dessous dans quelques secondes.' });
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (isCurrent()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
     }
   };
 
@@ -164,19 +207,33 @@ export default function CreatorAgentDetail() {
   };
 
   const handleDelete = async () => {
-    if (!agent) return;
+    const isCurrent = captureResource();
+    if (!agent || !userId || agent.user_id !== userId || !isCurrent()) return;
     if (!confirm(`Supprimer "${agent.name}" et tout son historique ?`)) return;
     try {
       await deleteAgent(agent.id);
+      if (!isCurrent()) return;
       toast.success('Supprimé');
       nav('/dashboard/creator-agent');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (isCurrent()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
     }
   };
 
-  if (loading || !agent) {
+  if (loading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-purple" /></div>;
+  }
+
+  if (!agent) {
+    return (
+      <Card className="p-6 space-y-4">
+        <p role="alert" className="text-muted-foreground">{loadError ?? 'Cet agent est introuvable ou inaccessible.'}</p>
+        <div className="flex gap-3">
+          <Button onClick={() => setLoadAttempt(attempt => attempt + 1)}>Réessayer</Button>
+          <Button variant="outline" asChild><Link to="/dashboard/creator-agent">Retour aux agents</Link></Button>
+        </div>
+      </Card>
+    );
   }
 
   // Templates aren't owned by the user → read-only mode

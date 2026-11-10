@@ -46,14 +46,26 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.9.6
       - run: npm ci --no-audit
       - run: npm run test:dependencies
       - run: npm run test:contracts-auth
       - run: npm run test:contracts-security
+      - run: npm run test:contracts-ots
+      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts
+      - run: npm run test:commerce:plans
+      - run: npm run test:commerce:handlers
+      - run: npm run test:founder
+      - run: npm run test:founder:types
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium
       - run: npm run test:quality
+      - run: npm run test:founder:browser
+      - run: npm run test:account-isolation
+      - run: npm run test:contracts-ots:browser
       - run: npm run test:wellbeing
       - run: npm run test:voice-consent
       - run: npm run test:ui-state

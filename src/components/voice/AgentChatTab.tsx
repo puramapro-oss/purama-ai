@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Loader2, Bot, Sparkles, Plus, Headphones } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useVoice } from '@/hooks/useVoice';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import { MicButton } from './MicButton';
 import { SpeakButton } from './SpeakButton';
 import { VoiceMode } from './VoiceMode';
@@ -30,20 +31,36 @@ interface Props {
 export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [] }: Props) {
   const { user } = useAuth();
   const voice = useVoice();
-  const [sessionId, setSessionId] = useState<string>('');
-  const [messages, setMessages] = useState<AgentChatMessage[]>([]);
-  const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+  const userId = user?.id ?? null;
+  const resourceKey = JSON.stringify([userId, agentType]);
+  const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
+  const conversationKey = JSON.stringify([userId, agentType, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [messages, setMessages] = useScopedState<AgentChatMessage[]>(conversationKey, []);
+  const [input, setInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
+  const messageRevision = useRef(0);
+  const { cancelRecording, stopSpeaking } = voice;
+  useLayoutEffect(() => () => {
+    cancelRecording();
+    stopSpeaking();
+  }, [conversationKey, cancelRecording, stopSpeaking]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const voiceReplyRef = useRef<string | null>(null);
 
-  useEffect(() => { setSessionId(newAgentSessionId()); }, []);
+  useEffect(() => { setSessionId(newAgentSessionId()); }, [resourceKey, setSessionId]);
 
   useEffect(() => {
-    if (!user || !sessionId) return;
-    listAgentChatMessages(user.id, agentType, sessionId).then(setMessages).catch(() => {});
-  }, [user?.id, agentType, sessionId]);
+    if (!userId || !sessionId) return;
+    const isCurrent = captureConversation();
+    const revision = messageRevision.current;
+    let active = true;
+    listAgentChatMessages(userId, agentType, sessionId).then(value => {
+      if (active && isCurrent() && revision === messageRevision.current) setMessages(value);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [userId, agentType, sessionId, captureConversation, setMessages]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -60,10 +77,12 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   }, [messages.length]);
 
   const submit = async (text: string, signal?: AbortSignal): Promise<string | null> => {
-    if (!text.trim() || !user || signal?.aborted) return null;
+    const isCurrent = captureConversation();
+    if (!text.trim() || !userId || !sessionId || !isCurrent() || signal?.aborted) return null;
+    messageRevision.current += 1;
     const tempUser: AgentChatMessage = {
       id: 'tmp-' + Date.now(),
-      user_id: user.id,
+      user_id: userId,
       agent_type: agentType,
       session_id: sessionId,
       role: 'user',
@@ -74,9 +93,9 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     setMessages(prev => [...prev, tempUser]);
     try {
       const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), signal);
-      if (signal?.aborted) return null;
+      if (!isCurrent() || signal?.aborted) return null;
       const replyId = 'tmp-asst-' + Date.now();
-      // VoiceMode owns playback for its turn, even if the modal closes before effects run.
+      // VoiceMode owns playback for its turn, including a closing modal.
       if (signal) voiceReplyRef.current = replyId;
       setMessages(prev => [...prev, {
         ...tempUser,
@@ -87,7 +106,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
       }]);
       return res.reply;
     } catch (e) {
-      if (signal?.aborted) return null;
+      if (!isCurrent() || signal?.aborted) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
@@ -96,15 +115,18 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
 
   const handleSend = async () => {
     if (!input.trim() || sending) return;
+    const isCurrent = captureConversation();
+    if (!isCurrent()) return;
     const text = input.trim();
     setInput('');
     setSending(true);
-    try { await submit(text); } finally { setSending(false); }
+    try { await submit(text); } finally { if (isCurrent()) setSending(false); }
   };
 
   const newSession = () => {
+    cancelRecording();
+    stopSpeaking();
     setSessionId(newAgentSessionId());
-    setMessages([]);
   };
 
   return (

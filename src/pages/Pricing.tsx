@@ -35,8 +35,9 @@ export default function Pricing() {
   const nav = useNavigate();
   const { planId: currentPlanId, hasUsedTrial, refresh: refreshSubscription } = useSubscription();
 
-  const success = searchParams.get('success');
-  const canceled = searchParams.get('canceled');
+  // A redirect query is user-controlled; only server billing evidence proves payment.
+  const success = searchParams.get('success') === 'true';
+  const canceled = searchParams.get('canceled') === 'true';
 
   /** Démarre l'essai 14 jours sans carte (RPC start_trial — jamais d'appel Stripe à cette étape). */
   const handleStartTrial = async (plan: Plan) => {
@@ -67,9 +68,11 @@ export default function Pricing() {
         body: { priceId },
       });
       if (error) throw error;
-      const url = (data as { url?: string } | null)?.url;
-      if (!url) throw new Error('Aucune URL de checkout');
-      window.location.href = url;
+      const url: unknown = (data as { url?: unknown } | null)?.url;
+      if (typeof url !== 'string' || !url.trim()) throw new Error('Aucune URL de checkout');
+      const redirect = new URL(url);
+      if (redirect.protocol !== 'https:') throw new Error('URL de paiement non sécurisée');
+      window.location.assign(redirect.href);
     } catch (e) {
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setLoadingPlan(null);
@@ -113,9 +116,11 @@ export default function Pricing() {
 
       {(success || canceled) && (
         <div className={`max-w-3xl mx-auto mt-4 px-4 py-3 rounded-lg text-sm ${
-          success ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300' : 'bg-yellow-500/10 border border-yellow-500/30 text-yellow-300'
+          success ? 'bg-sky-500/10 border border-sky-500/30 text-sky-300' : 'bg-yellow-500/10 border border-yellow-500/30 text-yellow-300'
         }`}>
-          {success ? '✅ Paiement validé. Bienvenue sur Purama AI !' : '⚠️ Paiement annulé. Tu peux réessayer quand tu veux.'}
+          {success
+            ? 'Retour du paiement reçu. Consulte la facturation pour vérifier la confirmation de ton abonnement.'
+            : 'Retour après annulation. Consulte la facturation pour vérifier l’état de ton abonnement.'}
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { defineConfig, mergeConfig } from 'vite';
+import { fileURLToPath } from 'node:url';
 import applicationConfig from '../../vite.config';
 import { qualityHost, qualityPort } from './quality-environment';
 
@@ -8,4 +9,12 @@ export default defineConfig(env => mergeConfig(applicationConfig(env), {
     'import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY': JSON.stringify('local-browser-test-key'),
   },
   server: { host: qualityHost, port: qualityPort, strictPort: true },
+  build: {
+    rollupOptions: {
+      input: [
+        fileURLToPath(new URL('../../index.html', import.meta.url)),
+        fileURLToPath(new URL('./commerce-ui-harness.html', import.meta.url)),
+      ],
+    },
+  },
 }));

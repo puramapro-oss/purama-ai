@@ -47,6 +47,28 @@ export async function runAgentCycle(
   let finalizedOutcome: AgentRunResult | undefined;
   let completionAttempted = false;
   let briefArmed = false;
+  const finishOutcome = async (outcome: AgentRunResult): Promise<AgentRunResult> => {
+    completionAttempted = true;
+    try {
+      await run.finish(outcome);
+    } catch {
+      // Reconcile only this same candidate; never repeat an external action.
+      // The logger's conditional write makes this one bounded retry safe.
+      await run.finish(outcome);
+    }
+    finalizedOutcome = outcome;
+    if (outcome.status === "awaiting_approval") {
+      try {
+        await notify({
+          userId, agentType: definition.type, title: `${definition.type} : action en attente de validation`,
+          body: decisionText, actionType: "review", actionUrl: "/dashboard/employees", priority: "normal",
+          channels: ["in_app", "push", "email"],
+        });
+      } catch { console.error("[loop] notification indisponible ; action conservée en attente"); }
+    }
+    await recordRunOutcome(userId, definition.type, outcome.status, cycleStartedAt);
+    return outcome;
+  };
 
   try {
     const continuation = await loadApprovalContinuation(userId, definition.type, trigger);
@@ -66,6 +88,21 @@ export async function runAgentCycle(
       ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
       : await definition.buildContext(userId, trigger);
     const context = continuation ? { ...baseContext, approvalResume: continuation.context } : baseContext;
+    if (!noBrief && definition.type.startsWith("custom:")) {
+      try {
+        // Admission, continuation and context reads may have awaited since the
+        // worker's check. Re-read authority immediately before the model call.
+        // This check is not atomic with the subsequent provider request.
+        await resolveAgentDefinition(definition.type, userId);
+      } catch (error) {
+        if (!(error instanceof CustomAgentAuthorizationError)) throw error;
+        return await finishOutcome(minimizeRunTrace({
+          status: "cancelled", decision: "Cycle annulé : autorisation modifiée avant l’appel au modèle",
+          toolsUsed: [], resultSummary: "Aucune requête au modèle ni action exécutée",
+          mock: false, retryable: false,
+        }, definition.tools, true));
+      }
+    }
     const decision = noBrief ? {
       summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
     } : await getClaudeClient().decide({
@@ -210,26 +247,7 @@ export async function runAgentCycle(
       retryable: false,
       ...(failed ? { errorMessage: "Un outil a échoué ; vérifier les effets avant toute reprise" } : {}),
     }, definition.tools, privateTrace);
-    completionAttempted = true;
-    try {
-      await run.finish(outcome);
-    } catch {
-      // Reconcile only this same candidate; never repeat the external action.
-      // The logger's conditional write makes this one bounded retry safe.
-      await run.finish(outcome);
-    }
-    finalizedOutcome = outcome;
-    if (pending) {
-      try {
-        await notify({
-          userId, agentType: definition.type, title: `${definition.type} : action en attente de validation`,
-          body: decisionText, actionType: "review", actionUrl: "/dashboard/employees", priority: "normal",
-          channels: ["in_app", "push", "email"],
-        });
-      } catch { console.error("[loop] notification indisponible ; action conservée en attente"); }
-    }
-    await recordRunOutcome(userId, definition.type, status, cycleStartedAt);
-    return outcome;
+    return await finishOutcome(outcome);
   } catch (error) {
     if (finalizedOutcome) {
       // The durable result is already known. A secondary state/statistics

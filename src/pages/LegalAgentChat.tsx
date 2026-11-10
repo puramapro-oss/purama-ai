@@ -15,64 +15,77 @@ import {
   type LegalChatMessage,
 } from '@/lib/legal';
 import { useVoice } from '@/hooks/useVoice';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import { MicButton } from '@/components/voice/MicButton';
 import { SpeakButton } from '@/components/voice/SpeakButton';
 import { VoiceMode } from '@/components/voice/VoiceMode';
 
 export default function LegalAgentChat() {
   const { user } = useAuth();
-  const userId = user?.id;
-  const [historyRequests] = useState(createRequestScope);
   const voice = useVoice();
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
-  const [sessionId, setSessionId] = useState<string>('');
-  const [messages, setMessages] = useState<LegalChatMessage[]>([]);
-  const [sessions, setSessions] = useState<Array<{ session_id: string; title: string; created_at: string }>>([]);
-  const [input, setInput] = useState('');
-  const [sending, setSending] = useState(false);
+  const [historyRequests] = useState(createRequestScope);
+  const userId = user?.id ?? null;
+  const accountKey = JSON.stringify([userId]);
+  const captureAccount = useRequestScope(accountKey);
+  const [sessionId, setSessionId] = useScopedState<string>(accountKey, '');
+  const conversationKey = JSON.stringify([userId, sessionId]);
+  const captureConversation = useRequestScope(conversationKey);
+  const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
+  const [messages, setMessages] = useScopedState<LegalChatMessage[]>(conversationKey, []);
+  const [sessions, setSessions] = useScopedState<Array<{ session_id: string; title: string; created_at: string }>>(accountKey, []);
+  const [input, setInput] = useScopedState(conversationKey, '');
+  const [sending, setSending] = useScopedState(conversationKey, false);
+  const messageRevision = useRef(0);
+  const { cancelRecording, stopSpeaking } = voice;
+  useLayoutEffect(() => () => {
+    historyRequests.invalidate();
+    cancelRecording();
+    stopSpeaking();
+  }, [conversationKey, historyRequests, cancelRecording, stopSpeaking]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!userId) return;
-    listChatSessions(userId).then(setSessions).catch(() => {});
+    const isCurrent = captureAccount();
+    let active = true;
+    listChatSessions(userId).then(value => {
+      if (active && isCurrent()) setSessions(value);
+    }).catch(() => {});
     setSessionId(newSessionId());
-  }, [userId]);
+    return () => { active = false; };
+  }, [userId, captureAccount, setSessions, setSessionId]);
 
-  useLayoutEffect(() => {
-    setMessages([]);
-    setSending(false);
+  useEffect(() => {
     if (!userId || !sessionId) return;
-    const request = historyRequests.begin('messages');
-    if (!request) return;
-    listChatMessages(userId, sessionId)
-      .then(next => { if (request.current()) setMessages(next); })
-      .catch(() => {})
-      .finally(() => request.finish());
-    // Invalidate before paint, even if the transport completes after navigation.
-    return () => {
-      historyRequests.cancel('messages');
-      historyRequests.cancel('send');
-    };
-  }, [userId, sessionId, historyRequests]);
+    const isCurrent = captureConversation();
+    const revision = messageRevision.current;
+    let active = true;
+    listChatMessages(userId, sessionId).then(value => {
+      if (active && isCurrent() && revision === messageRevision.current) setMessages(value);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [userId, sessionId, captureConversation, setMessages]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   const submitMessage = async (userMsg: string, signal?: AbortSignal): Promise<string | null> => {
-    if (!userMsg.trim() || !user || !sessionId || signal?.aborted) return null;
+    const isCurrent = captureConversation();
+    if (!userMsg.trim() || !userId || !sessionId || !isCurrent() || signal?.aborted) return null;
     const request = historyRequests.begin('send');
     if (!request) return null;
     const cancel = () => {
       if (!request.current()) return;
       historyRequests.cancel('send');
-      setSending(false);
+      if (isCurrent()) setSending(false);
     };
     signal?.addEventListener('abort', cancel, { once: true });
     setSending(true);
+    messageRevision.current += 1;
     const tempUser: LegalChatMessage = {
       id: 'tmp-' + Date.now(),
-      user_id: user.id,
+      user_id: userId,
       session_id: sessionId,
       role: 'user',
       content: userMsg,
@@ -87,7 +100,7 @@ export default function LegalAgentChat() {
     setMessages(prev => [...prev, tempUser]);
     try {
       const result = await sendChatMessage(sessionId, userMsg, request.signal);
-      if (!request.current()) return null;
+      if (!isCurrent() || !request.current()) return null;
       const assistantMsg: LegalChatMessage = {
         ...tempUser,
         id: 'tmp-asst-' + Date.now(),
@@ -96,30 +109,34 @@ export default function LegalAgentChat() {
         sources_cited: result.sources,
       };
       setMessages(prev => [...prev, assistantMsg]);
-      listChatSessions(user.id).then(setSessions).catch(() => {});
+      listChatSessions(userId).then(value => {
+        if (isCurrent()) setSessions(value);
+      }).catch(() => {});
       return result.reply;
     } catch (e) {
-      if (!request.current()) return null;
+      if (!isCurrent() || !request.current()) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
     } finally {
       signal?.removeEventListener('abort', cancel);
-      // A late completion must not release a newer conversation's pending state.
-      if (request.finish()) setSending(false);
+      if (request.finish() && isCurrent()) setSending(false);
     }
   };
 
   const handleSend = async () => {
     if (!input.trim() || sending) return;
+    const isCurrent = captureConversation();
+    if (!isCurrent()) return;
     const userMsg = input.trim();
     setInput('');
     await submitMessage(userMsg);
   };
 
   const newSession = () => {
+    cancelRecording();
+    stopSpeaking();
     setSessionId(newSessionId());
-    setMessages([]);
   };
 
   return (

@@ -50,7 +50,17 @@ function OptionalPause() {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[9999] bg-black/60" />
-        <Dialog.Content lang={copy.locale} dir="ltr" className="fixed left-1/2 top-1/2 z-[10000] max-h-[85vh] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-xl">
+        <Dialog.Content
+          lang={copy.locale}
+          dir="ltr"
+          onKeyDown={(event) => {
+            // Keep unhandled Escape responsive immediately after reopening the dialog.
+            if (event.key !== 'Escape' || event.defaultPrevented) return;
+            event.preventDefault();
+            handleOpen(false);
+          }}
+          className="fixed left-1/2 top-1/2 z-[10000] max-h-[85vh] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-xl"
+        >
           <Dialog.Title className="text-xl font-semibold">{copy.pause.title}</Dialog.Title>
           <Dialog.Description className="mt-2 text-sm text-muted-foreground">{copy.pause.description}</Dialog.Description>
           <div className="my-5 space-y-3">

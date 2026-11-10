@@ -25,7 +25,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // A new account must never inherit the previous account's local form state.
-  // Keep the same tree for token refreshes that retain the same user ID.
-  return <Fragment key={user.id}>{children}</Fragment>;
+  // A protected page owns its local state for one principal and one resource path.
+  // Refreshing the same account or query string preserves that state.
+  return <Fragment key={JSON.stringify([user.id, location.pathname])}>{children}</Fragment>;
 }

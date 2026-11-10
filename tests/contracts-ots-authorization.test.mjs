@@ -6,20 +6,27 @@ import { webcrypto, createHmac } from 'node:crypto';
 import vm from 'node:vm';
 import test from 'node:test';
 import ts from 'typescript';
-import OpenTimestamps from 'opentimestamps';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const { PendingAttestation } = require('opentimestamps/src/notary.js');
-const { RemoteCalendar } = require('opentimestamps/src/calendar.js');
+const OpenTimestamps = {
+  DetachedTimestampFile: require('opentimestamps/src/detached-timestamp-file.js'),
+  Ops: require('opentimestamps/src/ops.js'),
+  Context: require('opentimestamps/src/context.js'),
+  Timestamp: require('opentimestamps/src/timestamp.js'),
+  Notary: require('opentimestamps/src/notary.js'),
+};
+const { PendingAttestation } = OpenTimestamps.Notary;
 const functionsRoot = fileURLToPath(new URL('../supabase/functions/', import.meta.url));
 const contractId = '00000000-0000-4000-8000-000000000001';
 const serviceKey = 'test-service-never-live';
 const webhookSecret = 'test-webhook-never-live';
 const docusealToken = 'test-docuseal-never-live';
 const docusealOrigin = 'https://docuseal.example.invalid';
-const defaultPdfUrl = 'https://files.example.invalid/signed.pdf';
+const defaultPdfUrl = `${docusealOrigin}/signed.pdf`;
+const foreignPdfUrl = 'https://files.example.invalid/signed.pdf';
+const otsCore = fileURLToPath(new URL('../src/lib/ots-core.ts', import.meta.url));
 
 // Run the complete, actual Edge entry points and local helper modules. Only
 // external services and serve() are substituted. No provider request is sent.
@@ -35,6 +42,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
   });
   const environment = {
     SUPABASE_URL: 'https://db.example.invalid', SUPABASE_SERVICE_ROLE_KEY: serviceKey,
+    SUPABASE_ANON_KEY: 'test-anon-never-live',
     DOCUSEAL_API_URL: docusealOrigin, DOCUSEAL_API_TOKEN: docusealToken,
     DOCUSEAL_WEBHOOK_SECRET: webhookSecret, ...options.env,
   };
@@ -42,7 +50,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
   const createClient = (url, key, settings) => {
     calls.clients.push({ url, key, settings });
     if (options.realSupabase) {
-      return createSupabaseClient(url, key, { ...settings, global: { fetch: async (input, init = {}) => {
+      return createSupabaseClient(url, key, { ...settings, global: { ...settings?.global, fetch: async (input, init = {}) => {
         const target = new URL(typeof input === 'string' ? input : input.url);
         const headers = new Headers(init.headers);
         calls.sdk.push({ path: target.pathname, headers: Object.fromEntries(headers), body: init.body });
@@ -112,6 +120,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
         const builder = {
           select() { return builder; },
           eq(key, value) { filters.push([key, value]); return builder; },
+          is(key, value) { filters.push([key, value]); return builder; },
           update(value) { patch = value; return builder; },
           insert(value) {
             assert.equal(table, 'contract_events');
@@ -126,13 +135,13 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
     };
   };
   const context = vm.createContext({
-    Request, Response, Headers, URL, Uint8Array, TextEncoder, TextDecoder, performance, setTimeout, clearTimeout,
+    Request, Response, Headers, URL, Uint8Array, ArrayBuffer, Array, AbortController, TextEncoder, TextDecoder, performance, setTimeout, clearTimeout,
     crypto: webcrypto, atob, btoa,
     console: { error: (...args) => calls.errors.push(args), warn() {}, log() {} },
-    Deno: { env: { get: key => environment[key] } },
+    Deno: { env: { get: key => environment[key] }, serve: value => { handler = value; } },
     fetch: async (input, init) => {
       const url = String(input);
-      if (url === `${docusealOrigin}/api/submissions/42/documents`) {
+      if (url === `${docusealOrigin}/api/submissions/42/documents` || url === `${docusealOrigin}/api/submissions/42/documents?merge=true`) {
         calls.docs.push({ url, init });
         return Response.json(options.noPdf ? {} : { combined_document_url: pdfUrl });
       }
@@ -147,32 +156,29 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
         if (options.internalHandler) return options.internalHandler(new Request(url, init));
         return Response.json({ ok: true });
       }
+      const target = new URL(url);
+      if (['https://a.pool.opentimestamps.org', 'https://b.pool.opentimestamps.org',
+        'https://a.pool.eternitywall.com', 'https://ots.btc.catallaxy.com'].includes(target.origin)
+        && target.pathname === '/digest') {
+        assert.equal(init.redirect, 'error');
+        assert.equal(init.credentials, 'omit');
+        if (options.allCalendarsFail) throw new Error('calendar unavailable');
+        const timestamp = new OpenTimestamps.Timestamp(Array.from(init.body));
+        timestamp.attestations.push(new PendingAttestation('https://alice.btc.calendar.opentimestamps.org'));
+        const output = new OpenTimestamps.Context.StreamSerialization();
+        timestamp.serialize(output);
+        return new Response(new Uint8Array(output.getOutput()));
+      }
       if (url !== pdfUrl) throw new Error(`Unexpected network destination: ${url}`);
       calls.pdf.push({ url, init });
       if (options.pdfThrows) throw new Error('provider-private-pdf-detail');
       if (options.cancelDuringFetch) contract.status = 'cancelled';
       if (options.replaceSubmissionDuringFetch) contract.docuseal_submission_id = 99;
-      return new Response(new Uint8Array([37, 80, 68, 70]), { status: options.pdfStatus ?? 200 });
+      return new Response(new TextEncoder().encode("%PDF-1.7 synthetic signed document"), { status: options.pdfStatus ?? 200 });
     },
   });
   const external = {
-    'https://deno.land/std@0.190.0/http/server.ts': { serve: value => { handler = value; } },
     'npm:@supabase/supabase-js@2.91.0': { createClient },
-    'npm:opentimestamps@0.4.9': { default: {
-      ...OpenTimestamps,
-      stamp: async detached => {
-        calls.stamps.push(detached);
-        if (options.stampThrows) throw new Error('provider-private-stamp-detail');
-        if (options.allCalendarsFail) {
-          // Exercise the actual library's soft-failure behavior without network.
-          const original = RemoteCalendar.prototype.submit;
-          RemoteCalendar.prototype.submit = async () => { throw new Error('calendar unavailable'); };
-          try { await OpenTimestamps.stamp(detached); } finally { RemoteCalendar.prototype.submit = original; }
-          return;
-        }
-        detached.timestamp.attestations.push(new PendingAttestation('https://alice.btc.calendar.opentimestamps.org'));
-      },
-    } },
   };
   const cache = new Map();
   function localModule(file) {
@@ -187,6 +193,10 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
   }
   const module = localModule(resolve(functionsRoot, entry, 'index.ts'));
   await module.link((specifier, parent) => {
+    if (specifier.startsWith('npm:opentimestamps@0.4.9/src/')) {
+      const value = require(specifier.replace('npm:opentimestamps@0.4.9/', 'opentimestamps/'));
+      return new vm.SyntheticModule(['default'], function () { this.setExport('default', value); }, { context });
+    }
     if (external[specifier]) {
       const exports = external[specifier];
       return new vm.SyntheticModule(Object.keys(exports), function () {
@@ -194,10 +204,24 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       }, { context });
     }
     const file = resolve(dirname(parent.identifier), specifier);
-    assert.ok(specifier.startsWith('.') && file.startsWith(functionsRoot), `Unexpected import: ${specifier}`);
+    assert.ok(specifier.startsWith('.') && (file.startsWith(functionsRoot) || file === otsCore), `Unexpected import: ${specifier}`);
     return localModule(file);
   });
   await module.evaluate();
+  const library = cache.get(resolve(functionsRoot, '_shared/ots-library.ts'))?.namespace.ots;
+  if (library) {
+    const stampDigest = library.stampDigest;
+    // Observe one logical stamp while executing the real bounded transport and
+    // upstream proof primitives. Calendar HTTP alone is synthetic above.
+    library.stampDigest = async hash => {
+      const index = calls.stamps.push(OpenTimestamps.DetachedTimestampFile.fromHash(
+        new OpenTimestamps.Ops.OpSHA256(), Array.from(hash))) - 1;
+      if (options.stampThrows) throw new Error('provider-private-stamp-detail');
+      const proof = await stampDigest(hash);
+      calls.stamps[index] = OpenTimestamps.DetachedTimestampFile.deserialize([...Buffer.from(proof, 'base64')]);
+      return proof;
+    };
+  }
   return { handler, calls, contract };
 }
 
@@ -230,6 +254,7 @@ test('authorization SDK: the real Supabase transport selects public.has_role and
   const contract = h.calls.sdk.find(call => call.path === '/rest/v1/contracts');
   assert.ok(contract, 'a verified admin reaches the contract lookup after the public role check');
   assert.equal(contract.headers['accept-profile'], 'purama_ai');
+  assert.equal(contract.headers.authorization, 'Bearer admin-token', 'contract reads preserve the verified user RLS identity');
   assert.equal(response.status, 404, 'the inert contract transport deliberately returns no contract');
   assert.equal(h.calls.sdk.length, 3);
   assert.equal(h.calls.docs.length + h.calls.pdf.length + h.calls.stamps.length + h.calls.events.length, 0);
@@ -278,6 +303,11 @@ for (const token of ['admin-token', serviceKey]) {
     assert.equal(h.calls.events[0].actor_id, token === serviceKey ? null : 'server-admin');
     assert.equal(h.calls.events[0].actor_type, token === serviceKey ? 'service' : 'user');
     if (token === serviceKey) assert.equal(h.calls.auth.length + h.calls.roles.length, 0);
+    else {
+      assert.equal(h.calls.auth.length, 3, 'identity is rechecked after PDF retrieval and before persistence');
+      assert.equal(h.calls.roles.length, 3);
+      assert.ok(h.calls.roles.every(call => call.schema === 'public'));
+    }
   });
 }
 test('handles preflight without data access and refuses unsupported methods', async () => {
@@ -302,12 +332,12 @@ for (const status of ['draft', 'sent', 'opened', 'declined', 'cancelled', 'expir
 }
 for (const [label, options, status] of [
   ['missing contract', { noContract: true }, 404],
-  ['database read error', { loadError: true }, 500],
-  ['missing submission', { noSubmission: true }, 400],
-  ['missing signed PDF', { noPdf: true }, 404],
+  ['database read error', { loadError: true }, 503],
+  ['missing submission', { noSubmission: true }, 409],
+  ['missing signed PDF', { noPdf: true }, 502],
   ['provider PDF error', { pdfStatus: 503 }, 502],
-  ['provider PDF exception', { pdfThrows: true }, 500],
-  ['provider stamp exception', { stampThrows: true }, 500],
+  ['provider PDF exception', { pdfThrows: true }, 502],
+  ['provider stamp exception', { stampThrows: true }, 502],
   ['proof write error', { updateError: true }, 500],
   ['audit write error', { eventError: true }, 500],
 ]) {
@@ -335,13 +365,20 @@ test('does not persist or report a pending proof when every calendar failed', as
   assert.equal(h.calls.updates.length + h.calls.events.length, 0);
   assert.equal(h.contract.ots_proof, 'old-proof');
 });
-for (const pdfUrl of [`${docusealOrigin}/signed.pdf`, `${docusealOrigin}.attacker.invalid/signed.pdf`, defaultPdfUrl]) {
-  test(`forwards PDF credentials only to the exact configured origin: ${pdfUrl}`, async () => {
+for (const pdfUrl of [`${docusealOrigin}/signed.pdf`, `${docusealOrigin}.attacker.invalid/signed.pdf`, foreignPdfUrl]) {
+  test(`accepts PDF credentials only at the exact configured origin: ${pdfUrl}`, async () => {
     const h = await harness({ pdfUrl });
-    assert.equal((await h.handler(request())).status, 200);
-    const sent = new Headers(h.calls.pdf[0].init.headers);
-    assert.equal(sent.get('X-Auth-Token'), new URL(pdfUrl).origin === docusealOrigin ? docusealToken : null);
-    assert.equal(h.calls.pdf[0].init.redirect, 'error');
+    const sameOrigin = new URL(pdfUrl).origin === docusealOrigin;
+    assert.equal((await h.handler(request())).status, sameOrigin ? 200 : 502);
+    if (sameOrigin) {
+      const sent = new Headers(h.calls.pdf[0].init.headers);
+      assert.equal(sent.get('X-Auth-Token'), docusealToken);
+      assert.equal(h.calls.pdf[0].init.redirect, 'error');
+      assert.equal(h.calls.pdf[0].init.credentials, 'omit');
+    } else {
+      assert.equal(h.calls.pdf.length + h.calls.stamps.length + h.calls.updates.length + h.calls.events.length, 0,
+        'foreign and lookalike origins are refused before any document egress');
+    }
   });
 }
 for (const pdfUrl of ['http://files.example.invalid/signed.pdf', 'https://user@files.example.invalid/signed.pdf', 'data:application/pdf;base64,AA==']) {

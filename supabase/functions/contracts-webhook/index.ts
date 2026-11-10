@@ -2,7 +2,6 @@
 // Receives DocuSeal webhooks on submission lifecycle events.
 // Validates HMAC signature, updates contracts + contract_signers, triggers OTS stamping.
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
@@ -17,7 +16,7 @@ interface WebhookPayload {
   data: Record<string, unknown>;
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
   if (req.method !== "POST") {
     const response = errorResponse("Method not allowed", 405);
@@ -39,7 +38,7 @@ serve(async (req) => {
   }
   let rawBody: string;
   try {
-    rawBody = await readRequestText(req);
+    rawBody = await readRequestText(req, { maxBytes: 64 * 1024 });
     if (!await verifyDocusealWebhook(rawBody, req.headers, DOCUSEAL_WEBHOOK_SECRET)) {
       return errorResponse("Unauthorized", 401);
     }
@@ -56,7 +55,8 @@ serve(async (req) => {
     return errorResponse("Invalid request body", 400);
   }
   if (
-    !payload || typeof payload !== "object" || typeof payload.event_type !== "string" ||
+    !payload || typeof payload !== "object" || Array.isArray(payload) || typeof payload.event_type !== "string" ||
+    payload.event_type.length > 64 || !/^[a-z]+(?:[._][a-z]+)+$/.test(payload.event_type) ||
     !payload.data || typeof payload.data !== "object" || Array.isArray(payload.data)
   ) {
     return errorResponse("Invalid webhook payload", 400);
@@ -64,22 +64,25 @@ serve(async (req) => {
 
   const eventType = payload.event_type;
   const data = payload.data as Record<string, unknown>;
-  console.log(`[webhook] event=${eventType}`, { data_keys: Object.keys(data) });
+  const positiveId = (value: unknown): value is number => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+  if ((data.id !== undefined && !positiveId(data.id)) || (data.submission_id !== undefined && !positiveId(data.submission_id))) {
+    return errorResponse("Invalid webhook identifier", 400);
+  }
+  const submissionId = positiveId(data.submission_id) ? data.submission_id
+    : eventType.startsWith("submission.") && positiveId(data.id) ? data.id : null;
+  if (!positiveId(submissionId) || (eventType.startsWith("form.") && !positiveId(data.id))) {
+    return errorResponse("Missing webhook identifier", 400);
+  }
+
+
+  console.log(`[webhook] event=${eventType}`);
 
   try {
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
       db: { schema: "purama_ai" },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    // Find the contract by submission_id
-    const submissionId = typeof data.submission_id === "number" ? data.submission_id
-                      : typeof data.id === "number" && eventType.startsWith("submission.") ? data.id
-                      : null;
-    if (!submissionId) {
-      console.warn("[webhook] no submission_id in payload", { event_type: eventType, data_keys: Object.keys(data) });
-      return corsResponse({ ok: true, skip: "no submission_id" });
-    }
-
+    // Identifiers are validated before the privileged client is created.
     const { data: contract, error: loadError } = await supabaseAdmin
       .from("contracts")
       .select("id, status, user_id, app_slug, template_slug")

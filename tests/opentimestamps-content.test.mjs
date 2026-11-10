@@ -7,39 +7,45 @@ import { createRequire } from 'node:module';
 import vm from 'node:vm';
 import test from 'node:test';
 import ts from 'typescript';
-import OpenTimestamps from 'opentimestamps';
 
 const require = createRequire(import.meta.url);
-const { PendingAttestation } = require('opentimestamps/src/notary.js');
-const { RemoteCalendar } = require('opentimestamps/src/calendar.js');
-const Timestamp = require('opentimestamps/src/timestamp.js');
+const primitives = {
+  DetachedTimestampFile: require('opentimestamps/src/detached-timestamp-file.js'),
+  Ops: require('opentimestamps/src/ops.js'),
+  Context: require('opentimestamps/src/context.js'),
+  Timestamp: require('opentimestamps/src/timestamp.js'),
+  Notary: require('opentimestamps/src/notary.js'),
+};
+const OpenTimestamps = primitives;
+const { PendingAttestation } = primitives.Notary;
 const libRoot = fileURLToPath(new URL('../src/lib/', import.meta.url));
 const calendar = 'https://alice.btc.calendar.opentimestamps.org';
 const pdf = new Uint8Array([37, 80, 68, 70, 0, 128, 255, 10]);
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 
-// Execute the existing TypeScript libraries. The real OpenTimestamps library
-// builds/serializes its nonce and operation tree; only calendar I/O is replaced.
+// Execute the real TypeScript wrapper and bounded transport with the upstream
+// proof primitives. Only calendar HTTP is simulated; legacy transport is never loaded.
 async function library({ allCalendarsFail = false, withWebCrypto = true, withBuffer = true } = {}) {
-  const provider = {
-    ...OpenTimestamps,
-    stamp: async detached => {
-      const original = RemoteCalendar.prototype.submit;
-      RemoteCalendar.prototype.submit = async commitment => {
-        if (allCalendarsFail) throw new Error('calendar unavailable');
-        const timestamp = new Timestamp(commitment);
-        timestamp.attestations.push(new PendingAttestation(calendar));
-        return timestamp;
-      };
-      try { await OpenTimestamps.stamp(detached); } finally { RemoteCalendar.prototype.submit = original; }
-    },
-    // Keep the actual verify() digest comparison. No block/chain verification or
-    // calendar upgrade is attempted: this fixture remains explicitly pending.
-    upgradeTimestamp: async () => {},
-    verifyTimestamp: async () => ({}),
+  const providerFetch = async (input, init = {}) => {
+    const url = new URL(String(input));
+    assert.equal(init.redirect, 'error');
+    assert.equal(init.credentials, 'omit');
+    if (url.pathname === '/digest') {
+      if (allCalendarsFail) throw new Error('calendar unavailable');
+      const timestamp = new primitives.Timestamp(Array.from(init.body));
+      timestamp.attestations.push(new PendingAttestation(calendar));
+      const output = new primitives.Context.StreamSerialization();
+      timestamp.serialize(output);
+      return new Response(new Uint8Array(output.getOutput()));
+    }
+    if (url.pathname.startsWith('/timestamp/')) return new Response(null, { status: 404 });
+    throw new Error('Unexpected network destination blocked by the test');
   };
   const context = vm.createContext({
-    TextEncoder, Uint8Array, ArrayBuffer, atob, btoa,
+    // Upstream primitives use instanceof Array; keep their realm shared with
+    // the wrapper, as in the browser bundle. No proof or assertion is stubbed.
+    TextEncoder, TextDecoder, Uint8Array, ArrayBuffer, Array, atob, btoa, URL, Response,
+    AbortController, setTimeout, clearTimeout, fetch: providerFetch,
     ...(withBuffer ? { Buffer } : {}),
     ...(withWebCrypto ? { crypto: webcrypto } : {}),
   });
@@ -62,8 +68,9 @@ async function library({ allCalendarsFail = false, withWebCrypto = true, withBuf
   }
   const entry = load(resolve(libRoot, 'docuseal/ots-stamper.ts'));
   await entry.link((specifier, parent) => {
-    if (specifier === 'opentimestamps') {
-      return new vm.SyntheticModule(['default'], function () { this.setExport('default', provider); }, { context });
+    if (specifier.startsWith('opentimestamps/src/')) {
+      const value = require(specifier);
+      return new vm.SyntheticModule(['default'], function () { this.setExport('default', value); }, { context });
     }
     assert.ok(specifier.startsWith('.'));
     return load(resolve(dirname(parent.identifier), `${specifier}.ts`));

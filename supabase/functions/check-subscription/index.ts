@@ -1,6 +1,6 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { resolveStripeSubscriptionState } from "../_shared/stripe-subscription-state.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,7 +12,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -52,7 +52,16 @@ serve(async (req) => {
       httpClient: Stripe.createFetchHttpClient(),
       timeout: 10_000,
     });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const customers = await stripe.customers.list({ email: user.email, limit: 2 });
+
+    // Email is not a unique Stripe customer key. Do not silently select one account.
+    if (customers.data.length > 1 || customers.has_more) {
+      logStep("Multiple Stripe customers require reconciliation");
+      return new Response(JSON.stringify({
+        error: 'État de facturation à vérifier. Aucun nouveau droit accordé.',
+        code: 'SUBSCRIPTION_RECONCILIATION_REQUIRED',
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 });
+    }
     
     if (customers.data.length === 0) {
       logStep("No customer found, returning unsubscribed state");
@@ -74,50 +83,35 @@ serve(async (req) => {
     const activeSubscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
-      limit: 1,
+      limit: 2,
     });
 
     const trialingSubscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "trialing",
-      limit: 1,
+      limit: 2,
     });
 
-    const allSubscriptions = [...activeSubscriptions.data, ...trialingSubscriptions.data];
-    const hasActiveSub = allSubscriptions.length > 0;
-    let productId = null;
-    let subscriptionEnd = null;
-    let planType = 'free';
-
-    if (hasActiveSub) {
-      const subscription = allSubscriptions[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      productId = subscription.items.data[0].price.product;
-      logStep("Active/trialing subscription found", { 
-        subscriptionId: subscription.id, 
-        status: subscription.status,
-        endDate: subscriptionEnd,
-        productId 
-      });
-
-      // Map product IDs vers les PlanId réels de src/lib/plans.ts (1 seule source de vérité)
-      const planMapping: Record<string, string> = {
-        'prod_UHwPcnEEVEDf4K': 'starter',
-        'prod_UHwPSU2o4DW6Ej': 'pro', // "Premium" (nom affiché) = PlanId 'pro'
-        'prod_UHwPBOGTleT37J': 'ultime',
-      };
-      planType = planMapping[productId as string] || 'pro';
-      logStep("Determined plan type", { planType });
-    } else {
-      logStep("No active or trialing subscription found");
+    // A partial page cannot establish a unique paid subscription.
+    if (activeSubscriptions.has_more || trialingSubscriptions.has_more) {
+      logStep("Paginated subscriptions require reconciliation");
+      return new Response(JSON.stringify({
+        error: 'État de facturation à vérifier. Aucun nouveau droit accordé.',
+        code: 'SUBSCRIPTION_RECONCILIATION_REQUIRED',
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 });
     }
 
-    return new Response(JSON.stringify({
-      subscribed: hasActiveSub,
-      plan_type: planType,
-      product_id: productId,
-      subscription_end: subscriptionEnd
-    }), {
+    const allSubscriptions = [...activeSubscriptions.data, ...trialingSubscriptions.data];
+    const resolution = resolveStripeSubscriptionState(allSubscriptions);
+    if (resolution.status !== 'ready') {
+      logStep("Subscription requires reconciliation", { reason: resolution.reason });
+      return new Response(JSON.stringify({
+        error: 'État de facturation à vérifier. Aucun nouveau droit accordé.',
+        code: 'SUBSCRIPTION_RECONCILIATION_REQUIRED',
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 });
+    }
+
+    return new Response(JSON.stringify(resolution.state), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

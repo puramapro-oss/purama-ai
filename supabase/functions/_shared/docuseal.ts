@@ -22,11 +22,87 @@ export class DocusealError extends Error {
   }
 }
 
+/** Read-only metadata: one request, a total 10s deadline and at most 1 MiB.
+ * Writes keep their existing transport: an uncertain write cannot be retried
+ * or interpreted as absent merely because this read budget has expired.
+ */
+async function readDocusealJson<T>(path: string): Promise<T> {
+  if (!DOCUSEAL_TOKEN) throw new DocusealError("DocuSeal credential unavailable", 503, null);
+  const controller = new AbortController();
+  const deadline = performance.now() + 10_000;
+  let response: Response | undefined;
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  let rejectDeadline: (error: DocusealError) => void = () => {};
+  const expired = new Promise<never>((_, reject) => { rejectDeadline = reject; });
+  void expired.catch(() => {});
+  const timeoutError = () => new DocusealError("DocuSeal read deadline exceeded", 504, null);
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; rejectDeadline(timeoutError()); controller.abort(); }, 10_000);
+  const bounded = async <V>(work: Promise<V>): Promise<V> => {
+    if (performance.now() >= deadline) throw timeoutError();
+    const value = await Promise.race([work, expired]);
+    if (performance.now() >= deadline) throw timeoutError();
+    return value;
+  };
+  const cancel = (body: ReadableStream<Uint8Array> | null | undefined) => {
+    try { void Promise.resolve(body?.cancel()).catch(() => {}); } catch { /* Best effort, never a second wait. */ }
+  };
+  try {
+    response = await bounded<Response>(fetch(`${DOCUSEAL_URL}${path}`, {
+      method: "GET",
+      headers: { "X-Auth-Token": DOCUSEAL_TOKEN, "Content-Type": "application/json", "Accept": "application/json" },
+      redirect: "error", credentials: "omit", signal: controller.signal,
+    }).then(value => { if (controller.signal.aborted) cancel(value.body); return value; }));
+    if (response.redirected) throw new DocusealError("DocuSeal redirect rejected", 502, null);
+    const maximum = 1024 * 1024;
+    const declared = response.headers.get("content-length");
+    if (declared !== null && (!/^\d+$/.test(declared) || !Number.isSafeInteger(Number(declared)) || Number(declared) > maximum)) {
+      throw new DocusealError("DocuSeal response size rejected", 502, null);
+    }
+    if (response.status === 204) return {} as T;
+    reader = response.body?.getReader();
+    const decoder = new TextDecoder("utf-8", { fatal: true });
+    const parts: string[] = [];
+    let bytes = 0, emptyChunks = 0;
+    while (reader) {
+      const part = await bounded(reader.read());
+      if (part.done) break;
+      bytes += part.value.byteLength;
+      if (bytes > maximum || (part.value.byteLength === 0 && ++emptyChunks > 64)) {
+        throw new DocusealError("DocuSeal response size rejected", 502, null);
+      }
+      parts.push(decoder.decode(part.value, { stream: true }));
+    }
+    parts.push(decoder.decode());
+    const text = parts.join("");
+    let data: unknown;
+    try { data = JSON.parse(text); }
+    catch {
+      if (response.ok) throw new DocusealError("Invalid DocuSeal JSON response", 502, null);
+      data = text;
+    }
+    if (!response.ok) throw new DocusealError(`DocuSeal GET ${path} → ${response.status}`, response.status, data);
+    return data as T;
+  } catch (error) {
+    controller.abort();
+    if (reader) {
+      try { void Promise.resolve(reader.cancel()).catch(() => {}); } catch { /* The deadline also bounds cleanup. */ }
+    } else cancel(response?.body);
+    if (timedOut || performance.now() >= deadline) throw timeoutError();
+    if (error instanceof DocusealError) throw error;
+    throw new DocusealError("DocuSeal read unavailable", 502, null);
+  } finally {
+    clearTimeout(timer);
+    try { reader?.releaseLock(); } catch { /* A pending read is already observed by the deadline race. */ }
+  }
+}
+
 export async function docusealFetch<T>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   path: string,
   body?: unknown,
 ): Promise<T> {
+  if (method === "GET") return readDocusealJson<T>(path);
   const res = await fetch(`${DOCUSEAL_URL}${path}`, {
     method,
     headers: {

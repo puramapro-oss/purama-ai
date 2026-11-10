@@ -19,7 +19,16 @@
     "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check",
     "test:contracts-auth": "node --test --test-concurrency=1 tests/contracts-ots-auth.mjs",
     "test:ui-state": "playwright test --config tests/ui-state/playwright.config.ts",
-    "test:contracts-security": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts supabase/functions/_shared/request-body.test.ts"
+    "test:founder": "node --test tests/founder-dashboard/client.test.mjs tests/founder-dashboard/server.test.mjs",
+    "test:founder:types": "tsc --noEmit -p tests/founder-dashboard/tsconfig.json",
+    "test:founder:browser": "node tests/founder-dashboard/browser/run.mjs",
+    "test:commerce:plans": "node --test tests/quality/commerce-ui-plans.test.mjs",
+    "test:commerce:handlers": "deno test --no-remote --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,STRIPE_SECRET_KEY --config tests/commerce/deno.json tests/commerce",
+    "test:account-isolation": "node tests/quality/account-isolation/run.mjs",
+    "test:contracts-ots": "node tests/contracts-ots/run.mjs",
+    "test:contracts-ots:browser": "node tests/contracts-ots/browser/run.mjs",
+    "test:contracts-content": "node --experimental-vm-modules --test --test-concurrency=1 tests/opentimestamps-content.test.mjs",
+    "test:contracts-security": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts supabase/functions/_shared/request-body.test.ts tests/docuseal-read-boundaries.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",
