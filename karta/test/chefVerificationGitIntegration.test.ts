@@ -33,7 +33,7 @@ describe("CHEF Git checks around actual verification", () => {
     const control: ChefControlPlane = {
       heartbeat: vi.fn(async () => undefined), claimNext: vi.fn(async () => task),
       renewLease: vi.fn(async () => true), transition: vi.fn(async () => true),
-      addEvidence: vi.fn(async () => true), recordUsage: vi.fn(async () => undefined),
+      addEvidence: vi.fn(async () => true), recordUsage: vi.fn(async () => true),
       tryFinishMission: vi.fn(async () => true),
     };
     const driver: ChefWorkerDriver = {

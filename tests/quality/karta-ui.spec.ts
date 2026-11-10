@@ -96,15 +96,20 @@ test('unknown and malformed states never become completion or an active state; l
 
 test('running and executing keep polling until the matching execution completes', async ({ page }) => {
   let reads = 0;
+  let serverStatus: 'running' | 'executing' | 'success' = 'running';
   await prepare(page, { onRun: url => {
     expect(url.searchParams.get('execution_key')).toBe(`eq.${executionKey}`);
     reads += 1;
-    return run(reads === 1 ? 'running' : reads === 2 ? 'executing' : 'success');
+    return run(serverStatus);
   } });
   const dialog = await startFirstTask(page);
   await expect(dialog.getByRole('heading', { name: 'CRM fixture travaille…' })).toBeVisible();
   await expect(dialog.getByText('Réussi', { exact: true })).toHaveCount(0);
+  await expect.poll(() => reads).toBeGreaterThanOrEqual(1);
+  // Keep each server state until its UI assertion has completed, even on a busy runner.
+  serverStatus = 'executing';
   await expect(dialog.getByRole('heading', { name: 'CRM fixture exécute la tâche…' })).toBeVisible();
+  serverStatus = 'success';
   await expect(dialog.getByRole('heading', { name: 'CRM fixture a terminé sa tâche', exact: true })).toBeVisible();
   await expect(dialog.getByText('L’exécution est terminée.', { exact: true })).toBeVisible();
   const settledReads = reads;

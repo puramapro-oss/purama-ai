@@ -1037,7 +1037,9 @@ export type Database = {
       karta_pending_actions: {
         Row: {
           agent_type: string
+          claimed_at: string | null
           created_at: string
+          execution_trigger: Json | null
           id: string
           resolved_at: string | null
           result_summary: string | null
@@ -1049,7 +1051,9 @@ export type Database = {
         }
         Insert: {
           agent_type: string
+          claimed_at?: string | null
           created_at?: string
+          execution_trigger?: Json | null
           id?: string
           resolved_at?: string | null
           result_summary?: string | null
@@ -1061,7 +1065,9 @@ export type Database = {
         }
         Update: {
           agent_type?: string
+          claimed_at?: string | null
           created_at?: string
+          execution_trigger?: Json | null
           id?: string
           resolved_at?: string | null
           result_summary?: string | null

@@ -199,3 +199,99 @@ GitNexus signale automatiquement un risque **CRITICAL** : ses trois vues compten
 5. Les propriétaires des connecteurs vérifient les effets et les autorisations sur leurs comptes de test. La prévention des conflits entre missions différentes, l'ascendance durable de plusieurs approbations et les mesures de charge/latence restent des lots identifiés.
 
 Aucun déploiement, aucune migration réelle ni fusion dans `main` ne découle de ces tests locaux. Les interfaces Mac interrogées pendant cette passe renvoient une erreur interne ; le constat ne nie pas les accès à d'autres périmètres consignés dans la note de continuité. Le périmètre confirmé reste ce correctif de `purama-ai`.
+
+## Consignes, délégations et budgets intégrés — 10 novembre 2026
+
+**PASS sur le périmètre local documenté ; PARTIEL pour l’intégration réelle dans PURAMA ONE.** Cette campagne prolonge le commit `27815bcc9660adcc925f1a6c2b8651ff04ff5062` sur la même branche d’audit. Ses résultats actualisent les limites de la section précédente : les parcours navigateur sont maintenant exécutés, les consignes durables sont intégrées et le rapprochement des budgets est vérifié. Les anciennes campagnes restent des preuves datées et leurs nombres de tests ne s’additionnent pas.
+
+### Une seule architecture, des contributions rapprochées explicitement
+
+Le lot utilise les composants KARTA, CHEF, le journal et les approbations existants. Il rapproche les contributions suivantes à des heads précis, sans fusionner leurs branches entières :
+
+| Contribution | Révision examinée | Traitement |
+| --- | --- | --- |
+| PR #19 : décisions Claude complètes | `73be455cb94ea18159f8390ad1091d277e2f50f0` | Runtime exact ; test adapté seulement pour isoler le transport de queue. |
+| PR #20 : consignes durables | `d553ff2e784a82685d16f59727c55d5499d0db9e` | Migration 018 et fonctions de consigne réutilisées ; boucle rapprochée avec nos protections existantes. |
+| PR #21 : origine et réservations CHEF | `b826af125ce296d3808d3b71b93fd084e63dbdb7` | Origine minimale extraite ; budget intégré ; numéros SQL réconciliés. Le chargeur de reprise alternatif n’est pas importé. |
+| PR #18 : annulation CHEF | `8063016b84b3513af1e52efea79d58dbbaff5682` | Contrôles avant lancement et après attentes conservés, y compris après la dernière preuve. |
+| PR #24 : dépendances et contrôle CI | `9b066c5b10f6896041aec9359ee21b173c0f5014` | Quatre blobs exacts : manifestes npm, contrôle de compatibilité et workflow existant. |
+
+L’arbre des **43 fichiers source, configuration et tests**, avant ajout de cette documentation et du reçu, est `f4a837e034dbb052dac5aa6175aa01e1dd9919dc`. Le reçu [aether-runtime-integration-20261110.json](karta/test/evidence/aether-runtime-integration-20261110.json) conserve les empreintes, commandes, contrôles avant/après et limites. Aucun tarif, quota commercial, niveau de qualité selon l’offre ou choix d’hébergement n’est modifié.
+
+### Décider complètement avant de rendre une action exécutable
+
+Le client Claude examine le motif de fin, les types de blocs, les identifiants d’outils et tous les paramètres avant de rendre une décision au moteur. Une réponse tronquée, refusée, incohérente ou contenant un appel non conforme ne peut plus produire un premier effet suivi d’une erreur sur un second appel. Le validateur des outils déjà présent est réutilisé ; une validation de format n’accorde aucune permission d’exécution.
+
+Le banc repris de #19 avait **29 échecs et 5 réussites avant correction** ; les **34 cas passent après correction**. Ils figurent aussi dans la campagne complète décrite plus bas et ne constituent pas 34 tests supplémentaires à additionner.
+
+### Une demande conservée, un reçu pour chaque tentative
+
+Six agents à consigne utilisent désormais une acquisition exclusive liée au run. La simulation lit la consigne sans la réserver ni la supprimer. En mode réel, l’armement SQL précède tout effet ou création d’approbation ; les arrêts et l’autonomie sont revérifiés après cette attente. La perte d’un accusé de réception ne permet pas de rejouer librement une opération possiblement validée.
+
+Une erreur avant armement, un résultat mock ou une consigne sans action proposée conserve une entrée récupérable lorsque les preuves de clôture le permettent. L’absence de consigne évite l’appel au modèle et se termine en `skipped`. Les reprises d’une consigne sont bornées à **trois tentatives** ; un effet possible ou une situation ambiguë impose une réconciliation. Un résultat vide n’est pas présenté comme une mission accomplie.
+
+`loadApprovalContinuation` reste l’unique admission de reprise. La comparaison de l’action déjà résolue reste indépendante du contexte mutable du modèle. Pour un agent à `pendingBriefKey`, une reprise d’approbation suspend le cycle avant de consommer une autre consigne : le transfert durable de l’ascendance de l’ancienne consigne vers cette reprise reste à réaliser. Les parents comportant d’autres effets incertains et les reprises de reprises demeurent refusés.
+
+**Le patch historique `aether-pr20-brief-integration.patch` de la section précédente ne doit plus être appliqué à cette version.** Il reste conservé comme proposition datée du lot précédent ; son rapprochement a maintenant été réalisé explicitement dans les sources et vérifié avec leurs dépendances.
+
+### Déléguer avec une origine cohérente
+
+Une copie bornée de l’origine est créée avant le contexte métier et le modèle, puis recopiée pour chaque effet. Les approbations conservent cette origine. Le destinataire reçoit le motif de délégation utile, tandis que les champs métier ne peuvent pas se présenter comme des faits serveur de reprise.
+
+La délégation interdit l’auto-délégation, une lignée cyclique et une profondeur supérieure à trois. Une origine historique absente n’est pas convertie en nouvelle chaîne. Les traces des délégations sont minimisées ; les paramètres nécessaires à l’exécution restent dans leur chemin autorisé. Ces contrôles ne constituent pas une certification de chiffrement de bout en bout ni un audit des journaux internes de tous les fournisseurs.
+
+### Budget réservé, coût inconnu explicite, annulation conservée
+
+Les réservations CHEF sont liées à la mission, à la tâche, au worker, à la tentative et au jeton de génération. Le cas « deux tâches estimées à 60 sous un budget de 100 » admettait auparavant les deux tâches ; la deuxième reste maintenant en attente tant que la première occupe l’enveloppe nécessaire.
+
+Un coût non fourni reste `null`. Pour une dimension plafonnée, l’absence de réconciliation conserve la réservation et empêche de déclarer le travail validé. Un reçu tardif peut régler sa propre tentative sans valider une autre génération. Les métriques déjà finalisées ne sont pas réécrites ni comptabilisées une seconde fois dans les totaux de la mission et de la tâche. Un zéro avant lancement du driver reste une observation certaine, distincte d’une consommation inconnue après exécution.
+
+Un signal déjà annulé empêche le lancement du processus direct. Des contrôles après les attentes empêchent aussi une réponse tardive du driver, du vérificateur ou de la dernière preuve de rétablir un succès après perte d’autorité. Les trois défauts principaux ont été reproduits avant correction ; les **92 cas ciblés CHEF passent ensuite**, déjà inclus dans la campagne complète.
+
+Les réservations contrôlent l’admission selon des estimations : elles ne garantissent pas un plafond absolu de facture fournisseur. Une consommation inconnue peut suspendre l’admission jusqu’à réconciliation fiable. Le rattrapage historique vise les générations actives `claimed/running/verifying` ; un mélange ambigu de coûts historiques provoque un refus transactionnel de la migration. Les tests d’annulation ne prouvent pas l’arrêt de tous les descendants possibles d’un processus.
+
+### Migrations cohérentes dans un même schéma
+
+| Numéro final | Fonction | Provenance |
+| --- | --- | --- |
+| 018 | Acquisition, aperçu, armement et clôture des consignes | PR #20, contenu exact. |
+| 019 | Garde du parent avant effet approuvé | Inchangée depuis le lot précédent. |
+| 020 | Empreinte durable de la demande | Inchangée depuis le lot précédent. |
+| 021 | Origine conservée dans une approbation | SQL d’origine #21 renommé, contenu exact. |
+| 022 | Réservations et réconciliation des budgets CHEF | SQL #21 ; seuls deux diagnostics internes sont renommés de 018 en 022. |
+
+Le test `briefDatabaseCycle` applique la vraie migration d’origine de `creator_agents`, puis **001 à 022 dans l’ordre**, et exerce le cycle réel de consigne, le journal et les déclencheurs SQL. Ses **8 cas passent**. Les tests de consigne et d’origine vérifient aussi les réapplications prévues. Il s’agit d’une base PGlite locale vierge avec authentification minimale ; cette preuve ne qualifie ni toutes les autres migrations Supabase ni une mise à niveau de données de production.
+
+### Dépendances et parcours du site
+
+Les surcharges npm corrigent la compatibilité d’OpenTimestamps et de sa chaîne HTTP sans modifier les dépendances directes déclarées. L’installation depuis le lock exact est rejouée hors réseau dans un répertoire isolé puis dans le checkout. Le contrôle de compatibilité passe de **1/5 à 5/5**. Il vérifie notamment le chargement, les preuves en mémoire, les hôtes de calendrier et les contrats HTTP simulés ; aucun ancrage réel ni service payant n’est testé. Les fonctions Deno qui épinglent leurs propres paquets ne sont pas qualifiées par ce lock racine.
+
+La campagne qualité finale du site passe **31/31**, dont **26 parcours navigateur et 5 contrôles purs**, avec Playwright 1.59.1 et Chromium 147.0.7727.0. Le site et ses vrais composants/hooks s’exécutent localement, avec réponses Supabase interceptées. Les parcours couvrent navigation, erreurs et données nulles, redirections de paiement simulées, suivi du bon run, états actifs et finaux, réponses tardives, demandes étrangères et limite d’attente.
+
+Deux défauts du banc ont été corrigés : la surveillance Vite épuisait le quota partagé de fichiers ; `watch: null` est désormais affecté après `mergeConfig`, qui ignore autrement cette valeur. La configuration résolue est contrôlée. Le scénario des états intermédiaires garde maintenant chaque statut serveur jusqu’à son observation, au lieu de le faire disparaître au nombre de requêtes. Toutes les assertions et limites sont conservées ; aucun retry ni skip n’est ajouté.
+
+### Résultats et portée des preuves
+
+| Contrôle | Résultat de cette campagne |
+| --- | --- |
+| Ensemble KARTA | **1019/1019**, 71 fichiers uniques, zéro échec final ni test ignoré ; couverture vérifiée par les noms exacts et les hashes. |
+| Organisation KARTA | 50 fichiers sans PGlite dans un processus, puis 21 fichiers SQL chacun dans un processus distinct. Les 13 groupes déjà confirmés sont conservés ; les 9 groupes incomplets ou en échec sont repris séparément sur les mêmes sources. Les résultats antérieurs ne sont pas additionnés. |
+| TypeScript KARTA et compilation | **PASS**, sorties 0, sources inchangées pendant la campagne. |
+| TypeScript site et construction Vite | **PASS**, sorties 0. |
+| Contrats Supabase générés contre le catalogue SQL versionné | **PASS**, sortie 0. |
+| Compatibilité des dépendances | **5/5 PASS**, sortie 0. |
+| Qualité du site | **31/31 PASS**, zéro flaky, skip ou échec final, sortie 0. |
+| Schéma combiné 001–022 et cycle de consigne | **8/8 PASS** dans la suite KARTA. |
+| Contrôle des changements | `git diff --check` PASS ; empreintes des sources conservées dans le reçu. |
+
+La première tentative KARTA unifiée est arrêtée à sa deadline globale de 240 secondes sans rapport final et reste **NON CONCLUANTE**. Une première campagne SQL ciblée avait aussi été interrompue pendant une forte pression mémoire. La première partition échoue sur un cas d’isolation de conversation par timeout de cinq secondes, puis l’épuisement de l’espace disque empêche l’écriture de son rapport global. Les résultats incomplets restent conservés ; la reprise garde les mêmes assertions et délais. La version exacte du runner exécuté et les rapports acceptés sont identifiés dans le reçu. Aucune de ces durées ne mesure la latence du produit.
+
+Les impacts GitNexus ont été recherchés avant les modifications. Les types partagés ont un impact classé CRITICAL déjà signalé ; les appels indirects et les cibles SQL non résolues sont traités comme limites du graphe. Un miroir isolé contient le même arbre source43, les mêmes 772 fichiers suivis et les douze instructions inchangées. L’extraction globale des parcours reste PARTIELLE : 753 candidats d’entrée et 1 370 appels sont omis, avec douze parcours coupés par leur budget. Les réponses de changement non tronquées ne rendent pas ce graphe exhaustif ; ses liens par homonymie et ses symboles de test ne prouvent pas un appel produit réel. Le verrou d’un autre analyseur n’a pas été supprimé. Le contrôle final du staging et la publication sont consignés dans la note de continuité ; `main` n’est pas inventée dans ce checkout isolé.
+
+### Conditions restantes pour une mise en service dans ONE
+
+Le runtime ONE, son checkout actuel et les parcours authentifiés avec ses vrais services restent **BLOQUÉS / NON TESTÉS dans cette session**. Les deux interfaces Mac interrogées renvoient une erreur interne sur le chemin connu ; cela ne nie pas les accès rapportés dans d’autres conversations.
+
+Avant mise en service, l’intégrateur doit identifier la version réellement utilisée par ONE et réconcilier les autres branches. L’exploitation doit qualifier les migrations, permissions, données historiques et scénarios concurrents sur PostgreSQL natif et Redis. Les anciens workers doivent être drainés avant le changement de contrat. L’historique réel des numéros et des checksums doit être contrôlé, notamment si des migrations de #21 ont déjà été appliquées sous leurs anciens numéros. Les reçus restent conservés lors d’un retour arrière.
+
+Les effets des connecteurs réels, l’ascendance de plusieurs approbations, les reprises de briefs partiels, les mesures de charge/latence et les autres capacités AETHER restent à qualifier dans leur périmètre propre. Aucun déploiement, aucune migration réelle, fusion dans `main` ou activation de fournisseur ne découle de cette campagne.

@@ -4,6 +4,8 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun, type RunLogHandle } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
+import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js";
+import { ExecutionOriginError, snapshotAgentExecutionTrigger } from "./execution-origin.js";
 import { APPROVAL_CONTINUATION_GUIDANCE, ApprovalContinuationError, loadApprovalContinuation } from "./approval-continuation.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
@@ -37,7 +39,7 @@ export async function runAgentCycle(
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = trigger.source === "approval-resume" || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = trigger.type === "delegation" || trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
@@ -45,12 +47,41 @@ export async function runAgentCycle(
   let effectStarted = false;
   let finalizedOutcome: AgentRunResult | undefined;
   let completionAttempted = false;
+  let briefArmed = false;
 
   try {
     const continuation = await loadApprovalContinuation(userId, definition.type, trigger);
-    const baseContext = await definition.buildContext(userId, trigger);
-    const context = continuation ? { ...baseContext, approvalResume: continuation.context } : baseContext;
-    const decision = await getClaudeClient().decide({
+    // Partial briefs remain in
+    // reconciliation_required. There is no durable transfer from that receipt
+    // to this continuation. Never consume another pending brief as its input.
+    // Enabling this path needs a separate verified claim/ancestry transition.
+    if (continuation && definition.pendingBriefKey !== undefined) {
+      throw new ApprovalContinuationError();
+    }
+    // Snapshot before business context/model code can mutate the raw trigger.
+    // A historical approval with no origin must stay unknown, not start a root.
+    const executionTrigger = continuation ? continuation.executionTrigger
+      : snapshotAgentExecutionTrigger(trigger, definition.type);
+    const brief = definition.pendingBriefKey === undefined ? undefined : await (
+      mode === "simulation" ? peekPendingBrief : claimPendingBrief
+    )({ userId, agentType: definition.type, runId: run.runId, key: definition.pendingBriefKey });
+    const noBrief = definition.pendingBriefKey !== undefined && brief === null;
+    const baseContext = noBrief ? {} : brief
+      ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
+      : await definition.buildContext(userId, trigger);
+    const context = { ...baseContext };
+    // Business data may not impersonate the server's execution facts.
+    delete context.kartaTrigger;
+    delete context.approvalResume;
+    if (continuation) context.approvalResume = continuation.context;
+    if (executionTrigger?.type === "delegation") {
+      context.kartaTrigger = { delegation: {
+        source: executionTrigger.source, reason: executionTrigger.payload!.reason,
+      } };
+    }
+    const decision = noBrief ? {
+      summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
+    } : await getClaudeClient().decide({
       systemPrompt: definition.systemPrompt + (continuation ? APPROVAL_CONTINUATION_GUIDANCE : ""),
       context, tools: definition.tools, agentType: definition.type,
     });
@@ -107,7 +138,7 @@ export async function runAgentCycle(
         }
       }
       // The fresh definition read must precede the final stop/state checks.
-      const latest = await loadAgentState(userId, definition.type);
+      let latest = await loadAgentState(userId, definition.type);
       if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || (mode === "live" && latest.simulationMode)) {
         cancelled = true;
         skipRemaining("Action annulée : arrêt ou autorisation modifiée");
@@ -135,17 +166,33 @@ export async function runAgentCycle(
         break;
       }
 
-      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (simulation) {
         toolsUsed.push(traceRecord(call, "Simulée : aucune action réelle", "simulated"));
         continue;
       }
+      if (brief && !briefArmed) {
+        // A lost acknowledgement may still have committed the barrier. Keep
+        // the claim out of automatic replay even if this await then fails.
+        effectStarted = true;
+        await armPendingBrief({ userId, agentType: definition.type, runId: run.runId });
+        briefArmed = true;
+        // Arming adds a database round trip. Recheck stops and autonomy before
+        // choosing whether dispatch needs another human approval.
+        latest = await loadAgentState(userId, definition.type);
+        if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || latest.simulationMode) {
+          cancelled = true;
+          skipRemaining("Action annulée : arrêt ou autorisation modifiée");
+          break;
+        }
+      }
+      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (needsApproval) {
         // Reuse PR20's durable-write barrier: the insert may commit even when
         // its acknowledgement is lost. Direct callers must not replay it.
         effectStarted = true;
         const pendingActionId = await createPendingAction({
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
+          trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
         toolsUsed.push(traceRecord(call, "En attente de validation humaine", "pending", pendingActionId));
         for (const deferred of decision.toolCalls.slice(index + 1)) {
@@ -157,6 +204,7 @@ export async function runAgentCycle(
         effectStarted = true;
         const result = await tool.execute(call.params, {
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
+          trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
         assertToolResult(result);
         toolsUsed.push(traceRecord(call, summarizeToolResult(result, privateTrace), "executed"));
@@ -168,7 +216,9 @@ export async function runAgentCycle(
       }
     }
     const pending = toolsUsed.some(t => t.outcome === "pending");
-    const status: AgentRunResult["status"] = failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
+    // A live brief with no proposed action is still waiting for treatment.
+    const unhandledBrief = Boolean(brief) && !simulation && decision.toolCalls.length === 0;
+    const status: AgentRunResult["status"] = noBrief || unhandledBrief ? "skipped" : failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
     const outcome: AgentRunResult = minimizeRunTrace({
       status, decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed), mock,
       retryable: false,
@@ -206,12 +256,17 @@ export async function runAgentCycle(
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
       // A durable execution key is already claimed. No automatic replay of it,
       // even when logging fails after a completed external action.
-      retryable: !(error instanceof ApprovalContinuationError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
+      retryable: !(error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
     // This fixed server-owned explanation is safe even for private continuations.
-    if (error instanceof ApprovalContinuationError) outcome = { ...outcome, errorMessage: error.message };
+    if (error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) outcome = { ...outcome, errorMessage: error.message };
     if (!completionAttempted) {
-      await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
+      await run.finish(outcome).catch(() => {
+        // A durable brief becomes available only in a confirmed close. A lost
+        // acknowledgement cannot authorize an automatic replay of that input.
+        if (definition.pendingBriefKey !== undefined) outcome.retryable = false;
+        console.error("[loop] journalisation indisponible ; reprise automatique interdite");
+      });
     } else {
       console.error("[loop] clôture non confirmée après réconciliation ; reprise automatique interdite");
     }

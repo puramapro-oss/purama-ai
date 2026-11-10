@@ -51,7 +51,7 @@ function makeControl(task: ChefRuntimeTask | null) {
     renewLease: vi.fn(async () => true),
     transition: vi.fn(async (input) => { transitions.push(input.target); return true; }),
     addEvidence: vi.fn(async (_task, value) => { evidence.push(value); return true; }),
-    recordUsage: vi.fn(async () => undefined),
+    recordUsage: vi.fn(async () => true),
     tryFinishMission: vi.fn(async () => true),
   };
   return { control, transitions, evidence };

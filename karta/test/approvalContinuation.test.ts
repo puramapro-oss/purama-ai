@@ -77,7 +77,7 @@ async function resolve(status: "executed" | "rejected") {
 beforeAll(async () => {
   h.db = new PGlite();
   await h.db.exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;");
-  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql"])
+  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "021_pending_action_execution_trigger.sql"])
     await h.db.exec(await readFile(new URL(`../migrations/${name}`, import.meta.url), "utf8"));
 });
 afterAll(async () => { await h.db?.close(); });
@@ -94,6 +94,32 @@ beforeEach(async () => {
 });
 
 describe("verified approval continuation through the real loop and SQL-finalized receipts", () => {
+  it("restores only the owned origin and keeps it separate from mutable model facts", async () => {
+    const origin = { type: "delegation", source: "partner", payload: {
+      reason: "PRIVATE_DELEGATION_ORIGIN", kartaDelegation: { depth: 1, lineage: ["partner", "legal"] },
+    } };
+    await h.db!.query("UPDATE purama_ai.karta_pending_actions SET execution_trigger=$1 WHERE id=$2", [JSON.stringify(origin), pendingId]);
+    const value = trigger(); value.payload!.execution_trigger = { type: "manual", source: "FORGED_ORIGIN" };
+    h.decide.mockImplementation(async input => {
+      expect(input.context.kartaTrigger).toEqual({ delegation: { source: "partner", reason: "PRIVATE_DELEGATION_ORIGIN" } });
+      input.context.kartaTrigger.delegation.source = "email";
+      input.context.kartaTrigger.delegation.reason = "MODEL_MUTATION";
+      return decision();
+    });
+    const result = await run(value);
+    expect(result.status).toBe("success");
+    expect(h.next).toHaveBeenCalledExactlyOnceWith({}, expect.objectContaining({ trigger: origin }));
+    expect(JSON.stringify([result, h.finish.mock.calls])).not.toMatch(/PRIVATE_DELEGATION_ORIGIN|FORGED_ORIGIN/);
+  });
+
+  it("rejects a malformed stored origin before context, inference or effects", async () => {
+    await h.db!.query("UPDATE purama_ai.karta_pending_actions SET execution_trigger=$1 WHERE id=$2", [JSON.stringify({ type: "manual", source: "approval-resume" }), pendingId]);
+    const result = await run();
+    expect(result).toMatchObject({ status: "error", retryable: false });
+    expect(h.buildContext).not.toHaveBeenCalled(); expect(h.decide).not.toHaveBeenCalled();
+    expect(h.next).not.toHaveBeenCalled(); expect(h.execute).not.toHaveBeenCalled();
+  });
+
   it("supplies the verified receipt and remaining steps to the model without replaying the effect", async () => {
     const result = await run();
     expect(h.decide.mock.calls[0][0].context).toMatchObject({
