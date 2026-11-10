@@ -4,6 +4,95 @@
 -- 14-day pending lifetime. No new contact engine or public privileged RPC.
 BEGIN;
 
+-- Validate the pending rollout BEFORE its first committed RPC or ACL change.
+-- 021000/022000 also validate their own inputs, but their later refusal cannot
+-- undo this file's COMMIT. This guard only inspects existing state; it never
+-- translates a private protocol, retires an authority or changes stored consent.
+-- Already-applied #23 installations skip 020000/021000 and use 022000 alone.
+DO $preflight$
+DECLARE
+  v_legacy oid := pg_catalog.to_regprocedure('purama_ai.entraide_mission_mutate(uuid,text,uuid,jsonb,bigint)');
+  v_contact oid := pg_catalog.to_regprocedure('purama_ai.entraide_contact_command(uuid,text,jsonb)');
+  v_registry regclass := pg_catalog.to_regclass('purama_ai.entraide_mission_requests');
+BEGIN
+  IF pg_catalog.to_regprocedure('purama_ai.entraide_command(text,jsonb)') IS NOT NULL
+     OR pg_catalog.to_regprocedure('purama_ai.entraide_mission_command(uuid,text,jsonb)') IS NOT NULL
+     OR EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+       WHERE attrelid = 'purama_ai.missions_collectives'::regclass
+         AND attname IN ('revision','visibility','initial_visibility') AND NOT attisdropped)
+     OR EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+       WHERE attrelid = 'purama_ai.entraide_profils'::regclass
+         AND attname = 'is_active' AND NOT attisdropped)
+     OR EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+       WHERE attrelid = 'purama_ai.entraide_contact_requests'::regclass
+         AND attname IN ('version','expires_at','create_operation_id','create_payload','create_fingerprint')
+         AND NOT attisdropped) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+
+  -- A known contact-only partial installation may be retried. Do not replace
+  -- an unrelated function merely because it has the same public signature.
+  IF v_contact IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_proc p WHERE p.oid = v_contact AND NOT p.prosecdef
+      AND p.prorettype = 'jsonb'::regtype AND p.proconfig = ARRAY['search_path=""']
+      AND p.prolang = (SELECT oid FROM pg_catalog.pg_language WHERE lanname = 'plpgsql')
+      AND pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(p.prosrc, 'UTF8')), 'hex') =
+        'b50ce38f06a495573a15fc72c91cef210dfb724df33752b4b2fb4974ddff14dd'
+  ) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+
+  IF v_legacy IS NULL THEN
+    IF v_registry IS NOT NULL OR EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+      WHERE attrelid = 'purama_ai.missions_collectives'::regclass
+        AND attname = 'version' AND NOT attisdropped) THEN
+      RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+    END IF;
+    RETURN;
+  END IF;
+
+  -- Only the exact #17 authority and receipt shape have a defined bridge.
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_proc p WHERE p.oid = v_legacy AND p.prosecdef
+      AND p.prorettype = 'jsonb'::regtype AND p.proconfig = ARRAY['search_path=""']
+      AND p.prolang = (SELECT oid FROM pg_catalog.pg_language WHERE lanname = 'plpgsql')
+      AND pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(p.prosrc, 'UTF8')), 'hex') =
+        'f196ea13a6460a7985eddbfd6c604d458388a86b96d934751e6dee0c17906b40'
+  ) OR v_registry IS NULL
+    OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+      WHERE attrelid = 'purama_ai.missions_collectives'::regclass
+        AND attname = 'version' AND atttypid = 'bigint'::regtype AND attnotnull AND NOT attisdropped) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+
+  IF (SELECT pg_catalog.array_agg(attname::text ORDER BY attnum)
+      FROM pg_catalog.pg_attribute WHERE attrelid = v_registry
+        AND attnum > 0 AND NOT attisdropped) IS DISTINCT FROM
+       ARRAY['actor_id','request_id','action','mission_id','payload','expected_version','response','created_at']
+     OR (SELECT pg_catalog.array_agg(atttypid ORDER BY attnum)
+       FROM pg_catalog.pg_attribute WHERE attrelid = v_registry
+         AND attnum > 0 AND NOT attisdropped) IS DISTINCT FROM
+       ARRAY['uuid'::regtype,'uuid'::regtype,'text'::regtype,'uuid'::regtype,
+         'jsonb'::regtype,'bigint'::regtype,'jsonb'::regtype,'timestamptz'::regtype]::oid[]
+     OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_constraint
+       WHERE conrelid = v_registry AND contype = 'p' AND conkey = ARRAY[1,2]::smallint[]) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+
+  -- Include the data checks from both later steps, so a known rejection is
+  -- detected before this contact migration can commit any authority changes.
+  IF EXISTS (SELECT 1 FROM purama_ai.missions_collectives WHERE version < 1)
+     OR EXISTS (SELECT 1 FROM purama_ai.entraide_mission_requests
+       WHERE response IS NULL OR expected_version < 1
+         OR pg_catalog.jsonb_typeof(payload) IS DISTINCT FROM 'object'
+         OR pg_catalog.jsonb_typeof(response->'mission') IS DISTINCT FROM 'object'
+         OR COALESCE(response#>>'{mission,id}', '') !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+         OR action NOT IN ('create','join','leave','start','complete','cancel')) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+END;
+$preflight$;
+
 CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(
   p_actor uuid,
   p_action text,

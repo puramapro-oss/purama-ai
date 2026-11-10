@@ -1,0 +1,35 @@
+GitNexus Detect Changes (1.6.12)
+Changes: 70 files, 791 symbols
+Affected processes: 63
+Risk level: critical
+
+Changed symbols:
+  Class EntraideHttpError → src/lib/entraide-http.ts
+  Method constructor → src/lib/entraide-http.ts
+  Property status → src/lib/entraide-http.ts
+  Property code → src/lib/entraide-http.ts
+  Interface EntraideRequestOptions → src/lib/entraide-http.ts
+  Property token → src/lib/entraide-http.ts
+  Property method → src/lib/entraide-http.ts
+  Property body → src/lib/entraide-http.ts
+  Property signal → src/lib/entraide-http.ts
+  Const ERROR_MESSAGES → src/lib/entraide-http.ts
+  Property invalid_payload → src/lib/entraide-http.ts
+  Property invalid_request → src/lib/entraide-http.ts
+  Property invalid_body → src/lib/entraide-http.ts
+  Property revision_conflict → src/lib/entraide-http.ts
+  Property stale_revision → src/lib/entraide-http.ts
+... and 776 more
+
+Affected execution flows:
+  • GetMutualAidProfile → RequestEntraide (4 steps) — changed: requestEntraide, getBlockedUserIds, getMutualAidProfile, contacts
+  • GetMutualAidProfile → EntraideHttpError (5 steps) — changed: EntraideHttpError, requestEntraide, getBlockedUserIds, getMutualAidProfile, contacts
+  • GetMutualAidProfile → ErrorMessage (5 steps) — changed: requestEntraide, errorMessage, getBlockedUserIds, getMutualAidProfile, contacts
+  • GetMutualAidProfile → OwnSession (4 steps) — changed: getBlockedUserIds, getMutualAidProfile, contacts, ownSession
+  • Entraide → ErrorState (3 steps) — changed: EntraideWorkspace, Entraide, ErrorState
+  • Entraide → LoadingState (3 steps) — changed: EntraideWorkspace, Entraide, LoadingState
+  • Entraide → ContactStatus (3 steps) — changed: EntraideWorkspace, Entraide, contactStatus
+  • Entraide → ToProfileDraft (3 steps) — changed: EntraideWorkspace, Entraide, toProfileDraft
+  • ContactPayload → RequestError (3 steps) — changed: RequestError, contactPayload, onlyKeys
+  • ResultResponse → Object (3 steps) — changed: resultResponse, contactResult, object
+... and 53 more

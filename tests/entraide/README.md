@@ -38,6 +38,10 @@ canonical migrations. It checks preserved receipts, counter translation and
 current access checks on replay. `applied-pr23-db.test.mjs` installs the exact
 historical #23 SQL, skips its recorded migration versions, and applies only the
 new `022000` upgrade; known reapplication and unknown-schema refusal are checked.
+`preflight-db.test.mjs` runs the first pending contact migration with its own
+`BEGIN/COMMIT`, without an outer test transaction. It checks that incompatible
+histories leave functions, grants, policies, schema, rows and receipts unchanged,
+and that an exact contact-only partial installation can resume normally.
 The compatibility-client test needs the existing
 private pure library; `ENTRAIDE_DOMAIN_SOURCE` can point to its `src/missions.ts`.
 
@@ -97,12 +101,17 @@ and revocation, lost confirmations with stable IDs, draft preservation, and a
   and never triggers a payment.
 - New mission records and legacy records are private after the new migration.
   Existing participants retain access through the RPC.
-- The pending `021000` migration recognizes the exact PR #17 RPC and retires
+- The first pending `020000` migration inspects compatibility before committing
+  any contact RPC or grant changes. It refuses known private protocol footprints,
+  foreign authorities and incompatible #17 receipts without rewriting them.
+  An exact contact-only partial installation may retry this step.
+  The pending `021000` migration recognizes the exact PR #17 RPC and retires
   its definer authority. The additive `022000` migration translates its counter
   to `revision = version - 1` and preserves request identities and stored
   responses. An existing #23 installation applies only `022000`; no applied
-  historical migration is replayed. Unknown or partial installations fail closed.
-  See [the reconciliation receipt](RECONCILIATION-20261110.md).
+  historical migration is replayed. Unknown installations fail closed.
+  See [the reconciliation receipt](RECONCILIATION-20261110.md) and
+  [the first-migration refusal qualification](PREFLIGHT-20261110.md).
 - First-party mission mutations carry `request_id` and their captured revision.
   Replays return current accessible state; historical receipts never grant access
   after a member leaves a private mission. Earlier #23 calls without `request_id`

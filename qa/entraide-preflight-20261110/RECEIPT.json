@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-10",
+  "status": "PASS",
+  "base_head": "8914d209cd92c2c1e4408a81eaeadc6faea483d8",
+  "main": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+  "native_before": {
+    "tests": 8,
+    "pass": 0,
+    "fail": 8,
+    "skipped": 0
+  },
+  "native_after_same_cases": {
+    "tests": 8,
+    "pass": 8,
+    "fail": 0,
+    "skipped": 0
+  },
+  "native_final": {
+    "phase": "final",
+    "status": "PASS",
+    "files": [
+      "contact-db.test.mjs",
+      "missions-db.test.mjs",
+      "reconciliation-db.test.mjs",
+      "applied-pr23-db.test.mjs",
+      "preflight-db.test.mjs",
+      "concurrency-db.test.mjs",
+      "response-contract.test.mjs"
+    ],
+    "node": "v24.22.1",
+    "production_access": false,
+    "postgres": "18.6",
+    "command": [
+      "node",
+      "--import",
+      "./native-required.mjs",
+      "--test",
+      "--test-concurrency=1",
+      "contact-db.test.mjs",
+      "missions-db.test.mjs",
+      "reconciliation-db.test.mjs",
+      "applied-pr23-db.test.mjs",
+      "preflight-db.test.mjs",
+      "concurrency-db.test.mjs",
+      "response-contract.test.mjs"
+    ],
+    "exit_code": 0,
+    "signal": null,
+    "tests": 92,
+    "pass": 92,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "server_stopped": true
+  },
+  "contact_function_unchanged": true,
+  "contact_prosrc_sha256": "b50ce38f06a495573a15fc72c91cef210dfb724df33752b4b2fb4974ddff14dd",
+  "ci_prior_head": {
+    "run_id": 42840462976,
+    "job_id": 130156377488,
+    "conclusion": "success",
+    "tests": 83,
+    "pass": 83,
+    "fail": 0,
+    "skipped": 0
+  },
+  "ci_new_head": "Refer to checks attached to the published PR head; prior-head result is not reused as proof.",
+  "gitnexus": {
+    "scope": "Entraide only",
+    "indexed_files": 42,
+    "index_head": "8914d209cd92c2c1e4408a81eaeadc6faea483d8",
+    "sql_symbol_risk": "UNKNOWN",
+    "incremental_reindex_exit": 137,
+    "staged_detect_changes_exit": 0,
+    "compare_main_exit": 0,
+    "compare_main_risk": "CRITICAL",
+    "compare_main_files": 70,
+    "compare_main_symbols": 791,
+    "compare_main_processes": 63,
+    "staged_files": 14,
+    "staged_symbols": 23,
+    "staged_risk": "LOW, graph-limited; SQL remains UNKNOWN"
+  },
+  "production_access": false,
+  "source_and_evidence_sha256": {
+    "supabase/migrations/20261110020000_entraide_contact_atomic.sql": "d7af586a69ea327d4d18117f7147dbb6b257ddc5374b9b86c1e8c08754cff171",
+    "tests/entraide/preflight-db.test.mjs": "6cff68f897be4f5ae29bb62dbf42c4218194669c1d163ddc5f43417584b4a46c",
+    "tests/entraide/package.json": "fed15700c54ca7331d6bd90382a9e54f77cea687851e93fc3666efe07509a4e2",
+    "tests/entraide/README.md": "d3f721769317556158f65086deea32dea3f5dbcc4505476a7d0ce4692fbc5091",
+    "tests/entraide/PREFLIGHT-20261110.md": "4cbde9bf681e0adf79a82746767f64a709696963627aa40b09bbfa1818f54b59",
+    "qa/entraide-preflight-20261110/after.json": "896f6ff61efaf10c1a7e5a0f28e127b3d1c2a135f8243a6aec7e338a996705e1",
+    "qa/entraide-preflight-20261110/after.txt": "43707159427fad2c782560da52e96b98f149d7de162e53e27a079985ec210293",
+    "qa/entraide-preflight-20261110/before.json": "1ce4f766eeed856c017c4c2465ee30e16f7588cd865fcc42babeb82aeb118bd3",
+    "qa/entraide-preflight-20261110/before.txt": "ad7131fe206cb15a375ba825489ea644a5fe8a326db14c7bf03e83acea4cab4d",
+    "qa/entraide-preflight-20261110/ci-83-excerpt.txt": "1c57418f76eb04c9d88822c42fd9e9677ce96bdac75b3212f7ca1271d37adf15",
+    "qa/entraide-preflight-20261110/final.json": "4818e9bcaaa615ec38c44bfd82a7e39bc19792bc79d63772fbe486ff630f994b",
+    "qa/entraide-preflight-20261110/final.txt": "ef37128e15bb8a3bc5c70aed466ae2d84df5ebaddc403e67b05dd4fe1272eebf",
+    "qa/entraide-preflight-20261110/gitnexus-compare.txt": "cf7a0651206cff147520d4fdb18240c2e8788ad55d8558058811493ce7dc31d1"
+  },
+  "evidence_normalization": {
+    "before.txt": "Only trailing whitespace removed; all recorded lines and assertions retained.",
+    "before_original_sha256": "53d1d441735de997beb08e07d38119b7d52151dfaa002c738e33811f0d251f97"
+  }
+}

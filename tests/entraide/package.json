@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:sql": "node --max-old-space-size=384 --wasm-num-compilation-tasks=1 --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs reconciliation-db.test.mjs applied-pr23-db.test.mjs",
-    "test:native": "node --import ./native-required.mjs --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs reconciliation-db.test.mjs applied-pr23-db.test.mjs concurrency-db.test.mjs response-contract.test.mjs"
+    "test:sql": "node --max-old-space-size=384 --wasm-num-compilation-tasks=1 --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs reconciliation-db.test.mjs applied-pr23-db.test.mjs preflight-db.test.mjs",
+    "test:native": "node --import ./native-required.mjs --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs reconciliation-db.test.mjs applied-pr23-db.test.mjs preflight-db.test.mjs concurrency-db.test.mjs response-contract.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8",
