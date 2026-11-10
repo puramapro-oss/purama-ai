@@ -1,6 +1,6 @@
 import { test, expect, type Page, type Route } from '@playwright/test';
+import { qualityOrigin as origin } from './quality-environment';
 
-const origin = 'http://127.0.0.1:4176';
 const userId = '00000000-0000-4000-8000-000000000001';
 const user = { id: userId, email: 'fixture@example.invalid', aud: 'authenticated', role: 'authenticated',
   app_metadata: {}, user_metadata: {}, created_at: '2026-01-01T00:00:00Z' };

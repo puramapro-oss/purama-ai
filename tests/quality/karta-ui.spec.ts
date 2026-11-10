@@ -1,7 +1,7 @@
 import { test, expect, type Page, type Route } from '@playwright/test';
 import { getKartaRunStatus } from '../../src/lib/karta-run-status';
+import { qualityOrigin as origin } from './quality-environment';
 
-const origin = 'http://127.0.0.1:4176';
 const userId = '00000000-0000-4000-8000-000000000001';
 const agentType = 'crm-intelligent';
 const executionKey = 'opaque-execution-fixture';
@@ -10,6 +10,8 @@ const user = { id: userId, email: 'fixture@example.invalid', aud: 'authenticated
 const agent = { id: '00000000-0000-4000-8000-000000000010', slug: agentType, name: 'CRM fixture',
   description: 'Préparer le suivi des contacts.', category: 'ventes', icon: '🤖', color: null,
   features: [], is_active: true, is_premium: false, created_at: '2026-01-01T00:00:00Z' };
+
+test.use({ serviceWorkers: 'block' });
 
 function run(status: string, patch: Record<string, unknown> = {}) {
   return { id: `run-${status}`, execution_key: executionKey, user_id: userId, agent_type: agentType,
@@ -31,6 +33,10 @@ async function prepare(page: Page, options: {
   onTrigger?: () => unknown | Promise<unknown>;
   history?: ReturnType<typeof run>[];
 } = {}) {
+  // No realtime or development socket may reach a server during these fixtures.
+  await page.context().routeWebSocket('**/*', async socket => {
+    await socket.close();
+  });
   await page.addInitScript(({ user }) => {
     localStorage.setItem('purama_ai_intro_seen', '1');
     sessionStorage.setItem('purama_affirmation_shown', 'true');

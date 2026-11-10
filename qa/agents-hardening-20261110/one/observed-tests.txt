@@ -1,0 +1,31 @@
+[Reading 28 lines from line 370 (total: 435 lines, 37 remaining)]
+
+✔ transport error 415/UNSUPPORTED_MEDIA_TYPE is explicit and never retried (0.502375ms)
+✔ transport error 503/UNAVAILABLE is explicit and never retried (4.693ms)
+✔ invalid module IDs never make a request (3.283459ms)
+✔ malformed responses and inconsistent error statuses fail closed (6.037583ms)
+✔ invalid JSON and network failures expose no internal error details (0.569042ms)
+✔ cancel before request, while fetching and during JSON parsing refuses late success (4.330292ms)
+✔ offer is checked at completion and again at use, including exact expiry boundary (2.731958ms)
+✔ wrong module, version, revision, clock or expiration never produces a usable offer (0.813167ms)
+✔ unsafe destinations including credential, query and fragment URLs are rejected (0.771041ms)
+✔ real component initial SSR is accessible, escapes service title and performs no launch request (800.494666ms)
+✔ each service has a unique internal route and resolves by exact ID (20.425833ms)
+✔ search supports accents, case, whitespace, descriptions, categories and empty results (31.411125ms)
+ℹ tests 378
+ℹ suites 0
+ℹ pass 378
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7379.707833
+
+> purama-one@0.1.0 typecheck
+> tsc --noEmit
+
+
+> purama-one@0.1.0 lint
+> eslint . --max-warnings 0
+
+✅ Process completed with exit code 0 (runtime: 53.52s)

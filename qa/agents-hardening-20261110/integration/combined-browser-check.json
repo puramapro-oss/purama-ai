@@ -1,0 +1,16 @@
+{
+  "check": "combined-browser",
+  "command": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config=tests/quality/playwright.config.ts",
+    "tests/quality/karta-ui.spec.ts",
+    "tests/quality/partner-outreach.spec.ts",
+    "--workers=1",
+    "--timeout=90000"
+  ],
+  "exit": 1,
+  "elapsed_seconds": 5.42,
+  "tail": "(node:71490) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\nError: http://127.0.0.1:4176 is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.\n\n"
+}

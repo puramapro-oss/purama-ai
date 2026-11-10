@@ -1,0 +1,17 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+{"level":40,"time":1794280037962,"name":"gitnexus","msg":"[scope-resolution] 73 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (typescript), data (javascript/typescript), env (typescript), SUPABASE_SERVICE_ROLE_KEY (typescript), SUPABASE_URL (typescript), accent (typescript), action (typescript), action_payload (typescript), action_type (typescript), action_url (typescript), …"}
+{"level":40,"time":1794280038472,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":781,"entryPointsUnexplored":0,"walksCutByBudget":12,"tracesDepthCapped":0,"calleesDropped":1183,"processesDropped":0},"msg":"[processes] 537 flows reported, but whole flows are MISSING: 781 of 981 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 1183 callee(s) skipped at maxBranching, 12 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+
+Incremental: changed=14, added=43, deleted=0 (skipping wipe + 644 unchanged file rows preserved)
+
+Incremental: +11 importer(s) added to writable set (BFS depth ≤ 4)
+
+Parse cache: pruned 22 stale chunk entries
+
+  Repository indexed successfully (52.8s)
+
+  9,234 nodes | 21,495 edges | 309 clusters | 537 flows
+  /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314

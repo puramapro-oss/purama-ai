@@ -1,0 +1,46 @@
+{
+  "repository": "puramapro-oss/purama-ai",
+  "base": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "index": "purama-agents-hardening-20261110",
+  "gitnexus": "1.6.12",
+  "classImpact": {
+    "chunk_id": "2df8cf",
+    "wall_time_seconds": 0.000015353,
+    "exit_code": 0,
+    "original_token_count": 502,
+    "output": "\n  GitNexus Impact (1.6.12)\n{\n  \"target\": {\n    \"id\": \"Class:karta/src/chef/control-plane.ts:SupabaseChefControlPlane\",\n    \"name\": \"SupabaseChefControlPlane\",\n    \"type\": \"Class\",\n    \"filePath\": \"karta/src/chef/control-plane.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 3,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"lower-bound\",\n  \"boundaries\": [\n    \"ChefControlPlane is an interface with 1 implementation and 1 interface-level consumer; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher.\"\n  ],\n  \"causes\": {\n    \"scopeExtractionFiles\": 0,\n    \"receiverTyping\": 0,\n    \"dispatchBoundary\": 2,\n    \"externalBoundary\": 0,\n    \"undecidedSatisfaction\": 0,\n    \"callableValueReferences\": 0\n  },\n  \"summary\": {\n    \"direct\": 3,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 3\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Chef\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/src/chef/worker-main.ts\",\n        \"name\": \"worker-main.ts\",\n        \"filePath\": \"karta/src/chef/worker-main.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/test/chefEvidenceAdapter.test.ts\",\n        \"name\": \"chefEvidenceAdapter.test.ts\",\n        \"filePath\": \"karta/test/chefEvidenceAdapter.test.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"Function:karta/src/chef/worker-main.ts:main\",\n        \"name\": \"main\",\n        \"filePath\": \"karta/src/chef/worker-main.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n"
+  },
+  "interfaceImpact": {
+    "chunk_id": "068f06",
+    "wall_time_seconds": 0.000018488,
+    "exit_code": 0,
+    "original_token_count": 1018,
+    "output": "{\n  \"target\": {\n    \"id\": \"Interface:karta/src/chef/supervisor.ts:ChefControlPlane\",\n    \"name\": \"ChefControlPlane\",\n    \"type\": \"Interface\",\n    \"filePath\": \"karta/src/chef/supervisor.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 8,\n  \"risk\": \"MEDIUM\",\n  \"riskSharedAxes\": \"MEDIUM\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"lower-bound\",\n  \"boundaries\": [\n    \"ChefControlPlane is an interface with 1 implementation and 1 interface-level consumer; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher.\"\n  ],\n  \"causes\": {\n    \"scopeExtractionFiles\": 0,\n    \"receiverTyping\": 0,\n    \"dispatchBoundary\": 2,\n    \"externalBoundary\": 0,\n    \"undecidedSatisfaction\": 0,\n    \"callableValueReferences\": 0\n  },\n  \"summary\": {\n    \"direct\": 6,\n    \"processes_affected\": 1,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 6,\n    \"2\": 2\n  },\n  \"affected_processes\": [\n    {\n      \"name\": \"runChefWorkerCycle\",\n      \"type\": \"Function\",\n      \"filePath\": \"karta/src/chef/supervisor.ts\",\n      \"affected_process_count\": 2,\n      \"total_hits\": 2,\n      \"earliest_broken_step\": 1\n    }\n  ],\n  \"affected_modules\": [\n    {\n      \"name\": \"Chef\",\n      \"hits\": 3,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Class:karta/src/chef/control-plane.ts:SupabaseChefControlPlane\",\n        \"name\": \"SupabaseChefControlPlane\",\n        \"filePath\": \"karta/src/chef/control-plane.ts\",\n        \"relationType\": \"IMPLEMENTS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/src/chef/control-plane.ts\",\n        \"name\": \"control-plane.ts\",\n        \"filePath\": \"karta/src/chef/control-plane.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/src/chef/worker-main.ts\",\n        \"name\": \"worker-main.ts\",\n        \"filePath\": \"karta/src/chef/worker-main.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/test/chefSupervisor.test.ts\",\n        \"name\": \"chefSupervisor.test.ts\",\n        \"filePath\": \"karta/test/chefSupervisor.test.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/test/chefVerificationGitIntegration.test.ts\",\n        \"name\": \"chefVerificationGitIntegration.test.ts\",\n        \"filePath\": \"karta/test/chefVerificationGitIntegration.test.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"Function:karta/src/chef/supervisor.ts:runChefWorkerCycle\",\n        \"name\": \"runChefWorkerCycle\",\n        \"filePath\": \"karta/src/chef/supervisor.ts\",\n        \"relationType\": \"USES\",\n        \"confidence\": 0.53,\n        \"processes\": [\n          {\n            \"id\": \"proc_6_runchefworkercycle\",\n            \"label\": \"RunChefWorkerCycle → AssertRpc\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          },\n          {\n            \"id\": \"proc_7_runchefworkercycle\",\n            \"label\": \"RunChefWorkerCycle → Rpc\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          }\n        ]\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"File:karta/test/chefEvidenceAdapter.test.ts\",\n        \"name\": \"chefEvidenceAdapter.test.ts\",\n        \"filePath\": \"karta/test/chefEvidenceAdapter.test.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"Function:karta/src/chef/worker-main.ts:main\",\n        \"name\": \"main\",\n        \"filePath\": \"karta/src/chef/worker-main.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n"
+  },
+  "claimNextFromParent": {
+    "target": "Method:karta/src/chef/control-plane.ts:SupabaseChefControlPlane.claimNext#1",
+    "exit_code": 0,
+    "risk": "LOW",
+    "impactedCount": 5,
+    "session": 70047,
+    "callers": [
+      "runChefWorkerCycle",
+      "chefSupervisor.test.ts",
+      "chefVerificationGitIntegration.test.ts",
+      "worker-main.main"
+    ],
+    "provenance": "Parent executed on same unchanged base/index and supplied result; not rerun."
+  },
+  "reviewedLimitations": [
+    "Interface dispatch is a lower bound; direct callers/imports inspected.",
+    "Global index flow extraction was capped at 525.",
+    "Database trigger guards cannot be fully represented by TypeScript impact graphs."
+  ],
+  "extendedScope": [
+    "karta/src/chef/control-plane.ts",
+    "karta/src/chef/supervisor.ts",
+    "karta/migrations/020_chef_process_quarantine.sql",
+    "matching tests"
+  ],
+  "decision": "MEDIUM overall: persisted quarantine must precede blocked transition; failed persistence halts daemon, never retries."
+}

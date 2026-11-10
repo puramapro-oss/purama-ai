@@ -1,0 +1,71 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/chefEstimates.test.ts test/chefBrief.test.ts test/chefMission.test.ts --reporter=verbose --maxWorkers=1
+
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta
+
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > preserves the exact historical hash and shape when both estimates are absent 28ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > keeps explicit zero and makes estimates part of the canonical hash 4ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: null before RPC 4ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: 1 before RPC 1ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: true before RPC 11ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: -1 before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: 0.5 before RPC 1ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: NaN before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: Infinity before RPC 4ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedTokens: 9007199254740992 before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: null before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: 1 before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: true before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: -1 before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: 0.5 before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: NaN before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: Infinity before RPC 0ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > rejects an invalid estimatedCostMicros: 9007199254740992 before RPC 5ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > requires the corresponding estimate when tokenBudget is zero 1ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > requires the corresponding estimate when costBudgetMicros is zero 4ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > requires an estimate for every task under the corresponding cap 1ms
+ ✓ test/chefEstimates.test.ts > CHEF canonical admission estimates > leaves the other estimate optional when only one dimension has a cap 1ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > persists the real normalized RPC payload, including zero, with the existing DAG and ownership 84ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > preserves unbounded legacy missions and accepts replay of their unchanged hash 63ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > accepts the largest safe integer without precision loss 47ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: null and rolls back the mission 39ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: 1 and rolls back the mission 29ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: NaN and rolls back the mission 25ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: true and rolls back the mission 22ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: -1 and rolls back the mission 22ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: 0.5 and rolls back the mission 23ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedTokens: 9007199254740992 and rolls back the mission 27ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: null and rolls back the mission 23ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: 1 and rolls back the mission 25ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: NaN and rolls back the mission 44ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: true and rolls back the mission 25ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: -1 and rolls back the mission 27ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: 0.5 and rolls back the mission 26ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects invalid raw SQL estimatedCostMicros: 9007199254740992 and rolls back the mission 28ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > enforces missing estimates at SQL ingress for both finite budget dimensions 21ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > allows the uncapped dimension to remain absent in the raw RPC 28ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > rejects changed estimates on the same brief version and retains the first mission 39ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > retains the SQL ownership and profile guards introduced before this migration 39ms
+ ✓ test/chefEstimates.test.ts > CHEF estimate ingestion with real SQL > retains the server-only RPC permission 31ms
+ ✓ test/chefMission.test.ts > CHEF atomic mission ingestion > creates the canonical mission, DAG and requirement links atomically 68ms
+ ✓ test/chefMission.test.ts > CHEF atomic mission ingestion > is idempotent for the same brief version and hash 47ms
+ ✓ test/chefMission.test.ts > CHEF atomic mission ingestion > rejects reusing the same brief version with different content hash 42ms
+ ✓ test/chefMission.test.ts > CHEF atomic mission ingestion > rolls the whole mission back if a dependency is unknown 38ms
+ ✓ test/chefMission.test.ts > CHEF atomic mission ingestion > keeps mission creation server-only 20ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > produit le même hash malgré un ordre superficiel différent 21ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > change le hash si une exigence change réellement 2ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > normalise les valeurs par défaut de façon déterministe 2ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > refuse les requirements oubliées par le plan 1ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > refuse une dépendance inconnue 1ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > refuse les cycles de dépendances 1ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > refuse une tâche write sans périmètre de fichiers explicite 0ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > refuse les chemins qui sortent du dépôt et les doublons canoniques 1ms
+ ✓ test/chefBrief.test.ts > canonical CHEF briefs > refuse les doublons de tâches et de requirements après normalisation 1ms
+
+ Test Files  3 passed (3)
+      Tests  58 passed (58)
+   Start at  03:09:45
+   Duration  14.68s (tests 96%, transform 3%, import 1%)

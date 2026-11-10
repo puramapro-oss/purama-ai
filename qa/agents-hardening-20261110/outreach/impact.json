@@ -1,0 +1,45 @@
+{
+  "source": "Pre-edit GitNexus 1.6.12 command outputs, summarized without inventing missing graph edges.",
+  "repo": "purama-agents-hardening-20261110",
+  "base_commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "checks": [
+    {
+      "command": "npx --no-install gitnexus impact sendOutreach --direction upstream --file src/lib/partner.ts --repo purama-agents-hardening-20261110",
+      "exit": 0,
+      "risk": "LOW",
+      "direct": 1,
+      "impacted": 2,
+      "processes": 2,
+      "callers": [
+        "PartnerAgentProspects.handleSend",
+        "PartnerAgentProspects"
+      ]
+    },
+    {
+      "command": "npx --no-install gitnexus impact handleSend --direction upstream --file src/pages/PartnerAgentProspects.tsx --repo purama-agents-hardening-20261110",
+      "exit": 0,
+      "risk": "LOW",
+      "direct": 1,
+      "impacted": 1,
+      "processes": 1,
+      "callers": [
+        "PartnerAgentProspects"
+      ]
+    },
+    {
+      "command": "npx --no-install gitnexus impact json --direction upstream --file supabase/functions/partner-send-outreach/index.ts --repo purama-agents-hardening-20261110",
+      "exit": 0,
+      "risk": "LOW",
+      "direct": 1,
+      "impacted": 1,
+      "epistemic": "lower-bound",
+      "boundary": "One json callsite was dropped due to unresolved receiver typing; Deno callback and external HTTP consumers are not completely modeled."
+    }
+  ],
+  "manual_callers": [
+    "n8n/partner-outreach-scheduler.json",
+    "n8n/partner-relances.json",
+    "src/lib/partner.ts"
+  ],
+  "business_risk": "MEDIUM: outbound email admission and additive database migration. Parent notified before editing. No live sends, rollout or n8n changes."
+}

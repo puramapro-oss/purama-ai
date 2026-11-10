@@ -1,0 +1,51 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/overageCredit.test.ts --reporter=verbose
+
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta
+
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > credits a confirmed session once and retains the signed payment month on redelivery 200ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > serializes a burst of deliveries into one credit under the real SQL unique constraint 119ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > does not grant completed Checkout credits with unpaid status 11ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > does not grant completed Checkout credits with no_payment_required status 20ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > waits for delayed payment success and grants once in the successful event month 46ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > does not acknowledge an inconsistent delayed success as a credit 25ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > ignores delayed failures and unrelated async sessions without issuing credits 26ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > requires signature verification before crediting: null 10ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > requires signature verification before crediting: fixture-invalid 13ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects invalid owner before any persistent credit 30ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects missing payment intent before any persistent credit 42ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects invalid amount before any persistent credit 21ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects fractional amount before any persistent credit 24ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects invalid currency before any persistent credit 42ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects incomplete session before any persistent credit 33ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects missing timestamp before any persistent credit 25ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects time before creation before any persistent credit 29ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects mode mismatch before any persistent credit 15ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > supports an expanded payment intent without trusting its other fields 34ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > returns a retryable error on persistence failure and grants once on retry 29ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > requires a persisted receipt and safely retries after a lost acknowledgement 69ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects reuse of a session for another user through the real webhook 56ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects a conflicting session payload atomically: {"p_actions":2001} 35ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects a conflicting session payload atomically: {"p_payment_amount_total":1800} 18ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects a conflicting session payload atomically: {"p_payment_currency":"usd"} 23ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects a conflicting session payload atomically: {"p_stripe_payment_intent_id":"pi_other"} 37ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects a conflicting session payload atomically: {"p_payment_livemode":true} 42ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects a conflicting session payload atomically: {"p_payment_confirmed_at":"2026-11-01T00:00:01Z"} 55ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > accepts another event ID for the same evidenced payment without replacing its first receipt 53ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > rejects reusing a payment event for a different session 22ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > forbids credit RPC access from anon 22ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > forbids credit RPC access from authenticated 6ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > forbids credit RPC access from public_only 22ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > cannot be bypassed by a client direct insert despite broad historical table grants 21ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > enforces session uniqueness even for direct trusted inserts outside the helper 28ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > keeps historical credits intact and refuses to invent missing payment evidence on replay 39ms
+ ✓ test/overageCredit.test.ts > legacy overage: real webhook and PostgreSQL credit boundary > can reapply the migration without changing credits or payment proof 37ms
+ ✓ test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit 4184ms
+
+ Test Files  1 passed (1)
+      Tests  38 passed (38)
+   Start at  02:49:26
+   Duration  13.67s (tests 89%, import 8%, transform 3%)

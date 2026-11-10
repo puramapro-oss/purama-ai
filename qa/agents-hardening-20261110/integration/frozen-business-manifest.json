@@ -1,0 +1,62 @@
+[
+  {
+    "path": "supabase/functions/stripe-webhook/index.ts",
+    "sha256": "58f19152f9c54dd0d412cf73761279d7edbe5bd56b1803b353dd09487c27109d"
+  },
+  {
+    "path": "supabase/functions/stripe-webhook/overage.ts",
+    "sha256": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133"
+  },
+  {
+    "path": "supabase/migrations/20261110000200_overage_credit_idempotency.sql",
+    "sha256": "75bfcafe88ec226e21b7d7647c4f230f895b5c52d6604f5543eb0ea70b5414a4"
+  },
+  {
+    "path": "karta/test/overageCredit.test.ts",
+    "sha256": "9854df6c565a3f9022145ca7ea6474debd42a14807ea85e2b4d66d662550f8d8"
+  },
+  {
+    "path": "karta/src/chef/brief.ts",
+    "sha256": "673698526ca1e9a4943fc759f5bacc1f12baee7edee6fff2cab4a72c58c9a8ed"
+  },
+  {
+    "path": "karta/src/chef/mission.ts",
+    "sha256": "8d910608f6a2cf5b5ab1b05a306186129dbbc9b738c91297a2cdc7124f376712"
+  },
+  {
+    "path": "karta/migrations/019_chef_mission_estimates.sql",
+    "sha256": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f"
+  },
+  {
+    "path": "karta/test/chefEstimates.test.ts",
+    "sha256": "23e3fcbf5f0e9f48a5d4c873baff59538f59a46254d2d7596192427c3446b854"
+  },
+  {
+    "path": "supabase/functions/partner-send-outreach/index.ts",
+    "sha256": "5f9ad9cfa137da0d0e4f770f5c934f2b72ad3afbba299a47edf3d394690f7aec"
+  },
+  {
+    "path": "supabase/functions/partner-send-outreach/handler.ts",
+    "sha256": "958df640f4d013552916e2ef9286e78084772744f43a11f04eaf9c9e76c415d7"
+  },
+  {
+    "path": "supabase/migrations/20261110030000_partner_outreach_reservations.sql",
+    "sha256": "e93f400c9075204c7a7468e6c4ad323fca58cec73f765d51ba5c3473b41e1501"
+  },
+  {
+    "path": "src/lib/partner.ts",
+    "sha256": "cb3e348fce182e7a9af5a940b8826e95e6c5a1f47f07bf93db2136d09d573f3d"
+  },
+  {
+    "path": "src/lib/partner-outreach-result.ts",
+    "sha256": "71e42312e12e75fe7d34e2475491b21a60b5dafcad78854948b5bb1d8ee3d4f8"
+  },
+  {
+    "path": "src/pages/PartnerAgentProspects.tsx",
+    "sha256": "277b4bede3bd661403fe5ab54e5c40428c3fa67b39a9d9fac2c4be538602ed3a"
+  },
+  {
+    "path": "karta/test/partnerOutreach.test.ts",
+    "sha256": "fa981b07bd57fe60eb3011f9a82f7d55d7bbc5214b22ac124f4f49822c79a6dd"
+  }
+]

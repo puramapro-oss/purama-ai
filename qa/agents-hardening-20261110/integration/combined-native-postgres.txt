@@ -1,0 +1,8 @@
+{"check": "budget_70_plus_70_under_100", "status": "PASS", "elapsed_seconds": 5.5053}
+{"check": "one_credit_for_concurrent_deliveries", "status": "PASS", "elapsed_seconds": 3.877}
+{"check": "outreach_admission_and_persistent_opposition", "status": "PASS", "elapsed_seconds": 8.2196}
+{"check": "quarantine_three_session_reader_writer_queue", "status": "PASS", "elapsed_seconds": 4.1221}
+{"check": "quarantine_blocks_concurrent_claim", "status": "PASS", "elapsed_seconds": 2.5147}
+{"check": "expiry_quarantine_blocks_concurrent_claim", "status": "PASS", "elapsed_seconds": 2.5527}
+{"check": "expiry_recovery_uses_nonblocking_advisory_lock", "status": "PASS", "elapsed_seconds": 1.564}
+{"status": "PASS", "evidence": "/Users/matissdornier/purama-worktrees/agents-integrated-20261110-27815bcc/qa/agents-hardening-20261110/integration/combined-native-postgres-results.json", "cleanup": {"server_stopped": true, "temporary_cluster_removed": true, "client_cleanup_errors": []}}

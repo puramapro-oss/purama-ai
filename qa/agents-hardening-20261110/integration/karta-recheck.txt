@@ -1,0 +1,23 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/karta
+
+ ✓ test/chatHistoryIsolation.test.ts (39 tests) 50625ms
+   ✓ stored chat ownership: both schemas (10)
+     ✓ preserves administrative read/write/delete rights, including anonymous historical rows 376ms
+   ✓ migration preflight refuses an unreviewed schema (9)
+     ✓ rolls back both schemas when only conversations remain 4126ms
+     ✓ rolls back both schemas when only messages remain 4433ms
+     ✓ rolls back both schemas when an extra permissive conversation policy… 3226ms
+     ✓ rolls back both schemas when an extra permissive message policy exis… 3445ms
+     ✓ rolls back both schemas when a required policy is missing 2930ms
+     ✓ rolls back both schemas when a known name has an unexpected policy c… 2212ms
+     ✓ rolls back both schemas when a known name is unexpectedly restrictive 2231ms
+     ✓ rolls back both schemas when a table was replaced by a view 1875ms
+     ✓ refuses to report success when neither schema contains chat history 2142ms
+ ✓ test/overageCredit.test.ts (38 tests) 10992ms
+   ✓ stops the migration on historical duplicate sessions without deleting or rewriting a credit 4383ms
+
+ Test Files  2 passed (2)
+      Tests  77 passed (77)
+   Start at  03:39:54
+   Duration  63.84s (tests 98%, import 2%)

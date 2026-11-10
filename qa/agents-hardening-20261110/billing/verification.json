@@ -1,0 +1,82 @@
+{
+  "base_commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "status": "isolated_checks_passed_native_replay_pending_no_deployment",
+  "checks": [
+    {
+      "command": "npm test -- test/overageCredit.test.ts --reporter=verbose",
+      "cwd": "karta",
+      "exit_code": 0,
+      "passed": 38,
+      "log": "vitest-overage.txt",
+      "phase": "initial_isolated_patch"
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exit_code": 0,
+      "log": "karta-typecheck.txt",
+      "phase": "initial_isolated_patch"
+    },
+    {
+      "command": "./node_modules/.bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck ../supabase/functions/stripe-webhook/overage.ts",
+      "cwd": "karta",
+      "exit_code": 0,
+      "log": "helper-typecheck.txt",
+      "phase": "initial_isolated_patch"
+    },
+    {
+      "command": "git diff --check",
+      "cwd": ".",
+      "exit_code": 0,
+      "phase": "initial_isolated_patch"
+    },
+    {
+      "phase": "native_arbitration_fix",
+      "command": "npm test -- test/overageCredit.test.ts --reporter=verbose --maxWorkers=1",
+      "cwd": "karta",
+      "exit_code": 0,
+      "passed": 38,
+      "duration_seconds": 7.1,
+      "log": "vitest-overage-native-fix.txt"
+    },
+    {
+      "phase": "native_arbitration_fix",
+      "command": "git diff --check",
+      "cwd": ".",
+      "exit_code": 0
+    }
+  ],
+  "sha256": {
+    "supabase/functions/stripe-webhook/index.ts": "58f19152f9c54dd0d412cf73761279d7edbe5bd56b1803b353dd09487c27109d",
+    "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+    "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+    "karta/test/overageCredit.test.ts": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2"
+  },
+  "limitations": [
+    "The initial native multi-session run exposed a unique-index arbitration error; the corrected SQL has 38 passing isolated tests and awaits the identical native replay.",
+    "Provider and signature verification adapter simulated",
+    "No real payment, API call or production deployment",
+    "Other legacy webhook paths remain outside this patch"
+  ],
+  "native_fix": {
+    "recorded_at": "2026-11-10T02:48:19.071Z",
+    "initial_native_run_reported_by": "integration owner; PostgreSQL 18 on the isolated Mac cluster",
+    "initial_native_checks_passed": 6,
+    "initial_native_checks_total": 7,
+    "initial_error_sqlstate": "23505",
+    "initial_error_constraint": "overage_credits_stripe_event_unique",
+    "initial_server_stopped": true,
+    "initial_temporary_cluster_removed": true,
+    "previous_migration_sha256": "75bfcafe88ec226e21b7d7647c4f230f895b5c52d6604f5543eb0ea70b5414a4",
+    "previous_test_sha256": "9854df6c565a3f9022145ca7ea6474debd42a14807ea85e2b4d66d662550f8d8",
+    "change": "ON CONFLICT DO NOTHING arbitrates every unique index; immutable session validation remains, with explicit rejection of an event already bound to another session.",
+    "domain_error": "overage_session_conflict_requires_reconciliation",
+    "domain_error_sqlstate": "22023",
+    "unique_indexes_preserved": [
+      "overage_credits_stripe_session_unique",
+      "overage_credits_stripe_event_unique"
+    ],
+    "identical_native_replay": "PENDING_INTEGRATION_OWNER",
+    "native_script_sha256": "462c51632fa2cbd3afe16595a270e53a4899ae156b11e57833877a97ba5e5701"
+  }
+}

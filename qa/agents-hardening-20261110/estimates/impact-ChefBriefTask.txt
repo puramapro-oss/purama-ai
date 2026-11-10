@@ -1,0 +1,102 @@
+{
+  "target": {
+    "id": "Interface:karta/src/chef/brief.ts:ChefBriefTask",
+    "name": "ChefBriefTask",
+    "type": "Interface",
+    "filePath": "karta/src/chef/brief.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 5,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "ChefBriefTask is an interface with 1 interface-level consumer; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 0,
+    "dispatchBoundary": 1,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 2,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 2,
+    "2": 1,
+    "3": 2
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 4,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:karta/src/chef/mission.ts",
+        "name": "mission.ts",
+        "filePath": "karta/src/chef/mission.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/brief.ts:validateChefBrief",
+        "name": "validateChefBrief",
+        "filePath": "karta/src/chef/brief.ts",
+        "relationType": "USES",
+        "confidence": 0.53,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/brief.ts:normalizeChefBrief",
+        "name": "normalizeChefBrief",
+        "filePath": "karta/src/chef/brief.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/brief.ts:hashChefBrief",
+        "name": "hashChefBrief",
+        "filePath": "karta/src/chef/brief.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/mission.ts:createChefMission",
+        "name": "createChefMission",
+        "filePath": "karta/src/chef/mission.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Impact (1.6.12)
