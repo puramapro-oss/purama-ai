@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../config.js";
 import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
-import { schemaForTool } from "../engine/tool-input.js";
+import { schemaForTool, validateToolParams } from "../engine/tool-input.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 import { buildAssistantSystemPrompt } from "./assistant-policy.js";
 
@@ -42,15 +42,58 @@ export function createRealClaudeClient(): ClaudeClient {
         tools: toAnthropicTools(input.tools),
       });
 
+      // This client requests only client tools, without stop sequences or a
+      // server-tool continuation loop. Never turn a truncated, paused, refused
+      // or unknown completion into executable actions, even if its first tool
+      // block is well formed. Do not retry a rejected decision automatically.
+      if (response.stop_reason !== "end_turn" && response.stop_reason !== "tool_use") {
+        throw new Error(response.stop_reason === "refusal"
+          ? "Décision Claude refusée : aucune action exécutable"
+          : "Décision Claude incomplète ou fin non prise en charge : aucune action exécutable");
+      }
+      if (!Array.isArray(response.content)) {
+        throw new Error("Décision Claude invalide : contenu absent");
+      }
+
       const toolCalls: AgentDecision["toolCalls"] = [];
+      const toolIds = new Set<string>();
       let summary = "";
 
       for (const block of response.content) {
+        if (!block || typeof block !== "object") {
+          throw new Error("Décision Claude invalide : bloc de contenu incorrect");
+        }
         if (block.type === "text") {
+          if (typeof block.text !== "string") {
+            throw new Error("Décision Claude invalide : texte incorrect");
+          }
           summary += block.text;
         } else if (block.type === "tool_use") {
-          toolCalls.push({ tool: block.name, params: block.input as Record<string, unknown> });
+          if (response.stop_reason !== "tool_use" || typeof block.id !== "string"
+            || !block.id.trim() || toolIds.has(block.id)) {
+            throw new Error("Décision Claude incohérente : appel d'outil sans fin ou identifiant valide");
+          }
+          const tool = input.tools.find(candidate => candidate.name === block.name);
+          if (!tool) throw new Error("Décision Claude invalide : outil non proposé");
+          // Preflight the whole response before exposing any calls to KARTA.
+          // Permission checks remain the engine's responsibility at execution
+          // time; schema validity does not grant permission to execute.
+          try { validateToolParams(tool, block.input); }
+          catch { throw new Error("Décision Claude invalide : paramètres d'outil non conformes"); }
+          toolIds.add(block.id);
+          toolCalls.push({ tool: block.name, params: block.input });
+        } else if (block.type !== "thinking" && block.type !== "redacted_thinking") {
+          throw new Error("Décision Claude invalide : type de contenu non pris en charge");
         }
+      }
+
+      if (response.stop_reason === "tool_use" && toolCalls.length === 0) {
+        throw new Error("Décision Claude incohérente : aucun appel d'outil reçu");
+      }
+      // An empty end_turn is possible in the API (e.g. after tool results), but
+      // cannot prove a decision for this client's fresh, single-context request.
+      if (response.stop_reason === "end_turn" && !summary.trim()) {
+        throw new Error("Décision Claude vide : aucune conclusion exploitable");
       }
 
       return {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import { CHEF_ADMISSION_MIGRATIONS } from "./migration-fixtures.js";
 import { PGlite } from "@electric-sql/pglite";
 
 describe("CHEF budget migration of existing claims", () => {
@@ -11,8 +12,7 @@ describe("CHEF budget migration of existing claims", () => {
         CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
         CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;
       `);
-      const files = (await readdir(new URL("../migrations/", import.meta.url)))
-        .filter(file => /^0(0[89]|1[0-7]|2[1-3])_/.test(file)).sort();
+      const files = CHEF_ADMISSION_MIGRATIONS;
       for (const file of files) await db.exec(await readFile(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
       await db.exec(`
         INSERT INTO auth.users(id) VALUES('00000000-0000-4000-8000-000000000851');
@@ -43,8 +43,7 @@ describe("CHEF budget migration of existing claims", () => {
         CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
         CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;
       `);
-      const files = (await readdir(new URL("../migrations/", import.meta.url)))
-        .filter(file => /^0(0[89]|1[0-7]|2[1-3])_/.test(file)).sort();
+      const files = CHEF_ADMISSION_MIGRATIONS;
       for (const file of files) await db.exec(await readFile(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
       const user = "00000000-0000-4000-8000-000000000831";
       const mission = "00000000-0000-4000-8000-000000000832";
@@ -88,8 +87,7 @@ describe("CHEF budget migration of existing claims", () => {
         CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
         CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;
       `);
-      const files = (await readdir(new URL("../migrations/", import.meta.url)))
-        .filter(file => /^0(0[89]|1[0-7]|2[1-3])_/.test(file)).sort();
+      const files = CHEF_ADMISSION_MIGRATIONS;
       for (const file of files) await db.exec(await readFile(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
       await db.exec(`
         INSERT INTO auth.users(id) VALUES('00000000-0000-4000-8000-000000000841');

@@ -1,5 +1,6 @@
 import { supabase } from "../db/supabase.js";
 import { canonicalJson } from "../lib/canonical-json.js";
+import { restoreAgentExecutionTrigger } from "./execution-origin.js";
 import type { AgentTrigger, AgentType } from "./types.js";
 
 export class ApprovalContinuationError extends Error {
@@ -10,6 +11,8 @@ export class ApprovalContinuationError extends Error {
 }
 
 export interface ApprovalContinuation {
+  /** Owned original execution data, kept separate from model-visible facts. */
+  executionTrigger?: AgentTrigger;
   /** Business context only. Never persist these private parameters as telemetry. */
   context: {
     previousRunId: string;
@@ -51,7 +54,7 @@ export async function loadApprovalContinuation(
     const { previousRunId, pendingActionId, resolution } = payload;
     const [approval, parent] = await Promise.all([
       supabase.from("karta_pending_actions")
-        .select("id,user_id,run_id,agent_type,tool_name,tool_params,status,resolved_at")
+        .select("id,user_id,run_id,agent_type,tool_name,tool_params,status,resolved_at,execution_trigger")
         .eq("id", pendingActionId).eq("user_id", userId).eq("agent_type", agentType)
         .eq("run_id", previousRunId).single(),
       supabase.from("karta_runs")
@@ -86,7 +89,9 @@ export async function loadApprovalContinuation(
     }
     const tool = action.tool_name;
     const immutableParams = canonicalJson(action.tool_params);
+    const executionTrigger = restoreAgentExecutionTrigger(action.execution_trigger, agentType);
     return {
+      executionTrigger,
       context: {
         previousRunId, pendingActionId, resolution,
         resolvedAction: { tool, params: JSON.parse(immutableParams) as Record<string, unknown> },

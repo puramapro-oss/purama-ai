@@ -1,0 +1,17 @@
+{
+  "source_repository": "puramapro-oss/purama-ai",
+  "source_commit": "a40fbd1a32cda5e73524bcf2bb487cca6baba71f",
+  "purpose": "Immutable upgrade fixtures only. Never apply these as canonical active migrations; the runtime uses unchanged PR33 budget024 and origin026.",
+  "files": [
+    {
+      "path": "021_pending_action_execution_trigger.sql",
+      "sha256": "7a7f231fafdcd47acc6ee1200d4522bb45784ec90b31379f364e323edaa7da8c",
+      "bytes": 1407
+    },
+    {
+      "path": "022_chef_budget_reservations.sql",
+      "sha256": "d552aa820f62e753d83ab4f9e3aab4265f09c86a9f66cacab9ba6627dd9f32af",
+      "bytes": 34327
+    }
+  ]
+}

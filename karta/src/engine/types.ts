@@ -103,6 +103,8 @@ export interface ToolExecutionContext {
   userId: string;
   agentType: AgentType;
   mode: "simulation" | "live";
+  /** Server-owned origin of this cycle; legacy approvals may not have one. */
+  trigger?: AgentTrigger;
   /** Stable identity of this attempt; providers may use it as an idempotency key. */
   operationId?: string;
 }
