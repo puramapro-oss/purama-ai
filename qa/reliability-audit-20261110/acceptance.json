@@ -1,0 +1,104 @@
+{
+  "status": "PARTIEL",
+  "base_commit": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "base_pr": 36,
+  "scope": [
+    "Static scheduler cancellation and stable scheduled-delivery identities",
+    "Restore the already-qualified Stripe webhook changes omitted from consolidation",
+    "Bind Google and Gmail OAuth connections to verified initiators and one-use state",
+    "Verify callback navigation, cancellation and truthful success/failure states",
+    "Prevent configuration saves from copying Gmail credentials and reject stale UI notifications"
+  ],
+  "gates": [
+    {
+      "name": "Source provenance and prior work preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "Impact analysis before source edits",
+      "status": "PASS"
+    },
+    {
+      "name": "Discriminating regressions fail on original source",
+      "status": "PASS"
+    },
+    {
+      "name": "Final targeted runtime and concurrency tests",
+      "status": "PASS"
+    },
+    {
+      "name": "Types, lint, builds and generated contracts",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser paths with inert providers",
+      "status": "PASS"
+    },
+    {
+      "name": "Independent review and exact source manifest",
+      "status": "PASS"
+    },
+    {
+      "name": "Reviewable Git publication and CI status",
+      "status": "NON_TESTE"
+    },
+    {
+      "name": "Final GitNexus staged/main comparison before commit",
+      "status": "PASS",
+      "coverage": "PARTIEL",
+      "risk": "CRITICAL",
+      "receipt": "gitnexus-final/receipt.json",
+      "note": "Commands executed successfully; graph limits remain documented and are complemented by independent review and tests."
+    }
+  ],
+  "production": {
+    "changed": false,
+    "real_payments": false,
+    "real_messages": false,
+    "real_oauth_authorization": false,
+    "read_only_availability": "BLOCKED",
+    "observed_at": "2026-11-10T22:24:18Z",
+    "observations": [
+      "purama.dev GET returned 404",
+      "auth.purama.dev/auth/v1/health GET returned 502",
+      "auth.purama.dev/functions/v1/oauth-google GET returned 502",
+      "purama-ai.purama.dev GET returned 402",
+      "Canonical-named Supabase containers remain stopped; active p8-t03 containers are not assumed canonical"
+    ]
+  },
+  "counterexample_base_commit": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "upstream_preserved": {
+    "commit": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+    "change": "request-body rejection rechecks cancellation/deadline",
+    "integration": "fast-forward without overlap"
+  },
+  "upstream_websearch_preserved": {
+    "commits": [
+      "26abc70",
+      "0bfd44c"
+    ],
+    "integration": "fast-forward without overlapping files; hosted CI qualifies the final composition"
+  },
+  "recorded_at": "2026-11-10T22:39:55.908775+00:00",
+  "record_phase": "Candidate prepared before GitHub publication; hosted status is recorded in the PR and workflow run.",
+  "whole_karta_local": {
+    "status": "PARTIEL",
+    "passed": 1643,
+    "failed": 3,
+    "failure_kind": "Test timeouts in two pre-existing PGlite migration test files",
+    "base": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+    "note": "Full hosted CI must qualify the final composition including the later upstream websearch changes."
+  },
+  "final_targeted": {
+    "oauth_node": 69,
+    "oauth_browser": 22,
+    "ui_state_browser": 17,
+    "native_sql_groups": 11,
+    "native_postgres_versions": [
+      "18.4",
+      "16.15"
+    ],
+    "scope": "Counts overlap; do not add them as independent scenarios."
+  },
+  "source_manifest": "source-manifest.json"
+}

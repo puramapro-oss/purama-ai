@@ -1,0 +1,385 @@
+{
+  "run_id": "oauth_native_55845f30b2",
+  "migration_sha256": "aa53db76df986c60817253d34ae9c46757d3a47efeef23f36a1dfbfa47ce49dc",
+  "helper_sha256": "a6df9cafec0e97af3536099c6f930e2eabd4675b9d5b51739993c492837d08b5",
+  "runner_sha256": "2474b629686dd265434b5f2594e41a2e79da4316ecf005a76deed3f48b3cf4d0",
+  "port": 53396,
+  "cluster": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_55845f30b2",
+  "started_at_utc": "2026-11-10T21:48:54Z",
+  "cases": [
+    {
+      "name": "invoker_rls_metadata",
+      "status": "PASS",
+      "detail": {
+        "functions": [
+          {
+            "name": "create_oauth_connection_state",
+            "config": [
+              "search_path=\"\""
+            ],
+            "security_definer": false
+          },
+          {
+            "name": "consume_oauth_connection_state",
+            "config": [
+              "search_path=\"\""
+            ],
+            "security_definer": false
+          }
+        ],
+        "rls_enabled": true,
+        "service_bypasses_rls": false
+      },
+      "seconds": 0.078
+    },
+    {
+      "name": "ten_minute_issue_and_single_replay",
+      "status": "PASS",
+      "detail": {
+        "expires_at": "2026-11-10 22:58:58.117126+01",
+        "lifetime_seconds": 600.0,
+        "first": [
+          {
+            "user_id": "00000000-0000-4000-8000-000000000001",
+            "provider": "google_drive",
+            "return_path": "/mes-connexions"
+          }
+        ],
+        "replay": []
+      },
+      "seconds": 0.229
+    },
+    {
+      "name": "purpose_and_verified_actor_for_both_providers",
+      "status": "PASS",
+      "detail": {
+        "google_refusals": [
+          "wrong-purpose",
+          "wrong-actor",
+          "null-actor"
+        ],
+        "gmail_null_and_wrong_actor_refused": true,
+        "authorized_gmail": [
+          {
+            "user_id": "00000000-0000-4000-8000-000000000001",
+            "provider": "gmail",
+            "return_path": "/dashboard/email-agent"
+          }
+        ]
+      },
+      "seconds": 0.748
+    },
+    {
+      "name": "already_expired_state",
+      "status": "PASS",
+      "detail": {
+        "already_expired_receipts": 0,
+        "consumed_at_unchanged": true
+      },
+      "seconds": 0.197
+    },
+    {
+      "name": "invalid_inputs",
+      "status": "PASS",
+      "detail": {
+        "invalid_creates_sqlstate": "22023",
+        "rejected_creates": 3,
+        "invalid_consumes": 2
+      },
+      "seconds": 0.268
+    },
+    {
+      "name": "anon_authenticated_acl",
+      "status": "PASS",
+      "detail": [
+        {
+          "role": "anon",
+          "operation": "select",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "anon",
+          "operation": "insert",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "anon",
+          "operation": "update",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "anon",
+          "operation": "delete",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "anon",
+          "operation": "create_rpc",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "anon",
+          "operation": "consume_rpc",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "authenticated",
+          "operation": "select",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "authenticated",
+          "operation": "insert",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "authenticated",
+          "operation": "update",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "authenticated",
+          "operation": "delete",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "authenticated",
+          "operation": "create_rpc",
+          "sqlstate": "42501",
+          "exit_code": 1
+        },
+        {
+          "role": "authenticated",
+          "operation": "consume_rpc",
+          "sqlstate": "42501",
+          "exit_code": 1
+        }
+      ],
+      "seconds": 0.745
+    },
+    {
+      "name": "twelve_native_consumers_one_receipt",
+      "status": "PASS",
+      "detail": {
+        "simultaneously_blocked": [
+          {
+            "app": "oauth_native_55845f30b2_parallel-00",
+            "pid": 87393,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-01",
+            "pid": 87394,
+            "state": "active",
+            "wait_event": "transactionid",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-02",
+            "pid": 87396,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-03",
+            "pid": 87399,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-04",
+            "pid": 87400,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-05",
+            "pid": 87402,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-07",
+            "pid": 87404,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-06",
+            "pid": 87403,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-08",
+            "pid": 87406,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-09",
+            "pid": 87408,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-11",
+            "pid": 87410,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          },
+          {
+            "app": "oauth_native_55845f30b2_parallel-10",
+            "pid": 87411,
+            "state": "active",
+            "wait_event": "tuple",
+            "wait_event_type": "Lock"
+          }
+        ],
+        "client_results": [
+          {
+            "receipts": [],
+            "backend_pid": 87393
+          },
+          {
+            "receipts": [
+              {
+                "user_id": "00000000-0000-4000-8000-000000000001",
+                "provider": "google_drive",
+                "return_path": "/mes-connexions"
+              }
+            ],
+            "backend_pid": 87394
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87396
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87399
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87400
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87402
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87403
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87404
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87406
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87408
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87411
+          },
+          {
+            "receipts": [],
+            "backend_pid": 87410
+          }
+        ],
+        "total_receipts": 1
+      },
+      "seconds": 0.566
+    },
+    {
+      "name": "expiry_rechecked_after_lock_wait",
+      "status": "FAIL",
+      "error": "{'blocked': [{'app': 'oauth_native_55845f30b2_expiry-client', 'pid': 87428, 'state': 'active', 'wait_event': 'transactionid', 'wait_event_type': 'Lock'}], 'valid_at_lock_wait': True, 'expired_before_unlock': True, 'result': {'receipts': [{'user_id': '00000000-0000-4000-8000-000000000001', 'provider': 'google_drive', 'return_path': '/mes-connexions'}], 'backend_pid': 87428}, 'row': {'expires_at': '2026-11-10T22:49:03.943135+01:00', 'consumed_at': '2026-11-10T22:49:01.079656+01:00', 'observed_at': '2026-11-10T22:49:04.132783+01:00'}}",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/verify_native.py\", line 168, in case\n    detail = action()\n  File \"/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/verify_native.py\", line 329, in expiry_while_waiting\n    assert result[\"receipts\"] == [] and final[\"consumed_at\"] is None, detail\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {'blocked': [{'app': 'oauth_native_55845f30b2_expiry-client', 'pid': 87428, 'state': 'active', 'wait_event': 'transactionid', 'wait_event_type': 'Lock'}], 'valid_at_lock_wait': True, 'expired_before_unlock': True, 'result': {'receipts': [{'user_id': '00000000-0000-4000-8000-000000000001', 'provider': 'google_drive', 'return_path': '/mes-connexions'}], 'backend_pid': 87428}, 'row': {'expires_at': '2026-11-10T22:49:03.943135+01:00', 'consumed_at': '2026-11-10T22:49:01.079656+01:00', 'observed_at': '2026-11-10T22:49:04.132783+01:00'}}\n",
+      "seconds": 3.346
+    },
+    {
+      "name": "consume_transaction_rollback",
+      "status": "PASS",
+      "detail": {
+        "inside_rolled_back_transaction": {
+          "receipts": [
+            {
+              "user_id": "00000000-0000-4000-8000-000000000001",
+              "provider": "google_drive",
+              "return_path": "/mes-connexions"
+            }
+          ],
+          "backend_pid": 87474
+        },
+        "pending_after_rollback": true,
+        "subsequent_committed_receipts": 1
+      },
+      "seconds": 0.297
+    },
+    {
+      "name": "issue_cleanup_rollback_on_collision",
+      "status": "PASS",
+      "detail": {
+        "duplicate_hash_sqlstate": "23505",
+        "expired_cleanup_rolled_back": true,
+        "other_actor_receipt_preserved": true
+      },
+      "seconds": 0.364
+    },
+    {
+      "name": "deleted_actor_cascades_receipts",
+      "status": "PASS",
+      "detail": {
+        "deleted_actor_receipts_remaining": 0,
+        "both_purposes_unusable": true
+      },
+      "seconds": 0.344
+    }
+  ],
+  "runtime_scope": "Native PostgreSQL migration only; TypeScript helper fingerprinted and read separately.",
+  "provider_calls": 0,
+  "production_connections": 0,
+  "cluster_identity": {
+    "data_directory": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_55845f30b2/data",
+    "server_version": "18.4 (Homebrew)",
+    "listen_addresses": "127.0.0.1",
+    "system_identifier": "7706663119820023006",
+    "unix_socket_directories": ""
+  },
+  "cleanup": {
+    "stopped": true,
+    "cluster_removed": true,
+    "port_closed": true,
+    "errors": []
+  },
+  "inputs_unchanged": true,
+  "finished_at_utc": "2026-11-10T21:49:05Z",
+  "success": false
+}

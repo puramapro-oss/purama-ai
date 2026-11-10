@@ -1,0 +1,28 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "tests/oauth-google/handler.test.mjs",
+    "tests/oauth-gmail/handler.test.mjs"
+  ],
+  "exit": 0,
+  "seconds": 2.988,
+  "sources_before": {
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/email-agent-gmail-oauth/index.ts": "352d3b42b001e99b4de32205b56db6231c6c0cf61ee3378e2f871a3a6dad2212",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+    "tests/oauth-google/handler.test.mjs": "b095a8c28670bf3b5c8a5c077b67a41ff7ae0da6003f8f6570c7d7edd7107a2e",
+    "tests/oauth-gmail/handler.test.mjs": "cbe28b532dd6dfd04b0692133dfd90d032a2af61f04d09d9169713ca5d9083d9"
+  },
+  "sources_after": {
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/email-agent-gmail-oauth/index.ts": "352d3b42b001e99b4de32205b56db6231c6c0cf61ee3378e2f871a3a6dad2212",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+    "tests/oauth-google/handler.test.mjs": "b095a8c28670bf3b5c8a5c077b67a41ff7ae0da6003f8f6570c7d7edd7107a2e",
+    "tests/oauth-gmail/handler.test.mjs": "cbe28b532dd6dfd04b0692133dfd90d032a2af61f04d09d9169713ca5d9083d9"
+  },
+  "unchanged": true,
+  "actual_providers": false,
+  "coverage": "Actual TypeScript handlers and helpers evaluated with inert ports; SQL concurrency is qualified separately."
+}

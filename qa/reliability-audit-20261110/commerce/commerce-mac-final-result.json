@@ -1,0 +1,56 @@
+{
+  "command": [
+    "/opt/homebrew/bin/deno",
+    "test",
+    "--no-remote",
+    "--no-prompt",
+    "--deny-net",
+    "--deny-run",
+    "--allow-env=WEBHOOK_SECRET,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY",
+    "--config",
+    "tests/commerce/deno.json",
+    "tests/commerce"
+  ],
+  "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code",
+  "exit_code": 0,
+  "seconds": 3.084,
+  "deno_version": "deno 2.9.7 (stable, release, aarch64-apple-darwin)\nv8 15.0.245.2-rusty\ntypescript 6.0.3",
+  "tests": {
+    "passed": 82,
+    "failed": 0
+  },
+  "inputs_before": {
+    "tests/commerce/deno.json": "a7956dfa3c48ff09981035075271851e8e3dbf8a83297d9c7d3bb3e2661ae941",
+    "tests/commerce/payout-handler.test.ts": "f945d2fe10023e147b8317d14de2dc38cde9a586722dada829af79e8ea85a73a",
+    "tests/commerce/payout-provider-fixture.ts": "8c0a437939856f9ca7d749c43f75157da75887a8056ebdea97f712240b533a69",
+    "tests/commerce/serve-capture.ts": "3b835346701691f482dabf3cee56891c5c97dda4731466b5b45ea358b568ebf7",
+    "tests/commerce/subscription-handler.test.ts": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836",
+    "tests/commerce/subscription-provider-fixture.ts": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77",
+    "tests/commerce/subscription-state.test.ts": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02",
+    "tests/commerce/webhook-handler.test.ts": "a92208f22ac7f78098ae4d705f22f98ec64d6c23127699be1a1c5460acd85623",
+    "tests/commerce/webhook-provider-fixture.ts": "d0e664546a559fec2afc851264cc069f45babf5bf0077ab8e46d7592a995845c",
+    "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+    "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+    "supabase/functions/check-subscription/index.ts": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97",
+    "supabase/functions/_shared/stripe-subscription-state.ts": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5",
+    "supabase/functions/process-influencer-payments/index.ts": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489"
+  },
+  "inputs_after": {
+    "tests/commerce/deno.json": "a7956dfa3c48ff09981035075271851e8e3dbf8a83297d9c7d3bb3e2661ae941",
+    "tests/commerce/payout-handler.test.ts": "f945d2fe10023e147b8317d14de2dc38cde9a586722dada829af79e8ea85a73a",
+    "tests/commerce/payout-provider-fixture.ts": "8c0a437939856f9ca7d749c43f75157da75887a8056ebdea97f712240b533a69",
+    "tests/commerce/serve-capture.ts": "3b835346701691f482dabf3cee56891c5c97dda4731466b5b45ea358b568ebf7",
+    "tests/commerce/subscription-handler.test.ts": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836",
+    "tests/commerce/subscription-provider-fixture.ts": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77",
+    "tests/commerce/subscription-state.test.ts": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02",
+    "tests/commerce/webhook-handler.test.ts": "a92208f22ac7f78098ae4d705f22f98ec64d6c23127699be1a1c5460acd85623",
+    "tests/commerce/webhook-provider-fixture.ts": "d0e664546a559fec2afc851264cc069f45babf5bf0077ab8e46d7592a995845c",
+    "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+    "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+    "supabase/functions/check-subscription/index.ts": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97",
+    "supabase/functions/_shared/stripe-subscription-state.ts": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5",
+    "supabase/functions/process-influencer-payments/index.ts": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489"
+  },
+  "inputs_unchanged": true,
+  "log_sha256": "6a5a677b058e16153e8fba0f07d42fa4ab57bdbf56357e1342bdbaa3ce2751ad"
+}

@@ -1,0 +1,5 @@
+
+> vite_react_shadcn_ts@0.0.0 check:database-contracts
+> node scripts/generate-supabase-contracts.mjs --check
+
+PASS: generated Supabase table contracts match the versioned SQL catalog.

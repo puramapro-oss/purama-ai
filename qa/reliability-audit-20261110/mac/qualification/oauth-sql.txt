@@ -1,0 +1,122 @@
+
+> vite_react_shadcn_ts@0.0.0 test:oauth:sql
+> node --test --test-concurrency=1 tests/oauth-google/state-sql.test.mjs
+
+TAP version 13
+# Subtest: anon cannot select private OAuth admission state
+ok 1 - anon cannot select private OAuth admission state
+  ---
+  duration_ms: 5504.450916
+  type: 'test'
+  ...
+# Subtest: anon cannot create private OAuth admission state
+ok 2 - anon cannot create private OAuth admission state
+  ---
+  duration_ms: 10.939958
+  type: 'test'
+  ...
+# Subtest: anon cannot consume private OAuth admission state
+ok 3 - anon cannot consume private OAuth admission state
+  ---
+  duration_ms: 10.721542
+  type: 'test'
+  ...
+# Subtest: authenticated cannot select private OAuth admission state
+ok 4 - authenticated cannot select private OAuth admission state
+  ---
+  duration_ms: 9.020542
+  type: 'test'
+  ...
+# Subtest: authenticated cannot create private OAuth admission state
+ok 5 - authenticated cannot create private OAuth admission state
+  ---
+  duration_ms: 8.362709
+  type: 'test'
+  ...
+# Subtest: authenticated cannot consume private OAuth admission state
+ok 6 - authenticated cannot consume private OAuth admission state
+  ---
+  duration_ms: 8.301417
+  type: 'test'
+  ...
+# Subtest: service role can issue and consume a state without SECURITY DEFINER
+ok 7 - service role can issue and consume a state without SECURITY DEFINER
+  ---
+  duration_ms: 18.887958
+  type: 'test'
+  ...
+# Subtest: expiry is ten minutes from SQL creation, never supplied by the browser
+ok 8 - expiry is ten minutes from SQL creation, never supplied by the browser
+  ---
+  duration_ms: 3.588209
+  type: 'test'
+  ...
+# Subtest: a state can be consumed only once
+ok 9 - a state can be consumed only once
+  ---
+  duration_ms: 4.624167
+  type: 'test'
+  ...
+# Subtest: twelve pending consumers of the SQL function admit only one result
+ok 10 - twelve pending consumers of the SQL function admit only one result
+  ---
+  duration_ms: 27.766083
+  type: 'test'
+  ...
+# Subtest: a wrong actor does not consume the owner state
+ok 11 - a wrong actor does not consume the owner state
+  ---
+  duration_ms: 5.7935
+  type: 'test'
+  ...
+# Subtest: a Google callback without an authenticated actor cannot consume its state
+ok 12 - a Google callback without an authenticated actor cannot consume its state
+  ---
+  duration_ms: 8.991208
+  type: 'test'
+  ...
+# Subtest: Google and Gmail callback purposes cannot substitute for one another
+ok 13 - Google and Gmail callback purposes cannot substitute for one another
+  ---
+  duration_ms: 11.999958
+  type: 'test'
+  ...
+# Subtest: an expired state is rejected without a provider admission
+ok 14 - an expired state is rejected without a provider admission
+  ---
+  duration_ms: 12.307708
+  type: 'test'
+  ...
+# Subtest: an unknown state cannot be accepted
+ok 15 - an unknown state cannot be accepted
+  ---
+  duration_ms: 8.121334
+  type: 'test'
+  ...
+# Subtest: invalid purposes/providers never enter the state registry
+ok 16 - invalid purposes/providers never enter the state registry
+  ---
+  duration_ms: 5.312542
+  type: 'test'
+  ...
+# Subtest: new authorization preserves a live state from another tab
+ok 17 - new authorization preserves a live state from another tab
+  ---
+  duration_ms: 7.149
+  type: 'test'
+  ...
+# Subtest: cleanup is restricted to the actor issuing a new state
+ok 18 - cleanup is restricted to the actor issuing a new state
+  ---
+  duration_ms: 9.520417
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6119.3915

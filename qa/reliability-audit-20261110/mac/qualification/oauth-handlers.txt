@@ -1,0 +1,350 @@
+
+> vite_react_shadcn_ts@0.0.0 test:oauth
+> node --test --test-concurrency=1 tests/oauth-google/handler.test.mjs tests/oauth-gmail/handler.test.mjs
+
+TAP version 13
+# Subtest: raw user identifier is rejected before Google exchange or persistence
+ok 1 - raw user identifier is rejected before Google exchange or persistence
+  ---
+  duration_ms: 1856.213708
+  type: 'test'
+  ...
+# Subtest: a rejected database write cannot redirect as connected
+ok 2 - a rejected database write cannot redirect as connected
+  ---
+  duration_ms: 575.009459
+  type: 'test'
+  ...
+# Subtest: start produces a random server-recorded state instead of exposing the actor id
+ok 3 - start produces a random server-recorded state instead of exposing the actor id
+  ---
+  duration_ms: 494.872833
+  type: 'test'
+  ...
+# Subtest: a failed Google profile request cannot create a connected account
+ok 4 - a failed Google profile request cannot create a connected account
+  ---
+  duration_ms: 443.38175
+  type: 'test'
+  ...
+# Subtest: provider GET only relays to the fixed frontend without consuming or exchanging
+ok 5 - provider GET only relays to the fixed frontend without consuming or exchanging
+  ---
+  duration_ms: 277.80875
+  type: 'test'
+  ...
+# Subtest: a valid random state does not substitute for the initiating actor
+ok 6 - a valid random state does not substitute for the initiating actor
+  ---
+  duration_ms: 299.016041
+  type: 'test'
+  ...
+# Subtest: successful completion returns a receipt without credentials
+ok 7 - successful completion returns a receipt without credentials
+  ---
+  duration_ms: 300.690916
+  type: 'test'
+  ...
+# Subtest: replayed and simultaneous callbacks start only one provider exchange
+ok 8 - replayed and simultaneous callbacks start only one provider exchange
+  ---
+  duration_ms: 338.073291
+  type: 'test'
+  ...
+# Subtest: expired state is refused before any provider effect
+ok 9 - expired state is refused before any provider effect
+  ---
+  duration_ms: 346.617959
+  type: 'test'
+  ...
+# Subtest: missing refresh token preserves only the same verified Google account
+ok 10 - missing refresh token preserves only the same verified Google account
+  ---
+  duration_ms: 255.937333
+  type: 'test'
+  ...
+# Subtest: missing refresh token never mixes another Google account with old credentials
+ok 11 - missing refresh token never mixes another Google account with old credentials
+  ---
+  duration_ms: 275.484417
+  type: 'test'
+  ...
+# Subtest: missing refresh authorization for a first connection fails closed
+ok 12 - missing refresh authorization for a first connection fails closed
+  ---
+  duration_ms: 405.811792
+  type: 'test'
+  ...
+# Subtest: zero returned rows cannot be acknowledged as persisted
+ok 13 - zero returned rows cannot be acknowledged as persisted
+  ---
+  duration_ms: 298.440583
+  type: 'test'
+  ...
+# Subtest: cancelled callback cannot consume state or contact Google
+ok 14 - cancelled callback cannot consume state or contact Google
+  ---
+  duration_ms: 292.622208
+  type: 'test'
+  ...
+# Subtest: a non-cooperative provider is bounded without a late write
+ok 15 - a non-cooperative provider is bounded without a late write
+  ---
+  duration_ms: 274.015792
+  type: 'test'
+  ...
+# Subtest: private provider and database diagnostics are never returned or logged
+ok 16 - private provider and database diagnostics are never returned or logged
+  ---
+  duration_ms: 194.047916
+  type: 'test'
+  ...
+# Subtest: state database failure cannot start token exchange
+ok 17 - state database failure cannot start token exchange
+  ---
+  duration_ms: 290.791167
+  type: 'test'
+  ...
+# Subtest: configured application origin cannot redirect to an executable scheme
+ok 18 - configured application origin cannot redirect to an executable scheme
+  ---
+  duration_ms: 328.710708
+  type: 'test'
+  ...
+# Subtest: revoked actor after provider exchange cannot persist credentials
+ok 19 - revoked actor after provider exchange cannot persist credentials
+  ---
+  duration_ms: 229.668875
+  type: 'test'
+  ...
+# Subtest: partial Google consent cannot be reported as a ready Gmail connection
+ok 20 - partial Google consent cannot be reported as a ready Gmail connection
+  ---
+  duration_ms: 579.87175
+  type: 'test'
+  ...
+# Subtest: gmail.modify grants the sending capability without a redundant scope entry
+ok 21 - gmail.modify grants the sending capability without a redundant scope entry
+  ---
+  duration_ms: 131.522459
+  type: 'test'
+  ...
+# Subtest: callback refuses an unverified actor before provider or privileged client
+ok 22 - callback refuses an unverified actor before provider or privileged client
+  ---
+  duration_ms: 914.251166
+  type: 'test'
+  ...
+# Subtest: refresh refuses an unverified actor before reading or refreshing a connection
+ok 23 - refresh refuses an unverified actor before reading or refreshing a connection
+  ---
+  duration_ms: 271.107084
+  type: 'test'
+  ...
+# Subtest: refresh cannot target another account with a valid caller token
+ok 24 - refresh cannot target another account with a valid caller token
+  ---
+  duration_ms: 298.336708
+  type: 'test'
+  ...
+# Subtest: failed connection persistence cannot become successful refresh
+ok 25 - failed connection persistence cannot become successful refresh
+  ---
+  duration_ms: 326.624625
+  type: 'test'
+  ...
+# Subtest: authorize requires a verified actor
+ok 26 - authorize requires a verified actor
+  ---
+  duration_ms: 202.603334
+  type: 'test'
+  ...
+# Subtest: callback rejects the old self-selected Base64 state
+ok 27 - callback rejects the old self-selected Base64 state
+  ---
+  duration_ms: 106.849083
+  type: 'test'
+  ...
+# Subtest: success contract is bound to the current server-side state
+ok 28 - success contract is bound to the current server-side state
+  ---
+  duration_ms: 266.834
+  type: 'test'
+  ...
+# Subtest: authorize stores a digest of an opaque state and chooses scopes on the server
+ok 29 - authorize stores a digest of an opaque state and chooses scopes on the server
+  ---
+  duration_ms: 194.728792
+  type: 'test'
+  ...
+# Subtest: browser-selected scopes and state cannot replace the server authorization policy
+ok 30 - browser-selected scopes and state cannot replace the server authorization policy
+  ---
+  duration_ms: 149.192458
+  type: 'test'
+  ...
+# Subtest: expired callback state is rejected before Google
+ok 31 - expired callback state is rejected before Google
+  ---
+  duration_ms: 217.735875
+  type: 'test'
+  ...
+# Subtest: already missing callback state is rejected before Google
+ok 32 - already missing callback state is rejected before Google
+  ---
+  duration_ms: 170.1295
+  type: 'test'
+  ...
+# Subtest: wrong actor callback state is rejected before Google
+ok 33 - wrong actor callback state is rejected before Google
+  ---
+  duration_ms: 203.715125
+  type: 'test'
+  ...
+# Subtest: wrong purpose callback state is rejected before Google
+ok 34 - wrong purpose callback state is rejected before Google
+  ---
+  duration_ms: 184.091666
+  type: 'test'
+  ...
+# Subtest: simultaneous callbacks using one state cannot exchange the code twice
+ok 35 - simultaneous callbacks using one state cannot exchange the code twice
+  ---
+  duration_ms: 199.802709
+  type: 'test'
+  ...
+# Subtest: state storage failure refuses callback admission
+ok 36 - state storage failure refuses callback admission
+  ---
+  duration_ms: 200.246458
+  type: 'test'
+  ...
+# Subtest: a state consumed before a failed provider call cannot be replayed
+ok 37 - a state consumed before a failed provider call cannot be replayed
+  ---
+  duration_ms: 117.228333
+  type: 'test'
+  ...
+# Subtest: missing access token cannot produce a connected receipt
+ok 38 - missing access token cannot produce a connected receipt
+  ---
+  duration_ms: 119.704375
+  type: 'test'
+  ...
+# Subtest: blank access token cannot produce a connected receipt
+ok 39 - blank access token cannot produce a connected receipt
+  ---
+  duration_ms: 120.244125
+  type: 'test'
+  ...
+# Subtest: negative lifetime cannot produce a connected receipt
+ok 40 - negative lifetime cannot produce a connected receipt
+  ---
+  duration_ms: 142.522792
+  type: 'test'
+  ...
+# Subtest: unrecognized token type cannot produce a connected receipt
+ok 41 - unrecognized token type cannot produce a connected receipt
+  ---
+  duration_ms: 87.640125
+  type: 'test'
+  ...
+# Subtest: missing offline consent cannot produce a connected receipt
+ok 42 - missing offline consent cannot produce a connected receipt
+  ---
+  duration_ms: 137.42175
+  type: 'test'
+  ...
+# Subtest: refresh updates only the verified actor and never returns provider credentials
+ok 43 - refresh updates only the verified actor and never returns provider credentials
+  ---
+  duration_ms: 131.885625
+  type: 'test'
+  ...
+# Subtest: a disappeared connection cannot be reported as refreshed
+ok 44 - a disappeared connection cannot be reported as refreshed
+  ---
+  duration_ms: 142.898458
+  type: 'test'
+  ...
+# Subtest: a pending identity lookup reaches the total deadline before privileged work
+ok 45 - a pending identity lookup reaches the total deadline before privileged work
+  ---
+  duration_ms: 127.019708
+  type: 'test'
+  ...
+# Subtest: a provider ignoring cancellation still produces a bounded HTTP failure
+ok 46 - a provider ignoring cancellation still produces a bounded HTTP failure
+  ---
+  duration_ms: 191.092125
+  type: 'test'
+  ...
+# Subtest: a token response with an unbounded body cannot keep the request pending
+ok 47 - a token response with an unbounded body cannot keep the request pending
+  ---
+  duration_ms: 129.405916
+  type: 'test'
+  ...
+# Subtest: an oversized token response is refused without persistence
+ok 48 - an oversized token response is refused without persistence
+  ---
+  duration_ms: 125.878542
+  type: 'test'
+  ...
+# Subtest: provider redirects are not allowed to carry client credentials elsewhere
+ok 49 - provider redirects are not allowed to carry client credentials elsewhere
+  ---
+  duration_ms: 107.973083
+  type: 'test'
+  ...
+# Subtest: an already cancelled callback makes no identity, storage or provider call
+ok 50 - an already cancelled callback makes no identity, storage or provider call
+  ---
+  duration_ms: 81.551166
+  type: 'test'
+  ...
+# Subtest: POST authorize requires a verified human actor before any privileged port
+ok 51 - POST authorize requires a verified human actor before any privileged port
+  ---
+  duration_ms: 84.063458
+  type: 'test'
+  ...
+# Subtest: POST callback requires a verified human actor before any privileged port
+ok 52 - POST callback requires a verified human actor before any privileged port
+  ---
+  duration_ms: 129.994708
+  type: 'test'
+  ...
+# Subtest: revocation after provider exchange prevents connection persistence
+ok 53 - revocation after provider exchange prevents connection persistence
+  ---
+  duration_ms: 110.638708
+  type: 'test'
+  ...
+# Subtest: failure after state admission cannot trigger a second provider exchange
+ok 54 - failure after state admission cannot trigger a second provider exchange
+  ---
+  duration_ms: 102.071625
+  type: 'test'
+  ...
+# Subtest: a declared partial scope cannot be persisted as a Gmail connection
+ok 55 - a declared partial scope cannot be persisted as a Gmail connection
+  ---
+  duration_ms: 70.321042
+  type: 'test'
+  ...
+# Subtest: scope matching is exact and case-sensitive during refresh
+ok 56 - scope matching is exact and case-sensitive during refresh
+  ---
+  duration_ms: 91.741208
+  type: 'test'
+  ...
+1..56
+# tests 56
+# suites 0
+# pass 56
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 21494.42175

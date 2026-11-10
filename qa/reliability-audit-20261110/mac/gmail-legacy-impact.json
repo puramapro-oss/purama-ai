@@ -1,0 +1,17 @@
+{
+  "command": [
+    "npx",
+    "--yes",
+    "gitnexus@1.6.12",
+    "impact",
+    "--uid",
+    "Function:src/pages/EmailAgent.tsx:EmailAgent.fn@54:12",
+    "--direction",
+    "upstream",
+    "--repo",
+    "purama-reliability-audit-mac-20261110"
+  ],
+  "exit": 1,
+  "stdout": "{\n  \"error\": \"Target 'Function:src/pages/EmailAgent.tsx:EmailAgent.fn@54:12' not found\",\n  \"target\": {},\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+  "stderr": "\n  GitNexus Impact (1.6.12)\n"
+}

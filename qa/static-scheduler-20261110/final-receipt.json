@@ -1,0 +1,63 @@
+{
+  "head_before_patch": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "gates": [
+    {
+      "name": "final-targeted",
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=../qa/static-scheduler-20261110/final-targeted.json",
+        "test/staticAgentScheduler.test.ts",
+        "test/staticAgentSchedulerCron.test.ts",
+        "test/agentsRegistry.test.ts",
+        "test/customAgent.test.ts",
+        "test/customAuthorization.test.ts",
+        "test/queueDeliveryIdentity.test.ts",
+        "test/customAgentScheduler.test.ts",
+        "test/customAgentSchedulerCron.test.ts",
+        "test/customAgentScanAbort.test.ts"
+      ],
+      "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+      "exit_code": 0,
+      "seconds": 6.298
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+      "exit_code": 0,
+      "seconds": 5.502
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+      "exit_code": 137,
+      "seconds": 3.202
+    }
+  ],
+  "files": {
+    "karta/src/scheduler/cron.ts": "bb4ab70ae63aa4f4a300e1626140c7d92cba10698e878c5a062c49181416cd4f",
+    "karta/test/staticAgentScheduler.test.ts": "6abc0d9fb6699a4b703a7cf167ea73cbf01209cb36eceb0937112c11ea117321",
+    "karta/test/staticAgentSchedulerCron.test.ts": "9cd77ff4a53188566fa454aec4cb007cdf6c0e3aa3f7316718e782af2957b76b",
+    "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+    "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c"
+  },
+  "versions": {
+    "node": "v24.22.1",
+    "npm": "11.9.0",
+    "node-cron": "4.6.0"
+  }
+}

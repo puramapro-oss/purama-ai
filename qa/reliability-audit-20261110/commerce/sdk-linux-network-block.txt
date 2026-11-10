@@ -1,0 +1,9 @@
+Download https://deno.land/std@0.190.0/http/server.ts
+Download https://esm.sh/stripe@18.5.0
+Download https://esm.sh/@supabase/supabase-js@2.91.0
+Download https://esm.sh/resend@2.0.0
+error: Import 'https://deno.land/std@0.190.0/http/server.ts' failed.
+    0: error sending request for url (https://deno.land/std@0.190.0/http/server.ts): client error (Connect): Connection refused
+    1: client error (Connect)
+    2: Connection refused
+    at file:///workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/after/supabase/functions/stripe-webhook/index.ts:1:23

@@ -124,6 +124,140 @@ const planMapping: Record<string, string> = {
   'prod_UHwPBOGTleT37J': 'ultime',
 };
 
+function stripeObjectId(value: unknown): string | undefined {
+  if (typeof value === 'string' && value) return value;
+  if (value && typeof value === 'object' && 'id' in value && typeof value.id === 'string'
+    && !('deleted' in value && value.deleted === true)) return value.id;
+  return undefined;
+}
+
+// This checkout sells one known subscription plan. Unknown, deleted, expanded
+// or ambiguous products must never fall through to a paid default plan.
+function subscriptionPlan(subscription: Stripe.Subscription): { productId: string; planType: string } {
+  const items = subscription.items;
+  if (!items || items.has_more === true || !Array.isArray(items.data) || items.data.length !== 1) {
+    throw new Error('Subscription plan requires reconciliation');
+  }
+  const productId = stripeObjectId(items.data[0]?.price?.product);
+  if (!productId || !Object.prototype.hasOwnProperty.call(planMapping, productId)) {
+    throw new Error('Subscription product requires reconciliation');
+  }
+  return { productId, planType: planMapping[productId] };
+}
+
+async function confirmedSubscriptionState(subscription: Stripe.Subscription, stripe: Stripe): Promise<{
+  status: string; trial_ends_at?: string; has_used_trial?: true;
+}> {
+  if (subscription.status === 'trialing') {
+    const seconds = subscription.trial_end;
+    if (!Number.isSafeInteger(seconds) || seconds === null || seconds <= Math.floor(Date.now() / 1000)
+      || seconds > 253402300799) throw new Error('Subscription trial requires reconciliation');
+    // Preserve existing Stripe trials at their fixed provider deadline. A
+    // redelivery cannot restart or extend the application's one-time trial.
+    return { status: 'trialing', trial_ends_at: new Date(seconds * 1000).toISOString(), has_used_trial: true };
+  }
+  if (subscription.status === 'active') {
+    // Stripe can report active for send_invoice before payment. Require the
+    // current invoice's paid status instead of treating active as proof of funds.
+    const invoiceId = stripeObjectId(subscription.latest_invoice);
+    if (!invoiceId) throw new Error('Subscription payment requires reconciliation');
+    const invoice = await stripe.invoices.retrieve(invoiceId);
+    if (invoice.id !== invoiceId || invoice.status !== 'paid'
+      || !stripeObjectId(invoice.customer)
+      || stripeObjectId(invoice.customer) !== stripeObjectId(subscription.customer)) {
+      throw new Error('Subscription payment requires reconciliation');
+    }
+  }
+  return { status: subscription.status };
+}
+
+type SubscriptionLink = { id: string; user_id: string; stripe_customer_id: string | null };
+// Infer the concrete purama_ai client. ReturnType of the generic createClient
+// erases its database/schema inference and narrows queried rows to never.
+function createSubscriptionClient() {
+  return createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
+  );
+}
+type SubscriptionClient = ReturnType<typeof createSubscriptionClient>;
+
+async function storedSubscription(
+  client: SubscriptionClient, column: 'stripe_customer_id' | 'user_id', value: string,
+): Promise<SubscriptionLink | null> {
+  // Do not use limit(1): multiple matching rows require reconciliation.
+  const { data, error } = await client.from('subscriptions')
+    .select('id,user_id,stripe_customer_id').eq(column, value).maybeSingle();
+  if (error) throw new Error('Subscription identity lookup failed; retry or reconcile');
+  if (!data) return null;
+  if (typeof data.id !== 'string' || !data.id || typeof data.user_id !== 'string' || !data.user_id
+    || (data.stripe_customer_id !== null && typeof data.stripe_customer_id !== 'string')
+    || data[column] !== value) throw new Error('Subscription identity requires reconciliation');
+  return data;
+}
+
+async function checkoutSubscription(
+  client: SubscriptionClient, customerId: string, email: string | null | undefined,
+): Promise<SubscriptionLink | null> {
+  // The persisted provider binding wins over display email or caller metadata.
+  // This schema has no stripe_subscription_id column; never invent that binding.
+  const bound = await storedSubscription(client, 'stripe_customer_id', customerId);
+  if (bound) return bound;
+  if (typeof email !== 'string' || !email || email.length > 320) {
+    throw new Error('Unbound subscription customer requires reconciliation');
+  }
+
+  // Legacy accounts may predate provider binding. Scan exact email matches to
+  // exhaustion, not merely until the first match. Limits bound work and fail
+  // closed; provider pagination hints are not used as an authorization shortcut.
+  const perPage = 1000;
+  const maxPages = 50;
+  const seen = new Set<string>();
+  let matchedUserId: string | null = null;
+  for (let page = 1; page <= maxPages; page++) {
+    const { data, error } = await client.auth.admin.listUsers({ page, perPage });
+    if (error || !Array.isArray(data?.users) || data.users.length > perPage) {
+      throw new Error('Legacy subscription user lookup failed; retry or reconcile');
+    }
+    if (data.users.length === 0) {
+      if (!matchedUserId) return null;
+      const legacy = await storedSubscription(client, 'user_id', matchedUserId);
+      if (legacy && legacy.stripe_customer_id !== null && legacy.stripe_customer_id !== customerId) {
+        throw new Error('Legacy subscription customer binding conflicts');
+      }
+      return legacy;
+    }
+    for (const user of data.users) {
+      if (!user || typeof user.id !== 'string' || !user.id || seen.has(user.id)) {
+        throw new Error('Legacy subscription pagination requires reconciliation');
+      }
+      seen.add(user.id);
+      if (user.email === email) {
+        if (matchedUserId && matchedUserId !== user.id) throw new Error('Legacy subscription email is ambiguous');
+        matchedUserId = user.id;
+      }
+    }
+  }
+  throw new Error('Legacy subscription user lookup limit reached; reconciliation required');
+}
+
+async function persistSubscription(
+  client: SubscriptionClient, link: SubscriptionLink, patch: Record<string, unknown>,
+): Promise<void> {
+  // Compare the binding read above before updating. A concurrent reassignment,
+  // zero-row write or missing receipt must stop before commission side effects.
+  let query = client.from('subscriptions').update(patch).eq('id', link.id).eq('user_id', link.user_id);
+  query = link.stripe_customer_id === null
+    ? query.is('stripe_customer_id', null) : query.eq('stripe_customer_id', link.stripe_customer_id);
+  const { data, error } = await query.select('id,user_id,stripe_customer_id').single();
+  const expectedCustomer = patch.stripe_customer_id ?? link.stripe_customer_id;
+  if (error || !data || data.id !== link.id || data.user_id !== link.user_id
+    || data.stripe_customer_id !== expectedCustomer) {
+    throw new Error('Subscription persistence failed; retry before further effects');
+  }
+}
+
 // Plan prices for commission calculation (monthly price in EUR) — cf src/lib/plans.ts PLANS
 const planPrices: Record<string, number> = {
   'starter': 33,
@@ -158,11 +292,7 @@ serve(async (req) => {
     timeout: 10_000,
   });
   
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
-  );
+  const supabaseClient = createSubscriptionClient();
 
   try {
     const signature = req.headers.get("stripe-signature");
@@ -192,7 +322,8 @@ serve(async (req) => {
 
     // Handle the event
     switch (event.type) {
-      case 'checkout.session.completed': {
+      case 'checkout.session.completed':
+      case 'checkout.session.async_payment_succeeded': {
         const session = event.data.object as Stripe.Checkout.Session;
         logStep("Checkout session completed", { 
           sessionId: session.id, 
@@ -202,38 +333,46 @@ serve(async (req) => {
         });
 
         if (session.mode === 'subscription' && session.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-          const productId = subscription.items.data[0]?.price.product as string;
-          const planType = planMapping[productId] || 'pro';
+          // Completion alone is not payment confirmation for delayed methods.
+          if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') {
+            logStep('Subscription checkout awaiting payment', { sessionId: session.id });
+            break;
+          }
+          const subscriptionId = stripeObjectId(session.subscription);
+          if (session.status !== 'complete' || !subscriptionId) throw new Error('Subscription checkout requires reconciliation');
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          const { planType } = subscriptionPlan(subscription);
+          if (subscription.status !== 'active' && subscription.status !== 'trialing') {
+            logStep('Subscription checkout not eligible for activation', { sessionId: session.id, status: subscription.status });
+            break;
+          }
+          if (session.payment_status === 'no_payment_required' && subscription.status !== 'trialing') {
+            logStep('Subscription checkout has no confirmed payment', { sessionId: session.id });
+            break;
+          }
+          const customerId = stripeObjectId(session.customer);
+          if (stripeObjectId(subscription.customer) !== customerId
+            || !customerId) throw new Error('Subscription customer requires reconciliation');
+          const confirmedState = await confirmedSubscriptionState(subscription, stripe);
           const customerEmail = session.customer_email || session.customer_details?.email;
 
           // Extract influencer info from metadata
           const referralCode = session.metadata?.referral_code;
           const influencerId = session.metadata?.influencer_id;
-          const clientUserId = session.metadata?.user_id;
 
-          if (customerEmail) {
-            // Find user by email
-            const { data: userData } = await supabaseClient.auth.admin.listUsers();
-            const user = userData?.users?.find(u => u.email === customerEmail);
+          if (customerEmail || customerId) {
+            const link = await checkoutSubscription(supabaseClient, customerId, customerEmail);
+            const user = link ? { id: link.user_id } : null;
 
-            if (user) {
-              // Update subscription in database
-              const { error: updateError } = await supabaseClient
-                .from('subscriptions')
-                .update({
+            if (user && link) {
+              // A confirmed row receipt is required before any later effect.
+              await persistSubscription(supabaseClient, link, {
                   plan_type: planType,
-                  status: 'active',
-                  stripe_customer_id: session.customer as string,
+                  ...confirmedState,
+                  stripe_customer_id: customerId,
                   updated_at: new Date().toISOString(),
-                })
-                .eq('user_id', user.id);
-
-              if (updateError) {
-                logStep("ERROR: Failed to update subscription", { error: updateError.message });
-              } else {
-                logStep("Subscription updated successfully", { userId: user.id, planType });
-              }
+              });
+              logStep("Subscription updated successfully", { userId: user.id, planType });
 
               // Handle influencer commission if referral was used
               if (influencerId && referralCode) {
@@ -352,7 +491,7 @@ serve(async (req) => {
                 }
               }
             } else {
-              logStep("User not found for email", { email: customerEmail });
+              throw new Error('Subscription user or local subscription requires reconciliation');
             }
           }
         } else if (session.mode === 'payment' && session.metadata?.type === 'overage_pack') {
@@ -363,109 +502,76 @@ serve(async (req) => {
         break;
       }
 
-      case 'checkout.session.async_payment_succeeded': {
-        const result = await applyOveragePayment(event, OVERAGE_PACK_ACTIONS,
-          parameters => supabaseClient.rpc('credit_overage_pack', parameters));
-        logStep("Delayed overage payment processed", { eventId: event.id, ...result });
-        break;
-      }
-
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
-        const productId = subscription.items.data[0]?.price.product as string;
-        const planType = planMapping[productId] || 'pro';
-        const status = subscription.status === 'active' ? 'active' : subscription.status;
+        const received = event.data.object as Stripe.Subscription;
+        // Read current provider state so an older active event cannot undo a
+        // cancellation that has already reached Stripe.
+        const subscription = await stripe.subscriptions.retrieve(received.id);
+        const customerId = stripeObjectId(subscription.customer);
+        if (!customerId) throw new Error('Subscription customer requires reconciliation');
+        const { productId, planType } = subscriptionPlan(subscription);
+        const confirmedState = await confirmedSubscriptionState(subscription, stripe);
+        const status = confirmedState.status;
 
         logStep("Subscription updated", { customerId, productId, planType, status });
 
         // Find user by stripe_customer_id
-        const { data: subscriptionData } = await supabaseClient
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', customerId)
-          .single();
+        const subscriptionData = await storedSubscription(supabaseClient, 'stripe_customer_id', customerId);
 
         if (subscriptionData) {
-          const { error: updateError } = await supabaseClient
-            .from('subscriptions')
-            .update({
+          await persistSubscription(supabaseClient, subscriptionData, {
               plan_type: planType,
-              status: status,
+              ...confirmedState,
               updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', subscriptionData.user_id);
-
-          if (updateError) {
-            logStep("ERROR: Failed to update subscription", { error: updateError.message });
-          } else {
-            logStep("Subscription updated successfully", { userId: subscriptionData.user_id, planType });
-          }
+          });
+          logStep("Subscription updated successfully", { userId: subscriptionData.user_id, planType });
         } else {
-          logStep("No subscription found for customer", { customerId });
+          throw new Error('Subscription customer binding requires reconciliation');
         }
         break;
       }
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
+        const customerId = stripeObjectId(subscription.customer);
+        if (!customerId) throw new Error('Subscription customer requires reconciliation');
 
         logStep("Subscription deleted", { customerId });
 
         // Find and update user subscription to free
-        const { data: subscriptionData } = await supabaseClient
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', customerId)
-          .single();
+        const subscriptionData = await storedSubscription(supabaseClient, 'stripe_customer_id', customerId);
 
         if (subscriptionData) {
-          const { error: updateError } = await supabaseClient
-            .from('subscriptions')
-            .update({
+          await persistSubscription(supabaseClient, subscriptionData, {
               plan_type: 'free',
               status: 'canceled',
               updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', subscriptionData.user_id);
-
-          if (updateError) {
-            logStep("ERROR: Failed to update subscription", { error: updateError.message });
-          } else {
-            logStep("Subscription reverted to free", { userId: subscriptionData.user_id });
-          }
+          });
+          logStep("Subscription reverted to free", { userId: subscriptionData.user_id });
+        } else {
+          throw new Error('Subscription customer binding requires reconciliation');
         }
         break;
       }
 
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice;
-        const customerId = invoice.customer as string;
+        const customerId = stripeObjectId(invoice.customer);
+        if (!customerId) throw new Error('Subscription customer requires reconciliation');
 
         logStep("Payment failed", { customerId, invoiceId: invoice.id });
 
         // Update subscription status to past_due
-        const { data: subscriptionData } = await supabaseClient
-          .from('subscriptions')
-          .select('user_id')
-          .eq('stripe_customer_id', customerId)
-          .single();
+        const subscriptionData = await storedSubscription(supabaseClient, 'stripe_customer_id', customerId);
 
         if (subscriptionData) {
-          const { error: updateError } = await supabaseClient
-            .from('subscriptions')
-            .update({
+          await persistSubscription(supabaseClient, subscriptionData, {
               status: 'past_due',
               updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', subscriptionData.user_id);
-
-          if (updateError) {
-            logStep("ERROR: Failed to update subscription status", { error: updateError.message });
-          } else {
-            logStep("Subscription marked as past_due", { userId: subscriptionData.user_id });
-          }
+          });
+          logStep("Subscription marked as past_due", { userId: subscriptionData.user_id });
+        } else {
+          throw new Error('Subscription customer binding requires reconciliation');
         }
         break;
       }

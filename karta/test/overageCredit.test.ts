@@ -337,14 +337,19 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
   });
 });
 
-it('stops the migration on historical duplicate sessions without deleting or rewriting a credit', async () => {
-  const db = await database(false);
-  try {
+describe('legacy overage: historical migration guard', () => {
+  let db: PGlite;
+  // Initialize the isolated database under the same setup budget as the other
+  // SQL cases. The migration assertions retain the runner's five-second limit.
+  beforeAll(async () => { db = await database(false); });
+  afterAll(async () => { await db?.close(); });
+
+  it('stops the migration on historical duplicate sessions without deleting or rewriting a credit', async () => {
     await db.query("INSERT INTO purama_ai.overage_credits(user_id, actions, period_start, stripe_session_id) VALUES ($1, 2000, '2026-10-01', 'cs_test_duplicate'), ($1, 2000, '2026-10-01', 'cs_test_duplicate')", [owner]);
     const before = (await db.query('SELECT * FROM purama_ai.overage_credits ORDER BY id')).rows;
     await expect(db.exec(migration)).rejects.toThrow('overage_duplicate_sessions_require_reconciliation');
     await db.exec('ROLLBACK');
     expect((await db.query('SELECT * FROM purama_ai.overage_credits ORDER BY id')).rows).toEqual(before);
     expect((await db.query("SELECT column_name FROM information_schema.columns WHERE table_schema = 'purama_ai' AND table_name = 'overage_credits' AND column_name = 'payment_confirmed_at'")).rows).toEqual([]);
-  } finally { await db.close(); }
+  });
 });

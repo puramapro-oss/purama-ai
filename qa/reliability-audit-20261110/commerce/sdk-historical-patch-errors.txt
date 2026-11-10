@@ -1,0 +1,425 @@
+[Reading 420 new lines (total: 420 lines)]
+
+Download https://esm.sh/stripe@18.5.0
+Download https://esm.sh/resend@2.0.0
+Download https://esm.sh/stripe@18.5.0/types/index.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/index.d.ts
+Download https://esm.sh/stripe@18.5.0/types/lib.d.ts
+Download https://esm.sh/stripe@18.5.0/types/crypto/crypto.d.ts
+Download https://esm.sh/stripe@18.5.0/types/net/net.d.ts
+Download https://esm.sh/stripe@18.5.0/types/shared.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Errors.d.ts
+Download https://esm.sh/stripe@18.5.0/types/OAuth.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Webhooks.d.ts
+Download https://esm.sh/stripe@18.5.0/types/EventTypes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/UpcomingInvoices.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ThinEvent.d.ts
+Download https://esm.sh/stripe@18.5.0/types/AccountLinksResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/AccountSessionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/AccountsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ApplePayDomainsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ApplicationFeesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Apps/SecretsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BalanceResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BalanceTransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/AlertsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/CreditBalanceSummaryResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/CreditBalanceTransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/CreditGrantsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/MeterEventAdjustmentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/MeterEventsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/MetersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BillingPortal/ConfigurationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BillingPortal/SessionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ChargesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Checkout/SessionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Climate/OrdersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Climate/ProductsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Climate/SuppliersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ConfirmationTokensResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CountrySpecsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CouponsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CreditNotesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CustomerSessionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CustomersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/DisputesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Entitlements/ActiveEntitlementsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Entitlements/FeaturesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/EphemeralKeysResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/EventsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ExchangeRatesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FileLinksResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FilesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/AccountsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/SessionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/TransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Forwarding/RequestsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Identity/VerificationReportsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Identity/VerificationSessionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoiceItemsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoicePaymentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoiceRenderingTemplatesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoicesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/AuthorizationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/CardholdersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/CardsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/DisputesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/PersonalizationDesignsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/PhysicalBundlesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/TokensResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/TransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/MandatesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentIntentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentLinksResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentMethodConfigurationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentMethodDomainsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentMethodsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PayoutsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PlansResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PricesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ProductsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PromotionCodesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/QuotesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Radar/EarlyFraudWarningsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Radar/ValueListItemsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Radar/ValueListsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/RefundsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Reporting/ReportRunsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Reporting/ReportTypesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ReviewsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SetupAttemptsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SetupIntentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ShippingRatesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Sigma/ScheduledQueryRunsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SourcesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SubscriptionItemsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SubscriptionSchedulesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SubscriptionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/CalculationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/RegistrationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/SettingsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/TransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxCodesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxIdsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxRatesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/ConfigurationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/ConnectionTokensResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/LocationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/ReadersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/ConfirmationTokensResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/CustomersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Issuing/AuthorizationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Issuing/CardsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Issuing/PersonalizationDesignsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Issuing/TransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/RefundsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Terminal/ReadersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/TestClocksResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Treasury/InboundTransfersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Treasury/OutboundPaymentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Treasury/OutboundTransfersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Treasury/ReceivedCreditsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/Treasury/ReceivedDebitsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TokensResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TopupsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TransfersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/CreditReversalsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/DebitReversalsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/FinancialAccountsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/InboundTransfersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/OutboundPaymentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/OutboundTransfersResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/ReceivedCreditsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/ReceivedDebitsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/TransactionEntriesResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/TransactionsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEventAdjustmentsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEventSessionResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEventStreamResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEventsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Core/EventDestinationsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Core/EventsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/WebhookEndpointsResource.d.ts
+Download https://esm.sh/stripe@18.5.0/types/AccountLinks.d.ts
+Download https://esm.sh/stripe@18.5.0/types/AccountSessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Accounts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ApplePayDomains.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ApplicationFees.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Applications.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Apps/Secrets.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Balance.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BalanceTransactionSources.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BalanceTransactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BankAccounts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/AlertTriggereds.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/Alerts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/CreditBalanceSummary.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/CreditBalanceTransactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/CreditGrants.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/MeterEventAdjustments.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/MeterEventSummaries.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/MeterEvents.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Billing/Meters.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BillingPortal/Configurations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/BillingPortal/Sessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Capabilities.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Cards.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CashBalances.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Charges.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Checkout/Sessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Climate/Orders.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Climate/Products.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Climate/Suppliers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ConfirmationTokens.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ConnectCollectionTransfers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CountrySpecs.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Coupons.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CreditNoteLineItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CreditNotes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CustomerBalanceTransactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CustomerCashBalanceTransactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CustomerSessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/CustomerSources.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Customers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Discounts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Disputes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Entitlements/ActiveEntitlementSummaries.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Entitlements/ActiveEntitlements.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Entitlements/Features.d.ts
+Download https://esm.sh/stripe@18.5.0/types/EphemeralKeys.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Events.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ExchangeRates.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ExternalAccounts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FeeRefunds.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FileLinks.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Files.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/AccountOwners.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/AccountOwnerships.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/Accounts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/Sessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FinancialConnections/Transactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Forwarding/Requests.d.ts
+Download https://esm.sh/stripe@18.5.0/types/FundingInstructions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Identity/VerificationReports.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Identity/VerificationSessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoiceItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoiceLineItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoicePayments.d.ts
+Download https://esm.sh/stripe@18.5.0/types/InvoiceRenderingTemplates.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Invoices.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/Authorizations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/Cardholders.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/Cards.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/Disputes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/PersonalizationDesigns.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/PhysicalBundles.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/Tokens.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Issuing/Transactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/LineItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/LoginLinks.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Mandates.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentIntents.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentLinks.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentMethodConfigurations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentMethodDomains.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PaymentMethods.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Payouts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Persons.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Plans.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Prices.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ProductFeatures.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Products.d.ts
+Download https://esm.sh/stripe@18.5.0/types/PromotionCodes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Quotes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Radar/EarlyFraudWarnings.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Radar/ValueListItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Radar/ValueLists.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Refunds.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Reporting/ReportRuns.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Reporting/ReportTypes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ReserveTransactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Reviews.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SetupAttempts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SetupIntents.d.ts
+Download https://esm.sh/stripe@18.5.0/types/ShippingRates.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Sigma/ScheduledQueryRuns.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SourceMandateNotifications.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SourceTransactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Sources.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SubscriptionItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/SubscriptionSchedules.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Subscriptions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/CalculationLineItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/Calculations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/Registrations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/Settings.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/TransactionLineItems.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tax/Transactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxCodes.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxDeductedAtSources.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxIds.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TaxRates.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/Configurations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/ConnectionTokens.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/Locations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Terminal/Readers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TestHelpers/TestClocks.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Tokens.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Topups.d.ts
+Download https://esm.sh/stripe@18.5.0/types/TransferReversals.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Transfers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/CreditReversals.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/DebitReversals.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/FinancialAccountFeatures.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/FinancialAccounts.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/InboundTransfers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/OutboundPayments.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/OutboundTransfers.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/ReceivedCredits.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/ReceivedDebits.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/TransactionEntries.d.ts
+Download https://esm.sh/stripe@18.5.0/types/Treasury/Transactions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEventAdjustments.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEventSessions.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Billing/MeterEvents.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/EventDestinations.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/Events.d.ts
+Download https://esm.sh/stripe@18.5.0/types/WebhookEndpoints.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/resend.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/interfaces.d.ts
+Download https://esm.sh/stripe@18.5.0/types/V2/EventTypes.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/api-keys/api-keys.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/batch/batch.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/common/interfaces/index.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/domains.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/emails/emails.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/api-keys/interfaces/index.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/batch/interfaces/index.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/common/interfaces/get-option.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/common/interfaces/list-option.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/common/interfaces/post-option.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/common/interfaces/put-option.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/index.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/emails/interfaces/index.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/api-keys/interfaces/create-api-key-options.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/api-keys/interfaces/list-api-keys.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/api-keys/interfaces/remove-api-keys.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/batch/interfaces/create-batch-options.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/create-domain-options.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/list-domains.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/get-domain.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/remove-domain.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/verify-domain.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/emails/interfaces/create-email-options.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/emails/interfaces/get-email-options.interface.d.ts
+Download https://esm.sh/resend@2.0.0/build/src/domains/interfaces/domain.d.ts
+Download https://esm.sh/@types/react@~19.0.7/index.d.ts
+Download https://esm.sh/@types/react@19.0.14/index.d.ts
+Download https://esm.sh/@types/react@19.0.14/global.d.ts
+Download https://esm.sh/csstype@3.1.3/index.d.ts
+Check file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts
+TS2339 [ERROR]: Property 'id' does not exist on type 'never'.
+  if (typeof data.id !== 'string' || !data.id || typeof data.user_id !== 'string' || !data.user_id
+                  ~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:185:19
+
+TS2339 [ERROR]: Property 'id' does not exist on type 'never'.
+  if (typeof data.id !== 'string' || !data.id || typeof data.user_id !== 'string' || !data.user_id
+                                           ~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:185:44
+
+TS2339 [ERROR]: Property 'user_id' does not exist on type 'never'.
+  if (typeof data.id !== 'string' || !data.id || typeof data.user_id !== 'string' || !data.user_id
+                                                             ~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:185:62
+
+TS2339 [ERROR]: Property 'user_id' does not exist on type 'never'.
+  if (typeof data.id !== 'string' || !data.id || typeof data.user_id !== 'string' || !data.user_id
+                                                                                           ~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:185:92
+
+TS2339 [ERROR]: Property 'stripe_customer_id' does not exist on type 'never'.
+    || (data.stripe_customer_id !== null && typeof data.stripe_customer_id !== 'string')
+             ~~~~~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:186:14
+
+TS2339 [ERROR]: Property 'stripe_customer_id' does not exist on type 'never'.
+    || (data.stripe_customer_id !== null && typeof data.stripe_customer_id !== 'string')
+                                                        ~~~~~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:186:57
+
+TS2345 [ERROR]: Argument of type 'Record<string, unknown>' is not assignable to parameter of type 'never'.
+  let query = client.from('subscriptions').update(patch).eq('id', link.id).eq('user_id', link.user_id);
+                                                  ~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:241:51
+
+TS2339 [ERROR]: Property 'id' does not exist on type 'never'.
+  if (error || !data || data.id !== link.id || data.user_id !== link.user_id
+                             ~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:246:30
+
+TS2339 [ERROR]: Property 'user_id' does not exist on type 'never'.
+  if (error || !data || data.id !== link.id || data.user_id !== link.user_id
+                                                    ~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:246:53
+
+TS2339 [ERROR]: Property 'stripe_customer_id' does not exist on type 'never'.
+    || data.stripe_customer_id !== expectedCustomer) {
+            ~~~~~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:247:13
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+            const link = await checkoutSubscription(supabaseClient, customerId, customerEmail);
+                                                    ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:359:53
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+              await persistSubscription(supabaseClient, link, {
+                                        ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:364:41
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+        const subscriptionData = await storedSubscription(supabaseClient, 'stripe_customer_id', customerId);
+                                                          ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:514:59
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+          await persistSubscription(supabaseClient, subscriptionData, {
+                                    ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:517:37
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+        const subscriptionData = await storedSubscription(supabaseClient, 'stripe_customer_id', customerId);
+                                                          ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:537:59
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+          await persistSubscription(supabaseClient, subscriptionData, {
+                                    ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:540:37
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+        const subscriptionData = await storedSubscription(supabaseClient, 'stripe_customer_id', customerId);
+                                                          ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:560:59
+
+TS2345 [ERROR]: Argument of type 'SupabaseClient<any, "public", "purama_ai", any, any>' is not assignable to parameter of type 'SupabaseClient<unknown, { PostgrestVersion: string; }, never, never, { PostgrestVersion: string; }>'.
+  Type '"purama_ai"' is not assignable to type 'never'.
+          await persistSubscription(supabaseClient, subscriptionData, {
+                                    ~~~~~~~~~~~~~~
+    at file:///Users/matissdornier/purama-patches/iao-webhook-retry-20261110-64e178ce73/after/supabase/functions/stripe-webhook/index.ts:563:37
+
+Found 18 errors.
+
+error: Type checking failed.
+
+✅ Process completed with exit code 1 (runtime: 13.35s)
+
+[executed on device: mac.home (5b532c75-ad8a-421c-8e01-5b2e96c3cecf)]

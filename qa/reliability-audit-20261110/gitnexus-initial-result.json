@@ -1,0 +1,16 @@
+{
+  "command": [
+    "npx",
+    "--yes",
+    "gitnexus@1.6.12",
+    "analyze",
+    "--index-only",
+    "--name",
+    "purama-current-audit-20261110-2220",
+    "--workers",
+    "1"
+  ],
+  "exit": 1,
+  "seconds": 44.58,
+  "log": "qa/reliability-audit-20261110/gitnexus-initial.log"
+}

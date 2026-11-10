@@ -1,0 +1,23 @@
+[
+  {
+    "file": "before.txt",
+    "source": "/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before.log",
+    "raw_sha256": "f967a767bb6384be07f9fa0c4b99b9c828b6be6d14a076be021620e1487158ec",
+    "published_sha256": "691ba43cbb86d105db2b939411c6727065e60bf1261536721b414d70992b2e16",
+    "normalization": "trailing whitespace only"
+  },
+  {
+    "file": "after.txt",
+    "source": "/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/final.log",
+    "raw_sha256": "af785f904dbdfc357b4ee5c1d3c3b7d53bc9cc202f3259b762e0596bb88a996f",
+    "published_sha256": "af785f904dbdfc357b4ee5c1d3c3b7d53bc9cc202f3259b762e0596bb88a996f",
+    "normalization": "trailing whitespace only"
+  },
+  {
+    "file": "lint.txt",
+    "source": "/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/lint.log",
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normalization": "trailing whitespace only"
+  }
+]

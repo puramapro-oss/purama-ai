@@ -1,0 +1,98 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 --reporter=default --reporter=json --outputFile.json=../qa/static-scheduler-20261110/baseline-real-cron.json test/staticAgentSchedulerCron.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta
+
+ ❯ test/staticAgentSchedulerCron.test.ts (3 tests | 3 failed) 83ms
+   ❯ static-agent scheduler with actual node-cron (3)
+     × invalidates a real executing callback before its database read completes 68ms
+     × keeps the real execution unfinished while its active-user lookup is pending 7ms
+     × removes every retired timer from the actual node-cron registry 7ms
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  22:27:08
+   Duration  305ms (tests 58%, transform 28%, import 6%, setup 4%, worker 4%)
+
+JSON report written to /workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/static-scheduler-20261110/baseline-real-cron.json
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/staticAgentSchedulerCron.test.ts > static-agent scheduler with actual node-cron > invalidates a real executing callback before its database read completes
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "agentType": "email",
+        "trigger": Object {
+          "payload": Object {
+            "slot": "2026-11-10T12:00",
+          },
+          "source": "Email Agent — Fetch & Process",
+          "type": "cron",
+        },
+        "userId": "user-1",
+      },
+      Object {
+        "dedupeKey": "cron|email|user-1|2026-11-10T12:00",
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ test/staticAgentSchedulerCron.test.ts:48:33
+     46|       await execution;
+     47|       await flush();
+     48|       expect(state.enqueue).not.toHaveBeenCalled();
+       |                                 ^
+     49|     } finally {
+     50|       pending.resolve([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/staticAgentSchedulerCron.test.ts > static-agent scheduler with actual node-cron > keeps the real execution unfinished while its active-user lookup is pending
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/staticAgentSchedulerCron.test.ts:69:24
+     67|       await flush();
+     68|       expect(state.list).toHaveBeenCalledTimes(1);
+     69|       expect(finished).toBe(false);
+       |                        ^
+     70|       pending.resolve(["user-1"]);
+     71|       await execution;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/staticAgentSchedulerCron.test.ts > static-agent scheduler with actual node-cron > removes every retired timer from the actual node-cron registry
+AssertionError: expected 17 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 17
+
+ ❯ test/staticAgentSchedulerCron.test.ts:89:34
+     87|     for (const controller of controllers) controller.stop();
+     88|     await flush();
+     89|     expect(cron.getTasks().size).toBe(0);
+       |                                  ^
+     90|     expect(tasks.every(task => task.getStatus() === "destroyed")).toBe…
+     91|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

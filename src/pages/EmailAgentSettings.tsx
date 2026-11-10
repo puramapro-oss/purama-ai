@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -16,6 +16,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope } from '@/hooks/useRequestScope';
+import { createRequestScope } from '@/lib/request-scope';
 import {
   getConfig, updateConfig, getGmailOAuthUrl, disconnectGmail,
   TONES, type EmailAgentConfig, type ToneId,
@@ -24,6 +26,7 @@ import {
 export default function EmailAgentSettings() {
   const { user } = useAuth();
   const userId = user?.id;
+  const capture = useRequestScope(userId ?? '');
   const [config, setConfig] = useState<EmailAgentConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -31,6 +34,12 @@ export default function EmailAgentSettings() {
   const [saving, setSaving] = useState(false);
   const [newExcludedEmail, setNewExcludedEmail] = useState('');
   const [newExcludedDomain, setNewExcludedDomain] = useState('');
+  const [connecting, setConnecting] = useState(false);
+  const [oauthRequests] = useState(createRequestScope);
+  useLayoutEffect(() => {
+    setConnecting(false);
+    return () => oauthRequests.invalidate();
+  }, [userId, oauthRequests]);
 
   useEffect(() => {
     setLoading(Boolean(userId));
@@ -66,6 +75,7 @@ export default function EmailAgentSettings() {
 
   const handleSave = async () => {
     if (!user) return;
+    const current = capture();
     setSaving(true);
     try {
       const { id, user_id, created_at, updated_at, total_processed, total_auto_replied, total_drafted, total_notified, total_archived, estimated_time_saved_minutes, last_sync_at, gmail_email, ...patch } = config;
@@ -73,11 +83,13 @@ export default function EmailAgentSettings() {
       void total_processed; void total_auto_replied; void total_drafted; void total_notified; void total_archived;
       void estimated_time_saved_minutes; void last_sync_at; void gmail_email;
       await updateConfig(user.id, patch);
+      if (!current()) return;
       toast.success('✅ Paramètres enregistrés');
     } catch (e) {
+      if (!current()) return;
       toast.error('Erreur de sauvegarde', { description: e instanceof Error ? e.message : String(e) });
     } finally {
-      setSaving(false);
+      if (current()) setSaving(false);
     }
   };
 
@@ -95,22 +107,31 @@ export default function EmailAgentSettings() {
   };
 
   const handleConnectGmail = async () => {
+    if (!userId) return;
+    const request = oauthRequests.begin('gmail-connect');
+    if (!request) return;
+    setConnecting(true);
     try {
-      const url = await getGmailOAuthUrl();
-      window.location.href = url;
-    } catch (e) {
-      toast.error('Erreur OAuth', { description: e instanceof Error ? e.message : String(e) });
+      const url = await getGmailOAuthUrl(userId, request.signal);
+      if (request.current()) window.location.href = url;
+    } catch {
+      if (request.current()) toast.error('Impossible de démarrer la connexion Gmail. Réessayez.');
+    } finally {
+      if (request.finish()) setConnecting(false);
     }
   };
 
   const handleDisconnect = async () => {
     if (!user) return;
     if (!confirm('Déconnecter Gmail ? L\'agent sera désactivé.')) return;
+    const current = capture();
     try {
       await disconnectGmail(user.id);
+      if (!current()) return;
       setConfig({ ...config, gmail_email: null, is_active: false });
       toast.success('Gmail déconnecté');
     } catch (e) {
+      if (!current()) return;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
     }
   };
@@ -147,7 +168,7 @@ export default function EmailAgentSettings() {
               </Button>
             </div>
           ) : (
-            <Button onClick={handleConnectGmail} className="w-full">
+            <Button onClick={handleConnectGmail} disabled={connecting} className="w-full">
               <Mail className="w-4 h-4 mr-2" /> Connecter un compte Gmail
             </Button>
           )}

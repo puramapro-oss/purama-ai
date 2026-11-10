@@ -1,6 +1,7 @@
 // Frontend client for the Email Agent module.
 // Tables live in `purama_ai` schema (matches the supabase client default).
 import { supabase } from '@/integrations/supabase/client';
+import { invokeOAuth, storeOAuthContext } from '@/lib/oauth-google';
 
 // Use the raw client (the generated `Database` type doesn't yet know about
 // these tables). We bypass type narrowing with `as any` only at the .from()
@@ -264,10 +265,27 @@ const DEFAULT_CONFIG: Omit<EmailAgentConfig, 'user_id'> = {
 // =============================================================
 // CONFIG
 // =============================================================
+const EDITABLE_CONFIG_KEYS = [
+  'is_active', 'autonomy_level', 'tone', 'custom_tone_prompt', 'signature', 'language',
+  'excluded_emails', 'excluded_domains', 'auto_reply_categories', 'notify_categories',
+  'archive_categories', 'working_hours_only', 'working_hours_start', 'working_hours_end',
+  'daily_digest', 'daily_digest_time', 'vacation_mode', 'vacation_message',
+] as const satisfies readonly (keyof EmailAgentConfig)[];
+
+export type EmailAgentConfigPatch = Partial<Pick<EmailAgentConfig, (typeof EDITABLE_CONFIG_KEYS)[number]>>;
+
+// Provider credentials and worker cursors never belong in frontend config state.
+// Use the same projection for reads and write receipts, including first creation.
+const CONFIG_COLUMNS = [
+  'id', 'user_id', ...EDITABLE_CONFIG_KEYS, 'gmail_email', 'last_sync_at',
+  'total_processed', 'total_auto_replied', 'total_drafted', 'total_notified',
+  'total_archived', 'estimated_time_saved_minutes', 'created_at', 'updated_at',
+].join(',');
+
 export async function getConfig(userId: string): Promise<EmailAgentConfig> {
   const { data, error } = await sb()
     .from('email_agent_config')
-    .select('*')
+    .select(CONFIG_COLUMNS)
     .eq('user_id', userId)
     .maybeSingle();
   if (error) throw error;
@@ -277,7 +295,7 @@ export async function getConfig(userId: string): Promise<EmailAgentConfig> {
   const { data: inserted, error: insertErr } = await sb()
     .from('email_agent_config')
     .insert(insertPayload)
-    .select()
+    .select(CONFIG_COLUMNS)
     .single();
   if (insertErr) throw insertErr;
   return inserted as EmailAgentConfig;
@@ -285,13 +303,19 @@ export async function getConfig(userId: string): Promise<EmailAgentConfig> {
 
 export async function updateConfig(
   userId: string,
-  patch: Partial<EmailAgentConfig>,
+  patch: EmailAgentConfigPatch,
 ): Promise<EmailAgentConfig> {
+  // Types cannot remove undeclared runtime fields from an older config snapshot.
+  // Only own, defined settings may be persisted; provider state stays untouched.
+  const settings = Object.fromEntries(EDITABLE_CONFIG_KEYS
+    .filter(key => Object.prototype.hasOwnProperty.call(patch, key) && patch[key] !== undefined)
+    .map(key => [key, patch[key]]));
+  if (Object.keys(settings).length === 0) throw new Error('Aucun paramètre modifiable fourni');
   const { data, error } = await sb()
     .from('email_agent_config')
-    .update(patch)
+    .update(settings)
     .eq('user_id', userId)
-    .select()
+    .select(CONFIG_COLUMNS)
     .single();
   if (error) throw error;
   return data as EmailAgentConfig;
@@ -494,22 +518,33 @@ export async function deleteTemplate(id: string): Promise<void> {
 // =============================================================
 // Gmail OAuth (delegated to edge function)
 // =============================================================
-export async function getGmailOAuthUrl(): Promise<string> {
-  const { data, error } = await supabase.functions.invoke(
-    'email-agent-gmail-oauth',
-    { body: { action: 'start' } },
-  );
-  if (error) throw error;
-  const url = (data as { url?: string } | null)?.url;
-  if (!url) throw new Error('Aucune URL OAuth retournée');
-  return url;
+export async function getGmailOAuthUrl(userId: string, signal?: AbortSignal): Promise<string> {
+  const result = await invokeOAuth('email-agent-gmail-oauth', { action: 'start' }, userId, signal);
+  if (signal?.aborted) throw new Error('Connexion annulée');
+  if (typeof result.url !== 'string' || typeof result.state !== 'string' || !/^[a-f0-9]{64}$/.test(result.state) ||
+      typeof result.expiresAt !== 'string' || !Number.isFinite(Date.parse(result.expiresAt))) {
+    throw new Error('Réponse de connexion invalide');
+  }
+  const url = new URL(result.url);
+  if (url.origin !== 'https://accounts.google.com' || url.pathname !== '/o/oauth2/v2/auth' ||
+      url.username || url.password || url.hash || url.searchParams.get('state') !== result.state ||
+      url.searchParams.get('response_type') !== 'code') throw new Error('Destination de connexion invalide');
+  storeOAuthContext({ state: result.state, userId, provider: 'gmail', purpose: 'email_agent_gmail', expiresAt: result.expiresAt });
+  return url.toString();
 }
 
 export async function disconnectGmail(userId: string): Promise<void> {
-  await updateConfig(userId, {
-    gmail_email: null,
-    is_active: false,
-  });
+  // Disconnection is an explicit action, separate from editable agent settings.
+  const { data, error } = await sb()
+    .from('email_agent_config')
+    .update({ gmail_email: null, is_active: false })
+    .eq('user_id', userId)
+    .select('user_id,gmail_email,is_active')
+    .single();
+  if (error) throw error;
+  if (!data || data.user_id !== userId || data.gmail_email !== null || data.is_active !== false) {
+    throw new Error('Déconnexion Gmail non confirmée');
+  }
 }
 
 // =============================================================

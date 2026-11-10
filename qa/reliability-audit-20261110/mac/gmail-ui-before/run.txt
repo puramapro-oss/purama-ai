@@ -1,0 +1,122 @@
+
+Running 4 tests using 1 worker
+
+  ✘  1 tests/ui-state/email-lifecycle.spec.ts:50:1 › email settings: A-B-A ignores an old save receipt and retains the current pending save (12.8s)
+  ✘  2 tests/ui-state/email-lifecycle.spec.ts:74:1 › email settings: A-B-A ignores an old disconnect receipt and keeps the new connection (16.0s)
+  ✘  3 tests/ui-state/email-lifecycle.spec.ts:94:1 › email dashboard: a rejected initial A load cannot notify the newer A lifetime (12.4s)
+  ✘  4 tests/ui-state/email-lifecycle.spec.ts:108:1 › email dashboard: an old rejected activation cannot notify a later account lifetime (11.9s)
+
+
+  1) tests/ui-state/email-lifecycle.spec.ts:50:1 › email settings: A-B-A ignores an old save receipt and retains the current pending save 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByText('✅ Paramètres enregistrés', { exact: true })
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  1500ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 1500ms[22m
+    [2m  - waiting for getByText('✅ Paramètres enregistrés', { exact: true })[22m
+    [2m    5 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      61 |   await save.click(); await waitWrites(page, 2);
+      62 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0)); await settle(page);
+    > 63 |   await expect(page.getByText('✅ Paramètres enregistrés', { exact: true })).toHaveCount(0);
+         |                                                                             ^
+      64 |   await expect(page.locator(signature)).toHaveValue('CURRENT-DRAFT-A');
+      65 |   await expect(save).toBeDisabled();
+      66 |
+        at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:63:77
+
+    Error Context: ../gmail-ui-before/artifacts/email-lifecycle-email-sett-a35a9-ns-the-current-pending-save/error-context.md
+
+  2) tests/ui-state/email-lifecycle.spec.ts:74:1 › email settings: A-B-A ignores an old disconnect receipt and keeps the new connection 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByText('Gmail déconnecté', { exact: true })
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  1500ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 1500ms[22m
+    [2m  - waiting for getByText('Gmail déconnecté', { exact: true })[22m
+    [2m    5 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      83 |
+      84 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0)); await settle(page);
+    > 85 |   await expect(page.getByText('Gmail déconnecté', { exact: true })).toHaveCount(0);
+         |                                                                     ^
+      86 |   await expect(page.locator(signature)).toHaveValue('CURRENT-A');
+      87 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();
+      88 |   await page.getByRole('button', { name: 'Déconnecter', exact: true }).click(); await waitWrites(page, 2);
+        at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:85:69
+
+    Error Context: ../gmail-ui-before/artifacts/email-lifecycle-email-sett-fa5a9-nd-keeps-the-new-connection/error-context.md
+
+  3) tests/ui-state/email-lifecycle.spec.ts:94:1 › email dashboard: a rejected initial A load cannot notify the newer A lifetime 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByText('Erreur de chargement', { exact: true })
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  1500ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 1500ms[22m
+    [2m  - waiting for getByText('Erreur de chargement', { exact: true })[22m
+    [2m    5 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      102 |
+      103 |   await page.evaluate(owner => window.uiStateHarness.rejectConfig('email_agent_config', owner), A); await settle(page);
+    > 104 |   await expect(page.getByText('Erreur de chargement', { exact: true })).toHaveCount(0);
+          |                                                                         ^
+      105 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();
+      106 | });
+      107 |
+        at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:104:73
+
+    Error Context: ../gmail-ui-before/artifacts/email-lifecycle-email-dash-086a8-notify-the-newer-A-lifetime/error-context.md
+
+  4) tests/ui-state/email-lifecycle.spec.ts:108:1 › email dashboard: an old rejected activation cannot notify a later account lifetime 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByText('Impossible de mettre à jour', { exact: true })
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  1500ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 1500ms[22m
+    [2m  - waiting for getByText('Impossible de mettre à jour', { exact: true })[22m
+    [2m    5 × locator resolved to 1 element[22m
+    [2m      - unexpected value "1"[22m
+
+
+      115 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();
+      116 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0, true)); await settle(page);
+    > 117 |   await expect(page.getByText('Impossible de mettre à jour', { exact: true })).toHaveCount(0);
+          |                                                                                ^
+      118 |   await expect(page.getByRole('switch')).toBeEnabled();
+      119 |
+      120 |   await page.getByRole('switch').click(); await waitWrites(page, 2);
+        at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:117:80
+
+    Error Context: ../gmail-ui-before/artifacts/email-lifecycle-email-dash-5552b-fy-a-later-account-lifetime/error-context.md
+
+  4 failed
+    tests/ui-state/email-lifecycle.spec.ts:50:1 › email settings: A-B-A ignores an old save receipt and retains the current pending save 
+    tests/ui-state/email-lifecycle.spec.ts:74:1 › email settings: A-B-A ignores an old disconnect receipt and keeps the new connection 
+    tests/ui-state/email-lifecycle.spec.ts:94:1 › email dashboard: a rejected initial A load cannot notify the newer A lifetime 
+    tests/ui-state/email-lifecycle.spec.ts:108:1 › email dashboard: an old rejected activation cannot notify a later account lifetime 

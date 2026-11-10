@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "tests/oauth-google/browser/run.mjs"
+  ],
+  "exit": 1,
+  "seconds": 50.37,
+  "baseline": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "selected_existing_defects": 4
+}

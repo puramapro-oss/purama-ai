@@ -1,0 +1,49 @@
+[
+  {
+    "name": "query",
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+      "query",
+      "static agent cron schedule enqueue stop",
+      "--repo",
+      "iao-resume-cb46"
+    ],
+    "exit_code": 0,
+    "seconds": 2.327
+  },
+  {
+    "name": "impact-start",
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "startSchedulers",
+      "--file",
+      "karta/src/scheduler/cron.ts",
+      "--direction",
+      "upstream",
+      "--repo",
+      "iao-resume-cb46"
+    ],
+    "exit_code": 0,
+    "seconds": 0.851
+  },
+  {
+    "name": "impact-cycle",
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "runScheduledCycle",
+      "--file",
+      "karta/src/scheduler/cron.ts",
+      "--direction",
+      "upstream",
+      "--repo",
+      "iao-resume-cb46"
+    ],
+    "exit_code": 0,
+    "seconds": 0.763
+  }
+]

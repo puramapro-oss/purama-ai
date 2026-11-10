@@ -1,0 +1,38 @@
+
+  GitNexus Detect Changes (1.6.12)
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 992 files, 7739 symbols
+Affected processes: 543
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 7724 more
+
+Affected execution flows:
+  • RunDailyReport → SendEmail (3 steps) — changed: sendEmail, notify
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized
+  • Execute → JevValidationError (7 steps) — changed: JevValidationError, validateJevRequest, exactKeys, keys, field, fail, execute
+  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: tryFinishMission, housekeeping, ChefProcessStopUnconfirmedError, runChefWorkerCycle
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, assertRpc, runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc
+  • HandleRequest → RequestError (3 steps) — changed: RequestError, handleRequest, readBody
+  • RunChefWorkerCycle → Rpc (3 steps) — changed: heartbeat, runChefWorkerCycle, rpc
+  • LoadApprovalContinuation → Encode (3 steps) — changed: loadApprovalContinuation, encode, canonicalJson
+... and 533 more

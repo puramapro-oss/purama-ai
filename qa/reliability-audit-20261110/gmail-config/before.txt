@@ -1,0 +1,506 @@
+TAP version 13
+# Subtest: config read requests public metadata without credentials or worker cursors
+not ok 1 - config read requests public metadata without credentials or worker cursors
+  ---
+  duration_ms: 82.311584
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:117:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+
+      [
+        'archive_categories',
+        'auto_reply_categories',
+        'autonomy_level',
+        'created_at',
+    ...
+        'excluded_emails',
+    +   'future_private_column',
+    +   'gmail_access_token',
+        'gmail_email',
+    +   'gmail_refresh_token',
+    +   'gmail_token_expiry',
+        'id',
+        'is_active',
+        'language',
+    +   'last_email_id',
+        'last_sync_at',
+        'notify_categories',
+        'signature',
+        'tone',
+        'total_archived',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'archive_categories'
+    1: 'auto_reply_categories'
+    2: 'autonomy_level'
+    3: 'created_at'
+    4: 'custom_tone_prompt'
+    5: 'daily_digest'
+    6: 'daily_digest_time'
+    7: 'estimated_time_saved_minutes'
+    8: 'excluded_domains'
+    9: 'excluded_emails'
+    10: 'gmail_email'
+    11: 'id'
+    12: 'is_active'
+    13: 'language'
+    14: 'last_sync_at'
+    15: 'notify_categories'
+    16: 'signature'
+    17: 'tone'
+    18: 'total_archived'
+    19: 'total_auto_replied'
+    20: 'total_drafted'
+    21: 'total_notified'
+    22: 'total_processed'
+    23: 'updated_at'
+    24: 'user_id'
+    25: 'vacation_message'
+    26: 'vacation_mode'
+    27: 'working_hours_end'
+    28: 'working_hours_only'
+    29: 'working_hours_start'
+  actual:
+    0: 'archive_categories'
+    1: 'auto_reply_categories'
+    2: 'autonomy_level'
+    3: 'created_at'
+    4: 'custom_tone_prompt'
+    5: 'daily_digest'
+    6: 'daily_digest_time'
+    7: 'estimated_time_saved_minutes'
+    8: 'excluded_domains'
+    9: 'excluded_emails'
+    10: 'future_private_column'
+    11: 'gmail_access_token'
+    12: 'gmail_email'
+    13: 'gmail_refresh_token'
+    14: 'gmail_token_expiry'
+    15: 'id'
+    16: 'is_active'
+    17: 'language'
+    18: 'last_email_id'
+    19: 'last_sync_at'
+    20: 'notify_categories'
+    21: 'signature'
+    22: 'tone'
+    23: 'total_archived'
+    24: 'total_auto_replied'
+    25: 'total_drafted'
+    26: 'total_notified'
+    27: 'total_processed'
+    28: 'updated_at'
+    29: 'user_id'
+    30: 'vacation_message'
+    31: 'vacation_mode'
+    32: 'working_hours_end'
+    33: 'working_hours_only'
+    34: 'working_hours_start'
+  operator: 'deepStrictEqual'
+  stack: |-
+    assertPublic (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:113:10)
+    TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:120:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: first config creation returns the same public projection and existing defaults
+not ok 2 - first config creation returns the same public projection and existing defaults
+  ---
+  duration_ms: 32.108055
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:128:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+
+      [
+        'archive_categories',
+        'auto_reply_categories',
+        'autonomy_level',
+        'created_at',
+    ...
+        'excluded_emails',
+    +   'future_private_column',
+    +   'gmail_access_token',
+        'gmail_email',
+    +   'gmail_refresh_token',
+    +   'gmail_token_expiry',
+        'id',
+        'is_active',
+        'language',
+    +   'last_email_id',
+        'last_sync_at',
+        'notify_categories',
+        'signature',
+        'tone',
+        'total_archived',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'archive_categories'
+    1: 'auto_reply_categories'
+    2: 'autonomy_level'
+    3: 'created_at'
+    4: 'custom_tone_prompt'
+    5: 'daily_digest'
+    6: 'daily_digest_time'
+    7: 'estimated_time_saved_minutes'
+    8: 'excluded_domains'
+    9: 'excluded_emails'
+    10: 'gmail_email'
+    11: 'id'
+    12: 'is_active'
+    13: 'language'
+    14: 'last_sync_at'
+    15: 'notify_categories'
+    16: 'signature'
+    17: 'tone'
+    18: 'total_archived'
+    19: 'total_auto_replied'
+    20: 'total_drafted'
+    21: 'total_notified'
+    22: 'total_processed'
+    23: 'updated_at'
+    24: 'user_id'
+    25: 'vacation_message'
+    26: 'vacation_mode'
+    27: 'working_hours_end'
+    28: 'working_hours_only'
+    29: 'working_hours_start'
+  actual:
+    0: 'archive_categories'
+    1: 'auto_reply_categories'
+    2: 'autonomy_level'
+    3: 'created_at'
+    4: 'custom_tone_prompt'
+    5: 'daily_digest'
+    6: 'daily_digest_time'
+    7: 'estimated_time_saved_minutes'
+    8: 'excluded_domains'
+    9: 'excluded_emails'
+    10: 'future_private_column'
+    11: 'gmail_access_token'
+    12: 'gmail_email'
+    13: 'gmail_refresh_token'
+    14: 'gmail_token_expiry'
+    15: 'id'
+    16: 'is_active'
+    17: 'language'
+    18: 'last_email_id'
+    19: 'last_sync_at'
+    20: 'notify_categories'
+    21: 'signature'
+    22: 'tone'
+    23: 'total_archived'
+    24: 'total_auto_replied'
+    25: 'total_drafted'
+    26: 'total_notified'
+    27: 'total_processed'
+    28: 'updated_at'
+    29: 'user_id'
+    30: 'vacation_message'
+    31: 'vacation_mode'
+    32: 'working_hours_end'
+    33: 'working_hours_only'
+    34: 'working_hours_start'
+  operator: 'deepStrictEqual'
+  stack: |-
+    assertPublic (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:113:10)
+    TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:131:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: all editable settings including false, null and empty arrays remain writable
+not ok 3 - all editable settings including false, null and empty arrays remain writable
+  ---
+  duration_ms: 30.623231
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:139:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+
+      [
+        'archive_categories',
+        'auto_reply_categories',
+        'autonomy_level',
+        'created_at',
+    ...
+        'excluded_emails',
+    +   'future_private_column',
+    +   'gmail_access_token',
+        'gmail_email',
+    +   'gmail_refresh_token',
+    +   'gmail_token_expiry',
+        'id',
+        'is_active',
+        'language',
+    +   'last_email_id',
+        'last_sync_at',
+        'notify_categories',
+        'signature',
+        'tone',
+        'total_archived',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'archive_categories'
+    1: 'auto_reply_categories'
+    2: 'autonomy_level'
+    3: 'created_at'
+    4: 'custom_tone_prompt'
+    5: 'daily_digest'
+    6: 'daily_digest_time'
+    7: 'estimated_time_saved_minutes'
+    8: 'excluded_domains'
+    9: 'excluded_emails'
+    10: 'gmail_email'
+    11: 'id'
+    12: 'is_active'
+    13: 'language'
+    14: 'last_sync_at'
+    15: 'notify_categories'
+    16: 'signature'
+    17: 'tone'
+    18: 'total_archived'
+    19: 'total_auto_replied'
+    20: 'total_drafted'
+    21: 'total_notified'
+    22: 'total_processed'
+    23: 'updated_at'
+    24: 'user_id'
+    25: 'vacation_message'
+    26: 'vacation_mode'
+    27: 'working_hours_end'
+    28: 'working_hours_only'
+    29: 'working_hours_start'
+  actual:
+    0: 'archive_categories'
+    1: 'auto_reply_categories'
+    2: 'autonomy_level'
+    3: 'created_at'
+    4: 'custom_tone_prompt'
+    5: 'daily_digest'
+    6: 'daily_digest_time'
+    7: 'estimated_time_saved_minutes'
+    8: 'excluded_domains'
+    9: 'excluded_emails'
+    10: 'future_private_column'
+    11: 'gmail_access_token'
+    12: 'gmail_email'
+    13: 'gmail_refresh_token'
+    14: 'gmail_token_expiry'
+    15: 'id'
+    16: 'is_active'
+    17: 'language'
+    18: 'last_email_id'
+    19: 'last_sync_at'
+    20: 'notify_categories'
+    21: 'signature'
+    22: 'tone'
+    23: 'total_archived'
+    24: 'total_auto_replied'
+    25: 'total_drafted'
+    26: 'total_notified'
+    27: 'total_processed'
+    28: 'updated_at'
+    29: 'user_id'
+    30: 'vacation_message'
+    31: 'vacation_mode'
+    32: 'working_hours_end'
+    33: 'working_hours_only'
+    34: 'working_hours_start'
+  operator: 'deepStrictEqual'
+  stack: |-
+    assertPublic (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:113:10)
+    TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:148:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: saving a stale config after reconnection preserves the fresh Gmail credentials and metadata
+not ok 4 - saving a stale config after reconnection preserves the fresh Gmail credentials and metadata
+  ---
+  duration_ms: 20.747895
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:151:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    gmail_access_token
+    + actual - expected
+
+    + 'fixture-old-encrypted-access'
+    - 'fixture-new-encrypted-access'
+               ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'fixture-new-encrypted-access'
+  actual: 'fixture-old-encrypted-access'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:166:60)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: runtime whitelist blocks ownership, provider fields, counters, timestamps and unknown columns
+not ok 5 - runtime whitelist blocks ownership, provider fields, counters, timestamps and unknown columns
+  ---
+  duration_ms: 27.024016
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:172:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+    +   created_at: null,
+    +   estimated_time_saved_minutes: 0,
+    +   future_private_column: 'replacement',
+    +   gmail_access_token: 'fixture-forged-access',
+    +   gmail_email: 'forged@fixture.invalid',
+    +   gmail_refresh_token: 'fixture-forged-refresh',
+    +   gmail_token_expiry: null,
+    +   id: 'replacement-id',
+    +   last_email_id: 'replacement-cursor',
+    +   last_sync_at: null,
+        signature: 'Allowed',
+    +   total_archived: 0,
+    +   total_auto_replied: 0,
+    +   total_drafted: 0,
+    +   total_notified: 0,
+    +   total_processed: 0,
+    +   updated_at: null,
+    +   user_id: '22222222-2222-4222-8222-222222222222'
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    signature: 'Allowed'
+  actual:
+    signature: 'Allowed'
+    id: 'replacement-id'
+    user_id: '22222222-2222-4222-8222-222222222222'
+    gmail_email: 'forged@fixture.invalid'
+    gmail_access_token: 'fixture-forged-access'
+    gmail_refresh_token: 'fixture-forged-refresh'
+    gmail_token_expiry: ~
+    last_sync_at: ~
+    last_email_id: 'replacement-cursor'
+    total_processed: 0
+    total_auto_replied: 0
+    total_drafted: 0
+    total_notified: 0
+    total_archived: 0
+    estimated_time_saved_minutes: 0
+    created_at: ~
+    updated_at: ~
+    future_private_column: 'replacement'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:184:10)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: protected-only and empty patches fail before any database mutation
+not ok 6 - protected-only and empty patches fail before any database mutation
+  ---
+  duration_ms: 29.499331
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:189:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:192:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: inherited properties never become settings writes
+ok 7 - inherited properties never become settings writes
+  ---
+  duration_ms: 10.021087
+  type: 'test'
+  ...
+# Subtest: read errors remain errors and do not trigger default creation
+ok 8 - read errors remain errors and do not trigger default creation
+  ---
+  duration_ms: 17.301729
+  type: 'test'
+  ...
+# Subtest: write errors cannot be acknowledged as saved settings
+ok 9 - write errors cannot be acknowledged as saved settings
+  ---
+  duration_ms: 12.088527
+  type: 'test'
+  ...
+# Subtest: a concurrent first-creation conflict remains visible and never retries as an overwrite
+ok 10 - a concurrent first-creation conflict remains visible and never retries as an overwrite
+  ---
+  duration_ms: 16.401378
+  type: 'test'
+  ...
+# Subtest: explicit Gmail disconnection only clears the display account and disables the agent
+not ok 11 - explicit Gmail disconnection only clears the display account and disables the agent
+  ---
+  duration_ms: 11.326149
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:226:1'
+  failureType: 'testCodeFailure'
+  error: `Expected "actual" to be strictly unequal to: '*'`
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '*'
+  actual: '*'
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:233:10)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: Gmail disconnection rejects missing, foreign or contradictory write receipts
+not ok 12 - Gmail disconnection rejects missing, foreign or contradictory write receipts
+  ---
+  duration_ms: 11.03412
+  type: 'test'
+  location: '/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:237:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before/tests/oauth-gmail/config.test.mjs:241:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: Gmail disconnection propagates a rejected database write
+ok 13 - Gmail disconnection propagates a rejected database write
+  ---
+  duration_ms: 26.462638
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 5
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 747.486002

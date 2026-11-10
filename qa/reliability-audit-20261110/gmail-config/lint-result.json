@@ -1,0 +1,21 @@
+{
+  "started_at": "2026-11-10T22:02:31.133127+00:00",
+  "command": [
+    "node_modules/.bin/eslint",
+    "src/lib/email-agent.ts",
+    "tests/oauth-gmail/config.test.mjs"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+  "node": "v24.22.1",
+  "exit_code": 0,
+  "duration_seconds": 22.756,
+  "inputs_before": {
+    "src/lib/email-agent.ts": "8055d9c73909d9725562c03f2ca1b4d67c48810bd3ce09eecad66af5aaf26bfa",
+    "tests/oauth-gmail/config.test.mjs": "20919c892a46207d83e2d3a54a00b40da22ec8603cb5c6af2d3aa393bfa75e1b"
+  },
+  "inputs_after": {
+    "src/lib/email-agent.ts": "8055d9c73909d9725562c03f2ca1b4d67c48810bd3ce09eecad66af5aaf26bfa",
+    "tests/oauth-gmail/config.test.mjs": "20919c892a46207d83e2d3a54a00b40da22ec8603cb5c6af2d3aa393bfa75e1b"
+  },
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

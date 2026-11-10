@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: config read requests public metadata without credentials or worker cursors
+ok 1 - config read requests public metadata without credentials or worker cursors
+  ---
+  duration_ms: 224.751571
+  type: 'test'
+  ...
+# Subtest: first config creation returns the same public projection and existing defaults
+ok 2 - first config creation returns the same public projection and existing defaults
+  ---
+  duration_ms: 2644.315482
+  type: 'test'
+  ...
+# Subtest: all editable settings including false, null and empty arrays remain writable
+ok 3 - all editable settings including false, null and empty arrays remain writable
+  ---
+  duration_ms: 292.013961
+  type: 'test'
+  ...
+# Subtest: saving a stale config after reconnection preserves the fresh Gmail credentials and metadata
+ok 4 - saving a stale config after reconnection preserves the fresh Gmail credentials and metadata
+  ---
+  duration_ms: 350.689113
+  type: 'test'
+  ...
+# Subtest: runtime whitelist blocks ownership, provider fields, counters, timestamps and unknown columns
+ok 5 - runtime whitelist blocks ownership, provider fields, counters, timestamps and unknown columns
+  ---
+  duration_ms: 112.530638
+  type: 'test'
+  ...
+# Subtest: protected-only and empty patches fail before any database mutation
+ok 6 - protected-only and empty patches fail before any database mutation
+  ---
+  duration_ms: 794.131727
+  type: 'test'
+  ...
+# Subtest: inherited properties never become settings writes
+ok 7 - inherited properties never become settings writes
+  ---
+  duration_ms: 66.760119
+  type: 'test'
+  ...
+# Subtest: read errors remain errors and do not trigger default creation
+ok 8 - read errors remain errors and do not trigger default creation
+  ---
+  duration_ms: 26.302691
+  type: 'test'
+  ...
+# Subtest: write errors cannot be acknowledged as saved settings
+ok 9 - write errors cannot be acknowledged as saved settings
+  ---
+  duration_ms: 17.02036
+  type: 'test'
+  ...
+# Subtest: a concurrent first-creation conflict remains visible and never retries as an overwrite
+ok 10 - a concurrent first-creation conflict remains visible and never retries as an overwrite
+  ---
+  duration_ms: 20.254141
+  type: 'test'
+  ...
+# Subtest: explicit Gmail disconnection only clears the display account and disables the agent
+ok 11 - explicit Gmail disconnection only clears the display account and disables the agent
+  ---
+  duration_ms: 17.320912
+  type: 'test'
+  ...
+# Subtest: Gmail disconnection rejects missing, foreign or contradictory write receipts
+ok 12 - Gmail disconnection rejects missing, foreign or contradictory write receipts
+  ---
+  duration_ms: 56.162758
+  type: 'test'
+  ...
+# Subtest: Gmail disconnection propagates a rejected database write
+ok 13 - Gmail disconnection propagates a rejected database write
+  ---
+  duration_ms: 9.970275
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11260.719131

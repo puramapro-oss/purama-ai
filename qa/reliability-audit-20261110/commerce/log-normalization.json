@@ -1,0 +1,163 @@
+[
+  {
+    "file": "webhook-before.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/before.log",
+    "raw_sha256": "af85db7eff1fe3cd5e0499aa618f252be2954840534c90bb52151ad0f1d68ab1",
+    "published_sha256": "0598266d53def3be7694e5461280e9560373374b2ed41d2c7d9d839543aedc4f",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "webhook-restored.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/after.log",
+    "raw_sha256": "811cc4ca17e087706459750d50c52d02504af096b3f21fb373993a2cb546b8b1",
+    "published_sha256": "1c7df242dae632e8a6c624243dc5a0cd2cc701d1f760fb5715d8bed6d6649162",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "commerce-final.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/integrated-commerce.log",
+    "raw_sha256": "8c8c82d5fd9a787f035947682127c1a06a038eecb416433be922ed57efa5a91e",
+    "published_sha256": "07495b3d8aced2cea70495bbaa437e59b4d79ad882bebbc932e4f8d1073cd0fd",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "sdk-historical-patch-errors.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/real-sdk-mac-original.log",
+    "raw_sha256": "b53b2a554bd8bf6c110a0ff29acf18af6976ced523dd529b5e65bf48c331c253",
+    "published_sha256": "d41fd48ad6b52124b06d7806eeb20870433734e972ebf65583af2490fc0796d3",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "sdk-final.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/real-sdk-final.log",
+    "raw_sha256": "99d29c91207986af8b9fd4c5b10d0937fb4eedbf3618ff9d299af9459058e0c7",
+    "published_sha256": "f4d873d5a9db6785bb63e15d6806136962e7785148ea9bab003215295dbf88da",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "sdk-linux-network-block.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/real-sdk-check.log",
+    "raw_sha256": "7c3c09305eef85eb0ba76633c4ed095951381906de1644788e23256c8592d8ab",
+    "published_sha256": "7c3c09305eef85eb0ba76633c4ed095951381906de1644788e23256c8592d8ab",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "overage-linux-initial.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/overage-regression.log",
+    "raw_sha256": "8b0f1f9bd6ef0abf1a6058e95f8a05c62b7b6a08e40f4b840aa3053dc36e66d0",
+    "published_sha256": "dce2d2d564998453fbf00893edd2338c4ee0f671166d4c167aaad77bc3502ac7",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "overage-linux-retry.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/fresh-qualification/overage-regression-retry.log",
+    "raw_sha256": "d23921b6d6f0dc51d8b4c392598af0c4894c25fedbcc09c78ac9840cc5e6d243",
+    "published_sha256": "65abf4b70bf890ad638823ed53630596bee3ecfbe415dfda778408effb9d3e1e",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "gitnexus-impact.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/gitnexus-impact-file.log",
+    "raw_sha256": "a3801be12e16f0925469d83ec68861e5b70e52935f406426440223e0bfca0faa",
+    "published_sha256": "a3801be12e16f0925469d83ec68861e5b70e52935f406426440223e0bfca0faa",
+    "normalization": "ANSI color codes removed; line-end whitespace and terminal blank lines normalized; no test content removed"
+  },
+  {
+    "file": "overage-mac.txt",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/overage-mac.log",
+    "raw_sha256": "559b8ec3108da38d1dcee147407b7d7b4aaefad78696b8ee25ed2da022bfa22b",
+    "published_sha256": "4ee608b6c24ba9798be23b3e93880164720ff7ba4a35f14086e54e8d5ae90632",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "overage-mac-result.json",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/overage-mac-result.json",
+    "raw_sha256": "344371c8724dfe0d6541eeef0de20d35ac6ec2b4dadcb0a69993ac089b5ccdb9",
+    "published_sha256": "344371c8724dfe0d6541eeef0de20d35ac6ec2b4dadcb0a69993ac089b5ccdb9",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "overage-mac-targeted.txt",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/overage-mac-targeted.log",
+    "raw_sha256": "9998675a4194e0e5bb04fbf453236c52d4eb7d6e394a2f523d94a9f546093787",
+    "published_sha256": "a2a30fc4fc515c84d25fb08fb25c6bef67a639705a2fc5a7bbdb7ace3b402e0f",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "overage-mac-targeted-result.json",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/overage-mac-targeted-result.json",
+    "raw_sha256": "4ff527a925d900a0a965917dd1c053d9d9498f99463bdac4aa8164bc8ed8e55a",
+    "published_sha256": "4ff527a925d900a0a965917dd1c053d9d9498f99463bdac4aa8164bc8ed8e55a",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "overage-mac-final.txt",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/overage-mac-final.log",
+    "raw_sha256": "5a2ffcc354150c90e5b7092f8be7987de9da67152f1cf9d0d83137f7502f0e51",
+    "published_sha256": "242fe5a159918be33616675eedaeef59ee0e8dd765a891e3c712c0680298f8f6",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "overage-mac-final-result.json",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/overage-mac-final-result.json",
+    "raw_sha256": "445c58f93ac33f2b9df27415646fd69993616acf7a4e71302936d05ef03a605a",
+    "published_sha256": "445c58f93ac33f2b9df27415646fd69993616acf7a4e71302936d05ef03a605a",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "commerce-mac-final.txt",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/commerce-mac-final.log",
+    "raw_sha256": "6a5a677b058e16153e8fba0f07d42fa4ab57bdbf56357e1342bdbaa3ce2751ad",
+    "published_sha256": "fab591e85dd641775add34808e475cce51190ba58f52732b643da37e5ad69323",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "commerce-mac-final-result.json",
+    "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/qa/reliability-audit-20261110/commerce/commerce-mac-final-result.json",
+    "raw_sha256": "6e82e7d877d8ce6383340ecbdb589a04763fd19a5b6bafe61037cb3ca56edd59",
+    "published_sha256": "6e82e7d877d8ce6383340ecbdb589a04763fd19a5b6bafe61037cb3ca56edd59",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "phase-result.json",
+    "source": "/Users/matissdornier/purama-patches/commerce-phase-probe-20261110/phase-result.json",
+    "raw_sha256": "c11beb6a311c6e5ca8771056e460c583681ce95910388d2e2895c807622a33f7",
+    "published_sha256": "c11beb6a311c6e5ca8771056e460c583681ce95910388d2e2895c807622a33f7",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "measure.cjs",
+    "source": "/Users/matissdornier/purama-patches/commerce-phase-probe-20261110/measure.cjs",
+    "raw_sha256": "406058f56928018fd5d7434bd76016d36bb15d79746a788182ebfea13e3398fd",
+    "published_sha256": "406058f56928018fd5d7434bd76016d36bb15d79746a788182ebfea13e3398fd",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "vitest-phase.txt",
+    "source": "/Users/matissdornier/purama-patches/commerce-phase-probe-20261110/vitest-phase.log",
+    "raw_sha256": "00109731cc51073ac5215d2986a35c12da75763a08d4b3d15fda188f465a0427",
+    "published_sha256": "2c5be7e3bcb261cef64ba2be97f7a4d8122112e4005a3f9de678faabc9f3666f",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "vitest-phase-result.json",
+    "source": "/Users/matissdornier/purama-patches/commerce-phase-probe-20261110/vitest-phase-result.json",
+    "raw_sha256": "7b42f6442e858393c57ee38d372f964cba3c66a141208705c1e20cefd10339c6",
+    "published_sha256": "7b42f6442e858393c57ee38d372f964cba3c66a141208705c1e20cefd10339c6",
+    "normalization": "ANSI and trailing whitespace normalized for logs; other files byte-identical"
+  },
+  {
+    "file": "phase-instrumentation.patch",
+    "source": "git HEAD versus isolated instrumentation",
+    "raw_sha256": "bd47ac728e823c1b25bfdd6eb741fc4390785adc27362fe4001e54093cf65d8b",
+    "published_sha256": "181758bc804e867a6a143a8fccf9ec4bddb23e557574a4959601fe26c8960e1c",
+    "normalization": "Same diagnostic delta, context reduced to one line to avoid whitespace-only patch context; instrumented source SHA256 unchanged"
+  },
+  {
+    "file": "gitnexus-impact-overage-test.txt",
+    "source": "/workspace/scratch/1d67ec79327f/commerce-webhook-restoration/gitnexus-impact-overage-test.log",
+    "raw_sha256": "1cd87d62cbe4736adcd882751c639676673be416e8494ba809c22a8d22dc0db1",
+    "published_sha256": "1cd87d62cbe4736adcd882751c639676673be416e8494ba809c22a8d22dc0db1",
+    "normalization": "trailing whitespace normalized"
+  }
+]

@@ -1,0 +1,29 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+[2K
+  Skipped 1 large files (>512KB, likely generated/vendored)
+[2K
+  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K
+  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+{"level":40,"time":1794349984012,"name":"gitnexus","msg":"[scope-resolution] 1069 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (javascript/typescript), children (typescript), data (javascript/typescript), env (typescript), errors (javascript/typescript), label (typescript), lines (typescript), messages (typescript), port (typescript), run_id (typescript), …"}
+{"level":40,"time":1794349984396,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1014,"entryPointsUnexplored":0,"walksCutByBudget":30,"tracesDepthCapped":0,"calleesDropped":2509,"processesDropped":0},"msg":"[processes] 582 flows reported, but whole flows are MISSING: 1014 of 1214 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 2509 callee(s) skipped at maxBranching, 30 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2K
+Incremental: changed=22, added=210, deleted=0 (skipping wipe + 1017 unchanged file rows preserved)
+[2K
+Incremental: +56 importer(s) added to writable set (BFS depth ≤ 4)
+[2K
+Incremental: the effective write set covers 669/1249 files (54%) — switching to a full DB write (wipe + bulk COPY) for this run; file-level incremental bookkeeping is unaffected.
+[2K
+Incremental: building the replacement index alongside the live one and swapping it in at the end, so an interrupted rebuild leaves the current index intact.
+{"level":30,"time":1794350010946,"name":"gitnexus","msg":"name-fallback resolution: 63 call sites (13 distinct caller-file/name pairs), 0 refused as impossible (guessed/refused by language: javascript 58/0, typescript 5/0)"}
+[2K
+Parse cache: pruned 30 stale chunk entries
+
+  Repository indexed successfully (67.7s)
+
+  15,211 nodes | 40,143 edges | 589 clusters | 582 flows
+  /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code
+

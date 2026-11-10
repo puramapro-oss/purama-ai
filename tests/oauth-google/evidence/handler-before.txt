@@ -1,0 +1,130 @@
+✖ callback refuses an unverified actor before provider or privileged client (78.546732ms)
+✖ refresh refuses an unverified actor before reading or refreshing a connection (21.494798ms)
+✖ refresh cannot target another account with a valid caller token (17.02815ms)
+✖ failed connection persistence cannot become successful refresh (12.860581ms)
+✖ authorize requires a verified actor (13.255346ms)
+✖ callback rejects the old self-selected Base64 state (12.005316ms)
+✖ success contract is bound to the current server-side state (7.955224ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 0
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 515.315055
+
+✖ failing tests:
+
+test at tests/oauth-google/handler.test.mjs:5:1
+✖ callback refuses an unverified actor before provider or privileged client (78.546732ms)
+  AssertionError [ERR_ASSERTION]: unsafe response 200
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:9:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:15:1
+✖ refresh refuses an unverified actor before reading or refreshing a connection (21.494798ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 401
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:18:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:24:1
+✖ refresh cannot target another account with a valid caller token (17.02815ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok([400, 403].includes(response.status))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:27:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:32:1
+✖ failed connection persistence cannot become successful refresh (12.860581ms)
+  AssertionError [ERR_ASSERTION]: false success 200
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:35:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:40:1
+✖ authorize requires a verified actor (13.255346ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok([401, 405].includes(response.status))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:43:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:48:1
+✖ callback rejects the old self-selected Base64 state (12.005316ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok([400, 403, 405, 409].includes(response.status))
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:52:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:57:1
+✖ success contract is bound to the current server-side state (7.955224ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  400 !== 200
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 400,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
