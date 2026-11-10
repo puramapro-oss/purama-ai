@@ -87,7 +87,10 @@ serve(async (req) => {
 
       if (!infError && influencer) {
         const expiresAt = new Date(influencer.expires_at);
-        if (expiresAt > new Date()) {
+        if (influencer.user_id === user.id) {
+          // Preserve the referral guard when copying attribution to recurring invoices.
+          logStep("Self-referral refused", { userId: user.id, promoCode: referralCode });
+        } else if (expiresAt > new Date()) {
           validInfluencer = influencer;
           applyCoupon = true;
           logStep("Valid influencer found", { 
@@ -128,6 +131,14 @@ serve(async (req) => {
             // 14-day free trial
             subscription_data: {
               trial_period_days: 14,
+              // Copy only server-resolved attribution. Checkout metadata alone
+              // is not copied to the subscription or its recurring invoices.
+              // These hints do not establish a rate, duration or right to pay.
+              metadata: {
+                user_id: user.id,
+                referral_code: validInfluencer?.promo_code || '',
+                influencer_id: validInfluencer?.id || '',
+              },
             },
           }),
     };
