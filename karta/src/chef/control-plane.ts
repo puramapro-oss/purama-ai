@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { supabase } from "../db/supabase.js";
 import type { ChefDriverProvider } from "./driver.js";
 import { ChefProcessStopUnconfirmedError } from "./process.js";
-import type { ChefControlPlane, ChefEvidenceClaim, ChefRuntimeTask } from "./supervisor.js";
+import type { ChefClaimUsage, ChefControlPlane, ChefEvidenceClaim, ChefRuntimeTask } from "./supervisor.js";
 import { normalizeChefRequirementKeys, type ChefVerificationEvidence } from "./verifier.js";
 
 export interface SupabaseChefControlPlaneOptions {
@@ -277,31 +277,24 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     return true;
   }
 
-  async recordUsage(input: {
-    eventKey: string;
-    missionId: string;
-    taskId: string;
-    workerId: string;
-    provider: ChefDriverProvider;
-    model?: string;
-    inputTokens: number;
-    outputTokens: number;
-    cachedInputTokens: number;
-    costMicros: number;
-  }): Promise<void> {
-    const result = await supabase.rpc("chef_record_usage", {
+  async recordUsage(input: ChefClaimUsage): Promise<boolean> {
+    const result = await supabase.rpc("chef_record_claim_usage", {
       p_event_key: input.eventKey,
       p_mission_id: input.missionId,
       p_task_id: input.taskId,
       p_worker_id: input.workerId,
       p_provider: input.provider,
       p_model: input.model ?? null,
+      p_attempt: input.attempt,
+      p_fencing_token: input.fencingToken,
       p_input_tokens: input.inputTokens,
       p_output_tokens: input.outputTokens,
       p_cached_input_tokens: input.cachedInputTokens,
       p_cost_micros: input.costMicros,
     });
-    assertRpc(result.error, "chef_record_usage");
+    assertRpc(result.error, "chef_record_claim_usage");
+    if (typeof result.data !== "boolean") throw new Error("Résultat de réconciliation d'usage invalide");
+    return result.data;
   }
 
   async tryFinishMission(missionId: string): Promise<boolean> {

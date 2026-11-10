@@ -2,6 +2,8 @@
 
 Date de qualification : **10 novembre 2026**.
 
+**Complément de réconciliation CHEF #21/#27 :** [réservations persistantes, migration additive 024 et nouvelle passe KARTA à 980/980](budget/reconciliation.md). Ce complément distingue ses preuves des résultats historiques ci-dessous et conserve les protections de la base #27.
+
 **État global : PARTIEL pour la mise en service.** Les correctifs ci-dessous sont préparés et vérifiés dans des environnements isolés. Ils ne sont pas appliqués à la production. Les tests locaux de ONE ne constituent pas un raccord actif à ses fournisseurs.
 
 ## Périmètre
