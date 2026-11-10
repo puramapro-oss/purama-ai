@@ -4,7 +4,7 @@ export const ACCOUNT_A = '00000000-0000-4000-8000-000000000001';
 export const ACCOUNT_B = '00000000-0000-4000-8000-000000000002';
 export const SESSION_A = '10000000-0000-4000-8000-000000000001';
 export const SESSION_B = '10000000-0000-4000-8000-000000000002';
-type Result = { data: unknown; error: null };
+type Result = { data: unknown; error: null | { message: string; code: string } };
 type Request = { table: string; ownerId: string; sessionId?: string; done: boolean; resolve: (result: Result) => void };
 type ReplyRequest = { sessionId: string; message: string; signal?: AbortSignal; done: boolean; resolve: (result: Result) => void };
 export const harness = {
@@ -20,6 +20,12 @@ export const harness = {
     if (!pending) throw new Error(`No pending config ${table}:${ownerId}`);
     pending.done = true;
     pending.resolve({ data: configFixture(table, ownerId, marker), error: null });
+  },
+  rejectConfig(table: SettingsTable, ownerId: string) {
+    const pending = harness.pending.find(p => !p.done && p.table === table && p.ownerId === ownerId);
+    if (!pending) throw new Error(`No pending config ${table}:${ownerId}`);
+    pending.done = true;
+    pending.resolve({ data: null, error: { message: 'Fixture unavailable', code: '503' } });
   },
   resolveHistory(sessionId: string, ownerId: string, content: string) {
     const pending = harness.pending.find(p => !p.done && p.sessionId === sessionId && p.ownerId === ownerId);

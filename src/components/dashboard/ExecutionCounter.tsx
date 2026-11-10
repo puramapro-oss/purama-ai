@@ -18,15 +18,19 @@ interface Props {
 
 export function ExecutionCounter({ variant = 'compact' }: Props) {
   const { user } = useAuth();
+  const userId = user?.id;
+  const userEmail = user?.email;
   const [snap, setSnap] = useState<UsageSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    setSnap(null);
+    setLoading(Boolean(userId));
+    if (!userId) return;
     let alive = true;
     (async () => {
       try {
-        const s = await getUsageSnapshot(user.id, user.email);
+        const s = await getUsageSnapshot(userId, userEmail);
         if (alive) setSnap(s);
       } catch (e) {
         console.warn('[ExecutionCounter]', e);
@@ -36,14 +40,13 @@ export function ExecutionCounter({ variant = 'compact' }: Props) {
     })();
     // Refresh every 60s
     const t = setInterval(async () => {
-      if (!user) return;
       try {
-        const s = await getUsageSnapshot(user.id, user.email);
+        const s = await getUsageSnapshot(userId, userEmail);
         if (alive) setSnap(s);
       } catch { /* silent */ }
     }, 60_000);
     return () => { alive = false; clearInterval(t); };
-  }, [user?.id]);
+  }, [userId, userEmail]);
 
   if (loading || !snap) {
     if (variant === 'compact') {

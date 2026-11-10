@@ -21,18 +21,27 @@ const TYPE_LABEL: Record<string, string> = {
 
 export default function PartnerAgentEmails() {
   const { user } = useAuth();
+  const userId = user?.id;
   const [emails, setEmails] = useState<PartnerEmail[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<PartnerEmail | null>(null);
 
   useEffect(() => {
-    if (!user) return;
+    setLoading(Boolean(userId));
+    setEmails([]);
+    setSelected(null);
+    if (!userId) return;
+    let active = true;
     (async () => {
-      try { setEmails(await listEmails(user.id)); }
-      catch (e) { toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) }); }
-      finally { setLoading(false); }
+      try {
+        const next = await listEmails(userId);
+        if (active) setEmails(next);
+      }
+      catch (e) { if (active) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) }); }
+      finally { if (active) setLoading(false); }
     })();
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId]);
 
   if (loading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>;

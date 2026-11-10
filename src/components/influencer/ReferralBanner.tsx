@@ -11,6 +11,7 @@ export function ReferralBanner() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    let active = true;
     const stored = getStoredReferral();
     if (stored) {
       // Fetch influencer name
@@ -21,16 +22,17 @@ export function ReferralBanner() {
           .eq('promo_code', stored.code)
           .maybeSingle();
 
-        if (data) {
+        if (active && data) {
           setReferral({
             code: data.promo_code,
             influencerName: data.beneficiary_name || undefined,
           });
         }
       };
-      fetchInfluencer();
+      void fetchInfluencer().catch(() => {});
     }
-  }, []);
+    return () => { active = false; };
+  }, [getStoredReferral]);
 
   if (!referral || dismissed) return null;
 

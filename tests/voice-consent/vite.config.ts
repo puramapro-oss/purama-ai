@@ -3,8 +3,9 @@ import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'node:path';
 
 export default defineConfig({
+  cacheDir: "node_modules/.vite-voice-consent",
   plugins: [react()],
-  resolve: { alias: [
+  resolve: { dedupe: ["react", "react-dom"], alias: [
     { find: '@/hooks/useAuth', replacement: resolve('tests/voice-consent/auth.tsx') },
     { find: '@/lib/voice', replacement: resolve('tests/voice-consent/voice-services.ts') },
     { find: '@/integrations/supabase/client', replacement: resolve('tests/voice-consent/transport.ts') },

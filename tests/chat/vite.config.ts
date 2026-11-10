@@ -2,8 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'node:path';
 export default defineConfig({
+  cacheDir: "node_modules/.vite-chat",
   plugins: [react()],
-  resolve: { alias: [
+  resolve: { dedupe: ["react", "react-dom"], alias: [
     { find: '@/hooks/useAuth', replacement: resolve('tests/chat/auth.tsx') },
     { find: '@', replacement: resolve('src') },
   ] },

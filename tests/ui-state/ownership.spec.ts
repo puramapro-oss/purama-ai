@@ -32,6 +32,17 @@ async function history(page: Page, session: string, content: string) {
   await page.evaluate(({ session, owner, content }) => window.uiStateHarness.resolveHistory(session, owner, content), { session, owner: A, content });
 }
 for (const { kind, table, field, selector } of settings) {
+  test(`${kind}: load failure is visible and retry restores the settings`, async ({ page }) => {
+    await page.goto(`/tests/ui-state/index.html?page=${kind}`);
+    await waitConfig(page, table, A);
+    await page.evaluate(({ table, owner }) => window.uiStateHarness.rejectConfig(table, owner), { table, owner: A });
+    await expect(page.getByRole('alert')).toContainText('Impossible de charger les paramètres');
+    await expect(page.getByRole('button', { name: 'Enregistrer', exact: true })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
+    await config(page, table, A, 'RECOVERED');
+    await expect(page.locator(selector)).toHaveValue('RECOVERED');
+    await expect(page.getByRole('alert')).toHaveCount(0);
+  });
   test(`${kind}: account switch never saves A's settings as B; same-account refresh preserves draft`, async ({ page }, testInfo) => {
     await page.goto(`/tests/ui-state/index.html?page=${kind}`);
     await config(page, table, A, 'PRIVATE-A');

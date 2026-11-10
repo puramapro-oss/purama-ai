@@ -54,5 +54,6 @@ jobs:
       - run: npm run test:wellbeing
       - run: npm run test:voice-consent
       - run: npm run test:ui-state
+      - run: npm run test:async-ui
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev

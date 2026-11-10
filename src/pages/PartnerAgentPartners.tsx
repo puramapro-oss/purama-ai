@@ -14,27 +14,34 @@ import {
 
 export default function PartnerAgentPartners() {
   const { user } = useAuth();
+  const userId = user?.id;
   const [partners, setPartners] = useState<PartnerActive[]>([]);
   const [commissions, setCommissions] = useState<PartnerCommission[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    setLoading(Boolean(userId));
+    setPartners([]);
+    setCommissions([]);
+    if (!userId) return;
+    let active = true;
     (async () => {
       try {
         const [p, c] = await Promise.all([
-          listActivePartners(user.id),
-          listCommissions(user.id),
+          listActivePartners(userId),
+          listCommissions(userId),
         ]);
+        if (!active) return;
         setPartners(p);
         setCommissions(c);
       } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+        if (active) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     })();
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId]);
 
   if (loading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>;

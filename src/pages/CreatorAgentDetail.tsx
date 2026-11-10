@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { createRequestScope } from '@/lib/request-scope';
 import {
   getAgent, updateAgent, deleteAgent,
   chatWithAgent, listChatMessages,
@@ -43,9 +44,13 @@ import { PendingActionsList } from '@/components/karta/PendingActionsList';
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const userId = user?.id;
+  const [requests] = useState(createRequestScope);
   const nav = useNavigate();
   const [agent, setAgent] = useState<CreatorAgent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [loadVersion, setLoadVersion] = useState(0);
   const voice = useVoice();
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
 
@@ -69,40 +74,81 @@ export default function CreatorAgentDetail() {
   const triggerKarta = useTriggerCustomAgent();
   const { data: pendingActions = [] } = useCustomAgentPendingActions(id);
 
-  useEffect(() => {
-    if (!id) return;
-    (async () => {
+  useLayoutEffect(() => {
+    setAgent(null);
+    setSessionId('');
+    setMessages([]);
+    setChatInput('');
+    setRuns([]);
+    setSending(false);
+    setSaving(false);
+    setVoiceModeOpen(false);
+    setLoadError(false);
+    setLoading(Boolean(id && userId));
+    if (!id || !userId) return;
+    const request = requests.begin('agent');
+    if (!request) return;
+    void (async () => {
       try {
         const a = await getAgent(id);
+        if (!request.current()) return;
+        if (!a || a.id !== id) throw new Error('Agent indisponible');
         setAgent(a);
         setSessionId(newSessionId());
-      } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      } catch {
+        if (request.current()) setLoadError(true);
       } finally {
-        setLoading(false);
+        if (request.finish()) setLoading(false);
       }
     })();
-  }, [id]);
+    return () => requests.invalidate();
+  }, [id, userId, loadVersion, requests]);
+
+  const loadedAgentId = agent?.id;
+  useLayoutEffect(() => {
+    if (!userId || !id || loadedAgentId !== id || !sessionId) return;
+    const request = requests.begin('messages');
+    if (!request) return;
+    listChatMessages(id, sessionId)
+      .then(next => { if (request.current()) setMessages(next); })
+      .catch(() => {})
+      .finally(() => request.finish());
+    return () => {
+      requests.cancel('messages');
+      requests.cancel('send');
+    };
+  }, [id, userId, loadedAgentId, sessionId, requests]);
 
   useEffect(() => {
-    if (!id || !sessionId) return;
-    listChatMessages(id, sessionId).then(setMessages).catch(() => {});
-  }, [id, sessionId]);
-
-  useEffect(() => {
-    if (!user || !id) return;
-    listRuns(user.id, { agent_id: id, limit: 50 }).then(setRuns).catch(() => {});
-  }, [user?.id, id]);
+    if (!userId || !id) return;
+    const request = requests.begin('runs');
+    if (!request) return;
+    listRuns(userId, { agent_id: id, limit: 50 })
+      .then(next => { if (request.current()) setRuns(next); })
+      .catch(() => {})
+      .finally(() => request.finish());
+    return () => requests.cancel('runs');
+  }, [userId, id, loadVersion, requests]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   const submitMessage = async (msg: string, signal?: AbortSignal): Promise<string | null> => {
-    if (!msg.trim() || !id || !user || signal?.aborted) return null;
+    if (!msg.trim() || !id || !userId || !sessionId || agent?.id !== id || agent.user_id !== userId || signal?.aborted) return null;
+    const request = requests.begin('send');
+    if (!request) return null;
+    requests.cancel('messages');
+    const cancel = () => {
+      if (!request.current()) return;
+      requests.cancel('send');
+      setSending(false);
+    };
+    signal?.addEventListener('abort', cancel, { once: true });
+    setSending(true);
     const tempUser: CreatorAgentChatMessage = {
       id: 'tmp-' + Date.now(),
-      user_id: user.id,
+      user_id: userId,
       agent_id: id,
       session_id: sessionId,
       role: 'user',
@@ -112,15 +158,18 @@ export default function CreatorAgentDetail() {
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await chatWithAgent(id, sessionId, msg, signal);
-      if (signal?.aborted) return null;
+      const res = await chatWithAgent(id, sessionId, msg, request.signal);
+      if (!request.current()) return null;
       setMessages(prev => [...prev, { ...tempUser, id: 'tmp-asst-' + Date.now(), role: 'assistant', content: res.reply, tokens: res.tokens }]);
       return res.reply;
     } catch (e) {
-      if (signal?.aborted) return null;
+      if (!request.current()) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
+    } finally {
+      signal?.removeEventListener('abort', cancel);
+      if (request.finish()) setSending(false);
     }
   };
 
@@ -128,30 +177,36 @@ export default function CreatorAgentDetail() {
     if (!chatInput.trim() || sending) return;
     const msg = chatInput.trim();
     setChatInput('');
-    setSending(true);
-    try { await submitMessage(msg); } finally { setSending(false); }
+    await submitMessage(msg);
   };
 
   const handleSave = async () => {
-    if (!agent) return;
+    if (!agent || agent.id !== id || agent.user_id !== userId) return;
+    const request = requests.begin('save');
+    if (!request) return;
     setSaving(true);
     try {
       const updated = await updateAgent(agent.id, agent);
-      setAgent(updated);
+      if (!request.current()) return;
+      // Preserve edits made while the save was in flight.
+      setAgent(current => current === agent ? updated : current);
       toast.success('✅ Enregistré');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setSaving(false); }
+      if (request.current()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally { if (request.finish()) setSaving(false); }
   };
 
   const handleTriggerNow = async () => {
-    if (!id) return;
+    if (!id || agent?.id !== id || agent.user_id !== userId) return;
+    const request = requests.begin('trigger');
+    if (!request) return;
     try {
       await triggerKarta.mutateAsync(id);
+      if (!request.current()) return;
       toast.success('Agent déclenché', { description: 'Regarde son activité ci-dessous dans quelques secondes.' });
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    }
+      if (request.current()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally { request.finish(); }
   };
 
   const toggleTool = (toolValue: string) => {
@@ -164,23 +219,33 @@ export default function CreatorAgentDetail() {
   };
 
   const handleDelete = async () => {
-    if (!agent) return;
+    if (!agent || agent.id !== id || agent.user_id !== userId) return;
     if (!confirm(`Supprimer "${agent.name}" et tout son historique ?`)) return;
+    const request = requests.begin('delete');
+    if (!request) return;
     try {
       await deleteAgent(agent.id);
+      if (!request.current()) return;
       toast.success('Supprimé');
       nav('/dashboard/creator-agent');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    }
+      if (request.current()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally { request.finish(); }
   };
 
-  if (loading || !agent) {
+  if (loading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-purple" /></div>;
+  }
+  if (loadError || !agent) {
+    return <div className="space-y-4 py-20 text-center" role="alert">
+      <p>Impossible de charger cet agent.</p>
+      <Button onClick={() => setLoadVersion(value => value + 1)}>Réessayer</Button>
+      <div><Link to="/dashboard/creator-agent" className="text-sm underline">Retour aux agents</Link></div>
+    </div>;
   }
 
   // Templates aren't owned by the user → read-only mode
-  const isReadOnly = agent.user_id !== user?.id;
+  const isReadOnly = agent.user_id !== userId;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
