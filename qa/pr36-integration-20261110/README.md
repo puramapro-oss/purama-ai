@@ -11,6 +11,10 @@ they are not test results for this combined tree.
 - The PR33 voice/chat/creator request scopes retain cancellation, duplicate
   request exclusion, owner checks, edit preservation and autoplay identity.
   PR36 account-scoping changes in the other hooks and pages are retained.
+  The Creator missing-response fixture expects PR33's existing explicit message
+  `Impossible de charger cet agent.`; its alert, loading completion, retry and
+  successful recovery assertions remain. The donor's `introuvable` wording was
+  incompatible with the retained component and is not a new product behavior.
 - The wellbeing dialog retains the local Escape fallback, the already-prevented
   event guard and the nested-dialog guard. No shared Radix primitive changes.
 - Stamping uses the PR36 user RLS client and explicit `public.has_role` with
