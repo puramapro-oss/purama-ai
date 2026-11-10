@@ -56,7 +56,7 @@ describe("CHEF cancellation while persisting the last proof", () => {
         proofPending = false;
         return accepted;
       }),
-      recordUsage: vi.fn(async () => undefined),
+      recordUsage: vi.fn(async () => true),
       tryFinishMission: vi.fn(async () => true),
     };
     const driver: ChefWorkerDriver = {

@@ -1,0 +1,13 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'preserves pre-migration rows without certifying them as current evidence' not found",
+  "target": {
+    "name": "preserves pre-migration rows without certifying them as current evidence"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

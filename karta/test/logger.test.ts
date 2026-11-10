@@ -1,14 +1,24 @@
 import {beforeEach,expect,it,vi} from "vitest";
-const h=vi.hoisted(()=>({rows:new Map<string,any>()}));
+type MockRow = Record<string, unknown>;
+type MockResult = { data: MockRow | null; error: { code: string } | null };
+interface MockQuery extends PromiseLike<MockResult> {
+ insert(value: MockRow): MockQuery;
+ update(value: MockRow): MockQuery;
+ select(): MockQuery;
+ eq(key: string, value: unknown): MockQuery;
+ is(key: string, value: unknown): MockQuery;
+ single(): Promise<MockResult>;
+}
+const h=vi.hoisted(()=>({rows:new Map<string,MockRow>()}));
 vi.mock("../src/db/supabase.js",()=>({supabase:{from:()=>{
- let insert:any;let patch:any;const filters:Record<string,unknown>={};
- const result=async()=>{
-  if(insert){if(h.rows.has(insert.execution_key))return {data:null,error:{code:"23505"}};const row={id:"run-"+h.rows.size,...insert};h.rows.set(insert.execution_key,row);return {data:{id:row.id},error:null};}
+ let insert: MockRow | undefined;let patch: MockRow | undefined;const filters:Record<string,unknown>={};
+ const result=async(): Promise<MockResult>=>{
+  if(insert){const key=typeof insert.execution_key==="string"?insert.execution_key:"run-"+h.rows.size;if(h.rows.has(key))return {data:null,error:{code:"23505"}};const row={id:"run-"+h.rows.size,duration_ms:null,...insert};h.rows.set(key,row);return {data:{id:row.id},error:null};}
   const row=[...h.rows.values()].find(r=>Object.entries(filters).every(([k,v])=>r[k]===v));
   if(patch&&row)Object.assign(row,patch);
   return {data:row??null,error:null};
  };
- const q:any={insert:(v:any)=>{insert=v;return q;},update:(v:any)=>{patch=v;return q;},select:()=>q,eq:(k:string,v:unknown)=>{filters[k]=v;return q;},single:result,then:(resolve:any,reject:any)=>result().then(resolve,reject)};
+ const q:MockQuery={insert:(v)=>{insert=v;return q;},update:(v)=>{patch=v;return q;},select:()=>q,eq:(k,v)=>{filters[k]=v;return q;},is:(k,v)=>{filters[k]=v;return q;},single:result,then:(resolve,reject)=>result().then(resolve,reject)};
  return q;
 }}}));
 const {startRun}=await import("../src/engine/logger.js");
@@ -32,5 +42,5 @@ it("never returns another user's journal after a key collision",async()=>{
 it("records mocked results with simulation mode",async()=>{
  const run=await startRun("u","compta",trigger,"live","same");
  await run.finish({status:"simulated",decision:"mock",toolsUsed:[],resultSummary:"none",mock:true});
- expect(h.rows.get("same").mode).toBe("simulation");
+ expect(h.rows.get("same")?.mode).toBe("simulation");
 });

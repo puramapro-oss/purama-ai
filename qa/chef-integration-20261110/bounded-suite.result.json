@@ -1,0 +1,21 @@
+{
+  "command": [
+    "python",
+    "qa/chef-integration-20261110/run-bounded-validation.py",
+    "--node",
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "--expected-tests",
+    "801"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110",
+  "started_at": "2026-11-10T03:51:47.198584+00:00",
+  "elapsed_seconds": 272.979,
+  "timeout_seconds": 900,
+  "timed_out": false,
+  "exit_code": 0,
+  "launch_error": null,
+  "child_maxrss_kib": 1118160,
+  "child_user_seconds": 184.745,
+  "child_system_seconds": 43.886,
+  "log": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/bounded-suite.log"
+}

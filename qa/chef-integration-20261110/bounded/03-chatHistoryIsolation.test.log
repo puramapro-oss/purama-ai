@@ -1,0 +1,53 @@
+(node:714) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta
+
+(node:747) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > preserves historical anonymous and owned rows 9ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > denies anonymous reads and inserts even with a known conversation and session 13ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > lets each authenticated user read only their own history 6ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > preserves creation, RETURNING, user/assistant messages and status updates for the owner 9ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > denies cross-user and anonymous conversation creation or message insertion 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > rejects system messages and ownership transfers by authenticated clients 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients 4ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > does not authorize an authenticated role without a user identity 3ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > preserves administrative read/write/delete rights, including anonymous historical rows 6ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: public only > can be applied twice without changing the resulting policies or privileges 11ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > preserves historical anonymous and owned rows 3ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > denies anonymous reads and inserts even with a known conversation and session 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > lets each authenticated user read only their own history 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > preserves creation, RETURNING, user/assistant messages and status updates for the owner 6ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > denies cross-user and anonymous conversation creation or message insertion 4ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > rejects system messages and ownership transfers by authenticated clients 4ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients 3ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > does not authorize an authenticated role without a user identity 2ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > preserves administrative read/write/delete rights, including anonymous historical rows 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: purama_ai only > can be applied twice without changing the resulting policies or privileges 9ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > preserves historical anonymous and owned rows 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > denies anonymous reads and inserts even with a known conversation and session 6ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > lets each authenticated user read only their own history 8ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > preserves creation, RETURNING, user/assistant messages and status updates for the owner 11ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > denies cross-user and anonymous conversation creation or message insertion 8ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > rejects system messages and ownership transfers by authenticated clients 7ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > does not grant message editing, deletion or RLS-bypassing TRUNCATE to clients 5ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > does not authorize an authenticated role without a user identity 6ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > preserves administrative read/write/delete rights, including anonymous historical rows 12ms
+ ✓ test/chatHistoryIsolation.test.ts > stored chat ownership: both schemas > can be applied twice without changing the resulting policies or privileges 13ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when only conversations remain 3170ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when only messages remain 5558ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when an extra permissive conversation policy… 3390ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when an extra permissive message policy exis… 2962ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when a required policy is missing 2550ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when a known name has an unexpected policy c… 3821ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when a known name is unexpectedly restrictive 4510ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > existing chat history tables > rolls back both schemas when a table was replaced by a view 3513ms
+ ✓ test/chatHistoryIsolation.test.ts > migration preflight refuses an unreviewed schema > no chat history tables > refuses to report success when neither schema contains chat history 38ms
+
+ Test Files  1 passed (1)
+      Tests  39 passed (39)
+   Start at  04:53:00
+   Duration  45.36s (tests 99%)
+
+JSON report written to /workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/bounded/03-chatHistoryIsolation.test.vitest.json

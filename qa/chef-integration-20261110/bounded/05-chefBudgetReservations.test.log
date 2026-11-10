@@ -1,0 +1,42 @@
+(node:804) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta
+
+(node:837) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > persists optional estimates and preserves the difference between absent and zero 112ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: -1 36ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: 0.1 49ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: NaN 48ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: Infinity 42ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: 9007199254740992 37ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: null 35ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate in the canonical TypeScript brief: 60 42ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate through direct SQL ingestion: -1 36ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate through direct SQL ingestion: 0.1 34ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate through direct SQL ingestion: 9007199254740992 29ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate through direct SQL ingestion: null 32ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > rejects an invalid estimate through direct SQL ingestion: 60 50ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > refuses unknown estimates for capped dimensions: {"tokens":0} 41ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > refuses unknown estimates for capped dimensions: {"cost":0} 52ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > refuses unknown estimates for capped dimensions: {"tokens":100,"cost":100} 51ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > allows an explicitly known zero envelope at a zero cap 111ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > requires estimates only for the limited dimensions and keeps other unknowns explicit 55ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > does not admit 60 + 60 under a shared cap of 100, then reuses the genuinely released remainder 59ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > settles each dimension once, including retries with another event key 59ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > holds an unknown cost after a partial receipt and a blocked attempt, then accepts a cost-only reconciliation 75ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > keeps a crashed claim reserved across housekeeping and prevents an old worker settling a new attempt 132ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > does not release the reservation through manual unblock/decrement of the attempt 104ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > enforces accounting in SQL completion independently of the application 544ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > preserves unlimited missions without misreporting their unobserved usage as zero 125ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > pauses further admission when the actual bill exceeds the reserved envelope and cap 76ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > prevents the old unbound usage RPC bypassing new reservations 82ms
+ ✓ test/chefBudgetReservations.test.ts > CHEF attempt-bound admission budgets > keeps server-only settlement usable by service_role and inaccessible to authenticated/anon 132ms
+
+ Test Files  1 passed (1)
+      Tests  28 passed (28)
+   Start at  04:53:58
+   Duration  8.51s (tests 96%, transform 3%, import 1%)
+
+JSON report written to /workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/bounded/05-chefBudgetReservations.test.vitest.json

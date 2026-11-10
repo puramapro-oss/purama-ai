@@ -1,7 +1,7 @@
 // Creator Agent — Chat with a custom user agent
 // POST { agent_id, session_id, message }
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { ChatMessageSchema, validateBody } from "../_shared/validation.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { CreatorChatMessageSchema, validateBody } from "../_shared/validation.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";
 import { json } from "../_shared/response.ts";
 
@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
 
     // Validate input
     const validation = validateBody(
-      ChatMessageSchema.extend({ agent_id: ChatMessageSchema.shape.agent_id.required() }),
+      CreatorChatMessageSchema,
       await req.json()
     );
     if (!validation.ok) {

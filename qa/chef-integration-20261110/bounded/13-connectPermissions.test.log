@@ -1,0 +1,18 @@
+(node:1164) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta
+
+(node:1197) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/connectPermissions.test.ts > allows a signed-in user to read only their own mapping 7ms
+ ✓ test/connectPermissions.test.ts > denies changing even the owner's Stripe account identifier 6ms
+ ✓ test/connectPermissions.test.ts > denies deletion of authorization mappings by clients 2ms
+ ✓ test/connectPermissions.test.ts > preserves writes by the server role 5ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  04:55:43
+   Duration  7.06s (tests 97%, transform 1%, import 1%, setup 1%)
+
+JSON report written to /workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/bounded/13-connectPermissions.test.vitest.json

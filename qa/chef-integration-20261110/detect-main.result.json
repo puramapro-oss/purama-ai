@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "/root/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "main",
+    "--repo",
+    "purama-chef-integration-20261110",
+    "--limit",
+    "100"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110",
+  "started_at": "2026-11-10T03:59:18.478543+00:00",
+  "elapsed_seconds": 7.156,
+  "timeout_seconds": 90,
+  "timed_out": false,
+  "exit_code": 0,
+  "launch_error": null,
+  "child_maxrss_kib": 505336,
+  "child_user_seconds": 1.585,
+  "child_system_seconds": 0.968,
+  "log": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/detect-main.log"
+}

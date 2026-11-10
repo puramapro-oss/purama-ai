@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "scripts/generate-supabase-contracts.mjs",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110",
+  "started_at": "2026-11-10T03:37:53.172704+00:00",
+  "elapsed_seconds": 4.992,
+  "timeout_seconds": 240,
+  "timed_out": false,
+  "exit_code": 0,
+  "launch_error": null,
+  "child_maxrss_kib": 793252,
+  "child_user_seconds": 6.143,
+  "child_system_seconds": 1.553,
+  "log": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/generated-contracts.log"
+}

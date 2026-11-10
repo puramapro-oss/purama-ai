@@ -93,8 +93,8 @@ describe("CHEF evidence generation", () => {
     expect((await db.query("SELECT id FROM purama_ai.chef_evidence")).rows).toHaveLength(0);
   });
 
-  it.each(["claimed", "retryable", "blocked_external", "verified_done", "cancelled", "failed"])
-    ("rejects proof writes after task state becomes %s", async (state) => {
+  it.each(["claimed", "retryable", "blocked_external", "verified_done", "cancelled", "failed"])(
+    "rejects proof writes after task state becomes %s", async (state) => {
       await db.query("UPDATE purama_ai.chef_tasks SET state=$2 WHERE id=$1", [task, state]);
       await expect(addProof()).rejects.toMatchObject({ code: "PCE01" });
     });
@@ -228,9 +228,13 @@ describe("CHEF evidence generation", () => {
     expect((await db.query("SELECT id FROM purama_ai.chef_evidence")).rows).toHaveLength(0);
   });
 
-  it("preserves pre-migration rows without certifying them as current evidence", async () => {
-    const legacy = new PGlite();
-    try {
+  describe("legacy evidence migration", () => {
+    let legacy: PGlite | undefined;
+
+    // Bootstrap the historical database within the fixture budget.
+    // The migration under test and its assertions keep the normal test timeout.
+    beforeAll(async () => {
+      legacy = new PGlite();
       await legacy.exec(`CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
         CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
         CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;`);
@@ -241,6 +245,17 @@ describe("CHEF evidence generation", () => {
       ]) {
         await legacy.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
       }
+    }, 30_000);
+
+    afterAll(async () => {
+      const current = legacy;
+      legacy = undefined;
+      await current?.close();
+    }, 30_000);
+
+    it("preserves pre-migration rows without certifying them as current evidence", async () => {
+      if (!legacy) throw new Error("Legacy PGlite fixture was not initialized");
+
       await legacy.query("INSERT INTO auth.users(id) VALUES($1)", [uid]);
       await legacy.query("INSERT INTO purama_ai.chef_missions(id,user_id,brief_id,brief_hash,goal,repo,state) VALUES($1,$2,'legacy',$3,'goal','repo','active')", [mission, uid, "a".repeat(64)]);
       await legacy.query("INSERT INTO purama_ai.chef_requirements(id,mission_id,requirement_key,description,critical) VALUES($1,$2,'R1','legacy',false)", [requirement, mission]);
@@ -256,8 +271,6 @@ describe("CHEF evidence generation", () => {
       await legacy.query("UPDATE purama_ai.chef_tasks SET state='verifying',lease_owner='worker',lease_expires_at=clock_timestamp()+interval '1 hour' WHERE id=$1", [task]);
       await expect(legacy.query("SELECT purama_ai.chef_transition_task($1,'worker',1,'verified_done')", [task]))
         .rejects.toThrow(/requires.*evidence/i);
-    } finally {
-      await legacy.close();
-    }
+    });
   });
 });

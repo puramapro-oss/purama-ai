@@ -1,0 +1,213 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  GitNexus Query (1.6.12)
+{
+  "processes": [
+    {
+      "id": "proc_10_runchefworkercycle",
+      "summary": "RunChefWorkerCycle → AssertRpc",
+      "priority": 0.076,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_11_runchefworkercycle",
+      "summary": "RunChefWorkerCycle → Rpc",
+      "priority": 0.076,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_12_runchefworkercycle",
+      "summary": "RunChefWorkerCycle → Rpc",
+      "priority": 0.076,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_47_renewal",
+      "summary": "Renewal → AssertRpc",
+      "priority": 0.074,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_48_renewal",
+      "summary": "Renewal → Rpc",
+      "priority": 0.074,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 3
+    }
+  ],
+  "process_symbols": [
+    {
+      "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+      "name": "runChefWorkerCycle",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "startLine": 92,
+      "endLine": 427,
+      "module": "Chef",
+      "process_id": "proc_10_runchefworkercycle",
+      "step_index": 1
+    },
+    {
+      "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle.renewal@201:2",
+      "name": "renewal",
+      "filePath": "karta/src/chef/supervisor.ts",
+      "startLine": 202,
+      "endLine": 224,
+      "module": "Chef",
+      "process_id": "proc_47_renewal",
+      "step_index": 1
+    }
+  ],
+  "definitions": [
+    {
+      "id": "Function:karta/test/chefEvidenceFreshness.test.ts:addProof",
+      "name": "addProof",
+      "filePath": "karta/test/chefEvidenceFreshness.test.ts",
+      "startLine": 47,
+      "endLine": 55
+    },
+    {
+      "id": "Function:karta/test/chefEvidenceFreshness.test.ts:finish",
+      "name": "finish",
+      "filePath": "karta/test/chefEvidenceFreshness.test.ts",
+      "startLine": 56,
+      "endLine": 58
+    },
+    {
+      "id": "File:karta/test/chefEvidenceFreshness.test.ts",
+      "name": "chefEvidenceFreshness.test.ts",
+      "filePath": "karta/test/chefEvidenceFreshness.test.ts"
+    },
+    {
+      "id": "Function:karta/test/chefBudgetReservations.test.ts:heartbeat",
+      "name": "heartbeat",
+      "filePath": "karta/test/chefBudgetReservations.test.ts",
+      "startLine": 40,
+      "endLine": 45
+    },
+    {
+      "id": "Function:karta/test/chefBudgetReservations.test.ts:prepareEvidence",
+      "name": "prepareEvidence",
+      "filePath": "karta/test/chefBudgetReservations.test.ts",
+      "startLine": 72,
+      "endLine": 79,
+      "module": "Test"
+    },
+    {
+      "id": "File:karta/test/chefBudgetReservations.test.ts",
+      "name": "chefBudgetReservations.test.ts",
+      "filePath": "karta/test/chefBudgetReservations.test.ts"
+    },
+    {
+      "id": "Function:karta/src/chef/worker-main.ts:parseJson",
+      "name": "parseJson",
+      "filePath": "karta/src/chef/worker-main.ts",
+      "startLine": 12,
+      "endLine": 19,
+      "module": "Chef"
+    },
+    {
+      "id": "Function:karta/src/chef/worker-main.ts:main",
+      "name": "main",
+      "filePath": "karta/src/chef/worker-main.ts",
+      "startLine": 42,
+      "endLine": 129,
+      "module": "Chef"
+    },
+    {
+      "id": "File:karta/src/chef/worker-main.ts",
+      "name": "worker-main.ts",
+      "filePath": "karta/src/chef/worker-main.ts"
+    },
+    {
+      "id": "File:karta/src/chef/supervisor.ts",
+      "name": "supervisor.ts",
+      "filePath": "karta/src/chef/supervisor.ts"
+    },
+    {
+      "id": "Method:karta/src/chef/control-plane.ts:SupabaseChefControlPlane.renewLease#1",
+      "name": "renewLease",
+      "filePath": "karta/src/chef/control-plane.ts",
+      "startLine": 143,
+      "endLine": 157,
+      "module": "Chef"
+    },
+    {
+      "id": "Method:karta/src/chef/control-plane.ts:SupabaseChefControlPlane.addEvidence#3",
+      "name": "addEvidence",
+      "filePath": "karta/src/chef/control-plane.ts",
+      "startLine": 179,
+      "endLine": 249,
+      "module": "Pages"
+    },
+    {
+      "id": "File:karta/src/chef/control-plane.ts",
+      "name": "control-plane.ts",
+      "filePath": "karta/src/chef/control-plane.ts"
+    },
+    {
+      "id": "Function:karta/test/chefControlPlane.test.ts:heartbeat",
+      "name": "heartbeat",
+      "filePath": "karta/test/chefControlPlane.test.ts",
+      "startLine": 19,
+      "endLine": 24
+    },
+    {
+      "id": "Function:karta/test/chefControlPlane.test.ts:claim",
+      "name": "claim",
+      "filePath": "karta/test/chefControlPlane.test.ts",
+      "startLine": 26,
+      "endLine": 31
+    },
+    {
+      "id": "File:karta/test/chefControlPlane.test.ts",
+      "name": "chefControlPlane.test.ts",
+      "filePath": "karta/test/chefControlPlane.test.ts"
+    },
+    {
+      "id": "Function:karta/test/chefHardening.test.ts:claim",
+      "name": "claim",
+      "filePath": "karta/test/chefHardening.test.ts",
+      "startLine": 103,
+      "endLine": 108,
+      "module": "Pages"
+    },
+    {
+      "id": "Function:karta/test/chefHardening.test.ts:transition",
+      "name": "transition",
+      "filePath": "karta/test/chefHardening.test.ts",
+      "startLine": 110,
+      "endLine": 115
+    },
+    {
+      "id": "File:karta/test/chefHardening.test.ts",
+      "name": "chefHardening.test.ts",
+      "filePath": "karta/test/chefHardening.test.ts"
+    },
+    {
+      "id": "Function:karta/test/chefSupervisor.test.ts:makeControl",
+      "name": "makeControl",
+      "filePath": "karta/test/chefSupervisor.test.ts",
+      "startLine": 45,
+      "endLine": 58
+    }
+  ],
+  "timing": {
+    "vector": 18.2,
+    "bm25": 643.2,
+    "merge": 0.3,
+    "symbol_lookup": 37.5,
+    "ranking": 0.1,
+    "formatting": 0.2,
+    "wall": 681.9
+  }
+}

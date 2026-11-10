@@ -142,7 +142,9 @@ export class ProcessChefDriver implements ChefWorkerDriver {
   }
 
   async run(request: ChefDriverRequest, signal?: AbortSignal): Promise<ChefDriverResponse> {
-    if (signal?.aborted) throw new Error("Worker CHEF annulé");
+    // An already aborted signal never emits another abort event for a new
+    // listener. Refuse it before spawning any process or sending instructions.
+    if (signal?.aborted) throw new Error("Worker CHEF annulé avant exécution");
     if (request.provider !== this.provider) throw new Error("Provider du driver incohérent");
     const cwd = assertAllowedCwd(request.cwd, this.options.allowedRoots);
     if (!Number.isSafeInteger(request.fencingToken) || request.fencingToken < 0) throw new Error("fencingToken invalide");

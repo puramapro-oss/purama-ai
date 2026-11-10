@@ -1,0 +1,16 @@
+(node:759) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta
+
+(node:792) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefBudgetMigration.test.ts > CHEF budget migration of existing claims > preserves charged historical totals, treats old synthetic zero costs as unknown and is replayable 5828ms
+ ✓ test/chefBudgetMigration.test.ts > CHEF budget migration of existing claims > rejects mixed historical known and ambiguous cost receipts without changing charged totals 3713ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  04:53:46
+   Duration  9.99s (tests 99%, transform 1%)
+
+JSON report written to /workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/bounded/04-chefBudgetMigration.test.vitest.json

@@ -43,11 +43,12 @@ async function redirectToStripe(
   try {
     const { data, error } = await invoke();
     if (error) throw error;
-    if (data?.url) {
-      window.location.href = data.url;
-    } else {
+    if (typeof data !== 'object' || data === null || !('url' in data) || typeof data.url !== 'string' || !data.url) {
       throw new Error(notFoundMessage);
     }
+    const redirect = new URL(data.url);
+    if (redirect.protocol !== 'https:') throw new Error('URL de paiement non sécurisée');
+    window.location.href = redirect.href;
   } catch (err) {
     console.error(err);
     toast.error(errorTitle, { description: err instanceof Error ? err.message : undefined });

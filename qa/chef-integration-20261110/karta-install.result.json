@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/lib/node_modules/npm/bin/npm-cli.js",
+    "ci",
+    "--offline",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta",
+  "started_at": "2026-11-10T03:31:06.698713+00:00",
+  "elapsed_seconds": 6.377,
+  "timeout_seconds": 180,
+  "timed_out": false,
+  "exit_code": 0,
+  "log": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/karta-install.log"
+}

@@ -1,7 +1,7 @@
 // Universal Agent Chat — Email / Compta / Partner conversational interface
 // POST { agent_type, session_id, message }
 // Returns: { reply, tokens? }
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import { ChatMessageSchema, validateBody } from "../_shared/validation.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";
 import { json } from "../_shared/response.ts";

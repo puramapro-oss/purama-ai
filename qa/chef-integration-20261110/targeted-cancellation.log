@@ -1,0 +1,75 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta
+
+(node:38) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > stamps every proof with the original claim rather than a refreshed generation 6ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > stops when proof write 1 loses the lease 3ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > stops when proof write 2 loses the lease 1ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > refuses to persist passing proofs if the final Git check detects a changed tree 2ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > surfaces an evidence storage outage without declaring completion 2ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > does not trust worker done text: it verifies before VERIFIED_DONE 2ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > refuses a write task that reports completion without a commit/output SHA 1ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > never runs verification when human approval is required 1ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > returns idle without launching a provider when no task is ready 1ms
+ ✓ test/chefSupervisor.test.ts > CHEF autonomous worker cycle > routes failed verification back to retryable instead of false PASS 1ms
+(node:54) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not spawn a worker for a signal already cancelled before run 4ms
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not spawn a verifier or create a success for a signal already cancelled 1ms
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > rejects and terminates a running worker when cancellation arrives 33ms
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > rejects and terminates a running verifier without continuing to another profile 31ms
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not return a completed worker if cancellation arrives before run resumes 37ms
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > does not publish overall success if cancellation arrives after the final profile closes 34ms
+ ✓ test/chefCancellation.test.ts > CHEF cancellation at process and verification boundaries > rechecks cancellation after a successful profile before spawning the next one 42ms
+ ✓ test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check rejects after cancellat… 15ms
+ ✓ test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check succeeds after cancella… 4ms
+ ✓ test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > final Git check rejects after cancellat… 2ms
+ ✓ test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > verifying transition acknowledges after… 2ms
+ ✓ test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > verifying heartbeat acknowledges after … 1ms
+(node:97) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:105) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > never verifies capped work when all provider usage is missing 9ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > does not invent a zero cost when only token counts are known 2ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > lets the database explicitly allow unlimited work without falsifying metrics 2ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > holds accounting closed when receipt persistence fails 2ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > distinguishes an absent cost from an explicitly observed zero in receipt keys 2ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > settles a known zero when the driver was never started 1ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > settles zero after a pre-driver heartbeat failure and never calls the provider 3ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > does not infer zero from a driver exception after execution began 1ms
+ ✓ test/chefBudgetAccounting.test.ts > CHEF budget accounting at the worker boundary > records a late receipt for its original claim but cannot finish after losing the lease 10ms
+(node:113) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefDriver.test.ts > CHEF process driver > never permits a cwd outside trusted roots 3ms
+ ✓ test/chefDriver.test.ts > CHEF process driver > rejects a symlink that lexically lives under a trusted root but escapes outside it 3ms
+ ✓ test/chefDriver.test.ts > CHEF process driver > rejects malformed worker responses 1ms
+ ✓ test/chefDriver.test.ts > CHEF process driver > sends model instructions over stdin and accepts only a strict JSON result 38ms
+ ✓ test/chefDriver.test.ts > CHEF process driver > fails closed when a worker exits without a valid JSON result 29ms
+ ✓ test/chefDriver.test.ts > CHEF process driver > does not start a process or its side effect when the signal is already aborted 2ms
+(node:139) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefSupervisorCancellation.test.ts > CHEF cancellation while persisting the last proof > does not finalize after heartbeat failure aborts an awaiting proof write 17ms
+(node:147) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefVerifier.test.ts > CHEF deterministic verifier > fails closed if no verification profile is attached 7ms
+ ✓ test/chefVerifier.test.ts > CHEF deterministic verifier > records reproducible evidence for a passing deterministic check 115ms
+ ✓ test/chefVerifier.test.ts > CHEF deterministic verifier > stops the verification chain at the first failed gate 30ms
+ ✓ test/chefVerificationGitIntegration.test.ts > CHEF Git checks around actual verification > handles a unchanged worktree after the verifier 186ms
+ ✓ test/chefVerificationGitIntegration.test.ts > CHEF Git checks around actual verification > handles a dirty worktree after the verifier 76ms
+ ✓ test/chefVerificationGitIntegration.test.ts > CHEF Git checks around actual verification > handles a new-commit worktree after the verifier 89ms
+
+ Test Files  8 passed (8)
+      Tests  44 passed (44)
+   Start at  04:34:54
+   Duration  1.95s (tests 55%, transform 25%, import 11%, setup 4%, worker 3%)
+
+    Isolate  8 workers spawned · ~259ms startup each (spawn + environment, per file)
+             at least ~778ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/targeted-cancellation.vitest.json

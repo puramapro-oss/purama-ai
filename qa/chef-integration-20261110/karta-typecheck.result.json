@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/root/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.json"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta",
+  "started_at": "2026-11-10T03:40:36.551116+00:00",
+  "elapsed_seconds": 20.583,
+  "timeout_seconds": 180,
+  "timed_out": false,
+  "exit_code": 0,
+  "launch_error": null,
+  "child_maxrss_kib": 439456,
+  "child_user_seconds": 12.546,
+  "child_system_seconds": 0.887,
+  "log": "/workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/karta-typecheck.log"
+}

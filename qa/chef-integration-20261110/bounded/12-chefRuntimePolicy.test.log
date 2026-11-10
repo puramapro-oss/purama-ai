@@ -1,0 +1,18 @@
+(node:1119) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-chef-integration-20261110/karta
+
+(node:1152) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ test/chefRuntimePolicy.test.ts > CHEF runtime task policy > refuses an unscoped write task 125ms
+ ✓ test/chefRuntimePolicy.test.ts > CHEF runtime task policy > refuses a task that has no deterministic verification profile 75ms
+ ✓ test/chefRuntimePolicy.test.ts > CHEF runtime task policy > permits read-only tasks without a write scope when verification is explicit 60ms
+ ✓ test/chefRuntimePolicy.test.ts > CHEF runtime task policy > permits a scoped write task with explicit verification 55ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  04:55:33
+   Duration  8.35s (tests 97%, transform 2%, import 1%)
+
+JSON report written to /workspace/scratch/29af233a360b/purama-chef-integration-20261110/qa/chef-integration-20261110/bounded/12-chefRuntimePolicy.test.vitest.json

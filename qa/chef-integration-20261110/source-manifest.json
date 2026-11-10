@@ -1,0 +1,72 @@
+{
+  "base": "b826af125ce296d3808d3b71b93fd084e63dbdb7",
+  "node": "22.23.4",
+  "files": [
+    {
+      "path": "karta/src/chef/driver.ts",
+      "sha256": "70604b42efaded380ef05eab9eecf7a6797f2daeb27479a9222de4073f18b5fb",
+      "git_blob": "ab49cb83ffb3db779044cb98ef4907ba50bc72db"
+    },
+    {
+      "path": "karta/src/chef/verifier.ts",
+      "sha256": "f0efe6d78f56a0da25ce9a6629e5b3a262c14ba3718ad00dc755bd1935f9e6dd",
+      "git_blob": "7d568ed21a7fa421db433e633c8a2d26b78f0476"
+    },
+    {
+      "path": "karta/src/chef/supervisor.ts",
+      "sha256": "6ff5b2e2d6c08932b317ad79e0c96bd10cf6120556a841fa04831806ce0468d3",
+      "git_blob": "863e65552007b751e733c24edf9e54c53740cfb5"
+    },
+    {
+      "path": "karta/test/chefCancellation.test.ts",
+      "sha256": "906d25543f935d5dc14857ea3959bf318960fea5cf569dd17e241bc675fc6660",
+      "git_blob": "00b583d6d706f16e648042a6fa028ac3441ba7cc"
+    },
+    {
+      "path": "karta/test/chefSupervisorCancellation.test.ts",
+      "sha256": "e4600959c5717b15d5e1255650f2c6041aaad1d1abcc8a2d0b982a830a8c66fc",
+      "git_blob": "401a3a8ea0767851da5337acfc060e201e0af166"
+    },
+    {
+      "path": "karta/test/chefGitCancellation.test.ts",
+      "sha256": "902d04feca4356084a3b87952ae871f3ab80ae15ddd226329ed0865e512bbe28",
+      "git_blob": "b7597af775f9eb56c0e3fe9a54ed6b94848cb5f9"
+    },
+    {
+      "path": "karta/package.json",
+      "sha256": "f02b5a660bd555c196731f53febed5b8424795a31acb34c92bb949795b3e8880",
+      "git_blob": "8e3b1ee65e655916adeb5d8565d2f2cf5d52ac39"
+    },
+    {
+      "path": "karta/package-lock.json",
+      "sha256": "f94deb0fab4f5239044b29265a1e62ad191dcd5ff56792e6afdbc95434e0c0f1",
+      "git_blob": "7f8d7c8e4390b54ad03bb5e0c6d8ebf2bf9c5b69"
+    },
+    {
+      "path": "karta/vitest.config.ts",
+      "sha256": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+      "git_blob": "026c3733f8abaa0d74a994b8d3d395e3166b828f"
+    },
+    {
+      "path": "package.json",
+      "sha256": "ed5f45824875ff2fe7ea3a1d319d023f89e5af9d8a112515b4825e7e6821f057",
+      "git_blob": "23af711cff2187b2bb3f73af97315803611ed282"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "7d6aa7a9cc26f6cdb8738d06eff6de1c3bcd77031ccd1ae5789ef3ba0d511d63",
+      "git_blob": "086bf787b12f4ab71441f8249a7405a96d771125"
+    },
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "sha256": "c1d48e17da18af2cd464053f9d466d23e92cc26550f56aa68876f024d6fdb260",
+      "git_blob": "3b7c71f5d3ffd2a5482a11ccd77f5a32882aff57"
+    },
+    {
+      "path": "tests/dependency-compat.cjs",
+      "sha256": "bf273f26919c25e08c27cfb28757a015f88470dbf7a7f066fb8e67d050c478f3",
+      "git_blob": "8daa78acb648d0dc23856dd636ea85a1d95736f9"
+    }
+  ],
+  "stage": "cancellation-integration-before-history-lifecycle"
+}

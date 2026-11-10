@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
 
@@ -246,22 +246,51 @@ describe('migration preflight refuses an unreviewed schema', () => {
       error: /Unexpected chat history relation type/ },
   ];
 
-  it.each(cases)('rolls back both schemas when $label', async ({ setup, error }) => {
-    const db = await fixture(['public', 'purama_ai']);
-    try {
+  describe('existing chat history tables', () => {
+    let db: PGlite | undefined;
+
+    // Cold PostgreSQL/WASM startup belongs to the fixture budget.
+    // The SQL assertions retain the normal test timeout.
+    beforeEach(async () => {
+      db = undefined;
+      db = await fixture(['public', 'purama_ai']);
+    }, 30_000);
+
+    afterEach(async () => {
+      const current = db;
+      db = undefined;
+      await current?.close();
+    }, 30_000);
+
+    it.each(cases)('rolls back both schemas when $label', async ({ setup, error }) => {
+      if (!db) throw new Error('PGlite fixture was not initialized');
+
       await db.exec(setup);
       const before = await accessSnapshot(db);
       await expect(db.exec(migration)).rejects.toThrow(error);
       await db.exec('ROLLBACK');
       expect(await accessSnapshot(db)).toEqual(before);
-    } finally { await db.close(); }
+    });
   });
 
-  it('refuses to report success when neither schema contains chat history', async () => {
-    const db = await fixture([]);
-    try {
+  describe('no chat history tables', () => {
+    let db: PGlite | undefined;
+
+    beforeAll(async () => {
+      db = await fixture([]);
+    }, 30_000);
+
+    afterAll(async () => {
+      const current = db;
+      db = undefined;
+      await current?.close();
+    }, 30_000);
+
+    it('refuses to report success when neither schema contains chat history', async () => {
+      if (!db) throw new Error('PGlite fixture was not initialized');
+
       await expect(db.exec(migration)).rejects.toThrow(/No chat history tables found/);
       await db.exec('ROLLBACK');
-    } finally { await db.close(); }
+    });
   });
 });

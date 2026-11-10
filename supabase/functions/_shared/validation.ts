@@ -1,4 +1,4 @@
-import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { z } from "npm:zod@4.6.7";
 
 // Chat schemas
 export const ChatMessageSchema = z.object({
@@ -11,6 +11,9 @@ export const ChatMessageSchema = z.object({
     content: z.string().min(1).max(8000),
   })).max(20).optional(),
 });
+
+// Custom-agent chat always needs an agent identifier; universal chat may use agent_type.
+export const CreatorChatMessageSchema = ChatMessageSchema.required({ agent_id: true });
 
 export const AgentRunSchema = z.object({
   agent_id: z.string().uuid(),
@@ -58,14 +61,14 @@ export const KartaTriggerSchema = z.object({
 
 // Helper
 export function validateBody<T>(
-  schema: z.ZodSchema<T>,
+  schema: z.ZodType<T>,
   body: unknown
 ): { ok: true; data: T } | { ok: false; error: string } {
   const result = schema.safeParse(body);
   if (!result.success) {
     return {
       ok: false,
-      error: result.error.errors
+      error: result.error.issues
         .map((e) => `${e.path.join(".")}: ${e.message}`)
         .join(", "),
     };

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AgentDecision, AgentDefinition } from "../src/engine/types.js";
+import type { AgentDecision, AgentDefinition, AgentRunResult } from "../src/engine/types.js";
 const h = vi.hoisted(() => ({
   stopped: false, enabled: true, simulation: false,
   decision: { summary: "test", toolCalls: [{ tool: "act", params: {} }], requiresApproval: false, mock: false } as AgentDecision,
-  finish: vi.fn(), record: vi.fn(), execute: vi.fn(), pending: vi.fn(), existing: undefined as any,
+  finish: vi.fn(), record: vi.fn(), execute: vi.fn(), pending: vi.fn(), existing: undefined as AgentRunResult | undefined,
 }));
 vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ decide: async () => h.decision }) }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.stopped }));
@@ -44,6 +44,6 @@ describe("cycle outcomes and interruption", () => {
   it.each([{ ok: false }, { success: false }, { error: "denied" }])("does not report a failed tool envelope as success: %j", async value => { h.execute.mockResolvedValue(value); h.decision.toolCalls.push({ tool: "act", params: {} }); expect((await run()).status).toBe("error"); expect(h.execute).toHaveBeenCalledOnce(); });
   it("mock decisions never cause real effects or approvals", async () => { h.decision.mock = true; h.decision.requiresApproval = true; expect((await run()).status).toBe("simulated"); expect(h.execute).not.toHaveBeenCalled(); expect(h.pending).not.toHaveBeenCalled(); });
   it("simulation never counts as execution", async () => { h.simulation = true; const r = await run(); expect(r.status).toBe("simulated"); expect(r.toolsUsed[0].success).toBe(false); });
-  it("retains evidence and forbids replay after a bookkeeping failure", async () => { h.record.mockRejectedValue(new Error("database unavailable")); const r = await run(); expect(r.status).toBe("error"); expect(r.retryable).toBe(false); expect(r.toolsUsed[0].outcome).toBe("executed"); expect(h.execute).toHaveBeenCalledOnce(); });
-  it("does not execute a previously claimed delivery", async () => { h.existing = { status: "error", toolsUsed: [], retryable: false }; expect(await run()).toBe(h.existing); expect(h.execute).not.toHaveBeenCalled(); });
+  it("preserves committed success and forbids replay after a bookkeeping failure", async () => { h.record.mockRejectedValue(new Error("database unavailable")); const r = await run(); expect(r.status).toBe("success"); expect(r.retryable).toBe(false); expect(r.toolsUsed[0].outcome).toBe("executed"); expect(h.execute).toHaveBeenCalledOnce(); expect(h.finish).toHaveBeenCalledOnce(); });
+  it("does not execute a previously claimed delivery", async () => { h.existing = { status: "error", decision: "already claimed", toolsUsed: [], resultSummary: "Requires reconciliation", mock: false, retryable: false }; expect(await run()).toBe(h.existing); expect(h.execute).not.toHaveBeenCalled(); });
 });

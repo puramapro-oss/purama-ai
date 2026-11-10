@@ -5,18 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Scale, ShieldCheck, Clock, Hash, ExternalLink, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 
-interface Reglement {
-  id: string;
-  version: string;
-  type: 'jeu_concours' | 'prime' | 'bourse' | 'cgv';
-  content_hash: string;
-  opentimestamps_proof: string | null;
-  blockchain: string;
-  published_at: string;
-  content_url: string | null;
-}
+type Reglement = Pick<Database['public']['Tables']['reglements']['Row'],
+  'id' | 'version' | 'type' | 'content_hash' | 'opentimestamps_proof' | 'blockchain' | 'published_at' | 'content_url'>;
 
 interface VerifyState {
   loading: boolean;
@@ -36,20 +29,32 @@ const TYPE_LABELS: Record<Reglement['type'], { label: string; color: string }> =
 
 export default function Reglement() {
   const [reglements, setReglements] = useState<Reglement[]>([]);
+  const [loadError, setLoadError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState<Record<string, VerifyState>>({});
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(false);
     (async () => {
-      const { data, error } = await supabase
-        .from('reglements')
-        .select('id, version, type, content_hash, opentimestamps_proof, blockchain, published_at, content_url')
-        .order('published_at', { ascending: false });
-      if (error) toast.error('Impossible de charger les règlements.');
-      else setReglements((data ?? []) as Reglement[]);
-      setLoading(false);
+      try {
+        const { data, error } = await supabase
+          .schema('public')
+          .from('reglements')
+          .select('id, version, type, content_hash, opentimestamps_proof, blockchain, published_at, content_url')
+          .order('published_at', { ascending: false });
+        if (error) throw error;
+        if (!cancelled) setReglements(data ?? []);
+      } catch {
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     })();
-  }, []);
+    return () => { cancelled = true; };
+  }, [loadAttempt]);
 
   const verify = async (id: string) => {
     setVerifying((v) => ({ ...v, [id]: { loading: true } }));
@@ -82,6 +87,13 @@ export default function Reglement() {
           <div className="flex justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-accent-cyan" />
           </div>
+        ) : loadError ? (
+          <Card role="alert">
+            <CardContent className="p-10 text-center space-y-4">
+              <p>Impossible de charger les règlements.</p>
+              <Button variant="outline" onClick={() => setLoadAttempt(attempt => attempt + 1)}>Réessayer</Button>
+            </CardContent>
+          </Card>
         ) : reglements.length === 0 ? (
           <Card>
             <CardContent className="p-10 text-center text-muted-foreground">
@@ -93,16 +105,17 @@ export default function Reglement() {
           <div className="space-y-4">
             {reglements.map((r) => {
               const v = verifying[r.id];
+              const typeLabel = TYPE_LABELS[r.type] ?? { label: r.type, color: 'bg-secondary text-foreground' };
               return (
                 <Card key={r.id} className="bg-secondary/30 border-accent-cyan/10">
                   <CardContent className="p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
-                        <Badge className={TYPE_LABELS[r.type].color}>{TYPE_LABELS[r.type].label}</Badge>
+                        <Badge className={typeLabel.color}>{typeLabel.label}</Badge>
                         <span className="font-mono text-sm">v{r.version}</span>
                         <span className="text-xs text-muted-foreground">
                           <Clock className="inline w-3 h-3 mr-1" />
-                          {new Date(r.published_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                          {r.published_at ? new Date(r.published_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Date de publication indisponible'}
                         </span>
                       </div>
                       {r.content_url && (

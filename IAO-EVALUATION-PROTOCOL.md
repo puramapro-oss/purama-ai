@@ -92,3 +92,25 @@ Priorité aux essais natifs des verrous et reprises, aux comptes sandbox fournis
 Les points ouverts de `IAO-SAFETY-REVIEW.md` demeurent : diagnostics TypeScript globaux du site, dépendances du site et du mobile, médias non récupérés, absence de tests navigateur réel et d'essais multisessions PostgreSQL natif. Il n'y a ici ni scan antivirus complet des appareils, ni garantie contre tout piratage, ni certification de toutes les applications. Les travaux non publiés des terminaux locaux Codex/GLM restent hors de visibilité de cette session.
 
 La cible raisonnable est une fiabilité mesurée sur des usages définis, des erreurs détectées et récupérables, et une progression vérifiable. Aucune campagne finie ne permet d'affirmer « tous les besoins, zéro bug, zéro latence, aucune concurrence ».
+
+## Consolidation KARTA du 10 novembre 2026
+
+**PASS pour le lot isolé : 612 tests sur 52 fichiers, contrôle TypeScript et compilation. PARTIEL pour l'intégration dans PURAMA ONE.** Ce relevé remplace le compte de régressions KARTA pour cette version précise ; les campagnes historiques ci-dessus ne sont pas additionnées à ce résultat.
+
+La base est la PR #14 au commit `d003159bdf3216b155f747b0f8fa93b3a92e5b3a`. Ses 729 fichiers ont été vérifiés par empreinte avant modification ; sa suite initiale passait 505 tests. Le lot reprend les contrôles d'autorité custom de la PR #7 et la confidentialité/finalisation du commit `7658be81e937b33a0b5aa3dab6d7939857a8aca8` de la PR #13, adaptés aux contrats actuels. Les réservations et finalisations SQL de #14 restent le mécanisme commun. Les connecteurs et catalogues indépendants de ces branches ne font pas partie de ce lot.
+
+| Contrôle | Résultat exécuté |
+| --- | --- |
+| Propriétaire, activation, retrait d'un outil pendant le raisonnement ou entre deux effets | Les 30 premiers scénarios produisaient 22 échecs avant correction ; 30/30 passent après correction. Les contrôles positifs exécutent des outils inertes avec `mock: false`. |
+| Autorisation et confidentialité custom élargies | 38/38 : refus terminaux distincts d'une lecture temporairement indisponible ; descripteurs copiés sans modifier le registre ; paramètres métier préservés ; traces minimisées, y compris sans outil. |
+| Erreurs initiales du cycle et du claim d'approbation | 1/10 passait avant correction, 10/10 après : aucune sentinelle privée dans les exceptions, résultats ou logs du worker examinés ; aucun effet après refus d'admission. |
+| Confidentialité et clôture reprises de #13 | 59 tests supplémentaires sur quatre fichiers : protection des traces et conservation du premier résultat confirmé. Le test lié à Jev est adapté à un outil inerte désactivé, sans revendiquer une validation de Jev. |
+| Régression complète | **612/612**, zéro échec et zéro test ignoré ; `npm run typecheck` et `npm run build` terminent avec le code 0. |
+
+Le reçu [aether-consolidation-20261110.json](karta/test/evidence/aether-consolidation-20261110.json) conserve les versions, les commandes, les résultats avant/après, les empreintes des 16 fichiers produit/tests et les limites de vérification. Le test d'autorisation conserve le nom `customAuthorization.test.ts` déjà utilisé dans #7 afin d'éviter deux suites parallèles lors du rapprochement des branches.
+
+GitNexus a examiné les symboles existants avant modification. Les risques HIGH du résolveur/builder et CRITICAL des types partagés ont été signalés. La comparaison locale finale utilise explicitement `baseline-pr14`, dont l'arbre correspond à #14 ; elle ne se présente pas comme une comparaison avec la branche distante `main`. Les limites de dispatch, les parcours plafonnés et les faux rapprochements par nom du graphe ne remplacent pas les tests.
+
+Les fournisseurs et le transport des files sont simulés. Les contrôles PGlite exécutent les contrats SQL dans le banc local, sans qualifier une instance PostgreSQL native à plusieurs connexions, ses rôles/RLS, Redis ni une migration déployée. La révocation est revérifiée avant l'effet ; elle n'est pas atomique avec une opération ultérieure chez un fournisseur. Les paramètres métier nécessaires à une approbation restent conservés dans son chemin autorisé ; la minimisation ne certifie pas les journaux internes des connecteurs.
+
+Le déploiement et les parcours réels de PURAMA ONE restent **NON TESTÉS**. Le dépôt GitHub `purama-one` était vide lors de ce contrôle ; le checkout local, les verrous et les propriétaires actuels des terminaux restent inaccessibles. L'intégrateur doit réconcilier ce lot avec les autres branches avant toute fusion, puis qualifier les migrations et les parcours authentifiés sur la cible réelle. Aucun appel à un modèle ou fournisseur métier payant n'a été effectué pour cette campagne.
