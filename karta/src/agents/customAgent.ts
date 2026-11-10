@@ -31,12 +31,13 @@ export async function loadCustomAgent(agentId: string): Promise<CustomAgentRow |
 }
 
 /** Tous les agents créés par des users, activés en exécution réelle ET non désactivés par leur propriétaire. */
-export async function listKartaEnabledCustomAgents(): Promise<CustomAgentRow[]> {
-  const { data, error } = await supabase
+export async function listKartaEnabledCustomAgents(signal?: AbortSignal): Promise<CustomAgentRow[]> {
+  const query = supabase
     .from("creator_agents")
     .select(SELECT_COLUMNS)
     .eq("karta_enabled", true)
     .eq("is_active", true);
+  const { data, error } = await (signal ? query.abortSignal(signal) : query);
 
   if (error) throw new Error(`listKartaEnabledCustomAgents: ${error.message}`);
   return (data ?? []) as CustomAgentRow[];
