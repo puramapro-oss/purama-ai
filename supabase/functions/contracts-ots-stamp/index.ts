@@ -1,24 +1,33 @@
 // Signed webhook service or authenticated administrator only.
 import { CORS_HEADERS, corsResponse, errorResponse } from "../_shared/docuseal.ts";
 import { authorizeOts, otsAdminClient, OtsHttpError, validContractId } from "../_shared/ots-auth.ts";
-import { signedPdf } from "../_shared/ots-pdf.ts";
+import { signedPdf, SIGNED_DOCUMENT_TIMEOUT_MS } from "../_shared/ots-pdf.ts";
+import { createRequestDeadline } from "../../../src/lib/request-deadline.ts";
 import { ots } from "../_shared/ots-library.ts";
 import { loadOtsContract, requireUnchangedContract, conditionOnSnapshot, readOtsBody } from "../_shared/ots-contract.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
   if (req.method !== "POST") return errorResponse("Method not allowed", 405);
+  let documentDeadline: ReturnType<typeof createRequestDeadline> | undefined;
   try {
     const initialAccess = await authorizeOts(req, true);
     const body = await readOtsBody(req);
     if (!validContractId(body.contract_id)) throw new OtsHttpError(400, "Invalid contract_id");
     const contract = await loadOtsContract(initialAccess.client, body.contract_id);
     if (contract.status !== "signed") throw new OtsHttpError(409, "Contract must be signed");
-    const pdf = await signedPdf(contract.docuseal_submission_id);
+    // Preserve one document window through reauthorization and hashing, up to
+    // the first stamp, not for subsequent stamping and persistence operations.
+    documentDeadline = createRequestDeadline(SIGNED_DOCUMENT_TIMEOUT_MS, req.signal);
+    const pdf = await signedPdf(contract.docuseal_submission_id, req.signal, documentDeadline);
     const beforeStamp = await authorizeOts(req, true);
     requireUnchangedContract(contract, await loadOtsContract(beforeStamp.client, contract.id));
+    if (req.signal.aborted) throw new OtsHttpError(408, "Request cancelled");
+    documentDeadline.check();
     const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", pdf));
+    if (req.signal.aborted) throw new OtsHttpError(408, "Request cancelled");
     const hashHex = Array.from(hash).map(byte => byte.toString(16).padStart(2, "0")).join("");
+    documentDeadline.check();
     const proof = await ots.stampDigest(hash);
     const finalAccess = await authorizeOts(req, true);
     requireUnchangedContract(contract, await loadOtsContract(finalAccess.client, contract.id));
@@ -35,5 +44,5 @@ Deno.serve(async (req) => {
   } catch (error) {
     if (error instanceof OtsHttpError) return errorResponse(error.message, error.status);
     return errorResponse("Proof stamping unavailable", 502);
-  }
+  } finally { documentDeadline?.close(); }
 });

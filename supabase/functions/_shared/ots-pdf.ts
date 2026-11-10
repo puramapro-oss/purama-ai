@@ -2,36 +2,50 @@ import { DOCUSEAL_URL, DOCUSEAL_TOKEN } from "./docuseal.ts";
 import { OtsHttpError } from "./ots-auth.ts";
 import { cancelResponseQuietly, createRequestDeadline } from "../../../src/lib/request-deadline.ts";
 
+export const SIGNED_DOCUMENT_TIMEOUT_MS = 15_000;
+
 async function boundedResponse(response: Response, maximum: number, deadline: ReturnType<typeof createRequestDeadline>): Promise<Uint8Array> {
   if (!response.ok || response.redirected) { cancelResponseQuietly(response.body); throw new OtsHttpError(502, "Signed document unavailable"); }
   const declared = response.headers.get("content-length");
-  if (declared && (!/^\d+$/.test(declared) || Number(declared) > maximum)) { cancelResponseQuietly(response.body); throw new OtsHttpError(502, "Signed document too large"); }
+  const encoding = response.headers.get("content-encoding")?.trim().toLowerCase();
+  const matchLength = !encoding || encoding === "identity";
+  if (declared !== null && (!/^\d+$/.test(declared) || !Number.isSafeInteger(Number(declared))
+    || (matchLength && Number(declared) > maximum))) {
+    cancelResponseQuietly(response.body); throw new OtsHttpError(502, "Signed document too large");
+  }
   const reader = response.body?.getReader();
   if (!reader) throw new OtsHttpError(502, "Signed document unavailable");
-  const chunks: Uint8Array[] = []; let size = 0;
+  let bytes = new Uint8Array(0); let size = 0;
   try {
     for (;;) {
       const { done, value } = await deadline.wait(() => reader.read()); if (done) break;
-      size += value.length;
-      if (size > maximum) throw new OtsHttpError(502, "Signed document too large");
-      if (value.length) chunks.push(value);
+      const nextSize = size + value.length;
+      if (nextSize > maximum || (matchLength && declared !== null && nextSize > Number(declared))) {
+        throw new OtsHttpError(502, "Signed document too large");
+      }
+      if (nextSize > bytes.length) {
+        const grown = new Uint8Array(Math.min(maximum, Math.max(nextSize, bytes.length * 2, 1024)));
+        grown.set(bytes.subarray(0, size)); bytes = grown;
+      }
+      // A producer may reuse its buffer after the next read. Snapshot now.
+      bytes.set(value, size); size = nextSize;
     }
+    if (matchLength && declared !== null && size !== Number(declared)) throw new OtsHttpError(502, "Signed document length mismatch");
   } catch (error) { cancelResponseQuietly(reader); throw error; }
   finally { try { reader.releaseLock(); } catch { /* Pending adapters may retain the reader lock. */ } }
-  const bytes = new Uint8Array(size); let offset = 0;
-  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
-  deadline.check(); return bytes;
+  deadline.check(); return bytes.subarray(0, size);
 }
-export async function signedPdf(submission: unknown): Promise<Uint8Array<ArrayBuffer>> {
+export async function signedPdf(submission: unknown, signal?: AbortSignal,
+  requestDeadline?: ReturnType<typeof createRequestDeadline>): Promise<Uint8Array<ArrayBuffer>> {
   if (!Number.isSafeInteger(submission) || (submission as number) <= 0) throw new OtsHttpError(409, "No signed submission linked");
   const origin = new URL(DOCUSEAL_URL);
   if (origin.protocol !== "https:" || origin.username || origin.password || !DOCUSEAL_TOKEN) throw new OtsHttpError(503, "Document service unavailable");
-  const deadline = createRequestDeadline(15_000);
+  const deadline = requestDeadline ?? createRequestDeadline(SIGNED_DOCUMENT_TIMEOUT_MS, signal);
   try {
     const metadata = await deadline.fetch(new URL(`/api/submissions/${submission}/documents?merge=true`, origin), {
       headers: { "X-Auth-Token": DOCUSEAL_TOKEN, Accept: "application/json" }, redirect: "error", credentials: "omit",
     });
-    const data = JSON.parse(new TextDecoder().decode(await boundedResponse(metadata, 64_000, deadline))) as { id?: unknown; combined_document_url?: unknown; documents?: Array<{ url?: unknown }> };
+    const data = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(await boundedResponse(metadata, 64_000, deadline))) as { id?: unknown; combined_document_url?: unknown; documents?: Array<{ url?: unknown }> };
     if (!data || typeof data !== "object" || (data.id !== undefined && String(data.id) !== String(submission))) throw new OtsHttpError(502, "Signed submission mismatch");
     const candidate = data.combined_document_url ?? (Array.isArray(data.documents) && data.documents.length === 1 ? data.documents[0]?.url : undefined);
     if (typeof candidate !== "string" || candidate.includes("\\")) throw new OtsHttpError(502, "Signed document unavailable");
@@ -47,5 +61,5 @@ export async function signedPdf(submission: unknown): Promise<Uint8Array<ArrayBu
   } catch (error) {
     if (error instanceof OtsHttpError) throw error;
     throw new OtsHttpError(502, "Signed document unavailable");
-  } finally { deadline.close(); }
+  } finally { if (!requestDeadline) deadline.close(); }
 }

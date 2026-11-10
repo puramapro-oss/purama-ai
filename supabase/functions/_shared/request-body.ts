@@ -35,10 +35,19 @@ export async function readRequestText(request: Request, limits: BodyLimits = {})
   const stopped = new Promise<never>((_, reject) => { rejectStopped = reject; });
   // A pre-aborted request or early header refusal can precede the first race.
   void stopped.catch(() => {});
-  const abort = () => rejectStopped(new RequestBodyError(408, "Request body interrupted"));
+  let failure: RequestBodyError | undefined;
+  const stop = (error: RequestBodyError) => {
+    if (!failure) { failure = error; rejectStopped(error); }
+  };
+  const abort = () => stop(new RequestBodyError(408, "Request body interrupted"));
+  const checkCurrent = () => {
+    if (request.signal.aborted) abort();
+    if (!failure && performance.now() >= deadline) stop(new RequestBodyError(408, "Request body deadline exceeded"));
+    if (failure) throw failure;
+  };
 
   try {
-    if (request.signal.aborted) throw new RequestBodyError(408, "Request body interrupted");
+    checkCurrent();
     const length = request.headers.get("content-length");
     let declared: number | undefined;
     if (length !== null) {
@@ -50,14 +59,16 @@ export async function readRequestText(request: Request, limits: BodyLimits = {})
     }
     if (!request.body) {
       if (declared !== undefined && declared !== 0) throw new RequestBodyError(400, "Incomplete request body");
+      checkCurrent();
       return "";
     }
 
     reader = request.body.getReader();
+    const bodyReader = reader;
     request.signal.addEventListener("abort", abort, { once: true });
     if (request.signal.aborted) abort();
     timer = setTimeout(
-      () => rejectStopped(new RequestBodyError(408, "Request body deadline exceeded")),
+      () => stop(new RequestBodyError(408, "Request body deadline exceeded")),
       Math.max(0, deadline - performance.now()),
     );
     const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
@@ -65,26 +76,32 @@ export async function readRequestText(request: Request, limits: BodyLimits = {})
     let size = 0;
     let emptyChunks = 0;
 
-    while (true) {
-      if (request.signal.aborted) throw new RequestBodyError(408, "Request body interrupted");
-      if (performance.now() >= deadline) throw new RequestBodyError(408, "Request body deadline exceeded");
-      const part = await Promise.race([reader.read(), stopped]);
-      if (request.signal.aborted) throw new RequestBodyError(408, "Request body interrupted");
-      if (performance.now() >= deadline) throw new RequestBodyError(408, "Request body deadline exceeded");
-      if (part.done) {
-        if (declared !== undefined && declared !== size) throw new RequestBodyError(400, "Incomplete request body");
-        text.push(decoder.decode());
-        return text.join("");
+    const consume = async () => {
+      while (true) {
+        checkCurrent();
+        const part = await bodyReader.read();
+        checkCurrent();
+        if (part.done) {
+          if (declared !== undefined && declared !== size) throw new RequestBodyError(400, "Incomplete request body");
+          text.push(decoder.decode());
+          const result = text.join("");
+          checkCurrent();
+          return result;
+        }
+        if (!(part.value instanceof Uint8Array)) throw new RequestBodyError(400, "Invalid request body chunk");
+        size += part.value.byteLength;
+        if (size > maxBytes) throw new RequestBodyError(413, "Request body too large");
+        if (declared !== undefined && size > declared) throw new RequestBodyError(400, "Content-Length mismatch");
+        if (part.value.byteLength === 0 && ++emptyChunks > 64) {
+          throw new RequestBodyError(400, "Invalid empty request stream");
+        }
+        text.push(decoder.decode(part.value, { stream: true }));
       }
-      if (!(part.value instanceof Uint8Array)) throw new RequestBodyError(400, "Invalid request body chunk");
-      size += part.value.byteLength;
-      if (size > maxBytes) throw new RequestBodyError(413, "Request body too large");
-      if (declared !== undefined && size > declared) throw new RequestBodyError(400, "Content-Length mismatch");
-      if (part.value.byteLength === 0 && ++emptyChunks > 64) {
-        throw new RequestBodyError(400, "Invalid empty request stream");
-      }
-      text.push(decoder.decode(part.value, { stream: true }));
-    }
+    };
+    // One stop reaction for the whole consumer, not one per completed chunk.
+    const result = await Promise.race([consume(), stopped]);
+    checkCurrent();
+    return result;
   } catch (error) {
     try {
       const cancelled = reader ? reader.cancel() : request.body?.cancel();

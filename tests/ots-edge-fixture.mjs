@@ -78,6 +78,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
     return {
       auth: { getUser: async token => {
         calls.auth.push(token);
+        options.onAuthorization?.(calls.auth.length);
         if (options.authThrows) throw new Error('provider-private-auth-detail');
         const id = token === 'admin-token' ? 'server-admin' : token === 'member-token' ? 'ordinary-member' : null;
         return { data: { user: id ? { id, user_metadata: { role: 'admin' } } : null },
@@ -135,8 +136,9 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
     };
   };
   const context = vm.createContext({
-    Request, Response, Headers, URL, Uint8Array, ArrayBuffer, Array, AbortController, TextEncoder, TextDecoder, performance, setTimeout, clearTimeout,
-    crypto: webcrypto, atob, btoa,
+    Request, Response, Headers, URL, Uint8Array, ArrayBuffer, Array, AbortController, TextEncoder, TextDecoder,
+    performance: options.performance ?? performance, setTimeout, clearTimeout,
+    crypto: options.crypto ?? webcrypto, atob, btoa,
     console: { error: (...args) => calls.errors.push(args), warn() {}, log() {} },
     Deno: { env: { get: key => environment[key] }, serve: value => { handler = value; } },
     fetch: async (input, init) => {
@@ -174,7 +176,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       if (options.pdfThrows) throw new Error('provider-private-pdf-detail');
       if (options.cancelDuringFetch) contract.status = 'cancelled';
       if (options.replaceSubmissionDuringFetch) contract.docuseal_submission_id = 99;
-      return new Response(new TextEncoder().encode("%PDF-1.7 synthetic signed document"), { status: options.pdfStatus ?? 200 });
+      return new Response(options.pdfBytes ?? new TextEncoder().encode("%PDF-1.7 synthetic signed document"), { status: options.pdfStatus ?? 200 });
     },
   });
   const external = {
