@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - codex/purama-chef-hardening-20260927
+      - main
+      - audit/iao-release-integration-20261110
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
