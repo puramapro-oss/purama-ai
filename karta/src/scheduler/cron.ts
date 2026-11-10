@@ -32,27 +32,76 @@ const ACTION_SCHEDULES: Array<{ agentType: AgentType; cronExpr: string; label: s
 
 const SCHEDULES = [...CORE_SCHEDULES, ...ACTION_SCHEDULES];
 
-export function startSchedulers(): ScheduledTask[] {
-  const tasks = SCHEDULES.map(({ agentType, cronExpr, label }) =>
-    cron.schedule(cronExpr, () => void runScheduledCycle(agentType, label))
-  );
-
-  tasks.push(
-    cron.schedule(config.dailyReportCron, () => {
-      void runDailyReport().catch((err) => console.error("[scheduler] daily report échoué:", err));
-    })
-  );
-
-  return tasks;
+/** Keep timer stop compatible with node-cron while draining its dispatched work. */
+function scheduleDrainable(cronExpr: string, run: (isStopped: () => boolean) => Promise<void>): ScheduledTask {
+  let stopped = false;
+  let stopping: Promise<void> | undefined;
+  const inFlight = new Set<Promise<void>>();
+  const task = cron.schedule(cronExpr, () => {
+    if (stopped) return;
+    const work = Promise.resolve().then(() => stopped ? undefined : run(() => stopped));
+    inFlight.add(work);
+    // Attach both handlers without creating a detached rejected finally chain.
+    void work.then(() => { inFlight.delete(work); }, () => { inFlight.delete(work); });
+    return work;
+  });
+  const stopTimer = task.stop.bind(task);
+  task.stop = () => {
+    if (stopping) return stopping;
+    // stop() cannot retract a callback already dispatched by the timer. Invalidate
+    // it synchronously, and let pending scans observe the same flag before enqueue.
+    stopped = true;
+    stopping = Promise.allSettled([
+      Promise.resolve().then(stopTimer),
+      ...inFlight,
+    ]).then(results => {
+      if (results.some(result => result.status === "rejected")) {
+        throw new Error("Arrêt du planificateur non confirmé");
+      }
+    });
+    return stopping;
+  };
+  return task;
 }
 
-async function runScheduledCycle(agentType: AgentType, label: string): Promise<void> {
+export function startSchedulers(): ScheduledTask[] {
+  const tasks: ScheduledTask[] = [];
   try {
+    // Validate the last expression too, before the first timer can be created.
+    if (![...SCHEDULES.map(schedule => schedule.cronExpr), config.dailyReportCron]
+      .every(expression => cron.validate(expression))) throw new Error();
+    for (const { agentType, cronExpr, label } of SCHEDULES) {
+      tasks.push(scheduleDrainable(cronExpr, isStopped => runScheduledCycle(agentType, label, isStopped)));
+    }
+    tasks.push(scheduleDrainable(config.dailyReportCron, () =>
+      runDailyReport().catch((err) => console.error("[scheduler] daily report échoué:", err))));
+    return tasks;
+  } catch {
+    // A construction failure means the runtime never receives this list. Retire
+    // every created task here; stop invalidates callbacks synchronously, before
+    // even a callback queued during construction can publish work.
+    for (const task of tasks) {
+      try {
+        void Promise.resolve(task.stop()).then(() => task.destroy()).catch(() => {
+          console.error("[scheduler] nettoyage du planificateur non confirmé");
+        });
+      } catch {
+        console.error("[scheduler] nettoyage du planificateur non confirmé");
+      }
+    }
+    throw new Error("Planifications KARTA invalides ou indisponibles");
+  }
+}
+
+async function runScheduledCycle(agentType: AgentType, label: string, isStopped: () => boolean): Promise<void> {
+  try {
+    if (isStopped()) return;
     const userIds = await listActiveUserIds(agentType);
     // Multiple KARTA instances may fire the same cron. The minute slot makes those
     // deliveries share one durable BullMQ job id instead of executing twice.
     const slot = new Date().toISOString().slice(0, 16);
     for (const userId of userIds) {
+      if (isStopped()) return;
       await enqueueAgentCycle(
         { agentType, userId, trigger: { type: "cron", source: label, payload: { slot } } },
         { dedupeKey: `cron|${agentType}|${userId}|${slot}` }
