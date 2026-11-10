@@ -1,0 +1,43 @@
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1794321421166,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "target": {
+    "id": "Function:tests/entraide/browser-harness.mjs:createBrowserHarness",
+    "name": "createBrowserHarness",
+    "type": "Function",
+    "filePath": "tests/entraide/browser-harness.mjs"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:tests/entraide/browser.spec.mjs",
+        "name": "browser.spec.mjs",
+        "filePath": "tests/entraide/browser.spec.mjs",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

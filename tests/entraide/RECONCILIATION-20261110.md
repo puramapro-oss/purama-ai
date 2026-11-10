@@ -1,5 +1,45 @@
 # Entraide — rapprochement vérifié des PR #17 et #23
 
+## Qualification native et navigateur — 10 novembre, passe de continuation
+
+Sur le candidat publié `c9337987ae1f3c820b8947bd3da4e6f1721c57c4`, le runtime
+non privilégié permet maintenant une vraie instance PostgreSQL 18.6 jetable.
+La commande du workflow `npm run test:native --prefix tests/entraide` produit
+**83 PASS, 0 échec, 0 SKIP**, dont les quatre courses multisession précédemment
+ignorées : dernière place, contact répété, reçu de mission unique et quota quotidien.
+Les trois états de migration et les droits actuels sur les reprises sont inclus.
+Les 83 cas recouvrent une partie des 111 tests PGlite historiques ; leurs décomptes
+ne s’additionnent pas.
+
+Le parcours UI → vrai HTTP → PostgreSQL natif → UI produit **3 PASS** dans Firefox
+148.0.2 / Playwright 1.59.1, sans reprise automatique ni scénario ignoré. Il couvre
+la mission privée puis publique, l’adhésion et la fin déclarée, le consentement
+de contact et sa révocation, les réponses perdues, les brouillons et la largeur
+mobile de 390 pixels. Le premier passage a révélé une comparaison de test entre
+un `bigint` SQL renvoyé en texte par `pg` et un compteur JSON numérique. Le test
+compare maintenant leurs entiers exacts avec `BigInt`. Aucune source produit,
+politique d’accès, migration ou validation HTTP n’a changé dans cette continuation.
+
+Les commandes, journaux avant/après, versions et empreintes sont conservés dans
+[`native-qualification/RECEIPT.json`](../../qa/entraide-reconciliation-20261110/native-qualification/RECEIPT.json).
+Les traces et captures synthétiques complètes restent dans le dossier local
+`test-results/`. Les installations npm de l’application et des dépendances SQL,
+la provenance du paquet privé de matching, son garde SHA-256 et l’ESLint du test
+ont été vérifiés. L’impact GitNexus du banc est LOW, avec un fichier appelant.
+
+Cette preuve locale lève les anciens blocages natifs et navigateur décrits plus
+bas. L’authentification Supabase hébergée, PostgREST distant, les fonctions Edge
+déployées, la charge réelle, les appareils physiques et la production restent
+**NON TESTÉS**. Aucune publication ni migration distante n’a été effectuée.
+La livraison du client et de l’API reste coordonnée ; le RPC historique #17 reste
+retiré et ne redevient pas une deuxième autorité.
+
+## Historique de la première qualification
+
+Les résultats ci-dessous décrivent la première passe, conservée avec ses limites
+d’origine. Les quatre SKIP et le blocage navigateur ne décrivent plus la passe
+native de continuation ci-dessus.
+
 ## Périmètre exact
 
 Correctif local préparé sur la branche existante de la PR #23,

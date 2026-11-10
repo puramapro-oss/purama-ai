@@ -1,0 +1,53 @@
+
+Running 3 tests using 1 worker
+
+(node:40) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Browserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+  ✘  1 [entraide-local] › tests/entraide/browser.spec.mjs:120:1 › profil enregistré, mission privée publiée, Bob rejoint et Alice déclare la fin (4.5s)
+Testing stopped early after 1 maximum allowed failures.
+
+
+  1) [entraide-local] › tests/entraide/browser.spec.mjs:120:1 › profil enregistré, mission privée publiée, Bob rejoint et Alice déclare la fin
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "revision": 4,
+    +   "revision": "4",
+        "status": "terminee",
+        "visibility": "public",
+      }
+
+      167 |   await expect(missionCard(alice, title).getByText(/ni une preuve indépendante du résultat ni une autorisation de paiement/)).toBeVisible();
+      168 |   const final = await harness.snapshot();
+    > 169 |   expect(final.missions.find((row) => row.id === missionId)).toMatchObject({ status: 'terminee', visibility: 'public', revision: completed.body.mission.revision });
+          |                                                              ^
+      170 |   expect(final.participants.filter((row) => row.mission_id === missionId)).toHaveLength(2);
+      171 |   await testInfo.attach('mission-declared-complete', { body: await alice.screenshot({ fullPage: true }), contentType: 'image/png' });
+      172 |   await assertNoUnexpectedFailures();
+        at /workspace/scratch/6a3b4f291e34/continuation/entraide/tests/entraide/browser.spec.mjs:169:62
+
+    attachment #6: trace-alice-0 (application/zip) ─────────────────────────────────────────────────
+    test-results/entraide-browser/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/attachments/trace-alice-0-7a1d10ce97cc8a2102b2fccb764dc5a71b2f634c.zip
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #9: trace-bob-1 (application/zip) ───────────────────────────────────────────────────
+    test-results/entraide-browser/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/attachments/trace-bob-1-98403a52ec82d2a5e3695d20e6ead9b0cb7460e7.zip
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/entraide-browser/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/error-context.md
+
+    Error Context: test-results/entraide-browser/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/error-context.md
+
+  1 failed
+    [entraide-local] › tests/entraide/browser.spec.mjs:120:1 › profil enregistré, mission privée publiée, Bob rejoint et Alice déclare la fin
+  2 did not run
+  1 error was not a part of any test, see above for details

@@ -166,7 +166,11 @@ test('profil enregistré, mission privée publiée, Bob rejoint et Alice déclar
   await expect(missionCard(alice, title).getByText('Déclarée terminée', { exact: true })).toBeVisible();
   await expect(missionCard(alice, title).getByText(/ni une preuve indépendante du résultat ni une autorisation de paiement/)).toBeVisible();
   const final = await harness.snapshot();
-  expect(final.missions.find((row) => row.id === missionId)).toMatchObject({ status: 'terminee', visibility: 'public', revision: completed.body.mission.revision });
+  const storedMission = final.missions.find((row) => row.id === missionId);
+  expect(storedMission).toMatchObject({ status: 'terminee', visibility: 'public' });
+  // pg preserves SQL bigint as text; the validated JSON RPC counter is numeric.
+  // Compare the exact integer values without changing either transport's parser.
+  expect(BigInt(storedMission.revision)).toBe(BigInt(completed.body.mission.revision));
   expect(final.participants.filter((row) => row.mission_id === missionId)).toHaveLength(2);
   await testInfo.attach('mission-declared-complete', { body: await alice.screenshot({ fullPage: true }), contentType: 'image/png' });
   await assertNoUnexpectedFailures();
