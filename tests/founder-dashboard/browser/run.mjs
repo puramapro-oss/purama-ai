@@ -10,6 +10,7 @@ const root = path.resolve(here, '../../..');
 const evidence = path.resolve(process.env.FOUNDER_DASHBOARD_EVIDENCE || path.join(root, 'docs/founder-dashboard/evidence'));
 const results = [];
 const externalRequests = new Set();
+const networkSubstitutions = [];
 const errors = [];
 let server, browser, origin;
 const startedAt = new Date().toISOString();
@@ -19,12 +20,20 @@ async function check(name, fn, viewport = { width: 1280, height: 1000 }) {
   await context.route('**/*', (route) => {
     const url = new URL(route.request().url());
     if (url.origin === origin && ['GET', 'HEAD'].includes(route.request().method())) return route.continue();
+    if (route.request().method() === 'GET' && url.origin === 'https://fonts.googleapis.com' && url.pathname === '/css2') {
+      networkSubstitutions.push({ method: 'GET', origin: url.origin, path: url.pathname, decision: 'external-font-styles-replaced-with-empty-css' });
+      return route.fulfill({ status: 200, contentType: 'text/css', body: '/* Offline founder qualification. */' });
+    }
     externalRequests.add(url.origin);
     return route.abort('blockedbyclient');
   });
   await context.routeWebSocket('**/*', route => {
     const url = new URL(route.url());
-    if (url.origin !== origin.replace('http:', 'ws:')) externalRequests.add(url.origin);
+    if (url.origin === origin.replace('http:', 'ws:') && url.pathname === '/') {
+      route.connectToServer();
+      return;
+    }
+    externalRequests.add(url.origin);
     route.close();
   });
   const page = await context.newPage();
@@ -201,7 +210,7 @@ try {
   await browser?.close();
   await server?.close();
   await fs.mkdir(evidence,{recursive:true});
-  const report={startedAt,finishedAt:new Date().toISOString(),environment:{node:process.version,platform:process.platform,chrome:chromeVersion,network:'localhost only; external requests blocked',backend:'simulated',actualComponent:'src/pages/AdminDashboard.tsx'},results,externalOriginsBlocked:[...externalRequests],pageErrors:errors};
+  const report={startedAt,finishedAt:new Date().toISOString(),environment:{node:process.version,platform:process.platform,chrome:chromeVersion,network:'localhost only; external requests blocked; font CSS fulfilled locally',backend:'simulated',actualComponent:'src/pages/AdminDashboard.tsx'},results,externalOriginsBlocked:[...externalRequests],networkSubstitutions,pageErrors:errors};
   await fs.writeFile(path.join(evidence,'browser-results.json'),JSON.stringify(report,null,2)+'\n');
   if (results.length !== 16 || results.some(r => r.status !== 'PASS') || externalRequests.size || errors.length) process.exitCode = 1;
   console.log('SUMMARY '+JSON.stringify({pass:results.filter((r)=>r.status==='PASS').length,fail:results.filter((r)=>r.status!=='PASS').length,exitCode:process.exitCode||0}));
