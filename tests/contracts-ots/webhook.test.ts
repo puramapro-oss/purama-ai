@@ -76,7 +76,14 @@ Deno.test("webhook cancels a body exceeding64KiB without Content-Length or datab
 Deno.test("authenticated signer completion reaches the actual stamp handler with service authority", async () => {
   reset(); state.contract.status = "sent"; state.signers = [{ signed: true }, { signed: true }];
   let stamping: Promise<Response> | undefined;
-  state.internalStamp = request => { stamping = stamp(request); return stamping; };
+  state.internalStamp = request => {
+    const pending = stamp(request);
+    // The webhook owns and releases the HTTP response body. Observe a clone
+    // before handing that response to the simulated HTTP client, as a separate
+    // server-side observer would; every payload and persistence check remains.
+    stamping = pending.then(response => response.clone());
+    return pending;
+  };
   equal((await webhook(request(undefined, "form.completed"))).status, 200);
   if (!stamping) throw new Error("Completion did not invoke the production stamp handler");
   const response = await stamping;
