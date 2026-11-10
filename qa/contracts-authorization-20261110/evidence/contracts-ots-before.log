@@ -1,0 +1,50 @@
+(node:12) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"label":"invalid bearer","status":200,"calls":{"reads":1,"writes":2,"docs":1,"fetches":1,"stamps":1}}
+✖ stamp rejects invalid bearer before privileged reads, PDF fetch and writes (23.049977ms)
+{"label":"authenticated non-admin with forged user_metadata","status":200,"calls":{"reads":1,"writes":2,"docs":1,"fetches":1,"stamps":1}}
+✖ stamp rejects authenticated non-admin with forged user_metadata before privileged reads, PDF fetch and writes (21.898838ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1498.077176
+
+✖ failing tests:
+
+test at contracts-ots-repro.test.mjs:75:3
+✖ stamp rejects invalid bearer before privileged reads, PDF fetch and writes (23.049977ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 401
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/audit-inventory/contracts-ots-repro.test.mjs:82:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at contracts-ots-repro.test.mjs:75:3
+✖ stamp rejects authenticated non-admin with forged user_metadata before privileged reads, PDF fetch and writes (21.898838ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 403
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/221cb4a2f349/audit-inventory/contracts-ots-repro.test.mjs:82:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

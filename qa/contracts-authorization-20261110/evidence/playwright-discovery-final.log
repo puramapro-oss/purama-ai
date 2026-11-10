@@ -1,0 +1,200 @@
+Listing tests:
+  [desktop] › accessibility.spec.ts:4:3 › Accessibilité — Basiques › Landing — dark mode par défaut (bg sombre)
+  [desktop] › accessibility.spec.ts:18:3 › Accessibilité — Basiques › Pages ont des headings structurés
+  [desktop] › accessibility.spec.ts:25:3 › Accessibilité — Basiques › Images ont des attributs alt
+  [desktop] › accessibility.spec.ts:33:3 › Accessibilité — Basiques › Boutons interactifs ont du texte accessible
+  [desktop] › chat/lifecycle.spec.ts:25:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [desktop] › chat/lifecycle.spec.ts:37:1 › two submits in the same browser task admit one request
+  [desktop] › chat/lifecycle.spec.ts:48:1 › stop aborts the stream, removes partial output and restores the editable request
+  [desktop] › chat/lifecycle.spec.ts:59:1 › stop while saving a completed answer keeps the answer and does not resend
+  [desktop] › chat/lifecycle.spec.ts:73:1 › logout clears private content and subsequent guest requests never persist it
+  [desktop] › chat/lifecycle.spec.ts:88:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [desktop] › chat/lifecycle.spec.ts:101:1 › account change during conversation creation prevents a subsequent model call
+  [desktop] › chat/lifecycle.spec.ts:115:1 › failure to save the user message stops before model inference
+  [desktop] › chat/lifecycle.spec.ts:123:1 › failure to save the answer preserves it without another model request
+  [desktop] › chat/lifecycle.spec.ts:131:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  [desktop] › chat/lifecycle.spec.ts:141:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  [desktop] › chat/lifecycle.spec.ts:159:1 › closing the widget aborts its pending response
+  [desktop] › chat/lifecycle.spec.ts:166:1 › loading a conversation and submitting in the same task cannot overlap
+  [desktop] › chat/lifecycle.spec.ts:185:1 › mobile controls remain visible and the demo can be stopped
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › / — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /pricing — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /login — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /signup — pas d'erreur console critique
+  [desktop] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /ecosystem — pas d'erreur console critique
+  [desktop] › forms-validation.spec.ts:4:3 › Formulaires — Validation › Login — champs vides bloqués
+  [desktop] › forms-validation.spec.ts:22:3 › Formulaires — Validation › Signup — bouton désactivé sans accepter CGU
+  [desktop] › forms-validation.spec.ts:42:3 › Formulaires — Validation › Forgot password — formulaire présent
+  [desktop] › navigation.spec.ts:4:3 › Navigation — Liens & Boutons › Landing page — tous les CTAs sont cliquables
+  [desktop] › navigation.spec.ts:13:3 › Navigation — Liens & Boutons › Login page — formulaire présent
+  [desktop] › navigation.spec.ts:26:3 › Navigation — Liens & Boutons › Signup page — formulaire complet
+  [desktop] › navigation.spec.ts:37:3 › Navigation — Liens & Boutons › Pricing — cartes visibles
+  [desktop] › navigation.spec.ts:45:3 › Navigation — Liens & Boutons › Footer links — mentions légales, CGV, CGU
+  [desktop] › navigation.spec.ts:56:3 › Navigation — Liens & Boutons › Navigation — redirect non-auth vers login
+  [desktop] › performance.spec.ts:4:3 › Performance — Temps de chargement › Landing page charge en < 5s
+  [desktop] › performance.spec.ts:12:3 › Performance — Temps de chargement › Login page charge en < 3s
+  [desktop] › performance.spec.ts:20:3 › Performance — Temps de chargement › Pricing page charge en < 3s
+  [desktop] › performance.spec.ts:30:3 › Performance — Web Vitals basiques › LCP < 4s sur landing
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › / retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /login retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /signup retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /pricing retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /mentions-legales retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-de-confidentialite retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgv retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgu retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-cookies retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /ecosystem retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /parrainage retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /concours retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /classement retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /forge retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /influenceur/inscription retourne 200 et contient du contenu
+  [desktop] › public-pages.spec.ts:39:3 › Page 404 › /page-inexistante affiche 404
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › / — 0 Lorem ipsum
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /pricing — 0 Lorem ipsum
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /ecosystem — 0 Lorem ipsum
+  [desktop] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /parrainage — 0 Lorem ipsum
+  [desktop] › pwa.spec.ts:4:3 › PWA — Manifest & Service Worker › manifest.json accessible
+  [desktop] › pwa.spec.ts:14:3 › PWA — Manifest & Service Worker › Landing page a le lien manifest
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › / — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /pricing — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /login — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /signup — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /ecosystem — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /parrainage — pas d'overflow horizontal
+  [desktop] › responsive.spec.ts:19:3 › Responsive — Éléments visibles › Landing page — hero visible
+  [desktop] › responsive.spec.ts:29:3 › Responsive — Éléments visibles › Login — formulaire bien dimensionné
+  [tablet] › accessibility.spec.ts:4:3 › Accessibilité — Basiques › Landing — dark mode par défaut (bg sombre)
+  [tablet] › accessibility.spec.ts:18:3 › Accessibilité — Basiques › Pages ont des headings structurés
+  [tablet] › accessibility.spec.ts:25:3 › Accessibilité — Basiques › Images ont des attributs alt
+  [tablet] › accessibility.spec.ts:33:3 › Accessibilité — Basiques › Boutons interactifs ont du texte accessible
+  [tablet] › chat/lifecycle.spec.ts:25:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [tablet] › chat/lifecycle.spec.ts:37:1 › two submits in the same browser task admit one request
+  [tablet] › chat/lifecycle.spec.ts:48:1 › stop aborts the stream, removes partial output and restores the editable request
+  [tablet] › chat/lifecycle.spec.ts:59:1 › stop while saving a completed answer keeps the answer and does not resend
+  [tablet] › chat/lifecycle.spec.ts:73:1 › logout clears private content and subsequent guest requests never persist it
+  [tablet] › chat/lifecycle.spec.ts:88:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [tablet] › chat/lifecycle.spec.ts:101:1 › account change during conversation creation prevents a subsequent model call
+  [tablet] › chat/lifecycle.spec.ts:115:1 › failure to save the user message stops before model inference
+  [tablet] › chat/lifecycle.spec.ts:123:1 › failure to save the answer preserves it without another model request
+  [tablet] › chat/lifecycle.spec.ts:131:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  [tablet] › chat/lifecycle.spec.ts:141:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  [tablet] › chat/lifecycle.spec.ts:159:1 › closing the widget aborts its pending response
+  [tablet] › chat/lifecycle.spec.ts:166:1 › loading a conversation and submitting in the same task cannot overlap
+  [tablet] › chat/lifecycle.spec.ts:185:1 › mobile controls remain visible and the demo can be stopped
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › / — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /pricing — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /login — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /signup — pas d'erreur console critique
+  [tablet] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /ecosystem — pas d'erreur console critique
+  [tablet] › forms-validation.spec.ts:4:3 › Formulaires — Validation › Login — champs vides bloqués
+  [tablet] › forms-validation.spec.ts:22:3 › Formulaires — Validation › Signup — bouton désactivé sans accepter CGU
+  [tablet] › forms-validation.spec.ts:42:3 › Formulaires — Validation › Forgot password — formulaire présent
+  [tablet] › navigation.spec.ts:4:3 › Navigation — Liens & Boutons › Landing page — tous les CTAs sont cliquables
+  [tablet] › navigation.spec.ts:13:3 › Navigation — Liens & Boutons › Login page — formulaire présent
+  [tablet] › navigation.spec.ts:26:3 › Navigation — Liens & Boutons › Signup page — formulaire complet
+  [tablet] › navigation.spec.ts:37:3 › Navigation — Liens & Boutons › Pricing — cartes visibles
+  [tablet] › navigation.spec.ts:45:3 › Navigation — Liens & Boutons › Footer links — mentions légales, CGV, CGU
+  [tablet] › navigation.spec.ts:56:3 › Navigation — Liens & Boutons › Navigation — redirect non-auth vers login
+  [tablet] › performance.spec.ts:4:3 › Performance — Temps de chargement › Landing page charge en < 5s
+  [tablet] › performance.spec.ts:12:3 › Performance — Temps de chargement › Login page charge en < 3s
+  [tablet] › performance.spec.ts:20:3 › Performance — Temps de chargement › Pricing page charge en < 3s
+  [tablet] › performance.spec.ts:30:3 › Performance — Web Vitals basiques › LCP < 4s sur landing
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › / retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /login retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /signup retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /pricing retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /mentions-legales retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-de-confidentialite retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgv retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgu retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-cookies retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /ecosystem retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /parrainage retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /concours retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /classement retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /forge retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /influenceur/inscription retourne 200 et contient du contenu
+  [tablet] › public-pages.spec.ts:39:3 › Page 404 › /page-inexistante affiche 404
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › / — 0 Lorem ipsum
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /pricing — 0 Lorem ipsum
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /ecosystem — 0 Lorem ipsum
+  [tablet] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /parrainage — 0 Lorem ipsum
+  [tablet] › pwa.spec.ts:4:3 › PWA — Manifest & Service Worker › manifest.json accessible
+  [tablet] › pwa.spec.ts:14:3 › PWA — Manifest & Service Worker › Landing page a le lien manifest
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › / — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /pricing — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /login — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /signup — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /ecosystem — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /parrainage — pas d'overflow horizontal
+  [tablet] › responsive.spec.ts:19:3 › Responsive — Éléments visibles › Landing page — hero visible
+  [tablet] › responsive.spec.ts:29:3 › Responsive — Éléments visibles › Login — formulaire bien dimensionné
+  [mobile] › accessibility.spec.ts:4:3 › Accessibilité — Basiques › Landing — dark mode par défaut (bg sombre)
+  [mobile] › accessibility.spec.ts:18:3 › Accessibilité — Basiques › Pages ont des headings structurés
+  [mobile] › accessibility.spec.ts:25:3 › Accessibilité — Basiques › Images ont des attributs alt
+  [mobile] › accessibility.spec.ts:33:3 › Accessibilité — Basiques › Boutons interactifs ont du texte accessible
+  [mobile] › chat/lifecycle.spec.ts:25:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  [mobile] › chat/lifecycle.spec.ts:37:1 › two submits in the same browser task admit one request
+  [mobile] › chat/lifecycle.spec.ts:48:1 › stop aborts the stream, removes partial output and restores the editable request
+  [mobile] › chat/lifecycle.spec.ts:59:1 › stop while saving a completed answer keeps the answer and does not resend
+  [mobile] › chat/lifecycle.spec.ts:73:1 › logout clears private content and subsequent guest requests never persist it
+  [mobile] › chat/lifecycle.spec.ts:88:1 › a stale response cannot populate a new conversation or unlock a newer request
+  [mobile] › chat/lifecycle.spec.ts:101:1 › account change during conversation creation prevents a subsequent model call
+  [mobile] › chat/lifecycle.spec.ts:115:1 › failure to save the user message stops before model inference
+  [mobile] › chat/lifecycle.spec.ts:123:1 › failure to save the answer preserves it without another model request
+  [mobile] › chat/lifecycle.spec.ts:131:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  [mobile] › chat/lifecycle.spec.ts:141:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  [mobile] › chat/lifecycle.spec.ts:159:1 › closing the widget aborts its pending response
+  [mobile] › chat/lifecycle.spec.ts:166:1 › loading a conversation and submitting in the same task cannot overlap
+  [mobile] › chat/lifecycle.spec.ts:185:1 › mobile controls remain visible and the demo can be stopped
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › / — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /pricing — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /login — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /signup — pas d'erreur console critique
+  [mobile] › console-errors.spec.ts:7:5 › Console — 0 erreur JS critique › /ecosystem — pas d'erreur console critique
+  [mobile] › forms-validation.spec.ts:4:3 › Formulaires — Validation › Login — champs vides bloqués
+  [mobile] › forms-validation.spec.ts:22:3 › Formulaires — Validation › Signup — bouton désactivé sans accepter CGU
+  [mobile] › forms-validation.spec.ts:42:3 › Formulaires — Validation › Forgot password — formulaire présent
+  [mobile] › navigation.spec.ts:4:3 › Navigation — Liens & Boutons › Landing page — tous les CTAs sont cliquables
+  [mobile] › navigation.spec.ts:13:3 › Navigation — Liens & Boutons › Login page — formulaire présent
+  [mobile] › navigation.spec.ts:26:3 › Navigation — Liens & Boutons › Signup page — formulaire complet
+  [mobile] › navigation.spec.ts:37:3 › Navigation — Liens & Boutons › Pricing — cartes visibles
+  [mobile] › navigation.spec.ts:45:3 › Navigation — Liens & Boutons › Footer links — mentions légales, CGV, CGU
+  [mobile] › navigation.spec.ts:56:3 › Navigation — Liens & Boutons › Navigation — redirect non-auth vers login
+  [mobile] › performance.spec.ts:4:3 › Performance — Temps de chargement › Landing page charge en < 5s
+  [mobile] › performance.spec.ts:12:3 › Performance — Temps de chargement › Login page charge en < 3s
+  [mobile] › performance.spec.ts:20:3 › Performance — Temps de chargement › Pricing page charge en < 3s
+  [mobile] › performance.spec.ts:30:3 › Performance — Web Vitals basiques › LCP < 4s sur landing
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › / retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /login retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /signup retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /pricing retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /mentions-legales retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-de-confidentialite retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgv retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /cgu retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /politique-cookies retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /ecosystem retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /parrainage retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /concours retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /classement retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /forge retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:23:5 › Pages publiques — Chargement & Contenu › /influenceur/inscription retourne 200 et contient du contenu
+  [mobile] › public-pages.spec.ts:39:3 › Page 404 › /page-inexistante affiche 404
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › / — 0 Lorem ipsum
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /pricing — 0 Lorem ipsum
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /ecosystem — 0 Lorem ipsum
+  [mobile] › public-pages.spec.ts:48:5 › Pas de Lorem/placeholder texte › /parrainage — 0 Lorem ipsum
+  [mobile] › pwa.spec.ts:4:3 › PWA — Manifest & Service Worker › manifest.json accessible
+  [mobile] › pwa.spec.ts:14:3 › PWA — Manifest & Service Worker › Landing page a le lien manifest
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › / — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /pricing — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /login — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /signup — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /ecosystem — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:7:5 › Responsive — Pas de débordement horizontal › /parrainage — pas d'overflow horizontal
+  [mobile] › responsive.spec.ts:19:3 › Responsive — Éléments visibles › Landing page — hero visible
+  [mobile] › responsive.spec.ts:29:3 › Responsive — Éléments visibles › Login — formulaire bien dimensionné
+Total: 198 tests in 9 files

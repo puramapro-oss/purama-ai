@@ -1,0 +1,18 @@
+[
+  {
+    "gate": "typecheck",
+    "command": "npm run typecheck",
+    "exit_code": 0,
+    "duration_seconds": 17.96,
+    "heap_mb": 768,
+    "log": "iao-candidate-typecheck.log"
+  },
+  {
+    "gate": "build",
+    "command": "npm run build",
+    "exit_code": 0,
+    "duration_seconds": 17.43,
+    "heap_mb": 768,
+    "log": "iao-candidate-build.log"
+  }
+]

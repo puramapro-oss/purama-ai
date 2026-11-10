@@ -46,6 +46,7 @@ jobs:
           cache: npm
       - run: npm ci --no-audit
       - run: npm run test:dependencies
+      - run: npm run test:contracts-security
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}

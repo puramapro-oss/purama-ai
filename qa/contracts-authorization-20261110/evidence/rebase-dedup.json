@@ -1,0 +1,35 @@
+{
+  "oldBase": "8755a39a3c4a23b64f5b8f0b2909c82d11e732ad",
+  "newBase": "5f8d23d46b1aaa103eccb944406eb3e189388c1c",
+  "sourcePR24": "9b066c5b10f6896041aec9359ee21b173c0f5014",
+  "fourBlobs": [
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "source_PR24_blob": "3b7c71f5d3ffd2a5482a11ccd77f5a32882aff57",
+      "new_PR27_blob": "3b7c71f5d3ffd2a5482a11ccd77f5a32882aff57",
+      "equal": true
+    },
+    {
+      "path": "package.json",
+      "source_PR24_blob": "23af711cff2187b2bb3f73af97315803611ed282",
+      "new_PR27_blob": "23af711cff2187b2bb3f73af97315803611ed282",
+      "equal": true
+    },
+    {
+      "path": "package-lock.json",
+      "source_PR24_blob": "086bf787b12f4ab71441f8249a7405a96d771125",
+      "new_PR27_blob": "086bf787b12f4ab71441f8249a7405a96d771125",
+      "equal": true
+    },
+    {
+      "path": "tests/dependency-compat.cjs",
+      "source_PR24_blob": "8daa78acb648d0dc23856dd636ea85a1d95736f9",
+      "new_PR27_blob": "8daa78acb648d0dc23856dd636ea85a1d95736f9",
+      "equal": true
+    }
+  ],
+  "testedCodeTreeBeforeBaseChange": "00833bbd9ccffe2493fd3ee9672ef6be970777c0",
+  "codeTreeAfterBaseChange": "00833bbd9ccffe2493fd3ee9672ef6be970777c0",
+  "equal": true,
+  "method": "local branch rename and soft reset; index and worktree preserved; no remote mutation"
+}

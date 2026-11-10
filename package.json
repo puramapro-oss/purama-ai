@@ -12,6 +12,7 @@
     "test": "playwright test",
     "test:desktop": "playwright test --project=desktop",
     "test:dependencies": "node --test tests/dependency-compat.cjs",
+    "test:contracts-security": "node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test:quality": "playwright test --config tests/quality/playwright.config.ts",
     "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check"
