@@ -12,7 +12,7 @@ const allowed = new Set([
   'supabase/functions/customer-portal/index.ts',
   'supabase/functions/_shared/billing-boundary.ts',
   'supabase/functions/_shared/request-body.ts',
-  'src/lib/plans.ts',
+  'supabase/functions/_shared/plans.ts',
 ]);
 export const userId = 'fixture-user-a';
 export const price = 'price_1TxuHo4Y1unNvKtXJJRsMOIR';

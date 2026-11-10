@@ -29,7 +29,7 @@ Avant correction, le checkout et le portail choisissaient le premier customer St
 
 La frontière commune authentifie le jeton, utilise d'abord la liaison DB, vérifie les métadonnées et refuse les collisions ou listes incomplètes. L'email permet seulement de découvrir un customer portant déjà le même `user_id`. Une nouvelle identité Stripe est explicitement marquée. Le portail ne crée jamais de customer. Les anciens customers ambigus nécessitent une réconciliation par le support ; aucune association arbitraire n'est effectuée.
 
-Le catalogue existant `src/lib/plans.ts` est importé directement : six tarifs d'abonnement et le pack existant sont admis, sans nouveau catalogue concurrent. Le checkout est une conversion payante explicite, sans nouvel essai Stripe. Un abonnement fournisseur non terminé empêche l'ouverture d'un nouvel abonnement ; l'achat d'un pack reste distinct. La réduction utilise les colonnes existantes `promo_code`, `beneficiary_name`, `expires_at`. Une réduction non vérifiable arrête le paiement au lieu de facturer silencieusement le plein tarif.
+Le catalogue unique est déplacé, sans changement de contenu, dans `supabase/functions/_shared/plans.ts`. `src/lib/plans.ts` conserve une façade de réexport compatible avec tous les imports frontend : six tarifs d'abonnement et le pack existant sont admis, sans nouveau catalogue concurrent. Le checkout est une conversion payante explicite, sans nouvel essai Stripe. Un abonnement fournisseur non terminé empêche l'ouverture d'un nouvel abonnement ; l'achat d'un pack reste distinct. La réduction utilise les colonnes existantes `promo_code`, `beneficiary_name`, `expires_at`. Une réduction non vérifiable arrête le paiement au lieu de facturer silencieusement le plein tarif.
 
 Les retours utilisent `PURAMA_BILLING_ORIGIN` validée côté serveur, ou l'origine HTTPS existante par défaut. Seules les URLs hébergées Stripe attendues sont acceptées. Les domaines Stripe personnalisés ne sont pas activés par ce correctif : il faudra un paramétrage explicite et testé avant leur utilisation.
 
@@ -40,6 +40,12 @@ Le serveur checkout/portail borne l'ensemble auth/DB/Stripe à 15 secondes et l'
 Le tableau de facturation applique aussi une portée de compte, un verrou synchrone entre portail et achat de pack, un délai de 20 secondes et un domaine Stripe propre à chaque action. L’intention du pack est conservée lors d’un réessai dans le même montage et compte. Une lecture d’abonnement échouée affiche un état indisponible et une reprise explicite, sans présenter un abonnement gratuit comme confirmé. Ses 29 nouveaux cas attendent la CI du complément.
 
 Le webhook vérifie l'identité exacte via `getUserById`, l'appartenance customer/subscription, le produit et l'état fournisseur. Un formulaire terminé mais impayé n'accorde aucun droit. Le paiement différé reprend le même chemin. Les écritures sont confirmées et conditionnelles ; une erreur ou un reçu incohérent est renvoyé en erreur pour permettre un réessai. L'essai consommé n'est jamais réinitialisé.
+
+## Vérification du paquet auto-hébergé
+
+Le contrôle de dépendances locales a reproduit un échec avant le déplacement du catalogue : create-checkout importait `src/lib/plans.ts` hors du dossier monté par le conteneur de fonctions. Les deux autres handlers passaient. Après correction, les trois graphes d’imports locaux restent dans `supabase/functions` ; 108 tests billing et 17 tests de plans passent. Le catalogue partagé est identique octet par octet à l’ancienne source et le point d’entrée frontend reste compatible. Ce contrôle est une preuve de fermeture des imports locaux, pas une exécution sur le serveur Hostinger. La CI native et navigateur doit valider le commit contenant ce déplacement.
+
+Référence : [configuration Docker officielle Supabase](https://github.com/supabase/supabase/blob/master/docker/docker-compose.yml), volume de fonctions limité à `/home/deno/functions`, et [guide des fonctions auto-hébergées](https://supabase.com/docs/guides/self-hosting/self-hosted-functions).
 
 ## Blocages de mise en production conservés explicitement
 

@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import type Stripe from "https://esm.sh/stripe@18.5.0";
-import { PLANS, OVERAGE_PACK } from "../../../src/lib/plans.ts";
+import { PLANS, OVERAGE_PACK } from "../_shared/plans.ts";
 import { readRequestText, RequestBodyError } from "../_shared/request-body.ts";
 import { BillingError, billingCustomer, billingJson, billingKey, billingOrigin, billingSubscription, stripeRedirect, withBillingRequest } from "../_shared/billing-boundary.ts";
 
