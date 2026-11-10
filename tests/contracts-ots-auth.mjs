@@ -29,7 +29,7 @@ function harness(kind, options = {}) {
     DOCUSEAL_WEBHOOK_SECRET: WEBHOOK,
     ...options.env,
   };
-  const contract = { id: CONTRACT, user_id: USER, status: 'sent', app_slug: 'fixture',
+  const contract = { id: CONTRACT, user_id: USER, status: kind === 'contracts-ots-stamp' ? 'signed' : 'sent', app_slug: 'fixture',
     template_slug: 'fixture', docuseal_submission_id: 123, ots_stamp_hash: null,
     pdf_original_url: null };
   function createClient(url, credential, config) {
@@ -59,8 +59,11 @@ function harness(kind, options = {}) {
         function execute(single = false) {
           if (resolved) return resolved;
           if (operation !== 'select') calls.writes.push({ table, operation, value, filters: [...filters] });
-          const data = operation !== 'select' ? null : table === 'contracts'
-            ? (single ? contract : [contract]) : table === 'contract_signers' ? [{ signed: true }] : null;
+          const updated = operation === 'update' && table === 'contracts'
+            && filters.every(([key, expected]) => contract[key] === expected);
+          if (updated) Object.assign(contract, value);
+          const data = updated ? { id: contract.id } : operation !== 'select' ? null : table === 'contracts'
+            ? (single ? { ...contract } : [{ ...contract }]) : table === 'contract_signers' ? [{ signed: true }] : null;
           resolved = Promise.resolve({ data, error: null });
           return resolved;
         }
@@ -76,7 +79,8 @@ function harness(kind, options = {}) {
       },
     };
   }
-  const providerFetch = async (url, init = {}) => {
+  const providerFetch = async (input, init = {}) => {
+    const url = String(input);
     calls.fetches.push({ url, init });
     if (url === 'https://docuseal.example.invalid/api/submissions/123/documents'
       || url === 'https://docuseal.example.invalid/api/submissions/123') {
@@ -91,7 +95,8 @@ function harness(kind, options = {}) {
   const ots = {
     Ops: { OpSHA256: class {} },
     DetachedTimestampFile: { fromHash(_operation, bytes) {
-      return { hash: new Uint8Array(bytes), serializeToBytes: () => new Uint8Array([1, 2, 3]) };
+      return { hash: new Uint8Array(bytes), timestamp: { allAttestations: () => new Map([['fixture-pending', true]]) },
+        serializeToBytes: () => new Uint8Array([1, 2, 3]) };
     } },
     async stamp(detached) { calls.stamps.push(detached.hash); },
   };
@@ -114,7 +119,7 @@ function harness(kind, options = {}) {
     runInNewContext(compiled, { module, exports: module.exports, require: requireModule,
       Deno: { env: { get: (name) => env[name] } },
       fetch: providerFetch, crypto: webcrypto, Request, Response, Headers, URL,
-      TextEncoder, TextDecoder, Uint8Array, atob, btoa,
+      TextEncoder, TextDecoder, Uint8Array, atob, btoa, setTimeout, clearTimeout,
       console: { error() {}, warn() {}, log() {} },
     }, { filename: file });
     return module.exports;

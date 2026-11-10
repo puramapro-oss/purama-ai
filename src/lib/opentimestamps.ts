@@ -14,33 +14,43 @@
 
 import OpenTimestamps from 'opentimestamps';
 
+export type HashableContent = string | ArrayBuffer | Uint8Array;
+
 /**
- * Produit un hash SHA-256 hex d'un contenu texte.
+ * Produit le digest SHA-256 d'un texte UTF-8 ou d'octets bruts.
  * Utilise SubtleCrypto côté navigateur, fallback Node.js côté serveur/edge.
  */
-export async function hashContent(data: string): Promise<Uint8Array> {
+export async function hashContent(data: HashableContent): Promise<Uint8Array> {
+  // Copy typed-array views so byteOffset/byteLength are respected consistently
+  // by WebCrypto and Node, without hashing a Base64/text representation.
+  const bytes = typeof data === 'string'
+    ? new TextEncoder().encode(data)
+    : new Uint8Array(data instanceof Uint8Array ? data : new Uint8Array(data));
   if (typeof globalThis.crypto !== 'undefined' && globalThis.crypto.subtle) {
-    const bytes = new TextEncoder().encode(data);
     const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
     return new Uint8Array(digest);
   }
   // Node.js / Deno fallback
   const { createHash } = await import('crypto');
-  return new Uint8Array(createHash('sha256').update(data).digest());
+  return new Uint8Array(createHash('sha256').update(bytes).digest());
 }
 
 /**
  * Horodate un contenu sur la blockchain Bitcoin.
  * Retourne une preuve base64 à stocker en DB.
- * La preuve devient "confirmée Bitcoin" après ~2-6 heures (attente d'un bloc).
+ * La preuve reste en attente jusqu'à une confirmation Bitcoin vérifiée.
  */
-export async function stampHash(data: string): Promise<string> {
+export async function stampHash(data: HashableContent): Promise<string> {
   const hash = await hashContent(data);
   const detachedFile = OpenTimestamps.DetachedTimestampFile.fromHash(
     new OpenTimestamps.Ops.OpSHA256(),
     hash,
   );
   await OpenTimestamps.stamp(detachedFile);
+  // This library version resolves even when every calendar returned an error.
+  if (detachedFile.timestamp.allAttestations().size === 0) {
+    throw new Error('No timestamp calendar accepted the request');
+  }
   const bytes = detachedFile.serializeToBytes();
   return toBase64(bytes);
 }
@@ -56,14 +66,16 @@ export interface VerifyResult {
  * Vérifie qu'un contenu a bien été horodaté sur Bitcoin.
  * Si la preuve n'a pas encore été confirmée par un bloc, retourne pending:true.
  */
-export async function verifyProof(data: string, proofBase64: string): Promise<VerifyResult> {
+export async function verifyProof(data: HashableContent, proofBase64: string): Promise<VerifyResult> {
   const hash = await hashContent(data);
   const detachedOriginal = OpenTimestamps.DetachedTimestampFile.fromHash(
     new OpenTimestamps.Ops.OpSHA256(),
     hash,
   );
-  const detachedProof = OpenTimestamps.DetachedTimestampFile.deserialize(fromBase64(proofBase64));
   try {
+    const detachedProof = OpenTimestamps.DetachedTimestampFile.deserialize(fromBase64(proofBase64));
+    // A serialized digest/operation tree alone is not a calendar receipt.
+    if (detachedProof.timestamp.allAttestations().size === 0) return { verified: false };
     const result = await OpenTimestamps.verify(detachedProof, detachedOriginal);
     if (result && result.bitcoin) {
       return {
