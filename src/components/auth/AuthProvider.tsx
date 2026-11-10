@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { DEFAULT_AUTH_CONTINUATION, safeAuthContinuation } from '@/lib/auth-continuation';
 import { AuthContext } from '../../hooks/useAuth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -37,16 +38,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, fullName?: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async (email: string, password: string, fullName?: string, next?: string) => {
+    const destination = safeAuthContinuation(next) ?? DEFAULT_AUTH_CONTINUATION;
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: next === undefined ? window.location.origin : `${window.location.origin}${destination}`,
         data: { full_name: fullName },
       },
     });
-    return { error };
+    return { error, hasSession: Boolean(data.session) };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -54,11 +56,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (next?: string) => {
+    const destination = safeAuthContinuation(next) ?? DEFAULT_AUTH_CONTINUATION;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        // The provider performs authentication; only a validated internal
+        // continuation is supplied here, subject to its redirect allowlist.
+        redirectTo: `${window.location.origin}${destination}`,
         queryParams: { access_type: 'offline', prompt: 'consent' },
       },
     });

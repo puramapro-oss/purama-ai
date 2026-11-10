@@ -79,6 +79,7 @@ const CreatorAgentPage = lazy(() => import('@/pages/CreatorAgent'));
 const CreatorAgentNew = lazy(() => import('@/pages/CreatorAgentNew'));
 const CreatorAgentDetail = lazy(() => import('@/pages/CreatorAgentDetail'));
 const CreatorAgentTemplates = lazy(() => import('@/pages/CreatorAgentTemplates'));
+const PublicCreatorModel = lazy(() => import('@/pages/PublicCreatorModel'));
 const CreatorAgentRuns = lazy(() => import('@/pages/CreatorAgentRuns'));
 const Wallet = lazy(() => import('@/pages/Wallet'));
 const Boutique = lazy(() => import('@/pages/Boutique'));
@@ -144,6 +145,7 @@ export default function App() {
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/modeles/:id" element={<PublicCreatorModel />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pricing" element={<Pricing />} />
