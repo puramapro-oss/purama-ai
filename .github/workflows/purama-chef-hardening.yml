@@ -34,6 +34,15 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
+      - name: Promotion SQL invariants
+        working-directory: .
+        env:
+          PGLITE_MODULE: ${{ github.workspace }}/karta/node_modules/@electric-sql/pglite/dist/index.js
+        run: >-
+          node --test --test-concurrency=1
+          tests/revenue/inbox-sql.test.mjs
+          tests/social-publish/migration-sql.test.mjs
+          tests/social-connection/binding-sql.test.mjs
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
 
@@ -60,11 +69,40 @@ jobs:
       - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts
       - run: npm run test:commerce:plans
       - run: npm run test:commerce:handlers
+      - name: Promotion core behavior
+        run: >-
+          deno test --no-config --no-lock --no-prompt --deny-net --deny-run
+          tests/social-publish/client-intent.test.ts
+          tests/social-publish/provider.test.ts
+          tests/social-publish/publish.test.ts
+          tests/social-publish/scheduled.test.ts
+          tests/social-connection/connection.test.ts
+          tests/social-management/handlers.test.ts
+      - name: Promotion routes with the real Supabase SDK
+        run: >-
+          deno test --no-lock --no-prompt --deny-net --deny-run
+          --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET
+          --config tests/social-connection/deno.json
+          tests/social-connection/handler-sdk.test.ts
+          tests/social-management/handler-sdk.test.ts
+          tests/social-publish/runtime.test.ts
+      - name: Promotion revenue with the real Stripe SDK
+        run: >-
+          deno test --no-lock --no-prompt --deny-net --deny-run
+          --node-modules-dir=none
+          --allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY
+          --config tests/revenue/deno.json
+          tests/revenue/webhook.test.ts
       - run: npm run test:founder
       - run: npm run test:founder:types
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium
+      - name: Promotion browser behavior
+        # Ubuntu already provides an AppArmor profile for its packaged Chrome.
+        env:
+          SOCIAL_BROWSER_EXECUTABLE: /opt/google/chrome/chrome
+        run: node tests/social-browser/run.mjs
       - run: npx tsc --noEmit -p tests/public/tsconfig.json
       - run: npm run test:public
       - run: npm run test:chat

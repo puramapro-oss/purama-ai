@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Rocket, 
@@ -39,6 +39,8 @@ import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { PublishEverywhereButton } from '@/components/social/PublishEverywhereButton';
 import { maybeAutopilot } from '@/lib/social';
+import { useAuth } from '@/hooks/useAuth';
+import { createRequestScope } from '@/lib/request-scope';
 
 interface DynamicAgentFormProps {
   agentSlug: string;
@@ -46,14 +48,23 @@ interface DynamicAgentFormProps {
   agentColor?: string | null;
 }
 
-export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAgentFormProps) {
+export function DynamicAgentForm(props: DynamicAgentFormProps) {
+  const { user } = useAuth();
+  const ownerId = user?.id;
+  return <DynamicAgentFormContent key={JSON.stringify([ownerId ?? null, props.agentSlug])} {...props} ownerId={ownerId} />;
+}
+
+function DynamicAgentFormContent({ agentSlug, agentName, agentColor, ownerId }: DynamicAgentFormProps & { ownerId?: string }) {
   const agentConfig = getAgentConfig(agentSlug);
   const { execute, isLoading, result, reset } = useAgentExecution(agentSlug);
+  const [requests] = useState(createRequestScope);
   
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showResultModal, setShowResultModal] = useState(false);
   const [selectedMulti, setSelectedMulti] = useState<Record<string, string[]>>({});
+
+  useLayoutEffect(() => () => requests.invalidate(), [requests]);
 
   // Reset form when agent changes
   useEffect(() => {
@@ -114,31 +125,37 @@ export function DynamicAgentForm({ agentSlug, agentName, agentColor }: DynamicAg
       return;
     }
 
-    // Execute agent
-    const result = await execute(formData);
-    
-    if (result.success) {
-      setShowResultModal(true);
-      toast.success('Agent exécuté avec succès !');
+    const request = requests.begin('execution');
+    if (!request) return;
+    try {
+      const result = await execute(formData);
+      if (!request.current()) return;
 
-      // Social Autopilot: if user has it enabled, push the generated content
-      // to all connected social accounts. Silent on failure.
-      const text = typeof result.data === 'string'
-        ? result.data
-        : (() => {
-            try { return JSON.stringify(result.data); } catch { return ''; }
-          })();
-      if (text) {
-        maybeAutopilot({
-          content: text,
-          contentType: 'text',
-          agentName,
+      if (result.success) {
+        setShowResultModal(true);
+        toast.success('Agent exécuté avec succès !');
+
+        // Social Autopilot: if user has it enabled, push the generated content
+        // to all connected social accounts. Silent on failure.
+        const text = typeof result.data === 'string'
+          ? result.data
+          : (() => {
+              try { return JSON.stringify(result.data); } catch { return ''; }
+            })();
+        if (text && ownerId) {
+          void maybeAutopilot({
+            content: text,
+            contentType: 'text',
+            agentName,
+          }, { ownerId });
+        }
+      } else {
+        toast.error('Erreur d\'exécution', {
+          description: result.error || 'Une erreur est survenue',
         });
       }
-    } else {
-      toast.error('Erreur d\'exécution', {
-        description: result.error || 'Une erreur est survenue',
-      });
+    } finally {
+      request.finish();
     }
   };
 

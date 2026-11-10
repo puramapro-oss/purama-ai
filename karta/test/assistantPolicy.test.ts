@@ -170,16 +170,16 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
     } };
   }
   const cache = new Map<string, Record<string, unknown>>();
-  function load(relative: string, exposeCaption = false): Record<string, unknown> {
+  function load(relative: string): Record<string, unknown> {
     const path = resolve(repo, relative).replace(/\.js$/, '.ts');
     const cached = cache.get(path);
     if (cached) return cached;
-    const source = readFileSync(path, 'utf8') + (exposeCaption ? '\nexport { generateCaption as __testGenerateCaption };\n' : '');
+    const source = readFileSync(path, 'utf8');
     const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022,
       module: ts.ModuleKind.CommonJS, esModuleInterop: true } }).outputText;
     const module = { exports: {} as Record<string, unknown> };
     cache.set(path, module.exports);
-    const blocked = (name: string) => () => { throw new Error(`Unexpected external action: ${name}`); };
+    const blocked = (name: string) => () => { unexpected.push(name); throw new Error(`Unexpected external action: ${name}`); };
     const requireModule = (specifier: string): unknown => {
       if (specifier.startsWith('npm:zod@')) return zod;
       if (specifier.includes('@supabase/supabase-js')) return { createClient: () => db.client };
@@ -469,16 +469,21 @@ describe('task endpoints', () => {
     }
     expect(h.db.writes.some(write => ['partner_emails', 'partner_prospects', 'legal_documents', 'legal_cases'].includes(write.table))).toBe(false);
   });
-  it('social caption generation uses the actual task request without invoking publication', async () => {
-    const h = runtime({ provider: async () => new Response('simulated provider unavailable', { status: 503 }) });
-    // Export the existing private function in the in-memory compilation only.
-    const mod = h.load('supabase/functions/social-publish/index.ts', true);
-    const generate = mod.__testGenerateCaption as (input: unknown) => Promise<unknown>;
-    await expect(generate({ content: 'Contenu fictif', contentType: 'text' })).rejects.toThrow(/503/);
-    expect(h.modelBodies).toHaveLength(1);
-    policyIs(h.modelBodies[0]!.system, 'task');
-    expect(h.modelBodies[0]!.system).toContain('STRICTEMENT en JSON');
+  it('social publication rejects caption generation before storage, model or publication effects', async () => {
+    const h = edge('social-publish', { env: { SOCIAL_DB_SCHEMA: 'purama_ai' } });
+    const response = await h.handler(request({
+      clientRequestId: 'caption-request-0001', content: 'Contenu fictif',
+      contentType: 'text', forceCaption: true,
+    }));
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      error: "La génération de légende n'est pas disponible dans ce parcours. Utilisez un texte préparé.",
+    });
+    expect(h.modelBodies).toEqual([]);
+    expect(h.transport).not.toHaveBeenCalled();
+    expect(h.db.queries).toEqual([]);
     expect(h.db.writes).toEqual([]);
+    expect(h.db.rpcCalls).toEqual([]);
     expect(h.unexpected).toEqual([]);
   });
   it('forces the saved legal success probability to null even when the model returns 99', async () => {

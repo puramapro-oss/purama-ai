@@ -1,0 +1,583 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-10T22:46:37Z",
+  "status": "PASS",
+  "scope": "Local validation of the frozen PR22 promotion composition on PR33, before the final source commit.",
+  "source_parents": {
+    "pr33": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+    "pr22": "5b1338f8a7ff520b6509394ddf7ec8dc9eb2e6f0"
+  },
+  "git_head_at_capture": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+  "execution_root": "/workspace/scratch/5a57dc6debc0/purama-promotion-integrated",
+  "evidence_root": "/workspace/scratch/5a57dc6debc0",
+  "versions": {
+    "node": "24.22.1",
+    "deno": "2.9.6",
+    "supabase_js": "2.91.0",
+    "stripe": "18.5.0",
+    "pglite": "0.5.8",
+    "firefox": "148.0.2",
+    "playwright": "1.59.1",
+    "vitest": "5.0.3"
+  },
+  "counting": {
+    "distinct_tests_passed": 310,
+    "tests_failed_in_final_runs": 0,
+    "by_suite": {
+      "social_core": 101,
+      "social_routes": 14,
+      "commerce": 42,
+      "social_sql": 40,
+      "revenue_deno": 30,
+      "revenue_sql": 23,
+      "karta_overage": 40,
+      "social_browser": 20
+    },
+    "policy": "Each final suite is counted once. Initial failures, interrupted runs and reruns are excluded from the total."
+  },
+  "execution_attestations": [
+    {
+      "file": "promotion-root-validation.json",
+      "sha256": "64e4bb74837325aa4166f65c25b1b940c626d9f36d8d32b786accd8cf7360b8c",
+      "provenance": "Root observed exec_command/write_stdin exit codes; stdout/stderr were redirected to the referenced logs."
+    },
+    {
+      "file": "promotion-revenue-validation.json",
+      "sha256": "f85c93ef128f03ceffbd5dee74c6c28555be75f5af495159ee98991941386a2a",
+      "provenance": "Financial agent recorded commands, exit codes, final counters and post-run source hashes; all ten hashes still match."
+    },
+    {
+      "source": "promotion_browser final completion",
+      "provenance": "Browser agent reported the exact command and observed exit code 0; the referenced log independently contains all 20 PASS lines."
+    }
+  ],
+  "gates": [
+    {
+      "id": "social_core",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=384 /home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --no-config --no-lock --no-prompt --deny-net --deny-run --cached-only tests/social-publish/client-intent.test.ts tests/social-publish/provider.test.ts tests/social-publish/publish.test.ts tests/social-publish/scheduled.test.ts tests/social-connection/connection.test.ts tests/social-management/handlers.test.ts",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-social-core-final.log",
+        "sha256": "4da355753356cd4fbf41ef6e90f3acb074ac21f064ba2da0c7f2238a570cfb29",
+        "bytes": 11056,
+        "exit_code_source": "promotion-root-validation.json"
+      },
+      "tests_passed": 101,
+      "tests_failed": 0
+    },
+    {
+      "id": "social_routes",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=384 /home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --no-lock --no-prompt --cached-only --no-remote --deny-net --deny-run --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET --config tests/social-connection/deno.json tests/social-connection/handler-sdk.test.ts tests/social-management/handler-sdk.test.ts tests/social-publish/runtime.test.ts",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-social-routes-final.log",
+        "sha256": "7858f1948f285b294f2201709936fc1aa1feba2a559db42247f2dcc830755b55",
+        "bytes": 1783,
+        "exit_code_source": "promotion-root-validation.json"
+      },
+      "tests_passed": 14,
+      "tests_failed": 0
+    },
+    {
+      "id": "commerce",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=384 /home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --no-remote --no-lock --no-prompt --cached-only --deny-net --deny-run --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,STRIPE_SECRET_KEY --config tests/commerce/deno.json tests/commerce",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-commerce.log",
+        "sha256": "bf182a3e38b07bb1132217472c7716cdacaba66c11dcabcb793d5cc395b9706f",
+        "bytes": 9460,
+        "exit_code_source": "promotion-root-validation.json"
+      },
+      "tests_passed": 42,
+      "tests_failed": 0
+    },
+    {
+      "id": "social_sql",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=384 PGLITE_MODULE=/workspace/scratch/5a57dc6debc0/promotion-financial-runtime/node_modules/@electric-sql/pglite/dist/index.js node --test --test-isolation=none --test-concurrency=1 --test-reporter=tap tests/social-publish/migration-sql.test.mjs tests/social-connection/binding-sql.test.mjs",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-social-sql.log",
+        "sha256": "219989a6a99a29d80ffe3eb52d5a7c5b4036dae875744998ac12bad7c7d70311",
+        "bytes": 9652,
+        "exit_code_source": "promotion-root-validation.json"
+      },
+      "tests_passed": 40,
+      "tests_failed": 0
+    },
+    {
+      "id": "typecheck",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=768 node node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-typecheck-768.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "exit_code_source": "promotion-root-validation.json",
+        "note": "Empty log; successful exit is attested by the observed tool result, not inferred from silence."
+      }
+    },
+    {
+      "id": "lint",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=768 npm run lint",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-lint-final.log",
+        "sha256": "406a18a3d10b3f8c617ad796214ddefc50b9d4633e02bfd3b5c5e8b63c4e160a",
+        "bytes": 4231,
+        "exit_code_source": "promotion-root-validation.json"
+      },
+      "errors": 0,
+      "warnings": 16
+    },
+    {
+      "id": "build",
+      "status": "PASS",
+      "command": "env NODE_OPTIONS=--max-old-space-size=768 npm run build",
+      "cwd": ".",
+      "exit_code": 0,
+      "evidence": {
+        "log": "promotion-build.log",
+        "sha256": "3f92c690bff65497db8efbd13ada48f077b63ad15f1686026e9f5bc0a5980f0b",
+        "bytes": 14578,
+        "exit_code_source": "promotion-root-validation.json"
+      },
+      "duration_seconds": 21.13
+    },
+    {
+      "id": "revenue_deno",
+      "status": "PASS",
+      "command": "NODE_OPTIONS=--max-old-space-size=384 /home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --config tests/revenue/deno.json --node-modules-dir=manual --cached-only --no-remote --no-lock --no-prompt --deny-net --deny-run --allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY tests/revenue/webhook.test.ts",
+      "cwd": ".",
+      "exit_code": 0,
+      "tests_passed": 30,
+      "tests_failed": 0,
+      "evidence": {
+        "log": "promotion-revenue-deno-local.log",
+        "sha256": "15bbf3ad4453b975b46e6a32930a3e742e5e7ccb8b4bf0bd0de181256c590261",
+        "bytes": 18423,
+        "exit_code_source": "promotion-revenue-validation.json"
+      }
+    },
+    {
+      "id": "revenue_sql",
+      "status": "PASS",
+      "command": "NODE_OPTIONS=--max-old-space-size=384 PGLITE_MODULE=/workspace/scratch/5a57dc6debc0/promotion-financial-runtime/node_modules/@electric-sql/pglite/dist/index.js node --test --test-isolation=none --test-concurrency=1 --test-reporter=tap tests/revenue/inbox-sql.test.mjs",
+      "cwd": ".",
+      "exit_code": 0,
+      "tests_passed": 23,
+      "tests_failed": 0,
+      "evidence": {
+        "log": "promotion-revenue-sql.log",
+        "sha256": "fabb94d4e4e78ea4242a520ed6f0e4950bddfb4b420a31b37df583dc6a323b73",
+        "bytes": 5215,
+        "exit_code_source": "promotion-revenue-validation.json"
+      }
+    },
+    {
+      "id": "karta_overage",
+      "status": "PASS",
+      "command": "NODE_OPTIONS=--max-old-space-size=384 node /workspace/scratch/5a57dc6debc0/promotion-financial-runtime/node_modules/vitest/vitest.mjs run test/overageCredit.test.ts --pool=threads --maxWorkers=1 --no-file-parallelism",
+      "cwd": "karta",
+      "exit_code": 0,
+      "tests_passed": 40,
+      "tests_failed": 0,
+      "evidence": {
+        "log": "promotion-revenue-overage-threads.log",
+        "sha256": "eb58a985041967d737cbeb8685ea5aab556c946d0810f34751dfdd288cad30df",
+        "bytes": 215,
+        "exit_code_source": "promotion-revenue-validation.json"
+      }
+    },
+    {
+      "id": "social_browser",
+      "status": "PASS",
+      "command": "timeout 240s env SOCIAL_BROWSER=firefox SOCIAL_BROWSER_EXECUTABLE=/home/agent/.cache/ms-playwright/firefox-1511/firefox/firefox node tests/social-browser/run.mjs",
+      "cwd": ".",
+      "exit_code": 0,
+      "tests_passed": 20,
+      "tests_failed": 0,
+      "page_errors": 0,
+      "failed_local_resources": 0,
+      "external_requests": 0,
+      "evidence": {
+        "log": "social-browser-isolated-current.txt",
+        "sha256": "96ee50b0ff386fe42af7a0127abd8d2148e5b70765bf1d2a7535dc2399db1320",
+        "bytes": 4064,
+        "exit_code_source": "promotion_browser final tool-execution attestation: exit_code 0"
+      }
+    }
+  ],
+  "lint_warning_preservation": {
+    "baseline": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+    "warnings": 16,
+    "files": 14,
+    "all_warning_blobs_unchanged": true,
+    "details": [
+      {
+        "path": "mobile/hooks/useAuth.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "48b4d5fd60e908e2f8054764b12b2cdd7d8a8803"
+      },
+      {
+        "path": "src/components/CookieConsent.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "cf25238dce4ae7b9403a5ee7b0e42b17245f02a9"
+      },
+      {
+        "path": "src/components/ui/badge.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "0853c441dffc3ca2251118d2cca041423023f1a6"
+      },
+      {
+        "path": "src/components/ui/button.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "cdedd4f43da30732ce09e289a3c373a34c932078"
+      },
+      {
+        "path": "src/components/ui/form.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "439029fcffd79c94249c92772ff47ee3ad65eff9"
+      },
+      {
+        "path": "src/components/ui/navigation-menu.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "c9fcd7adf74d76a34ff619c536217ee4cc27aa2b"
+      },
+      {
+        "path": "src/components/ui/sidebar.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "beb1a591fc0375c035cf89966fd7ccab3a1baabd"
+      },
+      {
+        "path": "src/components/ui/sonner.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "b7f198b5928a228fb55ef595e26d9d74ac0241f2"
+      },
+      {
+        "path": "src/components/ui/toggle.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "de5dfc5ad8cca9ad540eead9303b3f09c6f2963e"
+      },
+      {
+        "path": "tests/chat/auth.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "ec145d8508bb8af2209e48a9edc9635fbb6c381b"
+      },
+      {
+        "path": "tests/voice-consent/auth.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "a52297e548b2fa92fc3fe56b8aed09f731bc44b6"
+      },
+      {
+        "path": "tests/voice-consent/harness.tsx",
+        "warnings": 2,
+        "unchanged_pr33_blob": "3a48b9ce0b6d22e929146da3b9e91899a5bddb95"
+      },
+      {
+        "path": "tests/wellbeing/auth.tsx",
+        "warnings": 1,
+        "unchanged_pr33_blob": "1c76d8fa79a33eb5e5f91cbf3aa2fe80e6e0ab52"
+      },
+      {
+        "path": "tests/wellbeing/harness.tsx",
+        "warnings": 2,
+        "unchanged_pr33_blob": "24de84c39282e88e3026b096677349163fb438fb"
+      }
+    ]
+  },
+  "source_hashes": {
+    "algorithm": "sha256",
+    "selection": "git diff HEAD --name-only; qa/ excluded",
+    "timing": "Collected after the final runs from the frozen working tree.",
+    "files": 55
+  },
+  "source_sha256": {
+    ".github/workflows/purama-chef-hardening.yml": "df7fb3a63170614ffcb951afe555e974155dc087347df5a04a7e584ae8ef7753",
+    "karta/test/overageCredit.test.ts": "83314476043d1d25e8ce3669ecaa3bf35fdf884186f2f02028e57430b58a76ed",
+    "src/components/agent/DynamicAgentForm.tsx": "91c5b18db5c0122f1f036e064bd48860c8bcd825b41b6f5d72f42fdd8b2185e9",
+    "src/components/social/PublishEverywhereButton.tsx": "c9a10831ef822a1d29a06b18387c7ddf95d76a4cedf7a4beddfdc756e1f148fd",
+    "src/lib/social-publish-request.ts": "32b7e95aa58575a4df54444908195f311473c18dc7f3fd25cf99433c52d2befe",
+    "src/lib/social.ts": "f3be7ab3ce405c27898b6594d4cd29075dd92276ce94f1a69911a155c6c15acc",
+    "src/pages/SocialSettings.tsx": "ebe6e6d8e6ef9c6c08251f986a28241c9bcf514c77d3560e522cef61070b8971",
+    "supabase/functions/_shared/social-connection-core.ts": "4be6b3050c0f4ba63d6ca0ecbe63759bef15d07ae30c1597de0bfa6ea4175335",
+    "supabase/functions/_shared/social-connection-provider.ts": "263b792e89841dbac173de13ade1d8f5cedddea50d4cad81e60058431a49924c",
+    "supabase/functions/_shared/social-connection-store.ts": "50c4722ed42eb1b48a37e0c365b905ed29b06f71b7ad605595f0c32a18facde9",
+    "supabase/functions/_shared/social-db.ts": "ce3fcb07690d183f5cda93d7715105b6c746c001edc813be1edcc142aaaaf4ce",
+    "supabase/functions/_shared/social-management-core.ts": "82244d53f1ae2f81d91afbad392b79aeb8979b197e9e3a5cd8194397b8fdfde4",
+    "supabase/functions/_shared/social-management-store.ts": "8a9f8c137003d949bf42e2b073f1da7217b01c54415062af9d2bbf1946d36571",
+    "supabase/functions/_shared/social-publish-core.ts": "8d42350d7fefbdb9d1ab00c979e0003950a190db05594a4e95cec49dd5a16256",
+    "supabase/functions/_shared/social-publish-reconcile.ts": "c3de56c4e3add5d2a932461e0417202be2295c2a2efa88bfcf0bfba625afe8f0",
+    "supabase/functions/_shared/social-publish-store.ts": "9d3fd2a91541f171ec7f29be71ac21c5c55acc8885002d80605c83543f7fd7b7",
+    "supabase/functions/_shared/social-state.ts": "df6b93062ea24470b62049a526043f0252fce0aeea9095936affac50b93021cc",
+    "supabase/functions/_shared/stripe-reconciliation.ts": "e53ed00ea8f68213335262447cac5fd7083cc5f79922dd23573e16bd132dfc75",
+    "supabase/functions/_shared/zernio.ts": "7575dcae5d8e97c290ed3163c31b2b5a14f437e618dc9ffba1ed70fd59dd12c8",
+    "supabase/functions/create-checkout/index.ts": "1bc310307fa96277a9f8a8c8b3938603651e21a132f1057a4bf27ae0024f21cb",
+    "supabase/functions/social-accounts/index.ts": "c988ac326a687bea2fcaef8e1a17b7eb27d528c4299f2457deb185f9aa08e7e9",
+    "supabase/functions/social-autopilot-config/index.ts": "91ec3682ab690bc0e276ade9371f1292819be6a21d0cb6c57fd5d19857e98a56",
+    "supabase/functions/social-callback/index.ts": "8eee948866f9fe804dc41e72e878959e2236284427d900c934bea38547e430b2",
+    "supabase/functions/social-connect/index.ts": "8a8268fe39106c82e96963ce343571f01641d9b019b27bde2d35bacaa4b8b386",
+    "supabase/functions/social-publish-scheduled/handler.ts": "b3174a112e0c569a90c9d79cc9d67298ee3a639c14699aed15835a00ea2131f2",
+    "supabase/functions/social-publish-scheduled/index.ts": "d5e2ce987b0d04ef620b1a744830aad02e9b717491951e159a43ccfff28ff540",
+    "supabase/functions/social-publish/handler.ts": "82051871d9e5a10dbd87240eae4a51aab6eb1ad75d2f9c54ac2e80d0d2a1401a",
+    "supabase/functions/social-publish/index.ts": "7e6bbb88617c660c4a9943b8e6645335984ccbce304fb7a64703af469ab9ef37",
+    "supabase/functions/stripe-webhook/index.ts": "2932d0e176dd23462337e82aa718211970241dcdb2c205e1da8f547d343df03c",
+    "supabase/migrations/20261110000300_social_publish_idempotency.sql": "f1a37f2d64faa2c3664ce8f9b5b34befcec94e63ca5905528b6c885f5d9b70c6",
+    "supabase/migrations/20261110000400_social_account_binding.sql": "a187b72f547a7e41fc92583290a90123157f19205f37d04c818bcb057656b9e7",
+    "supabase/migrations/20261110100000_stripe_reconciliation_events.sql": "ea0fd650f32bcd8edc9f88adc389c53a2c515a34ae288fa35062abe4b6c300af",
+    "tests/revenue/README.md": "1601d0b9c6b1b6d33e3484994fab523ef64110a37c7b9ed347c892764d6eb126",
+    "tests/revenue/deno.json": "9d9df1d3ed87e91794aa2d77c46f6fa39d8569fe51bcef92a5b462d6c2170a52",
+    "tests/revenue/inbox-sql.test.mjs": "9ec34c22c0fb986963c4619dce49bd74c91225e1e19d980726ae114e575e3db5",
+    "tests/revenue/provider-fixture.ts": "6fff2b04bf6b190e639cffcbad3a4abb568b1917b358ff6dc8f40fca82405588",
+    "tests/revenue/serve-fixture.ts": "2fd733d95f3325bd81ce9c496ae8bc4934699c2f605aef74d98e38558d0f3e2d",
+    "tests/revenue/webhook.test.ts": "7d6ae242b067bc897a9a2e4f503061a3268c14f150432389b46185fd201ca4d2",
+    "tests/social-browser/harness.jsx": "049c9df1dbd6be1f2e2e38579f96fae70b59e68023f12e08c3a78d2ff1e056d9",
+    "tests/social-browser/index.html": "dc6a487805d01f33458c626674f2db12a95b54743408d961ffac1c49df0f878a",
+    "tests/social-browser/run.mjs": "4349171049bfaeb97984dd2c60588395e4e39e78b4d22a20f3fa223a99b9ebd0",
+    "tests/social-browser/supabase-fixture.js": "9c5ab4a44d67193288b03e50ef6b036d9f86fb0ec800c21f822b0500d5a44e1c",
+    "tests/social-connection/binding-sql.test.mjs": "1c3158f215c5ff7d2d440f5ec4293733bf8354ccd03f238669bffd7d765d553c",
+    "tests/social-connection/connection.test.ts": "5b4f4dcc89525c938dd82f694166b29ceebed73380c8b6c28185a92392f3f176",
+    "tests/social-connection/deno.json": "788dc69f46b7e9670b0071fa6ecf000dfed10b443fd5121755c680034ee31598",
+    "tests/social-connection/handler-sdk.test.ts": "1b5385f79601ca58e7117015e90cae50fe0d085dde29173d481688e5cc954505",
+    "tests/social-management/handler-sdk.test.ts": "12fdd95730a4ac7620b5ee91413f3a7c699446fba70dadc509d5d961c007a511",
+    "tests/social-management/handlers.test.ts": "1f4c37acc01ae7e01e905bcf9267e9c24a7a19ea2a38549d623cb7459ceeafab",
+    "tests/social-publish/client-intent.test.ts": "45de90a527377293d6eb7f7fbe5507cc10527833e02c4498644ebfcdb74ade8c",
+    "tests/social-publish/fake-db.ts": "27ef1dd05369e28d790cc7214071b16bd90e58b1e7ec10dc39f77646fc1bbe43",
+    "tests/social-publish/migration-sql.test.mjs": "d2445a0a07c3b1a3986a923ca508879627254fa61c286a25cd426c66308e021b",
+    "tests/social-publish/provider.test.ts": "dfdc69c9c033f7cec62f3cfeeb862aa3a837bb1edc22892d62a78bba1e7d4e8d",
+    "tests/social-publish/publish.test.ts": "3d833151a3a76bb3a45e7e7217d035c21670ce2cdde9f308add167df72c5a796",
+    "tests/social-publish/runtime.test.ts": "e5d3c7896877de7bbe3dc25498721c25cb41b1e2d89a49e7ffefe7778d1e85e1",
+    "tests/social-publish/scheduled.test.ts": "ec7ae793e39a2b1f19b7e0b13db36debede47f97190f907f6983e653c28689a8"
+  },
+  "limitations": [
+    "Provider and Supabase transports use controlled fixtures and synthetic identities; no real publication, payment, production configuration or deployment was verified.",
+    "PGlite 0.5.8 executes PostgreSQL logic locally; native PostgreSQL concurrency across multiple connections was not tested.",
+    "The browser evidence covers Firefox 148.0.2 locally. Chromium and the GitHub Actions runner were not executed in this validation.",
+    "Local Stripe SDK validation used installed dependencies with manual/cached-only/no-remote Deno resolution. Cold npm resolution with node-modules-dir=none failed before tests because registry.npmjs.org refused the connection; fresh-runner resolution remains unverified.",
+    "Raw logs and execution attestations are local scratch artifacts identified by path and hash; this manifest does not claim a hosted CI result."
+  ],
+  "followup_correction": {
+    "recorded_at_utc": "2026-11-10T23:16:51Z",
+    "status": "PARTIEL",
+    "baseline_snapshot": {
+      "candidate_commit": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+      "scope": "All original top-level fields, counters, commands, logs and 55 source hashes remain the unchanged local evidence for this commit.",
+      "source_hashes_verified_against_commit": 55
+    },
+    "initial_ci": {
+      "run_id": 42918981402,
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/42918981402",
+      "status": "FAILURE",
+      "head_commit": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+      "checked_out_merge_commit": "a1cae9b6f93875e410e23f7011957f78c824630c",
+      "tree": "0151628a38da0b31cb06a6407e4f29b75625a068",
+      "merge_tree_equals_head_tree": true,
+      "jobs": {
+        "karta": {
+          "exit_code": 1,
+          "tests_passed": 1638,
+          "tests_failed": 1,
+          "tests_total": 1639,
+          "test_files_passed": 93,
+          "test_files_failed": 1,
+          "failure": "Obsolete test called the removed private __testGenerateCaption binding: TypeError: generate is not a function.",
+          "runner_image": "ubuntu-26.04",
+          "runner_image_version": "20261101.186.1",
+          "log": "ci-run-42918981402-karta.txt",
+          "log_sha256": "d8ff4e408ab016b3f215dd832ead12996606127423b6dea938f60f6fb5b683c3"
+        },
+        "site": {
+          "exit_code": 1,
+          "social_core_passed": 101,
+          "social_routes_passed": 14,
+          "revenue_deno_passed": 30,
+          "cold_stripe_resolution": {
+            "status": "PASS",
+            "mode": "node-modules-dir=none",
+            "version": "18.5.0",
+            "registry": "https://registry.npmjs.org/stripe/-/stripe-18.5.0.tgz"
+          },
+          "browser_scenarios_planned": 20,
+          "browser_scenarios_executed": 0,
+          "browser_failure": "Chromium failed to launch: No usable sandbox!; SIGTRAP.",
+          "runner_image": "ubuntu-24.04",
+          "runner_image_version": "20261101.360.1",
+          "log": "ci-run-42918981402-site.txt",
+          "log_sha256": "514704d44903c1f364c80c75544a6e39ba5ec7ce66066d63d16db62a7514eef7"
+        }
+      },
+      "downstream_gates": "Steps after each failed step were not executed; their presence in the workflow is not a pass.",
+      "counting": "These CI results are separate from the 310 local cases and are not added to that total."
+    },
+    "corrections": [
+      {
+        "scope": "social publication API and tests",
+        "behavior": "Reject forceCaption=true with HTTP 400 after authentication and before publication DB access or AI/provider effects; keep false/absent canonical identities and hashes unchanged; never convert or replay a historical true request automatically."
+      },
+      {
+        "scope": "karta/test/assistantPolicy.test.ts",
+        "behavior": "Replace the obsolete private-caption test with a public endpoint rejection assertion and verify zero DB/RPC/transport/model effects; production KARTA and OTS remain outside this patch."
+      },
+      {
+        "scope": ".github/workflows/purama-chef-hardening.yml",
+        "behavior": "Select /opt/google/chrome/chrome in the new promotion browser step while preserving chromiumSandbox=true and all original workflow gates."
+      }
+    ],
+    "correction_validation": {
+      "local_status": "PASS",
+      "local_scope": "Only the two affected suites below and static workflow/preservation checks; no full-depot retest.",
+      "ci_status": "NON TESTÉ",
+      "system_chrome_runtime_status": "NON TESTÉ",
+      "gates": [
+        {
+          "id": "assistant_policy",
+          "status": "PASS",
+          "command": "NODE_OPTIONS=--max-old-space-size=384 node /workspace/scratch/5a57dc6debc0/promotion-financial-runtime/node_modules/vitest/vitest.mjs run test/assistantPolicy.test.ts --pool=threads --maxWorkers=1 --no-file-parallelism",
+          "cwd": "karta",
+          "exit_code": 0,
+          "tests_passed": 55,
+          "tests_failed": 0,
+          "evidence": {
+            "log": "promotion-caption-policy-vitest.log",
+            "sha256": "74646bc634d5ff219985345d76f1aa5f5776c692ca796fe81df4fbe0310bde78",
+            "exit_code_source": "promotion-caption-contract-validation.json"
+          }
+        },
+        {
+          "id": "social_publish",
+          "status": "PASS",
+          "command": "NODE_OPTIONS=--max-old-space-size=384 /home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --no-config --no-lock --no-prompt --deny-net --deny-run tests/social-publish/publish.test.ts",
+          "cwd": ".",
+          "exit_code": 0,
+          "tests_passed": 16,
+          "tests_failed": 0,
+          "evidence": {
+            "log": "promotion-caption-publish-deno.log",
+            "sha256": "ec9625f08260f3bc2971c3b9e57a7a56945338df7aac64c3cd6ccc08d6854463",
+            "exit_code_source": "promotion-caption-contract-validation.json"
+          }
+        }
+      ],
+      "attestation": {
+        "file": "promotion-caption-contract-validation.json",
+        "sha256": "06510bd9d667693f9894d37ce0e8359405bd7665ddefa1645e6cacdaaf4d9310",
+        "source_hashes_verified": 3,
+        "attempts": "Both executable gates passed on their first local execution after this correction."
+      },
+      "workflow_static": {
+        "status": "PASS",
+        "comparison_base": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+        "jobs": {
+          "karta": {
+            "original_steps_preserved": 8,
+            "additional_steps": 1
+          },
+          "site": {
+            "original_steps_preserved": 32,
+            "additional_steps": 4
+          }
+        },
+        "system_chrome": "/opt/google/chrome/chrome",
+        "chromiumSandbox": true,
+        "runtime_execution_claimed": false
+      },
+      "preservation": {
+        "status": "PASS",
+        "KARTA_OTS_production_unchanged_from": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+        "only_KARTA_test_exceptions": [
+          "karta/test/assistantPolicy.test.ts",
+          "karta/test/overageCredit.test.ts"
+        ],
+        "scheduler_blobs_unchanged": 6
+      },
+      "counting": "Report 55 policy cases and 16 publication cases separately. Do not add reruns to the historical 310 or claim the full 1639-case KARTA suite passed.",
+      "not_retested": [
+        "Full KARTA suite",
+        "All other original local gates",
+        "System Chrome browser runtime",
+        "New GitHub Actions run"
+      ]
+    },
+    "initial_limitations_updated_by_ci": [
+      "Cold Stripe18.5 npm resolution is now verified by the initial CI run, despite the earlier local registry refusal.",
+      "GitHub Actions was executed for the initial candidate and failed in KARTA and browser startup; no passing Chromium scenario or successful global CI result is claimed."
+    ],
+    "source_hashes": {
+      "algorithm": "sha256",
+      "mode": "Changed-file delta against the initial candidate; original top-level source_sha256 remains intact.",
+      "base_commit": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+      "selection": "git diff 07faa21e353df0d84bf1059a0d4d01d75cf79b73 --name-only; qa/ excluded",
+      "files": 5,
+      "unchanged_initial_sources_verified": 51,
+      "timing": "Collected after the two corrective test runs and documentary edits."
+    },
+    "source_sha256": {
+      ".github/workflows/purama-chef-hardening.yml": "a4dfb81fe666cddad9079236114277b17d36ef687028ef423a60768b9b4f2d3a",
+      "karta/test/assistantPolicy.test.ts": "59ccc6bc55e8747a9185477ac8ad2dffab940490f2200adcc074dfc44032019f",
+      "supabase/functions/social-publish/handler.ts": "9ff04bd2652418a85346fe88b172bbd0d328334daaefd279fc89da8b278796dd",
+      "tests/revenue/README.md": "9d49e24faff7b90e9d5799027d17cf1cf5fe9a5c87904e4d1d6fa11869f566cf",
+      "tests/social-publish/publish.test.ts": "3af63ab81649c10f3f2a11ea25f14c5e1ddb0941f6f1ce37a3aa858f75ff0784"
+    },
+    "impact_review": {
+      "status": "PARTIEL",
+      "baseline_graph_commit": "5b1338f8a7ff520b6509394ddf7ec8dc9eb2e6f0",
+      "worktree_override_used": true,
+      "comparisons": [
+        {
+          "base_ref": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+          "summary": {
+            "changed_count": 27,
+            "affected_count": 2,
+            "changed_files": 7,
+            "risk_level": "medium"
+          },
+          "truncated": false,
+          "git_file_count": 7,
+          "symbol_paths_outside_diff": [],
+          "evidence_file": "promotion-followup-detect-previous.json",
+          "evidence_sha256": "5bdf986d8e100e2526d967a3b45b20778017e81a8dd5ec52436b48700f0bd075"
+        },
+        {
+          "base_ref": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+          "summary": {
+            "changed_count": 1248,
+            "affected_count": 47,
+            "changed_files": 58,
+            "risk_level": "critical"
+          },
+          "truncated": true,
+          "git_file_count": 58,
+          "symbol_paths_outside_diff": [],
+          "evidence_file": "promotion-followup-detect-integration.json",
+          "evidence_sha256": "2497dfde8d38959fe384d762e76516e56bddf514c7ae50383091ac497c2fec2e"
+        },
+        {
+          "base_ref": "main",
+          "summary": {
+            "changed_count": 2112,
+            "affected_count": 202,
+            "changed_files": 781,
+            "risk_level": "critical"
+          },
+          "truncated": true,
+          "git_file_count": 781,
+          "symbol_paths_outside_diff": [],
+          "evidence_file": "promotion-followup-detect-main.json",
+          "evidence_sha256": "f9eee415bb8d5184936ef67826b680751b54cf3743550e0828fa3b2453ff9df3"
+        }
+      ],
+      "limitations": "The previous graph is incomplete for the composition; full integration and main symbol lists are truncated. Actual Git file lists match."
+    }
+  }
+}
