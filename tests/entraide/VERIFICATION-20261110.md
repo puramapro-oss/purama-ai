@@ -29,8 +29,8 @@ completion wording.
 | Focused TypeScript check | PASS | Page, browser transport and legacy compatibility adapter, with their real dependencies |
 | Deno type/import check | PASS | All four edge entry points, Deno 2.9.6, pinned npm Supabase SDK, existing local dependencies |
 | Targeted ESLint | PASS | Page and browser helpers; final checks recorded in the candidate handoff |
-| GitNexus change detection | PASS with coverage limit | 33 code/test/config files, 61 indexed symbols, one resolved Entraide flow, medium risk; newly added symbols and dynamic SQL are not fully represented |
-| Native concurrent SQL races | NON TESTÉ locally | Three explicit skips. The local namespace maps only UID/GID 0, so native PostgreSQL cannot be started as a permitted non-root user. Dedicated CI workflow supplied |
+| GitNexus change detection | PASS with coverage limit | Final pre-commit comparison: 34 files, 61 indexed symbols, one resolved Entraide flow, medium risk; newly added symbols and dynamic SQL are not fully represented |
+| Native concurrent SQL races | NON TESTÉ / CI BLOQUÉ | Three explicit local skips. The local namespace maps only UID/GID 0, so native PostgreSQL cannot be started as a permitted non-root user. The first remote CI attempt failed without any reported job steps or accessible log; no native SQL test pass is claimed |
 | Real browser scenarios and mobile viewport | BLOQUÉ / NON TESTÉ | Firefox cannot create even an empty page in this runtime; no product action executed |
 | Hosted Supabase auth, deployed edge runtime, production data | NON TESTÉ | No production credentials, migration or deployment was exercised |
 
@@ -44,6 +44,26 @@ successful runs above used bounded heap settings and one WebAssembly compilation
 task; failures were not relabeled as passes. The full-project TypeScript run also
 reported errors in files outside this change. Focused TypeScript success and a
 successful Vite build do not establish a globally clean typecheck.
+
+## Published candidate and remote CI observation
+
+[Draft PR #23](https://github.com/puramapro-oss/purama-ai/pull/23) contains the
+candidate. Its initial commit is
+`bf0be2bfd1cb53f7490be8da48f3002ee9acc620`, with Git tree
+`dce8b6ba3b3b9d9d15b0004df789299700625add`, exactly matching the locally checked
+tree. Later evidence-only documentation updates do not change the tested code.
+
+The first [PostgreSQL workflow run](https://github.com/puramapro-oss/purama-ai/actions/runs/42744686344)
+was created at 02:43:24 UTC on 10 November 2026 and completed with `failure` at
+02:43:28 UTC. Job `postgres` (129593857387) exposes an empty steps array; its log
+download returns `404 BlobNotFound`. The check output has no summary or text. The
+available connector rejects the annotation endpoint, so the underlying cause is
+not established. No billing, image, YAML or SQL fault is inferred from this.
+
+The workflow remains supplied for a compatible, permitted runner. Native
+concurrency verification is **not complete**, and this failed attempt contributes
+no passing product tests. No identical manual rerun was requested without a
+diagnosed cause to address.
 
 ## Browser limitation established separately from product behavior
 
