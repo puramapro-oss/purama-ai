@@ -94,6 +94,19 @@ beforeEach(async () => {
 });
 
 describe("verified approval continuation through the real loop and SQL-finalized receipts", () => {
+  it.each(["executed", "rejected"] as const)("does not claim another brief while resuming an already %s action", async resolution => {
+    await resolve(resolution);
+    const result = await run(trigger(resolution), user, { ...definition, pendingBriefKey: "pending_brief" });
+    expect(result).toMatchObject({ status: "error", retryable: false });
+    expect(result.errorMessage).toContain("Reprise automatique suspendue");
+    expect(h.buildContext).not.toHaveBeenCalled();
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(h.next).not.toHaveBeenCalled();
+    expect(h.pending).not.toHaveBeenCalled();
+    expect(JSON.stringify(result)).not.toContain(secret);
+    expect(h.finish).toHaveBeenCalledOnce();
+  });
   it("supplies the verified receipt and remaining steps to the model without replaying the effect", async () => {
     const result = await run();
     expect(h.decide.mock.calls[0][0].context).toMatchObject({

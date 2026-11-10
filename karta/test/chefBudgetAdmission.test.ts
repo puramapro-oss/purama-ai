@@ -180,7 +180,8 @@ describe("CHEF cumulative estimated-budget admission", () => {
   it("preserves worker-session, worktree and max_parallel admission restrictions", async () => {
     await db.query("UPDATE purama_ai.chef_missions SET max_parallel=1 WHERE id=$1", [mission]);
     await addTask("foreign-tree", { cost: 1, worktree: "/other", priority: 10 });
-    const a = await addTask("local", { cost: 1, worktree: "/mine" });
+    // Keep the expected candidate explicit even when insertion timestamps tie.
+    const a = await addTask("local", { cost: 1, worktree: "/mine", priority: 1 });
     await addTask("another", { cost: 1 });
     await worker("first", "codex", "/mine"); await worker("second");
     expect(await claim("first", "codex", "wrong-session")).toEqual([]);

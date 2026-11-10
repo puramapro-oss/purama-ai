@@ -13,12 +13,13 @@ export interface Agent {
   premium: boolean;
 }
 
+// Ces descriptions présentent des assistants IA, sans diplôme ni expérience humaine revendiqués.
 export const AGENTS: Agent[] = [
   {
     slug: "compta",
     name: "Agent Compta",
     category: "Finance",
-    description: "Comptable expert 20 ans. Factures, TVA, declarations, bilans.",
+    description: "Assistant IA de comptabilité : aide pour factures, TVA, déclarations et bilans.",
     icon: "calculator",
     color: "#0EA5E9",
     endpoint: `${N8N_BASE_URL}/compta`,
@@ -38,7 +39,7 @@ export const AGENTS: Agent[] = [
     slug: "juridique",
     name: "Agent Juridique",
     category: "Legal",
-    description: "Avocat 30 ans d'experience. Contrats, litiges, conformite.",
+    description: "Assistant IA juridique : informations et préparation de documents à vérifier.",
     icon: "scale",
     color: "#6D28D9",
     endpoint: `${N8N_BASE_URL}/juridique`,

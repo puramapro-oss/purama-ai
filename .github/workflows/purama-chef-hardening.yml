@@ -46,7 +46,13 @@ jobs:
           cache: npm
       - run: npm ci --no-audit
       - run: npm run test:dependencies
+      - run: npm run test:contracts-auth
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:quality -- karta-briefs.spec.ts karta-ui.spec.ts
+      - run: npm run test:wellbeing
+      - run: npm run test:voice-consent
+      - run: npm run test:ui-state
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev

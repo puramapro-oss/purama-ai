@@ -19,6 +19,8 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
   if (req.method !== "POST") return errorResponse("Method not allowed", 405);
 
+  if (!DOCUSEAL_WEBHOOK_SECRET) return errorResponse("Webhook authentication not configured", 503);
+
   const rawBody = await req.text();
 
   // ─── Verify shared-secret Bearer token ──────────────────────────
@@ -40,8 +42,6 @@ serve(async (req) => {
       console.error("[webhook] Invalid bearer token");
       return errorResponse("Invalid signature", 401);
     }
-  } else {
-    console.warn("[webhook] DOCUSEAL_WEBHOOK_SECRET not set — skipping verification (dev only)");
   }
 
   let payload: WebhookPayload;

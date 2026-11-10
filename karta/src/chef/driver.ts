@@ -181,6 +181,9 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       abortMessage: "Worker CHEF annulé",
       timeoutMessage: "Worker CHEF expiré",
     });
+    // Cancellation can arrive after the process promise settles, before this
+    // async method resumes. A late response must not restore a cancelled run.
+    if (signal?.aborted) throw new Error("Worker CHEF annulé");
     if (result.exitCode !== 0) {
       throw new Error(`Worker CHEF échoué (code=${result.exitCode ?? "null"}, signal=${result.signal ?? "none"})`);
     }

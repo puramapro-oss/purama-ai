@@ -479,6 +479,10 @@ export async function runChefWorkerCycle(
       }
     }
 
+    // A pending proof write may succeed after the renewal heartbeat aborted
+    // this cycle. Its late acknowledgement must not authorize finalization.
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant validation finale" };
+
     if (!verification.ok) {
       stopRenewal();
       const error = verification.error ?? "Vérification échouée";

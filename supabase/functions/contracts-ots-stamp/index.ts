@@ -17,13 +17,41 @@ serve(async (req) => {
   if (!body.contract_id) return errorResponse("Missing contract_id");
 
   const authHeader = req.headers.get("authorization");
-  if (!authHeader?.startsWith("Bearer ")) return errorResponse("Missing Authorization", 401);
+  const bearer = authHeader?.match(/^Bearer\s+(\S+)$/);
+  if (!bearer) return errorResponse("Missing Authorization", 401);
+
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  if (!serviceRoleKey) return errorResponse("Stamp authentication not configured", 503);
 
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    serviceRoleKey,
     { db: { schema: "purama_ai" } },
   );
+
+  // Preserve the existing webhook's exact service credential. A bearer prefix,
+  // client-supplied role or unverified JWT never grants this authority.
+  const token = bearer[1];
+  let serviceCaller = token.length === serviceRoleKey.length;
+  if (serviceCaller) {
+    let difference = 0;
+    for (let i = 0; i < token.length; i++) difference |= token.charCodeAt(i) ^ serviceRoleKey.charCodeAt(i);
+    serviceCaller = difference === 0;
+  }
+  if (!serviceCaller) {
+    try {
+      const { data, error } = await supabaseAdmin.auth.getUser(token);
+      if (error || !data?.user) return errorResponse("Unauthenticated", 401);
+      // Reuse the administrator role that already governs contract RLS.
+      const { data: isAdmin, error: roleError } = await supabaseAdmin.rpc("has_role", {
+        _user_id: data.user.id, _role: "admin",
+      });
+      if (roleError) return errorResponse("Authorization unavailable", 503);
+      if (isAdmin !== true) return errorResponse("Administrator access required", 403);
+    } catch {
+      return errorResponse("Authorization unavailable", 503);
+    }
+  }
 
   try {
     const { data: contract, error: loadErr } = await supabaseAdmin

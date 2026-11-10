@@ -98,8 +98,8 @@ export default function CreatorAgentDetail() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const submitMessage = async (msg: string): Promise<string | null> => {
-    if (!msg.trim() || !id || !user) return null;
+  const submitMessage = async (msg: string, signal?: AbortSignal): Promise<string | null> => {
+    if (!msg.trim() || !id || !user || signal?.aborted) return null;
     const tempUser: CreatorAgentChatMessage = {
       id: 'tmp-' + Date.now(),
       user_id: user.id,
@@ -112,10 +112,12 @@ export default function CreatorAgentDetail() {
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await chatWithAgent(id, sessionId, msg);
+      const res = await chatWithAgent(id, sessionId, msg, signal);
+      if (signal?.aborted) return null;
       setMessages(prev => [...prev, { ...tempUser, id: 'tmp-asst-' + Date.now(), role: 'assistant', content: res.reply, tokens: res.tokens }]);
       return res.reply;
     } catch (e) {
+      if (signal?.aborted) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
@@ -637,7 +639,7 @@ export default function CreatorAgentDetail() {
         agentName={agent.name}
         agentEmoji={agent.emoji}
         agentColor="#8B5CF6"
-        onSend={async (text) => submitMessage(text)}
+        onSend={submitMessage}
       />
     </div>
   );

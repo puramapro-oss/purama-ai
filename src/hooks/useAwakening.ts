@@ -1,114 +1,64 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { localJournalDate } from '@/lib/gratitude-journal';
 
-const STORAGE_KEY = 'purama_awakening';
-
-interface AwakeningState {
-  level: number;
-  xp: number;
+interface ActivityState {
+  owner: string;
   affirmationsSeen: number;
   breathSessions: number;
   gratitudeEntries: number;
   lastAffirmation: string | null;
-  streak: number;
   lastActiveDate: string | null;
 }
 
-const LEVELS = [
-  { name: 'Eveille', minXp: 0 },
-  { name: 'Conscient', minXp: 500 },
-  { name: 'Aligne', minXp: 1500 },
-  { name: 'Illumine', minXp: 4000 },
-  { name: 'Transcendant', minXp: 10000 },
-  { name: 'Unifie', minXp: 25000 },
-] as const;
+type Activity = 'affirmationsSeen' | 'breathSessions' | 'gratitudeEntries';
 
-const DEFAULT_STATE: AwakeningState = {
-  level: 1,
-  xp: 0,
-  affirmationsSeen: 0,
-  breathSessions: 0,
-  gratitudeEntries: 0,
-  lastAffirmation: null,
-  streak: 0,
-  lastActiveDate: null,
-};
+const LEVELS = [{ name: 'Activités choisies', minXp: 0 }] as const;
 
-function getLevelFromXp(xp: number): number {
-  for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= LEVELS[i].minXp) return i + 1;
-  }
-  return 1;
-}
-
-function getToday(): string {
-  return new Date().toISOString().split('T')[0];
+function emptyActivity(owner: string): ActivityState {
+  return { owner, affirmationsSeen: 0, breathSessions: 0, gratitudeEntries: 0, lastAffirmation: null, lastActiveDate: null };
 }
 
 export function useAwakening() {
-  const [state, setState] = useState<AwakeningState>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as AwakeningState;
-        const today = getToday();
-        const lastActive = parsed.lastActiveDate;
-        if (lastActive && lastActive !== today) {
-          const last = new Date(lastActive);
-          const now = new Date(today);
-          const diffDays = Math.floor((now.getTime() - last.getTime()) / 86400000);
-          if (diffDays === 1) {
-            parsed.streak += 1;
-          } else if (diffDays > 1) {
-            parsed.streak = 0;
-          }
-          parsed.lastActiveDate = today;
-        } else if (!lastActive) {
-          parsed.lastActiveDate = today;
-        }
-        parsed.level = getLevelFromXp(parsed.xp);
-        return parsed;
-      }
-    } catch { /* ignore */ }
-    return { ...DEFAULT_STATE, lastActiveDate: getToday() };
-  });
+  const { user } = useAuth();
+  const owner = user?.id ?? 'anonymous';
+  const activeOwner = useRef(owner);
+  activeOwner.current = owner;
+  const [stored, setStored] = useState<ActivityState>(() => emptyActivity(owner));
+  const state = stored.owner === owner ? stored : emptyActivity(owner);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
-
-  const addXp = useCallback((amount: number) => {
-    setState(prev => {
-      const newXp = prev.xp + amount;
-      return { ...prev, xp: newXp, level: getLevelFromXp(newXp) };
+  // These counters describe voluntary actions in the current mounted session.
+  // They never measure spirituality, health, worth, wallet credit or quota.
+  // No localStorage, remote write, streak penalty or background collection.
+  const record = useCallback((activity: Activity) => {
+    if (activeOwner.current !== owner) return;
+    setStored(previous => {
+      const current = previous.owner === owner ? previous : emptyActivity(owner);
+      const today = localJournalDate();
+      return {
+        ...current,
+        [activity]: current[activity] + 1,
+        lastActiveDate: today,
+        lastAffirmation: activity === 'affirmationsSeen' ? today : current.lastAffirmation,
+      };
     });
-  }, []);
+  }, [owner]);
 
-  const recordAffirmation = useCallback(() => {
-    setState(prev => ({ ...prev, affirmationsSeen: prev.affirmationsSeen + 1 }));
-    addXp(20);
-  }, [addXp]);
-
-  const recordBreathSession = useCallback(() => {
-    setState(prev => ({ ...prev, breathSessions: prev.breathSessions + 1 }));
-    addXp(50);
-  }, [addXp]);
-
-  const recordGratitude = useCallback(() => {
-    setState(prev => ({ ...prev, gratitudeEntries: prev.gratitudeEntries + 1 }));
-    addXp(30);
-  }, [addXp]);
-
-  const currentLevel = LEVELS[state.level - 1] || LEVELS[0];
-  const nextLevel = LEVELS[state.level] || null;
-  const progressToNext = nextLevel
-    ? ((state.xp - currentLevel.minXp) / (nextLevel.minXp - currentLevel.minXp)) * 100
-    : 100;
+  const recordAffirmation = useCallback(() => record('affirmationsSeen'), [record]);
+  const recordBreathSession = useCallback(() => record('breathSessions'), [record]);
+  const recordGratitude = useCallback(() => record('gratitudeEntries'), [record]);
+  // Keep the historical hook shape for callers. These legacy progression fields
+  // are inert; activity must not award a moral or spiritual rank.
+  const addXp = useCallback((amount: number) => { void amount; }, []);
 
   return {
     ...state,
-    currentLevelName: currentLevel.name,
-    nextLevelName: nextLevel?.name || null,
-    progressToNext: Math.min(100, Math.max(0, progressToNext)),
+    level: 1,
+    xp: 0,
+    streak: 0,
+    currentLevelName: LEVELS[0].name,
+    nextLevelName: null,
+    progressToNext: 0,
     addXp,
     recordAffirmation,
     recordBreathSession,

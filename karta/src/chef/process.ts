@@ -73,7 +73,6 @@ export async function runChefProcess(options: ChefProcessOptions): Promise<ChefP
     let settled = false;
     let stopReason: Error | undefined;
     let stopFailure: string | undefined;
-    let operationTimer: NodeJS.Timeout | undefined;
     let forceTimer: NodeJS.Timeout | undefined;
     let confirmationTimer: NodeJS.Timeout | undefined;
     let pollTimer: NodeJS.Timeout | undefined;
@@ -207,7 +206,7 @@ export async function runChefProcess(options: ChefProcessOptions): Promise<ChefP
       });
     });
 
-    operationTimer = setTimeout(() => requestStop(new Error(options.timeoutMessage)), options.timeoutMs);
+    const operationTimer = setTimeout(() => requestStop(new Error(options.timeoutMessage)), options.timeoutMs);
     options.signal?.addEventListener("abort", onAbort, { once: true });
     // Covers an abort occurring between the first check and listener installation.
     if (options.signal?.aborted) onAbort();

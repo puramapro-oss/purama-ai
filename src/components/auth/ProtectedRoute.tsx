@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -24,5 +25,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <>{children}</>;
+  // A new account must never inherit the previous account's local form state.
+  // Keep the same tree for token refreshes that retain the same user ID.
+  return <Fragment key={user.id}>{children}</Fragment>;
 }

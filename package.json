@@ -14,7 +14,11 @@
     "test:dependencies": "node --test tests/dependency-compat.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test:quality": "playwright test --config tests/quality/playwright.config.ts",
-    "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check"
+    "test:wellbeing": "playwright test --config tests/wellbeing/playwright.config.ts",
+    "test:voice-consent": "playwright test --config tests/voice-consent/playwright.config.ts",
+    "check:database-contracts": "node scripts/generate-supabase-contracts.mjs --check",
+    "test:contracts-auth": "node --test --test-concurrency=1 tests/contracts-ots-auth.mjs",
+    "test:ui-state": "playwright test --config tests/ui-state/playwright.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

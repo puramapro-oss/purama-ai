@@ -55,9 +55,42 @@ export const KARTA_ACTION_AGENT_TYPES = [
   "reservation-intelligente",
 ] as const;
 
-export const KartaTriggerSchema = z.object({
-  agentType: z.enum(KARTA_ACTION_AGENT_TYPES),
-});
+export const KARTA_BRIEF_AGENT_TYPES = [
+  "campagnes-par-courriel",
+  "pro-de-la-sensibilisation-au-froid",
+  "newsletter-genie",
+  "maitre-des-publicites",
+  "planificateur-d-appels",
+  "reservation-intelligente",
+] as const;
+
+const kartaRequestId = z.string().uuid().toLowerCase();
+const kartaBriefAgent = z.enum(KARTA_BRIEF_AGENT_TYPES);
+const kartaBrief = z.string().trim().min(1).max(8000).refine(
+  (value) => value.length <= 8000 && new TextEncoder().encode(value).byteLength <= 32000,
+  "La consigne est trop volumineuse",
+);
+
+// The authenticated account and execution identity are server-owned. Strict
+// variants prevent accidental forwarding of userId, executionKey or tool data.
+export const KartaTriggerSchema = z.union([
+  z.object({
+    agentType: z.enum(KARTA_ACTION_AGENT_TYPES),
+    requestId: kartaRequestId.optional(),
+  }).strict(),
+  z.object({
+    action: z.literal("submit-brief"), agentType: kartaBriefAgent,
+    submissionId: kartaRequestId, requestId: kartaRequestId, brief: kartaBrief,
+  }).strict(),
+  z.object({
+    action: z.literal("retry-brief"), agentType: kartaBriefAgent,
+    submissionId: kartaRequestId, requestId: kartaRequestId,
+  }).strict(),
+  z.object({ action: z.literal("list-briefs"), agentType: kartaBriefAgent }).strict(),
+  z.object({
+    action: z.literal("brief-status"), agentType: kartaBriefAgent, submissionId: kartaRequestId,
+  }).strict(),
+]);
 
 // Helper
 export function validateBody<T>(

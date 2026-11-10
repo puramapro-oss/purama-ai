@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, Mic, MicOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { UseVoice } from '@/hooks/useVoice';
+import { useAuth } from '@/hooks/useAuth';
+import { createRequestScope } from '@/lib/request-scope';
 import { toast } from 'sonner';
 
 interface Props {
@@ -13,7 +15,7 @@ interface Props {
   agentEmoji?: string;
   agentColor?: string;
   /** Send the transcribed text and return the assistant reply */
-  onSend: (text: string) => Promise<string | null>;
+  onSend: (text: string, signal?: AbortSignal) => Promise<string | null>;
 }
 
 type Phase = 'idle' | 'listening' | 'thinking' | 'speaking';
@@ -33,6 +35,9 @@ export function VoiceMode({
   agentColor = '#8B5CF6',
   onSend,
 }: Props) {
+  const { user } = useAuth();
+  const [turns] = useState(createRequestScope);
+  const reducedMotion = useReducedMotion();
   const {
     isRecording, isTranscribing, isSpeaking,
     startRecording, stopRecording, cancelRecording,
@@ -42,81 +47,95 @@ export function VoiceMode({
   const [phase, setPhase] = useState<Phase>('idle');
   const [userText, setUserText] = useState('');
   const [agentText, setAgentText] = useState('');
+  const [busyTurn, setBusyTurn] = useState(false);
   const phaseRef = useRef<Phase>('idle');
   phaseRef.current = phase;
 
-  // Reset state when closing
-  useEffect(() => {
-    if (!open) {
+  // Closing, switching accounts, or unmounting invalidates the whole voice turn.
+  useLayoutEffect(() => {
+    turns.invalidate();
+    cancelRecording();
+    stopSpeaking();
+    setBusyTurn(false);
+    setPhase('idle');
+    setUserText('');
+    setAgentText('');
+    return () => {
+      turns.invalidate();
       cancelRecording();
       stopSpeaking();
-      setPhase('idle');
-      setUserText('');
-      setAgentText('');
-    }
-  }, [open, cancelRecording, stopSpeaking]);
+    };
+  }, [open, user?.id, turns, cancelRecording, stopSpeaking]);
+
+  const closeMode = useCallback(() => {
+    // Do not wait for the parent to render open=false before honouring the close.
+    turns.invalidate();
+    cancelRecording();
+    stopSpeaking();
+    onClose();
+  }, [turns, cancelRecording, stopSpeaking, onClose]);
 
   // Sync phase with hook state
   useEffect(() => {
+    if (!open) return;
     if (isRecording) setPhase('listening');
-    else if (isTranscribing) setPhase('thinking');
     else if (isSpeaking) setPhase('speaking');
-  }, [isRecording, isTranscribing, isSpeaking]);
+    else if (isTranscribing || busyTurn) setPhase('thinking');
+    else setPhase('idle');
+  }, [open, isRecording, isTranscribing, isSpeaking, busyTurn]);
 
   const handleMicTap = async () => {
-    if (phase === 'speaking') {
+    if (!open) return;
+    if (phaseRef.current === 'speaking') {
+      turns.invalidate();
       stopSpeaking();
+      setBusyTurn(false);
       setPhase('idle');
       return;
     }
-    if (phase === 'listening') {
-      const text = await stopRecording();
-      if (!text || !text.trim()) {
-        setPhase('idle');
+    if (phaseRef.current === 'thinking') return;
+    const wasListening = phaseRef.current === 'listening';
+    const lease = turns.begin('turn');
+    if (!lease) return;
+    setBusyTurn(true);
+    try {
+      if (!wasListening) {
+        setUserText('');
+        setAgentText('');
+        await startRecording();
         return;
       }
+      const text = await stopRecording();
+      if (!lease.current() || !text?.trim()) return;
       setUserText(text);
       setPhase('thinking');
-      try {
-        const reply = await onSend(text);
-        if (reply) {
-          setAgentText(reply);
-          setPhase('speaking');
-          await speak(reply);
-        } else {
-          setPhase('idle');
-        }
-      } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-        setPhase('idle');
+      const reply = await onSend(text, lease.signal);
+      if (!lease.current() || !reply) return;
+      setAgentText(reply);
+      await speak(reply);
+    } catch (e) {
+      if (lease.current()) {
+        toast.error(wasListening ? 'Erreur' : 'Micro indisponible', {
+          description: e instanceof Error ? e.message : String(e),
+        });
       }
-      return;
-    }
-    // idle → start
-    try {
-      setUserText('');
-      setAgentText('');
-      await startRecording();
-    } catch {
-      toast.error('Micro indisponible', { description: "Autorise l'accès au microphone." });
+    } finally {
+      if (lease.current()) { setBusyTurn(false); lease.finish(); }
     }
   };
 
   // Synthetic level when speaking (TTS) so the waveform stays alive
   const [synthLevel, setSynthLevel] = useState(0);
   useEffect(() => {
-    if (phase !== 'speaking') {
+    if (phase !== 'speaking' || reducedMotion) {
       setSynthLevel(0);
       return;
     }
-    let raf: number;
-    const tick = () => {
+    const timer = setInterval(() => {
       setSynthLevel(0.35 + Math.random() * 0.55);
-      raf = requestAnimationFrame(() => setTimeout(tick, 80) as unknown as number);
-    };
-    tick();
-    return () => cancelAnimationFrame(raf);
-  }, [phase]);
+    }, 80);
+    return () => clearInterval(timer);
+  }, [phase, reducedMotion]);
 
   const liveLevel = phase === 'listening' ? audioLevel : phase === 'speaking' ? synthLevel : 0;
 
@@ -154,7 +173,7 @@ export function VoiceMode({
             </div>
             <button
               type="button"
-              onClick={onClose}
+              onClick={closeMode}
               aria-label="Fermer le mode vocal"
               className="w-10 h-10 rounded-full border border-border bg-secondary/40 hover:bg-secondary/70 flex items-center justify-center text-muted-foreground hover:text-foreground transition"
             >
@@ -166,7 +185,7 @@ export function VoiceMode({
           <div className="flex flex-col items-center gap-8 flex-1 justify-center w-full max-w-2xl">
             <PhaseLabel phase={phase} agentName={agentName} />
 
-            <Waveform bars={barArray} level={liveLevel} color={agentColor} active={phase !== 'idle'} />
+            <Waveform bars={barArray} level={liveLevel} color={agentColor} active={phase !== 'idle' && !reducedMotion} />
 
             {/* Live transcripts */}
             <div className="w-full space-y-3 min-h-[120px]">

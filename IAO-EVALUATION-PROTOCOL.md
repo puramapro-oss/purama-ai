@@ -93,6 +93,112 @@ Les points ouverts de `IAO-SAFETY-REVIEW.md` demeurent : diagnostics TypeScript 
 
 La cible raisonnable est une fiabilité mesurée sur des usages définis, des erreurs détectées et récupérables, et une progression vérifiable. Aucune campagne finie ne permet d'affirmer « tous les besoins, zéro bug, zéro latence, aucune concurrence ».
 
+## Complément du 9 novembre 2026 — Jev et sélection de moteurs
+
+Ce complément conserve une seule IAO, KARTA/KRIYA pour les missions, SMARANA/AKASHA pour
+la mémoire, VAJRA pour les droits, SATYA/PRAMANA pour les preuves et AGNI pour l'observation.
+Les moteurs ci-dessous sont des candidats spécialisés à qualifier, pas un appel simultané
+à tous les fournisseurs ni une preuve de supériorité mondiale.
+
+### Ajout logiciel Jev
+
+Le connecteur `karta/src/jev/` et la factory `createJevJudgmentTool` sont préparés dans cette
+branche, sans activation automatique. Ils valident les contrats, bornent le transport,
+permettent l'abstention et exigent des callbacks serveur d'autorisation, de réservation et
+de réconciliation. Le [contrat d'intégration](karta/src/jev/README.md) précise les limites.
+
+Les fournisseurs sont simulés dans les tests. Aucun résultat de ces tests n'est un score
+de précision, de calibration, de vitesse ou de coût réel de Jev. Le signal d'annulation,
+les quotas atomiques et les autorisations doivent être raccordés aux services canoniques
+par l'hôte avant utilisation.
+
+Validation de ce complément : **83 nouveaux tests Jev** (30 schéma, 19 transport,
+34 outil), **588 tests KARTA réussis dans 49 fichiers**, compilation et contrôle
+TypeScript KARTA réussis. [Preuve du lot](karta/test/evidence/jev-20261109.json).
+Ces résultats s'ajoutent à l'historique daté plus haut ; ils ne réexécutent pas la
+campagne étendue de 200 000 cas et ne certifient pas le site complet.
+
+### Catalogue court à comparer
+
+| Rôle proposé | Candidat identifié | Décision de qualification |
+| --- | --- | --- |
+| Jugements structurés | [Jev 1.14.0](https://docs.typesafe.ai/models) | Questions bornées, version épinglée, abstention et critères propres au cas d'usage |
+| Code et travail général | [GPT-6.1 Sol](https://developers.openai.com/api/docs/models/gpt-6.1-sol) | Vérifier l'adaptateur Responses pour les outils et la qualité sur les missions PURAMA |
+| Alternative et contre-expertise ciblée | [Claude Sonnet 5.5](https://platform.claude.com/docs/en/models/sonnet-5-5/overview) | Réutiliser le fournisseur existant ; deuxième réponse seulement si son gain est mesuré |
+| Opérations courantes bornées | [GPT-6 Luna](https://developers.openai.com/api/docs/models/gpt-6-luna) | Respecter le même seuil de qualité ; exclure les usages où le modèle économique échoue |
+| Compréhension multimodale | [Gemini 3.8 Flash](https://aistudio.google.com/docs/models/gemini-3.8-flash) | Entrées audio/vidéo/image/PDF ; sortie texte, génération média évaluée séparément dans SUTRA |
+| Alternatives API | [DeepSeek V4.1 Flash](https://api-docs.deepseek.com/quick_start/pricing/) ou [Mistral Small 4](https://docs.mistral.ai/models/mistral-small-4-0-26-03) | Comparer aux connecteurs déjà disponibles ; enregistrer versions, politique de données et coût complet |
+| Recherche des preuves AKASHA | [Qwen3 Embedding et Reranker](https://qwenlm.github.io/blog/qwen3-embedding/) | Essai sur un échantillon, sans réindexation générale avant preuve du gain |
+| Transcription | [Voxtral Mini Transcribe 3](https://docs.mistral.ai/models/voxtral-mini-transcribe-3-0) | Offre en aperçu ; ajouter seulement si une lacune du moteur vocal actuel est mesurée |
+| Escalade pour tâches difficiles | [GPT-6 Astra](https://developers.openai.com/api/docs/models/gpt-6-astra), éventuellement [Claude Fable 5.2](https://platform.claude.com/docs/en/models/fable-5-2/overview) | Budget explicite, contrats et données admissibles, amélioration de réussite démontrée |
+
+Ce tableau ne modifie aucun modèle de production, abonnement ou compte. Le moteur le
+moins cher admissible est choisi seulement **après** les contraintes de qualité, de
+droits, de données, d'outils et de délai. Un domaine non évalué reste non qualifié.
+
+### Techniques à mesurer dans les composants existants
+
+1. Recherche lexicale et vectorielle combinée, puis reclassement des passages ; vérifier
+   droits, dates et références avant génération. [Principe de recherche hybride](https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview).
+2. Cache exact lié au contrat et aux permissions, préfixes stables, déduplication des
+   opérations et réutilisation d'artefacts validés. Ne pas confondre une cache-hit logique
+   avec une preuve de fraîcheur ou d'autorisation.
+3. Effort de raisonnement ajusté à la tâche, outils chargés à la demande et transformations
+   déterministes en code. Mesurer la réussite avant de réduire l'effort. [Effort](https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost), [outils](https://www.anthropic.com/research/advanced-tool-use).
+4. Parallélisme limité aux tâches indépendantes, échéance commune et interruption des
+   travaux devenus inutiles. Comparer le coût par succès au total des appels, y compris
+   reprises, vérifications et erreurs.
+5. Traitement différé/batch des tâches non urgentes, budgets réservés puis rapprochés,
+   limites de concurrence et absence de baisse silencieuse sous le seuil de qualité.
+6. Spéculation, quantification et optimisation du cache KV seulement si PURAMA contrôle
+   l'inférence. Cela n'ajoute pas une option magique aux API distantes ; confirmer
+   exactitude, matériel et distribution du résultat. [vLLM](https://docs.vllm.ai/en/latest/features/speculative_decoding/).
+
+Pour Jev, ajouter aux scénarios réservés : catégories incomplètes, ambiguïtés, français,
+permutation des options, adversaires textuels, qualité selon niveau de confiance,
+couverture après abstention, erreurs 402/429, réponse tardive et révocation pendant la
+réconciliation. Une réponse structurée ou la concordance de deux modèles ne suffit pas
+à établir la vérité. Les critères exécutables restent contrôlés par le code et les
+critères qualitatifs par une procédure de revue calibrée.
+
+Les indicateurs restent séparés : qualité, temps utile et total p50/p95, coût par mission
+réussie, volume facturé et énergie. Les kWh d'une API distante sont **inconnus** sans
+télémétrie fournisseur adéquate ; une baisse de tokens ne mesure pas à elle seule une
+baisse d'énergie. Aucun pourcentage de gain de production n'a été calculé dans ce lot.
+
+### Révision du 9 novembre 2026 — traces privées et clôture fiable
+
+Le connecteur Jev déclare maintenant une politique serveur `metadata_only`. Le moteur
+minimise les entrées/sorties, décisions, erreurs et notifications de tout cycle protégé,
+y compris les appels ordinaires qui pourraient reprendre le même contenu. Le marqueur
+durable accompagne les approbations et les relectures d'exécution ; les objets nécessaires
+à l'action autorisée restent intacts. Le [contrat Jev](karta/src/jev/README.md) détaille
+les limites, dont les anciennes données stockées et les journaux internes des outils.
+
+Le journal fixe le premier résultat final et conditionne son écriture à l'identité du
+cycle, à son propriétaire, à l'agent, au statut initial et à une durée encore absente.
+Une perte d'accusé est réconciliée contre le résultat exact ; une erreur secondaire
+ne remplace plus une action réussie ni une approbation déjà résolue. La boucle peut
+effectuer une seule seconde tentative de clôture du même résultat, sans réexécuter
+l'outil. Si elle reste non confirmée, la reprise automatique est interdite, même pour
+un cycle sans outil et sans clé de déduplication.
+
+Les nouvelles vérifications exercent la vraie boucle, la résolution d'approbation et
+le connecteur Jev désactivé, avec fournisseurs simulés. La clôture est également testée
+avec du SQL PostgreSQL exécuté dans PGlite. Les résultats et empreintes sont consignés
+dans la [preuve complémentaire](karta/test/evidence/traces-finalization-20261109.json).
+Une vérification locale n'atteste ni le déploiement ni le succès de GitHub Actions.
+
+L'admission/réservation monétaire, la révocation effective et le consommateur métier
+des jugements Jev restent à raccorder. Les compteurs Gmail, l'usage CHEF après exécution
+et le compteur frontend ne sont pas utilisés comme substituts à ce service.
+
+Consolidation avec la PR #14 : conserver ses typages de tests, puis ajouter au double
+`logger.test.ts` la valeur SQL initiale `duration_ms: null` et la méthode `is()` (également
+dans son interface typée). Dans `loop.test.ts`, le résultat après clôture confirmée puis
+échec du suivi secondaire est désormais `success`, avec une seule écriture finale.
+Les autres fichiers de cette PR sœur ne sont pas modifiés par cette révision.
+
 ## Consolidation KARTA du 10 novembre 2026
 
 **PASS pour le lot isolé : 612 tests sur 52 fichiers, contrôle TypeScript et compilation. PARTIEL pour l'intégration dans PURAMA ONE.** Ce relevé remplace le compte de régressions KARTA pour cette version précise ; les campagnes historiques ci-dessus ne sont pas additionnées à ce résultat.
@@ -114,6 +220,82 @@ GitNexus a examiné les symboles existants avant modification. Les risques HIGH 
 Les fournisseurs et le transport des files sont simulés. Les contrôles PGlite exécutent les contrats SQL dans le banc local, sans qualifier une instance PostgreSQL native à plusieurs connexions, ses rôles/RLS, Redis ni une migration déployée. La révocation est revérifiée avant l'effet ; elle n'est pas atomique avec une opération ultérieure chez un fournisseur. Les paramètres métier nécessaires à une approbation restent conservés dans son chemin autorisé ; la minimisation ne certifie pas les journaux internes des connecteurs.
 
 Le déploiement et les parcours réels de PURAMA ONE restent **NON TESTÉS**. Le dépôt GitHub `purama-one` était vide lors de ce contrôle ; le checkout local, les verrous et les propriétaires actuels des terminaux restent inaccessibles. L'intégrateur doit réconcilier ce lot avec les autres branches avant toute fusion, puis qualifier les migrations et les parcours authentifiés sur la cible réelle. Aucun appel à un modèle ou fournisseur métier payant n'a été effectué pour cette campagne.
+
+### Rapprochement Jev du 10 novembre 2026
+
+Les huit fichiers dédiés à Jev du commit `7658be81e937b33a0b5aa3dab6d7939857a8aca8`
+et l'export de sa factory sont rétablis à l'identique sur la consolidation
+`1daf6314d60f6dd336c3a3601ddf73cf432ef4b3`. Le complément Jev du 9 novembre et le
+relevé de consolidation ci-dessus sont conservés avec leurs résultats historiques.
+L'export ne modifie aucune liste d'outils autorisés et n'active pas le fournisseur.
+
+**PASS pour la vérification ciblée : 86/86 tests dans quatre fichiers et contrôle
+TypeScript KARTA terminé avec le code 0.** Les empreintes des sources TypeScript
+sont restées identiques pendant ce contrôle. Les 83 tests schéma/transport/outil
+de Jev sont complétés par trois tests dans `karta/test/loopJevTracePrivacy.test.ts` :
+factory désactivée sans requête, jugement autorisé avec charge privée conservée et
+traces minimisées, approbation en attente avec charge intacte et notification expurgée.
+Ces tests utilisent la vraie boucle, la factory publique et le transport Jev avec
+un fournisseur et des services d'autorisation/réconciliation simulés. Le réseau
+externe est bloqué dans cette suite d'intégration.
+
+Commandes ciblées depuis `karta/`, avec le runtime Node 24.22.1 de l'environnement :
+
+```bash
+node node_modules/vitest/vitest.mjs run test/jev-schema.test.ts test/jev-client.test.ts test/jev-tool.test.ts test/loopJevTracePrivacy.test.ts
+node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json
+```
+
+Ce résultat ciblé ne constitue pas un nouveau total de régression complète ni une
+qualification de Jev en production. Les raccordements serveur et les parcours réels
+décrits dans le contrat Jev restent à vérifier avant activation.
+
+
+## Validation locale du 10 novembre 2026 — consignes durables et approbations
+
+Cette campagne réunit la consolidation moteur `1daf6314`, le connecteur Jev
+issu de `7658be81` et les corrections de conservation des consignes et
+d’admission des approbations. Le connecteur Jev et ses tests historiques sont
+réutilisés ; les protections d’autorité custom de la consolidation sont
+conservées.
+
+| Contrôle exécuté sur les mêmes sources | Résultat |
+|---|---|
+| Suite KARTA complète | **PASS — 864/864 tests, 61 fichiers, aucun ignoré** |
+| Contrat des consignes, SQL et cycle joint | **PASS — 118 scénarios** |
+| Admission des approbations et référence 006 | **PASS — 48 scénarios** |
+| Jev : schéma, transport, outil et boucle | **PASS — 86 tests** |
+| Vérification TypeScript | **PASS — code de sortie 0** |
+| Compilation KARTA | **PASS — code de sortie 0** |
+| Stabilité pendant les trois contrôles | **PASS — 151 fichiers de code/configuration inchangés** |
+
+Les nombres ciblés sont des sous-ensembles des 864 tests, pas des tests à
+additionner une seconde fois. La commande complète utilise un seul worker
+Vitest et aucun parallélisme entre fichiers, après un ralentissement de
+l’environnement partagé. Les lancements interrompus antérieurs ne comptent
+pas comme validations.
+
+Le défaut de conservation a été reproduit avant correction avec le vrai
+moteur et la définition Newsletter, aux frontières réseau doublées. Les tests
+joints exécutent désormais les fonctions et déclencheurs PostgreSQL via
+PGlite, avec le vrai logger et le client RPC. Le test d’approbation démontre
+séparément l’admission orpheline sous 006 et son refus sous 019.
+
+Preuve et empreintes :
+[`karta/test/evidence/briefs-approvals-20261110.json`](karta/test/evidence/briefs-approvals-20261110.json).
+Contrat et mise en service :
+[`karta/src/engine/BRIEF-LIFECYCLE.md`](karta/src/engine/BRIEF-LIFECYCLE.md).
+
+**Limites maintenues :** migrations 018/019 non appliquées en production,
+charge PostgreSQL multiconnexion/BullMQ non testée, fournisseurs réels et Jev
+live non activés, aucun classement de puissance/prix/vitesse démontré. Le
+parcours de dépôt d’une consigne dans le frontend reste à raccorder ; la
+reprise automatique d’une mission partielle après approbation n’est pas
+prétendue. Les simulations lisent sans consommer, les reprises live sont
+bornées à trois acquisitions et les états ambigus conservent leur consigne
+pour réconciliation.
+
+> Relevé historique du lot de livraison publié dans `27815bcc`. Les résultats ci-dessous concernent cette révision seule ; ils ne valident pas automatiquement son assemblage avec les consignes et Jev.
 
 ## Exécution durable, reprise vérifiée et états honnêtes — 10 novembre 2026
 
@@ -199,3 +381,79 @@ GitNexus signale automatiquement un risque **CRITICAL** : ses trois vues compten
 5. Les propriétaires des connecteurs vérifient les effets et les autorisations sur leurs comptes de test. La prévention des conflits entre missions différentes, l'ascendance durable de plusieurs approbations et les mesures de charge/latence restent des lots identifiés.
 
 Aucun déploiement, aucune migration réelle ni fusion dans `main` ne découle de ces tests locaux. Les interfaces Mac interrogées pendant cette passe renvoient une erreur interne ; le constat ne nie pas les accès à d'autres périmètres consignés dans la note de continuité. Le périmètre confirmé reste ce correctif de `purama-ai`.
+
+## Parcours de mission utilisateur consolidé — 10 novembre 2026
+
+**PASS pour les contrôles locaux exécutés ; PARTIEL pour la livraison globale.**
+Ce lot réunit la PR20 au commit `d553ff2e784a82685d16f59727c55d5499d0db9e`
+et la livraison publiée dans `27815bcc9660adcc925f1a6c2b8651ff04ff5062`.
+Les protections et les tests Jev sont conservés, sans activation du fournisseur.
+La migration019 et son test communs aux deux branches ne sont présents qu’une fois.
+
+Le formulaire « Donner une mission » raccorde les six employés à consigne à
+l’admission SQL, à la file existante et au suivi de leur résultat exact. Le texte
+est enregistré avant l’envoi à la file. Une réponse perdue conserve les identités
+nécessaires à une reprise ; une autre consigne n’est jamais choisie à sa place.
+Le navigateur conserve seulement les identifiants de suivi, par compte et agent.
+Une consultation ne déclenche aucune action. Les simulations, validations
+humaines et effets incertains restent présentés séparément.
+
+La revue croisée a corrigé quatre cas : référence de livraison perdue après une
+réponse non confirmée, mission ancienne perdue après plusieurs rechargements,
+texte rejeté effacé lors de la récupération d’un conflit, et slot en attente
+masqué par vingt reçus plus récemment actualisés. Les trois corrections de
+l’interface sont compilées et assorties de scénarios ; leur exécution dans un
+navigateur reste **NON TESTÉE**. Le cas de priorité SQL a été exécuté.
+
+| Contrôle | Résultat et portée |
+| --- | --- |
+| Campagne KARTA complète | **1065/1065**, 68 fichiers, aucun ignoré ; 47 fichiers ordinaires puis 21 fichiers PGlite dans des processus successifs. |
+| Dernières corrections | **46/46** : admission SQL 32, parcours intégré 10, client RPC 4. Seulement quatre fichiers avaient changé depuis la campagne complète. |
+| Inventaire par dernière version de fichier | **1066 tests**, avec la provenance de chaque fichier. Il ne s’agit pas d’une nouvelle campagne complète de 1066 tests. Les 46 ne sont pas à ajouter aux 1065. |
+| TypeScript moteur et frontend | **PASS**, y compris après les dernières corrections. |
+| Compilation | **PASS** moteur dans la campagne complète ; **PASS** frontend également après les dernières corrections. Aucun code moteur TypeScript n’a changé entre les deux passages. |
+| Lint frontend ciblé, zéro avertissement autorisé | **PASS**, après les dernières corrections. |
+| Contrat Supabase généré | **PASS**, dans la campagne complète ; les types n’ont pas changé ensuite. |
+| Stabilité des sources | **648 fichiers** de code/configuration contrôlés, aucune modification pendant chacun des deux passages. |
+| Scénarios Playwright | **28 découverts**, aucun parcours navigateur de cette campagne exécuté. |
+
+Les tests intégrés traversent les vraies routes HTTP locales, le SQL d’admission,
+l’identité de livraison, le worker, la boucle, le logger et le statut. Les
+frontières de transport, modèle et effet métier sont inertes. Le contrôle
+TypeScript adapté du proxy utilise le source réel, une résolution locale des
+modules et des déclarations Deno virtuelles ; il ne valide pas une exécution
+native Deno ni la fonction déployée.
+
+Un passage ciblé antérieur a expiré pendant l’initialisation PGlite et a été
+interrompu ; ses douze succès et trente et un tests en attente ne sont pas
+comptés comme campagne validée. Les suites SQL ont ensuite été isolées par
+processus, sans allonger le délai des tests. L’essai Firefox borné à vingt-cinq
+secondes n’a pas atteint de page. Aucun défaut visuel ni succès visuel n’est
+déduit de ce blocage.
+
+Les commandes, codes de sortie, empreintes, résultats par fichier et limites
+figurent dans [mission-flow-20261110.json](karta/test/evidence/mission-flow-20261110.json).
+Le contrat et la mise en service figurent dans
+[BRIEF-SUBMISSION.md](karta/src/engine/BRIEF-SUBMISSION.md).
+
+**Limites restantes :** migration021 non appliquée en production, parcours
+Supabase/PostgREST authentifié réel, PostgreSQL natif multiconnexion, Redis,
+fournisseurs et navigateur opérationnel non qualifiés. La continuation d’une
+ancienne approbation ne peut pas acquérir un nouveau brief ; la poursuite
+complète de ces missions attend encore son transfert durable de reçu. La PR21
+utilise des numéros de migration et un contexte de continuation à rapprocher
+avant fusion. Aucun benchmark de coût, quota, vitesse ou supériorité universelle
+n’est établi par ce lot.
+
+Le contrôle GitNexus précommit classe le lot préparé et la comparaison au vrai
+`main` vérifié (`d116dc8a`) en **CRITICAL**. Les chemins préparés correspondent
+aux fichiers revus ; la comparaison à `main` inclut les travaux hérités. Les
+comptes et sorties sont conservés dans le reçu. Les liens par noms génériques
+et les parcours omis limitent le graphe. Le risque a été signalé avant publication ;
+la PR reste en brouillon.
+
+La CI du head précédent (`d553ff2e`) reste en échec avec étapes vides et journaux
+indisponibles ; les annotations ne sont pas accessibles par le connecteur.
+La cause est **non établie**. Le statut de la nouvelle révision sera contrôlé
+après publication et consigné dans la PR ; aucune réussite distante n’est
+inférée des résultats locaux.

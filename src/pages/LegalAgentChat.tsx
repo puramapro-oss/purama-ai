@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Send, Loader2, Plus, MessageSquare, Scale, BookOpen, Headphones } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { createRequestScope } from '@/lib/request-scope';
 import {
   sendChatMessage, listChatSessions, listChatMessages, newSessionId,
   type LegalChatMessage,
@@ -20,6 +21,8 @@ import { VoiceMode } from '@/components/voice/VoiceMode';
 
 export default function LegalAgentChat() {
   const { user } = useAuth();
+  const userId = user?.id;
+  const [historyRequests] = useState(createRequestScope);
   const voice = useVoice();
   const [voiceModeOpen, setVoiceModeOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string>('');
@@ -30,22 +33,43 @@ export default function LegalAgentChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) return;
-    listChatSessions(user.id).then(setSessions).catch(() => {});
+    if (!userId) return;
+    listChatSessions(userId).then(setSessions).catch(() => {});
     setSessionId(newSessionId());
-  }, [user?.id]);
+  }, [userId]);
 
-  useEffect(() => {
-    if (!user || !sessionId) return;
-    listChatMessages(user.id, sessionId).then(setMessages).catch(() => {});
-  }, [user?.id, sessionId]);
+  useLayoutEffect(() => {
+    setMessages([]);
+    setSending(false);
+    if (!userId || !sessionId) return;
+    const request = historyRequests.begin('messages');
+    if (!request) return;
+    listChatMessages(userId, sessionId)
+      .then(next => { if (request.current()) setMessages(next); })
+      .catch(() => {})
+      .finally(() => request.finish());
+    // Invalidate before paint, even if the transport completes after navigation.
+    return () => {
+      historyRequests.cancel('messages');
+      historyRequests.cancel('send');
+    };
+  }, [userId, sessionId, historyRequests]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const submitMessage = async (userMsg: string): Promise<string | null> => {
-    if (!userMsg.trim() || !user) return null;
+  const submitMessage = async (userMsg: string, signal?: AbortSignal): Promise<string | null> => {
+    if (!userMsg.trim() || !user || !sessionId || signal?.aborted) return null;
+    const request = historyRequests.begin('send');
+    if (!request) return null;
+    const cancel = () => {
+      if (!request.current()) return;
+      historyRequests.cancel('send');
+      setSending(false);
+    };
+    signal?.addEventListener('abort', cancel, { once: true });
+    setSending(true);
     const tempUser: LegalChatMessage = {
       id: 'tmp-' + Date.now(),
       user_id: user.id,
@@ -62,7 +86,8 @@ export default function LegalAgentChat() {
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const result = await sendChatMessage(sessionId, userMsg);
+      const result = await sendChatMessage(sessionId, userMsg, request.signal);
+      if (!request.current()) return null;
       const assistantMsg: LegalChatMessage = {
         ...tempUser,
         id: 'tmp-asst-' + Date.now(),
@@ -74,9 +99,14 @@ export default function LegalAgentChat() {
       listChatSessions(user.id).then(setSessions).catch(() => {});
       return result.reply;
     } catch (e) {
+      if (!request.current()) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
+    } finally {
+      signal?.removeEventListener('abort', cancel);
+      // A late completion must not release a newer conversation's pending state.
+      if (request.finish()) setSending(false);
     }
   };
 
@@ -84,8 +114,7 @@ export default function LegalAgentChat() {
     if (!input.trim() || sending) return;
     const userMsg = input.trim();
     setInput('');
-    setSending(true);
-    try { await submitMessage(userMsg); } finally { setSending(false); }
+    await submitMessage(userMsg);
   };
 
   const newSession = () => {
@@ -269,7 +298,7 @@ export default function LegalAgentChat() {
         agentName="Agent Juridique"
         agentEmoji="⚖️"
         agentColor="#6D28D9"
-        onSend={async (text) => submitMessage(text)}
+        onSend={submitMessage}
       />
     </div>
   );
