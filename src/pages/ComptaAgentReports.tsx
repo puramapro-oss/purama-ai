@@ -24,23 +24,29 @@ interface CategoryAggregate {
 
 export default function ComptaAgentReports() {
   const { user } = useAuth();
+  const userId = user?.id;
   const [txs, setTxs] = useState<ComptaTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    setLoading(Boolean(userId));
+    setTxs([]);
+    if (!userId) return;
+    let active = true;
     (async () => {
       try {
         // Fetch the current fiscal year (start = January)
         const start = `${new Date().getFullYear()}-01-01`;
-        setTxs(await listTransactions(user.id, { from: start, limit: 5000 }));
+        const next = await listTransactions(userId, { from: start, limit: 5000 });
+        if (active) setTxs(next);
       } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+        if (active) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     })();
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId]);
 
   if (loading) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>;

@@ -1,102 +1,103 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X } from 'lucide-react';
+import { useRef, useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useAwakening } from '@/hooks/useAwakening';
+import { wellbeingCopy } from '@/lib/wellbeing-copy';
 
-const AFFIRMATIONS = [
-  { text: "Je suis capable de creer la vie que je desire.", category: 'puissance' },
-  { text: "Chaque jour, j'avance vers ma meilleure version.", category: 'puissance' },
-  { text: "L'abondance coule naturellement vers moi.", category: 'abondance' },
-  { text: "Je merite le succes et la prosperite.", category: 'abondance' },
-  { text: "Mon intuition me guide vers les bonnes decisions.", category: 'sagesse' },
-  { text: "Je suis entoure d'amour et de bienveillance.", category: 'amour' },
-  { text: "Ma creativite est une source infinie d'opportunites.", category: 'puissance' },
-  { text: "Je transforme chaque defi en opportunite de croissance.", category: 'sagesse' },
-  { text: "L'univers conspire en ma faveur.", category: 'abondance' },
-  { text: "Je suis exactement la ou je dois etre.", category: 'sagesse' },
-  { text: "Ma valeur ne depend pas des autres, elle vient de moi.", category: 'amour' },
-  { text: "Chaque respiration m'ancre dans le present.", category: 'sante' },
-  { text: "Je choisis la gratitude et elle multiplie mes bienfaits.", category: 'gratitude' },
-  { text: "Mon potentiel est illimite.", category: 'puissance' },
-  { text: "Je suis un aimant a opportunites.", category: 'abondance' },
-];
+type Practice = 'neutral' | 'kindness' | 'spiritual';
+type Feedback = 'helpful' | 'neutral' | 'uncomfortable';
 
-const SESSION_KEY = 'purama_affirmation_shown';
-
-export function SpiritualLayer() {
-  const { user } = useAuth();
+function OptionalPause() {
+  const { i18n } = useTranslation();
+  const copy = wellbeingCopy(i18n.language);
   const { recordAffirmation } = useAwakening();
-  const [show, setShow] = useState(false);
-  const [affirmation, setAffirmation] = useState(AFFIRMATIONS[0]);
+  const [open, setOpen] = useState(false);
+  const [practice, setPractice] = useState<Practice | null>(null);
+  const [finished, setFinished] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const recorded = useRef(false);
 
-  useEffect(() => {
-    if (!user) return;
-    const shown = sessionStorage.getItem(SESSION_KEY);
-    if (shown) return;
+  const handleOpen = (next: boolean) => {
+    setOpen(next);
+    if (!next) {
+      setPractice(null);
+      setFinished(false);
+      setFeedback(null);
+      recorded.current = false;
+    }
+  };
 
-    const randomIndex = Math.floor(Math.random() * AFFIRMATIONS.length);
-    setAffirmation(AFFIRMATIONS[randomIndex]);
-    const timer = setTimeout(() => setShow(true), 1500);
-    return () => clearTimeout(timer);
-  }, [user]);
-
-  const handleAccept = () => {
-    setShow(false);
-    sessionStorage.setItem(SESSION_KEY, 'true');
+  const finish = () => {
+    if (recorded.current) return;
+    recorded.current = true;
     recordAffirmation();
+    setFinished(true);
   };
 
-  const handleClose = () => {
-    setShow(false);
-    sessionStorage.setItem(SESSION_KEY, 'true');
-  };
+  const practiceText = practice === 'spiritual' ? copy.pause.spiritualText
+    : practice === 'kindness' ? copy.pause.kindnessText : copy.pause.neutralText;
 
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-        >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="relative max-w-md w-full bg-card/90 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center shadow-[0_0_60px_rgba(124,58,237,0.2)]"
-          >
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 text-white/30 hover:text-white/60 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent-purple/30 to-accent-cyan/30 flex items-center justify-center">
-              <Sparkles className="w-8 h-8 text-accent-cyan" />
-            </div>
-
-            <p className="text-xs uppercase tracking-widest text-accent-purple/80 mb-4">
-              Affirmation du jour
-            </p>
-
-            <p className="text-xl font-light text-foreground leading-relaxed mb-8">
-              "{affirmation.text}"
-            </p>
-
-            <button
-              onClick={handleAccept}
-              className="w-full py-3.5 rounded-2xl font-semibold text-white bg-gradient-to-r from-accent-purple to-accent-cyan hover:opacity-90 active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_rgba(124,58,237,0.3)]"
-            >
-              J'integre ✨
-            </button>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Dialog.Root open={open} onOpenChange={handleOpen}>
+      <Dialog.Trigger asChild>
+        <Button type="button" variant="outline" lang={copy.locale} className="fixed bottom-4 left-4 z-40 max-w-[calc(100vw-6rem)] rounded-full bg-background/95 shadow-sm">
+          <Sparkles aria-hidden="true" className="mr-2 h-4 w-4" />
+          {copy.pause.trigger}
+        </Button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[9999] bg-black/60" />
+        <Dialog.Content lang={copy.locale} dir="ltr" onKeyDown={event => {
+          // Radix's passive layer registration can leave its captured index
+          // stale for an immediate Escape after reopening. Honor a consumed
+          // key or an inner dialogue; only this pause may use the fallback.
+          if (event.key !== 'Escape' || event.defaultPrevented ||
+            !(event.target instanceof Element) || event.target.closest('[role="dialog"]') !== event.currentTarget) return;
+          event.preventDefault();
+          event.stopPropagation();
+          handleOpen(false);
+        }} className="fixed left-1/2 top-1/2 z-[10000] max-h-[85vh] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-xl">
+          <Dialog.Title className="text-xl font-semibold">{copy.pause.title}</Dialog.Title>
+          <Dialog.Description className="mt-2 text-sm text-muted-foreground">{copy.pause.description}</Dialog.Description>
+          <div className="my-5 space-y-3">
+            {!practice ? (
+              <div className="flex flex-col gap-3">
+                {(['neutral', 'kindness', 'spiritual'] as const).map(value => (
+                  <Button type="button" key={value} variant="outline" className="h-auto whitespace-normal py-3 text-left" onClick={() => setPractice(value)}>{copy.pause[value]}</Button>
+                ))}
+              </div>
+            ) : !finished ? (
+              <>
+                <p className="leading-relaxed">{practiceText}</p>
+                <Button type="button" onClick={finish} className="w-full">{copy.pause.done}</Button>
+                <Button type="button" variant="outline" onClick={() => setPractice(null)} className="w-full">{copy.pause.change}</Button>
+              </>
+            ) : (
+              <div>
+                <p>{copy.common.feedback}</p>
+                <div className="my-3 flex flex-wrap gap-2">
+                  {(['helpful', 'neutral', 'uncomfortable'] as const).map(value => (
+                    <Button type="button" variant="outline" key={value} aria-pressed={feedback === value} onClick={() => setFeedback(value)}>{copy.common[value]}</Button>
+                  ))}
+                </div>
+                {feedback && <p role="status">{feedback === 'uncomfortable' ? copy.common.discomfort : copy.common.thanks}</p>}
+              </div>
+            )}
+          </div>
+          <p className="mb-4 text-xs text-muted-foreground">{copy.pause.note}</p>
+          <Dialog.Close asChild><Button type="button" variant="outline" className="w-full">{practice && !finished ? copy.common.stop : copy.common.close}</Button></Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
+}
+
+export function SpiritualLayer() {
+  const { user, loading } = useAuth();
+  // Remount on every identity transition; an open practice or private feedback
+  // must never carry over to another account. Nothing auto-opens after login.
+  return loading ? null : <OptionalPause key={user?.id ?? 'anonymous'} />;
 }

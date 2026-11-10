@@ -1,0 +1,191 @@
+{
+  "base": "27815bcc9660adcc925f1a6c2b8651ff04ff5062",
+  "initial_base": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "files": [
+    {
+      "path": "karta/migrations/021_chef_budget_admission.sql",
+      "sha256": "83f4dce22bbe6db490027b4645f5cf1628efa92907bf0833926eb886b1376863",
+      "bytes": 8153
+    },
+    {
+      "path": "karta/migrations/022_chef_mission_estimates.sql",
+      "sha256": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f",
+      "bytes": 8483
+    },
+    {
+      "path": "karta/migrations/023_chef_process_quarantine.sql",
+      "sha256": "997475e67e60519f4ec8f50a2a73d1795695cf7b44ce968f8afa955c337217fb",
+      "bytes": 14881
+    },
+    {
+      "path": "karta/src/chef/brief.ts",
+      "sha256": "673698526ca1e9a4943fc759f5bacc1f12baee7edee6fff2cab4a72c58c9a8ed",
+      "bytes": 8608
+    },
+    {
+      "path": "karta/src/chef/control-plane.ts",
+      "sha256": "79ebd2582684f52ab4880a74491e950001bf124c27760399ab9fb8f21de4cad8",
+      "bytes": 12819
+    },
+    {
+      "path": "karta/src/chef/driver.ts",
+      "sha256": "8758e958ecf06ab98509dcd025deb36f8f5d7ff230db77e65b0d94f54ab340ac",
+      "bytes": 7720
+    },
+    {
+      "path": "karta/src/chef/mission.ts",
+      "sha256": "8d910608f6a2cf5b5ab1b05a306186129dbbc9b738c91297a2cdc7124f376712",
+      "bytes": 1935
+    },
+    {
+      "path": "karta/src/chef/process.ts",
+      "sha256": "9487675a1eefc86da844a8f421b5150a63d5b64e115da8464042cfc1a1988895",
+      "bytes": 7829
+    },
+    {
+      "path": "karta/src/chef/supervisor.ts",
+      "sha256": "f26ffe09475c05cafdf64fe78df4d2ad61e184bb198454a198b463add9ff43eb",
+      "bytes": 19067
+    },
+    {
+      "path": "karta/src/chef/verifier.ts",
+      "sha256": "146c9825d116a97b151e025a0943e96bd12269eeecc5884d06e8312544ac22cf",
+      "bytes": 5043
+    },
+    {
+      "path": "karta/src/chef/worker-main.ts",
+      "sha256": "aaf37a98265b58421738517ce7c9f794480c7f843be2e62bdab09befca9df852",
+      "bytes": 6160
+    },
+    {
+      "path": "karta/test/chefBudgetAdmission.test.ts",
+      "sha256": "e84edeca6fb34b1c3a651299e0401a0e7d69682d81a509bae3864bdb94423913",
+      "bytes": 11281
+    },
+    {
+      "path": "karta/test/chefDriver.test.ts",
+      "sha256": "fbffc6f028e9665d782b625744ba97350f0c367e02490d940118541a262e790a",
+      "bytes": 4023
+    },
+    {
+      "path": "karta/test/chefEstimates.test.ts",
+      "sha256": "c13712bdd792ecde389e3757a432df5f7dd519f5eeda5b4c2b270aa536f59368",
+      "bytes": 11158
+    },
+    {
+      "path": "karta/test/chefProcess.test.ts",
+      "sha256": "5a896138972d696a19dc9bd99a6a593642356ef0d01112c6312a206cccceab4f",
+      "bytes": 6873
+    },
+    {
+      "path": "karta/test/chefProcessQuarantine.test.ts",
+      "sha256": "85f053007e9ab766218447762dc4f1be5e03107ab1ca392e7b22b9976c96fed1",
+      "bytes": 16690
+    },
+    {
+      "path": "karta/test/chefQuarantineAdapter.test.ts",
+      "sha256": "809dd2c001021dcab5061a970509b60f3b800d5e8c3c6c99804265f47f424985",
+      "bytes": 3583
+    },
+    {
+      "path": "karta/test/chefSupervisor.test.ts",
+      "sha256": "8963cd1007554da158aae47247c01de502148a372c3003d6d9d13aebce900e6d",
+      "bytes": 17713
+    },
+    {
+      "path": "karta/test/chefVerifier.test.ts",
+      "sha256": "8275064a082ecb272ab10880cedb121364fd2d523d0213585acbc293704a3ecb",
+      "bytes": 2546
+    },
+    {
+      "path": "karta/test/chefWorkerShutdown.test.ts",
+      "sha256": "14980e76f83165484930b165fbbddc259aca68fe2c8a580bfe45f01296c39492",
+      "bytes": 3941
+    },
+    {
+      "path": "karta/test/overageCredit.test.ts",
+      "sha256": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+      "bytes": 19272
+    },
+    {
+      "path": "karta/test/partnerOutreach.test.ts",
+      "sha256": "fa981b07bd57fe60eb3011f9a82f7d55d7bbc5214b22ac124f4f49822c79a6dd",
+      "bytes": 29767
+    },
+    {
+      "path": "src/lib/partner-outreach-result.ts",
+      "sha256": "71e42312e12e75fe7d34e2475491b21a60b5dafcad78854948b5bb1d8ee3d4f8",
+      "bytes": 4891
+    },
+    {
+      "path": "src/lib/partner.ts",
+      "sha256": "cb3e348fce182e7a9af5a940b8826e95e6c5a1f47f07bf93db2136d09d573f3d",
+      "bytes": 20219
+    },
+    {
+      "path": "src/pages/PartnerAgentProspects.tsx",
+      "sha256": "277b4bede3bd661403fe5ab54e5c40428c3fa67b39a9d9fac2c4be538602ed3a",
+      "bytes": 21174
+    },
+    {
+      "path": "supabase/functions/partner-send-outreach/handler.ts",
+      "sha256": "958df640f4d013552916e2ef9286e78084772744f43a11f04eaf9c9e76c415d7",
+      "bytes": 10620
+    },
+    {
+      "path": "supabase/functions/partner-send-outreach/index.ts",
+      "sha256": "5f9ad9cfa137da0d0e4f770f5c934f2b72ad3afbba299a47edf3d394690f7aec",
+      "bytes": 1293
+    },
+    {
+      "path": "supabase/functions/stripe-webhook/index.ts",
+      "sha256": "58f19152f9c54dd0d412cf73761279d7edbe5bd56b1803b353dd09487c27109d",
+      "bytes": 22723
+    },
+    {
+      "path": "supabase/functions/stripe-webhook/overage.ts",
+      "sha256": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+      "bytes": 4339
+    },
+    {
+      "path": "supabase/migrations/20261110000200_overage_credit_idempotency.sql",
+      "sha256": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+      "bytes": 5099
+    },
+    {
+      "path": "supabase/migrations/20261110030000_partner_outreach_reservations.sql",
+      "sha256": "e93f400c9075204c7a7468e6c4ad323fca58cec73f765d51ba5c3473b41e1501",
+      "bytes": 24336
+    },
+    {
+      "path": "tests/quality/database-pages.spec.ts",
+      "sha256": "72ac867b8e76ffe2b607503b74592479b35f22982595a19e9c3dcf00de3878c8",
+      "bytes": 11022
+    },
+    {
+      "path": "tests/quality/karta-ui.spec.ts",
+      "sha256": "22f566dd0337259c006b971f2ba5fa23befcc923e373f8d4fd1fc8176be56474",
+      "bytes": 13753
+    },
+    {
+      "path": "tests/quality/partner-outreach.spec.ts",
+      "sha256": "f3a6a258111b3d86d0c2192d0c808b7083c0a359a5799ed5f3b142dd6b2c7761",
+      "bytes": 15385
+    },
+    {
+      "path": "tests/quality/playwright.config.ts",
+      "sha256": "f1c1caf343989878559d89ec5ab1cf1e10a8fd83e3fe30f6ef15402ec156503b",
+      "bytes": 751
+    },
+    {
+      "path": "tests/quality/quality-environment.ts",
+      "sha256": "b649b8ca4b5f04fbc6a4e35d85b3280a3cf780f1e2b33801938b5104547b5bcb",
+      "bytes": 638
+    },
+    {
+      "path": "tests/quality/vite.config.ts",
+      "sha256": "1b1c563db1c937f8bec948e5c68d59f250a940a933c02359026fb9fa79db98df",
+      "bytes": 521
+    }
+  ]
+}

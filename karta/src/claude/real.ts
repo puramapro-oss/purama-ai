@@ -3,6 +3,7 @@ import { config } from "../config.js";
 import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
 import { schemaForTool, validateToolParams } from "../engine/tool-input.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
+import { buildAssistantSystemPrompt } from "./assistant-policy.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -31,7 +32,7 @@ export function createRealClaudeClient(): ClaudeClient {
       const response = await client.messages.create({
         model: selectModel(input),
         max_tokens: 1024,
-        system: input.systemPrompt,
+        system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
         messages: [
           {
             role: "user",

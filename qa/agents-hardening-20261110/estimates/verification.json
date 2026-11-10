@@ -1,0 +1,49 @@
+{
+  "base": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "recorded_at": "2026-11-10T02:13:04.563Z",
+  "product_files_frozen": true,
+  "commands": [
+    {
+      "command": "npm test -- test/chefEstimates.test.ts test/chefBrief.test.ts test/chefMission.test.ts --reporter=verbose --maxWorkers=1",
+      "cwd": "karta",
+      "exit_code": 0,
+      "status": "PASS",
+      "tests_passed": 58,
+      "new_tests": 44,
+      "log": "vitest-estimates.txt"
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exit_code": 2,
+      "status": "PARTIEL",
+      "log": "karta-typecheck.txt",
+      "failure_outside_scope": "karta/test/chefWorkerShutdown.test.ts signal callback types; parent notified"
+    },
+    {
+      "command": "node qa/agents-hardening-20261110/estimates/reproduce-baseline.cjs",
+      "cwd": ".",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": "baseline-reproduction.json"
+    },
+    {
+      "command": "git diff --check",
+      "cwd": ".",
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  ],
+  "file_sha256": {
+    "karta/src/chef/brief.ts": "673698526ca1e9a4943fc759f5bacc1f12baee7edee6fff2cab4a72c58c9a8ed",
+    "karta/src/chef/mission.ts": "8d910608f6a2cf5b5ab1b05a306186129dbbc9b738c91297a2cdc7124f376712",
+    "karta/migrations/019_chef_mission_estimates.sql": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f",
+    "karta/test/chefEstimates.test.ts": "23e3fcbf5f0e9f48a5d4c873baff59538f59a46254d2d7596192427c3446b854"
+  },
+  "limitations": [
+    "Local tests only; mocked Supabase transport with real SQL in PGlite",
+    "No production access, network supplier call, payment, deployment or commit",
+    "Estimates support admission; they are not hard limits on real API charges",
+    "Full combined regression and GitNexus detect_changes belong to the parent integration review"
+  ]
+}

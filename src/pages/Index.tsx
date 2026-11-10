@@ -19,7 +19,7 @@ export default function Index() {
 
   useEffect(() => {
     checkAndStoreReferral();
-  }, []);
+  }, [checkAndStoreReferral]);
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">

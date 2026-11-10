@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react'
 import storyboardImage from '@/assets/storyboard-image.avif'
 
-export function About() {
-  const [activeFrame, setActiveFrame] = useState(-1)
-  const [animationStarted, setAnimationStarted] = useState(false)
-
-  const processSteps = [
+const processSteps = [
     {
       number: "01",
       title: "Concept & Script",
@@ -40,17 +36,21 @@ export function About() {
     }
   ]
 
+export function About() {
+  const [activeFrame, setActiveFrame] = useState(-1)
+  const [animationStarted, setAnimationStarted] = useState(false)
+
   useEffect(() => {
-    // Start film animation after a 3 second pause
-    setTimeout(() => {
+    const timers: ReturnType<typeof setTimeout>[] = []
+    timers.push(setTimeout(() => {
       setAnimationStarted(true)
       processSteps.forEach((_, index) => {
-        setTimeout(() => {
+        timers.push(setTimeout(() => {
           setActiveFrame(index)
-         
-        }, index * 2000 + 1000) // Ultra slow: Start after 24s, then every 72s
+        }, index * 2000 + 1000))
       })
-    }, 3000) // 3 second pause after section loads
+    }, 3000))
+    return () => timers.forEach(clearTimeout)
   }, [])
 
   return (

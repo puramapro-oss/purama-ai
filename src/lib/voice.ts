@@ -97,11 +97,15 @@ async function blobToBase64(blob: Blob): Promise<string> {
   return btoa(binary);
 }
 
-export async function transcribeAudio(blob: Blob, language = 'fr'): Promise<string> {
+export async function transcribeAudio(blob: Blob, language = 'fr', signal?: AbortSignal): Promise<string> {
+  signal?.throwIfAborted();
   const base64 = await blobToBase64(blob);
+  signal?.throwIfAborted();
   const { data, error } = await supabase.functions.invoke('voice-transcribe', {
     body: { audio: base64, mime: blob.type || 'audio/webm', lang: language },
+    signal,
   });
+  signal?.throwIfAborted();
   if (error) throw error;
   const result = data as { text?: string; error?: string };
   if (result.error) throw new Error(result.error);
@@ -114,7 +118,9 @@ export async function transcribeAudio(blob: Blob, language = 'fr'): Promise<stri
 export async function synthesizeSpeech(
   text: string,
   settings: Pick<VoiceSettings, 'provider' | 'voice_id' | 'speed'>,
+  signal?: AbortSignal,
 ): Promise<Blob | null> {
+  signal?.throwIfAborted();
   // Strip markdown for cleaner narration
   const clean = text
     .replace(/```[\s\S]*?```/g, '')
@@ -127,11 +133,13 @@ export async function synthesizeSpeech(
 
   try {
     const { data: sessionData } = await supabase.auth.getSession();
+    signal?.throwIfAborted();
     const token = sessionData.session?.access_token;
     if (!token) return null;
     const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/voice-tts`;
     const r = await fetch(url, {
       method: 'POST',
+      signal,
       headers: {
         Authorization: `Bearer ${token}`,
         apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
@@ -144,9 +152,13 @@ export async function synthesizeSpeech(
         speed: settings.speed,
       }),
     });
+    signal?.throwIfAborted();
     if (!r.ok) return null;
-    return await r.blob();
+    const blob = await r.blob();
+    signal?.throwIfAborted();
+    return blob;
   } catch {
+    signal?.throwIfAborted();
     return null;
   }
 }

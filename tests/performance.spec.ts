@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './public/fixtures';
 
 test.describe('Performance — Temps de chargement', () => {
   test('Landing page charge en < 5s', async ({ page }) => {
@@ -43,8 +43,7 @@ test.describe('Performance — Web Vitals basiques', () => {
       });
     });
 
-    if (lcp > 0) {
-      expect(lcp).toBeLessThan(4000);
-    }
+    expect(lcp, 'A missing LCP measurement is not a successful measurement').toBeGreaterThan(0);
+    expect(lcp).toBeLessThan(4000);
   });
 });

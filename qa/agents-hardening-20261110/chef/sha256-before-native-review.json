@@ -1,0 +1,19 @@
+{
+  "base": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "files": {
+    "karta/src/chef/process.ts": "9487675a1eefc86da844a8f421b5150a63d5b64e115da8464042cfc1a1988895",
+    "karta/src/chef/driver.ts": "8758e958ecf06ab98509dcd025deb36f8f5d7ff230db77e65b0d94f54ab340ac",
+    "karta/src/chef/verifier.ts": "146c9825d116a97b151e025a0943e96bd12269eeecc5884d06e8312544ac22cf",
+    "karta/src/chef/supervisor.ts": "f26ffe09475c05cafdf64fe78df4d2ad61e184bb198454a198b463add9ff43eb",
+    "karta/src/chef/worker-main.ts": "aaf37a98265b58421738517ce7c9f794480c7f843be2e62bdab09befca9df852",
+    "karta/src/chef/control-plane.ts": "79ebd2582684f52ab4880a74491e950001bf124c27760399ab9fb8f21de4cad8",
+    "karta/migrations/020_chef_process_quarantine.sql": "997475e67e60519f4ec8f50a2a73d1795695cf7b44ce968f8afa955c337217fb",
+    "karta/test/chefProcess.test.ts": "e149d0d50ba2bb124d059f264cb0d498b5ab0cefd7e49fe3b43ba9f798cca2d4",
+    "karta/test/chefDriver.test.ts": "fbffc6f028e9665d782b625744ba97350f0c367e02490d940118541a262e790a",
+    "karta/test/chefVerifier.test.ts": "8275064a082ecb272ab10880cedb121364fd2d523d0213585acbc293704a3ecb",
+    "karta/test/chefSupervisor.test.ts": "8963cd1007554da158aae47247c01de502148a372c3003d6d9d13aebce900e6d",
+    "karta/test/chefWorkerShutdown.test.ts": "14980e76f83165484930b165fbbddc259aca68fe2c8a580bfe45f01296c39492",
+    "karta/test/chefProcessQuarantine.test.ts": "39a73e0f1ae300b6516e2d98fcfbf4a7ff08e53e7a327ddfe6a7c4836e211351",
+    "karta/test/chefQuarantineAdapter.test.ts": "809dd2c001021dcab5061a970509b60f3b800d5e8c3c6c99804265f47f424985"
+  }
+}

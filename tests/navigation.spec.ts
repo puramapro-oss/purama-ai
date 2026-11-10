@@ -1,13 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './public/fixtures';
 
 test.describe('Navigation — Liens & Boutons', () => {
-  test('Landing page — tous les CTAs sont cliquables', async ({ page }) => {
+  test('Landing page — le CTA principal ouvre le formulaire d’inscription', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
-    // At least one CTA button exists
-    const buttons = page.locator('a, button').filter({ hasText: /commencer|essayer|découvrir|s'inscrire|gratuit/i });
-    const count = await buttons.count();
-    expect(count).toBeGreaterThan(0);
+    const signup = page.locator('#hero').getByRole('link', { name: 'Commencer gratuitement', exact: true });
+    await expect(signup).toHaveAttribute('href', '/signup');
+    await signup.click();
+    await expect(page).toHaveURL(/\/signup$/);
+    await expect(page.getByRole('heading', { name: 'Créer un compte', exact: true })).toBeVisible();
   });
 
   test('Login page — formulaire présent', async ({ page }) => {
@@ -26,9 +27,9 @@ test.describe('Navigation — Liens & Boutons', () => {
   test('Signup page — formulaire complet', async ({ page }) => {
     await page.goto('/signup', { waitUntil: 'networkidle' });
 
-    const inputs = page.locator('input');
-    const count = await inputs.count();
-    expect(count).toBeGreaterThanOrEqual(3); // name, email, password
+    for (const field of ['#fullName', '#email', '#password', '#confirmPassword']) {
+      await expect(page.locator(field)).toBeVisible();
+    }
 
     const submitBtn = page.locator('button[type="submit"]');
     await expect(submitBtn).toBeVisible();
@@ -46,16 +47,18 @@ test.describe('Navigation — Liens & Boutons', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const footer = page.locator('footer');
-    if (await footer.count() > 0) {
-      const links = footer.locator('a');
-      const count = await links.count();
-      expect(count).toBeGreaterThan(0);
+    await expect(footer).toHaveCount(1);
+    for (const path of ['/mentions-legales', '/cgv', '/cgu']) {
+      const link = footer.locator(`a[href="${path}"]`);
+      await expect(link).toHaveCount(1);
+      await expect(link).toHaveAccessibleName(/\S/);
     }
   });
 
   test('Navigation — redirect non-auth vers login', async ({ page }) => {
     await page.goto('/dashboard', { waitUntil: 'networkidle' });
     // Should redirect to login
-    await page.waitForURL(/\/(login|dashboard)/, { timeout: 10_000 });
+    await expect(page).toHaveURL(/\/login$/, { timeout: 10_000 });
+    await expect(page.getByRole('button', { name: 'Se connecter', exact: true })).toBeVisible();
   });
 });

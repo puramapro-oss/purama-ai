@@ -1,0 +1,14 @@
+{
+  "check": "browser-outreach-verified",
+  "command": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config=tests/quality/playwright.config.ts",
+    "tests/quality/partner-outreach.spec.ts",
+    "--workers=1"
+  ],
+  "exit": 0,
+  "elapsed_seconds": 27.35,
+  "tail": "(node:62925) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\n\nRunning 4 tests using 1 worker\n\n(node:62962) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.\n(Use `node --trace-deprecation ...` to show where the warning was created)\n[outreach-preview-diagnostic] {\"playwrightFrameUrl\":\"\",\"locationHref\":\"about:srcdoc\",\"documentUrl\":\"about:srcdoc\",\"readyState\":\"complete\",\"origin\":\"null\",\"scriptExecuted\":false}\n  ✓  1 tests/quality/partner-outreach.spec.ts:170:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response (5.6s)\n  ✓  2 tests/quality/partner-outreach.spec.ts:238:1 › an unknown approval result stays a warning with no success claim or automatic resend (5.2s)\n  ✓  3 tests/quality/partner-outreach.spec.ts:252:1 › a refused draft version is shown as blocked rather than approved or sent (2.9s)\n  ✓  4 tests/quality/partner-outreach.spec.ts:262:1 › a sent status without provider proof cannot become a success toast (2.6s)\n\n  4 passed (24.9s)\n"
+}

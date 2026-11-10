@@ -1,0 +1,73 @@
+{
+  "tool": "GitNexus 1.6.12",
+  "repo": "purama-agents-hardening-20261110",
+  "direction": "upstream",
+  "recorded_before_edits": true,
+  "functional_risk_reported_to_parent": "MEDIUM",
+  "targets": [
+    {
+      "target": "normalizeChefBrief",
+      "file": "karta/src/chef/brief.ts",
+      "exit_code": 0,
+      "risk": "LOW",
+      "direct": [
+        "hashChefBrief",
+        "createChefMission"
+      ],
+      "impacted_count": 2,
+      "processes": 0
+    },
+    {
+      "target": "validateChefBrief",
+      "file": "karta/src/chef/brief.ts",
+      "exit_code": 0,
+      "risk": "LOW",
+      "direct": [
+        "normalizeChefBrief"
+      ],
+      "indirect": [
+        "hashChefBrief",
+        "createChefMission"
+      ],
+      "impacted_count": 3,
+      "processes": 0,
+      "log": "impact-validateChefBrief.txt"
+    },
+    {
+      "target": "ChefBriefTask",
+      "file": "karta/src/chef/brief.ts",
+      "exit_code": 0,
+      "risk": "LOW",
+      "epistemic": "lower-bound",
+      "impacted_count": 5,
+      "processes": 0,
+      "interface_boundary": true,
+      "log": "impact-ChefBriefTask.txt"
+    },
+    {
+      "target": "createChefMission",
+      "file": "karta/src/chef/mission.ts",
+      "exit_code": 137,
+      "risk": "UNKNOWN",
+      "complete_json_received_before_kill": true,
+      "direct": [],
+      "limitation": "Absence of resolved callers is not proof of absence of consumers."
+    },
+    {
+      "target": "chef_create_mission",
+      "file": "karta/migrations/015_chef_mission_file_ownership.sql",
+      "exit_code": 1,
+      "risk": "UNKNOWN",
+      "reason": "Target not found",
+      "manual_trace": [
+        "karta/src/chef/mission.ts RPC chef_create_mission",
+        "karta/migrations/015_chef_mission_file_ownership.sql latest existing definition"
+      ],
+      "log": "impact-chef_create_mission.txt"
+    }
+  ],
+  "environment_failures_not_counted_as_coverage": [
+    "first validateChefBrief impact exit 137",
+    "initial PGlite baseline attempt exit 137"
+  ]
+}

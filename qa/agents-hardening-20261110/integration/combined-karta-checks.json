@@ -1,0 +1,35 @@
+[
+  {
+    "check": "combined-karta-typecheck",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 11.25
+  },
+  {
+    "check": "combined-karta-build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "elapsed_seconds": 11.35
+  },
+  {
+    "check": "combined-karta-full",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "--testTimeout=30000",
+      "--hookTimeout=90000"
+    ],
+    "exit": 1,
+    "elapsed_seconds": 608.85
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "checks": [
+    "Python syntax",
+    "psql JSON parser smoke check",
+    "SQL literal escaping smoke check",
+    "no HOME override",
+    "no inherited environment copy"
+  ],
+  "native_database_execution": "NOT_TESTED_BY_THIS_AGENT",
+  "script_sha256": "462c51632fa2cbd3afe16595a270e53a4899ae156b11e57833877a97ba5e5701"
+}

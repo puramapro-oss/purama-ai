@@ -1,0 +1,14 @@
+(node:62925) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:62962) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[outreach-preview-diagnostic] {"playwrightFrameUrl":"","locationHref":"about:srcdoc","documentUrl":"about:srcdoc","readyState":"complete","origin":"null","scriptExecuted":false}
+  ✓  1 tests/quality/partner-outreach.spec.ts:170:1 › pending preview isolates hostile HTML, then reports acceptance only after the provider proof response (5.6s)
+  ✓  2 tests/quality/partner-outreach.spec.ts:238:1 › an unknown approval result stays a warning with no success claim or automatic resend (5.2s)
+  ✓  3 tests/quality/partner-outreach.spec.ts:252:1 › a refused draft version is shown as blocked rather than approved or sent (2.9s)
+  ✓  4 tests/quality/partner-outreach.spec.ts:262:1 › a sent status without provider proof cannot become a success toast (2.6s)
+
+  4 passed (24.9s)

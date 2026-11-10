@@ -49,6 +49,7 @@ function executionTrigger(value: unknown, agentType: AgentType, strict: boolean)
   if (type !== "manual" && type !== "cron" && type !== "webhook" && type !== "delegation") throw new Error(CONTEXT_ERROR);
   const source = own(envelope, "source");
   if (typeof source !== "string" || !source.trim() || source.length > MAX_TRIGGER_SOURCE_LENGTH ||
+      // eslint-disable-next-line no-control-regex -- Reject ASCII control characters in server-owned origin labels.
       /[\u0000-\u001f\u007f]/.test(source) || source === "approval-resume") throw new Error(CONTEXT_ERROR);
   let snapshot: AgentTrigger = { type, source };
   if (type === "delegation") {

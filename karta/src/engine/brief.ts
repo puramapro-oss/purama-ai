@@ -6,6 +6,8 @@ export interface PendingBriefRequest {
   agentType: AgentType;
   runId: string;
   key?: string;
+  /** A delivery for one submission must never acquire another pending input. */
+  expectedBriefId?: string;
 }
 
 export interface PendingBrief {
@@ -31,16 +33,23 @@ function decodeBrief(data: unknown): PendingBrief | null {
 async function readBrief(
   rpc: "karta_claim_pending_brief" | "karta_peek_pending_brief", request: PendingBriefRequest,
 ): Promise<PendingBrief | null> {
+  if (request.expectedBriefId !== undefined && (typeof request.expectedBriefId !== "string" || !UUID.test(request.expectedBriefId))) throw new Error(INPUT_ERROR);
+  const expectedBriefId = request.expectedBriefId?.toLowerCase();
   const params = {
     p_user_id: request.userId, p_agent_type: request.agentType,
     p_run_id: request.runId, p_key: request.key ?? "pending_brief",
+    ...(expectedBriefId !== undefined ? { p_expected_brief_id: expectedBriefId } : {}),
   };
   // The retry keeps the exact run and key. A lost committed response must never
   // cause a second claim identity, a restoration, or an external action.
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const { data, error } = await supabase.rpc(rpc, params);
-      if (!error) return decodeBrief(data);
+      if (!error) {
+        const decoded = decodeBrief(data);
+        if (decoded && expectedBriefId !== undefined && decoded.briefId.toLowerCase() !== expectedBriefId) throw new Error(INPUT_ERROR);
+        return decoded;
+      }
     } catch {
       // Do not expose PostgreSQL, transport or payload text in public traces.
     }
@@ -52,7 +61,7 @@ export function claimPendingBrief(request: PendingBriefRequest): Promise<Pending
   return readBrief("karta_claim_pending_brief", request);
 }
 
-/** Simulation previews do not reserve, delete or copy the pending input. */
+/** Simulation previews only associate the run with an input, without reserving or deleting it. */
 export function peekPendingBrief(request: PendingBriefRequest): Promise<PendingBrief | null> {
   return readBrief("karta_peek_pending_brief", request);
 }

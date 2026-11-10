@@ -10,8 +10,7 @@ import {
   TrendingUp,
   CheckCircle2,
   Clock,
-  XCircle,
-  Sparkles
+  XCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,19 +30,16 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { useInfluencerAdmin, Influencer, Commission } from '@/hooks/useInfluencer';
+import { useInfluencerAdmin, type Influencer } from '@/hooks/useInfluencer';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 export default function AdminInfluencers() {
-  const { allInfluencers, allCommissions, isLoading, markCommissionPaid } = useInfluencerAdmin();
+  const { allInfluencers, allCommissions, isLoading } = useInfluencerAdmin();
   const [search, setSearch] = useState('');
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
-  const [showPayDialog, setShowPayDialog] = useState(false);
-  const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
 
   const filteredInfluencers = allInfluencers.filter(inf => 
     inf.promo_code.toLowerCase().includes(search.toLowerCase()) ||
@@ -58,14 +54,6 @@ export default function AdminInfluencers() {
 
   const getInfluencerCommissions = (influencerId: string) => {
     return allCommissions.filter(c => c.influencer_id === influencerId);
-  };
-
-  const handlePayCommission = () => {
-    if (selectedCommission) {
-      markCommissionPaid.mutate(selectedCommission.id);
-      setShowPayDialog(false);
-      setSelectedCommission(null);
-    }
   };
 
   if (isLoading) {
@@ -94,7 +82,8 @@ export default function AdminInfluencers() {
               Gestion des Influenceurs
             </h1>
             <p className="text-muted-foreground">
-              Gérez vos partenaires et leurs commissions
+              Consultez vos partenaires et leurs commissions.
+              Les versements ne sont pas disponibles depuis cet écran.
             </p>
           </div>
         </div>
@@ -127,7 +116,7 @@ export default function AdminInfluencers() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Commissions payées</p>
+                  <p className="text-sm text-muted-foreground">Revenus enregistrés</p>
                   <p className="text-2xl font-bold">{totalRevenue.toFixed(0)}€</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-blue-500 opacity-50" />
@@ -184,9 +173,6 @@ export default function AdminInfluencers() {
                 </TableHeader>
                 <TableBody>
                   {filteredInfluencers.map((influencer) => {
-                    const commissions = getInfluencerCommissions(influencer.id);
-                    const pendingCommissions = commissions.filter(c => c.status === 'validated');
-                    
                     return (
                       <TableRow key={influencer.id}>
                         <TableCell>
@@ -239,17 +225,6 @@ export default function AdminInfluencers() {
                             >
                               Détails
                             </Button>
-                            {pendingCommissions.length > 0 && (
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedCommission(pendingCommissions[0]);
-                                  setShowPayDialog(true);
-                                }}
-                              >
-                                Payer ({pendingCommissions.length})
-                              </Button>
-                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -266,6 +241,7 @@ export default function AdminInfluencers() {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Détails de l'influenceur</DialogTitle>
+              <DialogDescription>Coordonnées et commissions enregistrées pour ce partenaire.</DialogDescription>
             </DialogHeader>
             {selectedInfluencer && (
               <div className="space-y-6">
@@ -336,36 +312,6 @@ export default function AdminInfluencers() {
           </DialogContent>
         </Dialog>
 
-        {/* Pay Dialog */}
-        <Dialog open={showPayDialog} onOpenChange={setShowPayDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirmer le paiement</DialogTitle>
-              <DialogDescription>
-                Marquer cette commission comme payée ?
-              </DialogDescription>
-            </DialogHeader>
-            {selectedCommission && (
-              <div className="p-4 bg-secondary/50 rounded-lg">
-                <p className="text-lg font-bold text-green-500">
-                  {Number(selectedCommission.commission_amount).toFixed(2)}€
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Commission sur une vente de {Number(selectedCommission.sale_amount).toFixed(2)}€
-                </p>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowPayDialog(false)}>
-                Annuler
-              </Button>
-              <Button onClick={handlePayCommission} disabled={markCommissionPaid.isPending}>
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Confirmer le paiement
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

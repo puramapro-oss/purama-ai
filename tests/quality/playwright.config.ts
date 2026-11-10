@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
+import { qualityOrigin } from './quality-environment';
 
 export default defineConfig({
   testDir: '.',
@@ -9,16 +10,18 @@ export default defineConfig({
   timeout: 30_000,
   reporter: [['list']],
   use: {
-    baseURL: 'http://127.0.0.1:4176',
+    baseURL: qualityOrigin,
+    serviceWorkers: 'block',
     ...devices['Desktop Chrome'],
-    launchOptions: process.env.PLAYWRIGHT_EXECUTABLE_PATH ? {
-      executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH,
-    } : {},
+    launchOptions: {
+      ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH } : {}),
+      args: ['--no-zygote', '--disable-gpu', '--disable-background-networking', '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1'],
+    },
   },
   webServer: {
     command: 'node node_modules/vite/bin/vite.js --config tests/quality/vite.config.ts --mode test',
     cwd: fileURLToPath(new URL('../..', import.meta.url)),
-    url: 'http://127.0.0.1:4176',
+    url: qualityOrigin,
     reuseExistingServer: false,
   },
 });

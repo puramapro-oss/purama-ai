@@ -82,21 +82,25 @@ export default function DashboardBilling() {
   const agentCap = plan.agents_included === -1 ? agents.length : plan.agents_included;
   const usedAgents = selectedAgentIds.length;
 
-  // Cf ERRORS.md 2026-07-27 : redirection Stripe success/cancel du pack de dépassement
-  // (create-checkout mode "payment" → stripe-webhook crédite overage_credits).
+  // A checkout return is not proof of payment. Only confirmed credits in the
+  // refreshed usage snapshot can change the displayed quota.
   useEffect(() => {
-    if (searchParams.get('overage_success') === 'true') {
-      toast.success('Pack de dépassement activé', {
-        description: `+${OVERAGE_PACK.actions.toLocaleString('fr-FR')} actions ajoutées à ton quota de ce mois.`,
-      });
+    const returnedFromCheckout = searchParams.get('overage_success') === 'true';
+    const canceledCheckout = searchParams.get('overage_canceled') === 'true';
+    if (!returnedFromCheckout && !canceledCheckout) return;
+
+    toast.info('Retour du paiement', {
+      description: returnedFromCheckout
+        ? 'Le pack apparaîtra dans ton quota une fois le paiement confirmé.'
+        : 'Consulte le portail de facturation pour vérifier l’état du paiement.',
+    });
+    if (user?.id) {
       queryClient.invalidateQueries({ queryKey: ['usage-snapshot', user?.id] });
-      searchParams.delete('overage_success');
-      setSearchParams(searchParams, { replace: true });
-    } else if (searchParams.get('overage_canceled') === 'true') {
-      toast.info('Achat annulé', { description: 'Aucun montant débité.' });
-      searchParams.delete('overage_canceled');
-      setSearchParams(searchParams, { replace: true });
     }
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete('overage_success');
+    nextSearchParams.delete('overage_canceled');
+    setSearchParams(nextSearchParams, { replace: true });
   }, [searchParams, setSearchParams, queryClient, user?.id]);
 
   const openCustomerPortal = () =>

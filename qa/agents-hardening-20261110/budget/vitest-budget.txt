@@ -1,0 +1,68 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/chefBudgetAdmission.test.ts --reporter=verbose
+
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta
+
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > reserves 70 before admitting another 70 against a shared budget of 100
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > admits two estimates that exactly fit the remaining shared budget
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > also reserves token estimates when the currency budget is unlimited
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > requires both the cost and token dimensions to fit
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > adds already-consumed cost to all active estimates
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > selects an affordable task when a higher-priority one does not fit
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > refuses an unknown cost estimate under a configured budget
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > refuses an unknown tokens estimate under a configured budget
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > preserves unbounded legacy missions without estimates
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > distinguishes an explicit zero estimate from an absent estimate
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not treat an active legacy task with missing cost as free capacity
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > keeps the full current estimate despite cumulative usage from an older attempt
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > releases admission capacity after verified completion, retaining actual recorded usage
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not pause affordable work assigned to another provider
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > preserves worker-session, worktree and max_parallel admission restrictions
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not overflow bigint while deciding that an estimate exceeds remaining capacity
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > rejects a null lease and keeps the claim RPC server-only
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > can reapply the additive migration without changing existing claims
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chefBudgetAdmission.test.ts [ test/chefBudgetAdmission.test.ts ]
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ test/chefBudgetAdmission.test.ts:10:1
+      8| let db: PGlite;
+      9|
+     10| beforeAll(async () => {
+       | ^
+     11|   db = new PGlite();
+     12|   await db.exec(`
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta/test/chefBudgetAdmission.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  18 skipped (18)
+     Errors  1 error
+   Start at  02:58:30
+   Duration  166.49s (import 79%, transform 17%, setup 2%, worker 2%)

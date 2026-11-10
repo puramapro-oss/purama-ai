@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { formatRelative } from '@/lib/utils';
 import { getKartaRunStatus } from '@/lib/karta-run-status';
 import { PendingActionsList } from '@/components/karta/PendingActionsList';
+import { BriefMissionDialog } from '@/components/karta/BriefMissionDialog';
 import {
   useEmployeeAgents,
   useKartaAgentStates,
@@ -27,6 +28,7 @@ import {
   useKartaRuns,
   useKartaStats,
   usePendingActions,
+  isBriefAgent,
   type ActionAgentSlug,
   type KartaRun,
 } from '@/hooks/useKartaEmployees';
@@ -124,6 +126,7 @@ interface EmployeeCardProps {
 
 function EmployeeCard({ slug, name, icon, category, description, state }: EmployeeCardProps) {
   const update = useUpdateKartaAgentState();
+  const [briefOpen, setBriefOpen] = useState(false);
 
   const isEnabled = state?.is_enabled ?? false;
   const killSwitch = state?.kill_switch ?? false;
@@ -147,7 +150,7 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
         : 'text-accent-emerald';
 
   return (
-    <Card className="bg-card border-border">
+    <Card className="bg-card border-border" role="group" aria-label={`Employé ${name}`}>
       <CardContent className="p-5 space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-accent-cyan/10 flex items-center justify-center text-2xl flex-shrink-0">
@@ -158,6 +161,7 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
             <p className="text-xs text-muted-foreground capitalize">{category}</p>
           </div>
           <Switch
+            aria-label={`Activer ${name}`}
             checked={isEnabled}
             disabled={update.isPending}
             onCheckedChange={(checked) =>
@@ -167,6 +171,8 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
         </div>
 
         {description && <p className="text-xs text-muted-foreground/80 line-clamp-2">{description}</p>}
+
+        {update.isError && <p role="alert" className="text-xs text-destructive">Impossible d’enregistrer ce réglage. Réessaie dans un instant.</p>}
 
         <div className="flex items-center gap-2">
           <span className={`text-xs font-medium ${statusColor}`}>● {statusLabel}</span>
@@ -200,6 +206,7 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
             <span className="text-[11px] text-muted-foreground">Mode simulation (dry-run)</span>
           </div>
           <Switch
+            aria-label={`Mode simulation de ${name}`}
             checked={simulationMode}
             disabled={update.isPending}
             onCheckedChange={(checked) =>
@@ -228,6 +235,16 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
           )}
         </button>
 
+        {isBriefAgent(slug) && (
+          <>
+            <Button variant="outline" className="w-full" onClick={() => setBriefOpen(true)} aria-label={`Donner une mission à ${name}`}>
+              Donner une mission
+            </Button>
+            <BriefMissionDialog open={briefOpen} onOpenChange={setBriefOpen} agentType={slug} agentName={name}
+              isEnabled={isEnabled} killSwitch={killSwitch} simulationMode={simulationMode} />
+          </>
+        )}
+
         <p className="text-[10px] text-muted-foreground/60 text-right">
           Dernière exécution : {formatRelative(state?.last_run_at ?? null)}
         </p>
@@ -242,7 +259,7 @@ export default function MyEmployees() {
   const { data: agents = [], isLoading: agentsLoading, isError: agentsError } = useEmployeeAgents();
   const { data: statesMap, isLoading: statesLoading, isError: statesError } = useKartaAgentStates();
   const { data: runs = [], isLoading: runsLoading, isError: runsError } = useKartaRuns(30);
-  const { data: pendingActions = [], isError: pendingError } = usePendingActions();
+  const { data: pendingActions = [], isError: pendingError, refetch: refetchPending } = usePendingActions();
   const stats = useKartaStats();
 
   const isLoading = agentsLoading || statesLoading;
@@ -286,11 +303,17 @@ export default function MyEmployees() {
         <>
           {/* Stats réelles (30 derniers jours) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={Activity} label="Exécutions (30j)" value={stats.total} />
-            <StatCard icon={CheckCircle2} label="Taux de réussite" value={`${stats.successRate}%`} />
-            <StatCard icon={PauseCircle} label="En attente de validation" value={stats.awaitingApproval} />
-            <StatCard icon={Clock} label="Dernière activité" value={formatRelative(runs[0]?.started_at ?? null)} />
+            <StatCard icon={Activity} label="Exécutions (30j)" value={stats.isLoading || stats.isError ? '—' : stats.total} />
+            <StatCard icon={CheckCircle2} label="Taux de réussite" value={stats.isLoading || stats.isError ? '—' : `${stats.successRate}%`} />
+            <StatCard icon={PauseCircle} label="En attente de validation" value={stats.isLoading || stats.isError ? '—' : stats.awaitingApproval} />
+            <StatCard icon={Clock} label="Dernière activité" value={runsLoading || runsError ? '—' : formatRelative(runs[0]?.started_at ?? null)} />
           </div>
+
+          {stats.isError && <p role="alert" className="text-sm text-destructive">Les statistiques sont momentanément indisponibles.</p>}
+          {pendingError && <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-destructive">
+            <p>Impossible de charger les actions à valider pour le moment.</p>
+            <Button variant="outline" size="sm" onClick={() => void refetchPending()}>Réessayer les validations</Button>
+          </div>}
 
           {!pendingError && pendingActions.length > 0 && (
             <Card className="bg-yellow-500/5 border-yellow-500/30">

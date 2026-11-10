@@ -77,7 +77,7 @@ async function resolve(status: "executed" | "rejected") {
 beforeAll(async () => {
   h.db = new PGlite();
   await h.db.exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;");
-  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "021_pending_action_execution_trigger.sql"])
+  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "026_pending_action_execution_origin.sql"])
     await h.db.exec(await readFile(new URL(`../migrations/${name}`, import.meta.url), "utf8"));
 });
 afterAll(async () => { await h.db?.close(); });
@@ -94,6 +94,20 @@ beforeEach(async () => {
 });
 
 describe("verified approval continuation through the real loop and SQL-finalized receipts", () => {
+  it.each(["executed", "rejected"] as const)("does not claim another brief while resuming an already %s action", async resolution => {
+    await resolve(resolution);
+    const result = await run(trigger(resolution), user, { ...definition, pendingBriefKey: "pending_brief" });
+    expect(result).toMatchObject({ status: "error", retryable: false });
+    expect(result.errorMessage).toContain("Reprise automatique suspendue");
+    expect(h.buildContext).not.toHaveBeenCalled();
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(h.next).not.toHaveBeenCalled();
+    expect(h.pending).not.toHaveBeenCalled();
+    expect(JSON.stringify(result)).not.toContain(secret);
+    expect(h.finish).toHaveBeenCalledOnce();
+  });
+
   it("restores only the owned origin and keeps it separate from mutable model facts", async () => {
     const origin = { type: "delegation", source: "partner", payload: {
       reason: "PRIVATE_DELEGATION_ORIGIN", kartaDelegation: { depth: 1, lineage: ["partner", "legal"] },

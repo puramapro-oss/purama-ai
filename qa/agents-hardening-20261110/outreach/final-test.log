@@ -1,0 +1,55 @@
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta
+
+ ✓ test/partnerOutreach.test.ts > retains pending approval and reports it honestly without an email send 72ms
+ ✓ test/partnerOutreach.test.ts > approves exactly the frozen preview even if the editable legacy email row was changed 57ms
+ ✓ test/partnerOutreach.test.ts > twenty simultaneous approval clicks dispatch the same frozen email only once 85ms
+ ✓ test/partnerOutreach.test.ts > refuses another user's approval even with a forged user_id and the exact version 32ms
+ ✓ test/partnerOutreach.test.ts > binds approval to both the email and its version, rejecting a different or stale draft 43ms
+ ✓ test/partnerOutreach.test.ts > rechecks status='rejected',has_replied=true after preview and before an approved send 39ms
+ ✓ test/partnerOutreach.test.ts > rechecks has_replied=true after preview and before an approved send 33ms
+ ✓ test/partnerOutreach.test.ts > rechecks email='changed@example.invalid' after preview and before an approved send 34ms
+ ✓ test/partnerOutreach.test.ts > rechecks is_active=false after preview and before an approved send 35ms
+ ✓ test/partnerOutreach.test.ts > rechecks sender_email='changed@example.invalid' after preview and before an approved send 40ms
+ ✓ test/partnerOutreach.test.ts > does not interpret a configuration change as approval for an already pending email 44ms
+ ✓ test/partnerOutreach.test.ts > reopens and approves follow-up 1 from the current prospect status without regenerating it 41ms
+ ✓ test/partnerOutreach.test.ts > reopens and approves follow-up 2 from the current prospect status without regenerating it 41ms
+ ✓ test/partnerOutreach.test.ts > reopens and approves follow-up 3 from the current prospect status without regenerating it 46ms
+ ✓ test/partnerOutreach.test.ts > blocks a follow-up selected by the client until its server-side due date 27ms
+ ✓ test/partnerOutreach.test.ts > does not equate approval with delivery or resend after an uncertain approval attempt 38ms
+ ✓ test/partnerOutreach.test.ts > rejects malformed approval requests before calling providers 22ms
+ ✓ test/partnerOutreach.test.ts > uses the explicitly configured model without selecting another tier 34ms
+ ✓ test/partnerOutreach.test.ts > rejects an empty model configuration before any external API call 26ms
+ ✓ test/partnerOutreach.test.ts > twenty simultaneous requests reserve one action and one provider send 61ms
+ ✓ test/partnerOutreach.test.ts > blocks a rejected/unsubscribed contact, including after a pipeline reset 30ms
+ ✓ test/partnerOutreach.test.ts > preserves suppression after deletion and reimport with changed email casing 43ms
+ ✓ test/partnerOutreach.test.ts > blocks replied contacts and inactive agents before paid drafting 30ms
+ ✓ test/partnerOutreach.test.ts > rechecks approval changed at onDraft 35ms
+ ✓ test/partnerOutreach.test.ts > rechecks approval changed at onReady 35ms
+ ✓ test/partnerOutreach.test.ts > rechecks opposition received while generation was running 26ms
+ ✓ test/partnerOutreach.test.ts > late provider acceptance cannot undo a reply or schedule a new follow-up 34ms
+ ✓ test/partnerOutreach.test.ts > keeps timeout uncertain and never sends a second time 43ms
+ ✓ test/partnerOutreach.test.ts > keeps missing_id uncertain and never sends a second time 40ms
+ ✓ test/partnerOutreach.test.ts > keeps server_error uncertain and never sends a second time 30ms
+ ✓ test/partnerOutreach.test.ts > does not claim success or resend after acknowledgement lost before_commit 29ms
+ ✓ test/partnerOutreach.test.ts > does not claim success or resend after acknowledgement lost after_commit 56ms
+ ✓ test/partnerOutreach.test.ts > keeps an uncertain dispatch reserved after prospect deletion and reimport of the same identity 40ms
+ ✓ test/partnerOutreach.test.ts > blocks ok attempts after deletion and reimport under a new ID with the same normalized email 35ms
+ ✓ test/partnerOutreach.test.ts > blocks timeout attempts after deletion and reimport under a new ID with the same normalized email 32ms
+ ✓ test/partnerOutreach.test.ts > does not automatically retry a known provider rejection 32ms
+ ✓ test/partnerOutreach.test.ts > uses authenticated identity and refuses another account's prospect 26ms
+ ✓ test/partnerOutreach.test.ts > rejects missing authentication and unauthorized step names without calls 260ms
+ ✓ test/partnerOutreach.test.ts > serializes the daily cap across different prospects and counts legacy sends 84ms
+ ✓ test/partnerOutreach.test.ts > counts pre-migration outreach towards the daily cap 121ms
+ ✓ test/partnerOutreach.test.ts > does not replay a historical attempt whose provider outcome was never persisted 729ms
+ ✓ test/partnerOutreach.test.ts > fences a stale generation claim and reserves the same action on safe recovery 28ms
+ ✓ test/partnerOutreach.test.ts > requires provider proof and the dispatch owner's token to finish 29ms
+ ✓ test/partnerOutreach.test.ts > client permissions for anon > cannot reserve, approve, inspect another frozen payload, alter evidence, or erase suppressions 35ms
+ ✓ test/partnerOutreach.test.ts > client permissions for authenticated > cannot reserve, approve, inspect another frozen payload, alter evidence, or erase suppressions 32ms
+ ✓ test/partnerOutreach.test.ts > reapplies the migration without losing evidence or reopening client permissions 63ms
+ ✓ test/partnerOutreach.test.ts > the presentation layer rejects unproved sent statuses and unknown schemas 27ms
+
+ Test Files  1 passed (1)
+      Tests  47 passed (47)
+   Start at  03:14:26
+   Duration  7.25s (tests 94%, transform 4%, import 2%)

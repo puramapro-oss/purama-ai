@@ -92,7 +92,7 @@ beforeAll(async () => {
   await db.exec(await readFile(new URL("../migrations/018_karta_brief_claims.sql", import.meta.url), "utf8"));
   await db.exec(await readFile(new URL("../migrations/019_karta_approval_parent_guard.sql", import.meta.url), "utf8"));
   await db.exec(await readFile(new URL("../migrations/020_execution_fingerprints.sql", import.meta.url), "utf8"));
-  await db.exec(await readFile(new URL("../migrations/021_pending_action_execution_trigger.sql", import.meta.url), "utf8"));
+  await db.exec(await readFile(new URL("../migrations/026_pending_action_execution_origin.sql", import.meta.url), "utf8"));
   // Reapplying the additive brief schema must preserve the later guards.
   await db.exec(await readFile(new URL("../migrations/018_karta_brief_claims.sql", import.meta.url), "utf8"));
 });

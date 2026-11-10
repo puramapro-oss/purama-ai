@@ -26,6 +26,185 @@ export const ACTION_AGENT_SLUGS = [
 
 export type ActionAgentSlug = (typeof ACTION_AGENT_SLUGS)[number];
 
+/** Agents dont le contexte attend une consigne ; même périmètre que les reçus KARTA. */
+export const BRIEF_AGENT_SLUGS = [
+  'campagnes-par-courriel',
+  'pro-de-la-sensibilisation-au-froid',
+  'newsletter-genie',
+  'maitre-des-publicites',
+  'planificateur-d-appels',
+  'reservation-intelligente',
+] as const satisfies readonly ActionAgentSlug[];
+export type BriefAgentSlug = (typeof BRIEF_AGENT_SLUGS)[number];
+export const BRIEF_MAX_LENGTH = 8000;
+
+export function isBriefAgent(slug: string): slug is BriefAgentSlug {
+  return (BRIEF_AGENT_SLUGS as readonly string[]).includes(slug);
+}
+
+const BRIEF_STATES = [
+  'pending', 'claimed', 'effect_started', 'ready', 'awaiting_approval', 'completed', 'reconciliation_required',
+] as const;
+export interface BriefMission {
+  submissionId: string;
+  agentType: BriefAgentSlug;
+  state: (typeof BRIEF_STATES)[number];
+  createdAt: string;
+  updatedAt: string;
+  attemptCount: number;
+  run: null | { id: string; status: string; mode: 'live' | 'simulation'; mock: boolean };
+}
+export type BriefMutationInput = {
+  action: 'submit-brief'; agentType: BriefAgentSlug; submissionId: string; requestId: string; brief: string;
+} | {
+  action: 'retry-brief'; agentType: BriefAgentSlug; submissionId: string; requestId: string;
+};
+export interface BriefMutationResult {
+  mission: BriefMission;
+  dispatch: { state: 'queued' | 'unconfirmed' | 'not_requested'; executionKey?: string };
+}
+
+const BRIEF_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const BRIEF_UNCONFIRMED = 'La réponse du service n’est pas confirmée. Vérifie le suivi ou réessaie le même envoi.';
+
+/** Messages publics fixes : les réponses du service peuvent contenir des informations privées. */
+export class BriefRequestError extends Error {
+  constructor(readonly code: 'BRIEF_BUSY' | 'BRIEF_CONFLICT' | 'INVALID' | 'UNCONFIRMED' | 'SESSION' = 'UNCONFIRMED') {
+    super(code === 'BRIEF_BUSY' ? 'Une consigne est déjà en attente pour cet employé. Elle n’a pas été remplacée.'
+      : code === 'BRIEF_CONFLICT' ? 'Cette demande est déjà associée à une autre consigne. Vérifie son suivi avant de continuer.'
+        : code === 'INVALID' ? 'La consigne ou sa référence est invalide. Vérifie le texte avant de réessayer.'
+          : code === 'SESSION' ? 'Ta session a changé. Rouvre le formulaire avec le compte souhaité.' : BRIEF_UNCONFIRMED);
+    this.name = 'BriefRequestError';
+  }
+}
+
+function briefRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new BriefRequestError();
+  return value as Record<string, unknown>;
+}
+
+function readBriefMission(value: unknown, agentType: BriefAgentSlug, submissionId?: string): BriefMission {
+  const row = briefRecord(value);
+  if (typeof row.submissionId !== 'string' || !BRIEF_UUID.test(row.submissionId)
+    || (submissionId && row.submissionId !== submissionId) || row.agentType !== agentType
+    || !(BRIEF_STATES as readonly unknown[]).includes(row.state)
+    || typeof row.createdAt !== 'string' || !Number.isFinite(Date.parse(row.createdAt))
+    || typeof row.updatedAt !== 'string' || !Number.isFinite(Date.parse(row.updatedAt))
+    || !Number.isInteger(row.attemptCount) || Number(row.attemptCount) < 0 || Number(row.attemptCount) > 3) {
+    throw new BriefRequestError();
+  }
+  let run: BriefMission['run'] = null;
+  if (row.run !== null) {
+    const candidate = briefRecord(row.run);
+    if (typeof candidate.id !== 'string' || !BRIEF_UUID.test(candidate.id)
+      || typeof candidate.status !== 'string' || !candidate.status || candidate.status.length > 80
+      || (candidate.mode !== 'live' && candidate.mode !== 'simulation') || typeof candidate.mock !== 'boolean') {
+      throw new BriefRequestError();
+    }
+    run = { id: candidate.id, status: candidate.status, mode: candidate.mode, mock: candidate.mock };
+  }
+  return { submissionId: row.submissionId, agentType, state: row.state as BriefMission['state'],
+    createdAt: row.createdAt, updatedAt: row.updatedAt, attemptCount: Number(row.attemptCount), run };
+}
+
+async function invokeBriefRequest(ownerId: string, body: Record<string, unknown>, signal?: AbortSignal) {
+  // Bind the token to the owner captured by this query, even if the account changes during an await.
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || sessionData.session?.user.id !== ownerId) throw new BriefRequestError('SESSION');
+  if (signal?.aborted) throw new BriefRequestError();
+  const { data, error } = await supabase.functions.invoke('karta-trigger', {
+    body, signal, timeout: 15000,
+    headers: { Authorization: `Bearer ${sessionData.session.access_token}` },
+  });
+  if (error) {
+    let code: unknown;
+    let status: number | undefined;
+    if (error.context instanceof Response) {
+      status = error.context.status;
+      try { code = (await error.context.json())?.code; } catch { /* Keep a fixed public message. */ }
+    }
+    throw new BriefRequestError(status === 409 && (code === 'BRIEF_BUSY' || code === 'BRIEF_CONFLICT') ? code
+      : status === 400 && (code === 'INVALID' || code === 'BRIEF_INVALID') ? 'INVALID' : 'UNCONFIRMED');
+  }
+  const result = briefRecord(data);
+  if (result.ok !== true) throw new BriefRequestError();
+  return result;
+}
+
+/** Reads are separate from mutations; callers bound polling with `polling`. No request is replayed by a read. */
+export function useKartaBriefMissions(agentType: BriefAgentSlug, polling: boolean) {
+  const { user } = useAuth();
+  return useQuery<BriefMission[], Error>({
+    queryKey: ['karta-brief-missions', user?.id, agentType],
+    enabled: !!user,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    refetchInterval: query => polling && query.state.status !== 'error'
+      && query.state.data?.some(mission => mission.state !== 'completed' && mission.state !== 'reconciliation_required')
+      ? 2500 : false,
+    queryFn: async ({ signal }) => {
+      const result = await invokeBriefRequest(user!.id, { action: 'list-briefs', agentType }, signal);
+      if (!Array.isArray(result.missions)) throw new BriefRequestError();
+      const missions = result.missions.map(row => readBriefMission(row, agentType));
+      if (new Set(missions.map(mission => mission.submissionId)).size !== missions.length) throw new BriefRequestError();
+      return missions.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+    },
+  });
+}
+
+/** Recover an uncertain submission using its original identifier, including after a reload. */
+export function useKartaBriefStatus(agentType: BriefAgentSlug, submissionId: string | null, polling: boolean) {
+  const { user } = useAuth();
+  return useQuery<BriefMission | null, Error>({
+    queryKey: ['karta-brief-status', user?.id, agentType, submissionId],
+    enabled: !!user && !!submissionId,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    refetchInterval: query => polling && query.state.status !== 'error' ? 2500 : false,
+    queryFn: async ({ signal }) => {
+      const result = await invokeBriefRequest(user!.id, { action: 'brief-status', agentType, submissionId }, signal);
+      return result.mission === null ? null : readBriefMission(result.mission, agentType, submissionId!);
+    },
+  });
+}
+
+export function useMutateKartaBrief() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation<BriefMutationResult, Error, { request: BriefMutationInput; signal: AbortSignal }>({
+    retry: false,
+    gcTime: 0,
+    mutationFn: async ({ request, signal }) => {
+      if (!user) throw new BriefRequestError('SESSION');
+      if (!BRIEF_UUID.test(request.submissionId) || !BRIEF_UUID.test(request.requestId)
+        || (request.action === 'submit-brief' && (!request.brief.trim()
+          || request.brief.includes('\0') || request.brief.length > BRIEF_MAX_LENGTH
+          || new TextEncoder().encode(request.brief).length > 32000))) {
+        throw new BriefRequestError('INVALID');
+      }
+      const result = await invokeBriefRequest(user.id, request, signal);
+      if (result.accepted !== true) throw new BriefRequestError();
+      const mission = readBriefMission(result.mission, request.agentType, request.submissionId);
+      const dispatch = briefRecord(result.dispatch);
+      if (dispatch.state !== 'queued' && dispatch.state !== 'unconfirmed' && dispatch.state !== 'not_requested') {
+        throw new BriefRequestError();
+      }
+      if (dispatch.executionKey !== undefined && (typeof dispatch.executionKey !== 'string'
+        || !dispatch.executionKey.trim() || dispatch.executionKey.length > 512)) throw new BriefRequestError();
+      return { mission, dispatch: { state: dispatch.state, ...(typeof dispatch.executionKey === 'string'
+        ? { executionKey: dispatch.executionKey } : {}) } };
+    },
+    onSuccess: ({ mission }) => {
+      const key = ['karta-brief-missions', user?.id, mission.agentType];
+      queryClient.setQueryData<BriefMission[]>(key, previous => [mission, ...(previous ?? []).filter(row => row.submissionId !== mission.submissionId)]);
+      void queryClient.invalidateQueries({ queryKey: key });
+      void queryClient.invalidateQueries({ queryKey: ['karta-brief-status', user?.id, mission.agentType, mission.submissionId] });
+      void queryClient.invalidateQueries({ queryKey: ['karta-runs', user?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['karta-stats', user?.id] });
+    },
+  });
+}
+
 export interface KartaAgentState {
   id: string;
   user_id: string;

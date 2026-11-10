@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { supabase } from "../db/supabase.js";
 import type { ChefDriverProvider } from "./driver.js";
+import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefClaimUsage, ChefControlPlane, ChefEvidenceClaim, ChefRuntimeTask } from "./supervisor.js";
 import { normalizeChefRequirementKeys, type ChefVerificationEvidence } from "./verifier.js";
 
@@ -47,6 +48,9 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
     assertRpc(stale.error, "chef_mark_stale_workers");
 
     const requeue = await supabase.rpc("chef_requeue_expired_tasks", { p_mission_id: missionId });
+    if (requeue.error?.code === "PCQ01") {
+      throw new ChefProcessStopUnconfirmedError("Récupération CHEF bloquée: arrêt du processus expiré non confirmé; intervention requise");
+    }
     assertRpc(requeue.error, "chef_requeue_expired_tasks");
 
     // Self-heal a prior transient failure that happened after the last task became verified.
@@ -93,6 +97,11 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       p_provider: input.provider,
       p_lease_seconds: input.leaseSeconds,
     });
+    if (result.error?.code === "PCQ01") {
+      // This is a persistent safety stop, not an empty queue or transient outage.
+      // Let the daemon halt instead of polling or launching another process.
+      throw new ChefProcessStopUnconfirmedError("Admission CHEF bloquée par une quarantaine persistante; intervention requise");
+    }
     assertRpc(result.error, "chef_claim_next_task");
     const row = oneRow(result.data);
     if (!row) return null;
@@ -173,6 +182,26 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       p_output_sha: input.outputSha ?? null,
     });
     assertRpc(result.error, "chef_transition_task");
+    return result.data === true;
+  }
+
+  async quarantineProcess(taskId: string, claim: ChefEvidenceClaim, reason: string): Promise<boolean> {
+    if (!claim || typeof claim.workerId !== "string" || claim.workerId.trim().length === 0) {
+      throw new Error("Claim de quarantaine CHEF invalide");
+    }
+    const fencingToken = safeInt(claim.fencingToken, "fencingToken");
+    const attempt = safeInt(claim.attempt, "attempt");
+    if (fencingToken === 0 || attempt === 0 || typeof reason !== "string" || !reason.trim() || reason.length > 10_000) {
+      throw new Error("Quarantaine CHEF invalide");
+    }
+    const result = await supabase.rpc("chef_quarantine_process", {
+      p_task_id: taskId,
+      p_worker_id: claim.workerId,
+      p_fencing_token: fencingToken,
+      p_attempt: attempt,
+      p_reason: reason,
+    });
+    assertRpc(result.error, "chef_quarantine_process");
     return result.data === true;
   }
 
@@ -270,6 +299,9 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
 
   async tryFinishMission(missionId: string): Promise<boolean> {
     const result = await supabase.rpc("chef_try_finish_mission", { p_mission_id: missionId });
+    if (result.error?.code === "PCQ01") {
+      throw new ChefProcessStopUnconfirmedError("Validation de mission CHEF bloquée par une quarantaine persistante; intervention requise");
+    }
     assertRpc(result.error, "chef_try_finish_mission");
     return result.data === true;
   }

@@ -1,0 +1,36 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 37 files, 461 symbols
+Affected processes: 12
+Risk level: high
+
+Changed symbols:
+  Interface ChefBriefTask → karta/src/chef/brief.ts
+  Property estimatedTokens → karta/src/chef/brief.ts
+  Property estimatedCostMicros → karta/src/chef/brief.ts
+  Function validateChefBrief → karta/src/chef/brief.ts
+  Function normalizeChefBrief → karta/src/chef/brief.ts
+  Property tasks → karta/src/chef/brief.ts
+  Class SupabaseChefControlPlane → karta/src/chef/control-plane.ts
+  Method housekeeping → karta/src/chef/control-plane.ts
+  Method claimNext → karta/src/chef/control-plane.ts
+  Method quarantineProcess → karta/src/chef/control-plane.ts
+  Method tryFinishMission → karta/src/chef/control-plane.ts
+  Class ProcessChefDriver → karta/src/chef/driver.ts
+  Method run → karta/src/chef/driver.ts
+  Function createChefMission → karta/src/chef/mission.ts
+  Class ChefProcessStopUnconfirmedError → karta/src/chef/process.ts
+... and 446 more
+
+Affected execution flows:
+  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: tryFinishMission, housekeeping, ChefProcessStopUnconfirmedError, runChefWorkerCycle
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle
+  • HandleApprove → Sb (4 steps) — changed: handleApprove
+  • HandleApprove → ParseOutreachResult (3 steps) — changed: approveOutreach, handleApprove, parseOutreachResult
+  • HandleSend → ParseOutreachResult (3 steps) — changed: sendOutreach, handleSend, parseOutreachResult
+  • HandleSend → Sb (4 steps) — changed: handleSend
+  • HandleApprove → From (4 steps) — changed: handleApprove
+  • HandleApprove → Query (4 steps) — changed: handleApprove
+  • HandleSend → From (4 steps) — changed: handleSend
+... and 2 more

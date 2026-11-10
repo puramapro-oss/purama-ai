@@ -1,0 +1,35 @@
+{
+  "sha": "8631305fe0a4e0208566191b795ef876d9b5dfbe",
+  "node_id": "C_kwDOSClhn9oAKDg2MzEzMDVmZTBhNGUwMjA4NTY2MTkxYjc5NWVmODc2ZDliNWRmYmU",
+  "url": "https://api.github.com/repos/puramapro-oss/purama-ai/git/commits/8631305fe0a4e0208566191b795ef876d9b5dfbe",
+  "html_url": "https://github.com/puramapro-oss/purama-ai/commit/8631305fe0a4e0208566191b795ef876d9b5dfbe",
+  "author": {
+    "name": "puramapro-oss",
+    "email": "purama.pro@gmail.com",
+    "date": "2026-11-10T14:51:16Z"
+  },
+  "committer": {
+    "name": "puramapro-oss",
+    "email": "purama.pro@gmail.com",
+    "date": "2026-11-10T14:51:16Z"
+  },
+  "tree": {
+    "sha": "16d4f2b45afc7ba05f8c74ef71e1b209c7bcac0e",
+    "url": "https://api.github.com/repos/puramapro-oss/purama-ai/git/trees/16d4f2b45afc7ba05f8c74ef71e1b209c7bcac0e"
+  },
+  "message": "ci: restore complete quality discovery and main/manual triggers\n\nPreserve existing jobs and permissions. Include all five quality spec files; exact Playwright discovery lists 49 tests instead of 28. This change does not assert that the billing lock on hosted Actions has been cleared.",
+  "parents": [
+    {
+      "sha": "0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+      "url": "https://api.github.com/repos/puramapro-oss/purama-ai/git/commits/0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+      "html_url": "https://github.com/puramapro-oss/purama-ai/commit/0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

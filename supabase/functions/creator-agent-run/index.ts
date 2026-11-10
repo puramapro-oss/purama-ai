@@ -1,3 +1,4 @@
+import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Creator Agent — One-shot run (manual trigger or n8n cron)
 // POST { agent_id, input, trigger?: "manual"|"cron"|"webhook"|"api" }
 // If called by service-role: bypass user check (used by n8n scheduler).
@@ -112,7 +113,7 @@ Deno.serve(async (req) => {
           model: agent.model,
           max_tokens: agent.max_tokens,
           temperature: Number(agent.temperature),
-          system: agent.system_prompt,
+          system: buildAssistantSystemPrompt(agent.system_prompt, "task"),
           messages: [{ role: "user", content: inputText || "Démarre." }],
         }),
       });

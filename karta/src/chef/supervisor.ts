@@ -1,6 +1,7 @@
 import type { ChefDriverProvider, ChefDriverResponse, ChefWorkerDriver } from "./driver.js";
 import { createHash } from "node:crypto";
 import { captureCleanGitBaseline, verifyCommittedGitState } from "./git-state.js";
+import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
 
 export interface ChefRuntimeTask {
@@ -46,6 +47,7 @@ export interface ChefControlPlane {
   claimNext(input: { missionId: string; workerId: string; provider: ChefDriverProvider; leaseSeconds: number }): Promise<ChefRuntimeTask | null>;
   renewLease(input: { taskId: string; workerId: string; fencingToken: number; leaseSeconds: number }): Promise<boolean>;
   transition(input: { taskId: string; workerId: string; fencingToken: number; target: "running" | "verifying" | "verified_done" | "retryable" | "blocked_human" | "blocked_external" | "failed"; error?: string; outputSha?: string }): Promise<boolean>;
+  quarantineProcess?(taskId: string, claim: ChefEvidenceClaim, reason: string): Promise<boolean>;
   addEvidence(taskId: string, evidence: ChefVerificationEvidence, claim: ChefEvidenceClaim): Promise<boolean>;
   /** False means a capped dimension is still unknown; its reservation remains held. */
   recordUsage(input: ChefClaimUsage): Promise<boolean>;
@@ -56,6 +58,7 @@ export type ChefWorkerCycleResult =
   | { state: "idle" }
   | { state: "verified_done"; taskId: string }
   | { state: "retryable"; taskId: string; error: string }
+  | { state: "blocked_external"; taskId: string; error: string; haltWorker: true }
   | { state: "blocked_human" | "blocked_external" | "failed" | "lost_lease"; taskId: string; error?: string };
 
 export interface ChefWorkerCycleOptions {
@@ -65,6 +68,7 @@ export interface ChefWorkerCycleOptions {
   model?: string;
   leaseSeconds?: number;
   renewEveryMs?: number;
+  signal?: AbortSignal;
 }
 
 function usageEventKey(task: ChefRuntimeTask, response: ChefDriverResponse): string {
@@ -104,8 +108,11 @@ export async function runChefWorkerCycle(
     throw new Error("Cadence de renouvellement CHEF invalide");
   }
 
+  if (options.signal?.aborted) return { state: "idle" };
   if (control.housekeeping) await control.housekeeping(options.missionId);
+  if (options.signal?.aborted) return { state: "idle" };
   await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "idle" });
+  if (options.signal?.aborted) return { state: "idle" };
   const task = await control.claimNext({
     missionId: options.missionId,
     workerId: options.workerId,
@@ -113,14 +120,12 @@ export async function runChefWorkerCycle(
     leaseSeconds,
   });
   if (!task) return { state: "idle" };
-  const evidenceClaim = Object.freeze({
-    workerId: options.workerId,
-    fencingToken: task.fencingToken,
-    attempt: task.attempt,
-  });
-  // These paths have not called the driver. Zero is a known observation here,
-  // unlike missing provider metrics after an execution or timeout.
+  let driverStarted = false;
+  let preExecutionSettled = false;
+  // Zero is known only while this worker has not invoked the driver. A timeout,
+  // confirmed shutdown or process quarantine after that point proves no amount.
   const settleBeforeExecution = async () => {
+    if (preExecutionSettled) return;
     const settled = await control.recordUsage({
       eventKey: `chef-no-execution|${task.id}|${task.attempt}|${task.fencingToken}`,
       missionId: task.missionId, taskId: task.id, workerId: options.workerId,
@@ -129,7 +134,25 @@ export async function runChefWorkerCycle(
       inputTokens: 0, outputTokens: 0, cachedInputTokens: 0, costMicros: 0,
     });
     if (!settled) throw new Error("Réservation sans exécution non réconciliée");
+    preExecutionSettled = true;
   };
+  const releaseForShutdown = async (): Promise<ChefWorkerCycleResult> => {
+    if (!driverStarted) await settleBeforeExecution();
+    const error = "Arrêt du worker demandé; exécution arrêtée ou non démarrée";
+    const released = await control.transition({
+      taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+      target: "retryable", error,
+    });
+    return released
+      ? { state: "retryable", taskId: task.id, error }
+      : { state: "lost_lease", taskId: task.id, error };
+  };
+  if (options.signal?.aborted) return await releaseForShutdown();
+  const evidenceClaim = Object.freeze({
+    workerId: options.workerId,
+    fencingToken: task.fencingToken,
+    attempt: task.attempt,
+  });
 
   if (task.briefHash.length !== 64) {
     await settleBeforeExecution();
@@ -169,6 +192,7 @@ export async function runChefWorkerCycle(
     }
   }
 
+  if (options.signal?.aborted) return await releaseForShutdown();
   let running: boolean;
   try {
     running = await control.transition({
@@ -190,6 +214,9 @@ export async function runChefWorkerCycle(
   }
 
   const abort = new AbortController();
+  const onShutdown = () => abort.abort(options.signal?.reason);
+  options.signal?.addEventListener("abort", onShutdown, { once: true });
+  if (options.signal?.aborted) onShutdown();
   let lostLease = false;
   let renewalBusy = false;
   let renewalStopped = false;
@@ -229,9 +256,44 @@ export async function runChefWorkerCycle(
     clearInterval(renewal);
   };
 
+  const blockUnconfirmedStop = async (error: ChefProcessStopUnconfirmedError): Promise<ChefWorkerCycleResult> => {
+    stopRenewal();
+    const message = error.message.slice(0, 10_000);
+    let quarantined = false;
+    try {
+      quarantined = await control.quarantineProcess?.(task.id, evidenceClaim, message) === true;
+    } catch {
+      throw new ChefProcessStopUnconfirmedError(`${message}; quarantaine durable non enregistrée`);
+    }
+    if (!quarantined) {
+      throw new ChefProcessStopUnconfirmedError(`${message}; quarantaine durable indisponible ou refusée`);
+    }
+    // The persistent scope exclusion MUST exist before blocked_external releases
+    // the ordinary active-task index locks. A stale claim can still quarantine
+    // its authenticated historical generation, even if this transition fails.
+    let blocked: boolean;
+    try {
+      blocked = await control.transition({
+        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+        target: "blocked_external", error: message,
+      });
+    } catch {
+      throw new ChefProcessStopUnconfirmedError(`${message}; blocage durable non enregistré`);
+    }
+    if (!blocked) {
+      throw new ChefProcessStopUnconfirmedError(`${message}; blocage durable refusé (claim périmé)`);
+    }
+    return { state: "blocked_external", taskId: task.id, error: message, haltWorker: true };
+  };
+
   try {
+    if (abort.signal.aborted) {
+      stopRenewal();
+      return await releaseForShutdown();
+    }
     let response: ChefDriverResponse;
     try {
+      driverStarted = true;
       response = await driver.run({
         schemaVersion: 1,
         missionId: task.missionId,
@@ -249,6 +311,7 @@ export async function runChefWorkerCycle(
         allowedPaths: task.allowedPaths,
       }, abort.signal);
     } catch (error) {
+      if (error instanceof ChefProcessStopUnconfirmedError) return await blockUnconfirmedStop(error);
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
       const message = error instanceof Error ? error.message : "Erreur worker";
       const retry = await control.transition({
@@ -260,8 +323,8 @@ export async function runChefWorkerCycle(
         : { state: "lost_lease", taskId: task.id, error: message };
     }
 
-    // Accounting is bound to this attempt even if its lease was lost meanwhile.
-    // A late receipt may settle its own reservation; it cannot complete another claim.
+    // A late receipt settles only this exact attempt. Lease loss still prevents
+    // task completion, and settlement never clears a process quarantine.
     try {
       const accounted = await control.recordUsage({
         eventKey: usageEventKey(task, response),
@@ -292,6 +355,11 @@ export async function runChefWorkerCycle(
     }
 
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
+
+    if (abort.signal.aborted) {
+      stopRenewal();
+      return await releaseForShutdown();
+    }
 
     if (response.status === "blocked_human" || response.status === "blocked_external") {
       stopRenewal();
@@ -361,6 +429,7 @@ export async function runChefWorkerCycle(
     try {
       verification = await verifier.verify(task.cwd, task.verificationProfiles, abort.signal);
     } catch (error) {
+      if (error instanceof ChefProcessStopUnconfirmedError) return await blockUnconfirmedStop(error);
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
       const message = error instanceof Error ? error.message : "Erreur de vérification";
       stopRenewal();
@@ -372,6 +441,10 @@ export async function runChefWorkerCycle(
     }
 
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
+    if (abort.signal.aborted) {
+      stopRenewal();
+      return await releaseForShutdown();
+    }
 
     // Observe Git again after the checks. This detects a changed final HEAD/worktree;
     // it is not a claim that commands executed inside an immutable snapshot.
@@ -396,6 +469,10 @@ export async function runChefWorkerCycle(
     }
 
     for (const evidence of [...(gitEvidence ? [gitEvidence] : []), ...verification.evidence]) {
+      if (options.signal?.aborted) {
+        stopRenewal();
+        return await releaseForShutdown();
+      }
       if (lostLease || !await control.addEvidence(task.id, evidence, evidenceClaim)) {
         loseLease();
         return { state: "lost_lease", taskId: task.id, error: "Claim périmé lors de l'enregistrement des preuves" };
@@ -417,6 +494,7 @@ export async function runChefWorkerCycle(
     }
 
     stopRenewal();
+    if (options.signal?.aborted) return await releaseForShutdown();
     const done = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
       target: "verified_done", outputSha: response.outputSha,
@@ -427,5 +505,6 @@ export async function runChefWorkerCycle(
     return { state: "verified_done", taskId: task.id };
   } finally {
     stopRenewal();
+    options.signal?.removeEventListener("abort", onShutdown);
   }
 }

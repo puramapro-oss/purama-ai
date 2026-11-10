@@ -1,0 +1,18 @@
+{
+  "command": "npm test -- test/chefProcessQuarantine.test.ts test/chefQuarantineAdapter.test.ts --maxWorkers=1",
+  "cwd": "karta",
+  "result": {
+    "chunk_id": "8db697",
+    "wall_time_seconds": 0.00002758,
+    "exit_code": 0,
+    "original_token_count": 34,
+    "output": "\n Test Files  2 passed (2)\n      Tests  33 passed (33)\n   Start at  03:26:20\n   Duration  5.17s (tests 91%, transform 6%, import 2%)\n\n"
+  },
+  "passedTests": 33,
+  "passedFiles": 2,
+  "notes": [
+    "Actual migrations 008 through 020 loaded into PGlite, plus mocked Supabase adapter tests.",
+    "An initial fixture-only failure reused one SQL parameter with UUID and text types; fixed by distinct parameters.",
+    "No PostgreSQL multi-connection guarantee inferred from PGlite; native queue-order review pending."
+  ]
+}

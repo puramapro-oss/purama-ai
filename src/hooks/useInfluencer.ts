@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -240,7 +241,7 @@ export function useInfluencer() {
 
 // Hook for tracking referrals
 export function useReferralTracking() {
-  const checkAndStoreReferral = () => {
+  const checkAndStoreReferral = useCallback(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
     
@@ -251,9 +252,9 @@ export function useReferralTracking() {
     }
     
     return null;
-  };
+  }, []);
 
-  const getStoredReferral = (): { code: string; timestamp: number } | null => {
+  const getStoredReferral = useCallback((): { code: string; timestamp: number } | null => {
     const code = localStorage.getItem('referral_code');
     const timestamp = localStorage.getItem('referral_timestamp');
     
@@ -268,12 +269,12 @@ export function useReferralTracking() {
     }
     
     return { code, timestamp: parseInt(timestamp) };
-  };
+  }, []);
 
-  const clearReferral = () => {
+  const clearReferral = useCallback(() => {
     localStorage.removeItem('referral_code');
     localStorage.removeItem('referral_timestamp');
-  };
+  }, []);
 
   return {
     checkAndStoreReferral,
@@ -284,8 +285,6 @@ export function useReferralTracking() {
 
 // Admin hook for managing all influencers
 export function useInfluencerAdmin() {
-  const queryClient = useQueryClient();
-
   const { data: allInfluencers = [], isLoading } = useQuery({
     queryKey: ['admin-influencers'],
     queryFn: async () => {
@@ -312,29 +311,9 @@ export function useInfluencerAdmin() {
     },
   });
 
-  const markCommissionPaid = useMutation({
-    mutationFn: async (commissionId: string) => {
-      const { error } = await supabase
-        .from('commissions')
-        .update({
-          status: 'paid',
-          payment_date: new Date().toISOString(),
-        })
-        .eq('id', commissionId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-commissions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-influencers'] });
-      toast.success('Commission marquée comme payée');
-    },
-  });
-
   return {
     allInfluencers,
     allCommissions,
     isLoading,
-    markCommissionPaid,
   };
 }

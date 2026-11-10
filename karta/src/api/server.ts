@@ -8,6 +8,7 @@ import { CycleDeliveryConflictError, getQueuedExecutionKey } from "../queue/deli
 import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
+import { BriefSubmissionError, dispatchBrief, getBriefStatus, listBriefs, submitBrief } from "../engine/brief-submission.js";
 import type { StaticAgentType } from "../engine/types.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
@@ -64,6 +65,7 @@ export function startApiServer() {
     void handleRequest(req, res).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
+      else if (error instanceof BriefSubmissionError) json(res, error.status, { error: error.message, code: error.code });
       else if (error instanceof CycleDeliveryConflictError) json(res, 409, { error: error.message });
       else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
     });
@@ -124,6 +126,19 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return;
   }
 
+  const briefsMatch = url.pathname.match(/^\/briefs\/([a-z-]+)\/([0-9a-f-]+)$/);
+  if (req.method === "GET" && briefsMatch) {
+    const [, agentType, userId] = briefsMatch;
+    if ([...url.searchParams.keys()].some(key => key !== "submissionId") || url.searchParams.getAll("submissionId").length > 1) {
+      throw new BriefSubmissionError("BRIEF_INVALID");
+    }
+    const id = url.searchParams.get("submissionId");
+    json(res, 200, id === null
+      ? { ok: true, missions: await listBriefs({ userId, agentType }) }
+      : { ok: true, mission: await getBriefStatus({ userId, agentType }, id) });
+    return;
+  }
+
   const triggerMatch = url.pathname.match(/^\/trigger\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "POST" && triggerMatch) {
     const [, agentType, userId] = triggerMatch;
@@ -132,6 +147,23 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       return;
     }
     const requestKey = readIdempotencyKey(req);
+    const body = await readBody(req);
+    if (body.action === "submit-brief" || body.action === "retry-brief") {
+      const allowed = body.action === "submit-brief" ? ["action", "submissionId", "brief"] : ["action", "submissionId"];
+      if (Object.keys(body).some(key => !allowed.includes(key)) || typeof body.submissionId !== "string"
+        || !requestKey || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestKey)) {
+        throw new BriefSubmissionError("BRIEF_INVALID");
+      }
+      const scope = { userId, agentType };
+      const mission = body.action === "submit-brief"
+        ? await submitBrief(scope, body.submissionId, body.brief)
+        : await getBriefStatus(scope, body.submissionId);
+      if (!mission) throw new BriefSubmissionError("BRIEF_NOT_FOUND");
+      const dispatch = await dispatchBrief(scope, mission, requestKey);
+      json(res, 202, { ok: true, accepted: true, mission, dispatch });
+      return;
+    }
+    if (Object.keys(body).length !== 0) throw new RequestError(400, "Contrat de déclenchement invalide");
     const jobId = await enqueueAgentCycle(
       {
         agentType: agentType as StaticAgentType,

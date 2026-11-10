@@ -1,0 +1,9 @@
+{
+  "nodeModulesDir": "manual",
+  "imports": {
+    "https://deno.land/std@0.190.0/http/server.ts": "./fixture.ts",
+    "npm:@supabase/supabase-js@2.91.0": "./fixture.ts",
+    "npm:opentimestamps@0.4.9": "./fixture.ts",
+    "../../supabase/functions/_shared/ots-library.ts": "./ots-runtime-fixture.ts"
+  }
+}

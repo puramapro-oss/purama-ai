@@ -1,0 +1,29 @@
+{
+  "commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "result": {
+    "state": "retryable",
+    "taskId": "t1",
+    "error": "Worker CHEF expiré"
+  },
+  "transitions": [
+    {
+      "taskId": "t1",
+      "workerId": "w1",
+      "fencingToken": 1,
+      "target": "running",
+      "at": 1794274561982
+    },
+    {
+      "taskId": "t1",
+      "workerId": "w1",
+      "fencingToken": 1,
+      "target": "retryable",
+      "error": "Worker CHEF expiré",
+      "at": 1794274562239
+    }
+  ],
+  "markerAtRetry": false,
+  "markerAfterRetry": true,
+  "lateEffectAfterCycleReturnMs": 441,
+  "pass": false
+}

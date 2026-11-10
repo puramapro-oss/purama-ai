@@ -21,9 +21,9 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
   listProspects, createProspect, updateProspect, deleteProspect,
-  findProspects, sendOutreach, generateContract,
+  findProspects, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus, generateContract,
   STATUS_META, PROSPECT_TYPES, NICHES,
-  type PartnerProspect, type ProspectStatus, type ProspectType,
+  type PartnerProspect, type ProspectStatus, type ProspectType, type OutreachApproval,
 } from '@/lib/partner';
 
 const newProspect = (): Partial<PartnerProspect> => ({
@@ -51,6 +51,8 @@ export default function PartnerAgentProspects() {
   const [findNiche, setFindNiche] = useState('');
   const [findType, setFindType] = useState<ProspectType>('influencer');
   const [finding, setFinding] = useState(false);
+  const [pendingApproval, setPendingApproval] = useState<{ emailId: string; preview: OutreachApproval } | null>(null);
+  const [approving, setApproving] = useState(false);
 
   const refresh = async () => {
     if (!user) return;
@@ -119,18 +121,43 @@ export default function PartnerAgentProspects() {
   };
 
   const handleSend = async (p: PartnerProspect) => {
+    const step = outreachStepForStatus(p.status);
+    if (!step) return;
     if (!p.email) {
       toast.error('Pas d\'email pour ce prospect');
       return;
     }
-    if (!confirm(`Envoyer un email d'outreach IA à ${p.name} (${p.email}) ?`)) return;
+    const label = step === 'outreach' ? 'un premier email de partenariat' : `la relance ${step.slice(-1)}`;
+    if (!confirm(`Envoyer ${label} à ${p.name} (${p.email}) ?`)) return;
     try {
-      await sendOutreach(p.id);
-      toast.success('✅ Email envoyé', { description: 'L\'IA a rédigé et envoyé un message personnalisé' });
+      const result = await sendOutreach(p.id, step);
+      const feedback = outreachFeedback(result);
+      toast[feedback.kind](feedback.title, { description: feedback.description });
+      if (result.status === 'pending_approval' && result.email_id && result.approval) {
+        setPendingApproval({ emailId: result.email_id, preview: result.approval });
+      }
       refresh();
     } catch (e) {
       toast.error('Erreur d\'envoi', { description: e instanceof Error ? e.message : String(e) });
     }
+  };
+
+  const handleApprove = async () => {
+    if (!pendingApproval || approving) return;
+    setApproving(true);
+    try {
+      const result = await approveOutreach(pendingApproval.emailId, pendingApproval.preview.version);
+      const feedback = outreachFeedback(result);
+      toast[feedback.kind](feedback.title, { description: feedback.description });
+      if (result.status === 'pending_approval' && result.email_id && result.approval) {
+        setPendingApproval({ emailId: result.email_id, preview: result.approval });
+      } else {
+        setPendingApproval(null);
+      }
+      refresh();
+    } catch (e) {
+      toast.error('Validation non confirmée', { description: e instanceof Error ? e.message : String(e) });
+    } finally { setApproving(false); }
   };
 
   const handleFind = async () => {
@@ -197,6 +224,7 @@ export default function PartnerAgentProspects() {
         <div className="space-y-2">
           {filtered.map(p => {
             const meta = STATUS_META[p.status];
+            const nextStep = outreachStepForStatus(p.status);
             return (
               <Card key={p.id} className="bg-card border-border">
                 <CardContent className="p-4 flex items-start gap-3">
@@ -230,8 +258,8 @@ export default function PartnerAgentProspects() {
                     )}
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
-                    {p.email && p.status !== 'active' && p.status !== 'rejected' && (
-                      <Button variant="ghost" size="icon" onClick={() => handleSend(p)} title="Envoyer outreach IA">
+                    {p.email && nextStep && (
+                      <Button variant="ghost" size="icon" onClick={() => handleSend(p)} title={nextStep === 'outreach' ? 'Premier email de partenariat' : `Relance ${nextStep.slice(-1)}`}>
                         <Send className="w-4 h-4 text-accent-purple" />
                       </Button>
                     )}
@@ -317,6 +345,35 @@ export default function PartnerAgentProspects() {
             <Button variant="outline" onClick={() => setEditing(null)}>Annuler</Button>
             <Button onClick={handleSave} disabled={busy || !editing?.name?.trim()}>
               {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!pendingApproval} onOpenChange={open => { if (!open && !approving) setPendingApproval(null); }}>
+        <DialogContent className="max-w-2xl" aria-describedby="outreach-approval-description">
+          <DialogHeader><DialogTitle>Valider l’email</DialogTitle></DialogHeader>
+          <p id="outreach-approval-description" className="text-sm text-muted-foreground">
+            Vérifiez le destinataire et le message. Le bouton ci-dessous autorise uniquement cet email.
+          </p>
+          {pendingApproval && (
+            <div className="space-y-2 text-sm">
+              <p className="break-words"><strong>De :</strong> {pendingApproval.preview.from}</p>
+              <p className="break-words"><strong>À :</strong> {pendingApproval.preview.to}</p>
+              <p className="break-words"><strong>Objet :</strong> {pendingApproval.preview.subject}</p>
+              <iframe
+                title="Aperçu du message à valider"
+                sandbox=""
+                referrerPolicy="no-referrer"
+                className="h-64 w-full rounded border bg-white"
+                srcDoc={'<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;unsafe-inline&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;"></head><body>' + pendingApproval.preview.body_html + '</body></html>'}
+              />
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" disabled={approving} onClick={() => setPendingApproval(null)}>Plus tard</Button>
+            <Button disabled={approving || !pendingApproval} onClick={handleApprove}>
+              {approving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Approuver et envoyer
             </Button>
           </DialogFooter>
         </DialogContent>

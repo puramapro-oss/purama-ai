@@ -1,0 +1,51 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/agents-validation-20261110-1daf6314/karta
+
+ × test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > reserves 70 before admitting another 70 against a shared budget of 100 155ms
+   → expected [ Array(1) ] to deeply equal []
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > admits two estimates that exactly fit the remaining shared budget
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > also reserves token estimates when the currency budget is unlimited
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > requires both the cost and token dimensions to fit
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > adds already-consumed cost to all active estimates
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > selects an affordable task when a higher-priority one does not fit
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > refuses an unknown cost estimate under a configured budget
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > refuses an unknown tokens estimate under a configured budget
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > preserves unbounded legacy missions without estimates
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > distinguishes an explicit zero estimate from an absent estimate
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not treat an active legacy task with missing cost as free capacity
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > keeps the full current estimate despite cumulative usage from an older attempt
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > releases admission capacity after verified completion, retaining actual recorded usage
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not pause affordable work assigned to another provider
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > preserves worker-session, worktree and max_parallel admission restrictions
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > does not overflow bigint while deciding that an estimate exceeds remaining capacity
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > rejects a null lease and keeps the claim RPC server-only
+ ↓ test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > can reapply the additive migration without changing existing claims
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chefBudgetAdmission.test.ts > CHEF cumulative estimated-budget admission > reserves 70 before admitting another 70 against a shared budget of 100
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "51528158-a7a9-4597-9514-3016073e7853",
++ ]
+
+ ❯ test/chefBudgetAdmission.test.ts:72:35
+     70|     await worker("first"); await worker("second");
+     71|     expect(await claim("first")).toEqual([a]);
+     72|     expect(await claim("second")).toEqual([]);
+       |                                   ^
+     73|     expect(await missionState()).toBe("active");
+     74|     expect((await db.query("SELECT kind FROM purama_ai.chef_events WHE…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 skipped (18)
+   Start at  03:07:25
+   Duration  6.36s (tests 96%, transform 2%, import 1%)

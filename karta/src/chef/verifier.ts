@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { spawn } from "node:child_process";
+import { runChefProcess } from "./process.js";
 import { assertAllowedCwd } from "./driver.js";
 
 export type ChefEvidenceKind = "test" | "build" | "typecheck" | "lint" | "security" | "review" | "receipt" | "runtime" | "other";
@@ -89,11 +89,9 @@ export class CommandChefVerifier implements ChefVerifier {
 
     const evidence: ChefVerificationEvidence[] = [];
     for (const name of profileNames) {
-      if (signal?.aborted) throw new Error("Vérification CHEF annulée");
       const profile = this.profiles.get(name);
       if (!profile) return { ok: false, evidence, error: `Profil inconnu: ${name}` };
       const result = await this.runProfile(cwd, profile, signal);
-      // Recheck after every async boundary, including the final profile.
       if (signal?.aborted) throw new Error("Vérification CHEF annulée");
       evidence.push(result);
       if (!result.payload.ok) {
@@ -104,80 +102,32 @@ export class CommandChefVerifier implements ChefVerifier {
   }
 
   private async runProfile(cwd: string, profile: ChefVerificationProfile, signal?: AbortSignal): Promise<ChefVerificationEvidence> {
-    if (signal?.aborted) throw new Error(`Vérification annulée: ${profile.name}`);
     const maxOutput = profile.maxOutputBytes ?? 2 * 1024 * 1024;
     const timeoutMs = profile.timeoutMs ?? 20 * 60 * 1000;
 
-    return await new Promise<ChefVerificationEvidence>((resolvePromise, rejectPromise) => {
-      const child = spawn(profile.command, profile.args ?? [], {
-        cwd,
-        shell: false,
-        stdio: ["ignore", "pipe", "pipe"],
-        env: safeEnv(profile.envAllowList ?? ["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "TERM"], profile.env ?? {}),
-      });
-      let output = "";
-      let settled = false;
-      const terminate = () => {
-        if (!child.killed) child.kill("SIGTERM");
-        setTimeout(() => {
-          if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL");
-        }, 2_000).unref();
-      };
-      const append = (chunk: Buffer) => {
-        output += chunk.toString("utf8");
-        if (Buffer.byteLength(output, "utf8") > maxOutput) {
-          terminate();
-          throw new Error(`Sortie de vérification trop volumineuse: ${profile.name}`);
-        }
-      };
-      const fail = (error: Error) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        rejectPromise(error);
-      };
-      const timer = setTimeout(() => {
-        terminate();
-        fail(new Error(`Vérification expirée: ${profile.name}`));
-      }, timeoutMs);
-      timer.unref();
-      const onAbort = () => {
-        terminate();
-        fail(new Error(`Vérification annulée: ${profile.name}`));
-      };
-      const cleanup = () => {
-        clearTimeout(timer);
-        signal?.removeEventListener("abort", onAbort);
-      };
-
-      child.stdout.on("data", (chunk: Buffer) => { try { append(chunk); } catch (e) { fail(e as Error); } });
-      child.stderr.on("data", (chunk: Buffer) => { try { append(chunk); } catch (e) { fail(e as Error); } });
-      child.on("error", fail);
-      child.on("close", (code, signalName) => {
-        if (settled) return;
-        if (signal?.aborted) {
-          fail(new Error(`Vérification annulée: ${profile.name}`));
-          return;
-        }
-        settled = true;
-        cleanup();
-        const ok = code === 0;
-        const digest = createHash("sha256").update(output).digest("hex");
-        resolvePromise({
-          kind: profile.kind,
-          sha256: digest,
-          requirementKeys: [...(profile.requirementKeys ?? [])],
-          payload: {
-            profile: profile.name,
-            ok,
-            exitCode: code,
-            signal: signalName,
-            outputBytes: Buffer.byteLength(output, "utf8"),
-          },
-        });
-      });
-      signal?.addEventListener("abort", onAbort, { once: true });
-      if (signal?.aborted) onAbort();
+    const result = await runChefProcess({
+      command: profile.command,
+      args: profile.args,
+      cwd,
+      env: safeEnv(profile.envAllowList ?? ["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "TERM"], profile.env ?? {}),
+      signal,
+      timeoutMs,
+      maxOutputBytes: maxOutput,
+      label: `vérification ${profile.name}`,
+      abortMessage: `Vérification annulée: ${profile.name}`,
+      timeoutMessage: `Vérification expirée: ${profile.name}`,
     });
+    return {
+      kind: profile.kind,
+      sha256: createHash("sha256").update(result.output).digest("hex"),
+      requirementKeys: [...(profile.requirementKeys ?? [])],
+      payload: {
+        profile: profile.name,
+        ok: result.exitCode === 0,
+        exitCode: result.exitCode,
+        signal: result.signal,
+        outputBytes: result.output.length,
+      },
+    };
   }
 }

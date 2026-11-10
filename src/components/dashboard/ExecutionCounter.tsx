@@ -18,34 +18,36 @@ interface Props {
 
 export function ExecutionCounter({ variant = 'compact' }: Props) {
   const { user } = useAuth();
-  const [snap, setSnap] = useState<UsageSnapshot | null>(null);
-  const [loading, setLoading] = useState(true);
+  const userId = user?.id;
+  const userEmail = user?.email;
+  const [loaded, setLoaded] = useState<{
+    userId: string; userEmail: string | undefined; snapshot: UsageSnapshot;
+  } | null>(null);
+  const snap = loaded && userId && loaded.userId === userId && loaded.userEmail === userEmail
+    ? loaded.snapshot : null;
 
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
     let alive = true;
-    (async () => {
+    let pending = false;
+    const refresh = async () => {
+      if (pending) return;
+      pending = true;
       try {
-        const s = await getUsageSnapshot(user.id, user.email);
-        if (alive) setSnap(s);
-      } catch (e) {
-        console.warn('[ExecutionCounter]', e);
+        const snapshot = await getUsageSnapshot(userId, userEmail);
+        if (alive) setLoaded({ userId, userEmail, snapshot });
+      } catch (error) {
+        if (alive) console.warn('[ExecutionCounter]', error);
       } finally {
-        if (alive) setLoading(false);
+        pending = false;
       }
-    })();
-    // Refresh every 60s
-    const t = setInterval(async () => {
-      if (!user) return;
-      try {
-        const s = await getUsageSnapshot(user.id, user.email);
-        if (alive) setSnap(s);
-      } catch { /* silent */ }
-    }, 60_000);
-    return () => { alive = false; clearInterval(t); };
-  }, [user?.id]);
+    };
+    void refresh();
+    const timer = setInterval(() => { void refresh(); }, 60_000);
+    return () => { alive = false; clearInterval(timer); };
+  }, [userId, userEmail]);
 
-  if (loading || !snap) {
+  if (!snap) {
     if (variant === 'compact') {
       return (
         <div className="px-3 py-2.5 rounded-lg bg-secondary/30 border border-border animate-pulse">

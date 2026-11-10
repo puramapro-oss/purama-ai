@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "tested_base": "0c7f7da1b4ecb0d93e00b1f73a55a3736b0f348c",
+  "concurrent_base": "8631305fe0a4e0208566191b795ef876d9b5dfbe",
+  "concurrent_base_tree": "16d4f2b45afc7ba05f8c74ef71e1b209c7bcac0e",
+  "concurrent_files": [
+    ".github/workflows/purama-chef-hardening.yml"
+  ],
+  "concurrent_change": {
+    "added_push_main": true,
+    "added_workflow_dispatch": true,
+    "retained_complete_quality_discovery": true
+  },
+  "test_source_files": 483,
+  "unchanged_test_source_files": 482,
+  "changed_test_source_files": [
+    ".github/workflows/purama-chef-hardening.yml"
+  ],
+  "workflow_parent_sha256": "27d6fc861574ca0cbc40c6dec9cd75743c6b5c516091df6343dc8b1fb7e127e0",
+  "workflow_result_sha256": "6b3eddc9cee0fe2a41fbc69909372d01baed0f4c6ecacd13619bdc9591253ab1",
+  "workflow_only_local_addition": "npm run test:contracts-security",
+  "karta_and_package_lock_unchanged": true,
+  "unit_gates_reused_by_identical_source_hashes": [
+    "contracts-security-final",
+    "contracts-auth-final",
+    "dependencies-final"
+  ],
+  "no_existing_remote_ref_changed_during_reconciliation": true,
+  "quality_discovery": {
+    "command": [
+      "npm",
+      "run",
+      "test:quality",
+      "--",
+      "--list"
+    ],
+    "exit": 0,
+    "tests_collected": 49,
+    "files": 5,
+    "browser_executed": false,
+    "log": "quality-discovery-reconciled.log"
+  }
+}

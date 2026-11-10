@@ -1,0 +1,71 @@
+[
+  {
+    "name": "typecheck-final",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/workspace/scratch/221cb4a2f349/iao-ci-current/repo",
+    "exit": 0,
+    "seconds": 11.557,
+    "log": "typecheck-final.log"
+  },
+  {
+    "name": "build-final",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/workspace/scratch/221cb4a2f349/iao-ci-current/repo",
+    "exit": 0,
+    "seconds": 25.816,
+    "log": "build-final.log"
+  },
+  {
+    "name": "lint-final",
+    "command": [
+      "npx",
+      "eslint",
+      "src/lib/opentimestamps.ts",
+      "src/lib/docuseal/ots-stamper.ts",
+      "supabase/functions/contracts-ots-stamp/index.ts",
+      "supabase/functions/contracts-webhook/index.ts",
+      "supabase/functions/_shared/webhook-security.ts",
+      "supabase/functions/_shared/webhook-security.test.ts",
+      "supabase/functions/_shared/request-body.ts",
+      "supabase/functions/_shared/request-body.test.ts",
+      "playwright.config.ts"
+    ],
+    "cwd": "/workspace/scratch/221cb4a2f349/iao-ci-current/repo",
+    "exit": 0,
+    "seconds": 2.361,
+    "log": "lint-final.log"
+  },
+  {
+    "name": "playwright-list-final",
+    "command": [
+      "npx",
+      "playwright",
+      "test",
+      "--list"
+    ],
+    "cwd": "/workspace/scratch/221cb4a2f349/iao-ci-current/repo",
+    "exit": 0,
+    "seconds": 2.264,
+    "log": "playwright-list-final.log"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/221cb4a2f349/iao-ci-current/repo",
+    "exit": 0,
+    "seconds": 0.116,
+    "log": "diff-check.log"
+  }
+]

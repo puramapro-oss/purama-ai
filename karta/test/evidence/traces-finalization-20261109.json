@@ -1,0 +1,144 @@
+{
+  "scope": "KARTA private tool traces and immutable initial run finalization",
+  "date": "2026-11-09",
+  "timezone": "UTC",
+  "canonical_base_commit": "4c19cf5daf4cbf0372fcfa668105076fe9eb43e1",
+  "base_tree": "a20f7b01033359aff40458a321f4f8c17bf9708f",
+  "runtime": "v24.22.1",
+  "verification": {
+    "full_suite": {
+      "command": "npm test -- --reporter=json --outputFile=/tmp/iao-private-traces-final-20261109.json",
+      "cwd": "karta",
+      "exit_code": 0,
+      "passed": 647,
+      "failed": 0,
+      "pending": 0,
+      "test_files": 53,
+      "started_at": "2026-11-09T21:04:32.920000+00:00",
+      "finished_at": "2026-11-09T21:05:35.811378+00:00",
+      "duration_seconds": 62.891,
+      "raw_report_sha256": "c2d1c7d781a850fa03ff9360cc1948c0bdb8675dcad058eee88cbc8d3e6e529a"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exit_code": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "cwd": "karta",
+      "exit_code": 0
+    },
+    "new_tests": {
+      "approvalTracePrivacy.test.ts": 20,
+      "loggerCycleFinalization.test.ts": 6,
+      "loggerFinalization.test.ts": 11,
+      "loopTracePrivacy.test.ts": 22
+    },
+    "baseline_reproductions": [
+      {
+        "scope": "first privacy regression set",
+        "tests": 31,
+        "failed": 25,
+        "passed": 6,
+        "command": "npx --no-install vitest run test/loopTracePrivacy.test.ts test/approvalTracePrivacy.test.ts --reporter=json --outputFile=/tmp/iao-trace-privacy-before-20261109.json"
+      },
+      {
+        "scope": "initial durable finalization regression set",
+        "tests": 10,
+        "failed": 10,
+        "passed": 0,
+        "report_sha256": "8c0e8ce086ea41fe3435fca27a0042cdd3b0922269d9b7203471d0f3e385250b"
+      },
+      {
+        "scope": "cycle reconciliation of first outcome",
+        "tests": 5,
+        "failed": 4,
+        "passed": 1,
+        "report_sha256": "e6178a8a35338fa661966b3174000948e9c9d1d3fc01d342710c9324ee28933c"
+      },
+      {
+        "scope": "uncertain empty cycle without execution key",
+        "selected_tests": 1,
+        "failed": 1,
+        "filtered_tests": 5,
+        "report_sha256": "5fcb3601e05602267daa940af19d66204ac85a52bb2f003d5f8f4643ecad7760"
+      }
+    ],
+    "review": "Independent source review: reported defects fixed; no further blocking defect found in the bounded scope."
+  },
+  "contracts": [
+    "metadata_only is server-owned and independent of sensitive approval policy",
+    "a private or unknown tool protects the whole cycle, including mixed and deferred calls",
+    "private data is removed from run traces, returned outcomes and notification bodies; execution and approval payloads remain intact",
+    "privacy marker persists in tools_used and is inherited at approval resolution and replay",
+    "parent trace lookup is scoped by run id, user id and agent type; uncertain lookup minimizes diagnostics",
+    "first completion JSON is fixed; conditional write requires matching id/user/agent/status running/duration_ms NULL",
+    "one bounded second close uses the same candidate; no tool or provider replay",
+    "uncertain finalization forbids automatic retry, including empty cycles without an execution key",
+    "secondary bookkeeping errors do not overwrite committed action or approval evidence"
+  ],
+  "limits": [
+    "Supabase transport and provider calls simulated; PostgreSQL predicates exercised using one PGlite backend",
+    "no production deployment, real Jev call, semantic qualification, cost/speed/energy benchmark or distributed load test",
+    "legacy tools keep their traces outside protected cycles; historical database rows are not rewritten",
+    "authorized approval payloads remain stored; per-tool/provider logging and retention are outside this change",
+    "real admission, atomic monetary quotas, revocation, settlement and business consumption of Jev judgments remain host prerequisites",
+    "PR14 sibling test typing requires retaining duration_ms null, is() signature and committed-success expectation on consolidation",
+    "GitHub CI results are reported separately and are not inferred from this local verification"
+  ],
+  "source_sha256": {
+    "karta/src/engine/approval.ts": "36ad58fb1c93637d49e2b9decbbebd71cbc1dcfcd6ec8fc2eeafa04d23931f9e",
+    "karta/src/engine/logger.ts": "3c4f7cc6a3edb1f3af49c43be948be2fdc9fc1eede298a666a3763dc133adeeb",
+    "karta/src/engine/loop.ts": "8ef06eebea9462eb39014451b5744e6c328230b2cbc16a2986e858984f965c0c",
+    "karta/src/engine/types.ts": "67f6a22c13506a529be17656b83120836a3d807de5eaef44c31d1661da5086c6",
+    "karta/src/engine/tool-trace.ts": "56f24f26e355fe0e72ff3bb15321ab5a578e46d2e2b5e7a51c69c7c2b309b51e",
+    "karta/src/tools/jev.ts": "60732a5bdef3a3e574a42d55ec18842e076555f728fd0e09ff2cd6defba7333c",
+    "karta/test/approvalTracePrivacy.test.ts": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+    "karta/test/loggerCycleFinalization.test.ts": "51e63589bb9048c9485d1370c9335dd6ae7b5d160f303a07e9effd325da29e38",
+    "karta/test/loggerFinalization.test.ts": "755c0eb820a9d77df129c415198daf006f560004afead9b35ba19c326ceaed49",
+    "karta/test/loopTracePrivacy.test.ts": "8e6867a6b25c3588b16fdbc593980fc33a3c9e607162793d9ac0055980b7d0af",
+    "karta/test/logger.test.ts": "dbf0ff6fe40051cf317d6bac7433e526cccec30a607dcd2659341209c6a6d80e",
+    "karta/test/loop.test.ts": "dede16c9982fcd269c9ff3087dcdc4f019d5bc6f9bb1152120734b024bdd1fd3"
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "index_refresh": "PASS, index-only, no embeddings, FTS unavailable",
+    "default_branch_verified_sha": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+    "precommit_checks": [
+      {
+        "scope": "staged",
+        "exit_code": 0,
+        "files": 15,
+        "symbols": 96,
+        "reported_flows": 207,
+        "risk": "CRITICAL",
+        "log_sha256": "d6348f97a3796d35f89ccec6b833136b5c7d08cfa16c0ea089579c941ffc425d"
+      },
+      {
+        "scope": "pr-parent",
+        "exit_code": 0,
+        "files": 22,
+        "symbols": 252,
+        "reported_flows": 215,
+        "risk": "CRITICAL",
+        "log_sha256": "f6e3b46b747eabffad85cb9c90b104f838849b8e9e200bfa29fb896f2e83810d"
+      },
+      {
+        "scope": "main",
+        "exit_code": 0,
+        "files": 230,
+        "symbols": 904,
+        "reported_flows": 368,
+        "risk": "CRITICAL",
+        "log_sha256": "3afabe706080bb7cf8d4baf16250b9303124d4528a21c419f1cc4848d408cc50"
+      }
+    ],
+    "limitations": [
+      "Shared interfaces are classified CRITICAL; risk reported before edits/commit.",
+      "Some reported frontend flows resolve to non-exported local getter/result functions in test files; direct source inspection found no runtime imports of these tests.",
+      "The graph is incomplete and its cross-module name resolution produces false positives; passing CLI commands is not proof of exhaustive impact coverage.",
+      "Default-branch comparison includes inherited changes outside this revision."
+    ]
+  }
+}

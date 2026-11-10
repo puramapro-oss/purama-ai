@@ -1,0 +1,21 @@
+{
+  "status": "BUG_REPRODUCED",
+  "base": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "legacy_hash": "62c06f360859f8533fa837b47e7aa9f92fc77dd5d291d768aa902624e55d205f",
+  "brief_source_sha256": "1fbd2ac58cd59b22bbfe2e9e3da935d97c5c7f1fd3dc3933fbf7916bd8ad62ef",
+  "normalization_drops_estimates": true,
+  "old_hash_ignores_estimates": true,
+  "raw_rpc_drops_estimates": [
+    {
+      "task_key": "T1",
+      "estimated_tokens": null,
+      "estimated_cost_micros": null
+    },
+    {
+      "task_key": "T2",
+      "estimated_tokens": null,
+      "estimated_cost_micros": null
+    }
+  ],
+  "limitation": "PGlite local, aucune API ou base de production ; les migrations sont lues directement au commit indiqué."
+}

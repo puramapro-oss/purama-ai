@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-10",
+  "source": "Existing isolated PURAMA ONE checkout on the authorized Mac",
+  "commit": "485308a1d4b125c2973387285a2b16c251989231",
+  "branch": "audit/one-integration-20261110",
+  "lockfile_sha256": "8996c048b0d947156384db57bdce1614c87b72ecc694e73f215e164dd6caff70",
+  "command": "npm test && npm run typecheck && npm run lint && npm run build",
+  "checks": {
+    "tests": {
+      "total": 378,
+      "passed": 378,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": {
+      "exit_code": 0
+    },
+    "lint": {
+      "exit_code": 0
+    },
+    "build": {
+      "exit_code": 0
+    }
+  },
+  "chained_process": {
+    "exit_code": 0,
+    "runtime_seconds": 53.52
+  },
+  "source_changes": "No tracked source change; missing dependencies connected to an existing installation with exactly the same package lock",
+  "evidence_scope": "Console observation by the parent agent; preserved excerpt in observed-tests.txt. The excerpt does not contain all build output.",
+  "limitations": [
+    "Session/runtime adapters NOT_CONFIGURED in source provenance",
+    "Production NOT_ACTIVATED",
+    "Local test-only commerce paths do not establish a working live Stripe or agent integration"
+  ]
+}

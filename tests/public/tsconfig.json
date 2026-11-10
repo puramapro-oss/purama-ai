@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.node.json",
+  "compilerOptions": { "lib": ["ES2023", "DOM"], "types": ["node"] },
+  "include": ["./*.ts", "../../playwright.config.ts", "../accessibility.spec.ts", "../console-errors.spec.ts", "../forms-validation.spec.ts", "../navigation.spec.ts", "../performance.spec.ts", "../public-pages.spec.ts", "../pwa.spec.ts", "../responsive.spec.ts", "../chat/playwright.config.ts", "../chat/vite.config.ts", "../chat/fixtures.ts", "../chat/lifecycle.spec.ts"]
+}

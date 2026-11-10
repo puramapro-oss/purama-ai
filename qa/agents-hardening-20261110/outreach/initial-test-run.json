@@ -1,0 +1,10 @@
+{
+  "command": "./node_modules/.bin/vitest run test/partnerOutreach.test.ts",
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-agent-hardening/karta",
+  "exit_status": 0,
+  "observed_test_files": 1,
+  "observed_passed": 25,
+  "observed_duration_seconds": 16.29,
+  "scope": "Before final legacy-attempt guard/test addition",
+  "network": "Explicit test doubles only; no real provider requests."
+}

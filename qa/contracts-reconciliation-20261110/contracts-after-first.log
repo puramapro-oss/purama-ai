@@ -1,0 +1,142 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> vite_react_shadcn_ts@0.0.0 test:contracts-security
+> node --experimental-vm-modules --experimental-strip-types --test --test-concurrency=1 tests/contracts-ots-authorization.test.mjs tests/opentimestamps-content.test.mjs supabase/functions/_shared/webhook-security.test.ts
+
+✔ bearer authentication accepts only the exact configured value (0.988689ms)
+✔ HMAC authentication accepts prefixed and bare signatures (7.364637ms)
+✔ HMAC authentication rejects tampering and malformed encodings (1.362741ms)
+✔ webhook authentication supports configured bearer or HMAC transport (1.591245ms)
+✔ only explicit local environments may opt into the development exception (0.252229ms)
+(node:51) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ rejects unauthenticated credential null before any contract effects (96.162796ms)
+✔ rejects unauthenticated credential "" before any contract effects (25.082342ms)
+✔ rejects unauthenticated credential "invalid-token" before any contract effects (23.355721ms)
+✔ rejects unauthenticated credential "test-service-never-livex" before any contract effects (26.442519ms)
+✔ rejects unauthenticated credential "fake.jwt.service_role" before any contract effects (22.741617ms)
+✔ ordinary user cannot elevate via metadata, body identity or role (25.270485ms)
+✔ fails closed on invalidated user (19.328818ms)
+✔ fails closed on removed role (14.836927ms)
+✔ fails closed on different role (14.96571ms)
+✔ fails closed on role lookup failure (15.35744ms)
+✔ fails closed on auth provider failure (16.10773ms)
+✔ fails closed on role provider failure (16.657448ms)
+✔ fails closed on missing service configuration (14.419848ms)
+✔ fails closed on missing service URL (21.63844ms)
+✔ allows verified current admin and clears stale Bitcoin confirmation (27.99414ms)
+✔ allows exact internal credential and clears stale Bitcoin confirmation (17.375835ms)
+✔ handles preflight without data access and refuses unsupported methods (25.079258ms)
+✔ rejects malformed input null before contract access (12.399373ms)
+✔ rejects malformed input [] before contract access (10.840078ms)
+✔ rejects malformed input {} before contract access (12.869831ms)
+✔ rejects malformed input {"contract_id":42} before contract access (11.623987ms)
+✔ rejects malformed input {"contract_id":"not-a-uuid"} before contract access (11.327541ms)
+✔ rejects malformed input "{" before contract access (13.523323ms)
+✔ refuses stamping a draft contract before provider access (10.618506ms)
+✔ refuses stamping a sent contract before provider access (11.031587ms)
+✔ refuses stamping a opened contract before provider access (15.834628ms)
+✔ refuses stamping a declined contract before provider access (11.435745ms)
+✔ refuses stamping a cancelled contract before provider access (13.15524ms)
+✔ refuses stamping a expired contract before provider access (13.654019ms)
+✔ does not report success after missing contract (13.497575ms)
+✔ does not report success after database read error (23.910039ms)
+✔ does not report success after missing submission (16.405547ms)
+✔ does not report success after missing signed PDF (17.296797ms)
+✔ does not report success after provider PDF error (17.293603ms)
+✔ does not report success after provider PDF exception (18.128237ms)
+✔ does not report success after provider stamp exception (25.750097ms)
+✔ does not report success after proof write error (27.640759ms)
+✔ does not report success after audit write error (13.637354ms)
+✔ does not overwrite a contract changed during PDF retrieval: cancelDuringFetch (15.652184ms)
+✔ does not overwrite a contract changed during PDF retrieval: replaceSubmissionDuringFetch (12.8235ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ does not persist or report a pending proof when every calendar failed (13.64055ms)
+✔ forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid/signed.pdf (18.819546ms)
+✔ forwards PDF credentials only to the exact configured origin: https://docuseal.example.invalid.attacker.invalid/signed.pdf (13.484825ms)
+✔ forwards PDF credentials only to the exact configured origin: https://files.example.invalid/signed.pdf (12.582768ms)
+✔ rejects unsafe PDF location before fetching: http://files.example.invalid/signed.pdf (11.986823ms)
+✔ rejects unsafe PDF location before fetching: https://user@files.example.invalid/signed.pdf (11.405809ms)
+✔ rejects unsafe PDF location before fetching: data:application/pdf;base64,AA== (11.846352ms)
+✔ reused webhook guard fails closed without a secret in undefined (15.121716ms)
+✔ reused webhook guard fails closed without a secret in production (15.23069ms)
+✔ reused webhook guard fails closed without a secret in staging (15.019854ms)
+✔ reused webhook guard fails closed without a secret in development (13.56116ms)
+✔ reused webhook guard fails closed without a secret in local (12.258341ms)
+✔ reused webhook guard fails closed without a secret in test (14.604368ms)
+✔ reused webhook guard rejects an invalid provider credential before privileged reads (15.786435ms)
+✔ reused webhook guard preserves authenticated bearer delivery (12.839636ms)
+✔ reused webhook guard preserves authenticated hmac delivery (29.817953ms)
+✔ authenticated completion delivers the internal credential to the actual stamp handler (32.35005ms)
+(node:63) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ hashContent preserves binary bytes and the view boundary with WebCrypto=true (71.99625ms)
+✔ hashContent preserves binary bytes and the view boundary with WebCrypto=false (15.125913ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ stampContract hashes the exact PDF bytes for Uint8Array view (20.951086ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ stampContract hashes the exact PDF bytes for ArrayBuffer (14.052729ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ stampContract keeps one Uint8Array snapshot if the caller mutates its buffer during hashing (16.580309ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ stampContract keeps one ArrayBuffer snapshot if the caller mutates its buffer during hashing (10.519917ms)
+✔ hashContent snapshots an ArrayBuffer before awaiting the Node crypto fallback (8.720742ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ existing UTF-8 string stamping remains byte-compatible (8.553831ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ browser Base64 encoding preserves the serialized proof without Buffer (12.315487ms)
+✔ contract verification accepts the raw-byte digest produced by the Edge handler (10.549671ms)
+Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+File does not match original!
+✔ contract verification preserves existing proofs of the legacy Base64 text (11.766422ms)
+Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+File does not match original!
+✔ legacy verification keeps its ArrayBuffer snapshot across the raw-proof attempt (16.662323ms)
+Expected digest 0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a
+File does not match original!
+Expected digest 0df5805f1249fc57c375baddf45ec51fb098729042fc55b7dc57f0c09dd37f1a
+File does not match original!
+Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+File does not match original!
+Expected digest 98e9ca2fd23822b7d6156d6ed7546702df29e81cc3fe4ba7542dda51db5eb84f
+File does not match original!
+✔ contract verification rejects altered bytes in both raw and legacy formats (13.857025ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ stampHash rejects a receipt when every calendar failed (14.827874ms)
+Submitting to remote calendar https://a.pool.opentimestamps.org
+Submitting to remote calendar https://b.pool.opentimestamps.org
+Submitting to remote calendar https://a.pool.eternitywall.com
+Submitting to remote calendar https://ots.btc.catallaxy.com
+✔ stampContract rejects a receipt when every calendar failed (10.942258ms)
+ℹ tests 77
+ℹ suites 0
+ℹ pass 77
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2460.709831

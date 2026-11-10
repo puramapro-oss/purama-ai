@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { readFile } from "node:fs/promises";
+import { KARTA_CANONICAL_MIGRATIONS } from "./migration-fixtures.js";
 import { PGlite } from "@electric-sql/pglite";
 import type { AgentDefinition } from "../src/engine/types.js";
 
@@ -171,30 +172,7 @@ beforeAll(async () => {
   // KARTA004 extends the existing app table. Apply its actual foundation,
   // including policies and privileges, instead of inventing a table fixture.
   await h.db.exec(await readFile(new URL("../../supabase/migrations/20260407000000_creator_agent.sql", import.meta.url), "utf8"));
-  for (const name of [
-    "001_karta_core.sql",
-    "002_karta_global_kill_switch.sql",
-    "003_karta_crm_leads.sql",
-    "004_karta_custom_agents.sql",
-    "005_karta_pending_actions.sql",
-    "006_execution_claims.sql",
-    "007_runtime_hardening.sql",
-    "008_chef_control_plane.sql",
-    "009_chef_hardening.sql",
-    "010_chef_reliability.sql",
-    "011_chef_runtime_policy.sql",
-    "012_chef_mission_ingest.sql",
-    "013_chef_independent_review.sql",
-    "014_chef_file_ownership.sql",
-    "015_chef_mission_file_ownership.sql",
-    "016_chef_scoped_evidence.sql",
-    "017_chef_evidence_generation.sql",
-    "018_karta_brief_claims.sql",
-    "019_karta_approval_parent_guard.sql",
-    "020_execution_fingerprints.sql",
-    "021_pending_action_execution_trigger.sql",
-    "022_chef_budget_reservations.sql",
-  ]) {
+  for (const name of KARTA_CANONICAL_MIGRATIONS) {
     await h.db.exec(await readFile(new URL("../migrations/" + name, import.meta.url), "utf8"));
   }
 }, 30_000);

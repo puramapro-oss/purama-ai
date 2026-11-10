@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope } from '@/hooks/useRequestScope';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +49,8 @@ export default function AdminContracts() {
   const [appSlugFilter, setAppSlugFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<ContractRow | null>(null);
+  const captureOtsScope = useRequestScope(JSON.stringify([user?.id ?? null, selected?.id ?? null]));
+  const latestOtsRequest = useRef<symbol | null>(null);
 
   // Verify admin role
   useEffect(() => {
@@ -116,21 +119,38 @@ export default function AdminContracts() {
   }
 
   async function handleVerifyOts(contract: ContractRow) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    toast.info('Vérification OTS en cours…');
-    const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/contracts-ots-verify?id=${contract.id}&upgrade=true`,
-      { headers: { 'Authorization': `Bearer ${session.access_token}` } }
-    );
-    const data = await res.json();
-    if (data.verified) {
-      toast.success(`Bloc Bitcoin #${data.block_height} — ${new Date(data.btc_timestamp).toLocaleString('fr-FR')}`);
-      setContracts(prev => prev.map(c => c.id === contract.id
-        ? { ...c, ots_block_height: data.block_height, ots_btc_timestamp: data.btc_timestamp }
-        : c));
-    } else {
-      toast.info(data.message ?? 'En attente de confirmation Bitcoin (1-6h)');
+    const inScope = captureOtsScope();
+    const request = Symbol(contract.id);
+    latestOtsRequest.current = request;
+    const isCurrent = () => inScope() && latestOtsRequest.current === request;
+    if (!isCurrent()) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!isCurrent() || !session || session.user.id !== user?.id) return;
+      toast.info('Vérification OTS en cours…');
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/contracts-ots-verify?id=${encodeURIComponent(contract.id)}&upgrade=true`,
+        { headers: { Authorization: `Bearer ${session.access_token}` } }
+      );
+      if (!isCurrent()) return;
+      if (!res.ok) { toast.error('La vérification de la preuve a échoué. Réessayez plus tard.'); return; }
+      const data: unknown = await res.json();
+      if (!isCurrent()) return;
+      if (!data || typeof data !== 'object') throw new Error('Invalid proof response');
+      const result = data as { verified?: unknown; pending?: unknown; block_height?: unknown; btc_timestamp?: unknown };
+      if (result.verified === true && Number.isSafeInteger(result.block_height) && (result.block_height as number) >= 0
+        && typeof result.btc_timestamp === 'string' && Number.isFinite(Date.parse(result.btc_timestamp))) {
+        const height = result.block_height as number; const timestamp = result.btc_timestamp;
+        toast.success(`Bloc Bitcoin #${height} — ${new Date(timestamp).toLocaleString('fr-FR')}`);
+        setContracts(prev => isCurrent() ? prev.map(c => c.id === contract.id
+          ? { ...c, ots_block_height: height, ots_btc_timestamp: timestamp } : c) : prev);
+      } else if (result.verified === false && result.pending === true) {
+        toast.info('En attente de confirmation Bitcoin');
+      } else {
+        toast.error('La réponse de vérification de la preuve est invalide.');
+      }
+    } catch {
+      if (isCurrent()) toast.error('La vérification de la preuve a échoué. Réessayez plus tard.');
     }
   }
 

@@ -19,30 +19,38 @@ import {
 
 export default function CreatorAgentPage() {
   const { user } = useAuth();
+  const userId = user?.id;
   const [myAgents, setMyAgents] = useState<CreatorAgent[]>([]);
   const [templates, setTemplates] = useState<CreatorAgent[]>([]);
   const [recentRuns, setRecentRuns] = useState<CreatorAgentRun[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    setLoading(Boolean(userId));
+    setMyAgents([]);
+    setTemplates([]);
+    setRecentRuns([]);
+    if (!userId) return;
+    let active = true;
     (async () => {
       try {
         const [m, t, r] = await Promise.all([
-          listMyAgents(user.id),
+          listMyAgents(userId),
           listTemplates(),
-          listRuns(user.id, { limit: 8 }),
+          listRuns(userId, { limit: 8 }),
         ]);
+        if (!active) return;
         setMyAgents(m);
         setTemplates(t);
         setRecentRuns(r);
       } catch (e) {
-        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+        if (active) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     })();
-  }, [user?.id]);
+    return () => { active = false; };
+  }, [userId]);
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="w-8 h-8 text-accent-cyan animate-spin" /></div>;

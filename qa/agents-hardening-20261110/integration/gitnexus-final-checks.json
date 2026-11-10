@@ -1,0 +1,17 @@
+[
+  {
+    "check": "gitnexus-final-index",
+    "exit": 0,
+    "elapsed_seconds": 68.15
+  },
+  {
+    "check": "gitnexus-detect-staged",
+    "exit": 0,
+    "elapsed_seconds": 7.0
+  },
+  {
+    "check": "gitnexus-detect-main",
+    "exit": 0,
+    "elapsed_seconds": 8.42
+  }
+]

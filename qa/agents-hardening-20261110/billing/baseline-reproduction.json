@@ -1,0 +1,29 @@
+{
+  "status": "BUG_REPRODUCED",
+  "base_commit": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3",
+  "handler_sha256": "00793517832c51cccc5ee139d80387569ba93c565d66ef48524d7e208ac61f40",
+  "runtime": "real baseline handler, original SQL in private PGlite; provider/signature simulated, no network",
+  "replay": {
+    "http": [
+      200,
+      200
+    ],
+    "credits": 2,
+    "actions": 4000,
+    "period_start": "2026-11-01"
+  },
+  "unpaid": {
+    "http": 200,
+    "credits": 1,
+    "actions": 2000
+  },
+  "persistence_failure": {
+    "http": 200,
+    "credits": 0
+  },
+  "period": {
+    "signed_event_created": "2026-10-31T23:59:00.000Z",
+    "simulated_delivery": "2026-11-10T09:00:00Z",
+    "observed_credit_period": "2026-11-01"
+  }
+}

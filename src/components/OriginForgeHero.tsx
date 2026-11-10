@@ -18,11 +18,15 @@ const agentSkills = ['📋 Prises de commandes', '🍝 Recommandations', '📅 R
 function MockupAnimation() {
   const [phase, setPhase] = useState<'typing' | 'forging' | 'result'>('typing');
   const [typedChars, setTypedChars] = useState(0);
+  const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTypedChars(prev => {
-        if (prev >= typewriterText.length) return prev;
+        if (prev >= typewriterText.length) {
+          clearInterval(interval);
+          return prev;
+        }
         return prev + 1;
       });
     }, 40);
@@ -31,6 +35,7 @@ function MockupAnimation() {
     const resetTimeout = setTimeout(() => {
       setPhase('typing');
       setTypedChars(0);
+      setCycle(value => value + 1);
     }, typewriterText.length * 40 + 10000);
 
     return () => {
@@ -39,7 +44,7 @@ function MockupAnimation() {
       clearTimeout(resultTimeout);
       clearTimeout(resetTimeout);
     };
-  }, [phase === 'typing' ? 'typing' : 'other']);
+  }, [cycle]);
 
   return (
     <div className="futuristic-card p-6 max-w-md mx-auto relative overflow-hidden">

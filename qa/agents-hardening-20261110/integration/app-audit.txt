@@ -1,0 +1,37 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+# npm audit report
+
+elliptic  *
+Elliptic Uses a Cryptographic Primitive with a Risky Implementation - https://github.com/advisories/GHSA-848j-6mx2-7j84
+fix available via `npm audit fix`
+node_modules/elliptic
+  bitcore-lib  *
+  Depends on vulnerable versions of elliptic
+  node_modules/bitcore-lib
+
+request  *
+Severity: moderate
+Server-Side Request Forgery in Request - https://github.com/advisories/GHSA-p8p7-x288-28g6
+fix available via `npm audit fix --force`
+Will install opentimestamps@0.0.0, which is a breaking change
+node_modules/request
+  opentimestamps  >=0.4.6
+  Depends on vulnerable versions of bitcore-lib
+  Depends on vulnerable versions of request
+  Depends on vulnerable versions of request-promise
+  node_modules/opentimestamps
+  request-promise  >=0.0.2
+  Depends on vulnerable versions of request
+  Depends on vulnerable versions of request-promise-core
+  node_modules/request-promise
+  request-promise-core  *
+  Depends on vulnerable versions of request
+  node_modules/request-promise-core
+
+6 vulnerabilities (2 low, 4 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
