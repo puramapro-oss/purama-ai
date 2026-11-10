@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-10T02:28:05.118947+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "7658be81e937b33a0b5aa3dab6d7939857a8aca8",
+  "base_pull_request": 13,
+  "branch": "fix/iao-decision-completeness-20261110",
+  "purpose": "Refuser une décision Claude incomplète ou incohérente avant toute exécution ou mise en attente de ses outils.",
+  "production_files_changed": [
+    "karta/src/claude/real.ts"
+  ],
+  "file_sha256": {
+    "karta/src/claude/real.ts": "a109782c9eb07c3914bc8af4a6e2572391baa746fdc50cb89101dee156442548",
+    "karta/test/claudeDecisionCompleteness.test.ts": "d959340010371ad065d3175c1db1cfdd284238b4e679d29e27f0f81d1e07fe53",
+    "vercel.json": "c42bf60bad616748b99566b5fef95d63a08ff289adba989d2face18bab347caf"
+  },
+  "base_real_ts_sha256": "0ee103db35586f422f55654db14f3cb0189eaab55b7466178ca1650252e1ec31",
+  "node": "v24.22.1",
+  "dependency_lock_sha256": "205b75487de96d15c9c8498ae9d0821fe7165827478f92d0d24ecdd3eae3f7e9",
+  "dependency_changes": false,
+  "provider_transport": "SDK Anthropic remplacé par un double; client KARTA, sélecteur réel et boucle KARTA exécutés. Aucun fournisseur ni outil externe réel appelé. fetch interdit par test/setup.ts.",
+  "contract_sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+  ],
+  "decisions": [
+    "Ce client ne demande que des outils client, sans stop_sequences ni continuation des outils serveur. Il accepte end_turn avec texte exploitable ou tool_use avec au moins un outil proposé.",
+    "Troncature, pause, refus, fin manquante/inconnue et contradiction entre fin et contenu provoquent une erreur explicite, sans nouvelle requête ajoutée par ce correctif.",
+    "Tous les appels et leurs paramètres sont validés avant retour au moteur; validation existante validateToolParams réutilisée. Les identifiants outil sont présents et uniques.",
+    "Les blocs thinking/redacted_thinking restent acceptés comme contenu auxiliaire; tool_use sans résumé texte reste valide.",
+    "Une réponse end_turn vide peut être valide dans l’API après un retour outil; elle ne démontre pas une décision exploitable pour la requête initiale de ce client et est donc rejetée explicitement.",
+    "Les erreurs de validation ne recopient pas le contenu fournisseur ni les noms/valeurs de paramètres non fiables."
+  ],
+  "nonduplication": {
+    "pull_requests_checked": [
+      {
+        "number": 17,
+        "head": "39b9cff012514ca63078199bb672aca2d662e7c3",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 16,
+        "head": "ef9aa78312aa092fc2ad02d33aea4b27d6cca303",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 15,
+        "head": "e859a4235d6af4d0f07fb52eb9ade3734adfa5b5",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 14,
+        "head": "d003159bdf3216b155f747b0f8fa93b3a92e5b3a",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 13,
+        "head": "7658be81e937b33a0b5aa3dab6d7939857a8aca8",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 12,
+        "head": "87ea6753b91794b1aadab0d36418b82f2b83f3b0",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 11,
+        "head": "68a713c8e463373570ec5865a1b2fcfc781c5729",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 10,
+        "head": "b040af6dd7abe202a4dd7996f0ffad41c1b742bf",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 9,
+        "head": "ec2aafb8db1cdde377bedaa410e8d8d99df8da58",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 8,
+        "head": "edd93584949803979a287b699728e1168fc242d8",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 7,
+        "head": "caeff811a3ba75dd766cc02555ed196e3807663f",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 6,
+        "head": "6b71194f70eb2163bc89bde8a986fcd97cf5d651",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 5,
+        "head": "d48672fd6c0b9e058431095b4f9d0e41fd1fc67c",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 4,
+        "head": "878deec19db5959c832039d92313672d8a2bd9f6",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 3,
+        "head": "ca155cdc412d65b78146c3cccc8b44f62e0db5b5",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 2,
+        "head": "fd76a082874f3498b618b2543c44fa6d61bdfac7",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      },
+      {
+        "number": 1,
+        "head": "f18624e0a0072140946effc6827c588d3c152d4c",
+        "path": "karta/src/claude/real.ts",
+        "stop_reason_handling_found": false
+      }
+    ],
+    "result": "Aucun traitement stop_reason dans le client real.ts des 17 têtes examinées; quatre checkouts locaux inspectés en lecture seule ne le contiennent pas non plus."
+  },
+  "checks": [
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/claudeDecisionCompleteness.test.ts --reporter=json --outputFile=<evidence>/before.json",
+      "cwd": "karta",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "report_file": "before.json",
+      "report_sha256": "64e268db1826843b130885c9769e5af665a158cc16e32b4d10b94d7c9f7cf87f",
+      "collected": 34,
+      "assertion_statuses": {
+        "failed": 29,
+        "passed": 5
+      },
+      "files": 1,
+      "success": false,
+      "duration_seconds": 0.582
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/claudeDecisionCompleteness.test.ts test/real-claude.test.ts test/loop.test.ts --reporter=json --outputFile=<evidence>/after.json",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "report_file": "after.json",
+      "report_sha256": "77fba8063c4f333c89ffb213ea61540f74c244857d0c0f733875c7c7300d34b8",
+      "collected": 52,
+      "assertion_statuses": {
+        "passed": 52
+      },
+      "files": 3,
+      "success": true,
+      "duration_seconds": 1.567
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run --reporter=json --outputFile=<evidence>/full-suite.json",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 1,
+      "report_file": "full-suite.json",
+      "report_sha256": "b41460dbed273b09cd1da9bb40b868f42f71e4bd1a1a356d6940751e95d5ef80",
+      "collected": 681,
+      "assertion_statuses": {
+        "passed": 662,
+        "failed": 2,
+        "pending": 17
+      },
+      "files": 54,
+      "success": false,
+      "duration_seconds": 76.337
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/chatHistoryIsolation.test.ts --maxWorkers=1 --reporter=json --outputFile=<evidence>/history-recheck.json",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "report_file": "history-recheck.json",
+      "report_sha256": "68cf202411aedce66a9549527a2704a186a9b3f0256a0cf11102fda6320f92b4",
+      "collected": 39,
+      "assertion_statuses": {
+        "passed": 39
+      },
+      "files": 1,
+      "success": true,
+      "duration_seconds": 27.157
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run --maxWorkers=1 --reporter=json --outputFile=<evidence>/full-suite-serial.json",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "report_file": "full-suite-serial.json",
+      "report_sha256": "f4dc4811a1a9cd99d32ec4e7e749011a4b31e401ea5f5c28964422cffd064c3b",
+      "collected": 681,
+      "assertion_statuses": {
+        "passed": 681
+      },
+      "files": 54,
+      "success": true,
+      "duration_seconds": 91.466
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746"
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit_code": 0
+    }
+  ],
+  "baseline_findings": {
+    "new_cases": 34,
+    "failed_before_fix": 29,
+    "valid_cases_passing_before": 5,
+    "effects_before_fix": "max_tokens/pause/refusal/null: deux appels de l’outil double exécutés; premier appel valide suivi de paramètres invalides: un appel exécuté avant détection."
+  },
+  "first_full_run_limitation": "Premier passage à deux workers: 662 assertions passantes, deux délais de 5 secondes dépassés dans chatHistoryIsolation, 17 assertions walletRpcPermissions pending dans le rapport. Aucun skip explicite. Une indexation GitNexus se déroulait en parallèle; la contention est une hypothèse, pas une cause prouvée. Le fichier historique isolé puis la suite complète à un worker passent avec les mêmes délais et assertions, sans modifier les tests existants.",
+  "gitnexus": {
+    "version": "1.6.12",
+    "before_edit": {
+      "command": "gitnexus impact createRealClaudeClient --direction upstream --file karta/src/claude/real.ts --repo iao-response-completeness",
+      "exit_code": 0,
+      "risk": "LOW",
+      "impacted_symbols": 3,
+      "direct_callers": [
+        "getClaudeClient"
+      ],
+      "indirect_callers": [
+        "runAgentCycle",
+        "startAgentCycleWorker"
+      ],
+      "raw_sha256": "51919552184804ce4123aa6371f166cf38c143def5d57c44ecf2f2717fc4cac1"
+    },
+    "index_limitation": "Le graphe signale une sélection tronquée des points d’entrée/parcours; absence de parcours ne prouve pas absence d’impact.",
+    "scoped_detect": {
+      "command": "gitnexus detect-changes --scope staged --repo iao-response-completeness",
+      "exit_code": 0,
+      "changed_files": 4,
+      "changed_symbols": 24,
+      "affected_processes": 0,
+      "risk": "LOW",
+      "raw_sha256": "348dd545040e8f3e2ac553a1cf5f18c1fb3b0c84dcd8b7ed503615945eefa97f"
+    },
+    "compare_main": {
+      "command": "gitnexus detect-changes --scope compare --base-ref d116dc8a6429ea76c67167a195eb3f723f2251fb --repo iao-response-completeness",
+      "exit_code": 0,
+      "changed_files": 232,
+      "changed_symbols": 1126,
+      "affected_processes": 368,
+      "risk": "CRITICAL",
+      "interpretation": "Inclut les lignées héritées de la PR #13; ne constitue pas une validation de fusion de cet ensemble.",
+      "raw_sha256": "9a11c6ab17d7d6bb50ae2c784eeab7da8955e395bd6a46a30a4d00adcd267025"
+    }
+  },
+  "limitations": [
+    "Tests locaux et transports simulés: aucun test Anthropic facturé, aucun fournisseur réel, aucune production qualifiée.",
+    "Les permissions, annulations, délais et tentatives du moteur ne sont pas modifiés. Cette branche ne consolide pas les protections de la PR #7.",
+    "La validité structurelle des paramètres ne démontre ni vérité métier ni autorisation.",
+    "La branche descend de PR #13 et ne valide ni fusion main ni migrations des lignées concurrentes.",
+    "Le déploiement Vercel automatique est désactivé uniquement pour cette branche dans vercel.json; aucune activation ni publication de production exécutée."
+  ]
+}
