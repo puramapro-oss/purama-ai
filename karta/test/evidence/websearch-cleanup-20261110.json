@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "work_item": "web-search-nonblocking-cleanup-20261110",
+  "repository": "puramapro-oss/purama-ai",
+  "existing_pull_request": 26,
+  "base_commit": "25db8049a68b458ec70e161efaefdc6eb23d3562",
+  "base_tree": "68e3663ed7d4422e07515589d7f6af724bed7a76",
+  "scope": [
+    "karta/src/tools/websearch.ts",
+    "karta/test/webSearchCleanup.test.ts"
+  ],
+  "problem": "Known oversized and non-2xx responses awaited a cleanup promise. A pending cancellation delayed failure until the 30-second deadline; the oversized branch also retained its reader lock.",
+  "change": "Reuse the existing best-effort reader cancellation callback on oversize; handle response-body cancellation rejection without awaiting it on non-2xx or aborted response. Existing finally releases the reader. No request retry or new timer.",
+  "preserved": [
+    "Input validation and explicit preferences",
+    "Legacy and evidence response contracts",
+    "Source provenance and metadata-only trace policy",
+    "Five results maximum and 1 MiB response limit",
+    "30-second request/body deadline",
+    "Provider error neutralization and no automatic retry"
+  ],
+  "regression_demonstration": {
+    "before": {
+      "numTotalTests": 9,
+      "numPassedTests": 5,
+      "numFailedTests": 4,
+      "numPendingTests": 0,
+      "success": false
+    },
+    "after": {
+      "numTotalTests": 9,
+      "numPassedTests": 9,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true
+    },
+    "failed_before": [
+      "web_search response cleanup does not block confirmed failures oversized: settles before a pending cancel later resolves",
+      "web_search response cleanup does not block confirmed failures oversized: settles before a pending cancel later rejects",
+      "web_search response cleanup does not block confirmed failures HTTP error: settles before a pending cancel later resolves",
+      "web_search response cleanup does not block confirmed failures HTTP error: settles before a pending cancel later rejects"
+    ],
+    "interpretation": "Four discriminatory cases cover two cleanup sites and late resolve/reject variants, not four unrelated product defects. Five existing boundary/control behaviors remain passing.",
+    "fixtures": "Real native ReadableStream and Response, controlled cancellation promises, fake timers, inert fetch and API key; no actual provider call."
+  },
+  "verification": {
+    "finished_at_utc": "2026-11-10T21:42:29.061497+00:00",
+    "runtime": {
+      "node": "22.23.4",
+      "vitest": "5.0.3",
+      "typescript": "5.9.3"
+    },
+    "dependencies": {
+      "provider": "/workspace/scratch/14d16bfc35cc/iao-frontend/karta/node_modules",
+      "target_lock_sha256": "f94deb0fab4f5239044b29265a1e62ad191dcd5ff56792e6afdbc95434e0c0f1",
+      "locked_packages": 213,
+      "matching_lock_entries": 213,
+      "extra_provider_package": "zod (unused by current PR26 source)",
+      "cache_owned_by_this_checkout": true
+    },
+    "tests": {
+      "numTotalTests": 185,
+      "numPassedTests": 185,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true
+    },
+    "test_files": 9,
+    "interpretation": "185 fresh targeted instances: 176 preexisting cases and 9 new cleanup cases. The separate 9-case run is a subset and must not be added to 185.",
+    "commands": [
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/webSearchCleanup.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/62771ddc7acc/iao-web-runtime-audit/cleanup-before.json"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup/karta",
+        "started_at_utc": "2026-11-10T21:36:07.522182+00:00",
+        "exit_code": 1,
+        "elapsed_seconds": 58.039,
+        "source_sha256": "b25bacb159edcf86a8a29a22c897a29197d429ec7491275e763c04226c1e575f",
+        "test_sha256": "fbff3330a9e97d2f047db41cb6fce6fdf9335a8da741862392b8858942bb286c",
+        "label": "cleanup-before",
+        "log": "cleanup-before.log",
+        "log_sha256": "97ad7138bc6a4b784a3b398cc823ecae182a5d009983c2f0184f28d4607b5b45",
+        "report": "cleanup-before.json",
+        "report_sha256": "caa3753e151a1e545e3b5f2df5cc4250913c8bd45189a6821ab46207517d3e03"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/webSearchCleanup.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/62771ddc7acc/iao-web-runtime-audit/cleanup-after.json"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup/karta",
+        "started_at_utc": "2026-11-10T21:37:39.024562+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.619,
+        "source_sha256": "5576d89aa44aa0a3cf16cc21abd4a122c07cfb46e7938bf3b8acbed87be05387",
+        "test_sha256": "fbff3330a9e97d2f047db41cb6fce6fdf9335a8da741862392b8858942bb286c",
+        "label": "cleanup-after",
+        "log": "cleanup-after.log",
+        "log_sha256": "52aecf1a743386c576b85ead67da6670923f82a694a767b80483e549c1fb1c4d",
+        "report": "cleanup-after.json",
+        "report_sha256": "f1cd0fc370249aa09900f14ff7ebc260ae747b122490b40b967ba3a7944502ed"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/webSearchEvidence.test.ts",
+          "test/webSearchPrivacy.test.ts",
+          "test/webSearchInputBoundary.test.ts",
+          "test/webSearchValidation.test.ts",
+          "test/webSearchCleanup.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/loop.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/62771ddc7acc/iao-web-runtime-audit/targeted-final.json"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup/karta",
+        "started_at_utc": "2026-11-10T21:38:40.021669+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 5.778,
+        "node_path": "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin",
+        "source_sha256": "5576d89aa44aa0a3cf16cc21abd4a122c07cfb46e7938bf3b8acbed87be05387",
+        "test_sha256": "fbff3330a9e97d2f047db41cb6fce6fdf9335a8da741862392b8858942bb286c",
+        "log_sha256": "551d0462da1fc894e2b7cd73357e517f44c88d864ba59defc9c2091b61827233",
+        "label": "targeted-final",
+        "log": "targeted-final.log",
+        "report": "targeted-final.json",
+        "report_sha256": "f0e59029ab55877304a7ad4d937f84ebcead97ef52df2807f76ae9e8f490f7a8"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup/karta",
+        "started_at_utc": "2026-11-10T21:38:40.070449+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 4.671,
+        "node_path": "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin",
+        "source_sha256": "5576d89aa44aa0a3cf16cc21abd4a122c07cfb46e7938bf3b8acbed87be05387",
+        "test_sha256": "fbff3330a9e97d2f047db41cb6fce6fdf9335a8da741862392b8858942bb286c",
+        "log_sha256": "b83cb6ebe4a08c3219109686daad91c4a1aa912aeef5a7f8e48af9872a5e91b9",
+        "label": "typecheck",
+        "log": "typecheck.log"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup/karta",
+        "started_at_utc": "2026-11-10T21:38:40.059526+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 3.444,
+        "node_path": "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin",
+        "source_sha256": "5576d89aa44aa0a3cf16cc21abd4a122c07cfb46e7938bf3b8acbed87be05387",
+        "test_sha256": "fbff3330a9e97d2f047db41cb6fce6fdf9335a8da741862392b8858942bb286c",
+        "log_sha256": "37bae9c2a1af908b93582cf8c9bfe57ba254337da250f9583f673282d0030eb1",
+        "label": "build",
+        "log": "build.log"
+      }
+    ],
+    "source_sha256": {
+      "karta/src/tools/websearch.ts": "5576d89aa44aa0a3cf16cc21abd4a122c07cfb46e7938bf3b8acbed87be05387",
+      "karta/test/webSearchCleanup.test.ts": "fbff3330a9e97d2f047db41cb6fce6fdf9335a8da741862392b8858942bb286c",
+      "karta/package.json": "f02b5a660bd555c196731f53febed5b8424795a31acb34c92bb949795b3e8880",
+      "karta/package-lock.json": "f94deb0fab4f5239044b29265a1e62ad191dcd5ff56792e6afdbc95434e0c0f1",
+      "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+      "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac",
+      "karta/test/agentsRegistry.test.ts": "5e3a2fde6e1d5ef2e48d67ef6e38098813b513412a3cc48cd9c84153e5d79ea1",
+      "karta/test/approvalTracePrivacy.test.ts": "25459a363ce76e19a5b2554fd4b9021abb90bf77f78d09434c3d88ad18042d0b",
+      "karta/test/loop.test.ts": "c9b0efbb568c8436a3a29672b350ead93d9616de419757caf3af7526007ce345",
+      "karta/test/loopTracePrivacy.test.ts": "9481cfcac31b745bd1239c178ece5951d0f9435629ee3519a57ee1e3dc4f79a2",
+      "karta/test/webSearchEvidence.test.ts": "2e1af7a718d14e1937852080b83a37742a3e15e8c24e3d3ece770dca54a76407",
+      "karta/test/webSearchInputBoundary.test.ts": "32d815f5a046b401d2e91d0e4f2790f0be1c7c47f0905c68d6d9eea0810d1444",
+      "karta/test/webSearchPrivacy.test.ts": "61f7774aa3545f6b1b3f14c0104627f74627bf729cf07b6eae925eec3d4bf780",
+      "karta/test/webSearchValidation.test.ts": "630b0a235490f58f2f4e0883d64cd617f8f3f5eb7cc564f6178ec876e81e32d0"
+    },
+    "qualification_inputs": {
+      "files": 758,
+      "manifest_sha256": "e1681f941479779e1c1e9cfe89327528c416dbef482c054082013a5cad85ba0d",
+      "unchanged_after_all_checks": true
+    },
+    "typecheck": "PASS",
+    "build": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "impact_analysis": {
+    "status": "PARTIEL",
+    "gitnexus_status": "BLOQUE",
+    "reason": "Three bounded index attempts exited 1 without a useful terminal diagnostic; no new index was registered. Required impact and detect_changes calls returned repository-not-found. Cause is not established; no LOW risk or empty graph success is claimed.",
+    "attempts": [
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/workspace/scratch/6a3b4f291e34/continuation/tooling/node_modules/gitnexus/dist/cli/index.js",
+          "analyze",
+          "--index-only",
+          "--workers",
+          "2",
+          "--name",
+          "iao-websearch-cleanup-62771"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-analyze.log",
+        "log_sha256": "b05c91895b1dcaf6b12076466f2b617d298322d242ef0136a3ee3d7ee9d054cf"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "analyze",
+          "--index-only",
+          "--workers",
+          "1",
+          "--skip-fts",
+          "--name",
+          "iao-websearch-cleanup-62771"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-analyze-retry.log",
+        "log_sha256": "da85e67f5e907431129541f74821809e600618b972d52405aa2cc6469505bb74"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "analyze",
+          "--index-only",
+          "--workers",
+          "1",
+          "--skip-fts",
+          "--name",
+          "iao-websearch-cleanup-62771"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "env_override": {
+          "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "536870912"
+        },
+        "exit_code": 1,
+        "log": "gitnexus-analyze-bounded.log",
+        "log_sha256": "9274c1f865ae5b2666f441c0f696a7e4134b81c0bdcb36de5ea5de77fd6d7eb0"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "readSearchResponse",
+          "--direction",
+          "upstream",
+          "--file",
+          "karta/src/tools/websearch.ts",
+          "--repo",
+          "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-impact-readSearchResponse.log",
+        "log_sha256": "7554f9a876844940c93f7a71217b088adf3b310af68275bbdd4d9bfb796f8a83"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "webSearchTool",
+          "--direction",
+          "upstream",
+          "--file",
+          "karta/src/tools/websearch.ts",
+          "--repo",
+          "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-impact-webSearchTool.log",
+        "log_sha256": "385843cf70db42c7c66b6a4c2ec97ec6bf5f5459fae4dc63f222f4f9b4aee6e9"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "impact",
+          "execute",
+          "--direction",
+          "upstream",
+          "--file",
+          "karta/src/tools/websearch.ts",
+          "--repo",
+          "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-impact-execute.log",
+        "log_sha256": "5bed7d995da1f214a2efeaea55ca61132fd515a50d16e98ad7503eec806f7bb8"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "staged",
+          "--repo",
+          "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-detect-staged.log",
+        "log_sha256": "e279f7d6512d6c4082b88d0b8d459962a7f56fab9932c2e937b0133efc1d584a"
+      },
+      {
+        "command": [
+          "/home/agent/.npm/_npx/361c55be1121897e/node_modules/node/bin/node",
+          "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+          "detect-changes",
+          "--scope",
+          "compare",
+          "--base-ref",
+          "main",
+          "--repo",
+          "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup"
+        ],
+        "cwd": "/workspace/scratch/62771ddc7acc/iao-websearch-cleanup",
+        "exit_code": 1,
+        "log": "gitnexus-detect-compare-main.log",
+        "log_sha256": "9e00e7dbbe46bee33e644512079190301f8ce2ab4e9cd38064efeae64d9b12ee"
+      }
+    ],
+    "manual_review": {
+      "changed_functions": [
+        "readSearchResponse",
+        "webSearchTool.execute nested request"
+      ],
+      "reader_callers": [
+        "webSearchTool.execute nested request"
+      ],
+      "upstream_importers": [
+        "karta/src/agents/legalAgent.ts",
+        "karta/src/agents/partnerAgent.ts",
+        "karta/src/agents/actionAgents.ts",
+        "karta/src/tools/customRegistry.ts"
+      ],
+      "reexport": [
+        "karta/src/tools/registry.ts"
+      ],
+      "scope": "Two known-failure cleanup sites only. Complete PR26 inheritance against main is not qualified by this local correction."
+    }
+  },
+  "production_status": {
+    "remote_branch_changed": false,
+    "ci_triggered": false,
+    "merged": false,
+    "deployed": false,
+    "actual_provider_calls": 0
+  },
+  "limitations": [
+    "No live Tavily or other provider, billing, network cancellation, production or full-site qualification.",
+    "Best-effort cancellation does not prove that a noncooperative underlying transport has stopped. The verified property is prompt failure and reader-lock release without waiting for its cleanup promise.",
+    "The full inherited KARTA suite beyond these nine selected test files was not rerun.",
+    "Fake timers verify ordering and the unchanged 30-second boundary; these runs are not a production latency or load benchmark.",
+    "Fresh GitNexus graph validation remains unavailable; the manual review and exact input identities do not replace a full call-graph audit."
+  ]
+}

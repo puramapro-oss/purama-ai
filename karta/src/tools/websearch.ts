@@ -213,7 +213,8 @@ async function readSearchResponse(response: Response, signal: AbortSignal): Prom
       if (chunk.done) break;
       bytes += chunk.value.byteLength;
       if (bytes > MAX_RESPONSE_BYTES) {
-        await reader.cancel();
+        // Cleanup may never settle; release this reader in finally immediately.
+        cancel();
         throw new Error("Search response too large");
       }
       chunks.push(chunk.value);
@@ -274,7 +275,8 @@ export const webSearchTool: ToolDefinition<SearchParams, SearchResponse> = {
         }),
       });
       if (controller.signal.aborted || !response.ok) {
-        await response.body?.cancel();
+        // A known failure must not wait for a potentially stalled cleanup.
+        void response.body?.cancel().catch(() => undefined);
         throw new Error("Search request not confirmed");
       }
       const data = await readSearchResponse(response, controller.signal);
