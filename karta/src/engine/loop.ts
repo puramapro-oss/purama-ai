@@ -5,6 +5,7 @@ import { startRun, type RunLogHandle } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
 import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js";
+import { ExecutionOriginError, snapshotAgentExecutionTrigger } from "./execution-origin.js";
 import { APPROVAL_CONTINUATION_GUIDANCE, ApprovalContinuationError, loadApprovalContinuation } from "./approval-continuation.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
@@ -38,7 +39,7 @@ export async function runAgentCycle(
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = trigger.type === "delegation" || trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
@@ -75,6 +76,10 @@ export async function runAgentCycle(
     // A resolved action does not transfer its original brief to this new run.
     // Preserve the receipt for reconciliation instead of consuming another mission.
     if (continuation && definition.pendingBriefKey !== undefined) throw new ApprovalContinuationError();
+    // Capture the original authority facts before mutable business/model context.
+    // A historical approval without an origin remains unknown.
+    const executionTrigger = continuation ? continuation.executionTrigger
+      : snapshotAgentExecutionTrigger(trigger, definition.type);
     const expectedBriefId = requestedBriefId(trigger);
     if (expectedBriefId && definition.pendingBriefKey === undefined) {
       throw new Error("Cet agent ne reçoit pas de mission par ce parcours");
@@ -87,7 +92,16 @@ export async function runAgentCycle(
     const baseContext = noBrief ? {} : brief
       ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
       : await definition.buildContext(userId, trigger);
-    const context = continuation ? { ...baseContext, approvalResume: continuation.context } : baseContext;
+    const context = { ...baseContext };
+    // Business data may not impersonate the server's execution facts.
+    delete context.kartaTrigger;
+    delete context.approvalResume;
+    if (continuation) context.approvalResume = continuation.context;
+    if (executionTrigger?.type === "delegation") {
+      context.kartaTrigger = { delegation: {
+        source: executionTrigger.source, reason: executionTrigger.payload!.reason,
+      } };
+    }
     if (!noBrief && definition.type.startsWith("custom:")) {
       try {
         // Admission, continuation and context reads may have awaited since the
@@ -216,6 +230,7 @@ export async function runAgentCycle(
         effectStarted = true;
         const pendingActionId = await createPendingAction({
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
+          trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
         toolsUsed.push(traceRecord(call, "En attente de validation humaine", "pending", pendingActionId));
         for (const deferred of decision.toolCalls.slice(index + 1)) {
@@ -227,6 +242,7 @@ export async function runAgentCycle(
         effectStarted = true;
         const result = await tool.execute(call.params, {
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
+          trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
         assertToolResult(result);
         toolsUsed.push(traceRecord(call, summarizeToolResult(result, privateTrace), "executed"));
@@ -260,10 +276,10 @@ export async function runAgentCycle(
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
       // A durable execution key is already claimed. No automatic replay of it,
       // even when logging fails after a completed external action.
-      retryable: !(error instanceof ApprovalContinuationError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
+      retryable: !(error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
     // This fixed server-owned explanation is safe even for private continuations.
-    if (error instanceof ApprovalContinuationError) outcome = { ...outcome, errorMessage: error.message };
+    if (error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) outcome = { ...outcome, errorMessage: error.message };
     if (!completionAttempted) {
       await run.finish(outcome).catch(() => {
         // A durable brief can only become available in the confirmed closing

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { readFile } from "node:fs/promises";
+import { KARTA_CANONICAL_MIGRATIONS } from "./migration-fixtures.js";
 import { PGlite } from "@electric-sql/pglite";
 import type { AgentDefinition } from "../src/engine/types.js";
 
@@ -132,6 +133,8 @@ vi.mock("../src/engine/autonomy.js", async original => ({
 }));
 vi.mock("../src/engine/approval.js", () => ({ createPendingAction: async () => { throw new Error("Unexpected approval"); } }));
 vi.mock("../src/engine/notify.js", () => ({ notify: async () => undefined }));
+// The SQL/engine are real; queue transport is outside this local database proof.
+vi.mock("../src/queue/queues.js", () => ({ enqueueAgentCycle: vi.fn() }));
 
 // The logger and brief client are deliberately NOT mocked.
 const { runAgentCycle } = await import("../src/engine/loop.js");
@@ -166,10 +169,12 @@ async function expectNoJournalPayload(): Promise<void> {
 beforeAll(async () => {
   h.db = new PGlite();
   await h.db.exec("CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS; CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai;");
-  for (const name of ["001_karta_core.sql", "005_karta_pending_actions.sql", "018_karta_brief_claims.sql"]) {
+  // KARTA004 extends the existing app table. Apply its actual foundation,
+  // including policies and privileges, instead of inventing a table fixture.
+  await h.db.exec(await readFile(new URL("../../supabase/migrations/20260407000000_creator_agent.sql", import.meta.url), "utf8"));
+  for (const name of KARTA_CANONICAL_MIGRATIONS) {
     await h.db.exec(await readFile(new URL("../migrations/" + name, import.meta.url), "utf8"));
   }
-  await h.db.exec("ALTER TABLE purama_ai.karta_runs ADD COLUMN execution_key text; CREATE UNIQUE INDEX test_execution_key ON purama_ai.karta_runs(execution_key) WHERE execution_key IS NOT NULL;");
 }, 30_000);
 
 afterAll(async () => { await h.db?.close(); });

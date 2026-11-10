@@ -32,6 +32,7 @@ vi.mock("../src/engine/logger.js", () => ({
 }));
 vi.mock("../src/engine/approval.js", () => ({ createPendingAction: h.pending }));
 vi.mock("../src/engine/notify.js", () => ({ notify: h.notify }));
+vi.mock("../src/queue/queues.js", () => ({ enqueueAgentCycle: vi.fn() }));
 
 const { runAgentCycle } = await import("../src/engine/loop.js");
 const {
@@ -240,7 +241,7 @@ describe("effect barrier and immutable completion", () => {
     const result = await run();
     expect(result.status).toBe("awaiting_approval");
     expect(h.events).toEqual(["claim", "context", "decide", "arm", "pending", "finish"]);
-    expect(h.pending).toHaveBeenCalledWith({ userId, runId, agentType: "newsletter-genie", toolName: "act", toolParams: h.decision.toolCalls[0].params });
+    expect(h.pending).toHaveBeenCalledWith({ userId, runId, agentType: "newsletter-genie", toolName: "act", toolParams: h.decision.toolCalls[0].params, trigger });
     expect(result.toolsUsed[0]).toMatchObject({ pendingActionId: "approval-id", tracePolicy: "metadata_only", outcome: "pending" });
     expect(h.execute).not.toHaveBeenCalled();
     assertNoPrivateTrace(result);

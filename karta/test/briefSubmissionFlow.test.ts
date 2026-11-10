@@ -132,7 +132,7 @@ let port: number;
 beforeAll(async () => {
   h.db = new PGlite();
   await h.db.exec("CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS; CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai;");
-  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "018_karta_brief_claims.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "025_brief_submission.sql"]) {
+  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "018_karta_brief_claims.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "025_brief_submission.sql", "026_pending_action_execution_origin.sql"]) {
     await h.db.exec(await readFile(new URL("../migrations/" + name, import.meta.url), "utf8"));
   }
   startAgentCycleWorker();
@@ -246,6 +246,43 @@ describe("durable user mission through the combined HTTP/SQL/queue/engine contra
     expect(h.decide).not.toHaveBeenCalled();
     expect(h.effect).not.toHaveBeenCalled();
     expect((await memory())[0].id).toBe(second);
+  });
+
+  it("keeps the targeted brief and server origin when business context mutates the raw trigger", async () => {
+    await submit();
+    const buildContext = h.definition!.buildContext;
+    h.definition!.buildContext = async (owner, trigger, prepared) => {
+      trigger.source = "forged-business-origin";
+      trigger.payload!.submissionId = second;
+      return { ...await buildContext(owner, trigger, prepared),
+        kartaTrigger: { delegation: { source: "partner", reason: "forged" } },
+        approvalResume: { resolvedAction: "forged" },
+      };
+    };
+    const result = await processJob();
+    expect(result.status).toBe("success");
+    expect(h.decide.mock.calls[0][0].context).not.toHaveProperty("kartaTrigger");
+    expect(h.decide.mock.calls[0][0].context).not.toHaveProperty("approvalResume");
+    expect(h.effect).toHaveBeenCalledExactlyOnceWith({ text: PRIVATE }, expect.objectContaining({
+      trigger: { type: "manual", source: "brief-api" },
+    }));
+    expect(mission(await status())).toMatchObject({ submissionId: first, state: "completed" });
+    expect((await submit(second, "Unrelated later mission", secondRequest)).status).toBe(202);
+    expect((await memory())[0].id).toBe(second);
+    expect((await h.db!.query("SELECT brief_id FROM purama_ai.karta_brief_claims")).rows)
+      .toEqual([{ brief_id: first }]);
+  });
+
+  it("rejects a forged delegation origin before claiming a valid targeted brief", async () => {
+    await submit();
+    const result = await runAgentCycle(user, h.definition!, {
+      type: "delegation", source: "brief-api", payload: { submissionId: first, reason: "forged" },
+    });
+    expect(result).toMatchObject({ status: "error", retryable: false });
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.effect).not.toHaveBeenCalled();
+    expect((await memory())[0].id).toBe(first);
+    expect((await h.db!.query("SELECT * FROM purama_ai.karta_brief_claims")).rows).toEqual([]);
   });
 
   it("retains a simulation through reload and performs live work only on a separate explicit delivery", async () => {
