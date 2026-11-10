@@ -246,7 +246,7 @@ export class IaoFacade {
     if (!overCapacity && now - this.#lastSweep < Math.min(this.#retentionMs / 4, 60_000)) return;
     this.#lastSweep = now;
     for (const [key, stored] of this.#requests) {
-      if (stored.terminalAt === undefined) continue;
+      if (stored.pending || stored.terminalAt === undefined) continue;
       const expired = now - stored.terminalAt >= this.#retentionMs;
       if (!expired && this.#requests.size <= this.#maxRequests) continue;
       this.#requests.delete(key);
