@@ -1,0 +1,67 @@
+diff --git a/karta/src/engine/loop.ts b/karta/src/engine/loop.ts
+index 566764c..0437c27 100644
+--- a/karta/src/engine/loop.ts
++++ b/karta/src/engine/loop.ts
+@@ -6,0 +7 @@
++import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js";
+@@ -40 +41 @@
+-  let privateTrace = trigger.source === "approval-resume" || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
++  let privateTrace = trigger.source === "approval-resume" || definition.pendingBriefKey !== undefined || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+@@ -47,0 +49 @@
++  let briefArmed = false;
+@@ -51 +53,14 @@
+-    const baseContext = await definition.buildContext(userId, trigger);
++    // PROPOSED INTEGRATION BOUNDARY: PR20 intentionally keeps partial briefs in
++    // reconciliation_required. There is no durable transfer from that receipt
++    // to this continuation. Never consume another pending brief as its input.
++    // Enabling this path needs a separate verified claim/ancestry transition.
++    if (continuation && definition.pendingBriefKey !== undefined) {
++      throw new ApprovalContinuationError();
++    }
++    const brief = definition.pendingBriefKey === undefined ? undefined : await (
++      mode === "simulation" ? peekPendingBrief : claimPendingBrief
++    )({ userId, agentType: definition.type, runId: run.runId, key: definition.pendingBriefKey });
++    const noBrief = definition.pendingBriefKey !== undefined && brief === null;
++    const baseContext = noBrief ? {} : brief
++      ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
++      : await definition.buildContext(userId, trigger);
+@@ -53 +68,3 @@
+-    const decision = await getClaudeClient().decide({
++    const decision = noBrief ? {
++      summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
++    } : await getClaudeClient().decide({
+@@ -110 +127 @@
+-      const latest = await loadAgentState(userId, definition.type);
++      let latest = await loadAgentState(userId, definition.type);
+@@ -138 +154,0 @@
+-      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+@@ -142,0 +159,16 @@
++      if (brief && !briefArmed) {
++        // A lost acknowledgement may still have committed the barrier. Keep
++        // the claim out of automatic replay even if this await then fails.
++        effectStarted = true;
++        await armPendingBrief({ userId, agentType: definition.type, runId: run.runId });
++        briefArmed = true;
++        // Arming adds a database round trip. Recheck stops and autonomy before
++        // choosing whether dispatch needs another human approval.
++        latest = await loadAgentState(userId, definition.type);
++        if (await isGlobalKillSwitchActive(true) || !isRunnable(latest).ok || latest.simulationMode) {
++          cancelled = true;
++          skipRemaining("Action annulée : arrêt ou autorisation modifiée");
++          break;
++        }
++      }
++      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+@@ -171 +203,3 @@
+-    const status: AgentRunResult["status"] = failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
++    // A live brief with no proposed action is still waiting for treatment.
++    const unhandledBrief = Boolean(brief) && !simulation && decision.toolCalls.length === 0;
++    const status: AgentRunResult["status"] = noBrief || unhandledBrief ? "skipped" : failed ? "error" : cancelled ? "cancelled" : pending ? "awaiting_approval" : simulation ? "simulated" : "success";
+@@ -214 +248,6 @@
+-      await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
++      await run.finish(outcome).catch(() => {
++        // A durable brief becomes available only in a confirmed close. A lost
++        // acknowledgement cannot authorize an automatic replay of that input.
++        if (definition.pendingBriefKey !== undefined) outcome.retryable = false;
++        console.error("[loop] journalisation indisponible ; reprise automatique interdite");
++      });

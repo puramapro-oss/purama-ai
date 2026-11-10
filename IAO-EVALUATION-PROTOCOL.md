@@ -1,6 +1,6 @@
 # IAO : preuves de fiabilité et protocole d'évaluation
 
-État au 19 septembre 2026. Ce document distingue le travail exécuté, la conception à valider et les comparaisons non réalisées. Il ne certifie pas toutes les applications PURAMA et ne constitue pas un classement mondial d'IAO.
+Document commencé le 19 septembre 2026, complété le 10 novembre 2026. Les relevés historiques restent attachés à leur date et à leur version. Le dernier lot ci-dessous passe 679 tests moteur ainsi que les contrôles TypeScript et les compilations du moteur et du site ; sa validation navigateur reste bloquée avant l'ouverture d'une page. Ce document distingue le travail exécuté, la conception à valider et les comparaisons non réalisées. Il ne certifie pas toutes les applications PURAMA et ne constitue pas un classement mondial d'IAO.
 
 ## Ce qui rendrait IAO utile et distinctive
 
@@ -114,3 +114,88 @@ GitNexus a examiné les symboles existants avant modification. Les risques HIGH 
 Les fournisseurs et le transport des files sont simulés. Les contrôles PGlite exécutent les contrats SQL dans le banc local, sans qualifier une instance PostgreSQL native à plusieurs connexions, ses rôles/RLS, Redis ni une migration déployée. La révocation est revérifiée avant l'effet ; elle n'est pas atomique avec une opération ultérieure chez un fournisseur. Les paramètres métier nécessaires à une approbation restent conservés dans son chemin autorisé ; la minimisation ne certifie pas les journaux internes des connecteurs.
 
 Le déploiement et les parcours réels de PURAMA ONE restent **NON TESTÉS**. Le dépôt GitHub `purama-one` était vide lors de ce contrôle ; le checkout local, les verrous et les propriétaires actuels des terminaux restent inaccessibles. L'intégrateur doit réconcilier ce lot avec les autres branches avant toute fusion, puis qualifier les migrations et les parcours authentifiés sur la cible réelle. Aucun appel à un modèle ou fournisseur métier payant n'a été effectué pour cette campagne.
+
+## Exécution durable, reprise vérifiée et états honnêtes — 10 novembre 2026
+
+**PASS pour les vérifications locales décrites ; PARTIEL pour la livraison intégrée dans ONE.** Ce second lot prolonge le commit distant `1daf6314d60f6dd336c3a3601ddf73cf432ef4b3` sur la même branche isolée. Il réutilise la file KARTA, son journal, ses approbations et ses écrans. Un sérialiseur JSON commun sert à l'identité des demandes et aux comparaisons de reprise ; une classification de statuts commune sert à l'onboarding et à l'historique.
+
+### Demande durable et refus des conflits
+
+L'ancienne clé SQL incluait l'horodatage du job. Une réémission après purge du transport pouvait donc être considérée comme une nouvelle exécution malgré une clé métier identique. Les nouvelles demandes possèdent une identité délimitée par utilisateur, agent et clé métier hachée. Une véritable nouvelle demande sans clé de déduplication reçoit une identité distincte.
+
+Le contenu est copié avant toute attente, puis lié à une empreinte canonique. Le worker recalcule cette empreinte. Le producteur vérifie le job réellement conservé par BullMQ, puis le journal avant et après l'ajout. La contrainte SQL unique sur `execution_key` et la comparaison de `execution_fingerprint` constituent la protection atomique finale ; les précontrôles seuls ne constituent pas une réservation.
+
+Un conflit connu de contenu renvoie HTTP 409. Les routes de déclenchement renvoient une `executionKey` calculée côté serveur pour suivre la bonne demande. Le statut HTTP 202 reste une admission asynchrone et ne prouve pas que l'action métier a réussi.
+
+| Cas contrôlé | Résultat vérifié |
+| --- | --- |
+| Même demande réémise après purge du transport | Un seul effet inerte et un seul journal. |
+| Même clé réutilisée avec un contenu différent | Refus ; l'ancien résultat n'est pas attribué au nouveau contenu. |
+| Deux workers franchissent leurs précontrôles avec des contenus différents | La réservation SQL permet un seul effet ; l'autre empreinte est refusée. PGlite sérialise ses appels : ceci ne qualifie pas une concurrence réseau multiconnexion. |
+| Nouvelle mission, autre utilisateur ou autre agent | Identité distincte et exécution légitime conservée. |
+| Métadonnées de livraison incohérentes ou journal illisible | Aucun effet autorisé sur cette preuve insuffisante. |
+| Ancien job dédupliqué encore inexécuté | Raccordement à la nouvelle identité stable. Un ancien journal sans empreinte vérifiable impose une vérification du résultat précédent. |
+
+Cette protection couvre une identité de demande conservée. Elle ne déduplique pas toutes les opérations sémantiquement équivalentes entre missions distinctes et ne remplace pas les garanties propres des fournisseurs. Les journaux durables ne doivent pas être effacés en supposant que la même protection reste acquise. Le verrou à durée fixe de la PR #7 n'est pas importé ; ce lot ne revendique pas de sérialisation globale des missions d'un utilisateur et d'un agent.
+
+### Approbation avant effet, puis reprise vérifiée
+
+La migration `019_karta_approval_parent_guard.sql` est réutilisée à l'identique depuis la [PR #20](https://github.com/puramapro-oss/purama-ai/pull/20), head `d553ff2e784a82685d16f59727c55d5499d0db9e`. Elle vérifie le propriétaire, l'agent, le parent clos et le lien unique avec son journal **avant** de permettre un effet approuvé. Un parent simulé ou mock ne peut devenir une autorisation réelle. Les arrêts et l'activation restent contrôlés ; un refus reste possible lorsque le lien de journal est valide. Le test associé de 48 cas est repris sans modification, et les quinze tests historiques d'approbation sont adaptés au nouveau contrat.
+
+La boucle marque aussi l'insertion d'une approbation comme une écriture à résultat potentiellement incertain avant d'attendre sa réponse. Si l'insertion a pu être validée mais que son accusé de réception se perd, l'appelant ne reçoit pas une permission de rejouer automatiquement. Deux nouveaux scénarios, avec clôture du journal réussie ou également incertaine, échouaient avant cette barrière et passent après.
+
+La reprise charge ensuite l'action résolue et son parent, avec les filtres d'utilisateur et d'agent. Elle exige une résolution finalisée, un parent réel et terminé, et une unique entrée de journal cohérente. Les identifiants du déclencheur ne font pas autorité sur les paramètres ni sur le résultat : ces informations proviennent des données détenues par l'utilisateur.
+
+Le modèle reçoit la preuve métier nécessaire et les métadonnées des étapes précédentes. Une comparaison canonique séparée de son contexte mutable interdit de réexécuter exactement l'action déjà approuvée ou refusée, ou de créer une seconde demande d'approbation pour elle. Les paramètres privés et le texte du modèle sont minimisés dans les traces de cette reprise, y compris sans appel d'outil.
+
+La portée est bornée. Une première reprise est admise lorsque l'action résolue est la seule action antérieure déjà traitée et que les autres entrées sont strictement différées. Une autre action déjà exécutée, un échec à effet incertain, une autre approbation ou une reprise d'une reprise sans ascendance durable suspend le traitement **avant de reconstruire le contexte, d'appeler le modèle et d'effectuer de nouvelles actions**. Le reçu précédent reste conservé. Le message explique qu'il faut vérifier l'activité avant une nouvelle mission ; il ne nie pas une action déjà exécutée.
+
+Le premier banc de 29 scénarios présentait 28 échecs. Sept scénarios de prudence sur l'historique, puis les deux scénarios d'insertion incertaine, ont été ajoutés : **38/38 passent** dans le fichier final. Les essais comprennent propriété, agent, résolution falsifiée, preuve manquante, état non finalisé, paramètres réordonnés, contexte modifié, nouvelle demande légitime et confidentialité. Ces comptes successifs ne s'additionnent pas.
+
+### Interface et contrat de données
+
+L'onboarding suit la clé renvoyée par le serveur, avec vérification de l'utilisateur et de l'agent. Il continue à consulter les états `running` et `executing`, distingue la validation humaine et les résultats finaux, et limite l'attente à vingt secondes. Une ancienne réponse sans clé, un statut inconnu, une erreur de lecture ou un délai dépassé restent non confirmés. La fermeture ou la réouverture invalident les réponses tardives d'une tentative précédente.
+
+L'historique distingue succès, erreur, annulation, simulation, résultat partiel, tâche ignorée et résultat inconnu. Les anciennes lignes `success` en mode simulation restent présentées comme des simulations. Les types Supabase reflètent les deux colonnes nullable des migrations 006 et 020. Le texte de première utilisation décrit une simulation, sans promesse de délai ni sécurité absolue.
+
+Ces comportements sont implémentés, compilés et accompagnés de quatorze scénarios de contrôle. **Un test de classification pure a été exécuté ; les treize parcours nécessitant une page navigateur ne sont pas validés.** Chromium n'était pas disponible et ses archives téléchargées étaient invalides. Le dernier essai Firefox a échoué dans `browserContext.newPage`, avant le corps du scénario et avant l'application. Un essai avec le runtime correspondant au navigateur avait également été interrompu pendant la saturation mémoire. Ces constats ne démontrent pas un défaut applicatif et ne valent pas validation visuelle.
+
+### Rapprochement avec les travaux parallèles
+
+Les migrations des vingt heads de PR ouverts ont été inventoriées à des révisions précises, consignées dans le reçu. La PR #20 occupe 018 pour les consignes et 019 pour le garde-fou d'approbation. Notre nouvelle migration est donc renommée **020**, numéro libre dans ces vingt inventaires. Ce constat ne couvre pas les modifications locales invisibles ni les publications ultérieures.
+
+La migration 019 et ses 48 tests sont importés avec leurs blobs d'origine, respectivement `fdb00f1d1842192715979727379245406efd76f8` et `703474853ce627464341af85d2b89acf03ee84d1`. Elle dépend des colonnes déjà présentes avec 006 et n'exige pas 018. Les migrations **019 et 020 sont exécutées ensemble** par les tests de livraison et de continuation dans PGlite. Aucun mécanisme d'approbation parallèle n'est ajouté.
+
+Le cycle de consignes de #20 n'est pas fusionné dans ce lot. Le [patch de rapprochement](karta/test/evidence/aether-pr20-brief-integration.patch) est une **proposition NON APPLIQUÉE et NON TESTÉE au runtime**. Son application est vérifiée dans une copie temporaire, de la base SHA-256 `493182e2b5188d3230415b0bbd172bcca102858ece8333e8ed72f2bb34183a1d` à la cible `ba160cb5080ffdee16867c5ce021afa39fce92da999c559f40b2f0b21aca9c7a`. Ce diff à contexte zéro exige `git apply --check --unidiff-zero` puis, au moment du rapprochement autorisé, `git apply --unidiff-zero`. Il nécessite aussi les types, fonctions et migration 018 de #20 ; il ne doit pas être appliqué seul.
+
+La proposition suspend une reprise d'approbation pour un agent à `pendingBriefKey` avant d'acquérir une consigne. #20 peut conserver la consigne partielle en `reconciliation_required` ; prendre une nouvelle consigne pour continuer l'ancienne serait incohérent. La poursuite automatique de ces agents demande encore une transition SQL reliant la consigne originale, son reçu, l'approbation et le nouveau run. Cette capacité n'est pas déclarée réalisée.
+
+### Vérification finale du lot
+
+| Vérification | Résultat |
+| --- | --- |
+| Suite moteur complète | **729/729**, 56 fichiers, aucun échec ni test ignoré, sortie 0. Les 117 cas supplémentaires depuis la base comprennent 69 nouveaux cas de ce lot et 48 repris de #20 ; le nombre de cas de la base était 612. Les fixtures et un cas historique d'approbation sont adaptés à 019. |
+| Tests ciblés combinés | **132/132** : 48 garde-fou du parent, 15 approbations existantes adaptées, 38 reprises/insertion incertaine, 27 livraisons/migrations, 4 HTTP locaux. Ils sont déjà inclus dans les 729. |
+| TypeScript moteur et site | **PASS**, sorties 0. Le moteur est revérifié après les imports tardifs ; le site est inchangé depuis sa vérification réussie. |
+| Compilation KARTA et construction Vite | **PASS**, sorties 0. |
+| ESLint sur les quatre composants/helpers/hooks concernés | **PASS**, zéro erreur, zéro avertissement. |
+| Migration 020 rejouable, formats, clé obligatoire avec empreinte, anciennes valeurs nulles | **PASS** dans PGlite ; aucune migration appliquée à des données réelles. |
+| 019 + 020 et contrat d'approbation | **PASS** dans les tests locaux combinés ; aucune qualification PostgreSQL native multiconnexion. |
+| Réindexation et contrôles de changement | **PASS de cohérence** sur les 23 sources/tests et deux documents provisoires ; 750 fichiers suivis inchangés pendant l’analyse et douze fichiers d’instructions identiques. |
+| Validation navigateur et parcours connectés dans ONE | **NON TESTÉ** ; blocage du navigateur avant la page et absence d'accès confirmé au runtime ONE. |
+
+La suite complète finale a duré **56,11 secondes** dans ce banc (56,64 secondes pour le processus complet). Cette durée ne mesure pas la performance du produit. Les premières tentatives interrompues par SIGKILL ou pendant la saturation mémoire ne sont pas requalifiées en succès ; la campagne finale et ses empreintes sont distinctes. Aucun délai de test n'a été augmenté pour masquer ces interruptions. Le test de reprise isole aussi l'import du transport afin d'éviter une connexion Redis locale involontaire pendant son chargement.
+
+Le reçu [aether-execution-status-20261110.json](karta/test/evidence/aether-execution-status-20261110.json) conserve les résultats, commandes, empreintes des **23 fichiers source/tests**, incidents de vérification, reprises de code et limites. L'arbre de ces sources avant documentation est `52db384d5db9d599199709742a27402d0014e235`.
+
+GitNexus signale automatiquement un risque **CRITICAL** : ses trois vues comptent les mêmes 351 symboles et 88 processus sur le snapshot source23 et ses deux documents provisoires. Soixante-quinze processus mentionnent un symbole `query`, sensible aux homonymes des tests. Les limites de génération et les fichiers sans symbole sont consignés ; ces chiffres ne sont pas une preuve de 88 parcours métier validés. La comparaison utile porte sur le contenu exact de `1daf6314…`. L’appel contre `main` a été retenté et échoue parce que cette référence n’existe pas dans la copie isolée ; aucune référence de substitution n’a été inventée. La réindexation a contrôlé l’absence de modification des sources et des douze fichiers d’instructions. Le contrôle de publication porte ensuite sur le staging définitif ; son résultat et le commit publié sont consignés dans la note de continuité.
+
+### Réception et mise en service restantes
+
+1. L'intégrateur ONE rapproche le lot des autres branches et du checkout réel, dont le cycle de consignes de #20, puis valide les treize parcours UI avec un navigateur opérationnel et un backend d'essai identifié.
+2. L'exploitation qualifie les migrations et les permissions sur une copie de données, ainsi que la concurrence PostgreSQL native et le transport Redis.
+3. Avant mise en service : arrêter et drainer les anciens workers ; qualifier et appliquer 019 puis 020 une seule fois (019 peut déjà être présente à l'identique via #20) ; démarrer les nouveaux workers/producteurs ; vérifier les contrats API et l'interface. Ne pas faire cohabiter les anciennes et nouvelles versions de workers.
+4. En retour arrière, ne pas remettre des jobs v2 à un ancien worker. Conserver les reçus et réconcilier l'état de la file avant reprise.
+5. Les propriétaires des connecteurs vérifient les effets et les autorisations sur leurs comptes de test. La prévention des conflits entre missions différentes, l'ascendance durable de plusieurs approbations et les mesures de charge/latence restent des lots identifiés.
+
+Aucun déploiement, aucune migration réelle ni fusion dans `main` ne découle de ces tests locaux. Les interfaces Mac interrogées pendant cette passe renvoient une erreur interne ; le constat ne nie pas les accès à d'autres périmètres consignés dans la note de continuité. Le périmètre confirmé reste ce correctif de `purama-ai`.

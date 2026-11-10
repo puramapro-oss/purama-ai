@@ -978,6 +978,8 @@ export type Database = {
           decision: string | null
           duration_ms: number | null
           error_message: string | null
+          execution_key: string | null
+          execution_fingerprint: string | null
           finished_at: string | null
           id: string
           input_summary: string | null
@@ -996,6 +998,8 @@ export type Database = {
           decision?: string | null
           duration_ms?: number | null
           error_message?: string | null
+          execution_key?: string | null
+          execution_fingerprint?: string | null
           finished_at?: string | null
           id?: string
           input_summary?: string | null
@@ -1014,6 +1018,8 @@ export type Database = {
           decision?: string | null
           duration_ms?: number | null
           error_message?: string | null
+          execution_key?: string | null
+          execution_fingerprint?: string | null
           finished_at?: string | null
           id?: string
           input_summary?: string | null

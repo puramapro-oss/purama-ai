@@ -4,6 +4,8 @@ import { runAgentCycle } from "../engine/loop.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "../engine/resolveDefinition.js";
 import type { AgentDefinition } from "../engine/types.js";
 import type { AgentCycleJobData } from "./queues.js";
+import { CycleDeliveryConflictError, resolveCycleDelivery } from "./delivery-identity.js";
+import { assertCycleDeliveryCompatible } from "./delivery-guard.js";
 
 export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
   const worker = new Worker<AgentCycleJobData>(
@@ -20,7 +22,15 @@ export function startAgentCycleWorker(): Worker<AgentCycleJobData> {
         // provider content in the worker's failed event.
         throw new Error("Vérification de l’agent temporairement indisponible");
       }
-      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger, `queue:${job.id}:${job.timestamp}`);
+      let identity;
+      try {
+        identity = resolveCycleDelivery(job);
+        await assertCycleDeliveryCompatible(job.data, identity);
+      } catch (error) {
+        if (error instanceof CycleDeliveryConflictError) throw new UnrecoverableError(error.message);
+        throw new Error("Vérification de la demande temporairement indisponible");
+      }
+      const result = await runAgentCycle(job.data.userId, definition, job.data.trigger, identity.executionKey, identity.fingerprint);
       if (result.status === "error") {
         if (result.retryable !== true) throw new UnrecoverableError(result.errorMessage ?? "Résultat à vérifier avant reprise");
         throw new Error(result.errorMessage ?? "échec inconnu du cycle agent");

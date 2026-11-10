@@ -4,6 +4,7 @@ import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
 import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
+import { CycleDeliveryConflictError, getQueuedExecutionKey } from "../queue/delivery-identity.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
@@ -63,6 +64,7 @@ export function startApiServer() {
     void handleRequest(req, res).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
+      else if (error instanceof CycleDeliveryConflictError) json(res, 409, { error: error.message });
       else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
     });
   });
@@ -138,7 +140,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       },
       requestKey ? { dedupeKey: `manual|${agentType}|${userId}|${requestKey}` } : undefined
     );
-    json(res, 202, { ok: true, queued: true, jobId });
+    json(res, 202, { ok: true, queued: true, jobId, executionKey: getQueuedExecutionKey(jobId) });
     return;
   }
 
@@ -163,7 +165,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       },
       requestKey ? { dedupeKey: `manual|custom:${row.id}|${row.user_id}|${requestKey}` } : undefined
     );
-    json(res, 202, { ok: true, queued: true, jobId });
+    json(res, 202, { ok: true, queued: true, jobId, executionKey: getQueuedExecutionKey(jobId) });
     return;
   }
 

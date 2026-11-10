@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { getKartaRunStatus } from '@/lib/karta-run-status';
 import { useAuth } from './useAuth';
 import type { Agent } from './useAgents';
 
@@ -54,6 +55,7 @@ export interface KartaPendingAction {
 
 export interface KartaRun {
   id: string;
+  execution_key?: string | null;
   user_id: string;
   agent_type: string;
   trigger_type: string;
@@ -202,35 +204,58 @@ export function useTriggerKartaAgent() {
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      return data as { ok: true; queued: boolean };
+      if (data?.ok !== true || data?.queued !== true) {
+        throw new Error('Le démarrage de la tâche n’a pas été confirmé. Consulte l’activité avant de réessayer.');
+      }
+      // Old servers may acknowledge the job without exposing its durable identity.
+      // Such a response can never be correlated safely using the latest run or a client clock.
+      const executionKey = typeof data.executionKey === 'string' && data.executionKey.trim().length > 0
+        && data.executionKey.length <= 512 ? data.executionKey : null;
+      return { ok: true as const, queued: true as const, executionKey };
     },
   });
 }
 
+export interface KartaRunTracking {
+  attemptId: string;
+  executionKey: string;
+}
+
 /**
- * Attend qu'un nouveau `karta_runs` apparaisse pour cet agent après `sinceIso` (poll court, ~15s max).
- * Le trigger est asynchrone (mis en queue BullMQ) : on ne peut pas afficher le vrai résultat sans attendre.
+ * Suit uniquement l'exécution admise par le serveur. L'appelant borne l'attente via `enabled`
+ * sans modifier l'identité de la requête lorsqu'un résultat est affiché.
  */
-export function usePollLatestRun(agentType: ActionAgentSlug | null, sinceIso: string | null) {
+export function usePollLatestRun(
+  agentType: ActionAgentSlug | null,
+  tracking: KartaRunTracking | null,
+  enabled = true,
+) {
   const { user } = useAuth();
 
-  return useQuery({
-    queryKey: ['karta-poll-run', user?.id, agentType, sinceIso],
-    enabled: !!user && !!agentType && !!sinceIso,
-    refetchInterval: (query) => (query.state.data ? false : 1500),
-    queryFn: async () => {
+  return useQuery<KartaRun | null, Error>({
+    queryKey: ['karta-poll-run', user?.id, agentType, tracking?.attemptId, tracking?.executionKey],
+    enabled: enabled && !!user && !!agentType && !!tracking,
+    retry: 1,
+    refetchInterval: (query) => {
+      if (query.state.status === 'error') return false;
+      const phase = getKartaRunStatus(query.state.data).phase;
+      return phase === 'complete' || phase === 'approval' ? false : 1500;
+    },
+    queryFn: async ({ signal }): Promise<KartaRun | null> => {
       const { data, error } = await supabase
         .from('karta_runs')
         .select('*')
         .eq('user_id', user!.id)
         .eq('agent_type', agentType!)
-        .gte('started_at', sinceIso!)
-        .order('started_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .eq('execution_key', tracking!.executionKey)
+        .abortSignal(signal)
+        .maybeSingle<KartaRun>();
 
       if (error) throw error;
-      return (data as KartaRun | null) ?? null;
+      const run = data;
+      if (!run || run.user_id !== user!.id || run.agent_type !== agentType
+        || run.execution_key !== tracking!.executionKey) return null;
+      return run;
     },
   });
 }

@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Loader2,
@@ -7,7 +8,6 @@ import {
   FlaskConical,
   Clock,
   CheckCircle2,
-  XCircle,
   PauseCircle,
   Activity,
   Sparkles,
@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { formatRelative } from '@/lib/utils';
+import { getKartaRunStatus } from '@/lib/karta-run-status';
 import { PendingActionsList } from '@/components/karta/PendingActionsList';
 import {
   useEmployeeAgents,
@@ -34,14 +35,6 @@ const AUTONOMY_LABELS: Record<number, string> = {
   1: 'Propose, tu valides',
   2: 'Agit seul (sauf sensible)',
   3: 'Autonomie totale',
-};
-
-const STATUS_META: Record<string, { label: string; icon: typeof CheckCircle2; className: string }> = {
-  success: { label: 'Réussi', icon: CheckCircle2, className: 'text-accent-emerald' },
-  error: { label: 'Erreur', icon: XCircle, className: 'text-destructive' },
-  awaiting_approval: { label: 'En attente de validation', icon: PauseCircle, className: 'text-yellow-500' },
-  running: { label: 'En cours', icon: Loader2, className: 'text-accent-cyan' },
-  skipped: { label: 'Ignoré', icon: PauseCircle, className: 'text-muted-foreground' },
 };
 
 function StatCard({
@@ -72,7 +65,7 @@ function StatCard({
 }
 
 function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: string; agentIcon: string }) {
-  const meta = STATUS_META[run.status] ?? STATUS_META.running;
+  const meta = getKartaRunStatus(run);
   const StatusIcon = meta.icon;
 
   return (
@@ -88,7 +81,7 @@ function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: strin
           </span>
           {run.claude_mock && (
             <Badge variant="outline" className="text-[10px] border-yellow-500/40 text-yellow-500">
-              [MOCK] TODO_LIVE_TEST
+              Mode démonstration
             </Badge>
           )}
           {run.mode === 'simulation' && (
@@ -97,8 +90,10 @@ function RunRow({ run, agentName, agentIcon }: { run: KartaRun; agentName: strin
             </Badge>
           )}
         </div>
-        {run.decision && (
-          <p className="text-xs text-muted-foreground/90 mt-1 line-clamp-2">{run.decision}</p>
+        {(run.result_summary || run.decision || !run.error_message) && (
+          <p className="text-xs text-muted-foreground/90 mt-1 line-clamp-2">
+            {run.result_summary || run.decision || meta.description}
+          </p>
         )}
         {run.error_message && (
           <p className="text-xs text-destructive mt-1 line-clamp-2">{run.error_message}</p>
@@ -242,7 +237,8 @@ function EmployeeCard({ slug, name, icon, category, description, state }: Employ
 }
 
 export default function MyEmployees() {
-  const [tab, setTab] = useState<'equipe' | 'activite'>('equipe');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get('tab') === 'activite' ? 'activite' : 'equipe';
   const { data: agents = [], isLoading: agentsLoading, isError: agentsError } = useEmployeeAgents();
   const { data: statesMap, isLoading: statesLoading, isError: statesError } = useKartaAgentStates();
   const { data: runs = [], isLoading: runsLoading, isError: runsError } = useKartaRuns(30);
@@ -322,7 +318,12 @@ export default function MyEmployees() {
         ].map((t) => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key)}
+            onClick={() => setSearchParams(previous => {
+              const next = new URLSearchParams(previous);
+              if (t.key === 'activite') next.set('tab', 'activite');
+              else next.delete('tab');
+              return next;
+            }, { replace: true })}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               tab === t.key
                 ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30'

@@ -4,6 +4,7 @@ import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun, type RunLogHandle } from "./logger.js";
 import { notify } from "./notify.js";
 import { createPendingAction } from "./approval.js";
+import { APPROVAL_CONTINUATION_GUIDANCE, ApprovalContinuationError, loadApprovalContinuation } from "./approval-continuation.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
@@ -11,7 +12,8 @@ import { minimizeRunTrace, PRIVATE_TRACE, shouldMinimizeToolTrace, summarizeTool
 import type { AgentDefinition, AgentRunResult, AgentTrigger, ToolCallRecord } from "./types.js";
 
 export async function runAgentCycle(
-  userId: string, definition: AgentDefinition, trigger: AgentTrigger, executionKey?: string
+  userId: string, definition: AgentDefinition, trigger: AgentTrigger,
+  executionKey?: string, executionFingerprint?: string
 ): Promise<AgentRunResult> {
   const cycleStartedAt = new Date().toISOString();
 
@@ -28,14 +30,14 @@ export async function runAgentCycle(
       return { status: "skipped", decision: runnable.reason, toolsUsed: [], resultSummary: "Aucune action exécutée", mock: false };
     }
     mode = state.simulationMode ? "simulation" : "live";
-    run = await startRun(userId, definition.type, trigger, mode, executionKey);
+    run = await startRun(userId, definition.type, trigger, mode, executionKey, executionFingerprint);
   } catch {
     // Admission errors remain thrown for the existing queue retry contract.
     // Do not pass raw database/provider content to callers or worker logs.
     throw new Error("Cycle temporairement indisponible : vérifier son état avant toute reprise");
   }
   // Protect context/decision failures before a model has selected any tool.
-  let privateTrace = definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
+  let privateTrace = trigger.source === "approval-resume" || definition.type.startsWith("custom:") || definition.tools.some(shouldMinimizeToolTrace);
   if (run.existingResult) return minimizeRunTrace(run.existingResult, definition.tools, privateTrace);
   const toolsUsed: ToolCallRecord[] = [];
   let decisionText = "";
@@ -45,9 +47,12 @@ export async function runAgentCycle(
   let completionAttempted = false;
 
   try {
-    const context = await definition.buildContext(userId, trigger);
+    const continuation = await loadApprovalContinuation(userId, definition.type, trigger);
+    const baseContext = await definition.buildContext(userId, trigger);
+    const context = continuation ? { ...baseContext, approvalResume: continuation.context } : baseContext;
     const decision = await getClaudeClient().decide({
-      systemPrompt: definition.systemPrompt, context, tools: definition.tools, agentType: definition.type,
+      systemPrompt: definition.systemPrompt + (continuation ? APPROVAL_CONTINUATION_GUIDANCE : ""),
+      context, tools: definition.tools, agentType: definition.type,
     });
     // One private/unknown call protects the entire decision, including earlier
     // and deferred calls where the model could repeat the same private content.
@@ -124,12 +129,21 @@ export async function runAgentCycle(
         break;
       }
 
+      if (continuation?.repeatsResolvedAction(call.tool, call.params)) {
+        cancelled = true;
+        skipRemaining("Action déjà résolue : aucune nouvelle exécution ni approbation");
+        break;
+      }
+
       const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (simulation) {
         toolsUsed.push(traceRecord(call, "Simulée : aucune action réelle", "simulated"));
         continue;
       }
       if (needsApproval) {
+        // Reuse PR20's durable-write barrier: the insert may commit even when
+        // its acknowledgement is lost. Direct callers must not replay it.
+        effectStarted = true;
         const pendingActionId = await createPendingAction({
           userId, runId: run.runId, agentType: definition.type, toolName: tool.name, toolParams: call.params,
         });
@@ -187,13 +201,15 @@ export async function runAgentCycle(
       console.error("[loop] suivi secondaire indisponible ; résultat final conservé");
       return finalizedOutcome;
     }
-    const outcome: AgentRunResult = minimizeRunTrace({
+    let outcome: AgentRunResult = minimizeRunTrace({
       status: "error", decision: decisionText, toolsUsed, resultSummary: summarizeToolsUsed(toolsUsed),
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
       // A durable execution key is already claimed. No automatic replay of it,
       // even when logging fails after a completed external action.
-      retryable: !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
+      retryable: !(error instanceof ApprovalContinuationError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
+    // This fixed server-owned explanation is safe even for private continuations.
+    if (error instanceof ApprovalContinuationError) outcome = { ...outcome, errorMessage: error.message };
     if (!completionAttempted) {
       await run.finish(outcome).catch(() => console.error("[loop] journalisation indisponible ; reprise automatique interdite"));
     } else {
