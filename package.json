@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "playwright test",
+    "test:public": "playwright test --config playwright.config.ts",
+    "test:chat": "playwright test --config tests/chat/playwright.config.ts",
     "test:desktop": "playwright test --project=desktop",
     "test:dependencies": "node --test tests/dependency-compat.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",

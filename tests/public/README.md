@@ -1,0 +1,11 @@
+# Pages publiques compilées
+
+`npm run test:public` compile la vraie application en mode production, puis sert ce build sur `127.0.0.1:4173`. La configuration racine sélectionne exclusivement les huit suites publiques : accessibilité, console, formulaires, navigation, performance, pages, manifeste PWA et responsive. Les harnais spécialisés et tests fournisseurs ont leur propre commande.
+
+Les 52 scénarios sont exécutés à trois dimensions (1920×1080, 768×1024, 375×812), soit 156 exécutions Chromium. Cela ne représente ni 156 scénarios distincts ni une qualification native Safari/iOS. `PLAYWRIGHT_EXECUTABLE_PATH` accepte un Chromium compatible déjà installé. La CI n’a besoin que de Chromium.
+
+Le build conserve les modules produit et les chunks de production ; seule la configuration Supabase est remplacée par des valeurs fictives réservées aux tests. Les fichiers `.env` sont ignorés. Le cache et le répertoire du build appartiennent à cette recette. Aucun cache des autres harnais n’est partagé.
+
+La fixture intercepte tout HTTP/WebSocket au niveau du contexte avant navigation. Elle autorise uniquement les ressources du serveur local, simule les lectures publiques `agents`, `concours`, `classement_mensuel`, `cross_promos` et le RPC de lecture `public_weekly_actions_count`, et neutralise la feuille de polices Google. Toute autre requête est bloquée et fait échouer le scénario. Aucune inscription, réinitialisation email, conversation réelle, action de paiement ou écriture fournisseur n’est effectuée. Les tests des formulaires se limitent aux champs vides, CGU non acceptées et présence des contrôles.
+
+La recette utilise un visiteur anonyme ayant déjà vu l’introduction et refusé les cookies optionnels. Les données publiques sont synthétiques et vides ; elle ne qualifie ni la disponibilité ni le contenu des services de production. Les polices de repli sont utilisées. Les service workers sont bloqués pour garantir l’interception réseau : les tests PWA portent sur le manifeste et ses ressources, pas l’installation ou le fonctionnement hors ligne. Les mesures de performance sont celles d’un serveur local, sans réseau fournisseur ni charge de production. Le chat est vérifié séparément par `npm run test:chat`.

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './public/fixtures';
 
 const PUBLIC_PAGES = [
   { path: '/', title: 'Purama AI', content: 'agent' },
@@ -14,7 +14,6 @@ const PUBLIC_PAGES = [
   { path: '/parrainage', title: 'Parrainage', content: 'parrainage' },
   { path: '/concours', title: 'Concours', content: 'concours' },
   { path: '/classement', title: 'Classement', content: 'classement' },
-  { path: '/forge', title: 'Forge', content: 'Forge' },
   { path: '/influenceur/inscription', title: 'Influenceur', content: 'partenaire' },
 ];
 
@@ -25,14 +24,24 @@ test.describe('Pages publiques — Chargement & Contenu', () => {
       expect(response?.status()).toBe(200);
 
       // Page has visible content (not blank)
-      const body = await p.locator('body').textContent();
+      const body = await p.locator('body').innerText();
       expect(body?.length).toBeGreaterThan(10);
 
-      // Specific content check (case insensitive)
-      const html = await p.content();
-      expect(html.toLowerCase()).toContain(page.content.toLowerCase());
+      // Check rendered text, not a script, metadata or a hidden HTML string.
+      await expect(p.locator('body')).toContainText(new RegExp(page.content, 'i'), { useInnerText: true });
+      await expect(p.getByRole('heading', { name: 'Une erreur est survenue', exact: true })).toHaveCount(0);
     });
   }
+});
+
+test('Forge — le visiteur rejoint l’inscription avec la destination Creator conservée', async ({ page }) => {
+  // Existing product contract since 0c7f7da: Forge is the Creator entry route,
+  // not a separate public editor. No account creation is performed here.
+  const response = await page.goto('/forge', { waitUntil: 'networkidle' });
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveURL(url => url.pathname === '/signup'
+    && url.searchParams.get('next') === '/dashboard/creator-agent/new');
+  await expect(page.getByRole('heading', { name: 'Créer un compte', exact: true })).toBeVisible();
 });
 
 test.describe('Page 404', () => {

@@ -54,6 +54,9 @@ jobs:
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium
+      - run: npx tsc --noEmit -p tests/public/tsconfig.json
+      - run: npm run test:public
+      - run: npm run test:chat
       - run: npm run test:quality
       - run: npm run test:wellbeing
       - run: npm run test:voice-consent
