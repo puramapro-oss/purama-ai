@@ -141,7 +141,7 @@ async function createNativeTestDb(rawUrl) {
   };
 }
 
-export async function createDb({ extraMigrations = [], beforeCurrentMigrations } = {}) {
+export async function createDb({ extraMigrations = [], beforeCurrentMigrations, alreadyApplied = [] } = {}) {
   let db;
   if (process.env.ENTRAIDE_DATABASE_URL) {
     db = await createNativeTestDb(process.env.ENTRAIDE_DATABASE_URL);
@@ -173,9 +173,13 @@ export async function createDb({ extraMigrations = [], beforeCurrentMigrations }
       '20260905000000_entraide_profile_privacy.sql',
     ];
     const current = names.filter((name) => /^2026111002\d{4}_entraide.*\.sql$/.test(name)).sort();
+    if (alreadyApplied.some(name => !current.includes(name))) throw new Error('Unknown already-applied migration');
     const selected = [...new Set([...baseline, ...current, ...extraMigrations])];
     for (const name of selected) {
       if (!/^[A-Za-z0-9_-]+\.sql$/.test(name)) throw new Error('Invalid migration filename');
+      // Models the migration runner skipping versions recorded before upgrade.
+      // The fixture callback must actually create that historical SQL state.
+      if (alreadyApplied.includes(name)) continue;
       await db.exec(await readFile(new URL(name, migrationsDirectory), 'utf8'));
       if (name === baseline.at(-1) && beforeCurrentMigrations) {
         await beforeCurrentMigrations(db);

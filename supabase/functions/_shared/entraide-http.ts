@@ -99,18 +99,26 @@ function profilePayload(input: Payload): Payload {
 }
 
 function missionPayload(input: Payload, action: string): Payload {
+  if ('request_id' in input && !uuid(input.request_id)) throw new RequestError('invalid_payload');
   if (action !== 'create') {
-    onlyKeys(input, ['expected_revision']);
-    if ('expected_revision' in input && !integer(input.expected_revision, 0, Number.MAX_SAFE_INTEGER)) throw new RequestError('invalid_payload');
-    if (['start', 'complete', 'cancel', 'publish', 'unpublish'].includes(action) && !('expected_revision' in input)) throw new RequestError('invalid_payload');
-    return input;
+    onlyKeys(input, ['request_id', 'expected_revision', 'expected_version']);
+    // Transitional #17 writes translate at this boundary. SQL and current
+    // clients use only revision; ambiguous dual preconditions are rejected.
+    if ('expected_revision' in input && 'expected_version' in input) throw new RequestError('invalid_payload');
+    if ('expected_version' in input && !integer(input.expected_version, 1, Number.MAX_SAFE_INTEGER)) throw new RequestError('invalid_payload');
+    const revision = 'expected_version' in input ? Number(input.expected_version) - 1 : input.expected_revision;
+    if (revision !== undefined && !integer(revision, 0, Number.MAX_SAFE_INTEGER)) throw new RequestError('invalid_payload');
+    if (['start', 'complete', 'cancel', 'publish', 'unpublish'].includes(action) && revision === undefined) throw new RequestError('invalid_payload');
+    return { ...('request_id' in input ? { request_id: input.request_id } : {}),
+      ...(revision === undefined ? {} : { expected_revision: revision }) };
   }
-  onlyKeys(input, ['id', 'title', 'description', 'min_participants', 'max_participants', 'visibility']);
-  if (!uuid(input.id) || typeof input.title !== 'string' || !input.title.trim() || input.title.trim().length > 200 ||
+  onlyKeys(input, ['id', 'request_id', 'title', 'description', 'min_participants', 'max_participants', 'visibility']);
+  const id = input.id ?? input.request_id;
+  if (!uuid(id) || typeof input.title !== 'string' || !input.title.trim() || input.title.trim().length > 200 ||
     typeof input.description !== 'string' || input.description.length > 2000 || !integer(input.min_participants, 2, 1000) ||
     (input.max_participants != null && !integer(input.max_participants, input.min_participants, 1000)) ||
     !['private', 'public'].includes(String(input.visibility ?? 'private'))) throw new RequestError('invalid_payload');
-  return { ...input, title: input.title.trim(), max_participants: input.max_participants ?? null, visibility: input.visibility ?? 'private' };
+  return { ...input, id, title: input.title.trim(), max_participants: input.max_participants ?? null, visibility: input.visibility ?? 'private' };
 }
 
 function contactPayload(input: Payload, action: string): Payload {
@@ -196,7 +204,11 @@ function resultResponse(data: unknown, expected: string, route: EntraideRoute, e
     return respond(route, { error: data.error }, data.status);
   }
   const value = data[expected];
-  if (expected === 'mission') return respond(route, { mission: missionResult(value, expectedId) });
+  if (expected === 'mission') {
+    if ('replayed' in data && typeof data.replayed !== 'boolean') throw new Error('invalid_database_response');
+    return respond(route, { mission: missionResult(value, expectedId),
+      ...('replayed' in data ? { replayed: data.replayed } : {}) });
+  }
   if (expected === 'request') return respond(route, { request: contactResult(value, expectedId) });
   if (expected === 'ok' && value === true) return respond(route, { ok: true });
   if (!Array.isArray(value)) throw new Error('invalid_database_response');
@@ -268,7 +280,7 @@ export function createEntraideHandler(route: EntraideRoute, ports: EntraidePorts
         return resultResponse(await ports.getMatches(user.id), 'matches', route);
       }
       const kind = route === 'entraide-contact' ? 'contact' : 'mission';
-      let action: string; let payload: Payload = {}; let expected: string;
+      let action: string; let payload: Payload = {}; let expected: string; let legacyCreation = false;
       if (req.method === 'GET') {
         if (parts.length === 0) { action = 'list'; expected = kind === 'contact' ? 'requests' : 'missions'; }
         else if (kind === 'mission' && parts.length === 1 && uuid(parts[0])) {
@@ -286,12 +298,19 @@ export function createEntraideHandler(route: EntraideRoute, ports: EntraidePorts
         else if (parts.length === 2 && uuid(parts[0]) && ['join', 'leave', 'start', 'complete', 'cancel', 'publish', 'unpublish'].includes(parts[1])) {
           action = parts[1]; payload.mission_id = parts[0]; expected = 'mission';
         } else return respond(route, { error: 'not_found' }, 404);
-        payload = { ...missionPayload(await readBody(req), action), ...payload };
+        const input = await readBody(req);
+        // #17 assigned the mission UUID server-side. Its migrated durable
+        // receipt may therefore map request_id to a different mission UUID.
+        legacyCreation = action === 'create' && !('id' in input) && 'request_id' in input;
+        payload = { ...missionPayload(input, action), ...payload };
       }
       const expectedId = expected === 'mission' ? payload.mission_id ?? payload.id :
         expected === 'request' ? payload.request_id ?? payload.id : undefined;
-      return resultResponse(await ports.command(kind, user.id, action, payload), expected, route,
-        typeof expectedId === 'string' ? expectedId : undefined);
+      const result = await ports.command(kind, user.id, action, payload);
+      if (legacyCreation && object(result) && !('error' in result) &&
+        (!object(result.mission) || result.mission.organizer_id !== user.id)) throw new Error('invalid_database_response');
+      return resultResponse(result, expected, route,
+        !legacyCreation && typeof expectedId === 'string' ? expectedId : undefined);
     } catch (error) {
       if (error instanceof RequestError) return respond(route, { error: error.message }, error.status);
       // Never reflect database errors, credentials or private records in HTTP output or logs.

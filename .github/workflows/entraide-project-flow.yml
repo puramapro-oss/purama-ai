@@ -4,6 +4,12 @@ on:
   pull_request:
     paths:
       - 'supabase/migrations/*entraide*.sql'
+      - 'supabase/functions/_shared/entraide-*.ts'
+      - 'supabase/functions/_shared/response.ts'
+      - 'supabase/functions/_shared/rate-limit.ts'
+      - 'supabase/functions/entraide-*/**'
+      - 'src/lib/entraide*.ts'
+      - 'src/pages/Entraide.tsx'
       - 'tests/entraide/**'
       - '.github/workflows/entraide-project-flow.yml'
   workflow_dispatch:

@@ -4,21 +4,62 @@
 -- Coordinate the API rollout with this read-permission change. This file was
 -- authored/tested in an isolated database; no production migration was executed.
 
--- This must be the first statement in the migration transaction. The parallel
--- authenticated SECURITY DEFINER RPC bypasses these visibility checks even when
--- table reads are revoked. Reconciliation must be explicit: do not silently
--- revoke, replace or drop another branch's function.
-DO $migration_guard$
+-- Pending-install bridge only. The additive 022000 migration carries the new
+-- protocol for already-applied #23 databases. A recognized #17 definer is retired
+-- here so this original schema migration can proceed; unknown sources fail closed.
+DO $transition$
+DECLARE
+  v_legacy oid := pg_catalog.to_regprocedure('purama_ai.entraide_mission_mutate(uuid,text,uuid,jsonb,bigint)');
 BEGIN
-  IF pg_catalog.to_regprocedure('purama_ai.entraide_mission_mutate(uuid,text,uuid,jsonb,bigint)') IS NOT NULL THEN
-    RAISE EXCEPTION USING
-      ERRCODE = 'P0001',
-      MESSAGE = 'entraide_missions_reconciliation_required',
-      DETAIL = 'Existing purama_ai.entraide_mission_mutate(uuid,text,uuid,jsonb,bigint) may bypass private mission access.',
-      HINT = 'Reconcile the competing mission RPC and its access policy before applying this migration.';
+  IF v_legacy IS NULL THEN
+    IF pg_catalog.to_regclass('purama_ai.entraide_mission_requests') IS NOT NULL
+       OR EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+                  WHERE attrelid = 'purama_ai.missions_collectives'::regclass
+                    AND attname = 'version' AND NOT attisdropped) THEN
+      RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+    END IF;
+    RETURN;
   END IF;
+
+  -- Exact source from #17, plus its authority and storage shape. A locally
+  -- altered/unknown RPC must be reviewed, not automatically removed.
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_proc p WHERE p.oid = v_legacy AND p.prosecdef
+      AND p.prorettype = 'jsonb'::regtype AND p.proconfig = ARRAY['search_path=""']
+      AND pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(p.prosrc, 'UTF8')), 'hex') =
+        'f196ea13a6460a7985eddbfd6c604d458388a86b96d934751e6dee0c17906b40'
+  ) OR pg_catalog.to_regclass('purama_ai.entraide_mission_requests') IS NULL
+    OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+      WHERE attrelid = 'purama_ai.missions_collectives'::regclass
+        AND attname = 'version' AND atttypid = 'bigint'::regtype AND attnotnull AND NOT attisdropped)
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+      WHERE attrelid = 'purama_ai.missions_collectives'::regclass
+        AND attname IN ('revision', 'visibility', 'initial_visibility') AND NOT attisdropped) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+
+  LOCK TABLE purama_ai.entraide_mission_requests,
+    purama_ai.missions_collectives,
+    purama_ai.missions_collectives_participants IN ACCESS EXCLUSIVE MODE;
+  IF (SELECT pg_catalog.array_agg(attname::text ORDER BY attnum)
+      FROM pg_catalog.pg_attribute
+      WHERE attrelid = 'purama_ai.entraide_mission_requests'::regclass
+        AND attnum > 0 AND NOT attisdropped) IS DISTINCT FROM
+       ARRAY['actor_id','request_id','action','mission_id','payload','expected_version','response','created_at']
+     OR EXISTS (SELECT 1 FROM purama_ai.entraide_mission_requests
+       WHERE response IS NULL OR pg_catalog.jsonb_typeof(response->'mission') IS DISTINCT FROM 'object'
+         OR COALESCE(response#>>'{mission,id}', '') !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+         OR action NOT IN ('create','join','leave','start','complete','cancel')) THEN
+    RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'entraide_missions_reconciliation_required';
+  END IF;
+
+  -- The old definer cannot remain callable: its reads/replays bypass privacy.
+  -- Historical request identities, responses, timestamps and members survive.
+  DROP FUNCTION purama_ai.entraide_mission_mutate(uuid,text,uuid,jsonb,bigint);
+  COMMENT ON TABLE purama_ai.entraide_mission_requests IS
+    'entraide:pr17-retired:0660d23c28e48ac0522725546848b0c842202708';
 END;
-$migration_guard$;
+$transition$;
 
 ALTER TABLE purama_ai.missions_collectives
   ADD COLUMN revision bigint NOT NULL DEFAULT 0,

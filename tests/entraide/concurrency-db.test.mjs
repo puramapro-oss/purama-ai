@@ -28,7 +28,7 @@ beforeEach(async () => {
   if (!db) return;
   await db.exec(`TRUNCATE purama_ai.missions_collectives_participants,
     purama_ai.missions_collectives, purama_ai.entraide_contact_requests,
-    purama_ai.entraide_blocages`);
+    purama_ai.entraide_blocages, purama_ai.entraide_mission_requests`);
 });
 
 async function waitForDistinctBlockedClients(rpcName, expected) {
@@ -122,6 +122,23 @@ test('native concurrency: duplicate command IDs replay one persisted contact', n
   assert.deepEqual(await callRpc(db, contactRpc, USERS.a, 'send', payload), results[0]);
   assert.deepEqual(await callRpc(db, contactRpc, USERS.a, 'send', { ...payload, message: 'Autre contenu' }),
     { error: 'idempotency_conflict', status: 409 });
+});
+
+test('native concurrency: one mission request has one effect and one durable receipt', nativeOnly, async () => {
+  await callRpc(db, missionRpc, USERS.a, 'create', {
+    id: id(1), title: 'Reprise concurrente', min_participants: 2, max_participants: 3, visibility: 'public',
+  });
+  const payload = { mission_id: id(1), request_id: id(2), expected_revision: 0 };
+  const results = await raceBehindLock(
+    'SELECT id FROM purama_ai.missions_collectives WHERE id=$1 FOR UPDATE', [id(1)], missionRpc,
+    [0, 1].map(() => () => callRpc(db, missionRpc, USERS.b, 'join', payload)),
+  );
+  assert.deepEqual(results.map(result => result.replayed).sort(), [false, true]);
+  assert.deepEqual(results[0].mission, results[1].mission);
+  assert.equal(results[0].mission.revision, 1);
+  assert.equal(results[0].mission.missions_collectives_participants.length, 2);
+  const stored = await db.query('SELECT count(*)::int AS n FROM purama_ai.entraide_mission_requests WHERE actor_id=$1 AND request_id=$2 AND response IS NOT NULL', [USERS.b, id(2)]);
+  assert.equal(stored.rows[0].n, 1);
 });
 
 test('native concurrency: simultaneous requests cannot exceed ten sends in one UTC day', nativeOnly, async () => {

@@ -1,5 +1,11 @@
 # Entraide — verification of the 10 November 2026 candidate
 
+> Historical receipt for the PR #23 baseline ending at `eb09c6d`. Its counts,
+> build and remote CI observations were not re-executed by the later reconciliation.
+> For the current code, use [RECONCILIATION-20261110.md](RECONCILIATION-20261110.md).
+> The conflicting-protocol refusal described below is now preceded by an explicit,
+> source-checked #17 transition; unknown implementations remain refused.
+
 ## Scope and outcome
 
 The existing `/dashboard/entraide` page, four edge endpoints and the existing

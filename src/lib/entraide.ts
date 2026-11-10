@@ -19,6 +19,9 @@ interface ContactRow {
 }
 interface Contacts { requests: ContactRow[]; blocked_user_ids: string[] }
 const loadedRevisions = new Map<string, number>();
+const pendingMissionCommands = new Map<string, {
+  desired: string; action: string; requestId: string; revision: number;
+}>();
 
 // The generated application types predate the existing 20260904 Entraide table.
 // This narrow contract mirrors that migration, while retaining the same auth client.
@@ -75,24 +78,42 @@ export async function getBlockedUserIds(userId: string): Promise<string[]> {
 export async function persistMissionCollective(mission: MissionCollective): Promise<void> {
   const session = await ownSession();
   const key = `${session.user.id}:${mission.id}`;
-  const { mission: current } = await requestEntraide<{ mission: MissionRow }>(`entraide-missions/${mission.id}`, { token: session.access_token });
-  if (loadedRevisions.get(key) !== current.revision) throw new Error('La mission a changé. Recharge-la avant de modifier son état.');
-  const before = asMission(current);
-  if (equalMission(before, mission)) return;
-  let action: string | undefined;
-  for (const [candidate, transition] of [['join', joinMission], ['leave', leaveMission]] as const) {
-    const result = transition(before, session.user.id);
-    if (result.ok && equalMission(result.mission, mission)) action = candidate;
+  const desired = JSON.stringify({ ...mission, participantIds: [...mission.participantIds].sort() });
+  let pending = pendingMissionCommands.get(key);
+  if (pending && pending.desired !== desired) {
+    throw new Error('La précédente modification n’est pas encore confirmée. Réessaie cette même action avant de continuer.');
   }
-  if (!action && current.organizer_id === session.user.id) {
-    const candidate = { en_cours: 'start', terminee: 'complete', annulee: 'cancel' }[mission.status as 'en_cours' | 'terminee' | 'annulee'];
-    if (candidate && equalMission({ ...before, status: mission.status }, mission)) action = candidate;
+  if (!pending) {
+    const { mission: current } = await requestEntraide<{ mission: MissionRow }>(`entraide-missions/${mission.id}`, { token: session.access_token });
+    if (loadedRevisions.get(key) !== current.revision) throw new Error('La mission a changé. Recharge-la avant de modifier son état.');
+    const before = asMission(current);
+    if (equalMission(before, mission)) return;
+    let action: string | undefined;
+    for (const [candidate, transition] of [['join', joinMission], ['leave', leaveMission]] as const) {
+      const result = transition(before, session.user.id);
+      if (result.ok && equalMission(result.mission, mission)) action = candidate;
+    }
+    if (!action && current.organizer_id === session.user.id) {
+      const candidate = { en_cours: 'start', terminee: 'complete', annulee: 'cancel' }[mission.status as 'en_cours' | 'terminee' | 'annulee'];
+      if (candidate && equalMission({ ...before, status: mission.status }, mission)) action = candidate;
+    }
+    if (!action) throw new Error('Cette modification doit utiliser une action explicite autorisée de la mission.');
+    pending = { desired, action, requestId: crypto.randomUUID(), revision: current.revision };
+    pendingMissionCommands.set(key, pending);
   }
-  if (!action) throw new Error('Cette modification doit utiliser une action explicite autorisée de la mission.');
-  const result = await requestEntraide<{ mission: MissionRow }>(`entraide-missions/${mission.id}/${action}`, {
-    token: session.access_token, method: 'POST', body: { expected_revision: current.revision },
-  });
-  loadedRevisions.set(key, result.mission.revision);
+  try {
+    const result = await requestEntraide<{ mission: MissionRow }>(`entraide-missions/${mission.id}/${pending.action}`, {
+      token: session.access_token, method: 'POST',
+      body: { request_id: pending.requestId, expected_revision: pending.revision },
+    });
+    pendingMissionCommands.delete(key);
+    loadedRevisions.set(key, result.mission.revision);
+  } catch (error) {
+    // A timeout/503 may follow a committed effect. Preserve its identity until
+    // the same operation is confirmed; a known business refusal is definitive.
+    if (error instanceof EntraideHttpError && error.status > 0 && error.status < 500) pendingMissionCommands.delete(key);
+    throw error;
+  }
 }
 
 export async function loadMissionCollective(missionId: string): Promise<MissionCollective | null> {
@@ -114,7 +135,7 @@ export async function createMissionInDB(
   const session = await ownSession(input.organizerId);
   const { mission } = await requestEntraide<{ mission: MissionRow }>('entraide-missions', {
     token: session.access_token, method: 'POST', body: {
-      id: input.id, title: input.title, description: input.description, min_participants: input.minParticipants,
+      id: input.id, request_id: input.id, title: input.title, description: input.description, min_participants: input.minParticipants,
       max_participants: input.maxParticipants ?? null, visibility: input.visibility ?? 'private',
     },
   });

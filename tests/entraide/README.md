@@ -28,9 +28,18 @@ node --max-old-space-size=384 --wasm-num-compilation-tasks=1 \
 
 `ENTRAIDE_PGLITE_MODULE` may point to an existing PGlite module instead of installing
 another copy. The engine executes the real baseline and new SQL migrations,
-roles, grants, policies and transactions. It is a single-connection engine: three
+roles, grants, policies and transactions. It is a single-connection engine: four
 native concurrency tests explicitly skip in this mode. Sequential RPC calls must
 never be reported as proof of independent concurrent transactions.
+
+`reconciliation-db.test.mjs` applies the exact PR #17 migrations stored as inert
+fixtures, executes their authenticated RPC, then applies the explicit bridge and
+canonical migrations. It checks preserved receipts, counter translation and
+current access checks on replay. `applied-pr23-db.test.mjs` installs the exact
+historical #23 SQL, skips its recorded migration versions, and applies only the
+new `022000` upgrade; known reapplication and unknown-schema refusal are checked.
+The compatibility-client test needs the existing
+private pure library; `ENTRAIDE_DOMAIN_SOURCE` can point to its `src/missions.ts`.
 
 The HTTP suite uses real Request/Response handlers and the real shared burst
 limiter. SDK tests use the actual pinned Supabase client with only provider HTTP
@@ -51,10 +60,12 @@ query parameters.
 npm run test:native --prefix tests/entraide
 ```
 
-The three races hold a witness transaction until `pg_stat_activity` shows distinct
+The command refuses to run without `ENTRAIDE_DATABASE_URL`; it cannot silently
+qualify PGlite as native PostgreSQL. The four races hold a witness transaction until `pg_stat_activity` shows distinct
 backend PIDs actually waiting for locks. They then release the contenders and
 inspect the committed rows: final mission place, duplicate contact command, and
-the daily contact quota. The dedicated GitHub workflow runs these checks against
+the daily contact quota, plus one durable mission receipt for simultaneous retries.
+The dedicated GitHub workflow is configured to run these checks against
 a disposable PostgreSQL service; no application secret is required.
 
 ## Real page in Firefox
@@ -86,13 +97,20 @@ and revocation, lost confirmations with stable IDs, draft preservation, and a
   and never triggers a payment.
 - New mission records and legacy records are private after the new migration.
   Existing participants retain access through the RPC.
-- The RPC `entraide_mission_mutate(uuid,text,uuid,jsonb,bigint)` from another repair
-  protocol must be reconciled before installing this migration. The migration
-  explicitly refuses coexistence because an authenticated definer RPC could bypass
-  the new visibility protocol. It does not delete or revoke that other work.
+- The pending `021000` migration recognizes the exact PR #17 RPC and retires
+  its definer authority. The additive `022000` migration translates its counter
+  to `revision = version - 1` and preserves request identities and stored
+  responses. An existing #23 installation applies only `022000`; no applied
+  historical migration is replayed. Unknown or partial installations fail closed.
+  See [the reconciliation receipt](RECONCILIATION-20261110.md).
+- First-party mission mutations carry `request_id` and their captured revision.
+  Replays return current accessible state; historical receipts never grant access
+  after a member leaves a private mission. Earlier #23 calls without `request_id`
+  retain their original behavior and do not gain durable retry guarantees.
 - Frontend, edge functions and schema must be released together in staging first.
-  Old clients lacking stable creation IDs must refresh; direct mission-table reads
-  are intentionally no longer the client API.
+  In-flight #17 writes can translate `expected_version` and request-only creation
+  IDs, but current reads expose `revision`; old browser builds must refresh.
+  Direct mission-table reads and the old SQL definer are no longer client APIs.
 - Matching scans at most 500 candidate profiles and returns `truncated` explicitly.
   Mission/contact lists still require pagination before large-scale use.
 - Worker-local burst limiting supplements the transactional daily contact limit;

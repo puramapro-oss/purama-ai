@@ -55,7 +55,7 @@ interface MatchesResult { matches: MutualAidMatch[]; scanned_profiles?: number; 
 interface MissionsResult { missions: CollectiveMission[] }
 interface ContactsResult { requests: ContactRequest[]; blocked_user_ids: string[] }
 interface MissionDraft { title: string; description: string; minimum: string; maximum: string; visibility: 'private' | 'public' }
-interface MissionCreate { id: string; title: string; description: string; min_participants: number; max_participants: number; visibility: 'private' | 'public' }
+interface MissionCreate { id: string; request_id: string; title: string; description: string; min_participants: number; max_participants: number; visibility: 'private' | 'public' }
 interface RequestIntent { id: string; fingerprint: string }
 
 const EMPTY_MISSION: MissionDraft = { title: '', description: '', minimum: '2', maximum: '10', visibility: 'private' };
@@ -183,13 +183,18 @@ function EntraideWorkspace({ userId, token }: { userId: string; token: string })
     },
   });
   const missionActionMutation = useMutation({
-    mutationFn: ({ mission, action }: { mission: CollectiveMission; action: MissionAction }) => requestEntraide<{ mission: CollectiveMission }>(`entraide-missions/${mission.id}/${action}`, { token, method: 'POST', body: action === 'join' || action === 'leave' ? {} : { expected_revision: mission.revision } }),
+    // Variables retain the request identity and original revision for an
+    // ambiguous network retry, even if the list refetches in the meantime.
+    mutationFn: ({ mission, action, requestId }: { mission: CollectiveMission; action: MissionAction; requestId: string }) => requestEntraide<{ mission: CollectiveMission }>(`entraide-missions/${mission.id}/${action}`, { token, method: 'POST', body: { request_id: requestId, expected_revision: mission.revision } }),
     onSuccess: ({ mission }, { action }) => {
       storeMission(mission);
       toast.success(ACTION_MESSAGES[action]);
     },
     onError: () => { void queryClient.invalidateQueries({ queryKey: ['entraide-missions', userId] }); },
   });
+  const missionUnconfirmed = !!missionActionMutation.error &&
+    (!(missionActionMutation.error instanceof EntraideHttpError) || missionActionMutation.error.status === 0 || missionActionMutation.error.status >= 500);
+  const missionBusy = missionActionMutation.isPending || missionUnconfirmed;
 
   // Un brouillon commence à la première saisie. Un refetch ne remplace jamais les champs modifiés.
   const draft = profileDraft ?? toProfileDraft(profil.data?.profil);
@@ -232,7 +237,7 @@ function EntraideWorkspace({ userId, token }: { userId: string; token: string })
     const body = { title: missionDraft.title.trim(), description: missionDraft.description.trim(), min_participants: minimum, max_participants: maximum, visibility: missionDraft.visibility };
     const fingerprint = JSON.stringify(body);
     if (missionIntent.current?.fingerprint !== fingerprint) missionIntent.current = newIntent(fingerprint);
-    createMissionMutation.mutate({ id: missionIntent.current.id, ...body });
+    createMissionMutation.mutate({ id: missionIntent.current.id, request_id: missionIntent.current.id, ...body });
   };
   const sendContact = (recipientId: string) => {
     if (sendContactMutation.isPending) return;
@@ -326,7 +331,7 @@ function EntraideWorkspace({ userId, token }: { userId: string; token: string })
               <CardContent className="space-y-4">
                 {missions.isPending && <LoadingState label="Chargement des missions…" />}
                 {missions.error && <ErrorState error={missions.error} onRetry={() => { void missions.refetch(); }} />}
-                {missionActionMutation.error && <ErrorState error={missionActionMutation.error} />}
+                {missionActionMutation.error && <ErrorState error={missionActionMutation.error} onRetry={missionUnconfirmed && missionActionMutation.variables ? () => missionActionMutation.mutate(missionActionMutation.variables!) : undefined} />}
                 {missions.data?.missions.length === 0 && <p className="py-4 text-sm text-muted-foreground">Aucune mission accessible pour l’instant. Crée la première autour d’un objectif concret.</p>}
                 {missions.data && <ul className="space-y-4">{missions.data.missions.map((mission) => {
                   const participants = mission.missions_collectives_participants ?? [];
@@ -337,7 +342,7 @@ function EntraideWorkspace({ userId, token }: { userId: string; token: string })
                   const closed = mission.status === 'terminee' || mission.status === 'annulee';
                   const full = mission.max_participants !== null && count >= mission.max_participants;
                   const revisionKnown = Number.isInteger(mission.revision) && mission.revision >= 0;
-                  const action = (name: MissionAction) => missionActionMutation.mutate({ mission, action: name });
+                  const action = (name: MissionAction) => missionActionMutation.mutate({ mission, action: name, requestId: crypto.randomUUID() });
                   return <li key={mission.id} className="space-y-3 rounded-lg bg-secondary/30 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between"><div className="min-w-0 space-y-1"><h3 className="break-words font-semibold">{mission.title}</h3>{mission.description && <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">{mission.description}</p>}</div><Badge className="w-fit shrink-0">{MISSION_LABELS[mission.status] ?? mission.status}</Badge></div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Users aria-hidden="true" className="h-3 w-3" />{count}{mission.max_participants === null ? '' : ` / ${mission.max_participants}`} participants · minimum {mission.min_participants}</span><span className="flex items-center gap-1">{mission.visibility === 'public' ? <Globe aria-hidden="true" className="h-3 w-3" /> : <LockKeyhole aria-hidden="true" className="h-3 w-3" />}{mission.visibility === 'public' ? 'Publique dans le réseau' : 'Privée'}</span>{owner ? <span>Tu organises cette mission</span> : member ? <span>Tu participes à cette mission</span> : null}</div>
@@ -345,12 +350,12 @@ function EntraideWorkspace({ userId, token }: { userId: string; token: string })
                     {mission.status === 'terminee' && <p className="text-xs text-muted-foreground">Fin déclarée par l’organisateur. Ce statut ne constitue ni une preuve indépendante du résultat ni une autorisation de paiement.</p>}
                     {owner && recruiting && <p className="text-xs text-muted-foreground">{mission.visibility === 'private' ? 'Rendre cette mission visible au réseau partagera son titre, sa description et ses participants avec les membres du réseau.' : 'Masquer cette mission du réseau conserve l’accès de ses participants actuels.'}</p>}
                     <div className="flex flex-wrap gap-2">
-                      {!member && !owner && mission.visibility === 'public' && recruiting && <Button type="button" size="sm" variant="outline" disabled={missionActionMutation.isPending || full} onClick={() => action('join')}>{full ? 'Mission complète' : 'Rejoindre la mission'}</Button>}
-                      {member && !owner && !closed && <Button type="button" size="sm" variant="outline" disabled={missionActionMutation.isPending} onClick={() => action('leave')}>Quitter la mission</Button>}
-                      {owner && mission.status === 'prete' && count >= mission.min_participants && <Button type="button" size="sm" disabled={missionActionMutation.isPending || !revisionKnown} onClick={() => action('start')}>Démarrer la mission</Button>}
-                      {owner && mission.status === 'en_cours' && <Button type="button" size="sm" disabled={missionActionMutation.isPending || !revisionKnown} onClick={() => action('complete')}>Déclarer la mission terminée</Button>}
-                      {owner && !closed && <Button type="button" size="sm" variant="outline" disabled={missionActionMutation.isPending || !revisionKnown} onClick={() => action('cancel')}>Annuler la mission</Button>}
-                      {owner && recruiting && <Button type="button" size="sm" variant="outline" disabled={missionActionMutation.isPending || !revisionKnown} onClick={() => action(mission.visibility === 'private' ? 'publish' : 'unpublish')}>{mission.visibility === 'private' ? 'Rendre visible au réseau' : 'Masquer du réseau'}</Button>}
+                      {!member && !owner && mission.visibility === 'public' && recruiting && <Button type="button" size="sm" variant="outline" disabled={missionBusy || full} onClick={() => action('join')}>{full ? 'Mission complète' : 'Rejoindre la mission'}</Button>}
+                      {member && !owner && !closed && <Button type="button" size="sm" variant="outline" disabled={missionBusy} onClick={() => action('leave')}>Quitter la mission</Button>}
+                      {owner && mission.status === 'prete' && count >= mission.min_participants && <Button type="button" size="sm" disabled={missionBusy || !revisionKnown} onClick={() => action('start')}>Démarrer la mission</Button>}
+                      {owner && mission.status === 'en_cours' && <Button type="button" size="sm" disabled={missionBusy || !revisionKnown} onClick={() => action('complete')}>Déclarer la mission terminée</Button>}
+                      {owner && !closed && <Button type="button" size="sm" variant="outline" disabled={missionBusy || !revisionKnown} onClick={() => action('cancel')}>Annuler la mission</Button>}
+                      {owner && recruiting && <Button type="button" size="sm" variant="outline" disabled={missionBusy || !revisionKnown} onClick={() => action(mission.visibility === 'private' ? 'publish' : 'unpublish')}>{mission.visibility === 'private' ? 'Rendre visible au réseau' : 'Masquer du réseau'}</Button>}
                     </div>
                     {owner && !closed && !revisionKnown && <p className="text-xs text-destructive">Actualise les missions avant de modifier leur état.</p>}
                     {missionActionMutation.isPending && missionActionMutation.variables.mission.id === mission.id && <p role="status" className="text-sm text-muted-foreground">Confirmation de l’action en cours…</p>}

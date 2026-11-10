@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "status": "PARTIEL",
+  "prepared_at_utc": "2026-11-10T05:11:20.189953+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "target_pr": 23,
+  "branch": "codex/human-one-project-flow-20261110",
+  "expected_parent": "eb09c6d1a1c134bbf430f20c3fb6f94f8ec3afcb",
+  "reviewed_pr17_head": "0660d23c28e48ac0522725546848b0c842202708",
+  "publication": "local candidate only; no remote mutation by preparing agent",
+  "engines": {
+    "node": "24.22.1",
+    "pglite": "0.5.8",
+    "typescript": "5.8.3",
+    "supabase_sdk": "2.91.0"
+  },
+  "tests": {
+    "status": "PASS",
+    "registered": 115,
+    "passed": 111,
+    "failed": 0,
+    "skipped": 4,
+    "exit_code": 0,
+    "command": "node --max-old-space-size=384 --wasm-num-compilation-tasks=1 --test --test-concurrency=1 tests/entraide/*.test.mjs",
+    "subsets_included_not_additive": {
+      "pr17_upgrade_and_retries": 15,
+      "already_applied_pr23_upgrade": 5,
+      "compatibility_client_retries": 2
+    }
+  },
+  "typecheck": {
+    "status": "PASS",
+    "scope": [
+      "src/lib/entraide.ts",
+      "src/pages/Entraide.tsx",
+      "supabase/functions/_shared/entraide-http.ts"
+    ],
+    "dependency_files": 279,
+    "baseline_diagnostics": 0,
+    "current_diagnostics": 0,
+    "full_project_typecheck": false
+  },
+  "lint": {
+    "status": "PASS",
+    "exit_code": 0,
+    "scope": "three changed TypeScript sources"
+  },
+  "native_postgres": {
+    "status": "BLOQUE",
+    "native_tests_executed": false,
+    "concurrency_tests_skipped": 4,
+    "available_binary_version": "18.6",
+    "blocked_before_initdb": "standard preparation for existing nobody user: chown EINVAL",
+    "uid_simulation": false,
+    "fallback_claimed_as_native": false
+  },
+  "native_gate_absent_url": {
+    "status": "PASS_EXPECTED_REFUSAL",
+    "exit_code": 1,
+    "database_opened": false
+  },
+  "browser": {
+    "status": "NON_TESTE",
+    "scenarios_executed": false
+  },
+  "production": {
+    "status": "NON_TESTE",
+    "migration_executed": false,
+    "deployment_executed": false
+  },
+  "migration_paths": {
+    "fresh": "020000 -> 021000 -> 022000",
+    "pr17": "source-checked retirement in pending021000; conversion and durable registry in022000",
+    "already_pr23": "021000 recorded and skipped; additive022000 only",
+    "known022000_reapply": "PASS",
+    "unknown_function_or_registry": "refused"
+  },
+  "gitnexus": {
+    "initial_per_symbol": "LOW for HTTP/page; UNKNOWN for unresolved compatibility callers and SQL",
+    "final_risk": "HIGH",
+    "changed_symbols": 32,
+    "affected_flows": 6,
+    "coverage_limits": [
+      "FTS disabled",
+      "truncated execution flow graph",
+      "SQL function not indexed"
+    ],
+    "log": "gitnexus-changes.log",
+    "changed_files_including_evidence": 32
+  },
+  "independent_review": {
+    "agent": "/root/continuity",
+    "status": "PASS",
+    "scope": [
+      "three schema paths",
+      "old RPC removal without CASCADE",
+      "one final revision counter",
+      "privacy on durable replay",
+      "historical SQL fixture equality",
+      "115 test log review"
+    ],
+    "tests_rerun": false
+  },
+  "required_rollout": [
+    "native PostgreSQL concurrency gate on permitted runner",
+    "coordinated edge API + UI + pending schema migration deployment in staging",
+    "reload legacy browsers",
+    "hosted Auth and browser flows before production qualification"
+  ],
+  "limits": [
+    "Old #23 writes without request_id retain their old behavior; updated first-party clients always include it",
+    "Pending UI intents are in memory for the current session",
+    "No native concurrency, hosted auth, browser or production pass claimed",
+    "Mission/contact pagination and global distributed burst limiting remain outside this patch",
+    "terminee is organizer declaration only; no independent delivery proof or payment authority"
+  ],
+  "source_sha256": {
+    ".github/workflows/entraide-project-flow.yml": "3633c13d3e86393062f9887bc7b26edd46423e67508f5106ccf7cc8334467cf3",
+    "src/lib/entraide.ts": "4c6fd94038f6bac10d27ad157259bfca7d3b1dc5fba43abcd8bcb15954931b14",
+    "src/pages/Entraide.tsx": "71025de11aec3514053397b1ae757df39d78b0f6a131018e3a3abfba30234a9f",
+    "supabase/functions/_shared/entraide-http.ts": "d1aa07eb0b5a988f9a7c6a9c7cd3aaf4cb6afe64cfb666d64d140661938d2a9c",
+    "supabase/migrations/20261110021000_entraide_missions_atomic.sql": "31eb27ff79cbceab930b16db6de57e7f0ca9b7cf0392ab4d215461a878b2bb41",
+    "supabase/migrations/20261110022000_entraide_mission_requests.sql": "437be52037110cadc224e9fbe234c6f7dc1ee3be783a033238d151c758ddddbf",
+    "tests/entraide/README.md": "6eda82b1bc9c517c92659c442156aa93b5cf4d090aaa07506752a60daee8b261",
+    "tests/entraide/RECONCILIATION-20261110.md": "1e18fad12113d57c7ffbf2bd557a8823b572ee69e9bf54f38e2f1af164591c50",
+    "tests/entraide/VERIFICATION-20261110.md": "8e475894a2021f0c950c7a5e1f9356fbb43b0a207bf94476ab40498008b0a78c",
+    "tests/entraide/applied-pr23-db.test.mjs": "dd89d0c2198edf4915da8be7375c096931d7b8dc8be91ac94e5e0ace1f3856d6",
+    "tests/entraide/compatibility-client.test.mjs": "296722b647cabc747d4228adde6c7ee8b449077f72d3917659c7bed15c1df55d",
+    "tests/entraide/concurrency-db.test.mjs": "a755eb9319f3e20eb922a639f09431ebee22e25eb3c03f8b1dba30e75dd23b0a",
+    "tests/entraide/db-harness.mjs": "707878c12dc5d4293057d706045cad5f0e53bc629c7499ab06799a7b759a8521",
+    "tests/entraide/fixtures/PR17-SOURCE.md": "a88dd026c00fab5650045c1ba931430bc9136a294c51a836a59cd982483a8fe9",
+    "tests/entraide/fixtures/pr17-20261110000000_entraide_missions_atomic.sql": "f79766b153806bdd6aac382b66c1d8495133c766fc35a50675a32894670d7c36",
+    "tests/entraide/fixtures/pr17-20261110001000_entraide_own_profile.sql": "e0c54fd186e46294cb8a44eebee1e83538ca95bc29c303b0bc397c35148ff677",
+    "tests/entraide/fixtures/pr23-20261110021000_entraide_missions_atomic.sql": "8b408c43e4a12609eac882797f2fc88d8a0c48366b7646aab71d39d9cefcdf72",
+    "tests/entraide/native-required.mjs": "28b185640c5230689e4a8aec556187fdd7688f5734e6c2f34e539d314e7626f5",
+    "tests/entraide/package.json": "7c0ac6632b74bfa5d20a925792bcf2e7abcc76598c1526366dba117111dfa83d",
+    "tests/entraide/reconciliation-db.test.mjs": "1b8c24e7ea36341a0fc7f0fe390ce20f748e429e213a064dde5b7efcfefa0123"
+  },
+  "source_manifest_sha256": "1ea7b4046aaa674de9a9097eb768e9af9909b45b1e5c8f63f1e12d46e6f9c826",
+  "evidence_sha256": {
+    "protocol-final.log": "e57b8aa64ae9a4c4fb61bd77f3ace2d5c1041f7324d474ed3e623320a2614a9e",
+    "compatibility-client.log": "bdb4b9f886730d22f5ca0244673201b4c8ad34658e1e8d9bb9151adae0ef8b53",
+    "typecheck.json": "f1672f45b7725e38462d418f1b7a0a8d1b5001eaffa2be4a7ebc33212629eb99",
+    "typecheck.log": "5d8e9bb49799edf8f0e8c4e2f252c6f1b58da1c74efe8a09c382d0f808961c30",
+    "lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-attempt.json": "3751d104a93e5d88524cad102e50971b480a113b05a8525ec40bb4db7200547f",
+    "native-gate-refusal.log": "10b8aaef826d2a4cc04002dfd7365441d641877a62de13fcab8efeae945c4783",
+    "gitnexus-before.log": "e109d2e131daf6a7151a4fc6340c5c89ffe422908e136c32ee7f029d7d724949",
+    "gitnexus-changes.log": "bc4b37cac5d2c0e666145ad3ed797e8b15e61d603f10946aa399d0a93f1560a7",
+    "remote-heads.txt": "451c84b1c3d56ae2c730818080013baa6e17c916fe56e16941210b5f09af0d29"
+  },
+  "log_normalization": "Trailing empty lines removed from gitnexus-before.log; substantive command output unchanged."
+}
