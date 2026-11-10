@@ -48,6 +48,7 @@ jobs:
           cache: npm
       - run: npm ci --no-audit
       - run: npm run test:dependencies
+      - run: npm run lint
       - run: npm run test:contracts-auth
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
@@ -57,5 +58,6 @@ jobs:
       - run: npm run test:voice-consent
       - run: npm run test:ui-state
       - run: npm run test:async-ui
+      - run: npm run test:mobile-auth
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
