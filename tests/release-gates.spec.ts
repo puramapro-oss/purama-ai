@@ -1,6 +1,26 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type Route } from '@playwright/test';
 
 const APP_ORIGIN = 'http://127.0.0.1:4173';
+const API_ORIGIN = 'http://127.0.0.1:54321';
+const API_HEADERS = {
+  'access-control-allow-origin': APP_ORIGIN,
+  'access-control-allow-headers': '*',
+  'access-control-allow-methods': 'GET, POST, OPTIONS',
+};
+
+// API doubles must receive the requests instead of the worker's network stack.
+// The separate PWA suite exercises the real registered service worker.
+test.use({ serviceWorkers: 'block' });
+
+function apiResponse(route: Route, body: unknown, status = 200) {
+  const preflight = route.request().method() === 'OPTIONS';
+  return route.fulfill({
+    status: preflight ? 204 : status,
+    contentType: 'application/json',
+    headers: API_HEADERS,
+    body: preflight ? '' : JSON.stringify(body),
+  });
+}
 
 function jwt(payload: Record<string, unknown>): string {
   const encode = (value: Record<string, unknown>) => Buffer.from(JSON.stringify(value)).toString('base64url');
@@ -8,25 +28,23 @@ function jwt(payload: Record<string, unknown>): string {
 }
 
 async function isolateFromLiveApis(page: Page) {
+  await page.routeWebSocket('**/*', socket => socket.close());
   await page.route('**/*', async (route) => {
     const url = new URL(route.request().url());
     if (url.origin === APP_ORIGIN) return route.continue();
+    if (url.origin !== API_ORIGIN) return route.abort('blockedbyclient');
 
     if (url.pathname.startsWith('/rest/v1/')) {
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
-        headers: { 'content-range': '0-0/0' },
+        headers: { ...API_HEADERS, 'content-range': '0-0/0' },
         body: '[]',
       });
     }
 
     if (url.pathname.startsWith('/auth/v1/')) {
-      return route.fulfill({
-        status: 503,
-        contentType: 'application/json',
-        body: JSON.stringify({ message: 'Auth E2E non simulée pour cette requête' }),
-      });
+      return apiResponse(route, { message: 'Auth E2E non simulée pour cette requête' }, 503);
     }
 
     return route.abort('blockedbyclient');
@@ -69,32 +87,28 @@ test('le parcours de connexion simulé ouvre le dashboard sans API live', async 
   };
   const accessToken = jwt({ sub: user.id, aud: 'authenticated', role: 'authenticated', email: user.email, exp: now + 3600 });
 
-  await page.route('**/auth/v1/token?grant_type=password', (route) => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({ access_token: accessToken, token_type: 'bearer', expires_in: 3600, expires_at: now + 3600, refresh_token: 'e2e-refresh', user }),
-  }));
+  await page.route('**/auth/v1/token?grant_type=password', (route) => apiResponse(route,
+    { access_token: accessToken, token_type: 'bearer', expires_in: 3600, expires_at: now + 3600, refresh_token: 'e2e-refresh', user },
+  ));
 
   await page.goto('/login');
   await page.getByLabel('Email').fill(user.email);
   await page.getByLabel('Mot de passe').fill('offline-password');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
 
   await expect(page).toHaveURL(/\/dashboard$/, { timeout: 10_000 });
   await expect(page.getByRole('heading', { name: 'Connexion' })).toHaveCount(0);
 });
 
 test('une erreur auth simulée produit un retour accessible', async ({ page }) => {
-  await page.route('**/auth/v1/token?grant_type=password', (route) => route.fulfill({
-    status: 400,
-    contentType: 'application/json',
-    body: JSON.stringify({ error_code: 'invalid_credentials', msg: 'Identifiants invalides' }),
-  }));
+  await page.route('**/auth/v1/token?grant_type=password', (route) => apiResponse(route,
+    { error_code: 'invalid_credentials', msg: 'Identifiants invalides' }, 400,
+  ));
 
   await page.goto('/login');
   await page.getByLabel('Email').fill('incorrect@purama.test');
   await page.getByLabel('Mot de passe').fill('incorrect-password');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
 
   await expect(page.getByText(/identifiants invalides/i)).toBeVisible();
   await expect(page).toHaveURL(/\/login$/);

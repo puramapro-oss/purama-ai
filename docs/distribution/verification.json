@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-11-10T03:18:28.368496+00:00",
+  "scope": "purama-ai distribution candidate; local qualification, not a production or ONE admission certificate",
+  "base_commit": "ca155cdc412d65b78146c3cccc8b44f62e0db5b5",
+  "branch": "codex/distribution-hardening-20261110",
+  "qualification": {
+    "local_candidate": "PASS",
+    "production_deployment": "NON TESTÉ",
+    "one_admission": "NON TESTÉ",
+    "live_providers": "NON TESTÉ"
+  },
+  "environment": {
+    "os": "macOS 26.7",
+    "architecture": "arm64",
+    "node": "22.23.3",
+    "npm": "10.9.10",
+    "playwright": "1.64.1",
+    "desktop_browser": "Google Chrome 157.0.8103.39 (system executable)",
+    "tablet_mobile_browser": "Playwright WebKit 27.2 revision 2370 (emulated viewports)",
+    "pglite": "0.5.16",
+    "edge_validation_zod": "3.22.4 via dev-only alias; matches production Edge import"
+  },
+  "checks": [
+    {
+      "name": "Unit tests",
+      "status": "PASS",
+      "command": "npm run test:unit -- --maxWorkers=2",
+      "scope": "React lifecycles, auth continuation, public URLs and DTOs, client RPC contracts, existing helpers",
+      "tests": 333,
+      "files": 13
+    },
+    {
+      "name": "TypeScript",
+      "status": "PASS",
+      "command": "npm run typecheck",
+      "scope": "Full tsconfig.app.json"
+    },
+    {
+      "name": "ESLint",
+      "status": "PASS",
+      "command": "npm run lint",
+      "scope": "Repository-wide plus final changed-test delta",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "name": "PostgreSQL model permissions",
+      "status": "PASS",
+      "command": "npm run test:distribution:db",
+      "scope": "Local controlled execution; see limitations",
+      "tests": 32,
+      "scenarios": 31,
+      "wrapper_tests": 1
+    },
+    {
+      "name": "Service worker behavior",
+      "status": "PASS",
+      "command": "node --test tests/service-worker-distribution.test.mjs",
+      "scope": "Local controlled execution; see limitations",
+      "tests": 25
+    },
+    {
+      "name": "Security and chat validation",
+      "status": "PASS",
+      "command": "npm run test:security",
+      "scope": "Local controlled execution; see limitations",
+      "tests": 40
+    },
+    {
+      "name": "Mobile OAuth contract",
+      "status": "PASS",
+      "command": "node --test tests/mobile-oauth-pkce.test.mjs",
+      "scope": "Local controlled execution; see limitations",
+      "tests": 3
+    },
+    {
+      "name": "Release configuration",
+      "status": "PASS",
+      "command": "npm run test:release-config",
+      "scope": "Local controlled execution; see limitations",
+      "tests": 4
+    },
+    {
+      "name": "Repository security policy",
+      "status": "PASS",
+      "command": "npm run test:repo-security",
+      "scope": "Static repository policy checks"
+    },
+    {
+      "name": "E2E build",
+      "status": "PASS",
+      "command": "npm run build:e2e",
+      "scope": "Vite e2e mode; loopback API configuration"
+    },
+    {
+      "name": "Production-mode build",
+      "status": "PASS",
+      "command": "npm run build",
+      "scope": "Vite production mode; artifact only, no deployment or live-service certification"
+    },
+    {
+      "name": "Browser suite",
+      "status": "PASS",
+      "command": "npm run test:ci (equivalent test selection with local browser executable override)",
+      "scope": "Compiled application, 71 desktop cases and 21 cases each for tablet/mobile; auth/RPC APIs simulated",
+      "tests": 113,
+      "desktop": 71,
+      "tablet": 21,
+      "mobile": 21,
+      "retries": 0,
+      "skipped": 0,
+      "flaky": 0
+    }
+  ],
+  "regression_evidence": {
+    "chat_real_handler_before_fix": {
+      "passed": 2,
+      "failed": 9,
+      "total": 11
+    },
+    "chat_real_handler_after_fix": {
+      "passed": 11,
+      "failed": 0,
+      "total": 11
+    },
+    "webkit_offline": {
+      "before": "Playwright 1.59.1 / WebKit 26.4: internal error during offline navigation",
+      "after": "Playwright 1.64.1 / WebKit 27.2: unchanged offline test passes; also passes in the complete suite",
+      "upstream_fix": "https://github.com/microsoft/playwright/pull/42894"
+    }
+  },
+  "limitations": [
+    "Browser sign-in/sign-up and Supabase RPC responses are isolated doubles, not real Google, email confirmation or a remote Supabase deployment.",
+    "SQL runs real PostgreSQL/WASM with synthetic users/roles and auth.uid context. Native PostgreSQL multi-connection concurrency and the Supabase HTTP layer are not qualified.",
+    "The chat executes the actual handler and actual validation module with exact-version Zod; rate limiting, auth/database transport and the AI provider are controlled doubles. Deno bootstrap and real model execution are not qualified.",
+    "Tablet/mobile are WebKit viewport emulations, not physical device testing. Desktop uses system Chrome rather than the CI-downloaded Chromium build.",
+    "Share URL construction is covered. Actual delivery through social networks/email/native sharing and remote push delivery are not qualified.",
+    "The offline page is public fallback content. Private app data is not promised offline.",
+    "Copy retry identifiers persist only in the mounted component, not across reloads/devices.",
+    "The migration, Edge chat function and frontend require coordinated staging and admission into ONE before production activation.",
+    "No production mutation, migration application, merge or live provider action has been performed for this candidate."
+  ],
+  "source_sha256": {
+    ".github/workflows/ci.yml": "d1225b5e9b956d1b67db50bd59f8f22f4550533ef09be7f836f37fe113c73e21",
+    "docs/distribution/README.md": "0d1d81f576c97ccc8b3371857952b3dead57740e149df40205a2cc5d1608569f",
+    "package-lock.json": "73adf8293653a93d1aecbce5868c27ac429d7b13ccb35302fc8e4a7910ed5bd7",
+    "package.json": "1b255180b5fff48a6918c213edfe32f2642de4403cfea976ee370fb7a521e319",
+    "public/offline.html": "d76c62c10bd145bc9e5b14f773f5d22b0fc3fd50345270f6d81fa10b9dbd4aba",
+    "public/sw.js": "432e34c236a257cab543c5ef0fef33dfc2663f103b97703606909c3e253dff7d",
+    "src/App.tsx": "62a2d2cd2a5e78898891bab442d448279daef6ee9eab6c5baee2f1d61bcf4da2",
+    "src/components/shared/CinematicIntro.test.tsx": "0904a090a7ff3010e11ab2f73a2d2fbf589bcd6603d331edda2f5595266a762b",
+    "src/components/shared/CinematicIntro.tsx": "07fdcb13e0088d278f9ce9f40744ef6532911938f3259c62a9967cd6811d95c0",
+    "src/components/shared/ShareButtons.test.tsx": "bd4013928fbf8af277d81a50b8d6de415d579a6baf7399c68975b39bc03eaeab",
+    "src/components/shared/ShareButtons.tsx": "3eda7378f767672775ab1751bf675b6d302a4b15c1b63185c6ce8d840c13c05a",
+    "src/components/shared/SpiritualLayer.test.tsx": "6410608eb4b036a915724a66f0d9c1a0981c611f52a527cebe65c1fe50f3708f",
+    "src/components/shared/SpiritualLayer.tsx": "73035b85df859f495449e0d3a9841ae27b44ad3aae0e357a4b8b5f5b1a90600e",
+    "src/hooks/useAuth.continuation.test.tsx": "5b6aa65f66723cd557d3142a3b765d1bd48afe62345ea250f13746c12bbdd671",
+    "src/hooks/useAuth.tsx": "26bf3a636062ad8f5f8beb7a6ff186dfa0c7a8faf5d68ae3b0e17dfe4acf7ee3",
+    "src/lib/auth-continuation.test.ts": "c61379b3b9c32051682858299e1e12a82b34b11172a562026e203c73d9ed67f5",
+    "src/lib/auth-continuation.ts": "9efe2cbe13e2544beff8ce1c66f464f195b196ecd4225bea4f70e86c63f638f5",
+    "src/lib/creator-agent-distribution.test.ts": "ce31df23536f6ddfbeb308ed6fc5cabd7b3fe5292d1f1d33522ffb8dc8611a8a",
+    "src/lib/creator-agent.ts": "4af90b3f08331c1de43e8d6094840a654576e4ef976dfa5c0a23eac992f4258d",
+    "src/lib/public-creator-model.test.ts": "267c722cd1a810f096939812e5df008693f814b32a047b43a18a6a5e647ed430",
+    "src/lib/public-creator-model.ts": "080fafa5210e36a21ab1400d624d6d7b18a788db6f06058f51ba34d55faa21ef",
+    "src/lib/public-share.test.ts": "171783899246b1e9a5d7e109a215a31f0537564489acdaceb92223ebdafe8612",
+    "src/lib/public-share.ts": "ab56e4102bf0d9c736ceaebd44274fa5d06f861d8e7fe1af9e4541695bc303e9",
+    "src/pages/CreatorAgent.tsx": "d7ffea2ca40ae08cbcda3c980b210c91da5dd0ce18e14abd4b3a3be7a6381750",
+    "src/pages/CreatorAgentTemplates.tsx": "becec9482e65505a326064eb6aa506d500f6ed1bd9793e5337e8989b14f266cc",
+    "src/pages/Login.tsx": "9b78db63675b6f27fcb6e4cabdaafdb223249cc1e52907ac918530ebbd55715b",
+    "src/pages/PublicCreatorModel.tsx": "9f7f94786e93c522e0b29d67565458234c61a7937aff19cb2332667f40c94bb9",
+    "src/pages/Signup.tsx": "f0ff2b49b39b2e8285513aa7a368721495187b6eaf373dd2d556eaad9d04671f",
+    "src/pages/auth-continuation.test.tsx": "e22f57bda4933d158dc53b03f86255bcf755b24022b4090588bf61611efe4ce4",
+    "supabase/functions/creator-agent-chat/index.ts": "aaa5f5dba589c749ebead5c279686da884df15c439d2994b3f0907ec38972d5c",
+    "supabase/migrations/20261110001000_creator_public_distribution.sql": "d81e1c867c89ee45ba647282465d0b9b5c7e4428d0ca1dc494f87c1454c630b1",
+    "tests/creator-chat-authorization.test.mjs": "75e1e58bf4a32a995ee6c921ad66dc0d22de20281b01e4ed3d47dfdc59aea89d",
+    "tests/creator-public-distribution.test.mjs": "bc141ea5a177a592181a397e88ea6b6c4e9a675da7ab313bea8653fce4e04271",
+    "tests/distribution.spec.ts": "51d29f937e97bcf2d925d7f65d586b0fbbaaefa21979b359c2905223d08f6378",
+    "tests/navigation.spec.ts": "b81bfbbc3913e2215cd6beed419eca20c4847f78b7df84c038db7c5934fe036c",
+    "tests/public-pages.spec.ts": "03612b23505817dc431f0a4ac31282b66e4ba8ee60faf9225af5fd6f6d25c12b",
+    "tests/pwa.spec.ts": "817ca7ee2b3a8914daf2d7c6f7713d5ca074fcae1ff60c76e7715f87fc608580",
+    "tests/release-gates.spec.ts": "920c7a897c9ec6e86a745df8d2cf2944fbcaff3468be2ce28caf83f57f8060a6",
+    "tests/service-worker-distribution.test.mjs": "8f65017dbc40078f38ece34b23dc363bf128610d86987a593f9a65eda6a6a920",
+    "vitest.config.ts": "19f6711169396561fe1cb6109fcbc069f3ae851b9ed51d0ee1f5e5b88620007b"
+  },
+  "source_manifest_note": "40 changed files matched byte-for-byte between the review copy and tested worktree; this verification file is excluded from its own hash manifest.",
+  "retained_log_sha256": {
+    "unit-overlay-final.log": "304067a6d0dae19492ed7f832963e96a4e7662165c4df5a5c03f51f298404b8f",
+    "typecheck-overlay-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lint-complete-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lint-last-test-delta.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "database.log": "f9f3276c0113121470c6220de1032264d4c8790bebe10dc54986c345a24081b7",
+    "service-worker.log": "fd780a41fbccab0e066d73c4989a5091e204c96a5b258152aea20eec72692c2a",
+    "security-real-validator-final.log": "6aca2c53d33dcce988014d397537112741d4c0254b5ad93133e1fc8bd7a35be3",
+    "mobile-oauth-contract.log": "743391c181575e073a73d0ba395ca670b042f39a09274687f40d2991904a4db5",
+    "release-config-qualified.log": "1540b39e8d3434b6a4a829fda2f0c13c78b555f3e158e2a407cf7c9ed418c9d1",
+    "repository-policy-qualified.log": "93c69bcebb380a92822d251e786cd1a8163ba897d7ccbfdebd75f14716da7802",
+    "build-e2e-final.log": "a02e807325e2d3bad479666b08c3ab174852fb9c9520fb3e4332d3e898efe386",
+    "production-build.log": "3ee0cb69b4247f573579adf18fc986f80ec933ef4b9cf5abeda0520b8b3fdd47",
+    "browser-complete.log": "24b0afbdfbbd1a31d4c0972ec8583e0f7436223b287a0f509a44e178109a4170",
+    "chat-real-validator-before-fix.log": "edef5b5e7b7dba244d1cfac1833f982614085466a34abb68901dd79f34b85f83"
+  }
+}

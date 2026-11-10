@@ -37,9 +37,11 @@ test.describe('Navigation — Liens & Boutons', () => {
   test('Pricing — cartes visibles', async ({ page }) => {
     await page.goto('/pricing', { waitUntil: 'networkidle' });
 
-    // Should have pricing tiers
-    const text = await page.locator('body').textContent();
-    expect(text?.toLowerCase()).toMatch(/gratuit|free|starter|pro|premium/i);
+    // Network idle can precede a lazy React route's commit. Assert the actual
+    // cards with Playwright's retrying locator checks, not a loading snapshot.
+    for (const name of ['Découverte', 'Starter', 'Premium', 'Ultime']) {
+      await expect(page.getByRole('heading', { name, exact: true, level: 3 })).toBeVisible();
+    }
   });
 
   test('Footer links — mentions légales, CGV, CGU', async ({ page }) => {

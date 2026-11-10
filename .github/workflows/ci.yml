@@ -41,6 +41,12 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
+      - name: Public model data permissions
+        run: npm run test:distribution:db
+
+      - name: Service worker behavior
+        run: node --test tests/service-worker-distribution.test.mjs
+
       - name: Security tests
         run: npm run test:security
 
@@ -134,8 +140,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and WebKit
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Run browser release gates
         run: npm run test:ci

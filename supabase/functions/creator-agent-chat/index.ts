@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
 
     // Validate input
     const validation = validateBody(
-      ChatMessageSchema.extend({ agent_id: ChatMessageSchema.shape.agent_id.required() }),
+      ChatMessageSchema.required({ agent_id: true }),
       await req.json()
     );
     if (!validation.ok) {
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
       .eq("id", agent_id)
       .single();
     if (aErr || !agent) return json({ error: "Agent not found" }, 404);
-    if (agent.user_id !== userId && !agent.is_public) {
+    if (agent.user_id !== userId) {
       return json({ error: "Forbidden" }, 403);
     }
 
@@ -67,6 +67,7 @@ Deno.serve(async (req) => {
     const { data: history } = await admin
       .from("creator_agent_chats")
       .select("role, content")
+      .eq("user_id", userId)
       .eq("agent_id", agent_id)
       .eq("session_id", session_id)
       .order("created_at", { ascending: true })

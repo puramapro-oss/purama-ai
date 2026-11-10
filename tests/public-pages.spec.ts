@@ -14,7 +14,6 @@ const PUBLIC_PAGES = [
   { path: '/parrainage', title: 'Parrainage', content: 'parrainage' },
   { path: '/concours', title: 'Concours', content: 'concours' },
   { path: '/classement', title: 'Classement', content: 'classement' },
-  { path: '/forge', title: 'Forge', content: 'Forge' },
   { path: '/influenceur/inscription', title: 'Influenceur', content: 'partenaire' },
 ];
 
@@ -28,18 +27,23 @@ test.describe('Pages publiques — Chargement & Contenu', () => {
       const body = await p.locator('body').textContent();
       expect(body?.length).toBeGreaterThan(10);
 
-      // Specific content check (case insensitive)
-      const html = await p.content();
-      expect(html.toLowerCase()).toContain(page.content.toLowerCase());
+      // Wait for the lazy route's actual content, not a network-idle loading
+      // snapshot or a matching word inside an unloaded component's markup.
+      await expect(p.locator('body')).toContainText(new RegExp(page.content, 'i'));
     });
   }
+
+  test('/forge mène au véritable parcours de création pour un visiteur', async ({ page }) => {
+    await page.goto('/forge', { waitUntil: 'domcontentloaded' });
+    await expect(page).toHaveURL(/\/signup\?next=(?:%2F|\/)dashboard(?:%2F|\/)creator-agent(?:%2F|\/)new$/i);
+    await expect(page.getByRole('heading', { name: 'Créer un compte', exact: true })).toBeVisible();
+  });
 });
 
 test.describe('Page 404', () => {
   test('/page-inexistante affiche 404', async ({ page }) => {
     await page.goto('/page-qui-existe-pas-du-tout', { waitUntil: 'networkidle' });
-    const text = await page.locator('body').textContent();
-    expect(text?.toLowerCase()).toContain('404');
+    await expect(page.getByRole('heading', { name: '404', exact: true })).toBeVisible();
   });
 });
 
@@ -47,8 +51,9 @@ test.describe('Pas de Lorem/placeholder texte', () => {
   for (const path of ['/', '/pricing', '/ecosystem', '/parrainage']) {
     test(`${path} — 0 Lorem ipsum`, async ({ page }) => {
       await page.goto(path, { waitUntil: 'networkidle' });
-      const text = await page.locator('body').textContent();
-      expect(text?.toLowerCase()).not.toContain('lorem ipsum');
+      const content = PUBLIC_PAGES.find(item => item.path === path)!.content;
+      await expect(page.locator('body')).toContainText(new RegExp(content, 'i'));
+      await expect(page.locator('body')).not.toContainText(/lorem ipsum/i);
     });
   }
 });

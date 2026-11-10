@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useAwakening } from '@/hooks/useAwakening';
 
@@ -25,6 +26,16 @@ const AFFIRMATIONS = [
 const SESSION_KEY = 'purama_affirmation_shown';
 
 export function SpiritualLayer() {
+  const { user, loading } = useAuth();
+  const { pathname, search, hash } = useLocation();
+
+  // Keep optional welcome content on the overview. Unmount the whole overlay
+  // on navigation so neither its timer nor an exit animation blocks a task.
+  if (loading || !user || pathname !== '/dashboard' || search || hash) return null;
+  return <DailyAffirmationOverlay key={user.id} />;
+}
+
+function DailyAffirmationOverlay() {
   const { user } = useAuth();
   const { recordAffirmation } = useAwakening();
   const [show, setShow] = useState(false);

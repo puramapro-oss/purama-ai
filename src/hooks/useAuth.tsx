@@ -1,14 +1,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { DEFAULT_AUTH_CONTINUATION, safeAuthContinuation } from '@/lib/auth-continuation';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName?: string, next?: string) => Promise<{ error: Error | null; hasSession?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: () => Promise<{ error: Error | null }>;
+  signInWithGoogle: (next?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -39,18 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName?: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async (email: string, password: string, fullName?: string, next?: string) => {
+    const destination = safeAuthContinuation(next) ?? DEFAULT_AUTH_CONTINUATION;
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: next === undefined ? window.location.origin : `${window.location.origin}${destination}`,
         data: {
           full_name: fullName,
         },
       },
     });
-    return { error };
+    return { error, hasSession: Boolean(data.session) };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -61,12 +63,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (next?: string) => {
+    const destination = safeAuthContinuation(next) ?? DEFAULT_AUTH_CONTINUATION;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Let Supabase handle the callback, then redirect to dashboard
-        redirectTo: `${window.location.origin}/dashboard`,
+        // Supabase handles authentication. Only the validated navigation route
+        // is supplied here; provider redirect allowlists must be qualified.
+        redirectTo: `${window.location.origin}${destination}`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',

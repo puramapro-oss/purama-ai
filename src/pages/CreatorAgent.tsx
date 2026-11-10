@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import type { PublicCreatorModel } from '@/lib/public-creator-model';
 import {
   listMyAgents, listTemplates, listRuns,
   CATEGORIES,
@@ -20,7 +21,7 @@ import {
 export default function CreatorAgentPage() {
   const { user } = useAuth();
   const [myAgents, setMyAgents] = useState<CreatorAgent[]>([]);
-  const [templates, setTemplates] = useState<CreatorAgent[]>([]);
+  const [templates, setTemplates] = useState<PublicCreatorModel[]>([]);
   const [recentRuns, setRecentRuns] = useState<CreatorAgentRun[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -199,7 +200,7 @@ export default function CreatorAgentPage() {
   );
 }
 
-function AgentCard({ agent, isTemplate }: { agent: CreatorAgent; isTemplate?: boolean }) {
+function AgentCard({ agent, isTemplate }: { agent: CreatorAgent | PublicCreatorModel; isTemplate?: boolean }) {
   const cat = CATEGORIES.find(c => c.value === agent.category);
   return (
     <Link to={isTemplate ? `/dashboard/creator-agent/templates` : `/dashboard/creator-agent/${agent.id}`}>
@@ -217,8 +218,8 @@ function AgentCard({ agent, isTemplate }: { agent: CreatorAgent; isTemplate?: bo
               )}
               <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                 {cat && <Badge variant="outline" className="text-[10px] py-0 h-4">{cat.emoji} {cat.label}</Badge>}
-                {agent.schedule_enabled && <Badge variant="secondary" className="text-[10px] py-0 h-4">⏰ Auto</Badge>}
-                {agent.total_runs > 0 && <span className="text-[10px] text-muted-foreground">{agent.total_runs} runs</span>}
+                {'schedule_enabled' in agent && agent.schedule_enabled && <Badge variant="secondary" className="text-[10px] py-0 h-4">⏰ Auto</Badge>}
+                {'total_runs' in agent && agent.total_runs > 0 && <span className="text-[10px] text-muted-foreground">{agent.total_runs} runs</span>}
               </div>
             </div>
           </div>

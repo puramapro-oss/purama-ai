@@ -79,6 +79,7 @@ const CreatorAgentPage = lazy(() => import('@/pages/CreatorAgent'));
 const CreatorAgentNew = lazy(() => import('@/pages/CreatorAgentNew'));
 const CreatorAgentDetail = lazy(() => import('@/pages/CreatorAgentDetail'));
 const CreatorAgentTemplates = lazy(() => import('@/pages/CreatorAgentTemplates'));
+const PublicCreatorModel = lazy(() => import('@/pages/PublicCreatorModel'));
 const CreatorAgentRuns = lazy(() => import('@/pages/CreatorAgentRuns'));
 const Wallet = lazy(() => import('@/pages/Wallet'));
 const Boutique = lazy(() => import('@/pages/Boutique'));
@@ -157,6 +158,7 @@ export default function App() {
             <Route path="/fiscal" element={<ProtectedRoute><Fiscal /></ProtectedRoute>} />
             <Route path="/ecosystem" element={<Ecosystem />} />
             <Route path="/forge" element={<Forge />} />
+            <Route path="/modeles/:id" element={<PublicCreatorModel />} />
             <Route path="/purama-compta" element={<PuramaCompta />} />
             <Route path="/agent" element={<SocialAgent />} />
             
