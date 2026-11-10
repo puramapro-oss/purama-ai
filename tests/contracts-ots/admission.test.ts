@@ -150,10 +150,29 @@ Deno.test("successful restamping clears every stale Bitcoin confirmation field",
 });
 Deno.test("stamp never reports success after a proof or audit persistence failure", async () => {
   for (const failure of ["updateFailure", "eventsFailure"] as const) {
-    reset(); state[failure] = true;
+    reset(); const before = JSON.stringify(state.contract); state[failure] = true;
     const response = await stamp(request()); equal(response.status, 500);
     const body = await response.json(); equal(body.ok, undefined); equal(JSON.stringify(body).includes("fixture-private"), false);
     equal(state.writes.filter(x => x.table === "contract_events").length, 0);
-    if (failure === "updateFailure") equal(state.writes.length, 0);
+    equal(state.writes.length, 0);
+    equal(JSON.stringify(state.contract), before, "failed atomic persistence preserves original proof and confirmation fields");
+  }
+});
+
+Deno.test("stamp uses one invoker RPC with the final authenticated identity and no actor argument", async () => {
+  for (const token of ["fixture-admin", SERVICE]) {
+    reset(); const before = { ...state.contract };
+    equal((await stamp(request(token))).status, 200);
+    equal(state.stampRpcs.length, 1);
+    const rpc = state.stampRpcs[0];
+    equal(rpc.name, "persist_contract_ots_stamp");
+    equal(rpc.service, token === SERVICE);
+    if (token !== SERVICE) equal(rpc.authorization, "Bearer fixture-admin");
+    equal(rpc.args.p_contract_id, before.id); equal(rpc.args.p_user_id, before.user_id);
+    equal(rpc.args.p_submission_id, before.docuseal_submission_id);
+    equal(rpc.args.p_previous_hash, before.ots_stamp_hash); equal(rpc.args.p_previous_proof, before.ots_proof);
+    equal(Object.keys(rpc.args).length, 7, "only snapshot and proof fields are supplied");
+    equal(state.writes.filter(x => x.table === "contract_events").length, 1);
+    equal(state.clients.some(x => x.service), token === SERVICE, "human stamp never creates a service client");
   }
 });

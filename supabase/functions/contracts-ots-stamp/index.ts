@@ -1,9 +1,9 @@
 // Signed webhook service or authenticated administrator only.
 import { CORS_HEADERS, corsResponse, errorResponse } from "../_shared/docuseal.ts";
-import { authorizeOts, otsAdminClient, OtsHttpError, validContractId } from "../_shared/ots-auth.ts";
+import { authorizeOts, OtsHttpError, validContractId } from "../_shared/ots-auth.ts";
 import { signedPdf } from "../_shared/ots-pdf.ts";
 import { ots } from "../_shared/ots-library.ts";
-import { loadOtsContract, requireUnchangedContract, conditionOnSnapshot, readOtsBody } from "../_shared/ots-contract.ts";
+import { loadOtsContract, requireUnchangedContract, readOtsBody } from "../_shared/ots-contract.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS_HEADERS });
@@ -22,15 +22,16 @@ Deno.serve(async (req) => {
     const proof = await ots.stampDigest(hash);
     const finalAccess = await authorizeOts(req, true);
     requireUnchangedContract(contract, await loadOtsContract(finalAccess.client, contract.id));
-    // Human writes retain RLS; the exact service credential is the only bypass.
-    const update = finalAccess.client.from("contracts").update({ ots_stamp_hash: hashHex, ots_proof: proof,
-      ots_verified_at: null, ots_block_height: null, ots_btc_timestamp: null });
-    const { data: written, error } = await conditionOnSnapshot(update, contract).select("id").maybeSingle();
+    // One database transaction persists both proof and audit. This invoker RPC
+    // keeps the final human JWT/RLS and the complete original contract snapshot.
+    const { data: written, error } = await finalAccess.client.rpc("persist_contract_ots_stamp", {
+      p_contract_id: contract.id, p_user_id: contract.user_id,
+      p_submission_id: contract.docuseal_submission_id,
+      p_previous_hash: contract.ots_stamp_hash, p_previous_proof: contract.ots_proof,
+      p_hash: hashHex, p_proof: proof,
+    });
     if (error) throw new OtsHttpError(500, "Proof persistence failed");
     if (!written) throw new OtsHttpError(409, "Contract changed; retry verification");
-    const { error: eventError } = await otsAdminClient().from("contract_events").insert({ contract_id: contract.id, event_type: "ots_stamped",
-      payload: { hash: hashHex, proof_size: atob(proof).length }, actor_id: finalAccess.userId, actor_type: finalAccess.service ? "service" : "user" });
-    if (eventError) throw new OtsHttpError(500, "Proof audit event persistence failed");
     return corsResponse({ ok: true, hash: hashHex, pending_bitcoin_confirmation: true });
   } catch (error) {
     if (error instanceof OtsHttpError) return errorResponse(error.message, error.status);

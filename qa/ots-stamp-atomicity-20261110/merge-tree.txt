@@ -1,0 +1,61 @@
+40e1b64cf99c66b432b630e742356fd8ad450c67
+100644 ebd5e491881716a1971fbe5e72785394f866d682 1	package.json
+100644 5f947f5e11886cbcab08616b172dd69a57d76df8 2	package.json
+100644 3bb3a2a66adaca27923916d6da84afa3b5a1425e 3	package.json
+100644 3a4b17bba6526a85e124fa41598778e972dd5d72 1	playwright.config.ts
+100644 3f0fd7a086f128774cb931d2f70c77e0a6e710e7 2	playwright.config.ts
+100644 c25ff0128f66e2ef701e14e44f8e6786df4d99c3 3	playwright.config.ts
+100644 8848578f7bed3f25c71d5d807dd3d6f68fa0a855 1	src/components/dashboard/ExecutionCounter.tsx
+100644 272f7548f36a5299349f283003dfeeab41dbbe71 2	src/components/dashboard/ExecutionCounter.tsx
+100644 979a4aab7d7e16c05634d74708b0f4282b7516cf 3	src/components/dashboard/ExecutionCounter.tsx
+100644 13e75ed39da8a81ba613d9391c04068e57d10fd4 1	src/components/shared/SpiritualLayer.tsx
+100644 01b54f84474d733ee2a70ee70ded71f69b465dc9 2	src/components/shared/SpiritualLayer.tsx
+100644 76e48fa12548719440bef217bcb5b2f519c5fba0 3	src/components/shared/SpiritualLayer.tsx
+100644 efc5f6267a3c9e94b27cbe3e9b730dfb25bf073d 1	src/components/voice/AgentChatTab.tsx
+100644 35f43d773dd451c3c699da27be635202cef3f1f6 2	src/components/voice/AgentChatTab.tsx
+100644 5e15e3ce80604b5df998bdb1fcabd113ddd83484 3	src/components/voice/AgentChatTab.tsx
+100644 c386602b007c254d48562d678e1030475b75dd1a 1	src/lib/opentimestamps.ts
+100644 329f92934cff461dadb25548332abfefb98084fd 2	src/lib/opentimestamps.ts
+100644 ffff53789bec425ada76ac6b35b5d575ebd48ec1 3	src/lib/opentimestamps.ts
+100644 58dc4039d2d2fcee6d4060da1f62e9f2be6acec4 1	src/pages/CreatorAgentDetail.tsx
+100644 ede9dd8f5063c37d9fda868a7bc8cb2e97d54749 2	src/pages/CreatorAgentDetail.tsx
+100644 ece9938849c8bc2822947ac324474b5e5d974739 3	src/pages/CreatorAgentDetail.tsx
+100644 b6641ce2292faf01a14501de3ed79d22cfda48c7 1	supabase/functions/contracts-ots-stamp/index.ts
+100644 31a3ecccfc5217622233bb700a95127d0ed3bace 2	supabase/functions/contracts-ots-stamp/index.ts
+100644 2674990ead1cf8c8c52a5ef84f300587e9f767a8 3	supabase/functions/contracts-ots-stamp/index.ts
+100644 34771d29b764693cefa23bb073d09ba8d840c307 1	supabase/functions/contracts-webhook/index.ts
+100644 3324f6d02828801bd56e27aef3ed3bee29b8f103 2	supabase/functions/contracts-webhook/index.ts
+100644 8d274854ccebe72bdda05300fc05bd8e098536e0 3	supabase/functions/contracts-webhook/index.ts
+100644 de7f175a5d58c5fa45005daf26bdd8317e7c4378 1	tests/contracts-ots-auth.mjs
+100644 89b76d71791c10e4e1e907710040942dac52df78 2	tests/contracts-ots-auth.mjs
+100644 c97d42f40684ec246ca12f5300df0de89106ce84 3	tests/contracts-ots-auth.mjs
+100644 7d5deaf8929d8e408d911a9c963a3d3c23efa63c 1	tests/contracts-ots-authorization.test.mjs
+100644 0fa1555b8053696fcad3e9bd5e27a4d5841d2ab9 2	tests/contracts-ots-authorization.test.mjs
+100644 93f2dd029407702465f84ff5049b36341bc3a18b 3	tests/contracts-ots-authorization.test.mjs
+
+Auto-merging .github/workflows/purama-chef-hardening.yml
+Auto-merging package.json
+CONFLICT (content): Merge conflict in package.json
+Auto-merging playwright.config.ts
+CONFLICT (content): Merge conflict in playwright.config.ts
+Auto-merging src/components/dashboard/ExecutionCounter.tsx
+CONFLICT (content): Merge conflict in src/components/dashboard/ExecutionCounter.tsx
+Auto-merging src/components/influencer/ReferralBanner.tsx
+Auto-merging src/components/shared/SpiritualLayer.tsx
+CONFLICT (content): Merge conflict in src/components/shared/SpiritualLayer.tsx
+Auto-merging src/components/voice/AgentChatTab.tsx
+CONFLICT (content): Merge conflict in src/components/voice/AgentChatTab.tsx
+Auto-merging src/hooks/useInfluencer.ts
+Auto-merging src/lib/opentimestamps.ts
+CONFLICT (content): Merge conflict in src/lib/opentimestamps.ts
+Auto-merging src/pages/CreatorAgentDetail.tsx
+CONFLICT (content): Merge conflict in src/pages/CreatorAgentDetail.tsx
+Auto-merging supabase/functions/contracts-ots-stamp/index.ts
+CONFLICT (content): Merge conflict in supabase/functions/contracts-ots-stamp/index.ts
+Auto-merging supabase/functions/contracts-webhook/index.ts
+CONFLICT (content): Merge conflict in supabase/functions/contracts-webhook/index.ts
+Auto-merging tests/contracts-ots-auth.mjs
+CONFLICT (content): Merge conflict in tests/contracts-ots-auth.mjs
+Auto-merging tests/contracts-ots-authorization.test.mjs
+CONFLICT (content): Merge conflict in tests/contracts-ots-authorization.test.mjs
+Auto-merging tests/quality/vite.config.ts

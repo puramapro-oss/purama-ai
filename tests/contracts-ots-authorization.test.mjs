@@ -33,7 +33,7 @@ const otsCore = fileURLToPath(new URL('../src/lib/ots-core.ts', import.meta.url)
 async function harness(options = {}, entry = 'contracts-ots-stamp') {
   let handler;
   const calls = { clients: [], auth: [], roles: [], contractReads: [], updates: [], events: [],
-    docs: [], pdf: [], stamps: [], internal: [], errors: [], signerUpdates: [], signerReads: [], sdk: [] };
+    docs: [], pdf: [], stamps: [], internal: [], errors: [], signerUpdates: [], signerReads: [], sdk: [], stampRpcs: [] };
   const contract = options.contractState ?? (options.noContract ? null : {
     id: contractId, user_id: 'contract-owner', status: options.status ?? 'signed',
     docuseal_submission_id: options.noSubmission ? null : 42,
@@ -62,7 +62,11 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
           assert.deepEqual(JSON.parse(init.body), { _user_id: 'server-admin', _role: 'admin' });
           return Response.json(true);
         }
-        if (target.pathname === '/rest/v1/contracts') return Response.json([]);
+        if (target.pathname === '/rest/v1/contracts') return Response.json(options.realSupabaseContract ? [contract] : []);
+        if (target.pathname === '/rest/v1/rpc/persist_contract_ots_stamp') {
+          if (options.rpcMissing) return Response.json({ code: 'PGRST202', message: 'private-schema-cache-detail' }, { status: 404 });
+          return Response.json(contract.id);
+        }
         throw new Error('Unexpected SDK transport blocked by the test');
       } } });
     }
@@ -84,7 +88,22 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
         return { data: { user: id ? { id, user_metadata: { role: 'admin' } } : null },
           error: options.authError ? { message: 'private-auth-detail' } : null };
       } },
-      rpc: (name, args) => rpc(name, args, settings?.db?.schema),
+      rpc: async (name, args) => {
+        if (name !== 'persist_contract_ots_stamp') return rpc(name, args, settings?.db?.schema);
+        calls.stampRpcs.push({ name, args, key, settings });
+        const filters = [['id', args.p_contract_id], ['user_id', args.p_user_id], ['status', 'signed'],
+          ['docuseal_submission_id', args.p_submission_id], ['ots_stamp_hash', args.p_previous_hash], ['ots_proof', args.p_previous_proof]];
+        const patch = { ots_stamp_hash: args.p_hash, ots_proof: args.p_proof,
+          ots_verified_at: null, ots_block_height: null, ots_btc_timestamp: null };
+        calls.updates.push({ filters, patch });
+        if (options.updateError || options.eventError) return { data: null, error: { message: 'private-transaction-detail' } };
+        if (!contract || !filters.every(([field, value]) => contract[field] === value)) return { data: null, error: null };
+        Object.assign(contract, patch);
+        calls.events.push({ contract_id: contract.id, event_type: 'ots_stamped',
+          payload: { hash: args.p_hash, proof_size: atob(args.p_proof).length },
+          actor_id: key === serviceKey ? null : 'server-admin', actor_type: key === serviceKey ? 'service' : 'user' });
+        return { data: contract.id, error: null };
+      },
       schema: schema => {
         assert.equal(schema, 'public');
         return { rpc: (name, args) => rpc(name, args, schema) };
@@ -258,6 +277,34 @@ test('authorization SDK: the real Supabase transport selects public.has_role and
   assert.equal(response.status, 404, 'the inert contract transport deliberately returns no contract');
   assert.equal(h.calls.sdk.length, 3);
   assert.equal(h.calls.docs.length + h.calls.pdf.length + h.calls.stamps.length + h.calls.events.length, 0);
+});
+test('persistence SDK: one atomic RPC keeps the human JWT and purama_ai schema with every snapshot condition', async () => {
+  const h = await harness({ realSupabase: true, realSupabaseContract: true });
+  const response = await h.handler(request('admin-token', { contract_id: contractId, actor_id: 'forged' }));
+  assert.equal(response.status, 200);
+  const mutations = h.calls.sdk.filter(call => call.path === '/rest/v1/rpc/persist_contract_ots_stamp');
+  assert.equal(mutations.length, 1);
+  assert.equal(mutations[0].headers['content-profile'], 'purama_ai');
+  assert.equal(mutations[0].headers.authorization, 'Bearer admin-token');
+  const payload = JSON.parse(mutations[0].body);
+  assert.deepEqual(Object.keys(payload).sort(), ['p_contract_id', 'p_hash', 'p_previous_hash', 'p_previous_proof', 'p_proof', 'p_submission_id', 'p_user_id']);
+  assert.equal(payload.p_contract_id, contractId); assert.equal(payload.p_user_id, 'contract-owner');
+  assert.equal(payload.p_submission_id, 42); assert.equal(payload.p_previous_hash, 'old-hash'); assert.equal(payload.p_previous_proof, 'old-proof');
+  assert.match(payload.p_hash, /^[a-f0-9]{64}$/);
+  assert.ok(payload.p_proof.length > 0);
+  assert.equal(h.calls.sdk.filter(call => call.path === '/rest/v1/contracts').length, 3, 'three authorized snapshots remain');
+  assert.equal(h.calls.sdk.filter(call => call.path === '/auth/v1/user').length, 3, 'three identity checks remain');
+  assert.equal(h.calls.sdk.some(call => call.path === '/rest/v1/contract_events'), false, 'no separate audit request');
+  assert.ok(h.calls.clients.every(client => client.key !== serviceKey), 'human stamp creates no privileged client');
+});
+test('persistence SDK: missing migration fails closed without a split-write fallback', async () => {
+  const h = await harness({ realSupabase: true, realSupabaseContract: true, rpcMissing: true });
+  const response = await h.handler(request());
+  assert.equal(response.status, 500);
+  assert.doesNotMatch(await response.text(), /private-/);
+  assert.equal(h.calls.sdk.filter(call => call.path === '/rest/v1/rpc/persist_contract_ots_stamp').length, 1);
+  assert.equal(h.calls.sdk.some(call => call.path === '/rest/v1/contract_events'), false);
+  assert.equal(h.calls.updates.length + h.calls.events.length, 0);
 });
 test('ordinary user cannot elevate via metadata, body identity or role', async () => {
   const h = await harness();

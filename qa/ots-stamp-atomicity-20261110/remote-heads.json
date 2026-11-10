@@ -1,0 +1,44 @@
+[
+  {
+    "observed_at": "2026-11-10T17:10:27.281Z",
+    "number": 33,
+    "url": "https://github.com/puramapro-oss/purama-ai/pull/33",
+    "state": "open",
+    "draft": true,
+    "head": "a11b2d8298c5cd7f8ed8be3427a1c6b676310e3f",
+    "head_ref": "audit/iao-integrated-20261110-14d16",
+    "base": "69843348ff85cd637537bce094f8cffa989c1d8f",
+    "base_ref": "fix/agents-budget-outreach-20261110",
+    "updated_at": "2026-11-10T16:51:43Z",
+    "mergeable": true,
+    "mergeable_state": "unstable"
+  },
+  {
+    "observed_at": "2026-11-10T17:10:28.525Z",
+    "number": 34,
+    "url": "https://github.com/puramapro-oss/purama-ai/pull/34",
+    "state": "open",
+    "draft": true,
+    "head": "5fe914ce98f69665cd04c8b640b6feb748b355fd",
+    "head_ref": "codex/custom-agent-scheduler-lifecycle-20261110",
+    "base": "58a85a9f7ae0c20abc37158ea0901243e0bf2acd",
+    "base_ref": "audit/iao-integrated-20261110-14d16",
+    "updated_at": "2026-11-10T15:14:55Z",
+    "mergeable": true,
+    "mergeable_state": "unstable"
+  },
+  {
+    "observed_at": "2026-11-10T17:08:59.737Z",
+    "number": 36,
+    "url": "https://github.com/puramapro-oss/purama-ai/pull/36",
+    "state": "open",
+    "draft": true,
+    "head": "cb5accbeac30bf43872c0a7a19233a619faed4ca",
+    "head_ref": "audit/iao-reconciled-20261110",
+    "base": "58a85a9f7ae0c20abc37158ea0901243e0bf2acd",
+    "base_ref": "audit/iao-integrated-20261110-14d16",
+    "updated_at": "2026-11-10T16:44:15Z",
+    "mergeable": false,
+    "mergeable_state": "dirty"
+  }
+]
