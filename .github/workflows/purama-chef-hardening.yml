@@ -57,9 +57,10 @@ jobs:
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
       - run: npm run test:contracts-native
-      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts
+      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/stripe-webhook/index.ts
       - run: npm run test:commerce:plans
       - run: npm run test:commerce:handlers
+      - run: npm run test:billing
       - run: npm run test:founder
       - run: npm run test:founder:types
       - run: npm run build
@@ -79,3 +80,38 @@ jobs:
       - run: npm run test:mobile-auth
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
+
+  subscription-concurrency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: karta
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: local-trial-fixture-only
+          PGDATA: /var/lib/postgresql/purama-trial-data
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PURAMA_TRIAL_TEST_PG_HOST: 127.0.0.1
+      PURAMA_TRIAL_TEST_PG_PORT: 5432
+      PURAMA_TRIAL_TEST_PG_USER: postgres
+      PURAMA_TRIAL_TEST_PG_PASSWORD: local-trial-fixture-only
+      PURAMA_TRIAL_TEST_PG_DATA: /var/lib/postgresql/purama-trial-data
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: karta/package-lock.json
+      - run: npm ci --no-audit
+      - run: npm run test:subscriptions:postgres

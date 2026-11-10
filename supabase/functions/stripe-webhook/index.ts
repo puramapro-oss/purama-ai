@@ -135,6 +135,157 @@ const planPrices: Record<string, number> = {
 // vérité déclarée ; dupliquée ici car cette fonction Deno n'importe pas src/lib).
 const OVERAGE_PACK_ACTIONS = 2000;
 
+const subscriptionColumns = 'user_id,stripe_customer_id,plan_type,status,trial_ends_at,has_used_trial,updated_at';
+type SubscriptionRow = {
+  user_id: string;
+  stripe_customer_id: string | null;
+  plan_type: string;
+  status: string;
+  trial_ends_at: string | null;
+  has_used_trial: boolean;
+  updated_at: string | null;
+};
+
+function stripeObjectId(value: unknown, prefix: string): string {
+  const candidate = typeof value === 'string' ? value
+    : value && typeof value === 'object' && !('deleted' in value && value.deleted === true) && 'id' in value ? value.id : null;
+  if (typeof candidate !== 'string' || candidate.length > 255 || !new RegExp(`^${prefix}_[A-Za-z0-9_]+$`).test(candidate)) {
+    throw new Error('checkout_identity_invalid');
+  }
+  return candidate;
+}
+
+function checkoutUserId(value: unknown): string {
+  if (typeof value !== 'string' || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value)) {
+    throw new Error('checkout_user_invalid');
+  }
+  return value.toLowerCase();
+}
+
+function subscriptionRow(data: unknown, error: unknown): SubscriptionRow | undefined {
+  if (error || !Array.isArray(data) || data.length > 1) throw new Error('checkout_subscription_lookup_failed');
+  const row = data[0];
+  if (row && (typeof row !== 'object' || checkoutUserId(row.user_id) !== row.user_id
+    || typeof row.has_used_trial !== 'boolean'
+    || typeof row.plan_type !== 'string' || typeof row.status !== 'string'
+    || (row.stripe_customer_id !== null && typeof row.stripe_customer_id !== 'string')
+    || (row.trial_ends_at !== null && typeof row.trial_ends_at !== 'string')
+    || (row.updated_at !== null && typeof row.updated_at !== 'string'))) {
+    throw new Error('checkout_subscription_record_invalid');
+  }
+  return row;
+}
+
+function createWebhookDatabase(url: string, key: string) {
+  return createClient(url, key, { db: { schema: 'purama_ai' }, auth: { persistSession: false } });
+}
+
+/** Only called after signature verification. Email is never an ownership proof. */
+async function completeSubscriptionCheckout(
+  session: Stripe.Checkout.Session,
+  stripe: Stripe,
+  database: ReturnType<typeof createWebhookDatabase>,
+) {
+  stripeObjectId(session, 'cs');
+  const customerId = stripeObjectId(session.customer, 'cus');
+  const subscriptionId = stripeObjectId(session.subscription, 'sub');
+  if (session.status !== 'complete' || typeof session.livemode !== 'boolean') {
+    throw new Error('checkout_session_invalid');
+  }
+  // Delayed payment methods emit a separate successful event. A completed form
+  // alone must never grant paid rights, even if another provider read is active.
+  if (session.payment_status === 'unpaid') return undefined;
+  if (!['paid', 'no_payment_required'].includes(session.payment_status)) throw new Error('checkout_payment_invalid');
+
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const customer = await stripe.customers.retrieve(customerId);
+  if (stripeObjectId(subscription, 'sub') !== subscriptionId
+    || stripeObjectId(subscription.customer, 'cus') !== customerId
+    || stripeObjectId(customer, 'cus') !== customerId || customer.deleted
+    || subscription.livemode !== session.livemode || customer.livemode !== session.livemode) {
+    throw new Error('checkout_provider_identity_conflict');
+  }
+  if (subscription.status !== 'active' && subscription.status !== 'trialing') {
+    throw new Error('checkout_subscription_not_ready');
+  }
+  const items = subscription.items;
+  if (items.has_more !== false || items.data.length !== 1) throw new Error('checkout_subscription_items_ambiguous');
+  const productId = stripeObjectId(items.data[0].price.product, 'prod');
+  const planType = planMapping[productId];
+  if (!planType) throw new Error('checkout_product_unknown');
+
+  // A stale checkout must not choose between multiple open subscriptions.
+  const page = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 100 });
+  if (page.has_more !== false || !Array.isArray(page.data)) throw new Error('checkout_subscription_list_incomplete');
+  const open = page.data.filter((entry: Stripe.Subscription) => !['canceled', 'incomplete_expired'].includes(entry.status));
+  if (open.length !== 1 || open[0].id !== subscriptionId || open[0].status !== subscription.status
+    || stripeObjectId(open[0].customer, 'cus') !== customerId) {
+    throw new Error('checkout_subscriptions_ambiguous');
+  }
+
+  const linkedResult = await database.from('subscriptions').select(subscriptionColumns)
+    .eq('stripe_customer_id', customerId).limit(2);
+  const linked = subscriptionRow(linkedResult.data, linkedResult.error);
+  // Legacy sessions without server user metadata may use an existing, unique
+  // database binding. Customer emails and paginated auth searches are excluded.
+  const userId = checkoutUserId(session.metadata?.user_id ?? linked?.user_id);
+  for (const candidate of [subscription.metadata?.user_id, customer.metadata?.user_id, session.client_reference_id]) {
+    if (candidate != null && checkoutUserId(candidate) !== userId) throw new Error('checkout_user_conflict');
+  }
+  if ((linked && linked.user_id !== userId) || (!linked && customer.metadata?.user_id !== userId)) {
+    throw new Error('checkout_customer_unowned');
+  }
+  const { data: userData, error: userError } = await database.auth.admin.getUserById(userId);
+  if (userError || userData?.user?.id !== userId) throw new Error('checkout_user_not_found');
+  const user = userData.user;
+  const existingResult = await database.from('subscriptions').select(subscriptionColumns).eq('user_id', userId).limit(2);
+  const existing = subscriptionRow(existingResult.data, existingResult.error);
+  if ((existing && existing.stripe_customer_id !== null && existing.stripe_customer_id !== customerId)
+    || (linked && (!existing || existing.stripe_customer_id !== customerId))) {
+    throw new Error('checkout_customer_binding_conflict');
+  }
+
+  let trialEndsAt = existing?.trial_ends_at ?? null;
+  if (subscription.status === 'trialing') {
+    if (!Number.isSafeInteger(subscription.trial_end) || subscription.trial_end! <= Date.now() / 1000
+      || subscription.trial_end! > 253402300799) throw new Error('checkout_trial_invalid');
+    trialEndsAt = new Date(subscription.trial_end! * 1000).toISOString();
+  }
+  const usedTrial = existing?.has_used_trial === true || subscription.status === 'trialing' || subscription.trial_start != null;
+  // PostgREST can serialize the same timestamptz as +00:00 rather than .000Z.
+  const sameTrialEnd = (value: string | null) => value === trialEndsAt || (value !== null && trialEndsAt !== null
+    && Number.isFinite(Date.parse(value)) && Date.parse(value) === Date.parse(trialEndsAt));
+  const matches = (row: SubscriptionRow) => row.user_id === userId && row.stripe_customer_id === customerId
+    && row.plan_type === planType && row.status === subscription.status
+    && sameTrialEnd(row.trial_ends_at) && (!usedTrial || row.has_used_trial === true);
+  if (existing && matches(existing)) return { user, planType, subscriptionId, applied: false };
+
+  const values = {
+    plan_type: planType,
+    status: subscription.status,
+    stripe_customer_id: customerId,
+    ...(subscription.status === 'trialing' ? { trial_ends_at: trialEndsAt } : {}),
+    // Never write false: a concurrent local trial must remain consumed.
+    ...(usedTrial ? { has_used_trial: true } : {}),
+    updated_at: new Date().toISOString(),
+  };
+  let result;
+  if (existing) {
+    let update = database.from('subscriptions').update(values).eq('user_id', userId)
+      .eq('plan_type', existing.plan_type).eq('status', existing.status);
+    update = existing.stripe_customer_id === null ? update.is('stripe_customer_id', null) : update.eq('stripe_customer_id', existing.stripe_customer_id);
+    update = existing.updated_at === null ? update.is('updated_at', null) : update.eq('updated_at', existing.updated_at);
+    result = await update.select(subscriptionColumns);
+  } else {
+    // UNIQUE(user_id) arbitrates concurrent first deliveries. A losing insert
+    // is retried by Stripe; it is not acknowledged as a successful activation.
+    result = await database.from('subscriptions').insert({ user_id: userId, ...values }).select(subscriptionColumns);
+  }
+  const persisted = subscriptionRow(result.data, result.error);
+  if (!persisted || !matches(persisted)) throw new Error('checkout_subscription_write_unconfirmed');
+  return { user, planType, subscriptionId, applied: true };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -156,12 +307,12 @@ serve(async (req) => {
     apiVersion: "2025-08-27.basil",
     httpClient: Stripe.createFetchHttpClient(),
     timeout: 10_000,
+    maxNetworkRetries: 0,
   });
   
-  const supabaseClient = createClient(
+  const supabaseClient = createWebhookDatabase(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { db: { schema: 'purama_ai' }, auth: { persistSession: false } }
   );
 
   try {
@@ -192,50 +343,31 @@ serve(async (req) => {
 
     // Handle the event
     switch (event.type) {
-      case 'checkout.session.completed': {
+      case 'checkout.session.completed':
+      case 'checkout.session.async_payment_succeeded': {
         const session = event.data.object as Stripe.Checkout.Session;
-        logStep("Checkout session completed", { 
-          sessionId: session.id, 
-          customerId: session.customer,
-          customerEmail: session.customer_email,
-          metadata: session.metadata
-        });
+        logStep("Checkout session received", { sessionId: session.id });
 
-        if (session.mode === 'subscription' && session.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-          const productId = subscription.items.data[0]?.price.product as string;
-          const planType = planMapping[productId] || 'pro';
-          const customerEmail = session.customer_email || session.customer_details?.email;
+        if (session.mode === 'subscription') {
+          if (session.livemode !== event.livemode) throw new Error('checkout_event_mode_conflict');
+          if (event.type === 'checkout.session.async_payment_succeeded' && session.payment_status !== 'paid') {
+            throw new Error('checkout_async_payment_not_confirmed');
+          }
+          const activation = await completeSubscriptionCheckout(session, stripe, supabaseClient);
+          if (!activation) {
+            logStep("Checkout awaiting payment", { sessionId: session.id });
+            break;
+          }
+          const { user, planType, subscriptionId, applied } = activation;
+          logStep("Subscription checkout processed", { userId: user.id, planType, applied });
 
           // Extract influencer info from metadata
           const referralCode = session.metadata?.referral_code;
           const influencerId = session.metadata?.influencer_id;
-          const clientUserId = session.metadata?.user_id;
-
-          if (customerEmail) {
-            // Find user by email
-            const { data: userData } = await supabaseClient.auth.admin.listUsers();
-            const user = userData?.users?.find(u => u.email === customerEmail);
-
-            if (user) {
-              // Update subscription in database
-              const { error: updateError } = await supabaseClient
-                .from('subscriptions')
-                .update({
-                  plan_type: planType,
-                  status: 'active',
-                  stripe_customer_id: session.customer as string,
-                  updated_at: new Date().toISOString(),
-                })
-                .eq('user_id', user.id);
-
-              if (updateError) {
-                logStep("ERROR: Failed to update subscription", { error: updateError.message });
-              } else {
-                logStep("Subscription updated successfully", { userId: user.id, planType });
-              }
 
               // Handle influencer commission if referral was used
+              // Legacy commission effects remain outside entitlement idempotency.
+              // They require a separate durable receipt/transaction migration.
               if (influencerId && referralCode) {
                 logStep("Processing influencer commission", { influencerId, referralCode });
 
@@ -269,7 +401,7 @@ serve(async (req) => {
                       sale_amount: annualValue,
                       commission_amount: commissionAmount,
                       status: 'pending',
-                      subscription_id: session.subscription as string,
+                      subscription_id: subscriptionId,
                     });
 
                   if (commissionError) {
@@ -351,22 +483,11 @@ serve(async (req) => {
                   }
                 }
               }
-            } else {
-              logStep("User not found for email", { email: customerEmail });
-            }
-          }
         } else if (session.mode === 'payment' && session.metadata?.type === 'overage_pack') {
           const result = await applyOveragePayment(event, OVERAGE_PACK_ACTIONS,
             parameters => supabaseClient.rpc('credit_overage_pack', parameters));
           logStep("Overage payment processed", { sessionId: session.id, ...result });
         }
-        break;
-      }
-
-      case 'checkout.session.async_payment_succeeded': {
-        const result = await applyOveragePayment(event, OVERAGE_PACK_ACTIONS,
-          parameters => supabaseClient.rpc('credit_overage_pack', parameters));
-        logStep("Delayed overage payment processed", { eventId: event.id, ...result });
         break;
       }
 

@@ -147,9 +147,9 @@ test('false pricing return flags do not display a payment banner', async ({ page
   await expect(page.getByText(/Retour du paiement reçu|Paiement annulé|Retour après annulation/)).toHaveCount(0);
 });
 
-for (const response of [{ url: 42 }, { url: 'javascript:window.invalidRedirect=true' }, { url: 'http://example.invalid/checkout' }, { url: '' }]) {
+for (const response of [{ url: 42 }, { url: 'javascript:window.invalidRedirect=true' }, { url: 'http://example.invalid/checkout' }, { url: '' }, { url: 'https://example.invalid/checkout' }, { url: 'https://checkout.stripe.com@evil.invalid/' }]) {
   test(`pricing releases checkout and rejects an invalid URL: ${JSON.stringify(response)}`, async ({ page }) => {
-    await prepare(page);
+    await prepare(page, { ...activeSubscription, plan_type: 'free' });
     await page.route('**/functions/v1/create-checkout', route => json(route, response));
     await page.goto('/pricing');
     const starter = page.getByRole('heading', { name: 'Starter', exact: true }).locator('..');
@@ -163,7 +163,7 @@ for (const response of [{ url: 42 }, { url: 'javascript:window.invalidRedirect=t
 }
 
 test('pricing follows the HTTPS checkout session returned by its server', async ({ page }) => {
-  await prepare(page);
+  await prepare(page, { ...activeSubscription, plan_type: 'free' });
   const destination = 'https://checkout.stripe.com/c/pay/local_fixture';
   await page.route('**/functions/v1/create-checkout', route => json(route, { url: destination }));
   await page.route(destination, route => route.fulfill({ contentType: 'text/html', body: '<h1>Local checkout fixture</h1>' }));

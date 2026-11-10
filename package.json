@@ -35,7 +35,8 @@
     "test:contracts-ots": "node tests/contracts-ots/run.mjs",
     "test:contracts-ots:browser": "node tests/contracts-ots/browser/run.mjs",
     "test:contracts-content": "node --experimental-vm-modules --test --test-concurrency=1 tests/opentimestamps-content.test.mjs",
-    "test:contracts-native": "deno test --no-remote --no-npm --deny-net --deny-run --allow-env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,DOCUSEAL_API_URL,DOCUSEAL_API_TOKEN,DOCUSEAL_WEBHOOK_SECRET --config tests/contracts-ots-native/deno.json tests/contracts-ots-native/runtime.ts tests/contracts-ots-native/webhook-runtime.ts tests/contracts-ots-native/webhook-donor-runtime.ts tests/contracts-ots-native/body-runtime.ts tests/contracts-ots-native/delivery-runtime.ts"
+    "test:contracts-native": "deno test --no-remote --no-npm --deny-net --deny-run --allow-env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,DOCUSEAL_API_URL,DOCUSEAL_API_TOKEN,DOCUSEAL_WEBHOOK_SECRET --config tests/contracts-ots-native/deno.json tests/contracts-ots-native/runtime.ts tests/contracts-ots-native/webhook-runtime.ts tests/contracts-ots-native/webhook-donor-runtime.ts tests/contracts-ots-native/body-runtime.ts tests/contracts-ots-native/delivery-runtime.ts",
+    "test:billing": "node --experimental-vm-modules --test --test-concurrency=1 tests/billing/billing.test.mjs tests/billing-webhook/handler.test.mjs tests/billing/module-boundary.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",
