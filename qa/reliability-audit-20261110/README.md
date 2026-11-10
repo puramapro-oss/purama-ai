@@ -26,6 +26,22 @@ La branche de revue est `audit/reliability-oauth-20261110`. Son déploiement
 automatique est désactivé dans `vercel.json`. La publication en brouillon et les
 contrôles GitHub sont distincts d'une fusion ou d'une mise en production.
 
+### Réconciliation du runtime arrivé en parallèle
+
+La première publication `54971f5` a terminé sa CI avec succès : site et KARTA,
+dont 1 739 tests KARTA dans 101 fichiers. La PR39 `2e2f713` a ensuite été
+examinée : elle modifie elle aussi le planificateur, pour que le runtime attende
+les travaux en cours pendant son arrêt. Les deux ensembles de protections ont
+été réconciliés dans un seul contrôleur. Quarante autres fichiers runtime sont
+préservés exactement ; un adaptateur de test reçoit le contexte réel attendu
+par node-cron, avec toutes ses assertions conservées.
+
+La composition conserve également les deux fichiers du correctif Web `42d508b`
+arrivé sur la PR36. Les sources initiales, le premier PASS hébergé, les entrées
+importées et la nouvelle qualification sont distingués dans le
+[rapport de réconciliation](late-integration/README.md). Le premier PASS ne
+devient pas par anticipation une preuve du nouvel assemblage.
+
 ## Corrections
 
 ### Planificateur des agents
@@ -39,7 +55,12 @@ timers et la boucle vérifie cet état avant chaque nouvelle soumission.
 Le callback attend la fin réelle de son travail. Les seize cadences statiques
 et le rapport quotidien sont conservés. Une soumission déjà commencée, un
 travail accepté par Redis ou un rapport déjà en cours ne sont pas annulés par
-ce garde. Voir [le rapport scheduler](../static-scheduler-20261110/README.md).
+ce garde. La réconciliation avec la PR39 fait aussi attendre la fin des travaux
+en cours à `stop` et `destroy`, pour que le runtime puisse arrêter ensuite ses
+workers et ses files. Toutes les expressions sont validées avant création et
+un démarrage partiel est nettoyé. Voir le
+[rapport initial du scheduler](../static-scheduler-20261110/README.md) et la
+[qualification de la composition](late-integration/README.md).
 
 ### Paiements et identité commerciale
 
@@ -99,7 +120,7 @@ La liste blanche frontend ne remplace pas des permissions de colonnes en base.
 La politique de révocation auprès de Google et le chiffrement existant ne sont
 pas redéfinis par cette correction.
 
-## Qualification par périmètre
+## Qualification du premier lot par périmètre
 
 Les suites se recouvrent ; leurs nombres ne sont pas additionnés en un total
 de scénarios uniques. Les fixtures d'identité et de fournisseur restent inertes.
@@ -159,12 +180,13 @@ leur mise en forme : le contrôle de blancs finaux du code et des tests est
 distinct des avertissements de whitespace dans ces sorties d'outils, comme
 l'indique [le reçu de contrôle du diff](code-diff-check.json).
 
-Ce dossier est construit avant publication. La qualification hébergée de la
-composition complète, y compris les corrections Web arrivées sur l'amont, est
-à lire dans les contrôles et la description de la PR associée au commit publié.
-Les résultats hébergés ne sont pas anticipés dans les reçus locaux.
+Les reçus initiaux ont été construits avant la première publication. La
+qualification hébergée de chaque composition complète est à lire dans les
+contrôles et la description de la PR associés au commit concerné. Le premier
+PASS hébergé est désormais conservé dans le rapport de réconciliation ; les
+résultats d'une révision suivante ne sont pas anticipés dans les reçus locaux.
 
-### Analyse d'impact finale
+### Analyse d'impact de la première publication
 
 GitNexus 1.6.12 a reconstruit l'index du candidat sur la base `0bfd44c`, puis
 exécuté la détection des changements préparés et la comparaison à `origin/main`
@@ -190,6 +212,10 @@ conserve cette distinction. Les rapports ajoutés après cette analyse ne
 modifient pas les entrées opérationnelles.
 
 ## Mise en service : dépendances réelles
+
+La composition avec le runtime PR39 hérite également de la migration KARTA
+027 et de sa procédure d'arrêt des anciens producteurs d'approbations,
+détaillées dans le [rapport de réconciliation](late-integration/README.md).
 
 La migration `20261110233000_oauth_connection_states.sql` doit précéder les deux
 handlers OAuth. Les fonctions et le client doivent être livrés comme une

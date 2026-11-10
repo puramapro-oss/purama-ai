@@ -66,9 +66,10 @@ function queryFor(table: string) {
 }
 vi.mock("../src/db/supabase.js", () => ({ supabase: {
   from: (table: string) => queryFor(table),
-  rpc: async (name: string, params: Record<string, unknown>) => {
+  rpc: (name: string, params: Record<string, unknown>) => {
+    const response = (async () => {
     const names: Record<string, string[]> = {
-      karta_claim_pending_action: ["p_id", "p_decision"],
+      karta_claim_pending_action_bounded: ["p_id", "p_decision"],
       karta_finalize_pending_action: ["p_id", "p_status", "p_summary"],
       karta_record_run_outcome: ["p_user_id", "p_agent_type", "p_status", "p_started_at"],
     };
@@ -76,8 +77,11 @@ vi.mock("../src/db/supabase.js", () => ({ supabase: {
     if (!keys) throw new Error("Unexpected fixture RPC");
     try {
       const rows = (await database().query(`SELECT * FROM purama_ai.${identifier(name)}(${keys.map((_, i) => "$" + (i + 1)).join(",")})`, keys.map(key => params[key]))).rows;
-      return { data: JSON.parse(JSON.stringify(rows)), error: null };
+      const data = name === "karta_claim_pending_action_bounded" ? (rows[0] as Record<string, unknown>)[name] : rows;
+      return { data: JSON.parse(JSON.stringify(data)), error: null };
     } catch { return { data: null, error: { message: "PRIVATE_DATABASE_SENTINEL" } }; }
+    })();
+    return Object.assign(response, { abortSignal: (_signal: AbortSignal) => response });
   },
 } }));
 vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ isMock: false, decide: h.decide }) }));
@@ -109,12 +113,20 @@ const run = async (trigger: AgentTrigger, key: string) => {
   catch (error) { throw new Error("Inert SQL fixture admission failed: " + h.sqlErrors.join("; "), { cause: error }); }
 };
 const queued = (index: number) => structuredClone(h.enqueue.mock.calls[index][0]) as Queued;
+const resumeFor = async (action: Pending): Promise<Queued> => {
+  const row = (await database().query<{ user_id: string; agent_type: AgentType; parent_run_id: string; pending_action_id: string; resolution: string }>(
+    "SELECT user_id,agent_type,parent_run_id,pending_action_id,resolution FROM purama_ai.karta_approval_outbox WHERE pending_action_id=$1", [action.id],
+  )).rows[0];
+  if (!row) throw new Error("Missing durable continuation intent");
+  return { userId: row.user_id, agentType: row.agent_type, trigger: { type: "delegation", source: "approval-resume",
+    payload: { previousRunId: row.parent_run_id, pendingActionId: row.pending_action_id, resolution: row.resolution } } };
+};
 const pending = async () => (await database().query<Pending>("SELECT id,run_id,execution_trigger,status FROM purama_ai.karta_pending_actions ORDER BY created_at,id")).rows;
 
 beforeAll(async () => {
   h.db = new PGlite();
   await database().exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT nullif(current_setting(''request.jwt.claim.sub'',true),'''')::uuid'; CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;");
-  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "007_runtime_hardening.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "026_pending_action_execution_origin.sql", "026_pending_action_execution_origin.sql"]) {
+  for (const name of ["001_karta_core.sql", "002_karta_global_kill_switch.sql", "005_karta_pending_actions.sql", "006_execution_claims.sql", "007_runtime_hardening.sql", "019_karta_approval_parent_guard.sql", "020_execution_fingerprints.sql", "026_pending_action_execution_origin.sql", "026_pending_action_execution_origin.sql", "027_approval_continuation_outbox.sql"]) {
     await database().exec(await readFile(new URL("../migrations/" + name, import.meta.url), "utf8"));
   }
 });
@@ -144,9 +156,9 @@ describe("durable approval origins with actual SQL and engine modules", () => {
     expect(queued(0)).toEqual({ userId: owner, agentType: "compta", trigger: {
       type: "delegation", source: "legal", payload: { reason: marker, kartaDelegation: { depth: 1, lineage: ["legal", "compta"] } },
     } });
-    expect(queued(1).trigger.source).toBe("approval-resume");
+    expect((await resumeFor(action)).trigger.source).toBe("approval-resume");
     expect((await resolvePendingAction(action.id, "approve")).ok).toBe(false);
-    expect(h.enqueue).toHaveBeenCalledTimes(2);
+    expect(h.enqueue).toHaveBeenCalledTimes(1);
   });
 
   it("preserves the original lineage across two explicit approvals but refuses the second automatic continuation", async () => {
@@ -156,7 +168,7 @@ describe("durable approval origins with actual SQL and engine modules", () => {
     expect(first.execution_trigger).toEqual(original());
     expect((await resolvePendingAction(first.id, "approve")).ok).toBe(true);
     expect(h.effect).toHaveBeenCalledExactlyOnceWith({}, expect.objectContaining({ trigger: original() }));
-    const resumeFirst = queued(0);
+    const resumeFirst = await resumeFor(first);
     expect(JSON.stringify(resumeFirst)).not.toContain(marker);
     h.decision!.toolCalls = [{ tool: "delegate_to_agent", params: { targetAgent: "compta", reason: "Suite de la tâche" } }];
     expect((await run(resumeFirst.trigger, "first-approval-resume")).status).toBe("awaiting_approval");
@@ -165,14 +177,14 @@ describe("durable approval origins with actual SQL and engine modules", () => {
     expect(second.execution_trigger).toEqual(original());
     expect(JSON.stringify(second.execution_trigger)).not.toMatch(/approval-resume|previousRunId|NEVER_PERSIST/);
     expect((await resolvePendingAction(second.id, "approve")).ok).toBe(true);
-    expect(queued(1)).toEqual({ userId: owner, agentType: "compta", trigger: {
+    expect(queued(0)).toEqual({ userId: owner, agentType: "compta", trigger: {
       type: "delegation", source: "legal", payload: { reason: "Suite de la tâche", kartaDelegation: { depth: 2, lineage: ["partner", "legal", "compta"] } },
     } });
-    const resumed = await run(queued(2).trigger, "second-approval-resume");
+    const resumed = await run((await resumeFor(second)).trigger, "second-approval-resume");
     expect(resumed).toMatchObject({ status: "error", retryable: false });
     expect(resumed.toolsUsed).toEqual([]);
     expect(h.decide).toHaveBeenCalledTimes(2);
-    expect(h.enqueue).toHaveBeenCalledTimes(3);
+    expect(h.enqueue).toHaveBeenCalledTimes(1);
     expect(await pending()).toHaveLength(2);
     const traces = await database().query("SELECT decision,tools_used,result_summary,error_message FROM purama_ai.karta_runs");
     expect(JSON.stringify([traces.rows, resumed, h.notify.mock.calls])).not.toMatch(/PRIVATE_ORIGIN_SENTINEL|NEVER_PERSIST/);
@@ -211,7 +223,7 @@ describe("durable approval origins with actual SQL and engine modules", () => {
     const action = (await pending())[0];
     await resolvePendingAction(action.id, "approve");
     h.decide.mockClear(); h.buildContext.mockClear();
-    const result = await runAgentCycle(otherOwner, definition(), queued(0).trigger, "wrong-owner-resume");
+    const result = await runAgentCycle(otherOwner, definition(), (await resumeFor(action)).trigger, "wrong-owner-resume");
     expect(result.status).toBe("error");
     expect(h.decide).not.toHaveBeenCalled(); expect(h.buildContext).not.toHaveBeenCalled();
     expect(h.effect).toHaveBeenCalledOnce();

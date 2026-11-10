@@ -2,7 +2,8 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { createHash, timingSafeEqual } from "node:crypto";
 import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
-import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
+import { setGlobalKillSwitch } from "../engine/killswitch.js";
+import type { RuntimeReadiness } from "../runtime/lifecycle.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { CycleDeliveryConflictError, getQueuedExecutionKey } from "../queue/delivery-identity.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
@@ -60,9 +61,9 @@ function readIdempotencyKey(req: IncomingMessage): string | undefined {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer() {
+export function startApiServer(readiness?: () => Promise<RuntimeReadiness>) {
   const server = createServer((req, res) => {
-    void handleRequest(req, res).catch((error) => {
+    void handleRequest(req, res, readiness).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
       else if (error instanceof BriefSubmissionError) json(res, error.status, { error: error.message, code: error.code });
@@ -78,15 +79,21 @@ export function startApiServer() {
   return server;
 }
 
-async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+async function handleRequest(req: IncomingMessage, res: ServerResponse,
+  readiness?: () => Promise<RuntimeReadiness>): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
+  if (req.method === "GET" && url.pathname === "/live") {
+    json(res, 200, { status: "alive" });
+    return;
+  }
   if (req.method === "GET" && url.pathname === "/health") {
-    const globalKillSwitch = await isGlobalKillSwitchActive();
-    json(res, 200, {
-      status: "ok",
+    const state = await readiness?.().catch(() => ({ ready: false, phase: "failed" as const }))
+      ?? { ready: false, phase: "starting" as const };
+    json(res, state.ready ? 200 : 503, {
+      status: state.ready ? "ok" : "unavailable",
+      ...state,
       mockClaude: config.mockClaude,
-      globalKillSwitch,
       timestamp: new Date().toISOString(),
     });
     return;
@@ -97,9 +104,19 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return;
   }
 
+  const requireReady = async (): Promise<boolean> => {
+    if (readiness && !(await readiness().catch(() => ({ ready: false }))).ready) {
+      json(res, 503, { error: "KARTA temporairement indisponible" });
+      return false;
+    }
+    return true;
+  };
+
   if (req.method === "POST" && url.pathname === "/kill-switch/global") {
     const body = await readBody(req);
     const active = readActive(body);
+    // Emergency stops remain available when Redis or the relay is down.
+    if (!active && !await requireReady()) return;
     await setGlobalKillSwitch(active);
     json(res, 200, { ok: true, active });
     return;
@@ -113,9 +130,11 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
       return;
     }
     const body = await readBody(req);
+    const active = readActive(body);
+    if (!active && !await requireReady()) return;
     const { error } = await supabase
       .from("karta_agent_state")
-      .update({ kill_switch: readActive(body), updated_at: new Date().toISOString() })
+      .update({ kill_switch: active, updated_at: new Date().toISOString() })
       .eq("user_id", userId)
       .eq("agent_type", agentType);
     if (error) {
@@ -125,6 +144,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     json(res, 200, { ok: true });
     return;
   }
+
+  if (!await requireReady()) return;
 
   const briefsMatch = url.pathname.match(/^\/briefs\/([a-z-]+)\/([0-9a-f-]+)$/);
   if (req.method === "GET" && briefsMatch) {

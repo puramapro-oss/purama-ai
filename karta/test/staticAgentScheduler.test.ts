@@ -17,6 +17,7 @@ const state = vi.hoisted(() => ({
 
 vi.mock("node-cron", () => ({
   default: {
+    validate: vi.fn(() => true),
     schedule: vi.fn((expression: string, callback: Timer["callback"]) => {
       const task = { expression, callback, stop: vi.fn(), destroy: vi.fn() };
       state.tasks.push(task);
@@ -91,6 +92,7 @@ describe("static-agent scheduler lifecycle", () => {
     const { startSchedulers } = await load();
     const controllers = startSchedulers();
     state.tasks[0].callback(context());
+    await flush();
     expect(state.list).toHaveBeenCalledTimes(1);
     controllers[0].stop();
     pending.resolve(["user-1"]);

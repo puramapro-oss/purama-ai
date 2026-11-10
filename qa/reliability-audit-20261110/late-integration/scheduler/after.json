@@ -1,0 +1,42 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "test/coreSchedulerDrain.test.ts",
+    "test/staticAgentScheduler.test.ts",
+    "test/staticAgentSchedulerCron.test.ts"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+  "env": {},
+  "capture_kind": "Exact structured tool results; output fields are the text returned by exec_command/write_stdin, not reconstructed raw terminal logs.",
+  "captures": [
+    {
+      "key": "scheduler_union_after_start",
+      "result": {
+        "chunk_id": "314aef",
+        "wall_time_seconds": 1.00158904,
+        "session_id": 52124,
+        "original_token_count": 124,
+        "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 test\n> vitest run --maxWorkers=1 test/coreSchedulerDrain.test.ts test/staticAgentScheduler.test.ts test/staticAgentSchedulerCron.test.ts\n\n\n RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta\n\n\n Test Files  3 passed (3)\n      Tests  24 passed (24)\n   Start at  23:58:08\n   Duration  657ms (tests 44%, transform 37%, import 10%, setup 5%, worker 4%)\n\n"
+      }
+    },
+    {
+      "key": "scheduler_reconciliation_validation_start_0",
+      "result": {
+        "chunk_id": "8a591c",
+        "wall_time_seconds": 0.000020979,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  ],
+  "tests": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0
+  },
+  "exit_code": 0
+}

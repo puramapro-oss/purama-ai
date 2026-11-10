@@ -1,0 +1,312 @@
+{
+  "recorded_at": "2026-11-10T23:01:33.572595+00:00",
+  "files": [
+    {
+      "path": "karta/migrations/027_approval_continuation_outbox.sql",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "c0b2ee41efcc095a641ac4a5116c8d8311a12ce86ddfdc5199584948d8a9cdd0",
+      "current_sha256": "c0b2ee41efcc095a641ac4a5116c8d8311a12ce86ddfdc5199584948d8a9cdd0",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/api/server.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "07268b32ff6f2a881cc7633271075ddb7352e72ecafa4bb13aa9e1310efb56c8",
+      "current_sha256": "07268b32ff6f2a881cc7633271075ddb7352e72ecafa4bb13aa9e1310efb56c8",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/engine/approval.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "344f13556dfcd6c028fa4837dcd0e5af4b08007969c407d1c0cb4e148935d7c1",
+      "current_sha256": "344f13556dfcd6c028fa4837dcd0e5af4b08007969c407d1c0cb4e148935d7c1",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/engine/notify.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "a6fb72caf0af8ab51b7a2f9d4d1cc82de9c87bac8ba135a3250e293104fea6d1",
+      "current_sha256": "a6fb72caf0af8ab51b7a2f9d4d1cc82de9c87bac8ba135a3250e293104fea6d1",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/index.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "0888d9568e79dabd1e78bf833a736c3add28f7fe4fd3df3a0f13d6e9a85a45bc",
+      "current_sha256": "0888d9568e79dabd1e78bf833a736c3add28f7fe4fd3df3a0f13d6e9a85a45bc",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/queue/approval-outbox.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "ace30105165f99a8bf4d544ed166eeaff3ac7ce69b37aef742dbfd21443284d9",
+      "current_sha256": "ace30105165f99a8bf4d544ed166eeaff3ac7ce69b37aef742dbfd21443284d9",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/queue/queues.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "0f42eaa8fa0cc0be8c5536b163f2b46f43f8be66582bd9d0b624784fceffe533",
+      "current_sha256": "0f42eaa8fa0cc0be8c5536b163f2b46f43f8be66582bd9d0b624784fceffe533",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/runtime/config.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "eea330ec3372cf887245a1b838590aa3b00ff67b28dacc49df79324e3bf9e82e",
+      "current_sha256": "eea330ec3372cf887245a1b838590aa3b00ff67b28dacc49df79324e3bf9e82e",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/runtime/lifecycle.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "c77d6a4a70289108510991db1ab4caf1c58673887057c7ad9589706b6421ea45",
+      "current_sha256": "c77d6a4a70289108510991db1ab4caf1c58673887057c7ad9589706b6421ea45",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/runtime/probe.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "ce79ad5951800a9a92f22b4b4f0c5c609c8d294fcc42b1de698ca1239d50740a",
+      "current_sha256": "ce79ad5951800a9a92f22b4b4f0c5c609c8d294fcc42b1de698ca1239d50740a",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/approval.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "88456f52b1eeb5eabebb889b53ec786249edbf9a14e61e327554046318f1aa53",
+      "current_sha256": "88456f52b1eeb5eabebb889b53ec786249edbf9a14e61e327554046318f1aa53",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/approvalOutbox.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "3645795578d2e66dd027c8070539d9a3e3d3d5db66962c568e2ab2d69c72a56f",
+      "current_sha256": "3645795578d2e66dd027c8070539d9a3e3d3d5db66962c568e2ab2d69c72a56f",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/approvalOutboxRelay.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "7dbeda49ee5faab8065150aea62ebc66e0b9ce214e10dad18a4b7727812a28ab",
+      "current_sha256": "7dbeda49ee5faab8065150aea62ebc66e0b9ce214e10dad18a4b7727812a28ab",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/approvalOutboxResolver.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "8aa0cb2aedd3eb0a112901a5b2107ca360b840247f77b472f0b249397c0e0103",
+      "current_sha256": "8aa0cb2aedd3eb0a112901a5b2107ca360b840247f77b472f0b249397c0e0103",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/approvalTracePrivacy.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "6423f064a8ca26840d8a2a08f6f4d9db52a01424a795aac2d2a12a769e4856dd",
+      "current_sha256": "6423f064a8ca26840d8a2a08f6f4d9db52a01424a795aac2d2a12a769e4856dd",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/approvalTriggerContext.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "807b93ba082e0fcc8101f7fd7d38830f84107ec36fe4d88661a22a937edbeb23",
+      "current_sha256": "807b93ba082e0fcc8101f7fd7d38830f84107ec36fe4d88661a22a937edbeb23",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/coreSchedulerDrain.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "a7aba79d4877796890082b7db649584766b58604465a3165a6b77dc67f372682",
+      "current_sha256": "7c87b5a9847bd1d122de0759c51d7b070c3a6bc73789f68c52422b31c1460427",
+      "status": "ADAPTER_CHANGED"
+    },
+    {
+      "path": "karta/test/customAuthorization.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "66d4257cb95f6a5750eb09c92b502066ed27b1b30be798a4ce1b1bfab2ccf08c",
+      "current_sha256": "66d4257cb95f6a5750eb09c92b502066ed27b1b30be798a4ce1b1bfab2ccf08c",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/cycleAdmissionPrivacy.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "c21b2811c1240c2be4581a04347dc20f8c8b9fe10e8f48353e85b0aaf08c0f78",
+      "current_sha256": "c21b2811c1240c2be4581a04347dc20f8c8b9fe10e8f48353e85b0aaf08c0f78",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/migration-fixtures.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "06f52ca285a67d76604f6cf056767be07d431382b0be223a00873307a98801fe",
+      "current_sha256": "06f52ca285a67d76604f6cf056767be07d431382b0be223a00873307a98801fe",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/notifyReceipt.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "2a7cdc2becd6b27aa3b47f48f7612d8ee5ff1199b5aaaba6eacfa7e0fd27fd4a",
+      "current_sha256": "2a7cdc2becd6b27aa3b47f48f7612d8ee5ff1199b5aaaba6eacfa7e0fd27fd4a",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/runtimeApiReadiness.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "869bd3335c73d4044c33268d48ca448f91207d90047ba1576c233be84192ce52",
+      "current_sha256": "869bd3335c73d4044c33268d48ca448f91207d90047ba1576c233be84192ce52",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/runtimeConfig.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "869fc1271c7133137082270df4bac29998fc083d2df2cf8ea65a877755176ea2",
+      "current_sha256": "869fc1271c7133137082270df4bac29998fc083d2df2cf8ea65a877755176ea2",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/runtimeLifecycle.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "265e03c7d2ca792344ccb4cac3f1c1599e5e46f727b0e7e658cc53050b7d0c08",
+      "current_sha256": "265e03c7d2ca792344ccb4cac3f1c1599e5e46f727b0e7e658cc53050b7d0c08",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/runtimeProbe.test.ts",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "131713410b7fc50f2df4cd1ee8d19c671c25b8fa26d9f8b365c5f86957c60367",
+      "current_sha256": "131713410b7fc50f2df4cd1ee8d19c671c25b8fa26d9f8b365c5f86957c60367",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/README.md",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "5ffdcff9a15ca13a29e9c8f07640e51b87431a1439766fa0a990f55aac6139b8",
+      "current_sha256": "5ffdcff9a15ca13a29e9c8f07640e51b87431a1439766fa0a990f55aac6139b8",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/baseline-http-shutdown.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "0596c258cb86f3ed212fc2b5ba4d74a50aef8bc936e45ab61484e13f64aad4ef",
+      "current_sha256": "0596c258cb86f3ed212fc2b5ba4d74a50aef8bc936e45ab61484e13f64aad4ef",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/change-impact.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "d5faf1729b62993f67f3436a16031e763cb92d178d492e7dcf82f4d4effddd22",
+      "current_sha256": "d5faf1729b62993f67f3436a16031e763cb92d178d492e7dcf82f4d4effddd22",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/core-scheduler-drain-evidence.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "d44388e65b51bdf8cf2074b289f3760c452f958e1a3b4020431717879aaa3424",
+      "current_sha256": "d44388e65b51bdf8cf2074b289f3760c452f958e1a3b4020431717879aaa3424",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/core-scheduler-drain-green.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "0b3a1ee672e3c86181b0ffcf8ffa250035a32b20ebc42f0d5341cb6e5bfbc62b",
+      "current_sha256": "0b3a1ee672e3c86181b0ffcf8ffa250035a32b20ebc42f0d5341cb6e5bfbc62b",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/core-scheduler-drain-red.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "0a26e0f3c18a18542166c8b6be9d236b7e29bd37caed26af4a0ecda927c65424",
+      "current_sha256": "0a26e0f3c18a18542166c8b6be9d236b7e29bd37caed26af4a0ecda927c65424",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/core-scheduler-real-timer.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "8365ca1f8264bc4948d89ed0069e19666dc60ed09605246631786678bc6920f8",
+      "current_sha256": "8365ca1f8264bc4948d89ed0069e19666dc60ed09605246631786678bc6920f8",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/core-scheduler-startup-red.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "b1b4e3c47c340b17822aabacc48e90e245a4e14041eca56a4430fbec4eeee568",
+      "current_sha256": "b1b4e3c47c340b17822aabacc48e90e245a4e14041eca56a4430fbec4eeee568",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/native-outbox-results.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "36226fb672c30f2510cd71262cb0554998860b0a86d314cb33f47892d7be6125",
+      "current_sha256": "36226fb672c30f2510cd71262cb0554998860b0a86d314cb33f47892d7be6125",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/native-outbox-setof-lock-red.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "90b9491432d94a97dadb0c4794485e5ec2a0d8ad5a2f0d4a82dff86677ba60ad",
+      "current_sha256": "90b9491432d94a97dadb0c4794485e5ec2a0d8ad5a2f0d4a82dff86677ba60ad",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/native-outbox.py",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "9e0866a3823a343174ccc5018947e88aa23f88fd729b2bf8939ff1f1aa3be231",
+      "current_sha256": "9e0866a3823a343174ccc5018947e88aa23f88fd729b2bf8939ff1f1aa3be231",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/notify-receipts-evidence.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "1cecbac71c2e1f5b4d272f7001afc2bd15e6b94a04c45df0dcb784b5d6b4ae3f",
+      "current_sha256": "1cecbac71c2e1f5b4d272f7001afc2bd15e6b94a04c45df0dcb784b5d6b4ae3f",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/notify-receipts-green.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "c094653cebe50edf3bf311a5ae0dc130b96ac08040fcb9e8b98de776ce76b585",
+      "current_sha256": "c094653cebe50edf3bf311a5ae0dc130b96ac08040fcb9e8b98de776ce76b585",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/notify-receipts-red.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "3236b70d81b6227333b5c19a7f403a799a0c7d005d04afe1a185d5b2a7014d4a",
+      "current_sha256": "3236b70d81b6227333b5c19a7f403a799a0c7d005d04afe1a185d5b2a7014d4a",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/reproduce-baseline-http-shutdown.mjs",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "060187c40e208089df905a8a84e4d2ba68e6094480c65880c86154b208122c6d",
+      "current_sha256": "060187c40e208089df905a8a84e4d2ba68e6094480c65880c86154b208122c6d",
+      "status": "EXACT"
+    },
+    {
+      "path": "qa/iao-runtime-20261110/source-manifest.json",
+      "source_commit": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+      "source_sha256": "df788ca8c02a8721bea2719f6f99e925553648e319160ff71fd6beec7d9c9cef",
+      "current_sha256": "df788ca8c02a8721bea2719f6f99e925553648e319160ff71fd6beec7d9c9cef",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/src/tools/websearch.ts",
+      "source_commit": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+      "source_sha256": "a3f9e22929894506750fb20c685f2a9f1c2eaa9a45875a57c558335c71d96600",
+      "current_sha256": "a3f9e22929894506750fb20c685f2a9f1c2eaa9a45875a57c558335c71d96600",
+      "status": "EXACT"
+    },
+    {
+      "path": "karta/test/webSearchTransportIntegrity.test.ts",
+      "source_commit": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+      "source_sha256": "0a56391c7900369662f30136d438457ec697673782b0c7ad2d24c04abca2fc9b",
+      "current_sha256": "0a56391c7900369662f30136d438457ec697673782b0c7ad2d24c04abca2fc9b",
+      "status": "EXACT"
+    }
+  ],
+  "runtime_exact": 40,
+  "web_exact": 2,
+  "adapted_test": [
+    "karta/test/coreSchedulerDrain.test.ts"
+  ],
+  "cron_sha256": "0bb2de145b86bbc6c377e90eb70f939f779343cc221d16754f9f4cd7aeb7b972"
+}

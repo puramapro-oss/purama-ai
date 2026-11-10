@@ -313,7 +313,9 @@ export const webSearchTool: ToolDefinition<SearchParams, SearchResponse> = {
       }
     };
     try {
-      return await Promise.race([request(), deadline]);
+      const result = await Promise.race([request(), deadline]);
+      assertSearchActive(controller.signal, expiresAt);
+      return result;
     } catch {
       controller.abort();
       // Transport, JSON and provider errors can contain credentials or private

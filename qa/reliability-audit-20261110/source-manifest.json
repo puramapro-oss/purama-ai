@@ -1,11 +1,44 @@
 {
-  "base": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "phase": "composed_runtime_candidate",
+  "base": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+  "publication_parent": "54971f5a511be752fa70ed94306cdb322f29ff81",
+  "additional_parents": [
+    "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+    "42d508b46dc7e7cda7efe3c6bfd4396450afedef"
+  ],
   "files": {
     ".github/workflows/purama-chef-hardening.yml": "cae03d727d63d142728a9a587ab7877b03201a729a5f899be166a5b504943d39",
-    "karta/src/scheduler/cron.ts": "bb4ab70ae63aa4f4a300e1626140c7d92cba10698e878c5a062c49181416cd4f",
+    "karta/migrations/027_approval_continuation_outbox.sql": "c0b2ee41efcc095a641ac4a5116c8d8311a12ce86ddfdc5199584948d8a9cdd0",
+    "karta/src/api/server.ts": "07268b32ff6f2a881cc7633271075ddb7352e72ecafa4bb13aa9e1310efb56c8",
+    "karta/src/engine/approval.ts": "344f13556dfcd6c028fa4837dcd0e5af4b08007969c407d1c0cb4e148935d7c1",
+    "karta/src/engine/notify.ts": "a6fb72caf0af8ab51b7a2f9d4d1cc82de9c87bac8ba135a3250e293104fea6d1",
+    "karta/src/index.ts": "0888d9568e79dabd1e78bf833a736c3add28f7fe4fd3df3a0f13d6e9a85a45bc",
+    "karta/src/queue/approval-outbox.ts": "ace30105165f99a8bf4d544ed166eeaff3ac7ce69b37aef742dbfd21443284d9",
+    "karta/src/queue/queues.ts": "0f42eaa8fa0cc0be8c5536b163f2b46f43f8be66582bd9d0b624784fceffe533",
+    "karta/src/runtime/config.ts": "eea330ec3372cf887245a1b838590aa3b00ff67b28dacc49df79324e3bf9e82e",
+    "karta/src/runtime/lifecycle.ts": "c77d6a4a70289108510991db1ab4caf1c58673887057c7ad9589706b6421ea45",
+    "karta/src/runtime/probe.ts": "ce79ad5951800a9a92f22b4b4f0c5c609c8d294fcc42b1de698ca1239d50740a",
+    "karta/src/scheduler/cron.ts": "0bb2de145b86bbc6c377e90eb70f939f779343cc221d16754f9f4cd7aeb7b972",
+    "karta/src/tools/websearch.ts": "a3f9e22929894506750fb20c685f2a9f1c2eaa9a45875a57c558335c71d96600",
+    "karta/test/approval.test.ts": "88456f52b1eeb5eabebb889b53ec786249edbf9a14e61e327554046318f1aa53",
+    "karta/test/approvalOutbox.test.ts": "3645795578d2e66dd027c8070539d9a3e3d3d5db66962c568e2ab2d69c72a56f",
+    "karta/test/approvalOutboxRelay.test.ts": "7dbeda49ee5faab8065150aea62ebc66e0b9ce214e10dad18a4b7727812a28ab",
+    "karta/test/approvalOutboxResolver.test.ts": "8aa0cb2aedd3eb0a112901a5b2107ca360b840247f77b472f0b249397c0e0103",
+    "karta/test/approvalTracePrivacy.test.ts": "6423f064a8ca26840d8a2a08f6f4d9db52a01424a795aac2d2a12a769e4856dd",
+    "karta/test/approvalTriggerContext.test.ts": "807b93ba082e0fcc8101f7fd7d38830f84107ec36fe4d88661a22a937edbeb23",
+    "karta/test/coreSchedulerDrain.test.ts": "7c87b5a9847bd1d122de0759c51d7b070c3a6bc73789f68c52422b31c1460427",
+    "karta/test/customAuthorization.test.ts": "66d4257cb95f6a5750eb09c92b502066ed27b1b30be798a4ce1b1bfab2ccf08c",
+    "karta/test/cycleAdmissionPrivacy.test.ts": "c21b2811c1240c2be4581a04347dc20f8c8b9fe10e8f48353e85b0aaf08c0f78",
+    "karta/test/migration-fixtures.ts": "06f52ca285a67d76604f6cf056767be07d431382b0be223a00873307a98801fe",
+    "karta/test/notifyReceipt.test.ts": "2a7cdc2becd6b27aa3b47f48f7612d8ee5ff1199b5aaaba6eacfa7e0fd27fd4a",
     "karta/test/overageCredit.test.ts": "891d29cd7700c7e955c2f48eb21da02575814126d8d88d861bf75c2a5385dd93",
-    "karta/test/staticAgentScheduler.test.ts": "6abc0d9fb6699a4b703a7cf167ea73cbf01209cb36eceb0937112c11ea117321",
+    "karta/test/runtimeApiReadiness.test.ts": "869bd3335c73d4044c33268d48ca448f91207d90047ba1576c233be84192ce52",
+    "karta/test/runtimeConfig.test.ts": "869fc1271c7133137082270df4bac29998fc083d2df2cf8ea65a877755176ea2",
+    "karta/test/runtimeLifecycle.test.ts": "265e03c7d2ca792344ccb4cac3f1c1599e5e46f727b0e7e658cc53050b7d0c08",
+    "karta/test/runtimeProbe.test.ts": "131713410b7fc50f2df4cd1ee8d19c671c25b8fa26d9f8b365c5f86957c60367",
+    "karta/test/staticAgentScheduler.test.ts": "73352d8f78163c6df1709e89d4c60b85dd807ad1e49aef6525637948f677f9f5",
     "karta/test/staticAgentSchedulerCron.test.ts": "9cd77ff4a53188566fa454aec4cb007cdf6c0e3aa3f7316718e782af2957b76b",
+    "karta/test/webSearchTransportIntegrity.test.ts": "0a56391c7900369662f30136d438457ec697673782b0c7ad2d24c04abca2fc9b",
     "package.json": "dcd4cf1e92aa4d6d338fea9b2408c44946c62a322a80d74a4d221d70cb97bb83",
     "qa/reliability-audit-20261110/oauth-native/run-native.sh": "6faaac18a6010e74b3c34babda51d29d6b548b5b17ba5831fb8d465750f6ce9d",
     "qa/reliability-audit-20261110/oauth-native/verify_native.py": "2474b629686dd265434b5f2594e41a2e79da4316ecf005a76deed3f48b3cf4d0",
@@ -37,5 +70,12 @@
     "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
     "vercel.json": "de43e48150fbc7bb9f39dcee767dbd2c22b5ae6fda619a955e16e605fb593807"
   },
-  "browser_qualification_base": "ca2f92b2887c711d152cbfd7e3615c3264a875a8"
+  "file_count": 62,
+  "initial_manifest": "late-integration/initial-source-manifest.json",
+  "initial_files_changed": [
+    "karta/src/scheduler/cron.ts",
+    "karta/test/staticAgentScheduler.test.ts"
+  ],
+  "adapted_incoming_test": "karta/test/coreSchedulerDrain.test.ts",
+  "note": "62 operational source/test/CI entries, excluding archived diagnostic scripts and evidence. OAuth, frontend, commerce, dependency and workflow inputs are unchanged from the initial passing CI."
 }

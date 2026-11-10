@@ -1,0 +1,36 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 73 files, 398 symbols
+Affected processes: 27
+Risk level: critical
+
+Changed symbols:
+  Function startApiServer → karta/src/api/server.ts
+  Function server → karta/src/api/server.ts
+  Function handleRequest → karta/src/api/server.ts
+  Function requireReady → karta/src/api/server.ts
+  Function resolvePendingAction → karta/src/engine/approval.ts
+  Function finalizePendingAction → karta/src/engine/approval.ts
+  Const NOTIFY_DEADLINE_MS → karta/src/engine/notify.ts
+  Function hasReceipt → karta/src/engine/notify.ts
+  Function notify → karta/src/engine/notify.ts
+  Property channels → karta/src/engine/notify.ts
+  Function assertActive → karta/src/engine/notify.ts
+  Function deliver → karta/src/engine/notify.ts
+  Function sendEmail → karta/src/engine/notify.ts
+  Function main → karta/src/index.ts
+  Function startWorker → karta/src/index.ts
+... and 383 more
+
+Affected execution flows:
+  • RunDailyReport → SendEmail (4 steps) — changed: sendEmail, deliver, notify
+  • RunDailyReport → Deliver (3 steps) — changed: deliver, notify
+  • VoiceSettingsCard → Interrupt (8 steps) — changed: stop, drainHttp
+  • VoiceSettingsCard → Resolve (8 steps) — changed: stop
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest
+  • VoiceSettingsCard → CloseQueue (6 steps) — changed: closeQueue, stop
+  • VoiceSettingsCard → Disconnect (6 steps) — changed: disconnect, stop
+  • RunDailyReport → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt
+  • RunDailyReport → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify
+  • HandleRequest → RequestError (3 steps) — changed: handleRequest
+... and 17 more

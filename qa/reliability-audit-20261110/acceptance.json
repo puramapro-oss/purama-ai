@@ -1,13 +1,14 @@
 {
   "status": "PARTIEL",
-  "base_commit": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "base_commit": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
   "base_pr": 36,
   "scope": [
     "Static scheduler cancellation and stable scheduled-delivery identities",
     "Restore the already-qualified Stripe webhook changes omitted from consolidation",
     "Bind Google and Gmail OAuth connections to verified initiators and one-use state",
     "Verify callback navigation, cancellation and truthful success/failure states",
-    "Prevent configuration saves from copying Gmail credentials and reject stale UI notifications"
+    "Prevent configuration saves from copying Gmail credentials and reject stale UI notifications",
+    "Reconcile the parallel PR39 runtime drain with stable scheduled delivery, preserving the 42d508b Web deadline fix"
   ],
   "gates": [
     {
@@ -40,15 +41,16 @@
     },
     {
       "name": "Reviewable Git publication and CI status",
-      "status": "NON_TESTE"
+      "status": "NON_TESTE",
+      "note": "Initial commit is published with PASS CI; the composed follow-up is prepared before publication."
     },
     {
       "name": "Final GitNexus staged/main comparison before commit",
       "status": "PASS",
       "coverage": "PARTIEL",
       "risk": "CRITICAL",
-      "receipt": "gitnexus-final/receipt.json",
-      "note": "Commands executed successfully; graph limits remain documented and are complemented by independent review and tests."
+      "receipt": "late-integration/gitnexus/receipt.json",
+      "note": "Fresh composed index, staged and main comparisons executed successfully; exact-tree staged check follows final documentation. Graph limits are retained."
     }
   ],
   "production": {
@@ -79,8 +81,8 @@
     ],
     "integration": "fast-forward without overlapping files; hosted CI qualifies the final composition"
   },
-  "recorded_at": "2026-11-10T22:39:55.908775+00:00",
-  "record_phase": "Candidate prepared before GitHub publication; hosted status is recorded in the PR and workflow run.",
+  "recorded_at": "2026-11-10T23:09:10.711498+00:00",
+  "record_phase": "Composed candidate before follow-up publication; current hosted status belongs to the exact published commit and is recorded in the PR.",
   "whole_karta_local": {
     "status": "PARTIEL",
     "passed": 1643,
@@ -100,5 +102,28 @@
     ],
     "scope": "Counts overlap; do not add them as independent scenarios."
   },
-  "source_manifest": "source-manifest.json"
+  "source_manifest": "source-manifest.json",
+  "initial_base_commit": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "publication_parent": "54971f5a511be752fa70ed94306cdb322f29ff81",
+  "runtime_composition_source": "2e2f71375986d3a1adb3f8b791a668ca739683f3",
+  "initial_published_ci": {
+    "status": "PASS",
+    "receipt": "late-integration/initial-published-ci.json",
+    "run_id": 42916932296
+  },
+  "composed_candidate": {
+    "local_status": "PASS",
+    "scheduler_union": 24,
+    "assertions_preserved": 65,
+    "neighbor_cases": [
+      36,
+      27
+    ],
+    "typecheck": "PASS",
+    "build": "PASS",
+    "independent_review": "PASS",
+    "source_entries": 62,
+    "receipt": "late-integration/scheduler/receipt.json",
+    "hosted_status": "NON_TESTE"
+  }
 }

@@ -86,4 +86,33 @@ describe("web search byte integrity and terminal deadline", () => {
     expect(stream.locked).toBe(false);
   });
 
+  it.each([
+    { deliveryTime: 29_999, succeeds: true },
+    { deliveryTime: 30_000, succeeds: false },
+    { deliveryTime: 30_001, succeeds: false },
+  ])("rechecks the budget when the outer race hands back its result at $deliveryTime ms", async ({ deliveryTime, succeeds }) => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    let now = 0;
+    vi.spyOn(performance, "now").mockImplementation(() => now);
+    transport.mockResolvedValue(Response.json({ results: [] }));
+    const originalRace = Promise.race.bind(Promise);
+    const race = vi.spyOn(Promise, "race").mockImplementationOnce(values =>
+      originalRace(values).then(value => {
+        // Expire inside the actual race's adoption boundary, after request()
+        // has checked its result. Do not move the fixture to the caller's
+        // continuation after execute() has completed its own final check.
+        now = deliveryTime;
+        return value;
+      }));
+
+    const completed = search();
+    if (succeeds) await expect(completed).resolves.toEqual({ results: [] });
+    else await expect(completed).rejects.toThrow(unavailable);
+
+    expect(race).toHaveBeenCalledOnce();
+    expect(transport).toHaveBeenCalledOnce();
+    expect(transport.mock.calls[0][1]?.signal?.aborted).toBe(!succeeds);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
 });
