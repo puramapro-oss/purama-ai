@@ -99,6 +99,9 @@ jobs:
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium
       - name: Promotion browser behavior
+        # Ubuntu already provides an AppArmor profile for its packaged Chrome.
+        env:
+          SOCIAL_BROWSER_EXECUTABLE: /opt/google/chrome/chrome
         run: node tests/social-browser/run.mjs
       - run: npx tsc --noEmit -p tests/public/tsconfig.json
       - run: npm run test:public

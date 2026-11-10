@@ -134,6 +134,61 @@ Deno.test("immediate: unverified, inactive, foreign and X accounts perform no ou
   }
 });
 
+Deno.test("immediate: caption generation is rejected before lookup or publication, including existing requests", async () => {
+  for (const existing of [[], [post({
+    id: "legacy-caption-request", client_request_id: key,
+    request_hash: "legacy-caption-request-hash", status: "scheduled",
+  })]]) {
+    const db = new FakeDb(existing);
+    const before = structuredClone(db.tables);
+    let calls = 0;
+    const response = await handleSocialPublishRequest(request({ forceCaption: true }), {
+      db, authenticate: auth, now: () => NOW, publish: async () => { calls++; return providerResult(); },
+    });
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), {
+      error: "La génération de légende n'est pas disponible dans ce parcours. Utilisez un texte préparé.",
+    });
+    assert.deepEqual(db.queries, []);
+    assert.deepEqual(db.tables, before);
+    assert.equal(calls, 0);
+  }
+});
+
+Deno.test("immediate: invalid caption option types fail before storage or provider access", async () => {
+  for (const forceCaption of ["true", 1, null, {}, []]) {
+    const db = new FakeDb();
+    let calls = 0;
+    const response = await handleSocialPublishRequest(request({ forceCaption }), {
+      db, authenticate: auth, now: () => NOW, publish: async () => { calls++; return providerResult(); },
+    });
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), { error: "Option de légende invalide." });
+    assert.deepEqual(db.queries, []);
+    assert.equal(db.tables.social_posts.length, 0);
+    assert.equal(calls, 0);
+  }
+});
+
+Deno.test("immediate: false and omitted caption options retain one normal publication identity", async () => {
+  const db = new FakeDb();
+  let calls = 0;
+  const deps = { db, authenticate: auth, now: () => NOW, publish: async () => { calls++; return providerResult(); } };
+  const first = await handleSocialPublishRequest(request({ forceCaption: false }), deps);
+  assert.equal(first.status, 200);
+  assert.equal((await first.json()).status, "published");
+  const originalHash = db.tables.social_posts[0].request_hash;
+  const replay = await handleSocialPublishRequest(request(), deps);
+  assert.equal(replay.status, 200);
+  const body = await replay.json();
+  assert.equal(body.status, "published");
+  assert.equal(body.replayed, true);
+  assert.equal(body.caption_generated, false);
+  assert.equal(db.tables.social_posts[0].request_hash, originalHash);
+  assert.equal(db.tables.social_posts.length, 1);
+  assert.equal(calls, 1);
+});
+
 Deno.test("immediate: authentication, missing key and DB read errors fail before provider access", async () => {
   const db = new FakeDb();
   let calls = 0;
@@ -148,7 +203,7 @@ Deno.test("immediate: authentication, missing key and DB read errors fail before
 Deno.test("immediate: scheduling saves prepared content without any provider or caption generation", async () => {
   const db = new FakeDb();
   let calls = 0;
-  const response = await handleSocialPublishRequest(request({ scheduledAt: "2026-11-11T12:00:00Z", forceCaption: true }), {
+  const response = await handleSocialPublishRequest(request({ scheduledAt: "2026-11-11T12:00:00Z", forceCaption: false }), {
     db, authenticate: auth, now: () => NOW, publish: async () => { calls++; return providerResult(); },
   });
   const body = await response.json();

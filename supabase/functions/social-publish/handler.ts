@@ -132,6 +132,11 @@ function parseRequest(value: unknown, headerKey: string | null): PublishRequest 
   if (body.forceCaption !== undefined && typeof body.forceCaption !== "boolean") {
     throw new InvalidPublishRequest("Option de légende invalide.");
   }
+  if (body.forceCaption === true) {
+    throw new InvalidPublishRequest(
+      "La génération de légende n'est pas disponible dans ce parcours. Utilisez un texte préparé.",
+    );
+  }
   return {
     clientRequestId: key,
     content,
@@ -140,7 +145,9 @@ function parseRequest(value: unknown, headerKey: string | null): PublishRequest 
     agentName: (body.agentName as string | undefined) ?? null,
     platforms,
     scheduledAt,
-    forceCaption: body.forceCaption === true,
+    // Preserve the existing canonical false value in the request hash so normal
+    // historical requests keep the same identity when the option is omitted.
+    forceCaption: false,
   };
 }
 
@@ -159,7 +166,6 @@ async function existingRequest(db: SocialDbClient, userId: string, key: string):
 
 function outcomeResponse(
   outcome: ReturnType<typeof storedOutcome>,
-  body: PublishRequest,
   replayed = false,
 ): Response {
   const httpStatus = outcome.status === "publish_unconfirmed" || outcome.status === "scheduled"
@@ -174,9 +180,6 @@ function outcomeResponse(
     error: "error" in outcome ? outcome.error : undefined,
     platform_results: "platformResults" in outcome ? outcome.platformResults : undefined,
     caption_generated: false,
-    caption_notice: body.forceCaption
-      ? "Le texte préparé est conservé ; aucune génération payante n'est déclenchée ici."
-      : undefined,
   }, httpStatus);
 }
 
@@ -205,7 +208,7 @@ export async function handleSocialPublishRequest(req: Request, deps: ImmediatePu
     const body = parseRequest(await readBody(req), req.headers.get("Idempotency-Key"));
     const requestHash = await hashPublishRequest(body);
     const replay = (post: StoredSocialPost) => post.request_hash === requestHash
-      ? outcomeResponse(storedOutcome(post), body, true)
+      ? outcomeResponse(storedOutcome(post), true)
       : response({ error: "Cette clé de demande correspond déjà à un autre contenu." }, 409);
     const existing = await existingRequest(deps.db, userId, body.clientRequestId);
     if (existing) return replay(existing);
@@ -245,9 +248,9 @@ export async function handleSocialPublishRequest(req: Request, deps: ImmediatePu
     if (post.user_id !== userId || post.client_request_id !== body.clientRequestId || post.request_hash !== requestHash) {
       throw new Error("Unexpected inserted request identity");
     }
-    if (future) return outcomeResponse(storedOutcome(post), body);
+    if (future) return outcomeResponse(storedOutcome(post));
     const outcome = await executeSocialPublish(post, createPublishDeps(deps.db, deps.publish, deps.now));
-    return outcomeResponse(outcome, body);
+    return outcomeResponse(outcome);
   } catch (error) {
     if (error instanceof InvalidPublishRequest) return response({ error: error.message }, 400);
     if (error instanceof PublishNotStartedError) return response({ error: error.message, sent: false }, 422);

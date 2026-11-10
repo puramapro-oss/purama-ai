@@ -366,5 +366,218 @@
     "The browser evidence covers Firefox 148.0.2 locally. Chromium and the GitHub Actions runner were not executed in this validation.",
     "Local Stripe SDK validation used installed dependencies with manual/cached-only/no-remote Deno resolution. Cold npm resolution with node-modules-dir=none failed before tests because registry.npmjs.org refused the connection; fresh-runner resolution remains unverified.",
     "Raw logs and execution attestations are local scratch artifacts identified by path and hash; this manifest does not claim a hosted CI result."
-  ]
+  ],
+  "followup_correction": {
+    "recorded_at_utc": "2026-11-10T23:16:51Z",
+    "status": "PARTIEL",
+    "baseline_snapshot": {
+      "candidate_commit": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+      "scope": "All original top-level fields, counters, commands, logs and 55 source hashes remain the unchanged local evidence for this commit.",
+      "source_hashes_verified_against_commit": 55
+    },
+    "initial_ci": {
+      "run_id": 42918981402,
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/42918981402",
+      "status": "FAILURE",
+      "head_commit": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+      "checked_out_merge_commit": "a1cae9b6f93875e410e23f7011957f78c824630c",
+      "tree": "0151628a38da0b31cb06a6407e4f29b75625a068",
+      "merge_tree_equals_head_tree": true,
+      "jobs": {
+        "karta": {
+          "exit_code": 1,
+          "tests_passed": 1638,
+          "tests_failed": 1,
+          "tests_total": 1639,
+          "test_files_passed": 93,
+          "test_files_failed": 1,
+          "failure": "Obsolete test called the removed private __testGenerateCaption binding: TypeError: generate is not a function.",
+          "runner_image": "ubuntu-26.04",
+          "runner_image_version": "20261101.186.1",
+          "log": "ci-run-42918981402-karta.txt",
+          "log_sha256": "d8ff4e408ab016b3f215dd832ead12996606127423b6dea938f60f6fb5b683c3"
+        },
+        "site": {
+          "exit_code": 1,
+          "social_core_passed": 101,
+          "social_routes_passed": 14,
+          "revenue_deno_passed": 30,
+          "cold_stripe_resolution": {
+            "status": "PASS",
+            "mode": "node-modules-dir=none",
+            "version": "18.5.0",
+            "registry": "https://registry.npmjs.org/stripe/-/stripe-18.5.0.tgz"
+          },
+          "browser_scenarios_planned": 20,
+          "browser_scenarios_executed": 0,
+          "browser_failure": "Chromium failed to launch: No usable sandbox!; SIGTRAP.",
+          "runner_image": "ubuntu-24.04",
+          "runner_image_version": "20261101.360.1",
+          "log": "ci-run-42918981402-site.txt",
+          "log_sha256": "514704d44903c1f364c80c75544a6e39ba5ec7ce66066d63d16db62a7514eef7"
+        }
+      },
+      "downstream_gates": "Steps after each failed step were not executed; their presence in the workflow is not a pass.",
+      "counting": "These CI results are separate from the 310 local cases and are not added to that total."
+    },
+    "corrections": [
+      {
+        "scope": "social publication API and tests",
+        "behavior": "Reject forceCaption=true with HTTP 400 after authentication and before publication DB access or AI/provider effects; keep false/absent canonical identities and hashes unchanged; never convert or replay a historical true request automatically."
+      },
+      {
+        "scope": "karta/test/assistantPolicy.test.ts",
+        "behavior": "Replace the obsolete private-caption test with a public endpoint rejection assertion and verify zero DB/RPC/transport/model effects; production KARTA and OTS remain outside this patch."
+      },
+      {
+        "scope": ".github/workflows/purama-chef-hardening.yml",
+        "behavior": "Select /opt/google/chrome/chrome in the new promotion browser step while preserving chromiumSandbox=true and all original workflow gates."
+      }
+    ],
+    "correction_validation": {
+      "local_status": "PASS",
+      "local_scope": "Only the two affected suites below and static workflow/preservation checks; no full-depot retest.",
+      "ci_status": "NON TESTÉ",
+      "system_chrome_runtime_status": "NON TESTÉ",
+      "gates": [
+        {
+          "id": "assistant_policy",
+          "status": "PASS",
+          "command": "NODE_OPTIONS=--max-old-space-size=384 node /workspace/scratch/5a57dc6debc0/promotion-financial-runtime/node_modules/vitest/vitest.mjs run test/assistantPolicy.test.ts --pool=threads --maxWorkers=1 --no-file-parallelism",
+          "cwd": "karta",
+          "exit_code": 0,
+          "tests_passed": 55,
+          "tests_failed": 0,
+          "evidence": {
+            "log": "promotion-caption-policy-vitest.log",
+            "sha256": "74646bc634d5ff219985345d76f1aa5f5776c692ca796fe81df4fbe0310bde78",
+            "exit_code_source": "promotion-caption-contract-validation.json"
+          }
+        },
+        {
+          "id": "social_publish",
+          "status": "PASS",
+          "command": "NODE_OPTIONS=--max-old-space-size=384 /home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno test --no-config --no-lock --no-prompt --deny-net --deny-run tests/social-publish/publish.test.ts",
+          "cwd": ".",
+          "exit_code": 0,
+          "tests_passed": 16,
+          "tests_failed": 0,
+          "evidence": {
+            "log": "promotion-caption-publish-deno.log",
+            "sha256": "ec9625f08260f3bc2971c3b9e57a7a56945338df7aac64c3cd6ccc08d6854463",
+            "exit_code_source": "promotion-caption-contract-validation.json"
+          }
+        }
+      ],
+      "attestation": {
+        "file": "promotion-caption-contract-validation.json",
+        "sha256": "06510bd9d667693f9894d37ce0e8359405bd7665ddefa1645e6cacdaaf4d9310",
+        "source_hashes_verified": 3,
+        "attempts": "Both executable gates passed on their first local execution after this correction."
+      },
+      "workflow_static": {
+        "status": "PASS",
+        "comparison_base": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+        "jobs": {
+          "karta": {
+            "original_steps_preserved": 8,
+            "additional_steps": 1
+          },
+          "site": {
+            "original_steps_preserved": 32,
+            "additional_steps": 4
+          }
+        },
+        "system_chrome": "/opt/google/chrome/chrome",
+        "chromiumSandbox": true,
+        "runtime_execution_claimed": false
+      },
+      "preservation": {
+        "status": "PASS",
+        "KARTA_OTS_production_unchanged_from": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+        "only_KARTA_test_exceptions": [
+          "karta/test/assistantPolicy.test.ts",
+          "karta/test/overageCredit.test.ts"
+        ],
+        "scheduler_blobs_unchanged": 6
+      },
+      "counting": "Report 55 policy cases and 16 publication cases separately. Do not add reruns to the historical 310 or claim the full 1639-case KARTA suite passed.",
+      "not_retested": [
+        "Full KARTA suite",
+        "All other original local gates",
+        "System Chrome browser runtime",
+        "New GitHub Actions run"
+      ]
+    },
+    "initial_limitations_updated_by_ci": [
+      "Cold Stripe18.5 npm resolution is now verified by the initial CI run, despite the earlier local registry refusal.",
+      "GitHub Actions was executed for the initial candidate and failed in KARTA and browser startup; no passing Chromium scenario or successful global CI result is claimed."
+    ],
+    "source_hashes": {
+      "algorithm": "sha256",
+      "mode": "Changed-file delta against the initial candidate; original top-level source_sha256 remains intact.",
+      "base_commit": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+      "selection": "git diff 07faa21e353df0d84bf1059a0d4d01d75cf79b73 --name-only; qa/ excluded",
+      "files": 5,
+      "unchanged_initial_sources_verified": 51,
+      "timing": "Collected after the two corrective test runs and documentary edits."
+    },
+    "source_sha256": {
+      ".github/workflows/purama-chef-hardening.yml": "a4dfb81fe666cddad9079236114277b17d36ef687028ef423a60768b9b4f2d3a",
+      "karta/test/assistantPolicy.test.ts": "59ccc6bc55e8747a9185477ac8ad2dffab940490f2200adcc074dfc44032019f",
+      "supabase/functions/social-publish/handler.ts": "9ff04bd2652418a85346fe88b172bbd0d328334daaefd279fc89da8b278796dd",
+      "tests/revenue/README.md": "9d49e24faff7b90e9d5799027d17cf1cf5fe9a5c87904e4d1d6fa11869f566cf",
+      "tests/social-publish/publish.test.ts": "3af63ab81649c10f3f2a11ea25f14c5e1ddb0941f6f1ce37a3aa858f75ff0784"
+    },
+    "impact_review": {
+      "status": "PARTIEL",
+      "baseline_graph_commit": "5b1338f8a7ff520b6509394ddf7ec8dc9eb2e6f0",
+      "worktree_override_used": true,
+      "comparisons": [
+        {
+          "base_ref": "07faa21e353df0d84bf1059a0d4d01d75cf79b73",
+          "summary": {
+            "changed_count": 27,
+            "affected_count": 2,
+            "changed_files": 7,
+            "risk_level": "medium"
+          },
+          "truncated": false,
+          "git_file_count": 7,
+          "symbol_paths_outside_diff": [],
+          "evidence_file": "promotion-followup-detect-previous.json",
+          "evidence_sha256": "5bdf986d8e100e2526d967a3b45b20778017e81a8dd5ec52436b48700f0bd075"
+        },
+        {
+          "base_ref": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+          "summary": {
+            "changed_count": 1248,
+            "affected_count": 47,
+            "changed_files": 58,
+            "risk_level": "critical"
+          },
+          "truncated": true,
+          "git_file_count": 58,
+          "symbol_paths_outside_diff": [],
+          "evidence_file": "promotion-followup-detect-integration.json",
+          "evidence_sha256": "2497dfde8d38959fe384d762e76516e56bddf514c7ae50383091ac497c2fec2e"
+        },
+        {
+          "base_ref": "main",
+          "summary": {
+            "changed_count": 2112,
+            "affected_count": 202,
+            "changed_files": 781,
+            "risk_level": "critical"
+          },
+          "truncated": true,
+          "git_file_count": 781,
+          "symbol_paths_outside_diff": [],
+          "evidence_file": "promotion-followup-detect-main.json",
+          "evidence_sha256": "f9eee415bb8d5184936ef67826b680751b54cf3743550e0828fa3b2453ff9df3"
+        }
+      ],
+      "limitations": "The previous graph is incomplete for the composition; full integration and main symbol lists are truncated. Actual Git file lists match."
+    }
+  }
 }

@@ -142,10 +142,16 @@ deno test --config tests/revenue/deno.json --node-modules-dir=none \
 
 Dans l'environnement local de qualification, la résolution initiale de
 `https://registry.npmjs.org/stripe` a été refusée avant le démarrage des tests
-(`Connection refused`). La résolution sur un runner CI neuf reste donc à vérifier
-par son propre résultat. Le SDK 18.5.0 a été installé dans un runtime de test
-séparé, puis lié dans `node_modules`. L'override local effectivement exécuté
-emploie la même configuration versionnée, sans import map externe :
+(`Connection refused`). Le [run CI initial 42918981402](https://github.com/puramapro-oss/purama-ai/actions/runs/42918981402)
+a ensuite téléchargé Stripe 18.5.0 depuis le registre npm avec
+`node-modules-dir=none`, puis exécuté **30 tests réussis, aucun échec**. La
+résolution normale sur runner est donc prouvée pour cette révision, même si le
+job site a échoué plus tard au lancement de son navigateur.
+
+Pour la qualification locale initiale, le SDK 18.5.0 avait été installé dans un
+runtime de test séparé, puis lié dans `node_modules`. L'override local
+effectivement exécuté emploie la même configuration versionnée, sans import map
+externe :
 
 ```sh
 deno test --config tests/revenue/deno.json --node-modules-dir=manual \
@@ -154,8 +160,9 @@ deno test --config tests/revenue/deno.json --node-modules-dir=manual \
   tests/revenue/webhook.test.ts
 ```
 
-La qualification locale assemblée du 10 novembre 2026 donne **30 tests réussis,
-aucun échec**. La première exécution avait détecté la perte du refus
+La qualification locale initiale du commit
+`07faa21e353df0d84bf1059a0d4d01d75cf79b73`, le 10 novembre 2026, donne **30 tests
+réussis, aucun échec**. La première exécution avait détecté la perte du refus
 d'auto-parrainage dans le checkout lors de la composition : **29 réussis, 1 échec**.
 La condition existante a été restaurée, puis les 30 tests ont été réexécutés avec
 succès. Ces résultats ne prouvent pas l'intégration aux services de production.
@@ -194,7 +201,17 @@ tentative avec le pool `forks` s'était arrêtée sur un worker tué par `SIGKIL
 sans résultat métier exploitable. Le passage à un seul worker `threads` a permis
 l'exécution complète, sans modifier les assertions.
 
-Les compteurs ci-dessus correspondent à l'assemblage local qualifié ; les anciens
-résultats isolés de PR22 ou PR33 ne sont pas utilisés comme preuve de cette
-intégration. Le déploiement, les secrets réels, la livraison Stripe et les
-privilèges du Supabase de production restent à vérifier dans cet environnement.
+Les compteurs locaux ci-dessus appartiennent exclusivement au commit
+`07faa21e353df0d84bf1059a0d4d01d75cf79b73`. La référence de fusion testée par la CI,
+`a1cae9b6f93875e410e23f7011957f78c824630c`, possède le même arbre Git
+`0151628a38da0b31cb06a6407e4f29b75625a068`, égalité vérifiée directement. Les
+résultats CI ne sont pas additionnés aux résultats locaux ni transférés à une
+correction ultérieure.
+
+Les corrections et les gates restants de cette première CI sont détaillés dans
+[le rapport promotion](../../qa/paid-promotion-20261110/REPORT.md) et son manifeste
+de validation. Les compteurs financiers ci-dessus ne sont pas présentés comme
+une revalidation de ces nouveaux changements.
+
+Le déploiement, les secrets réels, la livraison Stripe et les privilèges du
+Supabase de production restent à vérifier dans cet environnement.
