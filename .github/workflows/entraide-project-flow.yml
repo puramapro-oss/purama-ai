@@ -1,0 +1,46 @@
+name: Entraide PostgreSQL protocol
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/*entraide*.sql'
+      - 'tests/entraide/**'
+      - '.github/workflows/entraide-project-flow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: entraide-project-flow-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:18.6
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: entraide-local-test
+          POSTGRES_DB: entraide_test_admin
+        ports:
+          - 55439:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d entraide_test_admin"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      ENTRAIDE_DATABASE_URL: postgresql://postgres:entraide-local-test@127.0.0.1:55439/entraide_test_admin
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: tests/entraide/package-lock.json
+      - run: npm ci --ignore-scripts --prefix tests/entraide
+      - run: npm run test:native --prefix tests/entraide

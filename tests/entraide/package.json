@@ -1,0 +1,14 @@
+{
+  "name": "purama-entraide-protocol-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:sql": "node --max-old-space-size=384 --wasm-num-compilation-tasks=1 --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs",
+    "test:native": "node --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs concurrency-db.test.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "pg": "8.16.3"
+  }
+}
