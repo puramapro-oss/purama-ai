@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/home/agent/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "scripts/generate-supabase-contracts.mjs",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-resume-20261110",
+  "started_at": "2026-11-10T21:45:11.431313+00:00",
+  "timeout_seconds": 60,
+  "timed_out": false,
+  "interrupted": false,
+  "exit_code": -9,
+  "elapsed_seconds": 1.178
+}

@@ -1,0 +1,120 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v5.0.3 /workspace/scratch/29af233a360b/purama-resume-20261110/karta
+
+(node:40) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ test/chefGitCancellation.test.ts (5 tests | 5 failed) 26ms
+   ❯ CHEF cancellation at Git and verification-entry boundaries (5)
+     × first Git check rejects after cancellat… 16ms
+     × first Git check succeeds after cancella… 3ms
+     × final Git check rejects after cancellat… 2ms
+     × verifying transition acknowledges after… 2ms
+     × verifying heartbeat acknowledges after … 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check rejects after cancellat…
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > final Git check rejects after cancellat…
+AssertionError: expected 'retryable' to be 'lost_lease' // Object.is equality
+
+Expected: "lost_lease"
+Received: "retryable"
+
+ ❯ test/chefGitCancellation.test.ts:186:31
+    184|     expect(abortedBeforeReply).toBe(true);
+    185|     expect(f.control.recordUsage).toHaveBeenCalledOnce();
+    186|     expect.soft(result.state).toBe("lost_lease");
+       |                               ^
+    187|     expect.soft(f.transitionsAfterAbort).toEqual([]);
+    188|     expect.soft(f.heartbeatsAfterAbort).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check rejects after cancellat…
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > final Git check rejects after cancellat…
+AssertionError: expected [ 'retryable' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "retryable",
++ ]
+
+ ❯ test/chefGitCancellation.test.ts:187:42
+    185|     expect(f.control.recordUsage).toHaveBeenCalledOnce();
+    186|     expect.soft(result.state).toBe("lost_lease");
+    187|     expect.soft(f.transitionsAfterAbort).toEqual([]);
+       |                                          ^
+    188|     expect.soft(f.heartbeatsAfterAbort).toEqual([]);
+    189|     expect.soft(f.verifier.verify).toHaveBeenCalledTimes(verifierCalls…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check succeeds after cancella…
+AssertionError: expected [ 'verifying' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "verifying",
++ ]
+
+ ❯ test/chefGitCancellation.test.ts:187:42
+    185|     expect(f.control.recordUsage).toHaveBeenCalledOnce();
+    186|     expect.soft(result.state).toBe("lost_lease");
+    187|     expect.soft(f.transitionsAfterAbort).toEqual([]);
+       |                                          ^
+    188|     expect.soft(f.heartbeatsAfterAbort).toEqual([]);
+    189|     expect.soft(f.verifier.verify).toHaveBeenCalledTimes(verifierCalls…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check succeeds after cancella…
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > verifying transition acknowledges after…
+AssertionError: expected [ 'verifying' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "verifying",
++ ]
+
+ ❯ test/chefGitCancellation.test.ts:188:41
+    186|     expect.soft(result.state).toBe("lost_lease");
+    187|     expect.soft(f.transitionsAfterAbort).toEqual([]);
+    188|     expect.soft(f.heartbeatsAfterAbort).toEqual([]);
+       |                                         ^
+    189|     expect.soft(f.verifier.verify).toHaveBeenCalledTimes(verifierCalls…
+    190|     expect.soft(f.control.addEvidence).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > first Git check succeeds after cancella…
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > verifying transition acknowledges after…
+ FAIL  test/chefGitCancellation.test.ts > CHEF cancellation at Git and verification-entry boundaries > verifying heartbeat acknowledges after …
+AssertionError: expected "vi.fn()" to be called +0 times, but got 1 times
+ ❯ test/chefGitCancellation.test.ts:189:36
+    187|     expect.soft(f.transitionsAfterAbort).toEqual([]);
+    188|     expect.soft(f.heartbeatsAfterAbort).toEqual([]);
+    189|     expect.soft(f.verifier.verify).toHaveBeenCalledTimes(verifierCalls…
+       |                                    ^
+    190|     expect.soft(f.control.addEvidence).not.toHaveBeenCalled();
+    191|     expect.soft(f.control.tryFinishMission).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  22:30:24
+   Duration  313ms (transform 67%, tests 15%, import 12%, setup 3%, worker 2%)
+
+JSON report written to /workspace/scratch/29af233a360b/purama-resume-20261110/qa/chef-resume-20261110/baseline-five.json

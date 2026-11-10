@@ -1,0 +1,16 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  GitNexus Analyzer (1.6.12)
+(node:33) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  GitNexus Analyzer (1.6.12)
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+[2K  Skipped 1 large files (>512KB, likely generated/vendored)
+[2K  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+(node:33) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"level":40,"time":1794346040285,"name":"gitnexus","msg":"[scope-resolution] 839 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: args (javascript/typescript), data (javascript/typescript), env (typescript), DOCUSEAL_API_TOKEN (javascript), DOCUSEAL_API_URL (javascript), base (javascript), hash (javascript), internal (javascript), p_actor_id (javascript), p_actor_type (javascript), …"}
+{"level":40,"time":1794346040531,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":958,"entryPointsUnexplored":0,"walksCutByBudget":28,"tracesDepthCapped":0,"calleesDropped":2123,"processesDropped":0},"msg":"[processes] 545 flows reported, but whole flows are MISSING: 958 of 1158 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 2123 callee(s) skipped at maxBranching, 28 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}

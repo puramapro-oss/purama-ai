@@ -1,0 +1,9 @@
+{
+  "base": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "source_commit": "7cef7e57268ba2326d256d10277434a751ae1275",
+  "test_path": "karta/test/chefGitCancellation.test.ts",
+  "source_blob": "b7597af775f9eb56c0e3fe9a54ed6b94848cb5f9",
+  "imported_blob": "b7597af775f9eb56c0e3fe9a54ed6b94848cb5f9",
+  "source_sha256": "902d04feca4356084a3b87952ae871f3ab80ae15ddd226329ed0865e512bbe28",
+  "production_unchanged": true
+}

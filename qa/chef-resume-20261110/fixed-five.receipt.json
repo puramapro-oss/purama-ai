@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/home/agent/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/chefGitCancellation.test.ts",
+    "--maxWorkers=1",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=../qa/chef-resume-20261110/fixed-five.json"
+  ],
+  "cwd": "/workspace/scratch/29af233a360b/purama-resume-20261110/karta",
+  "started_at": "2026-11-10T21:30:43.516237+00:00",
+  "timeout_seconds": 60,
+  "timed_out": false,
+  "interrupted": false,
+  "exit_code": 0,
+  "elapsed_seconds": 0.668
+}

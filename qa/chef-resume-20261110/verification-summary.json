@@ -1,0 +1,2811 @@
+{
+  "review_schema_version": 1,
+  "reviewed_at": "2026-11-10T21:48:15.161551+00:00",
+  "status": "PARTIEL",
+  "global_karta_qualification": "BLOQUE",
+  "review_method": "Independent read-only reconciliation of 95 raw Vitest JSON reports, 95 raw logs, command receipts, current test inventory, source hashes and combined log. No test or application execution performed by the reviewer.",
+  "tested_base_head": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "execution_summary": "bounded/summary.json",
+  "execution_summary_sha256": "d4e8ab85676a8533dd4ee62f3628c4b0cf9c7044a99802b4788968496cd6cfe8",
+  "combined_log": "bounded/combined.log",
+  "combined_log_sha256": "bfdcac383959bb3e935bcb064ca16e96769bf51e47820cd0349bce997271c509",
+  "combined_log_matches_all_raw_console_sections": true,
+  "raw_reports_directory_at_review": "/tmp/chef-resume-vitest-vwl672bm",
+  "runtime": {
+    "node_version": "v22.23.4",
+    "node_path": "/home/agent/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "process_parallelism": 1,
+    "worker_parallelism": 1
+  },
+  "coverage": {
+    "expected_files": 95,
+    "receipt_count": 95,
+    "reported_file_count": 95,
+    "distinct_reported_files": 95,
+    "missing_files": [],
+    "unexpected_files": [],
+    "duplicate_files": [],
+    "current_inventory_matches_recorded_inventory": true,
+    "current_changed_test_files": []
+  },
+  "counts": {
+    "fully_passed_files": 82,
+    "blocked_files": 13,
+    "reported_test_cases": 1642,
+    "assertion_status_counts": {
+      "passed": 1345,
+      "pending": 297
+    },
+    "passed_assertions": 1345,
+    "failed_assertions": 0,
+    "unqualified_pending_assertions": 297,
+    "confirmed_intentional_skips": 0,
+    "unhandled_worker_errors": 13,
+    "sigkill_worker_exits": 13,
+    "process_timeouts": 0,
+    "reported_pending_tests_counter": 2,
+    "reported_failed_tests_counter": 0,
+    "reported_todo_tests_counter": 0
+  },
+  "count_interpretation": {
+    "pending": "297 assertions lack a verified completed result after worker SIGKILL. They may have been unstarted or interrupted; they are not evidence of 297 intentionally skipped tests.",
+    "vitest_json_limitation": "All 13 crashed-file JSON reports say success:true despite exit_code=1 and an unhandled worker error. numPendingTests sums to 2 while assertionResults contain 297 pending statuses. Use process exits, individual statuses and raw logs together.",
+    "skip_observation": "Only three static skipIf(win32) sites were found. Both containing test files completed with all assertions passed on this Linux run. No intentional skip was established."
+  },
+  "source_integrity": {
+    "all_test_files_match_recorded_sha256": true,
+    "supervisor_sha256_before": "a3e66a1909f10fbefdf6cf6cbb8716e388a5f46874cdf925e46cd2697acdc1bd",
+    "supervisor_sha256_after": "a3e66a1909f10fbefdf6cf6cbb8716e388a5f46874cdf925e46cd2697acdc1bd",
+    "supervisor_sha256_at_review": "a3e66a1909f10fbefdf6cf6cbb8716e388a5f46874cdf925e46cd2697acdc1bd",
+    "supervisor_unchanged": true,
+    "all_raw_json_hashes_match": true,
+    "all_raw_console_hashes_match": true,
+    "all_assertion_names_statuses_match": true,
+    "all_raw_totals_match_assertion_counts": true,
+    "all_independent_file_outcomes_match_execution_summary": true
+  },
+  "scopes": {
+    "actual_runChefWorkerCycle": {
+      "status": "PASS",
+      "files": 5,
+      "passed_files": 5,
+      "assertion_status_counts": {
+        "passed": 41
+      },
+      "file_names": [
+        "test/chefBudgetAccounting.test.ts",
+        "test/chefGitCancellation.test.ts",
+        "test/chefSupervisor.test.ts",
+        "test/chefSupervisorCancellation.test.ts",
+        "test/chefVerificationGitIntegration.test.ts"
+      ],
+      "blocked_files": []
+    },
+    "supervisor_and_dependencies": {
+      "status": "PARTIEL",
+      "files": 18,
+      "passed_files": 15,
+      "assertion_status_counts": {
+        "passed": 132,
+        "pending": 48
+      },
+      "file_names": [
+        "test/chefBudgetAccounting.test.ts",
+        "test/chefBudgetAdapter.test.ts",
+        "test/chefBudgetAdmission.test.ts",
+        "test/chefBudgetMigration.test.ts",
+        "test/chefBudgetReservations.test.ts",
+        "test/chefCancellation.test.ts",
+        "test/chefDriver.test.ts",
+        "test/chefEvidenceAdapter.test.ts",
+        "test/chefGitCancellation.test.ts",
+        "test/chefGitState.test.ts",
+        "test/chefProcess.test.ts",
+        "test/chefProcessQuarantine.test.ts",
+        "test/chefQuarantineAdapter.test.ts",
+        "test/chefSupervisor.test.ts",
+        "test/chefSupervisorCancellation.test.ts",
+        "test/chefVerificationGitIntegration.test.ts",
+        "test/chefVerifier.test.ts",
+        "test/chefWorkerShutdown.test.ts"
+      ],
+      "blocked_files": [
+        "test/chefBudgetAdmission.test.ts",
+        "test/chefBudgetMigration.test.ts",
+        "test/chefBudgetReservations.test.ts"
+      ]
+    }
+  },
+  "skip_condition_sites": [
+    {
+      "file": "test/chefProcess.test.ts",
+      "line": 31,
+      "source": "describe.skipIf(process.platform === \"win32\")(\"CHEF owned POSIX process group\", () => {"
+    },
+    {
+      "file": "test/chefSupervisor.test.ts",
+      "line": 109,
+      "source": "it.skipIf(process.platform === \"win32\")(\"propagates shutdown to a running real process before releasing the task\", async () => {"
+    },
+    {
+      "file": "test/chefSupervisor.test.ts",
+      "line": 134,
+      "source": "it.skipIf(process.platform === \"win32\")(\"waits for a timed-out worker to finish before the retryable transition\", async () => {"
+    }
+  ],
+  "file_reviews": [
+    {
+      "file": "test/actionAgentsMock.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "bb68b02cf8eead14fbe2ca598b545861fb5388c63619f9ef1e80032c841d9d9e",
+      "raw_console_sha256": "ce35a89d5e0a77afa2cfb2e4d83a9db0c4c8937c5b1e91fcc74d223b81b68312",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/actionAgentsMock.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/agentsRegistry.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "79d029435e886b28048a60fc543023a288854cc548b029ae5e823df94d48c1b5",
+      "raw_console_sha256": "b24aeed07331b5f66806730edac447434419670c232768cbd9e62d138005008a",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/agentsRegistry.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/apiDeliveryIdentity.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "7e1cd59410d23dbfe78866f479ba30cc6b94bd24af2b633c842aaae456c55531",
+      "raw_console_sha256": "158526da707de2255f5f33b88a62b998cea5536c012b0da923b95525bb13d013",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/apiDeliveryIdentity.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/apiSafety.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 9,
+      "assertion_status_counts": {
+        "passed": 9
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "ad0d15c0b33ed5facf2afbde8505ecc569f679465765dcc16ad74c74fc7c81be",
+      "raw_console_sha256": "7cb1a376a6302312305f63b4111f09cc5f84275bf790c7822427810f5a5622ca",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/apiSafety.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/approval.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 15,
+      "assertion_status_counts": {
+        "pending": 15
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "fff046262f0157f66175f2fe1b8c47178a5fb9e520c29660ff8f965e22d06d80",
+      "raw_console_sha256": "34f7998f459847197b61acd96455e2c16dbc68c3cfad51ccdb78d326bf14298a",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/approval.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/approvalContinuation.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 42,
+      "assertion_status_counts": {
+        "pending": 42
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "90e60d49ec29699ddee30abf3907e558120afd9ea4df3391380b74a73d3ca518",
+      "raw_console_sha256": "6b7a54e84a5d284facd0ff0d85fa2e1e13d5716738e1374f80dba59c029206df",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/approvalContinuation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/approvalParentGuard.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 48,
+      "assertion_status_counts": {
+        "pending": 48
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "25281ed67b6489a21a0d4b79e225994dad29393567f9e6388a33932bdb0e5586",
+      "raw_console_sha256": "0882884a4c104294e7f178c08449cc9457ade5488834f116bec59976973cfa09",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/approvalParentGuard.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/approvalTracePrivacy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 20,
+      "assertion_status_counts": {
+        "passed": 20
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "4c53935945999a5a53c563201854ac17545494890c66a1efd314b26155cf7cbd",
+      "raw_console_sha256": "4d47659ed612f59c5e18a3b06141cd79109063ebc1c96533ddc30d6103e2d44c",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/approvalTracePrivacy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/approvalTriggerContext.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 8,
+      "assertion_status_counts": {
+        "passed": 8
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "4d582d3c5b4be20afecf6ea854f91d63eb79d03c9a937ebead3e1e176e26bee8",
+      "raw_console_sha256": "88f707235f5b40cb3b1438d620ba9b0b7ec232ddb6d58c22d3c5d0267aa0de88",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/approvalTriggerContext.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/assistantPolicy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 55,
+      "assertion_status_counts": {
+        "passed": 55
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "c4e81e6456add3136a43a2e83bd422cd3f405cdee56a210ce2e6b36e7ce33036",
+      "raw_console_sha256": "b749f1b714202ff8f5f820694cdbac3f5dde738a0a387fe7eba417047478604a",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/assistantPolicy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/autonomy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 7,
+      "assertion_status_counts": {
+        "passed": 7
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "dc718560a8d6b051ea11536d1c2004c8f2dad5dcdcf8a6272661f82a217a215b",
+      "raw_console_sha256": "e9f4b2ae7809fb3999b97c8868ee80e5aa2f36f382cf0a3b103376e5043f0ba9",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/autonomy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/brief.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 18,
+      "assertion_status_counts": {
+        "passed": 18
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "707bfd718958802d0d607106cd69c4c73d162eb0fcfba984c1dfc84e1adf14d1",
+      "raw_console_sha256": "daffd4bcd108ce2cc34e84a0fa7f416b3eac6365d85aacd9edfd87f97649bb55",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/brief.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/briefClaims.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 57,
+      "assertion_status_counts": {
+        "passed": 57
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "056f759d8f49f17919605b5e6ff109b62064e2ad4bd6a298fdc905f566cb0d10",
+      "raw_console_sha256": "aac6d80d6e81ead6291592ab199e1b6e38e553c3829e76a979b678fc27c06ccf",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/briefClaims.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/briefDatabaseCycle.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 8,
+      "assertion_status_counts": {
+        "passed": 8
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "e2ce7e215cadf6c65a05037ece3df997687c54b7c2b9ab28e5415ce1f9982115",
+      "raw_console_sha256": "f6b4e008b3feeac163a82e739bfb4f67cac44cf9e525df81d85b5bd3ca2d6862",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/briefDatabaseCycle.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/briefSubmission.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 32,
+      "assertion_status_counts": {
+        "passed": 32
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "fe34f7b1ba2701cf60f10c3a89acb7fbc3fc46cd287d9149ec722373d01a0eb8",
+      "raw_console_sha256": "d9e07d43ba8fefdb36e0ea2318bf13c2f26fa1ced0aa83829d6ec436ddedff8b",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/briefSubmission.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/briefSubmissionClient.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "8fdf43553fc85277af67b8e127631c8399f88011a21eec426f992f824023ed8d",
+      "raw_console_sha256": "d49789ec80841544655fcf6a29a08e17a46924a35ce029d08fa0160dea7d6259",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/briefSubmissionClient.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/briefSubmissionFlow.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 12,
+      "assertion_status_counts": {
+        "passed": 12
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "001e78a5cb3699ebd9ce00a59310ebeece0072cdeb9e615245eca98be9a03bac",
+      "raw_console_sha256": "73411668a58dbeb136111143da30bdc39115a6724ab8f1c599a802605a852fbd",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/briefSubmissionFlow.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chatEscalation.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 49,
+      "assertion_status_counts": {
+        "passed": 49
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "7a37223027b6042f040a72347e96b1f1631b16387344b6839d84074730548ddb",
+      "raw_console_sha256": "d8f7252390649e1470c3ff76b947f8340320a6e8850223449310c593c8a7b900",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chatEscalation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chatHistoryIsolation.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 39,
+      "assertion_status_counts": {
+        "passed": 32,
+        "pending": 7
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "e5a6268705d06ba9f5e1e1a5440d78b7bc4eff6a28ed275fd3e63fd0af7ba854",
+      "raw_console_sha256": "4e6720a2f0134a5f15c2dc58a0dc5b1f1e869f4e687a341d59f4c621367b6b6b",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chatHistoryIsolation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chatRequestScope.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 17,
+      "assertion_status_counts": {
+        "passed": 17
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "2e3093dce05bf702d2d7ade0a3d25ed5877182fcdd0e4b55725f5e6fdbb7b678",
+      "raw_console_sha256": "982004cf1ff4a3ba9bd365d7754da05b4d19140b07639001e72285c4361ce0dc",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chatRequestScope.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefBrief.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 9,
+      "assertion_status_counts": {
+        "passed": 9
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "a6e69769eb390b0ad8aad06125216f34f8496116a9519aa95cd8447d6d3db519",
+      "raw_console_sha256": "44109d1e9dbe99956eb9a71ebeeb69429653305ed9c6dc6f4a99b39a3addda73",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefBrief.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefBudgetAccounting.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 12,
+      "assertion_status_counts": {
+        "passed": 12
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "320d8dc7f5a3fc7db197b4935d49894ef54575c41c87f954178b318437759add",
+      "raw_console_sha256": "ff93bcce68dfa0eec1f4fb39e9dd1150cab216e828f014d7773742d666843d39",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefBudgetAccounting.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefBudgetAdapter.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 7,
+      "assertion_status_counts": {
+        "passed": 7
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "053ac7a8a1ddd694c50c640e833537f5cb807451887b8f52917577fa29891313",
+      "raw_console_sha256": "357e377463fee57afd2dd56008786c5337f685e53ebedafc6fa21c1f0d299166",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefBudgetAdapter.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefBudgetAdmission.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 18,
+      "assertion_status_counts": {
+        "pending": 18
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "adfffd6654a58a654ef93fbb971c4083c15dec17e4ae1b327317c76a196ab602",
+      "raw_console_sha256": "fbf18930b6c05689c8ba1b9984049bf5b9f675003f1c3717847e0d4e67b419e9",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefBudgetAdmission.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefBudgetMigration.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 1,
+        "pending": 2
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": true,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 1,
+      "raw_json_sha256": "337109ccdedbe55a274c4e867397b7e65beae0fdd896e76dc31a6b43dfc4770a",
+      "raw_console_sha256": "b42e8e8abc3434fd50ed9b0fc4b1ffbcc7025381fc2d57decc3107ccc7bb60b7",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefBudgetMigration.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefBudgetReservations.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 28,
+      "assertion_status_counts": {
+        "pending": 28
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "d3bb38106a7e38bbc45bf083d430c4b82d24562f92e85b314e3c2129a1b59f15",
+      "raw_console_sha256": "f3788ac4537fa0d68f7b770292b00e60cf9e8b3c7bcb1f0550236b81be4dd3bd",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefBudgetReservations.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefCancellation.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 7,
+      "assertion_status_counts": {
+        "passed": 7
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "3b73ffc60ce6941b6ce9cb44ff4996960c88517daa09fb72e2d3c2d99d225f2f",
+      "raw_console_sha256": "b9dbe64bd46ffbb555e10ccf0b7c549a49e1183a1c635ebd847fd8d39adc9248",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefCancellation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefControlPlane.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 8,
+      "assertion_status_counts": {
+        "pending": 8
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "d81b37f3db60662e63a47760e151865cdc0525587fa3bbc22b3cdaf73e1c9ab6",
+      "raw_console_sha256": "e8071e62e6e61aca1ca4a2a5977c49e3ccc354e9a412683bca50c149fa06b6f9",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefControlPlane.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefCostGovernor.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 7,
+      "assertion_status_counts": {
+        "passed": 7
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "20d16eb73c625b7ccbb53298bd02d99ce935529782bae609855767287ee562f8",
+      "raw_console_sha256": "8a33d84d04edeada1efde16cd0c51567bdfbcaddf741b9960c5b85de4ecb3a29",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefCostGovernor.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefDriver.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 6,
+      "assertion_status_counts": {
+        "passed": 6
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "560b53300e483294abe1e34006fcf68f48ca6205fe9b4b8a47018f41a6906aaf",
+      "raw_console_sha256": "957d36e8f3bde92e586461512cece4bd4be8bec2f4dc5668fda16f0e9127eddf",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefDriver.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefEstimates.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 44,
+      "assertion_status_counts": {
+        "pending": 44
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "8199cff822e4ffabed8ff0a0a7a3e67f36fc1b2e50971e0e1d4326bdc0ee79f9",
+      "raw_console_sha256": "9253a4468535d2ab528e6d512360e1bb9d15b84b2b55b23b8c3a93fd282db2d7",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefEstimates.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefEvidenceAdapter.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 20,
+      "assertion_status_counts": {
+        "passed": 20
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "d7bc270021e3844b1f9d599d1cf79eac8db711ddec8be2189e1bbb1f995d3897",
+      "raw_console_sha256": "6f3089cb2ca7c9b5c0128fd276aa2546230e2dcdb821ef75b85c9ee45ddabbe9",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefEvidenceAdapter.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefEvidenceFreshness.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 31,
+      "assertion_status_counts": {
+        "passed": 30,
+        "pending": 1
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": true,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 1,
+      "raw_json_sha256": "f35dfc1e879946acd884c2f97837cc49807ff7961cc06d79fc2ffb3f8866017e",
+      "raw_console_sha256": "7afe8d484368107d33f595f578e6d9f9f8ad009079cc5787788190c40bc97ba7",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefEvidenceFreshness.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefEvidenceGate.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 17,
+      "assertion_status_counts": {
+        "passed": 17
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "df5d6bd18be7e62a5b1963d2dd021ac98cdc93c6b725ed827511ebd058af9dec",
+      "raw_console_sha256": "27377b2ff9e73d1434ae880581ae9ebdd003bb0be4f24fe997db27cabd2bfa78",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefEvidenceGate.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefGitCancellation.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "405b1af2f573a7e4e6f4c8a7ab810c923063876e8938f7e6144eba0c55238ebd",
+      "raw_console_sha256": "e9ece4fbb58d61b12ab240906cf850820524d6e5aa9d061f4ae72502a5ddd8b4",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefGitCancellation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefGitState.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "fc898523742490a2bb1aac6b14df6b6d002ee5845a1b8c6127583497d85db91c",
+      "raw_console_sha256": "efecc83d9bedfed285528abf4b21cf47094c9803559fd449c60ee9e40b5d9ba1",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefGitState.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefHardening.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 15,
+      "assertion_status_counts": {
+        "pending": 15
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "1d9c55944c15c50e98b13db2b6e804a6af70412c41206373b3913498dcada0b2",
+      "raw_console_sha256": "43571e8b730530d25399f29340897f2a9a5d825461803316b9718f1e3f853bd1",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefHardening.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefIndependentReview.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 2,
+      "assertion_status_counts": {
+        "passed": 2
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "9f30c288cf1b9919d2511484df797c61dd92819cd502013d65fab3e4c937a777",
+      "raw_console_sha256": "ef8902107ea83b70d9186902c53c1782c3c653d3f6b2e39415af264bcae45536",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefIndependentReview.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefMission.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "2eabc163e5c4e22b9c3a8c87f17edfa08d119b78de401f0ab0ceb71966639c0c",
+      "raw_console_sha256": "94a5c995883df21be1996bff8f5cc32606a12df8b65a9e18d73ddccf1d1a88f9",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefMission.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefProcess.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "b346870af8160475324962f1f0e85daa935563f587f6c7f694362cc320e9ee54",
+      "raw_console_sha256": "4d4c93759ec48ec17d5f62469e5c24ef2ac3f472464166763f731d03e4cf8fb7",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefProcess.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefProcessQuarantine.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 18,
+      "assertion_status_counts": {
+        "passed": 18
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "0929a9d1ac5da9e3886bdd31f62de3919d6de6a464517375e311f52e9b54fead",
+      "raw_console_sha256": "8ea8f07286c4463d40bc521a57e6b502854793563819f8a0d25ff28a439c9a31",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefProcessQuarantine.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefProtocol.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "425534ed8eb6dc68942282bebef834331253ae9749e9c4701968f78d747f9d7e",
+      "raw_console_sha256": "288018e06df24eb1c5c5b8de80bacc8af6556a5fda03f9993bb5917c6ac7945b",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefProtocol.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefQuarantineAdapter.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 15,
+      "assertion_status_counts": {
+        "passed": 15
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "e28315704ced1d2f25b1918a7bbd6db9dff2adb04d80ed0ab2f8fdcd0d14e44f",
+      "raw_console_sha256": "3b6397f50207f2560c1a941110857908810aeec5da79ddc0168ffca91ad27c32",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefQuarantineAdapter.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefRuntimePolicy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "3f72bdccb574104845c2eb4abdd0c567b0072467df24c5202c2036cea217fbab",
+      "raw_console_sha256": "e7dcb3f5b0075843610a9cad36b834e3877d9e71f4bc9dfc08aa768454e06283",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefRuntimePolicy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefSupervisor.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 20,
+      "assertion_status_counts": {
+        "passed": 20
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "37054cece3b84324c0a21b42f4585a8ffa31546191ac337a48dc5d0ec2b729a3",
+      "raw_console_sha256": "0834cc857bf7d1ffa5e89ef6cd718cc4d53daf5e3b83aa966c1f44f6546d1b34",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefSupervisor.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefSupervisorCancellation.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 1,
+      "assertion_status_counts": {
+        "passed": 1
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "a5b916eba35cef06444d24c5e8f3d4b9bde9dd12effd0cb50ad8d352acdcc2e7",
+      "raw_console_sha256": "e239b2e51684abaf2a0e2d656742c5d8d64f05dfa0f0665a4865ced8e38a8a54",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefSupervisorCancellation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefVerificationGitIntegration.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 3
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "549bfd624ea67e27078ad4a7b5036be80cb97ef1f71b0a84d5d4bc146677f390",
+      "raw_console_sha256": "cd6366756ca4c02fcc71ee908ff1110584ab610e32b87e0f3e12ef9a945ec640",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefVerificationGitIntegration.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefVerifier.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "0e43a375b3b126f82c9a9950e48f0658fb8c0a81549504e495c2fe6215973bf2",
+      "raw_console_sha256": "86f19b23649816efb2a563c66d14900d137906e3f95836bfee8eaa38c4dc5cca",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefVerifier.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/chefWorkerShutdown.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "097275a75b387f5c5a10e5f9e5ac9c0fc05349ad4c2f8d4d8e0d72eca753ee14",
+      "raw_console_sha256": "9eff558809936fdbfe0f0c5ba0386445c831e7ceca36ab897ed29e32cb585f17",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/chefWorkerShutdown.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/claudeDecisionCompleteness.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 34,
+      "assertion_status_counts": {
+        "passed": 34
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "4d9b77b6196b4c065678babb4035471fe080c686a5dace644f1c619acfd67d5d",
+      "raw_console_sha256": "190e249be715a79cd9f48c56681fadd5b35d94be76c540416b90ac3a306dba15",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/claudeDecisionCompleteness.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/commercePrivileges.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 58,
+      "assertion_status_counts": {
+        "pending": 58
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "920084f43ea2b2e9b5116bff89df905b3739d6129192ba53bb517aff5980634d",
+      "raw_console_sha256": "af37975761e40900df512146400912bad9b6def1170d2f92deae3f325e8f2337",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/commercePrivileges.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/connectPermissions.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "c3136d3d487fd28e0dffa4ec683cd045dd137545e00dfecb33964772018991a0",
+      "raw_console_sha256": "f3aa4fc3ae6d4ff65542c7d8b7a6cf35df02340b8f9a4340b627f09adffbfc81",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/connectPermissions.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/customAgent.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "20ae7e41268bfbd381200f70a12c46bb6f0fdcf369a614b01722a1dbfbf79e1c",
+      "raw_console_sha256": "4e87e3cb0d761d4dd0af074ac937965582c525b202c8cb22c2e2e5ca8212a0bf",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/customAgent.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/customAgentScanAbort.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 2,
+      "assertion_status_counts": {
+        "passed": 2
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "c8f302701feae2af9092464bcdc8c59cd9e525873b0719a757a9001d5e8703ea",
+      "raw_console_sha256": "37be51209d9fa6ba57539a105508d48911828a9daef9803918a4bf20102d31f5",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/customAgentScanAbort.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/customAgentScheduler.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 13,
+      "assertion_status_counts": {
+        "passed": 13
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "76c182a9c596b96ccf78d02ae53c091c9c78f7e96837abe646a4ef064b00a4fe",
+      "raw_console_sha256": "f09c86487f2c120d8c0e87f153846c48acd65efd253343bc7ab15ab70d680b20",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/customAgentScheduler.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/customAgentSchedulerCron.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 3
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "a8fc454397c776a65e6319ebb6246e567f663fde68e7726333cd714eb87ff401",
+      "raw_console_sha256": "0219e2bbc823ba99f7894480614bac577c8f366c28e6ed850ae7391b0c75c672",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/customAgentSchedulerCron.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/customAuthorization.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 46,
+      "assertion_status_counts": {
+        "passed": 46
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "de0249d7274a745fcc010fc4810ace96764168623af08d24b8b29f9498d5d7dc",
+      "raw_console_sha256": "a70fb03958c625670647817c18da90eea51efedfa202203cf88bb95f603e6318",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/customAuthorization.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/customRegistry.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "d55d4d2718fd1ea989bb97dd621d1051f94e183a4fa353fe342e185b89f5c637",
+      "raw_console_sha256": "4e040e0e7947c81486cbd06537c670b1ba94da68f1085a99fad396189e579625",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/customRegistry.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/cycleAdmissionPrivacy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 10,
+      "assertion_status_counts": {
+        "passed": 10
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "e356a53b8a788ac23bb5bfbc91ff19204b7ca6713d9d639487bd0960ab7ad6e8",
+      "raw_console_sha256": "5be3c036142d2c98e82a502aa497b941e8c3333050c04c3e360dd2171fa188f6",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/cycleAdmissionPrivacy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/delegate.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 16,
+      "assertion_status_counts": {
+        "passed": 16
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "5bcaadb73652acc3d0c30d2b260dd1e1741f7b517ab6898e5e55182e2d48d993",
+      "raw_console_sha256": "b29a06221875692505a465fb6f79de230a6095bd07dd0120653429a5fdae7698",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/delegate.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/executionOrigin.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 29,
+      "assertion_status_counts": {
+        "passed": 29
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "66e3f98fc71d149615fe87a7737c8c3f3f353c6c9b2c8e273f65425a5b8df514",
+      "raw_console_sha256": "40db4e18a7c29cd6ed851b5fab1697a2f8a258cf1ed944b6dff7c29137568da0",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/executionOrigin.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/executionOriginMigration.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 10,
+      "assertion_status_counts": {
+        "passed": 10
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "4ba0eeaf213123be7c5d13ef84b6f14cbf5ae02db36edd6ec63bd34ce2c6c2ae",
+      "raw_console_sha256": "68a1ec90e5f15524935bb64de106570f45b06f3c71a1cf69bb399782401c2bbd",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/executionOriginMigration.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/generative.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "32bdc6f50337f7426cae43a042dc61a93f2e884fa167997b1f319bc705b0470e",
+      "raw_console_sha256": "19bf6360b656332801aa164b223d664a8b14ae21e6173a86e9ef4021550b2d45",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/generative.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/gmail-token-crypto.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 3
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "37340a3aff8b778ece3f8fcc9877de459782d77d161a2631bd32146195b351bd",
+      "raw_console_sha256": "49d1ba2f25f031cae8c856c110284e9e25cb33375a1ce9b0929ecdf2dd37ef64",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/gmail-token-crypto.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/gmailTool.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "4f9e86fe412f3958fbf73509790755302b388b7f0f821c23bfa5beaa78788cc1",
+      "raw_console_sha256": "5870756c010be76cbe16fc801473cea3b6db29b04b1892cd8d4986995627f5d1",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/gmailTool.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/jev-client.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 19,
+      "assertion_status_counts": {
+        "passed": 19
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "58d528aa03c75252bad9240014d13385e2f40362f9e616a74faf12e2c4cdd26b",
+      "raw_console_sha256": "236bfc6e48a4ef866fce4bb9944a636f33936698af7b4cc34f1ca57f213d9daf",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/jev-client.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/jev-schema.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 30,
+      "assertion_status_counts": {
+        "passed": 30
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "6aa777e88464ca7de5dae970092f7209be73752c4ee4619921781eee284fb537",
+      "raw_console_sha256": "feb8d00eee6ecd788c8bbef8cf146a10c0edc4df3a68e075e45f31a151a69918",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/jev-schema.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/jev-tool.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 34,
+      "assertion_status_counts": {
+        "passed": 34
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "9d8d07afb0ce51af634e0a42f0fecd95ca8e47bee62d94996e25cb96767c7b95",
+      "raw_console_sha256": "7bc19a2574ef9af012f9f870320d110fd7f64186aad4176d67b2ae13bde695a4",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/jev-tool.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/kartaTriggerEdge.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 87,
+      "assertion_status_counts": {
+        "passed": 87
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "509ab443de35b3d18e5068a86851f9ff697764799ba1f069442ccf144623ea11",
+      "raw_console_sha256": "64704ec38d25d68f06739042050be721a0f0b5aa4518bc5315a51cbdf3467f57",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/kartaTriggerEdge.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/logger.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "02f2e0562075266957569f104057dec6eaae058eeebce595385e8d330727d892",
+      "raw_console_sha256": "e1d7926539c8e98712fe293ae90278cfc19c8091ffbc0707e97cfc2a81210161",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/logger.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loggerCycleFinalization.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 6,
+      "assertion_status_counts": {
+        "passed": 6
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "ebb692b791e5a6bddda654881f2a7d52691dd088415d77354cc491d7a04cf56d",
+      "raw_console_sha256": "8d2f5b05b015e4cdeaef7d7ddab9a8654676f77f478bc4c80d8eb5113f13d6ca",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loggerCycleFinalization.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loggerFinalization.test.ts",
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 11,
+      "assertion_status_counts": {
+        "pending": 11
+      },
+      "unhandled_errors": 1,
+      "worker_sigkill": true,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "6b71bb3a803da7729795fadf18389a4329c3b9ad2d60f697aa00347ddf9f8eef",
+      "raw_console_sha256": "a35dfd8ba9061841e5bccb8ed59186b9f0e6877e9cf892be3f5015f72da12398",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loggerFinalization.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loop.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 14,
+      "assertion_status_counts": {
+        "passed": 14
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "72a1059e5f7c7b2dc06351e46b29125b3ace712205e1549e78a037af5d3bfe35",
+      "raw_console_sha256": "45f4aa6b3d3d77b0af017b461a999b70858b5619f74c87bbb07008c73fa0e2c6",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loop.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loopBriefLifecycle.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 35,
+      "assertion_status_counts": {
+        "passed": 35
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "b09cbb4e271a74e4826e4427fe53b86599d66d3a0bf23e97c3ce5595829296a2",
+      "raw_console_sha256": "32d0285c1a9be57d9f849d87bf6c4a2dd334f9108f911cba51afad8228ed7a3f",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loopBriefLifecycle.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loopJevTracePrivacy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 3
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "05f1e7a34b611c4347fe7a54a0c5707ef3ff395b1fd4c39de8162d757e55a0fa",
+      "raw_console_sha256": "70fca9e995dd74cd7e7ec68953cdbe1b8b4fb095d98d466e2a7884b48887d7ec",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loopJevTracePrivacy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loopTracePrivacy.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 22,
+      "assertion_status_counts": {
+        "passed": 22
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "9aa27c48d279d6784d922f92ad60022e276444c436817260e95a65f0ffa2d058",
+      "raw_console_sha256": "12706ff89ad58bf1b816cece91855ac59e1e881a6db977fb72ece1ef12e27b38",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loopTracePrivacy.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/loopTriggerContext.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 29,
+      "assertion_status_counts": {
+        "passed": 29
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "0b0f330052bf8737795e782546b2da1b5315fc4dee63c5881063f7aafd7612de",
+      "raw_console_sha256": "ec0c04e9c171d125bea555bb4a672632613b2da56861c3ad528131cb7cff9074",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/loopTriggerContext.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/mockClaude.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 7,
+      "assertion_status_counts": {
+        "passed": 7
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "aa92a266dbe518ed82b5ef9210f0db483ac98d044ced7376d7ee7fe13845c8c4",
+      "raw_console_sha256": "1e851cf8f248d7455cca0e33a54babac8359b8840aac8467d42f62740f75365f",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/mockClaude.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/overageCredit.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 38,
+      "assertion_status_counts": {
+        "passed": 38
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "ebbd3557753476dea907d6ee9edcad5cc92e7da5678574d0b802d1a101366715",
+      "raw_console_sha256": "7b13a99f55410c403b636f1f258434bec8927b050adcdb35decfa29128fbf4db",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/overageCredit.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/partnerOutreach.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 47,
+      "assertion_status_counts": {
+        "passed": 47
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "57db3038e2931f9fab4075346773410e01e915abafe76f9a5b59d03e7b9003c4",
+      "raw_console_sha256": "64a3962fb8a5b9d14f26417292069e1ba3deb2c63ddda71f32420bcbf1b62618",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/partnerOutreach.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/publicChatAdmission.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 11,
+      "assertion_status_counts": {
+        "passed": 11
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "65ceddb25ffb05066b889be1b88f7f56e46e671e926ede7c543eb41b6cb310e0",
+      "raw_console_sha256": "d2f43fdac492df956b7889664d9d29f10aedbd7eba369022c9bf7ca9d73534f9",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/publicChatAdmission.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/queueDeliveryIdentity.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 27,
+      "assertion_status_counts": {
+        "passed": 27
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "87e268fde1371ff0abb90c4da6dd4fdca5706b87fe195568153bd899e0b54d19",
+      "raw_console_sha256": "117d9ca9c4f73931d63a3ef780cf9e4ac0ad2de710bd6f92c912ea2a12271972",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/queueDeliveryIdentity.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/real-claude.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 4,
+      "assertion_status_counts": {
+        "passed": 4
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "ebb9e801a8ba3109886341c1b6fec87e92502c1f468092d2f6bf781b22d2f976",
+      "raw_console_sha256": "1ac8b3d4d05427f10ea72145584fd5847eceef55362fd871fcf0a263a86814b5",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/real-claude.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/runtimeHardening.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 3
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "534eabe3586fb13a521a2067505eed7a5c54f18f34ebe255a3fbada373b67ac2",
+      "raw_console_sha256": "e1871e0293a8a03603af7371bbc9d90f16beba8928032af3ea084ee364f57c8e",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/runtimeHardening.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/sseConsumer.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "5bdc2ab4f081108d15bf836ab2d605b0cc5ffa41449496daf52c09acc5ea0b1f",
+      "raw_console_sha256": "46eb3924a0e5a3b469b21b7b55ba88ee892fe94617c9239c38be6e44e666fa1c",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/sseConsumer.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/sseFraming.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 10,
+      "assertion_status_counts": {
+        "passed": 10
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "2de86de7a65e27685b57c3dc4c96fa212df85e2050c62f576801738eb09aa9ec",
+      "raw_console_sha256": "82e959273cb6dc670575750fbec13bdf4e347b3860aedbe533627488e88a7d7f",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/sseFraming.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/streamCompletionAudit.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 23,
+      "assertion_status_counts": {
+        "passed": 23
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "17374a58904766914cd73171b5d4c93f7621a2d44e69806799e270a7b3589da8",
+      "raw_console_sha256": "443be50b2f5cca67faca64095e68d357edd12bc090d58533687b486e367a2349",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/streamCompletionAudit.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/streaming.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 10,
+      "assertion_status_counts": {
+        "passed": 10
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "ee21ff9e37b97d71f588bd028b16b6687e82094604d2ad478e1aa9378416a4f8",
+      "raw_console_sha256": "650cfea009c01780b07f6df2e94071dc4be456262ac3e78f15e4368c9e580351",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/streaming.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/stripeIsolation.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 3,
+      "assertion_status_counts": {
+        "passed": 3
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "6a4032482d5c0957080bca250e7d08596f310e9cf18667f4aba426c91839a01b",
+      "raw_console_sha256": "40478f3c7a94358135080d8c91981f71ed1c210d4e122767421f5227ac91705c",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/stripeIsolation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/supabaseTool.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 5,
+      "assertion_status_counts": {
+        "passed": 5
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "8c2d9c3a09e7e523e028d8273f51b74be217e4b58db2a0b1069178760d08d3a4",
+      "raw_console_sha256": "a62c93efab2251cef39c40fe5dab506bb12b935ef19d42cfbf054d8dfa068a73",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/supabaseTool.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/toolResult.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 16,
+      "assertion_status_counts": {
+        "passed": 16
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "d270ce2a121bdaa30567c09048dcda91a80a0c47ac24639ceac4634142eda0a9",
+      "raw_console_sha256": "0661850d8bdd5ace0b9a7b97eb13ff125c6f9ab1ff1ffec368a77e882f13e784",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/toolResult.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/walletRpcPermissions.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 17,
+      "assertion_status_counts": {
+        "passed": 17
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "a742eb21884d5b9b13d760d423bab825f8ca7da38bf7a79a6b6ae05eeff3a3c6",
+      "raw_console_sha256": "0de1ad9da0e1682fd2740446931ad8729c446c2d2fd7c8705f0690afb7492023",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/walletRpcPermissions.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/webAccessPlanTool.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 10,
+      "assertion_status_counts": {
+        "passed": 10
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "10e272c2333bb31c1dcbe859dea94ad6a6eab5b27706e82909fc6a6406e5e43b",
+      "raw_console_sha256": "24f500ae12736f289d5c4f6bc118556f0b0e6fa69299c278f56b1860d8b103b2",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/webAccessPlanTool.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/webCapabilityPlan.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 47,
+      "assertion_status_counts": {
+        "passed": 47
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "7fc9e9f8f18750564b5ce1fc6c0ffac0a2530f0a9c09a6849b01a90d2a016a39",
+      "raw_console_sha256": "0ac6cd6fc19f13e366217674b5eb88193af164e694390b52ccdabf2f0ca00554",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/webCapabilityPlan.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    },
+    {
+      "file": "test/webSearchValidation.test.ts",
+      "status": "PASS",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "total_assertions": 41,
+      "assertion_status_counts": {
+        "passed": 41
+      },
+      "unhandled_errors": 0,
+      "worker_sigkill": false,
+      "json_report_while_tests_running_warning": false,
+      "vitest_report_success": true,
+      "vitest_num_pending_tests": 0,
+      "raw_json_sha256": "3a8d6b8a5eb7bde6db83e1b47807dfca8339cdc0a9c5eaf72ed89462b003355f",
+      "raw_console_sha256": "fb0d3bdce4feea86f03c18e4450dc330e272a3458ca7cb7c202e0716dcbb67d8",
+      "json_hash_matches_execution_receipt": true,
+      "console_hash_matches_execution_receipt": true,
+      "reported_files": [
+        "test/webSearchValidation.test.ts"
+      ],
+      "raw_statuses_match_execution_summary": true,
+      "raw_assertion_names_and_statuses_match_execution_summary": true,
+      "reported_total_matches_assertions": true,
+      "raw_success_matches_independent_success": true,
+      "assertion_failure_message_count": 0
+    }
+  ],
+  "limits": [
+    "No measured source-code or branch-coverage percentage: this review checks exact test-file coverage and test outcomes.",
+    "SIGKILL is established by logs. Its cause (including possible memory pressure) is not established; there is no accessible cgroup/OOM evidence in this review.",
+    "No product-wide, production, deployment, database-service or real-provider qualification is implied.",
+    "Raw Vitest reports are intermediate files outside this repository. Their hashes, per-file reconciliations and aggregate assertion names/statuses are retained in the QA artifacts."
+  ],
+  "remaining_action": {
+    "owner": "parent agent / existing GitHub CI runner",
+    "action": "Run the unchanged KARTA gate on a separate CI runner and inspect its final process exit, all assertion statuses, exact inventory and unhandled errors before granting global PASS."
+  }
+}

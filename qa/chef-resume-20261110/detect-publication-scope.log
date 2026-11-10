@@ -1,0 +1,17 @@
+(node:9) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 50 files, 1 symbols
+Affected processes: 5
+Risk level: medium
+
+Changed symbols:
+  Function runChefWorkerCycle → karta/src/chef/supervisor.ts
+
+Affected execution flows:
+  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: runChefWorkerCycle
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (3 steps) — changed: runChefWorkerCycle
