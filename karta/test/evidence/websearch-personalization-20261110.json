@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "work_item": "IAO-DELTA-20261110-WEB-RESEARCH",
+  "repository": "puramapro-oss/purama-ai",
+  "existing_pull_request": 26,
+  "branch": "fix/iao-websearch-validation-20261110",
+  "parent_commit": "a65151540557719ec8adb1bc755f2d05d9e63d3f",
+  "scope": "Existing web_search adapter only: opt-in evidence envelope, explicit preferences, and reuse of central trace minimization. Not a deployed ONE search journey.",
+  "verification": {
+    "started_at_utc": "2026-11-10T04:04:34.404140+00:00",
+    "source_sha256": {
+      "karta/src/tools/websearch.ts": "b25bacb159edcf86a8a29a22c897a29197d429ec7491275e763c04226c1e575f",
+      "karta/test/webSearchEvidence.test.ts": "2e1af7a718d14e1937852080b83a37742a3e15e8c24e3d3ece770dca54a76407",
+      "karta/test/webSearchPrivacy.test.ts": "61f7774aa3545f6b1b3f14c0104627f74627bf729cf07b6eae925eec3d4bf780",
+      "karta/test/webSearchInputBoundary.test.ts": "32d815f5a046b401d2e91d0e4f2790f0be1c7c47f0905c68d6d9eea0810d1444",
+      "karta/WEB_CAPABILITIES.md": "78c84552207e1832ec358ca6256bc9eabc6141bd7cbba286f64a9da8e39658ca"
+    },
+    "commands": [
+      {
+        "argv": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/webSearchEvidence.test.ts",
+          "test/webSearchPrivacy.test.ts",
+          "test/webSearchInputBoundary.test.ts",
+          "test/webSearchValidation.test.ts",
+          "test/agentsRegistry.test.ts",
+          "test/loop.test.ts",
+          "test/loopTracePrivacy.test.ts",
+          "test/approvalTracePrivacy.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=/workspace/scratch/6d86d08874e2/qa/final-tests.json"
+        ],
+        "cwd": "/workspace/scratch/6d86d08874e2/purama-ai/karta",
+        "expected_exit_code": 0,
+        "exit_code": 0,
+        "elapsed_seconds": 24.43,
+        "log": "final-command-0.log",
+        "log_sha256": "9d91734a6eaa8e312f15ddc6b3594740c05bdeb3facdef87c44d3b04d1f7bc00"
+      },
+      {
+        "argv": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "cwd": "/workspace/scratch/6d86d08874e2/purama-ai/karta",
+        "expected_exit_code": 0,
+        "exit_code": 0,
+        "elapsed_seconds": 42.982,
+        "log": "final-command-1.log",
+        "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8"
+      },
+      {
+        "argv": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "cwd": "/workspace/scratch/6d86d08874e2/purama-ai/karta",
+        "expected_exit_code": 0,
+        "exit_code": 0,
+        "elapsed_seconds": 41.344,
+        "log": "final-command-2.log",
+        "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746"
+      }
+    ],
+    "source_unchanged_during_checks": true,
+    "tests": {
+      "numTotalTests": 176,
+      "numPassedTests": 176,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTotalTestSuites": 18,
+      "success": true
+    },
+    "finished_at_utc": "2026-11-10T04:06:23.176117+00:00"
+  },
+  "test_files": [
+    {
+      "path": "test/agentsRegistry.test.ts",
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "path": "test/approvalTracePrivacy.test.ts",
+      "total": 20,
+      "passed": 20,
+      "failed": 0
+    },
+    {
+      "path": "test/loop.test.ts",
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    {
+      "path": "test/loopTracePrivacy.test.ts",
+      "total": 22,
+      "passed": 22,
+      "failed": 0
+    },
+    {
+      "path": "test/webSearchEvidence.test.ts",
+      "total": 59,
+      "passed": 59,
+      "failed": 0
+    },
+    {
+      "path": "test/webSearchInputBoundary.test.ts",
+      "total": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "path": "test/webSearchPrivacy.test.ts",
+      "total": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "path": "test/webSearchValidation.test.ts",
+      "total": 41,
+      "passed": 41,
+      "failed": 0
+    }
+  ],
+  "regression_demonstration": {
+    "feature_tests_against_parent": {
+      "total": 65,
+      "failed": 62,
+      "passed": 3,
+      "report_sha256": "5b651986aac779833c5ab9864ec65cf614ed087b9f51c9636fbbb6f3866d4759"
+    },
+    "input_boundary_before_correction": {
+      "total": 8,
+      "failed": 6,
+      "passed": 2,
+      "report_sha256": "58c67bab4586817680f07d9afb2a662d7635a782c7938c0b8ccd294813d62323"
+    },
+    "final_suite": {
+      "total": 176,
+      "passed": 176,
+      "failed": 0,
+      "pending": 0,
+      "report_sha256": "59eb83d51453e36120bb08fa30593b9cb905c90b9e676a6839aa9cee82530743"
+    }
+  },
+  "retained_failed_attempts": [
+    {
+      "total": 176,
+      "passed": 174,
+      "failed": 2,
+      "failures": [
+        {
+          "name": "cycle outcomes and interruption executes a non-sensitive live action",
+          "reason": "Test timed out in 5000ms."
+        },
+        {
+          "name": "private tool traces through the real agent cycle protects a disabled tool result through the real cycle without sending any request",
+          "reason": "Test timed out in 5000ms."
+        }
+      ],
+      "context": "A concurrent GitNexus analysis was running. Contention is a hypothesis, not an established root cause.",
+      "resolution": "The same source hashes passed all 176 tests with --maxWorkers=1 after the analysis ended, without increasing the test timeout. Typecheck and build then passed.",
+      "report_sha256": "fe93b6ac1f570bda8118bb81a61b4d4c67864b0d69a3d4559e76ceb3b0357775"
+    }
+  ],
+  "impact_analysis_before_edits": [
+    {
+      "target": {
+        "id": "Const:karta/src/tools/websearch.ts:webSearchTool",
+        "name": "webSearchTool",
+        "type": "Const",
+        "filePath": "karta/src/tools/websearch.ts"
+      },
+      "direction": "upstream",
+      "impactedCount": 0,
+      "risk": "UNKNOWN",
+      "epistemic": "exact",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      }
+    },
+    {
+      "target": {
+        "id": "Method:karta/src/tools/websearch.ts:webSearchTool.execute#1",
+        "name": "execute",
+        "type": "Method",
+        "filePath": "karta/src/tools/websearch.ts"
+      },
+      "direction": "upstream",
+      "impactedCount": 0,
+      "risk": "UNKNOWN",
+      "epistemic": "lower-bound",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "boundaries": [
+        "5 call sites invoking `execute` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+      ],
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      }
+    },
+    {
+      "target": {
+        "id": "Function:karta/src/tools/websearch.ts:searchParams",
+        "name": "searchParams",
+        "type": "Function",
+        "filePath": "karta/src/tools/websearch.ts"
+      },
+      "direction": "upstream",
+      "impactedCount": 1,
+      "risk": "LOW",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      }
+    },
+    {
+      "target": {
+        "id": "Function:karta/src/tools/websearch.ts:domainFilters",
+        "name": "domainFilters",
+        "type": "Function",
+        "filePath": "karta/src/tools/websearch.ts"
+      },
+      "direction": "upstream",
+      "impactedCount": 2,
+      "risk": "LOW",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      }
+    },
+    {
+      "target": {
+        "id": "Function:karta/src/tools/websearch.ts:providerDate",
+        "name": "providerDate",
+        "type": "Function",
+        "filePath": "karta/src/tools/websearch.ts"
+      },
+      "direction": "upstream",
+      "impactedCount": 3,
+      "risk": "LOW",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 2
+      }
+    }
+  ],
+  "manual_dependency_review": {
+    "direct_importers": [
+      "karta/src/agents/legalAgent.ts",
+      "karta/src/agents/partnerAgent.ts",
+      "karta/src/agents/actionAgents.ts",
+      "karta/src/tools/customRegistry.ts"
+    ],
+    "dynamic_dispatch": [
+      "customRegistry",
+      "runAgentCycle",
+      "approval execution and replay"
+    ],
+    "contract_preserved": "Default query-only request and legacy result projection remain unchanged; evidence format is opt-in.",
+    "graph_limit": "The graph does not resolve all dynamic execute callers. UNKNOWN does not mean unused or safe."
+  },
+  "precommit_checks": {
+    "status": "PASS for the scoped review; the inherited comparison to main remains CRITICAL",
+    "source_and_documentation_delta": {
+      "scope": "staged before adding this receipt",
+      "files": 5,
+      "changed_symbols": 98,
+      "affected_processes_resolved": 0,
+      "risk": "LOW",
+      "exit_code": 0,
+      "stdout_sha256": "a8a403f03dae89800a7f92d766fde9b700e9ed59c7a05c665b73e1ed36435a0a"
+    },
+    "comparison_to_main": {
+      "scope": "compare",
+      "base_ref": "main",
+      "base_sha": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+      "files": 270,
+      "changed_symbols": 2150,
+      "affected_processes": 376,
+      "risk": "CRITICAL",
+      "exit_code": 0,
+      "stdout_sha256": "167da74f5fcea43e0fe9464d1b3a6e57e5f3653aa494076a6562a577adf3d318",
+      "interpretation": "Includes inherited branch changes. This targeted delta does not authorize merging the full branch to main. Printed symbol listing was capped; reported aggregate counts cover all detected symbols."
+    },
+    "index": {
+      "cli_version": "1.6.12",
+      "exit_code": 0,
+      "nodes": 9144,
+      "edges": 22613,
+      "clusters": 287,
+      "flows_reported": 534,
+      "new_isolated_index": true,
+      "index_only": true,
+      "fts_disabled": true,
+      "warnings": [
+        "68 cross-language property sites unresolved.",
+        "756 of 956 entry candidates omitted, 1394 callees skipped and 16 trace walks cut by budget; missing flows do not imply unused code.",
+        "The analyzer printed fatal library error, lookup self after its successful summary but exited zero; subsequent staged and comparison queries completed successfully."
+      ],
+      "previous_attempt": "A prior refresh exited one with an incomplete index. Its lock was left intact; the final analysis used a new isolated store and registry."
+    },
+    "publication_intent": "Fast-forward the existing draft PR #26 only, using expected_sha equal to parent_commit. No merge, no deployment.",
+    "final_staged_delta": {
+      "files": 6,
+      "risk": "LOW",
+      "exit_code": 0,
+      "stdout_sha256": "ae3ffe4c972862f4c0d5e772c4c1b1f62f3bef40148bb524e78ff0924ac8fc4b",
+      "scope": "five source/test/documentation files plus this receipt; dynamic callers remain subject to the manual review and integration tests"
+    }
+  },
+  "production_status": "NON TESTE",
+  "limitations": [
+    "HTTP transport, persistence and notifications are mocked in the targeted tests. The real tool, registry, cycle and approval code paths are exercised where applicable.",
+    "No live Tavily request, provider latency, invoice, rate-limit or production check was performed.",
+    "No canonical ONE runtime source was available here; no UI/end-to-end ONE integration, synthesis after web results, session cancellation or tenant-bound quota reservation was added.",
+    "Evidence describes search excerpts, not pages read by KARTA and not verified claims. Publication dates remain provider estimates; missing metadata stays null.",
+    "URL grouping does not establish source independence, semantic duplication or agreement between sources.",
+    "metadata_only reuses existing trace minimization; it does not erase historical logs, pending business parameters or provider-side queries, and does not govern explicit notification content.",
+    "Search domain filters are preferences, not network-access permissions.",
+    "This is a targeted eight-file campaign, not the entire inherited branch test suite.",
+    "No merge or deployment is included in this receipt. Remote CI must be reported separately after publication."
+  ],
+  "official_contracts": [
+    "https://docs.tavily.com/documentation/api-reference/endpoint/search",
+    "https://docs.tavily.com/documentation/best-practices/best-practices-search",
+    "https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html"
+  ]
+}

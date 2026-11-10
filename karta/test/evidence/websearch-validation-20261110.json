@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-10T03:28:48.134285+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "b826af125ce296d3808d3b71b93fd084e63dbdb7",
+  "base_pull_request": 21,
+  "branch": "fix/iao-websearch-validation-20261110",
+  "purpose": "Distinguer une recherche web valide, une réponse absente ou mal formée et un échec fournisseur sans exposer les données privées du transport.",
+  "production_files_changed": [
+    "karta/src/tools/websearch.ts"
+  ],
+  "file_sha256": {
+    "karta/src/tools/websearch.ts": "5de0e3b0bde6e7c1dbf64937227698e8c672be4119270e57b58da1385159cafd",
+    "karta/test/webSearchValidation.test.ts": "630b0a235490f58f2f4e0883d64cd617f8f3f5eb7cc564f6178ec876e81e32d0",
+    "vercel.json": "58779eb81412ffff934c5e7110d9c3be5a926e47a73a6f86acfa78e2e09ea025"
+  },
+  "base_source_sha256": "ecf5da2076d6c1a2a9952be6435b33885afade2103e86b5b332995480bff39af",
+  "contract_source": "https://docs.tavily.com/documentation/api-reference/endpoint/search",
+  "dependency_lock_sha256": "f94deb0fab4f5239044b29265a1e62ad191dcd5ff56792e6afdbc95434e0c0f1",
+  "dependency_changes": false,
+  "runtime": {
+    "node": "v24.22.1",
+    "vitest": "5.0.3",
+    "typescript": "5.9.3",
+    "vite": "8.3.7"
+  },
+  "provider_transport": "Vrai outil web_search, registre custom et boucle KARTA exécutés avec fetch, décision, stockage et notifications simulés. Réponses et ReadableStream réels de Node ; aucun appel Tavily ou autre fournisseur réel.",
+  "decisions": [
+    "results doit être un tableau explicitement présent ; results:[] reste une recherche valide sans résultat.",
+    "Les trois champs projetés title, url et content doivent être des chaînes. Titres et extraits vides restent acceptés. Les champs documentés additionnels sont tolérés et non projetés, conformément au contrat public antérieur title/url/snippet.",
+    "Sources HTTP(S) absolues uniquement, sans identifiants intégrés ni caractères de contrôle. Toute la réponse est refusée si un élément est invalide ; aucune preuve partielle ou tronquée n’est présentée.",
+    "Maximum inchangé de cinq résultats demandés ; limites de 4096 caractères par titre, 8192 par URL, 100000 par extrait et 1048576 octets pour le corps complet.",
+    "Délai de 30 secondes couvrant transport et lecture ; réutilisation du motif AbortController/Promise.race de web-access-plan, sans nouveau framework ni retry. Un transport qui ignore AbortSignal ne peut pas être tué de force.",
+    "Les erreurs de transport, corps HTTP, JSON et flux ne sont jamais recopiées dans les exceptions ; les redirections du transport sont refusées.",
+    "Authentification alignée sur la documentation officielle actuelle : Authorization: Bearer, clé absente du corps JSON. Paramètres query/max_results, autorisations, registres, budgets et logique de reprise inchangés."
+  ],
+  "checks": [
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/webSearchValidation.test.ts --maxWorkers=1 --reporter=json --outputFile=<evidence>/before.json",
+      "cwd": "karta",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "report_file": "before.json",
+      "report_sha256": "248221fdd7c45d8582dce01307a8fb299f8d21eb79e1c9a7e0d9358037a550e0",
+      "collected": 41,
+      "passed": 8,
+      "failed": 33,
+      "pending": 0,
+      "files": 1,
+      "success": false,
+      "test_file_sha256_at_run": "9995bf6ddf6cfbe8e415cca5966925ff663e694657a30893cfab9085291261dc",
+      "phase": "baseline_before_response_validation"
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/webSearchValidation.test.ts test/customRegistry.test.ts test/loop.test.ts --maxWorkers=1 --reporter=json --outputFile=<evidence>/after.json",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "report_file": "after.json",
+      "report_sha256": "699f714406ba971c530f9dfa05637346dd20380931cb4a550a0f0b0b39ef23c6",
+      "collected": 59,
+      "passed": 59,
+      "failed": 0,
+      "pending": 0,
+      "files": 3,
+      "success": true,
+      "phase": "initial_fix_before_auth_review",
+      "test_file_sha256_at_run": "9995bf6ddf6cfbe8e415cca5966925ff663e694657a30893cfab9085291261dc"
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8",
+      "phase": "initial_fix_before_auth_review"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746",
+      "phase": "initial_fix_before_auth_review"
+    },
+    {
+      "command": "git diff --check",
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/webSearchValidation.test.ts -t 'keeps the existing title/url/snippet contract for valid sources' --maxWorkers=1 --reporter=json --outputFile=<evidence>/auth-before.json",
+      "cwd": "karta",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "phase": "auth_assertion_before_bearer_change",
+      "report_file": "auth-before.json",
+      "report_sha256": "daae1b7bab05ba456358bdb812bf68c5f1b44e53bf3a30cc93f1de6ee9d74867",
+      "test_file_sha256_at_run": "630b0a235490f58f2f4e0883d64cd617f8f3f5eb7cc564f6178ec876e81e32d0",
+      "collected": 41,
+      "passed": 0,
+      "failed": 1,
+      "pending": 40,
+      "files": 1,
+      "success": false
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run test/webSearchValidation.test.ts test/customRegistry.test.ts test/loop.test.ts --maxWorkers=1 --reporter=json --outputFile=<evidence>/after-review.json",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "phase": "final_after_review",
+      "report_file": "after-review.json",
+      "report_sha256": "9b02c9a4d0b00e0440e7bb900da3073992ca3cdcf76e7bc40ab09cd7ac60d8d8",
+      "test_file_sha256_at_run": "630b0a235490f58f2f4e0883d64cd617f8f3f5eb7cc564f6178ec876e81e32d0",
+      "collected": 59,
+      "passed": 59,
+      "failed": 0,
+      "pending": 0,
+      "files": 3,
+      "success": true
+    },
+    {
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "phase": "final_after_review",
+      "log_file": "typecheck-review.log",
+      "log_sha256": "14904f2d229b7ef1a1c9c454e3ce6a311e05413dc41d9909192a4b9e0e7958c8"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "phase": "final_after_review",
+      "log_file": "build-review.log",
+      "log_sha256": "7a91db29b585b995943a6cc1cf23073fc8658040fca410d8d6769e53d0371746"
+    },
+    {
+      "command": "Parse vercel.json and compare with HEAD plus exactly one deploymentEnabled entry",
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "phase": "final_after_review",
+      "observed": "Valid JSON; only fix/iao-websearch-validation-20261110:false added."
+    },
+    {
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "phase": "final_after_review"
+    }
+  ],
+  "new_test_cases": 41,
+  "regression_before": {
+    "passed": 8,
+    "failed": 33,
+    "pending": 0,
+    "observations": "Réponse {} considérée comme succès vide jusque dans le vrai cycle KARTA, champs/URL invalides projetés, détails privés d’erreur transmis, absence de borne de lecture et de délai. Le nombre de 33 correspond aux cas de test en échec, pas à 33 vulnérabilités distinctes.",
+    "auth_followup": "L’assertion ciblée Bearer échoue avant changement du transport (1 exécutée, 40 autres cas exclus par -t), puis réussit dans la campagne finale complète de 59 tests."
+  },
+  "gitnexus": {
+    "version": "1.6.12",
+    "before_edit": {
+      "tool": {
+        "target": {
+          "id": "Const:karta/src/tools/websearch.ts:webSearchTool",
+          "name": "webSearchTool",
+          "type": "Const",
+          "filePath": "karta/src/tools/websearch.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 0,
+        "risk": "UNKNOWN",
+        "riskSharedAxes": "UNKNOWN",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "epistemic": "exact",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {},
+        "affected_processes": [],
+        "affected_modules": [],
+        "byDepth": {}
+      },
+      "execute": {
+        "target": {
+          "id": "Method:karta/src/tools/websearch.ts:webSearchTool.execute#1",
+          "name": "execute",
+          "type": "Method",
+          "filePath": "karta/src/tools/websearch.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 0,
+        "risk": "UNKNOWN",
+        "riskSharedAxes": "UNKNOWN",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "epistemic": "lower-bound",
+        "boundaries": [
+          "5 call sites invoking `execute` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+        ],
+        "causes": {
+          "scopeExtractionFiles": 0,
+          "receiverTyping": 5,
+          "dispatchBoundary": 0,
+          "externalBoundary": 0,
+          "undecidedSatisfaction": 0,
+          "callableValueReferences": 0
+        },
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {},
+        "affected_processes": [],
+        "affected_modules": [],
+        "byDepth": {}
+      }
+    },
+    "manual_import_review": [
+      "karta/src/agents/legalAgent.ts",
+      "karta/src/agents/partnerAgent.ts",
+      "karta/src/agents/actionAgents.ts",
+      "karta/src/tools/customRegistry.ts"
+    ],
+    "scoped_detect": {
+      "command": "gitnexus detect-changes --scope staged",
+      "exit_code": 0,
+      "files": 4,
+      "symbols": 41,
+      "resolved_processes": 0,
+      "risk": "LOW",
+      "raw_report_file": "detect-reviewed-staged.txt",
+      "raw_report_sha256": "40b2764db7ee9f9202ade3882798df0c73a8fe615d62eb0328ba71d555535af5"
+    },
+    "compare_main": {
+      "command": "gitnexus detect-changes --scope compare --base-ref d116dc8a6429ea76c67167a195eb3f723f2251fb",
+      "exit_code": 0,
+      "files": 267,
+      "symbols": 2059,
+      "resolved_processes": 376,
+      "risk": "CRITICAL",
+      "raw_report_file": "detect-reviewed-main.txt",
+      "raw_report_sha256": "f3bd77632a2ebfeca617cd86234c23d46aaaa5ce6fe3f97989a32dcea184bc63",
+      "main_sha": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+      "interpretation": "Le diff global inclut les changements hérités de la PR #21 et de sa consolidation. Le correctif livré comprend uniquement les quatre fichiers staged ; le niveau CRITICAL agrégé a été signalé au parent avant toute publication."
+    },
+    "final_index": {
+      "command": "gitnexus analyze --index-only --name iao-websearch-validation --workers 2",
+      "exit_code": 0,
+      "log_file": "index-reviewed.log",
+      "log_sha256": "15829ca8e9f0d2b6ddb4f6d142f24cecb5ba4468a79ff45315a477248145a4af",
+      "nodes": 9049,
+      "edges": 22019,
+      "clusters": 283,
+      "flows": 534,
+      "isolation": "Registre et stockage isolés pour cette branche ; dernier index exécuté après les changements d’authentification.",
+      "limitations": "753 candidats de point d’entrée et 1313 appels écartés par les bornes du graphe ; 16 parcours coupés. Zéro flux résolu ne prouve pas zéro impact. Les références à une constante exportée et certains appels de propriétés ne sont pas entièrement résolus."
+    }
+  },
+  "limitations": [
+    "59 tests ciblés exécutés. La suite complète KARTA et les 788 résultats rapportés par la PR #21 ne sont pas revendiqués comme réexécutés ici.",
+    "Aucune qualité de recherche, latence réelle, facture, clé fournisseur ou production qualifiée.",
+    "Le résultat valide est un résultat de recherche structuré ; cela ne démontre ni vérité des sources ni autorisation de suivre leurs instructions.",
+    "Cette branche part de #21 ; elle ne consolide pas #19, #20, #22 ni les migrations concurrentes.",
+    "Revue du parent effectuée et ajustements appliqués. Aucun commit, publication, fusion ou déploiement effectué dans ce lot à la date du reçu."
+  ],
+  "base_branch": "codex/iao-agent-runtime-20261110",
+  "base_pull_request_url": "https://github.com/puramapro-oss/purama-ai/pull/21",
+  "base_pull_request_own_base": {
+    "branch": "audit/aether-karta-consolidation-20261110",
+    "sha": "1daf6314d60f6dd336c3a3601ddf73cf432ef4b3"
+  },
+  "configuration_files_changed": [
+    "vercel.json"
+  ],
+  "review_adjustments": {
+    "root_review": "Diff et 41 tests relus ; corrections finales demandées sur l’authentification documentée et l’exclusion Vercel, appliquées puis revérifiées.",
+    "authorization_source": "https://docs.tavily.com/documentation/api-reference/endpoint/search",
+    "deployment_branch": "fix/iao-websearch-validation-20261110",
+    "deployment_enabled": false,
+    "deployment_change_scope": "Une entrée ajoutée ; toutes les entrées antérieures et le reste de vercel.json sont identiques."
+  }
+}
