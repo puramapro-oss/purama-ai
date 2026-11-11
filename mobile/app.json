@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.purama.purama_ai",
+      "bundleIdentifier": "dev.purama.purama-ai",
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Purama AI utilise la camera pour scanner des documents et prendre des photos de preuves.",
