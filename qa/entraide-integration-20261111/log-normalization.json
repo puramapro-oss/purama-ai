@@ -1,0 +1,32 @@
+[
+  {
+    "path": "ui-account-before.log",
+    "original_sha256": "7869d284df41ceb812ed25350a3f2f879aa8ae1c419cea64cfabfc4f49d4e287",
+    "archive_sha256": "0866c58651aaa20c62eefbe10c6b9fd24c03e1e3ef8c581c9428287f4bebc45d",
+    "normalization": "Only trailing whitespace and extra blank lines at EOF removed; original full transcript remains in local evidence."
+  },
+  {
+    "path": "gitnexus-index-warm.log",
+    "original_sha256": "a798ea962f5581b894d3f722e08fcd074b25a290c14643539e7b4796754ba8c7",
+    "archive_sha256": "65d1d0f8948fc6a6ace6f9890e827fa8bf298b95326c38d820e14dbfbd5f5f38",
+    "normalization": "Only trailing whitespace and extra blank lines at EOF removed; original full transcript remains in local evidence."
+  },
+  {
+    "path": "site-types-without-private.log",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "archive_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "normalization": "Only trailing whitespace and extra blank lines at EOF removed; original full transcript remains in local evidence."
+  },
+  {
+    "path": "workflow-lint.log",
+    "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "archive_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "normalization": "Only trailing whitespace and extra blank lines at EOF removed; original full transcript remains in local evidence."
+  },
+  {
+    "path": "site-lint.log",
+    "original_sha256": "65c424198517c0b18e58c4712c7e6a67ef20ae5324146f736983503e57fefd87",
+    "archive_sha256": "0ac2ea2baa029c39793aa55b1f121b145e1970291b404f017ee2c7d9a8efa12d",
+    "normalization": "Only trailing whitespace and extra blank lines at EOF removed; original full transcript remains in local evidence."
+  }
+]

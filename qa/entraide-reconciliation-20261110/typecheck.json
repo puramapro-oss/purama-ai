@@ -1,0 +1,19 @@
+{
+  "typescript": "5.8.3",
+  "scope": [
+    "src/lib/entraide.ts",
+    "src/pages/Entraide.tsx",
+    "supabase/functions/_shared/entraide-http.ts"
+  ],
+  "baselineHead": "eb09c6d1a1c134bbf430f20c3fb6f94f8ec3afcb",
+  "baseline": {
+    "selected": [],
+    "dependencyDiagnostics": [],
+    "files": 279
+  },
+  "current": {
+    "selected": [],
+    "dependencyDiagnostics": [],
+    "files": 279
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "repository": "puramapro-oss/purama-master",
+  "commit": "6e50837af08ad57d8db37077f0363b3e05289e31",
+  "method": "GitHub connector exact Git blobs, verified git SHA1 and SHA256",
+  "files": [
+    {
+      "path": "package.json",
+      "git_blob": "0ba414436195792a87d3d610c5318d9b2bb50d78",
+      "sha256": "1af682212b0b0da4080d655b16445f8ac98a61fcbc4bdc083113cec49dee6ec2"
+    },
+    {
+      "path": "src/contact.ts",
+      "git_blob": "f118fad21c51ebd9effded6f9e1485114285dc72",
+      "sha256": "d9fd7693e37969e8ac0c11d1ca9f7a087fa4ae726bb61621f1ae5230b8d75372"
+    },
+    {
+      "path": "src/index.ts",
+      "git_blob": "2382bf180a62abf602665349f96ab53a755ac0c5",
+      "sha256": "10768b7de254159b8d5f75e091980faafc04089a3c440dcaf753f24f354bd492"
+    },
+    {
+      "path": "src/matching.ts",
+      "git_blob": "b1f9bd7af538ef7c1ee5bfc1b8d04e7a8a6f6001",
+      "sha256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24"
+    },
+    {
+      "path": "src/missions.ts",
+      "git_blob": "82fafa2a6f94db53f0732ffda0b64b47231ec58c",
+      "sha256": "8b1aa5175125b1e267f55f1e6144ddf2c476db662700625526a80b698a7e7e08"
+    },
+    {
+      "path": "src/types.ts",
+      "git_blob": "aae53c723fd391c17c72e6070053bac82ef0941a",
+      "sha256": "f0b94c77c351519944df2c5b6bcf563fb296b6ae4dfd2e80dfcb31d9458709d1"
+    },
+    {
+      "path": "tsconfig.json",
+      "git_blob": "bcf636cc73f3ff53557861d9e287b2b757e5da4a",
+      "sha256": "4955d4a4af4d53087b8b0aacce3fb4489e3d90c566b295db6c08582948db499f"
+    }
+  ]
+}

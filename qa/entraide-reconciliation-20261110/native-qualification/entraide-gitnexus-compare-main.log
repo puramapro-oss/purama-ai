@@ -1,0 +1,32 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1794322397407,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 56 files, 783 symbols
+Affected processes: 6
+Risk level: high
+
+Changed symbols:
+  Const root → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const files → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const configPath → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const input → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const config → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const domain → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const options → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Property allowImportingTsExtensions → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Property noEmit → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Property paths → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Const tracked → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Function inspect → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Property selected → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Property dependencyDiagnostics → qa/entraide-reconciliation-20261110/typecheck.mjs
+  Property files → qa/entraide-reconciliation-20261110/typecheck.mjs
+... and 768 more
+
+Affected execution flows:
+  • LoadMissionCollective → EntraideHttpError (3 steps) — changed: EntraideHttpError, requestEntraide, loadMissionCollective
+  • LoadMissionCollective → ErrorMessage (3 steps) — changed: requestEntraide, errorMessage, loadMissionCollective
+  • Entraide → ToProfileDraft (3 steps) — changed: EntraideWorkspace, Entraide, toProfileDraft
+  • PersistMissionCollective → EntraideHttpError (3 steps) — changed: EntraideHttpError, requestEntraide, persistMissionCollective
+  • PersistMissionCollective → ErrorMessage (3 steps) — changed: requestEntraide, errorMessage, persistMissionCollective
+  • Entraide → Cn (4 steps) — changed: EntraideWorkspace, Entraide

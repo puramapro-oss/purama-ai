@@ -1,0 +1,401 @@
+#!/usr/bin/env python3
+"""Run the unchanged entraide SQL suite in a new, private PostgreSQL cluster.
+
+No application configuration or existing database is used. This runner never
+installs dependencies. PostgreSQL and the explicit pg 8.23.0 driver must exist.
+Local evidence-only reuse of the reviewed native runner; no application source is changed.
+"""
+
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import shlex
+import signal
+import socket as socket_module
+import subprocess
+import sys
+import time
+import traceback
+import uuid
+
+
+REPO = Path(__file__).resolve().parents[2]
+ADMIN = "entraide_fixture_owner"
+EXPECTED_COUNTS = {
+    "tests": 92, "pass": 92, "fail": 0, "cancelled": 0, "skipped": 0, "todo": 0,
+}
+INPUTS = ('.git/entraide-integration/run-native.py', 'scripts/build-entraide-matching.mjs', 'src/lib/entraide-http.ts', 'supabase/functions/_shared/response.ts', 'supabase/functions/_shared/rate-limit.ts', 'supabase/functions/_shared/entraide-http.ts', 'supabase/functions/_shared/entraide-runtime.ts', 'supabase/functions/_shared/entraide-supabase.ts', 'supabase/functions/_shared/vendor/entraide-matching.js', 'supabase/migrations/20260904000000_entraide.sql', 'supabase/migrations/20260905000000_entraide_profile_privacy.sql', 'supabase/migrations/20261110020000_entraide_contact_atomic.sql', 'supabase/migrations/20261110021000_entraide_missions_atomic.sql', 'supabase/migrations/20261110022000_entraide_mission_requests.sql', 'tests/entraide/applied-pr23-db.test.mjs', 'tests/entraide/concurrency-db.test.mjs', 'tests/entraide/contact-db.test.mjs', 'tests/entraide/db-harness.mjs', 'tests/entraide/fixtures/pr17-20261110000000_entraide_missions_atomic.sql', 'tests/entraide/fixtures/pr17-20261110001000_entraide_own_profile.sql', 'tests/entraide/fixtures/pr23-20261110021000_entraide_missions_atomic.sql', 'tests/entraide/frontend.test.mjs', 'tests/entraide/http.test.mjs', 'tests/entraide/missions-db.test.mjs', 'tests/entraide/native-required.mjs', 'tests/entraide/package-lock.json', 'tests/entraide/package.json', 'tests/entraide/preflight-db.test.mjs', 'tests/entraide/reconciliation-db.test.mjs', 'tests/entraide/response-contract.test.mjs', 'tests/entraide/supabase-adapter.test.mjs')
+
+
+def now_utc():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def sha256(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
+def find_postgres(explicit):
+    if explicit:
+        candidates = [Path(explicit)]
+    else:
+        candidates = []
+        found = shutil.which("postgres")
+        if found:
+            candidates.append(Path(found).resolve().parent)
+        candidates.extend(sorted(
+            Path("/usr/lib/postgresql").glob("*/bin"),
+            key=lambda path: int(path.parent.name) if path.parent.name.isdigit() else 0,
+            reverse=True,
+        ))
+        candidates.extend([
+            Path("/opt/homebrew/opt/postgresql@18/bin"),
+            Path("/opt/homebrew/opt/postgresql/bin"),
+            Path("/usr/local/pgsql/bin"),
+        ])
+    for candidate in candidates:
+        if all((candidate / name).is_file() and os.access(candidate / name, os.X_OK)
+               for name in ("initdb", "pg_ctl", "psql", "postgres")):
+            return candidate.resolve()
+    raise RuntimeError("Complete installed PostgreSQL binaries required; pass --pg-bin. No database fallback.")
+
+
+def process_exists(pid):
+    if pid is None:
+        return False
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+
+class EntraideNativeRun:
+    def __init__(self, args):
+        self.args = args
+        self.run_id = "entraide-native-" + uuid.uuid4().hex[:12]
+        self.output = Path(args.output).resolve() / self.run_id
+        self.output.mkdir(parents=True, exist_ok=False)
+        self.cluster = None
+        self.started = False
+        self.postmaster_pid = None
+        self.transcript = []
+        self.report = {
+            "run_id": self.run_id, "started_at_utc": now_utc(), "success": False,
+            "scope": "Unchanged native entraide SQL suite; no application deployment or provider call.",
+            "expected_counts": EXPECTED_COUNTS,
+            "output": str(self.output),
+        }
+        # libpq requires a regular password file; /dev/null emits a warning.
+        # Empty private files also prevent reads of the user's real PG config.
+        pgpass = self.output / "empty.pgpass"
+        pgservice = self.output / "empty.pg_service.conf"
+        for path in (pgpass, pgservice):
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            os.close(descriptor)
+        self.env = {"PATH": "/usr/bin:/bin", "LANG": "C", "LC_ALL": "C", "TZ": "UTC",
+                    "PGPASSFILE": str(pgpass), "PGSERVICEFILE": str(pgservice),
+                    "PGCONNECT_TIMEOUT": "5"}
+
+    def command(self, label, command, timeout=30, env=None, check=True):
+        log = self.output / (label + ".log")
+        row = {"label": label, "command": [str(arg) for arg in command],
+               "started_at_utc": now_utc(), "timeout_seconds": timeout}
+        process = None
+        try:
+            with log.open("xb") as stream:
+                process = subprocess.Popen(
+                    row["command"], cwd=REPO, env=self.env if env is None else env,
+                    stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT,
+                    start_new_session=True,
+                )
+                try:
+                    process.wait(timeout=timeout)
+                except BaseException:
+                    # Only this command's freshly created process group is stopped.
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    process.wait(timeout=5)
+                    raise
+                row["exit_code"] = process.returncode
+        except BaseException as error:
+            row["error"] = type(error).__name__ + ": " + str(error)
+            if process is not None:
+                row["exit_code"] = process.returncode
+            raise
+        finally:
+            row["finished_at_utc"] = now_utc()
+            row["log"] = str(log)
+            row["log_sha256"] = sha256(log) if log.is_file() else None
+            self.transcript.append(row)
+        text = log.read_text(errors="replace")
+        require(not check or row["exit_code"] == 0,
+                label + " exited " + str(row["exit_code"]) + "; see " + str(log))
+        return row["exit_code"], text
+
+    def snapshot(self):
+        return {name: sha256(REPO / name) for name in INPUTS}
+
+    def prepare(self):
+        self.pg_bin = find_postgres(self.args.pg_bin)
+        node_name = self.args.node_bin or shutil.which("node")
+        require(node_name is not None, "Installed Node 22 or later required; pass --node-bin.")
+        self.node = Path(node_name).resolve()
+        require(self.node.is_file() and os.access(self.node, os.X_OK), "Node is not executable.")
+        self.driver = Path(self.args.driver).resolve()
+        require(self.driver.is_file(), "Explicit existing pg driver required; no dependency installation is attempted.")
+        package = self.driver.parent.parent / "package.json"
+        metadata = json.loads(package.read_text())
+        require(metadata.get("name") == "pg" and metadata.get("version") == "8.23.0",
+                "The explicit driver must be pg 8.23.0.")
+        self.env["PATH"] = os.pathsep.join([str(self.pg_bin), str(self.node.parent), "/usr/bin", "/bin"])
+        self.report["source_before"] = self.snapshot()
+        self.report["driver"] = {
+            "path": str(self.driver), "version": metadata["version"],
+            "sha256": sha256(self.driver), "package_sha256": sha256(package),
+        }
+        self.report["postgres_bin"] = str(self.pg_bin)
+        self.report["node_bin"] = str(self.node)
+        _, node_version = self.command("node-version", [self.node, "--version"], timeout=5)
+        match = re.fullmatch(r"v(\d+)\.\d+\.\d+\s*", node_version)
+        require(match is not None and int(match.group(1)) >= 22, "Node 22 or later is required.")
+        self.report["node_version"] = node_version.strip()
+        _, pg_version = self.command("postgres-version", [self.pg_bin / "postgres", "--version"], timeout=5)
+        self.report["postgres_version"] = pg_version.strip()
+        _, head = self.command("git-head", ["git", "--no-optional-locks", "rev-parse", "HEAD"], timeout=5)
+        self.report["git_head"] = head.strip()
+
+        with socket_module.socket() as reservation:
+            reservation.bind(("127.0.0.1", 0))
+            self.port = reservation.getsockname()[1]
+        fixture_root = Path(self.args.fixture_root).resolve()
+        fixture_root.mkdir(parents=True, exist_ok=True, mode=0o700)
+        cluster = fixture_root / ("c-" + uuid.uuid4().hex[:12])
+        require(cluster not in self.output.parents and cluster != self.output, "Evidence must be outside the cluster.")
+        socket_file = cluster / "socket" / (".s.PGSQL." + str(self.port))
+        require(len(os.fsencode(socket_file)) <= 100, "Private Unix socket path is too long; shorten --fixture-root.")
+        cluster.mkdir(mode=0o700, exist_ok=False)
+        self.cluster = cluster
+        self.data = cluster / "data"
+        self.socket = cluster / "socket"
+        self.socket.mkdir(mode=0o700)
+        self.socket_file = socket_file
+        self.marker = {"kind": "purama-entraide-native", "run_id": self.run_id,
+                       "cluster": str(cluster), "token": uuid.uuid4().hex}
+        with (cluster / "OWNERSHIP.json").open("x") as stream:
+            json.dump(self.marker, stream)
+        self.report.update({"cluster": str(cluster), "data": str(self.data),
+                            "socket": str(self.socket), "port": self.port, "listen_addresses": "127.0.0.1"})
+        print("NATIVE_START " + json.dumps({"run_id": self.run_id, "cluster": str(cluster),
+                                         "output": str(self.output)}), flush=True)
+
+    def owns_cluster(self):
+        if self.cluster is None or self.cluster.is_symlink() or not self.cluster.is_dir():
+            return False
+        marker = self.cluster / "OWNERSHIP.json"
+        if marker.is_symlink() or not marker.is_file():
+            return False
+        if json.loads(marker.read_text()) != self.marker:
+            return False
+        return all(not path.is_symlink() and path.resolve().parent == self.cluster
+                   for path in (self.data, self.socket))
+
+    def start(self):
+        require(self.owns_cluster(), "Cluster ownership check failed before initialization.")
+        require(not self.data.exists(), "Refuse an existing data directory.")
+        self.command("initdb", [
+            self.pg_bin / "initdb", "-D", self.data, "-U", ADMIN, "-A", "trust",
+            "--no-locale", "-E", "UTF8",
+        ])
+        # Set before pg_ctl: a timed-out start may still have launched PostgreSQL.
+        self.started = True
+        options = shlex.join([
+            "-k", str(self.socket), "-p", str(self.port), "-c", "listen_addresses=127.0.0.1",
+            "-c", "unix_socket_permissions=0700", "-c", "shared_buffers=16MB",
+            "-c", "max_connections=24",
+        ])
+        self.command("pg-start", [
+            self.pg_bin / "pg_ctl", "-D", self.data, "-l", self.output / "postgres.log",
+            "-o", options, "-w", "-t", "20", "start",
+        ], timeout=25)
+        self.postmaster_pid = int((self.data / "postmaster.pid").read_text().splitlines()[0])
+        require(self.postmaster_pid > 1, "Invalid private PostgreSQL PID.")
+        query = (
+            "SELECT jsonb_build_object("
+            "'data_directory',current_setting('data_directory'),"
+            "'listen_addresses',current_setting('listen_addresses'),"
+            "'unix_socket_directories',current_setting('unix_socket_directories'),"
+            "'port',current_setting('port'),"
+            "'server_version',current_setting('server_version'),"
+            "'system_identifier',system_identifier::text) FROM pg_control_system();"
+        )
+        _, result = self.command("cluster-identity", [
+            self.pg_bin / "psql", "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
+            "-h", self.socket, "-p", str(self.port), "-U", ADMIN, "-d", "postgres", "-c", query,
+        ], timeout=10)
+        identity = json.loads(result.strip())
+        require(identity["data_directory"] == str(self.data), "Unexpected data_directory.")
+        require(identity["listen_addresses"] == "127.0.0.1", "Only loopback TCP is permitted for this harness.")
+        require(identity["unix_socket_directories"] == str(self.socket), "Unexpected Unix socket directory.")
+        require(identity["port"] == str(self.port), "Unexpected private socket port.")
+        self.report["cluster_identity"] = identity
+        self.report["postmaster_pid"] = self.postmaster_pid
+        _, fresh = self.command("fresh-cluster-guard", [
+            self.pg_bin / "psql", "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
+            "-h", self.socket, "-p", str(self.port), "-U", ADMIN, "-d", "postgres", "-c",
+            "SELECT (SELECT count(*) FROM pg_roles WHERE rolname IN ('anon','authenticated','service_role')) + "
+            "(SELECT count(*) FROM pg_database WHERE datname NOT IN ('postgres','template0','template1')) + "
+            "(SELECT count(*) FROM pg_namespace WHERE nspname IN ('auth','purama_ai'));",
+        ], timeout=10)
+        require(fresh.strip() == "0", "Refuse any pre-existing application/test state.")
+        self.report["fresh_cluster_guard"] = True
+        self.command("create-test-admin", [
+            self.pg_bin / "psql", "-X", "-v", "ON_ERROR_STOP=1", "-h", self.socket,
+            "-p", str(self.port), "-U", ADMIN, "-d", "postgres", "-c",
+            "CREATE DATABASE entraide_test_admin TEMPLATE template0;",
+        ], timeout=10)
+        _, tcp_identity = self.command("loopback-identity", [
+            self.pg_bin / "psql", "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1",
+            "-h", "127.0.0.1", "-p", str(self.port), "-U", ADMIN, "-d", "entraide_test_admin", "-c", query,
+        ], timeout=10)
+        require(json.loads(tcp_identity.strip()) == identity, "Loopback transport identity differs from the owned cluster.")
+
+    def test(self):
+        env = {**self.env,
+               "ENTRAIDE_DATABASE_URL": f"postgresql://{ADMIN}@127.0.0.1:{self.port}/entraide_test_admin",
+               "ENTRAIDE_PG_MODULE": self.driver.as_uri()}
+        suites = {
+            "entraide-native-tests": ["contact-db.test.mjs", "missions-db.test.mjs",
+                "reconciliation-db.test.mjs", "applied-pr23-db.test.mjs", "preflight-db.test.mjs",
+                "concurrency-db.test.mjs", "response-contract.test.mjs"],
+            "entraide-http-sdk-frontend": ["http.test.mjs", "frontend.test.mjs",
+                "supabase-adapter.test.mjs"],
+        }
+        self.report["suites"] = {}
+        for label, files in suites.items():
+            code, output = self.command(label, [
+                self.node, "--import", "./tests/entraide/native-required.mjs",
+                "--test", "--test-reporter=tap", "--test-concurrency=1",
+                *["tests/entraide/" + file for file in files],
+            ], timeout=120, env=env, check=False)
+            counts = {}
+            for key in EXPECTED_COUNTS:
+                matches = re.findall(r"^# " + key + r" (\d+)\s*$", output, re.MULTILINE)
+                require(len(matches) == 1, "Missing or ambiguous TAP counter: " + key)
+                counts[key] = int(matches[0])
+            self.report["suites"][label] = {"exit_code": code, "counts": counts}
+            require(code == 0 and counts["tests"] > 0 and counts["pass"] == counts["tests"]
+                    and all(counts[key] == 0 for key in ("fail", "cancelled", "skipped", "todo")),
+                    "Suite failed: " + label)
+            if label == "entraide-native-tests":
+                self.report.update({"test_exit_code": code, "counts": counts})
+                require(counts == EXPECTED_COUNTS, "Native suite did not pass exactly 92 tests.")
+
+    def cleanup(self):
+        result = {"stopped": False, "cluster_removed": False, "pid_file_absent": False,
+                  "postmaster_absent": False, "socket_absent": False, "tcp_port_free": False, "errors": []}
+        self.report["cleanup"] = result
+        if self.cluster is None:
+            result.update({"stopped": True, "cluster_removed": True, "pid_file_absent": True,
+                           "postmaster_absent": True, "socket_absent": True, "tcp_port_free": True, "not_created": True})
+            return
+        try:
+            require(self.owns_cluster(), "Ownership marker changed; cluster is preserved.")
+            if self.started:
+                stop_code, _ = self.command("pg-stop", [
+                    self.pg_bin / "pg_ctl", "-D", self.data, "-m", "fast", "-w", "-t", "15", "stop",
+                ], timeout=20, check=False)
+                if stop_code != 0:
+                    result["errors"].append("pg_ctl stop returned " + str(stop_code))
+            if (self.data / "PG_VERSION").is_file():
+                status, _ = self.command("pg-status-after-stop", [
+                    self.pg_bin / "pg_ctl", "-D", self.data, "status",
+                ], timeout=5, check=False)
+                result["status_exit_code"] = status
+                result["stopped"] = status == 3
+            else:
+                result["stopped"] = not self.started
+            result["pid_file_absent"] = not os.path.lexists(self.data / "postmaster.pid")
+            result["socket_absent"] = not any(os.path.lexists(path) for path in
+                                             (self.socket_file, Path(str(self.socket_file) + ".lock")))
+            deadline = time.monotonic() + 2
+            while process_exists(self.postmaster_pid) and time.monotonic() < deadline:
+                time.sleep(0.05)
+            result["postmaster_absent"] = not process_exists(self.postmaster_pid)
+            try:
+                with socket_module.socket() as probe:
+                    result["tcp_port_free"] = probe.connect_ex(("127.0.0.1", self.port)) != 0
+            except OSError:
+                result["tcp_port_free"] = True
+            safe = all(result[key] for key in
+                       ("stopped", "pid_file_absent", "socket_absent", "postmaster_absent", "tcp_port_free"))
+            require(safe, "Private server shutdown is not fully confirmed; cluster is preserved.")
+            require(self.owns_cluster(), "Ownership marker changed before removal; cluster is preserved.")
+            shutil.rmtree(self.cluster)
+            result["cluster_removed"] = not self.cluster.exists()
+        except BaseException as error:
+            result["errors"].append(type(error).__name__ + ": " + str(error))
+
+    def run(self):
+        try:
+            self.prepare()
+            self.start()
+            self.test()
+        except BaseException as error:
+            self.report["error"] = type(error).__name__ + ": " + str(error)
+            self.report["traceback"] = traceback.format_exc()
+        finally:
+            self.cleanup()
+            try:
+                self.report["source_after"] = self.snapshot()
+                self.report["inputs_unchanged"] = self.report.get("source_before") == self.report["source_after"]
+            except BaseException as error:
+                self.report["inputs_unchanged"] = False
+                self.report["source_check_error"] = str(error)
+            cleanup = self.report["cleanup"]
+            self.report["finished_at_utc"] = now_utc()
+            self.report["success"] = (
+                not self.report.get("error") and self.report.get("test_exit_code") == 0
+                and self.report.get("counts") == EXPECTED_COUNTS and self.report["inputs_unchanged"]
+                and all(cleanup[key] for key in
+                        ("stopped", "cluster_removed", "pid_file_absent", "postmaster_absent", "socket_absent", "tcp_port_free"))
+                and cleanup.get("status_exit_code") == 3 and not cleanup["errors"]
+            )
+            self.report["commands"] = self.transcript
+            (self.output / "result.json").write_text(json.dumps(self.report, indent=2) + "\n")
+            print("FINAL_RESULT " + json.dumps({key: self.report.get(key) for key in ("run_id", "success", "error", "output", "suites", "cleanup", "inputs_unchanged")}), flush=True)
+        return 0 if self.report["success"] else 1
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--pg-bin", default=os.environ.get("PG_BIN"))
+    parser.add_argument("--node-bin")
+    parser.add_argument("--driver", required=True)
+    parser.add_argument("--fixture-root", required=True)
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+
+    def interrupted(signum, frame):
+        raise KeyboardInterrupt("Received signal " + str(signum))
+
+    signal.signal(signal.SIGTERM, interrupted)
+    return EntraideNativeRun(args).run()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

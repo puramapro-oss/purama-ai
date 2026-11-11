@@ -71,6 +71,10 @@ jobs:
           deno-version: v2.9.6
       - run: npm ci --no-audit
       - run: npm run test:dependencies
+      - name: Entraide public transport and account isolation
+        run: >-
+          node --test --test-concurrency=1
+          tests/entraide/frontend.test.mjs tests/entraide/ui-account-scope.test.mjs
       - run: npm run lint
       - run: npm run test:distribution:unit
       - run: npm run test:distribution:sql

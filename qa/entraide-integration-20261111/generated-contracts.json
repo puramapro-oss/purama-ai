@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+    "--max-old-space-size=384",
+    "--wasm-num-compilation-tasks=1",
+    "scripts/generate-supabase-contracts.mjs",
+    "--check"
+  ],
+  "exit_code": 0,
+  "seconds": 11.32,
+  "sha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3",
+  "catalog_sources": [
+    "p3_schema.sql",
+    "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql"
+  ],
+  "all_migrations_discovered": false,
+  "regeneration": false
+}

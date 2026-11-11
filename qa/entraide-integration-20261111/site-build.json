@@ -1,0 +1,19 @@
+{
+  "exit_code": 0,
+  "seconds": 49.65,
+  "command": [
+    "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+    "node_modules/vite/bin/vite.js",
+    "build"
+  ],
+  "log": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/site-build.log",
+  "sha256": "22a705f737f615d5153d6aaced23f31773fc7b39d0977a697e59f2930f58e1ba",
+  "environment_files_absent": [
+    ".env",
+    ".env.local",
+    ".env.production",
+    ".env.production.local"
+  ],
+  "private_frontend_package_absent": true,
+  "build_provider_configuration": "synthetic fixture only"
+}
