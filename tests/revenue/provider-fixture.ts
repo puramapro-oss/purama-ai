@@ -374,9 +374,15 @@ export class Stripe {
       if (id !== state.customer.id) throw new Error("Unknown inert customer");
       return structuredClone(state.customer) as unknown as RealStripe.Customer;
     },
-    create: async (params: { metadata: Record<string, string> }, _options: unknown) => ({
-      ...structuredClone(state.customer), metadata: params.metadata,
-    }) as unknown as RealStripe.Customer,
+    create: async (params: RealStripe.CustomerCreateParams = {}, _options?: RealStripe.RequestOptions) => {
+      const metadata: RealStripe.Metadata = {};
+      for (const [key, value] of Object.entries(params.metadata || {})) {
+        if (value !== null && value !== "") metadata[key] = String(value);
+      }
+      return {
+        ...structuredClone(state.customer), email: params.email ?? null, metadata,
+      } as unknown as RealStripe.Customer;
+    },
   };
   invoices = {
     retrieve: async (id: string) => {
