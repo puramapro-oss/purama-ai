@@ -353,6 +353,9 @@ export default function InfluencerDashboard() {
                         Date du contrat : {format(new Date(), 'dd MMMM yyyy', { locale: fr })}
                       </p>
                     </div>
+                    <p role="note" className="rounded-md border border-border bg-muted/50 p-3 text-sm text-foreground">
+                      Les versements ne sont pas disponibles depuis l'application. La signature de ce contrat ne déclenche aucun virement.
+                    </p>
                     <DialogFooter className="flex-col sm:flex-row gap-2">
                       <Button variant="outline" onClick={() => setShowContractDialog(false)}>
                         Annuler
