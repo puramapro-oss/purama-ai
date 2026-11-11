@@ -31,7 +31,7 @@
     "test:founder:types": "tsc --noEmit -p tests/founder-dashboard/tsconfig.json",
     "test:founder:browser": "node tests/founder-dashboard/browser/run.mjs",
     "test:commerce:plans": "node --test tests/quality/commerce-ui-plans.test.mjs",
-    "test:commerce:handlers": "deno test --no-remote --no-prompt --deny-net --deny-run --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET --config tests/commerce/deno.json tests/commerce",
+    "test:commerce:handlers": "deno test --no-remote --no-prompt --deny-net --deny-run --allow-env=WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,RESEND_API_KEY,STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET --config tests/commerce/deno.json tests/commerce",
     "test:oauth": "node --test --test-concurrency=1 tests/oauth-google/handler.test.mjs tests/oauth-gmail/handler.test.mjs tests/oauth-gmail/config.test.mjs",
     "test:oauth:sql": "node --test --test-concurrency=1 tests/oauth-google/state-sql.test.mjs",
     "test:oauth:browser": "node tests/oauth-google/browser/run.mjs",

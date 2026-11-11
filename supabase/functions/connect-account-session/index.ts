@@ -62,11 +62,18 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     // 1. Récupère ou crée le compte Connect Express
-    const { data: existing } = await supabaseAdmin
+    const { data: existing, error: lookupError } = await supabaseAdmin
       .from('connect_accounts')
-      .select('stripe_account_id')
+      .select('user_id, stripe_account_id')
       .eq('user_id', user.id)
       .maybeSingle();
+
+    // Un échec de lecture n'est pas une preuve d'absence de compte.
+    if (lookupError) return json({ error: 'Compte de paiement temporairement indisponible' }, 503);
+    if (existing && (existing.user_id !== user.id ||
+      typeof existing.stripe_account_id !== 'string' || !existing.stripe_account_id.trim())) {
+      return json({ error: 'Compte de paiement temporairement indisponible' }, 503);
+    }
 
     let accountId = existing?.stripe_account_id;
     if (!accountId) {
@@ -82,14 +89,20 @@ serve(async (req: Request): Promise<Response> => {
         },
       });
       accountId = account.id;
-      await supabaseAdmin.from('connect_accounts').insert({
+      const { data: persisted, error: insertError } = await supabaseAdmin.from('connect_accounts').insert({
         user_id: user.id,
         stripe_account_id: accountId,
         onboarding_completed: false,
         payouts_enabled: false,
         charges_enabled: false,
         country: 'FR',
-      });
+      }).select('user_id, stripe_account_id').single();
+
+      // Sans liaison confirmée, ne pas ouvrir de session sur le compte externe.
+      // Une création Stripe déjà réussie reste à réconcilier si l'écriture échoue.
+      if (insertError || !persisted || persisted.user_id !== user.id || persisted.stripe_account_id !== accountId) {
+        return json({ error: 'Compte de paiement temporairement indisponible' }, 503);
+      }
     }
 
     // 2. AccountSession pour Embedded Components
