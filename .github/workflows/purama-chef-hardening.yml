@@ -90,6 +90,7 @@ jobs:
       - run: npm run test:distribution:chat
       - run: npm run test:contracts-auth
       - run: npm run test:cross-app-jwt
+      - run: npm run test:cross-app-jwt:deno
       - run: npm run test:voice-settings
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
