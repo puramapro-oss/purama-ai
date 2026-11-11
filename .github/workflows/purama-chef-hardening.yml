@@ -24,6 +24,16 @@ jobs:
         working-directory: karta
     steps:
       - uses: actions/checkout@v4
+      - name: Approval outbox wrapper lifecycle (inert)
+        run: >-
+          python3 ../qa/approval-outbox-live-20261111/test_wrapper_lifecycle.py
+          --evidence "$RUNNER_TEMP/karta-outbox-wrapper-tests.json"
+      - name: Preserve outbox wrapper lifecycle evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: karta-outbox-wrapper-lifecycle
+          path: ${{ runner.temp }}/karta-outbox-wrapper-tests.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22
