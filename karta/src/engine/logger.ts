@@ -83,7 +83,7 @@ export async function startRun(
           decision: row.decision ?? "",
           toolsUsed: Array.isArray(row.tools_used) ? row.tools_used : [],
           resultSummary: row.result_summary ?? "Exécution déjà réservée : vérifier son résultat avant toute reprise",
-          errorMessage: known ? row.error_message : "Résultat de l'exécution précédente à réconcilier",
+          errorMessage: known ? row.error_message ?? undefined : "Résultat de l'exécution précédente à réconcilier",
           mock: row.claude_mock === true,
           retryable: false,
         },

@@ -19,7 +19,8 @@
       "fix/iao-preference-persistence-20261110": false,
       "audit/unlazy-consolidation-20261111-ac3c": false,
       "fix/iao-outbox-deadline-20261111": false,
-      "audit/iao-billing-finance-chef-20261111": false
+      "audit/iao-billing-finance-chef-20261111": false,
+      "audit/iao-replay-result-contract-20261111": false
     }
   }
 }
