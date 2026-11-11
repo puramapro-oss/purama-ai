@@ -9,6 +9,7 @@ on:
       - 'tests/commerce/connect*'
       - 'tests/commerce/deno.json'
       - 'tests/commerce/serve-capture.ts'
+      - 'tests/connect-sdk/**'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +23,9 @@ jobs:
   inert-handler:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    env:
+      DENO_DIR: ${{ runner.temp }}/connect-sdk-deno-cache
+      DENO_NO_UPDATE_CHECK: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -38,6 +42,24 @@ jobs:
           --config tests/commerce/deno.json
           tests/commerce/connect-handler.test.ts
           tests/commerce/connect-provisioning.test.ts
+      - name: Typecheck the real handler with the official dependency graph
+        run: >-
+          deno check --no-config --node-modules-dir=none
+          --lock=tests/connect-sdk/deno.lock --frozen-lockfile
+          supabase/functions/connect-account-session/index.ts
+      - name: Preload and typecheck the real Stripe SDK transport tests
+        run: >-
+          deno test --no-run --no-prompt --deny-net --deny-run --node-modules-dir=none
+          --lock=tests/connect-sdk/deno.lock --frozen-lockfile
+          --config tests/connect-sdk/deno.json
+          tests/connect-sdk/handler.test.ts
+      - name: Exercise the real SDK against an inert HTTP transport
+        run: >-
+          deno test --cached-only --no-prompt --deny-net --deny-run --node-modules-dir=none
+          --allow-env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,STRIPE_SECRET_KEY
+          --lock=tests/connect-sdk/deno.lock --frozen-lockfile
+          --config tests/connect-sdk/deno.json
+          tests/connect-sdk/handler.test.ts
 
   native-postgres:
     runs-on: ubuntu-24.04

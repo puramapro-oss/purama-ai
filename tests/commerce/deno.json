@@ -9,7 +9,7 @@
   "scopes": {
     "../../supabase/functions/connect-account-session/": {
       "https://deno.land/std@0.224.0/http/server.ts": "./serve-capture.ts",
-      "https://esm.sh/stripe@15.12.0?target=deno&deno-std=0.224.0": "./connect-provider-fixture.ts",
+      "npm:stripe@19.0.0": "./connect-provider-fixture.ts",
       "https://esm.sh/@supabase/supabase-js@2.91.0": "./connect-provider-fixture.ts"
     },
     "../../supabase/functions/stripe-webhook/": {
