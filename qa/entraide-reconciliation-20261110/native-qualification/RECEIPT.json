@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "status": "PASS_LOCAL_NATIVE_AND_BROWSER",
+  "utc": "2026-11-10T14:53:05.694454+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "target_pr": 23,
+  "expected_parent": "c9337987ae1f3c820b8947bd3da4e6f1721c57c4",
+  "publication": "local only; no remote mutation",
+  "engines": {
+    "node": "24.22.1",
+    "postgres": "18.6 native x86_64",
+    "pg": "8.16.3",
+    "playwright": "1.59.1",
+    "firefox": "148.0.2 revision1511",
+    "os_uid": 1000
+  },
+  "native": {
+    "command": "ENTRAIDE_DATABASE_URL=<disposable loopback database> npm run test:native --prefix tests/entraide",
+    "pass": 83,
+    "fail": 0,
+    "skip": 0,
+    "exit_code": 0,
+    "native_concurrency_cases_included": 4,
+    "upgrades": [
+      "fresh",
+      "exact PR17 applied",
+      "exact PR23 021000 already applied"
+    ],
+    "not_additive_to_prior_pglite_suite": true
+  },
+  "browser": {
+    "command": "ENTRAIDE_DATABASE_URL=<same disposable cluster> node tests/entraide/fixtures/run-browser.mjs",
+    "before": {
+      "pass": 0,
+      "fail": 1,
+      "not_run": 2,
+      "cause": "strict number vs pg bigint text snapshot assertion after completed mission"
+    },
+    "after": {
+      "pass": 3,
+      "fail": 0,
+      "skip": 0,
+      "flaky": 0,
+      "exit_code": 0,
+      "duration_ms": 11053.691
+    },
+    "scope": "actual Entraide page -> real HTTP handlers -> real native SQL -> page; fixtures replace Alice/Bob auth and PostgREST profile transport",
+    "viewports": [
+      "1280x900",
+      "390px mobile"
+    ]
+  },
+  "change": "Browser test compares exact integer counters with BigInt; no product SQL/API/UI changes",
+  "install": {
+    "test_dependencies": "npm ci --ignore-scripts --prefix tests/entraide PASS",
+    "application": "npm ci --ignore-scripts --no-audit --no-fund PASS",
+    "private_matching": "canonical blobs from purama-master@6e50837af08ad57d8db37077f0363b3e05289e31, SHA checked; bundler hash guard PASS"
+  },
+  "limits": [
+    "Hosted Supabase Auth/PostgREST and deployed Edge runtime NOT_TESTED",
+    "No production migration or deployment",
+    "No real users, provider requests or messages",
+    "Mobile viewport is not a real-device or full accessibility audit",
+    "No performance/load qualification",
+    "Remote CI was not rerun and is not represented by this local receipt"
+  ],
+  "source_sha256": {
+    "tests/entraide/browser.spec.mjs": "f41871c0ce685f822f57d517ac424ba64200570057e52e8f4653632835613990",
+    "tests/entraide/browser-harness.mjs": "03dd7988c9376e35bbbf222cef4ab1d495ef3d8c7b1435891f65700ba579bad3",
+    "tests/entraide/db-harness.mjs": "707878c12dc5d4293057d706045cad5f0e53bc629c7499ab06799a7b759a8521",
+    "tests/entraide/concurrency-db.test.mjs": "a755eb9319f3e20eb922a639f09431ebee22e25eb3c03f8b1dba30e75dd23b0a",
+    "supabase/functions/_shared/entraide-http.ts": "d1aa07eb0b5a988f9a7c6a9c7cd3aaf4cb6afe64cfb666d64d140661938d2a9c",
+    "src/pages/Entraide.tsx": "71025de11aec3514053397b1ae757df39d78b0f6a131018e3a3abfba30234a9f",
+    "src/lib/entraide.ts": "4c6fd94038f6bac10d27ad157259bfca7d3b1dc5fba43abcd8bcb15954931b14",
+    "supabase/migrations/20260904000000_entraide.sql": "d313dae5f8965f84d3ab8a69131f97d8398e054b1b50878a9ada5b763f8b6027",
+    "supabase/migrations/20260905000000_entraide_profile_privacy.sql": "91baf2db736f77f4e901c4b7a97ab42801df56b11027421ae7fed25a7d62c586",
+    "supabase/migrations/20261110020000_entraide_contact_atomic.sql": "a6cd1317311ec8f4b016656489709b2904f98ddf54c4953bb21382ae3044c5db",
+    "supabase/migrations/20261110021000_entraide_missions_atomic.sql": "31eb27ff79cbceab930b16db6de57e7f0ca9b7cf0392ab4d215461a878b2bb41",
+    "supabase/migrations/20261110022000_entraide_mission_requests.sql": "437be52037110cadc224e9fbe234c6f7dc1ee3be783a033238d151c758ddddbf"
+  },
+  "evidence_sha256": {
+    "entraide-native-before.log": "8ccece64b8f886fd2ab04dc6b9708bb920328959dc0e0693de76289998670108",
+    "entraide-browser-before.log": "a7b8a70303d0ba12550172d7793dba357735f229363b6c01f22efe374de5480e",
+    "entraide-browser-after.log": "0f04715a2074e577e1dce8c2c1f776fe7d25d407fc100e0fb065fdadd862870f",
+    "entraide-native-before-exit.json": "6dfcfdc2e51de9bf99f0456b9e71938f04e5e3ddd68bd48dbdcec404627e9755",
+    "entraide-browser-before-exit.json": "3a9ac45e4d10fbf00325a848e29522d4ebd4869786e98558bb1b317f60127a43",
+    "entraide-browser-after-exit.json": "b50a1fdb679cee5c93dd65d1d74a93d3e6a458c4b8739c605235651d768e43bc",
+    "postgres-connection.json": "6299bb78eb3a18d9503d4ffd150fd2de92ba599e151390066c1ebedfeaf0d620",
+    "entraide-private-package-provenance.json": "e17dcdd117f9580b54187b636d8d4e1c57d1766afb213dadf6de966679d30711",
+    "entraide-browser-impact.log": "f1419505f29c2f8fc67728821013bb6d56d0ac085c5379a7c4bf55e8fd6afe36",
+    "entraide-gitnexus-changes.log": "fc02bf9aeaddfa25fa919e0b7216620ca120fb8251603d6b380f7306a0f2b024",
+    "entraide-gitnexus-compare-main.log": "6be02df6b2b5fbc2e97735ad5e8dcd3e5c43aaa81a8ff453a622c6e7017c226d",
+    "entraide-browser-eslint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gitnexus": {
+    "local_change": "LOW,2files,3indexed symbols,0processes; anonymous test callback not resolved as symbol",
+    "whole_pr_against_main": "HIGH,56files,783symbols,6processes; whole PR not just this continuation",
+    "limits": "FTS unavailable, truncated index flows; no claim of exhaustive static analysis"
+  },
+  "log_format": {
+    "committed": "ANSI escapes and trailing whitespace removed only",
+    "raw_log_sha256": {
+      "entraide-browser-eslint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "entraide-gitnexus-compare-main.log": "6be02df6b2b5fbc2e97735ad5e8dcd3e5c43aaa81a8ff453a622c6e7017c226d",
+      "entraide-browser-after.log": "0f04715a2074e577e1dce8c2c1f776fe7d25d407fc100e0fb065fdadd862870f",
+      "entraide-gitnexus-changes.log": "fc02bf9aeaddfa25fa919e0b7216620ca120fb8251603d6b380f7306a0f2b024",
+      "entraide-native-before.log": "8ccece64b8f886fd2ab04dc6b9708bb920328959dc0e0693de76289998670108",
+      "entraide-browser-before.log": "c2a5ff19512b20b1b01c260ed27d4940785f13d3cf6910cd1beab6069430d804",
+      "entraide-browser-impact.log": "f1419505f29c2f8fc67728821013bb6d56d0ac085c5379a7c4bf55e8fd6afe36"
+    },
+    "raw_logs": "retained under continuation/native-evidence; test-results retains full browser attachments"
+  }
+}

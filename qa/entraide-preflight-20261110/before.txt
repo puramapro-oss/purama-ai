@@ -1,0 +1,2617 @@
+✖ preflight refuses a private unified RPC before committing a second contact authority (356.773277ms)
+✖ preflight refuses private schema footprints even without the unified RPC (118.066266ms)
+✖ preflight refuses an unknown contact RPC without replacing its body or grants (87.08602ms)
+✖ preflight refuses exact PR17 authority with a pre-existing visibility column (107.965406ms)
+✖ preflight refuses altered PR17 authority before any contact RPC or ACL installation (100.278014ms)
+✖ preflight refuses an orphan mission receipt registry without adopting it (84.738692ms)
+✖ preflight refuses an orphan mission version column without a known authority or registry (85.421002ms)
+✖ preflight preserves an incompatible committed PR17 receipt instead of partially upgrading contacts (107.624964ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 0
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1145.246727
+
+✖ failing tests:
+
+test at preflight-db.test.mjs:129:1
+✖ preflight refuses a private unified RPC before committing a second contact authority (356.773277ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+        },
+  +     {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     }
+      ],
+      policies: [
+        {
+          cmd: 'ALL',
+          permissive: 'PERMISSIVE',
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:130:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object], [Object] ],
+      tables: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [ [Object] ],
+      tables: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:139:1
+✖ preflight refuses private schema footprints even without the unified RPC (118.066266ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+        {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     },
+  +     {
+          acl: '{postgres=X/postgres,authenticated=X/postgres}',
+          definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_mission_mutate(p_request_id uuid, p_action text, p_mission_id uuid DEFAULT NULL::uuid, p_payload jsonb DEFAULT '{}'::jsonb, p_expected_version bigint DEFAULT NULL::bigint)\n" +
+            ' RETURNS jsonb\n' +
+            ' LANGUAGE plpgsql\n' +
+            ' SECURITY DEFINER\n' +
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_contact_requests',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:140:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object], [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [ [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:160:1
+✖ preflight refuses an unknown contact RPC without replacing its body or grants (87.08602ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+        {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  -       acl: '{postgres=X/postgres,authenticated=X/postgres}',
+          definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+            ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  -         ' LANGUAGE sql\n' +
+            " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  -         `AS $function$ SELECT '{"synthetic_foreign_contact":true}'::jsonb $function$\n`,
+          owner: 'postgres',
+          signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+        }
+      ],
+      policies: [
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:161:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object] ],
+      tables: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [ [Object] ],
+      tables: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:170:1
+✖ preflight refuses exact PR17 authority with a pre-existing visibility column (107.965406ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+        {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     },
+  +     {
+          acl: '{postgres=X/postgres,authenticated=X/postgres}',
+          definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_mission_mutate(p_request_id uuid, p_action text, p_mission_id uuid DEFAULT NULL::uuid, p_payload jsonb DEFAULT '{}'::jsonb, p_expected_version bigint DEFAULT NULL::bigint)\n" +
+            ' RETURNS jsonb\n' +
+            ' LANGUAGE plpgsql\n' +
+            ' SECURITY DEFINER\n' +
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:171:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object], [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [ [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:177:1
+✖ preflight refuses altered PR17 authority before any contact RPC or ACL installation (100.278014ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+        {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     },
+  +     {
+          acl: '{postgres=X/postgres,authenticated=X/postgres}',
+          definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_mission_mutate(p_request_id uuid, p_action text, p_mission_id uuid DEFAULT NULL::uuid, p_payload jsonb DEFAULT '{}'::jsonb, p_expected_version bigint DEFAULT NULL::bigint)\n" +
+            ' RETURNS jsonb\n' +
+            ' LANGUAGE sql\n' +
+            ' SECURITY DEFINER\n' +
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:178:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object], [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [ [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:188:1
+✖ preflight refuses an orphan mission receipt registry without adopting it (84.738692ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+      },
+  +   functions: [
+  +     {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     }
+  +   ],
+  -   functions: [],
+      policies: [
+        {
+          cmd: 'ALL',
+          permissive: 'PERMISSIVE',
+          policyname: 'entraide_blocages_self',
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:189:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:196:1
+✖ preflight refuses an orphan mission version column without a known authority or registry (85.421002ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+      },
+  +   functions: [
+  +     {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     }
+  +   ],
+  -   functions: [],
+      policies: [
+        {
+          cmd: 'ALL',
+          permissive: 'PERMISSIVE',
+          policyname: 'entraide_blocages_self',
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:197:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object] ],
+      tables: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [],
+      tables: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at preflight-db.test.mjs:202:1
+✖ preflight preserves an incompatible committed PR17 receipt instead of partially upgrading contacts (107.624964ms)
+  AssertionError [ERR_ASSERTION]: An incompatible history must not leave committed RPC, ACL, policy, schema, data or receipt changes
+  + actual - expected
+  ... Skipped lines
+
+    {
+      columns: [
+        {
+          acl: null,
+          attname: 'blocker_id',
+  ...
+        {
+  +       acl: '{postgres=X/postgres,service_role=X/postgres}',
+  +       definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_contact_command(p_actor uuid, p_action text, p_payload jsonb DEFAULT '{}'::jsonb)\n" +
+  +         ' RETURNS jsonb\n' +
+  +         ' LANGUAGE plpgsql\n' +
+  +         " SET search_path TO ''\n" +
+  +         'AS $function$\n' +
+  +         'DECLARE\n' +
+  +         '  v_now timestamptz := pg_catalog.transaction_timestamp();\n' +
+  +         '  v_day_start timestamptz;\n' +
+  +         '  v_id uuid;\n' +
+  +         '  v_target uuid;\n' +
+  +         '  v_message text;\n' +
+  +         '  v_response text;\n' +
+  +         '  v_pair_key integer;\n' +
+  +         '  v_lock_key integer;\n' +
+  +         '  v_count integer;\n' +
+  +         '  v_last_response timestamptz;\n' +
+  +         '  v_request purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_existing purama_ai.entraide_contact_requests%ROWTYPE;\n' +
+  +         '  v_requests jsonb;\n' +
+  +         '  v_blocked_user_ids jsonb;\n' +
+  +         "  v_uuid_pattern constant text := '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';\n" +
+  +         'BEGIN\n' +
+  +         '  IF p_actor IS NULL OR NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = p_actor) THEN\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_actor', 'status', 403);\n" +
+  +         '  END IF;\n' +
+  +         "  IF p_action IS NULL OR p_action NOT IN ('list', 'send', 'respond', 'block', 'unblock') THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_action', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         "  IF pg_catalog.jsonb_typeof(p_payload) IS DISTINCT FROM 'object' THEN\n" +
+  +         "    RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'list' THEN\n" +
+  +         "    IF p_payload <> '{}'::jsonb THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    -- Other commands take at most one pair lock. Lists acquire every needed pair\n' +
+  +         '    -- in LOCK-KEY order (including hash collisions), so two lists cannot invert\n' +
+  +         '    -- their acquisition order. No sender/request lock is taken after a pair lock.\n' +
+  +         '    FOR v_lock_key IN\n' +
+  +         '      SELECT DISTINCT pg_catalog.hashtext(\n' +
+  +         "        LEAST(r.requester_id::text, r.recipient_id::text) || ':' ||\n" +
+  +         '        GREATEST(r.requester_id::text, r.recipient_id::text)\n' +
+  +         '      ) AS lock_key\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours'\n" +
+  +         '      ORDER BY lock_key\n' +
+  +         '    LOOP\n' +
+  +         '      PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_lock_key);\n' +
+  +         '    END LOOP;\n' +
+  +         '    UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "      SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id)\n' +
+  +         "        AND r.status = 'pending'\n" +
+  +         "        AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(pg_catalog.to_jsonb(r) ORDER BY r.created_at DESC, r.id), '[]'::jsonb)\n" +
+  +         '      INTO v_requests\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE p_actor IN (r.requester_id, r.recipient_id);\n' +
+  +         "    SELECT COALESCE(pg_catalog.jsonb_agg(b.blocked_id ORDER BY b.blocked_id), '[]'::jsonb)\n" +
+  +         '      INTO v_blocked_user_ids FROM purama_ai.entraide_blocages AS b WHERE b.blocker_id = p_actor;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('requests', v_requests, 'blocked_user_ids', v_blocked_user_ids);\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('id', 'recipient_id', 'message'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'recipient_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'recipient_id') ~* v_uuid_pattern)\n" +
+  +         "      OR (p_payload ? 'message' AND pg_catalog.jsonb_typeof(p_payload -> 'message') NOT IN ('string', 'null'))\n" +
+  +         "      OR pg_catalog.char_length(p_payload ->> 'message') > 500\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'id')::uuid;\n" +
+  +         "    v_target := (p_payload ->> 'recipient_id')::uuid;\n" +
+  +         "    v_message := p_payload ->> 'message';\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         "    -- Lock hierarchy: immutable request id -> sender's daily capacity -> pair.\n" +
+  +         '    -- Hash collisions only serialize extra work; no reversed hierarchy exists.\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780201, pg_catalog.hashtext(v_id::text));\n' +
+  +         '    PERFORM pg_catalog.pg_advisory_xact_lock(780202, pg_catalog.hashtext(p_actor::text));\n' +
+  +         "  ELSIF p_action = 'respond' THEN\n" +
+  +         '    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key)\n' +
+  +         "               WHERE k.key NOT IN ('request_id', 'response'))\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'request_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'request_id') ~* v_uuid_pattern)\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'response') IS DISTINCT FROM 'string'\n" +
+  +         "      OR (p_payload ->> 'response') NOT IN ('accept', 'decline', 'block')\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_id := (p_payload ->> 'request_id')::uuid;\n" +
+  +         "    v_response := p_payload ->> 'response';\n" +
+  +         '    SELECT r.* INTO v_request\n' +
+  +         '      FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.id = v_id AND r.recipient_id = p_actor;\n' +
+  +         '    IF NOT FOUND THEN\n' +
+  +         '      -- Same response for a missing id and an id belonging to other parties.\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'request_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '    v_target := v_request.requester_id;\n' +
+  +         '  ELSE\n' +
+  +         "    IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_payload) AS k(key) WHERE k.key <> 'target_id')\n" +
+  +         "      OR pg_catalog.jsonb_typeof(p_payload -> 'target_id') IS DISTINCT FROM 'string'\n" +
+  +         "      OR NOT ((p_payload ->> 'target_id') ~* v_uuid_pattern)\n" +
+  +         '    THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'invalid_payload', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         "    v_target := (p_payload ->> 'target_id')::uuid;\n" +
+  +         '    IF v_target = p_actor THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'self_contact', 'status', 400);\n" +
+  +         '    END IF;\n' +
+  +         '    IF NOT EXISTS (SELECT 1 FROM auth.users AS u WHERE u.id = v_target) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'recipient_not_found', 'status', 404);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         '  v_pair_key := pg_catalog.hashtext(\n' +
+  +         "    LEAST(p_actor::text, v_target::text) || ':' || GREATEST(p_actor::text, v_target::text)\n" +
+  +         '  );\n' +
+  +         '  PERFORM pg_catalog.pg_advisory_xact_lock(780203, v_pair_key);\n' +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    SELECT r.* INTO v_existing FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         '    IF FOUND AND (v_existing.requester_id <> p_actor OR v_existing.recipient_id <> v_target\n' +
+  +         '                  OR v_existing.message IS DISTINCT FROM v_message) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'idempotency_conflict', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  -- Fixed hours preserve the package's 14 * 24-hour duration across DST changes.\n" +
+  +         '  -- Lazy expiry has a deterministic timestamp, including the exact TTL bound.\n' +
+  +         '  -- Business errors below RETURN rather than RAISE: an expiry is not rolled back\n' +
+  +         '  -- merely because a response is now too late or a new request is refused.\n' +
+  +         '  UPDATE purama_ai.entraide_contact_requests AS r\n' +
+  +         "    SET status = 'expired', responded_at = r.created_at + interval '336 hours'\n" +
+  +         '    WHERE ((r.requester_id = p_actor AND r.recipient_id = v_target)\n' +
+  +         '           OR (r.requester_id = v_target AND r.recipient_id = p_actor))\n' +
+  +         "      AND r.status = 'pending'\n" +
+  +         "      AND r.created_at <= v_now - interval '336 hours';\n" +
+  +         '\n' +
+  +         "  IF p_action = 'send' THEN\n" +
+  +         '    IF v_existing.id IS NOT NULL THEN\n' +
+  +         '      SELECT r.* INTO v_request FROM purama_ai.entraide_contact_requests AS r WHERE r.id = v_id;\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_blocages AS b\n' +
+  +         '      WHERE (b.blocker_id = p_actor AND b.blocked_id = v_target)\n' +
+  +         '         OR (b.blocker_id = v_target AND b.blocked_id = p_actor)\n' +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_unavailable', 'status', 403);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status = 'pending'\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'already_pending', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         "    v_day_start := pg_catalog.date_trunc('day', v_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';\n" +
+  +         '    SELECT count(*) INTO v_count FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.created_at >= v_day_start\n' +
+  +         "        AND r.created_at < v_day_start + interval '24 hours';\n" +
+  +         '    IF v_count >= 10 THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'daily_limit_reached', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    IF EXISTS (\n' +
+  +         '      SELECT 1 FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         '      WHERE r.requester_id = p_actor AND r.recipient_id = v_target\n' +
+  +         "        AND r.status IN ('declined', 'expired') AND r.responded_at IS NULL\n" +
+  +         '    ) THEN\n' +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'contact_history_unavailable', 'status', 409);\n" +
+  +         '    END IF;\n' +
+  +         '    SELECT max(r.responded_at) INTO v_last_response FROM purama_ai.entraide_contact_requests AS r\n' +
+  +         "      WHERE r.requester_id = p_actor AND r.recipient_id = v_target AND r.status IN ('declined', 'expired');\n" +
+  +         "    IF v_last_response IS NOT NULL AND v_now < v_last_response + interval '168 hours' THEN\n" +
+  +         "      RETURN pg_catalog.jsonb_build_object('error', 'cooldown_active', 'status', 429);\n" +
+  +         '    END IF;\n' +
+  +         '    INSERT INTO purama_ai.entraide_contact_requests (id, requester_id, recipient_id, message, status, created_at)\n' +
+  +         "      VALUES (v_id, p_actor, v_target, v_message, 'pending', v_now)\n" +
+  +         '      RETURNING * INTO v_request;\n' +
+  +         "    RETURN pg_catalog.jsonb_build_object('request', pg_catalog.to_jsonb(v_request));\n" +
+  +         '  END IF;\n' +
+  +         '\n' +
+  +         "  IF p_action = 'respond' THEN\n" +
+  +         '    SELEC'... 2686 more characters,
+  +       owner: 'postgres',
+  +       signature: 'purama_ai.entraide_contact_command(uuid,text,jsonb)'
+  +     },
+  +     {
+          acl: '{postgres=X/postgres,authenticated=X/postgres}',
+          definition: "CREATE OR REPLACE FUNCTION purama_ai.entraide_mission_mutate(p_request_id uuid, p_action text, p_mission_id uuid DEFAULT NULL::uuid, p_payload jsonb DEFAULT '{}'::jsonb, p_expected_version bigint DEFAULT NULL::bigint)\n" +
+            ' RETURNS jsonb\n' +
+            ' LANGUAGE plpgsql\n' +
+            ' SECURITY DEFINER\n' +
+  ...
+        {
+  +       acl: '{postgres=arwdDxtm/postgres,authenticated=r/postgres,service_role=arwdDxtm/postgres}',
+  -       acl: '{postgres=arwdDxtm/postgres,authenticated=ard/postgres,service_role=arwdDxtm/postgres}',
+          comment: null,
+          relforcerowsecurity: false,
+          relname: 'entraide_blocages',
+          relrowsecurity: true
+        },
+
+      at refusesWithoutChanges (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:119:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///workspace/scratch/7d843b6d69dd/entraide-current/tests/entraide/preflight-db.test.mjs:203:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: {
+      functions: [ [Object], [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    expected: {
+      functions: [ [Object] ],
+      tables: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      columns: [
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object],
+        [Object]
+      ],
+      policies: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      constraints: [
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object], [Object],
+        [Object], [Object], [Object], [Object]
+      ],
+      data: { entraide_blocages: [Array], entraide_contact_requests: [Array], entraide_mission_requests: [Array], entraide_profils: [Array], entraide_signalements: [], missions_collectives: [Array], missions_collectives_participants: [Array] }
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
