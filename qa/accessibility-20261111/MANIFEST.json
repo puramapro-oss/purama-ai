@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-11T18:58:57.020Z",
+  "generatedAt": "2026-11-11T19:21:46.221339+00:00",
   "overallStatus": "PARTIEL",
   "scope": "IAO: interface du mode vocal et commandes de saisie écrite",
   "base": {
@@ -84,8 +84,8 @@
     },
     {
       "path": "vercel.json",
-      "sha256": "19847c8542fa03a453402a14f2d0874d8569d2b6172a019cd88e62e5daee8b0f",
-      "bytes": 1031
+      "sha256": "345bdc69464f723825a3b8122dc0f264f509c46a864d798ba5eeaf18d4603b51",
+      "bytes": 1090
     },
     {
       "path": "qa/accessibility-20261111/README.md",
@@ -206,10 +206,12 @@
       "preEditImpact": "HIGH/CRITICAL signalé avant les modifications produit.",
       "postEditChangedFiles": 12,
       "postEditChangedSymbols": 7,
-      "detail": "detect_changes relancé sur le diff de la base arrêtée. Index d’impact 85cfd25 ; source UI amont vérifiée identique. Nouveaux fichiers de tests revus séparément. Aucune absence de processus n’est prise comme preuve de non-régression.",
+      "detail": "Index d’impact initial 85cfd25 conservé ; les sources UI amont sont inchangées. La comparaison exacte des blobs confirme que cette composition ne modifie aucun composant ou test d’accessibilité. L’absence de processus remontés ne constitue pas une preuve indépendante de non-régression.",
       "evidence": "qa/accessibility-20261111/evidence/base-and-impact.json",
-      "localDiffEvidence": "../iao-pr53-ci-evidence/responsive-detect-changes.log",
-      "finalIndexScope": "All 12 publication files staged; 7 existing indexed symbols matched; new tests reviewed independently."
+      "localDiffEvidence": "../iao-pr53-ci-evidence/composition-ee5059d5/gitnexus-detect-changes.log",
+      "finalIndexScope": "Comparaison avec l’arbre exact de ee5059d5 : 12 fichiers propres à l’accessibilité, 7 symboles indexés attendus. Les fichiers Connect sont identiques à la nouvelle base.",
+      "base": "ee5059d5d6c9a9c29c92a2c5892457d24b081f22",
+      "referenceTree": "05587a7b54aac6f61366a182f1a24fe73d92a6cf"
     },
     "workflowEvidence": {
       "status": "PASS",
@@ -225,13 +227,15 @@
     },
     "deploymentOverride": {
       "status": "PASS",
-      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "base": "ee5059d5d6c9a9c29c92a2c5892457d24b081f22",
       "branch": "feat/iao-accessibility-20261111",
       "enabled": false,
-      "allOtherVercelConfigurationUnchanged": true
+      "allOtherVercelConfigurationUnchanged": true,
+      "newKeyFirst": true,
+      "existingKeyRelativeOrderPreserved": true
     }
   },
-  "nextOwner": "Coordinateur : publier l’ajustement responsive avec lease sur 00e81a29b36d42485520408bc5802d32451b3c92 ; contrôler build, 27 scénarios voice-consent, 17 async-ui et les captures sur le nouveau commit.",
+  "nextOwner": "Coordinateur : publier uniquement sur feat/iao-accessibility-20261111 un commit de merge avec les parents [6ae2ce12a99c4f5bea51af350d52a46f45d412db, ee5059d5d6c9a9c29c92a2c5892457d24b081f22], puis qualifier la composition en CI. Aucun build local supplémentaire.",
   "recordType": "Relevé de qualification locale avant publication et CI",
   "currentStatusLocations": [
     "PR correspondant à cette correction IAO",
@@ -399,6 +403,109 @@
         "path": "tests/voice-consent/accessibility.spec.ts",
         "sha256": "e25fd74a3d2954f72c927b0ae83a0306fcf619d2132d034a946cdd2591ba5e3f"
       }
+    ]
+  },
+  "integrationComposition": {
+    "recordType": "Relevé local horodaté avant publication et CI de la composition ; qualifications précédentes conservées",
+    "recordedAt": "2026-11-11T19:21:46.221339+00:00",
+    "status": "PARTIEL",
+    "parents": [
+      "6ae2ce12a99c4f5bea51af350d52a46f45d412db",
+      "ee5059d5d6c9a9c29c92a2c5892457d24b081f22"
+    ],
+    "testedAccessibilityHead": "6ae2ce12a99c4f5bea51af350d52a46f45d412db",
+    "testedAccessibilityTree": "994019dd2d640df59acebfce21851b0d7e3499f6",
+    "newBase": "ee5059d5d6c9a9c29c92a2c5892457d24b081f22",
+    "newBaseTree": "05587a7b54aac6f61366a182f1a24fe73d92a6cf",
+    "mergeBase": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+    "conflict": {
+      "path": "vercel.json",
+      "kind": "Deux ajouts de clés en fin de la même map, reproduits par git merge-file sur copies immuables",
+      "resolution": "Toutes les règles de la nouvelle base sont conservées avec leur ordre relatif ; la clé feat/iao-accessibility-20261111=false est placée en première position."
+    },
+    "upstreamFilesPreservedExactly": [
+      {
+        "path": ".github/workflows/connect-provisioning.yml",
+        "gitBlob": "541181ef7570493e1283ac715018378af1863169",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/connect-provisioning-20261111/README.md",
+        "gitBlob": "5354645eab94aa043895bf0103ec157003076708",
+        "mode": "100644"
+      },
+      {
+        "path": "supabase/functions/connect-account-session/index.ts",
+        "gitBlob": "e5699b0ee282711d75b9f76ca9516deab6958cf4",
+        "mode": "100644"
+      },
+      {
+        "path": "supabase/migrations/20261111183000_connect_account_provisioning.sql",
+        "gitBlob": "a9e38c799c595c50d8f2e7b92d2b8e9d7b93c60d",
+        "mode": "100644"
+      },
+      {
+        "path": "tests/commerce/connect-provider-fixture.ts",
+        "gitBlob": "a60cdb1f0184ba5c918545cb861f7a1e75d8c88f",
+        "mode": "100644"
+      },
+      {
+        "path": "tests/commerce/connect-provisioning-postgres.py",
+        "gitBlob": "1c1ba77fc204e916cb8766539f82025ce45b0641",
+        "mode": "100644"
+      },
+      {
+        "path": "tests/commerce/connect-provisioning.test.ts",
+        "gitBlob": "111fcb7918c1ebeb52937008991b08190bdd2630",
+        "mode": "100644"
+      }
+    ],
+    "runtimeAndTestFilesUnchangedFromPassingCandidate": true,
+    "priorCandidateCi": {
+      "status": "PASS",
+      "runId": 43082993454,
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/43082993454",
+      "testedMerge": "7d7bd373a1a4d6e5693ef6a14412f706d55a0cec",
+      "testedBase": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "jobs": [
+        "site",
+        "karta",
+        "subscription-concurrency"
+      ],
+      "unitTests": 340,
+      "voiceDomTestsIncluded": 10,
+      "voiceConsentBrowserTests": 27,
+      "asyncUiBrowserTests": 17,
+      "geometryAssertions": "PASS aux trois formats et trois états ; les PNG sont archivés, les valeurs JSON brutes ne le sont pas.",
+      "notQualificationOfNewComposition": true
+    },
+    "localChecks": {
+      "upstreamBlobHashes": "PASS",
+      "rebuiltNewBaseTree": "PASS",
+      "vercelJsonAndAllRules": "PASS",
+      "relativeExistingKeyOrder": "PASS",
+      "unchangedUiAndTests": "PASS",
+      "gitNexus": "PASS",
+      "gitNexusScope": {
+        "referenceTree": "05587a7b54aac6f61366a182f1a24fe73d92a6cf",
+        "files": 12,
+        "indexedSymbols": 7,
+        "scope": "compare",
+        "noNewUiOrTestSourceChanges": true
+      }
+    },
+    "compositionCi": {
+      "status": "NON TESTÉ",
+      "owner": "Coordinateur après publication du commit de merge"
+    },
+    "localBuild": {
+      "status": "NON TESTÉ",
+      "detail": "Aucun nouveau build local demandé ; la CI existante qualifie la composition."
+    },
+    "evidenceLocalOnly": "../iao-pr53-ci-evidence/composition-ee5059d5",
+    "currentStatusLocations": [
+      "https://github.com/puramapro-oss/purama-ai/pull/53",
+      "Dossier partagé ONE associé à la PR #4"
     ]
   }
 }

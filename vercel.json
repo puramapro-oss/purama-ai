@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "feat/iao-accessibility-20261111": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
       "fix/iao-websearch-validation-20261110": false,
@@ -23,7 +24,7 @@
       "audit/connect-persistence-20261111": false,
       "test/karta-native-harness-20261111": false,
       "audit/iao-replay-result-contract-20261111": false,
-      "feat/iao-accessibility-20261111": false
+      "fix/connect-provisioning-recovery-20261111": false
     }
   }
 }
