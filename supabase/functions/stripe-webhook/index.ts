@@ -3,6 +3,7 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.91.0";
 import { applyOveragePayment } from "./overage.ts";
 import { normalizeStripeReconciliationEvent, persistStripeReconciliationEvent } from "../_shared/stripe-reconciliation.ts";
+import { readRequestText, RequestBodyError } from "../_shared/request-body.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -392,7 +393,9 @@ serve(async (req) => {
       });
     }
 
-    const body = await req.text();
+    // Application ingress budget, not a Stripe payload-size guarantee. Count
+    // raw UTF-8 bytes before decoding and retain the exact text for the SDK.
+    const body = await readRequestText(req, { maxBytes: 1024 * 1024, timeoutMs: 5_000 });
     let event: Stripe.Event;
 
     try {
@@ -482,6 +485,12 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
+    if (error instanceof RequestBodyError) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: error.status,
+      });
+    }
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in stripe-webhook", { message: errorMessage });
     return new Response(JSON.stringify({ error: "Webhook processing failed; event not acknowledged" }), {

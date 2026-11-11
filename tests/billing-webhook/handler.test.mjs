@@ -475,3 +475,239 @@ test('the VM blocks network calls and imports outside its provider allowlist', (
   assert.throws(() => createFixture({ source: "fetch('https://example.invalid')" }), /Network access is forbidden/);
   assert.throws(() => createFixture({ source: "import 'node:https';" }), /Unapproved module import/);
 });
+
+// Ingress policy is tested through the actual handler, before its inert SDK
+// boundary. These constants are acceptance limits, not imports from production.
+const webhookBodyLimit = 1024 * 1024;
+const bodyEncoder = new TextEncoder();
+function bodyRequest(body, headers = {}, signal) {
+  return new Request('https://webhook.example.invalid/', {
+    method: 'POST', duplex: 'half', body, signal,
+    headers: { 'content-type': 'application/json', 'stripe-signature': 'fixture_signature', ...headers },
+  });
+}
+function sizedBody(event, bytes) {
+  const payload = JSON.stringify(event);
+  return payload + ' '.repeat(bytes - bodyEncoder.encode(payload).byteLength);
+}
+function chunkedBody(bytes, chunkSize = 16 * 1024, onCancel = () => {}) {
+  let offset = 0;
+  return new ReadableStream({
+    pull(controller) {
+      if (offset === bytes.byteLength) return controller.close();
+      const next = Math.min(offset + chunkSize, bytes.byteLength);
+      controller.enqueue(bytes.subarray(offset, next));
+      offset = next;
+    },
+    cancel: onCancel,
+  }, { highWaterMark: 0 });
+}
+function assertNoBodyEffects(state) {
+  assert.deepEqual(state.calls, [], 'No signature, provider, Auth or database call before body acceptance');
+  assert.equal(state.observations.size, 0);
+  assert.equal(state.mutations.length, 0);
+  assert.equal(state.credits.size, 0);
+}
+function bodyClock() {
+  let now = 0;
+  let sequence = 0;
+  const timers = new Map();
+  const delays = [];
+  return {
+    delays,
+    now: () => now,
+    setTimeout: (callback, delay) => {
+      delays.push(delay);
+      const id = ++sequence;
+      timers.set(id, { callback, deadline: now + delay });
+      return id;
+    },
+    clearTimeout: id => timers.delete(id),
+    advance(milliseconds, fire = true) {
+      now += milliseconds;
+      if (fire) for (const [id, timer] of timers) {
+        if (timer.deadline <= now) { timers.delete(id); timer.callback(); }
+      }
+    },
+    pending: () => timers.size,
+  };
+}
+
+test('webhook body: chunked UTF-8, whitespace and CRLF reach signature verification unchanged', async () => {
+  const { state, deliverRequest } = fixture();
+  state.event.data.object.description = 'é e\u0301 € 🌍';
+  const payload = ` \r\n${JSON.stringify(state.event, null, 2).replaceAll('\n', '\r\n')}\t\r\n`;
+  const response = await deliverRequest(bodyRequest(chunkedBody(bodyEncoder.encode(payload), 1)));
+  assert.equal(response.status, 200);
+  assert.deepEqual(state.signatureBodies, [payload]);
+  assert.equal(state.observations.size, 1);
+  assert.equal(activations(state).length, 1);
+});
+
+test('webhook body: a BOM is preserved for the SDK instead of silently changing the signed bytes', async () => {
+  const { state, deliverRequest } = fixture();
+  const payload = '\uFEFF' + JSON.stringify(state.event);
+  const response = await deliverRequest(bodyRequest(chunkedBody(bodyEncoder.encode(payload), 1)));
+  // The SDK boundary parses JSON only after seeing the exact original text.
+  assert.equal(response.status, 400);
+  assert.deepEqual(state.signatureBodies, [payload]);
+  assert.deepEqual(state.calls, [{ kind: 'verifySignature' }]);
+  assert.equal(state.observations.size, 0);
+  assert.equal(state.mutations.length, 0);
+});
+
+for (const declared of [false, true]) {
+  test(`webhook body: exactly 1 MiB is accepted with Content-Length ${declared ? 'present' : 'absent'}`, async () => {
+    const { state, deliverRequest } = fixture();
+    const payload = sizedBody(state.event, webhookBodyLimit);
+    const headers = declared ? { 'content-length': String(webhookBodyLimit) } : {};
+    const response = await deliverRequest(bodyRequest(chunkedBody(bodyEncoder.encode(payload)), headers));
+    assert.equal(response.status, 200);
+    assert.deepEqual(state.signatureBodies, [payload]);
+    assert.equal(state.observations.size, 1);
+  });
+
+  test(`webhook body: 1 MiB plus one streamed byte is rejected with Content-Length ${declared ? 'understated' : 'absent'}`, async () => {
+    const { state, deliverRequest } = fixture();
+    const payload = sizedBody(state.event, webhookBodyLimit + 1);
+    let cancelled = false;
+    const headers = declared ? { 'content-length': String(webhookBodyLimit) } : {};
+    const response = await deliverRequest(bodyRequest(chunkedBody(bodyEncoder.encode(payload), 16 * 1024, () => { cancelled = true; }), headers));
+    assert.equal(response.status, 413);
+    assert.equal(cancelled, true);
+    assertNoBodyEffects(state);
+  });
+}
+
+test('webhook body: an excessive declared length refuses a stalled source without reading or waiting for cancellation', async () => {
+  const { state, deliverRequest } = fixture();
+  let pulls = 0;
+  let cancelled = false;
+  const body = new ReadableStream({
+    pull() { pulls++; return new Promise(() => {}); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 });
+  const response = await deliverRequest(bodyRequest(body, { 'content-length': String(webhookBodyLimit + 1) }));
+  assert.equal(response.status, 413);
+  assert.equal(pulls, 0);
+  assert.equal(cancelled, true);
+  assertNoBodyEffects(state);
+});
+
+test('webhook body: an unbounded chunk source is cancelled at the byte budget', async () => {
+  const { state, deliverRequest } = fixture();
+  let pulls = 0;
+  let cancelled = false;
+  const chunk = bodyEncoder.encode(' '.repeat(64 * 1024));
+  const body = new ReadableStream({
+    pull(controller) { pulls++; controller.enqueue(chunk); },
+    cancel() { cancelled = true; },
+  }, { highWaterMark: 0 });
+  const response = await deliverRequest(bodyRequest(body));
+  assert.equal(response.status, 413);
+  assert.equal(pulls, 17, 'The source stops at the first chunk crossing 1 MiB');
+  assert.equal(cancelled, true);
+  assertNoBodyEffects(state);
+});
+
+for (const length of ['short', 'long', '-1', '2.5']) {
+  test(`webhook body: false or malformed Content-Length (${length}) is rejected before verification`, async () => {
+    const { state, deliverRequest } = fixture();
+    const payload = JSON.stringify(state.event);
+    const declared = length === 'short' ? '1' : length === 'long' ? String(bodyEncoder.encode(payload).byteLength + 1) : length;
+    const response = await deliverRequest(bodyRequest(payload, { 'content-length': declared }));
+    assert.equal(response.status, 400);
+    assertNoBodyEffects(state);
+  });
+}
+
+test('webhook body: invalid UTF-8 is refused before signature verification', async () => {
+  const { state, deliverRequest } = fixture();
+  const response = await deliverRequest(bodyRequest(chunkedBody(new Uint8Array([0xc3, 0x28]), 1)));
+  assert.equal(response.status, 400);
+  assertNoBodyEffects(state);
+});
+
+test('webhook body: a read failure is sanitized and never acknowledged', async () => {
+  const { state, deliverRequest } = fixture();
+  const body = new ReadableStream({ pull(controller) { controller.error(new Error('private_body_marker')); } });
+  const response = await deliverRequest(bodyRequest(body));
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { error: 'Invalid request body' });
+  assertNoBodyEffects(state);
+});
+
+test('webhook body: a pre-aborted request cancels its source before all effects', async () => {
+  const { state, deliverRequest } = fixture();
+  const abort = new AbortController();
+  abort.abort();
+  let cancelled = false;
+  const body = chunkedBody(bodyEncoder.encode(JSON.stringify(state.event)), 1, () => { cancelled = true; });
+  const response = await deliverRequest(bodyRequest(body, {}, abort.signal));
+  assert.equal(response.status, 408);
+  assert.equal(cancelled, true);
+  assertNoBodyEffects(state);
+});
+
+test('webhook body: abort during a pending read does not wait for a hostile cancel promise', async () => {
+  const { state, deliverRequest } = fixture();
+  const abort = new AbortController();
+  let started;
+  const reading = new Promise(resolve => { started = resolve; });
+  let cancelled = false;
+  const body = new ReadableStream({
+    pull() { started(); return new Promise(() => {}); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 });
+  const pending = deliverRequest(bodyRequest(body, {}, abort.signal));
+  await reading;
+  abort.abort();
+  assert.equal((await pending).status, 408);
+  assert.equal(cancelled, true);
+  assertNoBodyEffects(state);
+});
+
+test('webhook body: the 5-second deadline bounds a pending read and hostile cancellation', async () => {
+  const clock = bodyClock();
+  const { state, deliverRequest } = createFixture({ source, clock });
+  let started;
+  const reading = new Promise(resolve => { started = resolve; });
+  let cancelled = false;
+  const body = new ReadableStream({
+    pull() { started(); return new Promise(() => {}); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 });
+  let settled = false;
+  const pending = deliverRequest(bodyRequest(body)).then(response => { settled = true; return response; });
+  await reading;
+  assert.deepEqual(clock.delays, [5000]);
+  clock.advance(4999);
+  await Promise.resolve();
+  assert.equal(settled, false);
+  clock.advance(1);
+  assert.equal((await pending).status, 408);
+  assert.equal(cancelled, true);
+  assert.equal(clock.pending(), 0);
+  assertNoBodyEffects(state);
+});
+
+test('webhook body: continuing chunks cannot reset or starve the absolute read deadline', async () => {
+  const clock = bodyClock();
+  const { state, deliverRequest } = createFixture({ source, clock });
+  let pulls = 0;
+  let cancelled = false;
+  const body = new ReadableStream({
+    pull(controller) {
+      pulls++;
+      clock.advance(1000, false); // Progress without letting the timer callback run.
+      controller.enqueue(new Uint8Array([32]));
+    },
+    cancel() { cancelled = true; },
+  }, { highWaterMark: 0 });
+  const response = await deliverRequest(bodyRequest(body));
+  assert.equal(response.status, 408);
+  assert.equal(pulls, 5);
+  assert.equal(cancelled, true);
+  assert.equal(clock.pending(), 0);
+  assertNoBodyEffects(state);
+});
