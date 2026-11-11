@@ -8,7 +8,6 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
       "fix/iao-websearch-validation-20261110": false,
@@ -21,7 +20,12 @@
       "audit/unlazy-consolidation-20261111-ac3c": false,
       "fix/iao-outbox-deadline-20261111": false,
       "audit/iao-billing-finance-chef-20261111": false,
-      "audit/connect-persistence-20261111": false
+      "audit/connect-persistence-20261111": false,
+      "test/karta-native-harness-20261111": false,
+      "audit/iao-replay-result-contract-20261111": false,
+      "fix/connect-provisioning-recovery-20261111": false,
+      "audit/connect-provisioning-gates-20261111": false,
+      "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false
     }
   }
 }
