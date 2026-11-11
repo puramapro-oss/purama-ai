@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-11T18:42:07.260Z",
+  "generatedAt": "2026-11-11T18:58:57.020Z",
   "overallStatus": "PARTIEL",
   "scope": "IAO: interface du mode vocal et commandes de saisie écrite",
   "base": {
@@ -49,8 +49,8 @@
   "fileIntegrity": [
     {
       "path": "src/components/voice/VoiceMode.tsx",
-      "sha256": "0d8334db637e9248ebcdbeb93d3987192cb118f36fcd8bdc0f67ed15de3539bf",
-      "bytes": 13578
+      "sha256": "d495ee00ec2db0a407e59b4e9cc1e1328235c19fd8e0796a8c551d00c479b173",
+      "bytes": 14542
     },
     {
       "path": "src/components/voice/AgentChatTab.tsx",
@@ -64,8 +64,8 @@
     },
     {
       "path": "tests/voice-consent/accessibility.spec.ts",
-      "sha256": "a7a7f9e6a4fdce29f5d0dd80bc57171e99166fcfc8d8f45448bccea771c4d215",
-      "bytes": 9373
+      "sha256": "e25fd74a3d2954f72c927b0ae83a0306fcf619d2132d034a946cdd2591ba5e3f",
+      "bytes": 12195
     },
     {
       "path": "tests/voice-consent/lifecycle.spec.ts",
@@ -89,8 +89,8 @@
     },
     {
       "path": "qa/accessibility-20261111/README.md",
-      "sha256": "fec42c62548e540852ac9495ceb254db3deafbb9a1799c86414be28b07067569",
-      "bytes": 9653
+      "sha256": "39621de419eb332f6596e2f6895bff4206ff23cea820001774b99bf226e6a74d",
+      "bytes": 11615
     },
     {
       "path": "qa/accessibility-20261111/evidence/base-and-impact.json",
@@ -116,22 +116,23 @@
       "passed": 10,
       "failed": 0,
       "environment": "jsdom ; React et Radix réels ; voix et animations décoratives simulées",
-      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/dom-vitest4-after-rebase.log",
+      "evidenceLocalOnly": "../iao-pr53-ci-evidence/responsive-dom.log",
       "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
       "runtimeVersion": "4.1.12"
     },
     "targetedLint": {
       "status": "PASS",
-      "command": "node node_modules/eslint/bin/eslint.js src/components/voice/VoiceMode.tsx src/components/voice/AgentChatTab.tsx src/components/voice/VoiceMode.accessibility.test.tsx tests/voice-consent/accessibility.spec.ts tests/voice-consent/lifecycle.spec.ts tests/async-ui/lifecycle.spec.ts",
+      "command": "node node_modules/eslint/bin/eslint.js src/components/voice/VoiceMode.tsx tests/voice-consent/accessibility.spec.ts",
       "exitCode": 0,
-      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/lint-after-rebase.log",
-      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
+      "evidenceLocalOnly": "../iao-pr53-ci-evidence/responsive-lint.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "scope": "Incremental check of both changed executable files; prior files remain unchanged from their previous PASS."
     },
     "applicationTypecheck": {
       "status": "PASS",
       "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
       "exitCode": 0,
-      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/typecheck-after-rebase.log",
+      "evidenceLocalOnly": "../iao-pr53-ci-evidence/responsive-typecheck.log",
       "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
     },
     "productionBuild": {
@@ -152,11 +153,11 @@
         0,
         0
       ],
-      "voiceConsentScenarios": 26,
+      "voiceConsentScenarios": 27,
       "existingVoiceConsentScenarios": 21,
-      "addedAccessibilityScenarios": 5,
+      "addedAccessibilityScenarios": 6,
       "asyncUiScenarios": 17,
-      "detail": "Découverte et chargement des scénarios uniquement ; ce n’est pas une exécution navigateur.",
+      "detail": "27 scénarios reconnus, dont le format paysage court. Mesures géométriques ajoutées à la boucle de réponse longue ; aucune exécution navigateur locale. Les 17 scénarios async-ui restent ceux de la précédente découverte.",
       "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
     },
     "browserExecution": {
@@ -175,7 +176,8 @@
         "cases": [
           "desktop keyboard modal",
           "desktop long answer",
-          "320px text 200% long answer",
+          "320 × 640 text 200% long answer",
+          "640 × 360 text 200% long answer",
           "failure in a new accessibility scenario when the page remains available"
         ],
         "artifactName": "iao-voice-accessibility-${{ github.sha }}",
@@ -206,7 +208,7 @@
       "postEditChangedSymbols": 7,
       "detail": "detect_changes relancé sur le diff de la base arrêtée. Index d’impact 85cfd25 ; source UI amont vérifiée identique. Nouveaux fichiers de tests revus séparément. Aucune absence de processus n’est prise comme preuve de non-régression.",
       "evidence": "qa/accessibility-20261111/evidence/base-and-impact.json",
-      "localDiffEvidence": "qa/accessibility-20261111/evidence/gitnexus-detect-changes-final.txt",
+      "localDiffEvidence": "../iao-pr53-ci-evidence/responsive-detect-changes.log",
       "finalIndexScope": "All 12 publication files staged; 7 existing indexed symbols matched; new tests reviewed independently."
     },
     "workflowEvidence": {
@@ -229,7 +231,7 @@
       "allOtherVercelConfigurationUnchanged": true
     }
   },
-  "nextOwner": "Coordinateur de la tâche : publier le candidat isolé et contrôler le build ainsi que les 26 scénarios voice-consent et 17 scénarios async-ui sur ce commit exact.",
+  "nextOwner": "Coordinateur : publier l’ajustement responsive avec lease sur 00e81a29b36d42485520408bc5802d32451b3c92 ; contrôler build, 27 scénarios voice-consent, 17 async-ui et les captures sur le nouveau commit.",
   "recordType": "Relevé de qualification locale avant publication et CI",
   "currentStatusLocations": [
     "PR correspondant à cette correction IAO",
@@ -274,5 +276,129 @@
       ],
       "next": "Valider npm run build sur le même commit candidat en CI. Aucun nouveau build local nécessaire si cette CI réussit."
     }
+  },
+  "responsiveAmendment": {
+    "recordType": "Local responsive correction qualification; browser geometry remains unexecuted",
+    "recordedAt": "2026-11-11T18:58:15.844Z",
+    "publishedParent": "00e81a29b36d42485520408bc5802d32451b3c92",
+    "parentTree": "0c3093b92d8a955190151936c6a10701cfc9f9fa",
+    "observation": {
+      "kind": "static CSS minimum-size analysis",
+      "browserFailureObserved": false,
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "rootFontSize": 32,
+      "oldMinimumHeights": {
+        "header": 96,
+        "readingRegion": 256,
+        "primaryControl": 160,
+        "paddingAndGaps": 152,
+        "total": 664
+      },
+      "excludedFromOldMinimum": [
+        "helper text height",
+        "additional title wrapping"
+      ]
+    },
+    "changes": {
+      "layout": "header / minmax(0,1fr) reading region / primary action",
+      "smallScreenClosePx": 44,
+      "smallScreenPrimaryPx": 64,
+      "readingRegionMinHeightCss": 0,
+      "decorativeWaveformHiddenBelowPx": 640,
+      "agentNameInScrollableRegion": true,
+      "userTextClamped": false,
+      "userTextFontReduced": false,
+      "largeLayoutRequires": {
+        "minWidthPx": 640,
+        "minHeightPx": 480
+      },
+      "largeScreenPrimaryPx": 80,
+      "decorationAndSpacingBoundedInPixels": true,
+      "heightConditionCompiledLocally": true
+    },
+    "upcomingBrowserAssertions": {
+      "states": [
+        "opened",
+        "processing",
+        "long-answer-end"
+      ],
+      "controlsFullyInsideViewport": true,
+      "minTargetPx": 44,
+      "minUsefulReadingRegionPx": 128,
+      "measuredUsing": "Playwright boundingBox and actual window.innerWidth/innerHeight",
+      "newArbitraryWaits": false,
+      "status": "NON TESTÉ",
+      "formats": [
+        {
+          "width": 1280,
+          "height": 800,
+          "textScale": 1
+        },
+        {
+          "width": 320,
+          "height": 640,
+          "textScale": 2
+        },
+        {
+          "width": 640,
+          "height": 360,
+          "textScale": 2
+        }
+      ]
+    },
+    "voiceLogic": {
+      "status": "PASS",
+      "completeComponentPrefixBeforeJsxUnchanged": true,
+      "sha256": "63e9e831e37ce452bbf392b5decab0a981c2abaff22c0a304635e133e764d0e4"
+    },
+    "localChecks": {
+      "dom": {
+        "status": "PASS",
+        "vitest": "4.1.12",
+        "passed": 10,
+        "failed": 0
+      },
+      "lint": {
+        "status": "PASS"
+      },
+      "typecheck": {
+        "status": "PASS"
+      },
+      "browserDiscovery": {
+        "status": "PASS",
+        "scenarios": 27
+      },
+      "browserGeometry": {
+        "status": "NON TESTÉ"
+      },
+      "build": {
+        "status": "NON TESTÉ"
+      },
+      "cssMediaCompilation": {
+        "status": "PASS",
+        "condition": "(min-width:640px) and (min-height:480px)",
+        "notBrowserEvidence": true
+      },
+      "gitNexus": {
+        "status": "PASS",
+        "changedFilesInTotalCandidate": 12,
+        "changedIndexedSymbols": 7,
+        "indexBehindCommits": 1,
+        "unchangedUpstreamUiPreviouslyVerified": true
+      }
+    },
+    "sourceFiles": [
+      {
+        "path": "src/components/voice/VoiceMode.tsx",
+        "sha256": "d495ee00ec2db0a407e59b4e9cc1e1328235c19fd8e0796a8c551d00c479b173"
+      },
+      {
+        "path": "tests/voice-consent/accessibility.spec.ts",
+        "sha256": "e25fd74a3d2954f72c927b0ae83a0306fcf619d2132d034a946cdd2591ba5e3f"
+      }
+    ]
   }
 }

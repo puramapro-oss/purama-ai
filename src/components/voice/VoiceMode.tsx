@@ -163,39 +163,29 @@ export function VoiceMode({
             event.preventDefault();
             if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus({ preventScroll: true });
           }}
-          className="fixed inset-0 z-[10000] flex flex-col items-center gap-4 overflow-y-auto bg-background/95 px-4 py-4 backdrop-blur-2xl sm:px-6 sm:py-8"
+          className="fixed inset-0 z-[10000] grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] justify-items-center gap-[8px] overflow-hidden bg-background/95 px-[12px] py-[12px] backdrop-blur-2xl sm:px-[24px] [@media_(min-width:640px)_and_(min-height:480px)]:gap-[16px] [@media_(min-width:640px)_and_(min-height:480px)]:py-[24px]"
           style={{
             background: `radial-gradient(ellipse at center, ${agentColor}22 0%, rgba(10,10,15,0.95) 60%, rgba(10,10,15,1) 100%)`,
           }}
         >
           {/* Header */}
-          <div className="flex w-full max-w-2xl shrink-0 items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-3">
-              <div
-                aria-hidden="true"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl"
-                style={{ background: `${agentColor}25`, border: `1px solid ${agentColor}55` }}
-              >
-                {agentEmoji}
-              </div>
-              <div className="min-w-0">
-                <p aria-hidden="true" className="text-xs uppercase tracking-wider text-muted-foreground">Mode vocal</p>
-                <DialogTitle className="break-words text-lg font-semibold text-foreground [overflow-wrap:anywhere]">
-                  <span className="sr-only">Mode vocal avec </span>{agentName}
-                </DialogTitle>
-                <DialogDescription className="sr-only">
-                  Active le micro pour parler. La transcription et la réponse restent consultables à l’écran.
-                  Appuie sur Échap pour fermer.
-                </DialogDescription>
-              </div>
+          <div className="flex w-full max-w-2xl items-center justify-between gap-[8px]">
+            <div className="min-w-0">
+              <DialogTitle className="text-sm font-semibold text-foreground">
+                Mode vocal<span className="sr-only"> avec {agentName}</span>
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Active le micro pour parler. La transcription et la réponse restent consultables à l’écran.
+                Appuie sur Échap pour fermer.
+              </DialogDescription>
             </div>
             <DialogClose asChild>
               <button
                 type="button"
                 aria-label="Fermer le mode vocal"
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-secondary/40 text-muted-foreground transition hover:bg-secondary/70 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none"
+                className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full border border-border bg-secondary/40 text-muted-foreground transition hover:bg-secondary/70 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none"
               >
-                <X aria-hidden="true" className="w-5 h-5" />
+                <X aria-hidden="true" className="h-[20px] w-[20px]" />
               </button>
             </DialogClose>
           </div>
@@ -205,8 +195,18 @@ export function VoiceMode({
             role="region"
             aria-label="Transcription et réponse"
             tabIndex={0}
-            className="flex min-h-[8rem] w-full max-w-2xl flex-1 flex-col items-center gap-6 overflow-y-auto overscroll-contain rounded-lg px-1 py-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="flex min-h-0 min-w-0 w-full max-w-2xl flex-col items-center gap-[12px] overflow-y-auto overscroll-contain rounded-lg px-[4px] py-[8px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [@media_(min-width:640px)_and_(min-height:480px)]:gap-[24px] [@media_(min-width:640px)_and_(min-height:480px)]:py-[16px]"
           >
+            <div className="flex w-full shrink-0 items-center justify-center gap-[8px]">
+              <div
+                aria-hidden="true"
+                className="hidden h-[48px] w-[48px] shrink-0 items-center justify-center rounded-2xl text-2xl [@media_(min-width:640px)_and_(min-height:480px)]:flex"
+                style={{ background: `${agentColor}25`, border: `1px solid ${agentColor}55` }}
+              >
+                {agentEmoji}
+              </div>
+              <p className="min-w-0 break-words text-center text-lg font-semibold text-foreground [overflow-wrap:anywhere]">{agentName}</p>
+            </div>
             <PhaseLabel phase={phase} agentName={agentName} reducedMotion={!!reducedMotion} />
 
             <Waveform bars={barArray} level={liveLevel} color={agentColor} active={phase !== 'idle' && !reducedMotion} reducedMotion={!!reducedMotion} />
@@ -238,7 +238,7 @@ export function VoiceMode({
           </div>
 
           {/* Mic tap button */}
-          <div className="flex shrink-0 flex-col items-center gap-3">
+          <div className="flex w-full max-w-2xl flex-col items-center gap-[4px]">
             <button
               type="button"
               onClick={handleMicTap}
@@ -248,7 +248,7 @@ export function VoiceMode({
                   : phase === 'thinking' ? 'Traitement en cours'
                     : 'Activer le micro'}
               className={cn(
-                'relative w-20 h-20 rounded-full flex items-center justify-center transition-all',
+                'relative h-[64px] w-[64px] shrink-0 rounded-full flex items-center justify-center transition-all [@media_(min-width:640px)_and_(min-height:480px)]:h-[80px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[80px]',
                 'border-2 shadow-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:animate-none motion-reduce:transition-none',
                 phase === 'listening' && 'bg-red-500/20 border-red-500/60 animate-pulse',
                 phase === 'speaking' && 'bg-accent-purple/20 border-accent-purple/60',
@@ -258,14 +258,14 @@ export function VoiceMode({
               style={phase === 'idle' ? { boxShadow: `0 0 40px ${agentColor}40` } : undefined}
             >
               {phase === 'thinking' ? (
-                <Loader2 aria-hidden="true" className="w-8 h-8 animate-spin text-accent-purple motion-reduce:animate-none" />
+                <Loader2 aria-hidden="true" className="h-[28px] w-[28px] animate-spin text-accent-purple motion-reduce:animate-none [@media_(min-width:640px)_and_(min-height:480px)]:h-[32px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[32px]" />
               ) : phase === 'listening' ? (
-                <MicOff aria-hidden="true" className="w-8 h-8 text-red-400" />
+                <MicOff aria-hidden="true" className="h-[28px] w-[28px] text-red-400 [@media_(min-width:640px)_and_(min-height:480px)]:h-[32px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[32px]" />
               ) : (
-                <Mic aria-hidden="true" className="w-8 h-8" style={{ color: agentColor }} />
+                <Mic aria-hidden="true" className="h-[28px] w-[28px] [@media_(min-width:640px)_and_(min-height:480px)]:h-[32px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[32px]" style={{ color: agentColor }} />
               )}
             </button>
-            <p className="text-[11px] text-muted-foreground text-center">
+            <p className="max-w-full text-center text-xs text-muted-foreground">
               {phase === 'idle' && 'Appuie pour parler'}
               {phase === 'listening' && 'Appuie pour envoyer'}
               {phase === 'thinking' && 'Réflexion en cours…'}
@@ -300,7 +300,7 @@ function PhaseLabel({ phase, agentName, reducedMotion }: { phase: Phase; agentNa
 
 function Waveform({ bars, level, color, active, reducedMotion }: { bars: number[]; level: number; color: string; active: boolean; reducedMotion: boolean }) {
   return (
-    <div aria-hidden="true" className="flex h-32 w-full shrink-0 items-center justify-center gap-[3px] sm:gap-1.5">
+    <div aria-hidden="true" className="hidden h-[128px] w-full shrink-0 items-center justify-center gap-[6px] [@media_(min-width:640px)_and_(min-height:480px)]:flex">
       {bars.map((i) => {
         // Each bar pulses with a phase offset for organic feel
         const phase = (i / bars.length) * Math.PI * 2;

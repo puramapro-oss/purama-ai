@@ -17,7 +17,7 @@ Le travail initial a été préparé sur `85cfd25a44913c77720842ca7f73a661854a44
 
 Aucun des fichiers produit ou de tests de cette correction n’a changé entre ces bases. Le seul chevauchement est le workflow : ses dix lignes KARTA sont conservées, avec les sept lignes d’archivage de cette correction. Les versions amont de `package.json` et `package-lock.json`, avec Vitest **4.1.12**, sont conservées à l’identique. Le runtime correspondant, déjà disponible, a été réutilisé sans installation. Aucun autre checkout n’a été modifié.
 
-La transposition précise les signatures TypeScript des doubles `onClose` et `onSend` pour Vitest 4. Les assertions, les cinq parcours navigateur et leurs délais restent inchangés.
+La transposition précise les signatures TypeScript des doubles `onClose` et `onSend` pour Vitest 4. Les parcours navigateur et leurs délais ont été conservés à ce stade ; les assertions géométriques et le format paysage sont ensuite ajoutés dans l’ajustement décrit ci-dessous.
 
 La map existante `git.deploymentEnabled` de `vercel.json` reçoit uniquement `feat/iao-accessibility-20261111: false`, pour désactiver le déploiement Vercel de cette branche de travail ; les autres règles et réécritures sont conservées. Cela ne constitue pas un déploiement sur la cible Hostinger.
 
@@ -33,6 +33,14 @@ Les mouvements de la forme d’onde et des textes respectent la préférence de 
 
 Les traitements de capture, transcription, synthèse, autorisations, consentement, destination réseau, lecture automatique et annulation ne sont pas réécrits. Une comparaison des portions de source et des fichiers concernés est enregistrée dans `evidence/voice-boundaries.json`. Le comportement antérieur de synthèse du mode vocal reste celui de l’application : ce patch ne le transforme pas en moteur de parole local.
 
+## Ajustement responsive après revue des minima CSS
+
+Une revue du candidat publié `00e81a29b36d42485520408bc5802d32451b3c92` a identifié un risque de débordement vertical sur 320 × 640 px avec une police racine de 32 px. Les minima précédents totalisaient déjà 664 px : en-tête 96 px, région centrale 256 px, bouton principal 160 px, marges internes et espacements 152 px, avant même de compter l’aide et un éventuel titre sur plusieurs lignes. **Ce constat vient d’une analyse CSS, pas d’un échec navigateur observé.**
+
+L’ajustement local conserve trois rangées : en-tête, région de lecture capable de rétrécir et de défiler, puis action principale. Sur fenêtre étroite ou courte, la fermeture mesure 44 px, le bouton principal 64 px et les espacements fixes sont réduits. La présentation plus grande et les décorations exigent à la fois une largeur d’au moins 640 px et une hauteur d’au moins 480 px ; leurs dimensions restent bornées en pixels. Le nom complet de l’agent se trouve dans la zone de lecture. Le texte de l’utilisateur et de la réponse garde sa taille et son intégralité ; aucun traitement vocal n’est modifié.
+
+La même boucle de réponse longue couvre l’ordinateur, 320 × 640 px à 200 % de texte et 640 × 360 px à 200 % de texte. Elle mesure les rectangles réels de la fermeture, du bouton principal et de la région de lecture après ouverture, pendant le traitement et après défilement à la fin. Elle exige que les commandes restent entièrement dans la fenêtre avec une cible d’au moins 44 × 44 px, et que la région de lecture reste visible sur une hauteur d’au moins 128 px. Ces mesures seront jointes aux captures. Aucune attente arbitraire n’est ajoutée pour ces assertions. Leur résultat navigateur reste à qualifier sur le commit intégrant cet ajustement.
+
 ## Tests et preuves
 
 Le manifeste `MANIFEST.json` donne les commandes, statuts et empreintes exactes de livraison. Les journaux bruts sont conservés localement dans `evidence/` et exclus de la liste de publication. Le commit candidat peut inclure le manifeste et les deux preuves JSON sélectionnées, sans index GitNexus, journal ni binaire.
@@ -41,13 +49,13 @@ Le manifeste `MANIFEST.json` donne les commandes, statuts et empreintes exactes 
 - **PASS — dix tests DOM après transposition, avec Vitest 4.1.12 :** vrai React et vrai moteur de focus Radix ; animations décoratives et services de voix remplacés par des doubles. Contrôles du cycle Tab/Maj+Tab, du bouton désactivé pendant l’attente, d’Échap et de la fermeture, du retour du focus, des libellés de phase, de l’annulation d’une réponse tardive, du texte intégral et du défilement réduit.
 - **PASS — lint ciblé et TypeScript application :** voir les journaux et le manifeste.
 - **NON TESTÉ localement — build du candidat transposé :** sur l’ancienne base, une première compilation du correctif avait réussi ; après l’ajustement des libellés, une compilation a été tuée par l’environnement avec le code 137. La relance a été arrêtée volontairement avec le code 130 pour laisser une autre compilation du groupe utiliser les ressources. Aucun build local n’a été relancé après transposition ; le build du candidat doit être validé par la CI.
-- **PASS — découverte Playwright :** 26 scénarios `voice-consent`, dont les 21 scénarios existants et cinq nouveaux ; 17 scénarios `async-ui`. La découverte valide le chargement des fichiers de scénarios, pas leur résultat dans un navigateur.
+- **PASS — découverte Playwright :** 27 scénarios `voice-consent`, dont les 21 scénarios existants et six nouveaux ; 17 scénarios `async-ui`. La découverte valide le chargement des fichiers de scénarios, pas leur résultat dans un navigateur.
 - **NON TESTÉ — exécution navigateur sur cette correction :** les scénarios sont préparés pour la CI existante. Ils ne constituent pas encore une preuve d’exécution Chromium.
 - **NON TESTÉ — matériel et technologies d’assistance :** aucun microphone physique, synthèse réelle, lecteur d’écran, clavier de contacteur ou appareil mobile réel n’a été essayé.
 
 Le harnais navigateur réutilisé est `tests/voice-consent/harness.tsx`, avec les doubles définis par `tests/voice-consent/transport.ts`, et sa configuration `tests/voice-consent/playwright.config.ts`. Aucun accès au microphone réel ou service vocal distant n’y est autorisé. Un scénario ouvre et ferme uniquement au clavier et vérifie zéro appel, même au double de `getUserMedia`.
 
-Les autres scénarios nouveaux vérifient le texte intégral sur 1 280 × 800 et sur 320 × 640 avec texte agrandi à 200 %, le défilement clavier jusqu’à la fin, le retour au déclencheur, et la réduction des animations. L’agrandissement testé par ce scénario est celui du texte CSS ; ce n’est pas une preuve de zoom de navigateur ni de test sur appareil physique. Les captures sont écrites via `testInfo.outputPath` puis jointes aux résultats Playwright. Les nouveaux scénarios enregistrent aussi une capture en cas d’échec, si la page est encore disponible.
+Les autres scénarios nouveaux vérifient le texte intégral sur 1 280 × 800, puis sur 320 × 640 et 640 × 360 avec texte agrandi à 200 %, le défilement clavier jusqu’à la fin, le retour au déclencheur, et la réduction des animations. L’agrandissement testé est celui du texte CSS ; ce n’est pas une preuve de zoom de navigateur ni de test sur appareil physique. Les captures sont écrites via `testInfo.outputPath` puis jointes aux résultats Playwright. Les nouveaux scénarios enregistrent aussi une capture en cas d’échec, si la page est encore disponible.
 
 ## Exécution dans la CI existante
 
