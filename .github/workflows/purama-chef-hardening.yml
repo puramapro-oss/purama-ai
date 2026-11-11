@@ -129,7 +129,8 @@ jobs:
       - run: npm run test:founder:types
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
-      - run: npx playwright install --with-deps chromium webkit
+      - name: Prepare the locked Playwright image without Ubuntu downloads
+        run: bash scripts/ci/run-site-browser.sh --prepare
       - name: Social browser behavior
         # Packaged Chrome keeps its existing AppArmor profile and browser sandbox.
         env:
@@ -137,19 +138,19 @@ jobs:
         run: node tests/social-browser/run.mjs
       - run: npx tsc --noEmit -p tests/public/tsconfig.json
       - run: npm run typecheck:distribution
-      - run: npm run test:distribution:browser
-      - run: npm run test:public
-      - run: npm run test:chat
-      - run: npm run test:quality
-      - run: npm run test:oauth:browser
-      - run: npm run test:founder:browser
-      - run: npm run test:account-isolation
-      - run: npm run test:contracts-ots:browser
-      - run: npm run test:wellbeing
-      - run: npm run test:voice-consent
-      - run: npm run test:ui-state
-      - run: npm run test:async-ui
-      - run: npm run test:mobile-auth
+      - run: bash scripts/ci/run-site-browser.sh npm run test:distribution:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:public
+      - run: bash scripts/ci/run-site-browser.sh npm run test:chat
+      - run: bash scripts/ci/run-site-browser.sh npm run test:quality
+      - run: bash scripts/ci/run-site-browser.sh npm run test:oauth:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:founder:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:account-isolation
+      - run: bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:wellbeing
+      - run: bash scripts/ci/run-site-browser.sh npm run test:voice-consent
+      - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
+      - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
+      - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
 
