@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "tests/ui-state/playwright.config.ts",
+    "email-lifecycle.spec.ts"
+  ],
+  "exit": 1,
+  "seconds": 114.561,
+  "sources": {
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "148dbf8c48b7997726da01805d9226c0f179d5a892f9ab6266af85b75ac0f513",
+    "tests/ui-state/email-lifecycle.spec.ts": "213997770e5d1babb6918e87af10273e860eae7c4223bf08d9568366045df214",
+    "src/pages/EmailAgent.tsx": "4c1f550d1278e87125bedb456bb3806d4f37298fa41af91e8f239b931e60a72f",
+    "src/pages/EmailAgentSettings.tsx": "a821e768b891903ce034269adb8e2751b2b07db445bc77ea0c45cc69582640d0",
+    "src/lib/email-agent.ts": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0"
+  },
+  "sourcesAfter": {
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "148dbf8c48b7997726da01805d9226c0f179d5a892f9ab6266af85b75ac0f513",
+    "tests/ui-state/email-lifecycle.spec.ts": "213997770e5d1babb6918e87af10273e860eae7c4223bf08d9568366045df214",
+    "src/pages/EmailAgent.tsx": "4c1f550d1278e87125bedb456bb3806d4f37298fa41af91e8f239b931e60a72f",
+    "src/pages/EmailAgentSettings.tsx": "a821e768b891903ce034269adb8e2751b2b07db445bc77ea0c45cc69582640d0",
+    "src/lib/email-agent.ts": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0"
+  }
+}

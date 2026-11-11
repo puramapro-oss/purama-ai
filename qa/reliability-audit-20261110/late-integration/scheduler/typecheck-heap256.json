@@ -1,0 +1,36 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=256"
+  },
+  "capture_kind": "Exact structured tool results; output fields are the text returned by exec_command/write_stdin, not reconstructed raw terminal logs.",
+  "captures": [
+    {
+      "key": "scheduler_typecheck_retry_start",
+      "result": {
+        "chunk_id": "ed2efa",
+        "wall_time_seconds": 1.001561108,
+        "session_id": 13553,
+        "original_token_count": 41,
+        "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 typecheck\n> tsc --noEmit -p tsconfig.json\n\n"
+      }
+    },
+    {
+      "key": "scheduler_final_state_1",
+      "result": {
+        "chunk_id": "b1afa1",
+        "wall_time_seconds": 0.000020455,
+        "exit_code": 134,
+        "original_token_count": 163,
+        "output": "\n<--- Last few GCs --->\n\n[17:0xcb5f000]     2155 ms: Mark-Compact (reduce) 253.4 (259.3) -> 253.0 (257.6) MB, pooled: 0 MB, 76.14 / 0.00 ms  (+ 0.1 ms in 13 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 83 ms) (average mu = 0.328, current mu =\nFATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory\n----- Native stack trace -----\n\n 1: 0x91d810  [node]\n 2: 0x75bb1b node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]\n 3: 0xc755c0  [node]\n 4: 0xc756bf  [node]\n 5: 0xf24835  [node]\n 6: 0xf372ac  [node]\n 7: 0xe6d148  [node]\n 8: 0x14069fe  [node]\n 9: 0x1b599b6  [node]\nAborted\n"
+      }
+    }
+  ],
+  "exit_code": 134,
+  "cause": "Explicit JavaScript heap out-of-memory at the 256 MiB cap"
+}

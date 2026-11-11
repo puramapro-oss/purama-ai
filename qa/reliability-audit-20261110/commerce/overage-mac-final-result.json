@@ -1,0 +1,37 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/overageCredit.test.ts",
+    "--maxWorkers=1"
+  ],
+  "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta",
+  "exit_code": 0,
+  "seconds": 8.456,
+  "node_version": "v22.23.3",
+  "inputs_before": {
+    "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+    "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+    "karta/test/overageCredit.test.ts": "891d29cd7700c7e955c2f48eb21da02575814126d8d88d861bf75c2a5385dd93",
+    "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+    "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+    "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+    "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+    "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+    "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
+  },
+  "inputs_after": {
+    "supabase/functions/stripe-webhook/index.ts": "d7ba53453b9ad088a5cfea56f1c010e5f7ba02235403634f37a3a236850801b7",
+    "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+    "karta/test/overageCredit.test.ts": "891d29cd7700c7e955c2f48eb21da02575814126d8d88d861bf75c2a5385dd93",
+    "supabase/migrations/20260727020000_overage_credits.sql": "fac34365f7e12a9f71cbf7d55b2aab2b935ae8f61ddf4833a551f5aae21044e3",
+    "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+    "karta/package.json": "6ff87d55a5a4663c6886f01cab13a5ed18f14ca005c3e5c1e0ca9df9e9a817a1",
+    "karta/package-lock.json": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c",
+    "karta/vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+    "karta/test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
+  },
+  "inputs_unchanged": true,
+  "log_sha256": "5a2ffcc354150c90e5b7092f8be7987de9da67152f1cf9d0d83137f7502f0e51"
+}

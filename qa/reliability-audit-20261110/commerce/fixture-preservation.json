@@ -1,0 +1,10 @@
+{
+  "assertion_and_query_statements_identical": true,
+  "statement_count": 6,
+  "expect_assertion_count": 3,
+  "database_helper_identical": true,
+  "original_sha256": "9e1aba5100ccbf6dec3b34d85ebb9fd1a4bfb3ad13388fe798efbcaff5d2b9e2",
+  "final_sha256": "891d29cd7700c7e955c2f48eb21da02575814126d8d88d861bf75c2a5385dd93",
+  "statements_sha256": "7b973a5e8dd043089917b3b58fb41e37b1aaee1b51bc40a832934829a2cbc569",
+  "delta": "The final test database is initialized in beforeAll and closed in afterAll; unchanged Vitest configuration retains 30000ms hookTimeout and the default 5000ms testTimeout."
+}

@@ -1,0 +1,32 @@
+{
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "src/pages/EmailAgent.tsx",
+    "src/pages/EmailAgentSettings.tsx",
+    "src/lib/oauth-google.ts",
+    "tests/ui-state/transport.ts",
+    "tests/ui-state/harness.tsx",
+    "tests/ui-state/email-lifecycle.spec.ts",
+    "--max-warnings",
+    "0"
+  ],
+  "exitCode": 0,
+  "sourcesBefore": {
+    "src/pages/EmailAgent.tsx": "33ecdab6280ed6d952c586d4d4501779aa0e503998a964aa112003ad8cedcaa1",
+    "src/pages/EmailAgentSettings.tsx": "d99a3d2057b4a04b1b4cfe83abcef5f2b95445ab954585c969b417ebfb9e1753",
+    "src/lib/oauth-google.ts": "c869b6fc624981518a9f0a94e467be97f81e494f8dccd612d17ba8df13568a87",
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "29c195e8cc3d918c8f3b3c922801b9b778e2bb1328ec23e114686fab3770c070",
+    "tests/ui-state/email-lifecycle.spec.ts": "7417271c70f994786c0a893c2601f45fefb75aec9aa729d139874212121c8396"
+  },
+  "sourcesAfter": {
+    "src/pages/EmailAgent.tsx": "33ecdab6280ed6d952c586d4d4501779aa0e503998a964aa112003ad8cedcaa1",
+    "src/pages/EmailAgentSettings.tsx": "d99a3d2057b4a04b1b4cfe83abcef5f2b95445ab954585c969b417ebfb9e1753",
+    "src/lib/oauth-google.ts": "c869b6fc624981518a9f0a94e467be97f81e494f8dccd612d17ba8df13568a87",
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "29c195e8cc3d918c8f3b3c922801b9b778e2bb1328ec23e114686fab3770c070",
+    "tests/ui-state/email-lifecycle.spec.ts": "7417271c70f994786c0a893c2601f45fefb75aec9aa729d139874212121c8396"
+  },
+  "sourceUnchanged": true
+}

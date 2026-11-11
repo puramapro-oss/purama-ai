@@ -1,0 +1,73 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-patches/commerce-phase-probe-20261110/vitest-copy/karta
+
+stdout | test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit
+PHASE_SETUP_MS 6646.414792
+
+stdout | test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit
+PHASE_ASSERTIONS_MS 103.33866600000147
+
+stdout | test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit
+PHASE_CLOSE_MS 8.907624999999825
+
+ ❯ test/overageCredit.test.ts (38 tests | 1 failed | 37 skipped) 6793ms
+   ↓ legacy overage: real webhook and PostgreSQL credit boundary (37)
+     ↓ credits a confirmed session once and retains the signed payment month on redelivery
+     ↓ serializes a burst of deliveries into one credit under the real SQL unique constraint
+     ↓ does not grant completed Checkout credits with unpaid status
+     ↓ does not grant completed Checkout credits with no_payment_required status
+     ↓ waits for delayed payment success and grants once in the successful event month
+     ↓ does not acknowledge an inconsistent delayed success as a credit
+     ↓ ignores delayed failures and unrelated async sessions without issuing credits
+     ↓ requires signature verification before crediting: null
+     ↓ requires signature verification before crediting: fixture-invalid
+     ↓ rejects invalid owner before any persistent credit
+     ↓ rejects missing payment intent before any persistent credit
+     ↓ rejects invalid amount before any persistent credit
+     ↓ rejects fractional amount before any persistent credit
+     ↓ rejects invalid currency before any persistent credit
+     ↓ rejects incomplete session before any persistent credit
+     ↓ rejects missing timestamp before any persistent credit
+     ↓ rejects time before creation before any persistent credit
+     ↓ rejects mode mismatch before any persistent credit
+     ↓ supports an expanded payment intent without trusting its other fields
+     ↓ returns a retryable error on persistence failure and grants once on retry
+     ↓ requires a persisted receipt and safely retries after a lost acknowledgement
+     ↓ rejects reuse of a session for another user through the real webhook
+     ↓ rejects a conflicting session payload atomically: {"p_actions":2001}
+     ↓ rejects a conflicting session payload atomically: {"p_payment_amount_total":1800}
+     ↓ rejects a conflicting session payload atomically: {"p_payment_currency":"usd"}
+     ↓ rejects a conflicting session payload atomically: {"p_stripe_payment_intent_id":"pi_other"}
+     ↓ rejects a conflicting session payload atomically: {"p_payment_livemode":true}
+     ↓ rejects a conflicting session payload atomically: {"p_payment_confirmed_at":"2026-11-01T00:00:01Z"}
+     ↓ accepts another event ID for the same evidenced payment without replacing its first receipt
+     ↓ rejects reusing a payment event for a different session, including crossed existing receipts
+     ↓ forbids credit RPC access from anon
+     ↓ forbids credit RPC access from authenticated
+     ↓ forbids credit RPC access from public_only
+     ↓ cannot be bypassed by a client direct insert despite broad historical table grants
+     ↓ enforces session and event uniqueness for direct trusted inserts outside the helper
+     ↓ keeps historical credits intact and refuses to invent missing payment evidence on replay
+     ↓ can reapply the migration without changing credits or payment proof
+   × stops the migration on historical duplicate sessions without deleting or rewriting a credit 6789ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/overageCredit.test.ts:340:1
+    338| });
+    339|
+    340| it('stops the migration on historical duplicate sessions without delet…
+       | ^
+    341|   const phaseStarted = performance.now();
+    342|   const db = await database(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 skipped (38)
+   Start at  22:44:58
+   Duration  11.61s (tests 63%, import 30%, transform 6%)

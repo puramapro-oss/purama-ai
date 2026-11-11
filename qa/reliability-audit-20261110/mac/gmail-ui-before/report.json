@@ -1,0 +1,340 @@
+{
+  "config": {
+    "configFile": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/playwright.config.ts",
+    "rootDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-ui-before/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-ui-before/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/vite/bin/vite.js --config tests/ui-state/vite.config.ts --mode test",
+      "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/",
+      "url": "http://127.0.0.1:4197/tests/ui-state/index.html",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "email-lifecycle.spec.ts",
+      "file": "email-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "email settings: A-B-A ignores an old save receipt and retains the current pending save",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12819,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('✅ Paramètres enregistrés', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('✅ Paramètres enregistrés', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('✅ Paramètres enregistrés', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('✅ Paramètres enregistrés', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:63:77",
+                    "location": {
+                      "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                      "column": 77,
+                      "line": 63
+                    },
+                    "snippet": "  61 |   await save.click(); await waitWrites(page, 2);\n  62 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0)); await settle(page);\n> 63 |   await expect(page.getByText('✅ Paramètres enregistrés', { exact: true })).toHaveCount(0);\n     |                                                                             ^\n  64 |   await expect(page.locator(signature)).toHaveValue('CURRENT-DRAFT-A');\n  65 |   await expect(save).toBeDisabled();\n  66 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                        "column": 77,
+                        "line": 63
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('✅ Paramètres enregistrés', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('✅ Paramètres enregistrés', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n\n  61 |   await save.click(); await waitWrites(page, 2);\n  62 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0)); await settle(page);\n> 63 |   await expect(page.getByText('✅ Paramètres enregistrés', { exact: true })).toHaveCount(0);\n     |                                                                             ^\n  64 |   await expect(page.locator(signature)).toHaveValue('CURRENT-DRAFT-A');\n  65 |   await expect(save).toBeDisabled();\n  66 |\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:63:77"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T22:03:02.809Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-ui-before/artifacts/email-lifecycle-email-sett-a35a9-ns-the-current-pending-save/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                    "column": 77,
+                    "line": 63
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93c90085d0c0e7e115ac-23bba6cb976faabd2069",
+          "file": "email-lifecycle.spec.ts",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "email settings: A-B-A ignores an old disconnect receipt and keeps the new connection",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15991,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Gmail déconnecté', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Gmail déconnecté', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Gmail déconnecté', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Gmail déconnecté', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:85:69",
+                    "location": {
+                      "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                      "column": 69,
+                      "line": 85
+                    },
+                    "snippet": "  83 |\n  84 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0)); await settle(page);\n> 85 |   await expect(page.getByText('Gmail déconnecté', { exact: true })).toHaveCount(0);\n     |                                                                     ^\n  86 |   await expect(page.locator(signature)).toHaveValue('CURRENT-A');\n  87 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();\n  88 |   await page.getByRole('button', { name: 'Déconnecter', exact: true }).click(); await waitWrites(page, 2);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                        "column": 69,
+                        "line": 85
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Gmail déconnecté', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Gmail déconnecté', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n\n  83 |\n  84 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0)); await settle(page);\n> 85 |   await expect(page.getByText('Gmail déconnecté', { exact: true })).toHaveCount(0);\n     |                                                                     ^\n  86 |   await expect(page.locator(signature)).toHaveValue('CURRENT-A');\n  87 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();\n  88 |   await page.getByRole('button', { name: 'Déconnecter', exact: true }).click(); await waitWrites(page, 2);\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:85:69"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T22:03:23.718Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-ui-before/artifacts/email-lifecycle-email-sett-fa5a9-nd-keeps-the-new-connection/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                    "column": 69,
+                    "line": 85
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93c90085d0c0e7e115ac-bd7e30a083979a6ea37e",
+          "file": "email-lifecycle.spec.ts",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "title": "email dashboard: a rejected initial A load cannot notify the newer A lifetime",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 12414,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Erreur de chargement', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Erreur de chargement', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Erreur de chargement', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Erreur de chargement', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:104:73",
+                    "location": {
+                      "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                      "column": 73,
+                      "line": 104
+                    },
+                    "snippet": "  102 |\n  103 |   await page.evaluate(owner => window.uiStateHarness.rejectConfig('email_agent_config', owner), A); await settle(page);\n> 104 |   await expect(page.getByText('Erreur de chargement', { exact: true })).toHaveCount(0);\n      |                                                                         ^\n  105 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();\n  106 | });\n  107 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                        "column": 73,
+                        "line": 104
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Erreur de chargement', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Erreur de chargement', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n\n  102 |\n  103 |   await page.evaluate(owner => window.uiStateHarness.rejectConfig('email_agent_config', owner), A); await settle(page);\n> 104 |   await expect(page.getByText('Erreur de chargement', { exact: true })).toHaveCount(0);\n      |                                                                         ^\n  105 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();\n  106 | });\n  107 |\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:104:73"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T22:03:54.617Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-ui-before/artifacts/email-lifecycle-email-dash-086a8-notify-the-newer-A-lifetime/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                    "column": 73,
+                    "line": 104
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93c90085d0c0e7e115ac-20ad845e48466aaeeed5",
+          "file": "email-lifecycle.spec.ts",
+          "line": 94,
+          "column": 1
+        },
+        {
+          "title": "email dashboard: an old rejected activation cannot notify a later account lifetime",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11859,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Impossible de mettre à jour', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Impossible de mettre à jour', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Impossible de mettre à jour', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Impossible de mettre à jour', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:117:80",
+                    "location": {
+                      "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                      "column": 80,
+                      "line": 117
+                    },
+                    "snippet": "  115 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();\n  116 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0, true)); await settle(page);\n> 117 |   await expect(page.getByText('Impossible de mettre à jour', { exact: true })).toHaveCount(0);\n      |                                                                                ^\n  118 |   await expect(page.getByRole('switch')).toBeEnabled();\n  119 |\n  120 |   await page.getByRole('switch').click(); await waitWrites(page, 2);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                        "column": 80,
+                        "line": 117
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Impossible de mettre à jour', { exact: true })\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  1500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" with timeout 1500ms\u001b[22m\n\u001b[2m  - waiting for getByText('Impossible de mettre à jour', { exact: true })\u001b[22m\n\u001b[2m    5 × locator resolved to 1 element\u001b[22m\n\u001b[2m      - unexpected value \"1\"\u001b[22m\n\n\n  115 |   await expect(page.getByText('current-a@fixture.invalid', { exact: true })).toBeVisible();\n  116 |   await page.evaluate(() => window.uiStateHarness.resolveWrite(0, true)); await settle(page);\n> 117 |   await expect(page.getByText('Impossible de mettre à jour', { exact: true })).toHaveCount(0);\n      |                                                                                ^\n  118 |   await expect(page.getByRole('switch')).toBeEnabled();\n  119 |\n  120 |   await page.getByRole('switch').click(); await waitWrites(page, 2);\n    at /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts:117:80"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T22:04:17.949Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-ui-before/artifacts/email-lifecycle-email-dash-5552b-fy-a-later-account-lifetime/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/email-lifecycle.spec.ts",
+                    "column": 80,
+                    "line": 117
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "93c90085d0c0e7e115ac-f5c5d530bb547d145c83",
+          "file": "email-lifecycle.spec.ts",
+          "line": 108,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T22:02:48.932Z",
+    "duration": 106019.428,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

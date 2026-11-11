@@ -1,0 +1,60 @@
+{
+  "target": {
+    "id": "Function:karta/src/scheduler/cron.ts:runScheduledCycle",
+    "name": "runScheduledCycle",
+    "type": "Function",
+    "filePath": "karta/src/scheduler/cron.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Queue",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/scheduler/cron.ts:startSchedulers",
+        "name": "startSchedulers",
+        "filePath": "karta/src/scheduler/cron.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:karta/src/index.ts",
+        "name": "index.ts",
+        "filePath": "karta/src/index.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+
+  GitNexus Impact (1.6.12)

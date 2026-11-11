@@ -1,0 +1,30 @@
+{
+  "differences": {
+    "qa/reliability-audit-20261110/gitnexus-initial.log": {
+      "local": {
+        "mode": "100644",
+        "blob": "3a3d8a1c3a00a2c20042984806cbec80f15f72d9",
+        "stage": "0"
+      },
+      "mac": {
+        "mode": "100644",
+        "blob": "dfa10e868271fea5528c5223d2475bb0af2bc529",
+        "stage": "0"
+      }
+    },
+    "qa/reliability-audit-20261110/gitnexus-local-retry.log": {
+      "local": {
+        "mode": "100644",
+        "blob": "bb47e9e5a3cee26b32030819c06e872cb652ff4c",
+        "stage": "0"
+      },
+      "mac": {
+        "mode": "100644",
+        "blob": "7e4c9f00db68bc0bbf407f3dec35655c5ab43a23",
+        "stage": "0"
+      }
+    }
+  },
+  "local_files": 235,
+  "mac_files": 235
+}

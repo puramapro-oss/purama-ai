@@ -1,0 +1,53 @@
+{
+  "read_only": true,
+  "checks": [
+    {
+      "name": "site",
+      "at": "2026-11-10T22:08:47.675886+00:00",
+      "exit": 0,
+      "stdout": "404 0.246315",
+      "stderr": "",
+      "seconds": 0.383
+    },
+    {
+      "name": "auth-health",
+      "at": "2026-11-10T22:08:48.233203+00:00",
+      "exit": 0,
+      "stdout": "502 0.501127",
+      "stderr": "",
+      "seconds": 0.553
+    },
+    {
+      "name": "iao-site",
+      "at": "2026-11-10T22:08:48.753932+00:00",
+      "exit": 0,
+      "stdout": "402 0.365038",
+      "stderr": "",
+      "seconds": 0.521
+    },
+    {
+      "name": "hostinger-disk",
+      "at": "2026-11-10T22:08:49.742745+00:00",
+      "exit": 0,
+      "stdout": "Filesystem     1024-blocks      Used Available Capacity Mounted on\n/dev/sda1        405196772 360286824  44893564      89% /\n",
+      "stderr": "",
+      "seconds": 0.989
+    },
+    {
+      "name": "hostinger-tunnel",
+      "at": "2026-11-10T22:08:50.357976+00:00",
+      "exit": 4,
+      "stdout": "inactive\n",
+      "stderr": "",
+      "seconds": 0.615
+    },
+    {
+      "name": "hostinger-services",
+      "at": "2026-11-10T22:08:51.365806+00:00",
+      "exit": 0,
+      "stdout": "p8-t03-rest Up 8 days\np8-t03-auth Up 8 days\np8-t03-db Up 8 days\np8-t03-rest-before-final-replay Exited (255) 8 days ago\np8-t03-auth-before-final-replay Exited (0) 8 days ago\np8-t03-db-before-final-replay Exited (0) 8 days ago\nsupabase-auth Exited (137) 5 weeks ago\nsupabase-rest Exited (255) 5 weeks ago\nsupabase-db Exited (0) 5 weeks ago\nsupabase-edge-functions Exited (15) 5 weeks ago\nsupabase-kong Exited (0) 5 weeks ago\nsupabase-studio Exited (0) 5 weeks ago\nsupabase-storage Exited (0) 5 weeks ago\nsupabase-meta Exited (137) 5 weeks ago\nsupabase-analytics Exited (137) 5 weeks ago\nsupabase-pooler Exited (143) 5 weeks ago\nrealtime-dev.supabase-realtime Exited (0) 5 weeks ago\nsupabase-vector Exited (137) 5 weeks ago\nsupabase-imgproxy Exited (0) 5 weeks ago",
+      "stderr": "",
+      "seconds": 1.008
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "startedAt": "2026-11-10T21:50:04.153Z",
+  "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code",
+  "sources": {
+    "src/pages/OAuthCallback.tsx": "c5a8f3142de7ac76aab134c86fcd7084722c3090b687f695bd21088da3bac5b8",
+    "src/hooks/useUserConnections.ts": "97ffef82cb8876a439e0d350b7744792f4d6fdee887258b80547ccea86c01d8c",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+    "src/lib/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "src/lib/email-agent.ts": "6eea3d344c716d54bbc12866df74f823bbd4d0f1dcd768ea2982a5077377ca06"
+  },
+  "checks": [
+    {
+      "name": "leaving a rejected callback cancels its pending redirect",
+      "status": "FAIL",
+      "message": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByTestId('path')\nExpected: \"/kept\"\nReceived: \"/mes-connexions\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByTestId('path')\n    9 × locator resolved to <output data-testid=\"path\">/mes-connexions</output>\n      - unexpected value \"/mes-connexions\"\n",
+      "errors": [],
+      "outside": []
+    },
+    {
+      "name": "double initiation admits only one session read",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n2 !== 1\n",
+      "errors": [],
+      "outside": []
+    },
+    {
+      "name": "HTTP 200 without an explicit success receipt is rejected",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+      "errors": [],
+      "outside": []
+    },
+    {
+      "name": "callback completion after unmount cannot notify or redirect",
+      "status": "FAIL",
+      "message": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByTestId('path')\nExpected: \"/kept\"\nReceived: \"/mes-connexions\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByTestId('path')\n    9 × locator resolved to <output data-testid=\"path\">/mes-connexions</output>\n      - unexpected value \"/mes-connexions\"\n",
+      "errors": [],
+      "outside": []
+    }
+  ],
+  "externalRequests": [],
+  "bundleSha256": "2af19ad649a88d110f4fe8c4981f9a320b6259df4ddfcdff6bba34eefb76455d",
+  "browser": "157.0.8103.39",
+  "sourcesAfter": {
+    "src/pages/OAuthCallback.tsx": "c5a8f3142de7ac76aab134c86fcd7084722c3090b687f695bd21088da3bac5b8",
+    "src/hooks/useUserConnections.ts": "97ffef82cb8876a439e0d350b7744792f4d6fdee887258b80547ccea86c01d8c",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+    "src/lib/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "src/lib/email-agent.ts": "6eea3d344c716d54bbc12866df74f823bbd4d0f1dcd768ea2982a5077377ca06"
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-11-10T21:50:53.126Z",
+  "status": "FAIL"
+}

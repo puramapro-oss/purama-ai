@@ -5,8 +5,8 @@ import { isRunnable, loadAgentState } from "./autonomy.js";
 import { assertToolResult } from "./tool-result.js";
 import { validateToolParams } from "./tool-input.js";
 import { shouldMinimizeToolTrace, summarizeToolError, summarizeToolResult } from "./tool-trace.js";
-import { enqueueAgentCycle } from "../queue/queues.js";
 import { restoreAgentExecutionTrigger, snapshotAgentExecutionTrigger } from "./execution-origin.js";
+import { bounded } from "../runtime/lifecycle.js";
 import type { AgentTrigger, AgentType } from "./types.js";
 
 interface CreatePendingActionInput {
@@ -42,7 +42,9 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
   // migration, duplicate request or uncertain prior attempt all fail closed.
   let claimed: { data: unknown; error: unknown };
   try {
-    claimed = await supabase.rpc("karta_claim_pending_action", { p_id: id, p_decision: decision });
+    claimed = await bounded(async signal => supabase.rpc("karta_claim_pending_action_bounded", {
+      p_id: id, p_decision: decision,
+    }).abortSignal(signal), 5_000);
   } catch {
     // A transport rejection gives no proof of whether the claim committed.
     // Report the same safe refusal and never dispatch or reset it to pending.
@@ -97,28 +99,9 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
     return { ok: false, error: "Résultat non confirmé dans le journal : vérifier l'action avant toute reprise" };
   }
 
-  if (status === "executed" || status === "rejected") {
-    try {
-      await enqueueAgentCycle(
-        {
-          agentType: pending.agent_type as AgentType,
-          userId: pending.user_id,
-          trigger: {
-            type: "delegation",
-            source: "approval-resume",
-            payload: { previousRunId: pending.run_id, pendingActionId: pending.id, resolution: status },
-          },
-        },
-        { dedupeKey: `approval-resume|${pending.id}|${status}` }
-      );
-    } catch {
-      return {
-        ok: false,
-        error: "Action traitée mais reprise du cycle non planifiée : relancer le cycle sans répéter l'action",
-      };
-    }
-  }
-
+  // Migration 027 captures the minimal continuation intent in the finalizer's
+  // transaction. Redis publication belongs to its durable relay; an outage must
+  // never invite another execution of the already resolved provider action.
   return status === "executed" || status === "rejected"
     ? { ok: true, resultSummary }
     : { ok: false, error: resultSummary };
@@ -148,9 +131,9 @@ async function parentRequiresPrivateTrace(pending: PendingActionRow, tools: read
 }
 
 async function finalizePendingAction(pending: PendingActionRow, status: FinalStatus, resultSummary: string): Promise<void> {
-  // Resolving the action and patching the parent's JSON happen in one transaction.
-  const { error } = await supabase.rpc("karta_finalize_pending_action", {
+  // Resolution, the parent journal and continuation intent commit together.
+  const { error } = await bounded(async signal => supabase.rpc("karta_finalize_pending_action", {
     p_id: pending.id, p_status: status, p_summary: resultSummary.slice(0, 500),
-  });
+  }).abortSignal(signal), 5_000);
   if (error) throw new Error("Finalisation indisponible");
 }

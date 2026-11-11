@@ -1,0 +1,26 @@
+
+> vite_react_shadcn_ts@0.0.0 test:ui-state
+> playwright test --config tests/ui-state/playwright.config.ts
+
+
+Running 17 tests using 1 worker
+
+  ✓   1 tests/ui-state/email-lifecycle.spec.ts:50:1 › email settings: A-B-A ignores an old save receipt and retains the current pending save (15.9s)
+  ✓   2 tests/ui-state/email-lifecycle.spec.ts:74:1 › email settings: A-B-A ignores an old disconnect receipt and keeps the new connection (10.4s)
+  ✓   3 tests/ui-state/email-lifecycle.spec.ts:94:1 › email dashboard: a rejected initial A load cannot notify the newer A lifetime (8.7s)
+  ✓   4 tests/ui-state/email-lifecycle.spec.ts:108:1 › email dashboard: an old rejected activation cannot notify a later account lifetime (8.7s)
+  ✓   5 tests/ui-state/email-lifecycle.spec.ts:126:1 › email dashboard: a legacy success query cannot claim an unconnected Gmail account is connected (6.5s)
+  ✓   6 tests/ui-state/ownership.spec.ts:35:3 › partner: load failure is visible and retry restores the settings (5.5s)
+  ✓   7 tests/ui-state/ownership.spec.ts:46:3 › partner: account switch never saves A's settings as B; same-account refresh preserves draft (7.3s)
+  ✓   8 tests/ui-state/ownership.spec.ts:70:3 › partner: late A config cannot overwrite loaded B (9.1s)
+  ✓   9 tests/ui-state/ownership.spec.ts:35:3 › email: load failure is visible and retry restores the settings (8.7s)
+  ✓  10 tests/ui-state/ownership.spec.ts:46:3 › email: account switch never saves A's settings as B; same-account refresh preserves draft (9.6s)
+  ✓  11 tests/ui-state/ownership.spec.ts:70:3 › email: late A config cannot overwrite loaded B (9.2s)
+  ✓  12 tests/ui-state/ownership.spec.ts:35:3 › compta: load failure is visible and retry restores the settings (12.4s)
+  ✓  13 tests/ui-state/ownership.spec.ts:46:3 › compta: account switch never saves A's settings as B; same-account refresh preserves draft (12.9s)
+  ✓  14 tests/ui-state/ownership.spec.ts:70:3 › compta: late A config cannot overwrite loaded B (11.7s)
+  ✓  15 tests/ui-state/ownership.spec.ts:84:1 › legal: late history A cannot replace selected conversation B (13.4s)
+  ✓  16 tests/ui-state/ownership.spec.ts:94:1 › legal: new conversation stays empty after old history resolves (9.6s)
+  ✓  17 tests/ui-state/submission.spec.ts:7:1 › legal: a late submitted answer from A cannot enter selected conversation B (12.6s)
+
+  17 passed (3.5m)

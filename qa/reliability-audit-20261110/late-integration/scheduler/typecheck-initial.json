@@ -1,0 +1,34 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+  "env": {},
+  "capture_kind": "Exact structured tool results; output fields are the text returned by exec_command/write_stdin, not reconstructed raw terminal logs.",
+  "captures": [
+    {
+      "key": "scheduler_reconciliation_validation_start_2",
+      "result": {
+        "chunk_id": "080b1e",
+        "wall_time_seconds": 1.00154845,
+        "session_id": 8663,
+        "original_token_count": 41,
+        "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 typecheck\n> tsc --noEmit -p tsconfig.json\n\n"
+      }
+    },
+    {
+      "key": "scheduler_reconciliation_validation_end_3",
+      "result": {
+        "chunk_id": "8ada78",
+        "wall_time_seconds": 0.000012508,
+        "exit_code": 137,
+        "original_token_count": 2,
+        "output": "Killed\n"
+      }
+    }
+  ],
+  "exit_code": 137,
+  "cause": "Killed; precise cause not established; neighbors and build were running concurrently"
+}

@@ -1,0 +1,11 @@
+{
+  "result": {
+    "chunk_id": "a21626",
+    "wall_time_seconds": 0.314976964,
+    "exit_code": 1,
+    "original_token_count": 53,
+    "output": "Error: Planifications KARTA invalides ou indisponibles\n    at Object.startSchedulers [as start] (evalmachine.<anonymous>:96:15)\n    at real_node_cron_registry_after_stop ([stdin]:83:103)\n    at [stdin]:90:164\n"
+  },
+  "status": "HARNESS_ERROR_NOT_PRODUCT_RESULT",
+  "explanation": "The first probe used vm.runInNewContext. Actual node-cron 4.6.0 checks func instanceof Function; a callback from another VM context fails this check. The corrected probe uses compileFunction in the current realm. Only the observed structured error result is retained for the first attempt; its original inline script is not reconstructed."
+}

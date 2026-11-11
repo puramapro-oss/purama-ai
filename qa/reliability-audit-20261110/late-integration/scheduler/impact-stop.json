@@ -1,0 +1,942 @@
+{
+  "command": "env GITNEXUS_LBUG_BUFFER_POOL_SIZE=268435456 /opt/homebrew/bin/node /Users/matissdornier/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js impact 'Function:karta/src/scheduler/cron.ts:startGuardedSchedule.stop@55:2' --direction upstream --repo purama-reliability-audit-mac-20261110",
+  "result": {
+    "target": {
+      "id": "Function:karta/src/scheduler/cron.ts:startGuardedSchedule.stop@55:2",
+      "name": "stop",
+      "type": "Function",
+      "filePath": "karta/src/scheduler/cron.ts"
+    },
+    "direction": "upstream",
+    "impactedCount": 30,
+    "risk": "CRITICAL",
+    "riskSharedAxes": "MEDIUM",
+    "riskScale": {
+      "comparableAcrossKinds": true,
+      "unusedAxes": []
+    },
+    "epistemic": "lower-bound",
+    "boundaries": [
+      "3 call sites invoking `stop` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+    ],
+    "causes": {
+      "scopeExtractionFiles": 0,
+      "receiverTyping": 3,
+      "dispatchBoundary": 0,
+      "externalBoundary": 0,
+      "undecidedSatisfaction": 0,
+      "callableValueReferences": 0
+    },
+    "summary": {
+      "direct": 10,
+      "processes_affected": 4,
+      "modules_affected": 5
+    },
+    "byDepthCounts": {
+      "1": 10,
+      "2": 9,
+      "3": 11
+    },
+    "affected_processes": [
+      {
+        "name": "VoiceSettingsCard",
+        "type": "Function",
+        "filePath": "src/components/voice/VoiceSettingsCard.tsx",
+        "affected_process_count": 9,
+        "total_hits": 29,
+        "earliest_broken_step": 1
+      },
+      {
+        "name": "CreatorAgentDetail",
+        "type": "Function",
+        "filePath": "src/pages/CreatorAgentDetail.tsx",
+        "affected_process_count": 9,
+        "total_hits": 29,
+        "earliest_broken_step": 1
+      },
+      {
+        "name": "LegalAgentChat",
+        "type": "Function",
+        "filePath": "src/pages/LegalAgentChat.tsx",
+        "affected_process_count": 9,
+        "total_hits": 29,
+        "earliest_broken_step": 1
+      },
+      {
+        "name": "runChefWorkerCycle",
+        "type": "Function",
+        "filePath": "karta/src/chef/supervisor.ts",
+        "affected_process_count": 5,
+        "total_hits": 5,
+        "earliest_broken_step": 1
+      }
+    ],
+    "affected_modules": [
+      {
+        "name": "Chef",
+        "hits": 10,
+        "impact": "direct"
+      },
+      {
+        "name": "Hooks",
+        "hits": 8,
+        "impact": "direct"
+      },
+      {
+        "name": "Pages",
+        "hits": 5,
+        "impact": "indirect"
+      },
+      {
+        "name": "_shared",
+        "hits": 4,
+        "impact": "indirect"
+      },
+      {
+        "name": "Scheduler",
+        "hits": 2,
+        "impact": "direct"
+      }
+    ],
+    "byDepth": {
+      "1": [
+        {
+          "depth": 1,
+          "id": "Function:karta/src/api/server.ts:startApiServer",
+          "name": "startApiServer",
+          "filePath": "karta/src/api/server.ts",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess",
+          "name": "runChefProcess",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess.fn@58:46.fail@88:4",
+          "name": "fail",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:karta/src/index.ts:shutdown",
+          "name": "shutdown",
+          "filePath": "karta/src/index.ts",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:karta/src/scheduler/cron.ts:startGuardedSchedule",
+          "name": "startGuardedSchedule",
+          "filePath": "karta/src/scheduler/cron.ts",
+          "relationType": "USES",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:karta/src/scheduler/customAgents.ts:destroyTask",
+          "name": "destroyTask",
+          "filePath": "karta/src/scheduler/customAgents.ts",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": [
+            {
+              "id": "proc_1_voicesettingscard",
+              "label": "VoiceSettingsCard → Resolve",
+              "processType": "cross_community",
+              "step": 7
+            },
+            {
+              "id": "proc_64_creatoragentdetail",
+              "label": "CreatorAgentDetail → Resolve",
+              "processType": "cross_community",
+              "step": 7
+            },
+            {
+              "id": "proc_103_legalagentchat",
+              "label": "LegalAgentChat → Resolve",
+              "processType": "cross_community",
+              "step": 7
+            }
+          ]
+        },
+        {
+          "depth": 1,
+          "id": "Function:src/hooks/useVoice.tsx:useVoice.cancelRecording@99:2",
+          "name": "cancelRecording",
+          "filePath": "src/hooks/useVoice.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": [
+            {
+              "id": "proc_85_creatoragentdetail",
+              "label": "CreatorAgentDetail → Cancel",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_65_creatoragentdetail",
+              "label": "CreatorAgentDetail → Interrupt",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_86_creatoragentdetail",
+              "label": "CreatorAgentDetail → Cancel",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_28_voicesettingscard",
+              "label": "VoiceSettingsCard → Cancel",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_3_voicesettingscard",
+              "label": "VoiceSettingsCard → Interrupt",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_11_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_12_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_103_legalagentchat",
+              "label": "LegalAgentChat → Resolve",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_64_creatoragentdetail",
+              "label": "CreatorAgentDetail → Resolve",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_10_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_1_voicesettingscard",
+              "label": "VoiceSettingsCard → Resolve",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_27_voicesettingscard",
+              "label": "VoiceSettingsCard → Cancel",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_111_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_122_legalagentchat",
+              "label": "LegalAgentChat → Cancel",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_73_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_71_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_104_legalagentchat",
+              "label": "LegalAgentChat → Interrupt",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_121_legalagentchat",
+              "label": "LegalAgentChat → Cancel",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_112_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_110_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_72_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 3
+            }
+          ]
+        },
+        {
+          "depth": 1,
+          "id": "Function:src/hooks/useVoice.tsx:useVoice.startRecording@119:2",
+          "name": "startRecording",
+          "filePath": "src/hooks/useVoice.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:src/hooks/useVoice.tsx:useVoice.stopRecording@153:2",
+          "name": "stopRecording",
+          "filePath": "src/hooks/useVoice.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:src/hooks/useVoice.tsx:useVoice.teardownRecording@91:2",
+          "name": "teardownRecording",
+          "filePath": "src/hooks/useVoice.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.7,
+          "processes": [
+            {
+              "id": "proc_65_creatoragentdetail",
+              "label": "CreatorAgentDetail → Interrupt",
+              "processType": "cross_community",
+              "step": 4
+            },
+            {
+              "id": "proc_104_legalagentchat",
+              "label": "LegalAgentChat → Interrupt",
+              "processType": "cross_community",
+              "step": 4
+            },
+            {
+              "id": "proc_64_creatoragentdetail",
+              "label": "CreatorAgentDetail → Resolve",
+              "processType": "cross_community",
+              "step": 4
+            },
+            {
+              "id": "proc_3_voicesettingscard",
+              "label": "VoiceSettingsCard → Interrupt",
+              "processType": "cross_community",
+              "step": 4
+            },
+            {
+              "id": "proc_103_legalagentchat",
+              "label": "LegalAgentChat → Resolve",
+              "processType": "cross_community",
+              "step": 4
+            },
+            {
+              "id": "proc_1_voicesettingscard",
+              "label": "VoiceSettingsCard → Resolve",
+              "processType": "cross_community",
+              "step": 4
+            }
+          ]
+        }
+      ],
+      "2": [
+        {
+          "depth": 2,
+          "id": "File:karta/src/index.ts",
+          "name": "index.ts",
+          "filePath": "karta/src/index.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 2,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess.fn@58:46.checkStopped@129:4",
+          "name": "checkStopped",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": []
+        },
+        {
+          "depth": 2,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess.fn@58:46.requestStop@132:4",
+          "name": "requestStop",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": []
+        },
+        {
+          "depth": 2,
+          "id": "Function:karta/src/scheduler/cron.ts:startSchedulers",
+          "name": "startSchedulers",
+          "filePath": "karta/src/scheduler/cron.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 2,
+          "id": "Function:karta/src/scheduler/customAgents.ts:refreshSchedules",
+          "name": "refreshSchedules",
+          "filePath": "karta/src/scheduler/customAgents.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 2,
+          "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler.stop@124:2",
+          "name": "stop",
+          "filePath": "karta/src/scheduler/customAgents.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_1_voicesettingscard",
+              "label": "VoiceSettingsCard → Resolve",
+              "processType": "cross_community",
+              "step": 6
+            },
+            {
+              "id": "proc_64_creatoragentdetail",
+              "label": "CreatorAgentDetail → Resolve",
+              "processType": "cross_community",
+              "step": 6
+            },
+            {
+              "id": "proc_103_legalagentchat",
+              "label": "LegalAgentChat → Resolve",
+              "processType": "cross_community",
+              "step": 6
+            }
+          ]
+        },
+        {
+          "depth": 2,
+          "id": "Function:src/hooks/useVoice.tsx:useVoice",
+          "name": "useVoice",
+          "filePath": "src/hooks/useVoice.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_112_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_3_voicesettingscard",
+              "label": "VoiceSettingsCard → Interrupt",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_11_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_12_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_103_legalagentchat",
+              "label": "LegalAgentChat → Resolve",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_65_creatoragentdetail",
+              "label": "CreatorAgentDetail → Interrupt",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_86_creatoragentdetail",
+              "label": "CreatorAgentDetail → Cancel",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_96_voicesettingscard",
+              "label": "VoiceSettingsCard → UseRequestScope",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_71_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_104_legalagentchat",
+              "label": "LegalAgentChat → Interrupt",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_121_legalagentchat",
+              "label": "LegalAgentChat → Cancel",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_374_legalagentchat",
+              "label": "LegalAgentChat → UseAuth",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_28_voicesettingscard",
+              "label": "VoiceSettingsCard → Cancel",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_325_creatoragentdetail",
+              "label": "CreatorAgentDetail → UseAuth",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_72_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_73_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_110_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_150_legalagentchat",
+              "label": "LegalAgentChat → UseRequestScope",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_291_voicesettingscard",
+              "label": "VoiceSettingsCard → UseAuth",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_1_voicesettingscard",
+              "label": "VoiceSettingsCard → Resolve",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_27_voicesettingscard",
+              "label": "VoiceSettingsCard → Cancel",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_85_creatoragentdetail",
+              "label": "CreatorAgentDetail → Cancel",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_111_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_122_legalagentchat",
+              "label": "LegalAgentChat → Cancel",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_64_creatoragentdetail",
+              "label": "CreatorAgentDetail → Resolve",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_10_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_128_creatoragentdetail",
+              "label": "CreatorAgentDetail → UseRequestScope",
+              "processType": "intra_community",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "depth": 2,
+          "id": "Method:karta/src/chef/driver.ts:ProcessChefDriver.run#2",
+          "name": "run",
+          "filePath": "karta/src/chef/driver.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 2,
+          "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.runProfile#3",
+          "name": "runProfile",
+          "filePath": "karta/src/chef/verifier.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        }
+      ],
+      "3": [
+        {
+          "depth": 3,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess.fn@58:46.append@156:4",
+          "name": "append",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": []
+        },
+        {
+          "depth": 3,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess.fn@58:46.onAbort@155:4",
+          "name": "onAbort",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": []
+        },
+        {
+          "depth": 3,
+          "id": "Function:karta/src/chef/process.ts:runChefProcess.fn@58:46.operationTimer@208:4",
+          "name": "operationTimer",
+          "filePath": "karta/src/chef/process.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": []
+        },
+        {
+          "depth": 3,
+          "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+          "name": "runChefWorkerCycle",
+          "filePath": "karta/src/chef/supervisor.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_20_runchefworkercycle",
+              "label": "RunChefWorkerCycle → ChefProcessStopUnconfirmedError",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_22_runchefworkercycle",
+              "label": "RunChefWorkerCycle → Rpc",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_21_runchefworkercycle",
+              "label": "RunChefWorkerCycle → AssertRpc",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_23_runchefworkercycle",
+              "label": "RunChefWorkerCycle → Rpc",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_39_runchefworkercycle",
+              "label": "RunChefWorkerCycle → Rpc",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "depth": 3,
+          "id": "Function:karta/src/scheduler/customAgents.ts:refreshCustomAgentSchedules",
+          "name": "refreshCustomAgentSchedules",
+          "filePath": "karta/src/scheduler/customAgents.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 3,
+          "id": "Function:karta/src/scheduler/customAgents.ts:startCustomAgentScheduler",
+          "name": "startCustomAgentScheduler",
+          "filePath": "karta/src/scheduler/customAgents.ts",
+          "relationType": "USES",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 3,
+          "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab",
+          "name": "AgentChatTab",
+          "filePath": "src/components/voice/AgentChatTab.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 3,
+          "id": "Function:src/components/voice/VoiceSettingsCard.tsx:VoiceSettingsCard",
+          "name": "VoiceSettingsCard",
+          "filePath": "src/components/voice/VoiceSettingsCard.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_291_voicesettingscard",
+              "label": "VoiceSettingsCard → UseAuth",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_10_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_1_voicesettingscard",
+              "label": "VoiceSettingsCard → Resolve",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_27_voicesettingscard",
+              "label": "VoiceSettingsCard → Cancel",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_3_voicesettingscard",
+              "label": "VoiceSettingsCard → Interrupt",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_11_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_12_voicesettingscard",
+              "label": "VoiceSettingsCard → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_28_voicesettingscard",
+              "label": "VoiceSettingsCard → Cancel",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_96_voicesettingscard",
+              "label": "VoiceSettingsCard → UseRequestScope",
+              "processType": "intra_community",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "depth": 3,
+          "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail",
+          "name": "CreatorAgentDetail",
+          "filePath": "src/pages/CreatorAgentDetail.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_72_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_128_creatoragentdetail",
+              "label": "CreatorAgentDetail → UseRequestScope",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_73_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_325_creatoragentdetail",
+              "label": "CreatorAgentDetail → UseAuth",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_71_creatoragentdetail",
+              "label": "CreatorAgentDetail → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_64_creatoragentdetail",
+              "label": "CreatorAgentDetail → Resolve",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_65_creatoragentdetail",
+              "label": "CreatorAgentDetail → Interrupt",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_86_creatoragentdetail",
+              "label": "CreatorAgentDetail → Cancel",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_85_creatoragentdetail",
+              "label": "CreatorAgentDetail → Cancel",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "depth": 3,
+          "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat",
+          "name": "LegalAgentChat",
+          "filePath": "src/pages/LegalAgentChat.tsx",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_103_legalagentchat",
+              "label": "LegalAgentChat → Resolve",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_104_legalagentchat",
+              "label": "LegalAgentChat → Interrupt",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_121_legalagentchat",
+              "label": "LegalAgentChat → Cancel",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_374_legalagentchat",
+              "label": "LegalAgentChat → UseAuth",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_112_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_110_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_150_legalagentchat",
+              "label": "LegalAgentChat → UseRequestScope",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_111_legalagentchat",
+              "label": "LegalAgentChat → Getter",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_122_legalagentchat",
+              "label": "LegalAgentChat → Cancel",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "depth": 3,
+          "id": "Method:karta/src/chef/verifier.ts:CommandChefVerifier.verify#3",
+          "name": "verify",
+          "filePath": "karta/src/chef/verifier.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        }
+      ]
+    }
+  },
+  "warning": "CRITICAL result communicated to user and root before code edits. Unresolved/homonymous receiver edges are not treated as proof of safety; runtime drain integration covered by union tests."
+}

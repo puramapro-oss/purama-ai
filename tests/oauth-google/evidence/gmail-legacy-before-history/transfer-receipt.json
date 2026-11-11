@@ -1,0 +1,15 @@
+{
+  "source": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-legacy-before-history",
+  "fixturePortClosed": true,
+  "files": {
+    "command.json": {
+      "sha256": "5a9829e911fff027fdfd6ab811fe558776852da34296ff7944d4168c979b3896"
+    },
+    "run.txt": {
+      "sha256": "9289c615a235a95d087ee59abc8216760fdcfa9cdb8cd0108d7d11d3effc6251"
+    },
+    "report.json": {
+      "sha256": "23babd4428b47c62ab943717178873a2a643f1e571fe3710f0da85ef84bf92dc"
+    }
+  }
+}

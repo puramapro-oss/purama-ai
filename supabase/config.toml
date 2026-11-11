@@ -12,6 +12,11 @@ verify_jwt = false
 [functions.oauth-google]
 verify_jwt = false
 
+# Google redirects without an application JWT. GET only returns to the fixed
+# frontend; both POST actions verify the initiating user inside the handler.
+[functions.email-agent-gmail-oauth]
+verify_jwt = false
+
 [functions.process-influencer-payments]
 verify_jwt = false
 

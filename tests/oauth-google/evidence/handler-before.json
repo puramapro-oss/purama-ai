@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "tests/oauth-google/handler.test.mjs"
+  ],
+  "exitCode": 1,
+  "sourceSha256": "4046764c7dfe055e0cd4003c0ab2c7c875e0611e42f870ca1e0663be9fe26807"
+}

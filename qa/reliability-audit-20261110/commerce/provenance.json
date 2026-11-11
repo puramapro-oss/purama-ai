@@ -1,0 +1,62 @@
+[
+  {
+    "patch": "iao-webhook-qa-20261110-3e970b5859",
+    "path": "DENO-RESULT.json",
+    "sha256": "52127a2a9811125e24e2f2876f661f4d2d26add3390d025c043db8ab572e7fd0",
+    "bytes": 1810
+  },
+  {
+    "patch": "iao-webhook-qa-20261110-3e970b5859",
+    "path": "before/supabase/functions/stripe-webhook/index.ts",
+    "sha256": "58f19152f9c54dd0d412cf73761279d7edbe5bd56b1803b353dd09487c27109d",
+    "bytes": 22723
+  },
+  {
+    "patch": "iao-webhook-qa-20261110-3e970b5859",
+    "path": "after/supabase/functions/stripe-webhook/index.ts",
+    "sha256": "eca53b25f61e9cc06873e5aac4c1348a0d1c1a4797ff4f34b73ef26e6c11697f",
+    "bytes": 26448
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "DENO-RESULT.json",
+    "sha256": "8cbc8ae1ced18d1116572f51b8390d6ad2208212c1d5aaae1c27468399971b3e",
+    "bytes": 1986
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "before/supabase/functions/stripe-webhook/index.ts",
+    "sha256": "eca53b25f61e9cc06873e5aac4c1348a0d1c1a4797ff4f34b73ef26e6c11697f",
+    "bytes": 26448
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "after/supabase/functions/stripe-webhook/index.ts",
+    "sha256": "799ffc83f3f1447ba9d3cd0f70891c8db7f88b2cebbf04e5766b6616f3be4cce",
+    "bytes": 29536
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "after/tests/commerce/webhook-handler.test.ts",
+    "sha256": "a92208f22ac7f78098ae4d705f22f98ec64d6c23127699be1a1c5460acd85623",
+    "bytes": 21417
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "after/tests/commerce/webhook-provider-fixture.ts",
+    "sha256": "d0e664546a559fec2afc851264cc069f45babf5bf0077ab8e46d7592a995845c",
+    "bytes": 9621
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "after/tests/commerce/deno.json",
+    "sha256": "7f03cb4075fd6e5990836bba0d3f0f7395931ca42c63a9eb5805c6dbfe04be3f",
+    "bytes": 904
+  },
+  {
+    "patch": "iao-webhook-retry-20261110-64e178ce73",
+    "path": "after/tests/commerce/serve-capture.ts",
+    "sha256": "623d160c2010c240ccc8e4db705a9fe09a58a7a13ea12809373cee47de24f3d7",
+    "bytes": 390
+  }
+]

@@ -1,0 +1,284 @@
+{
+  "phase": "initial_published_candidate_before_late_runtime_reconciliation",
+  "status": "PASS",
+  "head": "54971f5a511be752fa70ed94306cdb322f29ff81",
+  "base": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "checkout": "09f3563dfbdc28579276be510b29d947b73212a5",
+  "tree": "a6a415a5765a8e4441e12270dda1ac1a401a67ea",
+  "tree_identity_verified": true,
+  "workflow_run": 42916932296,
+  "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/42916932296",
+  "karta": {
+    "run_id": 42916932296,
+    "job_id": 130181671712,
+    "job": "karta",
+    "conclusion": "success",
+    "checkout": "09f3563dfbdc28579276be510b29d947b73212a5",
+    "tree": "a6a415a5765a8e4441e12270dda1ac1a401a67ea",
+    "tests": 1739,
+    "test_files": 101,
+    "pglite_tests": 18,
+    "native_groups": 11,
+    "native_all_pass": true,
+    "native_concurrent_receipts": 1,
+    "native_cleanup": {
+      "stopped": true,
+      "cluster_removed": true,
+      "port_closed": true,
+      "errors": []
+    },
+    "native_inputs_unchanged": true,
+    "artifact": "https://github.com/puramapro-oss/purama-ai/actions/runs/42916932296/artifacts/13809637071"
+  },
+  "site": {
+    "job_id": 130181672037,
+    "conclusion": "success",
+    "oauth_node": 69,
+    "oauth_browser": 22,
+    "ui_state_browser": 17,
+    "commerce_handlers": 82,
+    "public_viewport_executions": 156,
+    "lint_errors": 0,
+    "lint_warnings": 19
+  },
+  "jobs": [
+    {
+      "name": "karta",
+      "id": 130181671712,
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node ../scripts/generate-supabase-contracts.mjs --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm test",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run node --test ../tests/oauth-google/state-sql.test.mjs",
+          "conclusion": "success"
+        },
+        {
+          "name": "OAuth state on native PostgreSQL",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve native OAuth evidence",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run typecheck",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run build",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm audit --audit-level=high --omit=dev",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "site",
+      "id": 130181672037,
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run denoland/setup-deno@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run lint",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:contracts-auth",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:cross-app-jwt",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:contracts-security",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:contracts-ots",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:contracts-native",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:oauth",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:commerce:plans",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:commerce:handlers",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:founder",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:founder:types",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run build",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npx tsc --noEmit -p tsconfig.app.json",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npx playwright install --with-deps chromium",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npx tsc --noEmit -p tests/public/tsconfig.json",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:public",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:chat",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:quality",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:oauth:browser",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:founder:browser",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:account-isolation",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:contracts-ots:browser",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:wellbeing",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:voice-consent",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:ui-state",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:async-ui",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm run test:mobile-auth",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run npm audit --audit-level=high --omit=dev",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run denoland/setup-deno@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "The two npm audit steps are conditionally skipped on pull requests, not passed.",
+    "Provider ports are inert; production is not activated.",
+    "Initial local PGlite timeouts remain recorded.",
+    "This run does not qualify later PR39/Web composition changes."
+  ]
+}

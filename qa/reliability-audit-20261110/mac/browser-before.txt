@@ -1,0 +1,35 @@
+FAIL leaving a rejected callback cancels its pending redirect: expect(locator).toHaveText(expected) failed
+
+Locator:  getByTestId('path')
+Expected: "/kept"
+Received: "/mes-connexions"
+Timeout:  5000ms
+
+Call log:
+  - Expect "to.have.text" with timeout 5000ms
+  - waiting for getByTestId('path')
+    9 × locator resolved to <output data-testid="path">/mes-connexions</output>
+      - unexpected value "/mes-connexions"
+
+FAIL double initiation admits only one session read: Expected values to be strictly equal:
+
+2 !== 1
+
+FAIL HTTP 200 without an explicit success receipt is rejected: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL callback completion after unmount cannot notify or redirect: expect(locator).toHaveText(expected) failed
+
+Locator:  getByTestId('path')
+Expected: "/kept"
+Received: "/mes-connexions"
+Timeout:  5000ms
+
+Call log:
+  - Expect "to.have.text" with timeout 5000ms
+  - waiting for getByTestId('path')
+    9 × locator resolved to <output data-testid="path">/mes-connexions</output>
+      - unexpected value "/mes-connexions"
+
+{"status":"FAIL","checks":4,"pass":0,"fail":4}

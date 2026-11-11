@@ -1,0 +1,48 @@
+{
+  "baseline": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "source": "karta/src/scheduler/cron.ts",
+  "test": "karta/test/coreSchedulerDrain.test.ts",
+  "sourceBeforeSha256": "1ffd9be9ce8a69beeef51ee21b08a33ea9208f4194f550d6c1c6bef98a7ffb08",
+  "sourceAfterSha256": "915686985a8d89d0246e8e7e3f470f990b7afa07b072f06e96e364ecc7c375b0",
+  "testSha256": "a7aba79d4877796890082b7db649584766b58604465a3165a6b77dc67f372682",
+  "command": "NODE_OPTIONS=--max-old-space-size=256 npm test -- --maxWorkers=1 test/coreSchedulerDrain.test.ts --reporter=default --reporter=json --outputFile=../qa/iao-runtime-20261110/{report}.json",
+  "cwd": "karta",
+  "validation": {
+    "drainRed": {
+      "file": "core-scheduler-drain-red.json",
+      "total": 12,
+      "passed": 2,
+      "failed": 10,
+      "exitCode": 1
+    },
+    "startupRed": {
+      "file": "core-scheduler-startup-red.json",
+      "total": 15,
+      "passed": 13,
+      "failed": 2,
+      "exitCode": 1
+    },
+    "finalGreen": {
+      "file": "core-scheduler-drain-green.json",
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "actualNodeCron": "core-scheduler-real-timer.json",
+    "diffCheckExitCode": 0
+  },
+  "guarantees": [
+    "stop is individual and idempotent, rejects stale callbacks and drains all already started work.",
+    "Pending user scans and remaining users cannot enqueue after stop.",
+    "Daily reports already started are awaited.",
+    "An uncooperative scan makes runtime shutdown fail at its deadline and cannot enqueue after later resolution.",
+    "All cron expressions are validated before creating any timer.",
+    "If task construction fails, partially created tasks are stopped and destroyed."
+  ],
+  "limits": [
+    "No external database, Redis, provider or business effect was contacted.",
+    "An enqueue already started before stop is awaited; it is not cancelled.",
+    "A running daily report drains within the runtime global shutdown deadline."
+  ]
+}

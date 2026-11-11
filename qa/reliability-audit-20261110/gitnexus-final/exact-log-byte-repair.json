@@ -1,0 +1,11 @@
+{
+  "tree": "25fd239407e3064472a6b9ac7565ea614cfa998c",
+  "expected": "25fd239407e3064472a6b9ac7565ea614cfa998c",
+  "match": true,
+  "note": "Two QA stdout logs restored byte-for-byte on Mac from root originals; all operational files unchanged.",
+  "diagnosis": "Python universal-newline text transfer had converted carriage-return progress output in two GitNexus logs.",
+  "files": [
+    "qa/reliability-audit-20261110/gitnexus-initial.log",
+    "qa/reliability-audit-20261110/gitnexus-local-retry.log"
+  ]
+}
