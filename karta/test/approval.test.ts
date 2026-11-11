@@ -7,13 +7,17 @@ function database() {
   if (!h.db) throw new Error("Approval test database has not been initialized");
   return h.db;
 }
-vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: async (name: string, p: ApprovalRpcParams) => {
+vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: (name: string, p: ApprovalRpcParams) => {
+  const response = (async () => {
   if (h.failFinalize && name.includes("finalize")) return { data: null, error: { message: "offline" } };
   try {
     const args = name.includes("claim") ? [p.p_id, p.p_decision] : [p.p_id, p.p_status, p.p_summary];
     const sql = "SELECT * FROM purama_ai." + name + "(" + args.map((_: unknown, i: number) => "$" + (i+1)).join(",") + ")";
-    return { data: (await database().query(sql, args)).rows, error: null };
+    const rows = (await database().query<Record<string, unknown>>(sql, args)).rows;
+    return { data: name === "karta_claim_pending_action_bounded" ? rows[0][name] : rows, error: null };
   } catch { return { data: null, error: { message: "database rejected operation" } }; }
+  })();
+  return Object.assign(response, { abortSignal: (_signal: AbortSignal) => response });
 } } }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.stopped }));
 vi.mock("../src/engine/autonomy.js", () => ({ loadAgentState: async () => ({ simulationMode: false }), isRunnable: () => ({ ok: true }) }));
@@ -27,7 +31,7 @@ const bid = "00000000-0000-4000-8000-000000000004";
 beforeAll(async () => {
   h.db = new PGlite();
   await database().exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai; CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;");
-  for (const file of ["001_karta_core.sql","002_karta_global_kill_switch.sql","005_karta_pending_actions.sql","006_execution_claims.sql","019_karta_approval_parent_guard.sql"])
+  for (const file of ["001_karta_core.sql","002_karta_global_kill_switch.sql","005_karta_pending_actions.sql","006_execution_claims.sql","019_karta_approval_parent_guard.sql","020_execution_fingerprints.sql","026_pending_action_execution_origin.sql","027_approval_continuation_outbox.sql"])
     await database().exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
 });
 afterAll(async () => { await h.db?.close(); });
@@ -42,13 +46,11 @@ beforeEach(async () => {
 async function state() { return (await database().query<{ status: string; tools_used: unknown }>("SELECT status,tools_used FROM purama_ai.karta_runs WHERE id=$1",[rid])).rows[0]; }
 describe("approval with real PostgreSQL SQL in PGlite (single backend)", () => {
   it("executes and atomically patches the parent", async () => { expect((await resolvePendingAction(aid,"approve")).ok).toBe(true); expect((await state()).status).toBe("success"); expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({userId:uid,operationId:aid})); });
-  it("plans exactly one idempotent continuation after approval", async () => {
+  it("commits one durable continuation without depending on Redis", async () => {
     expect((await resolvePendingAction(aid,"approve")).ok).toBe(true);
-    expect(h.enqueue).toHaveBeenCalledOnce();
-    expect(h.enqueue).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: uid, agentType: "compta", trigger: expect.objectContaining({ source: "approval-resume" }) }),
-      expect.objectContaining({ dedupeKey: expect.stringContaining(aid) })
-    );
+    expect(h.enqueue).not.toHaveBeenCalled();
+    expect((await database().query("SELECT pending_action_id,status FROM purama_ai.karta_approval_outbox")).rows)
+      .toEqual([{ pending_action_id: aid, status: "pending" }]);
   });
   it.each([new Error("provider failed"), {ok:false}])("reports provider failure to the caller", async failure => { if(failure instanceof Error) h.execute.mockRejectedValue(failure); else h.execute.mockResolvedValue(failure); expect((await resolvePendingAction(aid,"approve")).ok).toBe(false); expect((await state()).status).toBe("error"); });
   it("rejects without claiming successful execution", async () => { expect((await resolvePendingAction(aid,"reject")).ok).toBe(true); expect(h.execute).not.toHaveBeenCalled(); expect((await state()).status).toBe("skipped"); });

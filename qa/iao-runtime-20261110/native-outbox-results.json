@@ -1,0 +1,210 @@
+{
+  "scope": "native PostgreSQL, inert fixtures only, no Redis/provider integration claimed",
+  "harness_sha256": "9e0866a3823a343174ccc5018947e88aa23f88fd729b2bf8939ff1f1aa3be231",
+  "started_at": "2026-11-10T22:01:08.867514+00:00",
+  "migrations_sha256": {
+    "001_karta_core.sql": "668f63ef71fbc80c20a555ffb938964deb8f40470c91ca4753314919bc287e2d",
+    "002_karta_global_kill_switch.sql": "08bd79d96ac3bef4c6bbd9f5b21c71a7f510a1713619d4e84a513dc58502e6a3",
+    "005_karta_pending_actions.sql": "ba70a7dc15e62b68a58350f35672153ff853877c9bc7577983e3a14a0829d88e",
+    "006_execution_claims.sql": "f76d3a598e11f340dfd0cd8706d17a8f372a1222f8a0de26e6a1f5c66a904f60",
+    "019_karta_approval_parent_guard.sql": "43d09f703d604a5eac3b10b68fede7367b9abb6eb904a469feb1c53ba4300849",
+    "020_execution_fingerprints.sql": "2c6a11b6565cea29e3714d15ffee13ee30d148e25efa9ec9a6b5006224d78d0c",
+    "026_pending_action_execution_origin.sql": "57cc09856de27bd1c47cb1dbd30b8d40edfd125840c9f789fe29028bf059501f",
+    "027_approval_continuation_outbox.sql": "c0b2ee41efcc095a641ac4a5116c8d8311a12ce86ddfdc5199584948d8a9cdd0"
+  },
+  "checks": [
+    {
+      "name": "atomic_finalize_and_private_minimal_intent",
+      "status": "PASS",
+      "evidence": {
+        "intent_count": 1,
+        "private_payload_absent": true,
+        "repeat_finalization_unchanged": true
+      },
+      "duration_ms": 728
+    },
+    {
+      "name": "rollback_after_parent_patch_failure",
+      "status": "PASS",
+      "evidence": {
+        "action": "executing",
+        "intent_count": 0
+      },
+      "duration_ms": 645
+    },
+    {
+      "name": "concurrent_native_claims",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "claim_counts": [
+          0,
+          1
+        ],
+        "attempts": 1
+      },
+      "duration_ms": 657
+    },
+    {
+      "name": "skip_locked_native",
+      "status": "PASS",
+      "evidence": {
+        "while_locked": 0,
+        "elapsed_ms": 175,
+        "claim_after_unlock": true
+      },
+      "duration_ms": 997
+    },
+    {
+      "name": "expired_lease_cannot_ack",
+      "status": "PASS",
+      "evidence": {
+        "old_prepare": "stale",
+        "old_finish": false,
+        "new_prepare": "ready"
+      },
+      "duration_ms": 1466
+    },
+    {
+      "name": "client_privileges_denied",
+      "status": "PASS",
+      "evidence": {
+        "client_access_denials": 8
+      },
+      "duration_ms": 544
+    },
+    {
+      "name": "health_attestation_fail_closed",
+      "status": "PASS",
+      "evidence": {
+        "fresh": true,
+        "missing_insert_privilege": false,
+        "disabled_trigger": false,
+        "restored": true
+      },
+      "duration_ms": 513
+    },
+    {
+      "name": "native_lock_bound_claim_pending",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2204,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 2520
+    },
+    {
+      "name": "native_lock_bound_claim_pending_table",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2188,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 2860
+    },
+    {
+      "name": "native_lock_bound_claim_pending_parent_table",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2183,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 2537
+    },
+    {
+      "name": "native_lock_bound_finalize",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2344,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 3098
+    },
+    {
+      "name": "native_lock_bound_finalize_pending_table",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2151,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 2446
+    },
+    {
+      "name": "native_lock_bound_finalize_parent_table",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2235,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 3272
+    },
+    {
+      "name": "native_lock_bound_prepare",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2331,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 3371
+    },
+    {
+      "name": "native_lock_bound_finish",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2176,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 2778
+    },
+    {
+      "name": "native_lock_bound_claim_outbox",
+      "status": "PASS",
+      "evidence": {
+        "independent_sessions": 2,
+        "sqlstate": "55P03",
+        "elapsed_ms": 2177,
+        "session_statement_timeout": "0",
+        "session_lock_timeout": "0"
+      },
+      "duration_ms": 2543
+    },
+    {
+      "name": "durable_intent_after_postgres_restart",
+      "status": "PASS",
+      "evidence": {
+        "postgres_restart": true,
+        "same_intent": true,
+        "claimable_after_restart": true
+      },
+      "duration_ms": 1591
+    }
+  ],
+  "cleanup": "PASS: owned cluster stopped and temporary directory removed",
+  "success": true,
+  "postgres_version": "PostgreSQL 18.4 (Homebrew) on aarch64-apple-darwin25.4.0, compiled by Apple clang version 21.0.0 (clang-2100.0.123.102), 64-bit",
+  "finished_at": "2026-11-10T22:01:49.196580+00:00"
+}

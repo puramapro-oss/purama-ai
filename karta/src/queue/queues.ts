@@ -1,6 +1,6 @@
 import { Queue } from "bullmq";
 import { redisConnection } from "./redis.js";
-import { createCycleDelivery, CycleDeliveryConflictError, resolveCycleDelivery, type CycleDeliveryMetadata } from "./delivery-identity.js";
+import { createCycleDelivery, CycleDeliveryConflictError, resolveCycleDelivery, type CycleDeliveryIdentity, type CycleDeliveryMetadata } from "./delivery-identity.js";
 import { assertCycleDeliveryCompatible } from "./delivery-guard.js";
 import type { AgentTrigger, AgentType } from "../engine/types.js";
 
@@ -34,10 +34,26 @@ export async function enqueueAgentCycle(
   data: AgentCycleJobData,
   options: EnqueueAgentCycleOptions = {}
 ): Promise<string | undefined> {
+  return enqueueCycleDelivery(agentCycleQueue, data, options);
+}
+
+/** The relay owns a bounded producer connection; all other producers retain
+ * their existing queue and compatibility guard through enqueueAgentCycle. */
+export interface CycleDeliveryQueue {
+  add(name: string, data: AgentCycleJobData, options: { jobId: string }): Promise<{ id?: string }>;
+  getJob(id: string): Promise<{ id?: string; timestamp: number; data: AgentCycleJobData } | undefined>;
+}
+
+export async function enqueueCycleDelivery(
+  queue: CycleDeliveryQueue,
+  data: AgentCycleJobData,
+  options: EnqueueAgentCycleOptions = {},
+  checkCompatibility: (data: AgentCycleJobData, identity: CycleDeliveryIdentity) => Promise<void> = assertCycleDeliveryCompatible,
+): Promise<string | undefined> {
   const delivery = createCycleDelivery(data, options.dedupeKey);
-  await assertCycleDeliveryCompatible(delivery.data, delivery.identity);
+  await checkCompatibility(delivery.data, delivery.identity);
   try {
-    const job = await agentCycleQueue.add(
+    const job = await queue.add(
       `${delivery.data.agentType}:${delivery.data.userId}`,
       delivery.data,
       { jobId: delivery.jobId }
@@ -46,14 +62,14 @@ export async function enqueueAgentCycle(
     if (delivery.identity.kind === "dedupe") {
       // add(existing jobId) can return a Job populated with the attempted data,
       // although Redis retains the first payload. Read the actual stored job.
-      const retained = await agentCycleQueue.getJob(delivery.jobId);
+      const retained = await queue.getJob(delivery.jobId);
       if (!retained) throw new Error();
       const retainedIdentity = resolveCycleDelivery(retained);
       if (retainedIdentity.executionKey !== delivery.identity.executionKey
         || retainedIdentity.fingerprint !== delivery.identity.fingerprint) throw new CycleDeliveryConflictError();
       // A previous job can finish and be removed between the preflight and
       // add(). Do not acknowledge its known result for a changed request.
-      await assertCycleDeliveryCompatible(delivery.data, delivery.identity);
+      await checkCompatibility(delivery.data, delivery.identity);
     }
     return job.id;
   } catch (error) {

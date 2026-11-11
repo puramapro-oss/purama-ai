@@ -51,4 +51,5 @@ export const KARTA_CANONICAL_MIGRATIONS = [
   ...KARTA_COMMON_MIGRATIONS,
   ...KARTA_PR33_ADDITIONS,
   "026_pending_action_execution_origin.sql",
+  "027_approval_continuation_outbox.sql",
 ] as const;
