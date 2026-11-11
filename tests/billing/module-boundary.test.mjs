@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import test from 'node:test';
+import test from './test-case.mjs';
 import ts from 'typescript';
 
 // Self-hosted Supabase mounts only its functions directory. Local imports

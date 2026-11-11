@@ -53,7 +53,7 @@ jobs:
         working-directory: .
         env:
           PGLITE_MODULE: ${{ github.workspace }}/karta/node_modules/@electric-sql/pglite/dist/index.js
-        run: node --test --test-isolation=none --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs
+        run: node --test --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
 
