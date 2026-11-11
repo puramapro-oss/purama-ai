@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 import pathlib
+import secrets
 import selectors
 import shutil
 import subprocess
@@ -38,7 +39,7 @@ def require(condition, message):
 class Cluster:
     def __init__(self, binary):
         self.binary = pathlib.Path(binary)
-        self.root = pathlib.Path(tempfile.mkdtemp(prefix="karta-outbox-", dir="/tmp"))
+        self.root = pathlib.Path(tempfile.mkdtemp(prefix="karta-outbox-", dir="/tmp")).resolve()
         os.chmod(self.root, 0o700)
         self.data = self.root / "data"
         self.log = self.root / "postgres.log"
@@ -65,44 +66,172 @@ class Cluster:
                            check=True, capture_output=True, text=True, timeout=20)
             self.started = False
 
+    def _session(self):
+        tag = "karta_native_" + secrets.token_hex(16)
+        env = dict(os.environ, PGAPPNAME=tag)
+        # psql emits this before any test SQL, including SET ROLE. The identity
+        # therefore belongs to this fixture connection, not a role under test.
+        preamble = ("SELECT json_build_object('pid',pg_backend_pid(),"
+                    "'backend_start',(SELECT backend_start::text FROM pg_stat_activity WHERE pid=pg_backend_pid()),"
+                    "'data_directory',current_setting('data_directory'),"
+                    "'system_identifier',(SELECT system_identifier::text FROM pg_control_system()),"
+                    "'application_name',current_setting('application_name'),"
+                    "'session_user',session_user,'database',current_database())::text AS karta_backend_identity \\gset\n"
+                    "\\echo KARTA_BACKEND_" + tag + " :karta_backend_identity\n")
+        return tag, env, preamble
+
+    def _session_output(self, output, tag):
+        if isinstance(output, bytes):
+            output = output.decode("utf8", errors="replace")
+        first, separator, rest = (output or "").partition("\n")
+        prefix = "KARTA_BACKEND_" + tag + " "
+        require(separator and first.startswith(prefix), "Backend identity was not received; cleanup is unverified")
+        identity = json.loads(first[len(prefix):])
+        require(identity["application_name"] == tag, "Backend application identity mismatch")
+        require(identity["data_directory"] == str(self.data.resolve()), "Backend is outside this fixture PGDATA")
+        require(isinstance(identity["pid"], int) and identity["pid"] > 1, "Invalid backend PID")
+        return identity, rest
+
+    def _cleanup_backend(self, identity, tag):
+        # Never select by PID alone: PIDs may be reused and application names
+        # are not sufficient to establish ownership. Every control connection
+        # rechecks this exact cluster and the complete captured backend tuple.
+        require(identity["application_name"] == tag, "Refuse foreign application identity")
+        require(identity["data_directory"] == str(self.data.resolve()), "Refuse foreign fixture identity")
+        literal = lambda value: "'" + str(value).replace("'", "''") + "'"
+        owned = ("WITH owned AS MATERIALIZED (SELECT current_setting('data_directory')="
+                 + literal(str(self.data.resolve())) + " AND (SELECT system_identifier::text FROM pg_control_system())="
+                 + literal(identity["system_identifier"]) + " AND session_user=" + literal(identity["session_user"])
+                 + " AS ok), target AS MATERIALIZED (SELECT pid FROM pg_stat_activity WHERE pid="
+                 + str(int(identity["pid"])) + " AND backend_start=" + literal(identity["backend_start"])
+                 + "::timestamptz AND application_name=" + literal(tag) + " AND usename=" + literal(identity["session_user"])
+                 + " AND datname=" + literal(identity["database"]) + " AND backend_type='client backend'"
+                 + " AND pid<>pg_backend_pid() AND (SELECT ok FROM owned)) ")
+        deadline = time.monotonic() + 5
+
+        def control(terminate):
+            remaining = deadline - time.monotonic()
+            require(remaining > 0, "Backend cleanup deadline exceeded")
+            action = "(SELECT pg_terminate_backend(pid,1000) FROM target)" if terminate else "NULL"
+            sql = owned + "SELECT json_build_object('server_matches',(SELECT ok FROM owned),'present',EXISTS(SELECT 1 FROM target),'terminated'," + action + ");"
+            result = subprocess.run(self.command, input=sql, capture_output=True, text=True, timeout=remaining,
+                                    env=dict(os.environ, PGAPPNAME=tag + "_cleanup"))
+            require(result.returncode == 0, "Backend cleanup control failed: " + result.stderr[-800:])
+            evidence = json.loads(result.stdout.strip())
+            require(evidence["server_matches"], "Backend cleanup refused: cluster identity differs")
+            return evidence
+
+        before = control(True)
+        # A backend may exit between selection and signal delivery. Its final
+        # absence, rather than a now-false signal acknowledgement, is the gate.
+        after = control(False)
+        while after["present"]:
+            require(time.monotonic() < deadline, "Owned backend still present after cleanup")
+            time.sleep(0.02)
+            after = control(False)
+        return {"status": "PASS", "pid": identity["pid"], "backend_start": identity["backend_start"],
+                "terminated": before["terminated"] is True, "absent": True}
+
+    @staticmethod
+    def _record_cleanup(error, name, result):
+        details = dict(getattr(error, "backend_cleanup", {}))
+        details[name] = result
+        error.backend_cleanup = details
+
     def query(self, sql, expect_error=None, timeout=10):
-        result = subprocess.run(self.command, input=sql, capture_output=True, text=True, timeout=timeout)
+        tag, env, preamble = self._session()
+        try:
+            result = subprocess.run(self.command, input=preamble + sql, capture_output=True, text=True,
+                                    timeout=timeout, env=env)
+        except subprocess.TimeoutExpired as error:
+            try:
+                identity, _ = self._session_output(error.stdout, tag)
+                cleanup = self._cleanup_backend(identity, tag)
+            except Exception as cleanup_error:
+                cleanup = {"status": "FAIL", "error": str(cleanup_error)[:800]}
+            self._record_cleanup(error, "query", cleanup)
+            raise  # Preserve the original TimeoutExpired and its timeout.
+        _, stdout = self._session_output(result.stdout, tag)
         if expect_error:
             require(result.returncode != 0 and expect_error in result.stderr,
                     "Expected SQLSTATE " + expect_error + ": " + result.stderr[-800:])
             return result.stderr
         require(result.returncode == 0, "SQL failed: " + result.stderr[-1200:])
-        return result.stdout.strip()
+        return stdout.strip()
 
     @contextlib.contextmanager
     def hold(self, sql):
         # The sentinel is emitted only after PostgreSQL has acquired the lock.
+        tag, env, preamble = self._session()
         process = subprocess.Popen(self.command + ["-o", os.devnull], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, text=True, bufsize=1)
+                                   stderr=subprocess.PIPE, env=env, bufsize=0)
         selector = selectors.DefaultSelector()
+        identity = None
+        primary_error = None
+        pending = b""
+        diagnostics = b""
         try:
-            process.stdin.write("BEGIN;\n" + sql + ";\n\\echo LOCK_READY\n")
+            process.stdin.write((preamble + "BEGIN;\n" + sql + ";\n\\echo LOCK_READY\n").encode())
             process.stdin.flush()
             selector.register(process.stdout, selectors.EVENT_READ)
+            selector.register(process.stderr, selectors.EVENT_READ)
             deadline = time.monotonic() + 10
-            while True:
+            ready = False
+            while not ready:
                 require(time.monotonic() < deadline and process.poll() is None, "Lock holder did not become ready")
-                if not selector.select(timeout=max(0, deadline - time.monotonic())):
-                    continue
-                line = process.stdout.readline()
-                if line.strip() == "LOCK_READY":
-                    break
+                for key, _ in selector.select(timeout=max(0, deadline - time.monotonic())):
+                    chunk = os.read(key.fd, 65536)
+                    if not chunk:
+                        selector.unregister(key.fileobj)
+                        continue
+                    if key.fileobj is process.stderr:
+                        diagnostics = (diagnostics + chunk)[-8000:]
+                        continue
+                    pending += chunk
+                    # Binary reads avoid a TextIOWrapper buffering LOCK_READY
+                    # while select waits on an already-drained descriptor.
+                    while b"\n" in pending:
+                        line, pending = pending.split(b"\n", 1)
+                        if line.startswith(("KARTA_BACKEND_" + tag + " ").encode()):
+                            identity, _ = self._session_output(line + b"\n", tag)
+                        elif line.strip() == b"LOCK_READY":
+                            require(identity is not None, "Holder lock has no verified backend identity")
+                            ready = True
             yield
+        except BaseException as error:
+            primary_error = error
+            raise
         finally:
             selector.close()
-            if process.poll() is None:
-                process.stdin.write("ROLLBACK;\n\\q\n")
-                process.stdin.flush()
+            cleanup_error = None
+            try:
+                if process.poll() is None:
+                    try:
+                        process.stdin.write(b"ROLLBACK;\n\\q\n")
+                        process.stdin.flush()
+                    except BrokenPipeError:
+                        pass
                 try:
                     process.communicate(timeout=5)
                 except subprocess.TimeoutExpired:
                     process.kill()
                     process.communicate(timeout=5)
+                require(identity is not None, "Holder backend identity unavailable: " + diagnostics.decode("utf8", errors="replace")[-800:])
+                cleanup = self._cleanup_backend(identity, tag)
+            except Exception as error:
+                cleanup_error = error
+                cleanup = {"status": "FAIL", "error": str(error)[:800]}
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.communicate(timeout=5)
+                for stream in (process.stdin, process.stdout, process.stderr):
+                    if stream and not stream.closed:
+                        stream.close()
+            if primary_error is not None:
+                self._record_cleanup(primary_error, "holder", cleanup)
+            elif cleanup_error is not None:
+                raise cleanup_error
 
     def cleanup(self):
         self.stop()
@@ -129,14 +258,23 @@ def main():
 
     def check(name, function):
         started = time.monotonic()
+        fatal_cleanup_error = None
         try:
             evidence = function()
             item = {"name": name, "status": "PASS", "evidence": evidence}
         except Exception as error:
             item = {"name": name, "status": "FAIL", "error": str(error)[:1500]}
+            if hasattr(error, "backend_cleanup"):
+                item["backend_cleanup"] = error.backend_cleanup
+                if any(result.get("status") != "PASS" for result in error.backend_cleanup.values()):
+                    fatal_cleanup_error = error
         item["duration_ms"] = round((time.monotonic() - started) * 1000)
         results["checks"].append(item)
         print(json.dumps(item), flush=True)
+        if fatal_cleanup_error is not None:
+            # The outer finally stops the entire owned cluster. Never run the
+            # next case when a previous backend's disappearance is unverified.
+            raise fatal_cleanup_error
 
     def seed(resolved=False):
         cluster.query("TRUNCATE auth.users CASCADE; INSERT INTO auth.users(id) VALUES('" + OWNER + "');"
