@@ -6,11 +6,13 @@ import { PGlite } from '@electric-sql/pglite';
 const source = (path: string) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
 const originalMigration = source('supabase/migrations/20260727020000_overage_credits.sql');
 const migration = source('supabase/migrations/20261110000200_overage_credit_idempotency.sql');
+const journalMigration = source('supabase/migrations/20261110100000_stripe_reconciliation_events.sql');
 const compile = (text: string) => ts.transpileModule(text, {
   compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
 }).outputText;
 const helperCode = compile(source('supabase/functions/stripe-webhook/overage.ts'));
 const handlerCode = compile(source('supabase/functions/stripe-webhook/index.ts'));
+const reconciliationCode = compile(source('supabase/functions/_shared/stripe-reconciliation.ts'));
 const owner = '00000000-0000-4000-8000-000000000101';
 const other = '00000000-0000-4000-8000-000000000102';
 const confirmedAt = Math.floor(Date.parse('2026-10-31T23:59:00Z') / 1000);
@@ -54,6 +56,10 @@ async function database(applyCorrection = true): Promise<PGlite> {
     CREATE ROLE service_role BYPASSRLS;
     CREATE SCHEMA auth; CREATE SCHEMA purama_ai;
     CREATE TABLE auth.users (id uuid PRIMARY KEY);
+    CREATE TABLE purama_ai.subscriptions (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL UNIQUE,
+      stripe_customer_id text
+    );
     CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$
       SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid
     $$;
@@ -64,7 +70,10 @@ async function database(applyCorrection = true): Promise<PGlite> {
   // Model the existing broad table grants; RLS and explicit RPC grants must still
   // prevent clients from assigning credits to themselves.
   await db.exec('GRANT ALL ON purama_ai.overage_credits TO anon, authenticated, service_role');
-  if (applyCorrection) await db.exec(migration);
+  if (applyCorrection) {
+    await db.exec(migration);
+    await db.exec(journalMigration);
+  }
   return db;
 }
 
@@ -88,9 +97,15 @@ async function snapshot(db: PGlite) {
 function harness(db: PGlite) {
   const state: {
     event: unknown; failuresRemaining: number; missingReceiptsRemaining: number; calls: Parameters[];
-  } = { event: paymentEvent(), failuresRemaining: 0, missingReceiptsRemaining: 0, calls: [] };
+    journalFailuresRemaining: number; missingJournalReceiptsRemaining: number;
+  } = {
+    event: paymentEvent(), failuresRemaining: 0, missingReceiptsRemaining: 0, calls: [],
+    journalFailuresRemaining: 0, missingJournalReceiptsRemaining: 0,
+  };
   const helperExports: Record<string, unknown> = {};
   new Function('exports', helperCode)(helperExports);
+  const reconciliationExports: Record<string, unknown> = {};
+  new Function('exports', reconciliationCode)(reconciliationExports);
   let handler: Handler | undefined;
   class StripeFixture {
     static createFetchHttpClient() { return null; }
@@ -102,6 +117,23 @@ function harness(db: PGlite) {
   }
   const createClient = () => ({
     rpc: async (name: string, parameters: Parameters) => {
+      if (name === 'record_stripe_reconciliation_event') {
+        if (state.journalFailuresRemaining-- > 0) return { data: null, error: { message: 'temporary_journal_failure' } };
+        try {
+          const data = await db.transaction(async tx => {
+            await tx.exec('SET LOCAL ROLE service_role');
+            const result = await tx.query<{ receipt: unknown }>(
+              'SELECT purama_ai.record_stripe_reconciliation_event($1::jsonb) AS receipt',
+              [JSON.stringify(parameters.p_event)],
+            );
+            return result.rows[0].receipt;
+          });
+          if (state.missingJournalReceiptsRemaining-- > 0) return { data: null, error: null };
+          return { data, error: null };
+        } catch (error) {
+          return { data: null, error: { message: error instanceof Error ? error.message : String(error) } };
+        }
+      }
       if (name !== 'credit_overage_pack') throw new Error(`Unexpected RPC ${name}`);
       state.calls.push(parameters);
       if (state.failuresRemaining-- > 0) return { data: null, error: { message: 'temporary_database_failure' } };
@@ -121,6 +153,7 @@ function harness(db: PGlite) {
     if (name === 'https://esm.sh/@supabase/supabase-js@2.91.0') return { createClient };
     if (name === 'https://esm.sh/resend@2.0.0') return { Resend: class { constructor() { throw new Error('Unexpected email side effect'); } } };
     if (name === './overage.ts') return helperExports;
+    if (name === '../_shared/stripe-reconciliation.ts') return reconciliationExports;
     throw new Error(`Unexpected remote import ${name}`);
   };
   const env: Record<string, string> = {
@@ -147,7 +180,7 @@ function request(signature: string | null = 'fixture-valid') {
 describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
   let db: PGlite;
   beforeAll(async () => { db = await database(); });
-  beforeEach(async () => { await db.exec('TRUNCATE purama_ai.overage_credits'); });
+  beforeEach(async () => { await db.exec('TRUNCATE purama_ai.overage_credits, purama_ai.stripe_reconciliation_events'); });
   afterAll(async () => { await db?.close(); });
 
   it('credits a confirmed session once and retains the signed payment month on redelivery', async () => {
@@ -193,7 +226,7 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
   it('does not acknowledge an inconsistent delayed success as a credit', async () => {
     const h = harness(db); const event = paymentEvent('checkout.session.async_payment_succeeded');
     event.data.object.payment_status = 'unpaid'; h.state.event = event;
-    expect((await h.handle(request())).status).toBe(500);
+    expect((await h.handle(request())).status).toBe(503);
     expect(h.state.calls).toEqual([]);
     expect(await snapshot(db)).toEqual([]);
   });
@@ -202,7 +235,8 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
     const h = harness(db);
     h.state.event = paymentEvent('checkout.session.async_payment_failed');
     expect((await h.handle(request())).status).toBe(200);
-    const event = paymentEvent('checkout.session.async_payment_succeeded'); event.data.object.metadata.type = 'other_product';
+    const event = paymentEvent('checkout.session.async_payment_succeeded'); event.id = 'evt_unrelated_product';
+    event.data.object.metadata.type = 'other_product';
     h.state.event = event;
     expect((await h.handle(request())).status).toBe(200);
     expect(h.state.calls).toEqual([]);
@@ -226,7 +260,7 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
     ['mode mismatch', (event: ReturnType<typeof paymentEvent>) => { event.livemode = true; }],
   ] as const)('rejects %s before any persistent credit', async (_name, alter) => {
     const h = harness(db); const event = paymentEvent(); alter(event); h.state.event = event;
-    expect((await h.handle(request())).status).toBe(500);
+    expect((await h.handle(request())).status).toBe(503);
     expect(h.state.calls).toEqual([]);
     expect(await snapshot(db)).toEqual([]);
   });
@@ -238,9 +272,22 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
     expect(await snapshot(db)).toHaveLength(1);
   });
 
+  it.each(['journal failure', 'lost journal receipt'])('requires a durable journal receipt before crediting: %s', async failure => {
+    const h = harness(db);
+    if (failure === 'journal failure') h.state.journalFailuresRemaining = 1;
+    else h.state.missingJournalReceiptsRemaining = 1;
+    expect((await h.handle(request())).status).toBe(503);
+    expect(h.state.calls).toEqual([]);
+    expect(await snapshot(db)).toEqual([]);
+    expect((await h.handle(request())).status).toBe(200);
+    expect(await snapshot(db)).toHaveLength(1);
+    expect((await db.query('SELECT event_id FROM purama_ai.stripe_reconciliation_events')).rows)
+      .toEqual([{ event_id: 'evt_confirmed_fixture' }]);
+  });
+
   it('returns a retryable error on persistence failure and grants once on retry', async () => {
     const h = harness(db); h.state.failuresRemaining = 1;
-    expect((await h.handle(request())).status).toBe(500);
+    expect((await h.handle(request())).status).toBe(503);
     expect(await snapshot(db)).toEqual([]);
     expect((await h.handle(request())).status).toBe(200);
     expect(await snapshot(db)).toHaveLength(1);
@@ -248,7 +295,7 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
 
   it('requires a persisted receipt and safely retries after a lost acknowledgement', async () => {
     const h = harness(db); h.state.missingReceiptsRemaining = 1;
-    expect((await h.handle(request())).status).toBe(500);
+    expect((await h.handle(request())).status).toBe(503);
     const before = await snapshot(db);
     expect(before).toHaveLength(1);
     expect((await h.handle(request())).status).toBe(200);
@@ -260,7 +307,7 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
     expect((await h.handle(request())).status).toBe(200);
     const before = await snapshot(db);
     const event = paymentEvent(); event.data.object.metadata.user_id = other; h.state.event = event;
-    expect((await h.handle(request())).status).toBe(500);
+    expect((await h.handle(request())).status).toBe(503);
     expect(await snapshot(db)).toEqual(before);
   });
 
@@ -325,7 +372,7 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
   it('keeps historical credits intact and refuses to invent missing payment evidence on replay', async () => {
     await db.query("INSERT INTO purama_ai.overage_credits(user_id, actions, period_start, stripe_session_id) VALUES ($1, 2000, '2026-10-01', 'cs_test_overage_fixture')", [owner]);
     const before = await snapshot(db); const h = harness(db);
-    expect((await h.handle(request())).status).toBe(500);
+    expect((await h.handle(request())).status).toBe(503);
     expect(await snapshot(db)).toEqual(before);
   });
 
@@ -337,19 +384,14 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
   });
 });
 
-describe('legacy overage: historical migration guard', () => {
-  let db: PGlite;
-  // Initialize the isolated database under the same setup budget as the other
-  // SQL cases. The migration assertions retain the runner's five-second limit.
-  beforeAll(async () => { db = await database(false); });
-  afterAll(async () => { await db?.close(); });
-
-  it('stops the migration on historical duplicate sessions without deleting or rewriting a credit', async () => {
+it('stops the migration on historical duplicate sessions without deleting or rewriting a credit', async () => {
+  const db = await database(false);
+  try {
     await db.query("INSERT INTO purama_ai.overage_credits(user_id, actions, period_start, stripe_session_id) VALUES ($1, 2000, '2026-10-01', 'cs_test_duplicate'), ($1, 2000, '2026-10-01', 'cs_test_duplicate')", [owner]);
     const before = (await db.query('SELECT * FROM purama_ai.overage_credits ORDER BY id')).rows;
     await expect(db.exec(migration)).rejects.toThrow('overage_duplicate_sessions_require_reconciliation');
     await db.exec('ROLLBACK');
     expect((await db.query('SELECT * FROM purama_ai.overage_credits ORDER BY id')).rows).toEqual(before);
     expect((await db.query("SELECT column_name FROM information_schema.columns WHERE table_schema = 'purama_ai' AND table_name = 'overage_credits' AND column_name = 'payment_confirmed_at'")).rows).toEqual([]);
-  });
+  } finally { await db.close(); }
 });

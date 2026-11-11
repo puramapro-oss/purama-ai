@@ -405,6 +405,7 @@ export async function runChefWorkerCycle(
           allowedPaths: task.allowedPaths,
         });
       } catch (error) {
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git" };
         const message = error instanceof Error ? error.message : "État Git invalide";
         stopRenewal();
         const ok = await control.transition({
@@ -417,13 +418,16 @@ export async function runChefWorkerCycle(
       }
     }
 
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
+
     const verifying = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
       target: "verifying", outputSha: response.outputSha,
     });
-    if (!verifying) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
+    if (lostLease || !verifying) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
     heartbeatState = "verifying";
     await control.heartbeat({ workerId: options.workerId, provider: options.provider, model: options.model, state: "verifying", taskId: task.id });
+    if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
 
     let verification;
     try {
@@ -458,6 +462,7 @@ export async function runChefWorkerCycle(
           allowedPaths: task.allowedPaths,
         });
       } catch (error) {
+        if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git final" };
         const message = error instanceof Error ? error.message : "État Git modifié pendant la vérification";
         stopRenewal();
         const ok = await control.transition({

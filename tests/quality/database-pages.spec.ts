@@ -201,3 +201,98 @@ test('billing follows a valid HTTPS session returned by its server', async ({ pa
   await expect(page).toHaveURL(destination);
   await expect(page.getByRole('heading', { name: 'Local portal fixture' })).toBeVisible();
 });
+
+test('pricing sends an existing paid subscriber to billing without starting another trial', async ({ page }) => {
+  await prepare(page, true);
+  let trials = 0;
+  await page.route('**/rest/v1/subscriptions**', route => json(route, {
+    plan_type: 'pro', status: 'active', has_used_trial: false, trial_ends_at: null,
+  }));
+  await page.route('**/rest/v1/rpc/start_trial', route => { trials++; return json(route, null); });
+  await page.goto('/pricing');
+  await expect(page.getByRole('button', { name: 'Essai 14 jours, sans carte', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Gérer mon abonnement', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/dashboard\/billing$/);
+  expect(trials).toBe(0);
+});
+
+test('pricing waits for subscription data and exposes a failed lookup with a retry', async ({ page }) => {
+  await prepare(page, true);
+  let release: () => void = () => {};
+  const hold = new Promise<void>(resolve => { release = resolve; });
+  let fail = true;
+  await page.route('**/rest/v1/subscriptions**', async route => {
+    await hold;
+    return json(route, fail ? { message: 'fixture unavailable' } : {
+      plan_type: 'free', status: 'active', has_used_trial: false, trial_ends_at: null,
+    }, fail ? 503 : 200);
+  });
+  await page.goto('/pricing');
+  const waiting = page.getByRole('button', { name: 'Vérification de ton abonnement…', exact: true });
+  await expect(waiting.first()).toBeVisible();
+  for (const button of await waiting.all()) await expect(button).toBeDisabled();
+  release();
+  await expect(page.getByRole('alert')).toContainText('Impossible de vérifier ton abonnement.', { timeout: 15000 });
+  await expect(page.getByRole('button', { name: 'Essai 14 jours, sans carte', exact: true }).first()).toBeDisabled();
+  fail = false;
+  await page.getByRole('button', { name: 'Réessayer', exact: true }).click();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Essai 14 jours, sans carte', exact: true }).first()).toBeEnabled();
+});
+
+test('pricing prevents another selection while the trial is pending and renders server errors', async ({ page }) => {
+  await prepare(page, true);
+  let calls = 0;
+  let release: () => void = () => {};
+  const hold = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/rest/v1/rpc/start_trial', async route => {
+    calls++;
+    expect(route.request().headers()['content-profile']).toBe('purama_ai');
+    await hold;
+    return json(route, { message: 'Essai déjà utilisé — fixture', code: 'P0001' }, 400);
+  });
+  await page.goto('/pricing');
+  const buttons = page.getByRole('button', { name: 'Essai 14 jours, sans carte', exact: true });
+  await buttons.first().click();
+  await expect.poll(() => calls).toBe(1);
+  for (const button of await buttons.all()) await expect(button).toBeDisabled();
+  release();
+  await expect(page.getByText('Essai déjà utilisé — fixture', { exact: true })).toBeVisible();
+  await expect(buttons.first()).toBeEnabled();
+  expect(calls).toBe(1);
+  await expect(page).toHaveURL(/\/pricing$/);
+});
+
+test('pricing lets a signed-out visitor select the free offer', async ({ page }) => {
+  await prepare(page);
+  await page.goto('/pricing');
+  await page.getByRole('button', { name: 'Commencer gratuitement', exact: true }).click();
+  await expect(page).toHaveURL(/\/login\?next=%2Fpricing$/);
+});
+
+for (const index of [0, 1]) {
+  test(`pricing lets a local trial convert through checkout on paid card ${index}`, async ({ page }) => {
+    await prepare(page, true);
+    let trials = 0;
+    const checkouts: unknown[] = [];
+    await page.route('**/rest/v1/subscriptions**', route => json(route, {
+      plan_type: 'pro', status: 'trialing', has_used_trial: true,
+      trial_ends_at: new Date(Date.now() + 86400000).toISOString(),
+    }));
+    await page.route('**/rest/v1/rpc/start_trial', route => { trials++; return json(route, null); });
+    const destination = 'https://checkout.stripe.com/c/pay/local_trial_fixture';
+    await page.route('**/functions/v1/create-checkout', route => {
+      checkouts.push(route.request().postDataJSON());
+      return json(route, { url: destination });
+    });
+    await page.route(destination, route => route.fulfill({ contentType: 'text/html', body: '<h1>Local checkout fixture</h1>' }));
+    await page.goto('/pricing');
+    await expect(page.getByRole('button', { name: 'Gérer mon abonnement', exact: true })).toHaveCount(0);
+    // Card 1 is the current pro trial; card 0 selects a different plan.
+    await page.getByRole('button', { name: "S'abonner", exact: true }).nth(index).click();
+    await expect(page).toHaveURL(destination);
+    expect(checkouts).toHaveLength(1);
+    expect(checkouts[0]).toMatchObject({ priceId: expect.any(String) });
+    expect(trials).toBe(0);
+  });
+}
