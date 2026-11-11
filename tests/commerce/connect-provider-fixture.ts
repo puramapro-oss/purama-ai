@@ -1,5 +1,6 @@
 type Binding = { user_id: string; stripe_account_id: string; [key: string]: unknown };
 type DatabaseResult = { data: Binding | null; error: { message: string } | null };
+type RpcResult = { data: Record<string, unknown> | null; error: { message: string } | null };
 type Provision = {
   user: string; id: string; parameters: Record<string, unknown>; version: string; context: string;
   retryUntil: number; leaseUntil: number; state: 'pending' | 'bound' | 'reconcile';
@@ -67,7 +68,7 @@ class ConnectQuery {
   }
 }
 
-async function rpc(name: string, args: Record<string, unknown>) {
+async function rpc(name: string, args: Record<string, unknown>): Promise<RpcResult> {
   fixture.provisionEvents.push(name);
   if (name === 'claim_connect_account_provision') {
     fixture.events.push('lookup'); fixture.lookupUsers.push(args.p_user_id);
