@@ -212,7 +212,12 @@ export function startApprovalOutboxRelay(): ApprovalOutboxRelay {
     queue,
     rpc: async (name, params, signal) => supabase.rpc(name, params).abortSignal(signal),
   }, async () => {
-    try { await deadline(() => queue.close()); }
-    finally { redis.disconnect(); }
+    // Keep BullMQ's error forwarder until its lazy initialization settles.
+    // One deadline bounds stop without closing the queue before a late rejection.
+    redis.disconnect();
+    await deadline(async () => {
+      try { await queue.waitUntilReady(); } catch { /* The owned connection is disconnected. */ }
+      await queue.close();
+    });
   });
 }
