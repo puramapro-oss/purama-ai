@@ -157,7 +157,7 @@ function harness(db: PGlite) {
     throw new Error(`Unexpected remote import ${name}`);
   };
   const env: Record<string, string> = {
-    STRIPE_SECRET_KEY: 'fixture-not-a-secret', STRIPE_WEBHOOK_SECRET: 'fixture-not-a-secret',
+    STRIPE_SECRET_KEY: 'sk_test_inert_fixture', STRIPE_WEBHOOK_SECRET: 'fixture-not-a-secret',
     SUPABASE_URL: 'https://fixture.invalid', SUPABASE_SERVICE_ROLE_KEY: 'fixture-not-a-secret',
   };
   // Execute the complete, real handler. Only runtime/provider boundaries are
@@ -257,12 +257,31 @@ describe('legacy overage: real webhook and PostgreSQL credit boundary', () => {
     ['incomplete session', (event: ReturnType<typeof paymentEvent>) => { event.data.object.status = 'open'; }],
     ['missing timestamp', (event: ReturnType<typeof paymentEvent>) => { event.created = 0; }],
     ['time before creation', (event: ReturnType<typeof paymentEvent>) => { event.created = event.data.object.created - 1; }],
-    ['mode mismatch', (event: ReturnType<typeof paymentEvent>) => { event.livemode = true; }],
+    ['mode mismatch', (event: ReturnType<typeof paymentEvent>) => { event.data.object.livemode = true; }],
   ] as const)('rejects %s before any persistent credit', async (_name, alter) => {
     const h = harness(db); const event = paymentEvent(); alter(event); h.state.event = event;
     expect((await h.handle(request())).status).toBe(503);
     expect(h.state.calls).toEqual([]);
     expect(await snapshot(db)).toEqual([]);
+  });
+
+  it('journals another provider mode and its redelivery without issuing credits', async () => {
+    const h = harness(db); const event = paymentEvent();
+    event.livemode = true; event.data.object.livemode = true; h.state.event = event;
+    for (const duplicate of [false, true]) {
+      const response = await h.handle(request());
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        received: true, event_id: event.id, duplicate,
+        reconciliation: 'required', application: 'deferred', reason: 'provider_mode_mismatch',
+      });
+    }
+    expect(h.state.calls).toEqual([]);
+    expect(await snapshot(db)).toEqual([]);
+    expect((await db.query(`SELECT stripe_account_key, livemode, event_id, reconciliation
+      FROM purama_ai.stripe_reconciliation_events`)).rows).toEqual([{
+      stripe_account_key: 'platform', livemode: true, event_id: event.id, reconciliation: 'required',
+    }]);
   });
 
   it('supports an expanded payment intent without trusting its other fields', async () => {

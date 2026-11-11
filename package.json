@@ -46,7 +46,7 @@
     "test:distribution:chat": "node --experimental-vm-modules --test tests/creator-chat-authorization.test.mjs",
     "test:distribution:browser": "playwright test --config playwright.distribution.config.ts",
     "typecheck:distribution": "tsc --noEmit -p tests/distribution/tsconfig.json",
-    "test:billing": "node --experimental-vm-modules --test --test-concurrency=1 --test-timeout=3000 tests/billing/billing.test.mjs tests/billing-webhook/handler.test.mjs tests/billing-webhook/concurrency.test.mjs tests/billing/module-boundary.test.mjs"
+    "test:billing": "node --experimental-vm-modules --test --test-concurrency=1 --test-timeout=3000 tests/billing/billing.test.mjs tests/billing-webhook/handler.test.mjs tests/billing-webhook/concurrency.test.mjs tests/billing/module-boundary.test.mjs tests/billing/subscription-state.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

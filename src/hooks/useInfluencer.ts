@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { isValidReferralCode } from '@/lib/public-share';
 
 export interface Influencer {
   id: string;
@@ -239,42 +240,97 @@ export function useInfluencer() {
   };
 }
 
+// A withdrawal belongs to this document, not to one mounted component.
+// Revision checks prevent an older capture from reviving it or clearing a newer capture.
+let referralRevision = 0;
+let referralWithdrawn = false;
+
 // Hook for tracking referrals
 export function useReferralTracking() {
-  const checkAndStoreReferral = useCallback(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref');
-    
-    if (refCode) {
-      localStorage.setItem('referral_code', refCode.toUpperCase());
-      localStorage.setItem('referral_timestamp', Date.now().toString());
-      return refCode.toUpperCase();
-    }
-    
-    return null;
-  }, []);
-
-  const getStoredReferral = useCallback((): { code: string; timestamp: number } | null => {
-    const code = localStorage.getItem('referral_code');
-    const timestamp = localStorage.getItem('referral_timestamp');
-    
-    if (!code || !timestamp) return null;
-    
-    // Check if referral is still valid (within 30 days)
-    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-    if (Date.now() - parseInt(timestamp) > thirtyDays) {
-      localStorage.removeItem('referral_code');
-      localStorage.removeItem('referral_timestamp');
-      return null;
-    }
-    
-    return { code, timestamp: parseInt(timestamp) };
-  }, []);
+  const captureFailedAt = useRef<number | null>(null);
 
   const clearReferral = useCallback(() => {
-    localStorage.removeItem('referral_code');
-    localStorage.removeItem('referral_timestamp');
+    referralWithdrawn = true;
+    captureFailedAt.current = ++referralRevision;
+    try {
+      localStorage.removeItem('referral_code');
+      localStorage.removeItem('referral_timestamp');
+      return localStorage.getItem('referral_code') === null
+        && localStorage.getItem('referral_timestamp') === null;
+    } catch {
+      // A browser may deny storage. Referral tracking must not block navigation.
+      return false;
+    }
   }, []);
+
+  const checkAndStoreReferral = useCallback((search = window.location.search) => {
+    const referrals = new URLSearchParams(search).getAll('ref');
+    if (referrals.length !== 1 || !isValidReferralCode(referrals[0])) return null;
+    const code = referrals[0].toUpperCase();
+    const revision = ++referralRevision;
+    const current = () => referralRevision === revision;
+    captureFailedAt.current = revision;
+    try {
+      const timestamp = Date.now().toString();
+      // Keep both historical keys. Invalidate first and commit the code last, so
+      // even denied cleanup cannot join a new code to a previous timestamp.
+      // The decimal prefix stays readable by the historical parseInt reader.
+      const receipt = `${timestamp}:${encodeURIComponent(code)}`;
+      localStorage.setItem('referral_code', '');
+      if (!current()) return null;
+      localStorage.setItem('referral_timestamp', receipt);
+      if (!current()) return null;
+      localStorage.setItem('referral_code', code);
+      if (!current()) return null;
+      const storedCode = localStorage.getItem('referral_code');
+      if (!current()) return null;
+      const storedReceipt = localStorage.getItem('referral_timestamp');
+      if (!current()) return null;
+      if (storedCode !== code || storedReceipt !== receipt) {
+        clearReferral();
+        return null;
+      }
+      referralWithdrawn = false;
+      captureFailedAt.current = null;
+      return code;
+    } catch {
+      // Never reuse a partial capture, or clear a newer capture after this one was superseded.
+      if (current()) clearReferral();
+      return null;
+    }
+  }, [clearReferral]);
+
+  const getStoredReferral = useCallback((): { code: string; timestamp: number } | null => {
+    if (referralWithdrawn || captureFailedAt.current === referralRevision) return null;
+    const revision = referralRevision;
+    try {
+      const storedCode = localStorage.getItem('referral_code');
+      const storedTimestamp = localStorage.getItem('referral_timestamp');
+      if (referralWithdrawn || referralRevision !== revision) return null;
+      if (!storedCode || !storedTimestamp) return null;
+      if (!isValidReferralCode(storedCode)) {
+        clearReferral();
+        return null;
+      }
+      const code = storedCode.toUpperCase();
+      const [timestampText, encodedCode, ...extra] = storedTimestamp.split(':');
+      const timestamp = Number(timestampText);
+      const now = Date.now();
+      // Keep the existing 30-day window; malformed dates must not make it infinite.
+      // Plain decimal dates remain valid for pre-existing records. New captures
+      // bind the timestamp to the code, including across remounts or reloads.
+      const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+      if (extra.length || (encodedCode !== undefined && decodeURIComponent(encodedCode) !== code)
+        || !/^\d+$/.test(timestampText) || !Number.isSafeInteger(timestamp)
+        || timestamp > now || now - timestamp > thirtyDays) {
+        clearReferral();
+        return null;
+      }
+      return { code, timestamp };
+    } catch {
+      return null;
+    }
+  }, [clearReferral]);
 
   return {
     checkAndStoreReferral,

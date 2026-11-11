@@ -80,7 +80,8 @@ export function useSubscription() {
     isTrialing,
     trialEndsAt: isTrialing ? row!.trial_ends_at : null,
     hasUsedTrial: row?.has_used_trial ?? false,
-    isLoading: query.isLoading,
+    // A first read can remain pending while its network request is paused offline.
+    isLoading: Boolean(user) && query.isPending,
     isError: query.isError,
     plan,
     refresh,

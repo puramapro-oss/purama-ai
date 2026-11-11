@@ -95,9 +95,12 @@ Les autres limites observables dans le dépôt restent explicites :
   `useRequestWithdrawal` insère une demande dans `withdrawals`, puis annonce un
   traitement sous 3 à 5 jours. Ce chemin ne rapproche pas le solde Stripe et
   n'ordonne aucun transfert ou virement dans le code examiné.
-- Le contrat PDF contient encore une assiette annuelle, et le tableau de bord
-  affilié décrit encore une remise sur la première année. Ce lot ne réécrit pas
-  ces engagements historiques et ne valide aucune nouvelle durée promotionnelle.
+- Le téléchargement PDF est désormais un récapitulatif actuel non signé, sans
+  assiette annuelle ni durée promotionnelle établie. Le tableau de bord affilié
+  renvoie aux prix et conditions applicables. Le contrat original et sa preuve
+  de signature restent à récupérer pour établir les conditions historiquement
+  acceptées ; ce lot ne les réécrit pas et ne valide aucune nouvelle durée
+  promotionnelle.
 - Le journal Stripe n'a pas de consommateur vers les commissions ONE dans ce
   dépôt. Les remboursements et litiges sont conservés pour rapprochement, sans
   annuler automatiquement un droit historique.

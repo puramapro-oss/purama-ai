@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useReferralTracking } from '@/hooks/useInfluencer';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PLAN_LIST, type Plan, type PlanId } from '@/lib/plans';
@@ -31,13 +32,20 @@ const COLORS: Record<string, string> = {
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const referralSearch = searchParams.toString();
+  const { checkAndStoreReferral, getStoredReferral, clearReferral } = useReferralTracking();
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  useEffect(() => {
+    checkAndStoreReferral(referralSearch);
+    setReferralCode(getStoredReferral()?.code ?? null);
+  }, [checkAndStoreReferral, getStoredReferral, referralSearch]);
   const { user } = useAuth();
   const accountKey = user?.id ?? 'signed-out';
   const [loadingPlan, setLoadingPlan] = useScopedState<string | null>(accountKey, null);
   const captureScope = useRequestScope(accountKey);
   const pending = useRef<(() => boolean) | null>(null);
-  const checkoutIntent = useRef<{ priceId: string; requestId: string } | null>(null);
+  const checkoutIntent = useRef<{ priceId: string; referralCode: string | null; requestId: string } | null>(null);
   useLayoutEffect(() => {
     pending.current = null;
     checkoutIntent.current = null;
@@ -80,6 +88,19 @@ export default function Pricing() {
     }
   };
 
+  const handleRemoveReferral = () => {
+    if (pending.current?.() || loadingPlan) return;
+    const removed = clearReferral();
+    setReferralCode(null);
+    checkoutIntent.current = null;
+    const nextSearch = new URLSearchParams(searchParams);
+    nextSearch.delete('ref');
+    setSearchParams(nextSearch, { replace: true });
+    if (!removed) {
+      toast.info('Code retiré pour cette visite. Ton navigateur empêche sa suppression durable ; il peut réapparaître après un rechargement.');
+    }
+  };
+
   /** S'abonner directement (carte requise) — passe par Stripe Checkout. */
   const handleCheckout = async (plan: Plan) => {
     const priceId = billingCycle === 'monthly' ? plan.monthly_price_id : plan.yearly_price_id;
@@ -92,10 +113,14 @@ export default function Pricing() {
     const deadline = createRequestDeadline(20_000);
     setLoadingPlan(plan.id);
     try {
-      if (checkoutIntent.current?.priceId !== priceId) checkoutIntent.current = { priceId, requestId: crypto.randomUUID() };
+      const referral = getStoredReferral()?.code ?? null;
+      setReferralCode(referral);
+      if (checkoutIntent.current?.priceId !== priceId || checkoutIntent.current?.referralCode !== referral) {
+        checkoutIntent.current = { priceId, referralCode: referral, requestId: crypto.randomUUID() };
+      }
       const requestId = checkoutIntent.current.requestId;
       const { data, error } = await deadline.wait(() => supabase.functions.invoke('create-checkout', {
-        body: { priceId, requestId },
+        body: { priceId, requestId, ...(referral ? { referralCode: referral } : {}) },
       }));
       if (!current()) return;
       if (error) throw error;
@@ -188,6 +213,18 @@ export default function Pricing() {
             <p>Impossible de vérifier ton abonnement. Réessaie avant de choisir une offre.</p>
             <Button variant="outline" className="mt-3" onClick={refreshSubscription}>
               Réessayer
+            </Button>
+          </div>
+        )}
+
+        {referralCode && (
+          <div role="status" className="max-w-3xl mx-auto mb-6 rounded-lg border border-primary/30 p-4">
+            <p className="font-medium break-all">Code de parrainage : {referralCode}.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Son éligibilité sera vérifiée au paiement. Tu peux le retirer pour continuer sans ce code.
+            </p>
+            <Button variant="outline" className="mt-3" disabled={!!loadingPlan} onClick={handleRemoveReferral}>
+              Retirer le code
             </Button>
           </div>
         )}
