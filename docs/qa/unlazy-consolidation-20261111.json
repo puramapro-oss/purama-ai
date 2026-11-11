@@ -1209,7 +1209,12 @@
       }
     },
     "handler_same_as_pr46": true,
-    "production_mutated": false
+    "production_mutated": false,
+    "historical_wrapper": {
+      "state": "PRE_DEADLINE_FIX_CHECKPOINT",
+      "epoch": "ca47f469 plus referral/offline before1d78e272",
+      "new_local_billing_result": "billing_deadline_reconciliation"
+    }
   },
   "historical_root_fields": {
     "epoch": "Initial PR37-43 consolidation before PR44, R2, PR28 and PR46",
@@ -1349,6 +1354,148 @@
       "remaining": "Run the unchanged assertions and corrected command in the next CI; no commit or push by this agent"
     },
     "receipt_sha256": "f6cf19a338e028e329860a742277a7414cb6ac602c7a1d74b5889bfa2bdfe8ca",
+    "new_ci_required": true,
+    "previous_ci_site": {
+      "job_id": 130385054039,
+      "completed_at": "2026-11-11T07:35:25Z",
+      "status": "SUCCESS",
+      "billing": 164,
+      "real_stripe_sdk_tests": 39,
+      "commerce_deno": 86,
+      "quality_browser_chromium": 156,
+      "referral_in_quality": 35,
+      "billing_scope_in_quality": 35,
+      "quality_no_skips": true,
+      "npm_audit": "SKIPPED",
+      "not_new_commit_qualification": true
+    }
+  },
+  "billing_deadline_reconciliation": {
+    "recorded_at": "2026-11-11T07:41:46.844384+00:00",
+    "source_commit": "1d78e27287d9c24712e86df3f3529c2caf2bd481",
+    "base_checkpoint": "15c07706edf2af5349541b511b02debc8433a985",
+    "per_case_timeout_ms": 3000,
+    "file_timeout_ms": 30000,
+    "stricter_timeout_preserved": true,
+    "offline_hooks_preserved": true,
+    "functional_tests": {
+      "pass": 164,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "independent_timeout_probes": {
+      "pass": 3,
+      "default_ms": 3001.87,
+      "stricter_400_ms": 402.01,
+      "capped_10000_ms": 3003.94,
+      "expected_failure_exit": 1
+    },
+    "proofs": {
+      "actual_billing": {
+        "receipt": {
+          "recorded_at": "2026-11-11T07:38:36.497606+00:00",
+          "gate": "billing-final-with-per-case-deadline",
+          "exit": 0,
+          "seconds": 18.82,
+          "node": "v22.23.4",
+          "summary": [
+            "# tests 164",
+            "# suites 0",
+            "# pass 164",
+            "# fail 0",
+            "# cancelled 0",
+            "# skipped 0",
+            "# todo 0",
+            "# duration_ms 18068.023125"
+          ],
+          "inputs": {
+            "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+            "tests/billing/test-case.mjs": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+            "tests/billing/billing.test.mjs": "bbf7b415b0b5b28ffb30555e3cd3d8a9225882926299830546d8dd25560035d7",
+            "tests/billing-webhook/handler.test.mjs": "c7d4d28ca55a1b1a388db2492da09b3a0080058dede2aba4ccd56a5e528f2e65",
+            "tests/billing-webhook/concurrency.test.mjs": "add817378b5d32faab91048f1a3b3b6e11bac0baceb263fadda8c4e78236762f",
+            "tests/billing/module-boundary.test.mjs": "baa59c7b85244f3d511baff20f08dac6dfdd71941bfd741e292819ccd72d5c8f",
+            "tests/billing/subscription-state.test.mjs": "971982f4b870eb401a4abff5ebc5fe1e6432d73aaea8a2e8c23cab19506cf10b",
+            "src/hooks/useSubscription.ts": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e"
+          },
+          "inputs_unchanged": true,
+          "log_sha256": "e617ce13a1168f653d8b6aa536f157d4ed8c73fec41201fa1fc1421b5400df7c"
+        },
+        "receipt_sha256": "a7e86e2645b65ed7feffbcaded0eebe6c2ab755cbb11a39281883a547509b677"
+      },
+      "independent_deadline_review": {
+        "receipt": {
+          "status": "PASS",
+          "review": "independent real Node22 timeout probes; no application source changes",
+          "timestamp": "2026-11-11T07:40:34.520381+00:00",
+          "head": "15c07706edf2af5349541b511b02debc8433a985",
+          "merge_head": "1d78e27287d9c24712e86df3f3529c2caf2bd481",
+          "wrapper_identical_to_commit": "1d78e27287d9c24712e86df3f3529c2caf2bd481",
+          "wrapper_sha256": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+          "node": "22.23.4",
+          "file_timeout_ms": 30000,
+          "cases": [
+            {
+              "mode": "default",
+              "status": "PASS_EXPECTED_TIMEOUT",
+              "expected_timeout_ms": 3000,
+              "exit_code": 1,
+              "body": {
+                "mode": "default",
+                "body_elapsed_ms": 3001.870958,
+                "aborted": true,
+                "node": "v22.23.4"
+              },
+              "log_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/billing-wrapper-probe-default.log",
+              "log_sha256": "cb8dba4f7aaa42be223a4388f14435facdf340d7e3141dc54053356e04b28c4c",
+              "probe_sha256": "ea6bb60460a24dec5f443ca1ba5a87f8dcd3d5c0fc0f53812a1640525cb1cb64"
+            },
+            {
+              "mode": "stricter",
+              "status": "PASS_EXPECTED_TIMEOUT",
+              "expected_timeout_ms": 400,
+              "exit_code": 1,
+              "body": {
+                "mode": "stricter",
+                "body_elapsed_ms": 402.01395799999995,
+                "aborted": true,
+                "node": "v22.23.4"
+              },
+              "log_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/billing-wrapper-probe-stricter.log",
+              "log_sha256": "81a8fb72364fb15b1337792616f8ab4cb590a1604972e250b879d06da2ea4ce8",
+              "probe_sha256": "4601dd62c1a01131ec6e8c00bab3d0eae0411da2cae68a62b0bb85d799842c7c"
+            },
+            {
+              "mode": "capped",
+              "status": "PASS_EXPECTED_TIMEOUT",
+              "expected_timeout_ms": 3000,
+              "exit_code": 1,
+              "body": {
+                "mode": "capped",
+                "body_elapsed_ms": 3003.9412079999997,
+                "aborted": true,
+                "node": "v22.23.4"
+              },
+              "log_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/billing-wrapper-probe-capped.log",
+              "log_sha256": "cf862bc03f8fbe22e1a8facea00504c5d1829984f0c28cb5fd6606a920cd7f32",
+              "probe_sha256": "d1a8c6e82229cc86f31d97e2c868ff5b32c59a51f9f02a739f906c130c0ee201"
+            }
+          ],
+          "interpretation": "Each probe intentionally exceeds its per-case deadline: testTimeoutFailure, cancelled1 and process exit1 are expected. These three controls are not added to the 164 application tests.",
+          "hooks": "after/beforeEach/afterEach remain imported from node:test in subscription-state.test.mjs",
+          "inputs_unchanged": {
+            "tests/billing/test-case.mjs": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+            "tests/billing/subscription-state.test.mjs": "971982f4b870eb401a4abff5ebc5fe1e6432d73aaea8a2e8c23cab19506cf10b",
+            "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4"
+          },
+          "no_network_or_install": true,
+          "no_git_mutation": true,
+          "limits": "The probes demonstrate cooperative async cancellation and timeout reporting, not preemption of a synchronously blocked JavaScript event loop. Entire-file timeout remains the separate CLI bound."
+        },
+        "receipt_sha256": "8ab85c3d9a054c3d1cdf75721164935c1ebf58f983b65c82bdf4b87e7433fe1b"
+      }
+    },
     "new_ci_required": true
   }
 }

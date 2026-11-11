@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import test from './test-case.mjs';
 import { harness, request, noEffects, ownedCustomer, userId, price, prices, packPrice, intent } from './fixture.mjs';
 
 const settle = async () => { for (let i = 0; i < 12; i++) await new Promise(resolve => setImmediate(resolve)); };

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { after, beforeEach, afterEach, test } from 'node:test';
+import { after, beforeEach, afterEach } from 'node:test';
+import test from './test-case.mjs';
 import { fileURLToPath } from 'node:url';
 import { runInThisContext } from 'node:vm';
 import { JSDOM } from 'jsdom';

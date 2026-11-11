@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import test from 'node:test';
+import test from '../billing/test-case.mjs';
 import { createFixture, subscriptionRow, userId, otherUserId } from './fixture.mjs';
 
 const source = process.env.PURAMA_WEBHOOK_TEST_SOURCE ? readFileSync(process.env.PURAMA_WEBHOOK_TEST_SOURCE, 'utf8') : undefined;
