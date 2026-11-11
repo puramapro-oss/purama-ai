@@ -1,6 +1,6 @@
 {
   "recorded_at": "2026-11-11T05:48:45.715051+00:00",
-  "scope": "Isolated consolidation of existing PR37-43 on PR40. Not main, deployment, or product completion.",
+  "scope": "Isolated consolidation of existing PR37-44 on PR40. Not main, deployment, or product completion.",
   "input_parents": [
     "ab6901cb79ba222952457452e2ae1156b19b9433",
     "0d38a925f9c0367deb5b9f77eb86b8b71b9da499",
@@ -387,5 +387,83 @@
     "node": "26.0.0",
     "env_flag": "--no-experimental-webstorage",
     "initial_environment_failure_preserved": true
-  }
+  },
+  "follow_up_integrations": [
+    {
+      "recorded_at": "2026-11-11T05:59:44.601995+00:00",
+      "base_commit": "8585b0b306a906a6afb5b472dddbaa850cb3e66e",
+      "source_pr": 44,
+      "source_commit": "8c764d196e419228521b508161792d4b8174543f",
+      "reason": "Replace the private approval outbox Promise.race deadline with the already qualified monotonic bounded helper. Preserve all 15 new regressions.",
+      "exact_source_blobs": {
+        "karta/src/queue/approval-outbox.ts": "97ff805d650ce32e80c55ff9e4998f55e13c87c1",
+        "karta/test/approvalOutboxDeadline.test.ts": "a6b850d948ccb1bd0a31b858090ec0fbd1ab3ce0"
+      },
+      "configuration_conflict": "Union of Vercel-disabled branches; all values remain false.",
+      "impact": {
+        "risk": "CRITICAL",
+        "impacted_count": 314,
+        "summary": {
+          "direct": 6,
+          "processes_affected": 153,
+          "modules_affected": 20
+        },
+        "limit": "Fresh static graph; transitive graph counts do not establish dynamic reachability or exhaustive runtime coverage."
+      },
+      "local_gate": {
+        "gate": "outbox-deadline-targeted",
+        "command": [
+          "npm",
+          "test",
+          "--",
+          "test/approvalOutboxDeadline.test.ts",
+          "test/approvalOutboxRelay.test.ts",
+          "test/runtimeDeadline.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=$EVIDENCE_DIR/outbox-deadline-result.json"
+        ],
+        "cwd": "karta",
+        "exit": 0,
+        "seconds": 2.155,
+        "log_sha256": "23207d8289984c07d18e90d131d840b810e6b013a453dd46abd5bb99b4f74696",
+        "tests": {
+          "numTotalTests": 42,
+          "numPassedTests": 42,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTotalTestSuites": 5,
+          "numPassedTestSuites": 5,
+          "numFailedTestSuites": 0,
+          "success": true
+        },
+        "test_files": [
+          {
+            "file": "approvalOutboxDeadline.test.ts",
+            "status": "passed",
+            "assertions": 15
+          },
+          {
+            "file": "approvalOutboxRelay.test.ts",
+            "status": "passed",
+            "assertions": 18
+          },
+          {
+            "file": "runtimeDeadline.test.ts",
+            "status": "passed",
+            "assertions": 9
+          }
+        ]
+      },
+      "initial_candidate_ci": {
+        "commit": "8585b0b306a906a6afb5b472dddbaa850cb3e66e",
+        "chef_run": 42968271166,
+        "karta": "success:1969 tests /113 files",
+        "mobile_run": 42968271175,
+        "mobile": "success",
+        "site": "in progress when recorded",
+        "qualification_limit": "Initial candidate only. Final merged head requires fresh CI."
+      }
+    }
+  ]
 }

@@ -25,3 +25,11 @@ Les audits de dépendances de production ont été réellement exécutés sans m
 Ce lot prépare un candidat commun. Il ne fusionne pas main et ne qualifie pas la production, les données réelles, le Redis déployé, l’endurance24/7, les appareils natifs ou les fournisseurs. Les autres lots de facturation/promotion/Entraide ne sont pas assimilés à cette intégration et restent à rapprocher séparément. La base canonique et l’autorité ONE→IAO restent des gates indépendants.
 
 Aucun garde-fou, test, assertion ou délai de test n’a été affaibli pour produire un résultat vert. Aucun service actif, DNS, paiement, ordre de trading, source d’un autre propriétaire ou worker de migration n’a été modifié.
+
+## Complément PR44 : délai de l’outbox d’approbation
+
+La PR44 `8c764d1` est intégrée au même candidat après `8585b0b`. Son relais utilisait encore un `Promise.race` privé qui pouvait accepter une résolution trop tardive lorsque la boucle d’événements était bloquée. Il réutilise maintenant `bounded`, déjà renforcé avec une échéance monotone. Le code et les quinze nouvelles régressions sont identiques aux blobs de la PR44 ; le seul conflit concerne l’union des branches désactivées dans Vercel.
+
+L’index GitNexus a été rafraîchi avant cette intégration. L’impact de `deadline` est CRITICAL : six appelants directs, 153 processus et vingt modules signalés par le graphe. L’avertissement a été communiqué et une revue indépendante demandée. Ces nombres décrivent l’analyse statique et ne constituent pas une preuve de portée dynamique exhaustive. Les trois fichiers de tests ciblés passent : 15 tests de délais de l’outbox, 18 tests de relais et 9 tests de délais génériques, soit **42 sur 42**, sans test ignoré.
+
+La CI du premier candidat `8585b0b` a déjà validé KARTA (1 969 tests dans 113 fichiers) et la qualification mobile. Sa campagne site était encore en cours lors de ce reçu. Ces résultats sont conservés comme preuves intermédiaires ; ils ne remplacent pas une nouvelle CI du commit intégrant PR44. Les résultats finaux seront consignés dans la PR45 sans modifier après coup l’arbre testé.

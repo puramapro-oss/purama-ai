@@ -17,7 +17,8 @@
       "audit/iao-reconciled-20261110": false,
       "audit/reliability-oauth-20261110": false,
       "fix/iao-preference-persistence-20261110": false,
-      "audit/unlazy-consolidation-20261111-ac3c": false
+      "audit/unlazy-consolidation-20261111-ac3c": false,
+      "fix/iao-outbox-deadline-20261111": false
     }
   }
 }
