@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import { getHandler } from './serve-capture.ts';
-import { fixture, resetConnectFixture, createClient } from './connect-provider-fixture.ts';
-import '../../supabase/functions/connect-account-session/index.ts';
+import { fixture, resetConnectFixture, createClient, syntheticCreationPolicy } from './connect-provider-fixture.ts';
+import { createConnectAccountHandler } from '../../supabase/functions/connect-account-session/index.ts';
 
-const handler = getHandler();
+// Explicit offline protocol qualification; the served policy is tested closed
+// in connect-handler.test.ts and has no production creation configuration.
+const handler = createConnectAccountHandler(syntheticCreationPolicy);
 const request = (method = 'POST', payload = '{"components":["balances"]}') =>
   new Request('https://fixture.invalid/connect-account-session', {
     method, headers: { authorization: 'Bearer fixture-user-token', 'content-type': 'application/json' },
@@ -130,11 +131,21 @@ Deno.test('connect provisioning: contradictory receipt quarantines the entire se
   assert.equal(fixture.sessions.length, sessionsBefore); assert.equal(fixture.createdAccounts.length, 1);
 });
 
-Deno.test('connect provisioning: credential rotation preserves a previously confirmed account', async () => {
+Deno.test('connect provisioning: credential rotation preserves the binding but blocks its session', async () => {
   resetConnectFixture(); assert.equal((await handler(request())).status, 200);
+  const original = structuredClone(fixture.operation);
   Deno.env.set('STRIPE_SECRET_KEY', 'fixture-rotated-key-not-a-credential');
-  assert.equal((await handler(request())).status, 200);
-  assert.equal(fixture.createdAccounts.length, 1); assert.equal(fixture.sessions.length, 2);
+  assert.equal((await handler(request())).status, 503);
+  assert.deepEqual(fixture.operation, original);
+  assert.equal(fixture.createdAccounts.length, 1); assert.equal(fixture.sessions.length, 1);
+});
+
+Deno.test('connect provisioning: a missing mapping cannot be replaced by a stale bound receipt', async () => {
+  resetConnectFixture(); assert.equal((await handler(request())).status, 200);
+  fixture.persisted = null;
+  assert.equal((await handler(request())).status, 503);
+  assert.equal(fixture.createdAccounts.length, 1); assert.equal(fixture.sessions.length, 1);
+  assert.equal(fixture.operation!.state, 'reconcile');
 });
 
 Deno.test('connect provisioning: finalization receipt must confirm this exact operation', async () => {

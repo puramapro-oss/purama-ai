@@ -28,6 +28,7 @@ args = parser.parse_args()
 output = Path(args.report).resolve()
 root = Path(__file__).resolve().parents[2]
 migration = root / 'supabase/migrations/20261111183000_connect_account_provisioning.sql'
+correction = root / 'supabase/migrations/20261111203000_connect_provisioning_admission_gates.sql'
 bins = Path(args.pg_bin).resolve()
 owned = data = socket = None
 env = {}
@@ -40,10 +41,10 @@ report = {'status': 'FAILED', 'checks': checks, 'real_provider_calls': 0,
 user = '00000000-0000-4000-8000-000000000001'
 other_user = '00000000-0000-4000-8000-000000000002'
 context = 'a' * 64
+# Synthetic protocol input; the served handler has no qualified creation policy.
 payload = {'type': 'express', 'country': 'FR', 'email': 'fixture@example.invalid',
-           'capabilities': {'transfers': {'requested': True}},
-           'controller': {'fees': {'payer': 'account'}, 'losses': {'payments': 'application'},
-                          'stripe_dashboard': {'type': 'none'}}}
+           'capabilities': {'transfers': {'requested': True}}}
+default_parameters = object()
 
 def check(condition, message='Verification failed'):
     if not condition:
@@ -52,10 +53,13 @@ def check(condition, message='Verification failed'):
 def literal(value):
     return "'" + str(value).replace("'", "''") + "'"
 
-def claim_sql(actor=user, parameters=None, version='2025-09-30.clover', credential=context):
-    params = json.dumps(payload if parameters is None else parameters, separators=(',', ':'))
+def claim_sql(actor=user, parameters=default_parameters, version='2025-09-30.clover', credential=context):
+    params = 'NULL' if parameters is None else literal(json.dumps(
+        payload if parameters is default_parameters else parameters, separators=(',', ':'))) + '::jsonb'
     return ("SET ROLE service_role; SELECT public.claim_connect_account_provision("
-            + ','.join([literal(actor)+'::uuid', literal(params)+'::jsonb', literal(version), literal(credential)])
+            + ','.join(['NULL' if actor is None else literal(actor)+'::uuid', params,
+                        'NULL' if version is None else literal(version),
+                        'NULL' if credential is None else literal(credential)])
             + "); RESET ROLE;")
 
 def final_sql(operation, account='acct_fixture_one', verified=True, actor=user):
@@ -201,7 +205,9 @@ def overlap(first_sql, second_sql, hold_seconds=0.0, on_wait=None):
 
 try:
     migration_bytes = migration.read_bytes()
+    correction_bytes = correction.read_bytes()
     report['migration_sha256'] = hashlib.sha256(migration_bytes).hexdigest()
+    report['correction_sha256'] = hashlib.sha256(correction_bytes).hexdigest()
     check(os.geteuid() != 0, 'initdb must run as a non-root disposable CI user.')
     for name in ('initdb', 'pg_ctl', 'psql'):
         check((bins / name).is_file(), f'Missing installed binary: {name}')
@@ -246,6 +252,176 @@ try:
     query(table.group(0))
     query(permissions.decode())
     query(migration_bytes.decode())
+
+    # Admission/ACL correction: run after the exact original migration, before
+    # the existing twenty protocol scenarios. All identities and grants below
+    # belong exclusively to this disposable cluster, never to deployed data.
+    gate_legacy_user = '00000000-0000-4000-8000-000000000011'
+    gate_absent_user = '00000000-0000-4000-8000-000000000012'
+    gate_incomplete_user = '00000000-0000-4000-8000-000000000013'
+    gate_acl_user = '00000000-0000-4000-8000-000000000014'
+
+    def gate_snapshot():
+        return object_query("SELECT jsonb_build_object("
+            "'users',(SELECT coalesce(jsonb_agg(to_jsonb(u) ORDER BY id),'[]'::jsonb) FROM auth.users u),"
+            "'bindings',(SELECT coalesce(jsonb_agg(to_jsonb(b) ORDER BY user_id),'[]'::jsonb) FROM public.connect_accounts b),"
+            "'provisions',(SELECT coalesce(jsonb_agg(to_jsonb(p) ORDER BY user_id),'[]'::jsonb) FROM public.connect_account_provisions p));")
+
+    reset()
+    query('INSERT INTO auth.users(id) VALUES '
+          + ','.join('(' + literal(actor) + '::uuid)' for actor in
+                     (gate_legacy_user, gate_absent_user, gate_incomplete_user, gate_acl_user)) + ';')
+    gate_bound = object_query(claim_sql())
+    check(gate_bound['decision'] == 'create')
+    check(object_query(final_sql(gate_bound['operation_id']))['decision'] == 'bound')
+    gate_pending = object_query(claim_sql(actor=other_user))
+    check(gate_pending['decision'] == 'create')
+    query("SET ROLE service_role; INSERT INTO public.connect_accounts(user_id,stripe_account_id) "
+          f"VALUES('{gate_legacy_user}','acct_fixture_legacy'); RESET ROLE;")
+
+    # These are expected pre-correction diagnostics, not evidence of an actual
+    # compromise or of production grants. Check them before seeding extra ACLs.
+    gate_old_legacy = object_query(claim_sql(actor=gate_legacy_user))
+    gate_old_context = object_query(claim_sql(credential='b' * 64))
+    check(gate_old_legacy['decision'] == 'bound', 'Historical SQL diagnostic changed.')
+    check(gate_old_context['decision'] == 'bound', 'Bound-context SQL diagnostic changed.')
+    gate_before_dml = gate_snapshot()
+    gate_old_dml = query("BEGIN; SET LOCAL ROLE service_role; "
+        "INSERT INTO public.connect_accounts(user_id,stripe_account_id) "
+        f"VALUES('{gate_acl_user}','acct_diagnostic_before') RETURNING stripe_account_id; "
+        f"UPDATE public.connect_accounts SET stripe_account_id='acct_diagnostic_after' WHERE user_id='{gate_acl_user}' RETURNING stripe_account_id; "
+        f"DELETE FROM public.connect_accounts WHERE user_id='{gate_acl_user}' RETURNING stripe_account_id; ROLLBACK;")
+    check(gate_old_dml.stdout.strip().splitlines() ==
+          ['acct_diagnostic_before', 'acct_diagnostic_after', 'acct_diagnostic_after'])
+    check(gate_snapshot() == gate_before_dml, 'Diagnostic DML transaction must roll back.')
+    report['pre_correction_diagnostics'] = {
+        'legacy_binding_decision': gate_old_legacy['decision'],
+        'bound_changed_context_decision': gate_old_context['decision'],
+        'service_role_direct_insert_update_delete': 'PERMITTED_IN_SYNTHETIC_BASELINE',
+        'scope': 'Exact historical SQL in an owned fixture; no deployed incident or historical grants inferred.'}
+
+    # Explicit column grants survive a table-only REVOKE. Seed both direct and
+    # PUBLIC-inherited grants so that removing only one source cannot pass.
+    query("GRANT INSERT(user_id,stripe_account_id), "
+          "UPDATE(user_id,stripe_account_id,country,created_at,onboarding_completed,payouts_enabled,charges_enabled,kyc_verified_at,requirements,updated_at), "
+          "REFERENCES(user_id,stripe_account_id) ON public.connect_accounts TO PUBLIC,anon,authenticated,service_role; "
+          "GRANT DELETE,TRUNCATE,TRIGGER ON public.connect_accounts TO PUBLIC,anon,authenticated,service_role;")
+    check(query("SELECT has_column_privilege('authenticated','public.connect_accounts','stripe_account_id','UPDATE');").stdout.strip() == 't')
+    gate_pre_upgrade = gate_snapshot()
+    check(len(gate_pre_upgrade['bindings']) == 2 and len(gate_pre_upgrade['provisions']) == 2)
+    query(correction_bytes.decode())
+    check(gate_snapshot() == gate_pre_upgrade, 'First correction changed existing data.')
+    query(correction_bytes.decode())
+    check(gate_snapshot() == gate_pre_upgrade, 'Reapplying correction changed existing data.')
+    completed('incremental_correction_preserves_preupgrade_rows_twice',
+              applications=2, existing_bindings=2, existing_provisions=2,
+              preexisting_column_grants=True)
+
+    gate_before = gate_snapshot()
+    check(object_query(claim_sql(actor=gate_absent_user, parameters=None))['decision'] == 'reconcile')
+    check(gate_snapshot() == gate_before, 'Resolution-only call created an absent intent.')
+    completed('resolution_only_absent_user_has_no_intent_or_lease')
+
+    for gate_lease in ('active', 'expired'):
+        if gate_lease == 'expired':
+            query("UPDATE public.connect_account_provisions SET lease_until=clock_timestamp()-interval '1 second' "
+                  f"WHERE user_id='{other_user}';")
+        gate_before = gate_snapshot()
+        check(object_query(claim_sql(actor=other_user, parameters=None))['decision'] == 'reconcile')
+        check(gate_snapshot() == gate_before, 'Resolution-only call mutated a pending intent or lease.')
+    completed('resolution_only_preserves_pending_payload_key_and_lease', lease_variants=2)
+
+    gate_before = gate_snapshot()
+    gate_invalid_requests = [
+        {'actor': None}, {'actor': '00000000-0000-4000-8000-000000000099'},
+        {'actor': other_user, 'version': None}, {'actor': other_user, 'version': ''},
+        {'actor': other_user, 'credential': None}, {'actor': other_user, 'credential': ''},
+    ]
+    for gate_invalid in gate_invalid_requests:
+        check(object_query(claim_sql(parameters=None, **gate_invalid))['decision'] == 'reconcile')
+    check(gate_snapshot() == gate_before, 'Incomplete resolution context mutated durable data.')
+    completed('resolution_only_incomplete_context_has_no_mutation', invalid_variants=len(gate_invalid_requests))
+
+    gate_before = gate_snapshot()
+    for gate_parameters in (None, payload):
+        check(object_query(claim_sql(actor=gate_legacy_user, parameters=gate_parameters))['decision'] == 'reconcile')
+    check(gate_snapshot() == gate_before, 'Legacy refusal must not create or rewrite a provision.')
+    completed('historical_binding_without_provision_requires_reconciliation', input_variants=2)
+
+    gate_before = gate_snapshot()
+    for gate_invalid in ({'credential': 'b' * 64}, {'credential': None},
+                         {'version': 'different-api'}, {'version': None}):
+        for gate_parameters in (None, payload):
+            check(object_query(claim_sql(parameters=gate_parameters, **gate_invalid))['decision'] == 'reconcile')
+    gate_bound_resolution = object_query(claim_sql(parameters=None))
+    check(gate_bound_resolution == {
+        'decision': 'bound', 'user_id': user, 'stripe_account_id': 'acct_fixture_one',
+        'operation_id': gate_bound['operation_id'], 'api_version': '2025-09-30.clover',
+        'provider_context': context})
+    check(gate_snapshot() == gate_before, 'Context rejection or valid resolution mutated bound data.')
+    completed('bound_resolution_requires_matching_context_api_and_operation', rejected_variants=8)
+
+    gate_incomplete = object_query(claim_sql(actor=gate_incomplete_user))
+    check(gate_incomplete['decision'] == 'create')
+    check(object_query(final_sql(gate_incomplete['operation_id'], account='acct_fixture_incomplete', actor=gate_incomplete_user))['decision'] == 'bound')
+    query(f"DELETE FROM public.connect_accounts WHERE user_id='{gate_incomplete_user}';")
+    gate_before = object_query(f"SELECT to_jsonb(p) FROM public.connect_account_provisions p WHERE user_id='{gate_incomplete_user}';")
+    check(object_query(claim_sql(actor=gate_incomplete_user, parameters=None))['decision'] == 'reconcile')
+    gate_after = object_query(f"SELECT to_jsonb(p) FROM public.connect_account_provisions p WHERE user_id='{gate_incomplete_user}';")
+    check(gate_after['state'] == 'reconcile' and gate_after['reconcile_reason'] == 'binding_conflict')
+    check(gate_after['lease_until'] is None)
+    check({key: value for key, value in gate_after.items() if key not in ('state', 'reconcile_reason', 'lease_until')}
+          == {key: value for key, value in gate_before.items() if key not in ('state', 'reconcile_reason', 'lease_until')})
+    check(query(f"SELECT count(*) FROM public.connect_accounts WHERE user_id='{gate_incomplete_user}';").stdout.strip() == '0')
+    completed('bound_resolution_with_missing_mapping_is_quarantined')
+
+    gate_roles = "(VALUES ('anon'),('authenticated'),('service_role')) AS roles(role_name)"
+    check(query("SELECT count(*) FROM " + gate_roles
+        + " CROSS JOIN (VALUES ('INSERT'),('UPDATE'),('DELETE'),('TRUNCATE'),('REFERENCES'),('TRIGGER')) AS privileges(privilege_name) "
+          "WHERE has_table_privilege(role_name,'public.connect_accounts',privilege_name);").stdout.strip() == '0')
+    check(query("SELECT count(*) FROM " + gate_roles
+        + " CROSS JOIN (VALUES ('user_id'),('stripe_account_id'),('country'),('created_at')) AS columns(column_name) "
+          "CROSS JOIN (VALUES ('INSERT'),('UPDATE'),('REFERENCES')) AS privileges(privilege_name) "
+          "WHERE has_column_privilege(role_name,'public.connect_accounts',column_name,privilege_name);").stdout.strip() == '0')
+    check(query("SELECT count(*) FROM (VALUES ('anon'),('authenticated')) AS roles(role_name) "
+          "CROSS JOIN pg_attribute AS columns CROSS JOIN (VALUES ('INSERT'),('UPDATE'),('REFERENCES')) AS privileges(privilege_name) "
+          "WHERE columns.attrelid='public.connect_accounts'::regclass AND columns.attnum>0 AND NOT columns.attisdropped "
+          "AND has_column_privilege(role_name,'public.connect_accounts',columns.attname::text,privilege_name);").stdout.strip() == '0')
+    completed('column_and_table_identity_privileges_are_removed', tested_roles=3, inherited_public_grants=True)
+
+    gate_before = gate_snapshot()
+    gate_statements = [
+        f"INSERT INTO public.connect_accounts(user_id,stripe_account_id) VALUES('{gate_acl_user}','acct_forbidden_insert');",
+        f"UPDATE public.connect_accounts SET user_id=user_id WHERE user_id='{user}';",
+        f"UPDATE public.connect_accounts SET stripe_account_id=stripe_account_id WHERE user_id='{user}';",
+        f"UPDATE public.connect_accounts SET country=country WHERE user_id='{user}';",
+        f"UPDATE public.connect_accounts SET created_at=created_at WHERE user_id='{user}';",
+        f"DELETE FROM public.connect_accounts WHERE user_id='{user}';",
+        'TRUNCATE public.connect_accounts;',
+    ]
+    for gate_role in ('anon', 'authenticated', 'service_role'):
+        for gate_statement in gate_statements:
+            gate_denied = query(f"SET ROLE {gate_role}; SET request.jwt.claim.sub='{user}'; " + gate_statement, expect_error=True)
+            check(gate_denied.returncode != 0 and '42501' in gate_denied.stderr,
+                  f'Expected permission denial for {gate_role}: {gate_statement}')
+    check(gate_snapshot() == gate_before, 'Denied DML changed data.')
+    completed('direct_binding_dml_is_denied_for_service_and_browser_roles', denied_attempts=21)
+
+    gate_before = object_query(f"SELECT to_jsonb(b) FROM public.connect_accounts b WHERE user_id='{user}';")
+    gate_status = object_query("SET ROLE service_role; UPDATE public.connect_accounts AS b SET "
+        "onboarding_completed=true,payouts_enabled=true,charges_enabled=true,"
+        "kyc_verified_at='2026-11-11T12:00:00Z',requirements='{" + '"fixture":"status-only"' + "}'::jsonb,"
+        f"updated_at='2026-11-11T12:01:00Z' WHERE user_id='{user}' RETURNING to_jsonb(b); RESET ROLE;")
+    check(all(gate_status[column] is True for column in ('onboarding_completed', 'payouts_enabled', 'charges_enabled')))
+    check(gate_status['requirements'] == {'fixture': 'status-only'} and gate_status['kyc_verified_at'] is not None)
+    check(all(gate_status[column] == gate_before[column] for column in ('user_id', 'stripe_account_id', 'country', 'created_at')))
+    completed('service_status_updates_preserve_binding_identity', allowed_columns=6)
+
+    check(int(query('SELECT count(*) FROM public.connect_accounts;').stdout.strip()) >= 2)
+    gate_visible = object_query(f"SET ROLE authenticated; SET request.jwt.claim.sub='{user}'; "
+        "SELECT coalesce(jsonb_agg(user_id::text ORDER BY user_id),'[]'::jsonb) FROM public.connect_accounts; RESET ROLE;")
+    check(gate_visible == [user], 'Authenticated read lost owner scope or stopped working.')
+    completed('authenticated_binding_read_remains_owner_scoped')
 
     reset()
     for role in ('anon', 'authenticated'):
@@ -384,7 +560,7 @@ try:
     check(query('SELECT cardinality(observed_account_ids) FROM public.connect_account_provisions;').stdout.strip() == '1')
     completed('auth_deletion_waits_for_finalization_and_receipt_survives', lock_wait_observed=True)
 
-    check(len(checks) == 20, 'Unexpected number of completed native scenarios.')
+    check(len(checks) == 31, 'Unexpected number of completed native scenarios.')
     report['status'] = 'PASS'
 except BaseException as error:
     report['error'] = f'{type(error).__name__}: {error}'

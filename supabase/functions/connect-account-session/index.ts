@@ -1,6 +1,6 @@
 // Stripe Connect AccountSession: confirmed binding and durable provisioning.
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
-import Stripe from 'https://esm.sh/stripe@15.12.0?target=deno&deno-std=0.224.0';
+import Stripe from 'npm:stripe@19.0.0';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.91.0';
 
 const corsHeaders = {
@@ -20,7 +20,12 @@ const record = (value: unknown): value is Record<string, unknown> =>
 const accountId = (value: unknown): value is string =>
   typeof value === 'string' && /^acct_[A-Za-z0-9_]+$/.test(value);
 
-serve(async (req: Request): Promise<Response> => {
+// The historical Express/controller configuration is not qualified. The served
+// instance resolves confirmed bindings only; neither HTTP input nor an env flag
+// can enable creation. Offline protocol tests inject a synthetic policy here.
+export const createConnectAccountHandler = (
+  creationPolicy: (email: string | undefined) => Record<string, unknown> | null = () => null,
+) => async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return json({ error: 'Méthode non autorisée' }, 405);
   try {
@@ -53,14 +58,8 @@ serve(async (req: Request): Promise<Response> => {
       // starting the same operation under another Stripe account or mode.
       const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secretKey));
       const providerContext = [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
-      const parameters = {
-        type: 'express', country: 'FR', ...(user.email ? { email: user.email } : {}),
-        capabilities: { transfers: { requested: true } },
-        controller: {
-          fees: { payer: 'account' }, losses: { payments: 'application' },
-          stripe_dashboard: { type: 'none' },
-        },
-      };
+      // SQL NULL requests resolution without reserving or renewing a creation.
+      const parameters = creationPolicy(user.email);
       const claimStarted = performance.now();
       const { data: claim, error: claimError } = await supabaseAdmin.rpc('claim_connect_account_provision', {
         p_user_id: user.id, p_parameters: parameters, p_api_version: API_VERSION, p_provider_context: providerContext,
@@ -68,10 +67,13 @@ serve(async (req: Request): Promise<Response> => {
       if (claimError || !record(claim) || claim.user_id !== user.id) return unavailable();
       // Every session, including an existing binding, passes through the RPC's
       // journal/quarantine checks. There is no direct binding-only shortcut.
-      if (claim.decision === 'bound' && accountId(claim.stripe_account_id)) {
+      if (claim.decision === 'bound' && accountId(claim.stripe_account_id)
+        && typeof claim.operation_id === 'string'
+        && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(claim.operation_id)
+        && claim.api_version === API_VERSION && claim.provider_context === providerContext) {
         linkedAccount = claim.stripe_account_id;
       } else {
-        if (claim.decision !== 'create' || typeof claim.operation_id !== 'string'
+        if (parameters === null || claim.decision !== 'create' || typeof claim.operation_id !== 'string'
           || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(claim.operation_id)
           || typeof claim.idempotency_key !== 'string'
           || claim.idempotency_key !== `connect-create:${claim.operation_id}`
@@ -87,7 +89,7 @@ serve(async (req: Request): Promise<Response> => {
         // The RPC uses 23 hours, leaving margin before Stripe's >=24h pruning.
         if (!Number.isFinite(remaining) || remaining < 15_000) return unavailable();
         const account = await stripe.accounts.create(
-          claim.parameters as Parameters<typeof stripe.accounts.create>[0],
+          claim.parameters,
           { idempotencyKey: claim.idempotency_key },
         );
         if (!accountId(account.id)) return unavailable();
@@ -106,6 +108,9 @@ serve(async (req: Request): Promise<Response> => {
 
     const components = Object.fromEntries(requested.map(component => [component, { enabled: true }])) as Record<Component, { enabled: boolean }>;
     const session = await stripe.accountSessions.create({ account: linkedAccount, components });
+    if (session.account !== linkedAccount || typeof session.client_secret !== 'string'
+      || session.client_secret.trim().length === 0 || !Number.isSafeInteger(session.expires_at)
+      || session.expires_at <= Math.floor(Date.now() / 1000)) return unavailable();
     return json({ client_secret: session.client_secret, expires_at: session.expires_at, account_id: linkedAccount });
   } catch {
     // Provider/SQL exceptions may contain credentials or personal data. Keep
@@ -113,11 +118,14 @@ serve(async (req: Request): Promise<Response> => {
     console.error('[connect-account-session] unavailable');
     return unavailable();
   }
-});
+};
+
+serve(createConnectAccountHandler());
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json', ...(status === 405 ? { Allow: 'POST, OPTIONS' } : {}) },
+    headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store',
+      ...(status === 405 ? { Allow: 'POST, OPTIONS' } : {}) },
   });
 }

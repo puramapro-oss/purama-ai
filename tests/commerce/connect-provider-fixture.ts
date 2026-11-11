@@ -15,6 +15,7 @@ export const fixture = {
   createdAccounts: [] as unknown[],
   sessions: [] as { account: string; components: Record<string, { enabled: boolean }> }[],
   provisionEvents: [] as string[],
+  claimArguments: [] as Record<string, unknown>[],
   operation: null as Provision | null,
   persisted: null as Binding | null,
   claimError: null as { message: string } | null,
@@ -26,6 +27,7 @@ export const fixture = {
   stripeOptions: [] as Record<string, unknown>[],
   accountMetadataOverride: undefined as Record<string, unknown> | undefined,
   sessionErrors: [] as boolean[],
+  sessionOverride: null as Record<string, unknown> | null,
   now: Date.now(),
   lookupBarrier: 0,
   lookupWaiters: [] as (() => void)[],
@@ -36,15 +38,35 @@ export function resetConnectFixture(): void {
   fixture.authError = null; fixture.lookup = { data: null, error: null }; fixture.insertion = null;
   fixture.events.length = 0; fixture.lookupUsers.length = 0; fixture.inserts.length = 0;
   fixture.createdAccounts.length = 0; fixture.sessions.length = 0;
-  fixture.provisionEvents.length = 0; fixture.operation = null; fixture.persisted = null;
+  fixture.provisionEvents.length = 0; fixture.claimArguments.length = 0; fixture.operation = null; fixture.persisted = null;
   fixture.claimError = null; fixture.claimOverride = null; fixture.finalizeResults.length = 0;
   fixture.providerResults.length = 0; fixture.providerAccounts.length = 0;
   fixture.createOptions.length = 0; fixture.stripeOptions.length = 0;
-  fixture.accountMetadataOverride = undefined; fixture.sessionErrors.length = 0;
+  fixture.accountMetadataOverride = undefined; fixture.sessionErrors.length = 0; fixture.sessionOverride = null;
   fixture.now = Date.now(); fixture.lookupBarrier = 0; fixture.lookupWaiters.length = 0;
   for (const key of ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_ANON_KEY', 'STRIPE_SECRET_KEY']) {
     Deno.env.set(key, key === 'SUPABASE_URL' ? 'https://fixture.invalid' : 'fixture-not-a-credential');
   }
+}
+
+// Synthetic qualification input only. It is never selected by the served
+// handler and does not adopt or authorize a production financial policy.
+export const syntheticCreationPolicy = (email: string | undefined): Record<string, unknown> => ({
+  type: 'express', country: 'FR', ...(email ? { email } : {}),
+  capabilities: { transfers: { requested: true } },
+});
+
+export async function seedConfirmedConnectAccount(account = 'acct_existing'): Promise<void> {
+  if (!fixture.user) throw new Error('A fixture user is required');
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(Deno.env.get('STRIPE_SECRET_KEY')!));
+  const id = '00000000-0000-4000-8000-000000000001';
+  fixture.operation = {
+    user: fixture.user.id, id,
+    parameters: { ...syntheticCreationPolicy(fixture.user.email), metadata: { purama_connect_operation: id } },
+    version: '2025-09-30.clover', context: [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join(''),
+    retryUntil: fixture.now + 23 * 60 * 60 * 1000, leaseUntil: 0, state: 'bound', account,
+  };
+  fixture.persisted = { user_id: fixture.user.id, stripe_account_id: account };
 }
 
 class ConnectQuery {
@@ -71,6 +93,7 @@ class ConnectQuery {
 async function rpc(name: string, args: Record<string, unknown>): Promise<RpcResult> {
   fixture.provisionEvents.push(name);
   if (name === 'claim_connect_account_provision') {
+    fixture.claimArguments.push(structuredClone(args));
     fixture.events.push('lookup'); fixture.lookupUsers.push(args.p_user_id);
     if (fixture.lookup.error) return { data: null, error: fixture.lookup.error };
     if (fixture.claimError) return { data: null, error: fixture.claimError };
@@ -80,13 +103,8 @@ async function rpc(name: string, args: Record<string, unknown>): Promise<RpcResu
     });
     if (fixture.operation?.state === 'reconcile') return { data: { decision: 'reconcile', user_id: args.p_user_id }, error: null };
     const existing = fixture.lookup.data ?? fixture.persisted;
-    if (existing) {
-      if (fixture.operation && (fixture.operation.state !== 'bound' || fixture.operation.account !== existing.stripe_account_id)) {
-        fixture.operation.state = 'reconcile'; return { data: { decision: 'reconcile', user_id: args.p_user_id }, error: null };
-      }
-      return { data: { decision: 'bound', ...existing }, error: null };
-    }
     if (!fixture.operation) {
+      if (existing || args.p_parameters === null) return { data: { decision: 'reconcile', user_id: args.p_user_id }, error: null };
       const id = '00000000-0000-4000-8000-000000000001';
       fixture.operation = {
         user: String(args.p_user_id), id,
@@ -97,12 +115,20 @@ async function rpc(name: string, args: Record<string, unknown>): Promise<RpcResu
     }
     const operation = fixture.operation;
     if (operation.context !== args.p_provider_context || operation.version !== args.p_api_version
-      || operation.state === 'reconcile' || fixture.now >= operation.retryUntil - 15_000) {
+      || operation.state === 'reconcile') {
       return { data: { decision: 'reconcile', user_id: operation.user }, error: null };
     }
-    if (operation.state === 'bound') return {
-      data: { decision: 'bound', user_id: operation.user, stripe_account_id: operation.account }, error: null,
-    };
+    if (operation.state === 'bound' || existing) {
+      if (operation.state === 'bound' && existing?.user_id === operation.user && existing.stripe_account_id === operation.account) return {
+        data: { decision: 'bound', user_id: operation.user, stripe_account_id: operation.account,
+          operation_id: operation.id, api_version: operation.version, provider_context: operation.context, ...fixture.claimOverride }, error: null,
+      };
+      operation.state = 'reconcile';
+      return { data: { decision: 'reconcile', user_id: operation.user }, error: null };
+    }
+    if (args.p_parameters === null || fixture.now >= operation.retryUntil - 15_000) {
+      return { data: { decision: 'reconcile', user_id: operation.user }, error: null };
+    }
     if (fixture.now < operation.leaseUntil) return { data: { decision: 'busy', user_id: operation.user }, error: null };
     operation.leaseUntil = fixture.now + 60_000;
     return { data: {
@@ -170,6 +196,7 @@ export default class Stripe {
   accountSessions = { create: (input: { account: string; components: Record<string, { enabled: boolean }> }) => {
     fixture.events.push('create-session'); fixture.sessions.push(structuredClone(input));
     if (fixture.sessionErrors.shift()) throw new Error('fixture-private-session-detail');
-    return Promise.resolve({ client_secret: 'fixture-session-only', expires_at: 2000000000 });
+    return Promise.resolve({ account: input.account, client_secret: 'fixture-session-only',
+      expires_at: Math.floor(Date.now() / 1000) + 3600, ...fixture.sessionOverride });
   } };
 }
