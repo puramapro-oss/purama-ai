@@ -19,10 +19,19 @@ export interface RuntimeDependencies {
 export async function bounded<T>(operation: (signal: AbortSignal) => Promise<T>, ms: number,
   parent?: AbortSignal): Promise<T> {
   const controller = new AbortController();
+  const expiresAt = performance.now() + ms;
+  const assertCurrent = () => {
+    // Promise continuations can run after the budget or cancellation before the
+    // timer/rejection wins the race. Recheck at admission and at final handoff.
+    if (controller.signal.aborted || parent?.aborted || performance.now() >= expiresAt) {
+      controller.abort();
+      throw new Error("Runtime operation interrupted");
+    }
+  };
   let timer: ReturnType<typeof setTimeout> | undefined;
   let cancel: (() => void) | undefined;
   try {
-    return await Promise.race([
+    const result = await Promise.race([
       new Promise<never>((_, reject) => {
         cancel = () => { controller.abort(); reject(new Error("Runtime operation interrupted")); };
         if (parent?.aborted) { cancel(); return; }
@@ -30,10 +39,15 @@ export async function bounded<T>(operation: (signal: AbortSignal) => Promise<T>,
         timer = setTimeout(cancel, ms);
       }),
       Promise.resolve().then(() => {
-        if (controller.signal.aborted) throw new Error("Runtime operation interrupted");
+        assertCurrent();
         return operation(controller.signal);
       }),
     ]);
+    assertCurrent();
+    return result;
+  } catch (error) {
+    assertCurrent();
+    throw error;
   } finally {
     clearTimeout(timer);
     if (cancel) parent?.removeEventListener("abort", cancel);
