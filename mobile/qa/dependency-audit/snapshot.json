@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-11T03:27:16.244789+00:00",
+  "maximumAgeHours": 24,
+  "reportSha256": "61306040143cba59ba97c6e5126c18607d246a26736d0b675e5d51f9352ed6e0",
+  "registryMultisetSha256": "570c9a2c35f3c31a936a51d9f0a9331a234be27e436967b73e0f807acfeafb15",
+  "registryPackageInstances": 874,
+  "source": {
+    "command": [
+      "npm",
+      "audit",
+      "--audit-level=high",
+      "--json"
+    ],
+    "receiptSha256": "4d786f440e42d03cca81b602995015f966caebc0f86d1ad18ecf1015b9ec6019",
+    "logSha256": "5b9fab8e3e0195e2856f76b9fc0d10d17206943d769a0ccbb137b29b379708aa",
+    "exitCode": 0
+  },
+  "status": "Previously received audit; the CI gate only checks exact local binding and freshness. No registry request.",
+  "remainingAdvisories": [
+    "GHSA-gcqx-w48m-w2h4",
+    "GHSA-3g3m-2fjr-6pw4",
+    "GHSA-g3hv-75wg-m249"
+  ],
+  "scopeLimit": "Registry package versions, URLs and integrity values only. Local adapter code is reviewed separately. Native execution, signing and store admission are not qualified."
+}
