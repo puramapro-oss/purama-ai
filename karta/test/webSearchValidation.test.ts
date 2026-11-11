@@ -19,6 +19,9 @@ vi.mock("../src/engine/autonomy.js", async (original) => ({
 vi.mock("../src/engine/logger.js", () => ({ startRun: async () => ({ runId: "run-web", finish: h.finish }) }));
 vi.mock("../src/engine/approval.js", () => ({ createPendingAction: vi.fn() }));
 vi.mock("../src/engine/notify.js", () => ({ notify: h.notify }));
+// The real loop imports delegation registration; this suite never schedules a
+// delegated job and must not open an incidental Redis connection.
+vi.mock("../src/queue/queues.js", () => ({ enqueueAgentCycle: vi.fn() }));
 
 const { config } = await import("../src/config.js");
 const { webSearchTool } = await import("../src/tools/websearch.js");
