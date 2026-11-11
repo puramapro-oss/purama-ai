@@ -10,6 +10,7 @@ const root = new URL('../../', import.meta.url);
 const sourcePath = fileURLToPath(new URL('supabase/functions/stripe-webhook/index.ts', root));
 const overagePath = fileURLToPath(new URL('supabase/functions/stripe-webhook/overage.ts', root));
 const reconciliationPath = fileURLToPath(new URL('supabase/functions/_shared/stripe-reconciliation.ts', root));
+const requestBodyPath = fileURLToPath(new URL('supabase/functions/_shared/request-body.ts', root));
 const compiled = new Map();
 
 export function subscriptionRow(overrides = {}) {
@@ -43,7 +44,7 @@ export function createFixture(options = {}) {
     users: [{ id: userId, email: 'server-user@example.invalid' }], authError: null,
     tables: { subscriptions: [], influencers: [], commissions: [], notifications: [], profiles: [] },
     failures: [], calls: [], mutations: [], logs: [], credits: new Set(),
-    observations: new Map(), journalFailures: [],
+    observations: new Map(), journalFailures: [], signatureBodies: [],
     beforeQuery: null, afterSubscriptionList: null, normalizeTimestamps: false,
   };
 
@@ -137,6 +138,7 @@ export function createFixture(options = {}) {
       }
       this.webhooks = { constructEventAsync: async (body, signature, secret) => {
         state.calls.push({ kind: 'verifySignature' });
+        state.signatureBodies.push(body);
         if (signature !== 'fixture_signature' || secret !== 'whsec_inert') throw new Error('fixture signature invalid');
         // Tests exercise the real handler after the SDK signature boundary;
         // they do not pretend to test Stripe's cryptography.
@@ -169,6 +171,9 @@ export function createFixture(options = {}) {
   const env = { STRIPE_SECRET_KEY: 'sk_test_inert', STRIPE_WEBHOOK_SECRET: 'whsec_inert', SUPABASE_URL: 'https://database.example.invalid', SUPABASE_SERVICE_ROLE_KEY: 'service_inert' };
   const context = vm.createContext({
     Request, Response, Headers, URL, Date, JSON, Uint8Array, TextEncoder, TextDecoder,
+    performance: options.clock ? { now: options.clock.now } : performance,
+    setTimeout: options.clock?.setTimeout ?? setTimeout,
+    clearTimeout: options.clock?.clearTimeout ?? clearTimeout,
     console: { log: (...args) => state.logs.push(args.join(' ')) },
     Deno: { env: { get: key => env[key] } },
     fetch: () => { throw new Error('Network access is forbidden in webhook tests'); },
@@ -195,6 +200,7 @@ export function createFixture(options = {}) {
       if (specifier === 'https://esm.sh/resend@2.0.0') return { Resend: ResendFixture };
       if (path === sourcePath && specifier === './overage.ts') return load(overagePath);
       if (path === sourcePath && specifier === '../_shared/stripe-reconciliation.ts') return load(reconciliationPath);
+      if (path === sourcePath && specifier === '../_shared/request-body.ts') return load(requestBodyPath);
       throw new Error(`Unapproved module import: ${specifier}`);
     };
     const factory = new vm.Script(`(function(require, module, exports) {\n${compiled.get(cacheKey)}\n})`, { filename: path }).runInContext(context, { timeout: 1000 });
@@ -205,6 +211,7 @@ export function createFixture(options = {}) {
   if (typeof handler !== 'function') throw new Error('The real handler was not captured');
   return {
     state, env,
+    deliverRequest: request => handler(request),
     async deliver({ signature = 'fixture_signature', event = state.event } = {}) {
       const headers = { 'content-type': 'application/json' };
       if (signature !== null) headers['stripe-signature'] = signature;

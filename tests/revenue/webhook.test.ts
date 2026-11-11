@@ -125,6 +125,59 @@ Deno.test("real Stripe signature rejects altered body before any observation or 
   equal(state.writes, []);
 });
 
+Deno.test("real Stripe signature accepts exact UTF-8 split across chunks, including whitespace and CRLF", async () => {
+  setup();
+  const value = event("invoice.paid", { ...invoice(), description: "é e\u0301 € 🌍" });
+  const payload = ` \r\n${JSON.stringify(value, null, 2).replaceAll("\n", "\r\n")}\t\r\n`;
+  const bytes = new TextEncoder().encode(payload);
+  let offset = 0;
+  const body = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      if (offset === bytes.byteLength) return controller.close();
+      controller.enqueue(bytes.subarray(offset, ++offset));
+    },
+  }, { highWaterMark: 0 });
+  const response = await webhook(new Request("https://edge.example.test/stripe-webhook", {
+    method: "POST",
+    headers: { "stripe-signature": await sign(payload), "content-length": String(bytes.byteLength) },
+    body,
+  }));
+  equal(response.status, 200);
+  equal(state.events.size, 1);
+  equal(state.writes, []);
+});
+
+for (const extra of [0, 1]) {
+  Deno.test(`real Stripe signature: 1 MiB plus ${extra} byte respects the ingress boundary`, async () => {
+    setup();
+    const value = JSON.stringify(event("invoice.paid", invoice()));
+    const payload = value + " ".repeat(1024 * 1024 + extra - new TextEncoder().encode(value).byteLength);
+    const response = await webhook(new Request("https://edge.example.test/stripe-webhook", {
+      method: "POST", headers: { "stripe-signature": await sign(payload) }, body: payload,
+    }));
+    equal(response.status, extra === 0 ? 200 : 413);
+    equal(state.events.size, extra === 0 ? 1 : 0);
+    equal(state.rpcCalls, extra === 0 ? 1 : 0);
+    equal(state.writes, []);
+    equal(state.subscriptionRequests, []);
+    equal(state.customerRequests, []);
+    equal(state.invoiceRequests, []);
+  });
+}
+
+Deno.test("real Stripe signature rejects altered JSON whitespace before any observation", async () => {
+  setup();
+  const payload = JSON.stringify(event("invoice.paid", invoice()), null, 2);
+  const response = await webhook(new Request("https://edge.example.test/stripe-webhook", {
+    method: "POST", headers: { "stripe-signature": await sign(payload) },
+    body: payload.replace("\n", "\r\n"),
+  }));
+  equal(response.status, 400);
+  equal(state.rpcCalls, 0);
+  equal(state.events.size, 0);
+  equal(state.writes, []);
+});
+
 Deno.test("missing signature and unsupported method cannot create financial evidence", async () => {
   setup();
   equal(

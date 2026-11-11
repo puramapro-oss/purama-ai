@@ -13,6 +13,7 @@ const compile = (text: string) => ts.transpileModule(text, {
 const helperCode = compile(source('supabase/functions/stripe-webhook/overage.ts'));
 const handlerCode = compile(source('supabase/functions/stripe-webhook/index.ts'));
 const reconciliationCode = compile(source('supabase/functions/_shared/stripe-reconciliation.ts'));
+const requestBodyCode = compile(source('supabase/functions/_shared/request-body.ts'));
 const owner = '00000000-0000-4000-8000-000000000101';
 const other = '00000000-0000-4000-8000-000000000102';
 const confirmedAt = Math.floor(Date.parse('2026-10-31T23:59:00Z') / 1000);
@@ -106,6 +107,8 @@ function harness(db: PGlite) {
   new Function('exports', helperCode)(helperExports);
   const reconciliationExports: Record<string, unknown> = {};
   new Function('exports', reconciliationCode)(reconciliationExports);
+  const requestBodyExports: Record<string, unknown> = {};
+  new Function('exports', requestBodyCode)(requestBodyExports);
   let handler: Handler | undefined;
   class StripeFixture {
     static createFetchHttpClient() { return null; }
@@ -154,6 +157,7 @@ function harness(db: PGlite) {
     if (name === 'https://esm.sh/resend@2.0.0') return { Resend: class { constructor() { throw new Error('Unexpected email side effect'); } } };
     if (name === './overage.ts') return helperExports;
     if (name === '../_shared/stripe-reconciliation.ts') return reconciliationExports;
+    if (name === '../_shared/request-body.ts') return requestBodyExports;
     throw new Error(`Unexpected remote import ${name}`);
   };
   const env: Record<string, string> = {
