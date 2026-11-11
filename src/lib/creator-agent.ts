@@ -1,9 +1,33 @@
 // Frontend client for the Creator Agent (meta-agent that builds custom agents).
 import { supabase } from '@/integrations/supabase/client';
 import { createSessionId } from '@/lib/session-id';
+import { createRequestDeadline } from '@/lib/request-deadline';
+import {
+  isCreatorModelId, parsePublicCreatorModel, type PublicCreatorModel,
+} from '@/lib/public-creator-model';
 
 type AnyTable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 const sb = () => (supabase as unknown as { from: (t: string) => AnyTable });
+const creatorRpc = supabase as unknown as {
+  rpc: (name: string, args: Record<string, unknown>) => AnyTable;
+};
+
+// A lost response may still have committed a copy on the server. Bound the
+// client wait, cancel its transport, and let the caller retry the same copy ID.
+async function creatorModelRequest<T>(
+  operation: (signal: AbortSignal) => PromiseLike<T>,
+  signal?: AbortSignal,
+): Promise<T> {
+  const transport = new AbortController();
+  const deadline = createRequestDeadline(20_000, signal);
+  try {
+    return await deadline.wait(async () => await operation(transport.signal));
+  } finally {
+    transport.abort();
+    deadline.close();
+  }
+}
+
 
 // =============================================================
 // Types
@@ -130,26 +154,38 @@ export async function listMyAgents(userId: string): Promise<CreatorAgent[]> {
   return (data ?? []) as CreatorAgent[];
 }
 
-export async function listTemplates(): Promise<CreatorAgent[]> {
-  const { data, error } = await sb()
-    .from('creator_agents')
-    .select('*')
-    .eq('is_template', true)
-    .order('name', { ascending: true });
+async function listPublicCreatorModels(kind: 'official' | 'community', signal?: AbortSignal): Promise<PublicCreatorModel[]> {
+  const { data, error } = await creatorModelRequest<{ data: unknown; error: unknown }>(
+    requestSignal => creatorRpc.rpc('public_creator_models', { p_kind: kind }).abortSignal(requestSignal), signal,
+  );
   if (error) throw error;
-  return (data ?? []) as CreatorAgent[];
+  if (!Array.isArray(data)) throw new Error('Le catalogue de modèles est indisponible.');
+  // One malformed community record must not make everybody's catalogue fail.
+  return data.flatMap((row: unknown) => {
+    const model = parsePublicCreatorModel(row);
+    return model ? [model] : [];
+  });
 }
 
-export async function listPublicAgents(): Promise<CreatorAgent[]> {
-  const { data, error } = await sb()
-    .from('creator_agents')
-    .select('*')
-    .eq('is_public', true)
-    .eq('is_template', false)
-    .order('total_runs', { ascending: false })
-    .limit(50);
+export async function listTemplates(signal?: AbortSignal): Promise<PublicCreatorModel[]> {
+  return listPublicCreatorModels('official', signal);
+}
+
+export async function listPublicAgents(signal?: AbortSignal): Promise<PublicCreatorModel[]> {
+  return listPublicCreatorModels('community', signal);
+}
+
+export async function getPublicCreatorModel(id: string, signal?: AbortSignal): Promise<PublicCreatorModel | null> {
+  if (!isCreatorModelId(id)) return null;
+  const { data, error } = await creatorModelRequest<{ data: unknown; error: unknown }>(
+    requestSignal => creatorRpc.rpc('public_creator_models', { p_id: id }).abortSignal(requestSignal), signal,
+  );
   if (error) throw error;
-  return (data ?? []) as CreatorAgent[];
+  if (!Array.isArray(data)) throw new Error('Le modèle est indisponible.');
+  if (data.length === 0) return null;
+  const model = data.length === 1 ? parsePublicCreatorModel(data[0]) : null;
+  if (!model || model.id !== id.toLowerCase()) throw new Error('Le modèle est indisponible.');
+  return model;
 }
 
 export async function getAgent(id: string): Promise<CreatorAgent> {
@@ -221,21 +257,22 @@ export async function deleteAgent(id: string): Promise<void> {
 export async function cloneTemplate(
   userId: string,
   templateId: string,
+  copyId: string = crypto.randomUUID(),
+  signal?: AbortSignal,
 ): Promise<CreatorAgent> {
-  const tpl = await getAgent(templateId);
-  return createAgent(userId, {
-    name: tpl.name,
-    description: tpl.description,
-    emoji: tpl.emoji,
-    color: tpl.color,
-    category: tpl.category,
-    system_prompt: tpl.system_prompt,
-    model: tpl.model,
-    temperature: tpl.temperature,
-    max_tokens: tpl.max_tokens,
-    tools_enabled: tpl.tools_enabled,
-    cloned_from: tpl.id,
-  });
+  if (![userId, templateId, copyId].every(isCreatorModelId)) throw new Error('Demande de copie invalide.');
+  const { data, error } = await creatorModelRequest<{ data: CreatorAgent | null; error: unknown }>(
+    requestSignal => creatorRpc.rpc('clone_public_creator_model', {
+      p_source_id: templateId,
+      p_copy_id: copyId,
+      p_expected_user_id: userId,
+    }).single().abortSignal(requestSignal), signal,
+  );
+  if (error) throw error;
+  if (!data || data.id !== copyId || data.user_id !== userId || data.cloned_from !== templateId) {
+    throw new Error('La copie n’a pas pu être confirmée.');
+  }
+  return data as CreatorAgent;
 }
 
 // =============================================================

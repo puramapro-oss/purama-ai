@@ -112,6 +112,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
     return {
       auth: { getUser: async token => {
         calls.auth.push(token);
+        options.onAuthorization?.(calls.auth.length);
         if (options.authThrows) throw new Error('provider-private-auth-detail');
         const id = token === 'admin-token' ? 'server-admin' : token === 'member-token' ? 'ordinary-member' : null;
         return { data: { user: id ? { id, user_metadata: { role: 'admin' } } : null },
@@ -190,8 +191,12 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
       const value = Reflect.get(target, key, target);
       if (typeof value !== 'function') return value;
       return (...args) => {
-        if (key === 'digest') calls.digests.push({ algorithm: args[0], bytes: args[1].byteLength });
-        return Reflect.apply(value, target, args);
+        const digestCall = key === 'digest'
+          ? calls.digests.push({ algorithm: args[0], bytes: args[1].byteLength }) : undefined;
+        const result = Reflect.apply(value, target, args);
+        if (digestCall === undefined || !options.afterDigest) return result;
+        // Interrupt only after the real WebCrypto digest has completed.
+        return result.then(hash => { options.afterDigest(digestCall); return hash; });
       };
     },
   });
@@ -612,6 +617,23 @@ for (const declared of [false, true]) {
   });
 }
 
+test('PDF bounds: failed metadata does not wait for pending cancellation', async () => {
+  let reads = 0; let cancelled = 0;
+  const metadata = new Response(new ReadableStream({
+    pull() { reads++; },
+    cancel() { cancelled++; return new Promise(() => {}); },
+  }, { highWaterMark: 0 }), { status: 503 });
+  const h = await harness({ documentsFetch: () => metadata });
+  const result = await boundedResult(h.handler(request(serviceKey)));
+  assert.equal(result.status, 502);
+  assert.equal(h.calls.docs.length, 1);
+  assert.equal(h.calls.pdf.length, 0);
+  assert.equal(h.calls.stampRpcs.length, 0);
+  assert.equal(reads, 0); assert.equal(cancelled, 1);
+  assert.equal(metadata.body.locked, false);
+  noPdfEffects(h);
+});
+
 for (const phase of ['metadata headers', 'PDF headers', 'metadata body', 'PDF body']) {
   test(`PDF bounds: one deadline stops stalled ${phase}`, async () => {
     const clock = downloadClock(); let cancelled = 0; let signal; let response;
@@ -673,6 +695,42 @@ test('PDF bounds: metadata and PDF consume one budget without resetting it', asy
   });
   assert.equal((await h.handler(request(serviceKey))).status, 504);
   noPdfEffects(h);
+});
+
+for (const phase of ['reauthorization', 'hashing']) {
+  test(`PDF bounds: deadline after ${phase} prevents stamping and persistence`, async () => {
+    const clock = { value: 0, now() { return this.value; } };
+    const h = await harness({
+      performance: clock,
+      onAuthorization: count => { if (phase === 'reauthorization' && count === 2) clock.value = 10_001; },
+      afterDigest: count => { if (phase === 'hashing' && count === 1) clock.value = 10_001; },
+    });
+    const before = { ...h.contract };
+    const result = await boundedResult(h.handler(request()));
+    assert.equal(result.status, 504);
+    assert.equal(clock.value, 10_001, 'the selected phase must expire the document budget');
+    assert.equal(h.calls.auth.length, 2);
+    assert.equal(h.calls.digests.length, phase === 'hashing' ? 1 : 0);
+    for (const effect of ['stamps', 'stampRpcs', 'updates', 'events']) {
+      assert.equal(h.calls[effect].length, 0, `Unexpected ${effect} after ${phase} expiry`);
+    }
+    assert.deepEqual(h.contract, before, 'the previous proof and confirmation must remain unchanged');
+  });
+}
+
+test('PDF bounds: cancellation during hashing prevents stamping and persistence', async () => {
+  const abort = new AbortController();
+  const h = await harness({ afterDigest: count => { if (count === 1) abort.abort(); } });
+  const before = { ...h.contract };
+  const result = await boundedResult(h.handler(new Request(request(), { signal: abort.signal })));
+  assert.equal(result.status, 503);
+  assert.equal(abort.signal.aborted, true);
+  assert.equal(h.calls.auth.length, 2);
+  assert.equal(h.calls.digests.length, 1, 'cancellation must follow one real digest');
+  for (const effect of ['stamps', 'stampRpcs', 'updates', 'events']) {
+    assert.equal(h.calls[effect].length, 0, `Unexpected ${effect} after cancellation during hashing`);
+  }
+  assert.deepEqual(h.contract, before, 'the previous proof and confirmation must remain unchanged');
 });
 
 for (const phase of ['metadata', 'PDF headers', 'PDF body']) {

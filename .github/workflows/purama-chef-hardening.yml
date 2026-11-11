@@ -67,21 +67,28 @@ jobs:
       - run: npm ci --no-audit
       - run: npm run test:dependencies
       - run: npm run lint
+      - run: npm run test:distribution:unit
+      - run: npm run test:distribution:sql
+      - run: npm run test:distribution:worker
+      - run: npm run test:distribution:chat
       - run: npm run test:contracts-auth
       - run: npm run test:cross-app-jwt
+      - run: npm run test:voice-settings
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
       - run: npm run test:contracts-native
       - run: npm run test:oauth
-      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts
+      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts
       - run: npm run test:commerce:plans
       - run: npm run test:commerce:handlers
       - run: npm run test:founder
       - run: npm run test:founder:types
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: npx tsc --noEmit -p tests/public/tsconfig.json
+      - run: npm run typecheck:distribution
+      - run: npm run test:distribution:browser
       - run: npm run test:public
       - run: npm run test:chat
       - run: npm run test:quality

@@ -117,6 +117,27 @@ export async function runAgentCycle(
         }, definition.tools, true));
       }
     }
+    if (!noBrief) {
+      // Context, brief and ownership reads may have awaited since admission.
+      // Inference itself sends data and can incur cost, before any tool runs.
+      // Keep this after the custom-definition check and use a fresh global read.
+      let modelAllowed: boolean;
+      try {
+        const latest = await loadAgentState(userId, definition.type);
+        const stopped = await isGlobalKillSwitchActive(true);
+        modelAllowed = !stopped && isRunnable(latest).ok && !(mode === "live" && latest.simulationMode);
+      } catch {
+        // Static/public agents also need a safe diagnostic at this boundary.
+        throw new Error("Autorisation de l’appel au modèle non vérifiable");
+      }
+      if (!modelAllowed) {
+        return await finishOutcome(minimizeRunTrace({
+          status: "cancelled", decision: "Cycle annulé : arrêt ou autorisation modifiée avant l’appel au modèle",
+          toolsUsed: [], resultSummary: "Aucune requête au modèle ni action exécutée",
+          mock: false, retryable: false,
+        }, definition.tools, privateTrace));
+      }
+    }
     const decision = noBrief ? {
       summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
     } : await getClaudeClient().decide({

@@ -329,7 +329,6 @@ describe.each(['agent-chat', 'chat'])('%s server model selection', name => {
 describe.each(chatNames)('%s real handler', name => {
   it('sends the most recent 20 own messages in chronological order and preserves the latest refusal', async () => {
     const h = edge(name);
-    if (name === 'creator-agent-chat') h.db.tables.creator_agents![0]!.user_id = stranger;
     const expected = h.db.tables[historyTable[name]]!.filter(row => row.user_id === principal).slice(-20)
       .map(row => ({ role: row.role, content: row.content }));
     const response = await h.handler(request(chatBody()));

@@ -46,7 +46,7 @@ test('router preserves public navigation, unknown routes, and protected redirect
   await page.goto('/login');
   await expect(page.getByRole('heading', { name: /connexion/i }).first()).toBeVisible();
   await page.getByRole('link', { name: /inscri|créer un compte/i }).first().click();
-  await expect(page).toHaveURL(/\/signup$/);
+  await expect(page).toHaveURL(`${origin}/signup?next=%2Fdashboard`);
   await page.goto('/page-inexistante');
   await expect(page.getByText('404', { exact: true })).toBeVisible();
   await page.goto('/fiscal');

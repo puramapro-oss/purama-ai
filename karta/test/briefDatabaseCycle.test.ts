@@ -11,6 +11,9 @@ type InferenceInput = { context: { items: Array<{ brief: string }> } };
 const h = vi.hoisted(() => ({
   db: null as PGlite | null,
   simulation: false,
+  globalStopped: false,
+  enabled: true,
+  localKill: false,
   mock: false,
   loseClaimAck: 0,
   loseArmAck: 0,
@@ -122,12 +125,12 @@ vi.mock("../src/db/supabase.js", () => ({
   supabase: { from: (table: string) => runQuery(table), rpc },
 }));
 vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ decide: h.decide }) }));
-vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => false }));
+vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.globalStopped }));
 vi.mock("../src/engine/autonomy.js", async original => ({
   ...await original<typeof import("../src/engine/autonomy.js")>(),
   loadAgentState: async () => ({
     userId: "00000000-0000-4000-8000-000000000071", agentType: "newsletter-genie",
-    isEnabled: true, killSwitch: false, autonomyLevel: 3, simulationMode: h.simulation,
+    isEnabled: h.enabled, killSwitch: h.localKill, autonomyLevel: 3, simulationMode: h.simulation,
   }),
   recordRunOutcome: async () => undefined,
 }));
@@ -149,7 +152,26 @@ const agent: AgentDefinition = {
     execute: h.execute,
   }],
 };
-const cycle = (key?: string) => runAgentCycle(user, agent, { type: "manual", source: "database-cycle-test" }, key);
+const cycle = (key?: string, definition: AgentDefinition = agent) =>
+  runAgentCycle(user, definition, { type: "manual", source: "database-cycle-test" }, key);
+
+/** Pause after the real context has acquired its private input, before returning it. */
+function pausedContextCycle(key: string) {
+  let reportEntered!: () => void;
+  let finishContext!: () => void;
+  const entered = new Promise<void>(resolve => { reportEntered = resolve; });
+  const released = new Promise<void>(resolve => { finishContext = resolve; });
+  const result = cycle(key, {
+    ...agent,
+    buildContext: async (userId, trigger, prepared) => {
+      const context = await agent.buildContext(userId, trigger, prepared);
+      reportEntered();
+      await released;
+      return context;
+    },
+  });
+  return { entered, release: finishContext, result };
+}
 async function rows(table: "karta_runs" | "karta_brief_claims" | "karta_agent_memory"): Promise<Row[]> {
   return (await h.db!.query<Row>("SELECT * FROM purama_ai." + table)).rows;
 }
@@ -181,6 +203,7 @@ afterAll(async () => { await h.db?.close(); });
 beforeEach(async () => {
   vi.resetAllMocks();
   h.simulation = false; h.mock = false;
+  h.globalStopped = false; h.enabled = true; h.localKill = false;
   h.loseClaimAck = 0; h.loseArmAck = 0; h.loseFinishAck = 0;
   h.runIds = []; h.rpcNames = []; h.receivedBriefs = [];
   h.updateAttempts = 0; h.updatedRows = 0;
@@ -311,6 +334,113 @@ describe("real brief RPC, agent cycle, immutable logger, and PostgreSQL closing 
     expect(await claimFor(h.runIds[0])).toMatchObject({ state: "ready", payload: SECRET });
     expect(h.rpcNames).toEqual(["karta_claim_pending_brief"]);
     expect(h.execute).not.toHaveBeenCalled();
+    await expectNoJournalPayload();
+  });
+
+  it.each(["global", "disabled", "localKill", "simulation"] as const)(
+    "stops before inference after a late %s change, retaining the exact brief for a new delivery",
+    async change => {
+      await submit();
+      const original = (await rows("karta_agent_memory"))[0];
+      const pending = pausedContextCycle("cancel-before-model");
+      await pending.entered;
+      if (change === "global") h.globalStopped = true;
+      else if (change === "disabled") h.enabled = false;
+      else if (change === "localKill") h.localKill = true;
+      else h.simulation = true;
+      pending.release();
+      const cancelled = await pending.result;
+
+      expect(h.decide).not.toHaveBeenCalled();
+      expect(h.execute).not.toHaveBeenCalled();
+      expect(h.rpcNames).toEqual(["karta_claim_pending_brief"]);
+      expect(cancelled).toMatchObject({ status: "cancelled", toolsUsed: [], retryable: false });
+      const cancelledRun = h.runIds[0];
+      expect(await claimFor(cancelledRun)).toMatchObject({
+        brief_id: original.id, state: "ready", payload: SECRET, attempt_count: 1,
+      });
+      expect((await rows("karta_runs"))[0]).toMatchObject({
+        id: cancelledRun, status: "cancelled", mode: "live", tools_used: [],
+      });
+      expect(await rows("karta_agent_memory")).toEqual([]);
+      expect(JSON.stringify(cancelled)).not.toContain(SECRET);
+      await expectNoJournalPayload();
+
+      // Reactivation does not turn the cancelled delivery into a new operation.
+      h.globalStopped = false; h.enabled = true; h.localKill = false; h.simulation = false;
+      const replay = await cycle("cancel-before-model");
+      expect(replay).toMatchObject({ status: "cancelled", toolsUsed: [], retryable: false });
+      expect(h.runIds).toHaveLength(1);
+      expect(h.decide).not.toHaveBeenCalled();
+      expect(h.rpcNames).toEqual(["karta_claim_pending_brief"]);
+      expect(h.updatedRows).toBe(1);
+
+      // A newer pending input must survive while a new delivery resumes the
+      // original ready receipt. Its identity and payload are never substituted.
+      const newer = SECRET + "_NEW";
+      await submit(newer);
+      const resumed = await cycle("fresh-delivery-after-reactivation");
+      expect(resumed).toMatchObject({ status: "success", retryable: false });
+      expect(h.receivedBriefs).toEqual([SECRET]);
+      expect(h.execute).toHaveBeenCalledOnce();
+      expect(h.execute.mock.calls[0][0]).toEqual({ text: SECRET });
+      expect(await claimFor(cancelledRun)).toMatchObject({
+        brief_id: original.id, state: "transferred", transferred_to_run_id: h.runIds[1],
+      });
+      expect(await claimFor(h.runIds[1])).toMatchObject({
+        brief_id: original.id, state: "completed", payload: SECRET,
+        previous_run_id: cancelledRun, attempt_count: 2,
+      });
+      expect(await rows("karta_brief_claims")).toHaveLength(2);
+      expect((await rows("karta_agent_memory"))[0]).toMatchObject({ memory_value: newer });
+      expect(h.rpcNames.filter(name => name === "karta_arm_pending_brief")).toHaveLength(1);
+      expect(JSON.stringify([replay, resumed])).not.toContain(SECRET);
+      await expectNoJournalPayload();
+    },
+  );
+
+  it("bounds three pre-model cancellations without consuming a fourth attempt or exposing the brief", async () => {
+    await submit();
+    const original = (await rows("karta_agent_memory"))[0];
+    const outcomes = [];
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      h.globalStopped = false;
+      const pending = pausedContextCycle(`pre-model-cancellation-${attempt}`);
+      await pending.entered;
+      h.globalStopped = true;
+      pending.release();
+      outcomes.push(await pending.result);
+    }
+
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.execute).not.toHaveBeenCalled();
+    for (const outcome of outcomes) {
+      expect(outcome).toMatchObject({ status: "cancelled", toolsUsed: [], retryable: false });
+    }
+    expect(h.runIds).toHaveLength(3);
+    expect(await claimFor(h.runIds[0])).toMatchObject({
+      brief_id: original.id, state: "transferred", attempt_count: 1, transferred_to_run_id: h.runIds[1],
+    });
+    expect(await claimFor(h.runIds[1])).toMatchObject({
+      brief_id: original.id, state: "transferred", attempt_count: 2,
+      previous_run_id: h.runIds[0], transferred_to_run_id: h.runIds[2],
+    });
+    expect(await claimFor(h.runIds[2])).toMatchObject({
+      brief_id: original.id, state: "reconciliation_required", payload: SECRET,
+      attempt_count: 3, previous_run_id: h.runIds[1],
+    });
+
+    h.globalStopped = false;
+    const fourth = await cycle("fourth-delivery");
+    expect(fourth).toMatchObject({ status: "skipped", toolsUsed: [], retryable: false });
+    expect(h.runIds).toHaveLength(4);
+    expect(await claimFor(h.runIds[3])).toBeUndefined();
+    expect(await rows("karta_brief_claims")).toHaveLength(3);
+    expect(await rows("karta_agent_memory")).toEqual([]);
+    expect(h.rpcNames).toEqual(Array.from({ length: 4 }, () => "karta_claim_pending_brief"));
+    expect(h.decide).not.toHaveBeenCalled();
+    expect(h.execute).not.toHaveBeenCalled();
+    expect(JSON.stringify([...outcomes, fourth])).not.toContain(SECRET);
     await expectNoJournalPayload();
   });
 });

@@ -1,0 +1,391 @@
+{
+  "recorded_at": "2026-11-11T05:48:45.715051+00:00",
+  "scope": "Isolated consolidation of existing PR37-43 on PR40. Not main, deployment, or product completion.",
+  "input_parents": [
+    "ab6901cb79ba222952457452e2ae1156b19b9433",
+    "0d38a925f9c0367deb5b9f77eb86b8b71b9da499",
+    "88dfee31ae18854b799439c92afc617cf01d34ea",
+    "9907571c3cc307f5de0e1e02fcca4b028b51b625",
+    "548c41d13001d27256017af697c16d74e78cd61b",
+    "70f6c5a81fb4cdd274c2d84338d603d8fd5fa255"
+  ],
+  "source_tree_before_receipt": "4b54173dc2c6dd3cac878b2cdad45e9bc9490173",
+  "configuration_conflicts_resolved": [
+    "vercel.json: union of disabled branches plus candidate branch",
+    "CHEF workflow: preserve OAuth and Stripe checks, add creator-agent-chat check"
+  ],
+  "donor_preservation": {
+    "PR43": {
+      "exact": 14,
+      "total": 14
+    },
+    "PR41": {
+      "exact": 7,
+      "total": 7
+    },
+    "PR37": {
+      "exact": 5,
+      "total": 5
+    },
+    "PR38": {
+      "exact": 6,
+      "total": 9,
+      "composed": [
+        "workflow",
+        "package.json",
+        "vercel.json"
+      ]
+    },
+    "PR42": {
+      "exact": 48,
+      "total": 50,
+      "composed": [
+        "workflow",
+        "package.json"
+      ]
+    }
+  },
+  "dependency_reuse": {
+    "root_locked_package_versions_verified": 622,
+    "karta_locked_package_versions_verified": 153,
+    "mismatches": 0,
+    "installations": 0,
+    "candidate_cache_isolated": true
+  },
+  "impact": {
+    "tool": "GitNexus1.6.12",
+    "files": 85,
+    "symbols": 111,
+    "affected_flows": 21,
+    "risk": "critical",
+    "limits": "Call graph includes inference limits; index flow tracing is bounded, so absent paths are not proof of absence."
+  },
+  "local_gates": [
+    {
+      "gate": "karta-tests",
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=$EVIDENCE_DIR/karta-result.json"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 124,
+      "seconds": 240.014,
+      "log_sha256": "4ad19eec54c4e0d611c82475a9c5706bfc58a894be8aa416fbd7c7d48aeb2608"
+    },
+    {
+      "gate": "karta-types",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 24.089,
+      "log_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7"
+    },
+    {
+      "gate": "karta-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 15.163,
+      "log_sha256": "62c5076d5c141d2825f050903a7e40cfc2100cacc55c106f67b8c686770bb6ed"
+    },
+    {
+      "gate": "site-dependencies",
+      "command": [
+        "npm",
+        "run",
+        "test:dependencies"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 9.344,
+      "log_sha256": "63be6b2284ccaeebc504b4af1a8ffbe217926f9efeecdc779e54c51ab4dbfc60"
+    },
+    {
+      "gate": "voice-settings",
+      "command": [
+        "npm",
+        "run",
+        "test:voice-settings"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 5.861,
+      "log_sha256": "29f99606696e9222d1d94a1e7b0698ee2ee5773890e4bb5c1f0101efe4d0ae4a"
+    },
+    {
+      "gate": "contracts-auth",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-auth"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 74.334,
+      "log_sha256": "338734a0b3196cdf2d9b1f9f88492e642a0671c2cf47177d5af6afeae75d017b"
+    },
+    {
+      "gate": "oauth-handlers",
+      "command": [
+        "npm",
+        "run",
+        "test:oauth"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 46.336,
+      "log_sha256": "610daea137f6d888919a13ea26941cf924f6510cfb1017a94472b09319f71368"
+    },
+    {
+      "gate": "contracts-security",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-security"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 86.116,
+      "log_sha256": "1510a1a21f2bc6510556cac7d8e4dc1a3532e08df806b3ef8c22ac66dbe6ab46"
+    },
+    {
+      "gate": "distribution-worker",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:worker"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 2.168,
+      "log_sha256": "095e622df58adfb9769983b564773f37d06c38da9e6f1d17987e0b1b8308c44e"
+    },
+    {
+      "gate": "distribution-chat",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:chat"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 3.207,
+      "log_sha256": "0475a884a954af9d213e872f3d83d67bd8eeba4c9761c1338f61ae6052ef77c6"
+    },
+    {
+      "gate": "distribution-unit",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:unit",
+        "--",
+        "--maxWorkers=1"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 1,
+      "seconds": 38.898,
+      "log_sha256": "b94ef907fa2f8b8280c6ca5fa768ee4fd0fab1a77054a8374427107cb27fdc89"
+    },
+    {
+      "gate": "site-types",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 42.377,
+      "log_sha256": "18613ddbee6bb1383ee22d4a41b90885223169ef27a680cb63aac1cdd738279f"
+    },
+    {
+      "gate": "distribution-types",
+      "command": [
+        "npm",
+        "run",
+        "typecheck:distribution"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 6.019,
+      "log_sha256": "11f6519f35c723917a85231a843dfde295456fac4f84f5989fcaa3bfd6ec4881"
+    },
+    {
+      "gate": "database-contracts",
+      "command": [
+        "npm",
+        "run",
+        "check:database-contracts"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 7.525,
+      "log_sha256": "a8c0b8d42c5b27e9d45eb5dc1254464ea60125cb948a78b487d390808b0d8e7d"
+    },
+    {
+      "gate": "site-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 31.208,
+      "log_sha256": "849ae4adf3ab6ae8515f1db3c14aa07fa4d3e091ddb80bf8aebfcbd902f6c05d"
+    },
+    {
+      "gate": "site-audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--audit-level=high",
+        "--json"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "seconds": 15.81,
+      "lock_unchanged": true,
+      "report_sha256": "1f3766278d5d8be9595416d258e07fc9d0fc26467bcba8d2b24ab555ed72bd4d",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 3,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 3
+      },
+      "error": null,
+      "advisories": [
+        {
+          "package": "bitcore-lib",
+          "severity": "low",
+          "fixAvailable": {
+            "name": "opentimestamps",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          },
+          "via": [
+            "elliptic"
+          ]
+        },
+        {
+          "package": "elliptic",
+          "severity": "low",
+          "fixAvailable": {
+            "name": "opentimestamps",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          },
+          "via": [
+            "https://github.com/advisories/GHSA-848j-6mx2-7j84"
+          ]
+        },
+        {
+          "package": "opentimestamps",
+          "severity": "low",
+          "fixAvailable": {
+            "name": "opentimestamps",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          },
+          "via": [
+            "bitcore-lib"
+          ]
+        }
+      ]
+    },
+    {
+      "gate": "karta-audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--audit-level=high",
+        "--json"
+      ],
+      "cwd": "karta",
+      "exit": 0,
+      "seconds": 12.23,
+      "lock_unchanged": true,
+      "report_sha256": "38dc0601eb9af9b5fa211ebb4d0eb66c963cb4c20a4e86f3286bb4b5564114e6",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "error": null,
+      "advisories": []
+    },
+    {
+      "gate": "distribution-unit-node26-compatible",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:unit",
+        "--",
+        "--maxWorkers=1"
+      ],
+      "cwd": ".",
+      "env": {
+        "NODE_OPTIONS": "--max-old-space-size=2048 --no-experimental-webstorage"
+      },
+      "exit": 0,
+      "seconds": 25.1,
+      "log_sha256": "1ff108d50b99c1123e70c470e0c6ce325ec23029e8ca566236bc9928164a4e26",
+      "prior_attempt": "Initial Node26 run:22 fixture failures. Same330 assertions pass with native WebStorage disabled; no source or assertion changed."
+    }
+  ],
+  "pending": [
+    "Fresh CI on exact submitted candidate",
+    "Native/device and production qualification"
+  ],
+  "blocked": [
+    "New mobile registry audit: previous automatic approval rejection documented in mobile/compat/README.md; not retried.",
+    "Production identity and canonical database reconciliation remain unqualified."
+  ],
+  "unchanged": [
+    "Existing worktrees/branches/main",
+    "Production services, DNS, data, payments and trading",
+    "Existing migration workers"
+  ],
+  "local_distribution_tests": {
+    "passed": 330,
+    "failed": 0,
+    "files": 11,
+    "node": "26.0.0",
+    "env_flag": "--no-experimental-webstorage",
+    "initial_environment_failure_preserved": true
+  }
+}

@@ -15,7 +15,9 @@
       "audit/iao-integrated-20261110-14d16": false,
       "codex/iao-compassion-consent-20261110": false,
       "audit/iao-reconciled-20261110": false,
-      "audit/reliability-oauth-20261110": false
+      "audit/reliability-oauth-20261110": false,
+      "fix/iao-preference-persistence-20261110": false,
+      "audit/unlazy-consolidation-20261111-ac3c": false
     }
   }
 }

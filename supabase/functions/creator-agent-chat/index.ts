@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
       .eq("id", agent_id)
       .single();
     if (aErr || !agent) return json({ error: "Agent not found" }, 404);
-    if (agent.user_id !== userId && !agent.is_public) {
+    if (agent.user_id !== userId) {
       return json({ error: "Forbidden" }, 403);
     }
 

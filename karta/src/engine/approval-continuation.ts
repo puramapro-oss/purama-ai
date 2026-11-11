@@ -1,5 +1,5 @@
 import { supabase } from "../db/supabase.js";
-import { canonicalJson } from "../lib/canonical-json.js";
+import { canonicalApprovalParams } from "./approval-params.js";
 import { restoreAgentExecutionTrigger } from "./execution-origin.js";
 import type { AgentTrigger, AgentType } from "./types.js";
 
@@ -88,7 +88,7 @@ export async function loadApprovalContinuation(
       if (entry.outcome !== "skipped" || entry.success !== false || entry.pendingActionId !== undefined) throw new ApprovalContinuationError();
     }
     const tool = action.tool_name;
-    const immutableParams = canonicalJson(action.tool_params);
+    const immutableParams = canonicalApprovalParams(action.tool_params);
     const executionTrigger = restoreAgentExecutionTrigger(action.execution_trigger, agentType);
     return {
       executionTrigger,
@@ -99,7 +99,7 @@ export async function loadApprovalContinuation(
       },
       repeatsResolvedAction: (candidateTool, params) => {
         if (candidateTool !== tool) return false;
-        try { return canonicalJson(params) === immutableParams; }
+        try { return canonicalApprovalParams(params) === immutableParams; }
         catch { throw new ApprovalContinuationError(); }
       },
     };
