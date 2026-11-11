@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     env:
-      DENO_DIR: ${{ runner.temp }}/connect-sdk-deno-cache
       DENO_NO_UPDATE_CHECK: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -33,6 +32,10 @@ jobs:
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.9.6
+      - name: Configure the isolated Deno cache
+        shell: bash
+        run: |
+          printf 'DENO_DIR=%s/connect-sdk-deno-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Verify the native Deno runtime
         run: deno --version
       - name: Exercise the handler with inert database and Stripe adapters
