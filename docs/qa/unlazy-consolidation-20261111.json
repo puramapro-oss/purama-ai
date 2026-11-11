@@ -1235,5 +1235,120 @@
     "reported_flows": 604,
     "limits": "Candidate-entry and per-entry branching limits retained; absent flow is not evidence of absence.",
     "log_sha256": "2dba12ae39dc8ca0b9025f3418bd8ef92db2d309e08fb8a77ffbefd2d51ec4a2"
+  },
+  "node22_sql_gate_repair": {
+    "recorded_at": "2026-11-11T07:32:48.306301+00:00",
+    "previous_ci_head": "c694ccda1fa5f374773c111db1a494495671ad3f",
+    "previous_ci_run": 42979110270,
+    "previous_ci_tree": "bd0b0b0fdd2cb039a492ad20f4acd50a04ccb9f6",
+    "previous_ci_karta": {
+      "test_files": 117,
+      "tests": 2045,
+      "pass": 2045,
+      "fail": 0,
+      "oauth_sql": 18,
+      "oauth_postgres_native": 11,
+      "types": "PASS",
+      "build": "PASS",
+      "journal_sql": "NOT_RUN_BAD_NODE22_OPTION_EXIT9"
+    },
+    "merged_fixture_followup": "5e2342fdab06201b920c762130676862f0d66789",
+    "fixture_composition": "Provider fixture exact from5e2342f; overage uses its inert key and keeps our extra deferred-mode replay case. No product source changed.",
+    "workflow_change": "Remove only --test-isolation=none; retain --test, concurrency1 and timeout30000.",
+    "actual_sql_tests": {
+      "pass": 24,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "seconds": 9.861
+    },
+    "concurrency_probe": {
+      "pass": 3,
+      "max_active": 1
+    },
+    "timeout_probe": {
+      "operation_ms": 35000,
+      "timeout_ms": 30000,
+      "observed_duration_ms": 30008,
+      "expected_exit": 1,
+      "observed_exit": 1,
+      "result": "PASS_EXPECTED_TIMEOUT"
+    },
+    "direct_launch_rejected": "Without --test the same operation completed at35006ms exit0; the requested timeout was silently ineffective. Not used.",
+    "source_inputs_unchanged": 7,
+    "receipt": {
+      "status": "PASS_LOCAL_CI_PENDING",
+      "timestamp": "2026-11-11T07:31:42.756839+00:00",
+      "head": "c694ccda1fa5f374773c111db1a494495671ad3f",
+      "merge_head": "5e2342fdab06201b920c762130676862f0d66789",
+      "changed_paths": [
+        ".github/workflows/purama-chef-hardening.yml"
+      ],
+      "workflow_before_sha256": "a0963e38a8e67beec0b73e29dd09a0cbbf715da1358e99f117d14ff2ab67e1c7",
+      "workflow_after_sha256": "84713266383872410a0754f286697748adfc273ab0a81d555084c6c1f7b878f0",
+      "staged_blob": "a3ef67a378cff384b724e2a4ee4344ad4f88cbcb",
+      "old_command": "node --test --test-isolation=none --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs",
+      "new_command": "node --test --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs",
+      "node_version": "22.23.4",
+      "pglite_version": "0.5.8",
+      "initial_ci_failure": {
+        "run_id": 42979110270,
+        "job_id": 130385054043,
+        "exit_code": 9,
+        "tests_executed_in_journal_gate": 0,
+        "reason": "node: bad option: --test-isolation=none",
+        "log": "agent-a-ci42979110270-karta-failed.log",
+        "log_sha256": "8cf4d251304529459774f1fafa02b73968678807e9be34eb918d6ab4e3ce1407"
+      },
+      "rejected_direct_variant": {
+        "reason": "Without --test the CLI timeout was ignored; 35000ms operation completed successfully.",
+        "receipt": "pr46-node22-direct-timeout.json",
+        "exit_code": 0,
+        "elapsed_seconds": 35.539
+      },
+      "qualified_sql": {
+        "receipt": "pr46-node22-runner-inbox-sql.json",
+        "tests": 24,
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0,
+        "exit_code": 0,
+        "elapsed_seconds": 9.861,
+        "log_sha256": "522255b98b18ff5b2d9087e8af51e60bbdd78edd586958e6952b310c86ce2b95"
+      },
+      "concurrency_probe": {
+        "receipt": "pr46-node22-runner-concurrency.json",
+        "passed": 3,
+        "maximum_active": 1,
+        "exit_code": 0
+      },
+      "effective_timeout_probe": {
+        "receipt": "pr46-node22-runner-timeout.json",
+        "expected_exit_code": 1,
+        "actual_exit_code": 1,
+        "configured_ms": 30000,
+        "operation_ms": 35000,
+        "reported_test_duration_ms": 30008.197458,
+        "elapsed_seconds": 30.329,
+        "result": "testTimeoutFailure, cancelled1; expected negative probe passed",
+        "log_sha256": "723251584b6407603259b6adf75baa63ffbd45aaa81eaf71a7cb7da16a472fa7"
+      },
+      "source_inputs_unchanged": {
+        "tests/revenue/inbox-sql.test.mjs": "d1ac3e575f2b48d7948e89fb7f87dddabbec57c94c31a631e44c4ffc15a2ddf8",
+        "supabase/functions/_shared/stripe-reconciliation.ts": "e53ed00ea8f68213335262447cac5fd7083cc5f79922dd23573e16bd132dfc75",
+        "supabase/migrations/20261110100000_stripe_reconciliation_events.sql": "ea0fd650f32bcd8edc9f88adc389c53a2c515a34ae288fa35062abe4b6c300af",
+        "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+        "karta/test/fixtures/subscriptions.sql": "36fa8e8982021b8152407d1539b3f83883e16f3221e817422d8832a0694b5114",
+        "supabase/migrations/20260727000000_subscriptions_security_and_trial.sql": "d896da9d463026292c5df56877207caff60104f7ce8a4ccaeb27d38314e1bb0e",
+        "supabase/migrations/20261110043500_trial_admission_atomic.sql": "fefd2f8420b5ef5dfd7f0f263109284d839601b81adbab70472d46c8c89672e0"
+      },
+      "no_dependency_install": true,
+      "no_other_workflow_change": true,
+      "remaining": "Run the unchanged assertions and corrected command in the next CI; no commit or push by this agent"
+    },
+    "receipt_sha256": "f6cf19a338e028e329860a742277a7414cb6ac602c7a1d74b5889bfa2bdfe8ca",
+    "new_ci_required": true
   }
 }

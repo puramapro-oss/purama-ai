@@ -157,7 +157,7 @@ function harness(db: PGlite) {
     throw new Error(`Unexpected remote import ${name}`);
   };
   const env: Record<string, string> = {
-    STRIPE_SECRET_KEY: 'sk_test_inert_fixture', STRIPE_WEBHOOK_SECRET: 'fixture-not-a-secret',
+    STRIPE_SECRET_KEY: 'sk_test_inert', STRIPE_WEBHOOK_SECRET: 'fixture-not-a-secret',
     SUPABASE_URL: 'https://fixture.invalid', SUPABASE_SERVICE_ROLE_KEY: 'fixture-not-a-secret',
   };
   // Execute the complete, real handler. Only runtime/provider boundaries are

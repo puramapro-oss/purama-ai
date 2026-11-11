@@ -2,7 +2,7 @@
 
 ## Résultat et portée
 
-**PARTIEL avant qualification CI du candidat final.** Une seule branche de consolidation est retenue dans [PR45](https://github.com/puramapro-oss/purama-ai/pull/45). Elle conserve les corrections des PR37 à PR44, reprend le SHA immuable `ca47f4693ffb6440faa130043a4e79f85090a35b` de PR46, puis ajoute les corrections locales vérifiées de facturation hors ligne et de parrainage. Les résultats CI finaux seront consignés dans la PR sans modifier après coup l’arbre testé.
+**PARTIEL avant qualification CI du candidat final.** Une seule branche de consolidation est retenue dans [PR45](https://github.com/puramapro-oss/purama-ai/pull/45). Elle conserve les corrections des PR37 à PR44, reprend le SHA immuable `ca47f4693ffb6440faa130043a4e79f85090a35b` de PR46, puis ajoute les corrections locales vérifiées de facturation hors ligne et de parrainage. Le suivi de fixtures PR46 `5e2342f` est également intégré, avec le correctif de lancement SQL décrit ci-dessous. Les résultats CI finaux seront consignés dans la PR sans modifier après coup l’arbre testé.
 
 Ce lot ne fusionne pas main, ne déploie pas le produit et ne qualifie ni les fournisseurs ni les données de production. Le JSON associé conserve les commandes, empreintes, erreurs et preuves de chaque étape ; les résultats historiques y sont séparés du candidat retenu.
 
@@ -51,6 +51,14 @@ GitNexus a été utilisé avant modification et avant chaque commit. Les impacts
 Les dépendances ont d’abord été réutilisées après comparaison de 622 versions verrouillées à la racine et 153 dans KARTA. PR28/PR46 ajoutent 14 paquets de développement dans KARTA, dont pg 8.23.1, sans changement de version, résolution ou intégrité d’un paquet préexistant. Le verrou racine est inchangé. Aucun paquet isolé supplémentaire de pilote n’est nécessaire dans le candidat final.
 
 Les audits de production réellement exécutés sur la tête précédente rapportent zéro vulnérabilité KARTA et trois alertes faibles sur la chaîne OpenTimestamps/bitcore-lib/elliptic du site, aucune modérée, élevée ou critique. La proposition de retour vers OpenTimestamps 0.0.0 n’a pas été appliquée. Les étapes d’audit registre exclues par la condition `pull_request` ne sont pas comptées PASS. L’audit mobile nouveau avait été refusé par une revue automatique dans le chantier source ; aucun autre chemin n’a été utilisé pour le relancer. Le snapshot daté reste une preuve limitée, distincte d’un audit actuel.
+
+## Correction du lancement SQL après la CI de `c694ccda`
+
+La CI CHEF 42979110270 exécute 2 045 tests KARTA dans 117 fichiers, 18 tests OAuth SQL et 11 cas OAuth PostgreSQL natifs avec succès. Le typage et le build KARTA passent également. Le gate du journal Stripe s’arrête ensuite avant toute assertion : Node 22 refuse l’option `--test-isolation=none`, sortie 9. Ce run n’est donc pas présenté comme une qualification complète réussie.
+
+La correction retire seulement cette option. Elle conserve `node --test --test-concurrency=1 --test-timeout=30000`. Le vrai groupe SQL passe 24/24 sous Node 22.23.4 et PGlite 0.5.8, en 9,861 secondes, avec les empreintes de ses sept entrées inchangées. Une contre-épreuve vérifie une concurrence maximale de 1 ; une opération prévue pour 35 secondes est effectivement arrêtée à 30 008 ms avec la sortie 1 attendue. Le lancement direct sans `--test` a été rejeté, car son succès apparent ignorait silencieusement le délai.
+
+La reprise `5e2342f` évite deux versions divergentes de la fixture fournisseur : type réel, paramètres optionnels, email et métadonnées normalisées sont repris exactement ; notre cas supplémentaire d’événement d’un mode étranger et de rejeu sans crédit est conservé. Aucun handler, migration, règle métier ni source de parrainage n’est modifié par ce complément. Une nouvelle CI reste requise sur le commit qui contient cette fusion et la correction de commande.
 
 ## Conditions de livraison conservées
 
