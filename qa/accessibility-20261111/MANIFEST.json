@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-11T18:42:07.260Z",
+  "overallStatus": "PARTIEL",
+  "scope": "IAO: interface du mode vocal et commandes de saisie écrite",
+  "base": {
+    "repository": "puramapro-oss/purama-ai",
+    "pr": 45,
+    "url": "https://github.com/puramapro-oss/purama-ai/pull/45",
+    "state": "open",
+    "draft": true,
+    "headRef": "audit/unlazy-consolidation-20261111-ac3c",
+    "headSha": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+    "baseRef": "audit/reliability-oauth-20261110",
+    "baseSha": "c04e2cb683ff81efe8443f4aa32d3447afb3b143",
+    "verifiedAt": "2026-11-11T18:41:26.954Z",
+    "referenceKind": "Pinned consolidation head supplied for integration; no moving-head chase"
+  },
+  "exactBaseTree": "3774728bac87d936b309fffa00730dfe011be442",
+  "localBranch": "feat/iao-accessibility-20261111",
+  "workingDirectory": "/workspace/scratch/f1f4b67ef5ca/iao-accessibility",
+  "publication": {
+    "performedByThisTask": false,
+    "remoteWrites": 0,
+    "files": [
+      "src/components/voice/VoiceMode.tsx",
+      "src/components/voice/AgentChatTab.tsx",
+      "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "tests/voice-consent/accessibility.spec.ts",
+      "tests/voice-consent/lifecycle.spec.ts",
+      "tests/async-ui/lifecycle.spec.ts",
+      ".github/workflows/purama-chef-hardening.yml",
+      "vercel.json",
+      "qa/accessibility-20261111/README.md",
+      "qa/accessibility-20261111/evidence/base-and-impact.json",
+      "qa/accessibility-20261111/evidence/voice-boundaries.json",
+      "qa/accessibility-20261111/MANIFEST.json"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      ".gitnexus",
+      "*.log",
+      "test-results",
+      "playwright-report",
+      "index GitNexus et binaires"
+    ]
+  },
+  "fileIntegrity": [
+    {
+      "path": "src/components/voice/VoiceMode.tsx",
+      "sha256": "0d8334db637e9248ebcdbeb93d3987192cb118f36fcd8bdc0f67ed15de3539bf",
+      "bytes": 13578
+    },
+    {
+      "path": "src/components/voice/AgentChatTab.tsx",
+      "sha256": "bbf5e77456a151d43dd6fc152f806a268d22faf2f60affce64bbf75ad5c86e96",
+      "bytes": 12193
+    },
+    {
+      "path": "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "sha256": "274547b5d3769960d60d391e3b2f4dcf6cc6480e58604237f72b091e80829baa",
+      "bytes": 10768
+    },
+    {
+      "path": "tests/voice-consent/accessibility.spec.ts",
+      "sha256": "a7a7f9e6a4fdce29f5d0dd80bc57171e99166fcfc8d8f45448bccea771c4d215",
+      "bytes": 9373
+    },
+    {
+      "path": "tests/voice-consent/lifecycle.spec.ts",
+      "sha256": "ff915dbcd7c4e6331110236369e7a11228217764e8e198d75a7a18069dccd746",
+      "bytes": 16945
+    },
+    {
+      "path": "tests/async-ui/lifecycle.spec.ts",
+      "sha256": "bd17b99f1d4e8dcc5290055052bb465daebe4b9633cddc31ae5d961bdd9c6392",
+      "bytes": 13808
+    },
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "sha256": "55cacb3fb13b8aa755cf350ff2f1111d5bcae643804200de93a5490702a240a9",
+      "bytes": 9363
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "19847c8542fa03a453402a14f2d0874d8569d2b6172a019cd88e62e5daee8b0f",
+      "bytes": 1031
+    },
+    {
+      "path": "qa/accessibility-20261111/README.md",
+      "sha256": "fec42c62548e540852ac9495ceb254db3deafbb9a1799c86414be28b07067569",
+      "bytes": 9653
+    },
+    {
+      "path": "qa/accessibility-20261111/evidence/base-and-impact.json",
+      "sha256": "15f25a968b5aea4b107bf73af479c01e2e438ef890575ce9fdc950d8b62870e3",
+      "bytes": 37024
+    },
+    {
+      "path": "qa/accessibility-20261111/evidence/voice-boundaries.json",
+      "sha256": "dfcfc2354710077360119ef1b40b0a73a66191e6b90802035c6d75bcfe04f8f5",
+      "bytes": 2627
+    }
+  ],
+  "validation": {
+    "initialRegression": {
+      "status": "PASS",
+      "detail": "Défauts reproduits avant correction : 8 échecs et 1 succès dans la première série de 9 tests DOM.",
+      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/dom-before.log"
+    },
+    "finalDomTests": {
+      "status": "PASS",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/voice/VoiceMode.accessibility.test.tsx",
+      "exitCode": 0,
+      "passed": 10,
+      "failed": 0,
+      "environment": "jsdom ; React et Radix réels ; voix et animations décoratives simulées",
+      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/dom-vitest4-after-rebase.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "runtimeVersion": "4.1.12"
+    },
+    "targetedLint": {
+      "status": "PASS",
+      "command": "node node_modules/eslint/bin/eslint.js src/components/voice/VoiceMode.tsx src/components/voice/AgentChatTab.tsx src/components/voice/VoiceMode.accessibility.test.tsx tests/voice-consent/accessibility.spec.ts tests/voice-consent/lifecycle.spec.ts tests/async-ui/lifecycle.spec.ts",
+      "exitCode": 0,
+      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/lint-after-rebase.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
+    },
+    "applicationTypecheck": {
+      "status": "PASS",
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
+      "exitCode": 0,
+      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/typecheck-after-rebase.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
+    },
+    "productionBuild": {
+      "status": "NON TESTÉ",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "finalCandidateVerified": false,
+      "currentBaseAttempted": false,
+      "detail": "Aucun build local après transposition ; les essais antérieurs sont archivés dans previousQualification.",
+      "next": "Build du commit candidat à qualifier en CI."
+    },
+    "browserDiscovery": {
+      "status": "PASS",
+      "commands": [
+        "node node_modules/@playwright/test/cli.js test --config tests/voice-consent/playwright.config.ts --list",
+        "node node_modules/@playwright/test/cli.js test --config tests/async-ui/playwright.config.ts --list"
+      ],
+      "exitCodes": [
+        0,
+        0
+      ],
+      "voiceConsentScenarios": 26,
+      "existingVoiceConsentScenarios": 21,
+      "addedAccessibilityScenarios": 5,
+      "asyncUiScenarios": 17,
+      "detail": "Découverte et chargement des scénarios uniquement ; ce n’est pas une exécution navigateur.",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
+    },
+    "browserExecution": {
+      "status": "NON TESTÉ",
+      "runner": ".github/workflows/purama-chef-hardening.yml",
+      "commands": [
+        "bash scripts/ci/run-site-browser.sh npm run test:voice-consent",
+        "bash scripts/ci/run-site-browser.sh npm run test:async-ui"
+      ],
+      "harness": "tests/voice-consent/harness.tsx",
+      "transport": "tests/voice-consent/transport.ts",
+      "hardwarePermission": "Aucune autorisation matérielle ; mediaDevices, MediaRecorder et Audio simulés avant montage. Le scénario clavier vérifie zéro appel au double getUserMedia.",
+      "screenshots": {
+        "directory": "test-results/voice-consent",
+        "creation": "testInfo.outputPath + page.screenshot + testInfo.attach",
+        "cases": [
+          "desktop keyboard modal",
+          "desktop long answer",
+          "320px text 200% long answer",
+          "failure in a new accessibility scenario when the page remains available"
+        ],
+        "artifactName": "iao-voice-accessibility-${{ github.sha }}",
+        "retentionDays": 14,
+        "status": "NON TESTÉ"
+      }
+    },
+    "hardwareAndAssistiveTechnology": {
+      "status": "NON TESTÉ",
+      "cases": [
+        "microphone physique",
+        "synthèse réelle",
+        "lecteur d’écran",
+        "contacteur",
+        "appareil mobile réel",
+        "zoom navigateur réel"
+      ]
+    },
+    "preservedVoiceBoundaries": {
+      "status": "PASS",
+      "evidence": "qa/accessibility-20261111/evidence/voice-boundaries.json",
+      "detail": "Portions de contrôle des tours, lecture automatique, capture, transcription, synthèse, annulation et fichiers réseau inchangés par comparaison exacte."
+    },
+    "gitNexus": {
+      "status": "PASS",
+      "preEditImpact": "HIGH/CRITICAL signalé avant les modifications produit.",
+      "postEditChangedFiles": 12,
+      "postEditChangedSymbols": 7,
+      "detail": "detect_changes relancé sur le diff de la base arrêtée. Index d’impact 85cfd25 ; source UI amont vérifiée identique. Nouveaux fichiers de tests revus séparément. Aucune absence de processus n’est prise comme preuve de non-régression.",
+      "evidence": "qa/accessibility-20261111/evidence/base-and-impact.json",
+      "localDiffEvidence": "qa/accessibility-20261111/evidence/gitnexus-detect-changes-final.txt",
+      "finalIndexScope": "All 12 publication files staged; 7 existing indexed symbols matched; new tests reviewed independently."
+    },
+    "workflowEvidence": {
+      "status": "PASS",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "parsed": true,
+      "onlyOneUploaderAdded": true,
+      "runtimeAndExistingStepsUnchanged": true,
+      "upstreamKartaChangesPreserved": true,
+      "action": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "condition": "always()",
+      "path": "test-results/voice-consent",
+      "retentionDays": 14
+    },
+    "deploymentOverride": {
+      "status": "PASS",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "branch": "feat/iao-accessibility-20261111",
+      "enabled": false,
+      "allOtherVercelConfigurationUnchanged": true
+    }
+  },
+  "nextOwner": "Coordinateur de la tâche : publier le candidat isolé et contrôler le build ainsi que les 26 scénarios voice-consent et 17 scénarios async-ui sur ce commit exact.",
+  "recordType": "Relevé de qualification locale avant publication et CI",
+  "currentStatusLocations": [
+    "PR correspondant à cette correction IAO",
+    "Dossier partagé ONE associé à la PR #4"
+  ],
+  "recordInterpretation": "Les statuts sont ceux du contrôle local horodaté ; les résultats distants et l’état courant sont suivis dans les emplacements ci-dessus.",
+  "previousQualification": {
+    "base": {
+      "repository": "puramapro-oss/purama-ai",
+      "pr": 45,
+      "url": "https://github.com/puramapro-oss/purama-ai/pull/45",
+      "state": "open",
+      "draft": true,
+      "headRef": "audit/unlazy-consolidation-20261111-ac3c",
+      "headSha": "85cfd25a44913c77720842ca7f73a661854a447b",
+      "baseRef": "audit/reliability-oauth-20261110",
+      "baseSha": "c04e2cb683ff81efe8443f4aa32d3447afb3b143",
+      "verifiedAt": "2026-11-11T18:21:54.581Z"
+    },
+    "exactBaseTree": "d69b737ded2a720c7d75a0123ea9f592caa97bb2",
+    "generatedAt": "2026-11-11T18:29:05.328Z",
+    "domTests": {
+      "passed": 10,
+      "vitest": "3.2.7"
+    },
+    "productionBuild": {
+      "status": "PARTIEL",
+      "finalCandidateVerified": false,
+      "attempts": [
+        {
+          "command": "node node_modules/vite/bin/vite.js build",
+          "exitCode": 137,
+          "detail": "Processus tué après 4 261 modules transformés ; compilation concurrente signalée par le coordinateur.",
+          "evidenceLocalOnly": "qa/accessibility-20261111/evidence/build-interrupted-137.log"
+        },
+        {
+          "command": "NODE_OPTIONS=--max-old-space-size=2048 node node_modules/vite/bin/vite.js build",
+          "exitCode": 130,
+          "detail": "Arrêt volontaire de la seule session de build IAO 50563 à la demande du coordinateur ; aucune relance.",
+          "evidenceLocalOnly": "qa/accessibility-20261111/evidence/build.log"
+        }
+      ],
+      "next": "Valider npm run build sur le même commit candidat en CI. Aucun nouveau build local nécessaire si cette CI réussit."
+    }
+  }
+}

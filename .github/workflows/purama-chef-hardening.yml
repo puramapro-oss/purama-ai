@@ -161,6 +161,13 @@ jobs:
       - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
       - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
       - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
+      - name: Archive voice consent and accessibility browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-voice-accessibility-${{ github.sha }}
+          path: test-results/voice-consent
+          retention-days: 14
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
 

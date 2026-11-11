@@ -52,7 +52,7 @@ test('shared agent chat: old history cannot overwrite a new conversation', async
 test('shared agent chat: old reply cannot enter new conversation or unlock a new send', async ({ page }) => {
   await page.goto('/tests/async-ui/index.html');
   await resolveHistory(page, await waitQuery(page, 'agent_chat_history'), '');
-  const input = page.getByPlaceholder('Parle à email…');
+  const input = page.getByRole('textbox', { name: 'Message pour email', exact: true });
   await input.fill('QUESTION-OLD'); await input.press('Enter');
   await expect.poll(() => page.evaluate(() => window.asyncHarness.replies.length)).toBe(1);
   await page.getByRole('button', { name: 'Nouvelle', exact: true }).click();
@@ -71,12 +71,12 @@ test('shared agent chat: old reply cannot enter new conversation or unlock a new
 test('shared agent chat: agent change clears draft and refuses old history', async ({ page }) => {
   await page.goto('/tests/async-ui/index.html');
   const old = await waitQuery(page, 'agent_chat_history');
-  await page.getByPlaceholder('Parle à email…').fill('EMAIL-PRIVATE-DRAFT');
+  await page.getByRole('textbox', { name: 'Message pour email', exact: true }).fill('EMAIL-PRIVATE-DRAFT');
   await page.evaluate(() => window.asyncHarness.setAgentType('partner'));
   const current = await waitQuery(page, 'agent_chat_history', 'agent_type', 'partner');
   await resolveHistory(page, current, 'PARTNER-CURRENT');
   await resolveHistory(page, old, 'EMAIL-OLD');
-  await expect(page.getByPlaceholder('Parle à partner…')).toHaveValue('');
+  await expect(page.getByRole('textbox', { name: 'Message pour partner', exact: true })).toHaveValue('');
   await expect(page.getByText('PARTNER-CURRENT', { exact: true })).toBeVisible();
   await expect(page.getByText('EMAIL-OLD', { exact: true })).toHaveCount(0);
 });
@@ -114,12 +114,12 @@ test('auth: initial failure cannot sign out a newer session', async ({ page }) =
 test('shared agent chat: account changes clear private drafts and history', async ({ page }) => {
   await page.goto('/tests/async-ui/index.html');
   const old = await waitQuery(page, 'agent_chat_history', 'user_id', A);
-  await page.getByPlaceholder('Parle à email…').fill('ACCOUNT-A-PRIVATE');
+  await page.getByRole('textbox', { name: 'Message pour email', exact: true }).fill('ACCOUNT-A-PRIVATE');
   await page.evaluate(id => window.asyncHarness.setIdentity(id), B);
   const current = await waitQuery(page, 'agent_chat_history', 'user_id', B);
   await resolveHistory(page, current, 'ACCOUNT-B-HISTORY');
   await resolveHistory(page, old, 'ACCOUNT-A-HISTORY');
-  await expect(page.getByPlaceholder('Parle à email…')).toHaveValue('');
+  await expect(page.getByRole('textbox', { name: 'Message pour email', exact: true })).toHaveValue('');
   await expect(page.getByText('ACCOUNT-B-HISTORY', { exact: true })).toBeVisible();
   await expect(page.getByText('ACCOUNT-A-HISTORY', { exact: true })).toHaveCount(0);
 });
@@ -127,17 +127,17 @@ test('shared agent chat: account changes clear private drafts and history', asyn
 test('shared agent chat: refreshing the same identity preserves the draft', async ({ page }) => {
   await page.goto('/tests/async-ui/index.html');
   await resolveHistory(page, await waitQuery(page, 'agent_chat_history'), '');
-  await page.getByPlaceholder('Parle à email…').fill('KEEP-MY-DRAFT');
+  await page.getByRole('textbox', { name: 'Message pour email', exact: true }).fill('KEEP-MY-DRAFT');
   await page.evaluate(id => window.asyncHarness.setIdentity(id), A);
   await paint(page);
-  await expect(page.getByPlaceholder('Parle à email…')).toHaveValue('KEEP-MY-DRAFT');
+  await expect(page.getByRole('textbox', { name: 'Message pour email', exact: true })).toHaveValue('KEEP-MY-DRAFT');
   expect(await page.evaluate(() => window.asyncHarness.pending.length)).toBe(1);
 });
 
 test('shared agent chat: delayed initial history cannot erase a new turn', async ({ page }) => {
   await page.goto('/tests/async-ui/index.html');
   const history = await waitQuery(page, 'agent_chat_history');
-  const input = page.getByPlaceholder('Parle à email…');
+  const input = page.getByRole('textbox', { name: 'Message pour email', exact: true });
   await input.fill('MY-NEW-QUESTION'); await input.press('Enter');
   await expect.poll(() => page.evaluate(() => window.asyncHarness.replies.length)).toBe(1);
   await resolveHistory(page, history, '');

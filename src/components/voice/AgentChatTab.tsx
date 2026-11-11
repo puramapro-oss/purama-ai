@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Send, Loader2, Bot, Sparkles, Plus, Headphones } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Card } from '@/components/ui/card';
@@ -34,6 +34,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   const userId = user?.id ?? null;
   const [requests] = useState(createRequestScope);
   const voice = useVoice();
+  const reducedMotion = useReducedMotion();
   const { cancelRecording, stopSpeaking } = voice;
   const resourceKey = JSON.stringify([userId, agentType]);
   const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
@@ -68,8 +69,8 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
   }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: reducedMotion ? 'auto' : 'smooth' });
+  }, [messages, reducedMotion]);
 
   // Auto-play last assistant message when voice settings.auto_play
   const { speak } = voice;
@@ -201,8 +202,9 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
           ) : messages.map(m => (
             <motion.div
               key={m.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={reducedMotion ? { duration: 0 } : undefined}
               className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}
             >
               <div
@@ -243,7 +245,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
                 {agentEmoji}
               </div>
               <div className="inline-block rounded-2xl p-3 bg-secondary/30 border border-border">
-                <Loader2 className="w-4 h-4 animate-spin" style={{ color: agentColor }} />
+                <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin motion-reduce:animate-none" style={{ color: agentColor }} />
               </div>
             </div>
           )}
@@ -266,18 +268,21 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
                   handleSend();
                 }
               }}
-              placeholder={`Parle à ${agentName}…`}
+              placeholder={`Écris à ${agentName}…`}
+              aria-label={`Message pour ${agentName}`}
               rows={2}
               className="resize-none flex-1"
               disabled={sending}
             />
             <Button
+              type="button"
               onClick={handleSend}
               disabled={sending || !input.trim()}
-              className="self-end"
+              aria-label="Envoyer le message"
+              className="min-h-11 min-w-11 self-end"
               style={{ background: agentColor }}
             >
-              <Send className="w-4 h-4" />
+              <Send aria-hidden="true" className="w-4 h-4" />
             </Button>
           </div>
         </div>
