@@ -1497,5 +1497,1376 @@
       }
     },
     "new_ci_required": true
+  },
+  "social_entraide_integration": {
+    "status": "PASS_LOCAL_PENDING_COMMON_CI",
+    "qualified_core": {
+      "head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+      "tree": "6e842d921de93b94a1540da43e8820f5ef6f1e40",
+      "chef_run": 42981609057,
+      "mobile_run": 42981608972,
+      "status": "ALL_JOBS_SUCCESS",
+      "checkout": "bcdb3afe45bc672240d361bded92a81d546560c7",
+      "checkout_tree_equals_head": true,
+      "karta_tests": 2045,
+      "karta_files": 117,
+      "billing_tests": 164,
+      "real_stripe_sdk_tests": 39,
+      "journal_sql_tests": 24,
+      "oauth_native_tests": 11,
+      "subscription_native_tests": 7,
+      "quality_chromium_tests": 156,
+      "referral_tests_within_quality": 35,
+      "audit_steps_skipped": true,
+      "production_qualified": false
+    },
+    "social": {
+      "commit": "deb01eb0cd6921bab3f69adb300988b8579222b4",
+      "tree": "36b8df1dad1a70864296a2deb95d0e47f5f38f23",
+      "parents": [
+        "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+        "fb2e7ea6aa1b8d35d54702927112f40e8ae82ac9"
+      ],
+      "receipt_sha256": "5e71137aa7dfcfb32ee90f47a4c19435ed8075ef95d0b7efc0c2b3925342c438",
+      "evidence_directory": "qa/social-reconciliation-20261111",
+      "gates": {
+        "social-core": {
+          "status": "PASS",
+          "cases": 104,
+          "exit_code": 0,
+          "log_sha256": "69179635e45ab754d4594a09caa8bd232f126d70e278c5a10ece0c822d5b8354"
+        },
+        "social-sdk": {
+          "status": "PASS",
+          "cases": 14,
+          "exit_code": 0,
+          "log_sha256": "3a4b0467a7ad880d9bc570f057fa558fe7a23cc24dbf1442f3685f0ab5c19630"
+        },
+        "social-sql": {
+          "status": "PASS",
+          "cases": 40,
+          "exit_code": 0,
+          "log_sha256": "14bc57af1ad43506f852a894f45883c5f80795d098042f12106d90fa1b4f64cf"
+        },
+        "assistant-policy-final": {
+          "status": "PASS",
+          "cases": 55,
+          "exit_code": 0,
+          "log_sha256": "14e2697e0684891a1ce5c54d102d27f51e676fa82a65b3396c4061db87f267f8"
+        },
+        "social-browser-final": {
+          "status": "PASS",
+          "cases": 29,
+          "exit_code": 0,
+          "log_sha256": "f8a7e53d7c97ed7bcbe51d198990f2495e10646ebef98495295bc073b2ab394b"
+        },
+        "social-hook-final": {
+          "status": "PASS",
+          "cases": 11,
+          "exit_code": 0,
+          "log_sha256": "7ac1e2eba9c454d970c6e73b6cedcb8fe6b6b7beb0422c29a4e8f5098bd2f0ee"
+        },
+        "social-production-sdk": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "3981b35cb5540c2b08cf5f215e4550e4b36f61f18cf3f3542979a1951ccb0877"
+        },
+        "database-contracts": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3"
+        },
+        "workflow-union": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "bae57606f56f0051baf9c72d87b5f9229126ec119a154d4401eb17a46bd9ffd4"
+        },
+        "site-typecheck-final": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "site-build-final": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "77315f6fc355b14573a8adf9ffaeb8676550829049ee15c46a4252bca002cb21"
+        },
+        "site-lint-final": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "3ca0260213af8c1b6d9114836f7837b4d32e5f9ab53c89fd36e863ed6f90b065"
+        }
+      },
+      "graph": {
+        "index-final": {
+          "receipt_sha256": "d64aba3c9c9fdc7c522774430f448085bf344e88263e0bfd8b051c528ddef8ee",
+          "log_sha256": "cc792c79ab3aaf35cec28784c31a7250f16117fd46aacec8239b8ae19e278434",
+          "analysis": null
+        },
+        "detect-staged": {
+          "receipt_sha256": "a21f9bdd2512c6c89f39e8ea341d4c88dca71b0bd4696a26e6a91ee95034b8f0",
+          "log_sha256": "a984f96e052cdc7a1d1de7ac536de15e4c91a55a2fe17d4d6bc07542472fdd81",
+          "analysis": {
+            "format": "GitNexus CLI text",
+            "files": 51,
+            "symbols": 1138,
+            "processes": 49,
+            "risk": "CRITICAL",
+            "listing_capped": true,
+            "counts_cover_full_analysis": true,
+            "preview_lines": [
+              "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • RunDemo → SocialConnectionError (4 steps) — changed: beginSocialConnection, begin, SocialConnectionError",
+              "  • RunDemo → IsOAuthSocialPlatform (4 steps) — changed: isOAuthSocialPlatform, beginSocialConnection, begin",
+              "  • RunDemo → IsSocialUserId (4 steps) — changed: isSocialUserId, beginSocialConnection, begin",
+              "  • RunDemo → Now (4 steps) — changed: beginSocialConnection, begin, now",
+              "  • HandleSocialAccountsRequest → Authenticate (3 steps) — changed: authenticate, handleSocialAccountsRequest, identity",
+              "  • ReconcileSocialPost → Query (3 steps) — changed: reconcileSocialPost, Query, from"
+            ]
+          }
+        },
+        "detect-compare-base": {
+          "receipt_sha256": "628e89737db2ae340ad035cccad1447ab9458074516551ff2a94936882150a77",
+          "log_sha256": "b4c0c84c5024d7b29ebf38f9d861abde17d7a036a453f6bcec8bbfdb535c9642",
+          "analysis": {
+            "format": "GitNexus CLI text",
+            "files": 51,
+            "symbols": 1138,
+            "processes": 49,
+            "risk": "CRITICAL",
+            "listing_capped": true,
+            "counts_cover_full_analysis": true,
+            "preview_lines": [
+              "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • RunDemo → SocialConnectionError (4 steps) — changed: SocialConnectionError, beginSocialConnection, begin",
+              "  • RunDemo → IsOAuthSocialPlatform (4 steps) — changed: isOAuthSocialPlatform, beginSocialConnection, begin",
+              "  • RunDemo → IsSocialUserId (4 steps) — changed: isSocialUserId, beginSocialConnection, begin",
+              "  • RunDemo → Now (4 steps) — changed: beginSocialConnection, begin, now",
+              "  • HandleSocialAccountsRequest → Authenticate (3 steps) — changed: authenticate, handleSocialAccountsRequest, identity",
+              "  • ReconcileSocialPost → Query (3 steps) — changed: Query, reconcileSocialPost, from"
+            ]
+          }
+        },
+        "detect-compare-main": {
+          "receipt_sha256": "2b61dbe28d3d603eefc2adc3029bc10658ddb644bb4714048e0e7557523cc006",
+          "log_sha256": "183541440981380a69bcaed045b87c3bcb02d854e422ffb86d229122fcb1fb2f",
+          "analysis": {
+            "format": "GitNexus CLI text",
+            "files": 1202,
+            "symbols": 10970,
+            "processes": 587,
+            "risk": "CRITICAL",
+            "listing_capped": true,
+            "counts_cover_full_analysis": true,
+            "preview_lines": [
+              "  • RunDailyReport → SendEmail (4 steps) — changed: sendEmail, deliver, notify",
+              "  • RunDailyReport → Deliver (3 steps) — changed: deliver, notify",
+              "  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized",
+              "  • Execute → JevValidationError (7 steps) — changed: JevValidationError, validateJevRequest, exactKeys, keys, field, fail, execute",
+              "  • RunChefWorkerCycle → Advance (5 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc, advance",
+              "  • RunDailyReport → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt",
+              "  • RunDailyReport → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify",
+              "  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: ChefProcessStopUnconfirmedError, tryFinishMission, housekeeping, runChefWorkerCycle",
+              "  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, assertRpc",
+              "  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc"
+            ]
+          }
+        }
+      },
+      "source_files": 47,
+      "proof_files": 4
+    },
+    "entraide": {
+      "commit": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+      "tree": "95d56c0c06754bb3bf09dcda78db7a0c9ecc4cd3",
+      "receipt_sha256": "65caaa8c8dd52d167d7b633ed9ed6312742ffe49fa750d467257c5a1bbe2bd9b",
+      "evidence_directory": "qa/entraide-integration-20261111",
+      "qualifications": {
+        "postgres_native": {
+          "tests": 92,
+          "pass": 92,
+          "fail": 0,
+          "skipped": 0,
+          "runtime": "PostgreSQL18.4 / Node22.23.4 / pg8.23.0",
+          "evidence": "native-result.json"
+        },
+        "http_sdk_frontend": {
+          "tests": 30,
+          "pass": 30,
+          "fail": 0,
+          "skipped": 0,
+          "private_matching_required": true,
+          "evidence": "http-sdk-frontend-30.log"
+        },
+        "ui_regression": {
+          "same_cases": 9,
+          "before_pass": 3,
+          "before_fail": 6,
+          "after_pass": 9,
+          "after_fail": 0,
+          "skipped": 0,
+          "evidence": "ui-account-receipt.json"
+        },
+        "public_ci_command": {
+          "tests": 22,
+          "pass": 22,
+          "fail": 0,
+          "skipped": 0,
+          "overlap_with_http_sdk_frontend": 13,
+          "additional_ui_cases": 9,
+          "evidence": "public-ci-tests.log"
+        },
+        "site_typecheck": "PASS without private package",
+        "site_build": "PASS without private package, synthetic public configuration",
+        "site_lint": {
+          "exit": 0,
+          "errors": 0,
+          "warnings": 21
+        },
+        "edge_typecheck": "PASS all four entries, cached-only SDK and canonical generated matching",
+        "workflow_lint": "PASS two workflows",
+        "generated_contracts": {
+          "exit": 0,
+          "evidence": "generated-contracts.json",
+          "catalog_sources": [
+            "p3_schema.sql",
+            "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql"
+          ],
+          "all_migrations_discovered": false
+        }
+      },
+      "donor_selection": {
+        "paths_total": 80,
+        "paths_selected": 78,
+        "paths_omitted": [
+          "src/lib/entraide.ts",
+          "tests/entraide/compatibility-client.test.mjs"
+        ],
+        "omitted_compatibility_tests": 2,
+        "reason": "No application consumer or package export surface; old adapter absent from the core. Private implementation is preserved in the donor and is not duplicated."
+      },
+      "private_runtime_prerequisite": {
+        "package": "@purama/entraide0.1.0",
+        "matching_source_sha256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24",
+        "generated_bundle_sha256": "b1fa6f3626855835b1e550ba5a96ff3d8f6a78a1e6135d12a4cfb31da06ff4d2",
+        "builder": "scripts/build-entraide-matching.mjs",
+        "frontend_requires_private_package": false,
+        "edge_runtime_requires_generated_bundle": true,
+        "public_ci_does_not_qualify_private_adapter": true
+      },
+      "graph": {
+        "cold_index": "TIMEOUT at150s, preserved",
+        "warm_index": "PASS",
+        "detect_changes": {
+          "status": "PASS",
+          "scope": "staged",
+          "files": 113,
+          "symbols_reported": 819,
+          "affected_processes_reported": 15,
+          "risk": "HIGH",
+          "coverage": "Budgeted graph result, not exhaustive. Some displayed items are limited by CLI output.",
+          "stdout": "Changes: 113 files, 819 symbols\nAffected processes: 15\nRisk level: high\n\nChanged symbols:\n  Const root → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const files → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const configPath → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const input → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const config → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const domain → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const options → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property allowImportingTsExtensions → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property noEmit → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property paths → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const tracked → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Function inspect → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property selected → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property dependencyDiagnostics → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property files → qa/entraide-reconciliation-20261110/typecheck.mjs\n... and 804 more\n\nAffected execution flows:\n  • App → Cn (5 steps) — changed: App\n  • App → UseAuth (5 steps) — changed: App\n  • App → EmptyActivity (5 steps) — changed: App\n  • App → RemovePreferenceListener (4 steps) — changed: App\n  • App → HandleOpen (4 steps) — changed: App\n  • App → WellbeingCopy (4 steps) — changed: App\n  • App → ApplySession (3 steps) — changed: App\n  • App → Skip (3 steps) — changed: App\n  • App → RememberIntroSeen (3 steps) — changed: App\n  • Entraide → ToProfileDraft (3 steps) — changed: EntraideWorkspace, Entraide, toProfileDraft\n... and 5 more\n",
+          "stdout_sha256": "7459644bc5d3dd2718e82cb441c8ca7014113855abbeb5ffe88154ff0086945a"
+        },
+        "seconds": 118.37,
+        "nodes": 18388,
+        "edges": 50565,
+        "flows_reported": 594,
+        "limits": [
+          "FTS intentionally disabled",
+          "2 historical large JSON proofs skipped above512KiB",
+          "1172 of1372 process entry candidates unranked,3336 callees omitted by branching budget",
+          "2018 cross-language field sites not linked; absent graph relationship is not proof of absence"
+        ],
+        "targeted_impacts": [
+          {
+            "target": "App",
+            "file": "src/App.tsx",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:src/App.tsx:App",
+                "name": "App",
+                "type": "Function",
+                "filePath": "src/App.tsx"
+              },
+              "direction": "upstream",
+              "impactedCount": 0,
+              "risk": "UNKNOWN",
+              "riskSharedAxes": "UNKNOWN",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+              "epistemic": "exact",
+              "summary": {
+                "direct": 0,
+                "processes_affected": 0,
+                "modules_affected": 0
+              },
+              "byDepthCounts": {},
+              "affected_processes": [],
+              "affected_modules": []
+            },
+            "log_sha256": "30826d41ad2b0fdd8302b5ca13d49f072695058eb8853ffd12e5928b2e0dd85f"
+          },
+          {
+            "target": "EntraideWorkspace",
+            "file": "src/pages/Entraide.tsx",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:src/pages/Entraide.tsx:EntraideWorkspace",
+                "name": "EntraideWorkspace",
+                "type": "Function",
+                "filePath": "src/pages/Entraide.tsx"
+              },
+              "direction": "upstream",
+              "impactedCount": 1,
+              "risk": "LOW",
+              "riskSharedAxes": "LOW",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "epistemic": "exact",
+              "summary": {
+                "direct": 1,
+                "processes_affected": 1,
+                "modules_affected": 1
+              },
+              "byDepthCounts": {
+                "1": 1
+              },
+              "affected_processes": [
+                {
+                  "name": "Entraide",
+                  "type": "Function",
+                  "filePath": "src/pages/Entraide.tsx",
+                  "affected_process_count": 3,
+                  "total_hits": 3,
+                  "earliest_broken_step": 1
+                }
+              ],
+              "affected_modules": [
+                {
+                  "name": "Pages",
+                  "hits": 1,
+                  "impact": "direct"
+                }
+              ]
+            },
+            "log_sha256": "4b20f1e1945d1ef33a12aca5ae391e8668ab348ee939e56abcffdbfa17ae3626"
+          },
+          {
+            "target": "createEntraideHandler",
+            "file": "supabase/functions/_shared/entraide-http.ts",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:supabase/functions/_shared/entraide-http.ts:createEntraideHandler",
+                "name": "createEntraideHandler",
+                "type": "Function",
+                "filePath": "supabase/functions/_shared/entraide-http.ts"
+              },
+              "direction": "upstream",
+              "impactedCount": 4,
+              "risk": "LOW",
+              "riskSharedAxes": "LOW",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "epistemic": "exact",
+              "summary": {
+                "direct": 4,
+                "processes_affected": 0,
+                "modules_affected": 0
+              },
+              "byDepthCounts": {
+                "1": 4
+              },
+              "affected_processes": [],
+              "affected_modules": []
+            },
+            "log_sha256": "e72c11c4329782d0b02dc9d84b6aeef3d15a01635c9348e709ead451a413176f"
+          },
+          {
+            "target": "createSupabaseEntraidePorts",
+            "file": "supabase/functions/_shared/entraide-supabase.ts",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:supabase/functions/_shared/entraide-supabase.ts:createSupabaseEntraidePorts",
+                "name": "createSupabaseEntraidePorts",
+                "type": "Function",
+                "filePath": "supabase/functions/_shared/entraide-supabase.ts"
+              },
+              "direction": "upstream",
+              "impactedCount": 5,
+              "risk": "LOW",
+              "riskSharedAxes": "LOW",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "epistemic": "exact",
+              "summary": {
+                "direct": 1,
+                "processes_affected": 0,
+                "modules_affected": 0
+              },
+              "byDepthCounts": {
+                "1": 1,
+                "2": 4
+              },
+              "affected_processes": [],
+              "affected_modules": []
+            },
+            "log_sha256": "b5ae175d80495488117dc0750bb13053cc3341eb7ed6fd9af5fdd548a49190e3"
+          }
+        ]
+      }
+    },
+    "agent_execution": {
+      "sha256": "db84778fdec06746b8a6dfb8dcd2d7351beeb1b3c6a49e725554233c33f1f160",
+      "receipt": {
+        "recorded_at": "2026-11-11T08:31:56.818707+00:00",
+        "phase": "final local qualification after independent SDK identity review",
+        "base_head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+        "production_file": "src/hooks/useAgentExecution.ts",
+        "before_sha256": "9d80f3b86875c942ab1e6fb6b21d04fcbfeb94f2daa2292db234b2e9c49c6ee6",
+        "after_sha256": "cc69a601f6200c55cb3864727af78e7a42da4f2922ef1072620c14308baa67cb",
+        "test_file": "tests/social-agent-execution.test.mjs",
+        "test_sha256": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+        "runtime": "Node22.23.4/React18.3.1/JSDOM26.1.0",
+        "boundary": "Production React hook and scope helpers. Eleven permanent cases, including real Supabase/PostgREST SDK with inert fetch. No hosted Auth, database or provider qualification.",
+        "gates": {
+          "before": {
+            "exit_code": 1,
+            "counts": {
+              "tests": 10,
+              "pass": 1,
+              "fail": 9,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "d0b4e0c9869d5f271cb9def12dc3c7ee6285b5bb6a2d06a276f25765fabf177f"
+          },
+          "after": {
+            "exit_code": 0,
+            "counts": {
+              "tests": 10,
+              "pass": 10,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "046da0d3668245b1bf2bcd8c60f15063776076898a1b3fa78e5e79ad6aa142a4"
+          },
+          "before-sdk-headers": {
+            "exit_code": 1,
+            "counts": {
+              "tests": 11,
+              "pass": 10,
+              "fail": 1,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "59fe085dddf62ff7104203cdf100baac375a52fd9fa47e3d9b2b10ea2d33878e"
+          },
+          "after-sdk-headers": {
+            "exit_code": 0,
+            "counts": {
+              "tests": 11,
+              "pass": 11,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "5e9bafe791451acfeb4d758db54012003ce657caa8b92d8fdb270eacdd208d7c"
+          },
+          "independent-sdk-bearer-before": {
+            "exit_code": 1,
+            "counts": {
+              "tests": 1,
+              "pass": 0,
+              "fail": 1,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "e06dce2943ea123833c411074677fd5a257a694135e6351d7c147d53bef618cb"
+          },
+          "independent-sdk-bearer-after": {
+            "exit_code": 0,
+            "counts": {
+              "tests": 1,
+              "pass": 1,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "9d53db6dad6b28f6177a94587569f338640fa23dea3f61ee3317c4897bd21fb3"
+          }
+        },
+        "gitnexus": {
+          "impact_file": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/root-agent-execution-review/impact-before.log",
+          "risk": "LOW",
+          "resolved_upstream_callers": 2,
+          "log_sha256": "3f5cdac4c16034cf988934078d170367ef84c81ea6cd7a00595ea5d0ed161203"
+        },
+        "status": "PASS",
+        "production_sha256": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+        "initial_phase_receipt_sha256": "626a86a28f70cd3fcfff73a596ddbe75afd84fbfff07815329cd0c7a7606415e",
+        "fixes": [
+          "Per-owner and per-agent state and request leases",
+          "Captured session owner and explicit bearer for proxy invocation",
+          "Same bearer captured on both PostgREST requests without mutating global client headers",
+          "AbortSignal passed to proxy and PostgREST; guards after each await",
+          "Reset and unmount invalidate old requests; duplicate admission denied"
+        ],
+        "independent_review": {
+          "status": "PASS",
+          "reviewer": "audit_portfolio",
+          "validation_helper_unchanged": true,
+          "reset_layout_loop_found": false
+        },
+        "installed_packages": {
+          "react": "18.3.1",
+          "jsdom": "26.1.0",
+          "typescript": "5.8.3",
+          "@supabase/supabase-js": "2.91.0",
+          "@supabase/postgrest-js": "2.91.0"
+        },
+        "diff_check": {
+          "exit_code": 0,
+          "output": ""
+        }
+      }
+    },
+    "entraide_browser": {
+      "sha256": "b87272ed41c72ae88ce887ee556cc655ed1cf32d8bd53038b79d7f5c82718225",
+      "receipt": {
+        "status": "PASS_LOCAL_CHROMIUM_HTTP_POSTGRES",
+        "source_commit": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "source_tree": "95d56c0c06754bb3bf09dcda78db7a0c9ecc4cd3",
+        "run_id": "entraide-native-a1ad617d948a",
+        "started_at_utc": "2026-11-11T08:41:41.788063+00:00",
+        "finished_at_utc": "2026-11-11T08:42:14.872908+00:00",
+        "browser": {
+          "browser": "Chromium via installed Google Chrome",
+          "version": "157.0.8103.39",
+          "bundle_version": "8103.39",
+          "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+          "firefox_expected_absent": true,
+          "firefox_app_absent": true
+        },
+        "actual_trace_user_agents": [
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+        ],
+        "recorded_page_network_origins": [
+          "http://127.0.0.1:65504"
+        ],
+        "node": "v22.23.4",
+        "postgres": "postgres (PostgreSQL) 18.4 (Homebrew)",
+        "pg_driver": {
+          "path": "/opt/homebrew/lib/node_modules/pg/lib/index.js",
+          "version": "8.23.0",
+          "sha256": "3fad6e6d3d976edbabe0cbc9e1d39f4340bcb719bbbb186a0d3a24f3dbd4a94c",
+          "package_sha256": "e42dd36cba6e9dd8dbb6f773a2f7be8a8c3c273e18b155e42e75961a4cb8bc28"
+        },
+        "counts": {
+          "tests": 3,
+          "pass": 3,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "playwright_stats": {
+          "startTime": "2026-11-11T08:41:47.041Z",
+          "duration": 27178.349000000002,
+          "expected": 3,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "case_results": [
+          {
+            "title": "profil enregistré, mission privée publiée, Bob rejoint et Alice déclare la fin",
+            "status": "passed",
+            "duration_ms": 6317,
+            "retry": 0,
+            "http_events": 24,
+            "lost_confirmations_after_commit": 0,
+            "browser_errors": [],
+            "screenshot": {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/screenshots/mission-declared-complete.png",
+              "sha256": "84ee18b9856002fa7667f8b053d5f6dd0729d9319bafb69a60ef263886d711b6",
+              "bytes": 126821
+            },
+            "final_state_counts": {
+              "profiles": 2,
+              "missions": 1,
+              "participants": 2,
+              "contacts": 0,
+              "blocks": 0
+            },
+            "mission_statuses": [
+              "terminee"
+            ],
+            "contact_statuses": []
+          },
+          {
+            "title": "contact accepté puis bloqué et débloqué sans réactiver l’acceptation",
+            "status": "passed",
+            "duration_ms": 7608,
+            "retry": 0,
+            "http_events": 15,
+            "lost_confirmations_after_commit": 0,
+            "browser_errors": [],
+            "screenshot": {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/screenshots/contact-unblocked-without-restoring-consent.png",
+              "sha256": "f0d5e77cb8637f6ef3fb27dfe10664a9a2f534e78afa6886c78e2af2d7c21b42",
+              "bytes": 65319
+            },
+            "final_state_counts": {
+              "profiles": 2,
+              "missions": 1,
+              "participants": 2,
+              "contacts": 1,
+              "blocks": 0
+            },
+            "mission_statuses": [
+              "terminee"
+            ],
+            "contact_statuses": [
+              "blocked"
+            ]
+          },
+          {
+            "title": "brouillon préservé, créations reprises sans doublon et interface à 390 pixels",
+            "status": "passed",
+            "duration_ms": 6185,
+            "retry": 0,
+            "http_events": 18,
+            "lost_confirmations_after_commit": 2,
+            "browser_errors": [
+              {
+                "kind": "console",
+                "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+                "url": "http://127.0.0.1:65504/functions/v1/entraide-missions"
+              },
+              {
+                "kind": "console",
+                "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+                "url": "http://127.0.0.1:65504/functions/v1/entraide-missions"
+              }
+            ],
+            "screenshot": {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/screenshots/mobile-390px.png",
+              "sha256": "b89a416c1b76187d6e5241039035aa4d4a2a0da93ba57958215c6b53f4da4ced",
+              "bytes": 54685
+            },
+            "final_state_counts": {
+              "profiles": 2,
+              "missions": 4,
+              "participants": 5,
+              "contacts": 1,
+              "blocks": 0
+            },
+            "mission_statuses": [
+              "terminee",
+              "ouverte",
+              "ouverte",
+              "ouverte"
+            ],
+            "contact_statuses": [
+              "blocked"
+            ]
+          }
+        ],
+        "total_http_events": 57,
+        "lost_confirmations_after_real_commit": 2,
+        "unexpected_http_errors": [],
+        "source_inputs_unchanged": true,
+        "assertions_or_timeouts_changed": false,
+        "tests_retried": false,
+        "native_92_reexecuted": false,
+        "source_commit_modified": false,
+        "matching_source_sha256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24",
+        "matching_bundle_sha256": "b1fa6f3626855835b1e550ba5a96ff3d8f6a78a1e6135d12a4cfb31da06ff4d2",
+        "source_input_manifest_sha256": "ccf656c24498af5baa41d7be72e051f4398c82cec5d7a65d374529b9b7c6589e",
+        "cleanup": {
+          "stopped": true,
+          "cluster_removed": true,
+          "pid_file_absent": true,
+          "postmaster_absent": true,
+          "socket_absent": true,
+          "tcp_port_free": true,
+          "errors": [],
+          "status_exit_code": 3,
+          "http_server_port_closed": true,
+          "owned_browser_processes_after_test": [],
+          "owned_browser_processes_before_removal": []
+        },
+        "cluster_identity": {
+          "port": "65491",
+          "data_directory": "/private/tmp/entraide-ac3c/c-57ba9308a147/data",
+          "server_version": "18.4 (Homebrew)",
+          "listen_addresses": "127.0.0.1",
+          "system_identifier": "7706831344339589261",
+          "unix_socket_directories": "/private/tmp/entraide-ac3c/c-57ba9308a147/socket"
+        },
+        "proofs": {
+          "runner_result": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/result.json",
+            "sha256": "500abd229abc7c00bc3b8b108f0d3a084b8ae76ef678c4a9d80b468f16ac209a"
+          },
+          "playwright_json": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/playwright-report.json",
+            "sha256": "dd77dafc1d15b3b6129a7c2d50d24139ca533f64c582d4700192451570c046cf"
+          },
+          "browser_log": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/browser-http-postgres.log",
+            "sha256": "540f67afd0301c21a0860a5c13a862952069490bb9c79ea6cc75dad32b6d304e"
+          },
+          "runtime_runner": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/run-browser-native.py",
+            "sha256": "66bb26e7b6f7097bca1f559f27dfce6483f7c1c8da8104e51a062abc15557949"
+          },
+          "chromium_config": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/browser.chromium.config.mjs",
+            "sha256": "eebc66d4a9af9350eed89875eecfec7148c6d740a95b182df36db14064634ff4"
+          },
+          "distinct_traces": [
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-contact-accepté-pu-8eb36-ans-réactiver-l’acceptation-entraide-local/trace-alice-0.zip",
+              "bytes": 349778,
+              "sha256": "a37fe1ea1c6720a69b06260e5f877ca8041f97a24952a0a406f92ed039d754e8"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-contact-accepté-pu-8eb36-ans-réactiver-l’acceptation-entraide-local/trace-bob-1.zip",
+              "bytes": 512448,
+              "sha256": "98648cca2a59b02494ec73fa43753df0da13e5393ff59450982b8012f5c6f820"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-brouillon-préservé-ed523-n-et-interface-à-390-pixels-entraide-local/trace-alice-0.zip",
+              "bytes": 2297622,
+              "sha256": "44d6df7207343809180df78e20a6faebf4b2d2e905cd5b600712fc511cf8997f"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/trace-alice-0.zip",
+              "bytes": 1038347,
+              "sha256": "a7531b671909a539b61ee1a2b9072b55dcc702755f340f3a8775d8ce804ee3aa"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/trace-bob-1.zip",
+              "bytes": 750801,
+              "sha256": "b7631fd269fee0e4a592023275fb016b4a6802091344f61f7fd25c1d9f9252ac"
+            }
+          ]
+        },
+        "coverage": [
+          "Real Entraide page/React Query/transport/CSS",
+          "Actual HTTP handlers and mission/contact PostgreSQL RPCs",
+          "Canonical matching function",
+          "Lost confirmation after committed SQL; same retry ID yields one row",
+          "Contact consent, revocation and non-reactivation",
+          "390px horizontal overflow assertions"
+        ],
+        "fixtures": [
+          "Alice/Bob synthetic authentication",
+          "SQL profile ports replacing Supabase PostgREST",
+          "Remote Google Fonts omitted"
+        ],
+        "not_verified": [
+          "Hosted Supabase Auth/PostgREST",
+          "Deployed Edge runtime and production database",
+          "Physical devices",
+          "Current Firefox execution"
+        ],
+        "supersedes_prior_non_tested_statement": "The local Entraide browser→HTTP→SQL boundary is now qualified on8fecab1. Earlier QA receipt remains a dated pre-browser snapshot. Hosted/deployed limits still apply.",
+        "source_or_provider_mutation": false,
+        "installation": false,
+        "push": false,
+        "deployment": false
+      }
+    },
+    "protected_paths_review": {
+      "count": 69,
+      "reviewer": "audit_portfolio",
+      "same_as_f766_in_both_children": true,
+      "receipt_file": null
+    },
+    "limits": [
+      "A new common CI is required on the actual composed commit.",
+      "Canonical matching remains private and generated locally; no private implementation is committed.",
+      "Hosted Supabase Auth/PostgREST, deployed Edge, real providers, physical devices, and production load are not qualified by these isolated tests.",
+      "Child browser and native proofs apply to their explicit commits; source identity is checked in the composition."
+    ],
+    "publication": {
+      "push": false,
+      "ci_triggered": false,
+      "deployment": false,
+      "provider_calls": false
+    },
+    "recorded_at": "2026-11-11T08:57:20.106519+00:00",
+    "composition": {
+      "phase": "local composition with both root proof documents; common CI still required",
+      "parents": [
+        "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "deb01eb0cd6921bab3f69adb300988b8579222b4"
+      ],
+      "base": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+      "merge_conflicts": 0,
+      "expected_changed_paths": 163,
+      "actual_changed_paths": 163,
+      "unexpected_paths": [],
+      "workflow_union_before_timeout_sha256": "de9015e5233901a07514f5248a5ea0645a0f6b34b9c9c079cca258857caac6db",
+      "workflow_sha256": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383",
+      "only_additional_workflow_change": "Entraide public file deadline30000ms, matching tested local command",
+      "workflow_impact": {
+        "risk": "UNKNOWN",
+        "exit_code": 1,
+        "reason": "Configuration target not represented; exact manual union independently checked, full CI required"
+      },
+      "source_tree_before_receipt": "06ad544e2444da3765513d70ef8168fe75706220",
+      "remote_push": false,
+      "guarded_edit_attempts": [
+        "No edit when a single-line matcher rejected the folded YAML command",
+        "No edit when impact returned UNKNOWN with exit1; retained as unknown, manual configuration review used"
+      ],
+      "path_count_epoch": "163 paths before the two root proof documents; 165 paths including them",
+      "final_changed_paths_including_root_proofs": 165,
+      "final_staged_paths_against_first_parent": 53
+    },
+    "composed_local_gates": {
+      "sources_before": {
+        "src/hooks/useAgentExecution.ts": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+        "tests/social-agent-execution.test.mjs": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+        "src/pages/Entraide.tsx": "9e3e7c352a7e01edb0bee91dc1e11323c6777cca0533e36f7fd9028f235be867",
+        "tests/entraide/ui-account-scope.test.mjs": "b1857d57ab7c41a133e62e0062b483a3f50ec1d864ac746a52d265da25c3fa8f",
+        "tests/entraide/frontend.test.mjs": "94821491e4a74f55f47161312b7e5560514044e494b8026934177c8dcabf2829",
+        "src/lib/entraide-http.ts": "49f09190efee61448ecddfbd0c9393e6eb33fa15a72806dbac20d7f32f018591",
+        "src/App.tsx": "8b4eff9a28b07476d1455e6b031a4703767e23b82f2ab2839c0dbbdcb50cda43",
+        ".github/workflows/purama-chef-hardening.yml": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383",
+        "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+        "package-lock.json": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a"
+      },
+      "sources_after": {
+        "src/hooks/useAgentExecution.ts": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+        "tests/social-agent-execution.test.mjs": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+        "src/pages/Entraide.tsx": "9e3e7c352a7e01edb0bee91dc1e11323c6777cca0533e36f7fd9028f235be867",
+        "tests/entraide/ui-account-scope.test.mjs": "b1857d57ab7c41a133e62e0062b483a3f50ec1d864ac746a52d265da25c3fa8f",
+        "tests/entraide/frontend.test.mjs": "94821491e4a74f55f47161312b7e5560514044e494b8026934177c8dcabf2829",
+        "src/lib/entraide-http.ts": "49f09190efee61448ecddfbd0c9393e6eb33fa15a72806dbac20d7f32f018591",
+        "src/App.tsx": "8b4eff9a28b07476d1455e6b031a4703767e23b82f2ab2839c0dbbdcb50cda43",
+        ".github/workflows/purama-chef-hardening.yml": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383",
+        "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+        "package-lock.json": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a"
+      },
+      "sources_unchanged": true,
+      "gates": [
+        {
+          "label": "public-tests",
+          "exit_code": 0,
+          "duration_seconds": 14.098,
+          "command": [
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "--test",
+            "--test-concurrency=1",
+            "--test-timeout=30000",
+            "tests/social-agent-execution.test.mjs",
+            "tests/entraide/frontend.test.mjs",
+            "tests/entraide/ui-account-scope.test.mjs"
+          ],
+          "log_sha256": "d60778da85ea92d34949cae5406b970fc6fe46b148003cbb9802f6caaaa90798",
+          "tail": "30 - session acquisition must complete for the same owner before a proxy call\n  ---\n  duration_ms: 18.353042\n  type: 'test'\n  ...\n# Subtest: concurrent submissions admit a single execution until it settles\nok 31 - concurrent submissions admit a single execution until it settles\n  ---\n  duration_ms: 7.398166\n  type: 'test'\n  ...\n# Subtest: the proxy receives the captured owner bearer and an abortable signal\nok 32 - the proxy receives the captured owner bearer and an abortable signal\n  ---\n  duration_ms: 14.063625\n  type: 'test'\n  ...\n# Subtest: real PostgREST retains captured A bearer when SDK session moves to B before React commits\nok 33 - real PostgREST retains captured A bearer when SDK session moves to B before React commits\n  ---\n  duration_ms: 200.641042\n  type: 'test'\n  ...\n1..33\n# tests 33\n# suites 0\n# pass 33\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 13898.162125\n"
+        },
+        {
+          "label": "site-types",
+          "exit_code": 0,
+          "duration_seconds": 44.289,
+          "command": [
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit",
+            "-p",
+            "tsconfig.app.json"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        },
+        {
+          "label": "workflow-lint",
+          "exit_code": 0,
+          "duration_seconds": 1.398,
+          "command": [
+            "/opt/homebrew/bin/actionlint",
+            ".github/workflows/purama-chef-hardening.yml",
+            ".github/workflows/entraide-project-flow.yml"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      ],
+      "actionlint_found": true
+    },
+    "entraide_input_identity": {
+      "matched": 29,
+      "paths": [
+        "scripts/build-entraide-matching.mjs",
+        "src/lib/entraide-http.ts",
+        "supabase/functions/_shared/response.ts",
+        "supabase/functions/_shared/rate-limit.ts",
+        "supabase/functions/_shared/entraide-http.ts",
+        "supabase/functions/_shared/entraide-runtime.ts",
+        "supabase/functions/_shared/entraide-supabase.ts",
+        "supabase/migrations/20260904000000_entraide.sql",
+        "supabase/migrations/20260905000000_entraide_profile_privacy.sql",
+        "supabase/migrations/20261110020000_entraide_contact_atomic.sql",
+        "supabase/migrations/20261110021000_entraide_missions_atomic.sql",
+        "supabase/migrations/20261110022000_entraide_mission_requests.sql",
+        "tests/entraide/applied-pr23-db.test.mjs",
+        "tests/entraide/concurrency-db.test.mjs",
+        "tests/entraide/contact-db.test.mjs",
+        "tests/entraide/db-harness.mjs",
+        "tests/entraide/fixtures/pr17-20261110000000_entraide_missions_atomic.sql",
+        "tests/entraide/fixtures/pr17-20261110001000_entraide_own_profile.sql",
+        "tests/entraide/fixtures/pr23-20261110021000_entraide_missions_atomic.sql",
+        "tests/entraide/frontend.test.mjs",
+        "tests/entraide/http.test.mjs",
+        "tests/entraide/missions-db.test.mjs",
+        "tests/entraide/native-required.mjs",
+        "tests/entraide/package-lock.json",
+        "tests/entraide/package.json",
+        "tests/entraide/preflight-db.test.mjs",
+        "tests/entraide/reconciliation-db.test.mjs",
+        "tests/entraide/response-contract.test.mjs",
+        "tests/entraide/supabase-adapter.test.mjs"
+      ],
+      "explicitly_separate_inputs": [
+        {
+          "path": ".git/entraide-integration/run-native.py",
+          "reason": "local runner evidence, not application source"
+        },
+        {
+          "path": "supabase/functions/_shared/vendor/entraide-matching.js",
+          "reason": "private generated bundle; source and bundle hashes retained in child native/browser receipts"
+        }
+      ],
+      "mismatches": []
+    },
+    "graph_reconciliation": {
+      "recorded_at": "2026-11-11T09:23:55.826587+00:00",
+      "source_receipt": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-reindex-evidence.json",
+      "source_receipt_sha256": "0326d512463bd9005ab92d47467b4639f3a6a870bb7c4054f283900551b6178a",
+      "proof_scope": "Full private graph rebuild and detector reruns on the frozen composed source, before this documentation-only finalization. Child graph results remain tied to their original commits.",
+      "evidence": {
+        "status": "PASS_REBUILT_WITH_EXPLICIT_GRAPH_LIMITATIONS",
+        "index": {
+          "command": [
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+            "analyze",
+            "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+            "--force",
+            "--no-parse-cache",
+            "--index-only",
+            "--skip-fts",
+            "--workers",
+            "1",
+            "--name",
+            "purama-ai-unlazy-ac3c",
+            "--default-branch",
+            "main"
+          ],
+          "started_at": "2026-11-11T09:07:56.121058+00:00",
+          "finished_at": "2026-11-11T09:10:21.611734+00:00",
+          "duration_seconds": 145.489,
+          "exit_code": 0,
+          "timeout": false,
+          "log_sha256": "4bf331f9398528afadc015e21b5a098b302ba07d334083d4639ac6cc075c99e8"
+        },
+        "fresh_index_stats": {
+          "files": 1511,
+          "nodes": 19573,
+          "edges": 54690,
+          "communities": 818,
+          "processes": 609,
+          "embeddings": 0
+        },
+        "detect": [
+          {
+            "scope": "staged",
+            "command": [
+              "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+              "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+              "detect-changes",
+              "--scope",
+              "staged",
+              "--repo",
+              "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+              "--limit",
+              "10000"
+            ],
+            "started_at": "2026-11-11T09:10:21.972782+00:00",
+            "duration_seconds": 1.211,
+            "exit_code": 0,
+            "log_sha256": "fb401cd59ffd2425e296693ed9bbbe04dc689b736f3931e8fadc1fffbe0bf6d3",
+            "analysis": {
+              "files": 53,
+              "symbols": 1147,
+              "processes": 48,
+              "risk": "CRITICAL",
+              "listing_capped": true,
+              "preview_flows": [
+                "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • RunDemo → SocialConnectionError (4 steps) — changed: SocialConnectionError, beginSocialConnection, begin",
+                "  • RunDemo → IsOAuthSocialPlatform (4 steps) — changed: isOAuthSocialPlatform, beginSocialConnection, begin",
+                "  • RunDemo → IsSocialUserId (4 steps) — changed: isSocialUserId, beginSocialConnection, begin",
+                "  • RunDemo → Now (4 steps) — changed: beginSocialConnection, begin, now",
+                "  • HandleSocialAccountsRequest → Authenticate (3 steps) — changed: authenticate, handleSocialAccountsRequest, identity",
+                "  • ReconcileSocialPost → Query (3 steps) — changed: Query, reconcileSocialPost, from"
+              ]
+            }
+          },
+          {
+            "scope": "compare-core",
+            "command": [
+              "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+              "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+              "detect-changes",
+              "--scope",
+              "compare",
+              "--base-ref",
+              "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+              "--repo",
+              "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+              "--limit",
+              "10000"
+            ],
+            "started_at": "2026-11-11T09:10:23.184511+00:00",
+            "duration_seconds": 1.53,
+            "exit_code": 0,
+            "log_sha256": "1b257a30aa10e9512d34d512c94c1a75cbe1b21e9f8820ee1a7d42514b32976f",
+            "analysis": {
+              "files": 165,
+              "symbols": 1972,
+              "processes": 61,
+              "risk": "CRITICAL",
+              "listing_capped": true,
+              "preview_flows": [
+                "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • App → Cn (5 steps) — changed: App",
+                "  • App → UseAuth (5 steps) — changed: App",
+                "  • App → EmptyActivity (5 steps) — changed: App",
+                "  • App → RemovePreferenceListener (4 steps) — changed: App",
+                "  • App → HandleOpen (4 steps) — changed: App",
+                "  • App → WellbeingCopy (4 steps) — changed: App"
+              ]
+            }
+          },
+          {
+            "scope": "compare-main",
+            "command": [
+              "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+              "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+              "detect-changes",
+              "--scope",
+              "compare",
+              "--base-ref",
+              "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+              "--repo",
+              "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+              "--limit",
+              "10000"
+            ],
+            "started_at": "2026-11-11T09:10:24.715409+00:00",
+            "duration_seconds": 3.839,
+            "exit_code": 0,
+            "log_sha256": "b7369879aa63d411173a57ea20ac9032bfe15a2b52c68344dfc9b91432ecc1a2",
+            "analysis": {
+              "files": 1298,
+              "symbols": 11785,
+              "processes": 578,
+              "risk": "CRITICAL",
+              "listing_capped": true,
+              "preview_flows": [
+                "  • RunDailyReport → SendEmail (4 steps) — changed: sendEmail, deliver, notify",
+                "  • RunDailyReport → Deliver (3 steps) — changed: deliver, notify",
+                "  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized",
+                "  • Execute → JevValidationError (7 steps) — changed: JevValidationError, validateJevRequest, exactKeys, keys, field, fail, execute",
+                "  • RunChefWorkerCycle → Advance (5 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc, advance",
+                "  • RunDailyReport → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt",
+                "  • RunDailyReport → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify",
+                "  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: tryFinishMission, housekeeping, ChefProcessStopUnconfirmedError, runChefWorkerCycle",
+                "  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, assertRpc",
+                "  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc"
+              ]
+            }
+          }
+        ],
+        "unchanged": {
+          "head": true,
+          "source_file_count": true,
+          "source_manifest_sha256": true,
+          "index_raw_sha256": true,
+          "stage_entries_sha256": true,
+          "status_sha256": true,
+          "staged_diff_sha256": true,
+          "unstaged_diff_sha256": true,
+          "global_files": true
+        },
+        "before_manifest": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-reindex-before.json",
+        "after_manifest": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-reindex-after.json",
+        "old_results": {
+          "classification": "UNRELIABLE_INSTRUMENTATION",
+          "preserved": true,
+          "sha256": {
+            "phase2-index.log": "73c47207f5715465203117343f63f47ae267e87fc008f66c629d0449ba6ffe82",
+            "phase2-index.json": "4a7f0f62309050726576da5ec46b87a741101eef155f287abb1cab986c7af6a0",
+            "phase2-detect-receipts.json": "cc7d8400deb7f4697f28b13408f0900d8d5ae61ba60175f6b91ce42c58831c5f",
+            "phase2-detect-staged.log": "8396ffcb82c4536e8f0b3b4162cf8b7dde21d9d14470387dbbe8b3f499d2da8e",
+            "phase2-detect-compare-core.log": "f63520e319e4d31f46352ca2b263ce9be8126fbb5729b23cfd3b8392bb8c7c55",
+            "phase2-detect-compare-main.log": "d38a06031327a2385a4dd11bb5462ed5fdef1fd84cf9165cb98daa21acdfee7c"
+          },
+          "metadata_preserved": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-incremental-meta-preserved.json"
+        },
+        "private_tool_home": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-tool-home",
+        "global_configuration_changed": false,
+        "code_changed": false,
+        "stage_changed": false,
+        "scope": "Only the owned primary clone private index and new evidence under .git/unlazy-gates; no code/stage/commit/push/CI modification.",
+        "semantic_review": {
+          "reviewed_at": "2026-11-11T09:12:05.860908+00:00",
+          "result": "PASS_FOR_REPAIR_OF_OBSERVED_INCONSISTENCY",
+          "scope": "CLI previews only; not an exhaustive validation of every graph edge",
+          "observations": [
+            "Staged preview now links SocialSettings to refresh/listAccounts/invoke/getSocialSession, social OAuth to beginSocialConnection/begin, and social handlers to authenticate/reconcileSocialPost.",
+            "Core comparison includes SocialSettings flows and App flow changes attributable to the composed social/Entraide changes.",
+            "Historical comparison shows distinct RunDailyReport, HandleRequest, Execute and RunChefWorkerCycle changes rather than a repeated unrelated symbol.",
+            "The previously observed repeated DynamicAgentFormContent/root mapping is absent from the current CLI previews."
+          ],
+          "full_graph_correctness_proven": false,
+          "cause": "The full rebuild removed the observed inconsistent mappings; the precise incremental-cache defect was not proven."
+        },
+        "comparison": [
+          {
+            "scope": "staged",
+            "before_unreliable": {
+              "files": 53,
+              "symbols": 196,
+              "processes": 598
+            },
+            "after_full_rebuild": {
+              "files": 53,
+              "symbols": 1147,
+              "processes": 48,
+              "risk": "CRITICAL"
+            }
+          },
+          {
+            "scope": "compare-core",
+            "before_unreliable": {
+              "files": 165,
+              "symbols": 349,
+              "processes": 598
+            },
+            "after_full_rebuild": {
+              "files": 165,
+              "symbols": 1972,
+              "processes": 61,
+              "risk": "CRITICAL"
+            }
+          },
+          {
+            "scope": "compare-main",
+            "before_unreliable": {
+              "files": 1298,
+              "symbols": 2171,
+              "processes": 609
+            },
+            "after_full_rebuild": {
+              "files": 1298,
+              "symbols": 11785,
+              "processes": 578,
+              "risk": "CRITICAL"
+            }
+          }
+        ],
+        "limits": {
+          "listing_capped": true,
+          "fts_enabled": false,
+          "large_files_skipped": [
+            "qa/iao-runtime-finalization-20261110/verification.json",
+            "qa/ots-stamp-atomicity-20261110/native-final.json"
+          ],
+          "cross_language_property_links_declined": 2172,
+          "entry_point_candidates_total": 1462,
+          "entry_point_candidates_dropped": 1262,
+          "callee_branches_skipped": 3580,
+          "walks_cut_by_budget": 36,
+          "name_fallback_call_sites": 177,
+          "name_fallback_distinct_pairs": 40,
+          "name_fallback_impossible_refusals": 554,
+          "absence_of_flow_is_not_absence_of_code_path": true,
+          "main_comparison_ref": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+          "main_comparison_is_historical_and_separate_from_core": true
+        },
+        "runtime": {
+          "node": "v22.23.4",
+          "gitnexus": "1.6.12",
+          "memory_mode": "off",
+          "node_max_old_space_size_mib": 2048,
+          "workers": 1,
+          "analyze_timeout_seconds": 360,
+          "home_unchanged": "/Users/matissdornier",
+          "private_index_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.gitnexus",
+          "parse_cache_disabled": true,
+          "index_only": true,
+          "help_log_sha256": "b2bc187973b5547c81d09e644548ec462cc8925c240d0c47aad1adc419b7a803"
+        },
+        "automatic_approval_rejection_observed": false,
+        "no_source_or_stage_mutation": true,
+        "new_tests_or_ci_executed": false
+      },
+      "invariant_fingerprints": {
+        "head": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "source_file_count": 1720,
+        "source_manifest_sha256": "07f2807f2d795a39ae1caf4cef8404be1b28bfb2aeade5eac1e015a292ca41c3",
+        "index_raw_sha256": "5c41a4440b94bc3165213c379fb7fe6986e8e0665e12f6b502e708bd6afa300a",
+        "stage_entries_sha256": "f8bb6f43680f7e6ee338e8a917ee25c589ad6f3df21d16207e75491351d73cd8",
+        "status_sha256": "261a5a0cebf3a839b7398e9cab7666816a709eb10eb87f3489e2f23a3fb152b8",
+        "staged_diff_sha256": "a3526f1a417d48e4fe3346417d4064c66d867c3371bdf889df910b5cc5236411",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "global_files": {
+          "/Users/matissdornier/.gitconfig": "8040606950a53be102382ebc51bc2dd900dde2a10a84c71d0f0f1b7efeb9a4bb",
+          "/Users/matissdornier/.gitnexus/config.json": null,
+          "/Users/matissdornier/.gitnexus/registry.json": "4f35c135113dca9cda1174a85cab19236c1c1cc83893cdc869001637ec4266d1",
+          "/Users/matissdornier/.gitnexus/update-check.json": "d11acb9e033a661720a77af8a8cee4f584172f15da3707aa6cf38b692abffbc5"
+        }
+      },
+      "finalization_preflight": {
+        "head": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "merge_head": "deb01eb0cd6921bab3f69adb300988b8579222b4",
+        "staged_paths": 53,
+        "paths_since_core": 165,
+        "nonproof_composition_paths": 163,
+        "no_unmerged_paths": true,
+        "source_files_identical_to_rebuild_snapshot": true,
+        "protected_files_against_core": {
+          "count": 69,
+          "stage_and_worktree_exact": true,
+          "sha256": {
+            "bun.lockb": "570b2bffe5052345e4a55eddc0077d6cef9b44f618123e9d746f4230bab0f298",
+            "components.json": "9820835141c54e5b5dfbb68b3c3790db73c9ebfb967884ae3fccd058d698a1a6",
+            "package-lock.json": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a",
+            "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+            "src/components/auth/AuthProvider.tsx": "c6724608ad3fb66b4115a5ead3d1d92ae31b14233e1df7204e2e922220e70cf8",
+            "src/components/auth/ProtectedRoute.tsx": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f",
+            "src/components/influencer/AchievementBadges.tsx": "c86af41592a041f4217b201e2bf531fab58fa1180be3937cbcfd03304a7bbca5",
+            "src/components/influencer/InfluencerLeaderboard.tsx": "42c0ea19b9e9363d04ac35b4dbe5f4402cae7ec1d1cd65e32bf1011c5aba4e94",
+            "src/components/influencer/PerformanceCharts.tsx": "911edc4d16d88d711c08cf9cc360fd9f7e3260047b414592d5e584a0430febef",
+            "src/components/influencer/ReferralBanner.tsx": "b2db82d2901dd311cde6e09514e13d6d8238bd98b780667c63aaa0e1d884aabb",
+            "src/components/influencer/TierBadge.tsx": "e6669c623e2721fc23563363e79b3edf3d3cc7a7744fcbe9bb3d9d80d1911029",
+            "src/components/influencer/TierProgress.tsx": "a85503c95b2d3a58cfb7ff0424d02bd717b9af7aeca0aa3ca0a1b27b54ba104c",
+            "src/components/influencer/TierUpgradeConfetti.tsx": "141d5e63dac59cb45c8c45f968d81326c371a6ca6e5f3e21ffc36e760c1be017",
+            "src/hooks/useInfluencer.ts": "3a41bd18e4646df2e3cd557d89fa7ae09126ce24c97211485cf9286d6edb4bd6",
+            "src/hooks/useReferral.ts": "d43d25c6a595b71cf1035ab05d8aa93bc3b36ef01cfc08ef0c39affee5e78d49",
+            "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+            "src/hooks/useSubscription.ts": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e",
+            "src/lib/plans.ts": "529d81a0f700a1726625ebee2c0e4f6b21a7fbca1ddb754991106cc0b53fdade",
+            "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+            "src/lib/stripe-connect.ts": "d4022d777704f617600d41c2d1d9fd790bd084ec0c5dc35e08bc70830f8ea836",
+            "src/pages/AdminInfluencers.tsx": "0b3ba466b56cd7a0de4bcc6fa0bb48d0758770eada4e9f48b288071708e3358a",
+            "src/pages/DashboardBilling.tsx": "575dcfd1a7aa447d175dd69e78cf8bcd57bbd54ab125412576be9a565feb4c61",
+            "src/pages/GoRedirect.tsx": "405584c312e329b3b3135140f69c7d6f6e2011b408b02089c4d508220816bfe5",
+            "src/pages/Index.tsx": "ac18fe99c43dbf2307224ffa084fcfffbe2183ac9f1e8d2eb88540dd350139fc",
+            "src/pages/InfluencerDashboard.tsx": "34bbbe0b3de257fef347304fe674c9be17702f4d671747d6f5a2f36dca7d8b60",
+            "src/pages/InfluencerSignup.tsx": "8ced50dac542ec89cc5ddd9b67584a4d5620090c7ead420f6b60ea264953d403",
+            "src/pages/Pricing.tsx": "fdfa29f389c1debf5de860fd9bbc094ca79ded39b9c27dc9884e3e6be48831e6",
+            "supabase/functions/_shared/billing-boundary.ts": "7e7014545795c8d0ae0d9cb20cd4697852b4086b7d56440bb9a4de4d8f37e25c",
+            "supabase/functions/_shared/stripe-reconciliation.ts": "e53ed00ea8f68213335262447cac5fd7083cc5f79922dd23573e16bd132dfc75",
+            "supabase/functions/_shared/stripe-subscription-state.ts": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5",
+            "supabase/functions/check-subscription/index.ts": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97",
+            "supabase/functions/create-checkout/index.ts": "388034d63cbde5544666ebddb81261363fe40d4192f428037ce30e2f53377b1b",
+            "supabase/functions/customer-portal/index.ts": "fbbd1146bccb4ba21720fc7dba64f3eb4ee470653716d107e5cc39953ad42988",
+            "supabase/functions/process-influencer-payments/index.ts": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489",
+            "supabase/functions/stripe-webhook/index.ts": "4bf4f143a217c8862fd304fe4b13ea20e851319f49f44af4b6b1c9acc5795a48",
+            "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+            "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql": "586178ff7ceb246b06bfc6764ad1e43140e967f63548126616c6b51001a44ef0",
+            "supabase/migrations/20260727000000_subscriptions_security_and_trial.sql": "d896da9d463026292c5df56877207caff60104f7ce8a4ccaeb27d38314e1bb0e",
+            "supabase/migrations/20261110100000_stripe_reconciliation_events.sql": "ea0fd650f32bcd8edc9f88adc389c53a2c515a34ae288fa35062abe4b6c300af",
+            "supabase/migrations/20261111100000_subscription_projection_revision.sql": "a49c8d45a399d04b149066b7c51cfbc095abbac68e18440868c8623d6c941470",
+            "tests/billing-webhook/README.md": "7c59d1a3eee90ec7369c7acc77a9827de3142cd49b5d444e4b8b99cf6d9df8ac",
+            "tests/billing-webhook/concurrency.test.mjs": "add817378b5d32faab91048f1a3b3b6e11bac0baceb263fadda8c4e78236762f",
+            "tests/billing-webhook/fixture.mjs": "e5da4e3bb384f64a71023e06f5f781091165f753f96b2d89e3355feda94da1df",
+            "tests/billing-webhook/handler.test.mjs": "c7d4d28ca55a1b1a388db2492da09b3a0080058dede2aba4ccd56a5e528f2e65",
+            "tests/billing/billing.test.mjs": "bbf7b415b0b5b28ffb30555e3cd3d8a9225882926299830546d8dd25560035d7",
+            "tests/billing/fixture.mjs": "bb37e8ecfadf10ef636d16630b0edded55ff0f8dcb40b4fc22e50b9e0b9cb537",
+            "tests/billing/module-boundary.test.mjs": "baa59c7b85244f3d511baff20f08dac6dfdd71941bfd741e292819ccd72d5c8f",
+            "tests/billing/subscription-state.test.mjs": "971982f4b870eb401a4abff5ebc5fe1e6432d73aaea8a2e8c23cab19506cf10b",
+            "tests/billing/test-case.mjs": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+            "tests/commerce/subscription-handler.test.ts": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836",
+            "tests/commerce/subscription-provider-fixture.ts": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77",
+            "tests/commerce/subscription-state.test.ts": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02",
+            "tests/quality/billing-dashboard-scope-harness.html": "89bce1143b4b8b500c3299bef39a2bddc36d5aa5e24b11ee70cc31e7f28b04f1",
+            "tests/quality/billing-dashboard-scope-harness.tsx": "05982202656efd5b06871483312a2a7a63e98a5de8ba9081cfe74c51b8c3d598",
+            "tests/quality/billing-dashboard-scope.spec.ts": "5524e25ab697a1e467e58f37763da3c7ea96c6ba93a49b5b906636e8d89292e5",
+            "tests/quality/billing-scope-harness.html": "98a8533d10acf95d19bec1cc89d6e311019ef2bd906ff3f0cce2742feab277da",
+            "tests/quality/billing-scope-harness.tsx": "6bdfc0ab49b954306632105db267eab92248e06de0d08ab94c3118eee9e3a5e1",
+            "tests/quality/billing-scope.spec.ts": "a790dda6e3c6456debc947167f7610bd600950b8e9af96906b44f43c76a4d377",
+            "tests/quality/commerce-ui.spec.ts": "d64f03450c53e5e24286c1d71f27e166611ea110e5dea40b6d9b3bcbff960b7a",
+            "tests/revenue/README.md": "0d26aaf424d08c16da2362c67de4a9b07bf9b9e293801fb6d63fa0a89c279b89",
+            "tests/revenue/deno.json": "9d9df1d3ed87e91794aa2d77c46f6fa39d8569fe51bcef92a5b462d6c2170a52",
+            "tests/revenue/inbox-sql.test.mjs": "d1ac3e575f2b48d7948e89fb7f87dddabbec57c94c31a631e44c4ffc15a2ddf8",
+            "tests/revenue/provider-fixture.ts": "8f2ffa7a1bd0278e9010280678ae5e1b1ad1ad507ad2a6d265e3d7581ee16836",
+            "tests/revenue/serve-fixture.ts": "2fd733d95f3325bd81ce9c496ae8bc4934699c2f605aef74d98e38558d0f3e2d",
+            "tests/revenue/webhook.test.ts": "400cdfaef4e3bfe3c916f1fcc7b20c8df9ae8efc737eb9519f2645841b6ce6de",
+            "tsconfig.app.json": "3d44641a0151484d5adb5c764a4766a8e31076d2fd557dbe8c6e1c87863058f7",
+            "tsconfig.json": "3a667cdf83b8335029de6380d1dc190d298d976df6c16259d562786ef13e3f07",
+            "tsconfig.node.json": "a96b9ba5e40d95b92adf56431fdf9cbe25b5c2557621f0666615bff6889dfc50",
+            "vercel.json": "94d154fe6218cb485af7d87b2256ccdba17b5b7de61cf66038148b08a4b6373f"
+          }
+        },
+        "child_composition": {
+          "child_paths": {
+            "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4": 113,
+            "deb01eb0cd6921bab3f69adb300988b8579222b4": 51
+          },
+          "only_common_child_path": ".github/workflows/purama-chef-hardening.yml",
+          "all_child_blobs_except_explicit_workflow_union_match": true,
+          "workflow_sha256": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383"
+        }
+      },
+      "new_common_ci_required": true
+    }
   }
 }

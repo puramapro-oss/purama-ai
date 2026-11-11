@@ -54,6 +54,14 @@ jobs:
         env:
           PGLITE_MODULE: ${{ github.workspace }}/karta/node_modules/@electric-sql/pglite/dist/index.js
         run: node --test --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs
+      - name: Social publication and account binding SQL invariants
+        working-directory: .
+        env:
+          PGLITE_MODULE: ${{ github.workspace }}/karta/node_modules/@electric-sql/pglite/dist/index.js
+        run: >-
+          node --test --test-concurrency=1 --test-timeout=30000
+          tests/social-publish/migration-sql.test.mjs
+          tests/social-connection/binding-sql.test.mjs
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
 
@@ -73,7 +81,7 @@ jobs:
       - run: npm run test:dependencies
       - name: Entraide public transport and account isolation
         run: >-
-          node --test --test-concurrency=1
+          node --test --test-concurrency=1 --test-timeout=30000
           tests/entraide/frontend.test.mjs tests/entraide/ui-account-scope.test.mjs
       - run: npm run lint
       - run: npm run test:distribution:unit
@@ -90,6 +98,25 @@ jobs:
       - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts
       - run: npm run test:commerce:plans
       - run: npm run test:commerce:handlers
+      - name: Social publication core behavior
+        run: >-
+          deno test --no-config --no-lock --no-prompt --deny-net --deny-run
+          tests/social-publish/client-intent.test.ts
+          tests/social-publish/provider.test.ts
+          tests/social-publish/publish.test.ts
+          tests/social-publish/scheduled.test.ts
+          tests/social-connection/connection.test.ts
+          tests/social-management/handlers.test.ts
+      - name: Agent execution lifetime isolation
+        run: node --test --test-concurrency=1 --test-timeout=30000 tests/social-agent-execution.test.mjs
+      - name: Social routes with the real Supabase SDK
+        run: >-
+          deno test --no-lock --no-prompt --deny-net --deny-run
+          --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET
+          --config tests/social-connection/deno.json
+          tests/social-connection/handler-sdk.test.ts
+          tests/social-management/handler-sdk.test.ts
+          tests/social-publish/runtime.test.ts
       - run: npm run test:billing
       - name: Stripe reconciliation with the real provider SDK
         run: >-
@@ -102,6 +129,11 @@ jobs:
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - run: npx playwright install --with-deps chromium webkit
+      - name: Social browser behavior
+        # Packaged Chrome keeps its existing AppArmor profile and browser sandbox.
+        env:
+          SOCIAL_BROWSER_EXECUTABLE: /opt/google/chrome/chrome
+        run: node tests/social-browser/run.mjs
       - run: npx tsc --noEmit -p tests/public/tsconfig.json
       - run: npm run typecheck:distribution
       - run: npm run test:distribution:browser

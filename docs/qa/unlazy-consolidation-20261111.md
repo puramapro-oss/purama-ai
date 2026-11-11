@@ -1,5 +1,67 @@
 # Consolidation IAO / KARTA — 11 novembre 2026
 
+
+## Checkpoint Social/Entraide — avant CI commune
+
+Ce complément est figé **avant la CI du commit qui le contient**. Les lots locaux sont qualifiés ; les résultats de la future tête commune doivent être lus dans PR45 et ses runs, sans les confondre avec les preuves historiques ci-dessous.
+
+### Socle déjà qualifié
+
+La tête **f7660e43bb72b29408611593d62c1bcee53ce4a1**, arbre **6e842d921de93b94a1540da43e8820f5ef6f1e40**, a terminé avec succès les trois jobs [CHEF 42981609057](https://github.com/puramapro-oss/purama-ai/actions/runs/42981609057) et le [mobile 42981608972](https://github.com/puramapro-oss/purama-ai/actions/runs/42981608972). L'arbre du checkout GitHub bcdb3afe est identique à celui de cette tête.
+
+Les résultats incluent KARTA 2 045/2 045 dans 117 fichiers, billing 164/164, SDK Stripe réel 39/39, journal SQL 24/24, OAuth natif 11/11, concurrence abonnements native 7/7 et quality Chromium 156/156. Les 35 cas de parrainage sont inclus dans quality, et ne sont pas additionnés une seconde fois. Les étapes d'audit registre exclues par leurs conditions ne sont pas qualifiées PASS.
+
+### Deux lots repris avec leurs preuves
+
+| Lot | Commit local | Qualification locale |
+|---|---|---|
+| Social | deb01eb0cd6921bab3f69adb300988b8579222b4 | Deno 104/104 ; SDK réel 14/14 ; SQL 40/40 ; policy 55/55 ; navigateur 29/29 ; hook 11/11 ; types, build, contrats et lint sans erreur |
+| Entraide | 8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4 | PostgreSQL natif 92/92 ; HTTP/SDK/transport 30/30 ; portée UI 9/9 ; types et build sans paquet frontend privé ; quatre entrées Edge vérifiées localement |
+| Entraide navigateur/HTTP/SQL | Même commit 8fecab1c, sources identiques | Trois scénarios existants PASS dans Chrome 157 ; 57 événements HTTP ; deux confirmations perdues après le vrai commit SQL ; zéro retry/skip/flaky ; cleanup complet |
+
+Les 22 cas du gate public Entraide comprennent 13 tests de transport déjà inclus dans les 30 et les neuf cas UI. Les trois parcours navigateur utilisent des identités synthétiques et des ports de profil reliés au PostgreSQL isolé ; ils ne qualifient pas Supabase Auth ou PostgREST hébergés. Firefox est absent : la preuve nouvelle concerne Chromium, avec les assertions et délais d'origine conservés.
+
+Les reçus versionnés se trouvent sous qa/social-reconciliation-20261111 et qa/entraide-integration-20261111. Le complément navigateur est intégré au JSON de consolidation ; il lève seulement la limite historique de non-exécution du parcours navigateur local sur ce commit.
+
+### Défauts reproduits et réparés
+
+- **Entraide :** une réponse de mutation obsolète traversait le changement de compte, le logout ou A → B → A ; elle pouvait remplacer le profil dans le cache et le champ affiché, puis provoquer une relecture. Les mêmes neuf contre-cas passent de 3 PASS / 6 FAIL à 9 PASS. Les sept requêtes de mutation, identifiants de reprise, révisions et règles serveur sont conservés.
+- **Autopilot social :** une continuation lancée en arrière-plan survivait au démontage ou au retour vers le compte initial. Les neuf contre-épreuves navigateur passent de 5 PASS / 4 FAIL à 9 PASS et rejoignent les 20 scénarios précédents. Une portée séparée maintient l'annulation jusqu'au règlement sans empêcher une nouvelle génération.
+- **Hook d'exécution :** les continuations utilisaient le client global après changement de compte et pouvaient écraser un résultat plus récent. Les dix cas initiaux passent de 1 PASS / 9 FAIL à 10 PASS. La contre-revue avec le vrai SDK trouve ensuite une fenêtre supplémentaire avant le commit React : Bearer B avec user_id A dans PostgREST. Les deux requêtes conservent désormais le bearer A capturé ; la suite étendue passe de 10 PASS / 1 FAIL à 11 PASS. La sonde indépendante recouvre ce onzième cas et n'est pas comptée comme un douzième.
+
+### Composition et dépendances
+
+Le lot social conserve l'ascendance de PR22, tout en gardant les blobs financiers récents de f766. Entraide reprend 78 des 80 chemins de PR23, les deux migrations préalables de main d116dc8 et le raccord minimal de la route protégée/navigation. L'adaptateur historique sans consommateur applicatif et ses deux tests privés ne sont pas importés ; leur provenance reste dans PR23. Le protocole de mission réconcilié est unique, avec ses reçus et révisions.
+
+Le matching canonique reste généré à partir du paquet privé et ignoré par Git. Aucun moteur recopié, module permissif, secret ou dépendance artificielle ne le remplace. La compilation frontend réussit sans ce paquet ; le runtime serveur conserve son prérequis privé explicite.
+
+L'union automatique des workflows correspond exactement à la fusion revue indépendamment : six gates ajoutés, aucun ancien step retiré, aucun doublon Stripe/journal/billing. La seule adaptation supplémentaire impose 30 secondes au fichier du nouveau gate public Entraide, comme lors de sa qualification locale. CHEF reste sous Node 22 ; le natif Entraide hérité reste distinct sous Node 24/PostgreSQL 18.6. Le workflow mobile, les verrous racine et les protections d'identité sont conservés.
+
+L'assemblage est vérifié avec les 33 tests publics ciblés, le typage du site et actionlint. Les tests natifs et navigateur des enfants ne sont pas relancés artificiellement : leurs empreintes et leurs frontières sont conservées, puis la nouvelle CI doit qualifier l'arbre commun.
+
+### Portée de l'analyse et limites
+
+Le lot social est classé CRITICAL par GitNexus (51 fichiers, 1 138 symboles rapportés, 49 processus), et Entraide HIGH (113 fichiers, 819 symboles rapportés, 15 flux). Ces nombres appartiennent aux comparaisons à f766. La comparaison historique beaucoup plus large avec main n'est pas présentée comme la portée de ce complément. Les listes et parcours du graphe sont bornés ; UNKNOWN ne signifie pas absence d'impact. Le workflow YAML n'est pas résolu comme symbole et a fait l'objet d'une comparaison structurelle explicite.
+
+L'index de l'assemblage a ensuite révélé des associations incohérentes : `DynamicAgentFormContent` puis `root` étaient répétés dans des parcours sans rapport. **Les sorties incrémentales `phase2-index.log` et `phase2-detect-*.log` sont conservées avec le statut `UNRELIABLE_INSTRUMENTATION` ; elles ne fondent pas la portée finale.** Une reconstruction complète de l'index privé avec `--force --no-parse-cache --index-only --skip-fts --workers 1` a terminé en 145,489 secondes, sortie 0, sous Node 22.23.4 et GitNexus 1.6.12, avec 2 GiB et mémoire désactivée. HOME et la configuration globale sont inchangés.
+
+| Comparaison sur le source figé | Fichiers | Symboles avant, non fiables | Symboles après reconstruction | Processus avant, non fiables | Processus après reconstruction | Risque |
+|---|---:|---:|---:|---:|---:|---|
+| Stage contre le premier parent 8fecab1c | 53 | 196 | 1 147 | 598 | 48 | CRITICAL |
+| Assemblage depuis le socle f7660e43 | 165 | 349 | 1 972 | 598 | 61 | CRITICAL |
+| Comparaison historique avec main d116dc8a | 1 298 | 2 171 | 11 785 | 609 | 578 | CRITICAL |
+
+Le nouveau graphe contient 19 573 nœuds, 54 690 relations et 609 processus. Les aperçus associent désormais les parcours sociaux à leurs fonctions ; les répétitions erronées observées ont disparu de ces aperçus. Cette correction ne prouve ni la cause exacte du défaut incrémental ni l'exactitude de chaque relation. Les limites restent explicites : listes affichées tronquées, 1 262 candidats d'entrée sur 1 462 écartés, 3 580 branches omises, 36 parcours interrompus par le budget, 2 172 liens interlangues non résolus et FTS désactivé. Deux gros JSON de preuves dépassent la limite de taille ; aucune absence de parcours ne démontre une absence de code.
+
+La reconstruction et les trois détections n'ont modifié ni les 1 720 fichiers du manifeste, ni le stage, ni HEAD, ni la configuration globale. Le manifeste source reste `07f2807f2d795a39ae1caf4cef8404be1b28bfb2aeade5eac1e015a292ca41c3` ; le reçu complet, son empreinte `0326d512463bd9005ab92d47467b4639f3a6a870bb7c4054f283900551b6178a` et les empreintes Git sont intégrés au JSON associé. La finalisation suivante porte seulement sur les deux preuves root : les 69 fichiers protégés sont revérifiés identiques à f766 dans le stage et sur disque, les autres blobs des deux enfants sont conservés, et leur seul chemin commun est le workflow CHEF dont l'union est contrôlée. L'assemblage compte 163 chemins avant ces deux preuves, 165 avec elles, et 53 stagés contre 8fecab1c ; les parents attendus sont 8fecab1c et deb01eb0. La nouvelle CI reste à exécuter sur le commit commun.
+
+La qualification locale des fournisseurs utilise des frontières inertes. Aucune publication sociale réelle, migration hébergée, donnée de production, opération financière ou activation de fournisseur n'est effectuée. L'identité ONE, l'admission de la base canonique et la restauration distante restent des qualifications distinctes.
+
+## Historique des checkpoints précédents
+
+Les sections suivantes conservent les essais, échecs et corrections des étapes antérieures. Leurs résultats restent rattachés aux commits et dates indiqués.
+
+
 ## Résultat et portée
 
 **PARTIEL avant qualification CI du candidat final.** Une seule branche de consolidation est retenue dans [PR45](https://github.com/puramapro-oss/purama-ai/pull/45). Elle conserve les corrections des PR37 à PR44, reprend le SHA immuable `ca47f4693ffb6440faa130043a4e79f85090a35b` de PR46, puis ajoute les corrections locales vérifiées de facturation hors ligne et de parrainage. Les suivis PR46 `5e2342f` et `1d78e272` sont également intégrés, avec les correctifs de lancement SQL et de bornes des tests décrits ci-dessous. Les résultats CI finaux seront consignés dans la PR sans modifier après coup l’arbre testé.
@@ -35,7 +97,7 @@ Les six préimages R3 de PR46 sont identiques à celles du checkpoint déjà qua
 | Candidat publié `001bc66` | CI CHEF 42969409637 et mobile 42969409690 : PASS ; KARTA 1 984 tests, 114 fichiers | Précède la reprise facturation PR46 et R3 |
 | Outbox PR44 | 42/42 tests ciblés, dont 15 nouvelles régressions de délai | Aucun Redis de production ni endurance 24/7 |
 | Checkpoint local `9a3e84c` | Billing 128/128, commerce Deno 111/111, PostgreSQL commissions 27/27, essais unitaires 28/28, offres 17/17 ; typages, builds et SDK réels PASS | Historique local ; le writer de commission n’est pas retenu |
-| R3 final du checkpoint | Stockage 21/21 ; retrait 4/4 ; typecheck, lint et contre-revue indépendante PASS | Aucun navigateur compatible installé sur le Mac |
+| R3 final du checkpoint | Stockage 21/21 ; retrait 4/4 ; typecheck, lint et contre-revue indépendante PASS | Parcours navigateur non exécutés dans cette campagne historique ; qualification Chromium acquise ensuite |
 | Collecte des parcours R3 | 101 cas dans trois fichiers, dont 35 d’attribution | Collecte seulement ; exécution réelle à obtenir en CI |
 | PR46 d’origine `ca47f469` | PostgreSQL natif 7/7 ; billing 156/156 ; commerce Deno 86/86 | CI globale en échec : 14 fixtures KARTA et typage du faux client Stripe |
 | Checkpoint `c694ccda`, avant correction de la borne fichier | Commerce Deno 86/86 ; crédits KARTA 41/41 ; typecheck et lint ciblé PASS ; collecte 101 cas | Billing local : 121 PASS, 2 annulations à 3 000 ms, donc NON VALIDÉ ; SDK npm revenus non disponible localement ; CI complète requise |
