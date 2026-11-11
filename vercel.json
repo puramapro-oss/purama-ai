@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
       "fix/iao-websearch-validation-20261110": false,
