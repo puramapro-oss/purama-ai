@@ -63,11 +63,22 @@ export interface AgentState {
   simulationMode: boolean;
 }
 
+/** Portable object JSON Schema, independent of a particular model provider. */
+export interface ToolInputSchema {
+  type: "object";
+  properties?: Record<string, unknown>;
+  required?: string[];
+  additionalProperties?: boolean;
+  [keyword: string]: unknown;
+}
+
 /** Un outil que l'agent peut appeler. `sensitive: true` force la validation humaine en dessous du niveau 3. */
 export interface ToolDefinition<Params = Record<string, unknown>, Result = unknown> {
   name: string;
   description: string;
   sensitive: boolean;
+  /** Optional for legacy tools. Runtime validation remains mandatory in execute(). */
+  inputSchema?: ToolInputSchema;
   execute: (params: Params, ctx: ToolExecutionContext) => Promise<Result>;
 }
 

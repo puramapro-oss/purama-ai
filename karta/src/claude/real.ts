@@ -27,6 +27,7 @@ export function createRealClaudeClient(): ClaudeClient {
   return {
     isMock: false,
     async decide(input: ClaudeDecideInput): Promise<AgentDecision> {
+      const serverTimeEpochMs = Date.now();
       const response = await client.messages.create({
         model: selectModel(input),
         max_tokens: 1024,
@@ -34,7 +35,7 @@ export function createRealClaudeClient(): ClaudeClient {
         messages: [
           {
             role: "user",
-            content: `Contexte actuel:\n${JSON.stringify(input.context, null, 2)}\n\nDécide quelle(s) action(s) prendre.`,
+            content: `Heure serveur UTC : ${new Date(serverTimeEpochMs).toISOString()} (serverTimeEpochMs=${serverTimeEpochMs}).\nContexte actuel:\n${JSON.stringify(input.context, null, 2)}\n\nDécide quelle(s) action(s) prendre.`,
           },
         ],
         tools: toAnthropicTools(input.tools),
@@ -65,6 +66,8 @@ function toAnthropicTools(tools: AnyToolDefinition[]): Anthropic.Tool[] {
   return tools.map((tool) => ({
     name: tool.name,
     description: tool.description,
-    input_schema: { type: "object", properties: {}, additionalProperties: true },
+    input_schema: tool.inputSchema
+      ? structuredClone(tool.inputSchema)
+      : { type: "object", properties: {}, additionalProperties: true },
   }));
 }
