@@ -1,0 +1,104 @@
+{
+  "status": "PARTIEL",
+  "executedAt": "2026-11-12T04:56:34.719Z",
+  "inheritedIndex": {
+    "storage": "/workspace/scratch/37cd53c7c075/evidence/gitnexus-inherited-index",
+    "lastCommit": "3714510a824010f4b705c0e5171e062735f5f22b",
+    "indexedAt": "2026-11-11T23:00:51.896Z"
+  },
+  "baseline": "cbd60006552f27771ef0f8b67623087c296fcf67",
+  "defaultBranchRef": "origin/main",
+  "defaultBranchSha": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "calls": [
+    {
+      "tag": "all",
+      "params": {
+        "repo": "/workspace/scratch/37cd53c7c075/iao-performance",
+        "worktree": "/workspace/scratch/37cd53c7c075/iao-performance",
+        "scope": "all"
+      },
+      "summary": {
+        "changed_count": 25,
+        "affected_count": 6,
+        "changed_files": 30,
+        "risk_level": "high"
+      },
+      "changedSymbols": 25,
+      "affectedProcesses": 6
+    },
+    {
+      "tag": "staged",
+      "params": {
+        "repo": "/workspace/scratch/37cd53c7c075/iao-performance",
+        "worktree": "/workspace/scratch/37cd53c7c075/iao-performance",
+        "scope": "staged"
+      },
+      "summary": {
+        "changed_count": 25,
+        "affected_count": 6,
+        "changed_files": 30,
+        "risk_level": "high"
+      },
+      "changedSymbols": 25,
+      "affectedProcesses": 6
+    },
+    {
+      "tag": "compare-main",
+      "params": {
+        "repo": "/workspace/scratch/37cd53c7c075/iao-performance",
+        "worktree": "/workspace/scratch/37cd53c7c075/iao-performance",
+        "scope": "compare",
+        "base_ref": "origin/main"
+      },
+      "summary": {
+        "changed_count": 12273,
+        "affected_count": 584,
+        "changed_files": 1368,
+        "risk_level": "critical"
+      },
+      "truncated": true,
+      "changedSymbols": 1000,
+      "affectedProcesses": 584
+    }
+  ],
+  "limitations": [
+    "Inherited graph retains original date and commit; additions are not freshly indexed.",
+    "Dynamic object dispatch and interface references have known unresolved edges.",
+    "Git diff does not include untracked files; staging completeness is reported separately."
+  ],
+  "sourceDiffSha256": "98efe85d6402cf161f8172ec5e62beeced36fbf16a4f375d7a1758eb8e1cb787",
+  "noConcurrentChanges": true,
+  "initialAnalyzedFiles": [
+    "karta/.env.example",
+    "karta/src/agents/comptaAgent.ts",
+    "karta/src/agents/legalAgent.ts",
+    "karta/src/agents/partnerAgent.ts",
+    "karta/src/claude/real.ts",
+    "karta/src/claude/types.ts",
+    "karta/src/config.ts",
+    "karta/test/agentContextContract.test.ts",
+    "karta/test/assistantPolicy.test.ts",
+    "karta/test/claudeTransportDeadline.test.ts",
+    "karta/test/modelQualityRouting.test.ts",
+    "qa/iao-quality-latency-20261112/README.md",
+    "qa/iao-quality-latency-20261112/base-reconciliation.json",
+    "qa/iao-quality-latency-20261112/context-benchmark.json",
+    "qa/iao-quality-latency-20261112/context-benchmark.mjs",
+    "qa/iao-quality-latency-20261112/evidence/build.txt",
+    "qa/iao-quality-latency-20261112/evidence/context-baseline.txt",
+    "qa/iao-quality-latency-20261112/evidence/context-targeted.txt",
+    "qa/iao-quality-latency-20261112/evidence/full-first.txt",
+    "qa/iao-quality-latency-20261112/evidence/full-serial.txt",
+    "qa/iao-quality-latency-20261112/evidence/recovery.txt",
+    "qa/iao-quality-latency-20261112/evidence/routing-baseline.txt",
+    "qa/iao-quality-latency-20261112/evidence/routing-targeted.txt",
+    "qa/iao-quality-latency-20261112/evidence/transport-baseline.txt",
+    "qa/iao-quality-latency-20261112/evidence/transport-targeted.txt",
+    "qa/iao-quality-latency-20261112/evidence/typecheck.txt",
+    "qa/iao-quality-latency-20261112/gitnexus-prechange.json",
+    "qa/iao-quality-latency-20261112/sources.json",
+    "qa/iao-quality-latency-20261112/verification.json",
+    "vercel.json"
+  ],
+  "note": "This stored report precedes the addition of this report file and the verification metadata update. Application sources are unchanged. A final detector run is performed before publication."
+}

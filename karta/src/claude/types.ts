@@ -6,6 +6,8 @@ export interface ClaudeDecideInput {
   tools: AnyToolDefinition[];
   /** Utilisé par le mock pour varier la réponse de façon réaliste selon l'agent. */
   agentType: string;
+  /** Optional caller cancellation; never forwarded in the model's prompt/context. */
+  signal?: AbortSignal;
 }
 
 export interface ClaudeClient {
