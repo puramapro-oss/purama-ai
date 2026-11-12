@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-10",
+  "baseline_commit": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+  "initial_backend_commit": "39b9cff012514ca63078199bb672aca2d662e7c3",
+  "sha256": {
+    ".github/workflows/entraide-missions.yml": "da2569bbff736b9054bfd288c71009f96b9ca0744c93517d7dee45069b37b659",
+    "src/lib/entraide-client.ts": "9e294e968bbdedb5b6767711b79e8903cf0d1371708882bb81afea9d49845d2c",
+    "src/lib/entraide.ts": "47e2af427b29840323e3a6186b5b65909cc70b4e29b315aa4b1e824f88cb7785",
+    "src/pages/Entraide.tsx": "b59e046bc4a7959eef449418f6843ebec034388f6e229ee2d66a1976d9ae0142",
+    "supabase/functions/_shared/entraide-http.test.ts": "822647281cc7cb5dfaf7ad4d93adbb86a596e69c15248fe2cd6bebf7da621996",
+    "supabase/functions/_shared/entraide-http.ts": "a18dd9b4d21e01116591091a82bb24ff13989b9bb767997e9a2b452acd58907d",
+    "supabase/functions/entraide-contact/deno.json": "60676bca4c90e26380565942c07bfd86761d7e2a77c763f6d4f87021696bb468",
+    "supabase/functions/entraide-contact/index.ts": "2e44df36f6bc59fa3d653fb6dbf80e2444fc21d2a745acba22557bbed4977318",
+    "supabase/functions/entraide-matches/deno.json": "60676bca4c90e26380565942c07bfd86761d7e2a77c763f6d4f87021696bb468",
+    "supabase/functions/entraide-matches/index.ts": "fc77797a8244613aefc22ce2f3e9f053350321aabdd4821049346a640a7ca1ab",
+    "supabase/functions/entraide-missions/handler.test.ts": "6318ccdb771b5e878fc99384429d7f22635a2ec1663361bb9753b9eabc305b8c",
+    "supabase/functions/entraide-missions/handler.ts": "deb6c8787184f34ca4c2f99c66e00e1a112e2517f2bc009995784396426c78e3",
+    "supabase/functions/entraide-missions/index.ts": "5f0c9c98b3ccf2fbd78743c193a96ab2e72bac6b6bcce3f32ed8371b06ff2858",
+    "supabase/functions/entraide-profil/deno.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "supabase/functions/entraide-profil/index.ts": "1157baad438503ff726fbbf622265f685567ef75526f998e2487c6c04fe52185",
+    "supabase/migrations/20261110000000_entraide_missions_atomic.sql": "f79766b153806bdd6aac382b66c1d8495133c766fc35a50675a32894670d7c36",
+    "supabase/migrations/20261110001000_entraide_own_profile.sql": "e0c54fd186e46294cb8a44eebee1e83538ca95bc29c303b0bc397c35148ff677",
+    "tests/entraide-missions.spec.ts": "cfd9c1dd2d8344accb6a03e766c00d03019839aeb7d86d11454e09f694872960",
+    "tests/entraide/README.md": "1ff1b6288f4cba045dd0e89d480a9ce7c14f2ff799a2f6f0a68f2879fd91ca38",
+    "tests/entraide/missions-postgres.mjs": "af9ac48c61958bb280706f52b16b2e0faa70f74577f2bde31be0957636d928c0",
+    "tests/entraide/package-lock.json": "4de4ae9e8fc957992d668490488666b3dc5d54626c2c68c68247d3e5e1fce73f",
+    "tests/entraide/package.json": "a303dec75bbf9f118f9d26a84d0124964829e2c0e2dfd9720d11266eb33644ec",
+    "tests/entraide/postgres-fixture.mjs": "eebd80efaa15098a3f238a8dc61ab8b6cc514df95145d864a67a0924d37a4bd0"
+  },
+  "postgres_and_ui_tested_sources_match": true
+}

@@ -1,0 +1,21 @@
+(node:52001) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:52010) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  ✓   1 tests/entraide-missions.spec.ts:140:1 › les commandes suivent organizer_id, indépendamment de l’ordre des participants (8.7s)
+  ✓   2 tests/entraide-missions.spec.ts:160:1 › un participant ordinaire peut quitter en cours mais ne reçoit aucune commande organisateur (9.3s)
+  ✓   3 tests/entraide-missions.spec.ts:176:1 › l’organisateur qui quitte en cours conserve les commandes de sa mission (6.1s)
+  ✓   4 tests/entraide-missions.spec.ts:191:1 › les missions complètes, en cours et fermées ne proposent pas de rejoindre (6.5s)
+  ✓   5 tests/entraide-missions.spec.ts:208:1 › un double clic produit une seule requête et ne bloque pas les autres missions (5.9s)
+  ✓   6 tests/entraide-missions.spec.ts:234:1 › un conflit recharge l’état sans relancer et la décision suivante utilise une nouvelle clé/version (4.8s)
+  ✓   7 tests/entraide-missions.spec.ts:260:1 › une reprise conserve UUID et payload puis affiche GET plutôt que l’ancien résultat rejoué (4.0s)
+  ✓   8 tests/entraide-missions.spec.ts:280:1 › après une coupure réseau, abandonner la reprise autorise une autre action avec une nouvelle clé (4.6s)
+  ✓   9 tests/entraide-missions.spec.ts:303:3 › une réponse 401 conserve la clé pour une reprise volontaire (4.6s)
+  ✓  10 tests/entraide-missions.spec.ts:303:3 › une réponse 429 conserve la clé pour une reprise volontaire (3.8s)
+  ✓  11 tests/entraide-missions.spec.ts:321:1 › la création réutilise sa clé à données identiques puis la change après modification (5.3s)
+  ✓  12 tests/entraide-missions.spec.ts:346:1 › la création de profil transmet explicitement radius_km nul (3.0s)
+
+  12 passed (1.4m)

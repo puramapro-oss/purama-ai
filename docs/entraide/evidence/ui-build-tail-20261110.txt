@@ -1,0 +1,12 @@
+dist/assets/InfluencerDashboard-DartvQWC.js        46.37 kB │ gzip:  12.95 kB
+dist/assets/radix-vendor-CT-8rMpz.js              112.03 kB │ gzip:  35.64 kB
+dist/assets/motion-vendor-BWCi2JEz.js             116.90 kB │ gzip:  38.61 kB
+dist/assets/index-DhJXR39w.js                     117.44 kB │ gzip:  35.95 kB
+dist/assets/index.es-CGKpOhaG.js                  150.52 kB │ gzip:  51.28 kB
+dist/assets/react-vendor-DtUb_bBK.js              163.05 kB │ gzip:  53.24 kB
+dist/assets/supabase-vendor-DEvIEdQL.js           172.96 kB │ gzip:  44.68 kB
+dist/assets/html2canvas.esm-CBrSDip1.js           201.42 kB │ gzip:  47.70 kB
+dist/assets/index-DzcPlG2u.js                     345.78 kB │ gzip:  99.14 kB
+dist/assets/pdf-vendor-DQZaX2zc.js                391.22 kB │ gzip: 127.76 kB
+dist/assets/charts-vendor-CTeNkviF.js             421.05 kB │ gzip: 111.81 kB
+✓ built in 20.72s

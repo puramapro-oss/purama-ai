@@ -1,22 +1,21 @@
 // Adapter ENTRAIDE pour purama-ai — implémente MOULE-ENTRAIDE.md §1 contre le schéma purama_ai.
 // Appelle la lib pure @purama/entraide (décision pure) avec les données réelles DB.
 
-import { supabase } from '@/integrations/supabase/client';
+import { entraideSupabase as supabase } from './entraide-client';
 import type {
   MutualAidProfile,
   WeekDay,
   MissionCollective,
-  CreateMissionCollectiveInput,
 } from '@purama/entraide';
 
 // ─── Mise en relation (profil) ───
 
 export async function getMutualAidProfile(userId: string): Promise<MutualAidProfile | null> {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!user || user.id !== userId) throw new Error('Ce profil personnel ne peut être lu que par son propriétaire');
   const { data: profil, error: profilError } = await supabase
-    .from('entraide_profils')
-    .select('*')
-    .eq('user_id', userId)
-    .maybeSingle();
+    .rpc('entraide_own_profile');
 
   if (profilError) throw profilError;
   if (!profil) return null;
@@ -54,43 +53,9 @@ export async function getBlockedUserIds(userId: string): Promise<string[]> {
 
 // ─── Missions collectives ───
 
-export async function persistMissionCollective(mission: MissionCollective): Promise<void> {
-  const { error: missionError } = await supabase
-    .from('missions_collectives')
-    .upsert(
-      {
-        id: mission.id,
-        organizer_id: mission.participantIds[0],
-        title: '',
-        description: '',
-        min_participants: mission.minParticipants,
-        max_participants: mission.maxParticipants,
-        status: mission.status,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'id' }
-    );
-
-  if (missionError) throw missionError;
-
-  const { error: deleteError } = await supabase
-    .from('missions_collectives_participants')
-    .delete()
-    .eq('mission_id', mission.id);
-
-  if (deleteError) throw deleteError;
-
-  if (mission.participantIds.length > 0) {
-    const { error: insertError } = await supabase.from('missions_collectives_participants').insert(
-      mission.participantIds.map((userId) => ({
-        mission_id: mission.id,
-        user_id: userId,
-      }))
-    );
-
-    if (insertError) throw insertError;
-  }
-}
+// Les mutations passent par entraide-missions et sa RPC authentifiée atomique.
+// L’ancien enregistrement d’un instantané a été supprimé : il effaçait les
+// métadonnées et déduisait à tort le propriétaire du premier participant.
 
 export async function loadMissionCollective(missionId: string): Promise<MissionCollective | null> {
   const { data: missionData, error: missionError } = await supabase
@@ -117,31 +82,6 @@ export async function loadMissionCollective(missionId: string): Promise<MissionC
     participantIds: participants?.map((p) => p.user_id) ?? [],
     status: missionData.status as MissionCollective['status'],
   };
-}
-
-export async function createMissionInDB(
-  input: CreateMissionCollectiveInput & { title: string; description: string }
-): Promise<void> {
-  const { error } = await supabase.from('missions_collectives').insert({
-    id: input.id,
-    organizer_id: input.organizerId,
-    title: input.title,
-    description: input.description,
-    min_participants: input.minParticipants,
-    max_participants: input.maxParticipants ?? null,
-    status: 'ouverte',
-  });
-
-  if (error) throw error;
-
-  const { error: participantError } = await supabase
-    .from('missions_collectives_participants')
-    .insert({
-      mission_id: input.id,
-      user_id: input.organizerId,
-    });
-
-  if (participantError) throw participantError;
 }
 
 // ─── Contact sécurisé ───

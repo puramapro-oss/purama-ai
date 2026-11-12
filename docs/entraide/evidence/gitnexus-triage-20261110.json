@@ -1,0 +1,350 @@
+{
+  "date": "2026-11-10",
+  "raw_risk": "HIGH",
+  "confirmed_scope": "Entraide client, page, server functions and targeted tests",
+  "finding": "Cross-module edges attributed to the local type-only property Table.Row are not confirmed by source imports or calls.",
+  "evidence": [
+    "Table<Row,...> and Row are local type declarations in src/lib/entraide-client.ts; no global/module augmentation.",
+    "The only runtime export is entraideSupabase, an alias of the existing configured client.",
+    "Only src/lib/entraide.ts imports the new module/export in the inspected TypeScript/JavaScript sources.",
+    "KARTA worker -> engine loop -> claude.decide/run.finish uses its own imports; no Entraide dependency.",
+    "Social scheduled consumer imports its SDK, zernio and social-publish-core; row is a local variable.",
+    "Diff from d116dc8 is empty for karta/**, global generated client/types and the inspected social files."
+  ],
+  "limitation": "The HIGH graph output is retained; this triage is not a global correctness proof. The index itself reports bounded process coverage.",
+  "context": {
+    "status": "found",
+    "symbol": {
+      "name": "Row",
+      "filePath": "src/lib/entraide-client.ts",
+      "startLine": 8,
+      "endLine": 8
+    },
+    "epistemic": "exact",
+    "incoming": {
+      "has_property": [
+        {
+          "uid": "Const:infra/docuseal/scripts/upload-templates.mjs:TIER_LABELS",
+          "name": "TIER_LABELS",
+          "filePath": "infra/docuseal/scripts/upload-templates.mjs"
+        },
+        {
+          "uid": "Const:karta/src/agents/partnerAgent.ts:partnerAgent",
+          "name": "partnerAgent",
+          "filePath": "karta/src/agents/partnerAgent.ts"
+        },
+        {
+          "uid": "Const:karta/src/agents/partnerAgent.ts:partnerAgent",
+          "name": "partnerAgent",
+          "filePath": "karta/src/agents/partnerAgent.ts"
+        },
+        {
+          "uid": "Const:karta/src/agents/partnerAgent.ts:partnerAgent",
+          "name": "partnerAgent",
+          "filePath": "karta/src/agents/partnerAgent.ts"
+        },
+        {
+          "uid": "Const:karta/src/config.ts:config",
+          "name": "config",
+          "filePath": "karta/src/config.ts"
+        },
+        {
+          "uid": "Const:karta/src/config.ts:config",
+          "name": "config",
+          "filePath": "karta/src/config.ts"
+        },
+        {
+          "uid": "Const:karta/src/config.ts:config",
+          "name": "config",
+          "filePath": "karta/src/config.ts"
+        },
+        {
+          "uid": "Const:karta/src/config.ts:config",
+          "name": "config",
+          "filePath": "karta/src/config.ts"
+        },
+        {
+          "uid": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        {
+          "uid": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        {
+          "uid": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        {
+          "uid": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        {
+          "uid": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        {
+          "uid": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        {
+          "uid": "Const:mobile/components/ui/Badge.tsx:textStyles",
+          "name": "textStyles",
+          "filePath": "mobile/components/ui/Badge.tsx"
+        },
+        {
+          "uid": "Const:mobile/components/ui/Badge.tsx:textStyles",
+          "name": "textStyles",
+          "filePath": "mobile/components/ui/Badge.tsx"
+        },
+        {
+          "uid": "Const:mobile/components/ui/Badge.tsx:variantStyles",
+          "name": "variantStyles",
+          "filePath": "mobile/components/ui/Badge.tsx"
+        },
+        {
+          "uid": "Const:src/components/contracts/UserContractsSection.tsx:STATUS",
+          "name": "STATUS",
+          "filePath": "src/components/contracts/UserContractsSection.tsx"
+        },
+        {
+          "uid": "Const:src/components/contracts/UserContractsSection.tsx:STATUS",
+          "name": "STATUS",
+          "filePath": "src/components/contracts/UserContractsSection.tsx"
+        },
+        {
+          "uid": "Const:src/components/contracts/UserContractsSection.tsx:STATUS",
+          "name": "STATUS",
+          "filePath": "src/components/contracts/UserContractsSection.tsx"
+        },
+        {
+          "uid": "Const:src/components/influencer/TierUpgradeConfetti.tsx:TIER_CONFIG",
+          "name": "TIER_CONFIG",
+          "filePath": "src/components/influencer/TierUpgradeConfetti.tsx"
+        },
+        {
+          "uid": "Const:src/components/influencer/TierUpgradeConfetti.tsx:TIER_CONFIG",
+          "name": "TIER_CONFIG",
+          "filePath": "src/components/influencer/TierUpgradeConfetti.tsx"
+        },
+        {
+          "uid": "Const:src/hooks/use-toast.ts:memoryState",
+          "name": "memoryState",
+          "filePath": "src/hooks/use-toast.ts"
+        },
+        {
+          "uid": "Const:src/hooks/useAwakening.ts:DEFAULT_STATE",
+          "name": "DEFAULT_STATE",
+          "filePath": "src/hooks/useAwakening.ts"
+        },
+        {
+          "uid": "Const:src/hooks/useAwakening.ts:DEFAULT_STATE",
+          "name": "DEFAULT_STATE",
+          "filePath": "src/hooks/useAwakening.ts"
+        },
+        {
+          "uid": "Const:src/lib/brand/motion.ts:fadeIn",
+          "name": "fadeIn",
+          "filePath": "src/lib/brand/motion.ts"
+        },
+        {
+          "uid": "Const:src/lib/brand/motion.ts:fadeIn",
+          "name": "fadeIn",
+          "filePath": "src/lib/brand/motion.ts"
+        },
+        {
+          "uid": "Const:src/lib/brand/motion.ts:fadeIn",
+          "name": "fadeIn",
+          "filePath": "src/lib/brand/motion.ts"
+        },
+        {
+          "uid": "Const:src/lib/brand/motion.ts:hoverLift",
+          "name": "hoverLift",
+          "filePath": "src/lib/brand/motion.ts"
+        },
+        {
+          "uid": "Const:src/lib/brand/motion.ts:hoverLift",
+          "name": "hoverLift",
+          "filePath": "src/lib/brand/motion.ts"
+        }
+      ]
+    },
+    "outgoing": {},
+    "processes": [
+      {
+        "id": "proc_19_processagentcyclejob",
+        "name": "ProcessAgentCycleJob → Decide",
+        "step_index": 3,
+        "step_count": 3
+      }
+    ]
+  },
+  "impact": {
+    "target": {
+      "name": "Row",
+      "type": "",
+      "filePath": "src/lib/entraide-client.ts"
+    },
+    "direction": "upstream",
+    "impactedCount": 5,
+    "risk": "HIGH",
+    "riskSharedAxes": "LOW",
+    "riskScale": {
+      "comparableAcrossKinds": true,
+      "unusedAxes": []
+    },
+    "epistemic": "exact",
+    "summary": {
+      "direct": 3,
+      "processes_affected": 1,
+      "modules_affected": 3
+    },
+    "byDepthCounts": {
+      "1": 3,
+      "2": 1,
+      "3": 1
+    },
+    "affected_processes": [
+      {
+        "name": "processAgentCycleJob",
+        "type": "Function",
+        "filePath": "karta/src/queue/worker.ts",
+        "affected_process_count": 6,
+        "total_hits": 9,
+        "earliest_broken_step": 1
+      }
+    ],
+    "affected_modules": [
+      {
+        "name": "Engine",
+        "hits": 1,
+        "impact": "direct"
+      },
+      {
+        "name": "Hooks",
+        "hits": 1,
+        "impact": "indirect"
+      },
+      {
+        "name": "Queue",
+        "hits": 1,
+        "impact": "indirect"
+      }
+    ],
+    "byDepth": {
+      "1": [
+        {
+          "depth": 1,
+          "id": "File:karta/test/actionAgentsMock.test.ts",
+          "name": "actionAgentsMock.test.ts",
+          "filePath": "karta/test/actionAgentsMock.test.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "File:karta/test/mockClaude.test.ts",
+          "name": "mockClaude.test.ts",
+          "filePath": "karta/test/mockClaude.test.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Function:karta/src/engine/loop.ts:runAgentCycle",
+          "name": "runAgentCycle",
+          "filePath": "karta/src/engine/loop.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_19_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → Decide",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_20_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → Finish",
+              "processType": "cross_community",
+              "step": 2
+            },
+            {
+              "id": "proc_21_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → BuildContext",
+              "processType": "cross_community",
+              "step": 2
+            }
+          ]
+        }
+      ],
+      "2": [
+        {
+          "depth": 2,
+          "id": "Function:karta/src/queue/worker.ts:processAgentCycleJob",
+          "name": "processAgentCycleJob",
+          "filePath": "karta/src/queue/worker.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_5_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → ResolveCustomAgentTools",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_21_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → BuildContext",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_22_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → CycleLockKey",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_19_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → Decide",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_20_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → Finish",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_104_processagentcyclejob",
+              "label": "ProcessAgentCycleJob → Table",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        }
+      ],
+      "3": [
+        {
+          "depth": 3,
+          "id": "Function:karta/src/queue/worker.ts:startAgentCycleWorker",
+          "name": "startAgentCycleWorker",
+          "filePath": "karta/src/queue/worker.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        }
+      ]
+    }
+  }
+}

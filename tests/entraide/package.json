@@ -1,0 +1,11 @@
+{
+  "name": "purama-entraide-postgres-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 missions-postgres.mjs"
+  },
+  "dependencies": {
+    "pg": "8.16.3"
+  }
+}

@@ -1,0 +1,52 @@
+name: Entraide missions
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/entraide-missions/**'
+      - 'supabase/functions/_shared/entraide-http*'
+      - 'supabase/migrations/*entraide*'
+      - 'tests/entraide/**'
+      - '.github/workflows/entraide-missions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: entraide-missions-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  postgres-and-http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.23.4'
+      - name: Installer les dépendances de test isolées
+        run: npm ci --prefix tests/entraide --ignore-scripts --no-audit --no-fund
+      - name: Vérifier transactions, permissions et concurrence sur PostgreSQL
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+        run: node tests/entraide/missions-postgres.mjs
+      - name: Vérifier le transport HTTP et ses erreurs
+        run: >-
+          npm exec --yes --package=deno@2.9.6 -- deno test
+          supabase/functions/entraide-missions/handler.test.ts
+          supabase/functions/_shared/entraide-http.test.ts

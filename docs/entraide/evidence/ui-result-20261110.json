@@ -1,0 +1,308 @@
+{
+  "ui-build-result.json": {
+    "exit_code": 0,
+    "log": "<candidate>/ui-build.log",
+    "source_sha256": {
+      "src/pages/Entraide.tsx": "b59e046bc4a7959eef449418f6843ebec034388f6e229ee2d66a1976d9ae0142",
+      "tests/entraide-missions.spec.ts": "cfd9c1dd2d8344accb6a03e766c00d03019839aeb7d86d11454e09f694872960"
+    },
+    "environment": "synthetic Supabase URL and publishable key",
+    "finished_at": 1794277234.946323
+  },
+  "ui-test-run-result.json": {
+    "exit_code": 0,
+    "source_sha256": {
+      "src/pages/Entraide.tsx": "b59e046bc4a7959eef449418f6843ebec034388f6e229ee2d66a1976d9ae0142",
+      "tests/entraide-missions.spec.ts": "cfd9c1dd2d8344accb6a03e766c00d03019839aeb7d86d11454e09f694872960"
+    },
+    "source_unchanged": true,
+    "log": "<candidate>/ui-tests.log",
+    "report": "<candidate>/ui-test-results.json",
+    "config": "<candidate>/ui-playwright.config.mjs",
+    "browser": "firefox-1511",
+    "workers": 1,
+    "server_port": 54300,
+    "server_port_open_after": false,
+    "finished_at": 1794277348.135085
+  },
+  "ui-responsive-run-result.json": {
+    "exit_code": 0,
+    "source_sha256": {
+      "src/pages/Entraide.tsx": "b59e046bc4a7959eef449418f6843ebec034388f6e229ee2d66a1976d9ae0142",
+      "tests/entraide-missions.spec.ts": "cfd9c1dd2d8344accb6a03e766c00d03019839aeb7d86d11454e09f694872960"
+    },
+    "source_unchanged": true,
+    "temporary_spec_sha256": "1bdfc85fdea0db3b405a45b7d1d4c3146cbc9f5dfd9eba7b73b901228a4c54be",
+    "log": "<candidate>/ui-responsive.log",
+    "report": "<candidate>/ui-responsive-results.json",
+    "config": "<candidate>/ui-responsive.config.mjs",
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "browser": "firefox-1511",
+    "server_port": 54458,
+    "server_port_open_after": false,
+    "finished_at": 1794277430.763644
+  },
+  "ui-test-results.json": {
+    "stats": {
+      "startTime": "2026-11-10T02:21:05.414Z",
+      "duration": 82688.694,
+      "expected": 12,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "tests": [
+      {
+        "title": "les commandes suivent organizer_id, indépendamment de l’ordre des participants",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 8699,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "un participant ordinaire peut quitter en cours mais ne reçoit aucune commande organisateur",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 9269,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "l’organisateur qui quitte en cours conserve les commandes de sa mission",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 6106,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "les missions complètes, en cours et fermées ne proposent pas de rejoindre",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 6537,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "un double clic produit une seule requête et ne bloque pas les autres missions",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 5861,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "un conflit recharge l’état sans relancer et la décision suivante utilise une nouvelle clé/version",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 4829,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "une reprise conserve UUID et payload puis affiche GET plutôt que l’ancien résultat rejoué",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 3980,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "après une coupure réseau, abandonner la reprise autorise une autre action avec une nouvelle clé",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 4643,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "une réponse 401 conserve la clé pour une reprise volontaire",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 4633,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "une réponse 429 conserve la clé pour une reprise volontaire",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 3841,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "la création réutilise sa clé à données identiques puis la change après modification",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 5344,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "la création de profil transmet explicitement radius_km nul",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 3028,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "ui-responsive-results.json": {
+    "stats": {
+      "startTime": "2026-11-10T02:23:34.050Z",
+      "duration": 16645.846999999998,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "tests": [
+      {
+        "title": "les commandes et la reprise restent accessibles sur 375 pixels sans débordement horizontal",
+        "ok": true,
+        "tests": [
+          {
+            "status": "expected",
+            "projectName": "",
+            "results": [
+              {
+                "status": "passed",
+                "retry": 0,
+                "duration": 8929,
+                "errors": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

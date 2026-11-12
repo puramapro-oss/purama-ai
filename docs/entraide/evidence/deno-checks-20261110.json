@@ -1,0 +1,60 @@
+{
+  "deno_version": "2.9.6",
+  "results": [
+    {
+      "command": [
+        "deno",
+        "check",
+        "--node-modules-dir=manual",
+        "--no-lock",
+        "supabase/functions/entraide-missions/index.ts"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.681,
+      "output": "Check supabase/functions/entraide-missions/index.ts\n"
+    },
+    {
+      "command": [
+        "deno",
+        "check",
+        "--node-modules-dir=manual",
+        "--no-lock",
+        "--config",
+        "supabase/functions/entraide-profil/deno.json",
+        "supabase/functions/entraide-profil/index.ts"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.521,
+      "output": "Check supabase/functions/entraide-profil/index.ts\n"
+    },
+    {
+      "command": [
+        "deno",
+        "check",
+        "--node-modules-dir=manual",
+        "--no-lock",
+        "--config",
+        "supabase/functions/entraide-contact/deno.json",
+        "supabase/functions/entraide-contact/index.ts"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.303,
+      "output": "Check supabase/functions/entraide-contact/index.ts\n"
+    },
+    {
+      "command": [
+        "deno",
+        "check",
+        "--node-modules-dir=manual",
+        "--no-lock",
+        "--config",
+        "supabase/functions/entraide-matches/deno.json",
+        "supabase/functions/entraide-matches/index.ts"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.391,
+      "output": "Check supabase/functions/entraide-matches/index.ts\n"
+    }
+  ],
+  "pass": true
+}

@@ -1,0 +1,34 @@
+> test
+> node --test --test-concurrency=1 missions-postgres.mjs
+
+✔ the real RPC is SECURITY DEFINER with a fixed empty search_path and no anonymous execution (802.986709ms)
+✔ authenticated callers cannot read the idempotence ledger or directly mutate missions (99.9645ms)
+✔ existing RLS isolates contacts and blockers and hides exact profile coordinates (88.517667ms)
+✔ creation returns the database identity, initial owner membership and version one (66.61975ms)
+✔ own-profile RPC returns only the caller profile including their precise coordinates (115.095166ms)
+✔ own-profile RPC is parameterless, stable, fixed-path and unavailable to anon (50.958208ms)
+✔ own-profile migration changes neither public profile policies nor direct coordinate privileges (56.2395ms)
+✔ invalid commands do not reserve a request key or write a mission (286.431167ms)
+✔ quorum transitions are recalculated after join and leave before starting (153.679333ms)
+✔ owner authorization and expected versions are enforced without changing the mission (372.577958ms)
+✔ leaving an active mission remains possible and retains stable owner identity (312.091042ms)
+✔ terminal state after complete rejects new transitions and preserves all data (398.410458ms)
+✔ terminal state after cancel rejects new transitions and preserves all data (386.147583ms)
+✔ idempotence replays the stored snapshot after later mission changes (187.798375ms)
+✔ request keys are scoped to the authenticated actor (137.309542ms)
+✔ a replayed join or leave succeeds once while a new request receives the canonical refusal (236.669208ms)
+✔ a late trigger failure rolls back participants, version and request reservation together (106.871375ms)
+✔ failure inserting the initial owner participant leaves no mission or request reservation (131.230667ms)
+✔ concurrent complete and cancel at one version commit one terminal state and reject the stale command (362.594917ms)
+✔ two PostgreSQL connections competing for the last place yield one winner and no overbooking (159.33475ms)
+✔ concurrent join and leave preserve every unrelated member and their original join time (371.897958ms)
+✔ two transactions using one request key create exactly one mission (172.378333ms)
+✔ two transactions using one request key reject a conflicting payload (180.203125ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6111.775667

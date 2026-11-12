@@ -1,0 +1,20 @@
+{
+  "base_commit": "39b9cff012514ca63078199bb672aca2d662e7c3",
+  "postgres": "18.4",
+  "node": "26.0.0",
+  "exit_code": 0,
+  "production_access": false,
+  "sha256": {
+    "tests/entraide/missions-postgres.mjs": "af9ac48c61958bb280706f52b16b2e0faa70f74577f2bde31be0957636d928c0",
+    "tests/entraide/postgres-fixture.mjs": "eebd80efaa15098a3f238a8dc61ab8b6cc514df95145d864a67a0924d37a4bd0",
+    "supabase/migrations/20261110000000_entraide_missions_atomic.sql": "f79766b153806bdd6aac382b66c1d8495133c766fc35a50675a32894670d7c36",
+    "supabase/migrations/20261110001000_entraide_own_profile.sql": "e0c54fd186e46294cb8a44eebee1e83538ca95bc29c303b0bc397c35148ff677"
+  },
+  "environment": "isolated local PostgreSQL cluster; synthetic identities; auth.uid fixture",
+  "tests": {
+    "pass": 23,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  }
+}

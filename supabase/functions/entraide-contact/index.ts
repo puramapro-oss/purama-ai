@@ -2,20 +2,25 @@
 // POST /entraide-contact/:id/respond { response: "accept"|"decline"|"block" }
 // Auth requise, verrou anti-doublon = index unique DB.
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { json } from "../_shared/response.ts";
-import { rateLimit } from "../_shared/rate-limit.ts";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import {
+  assertEntraideRateLimit,
+  entraideErrorResponse,
+  EntraideHttpError,
+  entraideJson,
+  entraideRouteParts,
+  readEntraideJson,
+} from "../_shared/entraide-http.ts";
+import { z } from "npm:zod@3.25.76";
 import {
   canSendContactRequest,
   respondToContactRequest,
-  MAX_CONTACT_REQUESTS_PER_DAY,
-  COOLDOWN_AFTER_DECLINE_DAYS,
-} from "https://esm.sh/@purama/entraide@1.0.0";
+} from "@purama/entraide";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
@@ -29,25 +34,54 @@ const RespondSchema = z.object({
 });
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
 
   try {
+    const pathParts = entraideRouteParts(req, "entraide-contact");
+    const isRoot = pathParts.length === 0;
+    const isRespond = pathParts.length === 2 && pathParts[1] === "respond";
+    if (!isRoot && !isRespond) {
+      throw new EntraideHttpError(404, "not_found", "Route introuvable");
+    }
+    if (
+      (req.method !== "GET" && req.method !== "POST") ||
+      (req.method === "GET" && !isRoot)
+    ) {
+      throw new EntraideHttpError(
+        405,
+        "method_not_allowed",
+        "Méthode non supportée",
+        {
+          Allow: isRespond
+            ? "POST, OPTIONS"
+            : corsHeaders["Access-Control-Allow-Methods"],
+        },
+      );
+    }
+    const requestId = isRespond ? pathParts[0] : undefined;
+    if (requestId && !z.string().uuid().safeParse(requestId).success) {
+      throw new EntraideHttpError(
+        400,
+        "invalid_request",
+        "Identifiant de demande invalide",
+      );
+    }
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return json({ error: "Authorization requise" }, { status: 401, headers: corsHeaders });
+      throw new EntraideHttpError(
+        401,
+        "unauthenticated",
+        "Authorization requise",
+      );
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
-      auth: { persistSession: false },
-      db: { schema: "purama_ai" },
-    });
-
-    const supabaseService = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { persistSession: false },
       db: { schema: "purama_ai" },
     });
@@ -57,16 +91,11 @@ Deno.serve(async (req) => {
       error: authError,
     } = await supabase.auth.getUser();
     if (authError || !user) {
-      return json({ error: "Non authentifié" }, { status: 401, headers: corsHeaders });
+      throw new EntraideHttpError(401, "unauthenticated", "Non authentifié");
     }
 
-    const url = new URL(req.url);
-    const pathParts = url.pathname.split("/").filter(Boolean);
-    const requestId = pathParts[pathParts.indexOf("entraide-contact") + 1];
-    const action = pathParts[pathParts.indexOf("entraide-contact") + 2];
-
     if (req.method === "GET") {
-      await rateLimit(supabase, user.id, "entraide-contact-list", 60);
+      assertEntraideRateLimit(user.id, "entraide-contact-list", 60);
 
       const { data, error } = await supabase
         .from("entraide_contact_requests")
@@ -76,42 +105,64 @@ Deno.serve(async (req) => {
 
       if (error) throw error;
 
-      return json({ requests: data }, { headers: corsHeaders });
+      return entraideJson({ requests: data }, 200, corsHeaders);
     }
 
-    if (req.method === "POST" && !requestId) {
-      await rateLimit(supabase, user.id, "entraide-contact-send", 15);
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!serviceKey) throw new Error("Missing contact service configuration");
+    const supabaseService = createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false },
+      db: { schema: "purama_ai" },
+    });
 
-      const body = await req.json();
+    if (req.method === "POST" && isRoot) {
+      assertEntraideRateLimit(user.id, "entraide-contact-send", 15);
+
+      const body = await readEntraideJson(req);
       const parsed = SendRequestSchema.safeParse(body);
 
       if (!parsed.success) {
-        return json(
-          { error: "Données invalides", details: parsed.error.errors },
-          { status: 400, headers: corsHeaders }
+        return entraideJson(
+          {
+            error: "invalid_request",
+            message: "Données invalides",
+            details: parsed.error.errors,
+          },
+          400,
+          corsHeaders,
         );
       }
 
-      const { data: isBlockedData } = await supabase
+      // Reverse blocks are invisible through the caller's RLS client.
+      const { data: isBlockedData, error: blockedError } = await supabaseService
         .from("entraide_blocages")
         .select("blocker_id")
-        .eq("blocker_id", parsed.data.recipient_id)
-        .eq("blocked_id", user.id)
+        .or(
+          `and(blocker_id.eq.${parsed.data.recipient_id},blocked_id.eq.${user.id}),and(blocker_id.eq.${user.id},blocked_id.eq.${parsed.data.recipient_id})`,
+        )
+        .limit(1)
         .maybeSingle();
 
+      if (blockedError) throw blockedError;
       const isBlockedByRecipient = !!isBlockedData;
 
-      const today = new Date().toISOString().split("T")[0];
-      const { count } = await supabase
+      const now = new Date();
+      const today = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+      );
+      const tomorrow = new Date(today.getTime() + 86_400_000);
+      const { count, error: countError } = await supabase
         .from("entraide_contact_requests")
         .select("*", { count: "exact", head: true })
         .eq("requester_id", user.id)
-        .gte("created_at", `${today}T00:00:00Z`)
-        .lt("created_at", `${today}T23:59:59Z`);
+        .gte("created_at", today.toISOString())
+        .lt("created_at", tomorrow.toISOString());
 
-      const requesterRequestsSentToday = count ?? 0;
+      if (countError) throw countError;
+      if (count === null) throw new Error("Contact request count unavailable");
+      const requesterRequestsSentToday = count;
 
-      const { data: pendingData } = await supabase
+      const { data: pendingData, error: pendingError } = await supabase
         .from("entraide_contact_requests")
         .select("id")
         .eq("requester_id", user.id)
@@ -119,9 +170,10 @@ Deno.serve(async (req) => {
         .eq("status", "pending")
         .maybeSingle();
 
+      if (pendingError) throw pendingError;
       const hasPendingRequestToSameRecipient = !!pendingData;
 
-      const { data: lastDeclineData } = await supabase
+      const { data: lastDeclineData, error: declineError } = await supabase
         .from("entraide_contact_requests")
         .select("responded_at")
         .eq("requester_id", user.id)
@@ -131,6 +183,7 @@ Deno.serve(async (req) => {
         .limit(1)
         .maybeSingle();
 
+      if (declineError) throw declineError;
       const lastDeclineOrExpiryToSameRecipient = lastDeclineData?.responded_at
         ? new Date(lastDeclineData.responded_at)
         : null;
@@ -142,13 +195,19 @@ Deno.serve(async (req) => {
         requesterRequestsSentToday,
         hasPendingRequestToSameRecipient,
         lastDeclineOrExpiryToSameRecipient,
-        now: new Date(),
+        now,
       });
 
       if (!decision.allowed) {
-        return json({ error: decision.reason }, { status: 400, headers: corsHeaders });
+        throw new EntraideHttpError(
+          400,
+          "contact_not_allowed",
+          decision.reason,
+        );
       }
 
+      // The pending-request unique index resolves duplicate sends. The daily
+      // quota/check-and-insert sequence is NOT yet atomic across instances.
       const { data: newRequest, error: insertError } = await supabaseService
         .from("entraide_contact_requests")
         .insert({
@@ -160,21 +219,33 @@ Deno.serve(async (req) => {
         .select()
         .single();
 
+      if (insertError?.code === "23505") {
+        throw new EntraideHttpError(
+          409,
+          "contact_request_exists",
+          "Une demande est déjà en attente",
+        );
+      }
       if (insertError) throw insertError;
 
-      return json({ request: newRequest }, { headers: corsHeaders });
+      return entraideJson({ request: newRequest }, 200, corsHeaders);
     }
 
-    if (req.method === "POST" && requestId && action === "respond") {
-      await rateLimit(supabase, user.id, "entraide-contact-respond", 30);
+    if (req.method === "POST" && requestId && isRespond) {
+      assertEntraideRateLimit(user.id, "entraide-contact-respond", 30);
 
-      const body = await req.json();
+      const body = await readEntraideJson(req);
       const parsed = RespondSchema.safeParse(body);
 
       if (!parsed.success) {
-        return json(
-          { error: "Données invalides", details: parsed.error.errors },
-          { status: 400, headers: corsHeaders }
+        return entraideJson(
+          {
+            error: "invalid_request",
+            message: "Données invalides",
+            details: parsed.error.errors,
+          },
+          400,
+          corsHeaders,
         );
       }
 
@@ -187,37 +258,92 @@ Deno.serve(async (req) => {
 
       if (fetchError) throw fetchError;
       if (!requestData) {
-        return json({ error: "Demande introuvable" }, { status: 404, headers: corsHeaders });
+        throw new EntraideHttpError(404, "not_found", "Demande introuvable");
+      }
+      if (requestData.status !== "pending") {
+        throw new EntraideHttpError(
+          409,
+          "contact_not_pending",
+          "Cette demande a déjà reçu une réponse",
+        );
       }
 
-      const result = respondToContactRequest(requestData.status, parsed.data.response);
+      const result = respondToContactRequest(
+        requestData.status,
+        parsed.data.response,
+      );
 
       if (!result.ok) {
-        return json({ error: result.reason }, { status: 400, headers: corsHeaders });
+        throw new EntraideHttpError(400, "contact_not_allowed", result.reason);
       }
 
-      const { error: updateError } = await supabaseService
-        .from("entraide_contact_requests")
-        .update({ status: result.status, responded_at: new Date().toISOString() })
-        .eq("id", requestId);
-
-      if (updateError) throw updateError;
+      if (parsed.data.response === "accept") {
+        const { data: blocked, error: blockedError } = await supabaseService
+          .from("entraide_blocages")
+          .select("blocker_id")
+          .or(
+            `and(blocker_id.eq.${requestData.requester_id},blocked_id.eq.${user.id}),and(blocker_id.eq.${user.id},blocked_id.eq.${requestData.requester_id})`,
+          )
+          .limit(1)
+          .maybeSingle();
+        if (blockedError) throw blockedError;
+        if (blocked) {
+          throw new EntraideHttpError(
+            409,
+            "contact_unavailable",
+            "Contact indisponible",
+          );
+        }
+      }
 
       if (parsed.data.response === "block") {
-        await supabaseService
+        // Persist the protective block first; never report success if it failed.
+        // Block + response still require a future atomic RPC for all race cases.
+        const { error: blockError } = await supabaseService
           .from("entraide_blocages")
-          .insert({ blocker_id: user.id, blocked_id: requestData.requester_id });
+          .upsert(
+            { blocker_id: user.id, blocked_id: requestData.requester_id },
+            {
+              onConflict: "blocker_id,blocked_id",
+              ignoreDuplicates: true,
+            },
+          );
+        if (blockError) throw blockError;
       }
 
-      return json({ request: { ...requestData, status: result.status } }, { headers: corsHeaders });
+      const { data: updatedRequest, error: updateError } = await supabaseService
+        .from("entraide_contact_requests")
+        .update({
+          status: result.status,
+          responded_at: new Date().toISOString(),
+        })
+        .eq("id", requestId)
+        .eq("recipient_id", user.id)
+        .eq("status", "pending")
+        .select()
+        .maybeSingle();
+
+      if (updateError) throw updateError;
+      if (!updatedRequest) {
+        throw new EntraideHttpError(
+          409,
+          "contact_not_pending",
+          "Cette demande a déjà reçu une réponse",
+        );
+      }
+
+      return entraideJson({ request: updatedRequest }, 200, corsHeaders);
     }
 
-    return json({ error: "Méthode non supportée" }, { status: 405, headers: corsHeaders });
-  } catch (error) {
-    console.error("Erreur entraide-contact:", error);
-    return json(
-      { error: error instanceof Error ? error.message : "Erreur serveur" },
-      { status: 500, headers: corsHeaders }
+    throw new EntraideHttpError(
+      405,
+      "method_not_allowed",
+      "Méthode non supportée",
     );
+  } catch (error) {
+    if (!(error instanceof EntraideHttpError)) {
+      console.error("Erreur entraide-contact:", error);
+    }
+    return entraideErrorResponse(error, corsHeaders);
   }
 });

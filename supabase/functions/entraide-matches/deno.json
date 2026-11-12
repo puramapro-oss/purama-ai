@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "@purama/entraide": "../../../../packages/purama-entraide/src/index.ts",
+    "../../../../packages/purama-entraide/src/types": "../../../../packages/purama-entraide/src/types.ts",
+    "../../../../packages/purama-entraide/src/matching": "../../../../packages/purama-entraide/src/matching.ts",
+    "../../../../packages/purama-entraide/src/missions": "../../../../packages/purama-entraide/src/missions.ts",
+    "../../../../packages/purama-entraide/src/contact": "../../../../packages/purama-entraide/src/contact.ts"
+  }
+}
