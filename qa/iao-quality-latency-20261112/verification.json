@@ -134,7 +134,7 @@
     "karta/src/claude/types.ts": "c5948a90ea8fd833168eed096945f2d3bef10c2124e551308406f3a07f909427",
     "karta/src/config.ts": "c3e1397ef29c451d7be6e42343c62fc1dc51980ecea42d312780052eb841016a",
     "karta/test/assistantPolicy.test.ts": "d78aa2bbc672dae36dc74db52fb5ac9f981402d7a814e71de0f102e7a4decc32",
-    "vercel.json": "73dc53140b4c933a8463f72df058c76ae9d324569b1772e4e95475b85d63a8f1",
+    "vercel.json": "48099c84e4a3b38d07fd21328870bd758d34c98be66d8b7de78df64ca1d6f505",
     "karta/test/agentContextContract.test.ts": "f3e7479ca7699d85f2383d80747948b30bbc142dd7aed8ac98ad9f6236487f9c",
     "karta/test/claudeTransportDeadline.test.ts": "c4bacdd296ffef885dc949ab423675e9524b83c7f15c30d2ad7c9bed7f951b41",
     "karta/test/modelQualityRouting.test.ts": "ea713c3cd35cd2656681b5b8abd9082932e4d1957718f2699fe3c5d4f8e9ea4b"
@@ -152,5 +152,38 @@
     "Hostinger/Mac deployment of this candidate"
   ],
   "gitnexusReport": "gitnexus-detect.json",
-  "reviewStatus": "PASS independent static review of transport/routing;no blocking finding;tradeoffs retained in README"
+  "reviewStatus": "PASS independent static review of transport/routing;no blocking finding;tradeoffs retained in README",
+  "reviewRevision": {
+    "verifiedAt": "2026-11-12T05:22:31.310491+00:00",
+    "initialPublishedCommit": "804a1160c1ac47c9f430903eff1a5991cc5d78a7",
+    "reason": "Move only the review branch deployment exclusion after the consolidation rule to resolve concurrent upstream additions at the start and end of the map.",
+    "applicationAndTestHashesUnchanged": true,
+    "ownVercelJsonSemanticallyIdentical": true,
+    "upstreamVercelBlob": "9f064a819c698b7eb23c1cb0eed77b4d1567094f",
+    "baseVercelBlob": "d71b8cc450e89c1867a7f142e0a262a705e40772",
+    "originalThreeWayMerge": {
+      "exitCode": 1,
+      "conflictCount": 1
+    },
+    "revisedThreeWayMerge": {
+      "exitCode": 0,
+      "conflictCount": 0,
+      "mergedRuleCount": 24,
+      "mergedJsonExactlyUpstreamPlusOwnFalseRule": true
+    },
+    "command": "git merge-file -p CANDIDATE_VERCEL BASE_VERCEL UPSTREAM_VERCEL",
+    "firstGitHubCi": {
+      "runId": 43158678864,
+      "checkout": "76e4d66c4e5f791d1397884b807e78026aa1447e",
+      "kartaTests": 2115,
+      "kartaFiles": 121,
+      "jobs": [
+        "karta:success",
+        "site:success",
+        "subscription-concurrency:success"
+      ],
+      "npmAudit": "skipped on PR"
+    },
+    "scopeNote": "The recorded full CI qualifies the initial published composition. Moving one JSON key changes neither application sources nor deployment rule values; it does not qualify newly added upstream application code."
+  }
 }
