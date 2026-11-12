@@ -102,6 +102,7 @@ jobs:
       - run: npm run test:cross-app-jwt
       - run: npm run test:cross-app-jwt:deno
       - run: npm run test:voice-settings
+      - run: npm run test:offline
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
       - run: npm run test:contracts-native
@@ -150,6 +151,19 @@ jobs:
       - run: npm run typecheck:distribution
       - run: bash scripts/ci/run-site-browser.sh npm run test:distribution:browser
       - run: bash scripts/ci/run-site-browser.sh npm run test:public
+      - name: Offline workspace browser tests
+        id: offline_browser
+        run: bash scripts/ci/run-site-browser.sh npm run test:offline:browser
+      - name: Archive offline workspace browser evidence
+        if: ${{ always() && steps.offline_browser.outcome != '' && steps.offline_browser.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-offline-${{ github.sha }}
+          path: |
+            test-results/offline
+            test-results/offline-report.json
+          if-no-files-found: error
+          retention-days: 14
       - run: bash scripts/ci/run-site-browser.sh npm run test:chat
       - run: bash scripts/ci/run-site-browser.sh npm run test:quality
       - run: bash scripts/ci/run-site-browser.sh npm run test:oauth:browser
