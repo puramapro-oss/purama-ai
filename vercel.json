@@ -9,6 +9,7 @@
   "git": {
     "deploymentEnabled": {
       "fix/iao-ime-composition-20261112": false,
+      "audit/api-cost-20261112-4eb2": false,
       "feat/iao-accessibility-20261111": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,

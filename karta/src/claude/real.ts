@@ -24,7 +24,9 @@ export function selectModel(input: ClaudeDecideInput): string {
 }
 
 export function createRealClaudeClient(): ClaudeClient {
-  const client = new Anthropic({ apiKey: config.anthropicApiKey });
+  // KARTA owns durable delivery/recovery. The SDK's implicit retries can repeat
+  // a paid inference after an ambiguous response, outside that execution log.
+  const client = new Anthropic({ apiKey: config.anthropicApiKey, maxRetries: 0 });
 
   return {
     isMock: false,
@@ -36,7 +38,7 @@ export function createRealClaudeClient(): ClaudeClient {
         messages: [
           {
             role: "user",
-            content: `Contexte actuel:\n${JSON.stringify(input.context, null, 2)}\n\nDécide quelle(s) action(s) prendre.`,
+            content: `Contexte actuel:\n${JSON.stringify(input.context)}\n\nDécide quelle(s) action(s) prendre.`,
           },
         ],
         tools: toAnthropicTools(input.tools),
