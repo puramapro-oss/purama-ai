@@ -1,0 +1,675 @@
+{
+  "case_count": 72,
+  "cases": [
+    {
+      "gate_count": 0,
+      "input_sha256": "6abd397d4c9dc7795499d5ad97b585968dbcbc8b4e4e6a237a5ae08bcf5bb69d",
+      "max_abs_probability_error": 0.0,
+      "name": "empty",
+      "qubits": 1,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 1,
+      "input_sha256": "0936a08d59c2146e3de8aff9e1b3d9291a8b3edbce73b390e701262ab94a756d",
+      "max_abs_probability_error": 0.0,
+      "name": "least-significant-qubit",
+      "qubits": 3,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 2,
+      "input_sha256": "574ab03c1af78fdcaae76295f9e8f53b257f52924c9127e8218aaba457da10f5",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "bell",
+      "qubits": 2,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 4,
+      "input_sha256": "046afea3524a57a7ad434ef6342c052ba034c77419b4ce963b4712e578b3dba2",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "ghz-high-control",
+      "qubits": 4,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 8,
+      "input_sha256": "fd79adb89a24eb6b5119eb23dcb5b277cd225813ab2d9003a331944fc2ffc8ea",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "phase-interference",
+      "qubits": 2,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 2,
+      "input_sha256": "daece0ea64afc36127f5968d622ed3ef3b5d769201ea70d15c7f82e89298c982",
+      "max_abs_probability_error": 0.0,
+      "name": "scientific-notation",
+      "qubits": 1,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 1,
+      "input_sha256": "dfe488c67e075e45baa96c20f7b7bd0e6748c70ba08ef5bd395cb0df4c7c3ada",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "angle-boundary",
+      "qubits": 1,
+      "state_norm_squared_error": 1.1102230246251565e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 53,
+      "input_sha256": "6e88e5eee2e7b68730ba87787fbaf9d7df92a07d64a46315b0752b724287819c",
+      "max_abs_probability_error": 4.996003610813204e-16,
+      "name": "random-000",
+      "qubits": 4,
+      "state_norm_squared_error": 1.1102230246251565e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 118,
+      "input_sha256": "433774dc38f1703f9f78f65c67012745178f061d23472f8b440c0a41eb82a3e2",
+      "max_abs_probability_error": 2.0816681711721685e-16,
+      "name": "random-001",
+      "qubits": 7,
+      "state_norm_squared_error": 3.3306690738754696e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 57,
+      "input_sha256": "b66ce9b6725242cf82bbbc45460f2947e0e6d6601af510962c1780bef42c3b5b",
+      "max_abs_probability_error": 2.220446049250313e-16,
+      "name": "random-002",
+      "qubits": 2,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 90,
+      "input_sha256": "4da3c1d724d1e70cb8f67cc3c5673b3216e4ed2392e88bf526bc27e7e7663393",
+      "max_abs_probability_error": 4.718447854656915e-16,
+      "name": "random-003",
+      "qubits": 5,
+      "state_norm_squared_error": 2.220446049250313e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 59,
+      "input_sha256": "8580b38c33202946c62e374799d32ffd2133e5cb26ffddbd0446464817483fa3",
+      "max_abs_probability_error": 5.551115123125783e-16,
+      "name": "random-004",
+      "qubits": 4,
+      "state_norm_squared_error": 1.9984014443252818e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 93,
+      "input_sha256": "780c2bae76eb97c159764d5baee9c42c242aee4a406d90a110522afa58a340cb",
+      "max_abs_probability_error": 1.1657341758564144e-15,
+      "name": "random-005",
+      "qubits": 2,
+      "state_norm_squared_error": 1.3322676295501878e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 6,
+      "input_sha256": "a5b5c677905de26a03d58f0435467a268af09b965702f6c426bf44d576ef1637",
+      "max_abs_probability_error": 5.551115123125783e-17,
+      "name": "random-006",
+      "qubits": 3,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 49,
+      "input_sha256": "894c2852dfe84b24e4ad7e5f02a949f2d8cb6324a9b02e57ae949367903cafcf",
+      "max_abs_probability_error": 2.7755575615628914e-16,
+      "name": "random-007",
+      "qubits": 3,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 114,
+      "input_sha256": "01a1d72428024ade8a081e5d5f17a2c2e963c97dbbeddec12b5e05d212655db5",
+      "max_abs_probability_error": 2.220446049250313e-16,
+      "name": "random-008",
+      "qubits": 4,
+      "state_norm_squared_error": 1.7763568394002505e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 54,
+      "input_sha256": "384f2852bfde0b6d78b3a4d42ad645e1a824c0b5cdc7446d1d722014c2ab38d4",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "random-009",
+      "qubits": 7,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 44,
+      "input_sha256": "9cc29507817404eb0eee53cb9f228df701ea88020714cb63aabd01fe991b949b",
+      "max_abs_probability_error": 6.106226635438361e-16,
+      "name": "random-010",
+      "qubits": 4,
+      "state_norm_squared_error": 2.220446049250313e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 108,
+      "input_sha256": "2a1e5564dae61e51e08ebf64bcd70a3b60483d2000b12055c4c9813cad0b52ec",
+      "max_abs_probability_error": 9.71445146547012e-17,
+      "name": "random-011",
+      "qubits": 7,
+      "state_norm_squared_error": 2.6645352591003757e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 112,
+      "input_sha256": "3e5321e02086c08a6432eb7d654461b40286d674e0c63be1720818bae4f36484",
+      "max_abs_probability_error": 1.3322676295501878e-15,
+      "name": "random-012",
+      "qubits": 1,
+      "state_norm_squared_error": 2.6645352591003757e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 74,
+      "input_sha256": "62df738763ea6a6214a5dae2082110523c9999eb4ed70fdfc42efb9ab836f80e",
+      "max_abs_probability_error": 2.0816681711721685e-16,
+      "name": "random-013",
+      "qubits": 5,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 27,
+      "input_sha256": "fb4bc620e528ea350c2082c099ee7fb3b0f27618ff9318e7c1ad55a1877010d7",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "random-014",
+      "qubits": 3,
+      "state_norm_squared_error": 8.881784197001252e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 2,
+      "input_sha256": "b0a13c410547e086ccaa28acb26a3feaac5861c603c1f72b0b5c864c963466ef",
+      "max_abs_probability_error": 0.0,
+      "name": "random-015",
+      "qubits": 6,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 99,
+      "input_sha256": "4b076b57be65d648663cec8362ea3c0b3b053c9c0df8043ed5ebca9e1d892d20",
+      "max_abs_probability_error": 2.636779683484747e-16,
+      "name": "random-016",
+      "qubits": 6,
+      "state_norm_squared_error": 1.3322676295501878e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 21,
+      "input_sha256": "31df457b05fa9e227a03179c72b08888082af7532258e66ed31d0141f6badaa5",
+      "max_abs_probability_error": 2.220446049250313e-16,
+      "name": "random-017",
+      "qubits": 3,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 32,
+      "input_sha256": "2f69b25ab5c8352194a78b1a9c7ae87fc3b4115e4f1f13e5494f82bce7515c6b",
+      "max_abs_probability_error": 2.7755575615628914e-16,
+      "name": "random-018",
+      "qubits": 5,
+      "state_norm_squared_error": 1.1102230246251565e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 67,
+      "input_sha256": "8b782815e84e77a4f650c851e9cfbbfda1aae4824d66e0d9fee0a6dbc28560aa",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "random-019",
+      "qubits": 7,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 93,
+      "input_sha256": "5238d7af17f40ffba403fdb796e0b2a2c4c59f2fd94ee7d393d3339c876db985",
+      "max_abs_probability_error": 4.163336342344337e-17,
+      "name": "random-020",
+      "qubits": 8,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 70,
+      "input_sha256": "7e5c94cdf7d84c2092d32465ff68a99b3b05e0f976965f05294fead38b457bb1",
+      "max_abs_probability_error": 1.5265566588595902e-16,
+      "name": "random-021",
+      "qubits": 6,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 85,
+      "input_sha256": "5c46d29abac122db8c68066e1475cfe3c8e05513fa45c8013e25c9bb3c5e423b",
+      "max_abs_probability_error": 7.771561172376096e-16,
+      "name": "random-022",
+      "qubits": 2,
+      "state_norm_squared_error": 8.881784197001252e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 18,
+      "input_sha256": "156c45a07c7ccc83635bc5e7ad341c46b237d8c86fb93a3672458b9b88e3f5a0",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "random-023",
+      "qubits": 4,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 79,
+      "input_sha256": "325e177bd4a8193efa4ec9dbff9a18dba01e32d754c6df7739234bf072cc911f",
+      "max_abs_probability_error": 6.661338147750939e-16,
+      "name": "random-024",
+      "qubits": 3,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 128,
+      "input_sha256": "6038bb76d24f8a8f4e6f5e460af64c4ae92085ffa14734275c644bd68aaa98f3",
+      "max_abs_probability_error": 1.942890293094024e-16,
+      "name": "random-025",
+      "qubits": 8,
+      "state_norm_squared_error": 1.3322676295501878e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 16,
+      "input_sha256": "fa894cb0b8a765b75a4a3ad2e66cd07c84ea13d6a9861c1ae718c0ca20ed911d",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "random-026",
+      "qubits": 5,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 6,
+      "input_sha256": "9c0b888fad53d5bee8af1addfbdd8394cc5a0346c7b7bb8b29107b3be22da130",
+      "max_abs_probability_error": 1.3877787807814457e-17,
+      "name": "random-027",
+      "qubits": 5,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 89,
+      "input_sha256": "f2fc93575ad1d19df667c91d11a7c9c792d416e32fb2b001a920edb7abbdae2c",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "random-028",
+      "qubits": 5,
+      "state_norm_squared_error": 1.5543122344752192e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 16,
+      "input_sha256": "82ed500f8c6553f0b47f8230590df10446f2740b4551f2ec9955b15ada22f097",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "random-029",
+      "qubits": 6,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 53,
+      "input_sha256": "cc9fc4b0efdd2c4a3a52399016bae10667cf5d83d9f8e68209033d8fae7f6eef",
+      "max_abs_probability_error": 2.220446049250313e-16,
+      "name": "random-030",
+      "qubits": 7,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 97,
+      "input_sha256": "a398163e0105777f412bb935bfffbc88828b0d04f5266e07b0200f3dd6d30b3d",
+      "max_abs_probability_error": 1.249000902703301e-16,
+      "name": "random-031",
+      "qubits": 6,
+      "state_norm_squared_error": 2.220446049250313e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 113,
+      "input_sha256": "659c88fee71e198d3ee6d11fb7e1cf0c4d9d06397daeba4cc0b8b0542633a426",
+      "max_abs_probability_error": 2.498001805406602e-16,
+      "name": "random-032",
+      "qubits": 7,
+      "state_norm_squared_error": 1.5543122344752192e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 70,
+      "input_sha256": "49b73c49eaf209fe2facbea1e09428344000272af023afd7382eb3641d28aeef",
+      "max_abs_probability_error": 9.992007221626409e-16,
+      "name": "random-033",
+      "qubits": 3,
+      "state_norm_squared_error": 1.1102230246251565e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 83,
+      "input_sha256": "878799997a008a13f8cc99337dae410b42cebc2cd9acd64c67d0d5ffa076a971",
+      "max_abs_probability_error": 3.0531133177191805e-16,
+      "name": "random-034",
+      "qubits": 6,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 110,
+      "input_sha256": "845d86de7aa39746254af9373cdaa0647ca253ce4f4886d6ae5eb5e5e471fe4e",
+      "max_abs_probability_error": 2.7755575615628914e-16,
+      "name": "random-035",
+      "qubits": 7,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 128,
+      "input_sha256": "a7aa06a781a40713a83571801878da4c66e5c4404bf5143d6f88945ad2cfa75d",
+      "max_abs_probability_error": 3.469446951953614e-16,
+      "name": "random-036",
+      "qubits": 5,
+      "state_norm_squared_error": 2.220446049250313e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 26,
+      "input_sha256": "8e490d4b2cccc36f4065fd067441394d18e6282500f9d96f2761d1beb678a44b",
+      "max_abs_probability_error": 3.885780586188048e-16,
+      "name": "random-037",
+      "qubits": 3,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 36,
+      "input_sha256": "4afc5a9e482b568dcd70aeb50cb3ef1d3b7ef226e9a8931e259dab718b2a6307",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "random-038",
+      "qubits": 8,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 90,
+      "input_sha256": "820837496cbee07577cfb2d8420fabe9298581f8b6253b365217190b449298d4",
+      "max_abs_probability_error": 4.5102810375396984e-17,
+      "name": "random-039",
+      "qubits": 8,
+      "state_norm_squared_error": 1.9984014443252818e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 28,
+      "input_sha256": "98935b0895ac72c0f7c1a84bc018ff8858f7e280bc9f865c8bae8509c286c834",
+      "max_abs_probability_error": 8.326672684688674e-17,
+      "name": "random-040",
+      "qubits": 8,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 26,
+      "input_sha256": "7ee6e450086561096167dae86e51ab0247699ae4f934ee6066f2812866c8fb63",
+      "max_abs_probability_error": 5.551115123125783e-17,
+      "name": "random-041",
+      "qubits": 7,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 101,
+      "input_sha256": "89e18f9641b6856ed936ba3a34b13a485ff4fedc786fa285a4f23405b4fa1650",
+      "max_abs_probability_error": 2.498001805406602e-16,
+      "name": "random-042",
+      "qubits": 5,
+      "state_norm_squared_error": 2.4424906541753444e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 2,
+      "input_sha256": "b811bfd0467afa3cf239129ccfe9c841d384a6166ba1fe01ab2c70e02935848d",
+      "max_abs_probability_error": 4.440892098500626e-16,
+      "name": "random-043",
+      "qubits": 3,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 30,
+      "input_sha256": "9b5204ea57b359888d8c8d760454be896f5d7ddd9f1edbc80018a724c6b9e2c3",
+      "max_abs_probability_error": 2.7755575615628914e-16,
+      "name": "random-044",
+      "qubits": 2,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 11,
+      "input_sha256": "df596b046fd39162daea2abe307d7223c6c71c71fb6481bc4189efb9abe286f9",
+      "max_abs_probability_error": 1.6653345369377348e-16,
+      "name": "random-045",
+      "qubits": 4,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 79,
+      "input_sha256": "48a06d062b64280fa3b4de446f12ab2455558a8878dfd1c1039dd547463df981",
+      "max_abs_probability_error": 9.71445146547012e-17,
+      "name": "random-046",
+      "qubits": 6,
+      "state_norm_squared_error": 0,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 125,
+      "input_sha256": "82a90d7dbd1ff51140375ffa82ba138c1ac622201c75b40df86579dd8ee408e7",
+      "max_abs_probability_error": 2.3592239273284576e-16,
+      "name": "random-047",
+      "qubits": 6,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 34,
+      "input_sha256": "1b556740cdb3efe0fd52ade0a6df37a65285e5433d910869c70ef339d798cfee",
+      "max_abs_probability_error": 4.85722573273506e-17,
+      "name": "random-048",
+      "qubits": 7,
+      "state_norm_squared_error": 8.881784197001252e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 36,
+      "input_sha256": "f7ec75ea35fccc0c8ec2027c705b91068713a24a6a6bfce069c24713e8516d23",
+      "max_abs_probability_error": 1.3877787807814457e-16,
+      "name": "random-049",
+      "qubits": 8,
+      "state_norm_squared_error": 6.661338147750939e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 53,
+      "input_sha256": "c22afe44d72dc992f8b5541f76423701cd717645a8aa223ed31ebdf38ec3378a",
+      "max_abs_probability_error": 1.2212453270876722e-15,
+      "name": "random-050",
+      "qubits": 1,
+      "state_norm_squared_error": 1.7763568394002505e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 39,
+      "input_sha256": "b6f2674ded1f1447fe318e20d8c680a89c3b5c7290ec1715f7839c2ef87a6e72",
+      "max_abs_probability_error": 8.881784197001252e-16,
+      "name": "random-051",
+      "qubits": 3,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 61,
+      "input_sha256": "a1d8c1305659fad397c229cb6ad7ff9aa399a9efb1adf22dbbf84a3432345c92",
+      "max_abs_probability_error": 6.938893903907228e-17,
+      "name": "random-052",
+      "qubits": 5,
+      "state_norm_squared_error": 4.440892098500626e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 92,
+      "input_sha256": "b60f6d684d2d7a8ddc9a3f0a0b0ec7abc9266dbf7578b01794e36595cc783b2b",
+      "max_abs_probability_error": 9.992007221626409e-16,
+      "name": "random-053",
+      "qubits": 3,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 112,
+      "input_sha256": "175d2792a468d5023c27f5d3afcb2dd6e621291393bf225b9bed8b6e5d15b2ef",
+      "max_abs_probability_error": 4.996003610813204e-16,
+      "name": "random-054",
+      "qubits": 2,
+      "state_norm_squared_error": 1.7763568394002505e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 103,
+      "input_sha256": "0ee7e22ec86376871249f2ac03240bd623c7eb87440ccffd31cdc5ff7770b925",
+      "max_abs_probability_error": 1.1796119636642288e-16,
+      "name": "random-055",
+      "qubits": 7,
+      "state_norm_squared_error": 2.4424906541753444e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 112,
+      "input_sha256": "37add231bec74c750d2efb00c4177e04978691e6d2e723973fb615642db60c4d",
+      "max_abs_probability_error": 7.216449660063518e-16,
+      "name": "random-056",
+      "qubits": 3,
+      "state_norm_squared_error": 2.886579864025407e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 35,
+      "input_sha256": "b2f9430812d59919c11366bce33ce265ad6244044dbdb40d4eb7aa5604dbeeb3",
+      "max_abs_probability_error": 4.440892098500626e-16,
+      "name": "random-057",
+      "qubits": 3,
+      "state_norm_squared_error": 1.1102230246251565e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 78,
+      "input_sha256": "cace60dbd134a23cf67e5927d1bb69e2acdf9a3f3231b668767fbf4ee648c2e1",
+      "max_abs_probability_error": 4.440892098500626e-16,
+      "name": "random-058",
+      "qubits": 3,
+      "state_norm_squared_error": 2.220446049250313e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 78,
+      "input_sha256": "70161762e2c6e0cc683666ff1b961a67df0caaec78db2d4e7c3c0d4d752807ab",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "random-059",
+      "qubits": 8,
+      "state_norm_squared_error": 1.3322676295501878e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 70,
+      "input_sha256": "6f35eeeedcd8805077743f347a224b6bd14ea1e97ac91f8ba24d92d76b4a18b2",
+      "max_abs_probability_error": 1.0547118733938987e-15,
+      "name": "random-060",
+      "qubits": 2,
+      "state_norm_squared_error": 1.5543122344752192e-15,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 46,
+      "input_sha256": "efab322db91a3b2564179514fc4c66f81361a2803d7deaec3bea8411f080d325",
+      "max_abs_probability_error": 1.1102230246251565e-16,
+      "name": "random-061",
+      "qubits": 8,
+      "state_norm_squared_error": 8.881784197001252e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 84,
+      "input_sha256": "31213c35c932480a2a1ba12286e6f79b29b73bd4e06aa7c8bd4917283c25cf0b",
+      "max_abs_probability_error": 3.0531133177191805e-16,
+      "name": "random-062",
+      "qubits": 4,
+      "state_norm_squared_error": 8.881784197001252e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 22,
+      "input_sha256": "b7b1a211f1fbaff8b423f5c40749f53ffbc64f6380447bb45fe7985ea68d5255",
+      "max_abs_probability_error": 4.163336342344337e-17,
+      "name": "random-063",
+      "qubits": 7,
+      "state_norm_squared_error": 2.220446049250313e-16,
+      "status": "PASS"
+    },
+    {
+      "gate_count": 128,
+      "input_sha256": "e70848278509c661504ce713bfb76cdecc3a1c3eba53129ce9dbbb3e377d8a3c",
+      "max_abs_probability_error": 2.42861286636753e-17,
+      "name": "maximum-workload",
+      "qubits": 10,
+      "state_norm_squared_error": 2.220446049250313e-15,
+      "status": "PASS"
+    }
+  ],
+  "input_set_sha256": "d050e008e710c82e62e0cc614b26035154516f38bd818fc2356de05bbcc2e2d7",
+  "max_abs_probability_error": 1.3322676295501878e-15,
+  "max_state_norm_squared_error": 3.3306690738754696e-15,
+  "oracle": "Qiskit Statevector via strict OpenQASM 2 parser",
+  "probability_tolerance": 1e-12,
+  "qpu_used": false,
+  "random_case_count": 64,
+  "seed": 20261112,
+  "source_sha256": {
+    "scripts/verify-quantum-qiskit.py": "af89c4b1ef96b6e52c0ae3e4f8dfe435095cc89752c3bc2c7a4525df78ab5ba7",
+    "src/quantum/openqasm.ts": "47d81c927b136a442c35906f29a322bcc5ead2c2332c5b3e2e107e3df6028973",
+    "src/quantum/simulator.ts": "ecea3993d0881d4dc51a6d44369067052051697ca0ebebeb597a806ea1388e8e"
+  },
+  "status": "PASS",
+  "versions": {
+    "node": "24.22.1",
+    "numpy": "2.5.4",
+    "python": "3.12.14",
+    "qiskit": "2.6.2",
+    "rustworkx": "0.18.1",
+    "scipy": "1.18.1"
+  }
+}

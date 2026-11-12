@@ -8,7 +8,9 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-wealth-continuity-20261112": false,
       "fix/iao-ime-composition-20261112": false,
+      "audit/api-cost-20261112-4eb2": false,
       "feat/iao-accessibility-20261111": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
@@ -29,7 +31,8 @@
       "fix/connect-provisioning-recovery-20261111": false,
       "audit/connect-provisioning-gates-20261111": false,
       "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false,
-      "audit/subscription-identity-20261112": false
+      "audit/subscription-identity-20261112": false,
+      "fix/oauth-shared-deadline-20261112": false
     }
   }
 }

@@ -33,6 +33,8 @@ export function createRealClaudeClient(): ClaudeClient {
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) {
     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
   }
+  // KARTA owns durable delivery/recovery. The SDK's implicit retries can repeat
+  // a paid inference after an ambiguous response, outside that execution log.
   const client = new Anthropic({
     apiKey: config.anthropicApiKey,
     timeout: timeoutMs,
@@ -55,7 +57,7 @@ export function createRealClaudeClient(): ClaudeClient {
         messages: [
           {
             role: "user",
-            content: `Contexte actuel:\n${JSON.stringify(input.context, null, 2)}\n\nDécide quelle(s) action(s) prendre.`,
+            content: `Contexte actuel:\n${JSON.stringify(input.context)}\n\nDécide quelle(s) action(s) prendre.`,
           },
         ],
         tools: toAnthropicTools(input.tools),

@@ -152,3 +152,11 @@ premier token, latence complète p50/p95 et mémoire sous charge.
 Ces pistes ne sont pas annoncées installées. Les fournisseurs réels, la cible
 Hostinger, l'intégration Mac de la version courante et la supériorité face aux
 autres IA restent NON TESTÉS dans cette tranche.
+
+## Réconciliation avec le correctif de consommation API
+
+La consolidation a ensuite atteint `5ca6add91f1c94ce0e0baf42a1934521270ebd47` et intégré le lot API-cost. La composition réconciliée conserve ses 13 tests de transport et sa sérialisation JSON compacte, avec les délais complets, la confidentialité et le routage de PR63. Le seul changement de sa fixture est la valeur `anthropicTimeoutMs: 60_000` ; aucune assertion n’est retirée.
+
+Avant conservation de la sérialisation compacte, la combinaison reproduit trois échecs de contrat et dix réussites. Après correction, les sept suites ciblées passent leurs 173 tests. Le typage et la compilation passent dans la reprise sérielle ; une première tentative de typage a reçu SIGKILL et n’est pas comptée comme réussie. Les 25 règles du fichier Vercel fusionné sont conservées.
+
+Les sources, commandes, empreintes, impacts et limites propres à cette composition figurent dans `integration-20261112.json`. Les manifestes antérieurs restent des preuves de leurs versions identifiées. La CI commune et l’éventuelle intégration de branche sont consignées dans la PR après observation ; aucune mise en production n’est établie par ce registre.
