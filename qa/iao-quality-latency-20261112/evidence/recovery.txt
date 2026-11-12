@@ -1,0 +1,186 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 --no-file-parallelism --reporter=verbose test/assistantPolicy.test.ts test/queueDeliveryIdentity.test.ts test/subscriptionRevision.test.ts test/approvalParentGuard.test.ts test/chefBudgetMigration.test.ts test/approval.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-performance/karta
+
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > resolves the actual Deno re-export to the one canonical Node source 69ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > encodes role/context delimiters while preserving multilingual data exactly 2ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: "" 1ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: "  " 0ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: null 0ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: 12 0ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an invalid policy kind and keeps task instructions free of the conversation layer 1ms
+ ✓ test/assistantPolicy.test.ts > real provider request construction > adds the core and conversation policy once in the actual streaming transport 68ms
+ ✓ test/assistantPolicy.test.ts > real provider request construction > adds the task policy once through createRealClaudeClient with a simulated SDK transport 65ms
+ ✓ test/assistantPolicy.test.ts > agent-chat server model selection > uses the server main model when configuration is configured 99ms
+ ✓ test/assistantPolicy.test.ts > agent-chat server model selection > uses the server main model when configuration is unset 60ms
+ ✓ test/assistantPolicy.test.ts > agent-chat server model selection > does not let a client model override the server configuration 29ms
+ ✓ test/assistantPolicy.test.ts > chat server model selection > uses the server main model when configuration is configured 31ms
+ ✓ test/assistantPolicy.test.ts > chat server model selection > uses the server main model when configuration is unset 36ms
+ ✓ test/assistantPolicy.test.ts > chat server model selection > does not let a client model override the server configuration 42ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > sends the most recent 20 own messages in chronological order and preserves the latest refusal 50ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > fails closed on a history outage before inference or a chat write 45ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > runs the real Zod schema and rejects a malformed session before model work 47ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects truncated answer before saving any assistant answer 37ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects paused answer before saving any assistant answer 41ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects empty answer before saving any assistant answer 41ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects tool instruction before saving any assistant answer 70ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > propagates request cancellation to the provider and stores no assistant response 20ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > does not persist a late response even when provider JSON finishes after cancellation 21ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > sends the most recent 20 own messages in chronological order and preserves the latest refusal 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > fails closed on a history outage before inference or a chat write 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > runs the real Zod schema and rejects a malformed session before model work 18ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects truncated answer before saving any assistant answer 27ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects paused answer before saving any assistant answer 37ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects empty answer before saving any assistant answer 42ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects tool instruction before saving any assistant answer 35ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > propagates request cancellation to the provider and stores no assistant response 35ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > does not persist a late response even when provider JSON finishes after cancellation 39ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > sends the most recent 20 own messages in chronological order and preserves the latest refusal 57ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > fails closed on a history outage before inference or a chat write 45ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > runs the real Zod schema and rejects a malformed session before model work 38ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects truncated answer before saving any assistant answer 41ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects paused answer before saving any assistant answer 42ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects empty answer before saving any assistant answer 82ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects tool instruction before saving any assistant answer 21ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > propagates request cancellation to the provider and stores no assistant response 35ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > does not persist a late response even when provider JSON finishes after cancellation 24ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > rejects a client system role before the actual provider is invoked 19ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > preserves the existing 50 by 4,000 character server contract without trimming 26ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > does not let client input increase the server limits 27ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > does not let client input increase the server limits 23ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > creator-agent-generate sends its actual task prompt and stops at simulated provider failure 13ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > creator-agent-run sends its actual task prompt and stops at simulated provider failure 38ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > legal-build-case sends its actual task prompt and stops at simulated provider failure 29ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > legal-generate-document sends its actual task prompt and stops at simulated provider failure 24ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > partner-find-prospects sends its actual task prompt and stops at simulated provider failure 9ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > partner-generate-contract sends its actual task prompt and stops at simulated provider failure 22ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > partner-send-outreach sends its actual task prompt and stops at simulated provider failure 17ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > social publication rejects caption generation before storage, model or publication effects 32ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > forces the saved legal success probability to null even when the model returns 99 21ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > executes and atomically patches the parent 29ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > commits one durable continuation without depending on Redis 17ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > reports provider failure to the caller 15ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > reports provider failure to the caller 16ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > rejects without claiming successful execution 15ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > does not repeat a resolved action 16ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > claims at most once for concurrent callers 19ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > does not repeat an effect after failed finalization 13ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > keeps waiting when another approval is outstanding 16ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > refuses an approval while the cycle is preparing its journal 14ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > refuses execution when the database global stop is active 13ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > observes revocation after claiming 15ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > refuses an orphan approval before any effect if the parent's action entry is absent 15ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > denies RPC access to a client database role 15ms
+ ✓ test/approval.test.ts > approval with real PostgreSQL SQL in PGlite (single backend) > enforces unique durable delivery keys 13ms
+ ✓ test/approvalParentGuard.test.ts > baseline 006 without the parent guard > admits an orphan approval before its unchanged finalizer discovers the absent journal entry 43ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an orphan before approve can change it to executing 23ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an orphan before reject can change it to executing 18ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > returns no work for an unknown approval 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid parent binding or closure: owner 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid parent binding or closure: agent 23ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid parent binding or closure: running 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid parent binding or closure: unconfirmed 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses a malformed negative duration before approve 17ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses a malformed negative duration before reject 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > does not execute a simulation parent when the agent is now live 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > does not execute a mock parent when the agent is now live 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > still permits rejection of a valid simulation parent 17ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > still permits rejection of a valid mock parent 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses a missing parent even in a legacy fixture without the foreign key 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: null 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: object 18ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: string 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: null_entry 12ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: scalar_entry 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: missing_entry 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: other_id 17ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: other_tool 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: true_success 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: string_success 14ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: missing_success 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: wrong_outcome 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: missing_outcome 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: duplicate 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: mixed_duplicate 14ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > fails closed for a malformed or ambiguous journal: mixed_malformed 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > admits and finalizes a valid approve using the unchanged 006 finalizer 17ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > admits and finalizes a valid reject using the unchanged 006 finalizer 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > admits the next approval after partial resolution clears finished_at but preserves the initial closure 19ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > accepts the metadata-only privacy marker and preserves the exact approval payload 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > does not claim an already admitted approval twice or reset its claim timestamp 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > preserves the existing approve stop: global 14ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > preserves the existing approve stop: global_missing 14ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > preserves the existing approve stop: disabled 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > preserves the existing approve stop: kill_switch 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > preserves the existing approve stop: simulation 16ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > preserves the existing approve stop: agent_missing 13ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > allows rejection of a valid journal entry while the agent and global switch are stopped 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid decision before admission: null 17ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid decision before admission: "" 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > refuses an invalid decision before admission: "execute" 15ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > does not expose approval admission to anon 17ms
+ ✓ test/approvalParentGuard.test.ts > 019 checks the parent before approval admission > does not expose approval admission to authenticated 16ms
+ ✓ test/chefBudgetMigration.test.ts > CHEF budget migration of existing claims > refuses an unreserved historical capped claim rather than assuming a missing receipt is zero 2194ms
+ ✓ test/chefBudgetMigration.test.ts > CHEF budget migration of existing claims > preserves charged historical totals, treats old synthetic zero costs as unknown and is replayable 1941ms
+ ✓ test/chefBudgetMigration.test.ts > CHEF budget migration of existing claims > rejects mixed historical known and ambiguous cost receipts without changing charged totals 1969ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > reuses the same confirmed run after queue retention, and executes a genuinely new mission 58ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > keeps separate ordinary missions even with the same input and timestamp 15ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > scopes the business key to both user and agent 26ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > compares the stored queue payload instead of the attempted Job returned by add 17ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > rejects conflicting content after the transport has been purged 16ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > allows only one of two simultaneous producers with conflicting content 18ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > does not acknowledge a changed request when the previous job completes between preflight and add 25ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > enforces the fingerprint at the SQL claim even if concurrent worker preflights both passed 19ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > normalizes property order and snapshots nested payloads before any await 19ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > maps an unprocessed legacy deduplicated job to the new durable identity 19ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > blocks a legacy success claim whose payload cannot be proven 12ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > blocks a legacy running claim whose payload cannot be proven 13ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > preserves the exact identity of an unprocessed legacy ordinary delivery 12ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > does not replay an ordinary legacy journal with no content fingerprint 9ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > rejects a modified queued payload without echoing its private content 8ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > does not reinterpret missing v2 metadata as a legacy delivery 7ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > fails closed with a safe retryable error when legacy/current claims cannot be read 9ms
+ ✓ test/queueDeliveryIdentity.test.ts > durable queue delivery identity > keeps a lost queue acknowledgement uncertain and makes retry use the same claim 17ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > reapplies migration 020 without losing existing claims or adding a second constraint 14ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > accepts a lowercase SHA-256 fingerprint with its execution key and preserves nullable legacy rows 10ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects an invalid fingerprint at the SQL boundary: "" 7ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects an invalid fingerprint at the SQL boundary: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 8ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects an invalid fingerprint at the SQL boundary: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 7ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects an invalid fingerprint at the SQL boundary: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 7ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects an invalid fingerprint at the SQL boundary: "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg" 7ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects an invalid fingerprint at the SQL boundary: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n" 8ms
+ ✓ test/queueDeliveryIdentity.test.ts > execution fingerprint migration constraints > rejects a non-null fingerprint when no durable execution key accompanies it 8ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > preserves every historical value without inventing a Stripe identity or adding a ledger 18ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > persists a new Stripe identity even when the paid plan and status are unchanged, invalidating stale cancellation 27ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > confirms a replay by advancing revision without rewriting commercial fields, fencing an older same-id observation 29ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > prevents an older paid checkout snapshot from undoing a committed cancellation 6ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > advances on no-op and administrative updates instead of accepting a caller revision 7ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > keeps distinct revisions when both timestamp-trigger updates share one transaction timestamp 7ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > detaches a previous Stripe subscription when a new local trial is admitted from canceled 13ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > detaches a previous Stripe subscription when a new local trial is admitted from past_due 8ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > starts a first local trial unbound at revision zero and preserves its one-time admission 8ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > retains client read isolation without granting writes to either new column 11ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > retains service writes with a non-definer revision trigger and fixed search path 8ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses invalid provider identity sub_ without mutation 6ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses invalid provider identity other_123 without mutation 14ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses invalid provider identity sub_bad-hyphen without mutation 7ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses invalid provider identity sub_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa without mutation 6ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses a bound Stripe subscription without a usable customer null 5ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses a bound Stripe subscription without a usable customer  4ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > refuses a bound Stripe subscription without a usable customer     4ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > accepts the maximum-length identity and permits unrelated unbound rows 8ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > enforces unique subscription and customer bindings without rewriting the earlier owner 9ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > rejects an inserted revision outside the exact JSON range -1 3ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > rejects an inserted revision outside the exact JSON range 9007199254740992 4ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > exhausts the last safe revision without wrapping, losing precision or changing rights 6ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > rolls back the revision together with a failed or aborted business write 5ms
+ ✓ test/subscriptionRevision.test.ts > subscription projection identity and database revision on composed SQL migrations > does not let a snapshot of a deleted row apply to a new row with a reset revision 7ms
+
+ Test Files  6 passed (6)
+      Tests  173 passed (173)
+   Start at  05:52:40
+   Duration  20.82s (tests 95%, import 3%, transform 2%)

@@ -189,6 +189,7 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
       const target = resolve(dirname(path), specifier).replace(/\.js$/, '.ts');
       if (target === resolve(repo, 'karta/src/config.ts')) return { config: {
         anthropicApiKey: 'test-only-not-a-secret', anthropicModelFast: 'test-fast', anthropicModelMain: 'test-main',
+        anthropicTimeoutMs: 60_000,
       } };
       if (target === resolve(repo, 'supabase/functions/_shared/zernio.ts'))
         return { corsHeaders: {}, publishPost: blocked('social publish') };
@@ -203,7 +204,7 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
       } } },
       fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
-      ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout,
+      ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout, performance,
       console: { error: vi.fn(), warn: vi.fn(), log: vi.fn() },
     }, { filename: path });
     return module.exports;

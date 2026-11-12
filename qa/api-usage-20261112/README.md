@@ -73,9 +73,9 @@ Elle a ajouté les cas d'annulation après réception et d'échec du journal san
 nouvelle inférence. Elle ne remplace pas la qualification PostgreSQL.
 
 La PR63 modifie aussi `real.ts` et `types.ts` pour les délais et le routage.
-Lors de leur composition, conserver `signal` et `onUsage`, le modèle sélectionné
-commun et placer le callback après le résultat borné, avant la validation.
-Aucun travail de délai ou de routage de cette PR n'est reproduit ici.
+Sa composition effective est documentée ci-dessous ; `signal` et `onUsage` sont
+conservés ensemble, avec sélection après admission et callback après le résultat
+borné, avant la validation. Aucun second mécanisme de délai ou de routage n'est créé.
 
 ## Limites financières et de durabilité
 
@@ -115,3 +115,33 @@ restent inchangées. L'adaptateur transmet le code PostgreSQL comme PostgREST.
 Les assertions, le code de production et les protections ne sont pas affaiblis.
 Une nouvelle CI du candidat corrigé reste obligatoire. Le reçu de cette première
 campagne est conservé dans `ci-first.json`.
+
+## Deuxième CI et composition avec la PR63 intégrée
+
+Le candidat `820e34d` a passé **2 327 tests KARTA / 128 fichiers**, les types,
+la compilation, les contrôles SQL complémentaires et les **7 tests de concurrence
+des abonnements** dans la CI [43168416008](https://github.com/puramapro-oss/purama-ai/actions/runs/43168416008).
+Son checkout `099fd8a` possède le même arbre `1cdae593` que le candidat publié.
+Le job site poursuivait ses suites navigateur lorsque la consolidation a intégré
+la PR63 (`58baecb`). Cette réception ne qualifie donc pas encore la combinaison.
+
+Les deux conflits de `real.ts` et `types.ts` sont résolus en conservant les deux
+contrats. La sélection du modèle reste à l'intérieur de `bounded` : aucune lecture
+de contexte avant admission d'un appel préannulé et erreurs synchrones toujours
+assainies. Le résultat borné contient le modèle choisi et la réponse complète ;
+le callback de consommation reste après ce résultat et avant validation de la
+décision. Les signaux, délais, tentatives uniques, logs SDK désactivés et règles
+de routage sensible de la PR63 sont conservés.
+
+Le mock de configuration du test de consommation doit maintenant définir le
+délai : les **9 échecs attendus** sont reproduits avant ajout de cette valeur.
+Les assertions sur les réponses tardives, annulations et demandes simultanées
+sont renforcées pour vérifier aussi l'absence de reçu attribué au mauvais appel.
+La campagne locale combinée passe **331/331 tests dans 18 fichiers**, dont les
+contrôles de coût, qualité de routage, contexte, délais, confidentialité et reçus.
+La sortie complète est dans `composition-targeted.txt`. Une nouvelle CI complète
+sur le candidat combiné reste obligatoire.
+
+`evidence.json` distingue désormais explicitement le snapshot local d'avant
+publication et les réceptions distantes suivantes. Les anciens états
+`NON TESTÉ` ne décrivent pas l'état courant de la qualification distante.

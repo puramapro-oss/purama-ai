@@ -14,35 +14,44 @@ toi-même aux impôts — tu prépares uniquement, l'envoi final reste une actio
 catégorisations, generate_pdf pour les documents, send_notification pour alerter des deadlines.`,
   tools: [supabaseSelectTool, supabaseUpsertTool, stripeListUnpaidInvoicesTool, generatePdfTool, sendNotificationTool],
   async buildContext(userId) {
-    const { data: comptaConfig } = await supabase
-      .from("compta_agent_config")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
+    try {
+      const { data: comptaConfig, error: configError } = await supabase
+        .from("compta_agent_config")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (configError) throw new Error("Lecture de la configuration indisponible");
 
-    if (!comptaConfig?.is_active) {
-      return { pendingDeclarations: [], reason: "compta_agent_config inactif ou absent" };
+      if (!comptaConfig?.is_active) {
+        return { pendingDeclarations: [], reason: "compta_agent_config inactif ou absent" };
+      }
+
+      // Both datasets are independent; neither is useful as a complete
+      // accounting context when the other could not be read.
+      const [transactions, invoices] = await Promise.all([
+        supabase
+          .from("compta_transactions")
+          .select("id, description, amount, date")
+          .eq("user_id", userId)
+          .eq("user_validated", false)
+          .limit(20),
+        supabase
+          .from("compta_invoices")
+          .select("id, invoice_number, counterpart_name, total_ht")
+          .eq("user_id", userId)
+          .eq("status", "draft")
+          .limit(10),
+      ]);
+      if (transactions.error || invoices.error) throw new Error("Lecture des données comptables indisponible");
+
+      return {
+        companyName: comptaConfig.company_name,
+        fiscalRegime: comptaConfig.fiscal_regime,
+        tvaRegime: comptaConfig.tva_regime,
+        pendingDeclarations: [...(transactions.data ?? []), ...(invoices.data ?? [])],
+      };
+    } catch {
+      throw new Error("Contexte comptable temporairement indisponible");
     }
-
-    const { data: unvalidatedTransactions } = await supabase
-      .from("compta_transactions")
-      .select("id, description, amount, date")
-      .eq("user_id", userId)
-      .eq("user_validated", false)
-      .limit(20);
-
-    const { data: draftInvoices } = await supabase
-      .from("compta_invoices")
-      .select("id, invoice_number, counterpart_name, total_ht")
-      .eq("user_id", userId)
-      .eq("status", "draft")
-      .limit(10);
-
-    return {
-      companyName: comptaConfig.company_name,
-      fiscalRegime: comptaConfig.fiscal_regime,
-      tvaRegime: comptaConfig.tva_regime,
-      pendingDeclarations: [...(unvalidatedTransactions ?? []), ...(draftInvoices ?? [])],
-    };
   },
 };

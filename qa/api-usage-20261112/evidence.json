@@ -79,19 +79,23 @@
     {
       "gate": "new PostgreSQL migration and expanded logger tests",
       "status": "NON TESTÉ",
-      "next": "Execute in GitHub Actions environment"
+      "next": "Execute in GitHub Actions environment",
+      "phase": "before_first_publication",
+      "superseded_by": "remote_first_candidate, remote_second_candidate and composition_with_pr63"
     },
     {
       "gate": "remote candidate CI",
       "status": "NON TESTÉ",
-      "next": "Publish draft candidate then read complete jobs on its immutable tree"
+      "next": "Publish draft candidate then read complete jobs on its immutable tree",
+      "phase": "before_first_publication",
+      "superseded_by": "remote_first_candidate, remote_second_candidate and composition_with_pr63"
     }
   ],
   "independent_review": {
     "status": "PASS",
     "finding_fixed": "Probe must require model_usage before startup; reproducer 2FAIL before and PASS after.",
     "additional_cases": "Cancellation after receipt; lost/unconfirmed journal without repeated inference; no-key replay guard.",
-    "sql_qualification": "Still required in CI"
+    "sql_qualification": "19/19 migration tests and 17/17 logger tests PASS in second CI; combined candidate with PR63 still requires fresh CI."
   },
   "limitations": [
     "Token counters are not a price estimate or reconciled invoice",
@@ -161,6 +165,16 @@
       "original_bytes": 1010,
       "original_sha256": "cea2a5dfe877aeaec46e22cc848a90caf21d25d1d3306b4135bb32627627c4bc",
       "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "composition-fixture-baseline.txt",
+      "bytes": 6211,
+      "sha256": "9e786326b24a89954c19733ff1bdda7379017fe6a00c3afc7a6be64f34d1926b"
+    },
+    {
+      "file": "composition-targeted.txt",
+      "bytes": 1144,
+      "sha256": "7d47cd592f2bba1a0476f01b09b02472ec9d08e7754edde6c54f5f1e1a29cf63"
     }
   ],
   "gitnexus_change_detection": {
@@ -199,5 +213,55 @@
     "receipt": "ci-first.json",
     "migration_tests": "19/19 PASS",
     "correction": "Current-runtime schema fixtures require028; logger test adapter must preserve SQLSTATE23505. Assertions and production guards retained."
+  },
+  "acceptance_scope": "Historical local snapshot before first publication, observed at 2026-11-12T06:15:24.059590+00:00; remote receptions below supersede pending CI/SQL entries.",
+  "remote_second_candidate": {
+    "status": "PARTIEL",
+    "head": "820e34d63d3b74b3c1efcac09287e9c01739050b",
+    "run_id": 43168416008,
+    "checkout": "099fd8a6b69814020a6af2a10842962a1442276d",
+    "tree": "1cdae5930ca90e1183bac0781d87045a7ed522fa",
+    "karta": {
+      "status": "PASS",
+      "passed": 2327,
+      "files": 128,
+      "typecheck": "PASS",
+      "build": "PASS"
+    },
+    "subscription_concurrency": {
+      "status": "PASS",
+      "passed": 7
+    },
+    "site": "Still running at composition snapshot; not a completed full CI claim",
+    "receipt": "ci-second-before-composition.json"
+  },
+  "composition_with_pr63": {
+    "status": "PARTIEL",
+    "merged_upstream": "58baecb7f63d23ede5a2318078cbe8bac9807e78",
+    "conflicts": [
+      "karta/src/claude/real.ts",
+      "karta/src/claude/types.ts"
+    ],
+    "resolution": "Select model within bounded admission, return selected model and complete response together; retain signal, timeout, maxRetries0, logLeveloff and onUsage after bounded result, before decision validation.",
+    "fixture_baseline": {
+      "failed": 9,
+      "total": 9,
+      "cause": "New timeout config omitted in usage-only test fixture",
+      "log": "composition-fixture-baseline.txt"
+    },
+    "current_acceptance": "331/331 targeted non-SQL tests PASS across18files. Final local types/build not rerun after prior SIGKILLs; fresh full remote CI required.",
+    "targeted": {
+      "status": "PASS",
+      "passed": 331,
+      "files": 18,
+      "exit_code": 0,
+      "log": "composition-targeted.txt"
+    },
+    "preservation": {
+      "upstream_non_composition_files_exact": 33,
+      "previous_receipt_files_exact": 25,
+      "vercel_union_exact": true
+    },
+    "independent_review": "Selection must remain inside bounded admission; received and implemented. Deadline cases strengthened for late responses, caller cancellation, concurrent attribution, private synchronous errors and single receipts."
   }
 }

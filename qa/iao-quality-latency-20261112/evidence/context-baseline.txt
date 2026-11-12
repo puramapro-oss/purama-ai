@@ -1,0 +1,161 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/agentContextContract.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-performance/karta
+
+ ❯ test/agentContextContract.test.ts (33 tests | 21 failed) 34ms
+   ❯ legal business context (11)
+     ❯ resolved database failure (3)
+       × rejects incomplete context without leaking the response from legal_agent_config 4ms
+       × rejects incomplete context without leaking the response from legal_documents 1ms
+       × rejects incomplete context without leaking the response from legal_impayes 0ms
+     ❯ rejected database failure (3)
+       × rejects incomplete context without leaking the response from legal_agent_config 3ms
+       × rejects incomplete context without leaking the response from legal_documents 0ms
+       × rejects incomplete context without leaking the response from legal_impayes 1ms
+     × prevents inference and action approval in the real cycle after a failed context read 5ms
+   ❯ compta business context (11)
+     ❯ resolved database failure (3)
+       × rejects incomplete context without leaking the response from compta_agent_config 0ms
+       × rejects incomplete context without leaking the response from compta_transactions 0ms
+       × rejects incomplete context without leaking the response from compta_invoices 0ms
+     ❯ rejected database failure (3)
+       × rejects incomplete context without leaking the response from compta_agent_config 0ms
+       × rejects incomplete context without leaking the response from compta_transactions 0ms
+       × rejects incomplete context without leaking the response from compta_invoices 0ms
+     × prevents inference and action approval in the real cycle after a failed context read 1ms
+   ❯ partner business context (9)
+     ❯ resolved database failure (2)
+       × rejects incomplete context without leaking the response from partner_agent_config 0ms
+       × rejects incomplete context without leaking the response from partner_prospects 0ms
+     ❯ rejected database failure (2)
+       × rejects incomplete context without leaking the response from partner_agent_config 0ms
+       × rejects incomplete context without leaking the response from partner_prospects 0ms
+     × prevents inference and action approval in the real cycle after a failed context read 1ms
+   ❯ legal independent context reads (1)
+     × starts both lazy requests before either result is available, then waits for both 1ms
+   ❯ compta independent context reads (1)
+     × starts both lazy requests before either result is available, then waits for both 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 21 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/agentContextContract.test.ts > legal business context > resolved database failure > rejects incomplete context without leaking the response from legal_agent_config
+ FAIL  test/agentContextContract.test.ts > legal business context > resolved database failure > rejects incomplete context without leaking the response from legal_documents
+ FAIL  test/agentContextContract.test.ts > legal business context > resolved database failure > rejects incomplete context without leaking the response from legal_impayes
+ FAIL  test/agentContextContract.test.ts > compta business context > resolved database failure > rejects incomplete context without leaking the response from compta_agent_config
+ FAIL  test/agentContextContract.test.ts > compta business context > resolved database failure > rejects incomplete context without leaking the response from compta_transactions
+ FAIL  test/agentContextContract.test.ts > compta business context > resolved database failure > rejects incomplete context without leaking the response from compta_invoices
+ FAIL  test/agentContextContract.test.ts > partner business context > resolved database failure > rejects incomplete context without leaking the response from partner_agent_config
+ FAIL  test/agentContextContract.test.ts > partner business context > resolved database failure > rejects incomplete context without leaking the response from partner_prospects
+AssertionError: expected undefined to be an instance of Error
+ ❯ test/agentContextContract.test.ts:163:21
+    161|       fail(table, mode);
+    162|       const error = await build(spec.agent).then(() => undefined, reas…
+    163|       expect(error).toBeInstanceOf(Error);
+       |                     ^
+    164|       expect(String(error)).not.toContain(PRIVATE_ERROR);
+    165|       if (table === spec.configTable) expect(h.calls).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  test/agentContextContract.test.ts > legal business context > rejected database failure > rejects incomplete context without leaking the response from legal_agent_config
+ FAIL  test/agentContextContract.test.ts > legal business context > rejected database failure > rejects incomplete context without leaking the response from legal_documents
+ FAIL  test/agentContextContract.test.ts > legal business context > rejected database failure > rejects incomplete context without leaking the response from legal_impayes
+ FAIL  test/agentContextContract.test.ts > compta business context > rejected database failure > rejects incomplete context without leaking the response from compta_agent_config
+ FAIL  test/agentContextContract.test.ts > compta business context > rejected database failure > rejects incomplete context without leaking the response from compta_transactions
+ FAIL  test/agentContextContract.test.ts > compta business context > rejected database failure > rejects incomplete context without leaking the response from compta_invoices
+ FAIL  test/agentContextContract.test.ts > partner business context > rejected database failure > rejects incomplete context without leaking the response from partner_agent_config
+ FAIL  test/agentContextContract.test.ts > partner business context > rejected database failure > rejects incomplete context without leaking the response from partner_prospects
+AssertionError: expected 'Error: PRIVATE_DATABASE_RESPONSE_must…' not to contain 'PRIVATE_DATABASE_RESPONSE_must_not_es…'
+
+Expected: "PRIVATE_DATABASE_RESPONSE_must_not_escape"
+Received: "Error: PRIVATE_DATABASE_RESPONSE_must_not_escape"
+
+ ❯ test/agentContextContract.test.ts:164:33
+    162|       const error = await build(spec.agent).then(() => undefined, reas…
+    163|       expect(error).toBeInstanceOf(Error);
+    164|       expect(String(error)).not.toContain(PRIVATE_ERROR);
+       |                                 ^
+    165|       if (table === spec.configTable) expect(h.calls).toHaveLength(1);
+    166|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  test/agentContextContract.test.ts > legal business context > prevents inference and action approval in the real cycle after a failed context read
+ FAIL  test/agentContextContract.test.ts > compta business context > prevents inference and action approval in the real cycle after a failed context read
+ FAIL  test/agentContextContract.test.ts > partner business context > prevents inference and action approval in the real cycle after a failed context read
+AssertionError: expected { status: 'success', …(5) } to match object { Object (status, toolsUsed, ...) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "retryable": false,
+-   "status": "error",
++   "status": "success",
+    "toolsUsed": [],
+  }
+
+ ❯ test/agentContextContract.test.ts:172:20
+    170|     fail(spec.tables[0], "resolved");
+    171|     const result = await runAgentCycle(USER, spec.agent, trigger, "con…
+    172|     expect(result).toMatchObject({ status: "error", toolsUsed: [], ret…
+       |                    ^
+    173|     expect(h.client).not.toHaveBeenCalled();
+    174|     expect(h.decide).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  test/agentContextContract.test.ts > legal independent context reads > starts both lazy requests before either result is available, then waits for both
+AssertionError: expected [ 'legal_agent_config', …(1) ] to deeply equal [ 'legal_agent_config', …(2) ]
+
+- Expected
++ Received
+
+  [
+    "legal_agent_config",
+    "legal_documents",
+-   "legal_impayes",
+  ]
+
+ ❯ test/agentContextContract.test.ts:194:76
+    192|       // Drain only local microtasks, independent of wall-clock speed.
+    193|       for (let i = 0; i < 20; i++) await Promise.resolve();
+    194|       expect(h.calls.filter(call => call.started).map(call => call.tab…
+       |                                                                            ^
+    195|         spec.configTable, ...spec.tables,
+    196|       ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  test/agentContextContract.test.ts > compta independent context reads > starts both lazy requests before either result is available, then waits for both
+AssertionError: expected [ 'compta_agent_config', …(1) ] to deeply equal [ 'compta_agent_config', …(2) ]
+
+- Expected
++ Received
+
+  [
+    "compta_agent_config",
+    "compta_transactions",
+-   "compta_invoices",
+  ]
+
+ ❯ test/agentContextContract.test.ts:194:76
+    192|       // Drain only local microtasks, independent of wall-clock speed.
+    193|       for (let i = 0; i < 20; i++) await Promise.resolve();
+    194|       expect(h.calls.filter(call => call.started).map(call => call.tab…
+       |                                                                            ^
+    195|         spec.configTable, ...spec.tables,
+    196|       ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  21 failed | 12 passed (33)
+   Start at  05:39:59
+   Duration  1.39s (transform 50%, import 44%, tests 3%, setup 1%, worker 1%)

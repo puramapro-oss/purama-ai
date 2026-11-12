@@ -5,6 +5,7 @@ import type { ModelUsageReceipt } from "../src/claude/usage.js";
 vi.mock("../src/config.js", () => ({ config: {
   anthropicApiKey: "usage-fixture-not-a-secret",
   anthropicModelMain: "fixture-main", anthropicModelFast: "fixture-fast",
+  anthropicTimeoutMs: 60_000,
 } }));
 import { createRealClaudeClient } from "../src/claude/real.js";
 
@@ -47,6 +48,15 @@ describe("provider usage through the real installed SDK", () => {
     for (const secret of ["PRIVATE_CONTEXT", "PRIVATE_OUTPUT", "req_private_header", "compatible-fixture.invalid"]) {
       expect(serialized).not.toContain(secret);
     }
+  });
+
+  it("records the same primary model actually requested for a guarded financial decision", async () => {
+    await createRealClaudeClient().decide({ ...input(), agentType: "compta" });
+    expect(network).toHaveBeenCalledOnce();
+    const request = JSON.parse(String(network.mock.calls[0][1]?.body));
+    expect(request.model).toBe("fixture-main");
+    expect(observed).toHaveBeenCalledOnce();
+    expect(observed.mock.calls[0][0]).toMatchObject({ requestedModel: request.model, responseModel: "fixture-actual" });
   });
 
   it.each(["max_tokens", "refusal", "pause_turn", "unknown"])("retains usage before rejecting %s", async reason => {
