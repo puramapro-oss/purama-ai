@@ -1,0 +1,13 @@
+{
+  "name": "@purama/expo-deepmerge-compat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reject unsafe config data before Expo merges it with the unchanged upstream implementation",
+  "type": "commonjs",
+  "main": "index.cjs",
+  "files": ["index.cjs"],
+  "engines": { "node": ">=20.19.4" },
+  "dependencies": {
+    "deepmerge-upstream": "npm:deepmerge@4.3.1"
+  }
+}

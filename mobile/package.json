@@ -26,6 +26,7 @@
     "@expo/vector-icons": "^15.0.3",
     "@supabase/supabase-js": "^2.103.0",
     "decode-uri-component": "file:compat/decode-uri-component",
+    "deepmerge": "file:compat/deepmerge",
     "expo": "~54.0.38",
     "expo-constants": "~18.0.14",
     "expo-device": "~8.0.10",
@@ -73,6 +74,9 @@
     },
     "@expo/metro-config": {
       "postcss": "8.5.32"
+    },
+    "@expo/config": {
+      "deepmerge": "$deepmerge"
     }
   }
 }
