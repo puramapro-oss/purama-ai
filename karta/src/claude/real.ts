@@ -4,6 +4,7 @@ import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
 import { schemaForTool, validateToolParams } from "../engine/tool-input.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 import { buildAssistantSystemPrompt } from "./assistant-policy.js";
+import { normalizeModelUsage } from "./usage.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -31,8 +32,9 @@ export function createRealClaudeClient(): ClaudeClient {
   return {
     isMock: false,
     async decide(input: ClaudeDecideInput): Promise<AgentDecision> {
+      const model = selectModel(input);
       const response = await client.messages.create({
-        model: selectModel(input),
+        model,
         max_tokens: 1024,
         system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
         messages: [
@@ -43,6 +45,10 @@ export function createRealClaudeClient(): ClaudeClient {
         ],
         tools: toAnthropicTools(input.tools),
       });
+
+      // Rejected/truncated decisions can still consume provider tokens. Keep
+      // their receipt before validating content, without another HTTP request.
+      input.onUsage?.(normalizeModelUsage(response, model, client.baseURL));
 
       // This client requests only client tools, without stop sequences or a
       // server-tool continuation loop. Never turn a truncated, paused, refused

@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-12T06:15:24.059590+00:00",
+  "timezone": "Europe/Paris",
+  "status": "PARTIEL",
+  "scope": "Provider usage receipts on existing KARTA run journal; software change awaiting CI, not provider billing or production",
+  "base_commit": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+  "branch": "audit/api-usage-20261112-4eb2",
+  "acceptance": [
+    {
+      "gate": "baseline client and loop",
+      "command": "npm test -- --maxWorkers=1 test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts",
+      "cwd": "karta",
+      "expected": "Reproduce missing receipt propagation",
+      "exit_code": 1,
+      "passed": 5,
+      "failed": 14,
+      "log": "baseline.txt"
+    },
+    {
+      "gate": "baseline readiness",
+      "command": "npm test -- --maxWorkers=1 test/runtimeUsageReadiness.test.ts",
+      "cwd": "karta",
+      "expected": "Previous schema incorrectly accepted before guard",
+      "exit_code": 1,
+      "failed": 2,
+      "log": "readiness-baseline.txt"
+    },
+    {
+      "gate": "baseline replay without key",
+      "command": "npm test -- --maxWorkers=1 test/loopModelUsage.test.ts -t 'without a durable key'",
+      "cwd": "karta",
+      "expected": "Known receipt still offers retry before guard",
+      "exit_code": 1,
+      "failed": 1,
+      "skipped": 13,
+      "log": "replay-baseline.txt"
+    },
+    {
+      "gate": "targeted non-SQL regression",
+      "command": "npm test -- --maxWorkers=1 test/modelUsage.test.ts test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts test/runtimeUsageReadiness.test.ts test/runtimeProbe.test.ts test/claudeTransportCost.test.ts test/claudeDecisionCompleteness.test.ts test/real-claude.test.ts test/loop.test.ts test/loopTracePrivacy.test.ts test/loopJevTracePrivacy.test.ts test/logger.test.ts test/loggerCycleFinalization.test.ts test/runtimeApiReadiness.test.ts",
+      "cwd": "karta",
+      "expected": "All selected regression tests pass",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 212,
+      "files": 14,
+      "log": "verified-non-sql.txt"
+    },
+    {
+      "gate": "first targeted PostgreSQL run",
+      "command": "npm test -- --maxWorkers=1 test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts test/modelUsage.test.ts test/claudeTransportCost.test.ts test/loggerFinalization.test.ts test/logger.test.ts",
+      "cwd": "karta",
+      "exit_code": 1,
+      "status": "PARTIEL",
+      "passed": 104,
+      "reported_total": 115,
+      "error": "loggerFinalization worker SIGKILL; cause not established",
+      "log": "targeted.txt"
+    },
+    {
+      "gate": "final local typecheck",
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "exit_code": 137,
+      "status": "PARTIEL",
+      "error": "Process killed, including sequential retry; cause not established",
+      "log": "typecheck.txt"
+    },
+    {
+      "gate": "final local build",
+      "command": "npm run build",
+      "cwd": "karta",
+      "exit_code": 137,
+      "status": "PARTIEL",
+      "error": "Process killed during parallel attempt; no success claimed",
+      "log": "build-parallel-interrupted.txt"
+    },
+    {
+      "gate": "new PostgreSQL migration and expanded logger tests",
+      "status": "NON TESTÉ",
+      "next": "Execute in GitHub Actions environment"
+    },
+    {
+      "gate": "remote candidate CI",
+      "status": "NON TESTÉ",
+      "next": "Publish draft candidate then read complete jobs on its immutable tree"
+    }
+  ],
+  "independent_review": {
+    "status": "PASS",
+    "finding_fixed": "Probe must require model_usage before startup; reproducer 2FAIL before and PASS after.",
+    "additional_cases": "Cancellation after receipt; lost/unconfirmed journal without repeated inference; no-key replay guard.",
+    "sql_qualification": "Still required in CI"
+  },
+  "limitations": [
+    "Token counters are not a price estimate or reconciled invoice",
+    "Missing receipt or missing counter is unknown, not zero",
+    "Crash before close may lose receipt",
+    "Physical provider calls, per-user invoices, load and production are not tested",
+    "Cache TTL buckets are not added again to cache creation totals",
+    "GitNexus graph is stale and dynamic dispatch remains partially resolved"
+  ],
+  "source_logs": [
+    {
+      "file": "baseline.txt",
+      "bytes": 10022,
+      "sha256": "78fe61810d4d268035a116c1d3157ced231af663148e8760aa118e9c785a38ae",
+      "original_bytes": 10023,
+      "original_sha256": "18ce0a2ba3d9326ae697ab7680882a85bc9d25918d155f5373e3c1104db9f6dd",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "build-parallel-interrupted.txt",
+      "bytes": 164,
+      "sha256": "67cdcbc4592567c4bf52a9fdff7277f8c8d734f806d64ed8c4c727ac6a48883e"
+    },
+    {
+      "file": "index-attempt.txt",
+      "bytes": 401,
+      "sha256": "5f6d9caaed7f9bc132f01d1bcffefb6c4b2853eda86205f688c19a11cadf3a9f"
+    },
+    {
+      "file": "readiness-baseline.txt",
+      "bytes": 2598,
+      "sha256": "4059788b11cc662a85ffe4f1cdb8e5a97a959ae67318a770fe2d754906dd39ac",
+      "original_bytes": 2599,
+      "original_sha256": "8470a15d2eb01e1db275a47cd4e262733eac19d5f1c53bbf525deffdccb7c1f2",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "replay-baseline.txt",
+      "bytes": 1884,
+      "sha256": "b62f3d061124f61b0e296821839b7f3dcefb05937fdefd649e3df2b1de2574c2",
+      "original_bytes": 1885,
+      "original_sha256": "9e68c285cf892e6929b1c5ee121cb245ced60374ec8925be8619bb1e69226f34",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "targeted.txt",
+      "bytes": 2014,
+      "sha256": "049ce0cf4d3bf2101def391be44ebd1f8b672765063cd3d1695d1d6cd6e66fb9",
+      "original_bytes": 2015,
+      "original_sha256": "06cd825d7b1e9eecc239632e221a694b633ee37d81e519c38440b60b13cb3110",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    },
+    {
+      "file": "typecheck-parallel-interrupted.txt",
+      "bytes": 171,
+      "sha256": "f59576b612d418c669f28cf1fd4e825f77ee56d6d9107abe5b0754a0b30b13d7"
+    },
+    {
+      "file": "typecheck.txt",
+      "bytes": 171,
+      "sha256": "f59576b612d418c669f28cf1fd4e825f77ee56d6d9107abe5b0754a0b30b13d7"
+    },
+    {
+      "file": "verified-non-sql.txt",
+      "bytes": 1009,
+      "sha256": "aeb4ef9b0c1c6ac703dbc02b31c061fcef307deb6b22a722ca1ddb181bf55c38",
+      "original_bytes": 1010,
+      "original_sha256": "cea2a5dfe877aeaec46e22cc848a90caf21d25d1d3306b4135bb32627627c4bc",
+      "normalization": "Trailing empty lines removed in versioned copy only"
+    }
+  ],
+  "gitnexus_change_detection": {
+    "checks": [
+      {
+        "scope": "staged",
+        "exit_code": 0,
+        "files": 26,
+        "symbols": 11,
+        "processes": 5,
+        "risk": "medium",
+        "text_sha256": "e9076a3235274f17274853c4cfecb7f267eb554177767aa30e334e7df42d9527"
+      },
+      {
+        "scope": "compare",
+        "exit_code": 0,
+        "files": 1399,
+        "symbols": 12236,
+        "processes": 584,
+        "risk": "critical",
+        "text_sha256": "5be5daf63ecac396f0dfde3495410578a31351ede7a131ecb1b932d433a141a5"
+      }
+    ],
+    "command": "node <installed-gitnexus-1.6.12>/dist/cli/index.js detect-changes --scope staged|compare --repo <original-registered-repo> [--base-ref main] --limit 50",
+    "git_directory": "New worktree Git directory and working tree supplied through standard GIT_DIR/GIT_WORK_TREE environment; shared Git objects, original registered graph unchanged.",
+    "limits": "Index stale; new symbols absent and line positions may be approximate. Changed source paths reviewed directly; graph counts are reported observations, not full coverage.",
+    "warning_reported": "Medium scope risk and critical main-comparison risk reported before commit."
+  }
+}

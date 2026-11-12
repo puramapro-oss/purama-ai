@@ -1,4 +1,5 @@
 import { getClaudeClient } from "../claude/index.js";
+import type { ModelUsageReceipt } from "../claude/usage.js";
 import { isRunnable, loadAgentState, recordRunOutcome, requiresHumanApproval } from "./autonomy.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun, type RunLogHandle } from "./logger.js";
@@ -48,14 +49,18 @@ export async function runAgentCycle(
   let finalizedOutcome: AgentRunResult | undefined;
   let completionAttempted = false;
   let briefArmed = false;
+  // Kept outside the business result: private-trace minimization must neither
+  // erase this server-owned receipt nor expose it in notifications/responses.
+  let modelUsage: ModelUsageReceipt | undefined;
   const finishOutcome = async (outcome: AgentRunResult): Promise<AgentRunResult> => {
     completionAttempted = true;
+    const storedOutcome = modelUsage ? { ...outcome, modelUsage } : outcome;
     try {
-      await run.finish(outcome);
+      await run.finish(storedOutcome);
     } catch {
       // Reconcile only this same candidate; never repeat an external action.
       // The logger's conditional write makes this one bounded retry safe.
-      await run.finish(outcome);
+      await run.finish(storedOutcome);
     }
     finalizedOutcome = outcome;
     if (outcome.status === "awaiting_approval") {
@@ -143,6 +148,7 @@ export async function runAgentCycle(
     } : await getClaudeClient().decide({
       systemPrompt: definition.systemPrompt + (continuation ? APPROVAL_CONTINUATION_GUIDANCE : ""),
       context, tools: definition.tools, agentType: definition.type,
+      onUsage: receipt => { modelUsage ??= receipt; },
     });
     // One private/unknown call protects the entire decision, including earlier
     // and deferred calls where the model could repeat the same private content.
@@ -297,12 +303,14 @@ export async function runAgentCycle(
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
       // A durable execution key is already claimed. No automatic replay of it,
       // even when logging fails after a completed external action.
-      retryable: !(error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
+      // A received provider response must not trigger another inference even
+      // for a direct caller that omitted a durable execution key.
+      retryable: !(error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) && !completionAttempted && !effectStarted && !executionKey && modelUsage === undefined && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
     // This fixed server-owned explanation is safe even for private continuations.
     if (error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) outcome = { ...outcome, errorMessage: error.message };
     if (!completionAttempted) {
-      await run.finish(outcome).catch(() => {
+      await run.finish(modelUsage ? { ...outcome, modelUsage } : outcome).catch(() => {
         // A durable brief can only become available in the confirmed closing
         // transaction. Never assume that happened after a lost response.
         if (definition.pendingBriefKey !== undefined) outcome.retryable = false;

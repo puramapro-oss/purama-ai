@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import type { AgentRunResult } from "../src/engine/types.js";
+import { normalizeModelUsage } from "../src/claude/usage.js";
 
 type Row = Record<string, unknown>;
 type QueryResult = { data: Row | null; error: { message: string; code?: string } | null };
@@ -92,6 +93,9 @@ const result = (): AgentRunResult => ({
 });
 const conflictingResult = (): AgentRunResult => ({ ...result(), status: "error", decision: "Later failure", errorMessage: "Bookkeeping failed" });
 const start = () => startRun(user, "legal", trigger, "live", "single-delivery");
+const usageReceipt = normalizeModelUsage({ id: "msg_journal", model: "actual-model", usage: {
+  input_tokens: 120, output_tokens: 8, cache_read_input_tokens: 400,
+} }, "requested-model", "https://compatible.invalid");
 async function row(id: string): Promise<Row> {
   return (await h.db!.query<Row>("SELECT * FROM purama_ai.karta_runs WHERE id = $1", [id])).rows[0];
 }
@@ -100,6 +104,7 @@ beforeAll(async () => {
   h.db = new PGlite();
   await h.db.exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai;");
   await h.db.exec(await readFile(new URL("../migrations/001_karta_core.sql", import.meta.url), "utf8"));
+  await h.db.exec(await readFile(new URL("../migrations/028_model_usage_receipts.sql", import.meta.url), "utf8"));
   await h.db.exec("ALTER TABLE purama_ai.karta_runs ADD COLUMN execution_key text UNIQUE;");
 });
 afterAll(async () => { await h.db?.close(); });
@@ -110,6 +115,65 @@ beforeEach(async () => {
 });
 
 describe("immutable run finalization with real PostgreSQL predicates", () => {
+  it("stores usage once on the existing run and leaves its public replay contract unchanged", async () => {
+    const run = await start();
+    await run.finish({ ...result(), modelUsage: usageReceipt });
+    expect(await row(run.runId)).toMatchObject({ user_id: user, agent_type: "legal", model_usage: usageReceipt });
+    const repeated = await start();
+    expect(repeated.existingResult).toMatchObject({ status: "success", retryable: false });
+    expect(repeated.existingResult).not.toHaveProperty("modelUsage");
+    expect(h.changedRows).toBe(1);
+  });
+
+  it("leaves absent provider usage NULL instead of claiming zero tokens", async () => {
+    const run = await start();
+    await run.finish(result());
+    expect((await row(run.runId)).model_usage).toBeNull();
+  });
+
+  it("freezes the first usage payload across caller mutation and concurrent closes", async () => {
+    const run = await start();
+    let release!: () => void;
+    h.beforeUpdate = () => new Promise<void>(resolve => { release = resolve; });
+    const mutable = { ...usageReceipt };
+    const first = run.finish({ ...result(), modelUsage: mutable });
+    mutable.inputTokens = 999;
+    const second = run.finish({ ...result(), modelUsage: mutable });
+    await vi.waitFor(() => expect(release).toBeTypeOf("function"));
+    release();
+    await Promise.all([first, second]);
+    expect((await row(run.runId)).model_usage).toEqual(usageReceipt);
+    expect(h.changedRows).toBe(1);
+  });
+
+  it("reconciles a committed usage receipt after its acknowledgement is lost", async () => {
+    const run = await start();
+    h.loseWriteAck = 1;
+    await expect(run.finish({ ...result(), modelUsage: usageReceipt })).resolves.toBeUndefined();
+    expect((await row(run.runId)).model_usage).toEqual(usageReceipt);
+    expect(h.changedRows).toBe(1);
+  });
+
+  it("refuses reconciliation when another receipt differs despite equal business fields", async () => {
+    const run = await start();
+    h.loseWriteAck = 1; h.failRead = 1;
+    await expect(run.finish({ ...result(), modelUsage: usageReceipt })).rejects.toThrow();
+    const conflicting = { ...usageReceipt, outputTokens: 99 };
+    await h.db!.query("UPDATE purama_ai.karta_runs SET model_usage=$2 WHERE id=$1", [run.runId, JSON.stringify(conflicting)]);
+    await expect(run.finish({ ...result(), modelUsage: usageReceipt })).rejects.toThrow(/non confirmée/);
+    expect((await row(run.runId)).model_usage).toEqual(conflicting);
+    expect(h.changedRows).toBe(1);
+  });
+
+  it("retries only the frozen first receipt after a failure before the database write", async () => {
+    const run = await start();
+    h.failBeforeWrite = 1;
+    await expect(run.finish({ ...result(), modelUsage: usageReceipt })).rejects.toThrow();
+    await run.finish({ ...conflictingResult(), modelUsage: { ...usageReceipt, outputTokens: 99 } });
+    expect(await row(run.runId)).toMatchObject({ status: "success", model_usage: usageReceipt });
+    expect(h.changedRows).toBe(1);
+  });
+
   it("keeps the first committed outcome when finish is called again with another result", async () => {
     const run = await start();
     await run.finish(result());
