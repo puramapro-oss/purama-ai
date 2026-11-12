@@ -1,33 +1,64 @@
 ---
 name: wealth-engine
-description: "Wealth Engine V2:split 50/10/40,plan 9.99€,20 moteurs,45 boosters,Purama Card Treezor 7 niveaux,Nature Rewards,paiement 6 wallets,8 détecteurs,7 agents IA,termes légaux,fiscalité ZFRR."
+description: "Faire évoluer les revenus, économies, missions financées et récompenses de PURAMA avec IAO. Utiliser pour concevoir, intégrer ou vérifier ces parcours et leurs règles économiques, en réutilisant ONE, Commerce/PAY et les agents existants."
 ---
-## 10.1 SPLIT CA — 50/10/40 IMMUABLE
-50% users(CA abos,JAMAIS modifiable)|10% croissance(60%pub ADYA,25%primes,15%viralité)|40% SASU
-## 10.2 PLANS — 1 ABO ZÉRO FRICTION
-GRATUIT:basiques,Points seuls,compteur grisé"XX€ en attente—Passe à Purama"(plafond 100€→FOMO).Card active cashback verrouillé.Tirages 1 ticket.S'abonne→TOUT+confettis.
-PURAMA 9.99€/mois—TOUT:gains €,prime 20€(30j,1/vie,KYC),retrait 0€,marketplace 91/9,parrainage 30% 3niv,Card cashback 0-20%,Nature Rewards €,Daily Treasure,Boost Fidélité 2%/mois,Jobs,tirages bonus,Guide,cross-app ×1-5 GOD MODE,streak +5%→+100%,Cagnotte 1%/an,wallet familial,AI Clone 8h/nuit,premium illimité,B2B,Mastery,retrait 500€/j(illimité 6mois).
-Crédits IA:quota inclus(SUTRA=50 vidéos,AKASHA=200 générations).Au-delà:0.10-1€/crédit.
-Anti-abus:prime après 30j,1/vie KYC,annulation<30j=récupérée.Message:"Purama.9.99€/mois.Tu as TOUT.Tu gagnes de l'argent."
-## 10.3 RÉPARTITION 50%
-RevUniv 15%(pondéré ancienneté)|Nature 8%|Classement 8%(top10)|Tirages 7%(cagnotte,10 gagnants)|Daily Treasure 5%(70%pts,20%0.50-5€,8%ticket doré,2%jackpot)|Quests 4%(1-4sem,200-1000€)|Mystery 2%(hebdo,1-1000€)|Legacy 1%
-## 10.4 20 MOTEURS
-M1 Marketplace 9/91+royalties+Neural|M2 B2B éthiques|M3 Parrainage 3niv N1=30% vie,N2=5%,N3=2%(100€/m max,filleul actif 1+/30j)|M4 Jobs freelance 9%|M5 Boost +2%/mois bloqué 30j(PAS staking)|M6 Tirages gratuit tickets bonus|M7 Classement top10|M8 Prime Trim 5% bénéfices×Score(PAS dividende)|M9 Collective Intelligence anon 70% opt-in|M10 AI Clone 24/7 91/9 8h/nuit|M11 Skill Graph+Bounties 200-2K€ 80/20|M12 Social Impact Bonds EXTERNE|M13 Impact Marketplace asso 5%|M14 Energy Exchange Enedis/RTE EXTERNE|M15 Micro-Impact 0.1%/tx→Asso|M16 Open Knowledge royalties|M17 Health Insights anon 50% opt-in|M18 Neural Marketplace commande garantie|M19 Learn-to-Earn module=0.50-5€,compétence=10-50€,certif=100-500€ EXTERNE|M20 Bridges APIs(Ecosia,TGTG,Strava,Duolingo)2-5%
-## 10.5 45 BOOSTERS (×30+ possible)
-B1 Treasure|B2 Cross-App(1=×1,2=×1.5,3=×2,5+=×3,toutes=×5)|B3 Guildes(+5%,best=×2,streak 7j×2/30j×3/90j×5)|B4 Tips 0%|B5 Score→missions|B6 Soutien Créateur(max-20%,5%)|B7 Revenue Share 3niv|B8 Quests 200-1K€|B9 Early Adopter 1000×2 vie|B10 Gift Chain(offrir=1mois+15% 6m)|B11 Streak(7j+5%,30+15%,90+30%,365+50%,365++100%)|B12 Social Proof auto|B13 Seasons trim×3|B14 RevUniv 2.0|B15 Gains Nuit|B16 Nature|B17 Family 2-8+2%|B18 Impact visible|B19 Legacy+junior13-17|B20 Starter Kit 500pts+3tickets+1sem×2|B21 Milestones(1€=100pts,10€=500+ticket,100€=2K+10€,1K=10K+100€,10K=50K+500€)|B22 Dream Board|B23 Zero to Hero 10/mois SUTRA|B24 Momentum +0.1%/j actif|B25 Ubuntu Circle 3-12=×5 24h|B26 Reverse Auction marques|B27 Group Buying -15-30%|B28 Compute Sharing nuit 0.50-2€|B29 Avance 70% acquis 0 intérêt|B30 World Quest trim paliers×1.2|B31 Achievement Trading 9%|B32 Biodiversity Scanner 0.10-50€|B33 Antifragile CA↓→multi↑|B34 Petition 10K→élus|B35 Mastery top1% ×2-5|B36 Reputation Passport|B37 Gains Dynamiques %pool PAS fixes|B38 Proximity BLE 2u+0.10€,5+1€,20++5€|B39 Democratic Treasury 5% 1u=1vote|B40 Forest virtuel→vrai→fruits|B41 Gold Day×3+Secret Quests|B42 Health Guardian patterns JAMAIS diagnostic|B43 Art Revolution salaire 200-2K€+merch 91/9|B44 Wisdom Score+10%|B45 Time Machine FOMO
-## 10.6 PURAMA CARD Treezor
-EME Treezor(SocGen).Agent ORIAS.White-label.7 niveaux Purity Engine(MCC+merchants+OCR+apprentissage+auto):Diamant 20%(maraîchers,herboristeries,permaculture)|Or 15%(bio local,AMAP,yoga,livres)|Argent 10%(bio,seconde main,sport,ENR,dons)|Bronze 5%(courses,pharma,services)|Gris 1%(resto,vêtements)|Sombre 0%+alerte(fast-food,fast-fashion)|Noir 0%+question(alcool,tabac,jeux,armes).JAMAIS blocage sauf Mode Nature.Nature Score 0-100 moy 90j.+1%/10pts.Monthly 80=50€,90=100€,100=200€.Features:Local Map 0€|Guide Financier|Savings Score|Mode Nature|Mindful Pay 3s>50€|arrondi solidaire×1.1|Gratitude Receipt|OCR|anti-addiction|anti-découvert|Junior 13-17|QR parrainage.Cashback:partenariats+9%marketplace+interchange.
-## 10.7 NATURE REWARDS
-APIs:HealthKit,Health Connect,Strava,Vision~0.01€,Screen Time,Maps,Enedis,OCR,OpenWeather.Barème:5Kpas=0.25€|10K=0.75€|30min sport=0.50€|1h=1.50€|méditation=0.30€|sommeil 7-8h=0.20€|<23h=0.10€|<2h écran=0.50€|lecture=0.30€|VIDA=0.20€|cuisine=0.20€|repas sain=0.15€|2L eau=0.10€|planter=1€|déchets=2€|vélo=0.50€|TC=0.20€|réparer=1€|aider=0.50€|don×1.1|art=0.30€|gratitude=0.20€|respiration=0.15€|famille=1-5€.Plafond 10€/j.Combo 5+cat=×1.5.Nuit×1.5.Anniv=5-50€+×3.
-## 10.8 PAIEMENT TREEZOR
-6 wallets Smart Split:Principal 60%|Boost 15% bloqué 30j|Emergency 10% plafond 3m|Dream 10%|Pending(verrouillés)|Solidaire 5%→Asso.Entrées:20 moteurs,cashback,salaire IBAN,virements,P2P,Bounties.Interne 0€:marketplace,Jobs,QR,tips,tontines.Sorties 0€:Card Apple/Google Pay,SEPA Instant 10s,batch 1x/j,PayPal,Wise,Flutterwave,Pix,UPI,Binance Pay.Multi-provider:Treezor(EU)+Flutterwave(Afrique)+Razorpay(Inde).Velocity(€ circule→bonus)|Compound(cashback réinvesti)|Freedom Tracker(passifs/dépenses×100).
-## 10.9 MARQUES 0% PUB
-Filtre 3P.JAMAIS pub/promo/lien/ciblage/données.Challenge 15-100K€ 30/70|Missions 10-500K€ 20/80|Jeu-concours 10-100K€ 15/85|Abondement 5-200K€ 20/80|Bourse 5-50K€ 10/90.
-## 10.10 8 DÉTECTEURS (TOUTE app)
-D1 MARKETPLACE"Assets réutilisables?"→9/91+royalties+Neural|D2 B2B"Utile orgs?"→missions|D3 IRL"Vendable en personne?"→services 9%|D4 NATURE"Santé/bien-être/écologie?"→Nature Rewards|D5 GUIDE"Domaine?"→personnalité auto(création→directeur artistique,finance→mentor,santé→coach,éducation→prof,juridique→conseiller,tech→partenaire,social→animateur,jeu→compagnon)|D6 MARQUES"Éthiques liées?"→catégories|D7 LEARN"Compétence mesurable?"→parcours+Mastery|D8 BRIDGE"Équivalent externe?"→API+récompenses.Procédure:1)BRIEF 2)8 détecteurs 3)Activer universels(wallet,compteur,Guide,Card,parrainage,streak,milestones,Score,kit) 4)Conditionnels 5)Personnalité+Quests+marketplace+onboarding 6)Filtre 3P 7)Documenter.
-## 10.11 7 AGENTS IA 24/7
-A1 GUARDIAN anti-fraude(fingerprint,bots,GPS,gel>80,déblocage 24h+10%)|A2 CURATOR modération 3P(>70=publié,40-70=review,<40=rejet,Tribunal 5€)|A3 MATCHER Smart Matching action RENTABLE|A4 FINANCE 20M×45B×multi,RevUniv,Treasure,commissions,SEPA,FEC Pennylane|A5 CLONE MASTER orchestre clones|A6 GUIDE 7 modes(Zen/Focus/Energy/Data/Mentor/Nature/Silencieux)|A7 GROWTH ADYA 12 plateformes,A/B,CAC.Rythmes:<1s|min|h|jour|sem|trim.Tissma:<30min/sem.
-## 10.12 TERMES LÉGAUX
-Boost=PAS staking|Prime=PAS dividende|Cagnotte≠épargne|Entraide≠prêt|Soutien≠investissement|Avance≠crédit|Récompenses≠salaire|Jeu-concours≠loterie|IA=nom app JAMAIS Claude|Treezor invisible=tout Purama.
-## 10.13 FISCALITÉ
-ZFRR 0% IS 5ans→JEI 0-50%→CIR 30%→IP Box 10%→Mécénat Asso 60%→Holding mère-fille 0.75%.IS cible:5-8% vie.Tissma:CCA 1500€+IK 667€=2058€ net+40% CA trésorerie.
+
+# IAO — revenus et argent disponible
+
+Conserver ce skill comme guide de travail du dépôt IAO. Viser une amélioration mesurable de l’argent disponible et du temps utile de chaque utilisateur. Une instruction ne crée ni compte, ni mandat, ni fonds, ni capacité d’exécution. Ne garantir ni enrichissement, montant, délai de gain, rendement, adoption universelle ou supériorité mondiale.
+
+## Retrouver les sources canoniques
+
+Avant de proposer une nouvelle fonction, relever le dépôt, la branche et le commit actifs, les décisions récentes, les contrats acceptés et les services effectivement raccordés. Réutiliser les propriétaires suivants ; les chemins ONE appartiennent à `puramapro-oss/purama-one`, pas au présent dépôt.
+
+| Besoin | Source à réutiliser |
+| --- | --- |
+| Explorer et préparer un revenu | ONE `/revenus`, `src/lib/income/catalogue.ts`, `workflows.ts`, `planner.ts` et `IncomeWorkspace` |
+| Chiffrer coûts et temps | ONE `src/lib/income/economics.ts` et `IncomeCalculator` |
+| Conserver le travail ouvert | ONE `IncomePlan`, `IncomeSessionProvider` et les imports/exports existants |
+| Économiser | Parcours Économiser/SANCHAYA existant ; préserver économies, récupérations et ventes de biens comme natures distinctes |
+| Missions et récompenses | ONE `/recompenses`, préparateurs de campagnes et de partenaires existants |
+| Commissions et fonds | ONE `src/server/commerce/purama-commission-policy.ts`, `ledger.ts`, `reward-campaign-funding.ts` et `src/server/pay/ledger-community-allocation.ts` |
+| Agir et mémoriser avec IAO | KARTA/KRIYA pour les actions autorisées ; SMARANA pour la mémoire autorisée ; preuves et reçus des services propriétaires |
+| Cadre de réponse IAO | `karta/src/claude/assistant-policy.ts`, réexporté par `supabase/functions/_shared/assistant-policy.ts` |
+
+Garder les identifiants canoniques d’un parcours, d’une commande et d’une transaction. Ne créer aucun catalogue, portefeuille, solde, moteur d’affiliation ou registre parallèle. Un parcours préparé, un lien fournisseur ou une hypothèse ne prouvent pas une mission disponible. Vérifier son état courant ; respecter `not_connected` lorsqu’il est encore présent.
+
+## Appliquer les décisions consolidées
+
+Prendre les décisions des 11–12 novembre 2026 comme base de continuité, puis vérifier toute décision ultérieure avant modification.
+
+- **ONE : 199 € et 499 € par mois.** Préserver le catalogue d’abonnement et le pont de droits canoniques. La présence d’anciens plans propres à IAO ne démontre pas leur convergence avec ONE : relever l’écart et raccorder les contrats existants, sans inventer un identifiant Stripe ni migrer un contrat accepté. Délivrer le quota de la période au paiement/renouvellement selon la règle existante ; les quotas inutilisés expirent en fin de période et ne se cumulent pas. Ne promettre aucun usage illimité non couvert.
+- **Commission PURAMA : 9 %** sur les nouvelles opérations admissibles où PURAMA fixe et prélève déjà sa commission. Remplacer le taux antérieur dans ce périmètre, sans cumul ni extension aux tarifs imposés par un tiers. Les anciennes opérations et leurs remboursements gardent la politique acceptée à l’origine.
+- **Fonds commun : 30 % de la commission PURAMA HT admissible encaissée**, après les corrections applicables et avant les coûts propres de PURAMA. Cette part est comprise dans la commission, pas ajoutée au prix. Utiliser les calculs, arrondis, reprises, réserves et preuves du registre existant.
+- Pour expliquer seulement, sur une base de 100 € sans taxe ni autre frais dans l’illustration : 9 € de commission, dont 2,70 € au fonds et 6,30 € à PURAMA avant coûts ; 91 € restent sur la base du prestataire avant ses coûts. Aucun de ces restes n’est un bénéfice net ni une récompense individuelle garantie.
+- **Affiliation distincte :** conserver les règles et contrats existants, dont le barème 30 % et les bonus pouvant atteindre 40 % lorsqu’ils sont admissibles. Ne jamais additionner ce taux, les 9 % et les 30 % du fonds sur une même assiette implicite. Les primes, promotions et avantages nécessitent leur propre éligibilité et leur financement.
+- Séparer euros acquis, estimations, points, quotas, avantages, crypto et NFT. Conserver la crypto PURAMA existante ; aucune conversion ou émission automatique. Un NFT offert ou un bien possédé ne devient pas un revenu encaissé par estimation de sa valeur.
+
+Ne réintroduire ni ancien partage du chiffre d’affaires, ni tarifs abandonnés, ni barème fixe de récompenses sans couverture. Les multiplicateurs éventuels ne portent que sur une prime admissible, plafonnée et financée ; ils ne multiplient pas un solde, un salaire ou l’argent placé.
+
+## Choisir puis accomplir une prochaine action utile
+
+1. **Définir le résultat et les contraintes.** Relever le temps réellement disponible, les compétences, les équipements déjà possédés, le pays, les besoins d’accessibilité et les coûts acceptés. Respecter le refus d’avance personnelle. Distinguer objectif exprimé, capacité observée et information manquante.
+2. **Partir d’une demande réelle.** Chercher dans les parcours existants une économie justifiable, une somme récupérable, une mission financée ou une commande avec un payeur identifié. Relever le livrable, les critères de réception, les droits d’utilisation, les frais et le délai contractuel de paiement. Une création réutilisable ou une offre récurrente vient avec une demande et des droits confirmés, pas avec des ventes supposées certaines.
+3. **Chiffrer chaque action séparément.** Réutiliser le calculateur ; inclure réalisation, IA, sous-traitance, paiement, acquisition, déplacement, corrections et support, puis les charges personnelles pertinentes lorsqu’elles sont connues. Inclure candidatures et présélections dans le temps total. Une valeur inconnue reste inconnue ; ne pas la remplacer par zéro. Étiqueter précisément un résultat avant cotisations/impôts. Ne pas appliquer le scénario d’un parcours à tous les autres.
+4. **Classer avec des raisons explicites.** Comparer les actions faisables et admissibles selon financement, reste après coûts, temps humain, délai jusqu’au versement et récurrence établie. Expliquer les données manquantes et l’objectif du classement. Exclure les actions incompatibles avec l’absence d’avance. Ne pas inventer de probabilité, de taux de conversion ou de revenu horaire ; garder les hypothèses visibles et distinctes des paiements constatés.
+5. **Préparer dans le projet existant.** Aider à produire un devis, une candidature honnête, un livrable, un plan de livraison ou une demande de remboursement. Respecter les conditions du commanditaire et son autorisation d’usage de l’IA. Ne pas fabriquer avis, participation humaine, qualifications ou preuve de travail.
+6. **Exécuter dans le mandat effectif.** Utiliser les outils et approbations KARTA/KRIYA déjà prévus. Les décisions réversibles et déjà autorisées peuvent avancer ; les messages à des tiers, dépenses, engagements, virements et investissements requièrent l’autorisation applicable au moment de l’action. Une sélection de parcours ou un fichier importé ne l’accorde pas.
+7. **Vérifier et ajuster.** Rapprocher le résultat et l’encaissement de leur reçu, leur propriétaire, leur montant et leur source. Conserver la preuve et les préférences dans SMARANA seulement via le service autorisé. Mesurer paiements reçus, coûts, temps total, remboursements, délai au premier paiement, récurrence et part des utilisateurs sans gain. Proposer ensuite l’action utile suivante sans masquer les échecs.
+
+## Financement, intégrité et mesure
+
+- Avant d’ouvrir une mission rémunérée ou d’annoncer un cadeau, exiger payeur/commanditaire, budget disponible, réservation commune, conditions de réception, recours et canal de règlement qualifiés. Une projection comptable en lecture seule n’est pas une réservation de fonds.
+- Réutiliser les transactions et clés d’idempotence du service propriétaire. Un paiement, un remboursement ou une contribution rejoués ne créent pas un deuxième droit. Ne pas compter une même vente dans plusieurs parcours comme plusieurs gains.
+- Préserver les créances et retraits acquis. Ne pas les conditionner à un abonnement, un achat, un réinvestissement ou un recrutement nouveau. Présenter séparément les frais réellement prévus au contrat.
+- Mesurer une économie sur une dépense de référence comparable ; ne pas traiter un achat supplémentaire comme un gain, une vente de bien comme une hausse automatique du patrimoine, ni un transfert entre comptes comme un revenu. Ne pas additionner euros, points et valorisations spéculatives.
+- Les revenus d’activité, cotisations, impôts, prestations et statuts varient selon la personne et le pays. Vérifier les sources applicables et orienter vers le professionnel compétent lorsque nécessaire ; changer le nom d’une opération ne change pas sa nature juridique ou fiscale.
+- Garder toute allocation, prise de crédit ou transaction financière dans le parcours autorisé du service concerné. Ne pas transformer l’objectif de revenu rapide en trading, levier ou investissement automatique. MIDAS conserve son périmètre propre et ne constitue pas une source de revenus garantie.
+- Minimiser les données utilisées, garder la séparation des comptes et permettre la suppression selon les capacités réelles du service. Ne pas vendre de données de santé ou de confidences pour financer des récompenses, ni exploiter des signaux de fragilité pour pousser à dépenser.
+
+## Rapporter le résultat vérifiable
+
+Pour une modification, contrôler le périmètre, les contrats, la conservation des anciennes données et les cas financiers affectés ; exécuter les tests pertinents sur le candidat exact. Appliquer les consignes AGENTS du dépôt. Ne pas déduire un raccordement financier d’un test synthétique ou la sûreté d’un système d’une seule instruction.
+
+Restituer **PASS**, **PARTIEL**, **BLOQUÉ** et **NON TESTÉ**, avec les preuves disponibles et la prochaine action dont le propriétaire est connu. Distinguer code préparé, code intégré, service déployé, action réelle et argent effectivement reçu. Une correction de ce skill ne prouve pas son chargement en production ni l’efficacité économique du modèle.

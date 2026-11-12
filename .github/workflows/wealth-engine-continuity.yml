@@ -1,0 +1,146 @@
+name: Wealth engine continuity
+
+on:
+  pull_request:
+    paths:
+      - '.claude/skills/wealth-engine/SKILL.md'
+      - '.github/workflows/wealth-engine-continuity.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wealth-engine-continuity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  gitnexus:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    env:
+      PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      EVIDENCE_DIR: ${{ runner.temp }}/wealth-engine-continuity
+      GITNEXUS_TOOL_DIR: ${{ runner.temp }}/wealth-engine-gitnexus-tool
+      GITNEXUS_CLI: ${{ runner.temp }}/wealth-engine-gitnexus-tool/node_modules/gitnexus/dist/cli/index.js
+      GITNEXUS_STORAGE_PATH: ${{ runner.temp }}/wealth-engine-gitnexus-index
+      GITNEXUS_MEMORY: 'off'
+      NODE_OPTIONS: '--max-old-space-size=4096'
+      GITNEXUS_PARSE_CHUNK_CONCURRENCY: '1'
+      GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES: '1048576'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.22.1'
+
+      - name: Record the exact PR comparison
+        id: candidate
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR" "$GITNEXUS_TOOL_DIR"
+          test "$(git rev-parse HEAD)" = "$PR_HEAD_SHA"
+          git cat-file -e "$PR_BASE_SHA^{commit}"
+          git status --porcelain=v1 --untracked-files=all > "$EVIDENCE_DIR/status-before.txt"
+          test ! -s "$EVIDENCE_DIR/status-before.txt"
+          git diff --check "$PR_BASE_SHA" "$PR_HEAD_SHA" 2>&1 | tee "$EVIDENCE_DIR/diff-check.log"
+          git diff --name-status "$PR_BASE_SHA" "$PR_HEAD_SHA" > "$EVIDENCE_DIR/changed-files.txt"
+          git diff --no-ext-diff --binary "$PR_BASE_SHA" "$PR_HEAD_SHA" > "$EVIDENCE_DIR/candidate.patch"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess
+          paths = [".claude/skills/wealth-engine/SKILL.md", ".github/workflows/wealth-engine-continuity.yml", "vercel.json"]
+          base, head = os.environ["PR_BASE_SHA"], os.environ["PR_HEAD_SHA"]
+          files = []
+          for path in paths:
+              base_entry = subprocess.check_output(["git", "ls-tree", base, "--", path], text=True).strip()
+              files.append({
+                  "path": path,
+                  "base_blob": base_entry.split()[2] if base_entry else None,
+                  "head_blob": subprocess.check_output(["git", "rev-parse", f"{head}:{path}"], text=True).strip(),
+                  "sha256": hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest(),
+              })
+          manifest = {
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "base_sha": base, "head_sha": head,
+              "head_tree": subprocess.check_output(["git", "rev-parse", f"{head}^{{tree}}"], text=True).strip(),
+              "scope": "compare", "gitnexus_version": "1.6.12",
+              "node_options": os.environ["NODE_OPTIONS"],
+              "gitnexus_memory": os.environ["GITNEXUS_MEMORY"],
+              "files": files,
+          }
+          pathlib.Path(os.environ["EVIDENCE_DIR"], "candidate-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+          PY
+
+      - name: Install the isolated GitNexus CLI
+        id: install
+        timeout-minutes: 5
+        working-directory: ${{ runner.temp }}/wealth-engine-gitnexus-tool
+        run: |
+          set -euo pipefail
+          trap 'code=$?; printf "%s\n" "$code" > "$EVIDENCE_DIR/install.exit-code"; exit "$code"' EXIT
+          npm install --prefix "$GITNEXUS_TOOL_DIR" --save-exact --no-audit --no-fund gitnexus@1.6.12 2>&1 | tee "$EVIDENCE_DIR/install.log"
+          node -e 'const p = require(process.env.GITNEXUS_TOOL_DIR + "/node_modules/gitnexus/package.json"); if (p.version !== "1.6.12") throw new Error("Unexpected GitNexus version"); console.log(p.version)' > "$EVIDENCE_DIR/gitnexus-version.txt"
+          node --version > "$EVIDENCE_DIR/node-version.txt"
+          npm --version > "$EVIDENCE_DIR/npm-version.txt"
+
+      - name: Index the PR head without changing instruction files
+        id: analyze
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          trap 'code=$?; printf "%s\n" "$code" > "$EVIDENCE_DIR/analyze.exit-code"; exit "$code"' EXIT
+          node "$GITNEXUS_CLI" analyze --index-only --skip-fts --workers 1 --name wealth-engine-continuity --verbose 2>&1 | tee "$EVIDENCE_DIR/analyze.log"
+          git status --porcelain=v1 --untracked-files=all > "$EVIDENCE_DIR/status-after-index.txt"
+          test ! -s "$EVIDENCE_DIR/status-after-index.txt"
+
+      - name: Detect changes against the exact PR base
+        id: detect
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+          trap 'code=$?; printf "%s\n" "$code" > "$EVIDENCE_DIR/detect-changes.exit-code"; exit "$code"' EXIT
+          node "$GITNEXUS_CLI" detect-changes --scope compare --base-ref "$PR_BASE_SHA" --repo "$GITHUB_WORKSPACE" 2>&1 | tee "$EVIDENCE_DIR/detect-changes.log"
+
+      - name: Preserve outcomes, dependency manifests and index metadata
+        if: always()
+        env:
+          CANDIDATE_OUTCOME: ${{ steps.candidate.outcome }}
+          INSTALL_OUTCOME: ${{ steps.install.outcome }}
+          ANALYZE_OUTCOME: ${{ steps.analyze.outcome }}
+          DETECT_OUTCOME: ${{ steps.detect.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, shutil
+          evidence = pathlib.Path(os.environ["EVIDENCE_DIR"])
+          tool = pathlib.Path(os.environ["GITNEXUS_TOOL_DIR"])
+          sources = {
+              "tool-package.json": tool / "package.json",
+              "tool-package-lock.json": tool / "package-lock.json",
+              "gitnexus-package.json": tool / "node_modules/gitnexus/package.json",
+              "index-metadata.json": pathlib.Path(os.environ["GITNEXUS_STORAGE_PATH"], "gitnexus.json"),
+          }
+          for name, source in sources.items():
+              if source.is_file():
+                  shutil.copyfile(source, evidence / name)
+          outcomes = {name: os.environ[name.upper() + "_OUTCOME"] for name in ["candidate", "install", "analyze", "detect"]}
+          (evidence / "outcomes.json").write_text(json.dumps(outcomes, indent=2) + "\n")
+          hashes = [f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}" for p in sorted(evidence.iterdir()) if p.is_file() and p.name != "SHA256SUMS"]
+          (evidence / "SHA256SUMS").write_text("\n".join(hashes) + "\n")
+          PY
+      - name: Upload GitNexus evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: wealth-engine-continuity-${{ github.event.pull_request.number }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/wealth-engine-continuity
+          if-no-files-found: error
+          retention-days: 14
