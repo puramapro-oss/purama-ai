@@ -117,6 +117,7 @@ before(async () => {
   }
   await admin.query('GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA purama_ai TO service_role; GRANT SELECT ON ALL TABLES IN SCHEMA purama_ai TO authenticated;');
   await admin.query(readFileSync(new URL('../migrations/028_private_tool_results.sql', import.meta.url), 'utf8'));
+  await admin.query(readFileSync(new URL('../migrations/029_model_usage_receipts.sql', import.meta.url), 'utf8'));
 });
 
 after(async () => {
@@ -174,6 +175,37 @@ async function waitForBlocked(blockedClients) {
   }
   assert.fail(`Expected ${pids.length} test backend(s) to actually wait for a PostgreSQL lock`);
 }
+
+test('private results reconcile without changing a validated provider receipt', { timeout: 30000 }, async () => {
+  const runId = await run();
+  const caller = await service('usage_coexistence');
+  const receipt = {
+    version: 1, apiFormat: 'anthropic_messages', routeKind: 'anthropic',
+    requestedModel: 'fixture-model', responseModel: 'fixture-model-v1', responseId: 'msg_private_native',
+    inputTokens: 123, outputTokens: 7, cacheReadInputTokens: 0, cacheCreationInputTokens: null,
+    cacheCreation5mInputTokens: null, cacheCreation1hInputTokens: null,
+  };
+  try {
+    assert.deepEqual((await caller.query('SELECT model_usage FROM purama_ai.karta_runs WHERE id=$1', [runId])).rows, [{ model_usage: null }]);
+    const id = await rpc(caller, runId);
+    await caller.query("UPDATE purama_ai.karta_runs SET status='success',duration_ms=1,finished_at=now(),model_usage=$2::jsonb WHERE id=$1", [runId, JSON.stringify(receipt)]);
+    assert.equal(await rpc(caller, runId), id);
+
+    for (const invalid of [
+      { ...receipt, inputTokens: -1 },
+      { ...receipt, outputTokens: 0.5 },
+      { ...receipt, inputTokens: 9007199254740992 },
+      { ...receipt, privatePrompt: 'Not part of a token receipt' },
+      { ...receipt, responseId: 'msg_invalid\n' },
+    ]) {
+      await assert.rejects(caller.query('UPDATE purama_ai.karta_runs SET model_usage=$2::jsonb WHERE id=$1', [runId, JSON.stringify(invalid)]),
+        { code: '23514', constraint: 'karta_runs_model_usage_shape' });
+    }
+    assert.deepEqual((await caller.query('SELECT user_id,agent_type,status,model_usage FROM purama_ai.karta_runs WHERE id=$1', [runId])).rows,
+      [{ user_id: owner, agent_type: agentType, status: 'success', model_usage: receipt }]);
+    assert.deepEqual(await rows(), [{ id, payload: data }]);
+  } finally { await close(caller); }
+});
 
 test('two identical RPCs waiting on the parent return one durable result identity', { timeout: 30000 }, async () => {
   const runId = await run();

@@ -5,6 +5,7 @@ import { schemaForTool, validateToolParams } from "../engine/tool-input.js";
 import { bounded } from "../runtime/lifecycle.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 import { buildAssistantSystemPrompt } from "./assistant-policy.js";
+import { normalizeModelUsage } from "./usage.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -50,18 +51,24 @@ export function createRealClaudeClient(): ClaudeClient {
       // Reuse the existing monotonic runtime bound. The SDK's fetch timeout
       // ends at headers; awaiting the full APIPromise also covers JSON/error
       // body consumption and discards late results from non-cooperative I/O.
-      const response = await bounded(signal => client.messages.create({
-        model: selectModel(input),
-        max_tokens: 1024,
-        system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
-        messages: [
-          {
-            role: "user",
-            content: `Contexte actuel:\n${JSON.stringify(input.context)}\n\nDécide quelle(s) action(s) prendre.`,
-          },
-        ],
-        tools: toAnthropicTools(input.tools),
-      }, { signal, timeout: timeoutMs, maxRetries: 0 }), timeoutMs, input.signal)
+      const { model, response } = await bounded(async signal => {
+        // Select after admission so pre-cancelled calls do not read context;
+        // keep the same selected model for the request and its usage receipt.
+        const model = selectModel(input);
+        const response = await client.messages.create({
+          model,
+          max_tokens: 1024,
+          system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
+          messages: [
+            {
+              role: "user",
+              content: `Contexte actuel:\n${JSON.stringify(input.context)}\n\nDécide quelle(s) action(s) prendre.`,
+            },
+          ],
+          tools: toAnthropicTools(input.tools),
+        }, { signal, timeout: timeoutMs, maxRetries: 0 });
+        return { model, response };
+      }, timeoutMs, input.signal)
         .catch(() => {
           // Neither a provider response nor a caller's abort reason is safe
           // to copy into a public cycle error or the worker's failed log.
@@ -69,6 +76,10 @@ export function createRealClaudeClient(): ClaudeClient {
             ? "Appel au modèle annulé : aucune décision disponible"
             : "Réponse du modèle indisponible ou délai dépassé : aucune décision disponible");
         });
+
+      // Rejected/truncated decisions can still consume provider tokens. Keep
+      // their receipt before validating content, without another HTTP request.
+      input.onUsage?.(normalizeModelUsage(response, model, client.baseURL));
 
       // This client requests only client tools, without stop sequences or a
       // server-tool continuation loop. Never turn a truncated, paused, refused

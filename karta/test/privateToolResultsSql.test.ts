@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { PGlite } from "@electric-sql/pglite";
+import { normalizeModelUsage } from "../src/claude/usage.js";
 import { projectPrivateToolResult, type PrivateToolResultPayload } from "../src/engine/private-tool-results.js";
 import { simulateQuantumCircuit } from "../src/quantum/simulator.js";
 import { parsePrivateToolResult } from "../src/knowledge/private-result-view.js";
@@ -82,6 +83,7 @@ beforeAll(async () => {
   const migration = await readFile(new URL("../migrations/028_private_tool_results.sql", import.meta.url), "utf8");
   await db.exec(migration);
   await db.exec(migration); // Safe reapplication retains the same policy/grant surface.
+  await db.exec(await readFile(new URL("../migrations/029_model_usage_receipts.sql", import.meta.url), "utf8"));
 });
 afterAll(async () => { await db?.close(); });
 beforeEach(async () => {
@@ -96,6 +98,21 @@ describe("private result migration — actual PostgreSQL SQL", () => {
     const runId = await run(); const id = await store(runId);
     expect((await rows()).rows).toEqual([expect.objectContaining({ id, user_id: owner, creator_agent_id: agent, payload: payload() })]);
     expect((await db.query("SELECT tools_used,result_summary FROM purama_ai.karta_runs WHERE id=$1", [runId])).rows).toEqual([{ tools_used: [], result_summary: null }]);
+  });
+
+  it("preserves a provider receipt while reconciling its private result after run closure", async () => {
+    const runId = await run(); const id = await store(runId);
+    expect((await db.query("SELECT model_usage FROM purama_ai.karta_runs WHERE id=$1", [runId])).rows).toEqual([{ model_usage: null }]);
+    const receipt = normalizeModelUsage({ id: "msg_private_sql", model: "fixture-model-v1",
+      usage: { input_tokens: 123, output_tokens: 7, cache_read_input_tokens: 0 },
+    }, "fixture-model", "https://api.anthropic.com");
+    await db.query("UPDATE purama_ai.karta_runs SET status='success',duration_ms=1,finished_at=now(),model_usage=$2::jsonb WHERE id=$1", [runId, JSON.stringify(receipt)]);
+
+    expect(await store(runId)).toBe(id);
+    expect((await db.query("SELECT user_id,agent_type,status,model_usage,tools_used,result_summary FROM purama_ai.karta_runs WHERE id=$1", [runId])).rows).toEqual([{
+      user_id: owner, agent_type: agentType, status: "success", model_usage: receipt, tools_used: [], result_summary: null,
+    }]);
+    expect((await rows()).rows).toEqual([expect.objectContaining({ id, user_id: owner, run_id: runId, payload: payload() })]);
   });
 
   it("preserves partial metadata and citations without upgrading its success status", async () => {

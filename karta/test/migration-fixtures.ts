@@ -52,4 +52,7 @@ export const KARTA_CANONICAL_MIGRATIONS = [
   ...KARTA_PR33_ADDITIONS,
   "026_pending_action_execution_origin.sql",
   "027_approval_continuation_outbox.sql",
+  // 028 private results requires creator-agent tables; its dedicated SQL and
+  // native fixtures exercise it together with the usage migration below.
+  "029_model_usage_receipts.sql",
 ] as const;

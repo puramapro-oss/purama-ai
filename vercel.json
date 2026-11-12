@@ -32,7 +32,8 @@
       "audit/connect-provisioning-gates-20261111": false,
       "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false,
       "audit/subscription-identity-20261112": false,
-      "fix/oauth-shared-deadline-20261112": false
+      "fix/oauth-shared-deadline-20261112": false,
+      "audit/api-usage-20261112-4eb2": false
     }
   }
 }

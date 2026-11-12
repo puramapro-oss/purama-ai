@@ -10,7 +10,8 @@ const h = vi.hoisted(() => ({
 vi.mock("../src/config.js", async original => {
   const actual = await original<typeof import("../src/config.js")>();
   return { ...actual, config: { ...actual.config, mockClaude: false,
-    anthropicApiKey: "inert-transport-test-key", anthropicTimeoutMs: 1_000 } };
+    anthropicApiKey: "inert-transport-test-key", anthropicTimeoutMs: 1_000,
+    anthropicModelMain: "transport-main", anthropicModelFast: "transport-fast" } };
 });
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => false }));
 vi.mock("../src/engine/autonomy.js", async original => ({
@@ -86,83 +87,116 @@ afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(
 
 describe("real SDK transport deadline", () => {
   it.each([408, 409, 429, 500])("HTTP %i makes exactly one provider attempt and exposes no provider body", async status => {
+    const onUsage = vi.fn();
     h.fetch.mockImplementation(async () => response({ type: "error", error: { type: "api_error", message: PRIVATE } }, status));
-    const result = observe(createRealClaudeClient().decide(input));
+    const result = observe(createRealClaudeClient().decide({ ...input, onUsage }));
     await vi.runAllTimersAsync();
     expect.soft(h.fetch).toHaveBeenCalledOnce();
     expectSafeFailure(await result);
+    expect(onUsage).not.toHaveBeenCalled();
   });
 
-  it("does not send a pre-cancelled request or expose its private cancellation reason", async () => {
+  it("does not inspect context or send a pre-cancelled request, and hides its private cancellation reason", async () => {
+    const readContext = vi.fn(() => PRIVATE); const onUsage = vi.fn();
+    const context = { get privateContext() { return readContext(); } };
     const parent = new AbortController(); parent.abort(new Error(PRIVATE));
-    const result = await observe(createRealClaudeClient().decide({ ...input, signal: parent.signal }));
+    // A non-sensitive agent forces selectModel to inspect context if admission is bypassed.
+    const result = await observe(createRealClaudeClient().decide({ ...input,
+      agentType: "transport-basic", context, signal: parent.signal, onUsage }));
+    expect(readContext).not.toHaveBeenCalled();
     expect.soft(h.fetch).not.toHaveBeenCalled();
+    expect(onUsage).not.toHaveBeenCalled();
+    expectSafeFailure(result);
+  });
+
+  it("sanitizes a synchronous routing failure without a provider attempt or a receipt", async () => {
+    const readContext = vi.fn(() => { throw new Error(PRIVATE); }); const onUsage = vi.fn();
+    const context = { get privateContext() { return readContext(); } };
+    const result = await observe(createRealClaudeClient().decide({ ...input,
+      agentType: "transport-basic", context, onUsage }));
+    expect(readContext).toHaveBeenCalledOnce();
+    expect(h.fetch).not.toHaveBeenCalled();
+    expect(onUsage).not.toHaveBeenCalled();
     expectSafeFailure(result);
   });
 
   it("bounds an uncooperative fetch and ignores its later response", async () => {
+    const onUsage = vi.fn();
     const entered = deferred<void>(); const network = deferred<Response>();
     let signal: AbortSignal | undefined | null;
     h.fetch.mockImplementation((_url, options) => { signal = options?.signal; entered.resolve(); return network.promise; });
-    const result = observe(createRealClaudeClient().decide(input));
+    const result = observe(createRealClaudeClient().decide({ ...input, onUsage }));
     await entered.promise;
     await vi.advanceTimersByTimeAsync(1_000);
     expectSafeFailure(await result);
     expect(signal?.aborted).toBe(true);
+    expect(onUsage).not.toHaveBeenCalled();
     network.resolve(response(message(true)));
     await vi.runAllTimersAsync();
     expectSafeFailure(await result);
     expect(h.fetch).toHaveBeenCalledOnce();
+    expect(onUsage).not.toHaveBeenCalled();
   });
 
   it.each([200, 429])("bounds the whole HTTP %i body after headers have arrived", async status => {
+    const onUsage = vi.fn();
     const body = hangingBody(status); const entered = deferred<void>();
     let signal: AbortSignal | undefined | null;
     h.fetch.mockImplementation(async (_url, options) => { signal = options?.signal; entered.resolve(); return body.response; });
-    const result = observe(createRealClaudeClient().decide(input));
+    const result = observe(createRealClaudeClient().decide({ ...input, onUsage }));
     await entered.promise;
     await vi.advanceTimersByTimeAsync(1_000);
     expectSafeFailure(await result);
     expect(signal?.aborted).toBe(true);
+    expect(onUsage).not.toHaveBeenCalled();
     body.finish(status === 200 ? message(true) : { error: { message: PRIVATE } });
     await vi.runAllTimersAsync();
     expect(h.fetch).toHaveBeenCalledOnce();
+    expect(onUsage).not.toHaveBeenCalled();
   });
 
   it("cancels a pending body promptly without waiting for the deadline", async () => {
+    const onUsage = vi.fn();
     const parent = new AbortController(); const body = hangingBody(); const entered = deferred<void>();
     let signal: AbortSignal | undefined | null;
     h.fetch.mockImplementation(async (_url, options) => { signal = options?.signal; entered.resolve(); return body.response; });
-    const result = observe(createRealClaudeClient().decide({ ...input, signal: parent.signal }));
+    const result = observe(createRealClaudeClient().decide({ ...input, signal: parent.signal, onUsage }));
     await entered.promise;
     parent.abort(new Error(PRIVATE));
     expectSafeFailure(await result);
     expect(signal?.aborted).toBe(true);
     expect(performance.now()).toBe(0);
+    expect(onUsage).not.toHaveBeenCalled();
     body.finish(message());
     await vi.runAllTimersAsync();
+    expect(onUsage).not.toHaveBeenCalled();
   });
 
   it("rejects a late handoff even before the deadline timer gets CPU time", async () => {
+    const onUsage = vi.fn();
     const entered = deferred<void>(); const network = deferred<Response>();
     h.fetch.mockImplementation(() => { entered.resolve(); return network.promise; });
-    const result = observe(createRealClaudeClient().decide(input));
+    const result = observe(createRealClaudeClient().decide({ ...input, onUsage }));
     await entered.promise;
     vi.spyOn(performance, "now").mockReturnValue(1_001);
     network.resolve(response());
     expectSafeFailure(await result);
     expect(h.fetch).toHaveBeenCalledOnce();
+    expect(onUsage).not.toHaveBeenCalled();
   });
 
   it("does not retry a connection failure or return its private cause", async () => {
+    const onUsage = vi.fn();
     h.fetch.mockRejectedValue(new Error(PRIVATE));
-    const result = observe(createRealClaudeClient().decide(input));
+    const result = observe(createRealClaudeClient().decide({ ...input, onUsage }));
     await vi.runAllTimersAsync();
     expectSafeFailure(await result);
     expect(h.fetch).toHaveBeenCalledOnce();
+    expect(onUsage).not.toHaveBeenCalled();
   });
 
-  it("isolates cancellation between simultaneous requests on the same client", async () => {
+  it("isolates cancellation and receipts between simultaneous requests on the same client", async () => {
+    const successfulUsage = vi.fn(); const cancelledUsage = vi.fn();
     const parent = new AbortController(); const entered = deferred<void>();
     const left = deferred<Response>(); const right = deferred<Response>();
     const signals: Array<AbortSignal | undefined | null> = [];
@@ -171,26 +205,44 @@ describe("real SDK transport deadline", () => {
       return signals.length === 1 ? left.promise : right.promise;
     });
     const client = createRealClaudeClient();
-    const cancelled = observe(client.decide({ ...input, signal: parent.signal }));
-    const successful = observe(client.decide(input));
+    const successful = observe(client.decide({ ...input, onUsage: successfulUsage }));
+    const cancelled = observe(client.decide({ ...input, agentType: "transport-basic",
+      signal: parent.signal, onUsage: cancelledUsage }));
     await entered.promise; parent.abort(new Error(PRIVATE));
     expectSafeFailure(await cancelled);
-    expect(signals[0]?.aborted).toBe(true);
-    expect(signals[1]?.aborted).toBe(false);
-    left.resolve(response()); right.resolve(response());
+    expect(signals[0]?.aborted).toBe(false);
+    expect(signals[1]?.aborted).toBe(true);
+    expect(successfulUsage).not.toHaveBeenCalled();
+    expect(cancelledUsage).not.toHaveBeenCalled();
+    left.resolve(response({ ...message(), id: "msg_successful", model: "served-successful",
+      usage: { input_tokens: 34, output_tokens: 56 } }));
     const result = await successful;
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.summary).toBe("No action needed.");
+    expect(successfulUsage).toHaveBeenCalledOnce();
+    expect(successfulUsage).toHaveBeenCalledWith(expect.objectContaining({
+      requestedModel: "transport-main", responseModel: "served-successful",
+      responseId: "msg_successful", inputTokens: 34, outputTokens: 56,
+    }));
+    right.resolve(response({ ...message(), id: "msg_cancelled", model: "served-cancelled",
+      usage: { input_tokens: 78, output_tokens: 90 } }));
+    await vi.runAllTimersAsync();
+    expect(cancelledUsage).not.toHaveBeenCalled();
+    expect(successfulUsage).toHaveBeenCalledOnce();
     expect(h.fetch).toHaveBeenCalledTimes(2);
   });
 
   it("preserves a complete decision and tool order without logging private content in SDK debug mode", async () => {
+    const onUsage = vi.fn();
     h.fetch.mockResolvedValue(response(message(true)));
-    const result = await createRealClaudeClient().decide(input);
+    const result = await createRealClaudeClient().decide({ ...input, onUsage });
     expect(result).toMatchObject({ summary: "Prepare, then verify.", mock: false,
       toolCalls: [{ tool: "act", params: { label: "prepare" } }, { tool: "act", params: { label: "verify" } }] });
+    expect(onUsage).toHaveBeenCalledOnce();
+    expect(onUsage).toHaveBeenCalledWith(expect.objectContaining({ requestedModel: "transport-main",
+      responseModel: "inert-model", responseId: "msg_inert", inputTokens: 12, outputTokens: 24 }));
     const logs = [console.debug, console.info, console.warn, console.error, console.log].map(method => vi.mocked(method).mock.calls);
-    expect(JSON.stringify(logs)).not.toContain(PRIVATE);
+    expect(JSON.stringify([logs, onUsage.mock.calls])).not.toContain(PRIVATE);
     expect(h.fetch).toHaveBeenCalledOnce();
   });
 
@@ -218,6 +270,7 @@ describe("real SDK transport through the real KARTA cycle", () => {
     expect(h.pending).not.toHaveBeenCalled();
     expect(h.notify).not.toHaveBeenCalled();
     expect(h.finish).toHaveBeenCalledOnce();
+    expect(h.finish.mock.calls[0]?.[0].modelUsage).toBeUndefined();
     expect(h.fetch).toHaveBeenCalledOnce();
     expect(JSON.stringify([result, h.finish.mock.calls, h.record.mock.calls])).not.toContain(PRIVATE);
   });

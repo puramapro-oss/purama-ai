@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { ClaudeDecideInput } from "../src/claude/types.js";
+import { normalizeModelUsage } from "../src/claude/usage.js";
 import type { AgentDecision, AgentDefinition, AgentRunResult, AgentState, AnyToolDefinition } from "../src/engine/types.js";
 import type { PrivateToolResultPayload } from "../src/engine/private-tool-results.js";
 import { createKnowledgeSearchTool } from "../src/tools/knowledge-search.js";
@@ -237,10 +239,23 @@ describe.each(["cycle", "approval"] as const)("private tool result delivery thro
     expect(h.events.indexOf("store")).toBeLessThan(h.events.lastIndexOf(path === "cycle" ? "finish" : "finalize"));
   });
 
-  it("fails safely after a storage refusal and never replays the completed provider call on repeated delivery", async () => {
+  it("retains model usage after a storage refusal and never replays the completed provider call on repeated delivery", async () => {
+    const receipt = normalizeModelUsage({ id: "msg_private_sink", model: "fixture-model-v1",
+      usage: { input_tokens: 123, output_tokens: 7, cache_read_input_tokens: 0 },
+    }, "fixture-model", "https://api.anthropic.com");
+    h.decide.mockImplementation(async (input: ClaudeDecideInput) => {
+      input.onUsage?.(receipt);
+      return h.decision;
+    });
     h.store.mockResolvedValue({ data: null, error: { code: "42501", message: PRIVATE_MARKER, details: PRIVATE_MARKER } });
     const result = await executePath(path);
     expectFailed(path, result);
+    expect(h.finish).toHaveBeenCalledOnce();
+    expect(h.finish.mock.calls[0][0]).toMatchObject({
+      status: path === "cycle" ? "error" : "awaiting_approval", retryable: false, modelUsage: receipt,
+    });
+    expect(h.finish.mock.calls[0][0].modelUsage).toStrictEqual(receipt);
+    expect(result).not.toHaveProperty("modelUsage");
     const repeated = path === "cycle" ? await cycle() : await resolvePendingAction(PENDING, "approve");
     if (path === "cycle") expect(repeated).toMatchObject({ status: "error", retryable: false });
     else expect(repeated).toMatchObject({ ok: false });
@@ -248,6 +263,10 @@ describe.each(["cycle", "approval"] as const)("private tool result delivery thro
     expect(h.providerFetch).toHaveBeenCalledTimes(2);
     expect(stores()).toHaveLength(1);
     expect(h.decide).toHaveBeenCalledOnce();
+    expect(h.finish).toHaveBeenCalledOnce();
+    expect(h.finish.mock.calls[0][0].modelUsage).toStrictEqual(receipt);
+    expect(repeated).not.toHaveProperty("modelUsage");
+    expect(stores()[0].p_payload).not.toHaveProperty("modelUsage");
     expectNoPrivateTrace(repeated);
   });
 

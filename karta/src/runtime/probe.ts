@@ -23,7 +23,7 @@ export async function probeRuntime(signal: AbortSignal): Promise<{ globalKillSwi
     const [outbox, global, runs, actions, pong] = await Promise.all([
       supabase.rpc("karta_approval_outbox_health").abortSignal(signal),
       supabase.from("karta_global_state").select("kill_switch").eq("id", "global").abortSignal(signal).single(),
-      supabase.from("karta_runs").select("execution_fingerprint").limit(0).abortSignal(signal),
+      supabase.from("karta_runs").select("execution_fingerprint,model_usage").limit(0).abortSignal(signal),
       supabase.from("karta_pending_actions").select("execution_trigger").limit(0).abortSignal(signal),
       redisConnection.ping(),
     ]);
