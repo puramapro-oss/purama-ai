@@ -97,3 +97,38 @@ test('the reviewed Expo merge guard and its upstream alias retain distinct ident
   adapter.name = 'unreviewed-package';
   assert.throws(() => verifyAuditSnapshot(input), /local adapter has changed/);
 });
+
+test('scoped glob guards retain local identities and unchanged registry aliases', () => {
+  const input = inputs();
+  assert.equal(verifyAuditSnapshot(input).status, 'PASS');
+  for (const [local, name, alias, upstream, version] of [
+    ['compat/glob', '@purama/expo-glob-compat', 'glob-upstream', 'glob', '13.0.7'],
+    ['compat/glob-minimatch', '@purama/glob-minimatch-guard', 'minimatch-upstream', 'minimatch', '10.2.6'],
+  ]) {
+    const entry = input.lock.packages[local];
+    assert.equal(entry.name, name);
+    assert.equal(entry.version, '1.0.0');
+    assert.deepEqual(entry.dependencies, { [alias]: `npm:${upstream}@${version}` });
+    const original = input.lock.packages[`node_modules/${alias}`];
+    assert.equal(original.name, upstream);
+    assert.equal(original.version, version);
+    for (const field of ['name', 'version']) {
+      const altered = inputs();
+      altered.lock.packages[local][field] = 'unreviewed';
+      assert.throws(() => verifyAuditSnapshot(altered), /local adapter has changed/);
+    }
+  }
+});
+
+test('a wrong glob guard link cannot pass as an admitted local dependency', () => {
+  for (const [module, target] of [['glob', 'compat/glob'], ['minimatch', 'compat/glob-minimatch']]) {
+    const input = inputs();
+    const key = `node_modules/${module}`;
+    assert.deepEqual(input.lock.packages[key], { resolved: target, link: true });
+    input.lock.packages[key].resolved = 'compat/unreviewed';
+    assert.throws(() => verifyAuditSnapshot(input), /outside the audited registry graph/);
+    const notLinked = inputs();
+    notLinked.lock.packages[key].link = false;
+    assert.throws(() => verifyAuditSnapshot(notLinked), /outside the audited registry graph/);
+  }
+});
