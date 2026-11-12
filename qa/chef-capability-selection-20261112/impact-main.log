@@ -29,3 +29,41 @@ Affected execution flows:
   • VoiceSettingsCard → Resolve (7 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, resolve
   • Ecosystem → Entries (7 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit
 ... and 618 more
+
+Follow-up: canonical trusted snapshot containment
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 1495 files, 4971 symbols
+Affected processes: 127
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 4956 more
+
+Affected execution flows:
+  • Execute → JevValidationError (7 steps) — changed: execute, JevValidationError
+  • VoiceSettingsCard → CloseQueue (6 steps) — changed: closeQueue
+  • VoiceSettingsCard → Disconnect (6 steps) — changed: disconnect
+  • Execute → Trap (6 steps) — changed: execute
+  • RunChefWorkerCycle → Advance (5 steps) — changed: tryFinishMission, housekeeping
+  • Execute → OwnKeys (5 steps) — changed: execute
+  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: tryFinishMission, housekeeping, ChefProcessStopUnconfirmedError
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping
+  • LoadSelectedPrivateToolResults → Record (4 steps) — changed: parsePrivateToolResult, privateToolSourceUrl, record
+... and 117 more

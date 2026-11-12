@@ -36,3 +36,6 @@ Affected execution flows:
   • Ecosystem → Entries (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
   • SocialSettings → RequestDeadlineError (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
 ... and 601 more
+
+Follow-up: canonical trusted snapshot containment
+Diff touched 5 file(s) but no indexed symbols overlap those hunks — not a clean tree.

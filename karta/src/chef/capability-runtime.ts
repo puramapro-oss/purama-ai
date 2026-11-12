@@ -1,6 +1,6 @@
-import { constants } from "node:fs";
+import { constants, realpathSync } from "node:fs";
 import { open } from "node:fs/promises";
-import { isAbsolute } from "node:path";
+import { isAbsolute, relative, sep } from "node:path";
 import { createHash } from "node:crypto";
 import {
   normalizeChefCapabilitySelection, resolveChefCapabilities,
@@ -99,6 +99,18 @@ export function hasChefCapabilityReceipt(value: unknown, plan: ChefCapabilityPla
   const expected = plan.selected.map(item => item.id).sort();
   if (receipt.appliedIds.length !== expected.length || receipt.appliedIds.some(id => typeof id !== "string")) return false;
   return [...receipt.appliedIds].sort().every((id, index) => id === expected[index]);
+}
+
+/** A name beginning with two dots is still a child unless it is the parent segment. */
+export function resolveTrustedChefCapabilityContextPath(path: string, allowedRoots: string[]): string {
+  if (!isAbsolute(path)) throw new Error("Chemin de contexte CHEF non absolu");
+  const canonical = realpathSync(path);
+  for (const root of allowedRoots) {
+    const rel = relative(realpathSync(root), canonical);
+    const outside = rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel);
+    if (!outside) throw new Error("Le contexte de capacités doit rester hors des espaces de travail des agents");
+  }
+  return canonical;
 }
 
 /**

@@ -1,12 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { existsSync, realpathSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ProcessChefDriver, type ChefDriverRequest } from "../src/chef/driver.js";
 import {
   createFileChefCapabilityResolver, hasChefCapabilityReceipt, prepareChefCapabilities,
+  resolveTrustedChefCapabilityContextPath,
   type ChefCapabilityRuntime,
 } from "../src/chef/capability-runtime.js";
 import type { ChefCapabilitySelection } from "../src/chef/capability-selection.js";
@@ -246,6 +247,41 @@ describe("CHEF capability process admission", () => {
 });
 
 describe("operator-managed capability snapshots", () => {
+  it.each(["normal", "..context", "...", ".hidden"])(
+    "rejects a context in the agent-writable %s child", async (name) => {
+      const root = await directory();
+      const child = join(root, name);
+      await mkdir(child);
+      const path = join(child, "contexts.json");
+      await writeFile(path, "{}");
+      expect(() => resolveTrustedChefCapabilityContextPath(path, [root])).toThrow(/hors des espaces/);
+    },
+  );
+
+  it("resolves symlinks before rejecting contexts within any writable root", async () => {
+    const root = await directory();
+    const outside = await directory();
+    const path = join(root, "contexts.json");
+    await writeFile(path, "{}");
+    const link = join(outside, "contexts.json");
+    await symlink(path, link);
+    expect(() => resolveTrustedChefCapabilityContextPath(link, [outside, root])).toThrow(/hors des espaces/);
+    expect(() => resolveTrustedChefCapabilityContextPath(path, [path])).toThrow(/hors des espaces/);
+  });
+
+  it("allows a real sibling or parent location while rejecting relative configuration", async () => {
+    const root = await directory();
+    const worktree = join(root, "project");
+    const sibling = join(root, "project-trusted");
+    await mkdir(worktree); await mkdir(sibling);
+    for (const location of [root, sibling]) {
+      const path = join(location, "contexts.json");
+      await writeFile(path, "{}");
+      expect(resolveTrustedChefCapabilityContextPath(path, [worktree])).toBe(realpathSync(path));
+    }
+    expect(() => resolveTrustedChefCapabilityContextPath("contexts.json", [worktree])).toThrow(/non absolu/);
+  });
+
   it("reads only the exact bound context and sees revocation on the next request", async () => {
     const cwd = await directory();
     const path = join(cwd, "contexts.json");

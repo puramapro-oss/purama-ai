@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-11-12T18:48:18.919980+00:00",
+  "recorded_at": "2026-11-12T19:00:02.991598+00:00",
   "status": "PARTIEL",
   "repository": "puramapro-oss/purama-ai",
   "base_commit": "b170fcb647f8f70851ee918bff795de3a45b0328",
@@ -12,7 +12,7 @@
       "command": "npm test -- --maxWorkers=2",
       "exit_code": 0,
       "test_files": 137,
-      "tests_passed": 2610,
+      "tests_passed": 2616,
       "evidence": "tests.log"
     },
     {
@@ -56,8 +56,8 @@
     },
     {
       "gate": "live_host_access",
-      "status": "BLOQUE",
-      "details": "MacDevBridge and Stable bridge_status both returned internal errors during inspection."
+      "status": "PARTIEL",
+      "details": "Both MacDevBridge status tools returned internal errors. Desktop Commander subsequently reached the Mac read-only. The local IAO checkout has a divergent historical main and uncommitted changes; it was not modified. This does not qualify the live CHEF host or provider adapters."
     },
     {
       "gate": "user_chat_to_chef",
@@ -68,21 +68,37 @@
       "gate": "real_provider_adapter_accounts_and_deployment",
       "status": "NON_TESTE",
       "details": "Subprocess fixtures are real Node processes; Codex/Claude/GLM adapters, external accounts, production migrations and production runtime were not activated or tested."
+    },
+    {
+      "gate": "snapshot_path_followup_impact",
+      "status": "PARTIEL",
+      "commands": [
+        "gitnexus impact main --direction upstream --file karta/src/chef/worker-main.ts --kind Function",
+        "gitnexus analyze --index-only",
+        "gitnexus detect-changes --scope staged",
+        "gitnexus detect-changes --scope compare --base-ref main"
+      ],
+      "details": "Pre-edit lookup reported CRITICAL with ambiguous cross-module edges. Index rebuilt; staged detection reports five touched files without indexed symbol overlap. This is not a clean-tree claim. Manual trace confirms the worker entry point calls the new pure containment helper; six filesystem regression tests and independent static review pass.",
+      "evidence": [
+        "impact-staged.log",
+        "impact-main.log"
+      ]
     }
   ],
   "source_sha256": {
     "docs/chef-capability-selection.md": "485d808f692bd10b3bfffe2f593c8c351f92d5073443a583d510a2efaf6bda3d",
     "karta/migrations/030_chef_capability_selection.sql": "a1af7443ff907eafaf14a7c30f1d7e8b910b5530430374ef25d521c94c49f1a9",
     "karta/src/chef/brief.ts": "60f0b3b25e23be74512da427ac6a7538cbde932d283427fbb1e82cf0af8370c7",
-    "karta/src/chef/capability-runtime.ts": "984ebfc4429262471f865d002fa71a3f33bdcab4c1abea5a48144c503e1412ae",
+    "karta/src/chef/capability-runtime.ts": "5bf153844a8bd965e6d9b2664412f6c343d6e63e324e274ecfe673e4ab00f918",
     "karta/src/chef/capability-selection.ts": "103711a52177ed745a443a9f6116cc0410da6cdeb98bead1eada9f754886e8f8",
     "karta/src/chef/control-plane.ts": "77d3672bc12b72670d1ad9c40eddb4b60ab0c628b763e76bf647d6ea732eb496",
     "karta/src/chef/driver.ts": "f96d7219394a2b383d82afc09b2133c0cd033c7d07741f84ef06a8c2c343403d",
     "karta/src/chef/supervisor.ts": "ad34df325b8be21eb2aab1ea775f0a1a39f05e8ac200996741aed86e33d56873",
-    "karta/src/chef/worker-main.ts": "238f0a3d1ab204b640d5301b9a88297451be3bc7206866ddfcf7d450922c0ac9",
+    "karta/src/chef/worker-main.ts": "be6fb0cd16646ca4685511f9e785b11ca42a2b5ca0a25c3791a8c46f3d3eaa0d",
     "karta/test/chefCapabilityPersistence.test.ts": "72729dbe674af89b8e497c3c1cd6367621f5bf5b7a5c85eb8b074362068caaf5",
-    "karta/test/chefCapabilityRuntime.test.ts": "6e7560fcc77152b1eb7a19a5e9ba77af299f90de0ea5754da06f9f302b23d039",
+    "karta/test/chefCapabilityRuntime.test.ts": "9a460557b0c4a33e80bd687efaab9a9bd8640bef85dac84217c831e863092504",
     "karta/test/chefCapabilitySelection.test.ts": "54a5be7c0beff28edbe1545cd66db2186663a08877ff307da6914cd55893c85e"
   },
-  "scope": "Selection preferences, trusted host catalogue projection, persisted owner-bound task dispatch, generation-bound adapter acknowledgment and conservative reconciliation. Existing CHEF scheduling retained; no new external service installed."
+  "scope": "Selection preferences, trusted host catalogue projection, persisted owner-bound task dispatch, generation-bound adapter acknowledgment and conservative reconciliation. Existing CHEF scheduling retained; no new external service installed.",
+  "followup_correction": "Canonical snapshot path rejects every descendant of an agent-writable root, including names starting with two dots; six additional filesystem cases pass. Independent static review PASS."
 }

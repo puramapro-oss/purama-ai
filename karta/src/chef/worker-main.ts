@@ -3,9 +3,7 @@ import { SupabaseChefControlPlane } from "./control-plane.js";
 import { runChefWorkerCycle } from "./supervisor.js";
 import { CommandChefVerifier, type ChefVerificationProfile } from "./verifier.js";
 import { ChefProcessStopUnconfirmedError } from "./process.js";
-import { createFileChefCapabilityResolver, type ChefCapabilityRuntime } from "./capability-runtime.js";
-import { realpathSync } from "node:fs";
-import { isAbsolute, relative } from "node:path";
+import { createFileChefCapabilityResolver, resolveTrustedChefCapabilityContextPath, type ChefCapabilityRuntime } from "./capability-runtime.js";
 
 function required(name: string): string {
   const value = process.env[name];
@@ -70,14 +68,7 @@ async function main(): Promise<void> {
     if (process.env.CHEF_DRIVER_CAPABILITY_PROTOCOL !== "1") {
       throw new Error("Adaptateur CHEF non qualifié pour le protocole de capacités 1");
     }
-    if (!isAbsolute(capabilityContextFile)) throw new Error("Chemin de contexte CHEF non absolu");
-    const trustedContextFile = realpathSync(capabilityContextFile);
-    for (const root of allowedRoots) {
-      const rel = relative(realpathSync(root), trustedContextFile);
-      if (rel === "" || (!rel.startsWith("..") && !isAbsolute(rel))) {
-        throw new Error("Le contexte de capacités doit rester hors des espaces de travail des agents");
-      }
-    }
+    const trustedContextFile = resolveTrustedChefCapabilityContextPath(capabilityContextFile, allowedRoots);
     capabilityRuntime = {
       adapterProtocol: 1,
       resolveContext: createFileChefCapabilityResolver(trustedContextFile),
