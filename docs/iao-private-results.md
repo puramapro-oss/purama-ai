@@ -36,7 +36,7 @@ Elle crée `purama_ai.karta_tool_results` et la RPC serveur
 | Opération approuvée | Identifiant de l’action en attente ; nouvelle insertion seulement pendant son état `executing`. |
 | Contenu | Projection contrôlée, version 1, au plus 64 Kio en représentation JSONB texte. |
 | Idempotence | Une opération ne reçoit qu’un résultat ; un contenu JSONB identique retrouve le même identifiant. Un contenu divergent est refusé. |
-| Écriture | RPC réservée au service ; ni l’utilisateur ni le service ne disposent d’un droit DML direct sur la table. |
+| Insertion et modification | RPC réservée au service ; aucune insertion ni modification directe de ligne n’est accordée à l’utilisateur ou au service. La suppression du propriétaire est régie séparément. |
 | Lecture | Le propriétaire courant du run et de l’agent ; les résultats ne deviennent pas publics avec la fiche de l’agent. |
 | Suppression | Propriétaire courant, après fin de l’opération. La fermeture empêche une nouvelle insertion après suppression. |
 | Conservation | Pas de purge automatique ni de durée de conservation annoncée. Suppression par le propriétaire et cascades lors de suppression du compte, de l’agent ou du run. |
