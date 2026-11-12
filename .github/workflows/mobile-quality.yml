@@ -58,6 +58,8 @@ jobs:
         run: npm ls --all --json > qa-results/npm-tree.json
       - name: Exercise actual consumers and security regressions
         run: npm run test:dependencies 2>&1 | tee qa-results/dependency-compat.log
+      - name: Exercise local communication and account activation boundaries
+        run: npm run test:local-communication 2>&1 | tee qa-results/local-communication.log
       - name: Test the offline audit binding and refusal cases
         run: npm run test:audit-snapshot 2>&1 | tee qa-results/audit-snapshot-tests.log
       - name: Check SDK dependency alignment
