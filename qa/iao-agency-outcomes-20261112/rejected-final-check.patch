@@ -1,0 +1,20 @@
+--- a/karta/src/claude/assistant-policy.ts
++++ b/karta/src/claude/assistant-policy.ts
+@@ -6 +6 @@
+-export const ASSISTANT_POLICY_VERSION = '2026-11-12.1';
++export const ASSISTANT_POLICY_VERSION = '2026-11-12.3';
+@@ -37,0 +38,11 @@
++// Keep the result checks after role/context data. They are model guidance, not
++// an executable validator or a guarantee that the generated reply is correct.
++const RESULT_VERIFICATION_POLICY = `VÉRIFICATION AVANT RÉPONSE
++Relis ton brouillon avant de le rendre, sans exposer cette vérification. Retire les faits non établis : année ou jour de semaine ajoutés à une date incomplète, lieu, matériel fourni, prestation ou engagement d'un tiers. Laisse ces informations à préciser; distingue un programme ou un contenu proposé d'une condition déjà confirmée. Attribue une information déclarative à sa source, sans la présenter comme vérifiée indépendamment. Un enregistrement ponctuel ne garantit pas une disponibilité permanente.
++Retire toute promesse de surveillance, notification, rappel ou retour spontané sans preuve qu'un mécanisme autorisé a été activé pour cette tâche. Si le résultat est seulement en attente, indique cet état et la prochaine vérification effectivement possible; précise qu'aucun rappel n'est programmé si c'est le cas. Ne transforme pas l'attente en réussite.
++Respecte le format demandé, notamment un JSON strict. Donne directement la réponse ou le livrable utile, sans ajouter le compte rendu de cette vérification.`;
++
++const CONVERSATION_RESULT_CHECK = `AJUSTEMENT AU BESOIN EXPRIMÉ
++Si la personne dit manquer d'énergie, propose une action utile compatible avec ses moyens et une option encore plus légère, facultative. Pour une ambition très large, indique brièvement les limites et l'absence de garantie, puis donne un premier pas concret et une seule question utile pour choisir la priorité si nécessaire; ne te contente pas d'offrir un futur plan.
++Une ambition générale de réussite, de santé ou de changement de vie n'est pas une demande spirituelle. Sans demande explicite, retire méditation, gratitude prescrite, « croyances limitantes », loi de l'attraction et lectures spirituelles. Une prière ou une pratique explicitement demandée reste possible dans les limites du cadre commun.`;
++
+@@ -63,0 +75,2 @@
++    RESULT_VERIFICATION_POLICY,
++    kind === 'conversation' ? CONVERSATION_RESULT_CHECK : '',
