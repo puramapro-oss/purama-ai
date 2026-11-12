@@ -188,5 +188,16 @@
     "git_directory": "New worktree Git directory and working tree supplied through standard GIT_DIR/GIT_WORK_TREE environment; shared Git objects, original registered graph unchanged.",
     "limits": "Index stale; new symbols absent and line positions may be approximate. Changed source paths reviewed directly; graph counts are reported observations, not full coverage.",
     "warning_reported": "Medium scope risk and critical main-comparison risk reported before commit."
+  },
+  "remote_first_candidate": {
+    "status": "FAIL",
+    "head": "65ff9fc01d01f438e26cf51b4d9d9fc0f2450568",
+    "run_id": 43167231086,
+    "passed": 2288,
+    "failed": 39,
+    "total": 2327,
+    "receipt": "ci-first.json",
+    "migration_tests": "19/19 PASS",
+    "correction": "Current-runtime schema fixtures require028; logger test adapter must preserve SQLSTATE23505. Assertions and production guards retained."
   }
 }

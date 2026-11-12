@@ -101,3 +101,17 @@ Documentation officielle consultée le 12 novembre 2026 :
 <https://platform.claude.com/docs/en/api/messages/create>.
 La documentation courante et la version SDK sont distinguées ; aucun changement
 de version d'API ou de dépendance n'est effectué.
+
+## Première réception distante et correction des bancs
+
+Candidat `65ff9fc` : CI [43167231086](https://github.com/puramapro-oss/purama-ai/actions/runs/43167231086),
+**2 288 PASS / 39 FAIL**, 128 fichiers. Les 19 cas de migration et les nouveaux
+cas de normalisation/transport/boucle/probe passent. Les échecs identifient quatre
+bancs d'intégration sans la migration028, puis un adaptateur de test qui supprimait
+SQLSTATE23505 lors du nouveau scénario de livraison répétée du logger.
+
+Les fixtures du moteur actuel sont mises à jour ; leurs variantes historiques
+restent inchangées. L'adaptateur transmet le code PostgreSQL comme PostgREST.
+Les assertions, le code de production et les protections ne sont pas affaiblis.
+Une nouvelle CI du candidat corrigé reste obligatoire. Le reçu de cette première
+campagne est conservé dans `ci-first.json`.

@@ -61,8 +61,12 @@ function query(table: string) {
       return requireSingle && result.rows.length !== 1
         ? { data: null, error: { code: "PGRST116", message: "Expected exactly one row" } }
         : { data: result.rows[0] ?? null, error: null };
-    } catch {
-      return { data: null, error: { message: "Test PostgreSQL query rejected" } };
+    } catch (error) {
+      // Match PostgREST's SQLSTATE contract: duplicate admission must exercise
+      // the real logger's 23505 reconciliation, not become a transport error.
+      const code = error && typeof error === "object" && "code" in error
+        && typeof error.code === "string" ? error.code : undefined;
+      return { data: null, error: { message: "Test PostgreSQL query rejected", ...(code ? { code } : {}) } };
     }
   };
   const q = {

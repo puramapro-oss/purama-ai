@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "scope": "First published candidate; retained regression evidence",
+  "head": "65ff9fc01d01f438e26cf51b4d9d9fc0f2450568",
+  "tree": "4aa88932513773e19463ffe637aaa96d5f5da0c8",
+  "checkout": "e5b11afe4357a32e945afe8ae1063d26efc29a1e",
+  "run_id": 43167231086,
+  "job_id": 131011823367,
+  "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/43167231086",
+  "passed": 2288,
+  "failed": 39,
+  "total": 2327,
+  "files": 128,
+  "result_lines": [
+    "2026-11-12T06:19:01.6956290Z  ❯ test/queueDeliveryIdentity.test.ts (27 tests | 12 failed) 4471ms",
+    "2026-11-12T06:19:13.4972735Z  ❯ test/briefSubmissionFlow.test.ts (12 tests | 8 failed) 4184ms",
+    "2026-11-12T06:19:18.5673976Z  ❯ test/briefDatabaseCycle.test.ts (13 tests | 13 failed) 9194ms",
+    "2026-11-12T06:19:30.3669616Z  ❯ test/approvalTriggerContext.test.ts (8 tests | 5 failed) 3663ms",
+    "2026-11-12T06:19:43.1306499Z  ❯ test/loggerFinalization.test.ts (17 tests | 1 failed) 3224ms",
+    "2026-11-12T06:20:12.2608376Z  ✓ test/loopModelUsage.test.ts (14 tests) 19ms",
+    "2026-11-12T06:20:14.0360685Z  ✓ test/modelUsage.test.ts (64 tests) 21ms",
+    "2026-11-12T06:20:27.9659153Z  ✓ test/modelUsageMigration.test.ts (19 tests) 3129ms",
+    "2026-11-12T06:20:29.1687268Z  ✓ test/claudeUsageTransport.test.ts (9 tests) 60ms",
+    "2026-11-12T06:20:40.6539413Z  ✓ test/runtimeUsageReadiness.test.ts (2 tests) 23ms",
+    "2026-11-12T06:20:43.3887565Z  Test Files  5 failed | 123 passed (128)",
+    "2026-11-12T06:20:43.3888924Z       Tests  39 failed | 2288 passed (2327)"
+  ],
+  "diagnosis": [
+    "Four integration fixtures did not apply migration028 before using the current logger; column is required by the runtime probe.",
+    "The logger SQL test adapter erased PostgreSQL error code23505, preventing its new duplicate-delivery scenario from exercising the real reconciliation branch."
+  ],
+  "remediation": "Apply028 in current-runtime fixtures; preserve SQLSTATE in the test adapter. No production guard or assertion is weakened."
+}
