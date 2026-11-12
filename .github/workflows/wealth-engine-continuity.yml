@@ -23,15 +23,20 @@ jobs:
     env:
       PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-      EVIDENCE_DIR: ${{ runner.temp }}/wealth-engine-continuity
-      GITNEXUS_TOOL_DIR: ${{ runner.temp }}/wealth-engine-gitnexus-tool
-      GITNEXUS_CLI: ${{ runner.temp }}/wealth-engine-gitnexus-tool/node_modules/gitnexus/dist/cli/index.js
-      GITNEXUS_STORAGE_PATH: ${{ runner.temp }}/wealth-engine-gitnexus-index
       GITNEXUS_MEMORY: 'off'
       NODE_OPTIONS: '--max-old-space-size=4096'
       GITNEXUS_PARSE_CHUNK_CONCURRENCY: '1'
       GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES: '1048576'
     steps:
+      - name: Configure isolated tooling and evidence paths
+        run: |
+          set -euo pipefail
+          {
+            printf 'EVIDENCE_DIR=%s/wealth-engine-continuity\n' "$RUNNER_TEMP"
+            printf 'GITNEXUS_TOOL_DIR=%s/wealth-engine-gitnexus-tool\n' "$RUNNER_TEMP"
+            printf 'GITNEXUS_CLI=%s/wealth-engine-gitnexus-tool/node_modules/gitnexus/dist/cli/index.js\n' "$RUNNER_TEMP"
+            printf 'GITNEXUS_STORAGE_PATH=%s/wealth-engine-gitnexus-index\n' "$RUNNER_TEMP"
+          } >> "$GITHUB_ENV"
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
