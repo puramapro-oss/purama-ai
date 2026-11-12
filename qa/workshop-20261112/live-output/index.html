@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atelier PURAMA</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #24362e; background: #f5f4ee; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 1.5rem; }
+    main { width: 100%; max-width: 38rem; padding-block: 3rem; }
+    .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { font-size: 2.5rem; line-height: 1.15; margin: 1rem 0; overflow-wrap: anywhere; }
+    p { max-width: 60ch; line-height: 1.6; }
+    .counter { margin-block: 2.5rem 1.5rem; padding-block: 1.5rem; border-block: 1px solid #a8b2a9; font-size: 1.25rem; }
+    output { font-weight: 700; font-variant-numeric: tabular-nums; }
+    button { font: inherit; font-weight: 650; color: #f5f4ee; background: #28543f; border: 2px solid transparent; border-radius: .4rem; min-height: 48px; padding: .8rem 1.25rem; cursor: pointer; max-width: 100%; }
+    button:hover { background: #193f2c; }
+    button:active { background: #123221; }
+    button:focus-visible { outline: 3px solid #24362e; outline-offset: 4px; }
+    .note { font-size: .875rem; color: #4e5e53; }
+    @media (max-width: 360px) { h1 { font-size: 2rem; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Un espace pour expérimenter</p>
+    <h1>Atelier PURAMA</h1>
+    <p>Chaque clic fait avancer le compteur. À vous de jouer.</p>
+    <p class="counter" role="status" aria-live="polite" aria-atomic="true">Compteur : <output id="counter">0</output></p>
+    <button id="increment" type="button">Ajouter 1 au compteur</button>
+    <p class="note">Le compteur revient à zéro au rechargement de la page.</p>
+    <noscript><p>Activez JavaScript dans votre navigateur pour utiliser le compteur.</p></noscript>
+  </main>
+  <script>
+    'use strict';
+    const counter = document.getElementById('counter');
+    const increment = document.getElementById('increment');
+    let count = 0n;
+    increment.addEventListener('click', () => {
+      count += 1n;
+      counter.textContent = count.toString();
+    });
+  </script>
+</body>
+</html>

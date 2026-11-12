@@ -1,0 +1,152 @@
+workshop-final-node22.log
+59bf7ae425aaa2b75069933d409696bbc78f2f77b9aadf131ddeef1e5e8145da
++ Received
+
+- true
++ false
+
+ ❯ test/chefCodexCliDriver.test.ts:217:57
+    215|       await new Promise(resolve => setTimeout(resolve, 10));
+    216|     }
+    217|     expect(existsSync(join(f.directory, "trace.json"))).toBe(true);
+       |                                                         ^
+    218|     controller.abort();
+    219|     const result = await outcome;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 275 passed (276)
+   Start at  00:41:46
+   Duration  396.63s (tests 94%, import 4%, transform 2%)
+
+    Isolate  8 workers spawned · ~1.72s startup each (spawn + environment, per file)
+             at least ~12.07s faster with isolate: false — reuses workers across files instead of one per file
+
+
+driver-final.log
+341c98d32857c35935b880a5c721fa2488e21daa090667bc2661ee92b2472733
+     ✓ does not invent usage when the CLI supplies none 8925ms
+     ✓ treats malformed CLI counters as unknown: {"input_tokens":-1,"output_tokens":1} 8509ms
+     ✓ treats malformed CLI counters as unknown: {"input_tokens":"21","output_tokens":7} 2281ms
+     ✓ treats malformed CLI counters as unknown: {"input_tokens":2,"output_tokens":1,"cached_input_tokens":3} 3514ms
+     ✓ treats malformed CLI counters as unknown: {"input_tokens":21} 3041ms
+     ✓ does not double-count ambiguous repeated completion events 3082ms
+     ✓ refuses invalid or model-supplied receipt fields: "not JSON" 4855ms
+     ✓ refuses invalid or model-supplied receipt fields: JSON.stringify({status:"completed",summary:"ok",outputSha:"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}) 1344ms
+     ✓ refuses invalid or model-supplied receipt fields: JSON.stringify({status:"completed",summary:"ok",usage:{inputTokens:0,outputTokens:0}}) 1390ms
+     ✓ refuses invalid or model-supplied receipt fields: JSON.stringify({status:"complete",summary:"ok"}) 2617ms
+     ✓ refuses invalid or model-supplied receipt fields: JSON.stringify({status:"completed",summary:" "}) 2460ms
+     ✓ refuses invalid or model-supplied receipt fields: JSON.stringify(["completed","ok"]) 11988ms
+     ✓ requires the final message file rather than accepting a log as the result 1467ms
+     ✓ refuses a symlink for the final result 2251ms
+     ✓ reports a failed CLI without echoing its diagnostics 2269ms
+     ✓ does not accept completion when Git cannot confirm a real revision 3602ms
+     ✓ preserves the primary CLI failure when removal of its private temporary files fails 5658ms
+     ✓ aborts an actual running fixture, waits for its termination and removes temporary files 852ms
+
+ Test Files  1 passed (1)
+      Tests  31 passed (31)
+   Start at  00:52:05
+   Duration  94.89s (tests 99%)
+
+
+frontend-final.log
+a96218ba17c7f568b5a8f29dc72372cb0362aca43703c9b85e23998c0a258558
+
+ RUN  v4.1.12 /Users/matissdornier/purama-worktrees/iao-atelier-multiagents-20261112
+
+ ✓ src/pages/Workshop.test.tsx (8 tests) 1441ms
+     ✓ opens existing missions after reload and shows readiness without inventing activity  642ms
+ ✓ src/lib/workshop.test.ts (11 tests) 146ms
+
+ Test Files  2 passed (2)
+      Tests  19 passed (19)
+   Start at  00:41:51
+   Duration  30.70s (transform 3.62s, setup 0ms, import 6.03s, tests 1.59s, environment 20.65s)
+
+
+browser-final.log
+e971261a98ba3c68aa896e4086e830bfc1269d97f02e9891aa3b87691319edb0
+
+Running 3 tests using 1 worker
+
+  ✓  1 tests/workshop-state/workshop.spec.ts:31:1 › desktop: start, true status progression, verification and resume after reload (12.9s)
+  ✓  2 tests/workshop-state/workshop.spec.ts:50:1 › mobile: fully accessible controls and no horizontal overflow (6.2s)
+  ✓  3 tests/workshop-state/workshop.spec.ts:59:1 › an unavailable backend never produces a false result (5.5s)
+
+  3 passed (42.5s)
+
+supervisor-final.log
+d9d7ba668d9fb9b98c0028b1a4f98392afc625fa717ba353df3df087e070cb02
+
+ RUN  v5.0.3 /Users/matissdornier/purama-worktrees/iao-atelier-multiagents-20261112/karta
+
+ ✓ test/chefSupervisor.test.ts (20 tests) 2500ms
+   ✓ CHEF autonomous worker cycle (20)
+     ✓ propagates shutdown to a running real process before releasing the task 835ms
+     ✓ waits for a timed-out worker to finish before the retryable transition 1323ms
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Start at  00:39:46
+   Duration  7.93s (transform 50%, tests 43%, import 4%, setup 2%, worker 1%)
+
+  Transform  transforming modules took 2.85s · 50% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+
+frontend-node22.log
+98448c26437ee0a68b75a2d7e8101ff5ec28c26380cb3db9f48666b16a55c15b
+
+ RUN  v4.1.12 /Users/matissdornier/purama-worktrees/iao-atelier-multiagents-20261112
+
+ ✓ src/components/shared/CinematicIntro.test.tsx (22 tests) 555ms
+ ✓ src/pages/Workshop.test.tsx (8 tests) 5943ms
+     ✓ opens existing missions after reload and shows readiness without inventing activity  427ms
+     ✓ restores the brief through authentication without putting it in the URL  473ms
+     ✓ offers an explicit retry on a failed status request without claiming success  4450ms
+ ✓ src/lib/workshop.test.ts (11 tests) 33ms
+
+ Test Files  3 passed (3)
+      Tests  41 passed (41)
+   Start at  00:32:11
+   Duration  41.07s (transform 3.17s, setup 0ms, import 6.89s, tests 6.53s, environment 18.51s)
+
+
+karta-node22-regressions.log
+5fa71e8c984ac2a0a5af9944388ea3e72eae5c501df161da35a2df5f4f869dd7
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/chefSupervisor.test.ts:153:34
+    151|     });
+    152|     expect(result).toMatchObject({ state: "retryable", error: "Worker …
+    153|     expect(effectPresentAtRetry).toBe(true);
+       |                                  ^
+    154|     expect(passingVerifier.verify).not.toHaveBeenCalled();
+    155|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 91 passed (92)
+   Start at  00:33:41
+   Duration  87.62s (tests 86%, import 12%, transform 2%)
+
+
+proxy-deno-check.log
+d101d616512d7fea6dd6bef97468c1c3ab11ac6ca65cae9ba6bae7bbff905198
+Check supabase/functions/chef-workshop/index.ts
+
+environment-check.log
+f9fe3a62a57f2f8cc6c3a20a72e1a0dc3971b7789b236ea6d170af8bb89749ed
+[chef-workshop] WORKSHOP_CONFIG : Catalogue atelier absent ou invalide.

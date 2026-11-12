@@ -1,0 +1,33 @@
+import { chromium } from '@playwright/test';
+import assert from 'node:assert/strict';
+import { readFile,writeFile,mkdir,copyFile } from 'node:fs/promises';
+import { resolve,join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const base=resolve('qa/workshop-20261112');
+const receipt=JSON.parse(await readFile(join(base,'live-driver-after.log'),'utf8'));
+assert.equal(receipt.status,'completed');
+assert.equal(receipt.gitStatus,'');
+assert.match(receipt.directory,/^\/tmp\/purama-atelier-check-[a-zA-Z0-9]+$/);
+const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,chromiumSandbox:true});
+const errors=[],network=[];
+try {
+ const page=await browser.newPage({viewport:{width:1280,height:850}});
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
+ await page.goto(pathToFileURL(join(receipt.directory,'index.html')).href);
+ assert.equal(await page.title(),'Atelier PURAMA');
+ const button=page.getByRole('button',{name:'Ajouter 1 au compteur'});
+ await button.click();await button.click();await button.click();
+ await button.focus();await page.keyboard.press('Enter');
+ assert.equal(await page.locator('#counter').textContent(),'4');
+ await page.screenshot({path:join(base,'live-created-desktop.png'),fullPage:true});
+ await page.setViewportSize({width:320,height:700});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await page.screenshot({path:join(base,'live-created-mobile.png'),fullPage:true});
+ assert.equal(await page.locator('html').getAttribute('lang'),'fr');
+ assert.equal(network.length,0);assert.equal(errors.length,0);
+ await mkdir(join(base,'live-output'),{recursive:true});
+ await copyFile(join(receipt.directory,'index.html'),join(base,'live-output','index.html'));
+ const result={kind:'LIVE_GENERATED_ARTIFACT_BROWSER',status:'PASS',sourceCommit:receipt.outputSha,checks:['title','three clicks + keyboard activation','counter=4','320px without overflow','French language','no external requests','no browser errors'],externalRequests:network.length,browserErrors:errors.length,providerUsage:receipt.usage};
+ await writeFile(join(base,'live-browser.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
+} finally { await browser.close(); }

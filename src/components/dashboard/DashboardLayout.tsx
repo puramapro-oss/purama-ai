@@ -26,6 +26,7 @@ const navItems = [
   { tKey: 'nav.partnerAgent', icon: Handshake, to: '/dashboard/partner-agent' },
   { tKey: 'nav.legalAgent', icon: Scale, to: '/dashboard/legal-agent' },
   { tKey: 'nav.creatorAgent', icon: Sparkles, to: '/dashboard/creator-agent' },
+  { tKey: 'nav.workshop', label: 'Atelier de création', icon: Sparkles, to: '/dashboard/atelier' },
   { tKey: 'nav.employees', icon: Users, to: '/dashboard/employees' },
   { tKey: 'nav.wallet', icon: Wallet, to: '/dashboard/wallet' },
   { tKey: 'nav.points', icon: Star, to: '/dashboard/boutique' },
@@ -79,7 +80,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             }`}
           >
             <item.icon className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>{t(item.tKey)}</span>}
+            {sidebarOpen && <span>{t(item.tKey, 'label' in item ? item.label : item.tKey)}</span>}
           </Link>
         ))}
       </nav>

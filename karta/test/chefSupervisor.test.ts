@@ -135,10 +135,12 @@ describe("CHEF autonomous worker cycle", () => {
     const cwd = await mkdtemp(join(tmpdir(), "chef-cycle-timeout-"));
     tempDirs.push(cwd);
     const lastEffect = join(cwd, "last-effect");
-    const script = `process.on('SIGTERM',()=>{});
-      setTimeout(()=>{require('node:fs').writeFileSync(${JSON.stringify(lastEffect)},'finished');process.exit(0);},900);`;
+    // The child lifecycle is under test, not Node startup latency. A tiny POSIX
+    // fixture installs its handler before the deadline even on a loaded host.
+    // Ignored SIGTERM is inherited by sleep, so the effect still occurs after timeout.
+    const script = 'trap "" TERM; sleep 0.9; printf finished > "$1"';
     const driver = new ProcessChefDriver({
-      provider: "codex", command: process.execPath, args: ["-e", script], allowedRoots: [cwd], timeoutMs: 500,
+      provider: "codex", command: "/bin/sh", args: ["-c", script, "chef-timeout-fixture", lastEffect], allowedRoots: [cwd], timeoutMs: 500,
     });
     const { control } = makeControl(makeTask({ cwd, accessMode: "read" }));
     let effectPresentAtRetry = false;

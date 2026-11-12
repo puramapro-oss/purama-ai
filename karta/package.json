@@ -13,7 +13,9 @@
     "test:subscriptions:postgres": "node --test test/subscriptionTrial.native.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "chef:worker": "tsx src/chef/worker-main.ts"
+    "chef:worker": "tsx src/chef/worker-main.ts",
+    "chef:workshop": "tsx src/chef/workshop-main.ts",
+    "chef:workshop:check": "tsx src/chef/workshop-main.ts --check"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",

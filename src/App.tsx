@@ -42,6 +42,7 @@ const GoRedirect = lazy(() => import('@/pages/GoRedirect'));
 const Concours = lazy(() => import('@/pages/Concours'));
 const Classement = lazy(() => import('@/pages/Classement'));
 const Forge = lazy(() => import('@/pages/Forge'));
+const Workshop = lazy(() => import('@/pages/Workshop'));
 const PuramaCompta = lazy(() => import('@/pages/PuramaCompta'));
 const SocialAgent = lazy(() => import('@/pages/SocialAgent'));
 const DashboardOverview = lazy(() => import('@/pages/DashboardOverview'));
@@ -165,6 +166,7 @@ export default function App() {
             
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
+              <Route path="/dashboard/atelier" element={<DashboardRoute><Workshop /></DashboardRoute>} />
             <Route path="/dashboard/agents" element={<DashboardRoute><DashboardAgents /></DashboardRoute>} />
             <Route path="/dashboard/employees" element={<DashboardRoute><MyEmployees /></DashboardRoute>} />
             <Route path="/dashboard/auto-agents" element={<Navigate to="/dashboard/agents" replace />} />
