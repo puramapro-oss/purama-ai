@@ -28,7 +28,7 @@ beforeAll(async () => {
     VALUES($1,$2,'legal','manual','history','live','success'),($3,$4,'legal','manual','history','live','success')`, [run,user,otherRun,other]);
   const policyBefore = await db.query("SELECT policyname,roles,cmd,qual,with_check FROM pg_policies WHERE schemaname='purama_ai' AND tablename='karta_runs' ORDER BY policyname");
   const privilegesBefore = await db.query("SELECT relrowsecurity,relacl::text FROM pg_class WHERE oid='purama_ai.karta_runs'::regclass");
-  migration = await readFile(new URL("../migrations/028_model_usage_receipts.sql", import.meta.url), "utf8");
+  migration = await readFile(new URL("../migrations/029_model_usage_receipts.sql", import.meta.url), "utf8");
   await db.exec(migration);
   expect((await db.query("SELECT policyname,roles,cmd,qual,with_check FROM pg_policies WHERE schemaname='purama_ai' AND tablename='karta_runs' ORDER BY policyname")).rows).toEqual(policyBefore.rows);
   expect((await db.query("SELECT relrowsecurity,relacl::text FROM pg_class WHERE oid='purama_ai.karta_runs'::regclass")).rows).toEqual(privilegesBefore.rows);

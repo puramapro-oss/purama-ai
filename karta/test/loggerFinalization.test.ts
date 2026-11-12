@@ -108,7 +108,7 @@ beforeAll(async () => {
   h.db = new PGlite();
   await h.db.exec("CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid'; CREATE SCHEMA purama_ai;");
   await h.db.exec(await readFile(new URL("../migrations/001_karta_core.sql", import.meta.url), "utf8"));
-  await h.db.exec(await readFile(new URL("../migrations/028_model_usage_receipts.sql", import.meta.url), "utf8"));
+  await h.db.exec(await readFile(new URL("../migrations/029_model_usage_receipts.sql", import.meta.url), "utf8"));
   await h.db.exec("ALTER TABLE purama_ai.karta_runs ADD COLUMN execution_key text UNIQUE;");
 });
 afterAll(async () => { await h.db?.close(); });

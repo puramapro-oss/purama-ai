@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -41,6 +41,7 @@ import {
   useCustomAgentKartaRuns, useTriggerCustomAgent, useCustomAgentPendingActions,
 } from '@/hooks/useCreatorAgentKarta';
 import { PendingActionsList } from '@/components/karta/PendingActionsList';
+import { PrivateToolResults } from '@/components/karta/PrivateToolResults';
 
 export default function CreatorAgentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -64,6 +65,20 @@ export default function CreatorAgentDetail() {
   const [chatInput, setChatInput] = useScopedState(conversationKey, '');
   const [sending, setSending] = useScopedState(conversationKey, false);
   const [voiceModeOpen, setVoiceModeOpen] = useScopedState(conversationKey, false);
+  const [toolResultIds, setToolResultIds] = useScopedState<string[]>(conversationKey, []);
+  const [activeTab, setActiveTab] = useScopedState(conversationKey, 'chat');
+  const focusComposer = useRef<(() => boolean) | null>(null);
+  const focusChatInput = useCallback((node: HTMLTextAreaElement | null) => {
+    if (!node || !focusComposer.current) return;
+    const isCurrent = focusComposer.current;
+    focusComposer.current = null;
+    if (isCurrent()) node.focus();
+  }, []);
+  useLayoutEffect(() => {
+    setToolResultIds([]);
+    setActiveTab('chat');
+    focusComposer.current = null;
+  }, [conversationKey, setToolResultIds, setActiveTab]);
   const { cancelRecording, stopSpeaking } = voice;
   useLayoutEffect(() => () => {
     cancelRecording();
@@ -149,9 +164,10 @@ export default function CreatorAgentDetail() {
     if (!msg.trim() || !id || !userId || !sessionId || agent?.id !== id || agent.user_id !== userId || !isCurrent() || signal?.aborted) return null;
     const request = requests.begin('send');
     if (!request) return null;
+    const attachedResultIds = [...toolResultIds];
     requests.cancel('messages');
     const cancel = () => {
-      if (!request.current()) return;
+      if (!request.current() || !isCurrent()) return;
       requests.cancel('send');
       setSending(false);
     };
@@ -169,19 +185,43 @@ export default function CreatorAgentDetail() {
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await chatWithAgent(id, sessionId, msg, request.signal);
-      if (!request.current()) return null;
+      const res = attachedResultIds.length > 0
+        ? await chatWithAgent(id, sessionId, msg, request.signal, attachedResultIds)
+        : await chatWithAgent(id, sessionId, msg, request.signal);
+      if (!request.current() || !isCurrent()) return null;
       setMessages(prev => [...prev, { ...tempUser, id: 'tmp-asst-' + Date.now(), role: 'assistant', content: res.reply, tokens: res.tokens }]);
+      if (attachedResultIds.length > 0) {
+        setToolResultIds(previous => previous.filter(resultId => !attachedResultIds.includes(resultId)));
+      }
       return res.reply;
     } catch (e) {
-      if (!request.current()) return null;
+      if (!request.current() || !isCurrent()) return null;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
       setMessages(prev => prev.filter(m => m.id !== tempUser.id));
       return null;
     } finally {
       signal?.removeEventListener('abort', cancel);
-      if (request.finish()) setSending(false);
+      if (request.finish() && isCurrent()) setSending(false);
     }
+  };
+
+  const toggleToolResult = (resultId: string) => {
+    if (sending || !captureConversation()()) return;
+    setToolResultIds(previous => previous.includes(resultId)
+      ? previous.filter(selectedId => selectedId !== resultId)
+      : previous.length < 3 ? [...previous, resultId] : previous);
+  };
+
+  const removeToolResult = (resultId: string) => {
+    if (!captureConversation()()) return;
+    setToolResultIds(previous => previous.filter(selectedId => selectedId !== resultId));
+  };
+
+  const useSelectedResults = () => {
+    const isCurrent = captureConversation();
+    if (sending || !toolResultIds.length || !isCurrent()) return;
+    focusComposer.current = isCurrent;
+    setActiveTab('chat');
   };
 
   const handleSendChat = async () => {
@@ -295,7 +335,7 @@ export default function CreatorAgentDetail() {
         </Card>
       )}
 
-      <Tabs defaultValue="chat">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="chat"><MessageSquare className="w-4 h-4 mr-2" /> Chat</TabsTrigger>
           <TabsTrigger value="runs"><Activity className="w-4 h-4 mr-2" /> Runs ({runs.length})</TabsTrigger>
@@ -350,6 +390,19 @@ export default function CreatorAgentDetail() {
               )}
             </div>
             <div className="border-t border-border p-3">
+              {toolResultIds.length > 0 ? <div className="mb-3 rounded-md border border-border p-2 text-sm">
+                <p role="status" aria-live="polite">
+                  {toolResultIds.length} résultat{toolResultIds.length > 1 ? 's' : ''} privé{toolResultIds.length > 1 ? 's' : ''} {toolResultIds.length > 1 ? 'seront joints' : 'sera joint'} à ta prochaine question.
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button type="button" variant="outline" size="sm" disabled={sending} onClick={() => setActiveTab('runs')}>
+                    Modifier la sélection
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" disabled={sending} onClick={() => setToolResultIds([])}>
+                    Tout retirer
+                  </Button>
+                </div>
+              </div> : null}
               <div className="mb-2 flex justify-end">
                 <Button
                   type="button"
@@ -369,6 +422,8 @@ export default function CreatorAgentDetail() {
                   disabled={sending || isReadOnly}
                 />
                 <Textarea
+                  ref={focusChatInput}
+                  aria-label={`Question pour ${agent.name}`}
                   value={chatInput}
                   onChange={e => setChatInput(e.target.value)}
                   onKeyDown={e => {
@@ -382,8 +437,8 @@ export default function CreatorAgentDetail() {
                   className="resize-none"
                   disabled={sending || isReadOnly}
                 />
-                <Button onClick={handleSendChat} disabled={sending || !chatInput.trim() || isReadOnly} className="self-end">
-                  <Send className="w-4 h-4" />
+                <Button type="button" aria-label="Envoyer la question" onClick={handleSendChat} disabled={sending || !chatInput.trim() || isReadOnly} className="self-end">
+                  <Send aria-hidden="true" className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -391,7 +446,14 @@ export default function CreatorAgentDetail() {
         </TabsContent>
 
         {/* RUNS */}
-        <TabsContent value="runs">
+        <TabsContent value="runs" className="space-y-4">
+          {!isReadOnly && userId && id && sessionId ? <Card className="bg-card border-border">
+            <CardContent className="p-5">
+              <PrivateToolResults ownerId={userId} agentId={id} sessionId={sessionId}
+                selectedIds={toolResultIds} onToggle={toggleToolResult} onRemove={removeToolResult}
+                onUseResults={useSelectedResults} disabled={sending} />
+            </CardContent>
+          </Card> : null}
           <Card className="bg-card border-border">
             <CardContent className="p-5">
               {runs.length === 0 ? (

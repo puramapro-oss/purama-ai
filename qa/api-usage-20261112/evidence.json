@@ -175,6 +175,11 @@
       "file": "composition-targeted.txt",
       "bytes": 1144,
       "sha256": "7d47cd592f2bba1a0476f01b09b02472ec9d08e7754edde6c54f5f1e1a29cf63"
+    },
+    {
+      "file": "private-results-composition-targeted.txt",
+      "bytes": 1340,
+      "sha256": "759337b17b39385cd99a184c25e9318d306e5c3fba1fb4574dc3ee1564b8c0da"
     }
   ],
   "gitnexus_change_detection": {
@@ -236,7 +241,7 @@
     "receipt": "ci-second-before-composition.json"
   },
   "composition_with_pr63": {
-    "status": "PARTIEL",
+    "status": "PASS",
     "merged_upstream": "58baecb7f63d23ede5a2318078cbe8bac9807e78",
     "conflicts": [
       "karta/src/claude/real.ts",
@@ -249,7 +254,7 @@
       "cause": "New timeout config omitted in usage-only test fixture",
       "log": "composition-fixture-baseline.txt"
     },
-    "current_acceptance": "331/331 targeted non-SQL tests PASS across18files. Final local types/build not rerun after prior SIGKILLs; fresh full remote CI required.",
+    "current_acceptance": "Historical completed PR63 composition: full remote CI PASS. See private_results_composition for the next candidate.",
     "targeted": {
       "status": "PASS",
       "passed": 331,
@@ -262,6 +267,42 @@
       "previous_receipt_files_exact": 25,
       "vercel_union_exact": true
     },
-    "independent_review": "Selection must remain inside bounded admission; received and implemented. Deadline cases strengthened for late responses, caller cancellation, concurrent attribution, private synchronous errors and single receipts."
+    "independent_review": "Selection must remain inside bounded admission; received and implemented. Deadline cases strengthened for late responses, caller cancellation, concurrent attribution, private synchronous errors and single receipts.",
+    "qualified_by": "remote_third_candidate"
+  },
+  "remote_third_candidate": {
+    "status": "PASS",
+    "head": "65e96225fafcf39719890af65f5c2c8346b6ef61",
+    "tree": "df22a2947cbdc102a5a5d82ae22799a1997e4566",
+    "ci_checkout": "7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+    "run_id": 43170366699,
+    "karta_tests": 2391,
+    "karta_files": 131,
+    "jobs_passed": 3,
+    "types": "PASS",
+    "build": "PASS",
+    "site": "PASS",
+    "subscription_concurrency": "PASS",
+    "receipt": "ci-third-before-private-results.json"
+  },
+  "private_results_composition": {
+    "status": "PARTIEL",
+    "upstream": "42410d7f433323a78c53eafbf069192b7e8a0f6e",
+    "reason": "Target integrated private tool results during CI; loop composition and a duplicate migration prefix require explicit reception.",
+    "migration_old_name": "028_model_usage_receipts.sql",
+    "migration_current_name": "029_model_usage_receipts.sql",
+    "migration_content_unchanged": true,
+    "unique_migration_numbers": 29,
+    "deployment_of_previous_name_in_this_work": false,
+    "loop_merge": "Automatic clean merge; private sink failure remains after effectStarted and closure retains the receipt.",
+    "current_acceptance": "436/436 targeted non-SQL tests PASS; native PostgreSQL, PGlite and full CI pending on the new candidate.",
+    "targeted": {
+      "status": "PASS",
+      "passed": 436,
+      "files": 21,
+      "exit_code": 0,
+      "log": "private-results-composition-targeted.txt"
+    },
+    "native_test_scope": "Both migrations coexist; preserve receipt after private-result reconciliation; reject five invalid receipt forms with SQLSTATE23514 and the named CHECK."
   }
 }

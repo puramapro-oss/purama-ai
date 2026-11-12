@@ -37,7 +37,7 @@ fournisseur ne produisent pas un faux reçu à zéro.
 
 ## Migration et réception
 
-Appliquer `karta/migrations/028_model_usage_receipts.sql` avant le code.
+Appliquer `karta/migrations/029_model_usage_receipts.sql` avant le code.
 La migration ajoute une colonne nullable, conserve l'historique à `NULL`,
 valide la forme fermée, les identifiants et les entiers sûrs. Elle ne crée
 aucune table et ne modifie ni RLS ni privilèges. Le code précédent peut encore
@@ -145,3 +145,27 @@ sur le candidat combiné reste obligatoire.
 `evidence.json` distingue désormais explicitement le snapshot local d'avant
 publication et les réceptions distantes suivantes. Les anciens états
 `NON TESTÉ` ne décrivent pas l'état courant de la qualification distante.
+
+## Coexistence avec les résultats privés intégrés
+
+La CI [43170366699](https://github.com/puramapro-oss/purama-ai/actions/runs/43170366699)
+a ensuite terminé en **PASS complet** : **2 391 tests KARTA / 131 fichiers**, types,
+compilation, contrôles SQL, site et concurrence des abonnements. Son reçu daté est
+conservé dans `ci-third-before-private-results.json`.
+
+Pendant cette réception, la consolidation a intégré les résultats privés
+(`42410d7`), qui utilisent `028_private_tool_results.sql` et enrichissent la boucle.
+La fusion de la boucle est propre. Pour conserver une séquence sans doublon, notre
+migration non déployée est renommée **`029_model_usage_receipts.sql`**, avec contenu
+SQL strictement identique. Les références actives changent ; les historiques de
+tests gardent les noms réellement exécutés à leur date. Les 29 numéros sont uniques.
+
+Les fixtures SQL et PostgreSQL natif dédiées aux résultats privés appliquent aussi
+029 pour vérifier leur coexistence. Le manifeste de fixtures du journal n'ajoute
+pas la migration privée, car elle requiert les tables de créateurs propres à son
+périmètre. Les scénarios de refus de remise privée vérifient que le reçu reste
+attaché à la clôture et qu'aucune nouvelle inférence automatique n'est déclenchée.
+La campagne ciblée combinée passe **436/436 tests dans 21 fichiers** ; les cas
+de refus du stockage privé gardent le reçu et ne répètent pas l’inférence.
+Les contrôles PostgreSQL natif et la CI complète de cette nouvelle composition
+restent à recevoir. Le journal est `private-results-composition-targeted.txt`.

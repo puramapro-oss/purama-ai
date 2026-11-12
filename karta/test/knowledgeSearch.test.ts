@@ -222,6 +222,86 @@ describe("knowledge_search transport boundaries", () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
+  it.each([429, 503].flatMap(status => [2_000, 2_001].map(elapsed => ({ status, elapsed }))))(
+    "keeps HTTP $status backoff when headers arrive at $elapsed ms without accepting the late response",
+    async ({ status, elapsed }) => {
+      let now = 0;
+      const marker = "private-late-provider-body";
+      const cancel = vi.fn();
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) { controller.enqueue(new TextEncoder().encode(marker)); }, cancel,
+      });
+      const read = vi.spyOn(body, "getReader");
+      const response = new Response(body, { status, headers: { "retry-after": "100" } });
+      const fetch = vi.fn<typeof globalThis.fetch>().mockImplementation(async () => {
+        now = elapsed;
+        return response;
+      });
+      const shared = createKnowledgeSearchTool({ fetch, timeoutMs: 2_000, monotonicNow: () => now });
+      const expired = await shared.execute(oneSource, ctx);
+      expect(expired).toMatchObject({ ok: false, status: "failed", results: [] });
+      expect(expired.evidence.sources[0].status).toBe("timeout");
+      expect(JSON.stringify(expired)).not.toContain(marker);
+      expect(fetch.mock.calls[0][1]?.signal?.aborted).toBe(true);
+      expect(read).not.toHaveBeenCalled();
+      expect(cancel).toHaveBeenCalledOnce();
+
+      fetch.mockResolvedValue(crossref([]));
+      now = elapsed + 1_101;
+      expect((await shared.execute(oneSource, ctx)).evidence.sources[0]).toMatchObject({
+        status: "rate_limited", retry_after_ms: 98_899,
+      });
+      now = elapsed + 99_999;
+      expect((await shared.execute(oneSource, ctx)).evidence.sources[0]).toMatchObject({
+        status: "rate_limited", retry_after_ms: 1,
+      });
+      expect(fetch).toHaveBeenCalledTimes(1);
+      now++;
+      expect((await shared.execute(oneSource, ctx)).ok).toBe(true);
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(vi.getTimerCount()).toBe(0);
+    },
+  );
+
+  it.each([
+    { status: 429, retry: "2", remaining: 2_000 },
+    { status: 503, retry: "Thu, 12 Nov 2026 12:00:02 GMT", remaining: 1_700 },
+  ])("keeps HTTP $status backoff received after the timeout result has returned", async ({ status, retry, remaining }) => {
+    let resolve!: (value: Response) => void;
+    const fetch = vi.fn<typeof globalThis.fetch>()
+      .mockImplementationOnce(() => new Promise<Response>(done => { resolve = done; }))
+      .mockResolvedValue(crossref([]));
+    const shared = tool(fetch, 100);
+    const pending = shared.execute(oneSource, ctx);
+    await vi.advanceTimersByTimeAsync(100);
+    const expired = await pending;
+    expect(expired).toMatchObject({ ok: false, status: "failed", results: [] });
+    expect(expired.evidence.sources[0].status).toBe("timeout");
+    expect((await shared.execute(oneSource, ctx)).evidence.sources[0].status).toBe("busy");
+    await vi.advanceTimersByTimeAsync(200);
+
+    const cancel = vi.fn();
+    const body = new ReadableStream<Uint8Array>({ cancel });
+    const read = vi.spyOn(body, "getReader");
+    resolve(new Response(body, { status, headers: { "retry-after": retry } }));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(read).not.toHaveBeenCalled();
+    expect(cancel).toHaveBeenCalledOnce();
+    expect((await shared.execute(oneSource, ctx)).evidence.sources[0]).toMatchObject({
+      status: "rate_limited", retry_after_ms: remaining,
+    });
+    await vi.advanceTimersByTimeAsync(remaining - 1);
+    expect((await shared.execute(oneSource, ctx)).evidence.sources[0]).toMatchObject({
+      status: "rate_limited", retry_after_ms: 1,
+    });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect((await shared.execute(oneSource, ctx)).ok).toBe(true);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(expired.evidence.sources[0].status).toBe("timeout");
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it("times out a stalled body and cancels its reader", async () => {
     const cancel = vi.fn();
     const fetch = vi.fn<typeof globalThis.fetch>().mockResolvedValue(new Response(new ReadableStream<Uint8Array>({

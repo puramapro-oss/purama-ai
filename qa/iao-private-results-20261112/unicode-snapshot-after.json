@@ -1,0 +1,29 @@
+{
+  "phase": "after",
+  "checks": [
+    {
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai/karta",
+      "command": "node --import tsx --input-type=module <<'JS'\nimport assert from 'node:assert/strict';\nawait import('./test/setup.ts');\nconst { createPublicKnowledgeSearch } = await import('./src/knowledge/public-search.ts');\nconst { projectPrivateToolResult, PRIVATE_TOOL_RESULT_MAX_BYTES } = await import('./src/engine/private-tool-results.ts');\nconst text = '文'.repeat(4096);\nconst crossref = JSON.stringify({ status: 'ok', message: { items: Array.from({ length: 5 }, (_, index) => ({ DOI: `10.1234/unicode${index}`, title: [text], publisher: '版'.repeat(1024), type: '類'.repeat(128) })) } });\nconst wikidata = JSON.stringify({ success: 1, search: Array.from({ length: 5 }, (_, index) => ({ id: `Q${1000 + index}`, label: text, description: text })) });\nconst bodies = { crossref: Buffer.byteLength(crossref), wikidata: Buffer.byteLength(wikidata) };\nassert(Object.values(bodies).every(bytes => bytes < 524288));\nlet requests = 0;\nconst search = createPublicKnowledgeSearch({ fetch: async url => { requests++; return new Response(new URL(String(url)).hostname === 'api.crossref.org' ? crossref : wikidata, { headers: { 'content-type': 'application/json' } }); } });\nconst result = await search({ query: 'test Unicode valide', sources: ['crossref', 'wikidata'], limit: 5, language: 'fr' }, 'live');\nassert.equal(result.status, 'complete'); assert.equal(result.ok, true); assert.equal(result.results.length, 10); assert.equal(requests, 2);\nconst projected = projectPrivateToolResult('knowledge_search', result);\nassert(projected); assert.equal(projected.status, 'complete'); assert.equal(projected.sources.length, 10); assert.equal(projected.details.metadata_truncated, true);\nassert(Buffer.byteLength(JSON.stringify(projected)) <= PRIVATE_TOOL_RESULT_MAX_BYTES - 4096);\nconsole.log(JSON.stringify({ body_bytes: bodies, tool_status: result.status, tool_results: result.results.length, raw_result_bytes: Buffer.byteLength(JSON.stringify(result)), projected_bytes: Buffer.byteLength(JSON.stringify(projected)), retained_sources: projected.sources.length, metadata_truncated: projected.details.metadata_truncated, calls: requests, external_calls: 0 }, null, 2));\nJS",
+      "exit_code": 0,
+      "output": "{\n  \"body_bytes\": {\n    \"crossref\": 79082,\n    \"wikidata\": 123119\n  },\n  \"tool_status\": \"complete\",\n  \"tool_results\": 10,\n  \"raw_result_bytes\": 266914,\n  \"projected_bytes\": 32630,\n  \"retained_sources\": 10,\n  \"metadata_truncated\": true,\n  \"calls\": 2,\n  \"external_calls\": 0\n}\n"
+    },
+    {
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai/karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/privateToolResults.test.ts test/privateToolResultsExecution.test.ts --maxWorkers=1 --no-file-parallelism",
+      "exit_code": 0,
+      "output": "\n RUN  v5.0.3 /workspace/scratch/4f500ff8ab47/purama-ai/karta\n\n\n Test Files  2 passed (2)\n      Tests  52 passed (52)\n   Start at  07:25:03\n   Duration  922ms (transform 52%, tests 30%, import 12%, setup 3%, worker 2%)\n\n"
+    },
+    {
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai/karta",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --strict --noUnusedLocals --noUnusedParameters --noImplicitReturns --esModuleInterop --skipLibCheck src/engine/private-tool-results.ts test/privateToolResults.test.ts",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "output": ""
+    }
+  ]
+}
