@@ -26,7 +26,8 @@
       "audit/iao-replay-result-contract-20261111": false,
       "fix/connect-provisioning-recovery-20261111": false,
       "audit/connect-provisioning-gates-20261111": false,
-      "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false
+      "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false,
+      "audit/subscription-identity-20261112": false
     }
   }
 }
