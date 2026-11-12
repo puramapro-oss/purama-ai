@@ -205,3 +205,5 @@ jobs:
           cache-dependency-path: karta/package-lock.json
       - run: npm ci --no-audit
       - run: npm run test:subscriptions:postgres
+      - name: Private tool result concurrency on native PostgreSQL
+        run: node --test test/privateToolResults.native.mjs

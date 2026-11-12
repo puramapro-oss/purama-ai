@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { createSessionId } from '@/lib/session-id';
 import { createRequestDeadline } from '@/lib/request-deadline';
+import { isPrivateToolResultId } from '@/lib/private-tool-results';
 import {
   isCreatorModelId, parsePublicCreatorModel, type PublicCreatorModel,
 } from '@/lib/public-creator-model';
@@ -285,10 +286,19 @@ export async function chatWithAgent(
   sessionId: string,
   message: string,
   signal?: AbortSignal,
+  toolResultIds: readonly string[] = [],
 ): Promise<{ reply: string; tokens: number }> {
   signal?.throwIfAborted();
+  const selectedIds = [...toolResultIds];
+  if (selectedIds.length > 3 || selectedIds.some(id => !isPrivateToolResultId(id))
+    || new Set(selectedIds.map(id => id.toLowerCase())).size !== selectedIds.length) {
+    throw new Error('Choisis au maximum trois résultats privés distincts.');
+  }
   const { data, error } = await supabase.functions.invoke('creator-agent-chat', {
-    body: { agent_id: agentId, session_id: sessionId, message },
+    body: {
+      agent_id: agentId, session_id: sessionId, message,
+      ...(selectedIds.length > 0 ? { tool_result_ids: selectedIds } : {}),
+    },
     signal,
   });
   signal?.throwIfAborted();

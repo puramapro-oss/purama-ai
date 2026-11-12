@@ -307,12 +307,14 @@ export function createPublicKnowledgeSearch(options: SearchOptions = {}) {
           headers: { Accept: "application/json", "User-Agent": USER_AGENT },
         });
         try {
+          // Provider backoff remains relevant even if this fetch settles after
+          // the caller's timeout. Preserve only the admission delay; the deadline
+          // below still rejects the result before reading any response body.
+          const retry = response.status === 429 || response.status === 503
+            ? retryDelay(response.headers.get("retry-after"), wallNow()) : undefined;
+          if (retry !== undefined) gate.nextAllowedAt = Math.max(gate.nextAllowedAt, now() + retry);
           assertActive(controller.signal, expiresAt, now);
-          if (response.status === 429 || response.status === 503) {
-            const retry = retryDelay(response.headers.get("retry-after"), wallNow());
-            gate.nextAllowedAt = Math.max(gate.nextAllowedAt, now() + retry);
-            throw new SourceFailure("rate_limited", retry);
-          }
+          if (retry !== undefined) throw new SourceFailure("rate_limited", retry);
           if (!response.ok || response.redirected) throw new SourceFailure("unavailable");
           const raw = await boundedJson(response, controller.signal, expiresAt, now);
           assertActive(controller.signal, expiresAt, now);

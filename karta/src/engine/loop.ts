@@ -8,6 +8,7 @@ import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js
 import { ExecutionOriginError, snapshotAgentExecutionTrigger } from "./execution-origin.js";
 import { APPROVAL_CONTINUATION_GUIDANCE, ApprovalContinuationError, loadApprovalContinuation } from "./approval-continuation.js";
 import { assertToolResult } from "./tool-result.js";
+import { persistPrivateToolResult } from "./private-tool-results.js";
 import { validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
 import { minimizeRunTrace, PRIVATE_TRACE, shouldMinimizeToolTrace, summarizeToolError, summarizeToolParams, summarizeToolResult } from "./tool-trace.js";
@@ -265,6 +266,15 @@ export async function runAgentCycle(
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
           trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
+        // A partial result can still contain useful notices. Deliver it privately
+        // before checking completion; this does not make the tool successful.
+        const delivery = await persistPrivateToolResult({
+          userId, agentType: definition.type, runId: run.runId,
+          operationId: `${run.runId}:${index}`, toolName: tool.name, result,
+        });
+        if (delivery.status === "unavailable") {
+          throw new Error("Résultat privé indisponible après exécution de l’outil");
+        }
         assertToolResult(result);
         toolsUsed.push(traceRecord(call, summarizeToolResult(result, privateTrace), "executed"));
       } catch (error) {
