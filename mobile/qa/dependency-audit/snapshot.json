@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-11-11T03:27:16.244789+00:00",
+  "capturedAt": "2026-11-12T03:59:42.234Z",
   "maximumAgeHours": 24,
-  "reportSha256": "61306040143cba59ba97c6e5126c18607d246a26736d0b675e5d51f9352ed6e0",
-  "registryMultisetSha256": "570c9a2c35f3c31a936a51d9f0a9331a234be27e436967b73e0f807acfeafb15",
-  "registryPackageInstances": 874,
+  "reportSha256": "2b1a68e86dc143c1f2ce57fd28d12d07728f7faa287fd5b2a6ed6e64ab506a82",
+  "registryMultisetSha256": "757ff86c012d4603f22dcfa5ada4c890db6b1b5020ed29d24d755cd17b974177",
+  "registryPackageInstances": 875,
   "source": {
     "command": [
       "npm",
@@ -12,15 +12,14 @@
       "--audit-level=high",
       "--json"
     ],
-    "receiptSha256": "4d786f440e42d03cca81b602995015f966caebc0f86d1ad18ecf1015b9ec6019",
-    "logSha256": "5b9fab8e3e0195e2856f76b9fc0d10d17206943d769a0ccbb137b29b379708aa",
+    "receiptSha256": "29a7dabe16ad01b38993d2190c0f131a6c95f8766d7af536090c148e3062dc3d",
     "exitCode": 0
   },
-  "status": "Previously received audit; the CI gate only checks exact local binding and freshness. No registry request.",
+  "status": "Fresh registry audit captured for this dependency graph. The CI gate checks exact local binding and freshness without making another registry request.",
   "remainingAdvisories": [
-    "GHSA-gcqx-w48m-w2h4",
     "GHSA-3g3m-2fjr-6pw4",
-    "GHSA-g3hv-75wg-m249"
+    "GHSA-g3hv-75wg-m249",
+    "GHSA-gcqx-w48m-w2h4"
   ],
   "scopeLimit": "Registry package versions, URLs and integrity values only. Local adapter code is reviewed separately. Native execution, signing and store admission are not qualified."
 }

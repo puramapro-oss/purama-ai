@@ -13,18 +13,12 @@
         "glob",
         "minimatch"
       ],
-      "effects": [
-        "expo"
-      ],
-      "range": "0.19.0-canary-20240625-2333e70 - 57.0.32 || >=58.0.0-canary-20260806-8c2d007",
+      "effects": [],
+      "range": "0.19.0-canary-20240625-2333e70 - 57.0.32 || 58.0.0-canary-20260806-8c2d007 - 58.1.19",
       "nodes": [
         "node_modules/expo/node_modules/@expo/cli"
       ],
-      "fixAvailable": {
-        "name": "expo",
-        "version": "53.0.11",
-        "isSemVerMajor": true
-      }
+      "fixAvailable": true
     },
     "@expo/config": {
       "name": "@expo/config",
@@ -45,7 +39,7 @@
       ],
       "fixAvailable": {
         "name": "expo-constants",
-        "version": "58.0.15",
+        "version": "58.0.16",
         "isSemVerMajor": true
       }
     },
@@ -68,7 +62,7 @@
       ],
       "fixAvailable": {
         "name": "expo",
-        "version": "53.0.11",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     },
@@ -89,7 +83,7 @@
       ],
       "fixAvailable": {
         "name": "expo",
-        "version": "53.0.11",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     },
@@ -108,11 +102,7 @@
       "nodes": [
         "node_modules/expo/node_modules/@expo/metro-config"
       ],
-      "fixAvailable": {
-        "name": "expo",
-        "version": "53.0.11",
-        "isSemVerMajor": true
-      }
+      "fixAvailable": true
     },
     "@expo/prebuild-config": {
       "name": "@expo/prebuild-config",
@@ -131,7 +121,7 @@
       ],
       "fixAvailable": {
         "name": "expo-splash-screen",
-        "version": "58.0.13",
+        "version": "58.0.14",
         "isSemVerMajor": true
       }
     },
@@ -166,7 +156,7 @@
       ],
       "fixAvailable": {
         "name": "expo-constants",
-        "version": "58.0.15",
+        "version": "58.0.16",
         "isSemVerMajor": true
       }
     },
@@ -184,13 +174,13 @@
         "expo-constants"
       ],
       "effects": [],
-      "range": ">=52.0.0-canary-20240625-2333e70",
+      "range": "52.0.0-canary-20240625-2333e70 - 58.0.0-preview.8",
       "nodes": [
         "node_modules/expo"
       ],
       "fixAvailable": {
         "name": "expo",
-        "version": "53.0.11",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     },
@@ -228,7 +218,7 @@
       ],
       "fixAvailable": {
         "name": "expo-constants",
-        "version": "58.0.15",
+        "version": "58.0.16",
         "isSemVerMajor": true
       }
     },
@@ -246,7 +236,7 @@
       ],
       "fixAvailable": {
         "name": "expo-linking",
-        "version": "58.0.16",
+        "version": "58.0.17",
         "isSemVerMajor": true
       }
     },
@@ -264,7 +254,7 @@
       ],
       "fixAvailable": {
         "name": "expo-notifications",
-        "version": "58.1.8",
+        "version": "58.1.9",
         "isSemVerMajor": true
       }
     },
@@ -283,7 +273,7 @@
       ],
       "fixAvailable": {
         "name": "expo-router",
-        "version": "58.0.30",
+        "version": "58.0.31",
         "isSemVerMajor": true
       }
     },
@@ -301,7 +291,7 @@
       ],
       "fixAvailable": {
         "name": "expo-splash-screen",
-        "version": "58.0.13",
+        "version": "58.0.14",
         "isSemVerMajor": true
       }
     },
@@ -341,7 +331,7 @@
       ],
       "fixAvailable": {
         "name": "expo",
-        "version": "53.0.11",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     },
@@ -379,7 +369,7 @@
       ],
       "fixAvailable": {
         "name": "expo",
-        "version": "53.0.11",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     }
@@ -395,11 +385,11 @@
     },
     "dependencies": {
       "prod": 826,
-      "dev": 31,
+      "dev": 32,
       "optional": 49,
       "peer": 0,
       "peerOptional": 0,
-      "total": 878
+      "total": 879
     }
   }
 }

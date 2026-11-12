@@ -14,6 +14,7 @@
     "update": "eas update --branch production",
     "typecheck": "tsc --noEmit --incremental false",
     "test:dependencies": "node --test --test-concurrency=1 tests/dependency-compat.test.cjs",
+    "test:local-communication": "node --test --test-concurrency=1 tests/local-communication.test.cjs",
     "check:dependencies": "expo install --check",
     "export:android": "expo export --platform android --output-dir dist/android --max-workers 2 --dump-assetmap",
     "export:ios": "expo export --platform ios --output-dir dist/ios --max-workers 2 --dump-assetmap",
@@ -58,6 +59,7 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "babel-preset-expo": "54.0.12",
+    "react-test-renderer": "19.1.0",
     "sharp": "^0.35.5",
     "typescript": "~5.9.2"
   },

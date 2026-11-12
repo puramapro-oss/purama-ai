@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/hooks/useAuth";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 interface SettingsItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -62,6 +63,15 @@ export default function SettingsScreen() {
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
         <Text className="text-white text-2xl font-bold mt-2 mb-6">Plus</Text>
+
+        <Button
+          testID="settings-communication"
+          title="Communiquer par écrit"
+          variant="secondary"
+          onPress={() => router.push("/communication")}
+          style={{ minHeight: 56, marginBottom: 24 }}
+          textStyle={{ fontSize: 20, textAlign: "center" }}
+        />
 
         {/* Profile card */}
         <GlassCard className="mb-6">
