@@ -479,7 +479,7 @@ describe("IAO HTTP contract", () => {
     const state: { status?: number; body?: unknown } = {};
     return {
       state,
-      res: { writeHead(status: number) { state.status = status; }, end(body: string) { state.body = JSON.parse(body); } } as unknown as ServerResponse,
+      res: { setHeader() {}, writeHead(status: number) { state.status = status; }, end(body: string) { state.body = JSON.parse(body); } } as unknown as ServerResponse,
       sendJson(res: ServerResponse, status: number, body: unknown) { res.writeHead(status); res.end(JSON.stringify(body)); },
     };
   }
@@ -508,7 +508,7 @@ describe("IAO HTTP contract", () => {
 
     const foreign = responseSink();
     await handleIaoRoute({ method: "GET", url: `/iao/requests/${REQUEST_ID}` } as IncomingMessage, foreign.res,
-      { facade, authenticator: { authenticate: async () => identity({ tenantId: "tenant-b", actorId: "user-b" }) } }, async () => ({}), foreign.sendJson);
+      { facade, authenticator: { authenticate: async () => identity({ tenantId: "tenant-b", actorId: "user-b", session: { ...identity().session, tenantId: "tenant-b", userId: "user-b" } }) } }, async () => ({}), foreign.sendJson);
     expect(foreign.state).toEqual({ status: 404, body: { error: "IAO request not found" } });
   });
 
@@ -524,7 +524,7 @@ describe("IAO HTTP contract", () => {
 
     const foreign = responseSink();
     await handleIaoRoute({ method: "POST", url: `/iao/requests/${REQUEST_ID}/cancel` } as IncomingMessage, foreign.res,
-      { facade, authenticator: { authenticate: async () => identity({ actorId: "user-b" }) } }, async () => ({}), foreign.sendJson);
+      { facade, authenticator: { authenticate: async () => identity({ actorId: "user-b", session: { ...identity().session, userId: "user-b" } }) } }, async () => ({}), foreign.sendJson);
     expect(foreign.state).toEqual({ status: 404, body: { error: "IAO request not found" } });
     pending.resolve({ kind: "accepted", preview: "late" });
     await expect(submitted).resolves.toMatchObject({ status: "cancelled" });

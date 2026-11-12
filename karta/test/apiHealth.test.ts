@@ -57,6 +57,7 @@ function request(path = "/health", method = "GET") {
   let status = 0;
   const res = {
     headersSent: false, destroyed: false,
+    setHeader: vi.fn(),
     writeHead(code: number) { status = code; },
     end(body: string) { done.resolve({ status, body: JSON.parse(body) }); },
   } as unknown as ServerResponse;
@@ -175,13 +176,17 @@ describe("HTTP routing of IAO cancellation", () => {
   it("routes POST /iao/requests/:id/cancel to the IAO handler ahead of admin authorization", async () => {
     const unavailable = fixture();
     await unavailable.runtime.start();
-    expect((await request(`/iao/requests/${REQUEST_ID}/cancel`, "POST").response)).toEqual({ status: 503, body: { error: "IAO runtime unavailable" } });
+    const unavailableRequest = request(`/iao/requests/${REQUEST_ID}/cancel`, "POST");
+    expect(await unavailableRequest.response).toEqual({ status: 503, body: { error: "IAO runtime unavailable" } });
+    expect(unavailableRequest.res.setHeader).toHaveBeenCalledWith("Cache-Control", "no-store");
 
     const facade = new IaoFacade({ prepare: vi.fn(() => new Promise<KartaIaoResult>(() => {})) });
     const f = fixture({ facade, authenticator: { authenticate: async () => serverIdentity() } });
     await f.runtime.start();
     void facade.submit({ type: "conversation", requestId: REQUEST_ID, tenantId: "tenant-a", actorId: "user-a", conversationId: "c", prompt: "x", identity: serverIdentity() });
-    const cancelled = await request(`/iao/requests/${REQUEST_ID}/cancel`, "POST").response;
+    const cancellation = request(`/iao/requests/${REQUEST_ID}/cancel`, "POST");
+    const cancelled = await cancellation.response;
+    expect(cancellation.res.setHeader).toHaveBeenCalledWith("Cache-Control", "no-store");
     expect(cancelled.status).toBe(200);
     expect(cancelled.body).toMatchObject({ status: "cancelled", effect: "uncertain" });
     expect((await request(`/iao/requests/${REQUEST_ID}`, "GET").response).body).toMatchObject({ status: "cancelled" });
