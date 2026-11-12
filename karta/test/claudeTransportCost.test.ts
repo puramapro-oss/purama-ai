@@ -7,6 +7,7 @@ import type { AnyToolDefinition } from "../src/engine/types.js";
 vi.mock("../src/config.js", () => ({
   config: {
     anthropicApiKey: "karta-transport-fixture-not-a-secret",
+    anthropicTimeoutMs: 60_000,
     anthropicModelMain: "fixture-main-model",
     anthropicModelFast: "fixture-fast-model",
   },

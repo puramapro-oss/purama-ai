@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../config.js";
 import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
 import { schemaForTool, validateToolParams } from "../engine/tool-input.js";
+import { bounded } from "../runtime/lifecycle.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 import { buildAssistantSystemPrompt } from "./assistant-policy.js";
 
@@ -12,26 +13,44 @@ import { buildAssistantSystemPrompt } from "./assistant-policy.js";
  * avant le vrai lancement (règle permanente 2026-07-26 : ne bloque pas le dev, mais bloque le launch).
  */
 /**
- * Routage Haiku/Sonnet selon complexité (brief §PRICING "maximiser la marge") : un cycle avec peu
- * d'outils et peu de contexte est une décision simple (ex: choisir d'envoyer 1 relance générée à
- * partir de 2-3 champs) — Haiku suffit. Dès que le nombre d'outils ou le volume de contexte grandit,
- * la décision devient plus fine (arbitrages entre plusieurs actions possibles) — Sonnet reste utilisé.
+ * Keep the primary model for sensitive, financial/legal and unqualified custom
+ * decisions. Prompt length is a workload heuristic, not proof of equivalent
+ * quality. Preserve the existing fast route only outside these guarded cases;
+ * real model quality and cost still need workload-specific evaluation.
  */
 export function selectModel(input: ClaudeDecideInput): string {
+  if (input.agentType.startsWith("custom:") || input.tools.some(tool => tool.sensitive)
+    || ["legal", "compta", "facture-pro", "rapports-financiers", "chasseur-de-paiements"].includes(input.agentType)) {
+    return config.anthropicModelMain;
+  }
   const contextSize = JSON.stringify(input.context).length;
   const isSimple = input.tools.length <= 2 && contextSize < 2000 && input.systemPrompt.length < 1500;
   return isSimple ? config.anthropicModelFast : config.anthropicModelMain;
 }
 
 export function createRealClaudeClient(): ClaudeClient {
+  const timeoutMs = config.anthropicTimeoutMs;
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) {
+    throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
+  }
   // KARTA owns durable delivery/recovery. The SDK's implicit retries can repeat
   // a paid inference after an ambiguous response, outside that execution log.
-  const client = new Anthropic({ apiKey: config.anthropicApiKey, maxRetries: 0 });
+  const client = new Anthropic({
+    apiKey: config.anthropicApiKey,
+    timeout: timeoutMs,
+    maxRetries: 0,
+    // The SDK's debug logger can include complete prompts and provider bodies.
+    // KARTA records its own minimized traces instead.
+    logLevel: "off",
+  });
 
   return {
     isMock: false,
     async decide(input: ClaudeDecideInput): Promise<AgentDecision> {
-      const response = await client.messages.create({
+      // Reuse the existing monotonic runtime bound. The SDK's fetch timeout
+      // ends at headers; awaiting the full APIPromise also covers JSON/error
+      // body consumption and discards late results from non-cooperative I/O.
+      const response = await bounded(signal => client.messages.create({
         model: selectModel(input),
         max_tokens: 1024,
         system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
@@ -42,7 +61,14 @@ export function createRealClaudeClient(): ClaudeClient {
           },
         ],
         tools: toAnthropicTools(input.tools),
-      });
+      }, { signal, timeout: timeoutMs, maxRetries: 0 }), timeoutMs, input.signal)
+        .catch(() => {
+          // Neither a provider response nor a caller's abort reason is safe
+          // to copy into a public cycle error or the worker's failed log.
+          throw new Error(input.signal?.aborted
+            ? "Appel au modèle annulé : aucune décision disponible"
+            : "Réponse du modèle indisponible ou délai dépassé : aucune décision disponible");
+        });
 
       // This client requests only client tools, without stop sequences or a
       // server-tool continuation loop. Never turn a truncated, paused, refused

@@ -1,0 +1,19 @@
+{
+  "recorded_at": "2026-11-12T06:38:54.421266+00:00",
+  "command": [
+    "node",
+    "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--scope",
+    "staged",
+    "--repo",
+    "/workspace/scratch/4f500ff8ab47/purama-ai",
+    "--limit",
+    "80"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\nfile:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/workspace/scratch/4f500ff8ab47/purama-ai\" not found. Available: pura-capsule-022-20261112, purama-one-accessibility-20261112, iao-integration-inherited-37cd53, iao-performance-inherited-37cd53, iao-connect-durable, purama-one-capsule-4aa997, purama-ai (/workspace/scratch/4eb2a799ec70/purama-ai), sutra-subtitles-60ab, karta-qa-native-6a6362-reprise, one-dreamforge-20261111, purama-ai (/workspace/scratch/9515c8d77e89/purama-ai), midas-auth-candidate-c080, midas-auth-20261111, midas-convergence-c080, midas-convergence-795-c080, midas-upstream-candidate-c080, iao-connect-gates-20261111-c7af, iao-connect-payment-20261111-c7af, purama-ai (/workspace/scratch/c7af123ff4f9/nov12-iao-audit), purama-ai (/workspace/scratch/dec42123c445/purama-ai-watch-native), iao-accessibility-f1f4b67ef5ca, iao-accessibility-f47c\n    at LocalBackend.selectToolRepository (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.1\n",
+  "status": "PARTIEL",
+  "note": "Automatic merge of already-reviewed upstream work; no manual conflict resolution. Both complete file sets verified byte-identical to their respective source commits."
+}
