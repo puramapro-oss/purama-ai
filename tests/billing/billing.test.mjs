@@ -213,8 +213,9 @@ test('billing: configured SDK transports inherit cancellation and are aborted on
   assert.equal(signal.aborted, true);
 });
 test('billing: a checkout provider resolving after the deadline never returns a successful link', async () => {
-  const wait = deferred(); const h = await harness({ manualClock: true, checkout: () => wait.promise });
-  const pending = h.handler(request()); await settle();
+  const wait = deferred(); const entered = deferred();
+  const h = await harness({ manualClock: true, checkout: () => { entered.resolve(); return wait.promise; } });
+  const pending = h.handler(request()); await entered.promise;
   assert.equal(h.calls.checkout.length, 1, 'the provider request began before the deadline');
   h.advance(15_001); const response = await pending;
   assert.equal(response.status, 504); assert.doesNotMatch(await response.text(), /checkout.stripe.com/);
