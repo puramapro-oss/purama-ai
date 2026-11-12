@@ -3,6 +3,9 @@ import { SupabaseChefControlPlane } from "./control-plane.js";
 import { runChefWorkerCycle } from "./supervisor.js";
 import { CommandChefVerifier, type ChefVerificationProfile } from "./verifier.js";
 import { ChefProcessStopUnconfirmedError } from "./process.js";
+import { createFileChefCapabilityResolver, type ChefCapabilityRuntime } from "./capability-runtime.js";
+import { realpathSync } from "node:fs";
+import { isAbsolute, relative } from "node:path";
 
 function required(name: string): string {
   const value = process.env[name];
@@ -61,6 +64,26 @@ async function main(): Promise<void> {
     ["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "TERM"]
   );
 
+  let capabilityRuntime: ChefCapabilityRuntime | undefined;
+  const capabilityContextFile = process.env.CHEF_CAPABILITY_CONTEXTS_FILE;
+  if (capabilityContextFile) {
+    if (process.env.CHEF_DRIVER_CAPABILITY_PROTOCOL !== "1") {
+      throw new Error("Adaptateur CHEF non qualifié pour le protocole de capacités 1");
+    }
+    if (!isAbsolute(capabilityContextFile)) throw new Error("Chemin de contexte CHEF non absolu");
+    const trustedContextFile = realpathSync(capabilityContextFile);
+    for (const root of allowedRoots) {
+      const rel = relative(realpathSync(root), trustedContextFile);
+      if (rel === "" || (!rel.startsWith("..") && !isAbsolute(rel))) {
+        throw new Error("Le contexte de capacités doit rester hors des espaces de travail des agents");
+      }
+    }
+    capabilityRuntime = {
+      adapterProtocol: 1,
+      resolveContext: createFileChefCapabilityResolver(trustedContextFile),
+    };
+  }
+
   const control = new SupabaseChefControlPlane({
     repo,
     defaultCwd,
@@ -78,6 +101,7 @@ async function main(): Promise<void> {
     timeoutMs: positiveInt("CHEF_DRIVER_TIMEOUT_MS", 60 * 60 * 1000, 1_000, 24 * 60 * 60 * 1000),
     maxOutputBytes: positiveInt("CHEF_MAX_DRIVER_OUTPUT_BYTES", 2 * 1024 * 1024, 1_024, 16 * 1024 * 1024),
     envAllowList,
+    capabilityRuntime,
   });
   const verifier = new CommandChefVerifier(verificationProfiles, allowedRoots);
 

@@ -1,6 +1,11 @@
-import { runChefProcess } from "./process.js";
+import { runChefProcess, ChefProcessStopUnconfirmedError } from "./process.js";
 import { realpathSync } from "node:fs";
 import { isAbsolute, relative } from "node:path";
+import type { ChefCapabilitySelection } from "./capability-selection.js";
+import {
+  prepareChefCapabilities, hasChefCapabilityReceipt, bindChefCapabilityPlan,
+  type ChefCapabilityPlan, type ChefCapabilityRuntime,
+} from "./capability-runtime.js";
 
 export type ChefDriverProvider = "codex" | "claude" | "glm";
 export type ChefDriverStatus = "completed" | "blocked_human" | "blocked_external" | "failed";
@@ -20,6 +25,9 @@ export interface ChefDriverRequest {
   baseSha?: string;
   accessMode: "read" | "write";
   allowedPaths: string[];
+  capabilitySelection?: ChefCapabilitySelection;
+  /** Canonical mission owner; required for capability-enabled tasks only. */
+  userId?: string;
 }
 
 export interface ChefDriverUsage {
@@ -37,6 +45,7 @@ export interface ChefDriverResponse {
   outputSha?: string;
   usage?: ChefDriverUsage;
   metadata?: Record<string, unknown>;
+  capabilityReceipt?: { selectionHash: string; appliedIds: string[] };
 }
 
 export interface ChefWorkerDriver {
@@ -53,6 +62,7 @@ export interface ProcessChefDriverOptions {
   maxOutputBytes?: number;
   envAllowList?: string[];
   env?: Record<string, string>;
+  capabilityRuntime?: ChefCapabilityRuntime;
 }
 
 const SHA = /^[0-9a-f]{40,64}$/i;
@@ -158,6 +168,39 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       throw new Error("allowedPaths requis pour un worker write");
     }
 
+    let capabilityPlan: ChefCapabilityPlan | undefined;
+    let capabilitySelection: ChefCapabilitySelection | undefined;
+    if (request.capabilitySelection !== undefined) {
+      const prepared = await prepareChefCapabilities(request.capabilitySelection, {
+        userId: request.userId ?? "", missionId: request.missionId, taskId: request.taskId, briefHash: request.briefHash,
+      }, this.options.capabilityRuntime, signal);
+      if (signal?.aborted) throw new Error("Worker CHEF annulé");
+      if (!prepared.ready) {
+        // No model or coding process has started. Settle known-zero usage and
+        // block durably instead of retrying indefinitely or silently dropping choices.
+        return {
+          schemaVersion: 1, status: "blocked_external",
+          summary: `Sélection des capacités indisponible : ${prepared.reason}`,
+          usage: { inputTokens: 0, outputTokens: 0, costMicros: 0 },
+          metadata: { capabilitySelection: { state: "blocked", reason: prepared.reason } },
+        };
+      }
+      capabilityPlan = bindChefCapabilityPlan(prepared.plan, {
+        workerId: request.workerId, attempt: request.attempt, fencingToken: request.fencingToken,
+      });
+      capabilitySelection = prepared.selection;
+    }
+    // Build the transport from known fields. A caller cannot inject an approved
+    // plan or trusted catalogue via additional JSON properties on the request.
+    const payload = {
+      schemaVersion: request.schemaVersion, missionId: request.missionId, taskId: request.taskId,
+      workerId: request.workerId, provider: request.provider, fencingToken: request.fencingToken,
+      attempt: request.attempt, briefHash: request.briefHash, instructions: request.instructions,
+      cwd, branch: request.branch, baseSha: request.baseSha,
+      accessMode: request.accessMode, allowedPaths: request.allowedPaths,
+      ...(capabilityPlan ? { userId: request.userId, capabilitySelection, capabilityPlan } : {}),
+    };
+
     const env = minimalEnv(
       this.options.envAllowList ?? ["PATH", "HOME", "TMPDIR", "LANG", "LC_ALL", "TERM"],
       {
@@ -168,23 +211,37 @@ export class ProcessChefDriver implements ChefWorkerDriver {
       }
     );
 
-    const result = await runChefProcess({
+    const uncertainCapabilityExecution = (): ChefDriverResponse => ({
+      schemaVersion: 1, status: "blocked_external",
+      summary: "Exécution interrompue sans reçu fiable ; effets et consommation à rapprocher avant reprise.",
+      metadata: { capabilitySelection: { state: "unconfirmed", selectionHash: capabilityPlan?.selectionHash } },
+    });
+    let result;
+    try { result = await runChefProcess({
       command: this.options.command,
       args: this.options.args,
       cwd,
       env,
-      input: JSON.stringify(request) + "\n",
+      input: JSON.stringify(payload) + "\n",
       signal,
       timeoutMs: this.options.timeoutMs,
       maxOutputBytes: this.options.maxOutputBytes,
       label: "worker CHEF",
       abortMessage: "Worker CHEF annulé",
       timeoutMessage: "Worker CHEF expiré",
-    });
+    }); } catch (error) {
+      if (error instanceof ChefProcessStopUnconfirmedError) throw error;
+      if (capabilityPlan) return uncertainCapabilityExecution();
+      throw error;
+    }
     // Cancellation can arrive after the process promise settles, before this
     // async method resumes. A late response must not restore a cancelled run.
-    if (signal?.aborted) throw new Error("Worker CHEF annulé");
+    if (signal?.aborted) {
+      if (capabilityPlan) return uncertainCapabilityExecution();
+      throw new Error("Worker CHEF annulé");
+    }
     if (result.exitCode !== 0) {
+      if (capabilityPlan) return uncertainCapabilityExecution();
       throw new Error(`Worker CHEF échoué (code=${result.exitCode ?? "null"}, signal=${result.signal ?? "none"})`);
     }
     const lines = result.stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
@@ -192,7 +249,24 @@ export class ProcessChefDriver implements ChefWorkerDriver {
     for (let index = lines.length - 1; index >= 0; index--) {
       try { parsed = JSON.parse(lines[index]); break; } catch { /* logs autorisés avant le JSON final */ }
     }
-    if (parsed === undefined) throw new Error("Worker CHEF terminé sans réponse JSON valide");
-    return validateDriverResponse(parsed);
+    if (parsed === undefined) {
+      if (capabilityPlan) return uncertainCapabilityExecution();
+      throw new Error("Worker CHEF terminé sans réponse JSON valide");
+    }
+    let response: ChefDriverResponse;
+    try { response = validateDriverResponse(parsed); } catch (error) {
+      if (capabilityPlan) return uncertainCapabilityExecution();
+      throw error;
+    }
+    if (capabilityPlan && (response.status === "failed" || !hasChefCapabilityReceipt(response.capabilityReceipt, capabilityPlan))) {
+      // The process may have acted: preserve actual/unknown usage and stop for
+      // reconciliation. Do not automatically repeat the execution.
+      return {
+        ...response, status: "blocked_external",
+        summary: "L’adaptateur n’a pas confirmé les capacités appliquées ; résultat à rapprocher avant reprise.",
+        metadata: { capabilitySelection: { state: "unconfirmed", selectionHash: capabilityPlan.selectionHash } },
+      };
+    }
+    return response;
   }
 }

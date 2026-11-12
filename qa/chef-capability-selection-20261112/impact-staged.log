@@ -1,0 +1,38 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1794509217617,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 12 files, 154 symbols
+Affected processes: 611
+Risk level: critical
+
+Changed symbols:
+  Section Sélection des compétences et connecteurs de réalisation → docs/chef-capability-selection.md
+  Section Intégration existante → docs/chef-capability-selection.md
+  Section Deux modes, même autorité → docs/chef-capability-selection.md
+  Section Catalogue fourni par le serveur → docs/chef-capability-selection.md
+  Section Raccordement au processus → docs/chef-capability-selection.md
+  Section Continuité et parallélisme → docs/chef-capability-selection.md
+  Section Réception → docs/chef-capability-selection.md
+  Interface ChefBriefTask → karta/src/chef/brief.ts
+  Function validateChefBrief → karta/src/chef/brief.ts
+  TypeAlias ChefCapabilityResolver → karta/src/chef/capability-runtime.ts
+  Interface ChefCapabilityRuntime → karta/src/chef/capability-runtime.ts
+  Interface ChefCapabilityPlan → karta/src/chef/capability-runtime.ts
+  TypeAlias ChefCapabilityPreparation → karta/src/chef/capability-runtime.ts
+  Interface ChefCapabilitySelection → karta/src/chef/capability-selection.ts
+  Property mode → karta/src/chef/capability-selection.ts
+... and 139 more
+
+Affected execution flows:
+  • RunDailyReport → SendEmail (4 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • RunDailyReport → Deliver (3 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief
+  • SocialSettings → Interrupt (9 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • SocialSettings → Now (8 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • VoiceSettingsCard → AssertCurrent (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • VoiceSettingsCard → Resolve (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • Ecosystem → Entries (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • Ecosystem → Entries (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+  • SocialSettings → RequestDeadlineError (7 steps) — changed: validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief, validateChefBrief
+... and 601 more

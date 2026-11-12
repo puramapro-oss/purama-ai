@@ -1,0 +1,31 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1794509223270,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 1491 files, 5304 symbols
+Affected processes: 626
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+... and 5296 more
+
+Affected execution flows:
+  • RunDailyReport → SendEmail (4 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit
+  • RunDailyReport → Deliver (3 steps) — changed: generated_circuit, generated_circuit, generated_circuit
+  • SocialSettings → Interrupt (9 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit
+  • SocialSettings → Now (8 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit
+  • VoiceSettingsCard → AssertCurrent (7 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit
+  • VoiceSettingsCard → Resolve (7 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, resolve
+  • Ecosystem → Entries (7 steps) — changed: generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit, generated_circuit
+... and 618 more

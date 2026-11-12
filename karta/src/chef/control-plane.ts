@@ -4,6 +4,7 @@ import type { ChefDriverProvider } from "./driver.js";
 import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefClaimUsage, ChefControlPlane, ChefEvidenceClaim, ChefRuntimeTask } from "./supervisor.js";
 import { normalizeChefRequirementKeys, type ChefVerificationEvidence } from "./verifier.js";
+import { normalizeChefCapabilitySelection } from "./capability-selection.js";
 
 export interface SupabaseChefControlPlaneOptions {
   repo: string;
@@ -133,6 +134,21 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       throw new Error("Task CHEF write sans allowedPaths");
     }
 
+    const capabilitySelection = row.capability_selection !== undefined && row.capability_selection !== null
+      ? normalizeChefCapabilitySelection(row.capability_selection) : undefined;
+    let userId: string | undefined;
+    if (capabilitySelection) {
+      // The task/driver snapshot cannot assert ownership. Bind capability access
+      // to the mission's canonical tenant before returning the claimed task.
+      const owner = await supabase.from("chef_missions").select("user_id").eq("id", missionId).single();
+      assertRpc(owner.error, "chef_mission_owner");
+      if (typeof owner.data?.user_id !== "string"
+        || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(owner.data.user_id)) {
+        throw new Error("Propriétaire de mission CHEF invalide");
+      }
+      userId = owner.data.user_id;
+    }
+
     return {
       id,
       missionId,
@@ -146,6 +162,7 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       ...(typeof row.base_sha === "string" && row.base_sha ? { baseSha: row.base_sha } : {}),
       verificationProfiles: [...verificationProfiles],
       allowedPaths: [...allowedPaths],
+      ...(capabilitySelection ? { capabilitySelection, userId } : {}),
     };
   }
 
