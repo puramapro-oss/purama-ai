@@ -33,6 +33,11 @@ export type PersistPrivateToolResultOutcome =
   | { status: "unavailable" };
 
 export const PRIVATE_TOOL_RESULT_MAX_BYTES = 65_536;
+// Ten provider-bounded notices can contain >128 KiB of UTF-8 metadata before
+// preview clipping (BMP text uses up to three bytes per UTF-16 unit). Inspect
+// at most 512 KiB of strings/keys; the persisted projection still has a separate
+// 64 KiB limit below and in PostgreSQL, including its JSONB rendering overhead.
+const MAX_TOOL_SNAPSHOT_BYTES = 524_288;
 const INVALID_RESULT = "Résultat privé indisponible : format ou identité non vérifiable.";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const names: readonly string[] = ["knowledge_search", "quantum_simulate"];
@@ -51,7 +56,7 @@ function snapshot(value: unknown): Json {
     if (typeof item === "number") return Number.isFinite(item) ? item : invalid();
     if (typeof item === "string") {
       bytes += Buffer.byteLength(item, "utf8");
-      if (bytes > 131_072 || item.includes("\u0000")) return invalid();
+      if (bytes > MAX_TOOL_SNAPSHOT_BYTES || item.includes("\u0000")) return invalid();
       return item;
     }
     if (typeof item !== "object" || isProxy(item) || seen.has(item)) return invalid();
@@ -77,7 +82,7 @@ function snapshot(value: unknown): Json {
         const descriptor = Object.getOwnPropertyDescriptor(item, key);
         if (typeof key !== "string" || !descriptor?.enumerable || !("value" in descriptor)) return invalid();
         bytes += Buffer.byteLength(key, "utf8");
-        if (bytes > 131_072) return invalid();
+        if (bytes > MAX_TOOL_SNAPSHOT_BYTES) return invalid();
         output[key] = visit(descriptor.value, depth + 1);
       }
       return output;

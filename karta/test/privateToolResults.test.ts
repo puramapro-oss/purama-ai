@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { simulateQuantumCircuit } from "../src/quantum/simulator.js";
+import { createPublicKnowledgeSearch } from "../src/knowledge/public-search.js";
 import { persistPrivateToolResult, projectPrivateToolResult, PRIVATE_TOOL_RESULT_MAX_BYTES } from "../src/engine/private-tool-results.js";
 
 const rpc = vi.hoisted(() => vi.fn());
@@ -65,6 +66,38 @@ describe("private result projection", () => {
     expect(result.sources[0].label).toMatch(/…$/u);
   });
 
+  it("clips ten real provider notices at their BMP Unicode text bounds before applying the private storage budget", async () => {
+    // Three UTF-8 bytes per UTF-16 unit is the largest BMP expansion. Crossref
+    // combines title + publisher + type; Wikidata retains label + description.
+    const longText = "文".repeat(4096);
+    const crossref = JSON.stringify({ status: "ok", message: { items: Array.from({ length: 5 }, (_, index) => ({
+      DOI: `10.1234/unicode${index}`, title: [longText], publisher: "版".repeat(1024), type: "類".repeat(128),
+    })) } });
+    const wikidata = JSON.stringify({ success: 1, search: Array.from({ length: 5 }, (_, index) => ({
+      id: `Q${1000 + index}`, label: longText, description: longText,
+    })) });
+    expect(Buffer.byteLength(crossref)).toBeLessThan(524_288);
+    expect(Buffer.byteLength(wikidata)).toBeLessThan(524_288);
+    const transport = vi.fn<typeof fetch>().mockImplementation(async url => new Response(
+      new URL(String(url)).hostname === "api.crossref.org" ? crossref : wikidata,
+      { headers: { "content-type": "application/json" } },
+    ));
+    const search = createPublicKnowledgeSearch({ fetch: transport, wallNow: () => Date.parse(stamp) });
+    const raw = await search({ query: "Unicode valide", sources: ["crossref", "wikidata"], limit: 5, language: "fr" }, "live");
+    expect(raw).toMatchObject({ ok: true, status: "complete" });
+    expect(raw.results).toHaveLength(10);
+    expect(Buffer.byteLength(JSON.stringify(raw))).toBeGreaterThan(131_072);
+    const projected = projectPrivateToolResult("knowledge_search", raw)!;
+    expect(projected).toMatchObject({ status: "complete", details: { metadata_truncated: true, verification_status: "unverified" } });
+    expect(projected.sources).toHaveLength(10);
+    expect(projected.sources.map(source => source.url)).toEqual(raw.results.map(record => record.url));
+    expect(projected.sources.every(source => source.label.length <= 256)).toBe(true);
+    expect((projected.details.records as { excerpt: string }[]).every(record => record.excerpt.length <= 512)).toBe(true);
+    expect(Buffer.byteLength(JSON.stringify(projected))).toBeLessThan(PRIVATE_TOOL_RESULT_MAX_BYTES - 4096);
+    expect(transport).toHaveBeenCalledTimes(2);
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
   it("projects the real local simulator with explicit no-QPU provenance and exact Bell probabilities", () => {
     const projected = projectPrivateToolResult("quantum_simulate", quantum())!;
     expect(projected).toMatchObject({ status: "complete", sources: [], details: {
@@ -91,7 +124,7 @@ describe("private result projection", () => {
       if (failure === "qpu") raw = { ...quantum(), physical_quantum_hardware: true };
       if (failure === "probabilities") raw = { ...quantum(), probabilities: [0.2, 0, 0, 0.5] };
       if (failure === "counts") raw = { ...quantum(), counts: { "00": 1 } };
-      if (failure === "huge") raw = { ...knowledge(), message: sentinel.repeat(10_000) };
+      if (failure === "huge") raw = { ...knowledge(), message: sentinel.repeat(50_000) };
       if (failure === "cycle") (raw as Record<string, unknown>).self = raw;
       if (failure === "accessor") Object.defineProperty(raw, "message", { enumerable: true, get: accessor });
       if (failure === "proxy") raw = new Proxy(raw as object, { ownKeys: accessor as never });
@@ -108,6 +141,19 @@ describe("private result projection", () => {
 });
 
 describe("private result durable delivery", () => {
+  it("rejects raw content above 512 KiB before RPC and never invokes hostile accessors", async () => {
+    const raw = input();
+    raw.result.message = "文".repeat(175_000);
+    expect(Buffer.byteLength(raw.result.message)).toBeGreaterThan(524_288);
+    expect(await persistPrivateToolResult(raw)).toEqual({ status: "unavailable" });
+    expect(rpc).not.toHaveBeenCalled();
+    const getter = vi.fn(() => raw.result.results);
+    Object.defineProperty(raw.result, "message", { enumerable: true, get: getter });
+    expect(await persistPrivateToolResult(raw)).toEqual({ status: "unavailable" });
+    expect(getter).not.toHaveBeenCalled();
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
   it("writes only the projected snapshot with expected owner and agent assertions", async () => {
     const raw = input(); const saved = persistPrivateToolResult(raw);
     raw.result.results[0].title = "MUTATED_AFTER_CALL";

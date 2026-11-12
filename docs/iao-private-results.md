@@ -46,6 +46,12 @@ identiques à la RPC dans une limite globale de cinq secondes. Cela ne réexécu
 pas l’outil. Si la livraison reste indisponible, le moteur signale l’échec ; il
 ne présente pas la mission comme réussie.
 
+L’inspection du résultat brut est bornée séparément à 512 Kio pour les chaînes
+et les clés. Elle précède l’abrègement et doit accepter les notices Unicode
+valides que produit la recherche. Le payload privé projeté reste limité à
+64 Kio ; les limites de profondeur, de nombre de nœuds et d’accesseurs restent
+contrôlées avant stockage.
+
 Un résultat de recherche partiel est conservé **avant** le contrôle de succès de
 l’outil. Ses notices restent consultables, tandis que le statut du cycle ou de
 l’approbation reste en échec. Une simulation de fonctionnement de l’agent et un

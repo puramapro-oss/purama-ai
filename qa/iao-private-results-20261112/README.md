@@ -49,3 +49,18 @@ Le quota distribué entre workers, les capacités QPU et la mise en service
 production restent hors du résultat certifié de ce lot. La documentation
 fonctionnelle et les dépendances de livraison sont dans
 `docs/iao-private-results.md`.
+
+## Correctif Unicode après la première qualification
+
+Une vérification supplémentaire a reproduit le rejet de dix notices Unicode
+valides : le résultat brut de 266 914 octets dépassait le plafond d’inspection
+de 128 Kio avant son abrègement. Le plafond d’inspection est porté à 512 Kio,
+avec les contrôles de structure conservés. Le même résultat produit ensuite un
+payload de 32 630 octets avec ses dix sources et `metadata_truncated: true`.
+Le plafond SQL de 64 Kio ne change pas.
+
+`unicode-snapshot-before.json` et `unicode-snapshot-after.json` conservent la
+reproduction avec le vrai connecteur et les vérifications : 34 tests de
+projection et 18 tests moteur passent après ce correctif. Les anciens reçus
+locaux restent des instantanés datés, avec leurs empreintes d’origine. La CI
+complète doit qualifier le nouveau commit avant intégration.
