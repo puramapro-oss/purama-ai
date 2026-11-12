@@ -19,7 +19,14 @@ const library = {
 };
 const source = readFileSync(new URL('../../src/lib/ots-core.ts', import.meta.url), 'utf8');
 const compile = text => ts.transpileModule(text, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
-const deadline = compile(readFileSync(new URL('../../src/lib/request-deadline.ts', import.meta.url), 'utf8'));
+// Data URLs have no directory from which to resolve relative re-exports.
+// Load the real shared implementation through the real browser facade.
+const sharedDeadline = compile(readFileSync(new URL('../../supabase/functions/_shared/request-deadline.ts', import.meta.url), 'utf8'));
+const sharedDeadlineUrl = `data:text/javascript;base64,${Buffer.from(sharedDeadline).toString('base64')}`;
+const deadlineFacade = compile(readFileSync(new URL('../../src/lib/request-deadline.ts', import.meta.url), 'utf8'));
+const sharedSpecifier = '"../../supabase/functions/_shared/request-deadline.ts"';
+assert.ok(deadlineFacade.includes(sharedSpecifier), 'the real browser facade must resolve the canonical deadline module');
+const deadline = deadlineFacade.replace(sharedSpecifier, JSON.stringify(sharedDeadlineUrl));
 const deadlineUrl = `data:text/javascript;base64,${Buffer.from(deadline).toString('base64')}`;
 const emitted = compile(source).replace('"./request-deadline.ts"', JSON.stringify(deadlineUrl));
 const core = await import(`data:text/javascript;base64,${Buffer.from(emitted).toString('base64')}`);

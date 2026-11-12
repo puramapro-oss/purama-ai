@@ -1,0 +1,213 @@
+{
+  "status": "PARTIEL",
+  "source_commit_before_reconciliation": "adfea2205a3dc8035f9547a60577a64a1f011820",
+  "composition_base": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+  "default_branch_sha": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "retained_policy_version": "2026-11-12.1",
+  "retained_policy_sha256": "7e89c62cb0d9cfbb88325b7d8066ffbec233b9c49dcdc8b08b4a244f48f71824",
+  "environment": {
+    "local_node": "v24.22.1",
+    "model_runner_node": "v26.0.0",
+    "ollama": "0.40.11",
+    "model": "qwen3-coder:30b",
+    "model_digest": "06c1097efce0431c2045fe7b2e5108366e43bee1b4603a7aded8f21689e90bca"
+  },
+  "commands": [
+    {
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/assistantPolicy.test.ts test/claudeTransportCost.test.ts test/real-claude.test.ts test/claudeDecisionCompleteness.test.ts --maxWorkers=1",
+      "status": "PASS",
+      "exit": 0,
+      "tests": 106,
+      "files": 4,
+      "seconds": 3.22,
+      "scope": "real modules; simulated provider and database transport"
+    },
+    {
+      "cwd": "karta",
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "status": "PARTIEL",
+      "exit": 137,
+      "note": "Last unbounded invocation killed; cause not established. Prior runs also succeeded."
+    },
+    {
+      "cwd": "karta",
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "status": "PASS",
+      "exit": 0
+    },
+    {
+      "cwd": "karta",
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc -p tsconfig.build.json",
+      "status": "PASS",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "node --check qa/iao-agency-outcomes-20261112/local-evaluation.mjs",
+      "status": "PASS",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "git diff --check",
+      "status": "PASS",
+      "exit": 0
+    },
+    {
+      "cwd": ".",
+      "command": "git diff --cached --check",
+      "status": "PASS",
+      "exit": 0
+    }
+  ],
+  "impact": {
+    "tool": "GitNexus 1.6.12",
+    "indexed_commit": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+    "analyze_exit": 0,
+    "nodes": 20662,
+    "edges": 59667,
+    "flows_bounded": 621,
+    "impact_target": "buildAssistantSystemPrompt",
+    "risk": "HIGH",
+    "impacted_elements": 17,
+    "direct_callers": 12,
+    "impact_exit": 0,
+    "constant_read_edges": "UNKNOWN",
+    "full_text_search": "DEGRADED",
+    "flow_enumeration": "BOUNDED",
+    "detect_changes": {
+      "staged": {
+        "exit": 0,
+        "files": 13,
+        "mapped_symbols": 5,
+        "affected_processes": 0,
+        "risk": "low",
+        "note": "Mapping of shifted hunks includes encodeData although both production functions remain byte-identical; new QA files are outside the baseline index."
+      },
+      "compare": {
+        "exit": 0,
+        "base_ref": "origin/main",
+        "files": 1389,
+        "mapped_symbols": 12790,
+        "affected_processes": 593,
+        "risk": "critical",
+        "listing_limit": 15,
+        "note": "Includes the pre-existing consolidation, not solely this PR."
+      }
+    }
+  },
+  "experiments": [
+    {
+      "file": "before.json",
+      "sha256": "a55fb792d6b99c78338d25139a1aa5d0519d077426dc5a590dc2e1043ec323f5",
+      "bytes": 394157,
+      "policy_version": "2026-11-12.1",
+      "policy_sha256": "7e89c62cb0d9cfbb88325b7d8066ffbec233b9c49dcdc8b08b4a244f48f71824",
+      "cases": 16,
+      "requests": 22,
+      "structural_pass": 16,
+      "process_exit": 0,
+      "wrapper_timeout_seconds": 900,
+      "process_elapsed_seconds": 91.7,
+      "all_fixtures_removed": true,
+      "finish_reasons": [
+        "stop"
+      ],
+      "max_prompt_tokens": 3164,
+      "max_output_tokens": 660
+    },
+    {
+      "file": "intermediate.json",
+      "sha256": "78ec097fd8f47210f3c34777dae311ed9682a981ef51241b98926ec1d0f726d4",
+      "bytes": 459884,
+      "policy_version": "2026-11-12.2",
+      "policy_sha256": "f6f81534cf2190e97323de923e16c863c652f4fb82230238b964a6f0cf6f5f65",
+      "cases": 16,
+      "requests": 22,
+      "structural_pass": 16,
+      "process_exit": 0,
+      "wrapper_timeout_seconds": 900,
+      "process_elapsed_seconds": 52.07,
+      "all_fixtures_removed": true,
+      "finish_reasons": [
+        "stop"
+      ],
+      "max_prompt_tokens": 3928,
+      "max_output_tokens": 587
+    },
+    {
+      "file": "rejected-final.json",
+      "sha256": "53819ba0d128fe36f8ac83ea4f4359bb844ad7f75803b68bebd6d98a537b194c",
+      "bytes": 538139,
+      "policy_version": "2026-11-12.3",
+      "policy_sha256": "691314280f767e32a12f23efd7a5c8275710af29a9aed34cf7a6574fc111e85c",
+      "cases": 20,
+      "requests": 26,
+      "structural_pass": 18,
+      "process_exit": 1,
+      "wrapper_timeout_seconds": 900,
+      "process_elapsed_seconds": 48.16,
+      "all_fixtures_removed": true,
+      "finish_reasons": [
+        "stop"
+      ],
+      "max_prompt_tokens": 3632,
+      "max_output_tokens": 490
+    },
+    {
+      "file": "retained.json",
+      "sha256": "3676e644b99fd7fd3ec70abdfa8dbf96549b72680c2e7c6dc195ceaf326f6992",
+      "bytes": 467521,
+      "policy_version": "2026-11-12.1",
+      "policy_sha256": "7e89c62cb0d9cfbb88325b7d8066ffbec233b9c49dcdc8b08b4a244f48f71824",
+      "cases": 20,
+      "requests": 26,
+      "structural_pass": 19,
+      "process_exit": 1,
+      "wrapper_timeout_seconds": 900,
+      "process_elapsed_seconds": 54.49,
+      "all_fixtures_removed": true,
+      "finish_reasons": [
+        "stop"
+      ],
+      "max_prompt_tokens": 3332,
+      "max_output_tokens": 660
+    }
+  ],
+  "unique_cases": 20,
+  "case_executions": 72,
+  "model_requests": 96,
+  "limitations": [
+    "Semantic judgments are independent AI review, not human evaluation.",
+    "Known synthetic cases; no broad or clinical efficacy conclusion.",
+    "Direct native Ollama API, not KARTA/SMARANA or production end-to-end.",
+    "Context truncation not independently verified.",
+    "No financial cost, energy or multi-user benchmark.",
+    "No business tool, payment, external message or production deployment."
+  ],
+  "ci": "A fresh CI result must be read on the published candidate; historical green checks do not establish the new composition.",
+  "semantic_review_sha256": "80391f7ca680b448169339c160b3bb7ed9c9ed0d6d55a739550018749f689ba3",
+  "semantic_results": {
+    "before.json": {
+      "pass": 12,
+      "fail": 4
+    },
+    "intermediate.json": {
+      "pass": 12,
+      "fail": 4
+    },
+    "rejected-final.json": {
+      "pass": 10,
+      "fail": 10
+    },
+    "retained.json": {
+      "pass": 12,
+      "fail": 8
+    }
+  },
+  "production_function_equality_against_composition_base": {
+    "encodeData": true,
+    "buildAssistantSystemPrompt": true
+  }
+}

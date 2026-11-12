@@ -8,7 +8,7 @@ import ts from 'typescript';
 // Self-hosted Supabase mounts only its functions directory. Local imports
 // outside that directory can pass a repository-wide check and still fail there.
 const functionsRoot = realpathSync(fileURLToPath(new URL('../../supabase/functions', import.meta.url)));
-for (const entry of ['create-checkout', 'customer-portal', 'stripe-webhook']) {
+for (const entry of ['create-checkout', 'customer-portal', 'stripe-webhook', 'oauth-google', 'email-agent-gmail-oauth']) {
   test(`${entry}: local dependencies fit inside the self-hosted functions mount`, () => {
     const pending = [path.join(functionsRoot, entry, 'index.ts')];
     const visited = new Set();
