@@ -139,3 +139,119 @@ test('PostCSS through Expo Metro does not disclose a map outside the CSS directo
     assert.equal(result.map?.toString().includes(marker) ?? false, false);
   } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 });
+
+test('GHSA-g3hv-75wg-m249: fingerprint defaults avoid level-two preprocessing', (t) => {
+  const fingerprintPath = require.resolve('@expo/fingerprint/build/utils/Path.js');
+  const fingerprintRequire = createRequire(fingerprintPath);
+  const { Minimatch } = fingerprintRequire('minimatch');
+  const aggressive = t.mock.method(Minimatch.prototype, 'firstPhasePreProcess', () => {
+    throw new Error('LEVEL_TWO_PREPROCESSING_FORBIDDEN_IN_FINGERPRINT_DEFAULTS');
+  });
+  assert.throws(() => new Minimatch('**/../x', { optimizationLevel: 2 }), /LEVEL_TWO_PREPROCESSING_FORBIDDEN/);
+  aggressive.mock.resetCalls();
+
+  const paths = require(fingerprintPath);
+  const matchers = paths.buildPathMatchObjects(['**/*.ts', '!**/ignored/**']);
+  assert.equal(paths.isIgnoredPathWithMatchObjects('app/example.ts', matchers), true);
+  assert.equal(paths.isIgnoredPathWithMatchObjects('app/ignored/example.ts', matchers), false);
+  paths.appendIgnorePath(matchers, '**/*.png');
+  assert.equal(paths.isIgnoredPathWithMatchObjects('assets/icon.png', matchers), true);
+  assert.ok(Array.isArray(paths.buildDirMatchObjects(matchers)));
+  const amplified = Array.from({ length: 6 }, (_, i) => `**/../part${i}`).join('/') + '/file.js';
+  assert.equal(typeof paths.isIgnoredPath('app/example.js', [amplified]), 'boolean');
+  assert.equal(aggressive.mock.callCount(), 0);
+});
+
+test('GHSA-gcqx-w48m-w2h4: reading the app config does not call its mutation-only merger', () => {
+  const configPath = expoRequire.resolve('@expo/config');
+  const result = isolated(`
+    const assert = require('node:assert/strict');
+    const Module = require('node:module');
+    const original = Module._load;
+    let attempts = 0;
+    Module._load = function (name, parent, main) {
+      if (name === 'deepmerge') { attempts++; throw new Error('CONFIG_MERGE_FORBIDDEN'); }
+      return original.call(this, name, parent, main);
+    };
+    assert.throws(() => require('deepmerge'), /CONFIG_MERGE_FORBIDDEN/);
+    attempts = 0;
+    const { getConfig } = require(process.argv[1]);
+    const config = getConfig(process.cwd());
+    process.stdout.write(JSON.stringify({ name: config.exp.name, slug: config.exp.slug, attempts }));
+  `, [configPath]);
+  const source = JSON.parse(fs.readFileSync(path.join(project, 'app.json'), 'utf8')).expo;
+  assert.deepEqual(result, { name: source.name, slug: source.slug, attempts: 0 });
+});
+
+test('Expo resolves the reviewed merge guard and preserves benign upstream merge behavior', () => {
+  const configRequire = createRequire(expoRequire.resolve('@expo/config'));
+  const merge = configRequire('deepmerge');
+  const upstream = require('deepmerge-upstream');
+  assert.equal(fs.realpathSync(configRequire.resolve('deepmerge')),
+    path.join(project, 'compat/deepmerge/index.cjs'));
+  assert.equal(typeof merge, 'function');
+  assert.equal(typeof merge.all, 'function');
+  const target = { extra: { enabled: true }, tags: ['one'], date: new Date(0) };
+  const source = { extra: { label: 'two' }, tags: ['two'] };
+  const before = structuredClone({ target, source });
+  assert.deepEqual(merge(target, source), upstream(target, source));
+  assert.deepEqual(merge.all([target, source]), upstream.all([target, source]));
+  const options = () => ({ arrayMerge: (_target, next) => next.slice() });
+  assert.deepEqual(merge(target, source, options()), upstream(target, source, options()));
+  assert.deepEqual({ target, source }, before);
+  assert.throws(() => merge.all({}), /first argument should be an array/);
+});
+
+test('GHSA-gcqx-w48m-w2h4: unsafe config data is refused before upstream merging', () => {
+  const merge = createRequire(expoRequire.resolve('@expo/config'))('deepmerge');
+  const upstream = require('deepmerge-upstream');
+  const poisoned = JSON.parse('{"__proto__":{"syntheticMarker":true}}');
+  // Positive control: the retained upstream package still has the advisory.
+  assert.equal(upstream(poisoned, {}).syntheticMarker, true);
+  for (const data of [poisoned, { nested: poisoned }, { list: [poisoned] }]) {
+    assert.throws(() => merge(data, {}), { code: 'ERR_UNSAFE_EXPO_CONFIG_MERGE' });
+    assert.throws(() => merge({}, data), { code: 'ERR_UNSAFE_EXPO_CONFIG_MERGE' });
+    assert.throws(() => merge.all([{}, data]), { code: 'ERR_UNSAFE_EXPO_CONFIG_MERGE' });
+  }
+  let getterCalls = 0;
+  const accessor = Object.defineProperty({}, 'extra', { enumerable: true, get() { getterCalls++; return poisoned; } });
+  assert.throws(() => merge(accessor, {}), { code: 'ERR_UNSAFE_EXPO_CONFIG_MERGE' });
+  assert.equal(getterCalls, 0);
+  assert.equal(Object.prototype.syntheticMarker, undefined);
+});
+
+test('the real Expo config mutation rejects prototype keys and retains plugin merge semantics', async () => {
+  const { modifyConfigAsync } = expoRequire('@expo/config');
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'purama-expo-config-'));
+  const file = path.join(temp, 'app.json');
+  const readOptions = { skipPlugins: true, skipSDKVersionRequirement: true };
+  try {
+    fs.writeFileSync(path.join(temp, 'package.json'), JSON.stringify({ name: 'guard-test', version: '1.0.0' }));
+    const baseline = { expo: { name: 'Guard test', slug: 'guard-test',
+      plugins: [['synthetic-plugin', { nested: { keep: true }, list: ['one'] }]],
+      extra: { keep: true } } };
+    const bytes = JSON.stringify(baseline);
+    fs.writeFileSync(file, bytes);
+    const modified = await modifyConfigAsync(temp, {
+      description: 'updated', extra: { added: true },
+      plugins: [['synthetic-plugin', { nested: { added: true }, list: ['two'] }]],
+    }, readOptions, { dryRun: true });
+    assert.equal(modified.type, 'success');
+    assert.deepEqual(modified.config.extra, { keep: true, added: true });
+    assert.deepEqual(modified.config.plugins, [['synthetic-plugin', {
+      nested: { keep: true, added: true }, list: ['one', 'two'],
+    }]]);
+    assert.equal(fs.readFileSync(file, 'utf8'), bytes);
+    for (const unsafe of [
+      '{"expo":{"name":"Guard test","slug":"guard-test","__proto__":{"syntheticMarker":true}}}',
+      '{"expo":{"name":"Guard test","slug":"guard-test","extra":{"__proto__":{"syntheticMarker":true}}}}',
+      '{"expo":{"name":"Guard test","slug":"guard-test","plugins":[["synthetic-plugin",{"__proto__":{"syntheticMarker":true}}]]}}',
+    ]) {
+      fs.writeFileSync(file, unsafe);
+      await assert.rejects(modifyConfigAsync(temp, { description: 'update' }, readOptions, { dryRun: true }),
+        { code: 'ERR_UNSAFE_EXPO_CONFIG_MERGE' });
+      assert.equal(fs.readFileSync(file, 'utf8'), unsafe);
+      assert.equal(Object.prototype.syntheticMarker, undefined);
+    }
+  } finally { fs.rmSync(temp, { recursive: true, force: true }); }
+});

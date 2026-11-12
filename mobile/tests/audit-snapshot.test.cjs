@@ -84,3 +84,16 @@ test('an unknown non-registry dependency cannot evade the binding', () => {
   input.lock.packages['node_modules/unapproved'] = { version: '1.0.0', resolved: 'file:unapproved' };
   assert.throws(() => verifyAuditSnapshot(input), /outside the audited registry graph/);
 });
+
+test('the reviewed Expo merge guard and its upstream alias retain distinct identities', () => {
+  const input = inputs();
+  const adapter = input.lock.packages['compat/deepmerge'];
+  assert.equal(adapter.name, '@purama/expo-deepmerge-compat');
+  assert.deepEqual(adapter.dependencies, { 'deepmerge-upstream': 'npm:deepmerge@4.3.1' });
+  assert.deepEqual(input.lock.packages['node_modules/deepmerge'], { resolved: 'compat/deepmerge', link: true });
+  assert.equal(input.lock.packages['node_modules/deepmerge-upstream'].name, 'deepmerge');
+  assert.equal(input.lock.packages['node_modules/deepmerge-upstream'].version, '4.3.1');
+  assert.equal(verifyAuditSnapshot(input).status, 'PASS');
+  adapter.name = 'unreviewed-package';
+  assert.throws(() => verifyAuditSnapshot(input), /local adapter has changed/);
+});
