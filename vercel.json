@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "feat/iao-local-desktop-20261112": false,
       "fix/iao-wealth-continuity-20261112": false,
       "fix/iao-ime-composition-20261112": false,
       "audit/api-cost-20261112-4eb2": false,

@@ -6,6 +6,7 @@ import { bounded } from "../runtime/lifecycle.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 import { buildAssistantSystemPrompt } from "./assistant-policy.js";
 import { normalizeModelUsage } from "./usage.js";
+import { createLmStudioTransport, type LmStudioOptions } from "./lmstudio.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -29,15 +30,17 @@ export function selectModel(input: ClaudeDecideInput): string {
   return isSimple ? config.anthropicModelFast : config.anthropicModelMain;
 }
 
-export function createRealClaudeClient(): ClaudeClient {
+export function createRealClaudeClient(options?: { lmStudio: LmStudioOptions }): ClaudeClient {
   const timeoutMs = config.anthropicTimeoutMs;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) {
     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
   }
   // KARTA owns durable delivery/recovery. The SDK's implicit retries can repeat
   // a paid inference after an ambiguous response, outside that execution log.
+  const local = options ? createLmStudioTransport(options.lmStudio) : undefined;
   const client = new Anthropic({
     apiKey: config.anthropicApiKey,
+    ...local?.clientOptions,
     timeout: timeoutMs,
     maxRetries: 0,
     // The SDK's debug logger can include complete prompts and provider bodies.
@@ -54,8 +57,8 @@ export function createRealClaudeClient(): ClaudeClient {
       const { model, response } = await bounded(async signal => {
         // Select after admission so pre-cancelled calls do not read context;
         // keep the same selected model for the request and its usage receipt.
-        const model = selectModel(input);
-        const response = await client.messages.create({
+        const model = local?.model ?? selectModel(input);
+        const send = () => client.messages.create({
           model,
           max_tokens: 1024,
           system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
@@ -67,6 +70,7 @@ export function createRealClaudeClient(): ClaudeClient {
           ],
           tools: toAnthropicTools(input.tools),
         }, { signal, timeout: timeoutMs, maxRetries: 0 });
+        const response = local ? await local.run(signal, input.tools.length > 0, send) : await send();
         return { model, response };
       }, timeoutMs, input.signal)
         .catch(() => {
