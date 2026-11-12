@@ -4,7 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import { encryptGmailToken } from "../_shared/gmail-token-crypto.ts";
 import { issueOAuthState, consumeOAuthState } from "../_shared/oauth-state.ts";
 import { readRequestText, readBoundedBytes } from "../_shared/request-body.ts";
-import { createRequestDeadline, cancelResponseQuietly, RequestDeadlineError } from "../../../src/lib/request-deadline.ts";
+import { createRequestDeadline, cancelResponseQuietly, RequestDeadlineError } from "../_shared/request-deadline.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
