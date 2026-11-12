@@ -58,8 +58,7 @@ export const STALLED_PUBLISHING_MS = 5 * 60 * 1000;
  */
 export async function handleScheduledConsumerRequest(
   req: Request,
-  // deno-lint-ignore no-explicit-any
-  supabase: SupabaseClient<any, any, any> | any,
+  supabase: SupabaseClient,
   cronSecret: string | undefined,
 ): Promise<Response> {
   if (req.method === "OPTIONS") {
@@ -105,8 +104,7 @@ export async function handleScheduledConsumerRequest(
       .limit(MAX_BATCH);
     if (stalledSelectError) throw stalledSelectError;
 
-    // deno-lint-ignore no-explicit-any
-    const stalledIds = (stalledCandidates ?? []).map((r: any) => r.id);
+    const stalledIds = (stalledCandidates ?? []).map((r: { id: string }) => r.id);
     if (stalledIds.length > 0) {
       const { error: requeueError } = await supabase
         .from("social_posts")
@@ -127,11 +125,9 @@ export async function handleScheduledConsumerRequest(
       .limit(MAX_BATCH);
     if (selectError) throw selectError;
 
-    // deno-lint-ignore no-explicit-any
-    const candidateIds = (candidates ?? []).map((r: any) => r.id);
+    const candidateIds = (candidates ?? []).map((r: { id: string }) => r.id);
 
-    // deno-lint-ignore no-explicit-any
-    let rows: any[] = [];
+    let rows: SocialPostRow[] = [];
     if (candidateIds.length > 0) {
       // Step 2: claim exactly those ids, still guarded by
       // WHERE status='scheduled' — a second concurrent invocation racing on
@@ -145,7 +141,7 @@ export async function handleScheduledConsumerRequest(
         .in("id", candidateIds)
         .select();
       if (claimError) throw claimError;
-      rows = claimed ?? [];
+      rows = (claimed ?? []) as SocialPostRow[];
     }
 
     if (rows.length === 0) {

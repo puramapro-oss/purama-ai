@@ -12,8 +12,15 @@
 // Terme UI : "Preuve blockchain Purama" (jamais "OpenTimestamps" ni "Bitcoin").
 // ───────────────────────────────────────────────────────────────────────────
 
-// @ts-expect-error — le package n'expose pas de types officiels
-import OpenTimestamps from 'opentimestamps';
+import {
+  canUpgrade,
+  canVerify,
+  read,
+  submit,
+  verify,
+  verifiers,
+  write,
+} from '@vitrified/typescript-opentimestamps';
 
 /**
  * Produit un hash SHA-256 hex d'un contenu texte.
@@ -37,13 +44,13 @@ export async function hashContent(data: string): Promise<Uint8Array> {
  */
 export async function stampHash(data: string): Promise<string> {
   const hash = await hashContent(data);
-  const detachedFile = OpenTimestamps.DetachedTimestampFile.fromHash(
-    new OpenTimestamps.Ops.OpSHA256(),
-    hash,
-  );
-  await OpenTimestamps.stamp(detachedFile);
-  const bytes = detachedFile.serializeToBytes();
-  return toBase64(bytes);
+  const { timestamp, errors } = await submit('sha256', hash);
+  if (!canUpgrade(timestamp) && !canVerify(timestamp)) {
+    throw new Error(
+      `OpenTimestamps submission failed: ${errors.map((error) => error.message).join('; ')}`,
+    );
+  }
+  return toBase64(write(timestamp));
 }
 
 export interface VerifyResult {
@@ -59,21 +66,28 @@ export interface VerifyResult {
  */
 export async function verifyProof(data: string, proofBase64: string): Promise<VerifyResult> {
   const hash = await hashContent(data);
-  const detachedOriginal = OpenTimestamps.DetachedTimestampFile.fromHash(
-    new OpenTimestamps.Ops.OpSHA256(),
-    hash,
-  );
-  const detachedProof = OpenTimestamps.DetachedTimestampFile.deserialize(fromBase64(proofBase64));
   try {
-    const result = await OpenTimestamps.verify(detachedProof, detachedOriginal);
-    if (result && result.bitcoin) {
+    const timestamp = read(fromBase64(proofBase64));
+    if (
+      timestamp.fileHash.algorithm !== 'sha256' ||
+      timestamp.fileHash.value.length !== hash.length ||
+      !timestamp.fileHash.value.every((value, index) => value === hash[index])
+    ) {
+      return { verified: false };
+    }
+
+    const result = await verify(timestamp, verifiers);
+    const verifiedTimes = Object.keys(result.attestations)
+      .map(Number)
+      .filter(Number.isFinite)
+      .sort((a, b) => a - b);
+    if (verifiedTimes.length > 0) {
       return {
         verified: true,
-        blockHeight: result.bitcoin.height,
-        timestamp: new Date(result.bitcoin.timestamp * 1000),
+        timestamp: new Date(verifiedTimes[0] * 1000),
       };
     }
-    return { verified: false, pending: true };
+    return { verified: false, pending: canUpgrade(timestamp) };
   } catch {
     return { verified: false };
   }
