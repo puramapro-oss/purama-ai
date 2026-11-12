@@ -255,3 +255,135 @@ test('the real Expo config mutation rejects prototype keys and retains plugin me
     }
   } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 });
+
+test('Expo glob resolves both scoped guards while legacy glob remains unchanged', () => {
+  const cliRoot = path.dirname(expoRequire.resolve('@expo/cli/package.json'));
+  const consumers = [
+    path.join(cliRoot, 'build/src/utils/glob.js'),
+    require.resolve('@expo/config'), require.resolve('@expo/config-plugins'),
+    require.resolve('@expo/fingerprint'), expoRequire.resolve('@expo/metro-config'),
+  ];
+  for (const consumer of consumers) {
+    assert.equal(fs.realpathSync(createRequire(consumer).resolve('glob')),
+      path.join(project, 'compat/glob/index.cjs'));
+  }
+  const fromGlob = createRequire(require.resolve('glob-upstream/package.json'));
+  assert.equal(fs.realpathSync(fromGlob.resolve('minimatch')),
+    path.join(project, 'compat/glob-minimatch/index.cjs'));
+  assert.equal(require('glob-upstream/package.json').version, '13.0.7');
+  assert.equal(require('minimatch-upstream/package.json').version, '10.2.6');
+  const codegen = createRequire(require.resolve('@react-native/codegen/package.json'));
+  assert.equal(codegen('glob/package.json').version, '7.2.3');
+  assert.equal(typeof codegen('glob'), 'function');
+});
+
+test('glob and matcher retain named ESM, CJS, raw and nested function aliases', async () => {
+  const glob = require('glob');
+  const matcher = require('minimatch');
+  assert.deepEqual(Object.keys(glob).sort(), Object.keys(require('glob-upstream')).sort());
+  assert.deepEqual(Object.keys(matcher).sort(), Object.keys(require('minimatch-upstream')).sort());
+  for (const name of ['glob', 'glob/raw']) {
+    const esm = await import(name);
+    assert.deepEqual(Object.keys(esm).sort(), Object.keys(glob).sort());
+    for (const key of Object.keys(glob)) assert.equal(esm[key], glob[key]);
+  }
+  const esmMatcher = await import('minimatch');
+  assert.deepEqual(Object.keys(esmMatcher).sort(), Object.keys(matcher).sort());
+  for (const key of Object.keys(matcher)) assert.equal(esmMatcher[key], matcher[key]);
+  assert.equal(require('glob/raw'), glob);
+  assert.equal(glob.glob.glob, glob.glob);
+  assert.equal(glob.glob.Glob, glob.Glob);
+  assert.equal(glob.glob.sync, glob.globSync);
+  assert.equal(glob.stream.sync, glob.globStreamSync);
+  assert.equal(glob.sync.iterate, glob.globIterateSync);
+  assert.equal(glob.iterate.sync, glob.globIterateSync);
+});
+
+test('GHSA-g3hv-75wg-m249: the real Expo glob APIs reject amplified patterns', async () => {
+  const cliRoot = path.dirname(expoRequire.resolve('@expo/cli/package.json'));
+  const utility = require(path.join(cliRoot, 'build/src/utils/glob.js'));
+  const pattern = Array.from({ length: 6 }, (_, i) => `**/../part${i}`).join('/') + '/file.js';
+  const options = { cwd: project, braceExpandMax: 16, maxDepth: 0 };
+  // The retained bundled upstream is a positive control, not silently labelled fixed.
+  assert.ok(new (require('glob-upstream').Glob)(pattern, options).patterns.length > 16);
+  await assert.rejects(utility.everyMatchAsync(pattern, options), RangeError);
+  await assert.rejects(utility.anyMatchAsync(pattern, options), RangeError);
+  const glob = require('glob');
+  for (const call of [glob.globSync, glob.globStreamSync, glob.globStream,
+    glob.globIterateSync, glob.globIterate]) {
+    assert.throws(() => call(pattern, options), RangeError);
+  }
+});
+
+test('default glob and ignore preprocessing stop within an isolated memory and time budget', () => {
+  const result = spawnSync(process.execPath, ['--max-old-space-size=128', '-e', `
+    const assert = require('node:assert/strict');
+    const { Glob, Ignore } = require('glob');
+    const pattern = Array.from({ length: 25 }, (_, i) => '**/../part' + i).join('/') + '/file.js';
+    assert.throws(() => new Glob(pattern, { cwd: process.cwd() }), RangeError);
+    assert.throws(() => new Ignore([pattern], {}), RangeError);
+    process.stdout.write(JSON.stringify({ globRejected: true, ignoreRejected: true }));
+  `], { cwd: project, encoding: 'utf8', timeout: 3000, maxBuffer: 1024 * 1024 });
+  assert.equal(result.error, undefined, result.error?.message);
+  assert.equal(result.signal, null, result.stderr);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { globRejected: true, ignoreRejected: true });
+});
+
+test('the real Expo paths and glob modes keep benign results including redundant alternatives', async () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'purama-glob-compat-'));
+  const files = ['src/a.js', 'src/deep/b.js', 'src/.hidden.js', 'app/index.ts',
+    'app/(tabs)/index.tsx', 'a/x/5/b', 'a/y/1100/b', '.gitignore',
+    'ios/Example.xcodeproj/project.pbxproj', 'android/app/src/main/java/com/demo/MainActivity.kt'];
+  try {
+    for (const file of files) {
+      fs.mkdirSync(path.dirname(path.join(temp, file)), { recursive: true });
+      fs.writeFileSync(path.join(temp, file), 'fixture');
+    }
+    const glob = require('glob'), upstream = require('glob-upstream');
+    const patterns = ['**/*.{ts,tsx}', '**/*.js', 'src/{*,deep/*}.js',
+      './src/**/../deep/b.js', '**/.gitignore', 'a/{*,x}/{0..1100}/b'];
+    for (const pattern of patterns) for (const mode of [{}, { dot: true }, { ignore: '**/deep/**' }]) {
+      const options = { cwd: temp, ...mode };
+      const expected = upstream.globSync(pattern, options).sort();
+      assert.deepEqual(glob.globSync(pattern, options).sort(), expected);
+      assert.deepEqual((await glob.glob(pattern, options)).sort(), expected);
+      assert.deepEqual([...glob.globIterateSync(pattern, options)].sort(), expected);
+      const streamed = [];
+      for await (const file of glob.globStream(pattern, options)) streamed.push(file);
+      assert.deepEqual(streamed.sort(), expected);
+    }
+    const cliRoot = path.dirname(expoRequire.resolve('@expo/cli/package.json'));
+    const utility = require(path.join(cliRoot, 'build/src/utils/glob.js'));
+    assert.deepEqual((await utility.everyMatchAsync('src/**/*.js', { cwd: temp })).sort(),
+      ['src/a.js', 'src/deep/b.js']);
+    const first = await utility.anyMatchAsync('src/**/*.js', { cwd: temp });
+    assert.equal(first.length, 1);
+    assert.ok(['src/a.js', 'src/deep/b.js'].includes(first[0]));
+    assert.equal(require('@expo/config-plugins/build/ios/Paths').getPBXProjectPath(temp),
+      path.join(temp, 'ios/Example.xcodeproj/project.pbxproj'));
+    assert.equal(require('@expo/config-plugins/build/android/Paths').getProjectFilePath(temp, 'MainActivity'),
+      path.join(temp, 'android/app/src/main/java/com/demo/MainActivity.kt'));
+  } finally { fs.rmSync(temp, { recursive: true, force: true }); }
+});
+
+test('switching to the supported raw entry retains the glob abort backport', async () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'purama-glob-abort-'));
+  const controller = new AbortController();
+  const reason = new Error('controlled glob cancellation');
+  let reads = 0, readsAfterAbort = 0;
+  const wrapped = { ...fs, readdir(...args) {
+    if (controller.signal.aborted) readsAfterAbort++;
+    if (++reads === 1) controller.abort(reason);
+    return fs.readdir(...args);
+  } };
+  try {
+    fs.mkdirSync(path.join(temp, 'nested/deeper'), { recursive: true });
+    fs.writeFileSync(path.join(temp, 'nested/deeper/file'), 'fixture');
+    await assert.rejects(require('glob').glob('**', { cwd: temp, signal: controller.signal, fs: wrapped }),
+      error => error === reason);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert.equal(reads, 1);
+    assert.equal(readsAfterAbort, 0);
+  } finally { fs.rmSync(temp, { recursive: true, force: true }); }
+});
