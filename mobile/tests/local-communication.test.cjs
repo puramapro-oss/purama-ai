@@ -25,7 +25,7 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
     segments, screen: null, fontError: null, fontsLoaded: true,
     factoryCalls: [], sessions: [], subscriptions: [], profileReads: [],
     networkCalls: [], persistentCalls: [], navigation: [], focus: [], keyboard: [],
-    focusCleanups: new Set(), backListeners: new Set(), loaded: new Set(),
+    focusCleanups: new Set(), backListeners: new Set(), appStateListeners: new Set(), loaded: new Set(),
   };
   const unexpectedNetwork = (...args) => {
     env.networkCalls.push(args);
@@ -65,9 +65,15 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
 
   const native = Object.fromEntries([
     'View', 'Text', 'TextInput', 'TouchableOpacity', 'ScrollView', 'KeyboardAvoidingView',
-    'ActivityIndicator', 'FlatList', 'RefreshControl', 'Image',
+    'ActivityIndicator', 'FlatList', 'RefreshControl', 'Image', 'Pressable', 'Button', 'Switch',
   ].map(name => [name, name]));
   native.Platform = { OS: platform, select: options => options[platform] ?? options.default };
+  native.StyleSheet = { create: styles => styles };
+  native.Linking = { openURL: unexpectedNetwork };
+  native.AppState = { currentState: 'active', addEventListener(name, callback) {
+    assert.equal(name, 'change'); env.appStateListeners.add(callback);
+    return { remove() { env.appStateListeners.delete(callback); } };
+  } };
   native.Keyboard = { dismiss() { env.keyboard.push('dismiss'); } };
   native.AccessibilityInfo = { sendAccessibilityEvent(target, eventType) { env.focus.push({ target: target.testID, eventType }); } };
   if (platform === 'web') native.AccessibilityInfo = require('react-native-web/dist/cjs/exports/AccessibilityInfo');
@@ -96,6 +102,11 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
   const modules = {
     react: React, 'react/jsx-runtime': require('react/jsx-runtime'),
     'react-native': native,
+    'react-native-webview': { WebView: 'WebView' },
+    'expo-modules-core': { requireOptionalNativeModule(name) {
+      assert.equal(name, 'PuramaAccessibilityWatch');
+      return null;
+    } },
     'react-native-safe-area-context': { SafeAreaView: 'SafeAreaView' },
     'react-native-gesture-handler': { GestureHandlerRootView: 'GestureHandlerRootView' },
     'expo-router': { Stack, Tabs, router, useSegments: () => env.segments, useFocusEffect,
@@ -120,6 +131,7 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
   function load(relative) {
     let file = path.resolve(project, relative);
     if (file.endsWith('.css')) return {};
+    if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index');
     if (!fs.existsSync(file)) file = ['.ts', '.tsx', '.js'].map(extension => file + extension).find(candidate => fs.existsSync(candidate));
     assert.ok(file, `Module not found: ${relative}`);
     if (cache.has(file)) return cache.get(file).exports;
@@ -173,9 +185,15 @@ const session = id => ({ user: { id }, access_token: 'synthetic', refresh_token:
 
 test('only exact public route segments keep account initialization inactive', () => {
   const { isLocalCommunicationRoute, boundCommunicationText, COMMUNICATION_TEXT_LIMIT } = environment().load('lib/local-communication.ts');
-  for (const segments of [[], ['index'], ['communication']]) assert.equal(isLocalCommunicationRoute(segments), true);
+  for (const segments of [[], ['index'], ['communication'], ['accessible-one'], ['accessibility-watch']]) {
+    assert.equal(isLocalCommunicationRoute(segments), true);
+  }
   for (const segments of [['(tabs)'], ['(tabs)', 'index'], ['(auth)', 'login'], ['account'], ['auth', 'callback'],
-    ['communication', 'index'], ['communication-extra'], ['agent', '[slug]']]) assert.equal(isLocalCommunicationRoute(segments), false);
+    ['communication', 'index'], ['communication-extra'], ['agent', '[slug]'],
+    ['accessible-one', 'index'], ['accessibility-watch', 'index'], ['accessible-one-extra'], ['accessibility-watch-extra'],
+    ['(auth)', 'accessible-one'], ['(tabs)', 'accessibility-watch'], ['Accessible-one']]) {
+    assert.equal(isLocalCommunicationRoute(segments), false);
+  }
   assert.equal(boundCommunicationText('Bonjour\nمرحبا 👋'), 'Bonjour\nمرحبا 👋');
   assert.equal(boundCommunicationText('x'.repeat(COMMUNICATION_TEXT_LIMIT - 1) + '👋').length, COMMUNICATION_TEXT_LIMIT - 1);
 });
@@ -234,6 +252,8 @@ test('installed Expo Router sync discovery imports every route without account c
     routerRequire, module, module.exports, { env: { NODE_ENV: 'development' } });
   const tree = module.exports.getRoutes(context, { platform: 'ios', importMode: 'sync', ignoreEntryPoints: true });
   assert.ok(tree.children.some(route => route.route === 'communication'));
+  assert.ok(tree.children.some(route => route.route === 'accessible-one'));
+  assert.ok(tree.children.some(route => route.route === 'accessibility-watch'));
   assert.ok(tree.children.some(route => route.route === 'account'));
   for (const file of routes) assert.ok(env.loaded.has(path.relative(project, file)), `Route was not imported: ${file}`);
   assert.equal(env.factoryCalls.length, 0); assert.equal(env.networkCalls.length, 0); assert.equal(env.persistentCalls.length, 0);
@@ -252,14 +272,20 @@ for (const platform of ['ios', 'android']) test(`${platform}: local entry/deep l
   };
   const renderer = await mount(env, Root);
   assert.equal(seen.at(-1).user, null); assert.equal(seen.at(-1).loading, true);
-  env.segments = [];
-  await act(async () => renderer.update(React.createElement(Root)));
+  for (const segments of [[], ['index'], ['accessible-one'], ['accessibility-watch'], ['communication']]) {
+    env.segments = segments;
+    await act(async () => renderer.update(React.createElement(Root)));
+    assert.equal(seen.at(-1).user, null);
+    assert.equal(seen.at(-1).loading, true);
+    assert.equal(seen.at(-1).initializationError, null);
+  }
   assert.equal(mounts, 1);
+  assert.equal(env.sessions.length, 0); assert.equal(env.subscriptions.length, 0);
   assert.equal(env.factoryCalls.length, 0); assert.equal(env.networkCalls.length, 0); assert.equal(env.persistentCalls.length, 0);
   await unmount(renderer);
 });
 
-test('account → public → account hides stale identity, ignores late work and reuses one client', async () => {
+for (const publicRoute of ['communication', 'accessible-one', 'accessibility-watch']) test(`account → ${publicRoute} → account hides stale identity, ignores late work and reuses one client`, async () => {
   const env = environment({ configured: true, segments: ['account'] });
   const Root = env.load('app/_layout.tsx').default;
   const { useAuth } = env.load('hooks/useAuth.tsx');
@@ -271,7 +297,7 @@ test('account → public → account hides stale identity, ignores late work and
   await act(async () => env.sessions[0].resolve({ data: { session: session('first') }, error: null }));
   assert.equal(state.user.id, 'first'); assert.equal(state.loading, false);
   assert.equal(env.profileReads.length, 1);
-  env.segments = ['communication'];
+  env.segments = [publicRoute];
   await act(async () => renderer.update(React.createElement(Root)));
   assert.equal(state.user, null); assert.equal(state.session, null); assert.equal(state.profile, null);
   assert.equal(state.loading, true, 'retained protected screens must not redirect while local mode is active');
@@ -472,14 +498,49 @@ test('RN Web without sendAccessibilityEvent uses focusable DOM refs and retains 
   await unmount(renderer);
 });
 
-test('local entry navigates only after a button press and never initializes the account itself', async () => {
-  const env = environment({ segments: [] });
-  const renderer = await mount(env, env.load('app/index.tsx').default);
+for (const platform of ['ios', 'android']) test(`${platform}: public menu reaches ONE and watch settings without an account or automatic opening`, async () => {
+  const env = environment({ platform, segments: [] });
+  const Root = env.load('app/_layout.tsx').default;
+  const Entry = env.load('app/index.tsx').default;
+  const { Button } = env.load('components/ui/Button.tsx');
+  env.screen = Entry;
+  const renderer = await mount(env, Root);
   assert.deepEqual(env.navigation, []); assert.equal(env.factoryCalls.length, 0);
+  assert.deepEqual(renderer.root.findAllByType(Button).map(node => ({
+    id: node.props.testID, title: node.props.title, variant: node.props.variant ?? 'primary',
+  })), [
+    { id: 'entry-communication', title: 'Communiquer par écrit', variant: 'primary' },
+    { id: 'entry-accessible-one', title: 'Accessible pour moi', variant: 'secondary' },
+    { id: 'entry-account', title: 'Ouvrir mon espace compte', variant: 'secondary' },
+  ]);
   await press(renderer, 'entry-communication');
   assert.deepEqual(env.navigation.at(-1), ['push', '/communication']);
+  await press(renderer, 'entry-accessible-one');
+  assert.deepEqual(env.navigation.at(-1), ['push', '/accessible-one']);
+  env.segments = ['accessible-one'];
+  env.screen = env.load('app/accessible-one.tsx').default;
+  await act(async () => renderer.update(React.createElement(Root)));
+  assert.ok(renderer.root.findAllByType('Text').some(node => node.props.children === 'Accessible pour moi'));
+  assert.equal(renderer.root.findAllByType('WebView').length, 0, 'opening the public route must not open ONE automatically');
+  assert.equal(env.navigation.length, 2);
+  const watchSettings = renderer.root.findAllByType('Pressable').find(node =>
+    node.findAllByType('Text').some(text => text.props.children === 'Régler ma montre'));
+  assert.ok(watchSettings, 'watch settings must be reachable even when ONE has no configured origin');
+  await act(async () => watchSettings.props.onPress());
+  assert.deepEqual(env.navigation.at(-1), ['push', '/accessibility-watch']);
+  env.segments = ['accessibility-watch'];
+  env.screen = env.load('app/accessibility-watch.tsx').default;
+  await act(async () => renderer.update(React.createElement(Root)));
+  assert.ok(renderer.root.findAllByType('Text').some(node => node.props.children === 'Connexion à ma montre'));
+  assert.equal(renderer.root.findAllByType('Redirect').length, 0);
+  assert.equal(env.navigation.length, 3);
+  assert.equal(env.sessions.length, 0); assert.equal(env.subscriptions.length, 0);
+  env.segments = [];
+  env.screen = Entry;
+  await act(async () => renderer.update(React.createElement(Root)));
   await press(renderer, 'entry-account');
   assert.deepEqual(env.navigation.at(-1), ['push', '/account']);
-  assert.equal(env.factoryCalls.length, 0);
+  assert.equal(env.factoryCalls.length, 0); assert.equal(env.networkCalls.length, 0); assert.equal(env.persistentCalls.length, 0);
   await unmount(renderer);
+  assert.equal(env.appStateListeners.size, 0);
 });

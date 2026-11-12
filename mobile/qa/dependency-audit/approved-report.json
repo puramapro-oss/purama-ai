@@ -30,7 +30,10 @@
         "glob"
       ],
       "effects": [
+        "@expo/cli",
         "@expo/metro-config",
+        "@expo/prebuild-config",
+        "expo",
         "expo-constants"
       ],
       "range": "9.1.0-canary-20240628-1ba8152 - 57.0.10 || 58.0.0-canary-20260806-8c2d007 - 58.0.10",
@@ -38,8 +41,8 @@
         "node_modules/@expo/config"
       ],
       "fixAvailable": {
-        "name": "expo-constants",
-        "version": "58.0.16",
+        "name": "expo",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     },
@@ -51,10 +54,7 @@
         "glob"
       ],
       "effects": [
-        "@expo/cli",
-        "@expo/config",
-        "@expo/prebuild-config",
-        "expo"
+        "@expo/config"
       ],
       "range": "8.0.9-canary-20240719-83ee47b - 8.0.9-canary-20240814-ce0f7d5 || 8.1.0-canary-20240904-69100c1 - 57.0.11 || 58.0.0-canary-20260806-8c2d007 - 58.0.11",
       "nodes": [
@@ -155,8 +155,8 @@
         "node_modules/deepmerge"
       ],
       "fixAvailable": {
-        "name": "expo-constants",
-        "version": "58.0.16",
+        "name": "expo",
+        "version": "58.0.24",
         "isSemVerMajor": true
       }
     },
@@ -384,12 +384,12 @@
       "total": 16
     },
     "dependencies": {
-      "prod": 826,
+      "prod": 827,
       "dev": 32,
       "optional": 49,
       "peer": 0,
       "peerOptional": 0,
-      "total": 879
+      "total": 880
     }
   }
 }

@@ -20,6 +20,8 @@ function SettingsItem({ icon, label, onPress, color = "#fff", badge, testID }: S
   return (
     <TouchableOpacity
       testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={label}
       onPress={onPress}
       className="flex-row items-center py-3.5 px-1"
       activeOpacity={0.6}
@@ -90,6 +92,12 @@ export default function SettingsScreen() {
         </GlassCard>
 
         {/* Sections */}
+        <GlassCard className="mb-4">
+          <SettingsItem testID="settings-accessible-one" icon="accessibility" label="Accessible pour moi" onPress={() => router.push('/accessible-one')} />
+          <View className="h-px bg-white/[0.06]" />
+          <SettingsItem testID="settings-accessibility-watch" icon="watch" label="Régler ma montre" onPress={() => router.push('/accessibility-watch')} />
+        </GlassCard>
+
         <GlassCard className="mb-4">
           <SettingsItem testID="settings-parrainage" icon="people" label="Parrainage" onPress={() => {}} badge={profile?.referral_code ?? undefined} />
           <View className="h-px bg-white/[0.06]" />

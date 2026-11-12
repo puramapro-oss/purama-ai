@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-11-12T03:59:42.234Z",
+  "capturedAt": "2026-11-12T04:27:51.943Z",
   "maximumAgeHours": 24,
-  "reportSha256": "2b1a68e86dc143c1f2ce57fd28d12d07728f7faa287fd5b2a6ed6e64ab506a82",
-  "registryMultisetSha256": "757ff86c012d4603f22dcfa5ada4c890db6b1b5020ed29d24d755cd17b974177",
-  "registryPackageInstances": 875,
+  "reportSha256": "d654f8c8205622003585badcd4be0c4139733ea49c8683d88a15ed404874b3d8",
+  "registryMultisetSha256": "4c83bda269f82010462b557a69557787828b33477bed05a33a3adc90074ee157",
+  "registryPackageInstances": 876,
   "source": {
     "command": [
       "npm",
@@ -12,7 +12,7 @@
       "--audit-level=high",
       "--json"
     ],
-    "receiptSha256": "29a7dabe16ad01b38993d2190c0f131a6c95f8766d7af536090c148e3062dc3d",
+    "receiptSha256": "18ed483a0ad0be1a01d09113efcf6816f3e5cf5472ae78795c8e52ab6349299c",
     "exitCode": 0
   },
   "status": "Fresh registry audit captured for this dependency graph. The CI gate checks exact local binding and freshness without making another registry request.",

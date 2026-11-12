@@ -25,6 +25,14 @@ export default function Index() {
             style={{ minHeight: 60 }}
             textStyle={{ fontSize: 22, textAlign: "center" }}
           />
+          <Button
+            testID="entry-accessible-one"
+            title="Accessible pour moi"
+            variant="secondary"
+            onPress={() => router.push("/accessible-one")}
+            style={{ minHeight: 56 }}
+            textStyle={{ fontSize: 20, textAlign: "center" }}
+          />
         </View>
         <View style={{ gap: 12 }}>
           <Button

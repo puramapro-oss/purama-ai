@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "scope": "Expo autolinking discovery only; no binary compilation",
+  "platforms": {
+    "android": {
+      "packageName": "purama-accessibility-watch",
+      "projects": [
+        {
+          "name": "purama-accessibility-watch",
+          "sourceDir": "/workspace/scratch/dec42123c445/watch-native-prebuild/modules/purama-accessibility-watch/android",
+          "modules": [
+            "expo.modules.puramaaccessibilitywatch.PuramaAccessibilityWatchModule"
+          ]
+        }
+      ],
+      "packageVersion": "0.1.0"
+    },
+    "apple": {
+      "packageName": "purama-accessibility-watch",
+      "pods": [
+        {
+          "podName": "PuramaAccessibilityWatch",
+          "podspecDir": "/workspace/scratch/dec42123c445/watch-native-prebuild/modules/purama-accessibility-watch/apple"
+        }
+      ],
+      "swiftModuleNames": [
+        "PuramaAccessibilityWatch"
+      ],
+      "modules": [
+        "PuramaAccessibilityWatchModule"
+      ],
+      "appDelegateSubscribers": [],
+      "reactDelegateHandlers": [],
+      "debugOnly": false,
+      "packageVersion": "0.1.0"
+    }
+  }
+}
