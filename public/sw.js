@@ -1,12 +1,53 @@
 // Purama AI — Service Worker
 // Handles: install/activate, offline fallback, web push, notification clicks
-const CACHE_PREFIX = 'purama-static-';
-const CACHE_NAME = CACHE_PREFIX + 'v2';
+const CACHE_NAME = 'purama-offline-v8';
 const OFFLINE_URL = '/offline.html';
-// The previous worker cached "/" with credentials. Retire only that known
-// legacy cache; other applications on this origin own their own caches.
-const LEGACY_CACHE_NAME = 'purama-v1';
-const PRECACHE = [OFFLINE_URL, '/manifest.json'];
+// BEGIN OFFLINE ASSET MANIFEST
+// OFFLINE ASSET CACHE VERSION: purama-offline-v8
+const OFFLINE_ASSETS = [
+  {
+    "path": "/offline.html",
+    "types": [
+      "text/html"
+    ],
+    "bytes": 17795,
+    "sha256": "985933b735663e75c8174041a2ae75ec1de88f759279133293435fdcf14a35ca"
+  },
+  {
+    "path": "/offline-workspace.js",
+    "types": [
+      "text/javascript",
+      "application/javascript",
+      "application/ecmascript",
+      "text/ecmascript"
+    ],
+    "bytes": 46034,
+    "sha256": "db52a8b8fa63b520bf1b16b415fd23208ba66899f1236897bb31f8a3c7b2dfbb"
+  },
+  {
+    "path": "/offline-library-backup.js",
+    "types": [
+      "text/javascript",
+      "application/javascript",
+      "application/ecmascript",
+      "text/ecmascript"
+    ],
+    "bytes": 12784,
+    "sha256": "d180b05605564f7e1acab48e2504f46d4fa6c220ad3386edfe36bea39df0d0e4"
+  },
+  {
+    "path": "/manifest.json",
+    "types": [
+      "application/json",
+      "application/manifest+json"
+    ],
+    "bytes": 1112,
+    "sha256": "569bf509b38dd6fcf0e6286efc2cd47f768ee646cae472f4dcc0768aecc9bc24"
+  }
+];
+// END OFFLINE ASSET MANIFEST
+const PRECACHE = OFFLINE_ASSETS.map((asset) => asset.path);
+
 const NOTIFICATION_FALLBACK = '/dashboard';
 const NOTIFICATION_PAGES = new Set([
   '/notifications',
@@ -95,52 +136,142 @@ async function openNotificationPage(url) {
   }
 }
 
+
+// Validate the decoded bytes, not just HTTP success: SPA/login fallbacks can be 200.
+// The known release size bounds each read, including a response without Content-Length.
+async function validOfflineAsset(response, asset) {
+  if (!response || !response.ok || response.redirected) return false;
+  const mime = (response.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+  if (!asset.types.includes(mime)) return false;
+  try {
+    const body = response.clone().body;
+    if (!body) return false;
+    const reader = body.getReader();
+    const bytes = new Uint8Array(asset.bytes);
+    let offset = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (offset + value.byteLength > bytes.byteLength) {
+        // Do not await cancellation of a tee: its other branch is the cached response.
+        void reader.cancel().catch(() => {});
+        return false;
+      }
+      bytes.set(value, offset);
+      offset += value.byteLength;
+    }
+    if (offset !== asset.bytes) return false;
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('') === asset.sha256;
+  } catch (_) { return false; }
+}
+
+async function cacheIsReady(cache) {
+  const checks = await Promise.all(OFFLINE_ASSETS.map(async (asset) =>
+    validOfflineAsset(await cache.match(asset.path), asset)));
+  return OFFLINE_ASSETS.length === 4 && checks.every(Boolean);
+}
+
+async function prepareAssets(cache) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    // Nothing is written until all responses match this worker's release.
+    const responses = await Promise.all(OFFLINE_ASSETS.map(async (asset) => {
+      const response = await fetch(new URL(asset.path, self.location.origin).href, {
+        cache: 'no-store', credentials: 'omit', redirect: 'error', signal: controller.signal,
+      });
+      if (!await validOfflineAsset(response, asset)) throw new Error('Invalid offline resource: ' + asset.path);
+      return response;
+    }));
+    // Each accepted file has the immutable hash for this cache version. If a put
+    // fails, existing valid files remain valid; an incomplete cache is never ready.
+    await Promise.all(OFFLINE_ASSETS.map((asset, index) => cache.put(asset.path, responses[index])));
+    if (!await cacheIsReady(cache)) throw new Error('Offline cache verification failed');
+  } finally {
+    clearTimeout(timeout);
+    controller.abort();
+  }
+}
+
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(PRECACHE.map((path) => new Request(new URL(path, self.location.origin), {
-        cache: 'reload',
-        credentials: 'omit',
-        redirect: 'error',
-      })));
-      // A failed/offline installation must reject and leave the previous worker
-      // in place, instead of activating without a usable offline page.
-      await self.skipWaiting();
-    })()
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    // A failed preparation must reject installation and leave the old worker usable.
+    await prepareAssets(cache);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(keys
-        .filter((key) => key === LEGACY_CACHE_NAME || (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME))
-        .map((key) => caches.delete(key)));
-      await self.clients.claim();
-    })()
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    const obsolete = keys.filter((key) => key !== CACHE_NAME
+      && (key === 'purama-v1' || /^purama-(?:static|offline)-v[1-9][0-9]*$/.test(key)));
+    await Promise.all(obsolete.map((key) => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 
-// Network-first for navigations, with offline fallback
+// Only the self-contained workspace is cache-first. Other navigations retain
+// their existing network-first behavior; authenticated/API responses are not cached.
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET' || req.mode !== 'navigate' || new URL(req.url).origin !== self.location.origin) return;
-  event.respondWith(
-    fetch(req).catch(async () => {
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (PRECACHE.includes(url.pathname)) {
+    event.respondWith((async () => {
       try {
-        const offline = await caches.match(OFFLINE_URL, { cacheName: CACHE_NAME });
-        if (offline) return offline;
-      } catch {
-        // Storage can be unavailable or evicted, even after a successful install.
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(url.pathname);
+        const asset = OFFLINE_ASSETS.find((entry) => entry.path === url.pathname);
+        if (await validOfflineAsset(cached, asset)) return cached;
+      } catch (_) { /* Online access can still work when local cache storage fails. */ }
+      return fetch(req);
+    })());
+    return;
+  }
+  if (req.mode === 'navigate') {
+    event.respondWith((async () => {
+      try { return await fetch(req); }
+      catch (_) {
+        try {
+          const cache = await caches.open(CACHE_NAME);
+          const fallback = await cache.match(OFFLINE_URL);
+          if (await cacheIsReady(cache) && fallback) return fallback;
+        } catch (_) { /* Report the unavailable fallback below. */ }
+        return new Response('Espace hors connexion indisponible. Reconnectez-vous au site pour le préparer.', {
+          status: 503,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
+        });
       }
-      return new Response('Hors ligne — reconnecte-toi puis réessaie.', {
-        status: 503,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
-      });
-    })
-  );
+    })());
+  }
+});
+
+// Readiness checks do not fetch. Re-preparation is an explicit user action and
+// also repairs eviction when the active worker's code has not changed.
+self.addEventListener('message', (event) => {
+  const prepare = event.data?.type === 'PURAMA_OFFLINE_PREPARE';
+  if ((!prepare && event.data?.type !== 'PURAMA_OFFLINE_STATUS') || !event.ports?.[0]) return;
+  event.waitUntil((async () => {
+    let ready = false;
+    let refreshed = false;
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      if (prepare) {
+        try {
+          await prepareAssets(cache);
+          refreshed = true;
+        } catch (_) { /* Invalid downloads never replace previously verified resources. */ }
+      }
+      ready = await cacheIsReady(cache);
+    } catch (_) { /* Storage failure is reported as unavailable. */ }
+    const status = { type: 'PURAMA_OFFLINE_STATUS', ready, version: CACHE_NAME };
+    if (prepare) status.refreshed = refreshed;
+    event.ports[0].postMessage(status);
+  })());
 });
 
 // =============================================================
