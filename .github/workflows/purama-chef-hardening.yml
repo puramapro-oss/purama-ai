@@ -42,6 +42,8 @@ jobs:
       - run: npm ci --no-audit
       - run: node ../scripts/generate-supabase-contracts.mjs --check
       - run: npm test
+      - name: Connected research native HTTP boundaries
+        run: node --import tsx --test test/connectedResearch.native.mjs
       - run: node --test ../tests/oauth-google/state-sql.test.mjs
       - name: OAuth state on native PostgreSQL
         working-directory: .
@@ -96,6 +98,8 @@ jobs:
       - run: npm run lint
       - run: npm run test:distribution:unit
       - run: npm run test:distribution:sql
+      - name: Saved agent execution preferences and ownership
+        run: node --test tests/creator-execution-preferences.test.mjs
       - run: npm run test:distribution:worker
       - run: npm run test:distribution:chat
       - run: npm run test:contracts-auth

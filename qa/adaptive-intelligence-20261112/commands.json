@@ -1,0 +1,62 @@
+[
+  {
+    "name": "karta-full",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=2",
+      "--reporter=json",
+      "--outputFile=${WORKSPACE}/purama-ai/qa/adaptive-intelligence-20261112/karta-tests.json"
+    ],
+    "cwd": "karta",
+    "exit_code": 1,
+    "seconds": 84.73,
+    "log_section": "karta-full.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "karta-types",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.json"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 6.63,
+    "log_section": "karta-types.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "karta-build",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.build.json"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 3.6,
+    "log_section": "karta-build.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "research-native",
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "--test",
+      "test/connectedResearch.native.mjs"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 0.34,
+    "log_section": "research-native.log",
+    "log": "validation-output.txt"
+  }
+]
