@@ -19,3 +19,21 @@ Additive to revision 1; every revision-1 response shape remains valid.
 Timeouts share the same controller: when a stage exceeds the bound, KARTA aborts the ports and returns a generic blocked response carrying `effect` — `none` when only the SMARANA context build (a read with a durable receipt) was interrupted, `uncertain` once a completion or a memory control was in flight. An already-aborted signal is rejected before any dispatch. Ports accept an optional `signal`; a port that ignores it still terminates by the KARTA bound, only with less precise effect knowledge.
 
 Every response carries `updatedAt` (ISO 8601) refreshed on each transition, so a poller can tell a live request from a stalled one. The facade holds requests under a lease: terminal requests expire `retentionMs` (default 15 min) after settling and the facade keeps at most `maxRequests` (default 10 000) entries, evicting the oldest terminal ones first; a pending request is never evicted. After eviction `GET` answers `404` and a resubmission with the same identity redispatches, which the SMARANA and Compute Fabric idempotency keys turn into a replay rather than a second effect. There is no streaming: `POST` answers `202` once the request is settled or `503` when blocked, and a client that disconnects mid-request loses nothing, since the settled state stays readable through `GET` until the lease expires.
+
+## Revision 3 — session gate (2026-11-12)
+
+Additive to revisions 1 and 2. Response bodies are unchanged. This revision does not create an issuer, a tenant directory, or a module-open policy decision point.
+
+Before `POST /iao/requests`, `POST /pura/requests`, `GET /iao/requests/:id`, and `POST /iao/requests/:id/cancel`, KARTA rechecks the authenticator result. A missing runtime still returns `503` and does not call the authenticator. Any other failure of this recheck returns `401` with `IAO authentication required`. The authenticator remains responsible for validating the credential and its current revocation.
+
+The recheck accepts the result only when all of the following hold:
+
+- `tenantId` and `actorId` are non-empty strings.
+- `session.tenantId` equals `tenantId`, and `session.userId` equals `actorId`.
+- `session.appSlug` is exactly `purama-ai`. A ONE launch offer is not an IAO session.
+- `session.sessionId` is a UUID.
+- `session.issuedAt` and `session.expiresAt` are finite numbers, `issuedAt` is not in the future, `expiresAt` is still ahead, and `expiresAt - issuedAt` is at most 15 minutes.
+
+KARTA freezes that tenant, actor, and session before reading the body or dispatching. IAO responses on these routes set `Cache-Control: no-store`. Routes that are not IAO routes keep their existing cache header and are not authenticated by this gate.
+
+This revision is implemented on `codex/t03-iao-local-transport-20261014`. It is not present on pull request 45. No ONE authority is designated to issue these sessions.
