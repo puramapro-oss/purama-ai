@@ -1,0 +1,34 @@
+{
+  "environment": "Dedicated private overlay clone; original database remains stopped",
+  "chronology": "Health confirmed by host qualification agent; hashes bind its source receipts",
+  "migrations": 30,
+  "authHealthHttp": 200,
+  "chefRestHttp": 200,
+  "syntheticAccountsAuthenticated": 2,
+  "redisAuthenticatedPing": true,
+  "publicPortsPublished": false,
+  "legacyCronNeutralized": true,
+  "originalPgControlUnchanged": true,
+  "sourceReceipts": [
+    {
+      "file": "db-qualification.json",
+      "sha256": "796f092b8eaa4d8b1ff62fe7e8b9cd853f1a4ca2a5580636df077c209dc891e4"
+    },
+    {
+      "file": "chef-migrations.json",
+      "sha256": "37f49b9a642587a543fe3923b1e32e6b9891edbc3c3f97436eb3d3c4017ca127"
+    },
+    {
+      "file": "private-auth-rest-proof.json",
+      "sha256": "0e9d7456f9e72c3def4673b784756568b8b9e6d3e80d135002c365480c7ab116"
+    },
+    {
+      "file": "redis-proof.json",
+      "sha256": "a65dc2321db88201624ea973ba299d1a20e224fda38c08c83ac7a596cbb3050e"
+    },
+    {
+      "file": "handoff-proof.json",
+      "sha256": "bb0ba7c7957e4779ec4062400c3541bb20b389f431e6b5f26fd46904bfbe5f21"
+    }
+  ]
+}

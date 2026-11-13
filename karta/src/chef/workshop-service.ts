@@ -3,6 +3,7 @@ import { supabase } from "../db/supabase.js";
 import { isGlobalKillSwitchActive } from "../engine/killswitch.js";
 import { normalizeChefBrief, hashChefBrief, type ChefBrief } from "./brief.js";
 import { parseWorkshopProjects, workshopProjectHash, WORKSHOP_ID, WORKSHOP_UUID, type WorkshopProject } from "./workshop-config.js";
+import { buildWorkshopArtifact } from "./workshop-artifact.js";
 
 export class WorkshopError extends Error {
   constructor(readonly status: number, readonly code: string, message: string) { super(message); }
@@ -26,7 +27,14 @@ export function buildWorkshopBrief(project: WorkshopProject, requestId: string, 
   const requirementKeys = ["PRODUCT", "QUALITY"];
   const context = "\nObjectif de l’utilisateur :\n" + prompt +
     "\nReste dans les fichiers autorisés. Aucun secret, paiement, publication ni modification d'infrastructure. " +
-    "Signale tout prérequis externe manquant. Les vérifications doivent porter sur le résultat réel.";
+    "Signale tout prérequis externe manquant. Les vérifications doivent porter sur le résultat réel. " +
+    "Après ta réponse, le serveur exécute obligatoirement les profils de vérification configurés sur la version enregistrée. " +
+    "Le statut completed signifie que ton implémentation ou ton examen est prêt pour ces contrôles; il ne certifie pas leur réussite. " +
+    "Effectue les contrôles permis par ton sandbox. Si un outil de test comme le navigateur ne peut pas y démarrer, " +
+    "ne contourne pas la protection et indique explicitement NON EXÉCUTÉ dans le résumé. " +
+    "Cette seule restriction de lancement ne bloque pas une implémentation ou un examen terminé: les contrôles du serveur restent obligatoires. " +
+    "Un défaut réellement constaté, un livrable incomplet ou un prérequis nécessaire à ta tâche doit toujours être signalé comme échec ou blocage. " +
+    "Ne déclare jamais un test réussi sans l’avoir exécuté.";
   const common = {
     provider: "codex" as const, worktree: project.workdir,
     requirementKeys, maxAttempts: 3,
@@ -96,11 +104,12 @@ export async function handleWorkshopRequest(userId: string, body: Record<string,
   if (!WORKSHOP_UUID.test(userId)) invalid();
   userId = userId.toLowerCase();
   const keys: Record<string,string[]> = {
-    list: ["action"], status: ["action","missionId"], cancel: ["action","missionId"],
+    list: ["action"], status: ["action","missionId"], cancel: ["action","missionId"], artifact: ["action","missionId"],
     start: ["action","projectId","requestId","prompt"],
   };
   if (typeof body.action !== "string" || !Object.hasOwn(keys,body.action) ||
       Object.keys(body).some(k => !keys[body.action as string].includes(k))) invalid();
+  if (body.action === "artifact" && (typeof body.missionId !== "string" || !WORKSHOP_UUID.test(body.missionId))) invalid();
   if (body.action === "status" || body.action === "cancel") {
     if (typeof body.missionId !== "string" || !WORKSHOP_UUID.test(body.missionId)) invalid();
     const id = body.missionId.toLowerCase();
@@ -118,6 +127,23 @@ export async function handleWorkshopRequest(userId: string, body: Record<string,
   let projects: WorkshopProject[];
   try { projects = parseWorkshopProjects().filter(p => p.userIds.includes(userId)); }
   catch { throw new WorkshopError(503,"WORKSHOP_UNAVAILABLE","Configuration du service de création indisponible."); }
+  if (body.action === "artifact") {
+    const mission = await getWorkshopMission(userId, String(body.missionId).toLowerCase());
+    const project = projects.find(candidate => candidate.id === mission.projectId);
+    // Ownership of an old run does not retain access after removal from the project.
+    if (!project) throw new WorkshopError(404,"WORKSHOP_NOT_FOUND","Projet introuvable.");
+    const expected = ["implementation", "functional-review", "security-review"];
+    const implementation = mission.tasks.find(task => task.key === "implementation");
+    const sha = implementation?.outputSha;
+    if (mission.state !== "verified_done" || !mission.finishedAt || mission.totalTasks !== expected.length ||
+        mission.verifiedTasks !== expected.length || typeof sha !== "string" || !/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/i.test(sha) ||
+        new Set(mission.tasks.map(task => task.key)).size !== expected.length ||
+        mission.tasks.some(task => !expected.includes(task.key) || task.state !== "verified_done" || task.outputSha !== sha || task.evidenceCount < 1)) {
+      throw new WorkshopError(409,"WORKSHOP_ARTIFACT_UNAVAILABLE","La création ne possède pas encore une version entièrement vérifiée.");
+    }
+    try { return { ok: true, artifact: await buildWorkshopArtifact(project, mission.id, sha.toLowerCase()) }; }
+    catch { throw new WorkshopError(409,"WORKSHOP_ARTIFACT_UNAVAILABLE","Les fichiers de cette version ne sont pas disponibles pour l’export."); }
+  }
   if (body.action === "list") {
     const [runtimeResult, historyResult, stopped] = await Promise.all([
       supabase.from("chef_workshop_runtimes").select("project_id,config_hash,online,heartbeat_at")

@@ -11,6 +11,9 @@ const PROJECT = /^[a-z0-9-]{1,48}$/;
 const SHA = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i;
 const MAX_REQUEST_BYTES = 64 * 1024;
 const MAX_RESPONSE_BYTES = 512 * 1024;
+const MAX_ARTIFACT_RESPONSE_BYTES = 6 * 1024 * 1024;
+const MAX_ARCHIVE_BYTES = 4 * 1024 * 1024;
+const MAX_PREVIEW_BYTES = 200 * 1024;
 const missionStates = new Set([
   "planning", "active", "paused", "human_required", "external_required",
   "verified_done", "failed", "cancelling", "cancelled",
@@ -21,7 +24,7 @@ const taskStates = new Set([
 ]);
 type WorkshopInput =
   | { action: "list" }
-  | { action: "status" | "cancel"; missionId: string }
+  | { action: "status" | "cancel" | "artifact"; missionId: string }
   | { action: "start"; projectId: string; requestId: string; prompt: string };
 
 function json(body: unknown, status = 200): Response {
@@ -92,7 +95,7 @@ function exactKeys(value: Record<string, unknown>, keys: string[]): boolean {
 function parseInput(value: unknown): WorkshopInput | null {
   if (!record(value)) return null;
   if (value.action === "list" && exactKeys(value, ["action"])) return { action: "list" };
-  if ((value.action === "status" || value.action === "cancel")
+  if ((value.action === "status" || value.action === "cancel" || value.action === "artifact")
     && exactKeys(value, ["action", "missionId"]) && identifier(value.missionId)) {
     return { action: value.action, missionId: value.missionId.toLowerCase() };
   }
@@ -147,8 +150,39 @@ function publicMission(value: unknown) {
     usage: { tokens: value.usage.tokens, costMicros: value.usage.costMicros },
   };
 }
-function publicResult(value: unknown, input: WorkshopInput) {
+async function publicArtifact(value: unknown, missionId: string) {
+  if (!record(value) || value.missionId !== missionId || typeof value.commitSha !== "string" || !SHA.test(value.commitSha)
+    || !record(value.archive)) throw new Error("Invalid artifact");
+  const archive = value.archive;
+  if (typeof archive.fileName !== "string" || !/^[a-z0-9][a-z0-9._-]{0,150}\.zip$/i.test(archive.fileName)
+    || archive.mediaType !== "application/zip" || !count(archive.bytes, MAX_ARCHIVE_BYTES) || archive.bytes < 22
+    || typeof archive.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(archive.sha256)
+    || typeof archive.base64 !== "string" || archive.base64.length > 4 * Math.ceil(MAX_ARCHIVE_BYTES / 3)
+    || archive.base64.length % 4 !== 0 || /[^A-Za-z0-9+/=]/.test(archive.base64)) throw new Error("Invalid archive");
+  const decoded = atob(archive.base64);
+  if (decoded.length !== archive.bytes || btoa(decoded) !== archive.base64 || !decoded.startsWith("PK\u0003\u0004")) throw new Error("Invalid archive bytes");
+  const hash = async (bytes: Uint8Array) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", Uint8Array.from(bytes).buffer)))
+    .map(byte => byte.toString(16).padStart(2, "0")).join("");
+  if (await hash(Uint8Array.from(decoded, char => char.charCodeAt(0))) !== archive.sha256) throw new Error("Archive hash mismatch");
+  let preview;
+  if (value.preview !== undefined) {
+    const entry = value.preview;
+    if (!record(entry) || typeof entry.fileName !== "string" || !/^[a-z0-9][a-z0-9._-]{0,150}\.html?$/i.test(entry.fileName)
+      || entry.mediaType !== "text/html" || typeof entry.content !== "string" || entry.content.length > MAX_PREVIEW_BYTES
+      || !count(entry.bytes, MAX_PREVIEW_BYTES) || typeof entry.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(entry.sha256)
+      // eslint-disable-next-line no-control-regex -- HTML with binary/control data is not an eligible preview.
+      || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(entry.content)) throw new Error("Invalid preview");
+    const bytes = new TextEncoder().encode(entry.content);
+    if (bytes.length !== entry.bytes || await hash(bytes) !== entry.sha256) throw new Error("Preview hash mismatch");
+    preview = { fileName: entry.fileName, mediaType: "text/html", content: entry.content, sha256: entry.sha256, bytes: entry.bytes };
+  }
+  return { missionId, commitSha: value.commitSha.toLowerCase(), archive: {
+    fileName: archive.fileName, mediaType: "application/zip", base64: archive.base64, sha256: archive.sha256, bytes: archive.bytes,
+  }, ...(preview ? { preview } : {}) };
+}
+async function publicResult(value: unknown, input: WorkshopInput) {
   if (!record(value) || value.ok !== true) throw new Error("Invalid result");
+  if (input.action === "artifact") return { ok: true, artifact: await publicArtifact(value.artifact, input.missionId) };
   if (input.action === "list") {
     if (!Array.isArray(value.projects) || value.projects.length > 64
       || !Array.isArray(value.missions) || value.missions.length > 50) throw new Error("Invalid list");
@@ -220,8 +254,8 @@ Deno.serve(async (req) => {
     }
     const input = parseInput(body);
     if (!input) return errorResponse(400, "Demande invalide.", "WORKSHOP_INVALID");
-    const bucket = input.action === "start" ? "start" : input.action === "cancel" ? "cancel" : "read";
-    const limit = rateLimit("chef-workshop:" + bucket + ":" + userId, bucket === "start" ? 10 : 120,
+    const bucket = input.action === "start" ? "start" : input.action === "cancel" ? "cancel" : input.action === "artifact" ? "artifact" : "read";
+    const limit = rateLimit("chef-workshop:" + bucket + ":" + userId, bucket === "start" ? 10 : bucket === "artifact" ? 15 : 120,
       bucket === "start" ? 3_600_000 : 60_000);
     if (!limit.allowed) return errorResponse(429, "Trop de demandes. Réessaie dans un moment.", "WORKSHOP_RATE_LIMITED");
     const internalUrl = Deno.env.get("KARTA_INTERNAL_URL");
@@ -250,8 +284,11 @@ Deno.serve(async (req) => {
         void response.body?.cancel().catch(() => undefined);
         return upstreamFailure(response.status);
       }
-      const result = await readBoundedJson(response, MAX_RESPONSE_BYTES, controller.signal);
-      return json(publicResult(result, input), response.status === 202 ? 202 : 200);
+      const result = await readBoundedJson(response, input.action === "artifact" ? MAX_ARTIFACT_RESPONSE_BYTES : MAX_RESPONSE_BYTES, controller.signal);
+      const receipt = await publicResult(result, input);
+      if (req.signal.aborted) return errorResponse(499, "Demande annulée.", "WORKSHOP_CANCELLED");
+      if (timedOut) return errorResponse(504, "Délai dépassé. Consulte l’état de la mission avant de réessayer.", "WORKSHOP_UNCONFIRMED");
+      return json(receipt, response.status === 202 ? 202 : 200);
     } catch {
       if (req.signal.aborted) return errorResponse(499, "Demande annulée.", "WORKSHOP_CANCELLED");
       if (timedOut) return errorResponse(504, "Délai dépassé. Consulte l’état de la mission avant de réessayer.", "WORKSHOP_UNCONFIRMED");

@@ -12,6 +12,8 @@ conditionnent le résultat. Les animations de génération fictive ont été ret
 - Exécution parallèle bornée par la configuration de l’hôte et les verrous CHEF.
 - Arrêt demandé distinct de l’arrêt confirmé ; aucune libération de dossier sur une simple expiration de bail.
 - SHA et nombre de preuves issus du moteur, sans fausse réussite ou faux aperçu.
+- Archive ZIP des sources et aperçu HTML optionnel, chargés depuis le commit vérifié.
+- Contrôle de la propreté, du HEAD et de la branche avant et après les vérifications, y compris en lecture seule.
 - L’interface ne reçoit ni chemins, ni commandes, ni clé de service, ni diagnostic brut.
 
 L’atelier exécute des projets **préenregistrés par leur propriétaire technique**. Il ne
@@ -41,7 +43,9 @@ Origin et la sélection des capacités de la PR68 restent distincts et ne sont p
 8. Qualifier une mission complète dans cet environnement avant d’ouvrir le projet aux utilisateurs.
 
 Aucun changement de fournisseur, achat, déploiement Vercel ou modification des autres
-worktrees n’est nécessaire. Le dépôt et les profils doivent être propres et dédiés.
+worktrees n’est nécessaire. Le dépôt et les profils doivent être propres et dédiés. `workdir` doit être le chemin canonique
+retourné par `realpath` : les alias sont refusés avant admission pour conserver la même
+identité de dossier entre l’API, les workers et les verrous SQL.
 Ne pas donner au worker le dépôt actif d’une autre équipe ou des accès de production.
 
 ## Enregistrement Git
@@ -57,12 +61,51 @@ les changements de .gitattributes/.gitmodules, plus de 256 fichiers, plus de 10 
 fichier et plus de 25 Mio au total. Les filtres Git locaux ne sont pas pris en charge
 par cet adaptateur ; un projet qui en dépend nécessite un adaptateur qualifié.
 
+## Récupération des créations
+
+L’action authentifiée `artifact` accepte uniquement un identifiant de mission. Elle
+revérifie l’appartenance actuelle au projet et exige que la réalisation et les deux
+revues soient terminées, avec le même commit. Les fichiers viennent des objets Git de
+cette version, même si le projet a ensuite changé ; aucun fichier courant n’est substitué.
+L’API doit donc accéder au même dépôt dédié que le consommateur.
+
+`exportPaths` permet de limiter les sources distribuées (par défaut `allowedPaths`).
+L’archive est bornée à 256 fichiers et 4 Mio. Liens symboliques, sous-modules, traversées
+de chemin et emplacements de secrets identifiables sont refusés. Ce filtre de noms
+ne remplace pas une revue du contenu : les projets exécutés doivent être sans secrets.
+Les sources d’authentification ordinaires, par exemple `src/auth/Login.tsx`, restent exportables.
+
+`previewEntry`, facultatif, désigne un fichier `.html` exporté, UTF-8, non vide, de 200 Kio maximum.
+Un fichier vide, binaire ou trop grand reste dans le ZIP sans être proposé en aperçu.
+L’aperçu convient à une page autonome ; il ne reconstruit pas les dépendances d’un site
+multifichier. Le client vérifie taille, empreinte, mission et commit avant d’exposer le
+résultat. L’iframe a une origine opaque et une CSP restrictive ; il ne partage pas la
+session de l’éditeur. Cette politique ne garantit pas l’absence de toute navigation
+arbitraire déclenchée par du JavaScript. Les URL Blob sont révoquées au changement de
+compte ou de mission. L’archive livrée contient des sources, pas une compilation mobile.
+
+Exemple d’ajout au projet déjà configuré :
+
+    "exportPaths": ["index.html", "src", "package.json"],
+    "previewEntry": "index.html"
+
+Les exécutables Git, Codex et de vérification doivent être extérieurs au dépôt généré.
+Un exécutable de confiance qui lance un script du projet exécute toujours du code non
+fiable : l’isolation complète du compte ou du conteneur reste indispensable avant
+ouverture à des utilisateurs publics.
+
 ## Vérifications et coûts
 
 Les profils sont des commandes de confiance enregistrées sur l’hôte, jamais envoyées
 par le navigateur ou choisies par le texte du modèle. Chaque exigence PRODUCT et QUALITY
 doit recevoir une preuve de réalisation et une preuve review issue d’une tâche distincte.
 Les tests d’acceptation devraient être maintenus hors des chemins modifiables par le modèle.
+
+La réponse `completed` du modèle signifie « prêt pour les contrôles du serveur ».
+Elle ne constitue jamais une preuve de réussite. Le modèle indique explicitement les
+contrôles qu’il n’a pas pu exécuter dans son sandbox, sans contourner ses restrictions ;
+les profils configurés sont ensuite exécutés par le serveur et peuvent refuser le résultat.
+Un défaut constaté ou une réalisation incomplète demeure un échec ou un blocage.
 
 tokenBudget et estimatedTokensPerTask utilisent les compteurs réellement rapportés par
 Codex. Une estimation n’est pas un plafond strict imposé à une requête du fournisseur :

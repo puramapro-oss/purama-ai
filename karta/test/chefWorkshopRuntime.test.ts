@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { parseWorkshopProjects, type WorkshopProject } from "../src/chef/workshop-config.js";
@@ -233,6 +233,7 @@ describe("workshop dispatcher", () => {
   });
 
   it("cancels through the real CHEF cycle and finishes only after authenticated release", async () => {
+    const fixture = await repository();
     const h = harness();
     h.deps.cycle = runChefWorkerCycle;
     let claimed = false;
@@ -241,7 +242,7 @@ describe("workshop dispatcher", () => {
     const unit = worker();
     const task: ChefRuntimeTask = {
       id: "task-1", missionId, briefHash: "a".repeat(64), instructions: "Review the project",
-      cwd: process.cwd(), accessMode: "read", fencingToken: 1, attempt: 1, verificationProfiles: ["review"], allowedPaths: [],
+      cwd: fixture.cwd, accessMode: "read", fencingToken: 1, attempt: 1, verificationProfiles: ["review"], allowedPaths: [],
     };
     unit.control.claimNext = vi.fn(async () => {
       if (claimed) return null;
@@ -307,8 +308,8 @@ describe("workshop dispatcher", () => {
 async function repository(auth = true) {
   const root = await mkdtemp(join(tmpdir(), "chef-workshop-test-"));
   dirs.push(root);
-  const cwd = join(root, "repo");
-  await mkdir(cwd);
+  await mkdir(join(root, "repo"));
+  const cwd = await realpath(join(root, "repo"));
   await exec("git", ["init", "-q", cwd]);
   await exec("git", ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
     "-c", "core.hooksPath=/dev/null", "commit", "--allow-empty", "-qm", "fixture"], { cwd });
@@ -316,6 +317,7 @@ async function repository(auth = true) {
   await writeFile(codex, "#!" + process.execPath + "\n" +
     "if (process.argv.includes('--version')) { console.log('codex-cli 0.1.0'); }\n" +
     "else if (process.argv.includes('login') && process.argv.includes('status')) {" +
+    " if (process.argv.includes('--ignore-user-config')) process.exit(2);" +
     " console.error('private auth detail'); process.exit(" + (auth ? 0 : 1) + "); }\n" +
     "else { console.error('unexpected model invocation'); process.exit(77); }\n", { mode: 0o700 });
   return { root, cwd, codex, project: project({ workdir: cwd, codexCommand: codex }) };
@@ -353,6 +355,14 @@ describe("workshop local preflight", () => {
       .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
   });
 
+  it("rejects a worktree alias before advertising a mismatched SQL identity", async () => {
+    const fixture = await repository();
+    const alias = join(fixture.root, "alias");
+    await symlink(fixture.cwd, alias);
+    await expect(preflightWorkshopProject({ ...fixture.project, workdir: alias }, new AbortController().signal))
+      .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+  });
+
   it("rejects a missing trusted verifier command", async () => {
     const fixture = await repository();
     fixture.project.verificationProfiles[0].command = join(fixture.root, "missing");
@@ -368,6 +378,35 @@ describe("workshop local preflight", () => {
       "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture symlink"], { cwd: fixture.cwd });
     await expect(preflightWorkshopProject(fixture.project, new AbortController().signal))
       .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+  });
+
+  it("forbids a verifier executable stored inside its own worktree", async () => {
+    const fixture = await repository();
+    const local = join(fixture.cwd, "self-verifier");
+    await writeFile(local, "#!/bin/sh\nexit 0\n", { mode: 0o700 });
+    await exec("git", ["add", "self-verifier"], { cwd: fixture.cwd });
+    await exec("git", ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+      "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture verifier"], { cwd: fixture.cwd });
+    fixture.project.verificationProfiles[0].command = local;
+    await expect(preflightWorkshopProject(fixture.project, new AbortController().signal))
+      .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+  });
+
+  it("rejects a Git executable resolved inside the model worktree before invoking it", async () => {
+    const fixture = await repository();
+    const local = join(fixture.cwd, "git");
+    const marker = join(fixture.root, "untrusted-git-ran");
+    await writeFile(local, "#!" + process.execPath + "\nrequire('node:fs').writeFileSync(" + JSON.stringify(marker) + ", 'bad');\n", { mode: 0o700 });
+    await exec("git", ["add", "git"], { cwd: fixture.cwd });
+    await exec("git", ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+      "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture Git"], { cwd: fixture.cwd });
+    const priorPath = process.env.PATH;
+    try {
+      process.env.PATH = fixture.cwd + ":" + priorPath;
+      await expect(preflightWorkshopProject(fixture.project, new AbortController().signal))
+        .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+      await expect(import("node:fs/promises").then(fs => fs.access(marker))).rejects.toMatchObject({ code: "ENOENT" });
+    } finally { process.env.PATH = priorPath; }
   });
 
   it("forbids a mutable CLI stored inside its own worktree", async () => {

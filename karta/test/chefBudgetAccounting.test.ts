@@ -4,6 +4,16 @@ import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js
 import type { ChefVerifier } from "../src/chef/verifier.js";
 import { ChefProcessStopUnconfirmedError } from "../src/chef/process.js";
 
+// These cases isolate accounting/cancellation; real Git mutations are exercised in
+// chefVerificationGitIntegration.test.ts with private temporary repositories.
+vi.mock("../src/chef/git-state.js", () => ({
+  captureCleanGitBaseline: vi.fn(async () => ({ headSha: "a".repeat(40) })),
+  verifyCommittedGitState: vi.fn(async () => ({
+    kind: "receipt", sha256: "9".repeat(64),
+    payload: { profile: "git-state", ok: true, headSha: "a".repeat(40), clean: true },
+  })),
+}));
+
 const task: ChefRuntimeTask = {
   id: "budget-task", missionId: "budget-mission", briefHash: "a".repeat(64), instructions: "Read only",
   cwd: process.cwd(), accessMode: "read", fencingToken: 9, attempt: 2,
