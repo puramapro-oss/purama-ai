@@ -154,6 +154,17 @@ export class CodexCliChefDriver implements ChefWorkerDriver {
   async run(request: ChefDriverRequest, signal?: AbortSignal): Promise<ChefDriverResponse> {
     if (signal?.aborted) throw new Error("Worker Codex annulé");
     validateRequest(request);
+    // This direct CLI adapter has no qualified capability catalogue or receipt
+    // protocol. Preserve explicit choices by refusing before Git or process I/O;
+    // never turn their absence from the CLI payload into implicit permission.
+    if (request.capabilitySelection !== undefined) {
+      return {
+        schemaVersion: 1, status: "blocked_external",
+        summary: "Sélection des capacités indisponible : capability_adapter_unavailable",
+        usage: { inputTokens: 0, outputTokens: 0, costMicros: 0 },
+        metadata: { capabilitySelection: { state: "blocked", reason: "capability_adapter_unavailable" } },
+      };
+    }
     const cwd = assertAllowedCwd(request.cwd, this.options.allowedRoots);
     const env = trustedEnvironment(this.options.envAllowList);
     const initialHead = await captureWorkshopHead(cwd, signal);

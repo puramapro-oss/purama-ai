@@ -25,7 +25,8 @@ beforeAll(async () => {
     "011_chef_runtime_policy.sql", "012_chef_mission_ingest.sql", "013_chef_independent_review.sql",
     "014_chef_file_ownership.sql", "015_chef_mission_file_ownership.sql", "016_chef_scoped_evidence.sql",
     "017_chef_evidence_generation.sql", "021_chef_budget_admission.sql", "022_chef_mission_estimates.sql",
-    "023_chef_process_quarantine.sql", "024_chef_claim_budget_reconciliation.sql", "030_chef_workshop.sql",
+    "023_chef_process_quarantine.sql", "024_chef_claim_budget_reconciliation.sql",
+    "030_chef_capability_selection.sql", "031_chef_workshop.sql",
   ]) await db.exec(await readFile(new URL("../migrations/" + file, import.meta.url), "utf8"));
 });
 afterAll(async () => { await db?.close(); });
@@ -91,6 +92,22 @@ async function runRows() {
 }
 
 describe("workshop durable admission", () => {
+  it("preserves capabilities through the composed migration chain and workshop admission", async () => {
+    await heartbeat();
+    const requestId = randomUUID();
+    const selection = { mode: "manual", needs: ["research"], selectedIds: ["qualified-source"], excludedIds: [], maxSelected: 4 };
+    const value = brief(requestId, "example");
+    const combined = { ...value, tasks: value.tasks.map((task, index) => index === 0 ? { ...task, capabilitySelection: selection } : task) };
+    const hash = createHash("sha256").update(JSON.stringify(combined)).digest("hex");
+    const args = [owner, "example", requestId, requestHash, configHash, JSON.stringify(combined), hash];
+    const sql = "SELECT purama_ai.chef_workshop_submit($1,$2,$3,$4,$5,$6::jsonb,$7,2,100,NULL) AS id";
+    const id = (await db.query<{ id: string }>(sql, args)).rows[0].id;
+    expect((await db.query<{ id: string }>(sql, args)).rows[0].id).toBe(id);
+    expect((await db.query("SELECT capability_selection FROM purama_ai.chef_tasks WHERE mission_id=$1 AND task_key='build'", [id])).rows)
+      .toEqual([{ capability_selection: selection }]);
+    expect(await runRows()).toBe(1);
+  });
+
   it("requires an online, matching and fresh consumer before creating a mission", async () => {
     await expect(submit()).rejects.toMatchObject({ code: "PW503" });
     expect(await runRows()).toBe(0);

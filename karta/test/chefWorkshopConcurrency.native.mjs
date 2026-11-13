@@ -7,7 +7,7 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
-import { access, chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { constants } from "node:fs";
 import { createServer } from "node:net";
 import { dirname, join, resolve } from "node:path";
@@ -17,7 +17,7 @@ import pg from "pg";
 
 const execute = promisify(execFile);
 const kartaRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const reportPath = resolve(kartaRoot, "../qa/workshop-20261112/native-concurrency.json");
+const reportPath = resolve(kartaRoot, "../test-results/workshop-native-concurrency.json");
 const owner = "00000000-0000-4000-8000-000000003201";
 const other = "00000000-0000-4000-8000-000000003202";
 const instanceA = "00000000-0000-4000-8000-000000003203";
@@ -28,7 +28,10 @@ const report = {
   isolation: "new private temporary cluster; Unix socket only; no existing PostgreSQL service used",
   checks: [], migrations: [], cleanup: { stopped: false, removed: false },
 };
-const binaries = ["/opt/homebrew/opt/postgresql@18/bin", "/opt/homebrew/opt/postgresql/bin", "/usr/local/opt/postgresql@18/bin"];
+const binaries = [
+  "/opt/homebrew/opt/postgresql@18/bin", "/opt/homebrew/opt/postgresql/bin", "/usr/local/opt/postgresql@18/bin",
+  "/usr/lib/postgresql/18/bin", "/usr/lib/postgresql/17/bin", "/usr/lib/postgresql/16/bin",
+];
 let bin;
 let cluster;
 let data;
@@ -148,7 +151,11 @@ async function main() {
       bin=candidate; break;
     } catch { /* Existing installations only; never install or use a service fallback. */ }
   }
-  if (!bin) { report.status="NON_TESTE"; report.reason="No installed PostgreSQL binary set found"; return; }
+  if (!bin) {
+    report.status="NON_TESTE"; report.reason="No installed PostgreSQL binary set found";
+    process.exitCode=1;
+    return;
+  }
   report.postgresVersion=(await binary("postgres",["--version"])).stdout.trim();
   cluster=await mkdtemp("/tmp/purama-workshop-pg-");
   await chmod(cluster,0o700);
@@ -175,7 +182,8 @@ async function main() {
     "008_chef_control_plane.sql","009_chef_hardening.sql","010_chef_reliability.sql","011_chef_runtime_policy.sql",
     "012_chef_mission_ingest.sql","013_chef_independent_review.sql","014_chef_file_ownership.sql","015_chef_mission_file_ownership.sql",
     "016_chef_scoped_evidence.sql","017_chef_evidence_generation.sql","021_chef_budget_admission.sql","022_chef_mission_estimates.sql",
-    "023_chef_process_quarantine.sql","024_chef_claim_budget_reconciliation.sql","030_chef_workshop.sql",
+    "023_chef_process_quarantine.sql","024_chef_claim_budget_reconciliation.sql",
+    "030_chef_capability_selection.sql","031_chef_workshop.sql",
   ]) {
     const sql=await readFile(join(kartaRoot,"migrations",file),"utf8");
     await coordinator.query(sql);
@@ -275,6 +283,7 @@ try {
     }
   }
   report.finishedAt=new Date().toISOString();
+  await mkdir(dirname(reportPath),{recursive:true});
   await writeFile(reportPath,JSON.stringify(report,null,2)+"\n");
   console.log(JSON.stringify({status:report.status,checks:report.checks.length,cleanup:report.cleanup,report:reportPath}));
 }

@@ -39,6 +39,28 @@ export type AgentCategory =
 
 export type AgentModel = 'claude-sonnet-4-20250514' | 'claude-haiku-4-5-20251001';
 
+export interface CreatorExecutionPreferences {
+  reflection: 'auto' | 'standard' | 'deep' | 'maximum';
+  speed: 'standard' | 'fast' | 'ultra_fast';
+}
+
+/** Invalid stored choices must not silently turn into a successful save or a
+ * different execution profile. Callers handle an absent legacy column. */
+export function parseCreatorExecutionPreferences(value: unknown): CreatorExecutionPreferences {
+  const invalid = () => new Error('Les réglages d’exécution de cet agent sont invalides.');
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw invalid();
+  const keys = Reflect.ownKeys(value);
+  const reflection = Object.getOwnPropertyDescriptor(value, 'reflection');
+  const speed = Object.getOwnPropertyDescriptor(value, 'speed');
+  if (keys.length !== 2 || !keys.includes('reflection') || !keys.includes('speed')
+    || !reflection || !('value' in reflection) || typeof reflection.value !== 'string'
+    || !['auto', 'standard', 'deep', 'maximum'].includes(reflection.value)
+    || !speed || !('value' in speed) || typeof speed.value !== 'string'
+    || !['standard', 'fast', 'ultra_fast'].includes(speed.value)) throw invalid();
+  return { reflection: reflection.value as CreatorExecutionPreferences['reflection'], speed: speed.value as CreatorExecutionPreferences['speed'] };
+}
+
 export type RunTrigger = 'chat' | 'manual' | 'cron' | 'webhook' | 'api';
 export type RunStatus = 'pending' | 'running' | 'success' | 'error';
 
@@ -53,6 +75,8 @@ export interface CreatorAgent {
   category: AgentCategory | null;
   system_prompt: string;
   model: AgentModel;
+  /** Saved preferences for task execution; absent in legacy responses. */
+  execution_preferences?: CreatorExecutionPreferences;
   temperature: number;
   max_tokens: number;
   tools_enabled: string[];
@@ -198,6 +222,9 @@ export async function getAgent(id: string): Promise<CreatorAgent> {
     .eq('id', id)
     .single();
   if (error) throw error;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'execution_preferences')) {
+    return { ...data, execution_preferences: parseCreatorExecutionPreferences(data.execution_preferences) } as CreatorAgent;
+  }
   return data as CreatorAgent;
 }
 
@@ -242,6 +269,9 @@ export async function updateAgent(
   // Strip unsafe fields
   const { id: _, user_id: __, created_at: ___, updated_at: ____, total_runs: _____, total_tokens: ______, is_template: _______, ...safe } = patch;
   void _; void __; void ___; void ____; void _____; void ______; void _______;
+  if (Object.prototype.hasOwnProperty.call(safe, 'execution_preferences')) {
+    safe.execution_preferences = parseCreatorExecutionPreferences(safe.execution_preferences);
+  }
   const { data, error } = await sb()
     .from('creator_agents')
     .update(safe)
@@ -249,6 +279,9 @@ export async function updateAgent(
     .select()
     .single();
   if (error) throw error;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'execution_preferences')) {
+    return { ...data, execution_preferences: parseCreatorExecutionPreferences(data.execution_preferences) } as CreatorAgent;
+  }
   return data as CreatorAgent;
 }
 

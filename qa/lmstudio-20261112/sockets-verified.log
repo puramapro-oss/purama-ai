@@ -1,0 +1,13 @@
+✔ real socket: local inventory, credentials, exact model and token receipt (43.467926ms)
+✔ real socket: tool decision validates but executes no tool (7.412901ms)
+✔ real socket: redirects do not forward the prompt or local token (6.320311ms)
+✔ real socket: a truncated answer is rejected with no retry (9.992388ms)
+✔ real socket: oversized inference body is bounded with no retry (23.886728ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 613.625601

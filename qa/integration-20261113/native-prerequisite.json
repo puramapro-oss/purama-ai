@@ -1,0 +1,13 @@
+{
+  "status": "NON_TESTE",
+  "startedAt": "2026-11-13T00:58:57.548Z",
+  "isolation": "new private temporary cluster; Unix socket only; no existing PostgreSQL service used",
+  "checks": [],
+  "migrations": [],
+  "cleanup": {
+    "stopped": false,
+    "removed": false
+  },
+  "reason": "No installed PostgreSQL binary set found",
+  "finishedAt": "2026-11-13T00:58:57.550Z"
+}

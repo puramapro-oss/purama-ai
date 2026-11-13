@@ -42,6 +42,21 @@ jobs:
       - run: npm ci --no-audit
       - run: node ../scripts/generate-supabase-contracts.mjs --check
       - run: npm test
+      - name: Connected research native HTTP boundaries
+        run: node --import tsx --test test/connectedResearch.native.mjs
+      - name: LM Studio transport over local HTTP (synthetic server)
+        run: npm run test:lmstudio:sockets
+      - name: Workshop admission races on a private native PostgreSQL cluster
+        id: workshop_concurrency
+        run: node --test test/chefWorkshopConcurrency.native.mjs
+      - name: Preserve workshop concurrency evidence
+        if: ${{ always() && steps.workshop_concurrency.outcome != '' && steps.workshop_concurrency.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-workshop-concurrency-${{ github.sha }}
+          path: test-results/workshop-native-concurrency.json
+          if-no-files-found: error
+          retention-days: 14
       - run: node --test ../tests/oauth-google/state-sql.test.mjs
       - name: OAuth state on native PostgreSQL
         working-directory: .
@@ -96,6 +111,8 @@ jobs:
       - run: npm run lint
       - run: npm run test:distribution:unit
       - run: npm run test:distribution:sql
+      - name: Saved agent execution preferences and ownership
+        run: node --test tests/creator-execution-preferences.test.mjs
       - run: npm run test:distribution:worker
       - run: npm run test:distribution:chat
       - run: npm run test:contracts-auth

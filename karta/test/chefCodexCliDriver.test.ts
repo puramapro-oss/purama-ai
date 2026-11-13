@@ -61,6 +61,26 @@ const completed = 'fs.writeFileSync(resultPath, JSON.stringify({status:"complete
 const usage = 'console.log(JSON.stringify({type:"turn.completed",usage:{input_tokens:21,output_tokens:7,cached_input_tokens:4}}));';
 
 describe("direct Codex CLI CHEF adapter", () => {
+  it.each([
+    { mode: "auto", needs: [], selectedIds: [], excludedIds: [], maxSelected: 8 },
+    { mode: "manual", needs: [], selectedIds: [], excludedIds: [], maxSelected: 8 },
+    { mode: "manual", needs: ["research"], selectedIds: ["review"], excludedIds: [], maxSelected: 8 },
+    null,
+  ])("blocks unsupported capability choices before any process or Git effect: %j", async selection => {
+    const f = await fixture(completed + usage);
+    const result = await f.driver.run({
+      ...f.request, capabilitySelection: selection as unknown as ChefDriverRequest["capabilitySelection"],
+    });
+    expect(result).toMatchObject({
+      status: "blocked_external", usage: { inputTokens: 0, outputTokens: 0, costMicros: 0 },
+      metadata: { capabilitySelection: { state: "blocked", reason: "capability_adapter_unavailable" } },
+    });
+    expect(result).not.toHaveProperty("outputSha");
+    expect(existsSync(join(f.directory, "trace.json"))).toBe(false);
+    expect(execFileSync("git", ["rev-parse", "HEAD"], { cwd: f.cwd, encoding: "utf8" }).trim()).toBe(f.head);
+    expect(execFileSync("git", ["status", "--porcelain"], { cwd: f.cwd, encoding: "utf8" })).toBe("");
+  });
+
   it("uses the real CLI contract, stdin, a narrow environment and an independently observed Git SHA", async () => {
     const f = await fixture(completed + usage);
     vi.stubEnv("CHEF_TEST_SECRET", "must-not-reach-child");

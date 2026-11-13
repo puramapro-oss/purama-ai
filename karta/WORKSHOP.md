@@ -19,10 +19,15 @@ provisionne pas un environnement arbitraire pour chaque visiteur. Une offre publ
 multiutilisateur demande un environnement isolé par client. Les travaux existants dans
 Origin et la sélection des capacités de la PR68 restent distincts et ne sont pas remplacés.
 
+L'adaptateur Codex direct refuse explicitement une demande portant une sélection de
+capacités avant tout lancement. Le catalogue qualifié, son application réelle par
+la CLI et son reçu doivent être raccordés avant d'exposer ces choix dans l'atelier.
+Une liste ajoutée au prompt ne constitue pas cette qualification.
+
 ## Configuration de l’hôte
 
-1. Utiliser un checkout de confiance comportant les migrations CHEF 008–029.
-2. Appliquer ensuite karta/migrations/030_chef_workshop.sql dans la base existante, selon le processus de migration de l’installation.
+1. Utiliser un checkout de confiance comportant les migrations CHEF 008–029, puis 030_chef_capability_selection.sql.
+2. Appliquer ensuite karta/migrations/031_chef_workshop.sql dans la base existante, selon le processus de migration de l’installation. Le fichier atelier portait le numéro 030 dans le candidat PR74 non déployé ; le numéro 031 évite le doublon avec la sélection des capacités. Une installation ayant appliqué l'ancien candidat doit rapprocher son historique avant toute exécution, sans rejouer la création des tables.
 3. Définir le même CHEF_WORKSHOP_PROJECTS_JSON pour l’API KARTA et le consommateur.
    Adapter workshop-projects.example.json : identifiant utilisateur Supabase réel,
    dépôt, worktree dédié et profils de vérification existants. Le fichier fourni est

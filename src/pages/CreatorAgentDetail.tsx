@@ -34,7 +34,7 @@ import {
   listRuns, newSessionId,
   CATEGORIES, MODELS, TOOL_OPTIONS, SCHEDULE_PRESETS,
   type CreatorAgent, type CreatorAgentChatMessage, type CreatorAgentRun,
-  type AgentModel, type AgentCategory,
+  type AgentModel, type AgentCategory, type CreatorExecutionPreferences,
 } from '@/lib/creator-agent';
 import {
   useCustomAgentKartaState, useUpdateCustomAgentKartaState,
@@ -300,6 +300,9 @@ export default function CreatorAgentDetail() {
 
   // Templates aren't owned by the user → read-only mode
   const isReadOnly = agent.user_id !== userId;
+  const executionPreferences = agent.execution_preferences === undefined
+    ? { reflection: 'auto' as const, speed: 'standard' as const }
+    : agent.execution_preferences;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
@@ -545,6 +548,44 @@ export default function CreatorAgentDetail() {
               </div>
 
               <div className="pt-3 border-t border-border space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-foreground">Réglages d’exécution des tâches</p>
+                  <p id="agent-execution-help" className="text-[11px] text-muted-foreground mt-1">
+                    Ces réglages s’appliquent aux tâches de cet agent. La disponibilité des niveaux de réflexion dépend du modèle configuré.
+                    Une vitesse plus élevée réduit le temps accordé à une réponse du modèle, sans garantir un délai ni réduire le niveau de réflexion choisi.
+                  </p>
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="agent-reflection" className="text-xs">Réflexion</Label>
+                      <Select value={executionPreferences.reflection} disabled={isReadOnly}
+                        onValueChange={(reflection: CreatorExecutionPreferences['reflection']) => setAgent({
+                          ...agent, execution_preferences: { ...executionPreferences, reflection },
+                        })}>
+                        <SelectTrigger id="agent-reflection" aria-describedby="agent-execution-help" className="mt-1.5"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto">Automatique (standard)</SelectItem>
+                          <SelectItem value="standard">Standard</SelectItem>
+                          <SelectItem value="deep">Approfondie</SelectItem>
+                          <SelectItem value="maximum">Maximale</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="agent-execution-speed" className="text-xs">Vitesse</Label>
+                      <Select value={executionPreferences.speed} disabled={isReadOnly}
+                        onValueChange={(speed: CreatorExecutionPreferences['speed']) => setAgent({
+                          ...agent, execution_preferences: { ...executionPreferences, speed },
+                        })}>
+                        <SelectTrigger id="agent-execution-speed" aria-describedby="agent-execution-help" className="mt-1.5"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="standard">Standard</SelectItem>
+                          <SelectItem value="fast">Rapide</SelectItem>
+                          <SelectItem value="ultra_fast">Ultra rapide</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-foreground flex items-center gap-2">

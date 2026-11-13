@@ -1,5 +1,6 @@
 import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
 import type { ModelUsageReceipt } from "./usage.js";
+import type { ModelExecutionPlan, ModelExecutionPreferences } from "./execution-profile.js";
 
 export interface ClaudeDecideInput {
   systemPrompt: string;
@@ -11,6 +12,10 @@ export interface ClaudeDecideInput {
   signal?: AbortSignal;
   /** Server-owned observation, called before decision validation; never sent to the model. */
   onUsage?: (receipt: ModelUsageReceipt) => void;
+  /** Authenticated choice; independently qualified against the host catalogue. */
+  preferences?: ModelExecutionPreferences;
+  /** Effective resource settings, without secrets or internal reasoning. */
+  onExecutionPlan?: (plan: ModelExecutionPlan) => void;
 }
 
 export interface ClaudeClient {
