@@ -35,6 +35,8 @@ export interface ConsultationReceipt {
   usage: ModelUsageReceipt[];
 }
 export interface ConsultationDependencies {
+  /** Host-owned context ceiling, separate from provider token measurement. */
+  maxContextBytes?: number;
   models: Array<{ model: string; provider: string; client: ClaudeClient }>;
   catalog: ModelExecutionCapability[];
   research?: {
@@ -59,7 +61,7 @@ export interface ConsultationResult {
   disagreements: string[];
   uncertainties: string[];
   sources: Array<ConnectedResearchResult["sources"][number] & {
-    id: string; provider: string; retrievedAt: string; verificationStatus: "unverified";
+    id: string; provider: string; retrievedAt: string; verificationStatus: "unverified"; truncated?: boolean;
   }>;
   receipts: ConsultationReceipt[];
   verificationStatus: "unverified";
@@ -139,6 +141,11 @@ function requestSnapshot(input: ConsultationRequest): Required<ConsultationReque
   } };
 }
 
+/** One normalization contract for durable identity and execution. */
+export function normalizeConsultationRequest(input: ConsultationRequest): Required<ConsultationRequest> {
+  return requestSnapshot(input);
+}
+
 function conclusion(text: string, ids: string[]) {
   const value: unknown = JSON.parse(text);
   if (!value || typeof value !== "object" || Array.isArray(value)) return invalid();
@@ -159,6 +166,8 @@ export async function runModelConsultation(
   raw: ConsultationRequest, deps: ConsultationDependencies, signal?: AbortSignal,
 ): Promise<ConsultationResult> {
   const request = requestSnapshot(raw);
+  const maxContextBytes = deps.maxContextBytes ?? 262_144;
+  if (!Number.isSafeInteger(maxContextBytes) || maxContextBytes < 8192 || maxContextBytes > 262_144) return invalid();
   const catalog = normalizeModelCatalog(deps.catalog);
   const plan = resolveModelExecutionPlan(request.preferences, catalog);
   if (!deps.admission || typeof deps.admission.claim !== "function" || typeof deps.admission.reserve !== "function"
@@ -232,8 +241,8 @@ export async function runModelConsultation(
             || typeof source.text !== "string" || source.text.length > 200_000
             || !["search_excerpt", "page_markdown"].includes(source.contentKind)) return invalid();
           const url = new URL(source.url);
-          if (url.protocol !== "https:" || url.username || url.password || url.hostname.length > 253) return invalid();
-          return { sourceId: source.sourceId, url: source.url, title: source.title, text: source.text,
+          if (url.protocol !== "https:" || url.username || url.password || url.hostname.length > 253 || url.href.length > 8192) return invalid();
+          return { sourceId: source.sourceId, url: url.href, title: source.title, text: source.text,
             contentKind: source.contentKind, provider, retrievedAt: retrieved.retrievedAt, verificationStatus: "unverified" as const };
         });
         if (sources.length + items.length > 32) return invalid();
@@ -267,7 +276,7 @@ export async function runModelConsultation(
       const modelCall = (model: string, kind: "proposal" | "critique" | "synthesis", context: Record<string, unknown>) => {
         // Entire serialized context, including metadata and reviews. This is a
         // byte ceiling, not an estimated tokenizer or model context guarantee.
-        if (Buffer.byteLength(JSON.stringify(context), "utf8") > 262_144) return invalid();
+        if (Buffer.byteLength(JSON.stringify(context), "utf8") > maxContextBytes) return invalid();
         const route = models.get(model)!;
         return call(kind, route.provider, context, async (s, usage) => {
           const decision = await route.client.decide({

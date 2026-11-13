@@ -1,0 +1,16 @@
+▶ saved execution preferences — real PostgreSQL migration and ownership
+  ✔ preserves every existing RLS policy and table grant (4.942078ms)
+  ✔ backfills existing rows and defaults new rows (4.688687ms)
+  ✔ owner can save and reload all supported combinations (16.929521ms)
+  ✔ rejects SQL null, JSON null, missing keys, extra keys and invalid enum types (34.24312ms)
+  ✔ another account cannot read or update the private saved settings (5.826039ms)
+  ✔ anonymous users still have no direct table privileges (1.671516ms)
+✔ saved execution preferences — real PostgreSQL migration and ownership (1829.564455ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1952.113207

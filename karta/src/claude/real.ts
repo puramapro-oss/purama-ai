@@ -35,7 +35,12 @@ export function selectModel(input: ClaudeDecideInput): string {
   return isSimple ? config.anthropicModelFast : config.anthropicModelMain;
 }
 
-export function createRealClaudeClient(options: { modelCatalog?: ModelExecutionCapability[] } = {}): ClaudeClient {
+export function createRealClaudeClient(options: {
+  modelCatalog?: ModelExecutionCapability[];
+  /** An account qualified against Anthropic's own catalogue must use that same
+   * native endpoint and key, without inheriting a compatible gateway override. */
+  nativeAnthropicAccount?: { apiKey: string };
+} = {}): ClaudeClient {
   const timeoutMs = config.anthropicTimeoutMs;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) {
     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
@@ -46,7 +51,8 @@ export function createRealClaudeClient(options: { modelCatalog?: ModelExecutionC
   // KARTA owns durable delivery/recovery. The SDK's implicit retries can repeat
   // a paid inference after an ambiguous response, outside that execution log.
   const client = new Anthropic({
-    apiKey: config.anthropicApiKey,
+    apiKey: options.nativeAnthropicAccount?.apiKey ?? config.anthropicApiKey,
+    ...(options.nativeAnthropicAccount ? { baseURL: "https://api.anthropic.com", authToken: null } : {}),
     timeout: timeoutMs,
     maxRetries: 0,
     // The SDK's debug logger can include complete prompts and provider bodies.

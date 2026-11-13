@@ -113,6 +113,8 @@ jobs:
       - run: npm run test:oauth
       - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts
       - run: npm run test:commerce:plans
+      - name: Authenticated model consultation Edge contract
+        run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/iao-consultation/index.ts
       - run: npm run test:commerce:handlers
       - name: Social publication core behavior
         run: >-
@@ -225,3 +227,5 @@ jobs:
       - run: npm run test:subscriptions:postgres
       - name: Private tool result concurrency on native PostgreSQL
         run: node --test test/privateToolResults.native.mjs
+      - name: Model consultation admission and cancellation concurrency
+        run: node --test test/consultationStore.native.mjs

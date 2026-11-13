@@ -1,0 +1,10 @@
+{
+  "index_refreshed": true,
+  "version": "1.6.12",
+  "fts_enabled": false,
+  "limitations": [
+    "  Skipped 2 large files (>512KB, likely generated/vendored)",
+    "{\"level\":40,\"time\":1794532656118,\"name\":\"gitnexus\",\"msg\":\"[scope-resolution] 2569 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \\\"unused\\\" \u2014 it means the definition anchor is in a different language. Affected: args (javascript/typescript), children (typescript), command (typescript), data (javascript/typescript), env (javascript/typescript), errors (javascript/typescript), label (javascript/typescript), lines (typescript), messages (javascript/typescript), pending (javascript/typescript), \u2026\"}",
+    "{\"level\":40,\"time\":1794532656578,\"name\":\"gitnexus\",\"truncation\":{\"truncated\":true,\"entryPointCandidatesDropped\":1568,\"entryPointsUnexplored\":0,\"walksCutByBudget\":41,\"tracesDepthCapped\":0,\"calleesDropped\":5470,\"processesDropped\":0},\"msg\":\"[processes] 591 flows reported, but whole flows are MISSING: 1568 of 1768 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 5470 callee(s) skipped at maxBranching, 41 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist.\"}"
+  ]
+}

@@ -1,0 +1,16 @@
+
+ RUN  v5.0.3 /workspace/scratch/41a841bfe32d/purama-ai/karta
+
+ ✓ test/modelConsultationStoreSql.test.ts (17 tests) 3772ms
+ ✓ test/chefBudgetReservations.test.ts (28 tests) 2627ms
+ ✓ test/chefBudgetAdmission.test.ts (18 tests) 2965ms
+ ✓ test/consultationIntegration.test.ts (5 tests) 2120ms
+ ✓ test/chefBudgetAccounting.test.ts (12 tests) 19ms
+ ✓ test/modelConsultationStore.test.ts (13 tests) 17ms
+
+ Test Files  6 passed (6)
+      Tests  93 passed (93)
+   Start at  02:27:00
+   Duration  12.75s (tests 96%, transform 2%, import 2%)
+
+JSON report written to /workspace/scratch/41a841bfe32d/purama-ai/qa/consultation-integration-20261113/final-targeted.json

@@ -88,6 +88,28 @@ function harness() {
 afterEach(() => vi.useRealTimers());
 
 describe("multi-model consultation composition", () => {
+  it("enforces the host's encoded context ceiling before dispatching a model", async () => {
+    const h = harness();
+    h.deps.maxContextBytes = 8192;
+    const result = await runModelConsultation(request({ question: "é".repeat(8000) }), h.deps);
+    expect(result.status).toBe("failed");
+    expect(h.modelCalls).toHaveLength(0);
+    expect(h.reservations).toHaveLength(0);
+  });
+  it.each([0, 8191, 262145, 9000.5, Number.NaN])("rejects an invalid host context ceiling %s before admission", async maximum => {
+    const h = harness(); h.deps.maxContextBytes = maximum;
+    await expect(runModelConsultation(request(), h.deps)).rejects.toThrow();
+    expect(h.claims).toHaveLength(0);
+  });
+  it("refuses URLs that expand beyond the link ceiling during canonicalization", async () => {
+    const h = harness();
+    h.state.search = async () => {
+      const value = researchResult("perplexity"); value.sources[0].url = "https://example.com/" + "é".repeat(4000); return value;
+    };
+    const result = await runModelConsultation(request({ research: { queries: ["q"], urls: [] } }), h.deps);
+    expect(result.sources).toHaveLength(0);
+    expect(result.status).toBe("partial");
+  });
   it("uses only the exact primary for synthesis and reserves/reconciles every individual operation", async () => {
     const h = harness();
     const result = await runModelConsultation(request({ reviewerModels: [MODEL_NAMES[1], MODEL_NAMES[2]],

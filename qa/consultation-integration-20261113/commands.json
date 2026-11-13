@@ -1,0 +1,169 @@
+[
+  {
+    "name": "karta-types",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.json"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai/karta",
+    "exit_code": 0,
+    "duration_seconds": 6.31
+  },
+  {
+    "name": "karta-build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai/karta",
+    "exit_code": 0,
+    "duration_seconds": 3.14
+  },
+  {
+    "name": "site-unit",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile.json=qa/consultation-integration-20261113/site-results.json"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "duration_seconds": 16.95
+  },
+  {
+    "name": "site-types",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.app.json"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "duration_seconds": 12.75
+  },
+  {
+    "name": "site-build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "duration_seconds": 11.7
+  },
+  {
+    "name": "site-lint",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 1,
+    "duration_seconds": 11.71
+  },
+  {
+    "name": "database-contracts",
+    "command": [
+      "node",
+      "scripts/generate-supabase-contracts.mjs",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "duration_seconds": 2.21
+  },
+  {
+    "name": "research-native",
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "--test",
+      "test/connectedResearch.native.mjs"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai/karta",
+    "exit_code": 0,
+    "duration_seconds": 0.34
+  },
+  {
+    "name": "preferences-sql",
+    "command": [
+      "node",
+      "--test",
+      "tests/creator-execution-preferences.test.mjs"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "duration_seconds": 2.0
+  },
+  {
+    "name": "site-lint-final",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "warnings": 21,
+    "errors": 0,
+    "note": "After replacing four explicit any types in new transport tests. Earlier failing log retained."
+  },
+  {
+    "name": "final-sql-host-regression",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "test/modelConsultationStoreSql.test.ts",
+      "test/modelConsultationStore.test.ts",
+      "test/consultationIntegration.test.ts",
+      "test/chefBudgetReservations.test.ts",
+      "test/chefBudgetAdmission.test.ts",
+      "test/chefBudgetAccounting.test.ts",
+      "--maxWorkers=1",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile.json=../qa/consultation-integration-20261113/final-targeted.json"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai/karta",
+    "exit_code": 0,
+    "duration_seconds": 13.08
+  },
+  {
+    "name": "karta-types-final",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.json"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai/karta",
+    "exit_code": 0,
+    "duration_seconds": 5.95
+  },
+  {
+    "name": "site-lint-final",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": "/workspace/scratch/41a841bfe32d/purama-ai",
+    "exit_code": 0,
+    "duration_seconds": 10.53
+  }
+]
