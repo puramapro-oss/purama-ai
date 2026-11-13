@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { captureCleanGitBaseline, verifyCommittedGitState } from "./git-state.js";
 import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefVerificationEvidence, ChefVerifier } from "./verifier.js";
+import type { ChefCapabilitySelection } from "./capability-selection.js";
 
 export interface ChefRuntimeTask {
   id: string;
@@ -17,6 +18,8 @@ export interface ChefRuntimeTask {
   baseSha?: string;
   verificationProfiles: string[];
   allowedPaths: string[];
+  capabilitySelection?: ChefCapabilitySelection;
+  userId?: string;
 }
 
 export interface ChefEvidenceClaim {
@@ -136,16 +139,21 @@ export async function runChefWorkerCycle(
     if (!settled) throw new Error("Réservation sans exécution non réconciliée");
     preExecutionSettled = true;
   };
+  const recoverTask = async (error: string): Promise<ChefWorkerCycleResult> => {
+    // A plan acknowledgment is not an effect receipt. Once a capability driver
+    // has started, every failed validation or interruption requires reconciliation.
+    const reconcile = driverStarted && Boolean(task.capabilitySelection);
+    const accepted = await control.transition({
+      taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+      target: reconcile ? "blocked_external" : "retryable", error: error.slice(0, 10_000),
+    });
+    if (!accepted) return { state: "lost_lease", taskId: task.id, error };
+    if (reconcile) return { state: "blocked_external", taskId: task.id, error };
+    return { state: "retryable", taskId: task.id, error };
+  };
   const releaseForShutdown = async (): Promise<ChefWorkerCycleResult> => {
     if (!driverStarted) await settleBeforeExecution();
-    const error = "Arrêt du worker demandé; exécution arrêtée ou non démarrée";
-    const released = await control.transition({
-      taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-      target: "retryable", error,
-    });
-    return released
-      ? { state: "retryable", taskId: task.id, error }
-      : { state: "lost_lease", taskId: task.id, error };
+    return recoverTask("Arrêt du worker demandé; exécution arrêtée ou non démarrée");
   };
   if (options.signal?.aborted) return await releaseForShutdown();
   const evidenceClaim = Object.freeze({
@@ -311,18 +319,13 @@ export async function runChefWorkerCycle(
         baseSha: executionBaseSha,
         accessMode: task.accessMode,
         allowedPaths: task.allowedPaths,
+        ...(task.capabilitySelection ? { userId: task.userId, capabilitySelection: task.capabilitySelection } : {}),
       }, abort.signal);
     } catch (error) {
       if (error instanceof ChefProcessStopUnconfirmedError) return await blockUnconfirmedStop(error);
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
       const message = error instanceof Error ? error.message : "Erreur worker";
-      const retry = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: message.slice(0, 10_000),
-      });
-      return retry
-        ? { state: "retryable", taskId: task.id, error: message }
-        : { state: "lost_lease", taskId: task.id, error: message };
+      return recoverTask(message);
     }
 
     // A late receipt settles only this exact attempt. Lease loss still prevents
@@ -358,6 +361,20 @@ export async function runChefWorkerCycle(
 
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant l'exécution" };
 
+    if (task.capabilitySelection && response.status === "blocked_external") {
+      // A capability adapter may have produced an external effect before its
+      // receipt was lost, even when cancellation subsequently stopped it.
+      // Persist reconciliation before the generic shutdown/retry path.
+      stopRenewal();
+      const ok = await control.transition({
+        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+        target: "blocked_external", error: response.summary.slice(0, 10_000),
+      });
+      return ok
+        ? { state: "blocked_external", taskId: task.id, error: response.summary }
+        : { state: "lost_lease", taskId: task.id, error: response.summary };
+    }
+
     if (abort.signal.aborted) {
       stopRenewal();
       return await releaseForShutdown();
@@ -377,23 +394,13 @@ export async function runChefWorkerCycle(
 
     if (response.status === "failed") {
       stopRenewal();
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: response.summary.slice(0, 10_000),
-      });
-      return ok
-        ? { state: "retryable", taskId: task.id, error: response.summary }
-        : { state: "lost_lease", taskId: task.id, error: response.summary };
+      return recoverTask(response.summary);
     }
 
     if (task.accessMode === "write" && !response.outputSha) {
       stopRenewal();
       const error = "Worker write terminé sans outputSha";
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error,
-      });
-      return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+      return recoverTask(error);
     }
 
     const expectedOutputSha = task.accessMode === "read" ? executionBaseSha : response.outputSha;
@@ -416,17 +423,15 @@ export async function runChefWorkerCycle(
         if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git" };
         const message = error instanceof Error ? error.message : "État Git invalide";
         stopRenewal();
-        // The process has stopped, so this is a revision conflict, not an
-        // uncertain-process quarantine. Preserve the tree for reconciliation.
-        const target = task.accessMode === "read" ? "blocked_external" : "retryable";
-        const ok = await control.transition({
+        // Capability effects still require recoverTask's reconciliation on writes.
+        // Read revision conflicts must also block rather than replay the review.
+        if (task.accessMode === "write") return recoverTask(message);
+        const blocked = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-          target, error: message.slice(0, 10_000),
+          target: "blocked_external", error: message.slice(0, 10_000),
         });
-        return ok
-          ? target === "blocked_external"
-            ? { state: "blocked_external", taskId: task.id, error: message }
-            : { state: "retryable", taskId: task.id, error: message }
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
           : { state: "lost_lease", taskId: task.id, error: message };
       }
     }
@@ -450,11 +455,7 @@ export async function runChefWorkerCycle(
       if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
       const message = error instanceof Error ? error.message : "Erreur de vérification";
       stopRenewal();
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: message.slice(0, 10_000),
-      });
-      return ok ? { state: "retryable", taskId: task.id, error: message } : { state: "lost_lease", taskId: task.id, error: message };
+      return recoverTask(message);
     }
 
     if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant la vérification" };
@@ -479,15 +480,15 @@ export async function runChefWorkerCycle(
         if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git final" };
         const message = error instanceof Error ? error.message : "État Git modifié pendant la vérification";
         stopRenewal();
-        const target = task.accessMode === "read" ? "blocked_external" : "retryable";
-        const ok = await control.transition({
+        // Capability effects still require recoverTask's reconciliation on writes.
+        // Read revision conflicts must also block rather than replay the review.
+        if (task.accessMode === "write") return recoverTask(message);
+        const blocked = await control.transition({
           taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-          target, error: message.slice(0, 10_000),
+          target: "blocked_external", error: message.slice(0, 10_000),
         });
-        return ok
-          ? target === "blocked_external"
-            ? { state: "blocked_external", taskId: task.id, error: message }
-            : { state: "retryable", taskId: task.id, error: message }
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
           : { state: "lost_lease", taskId: task.id, error: message };
       }
     }
@@ -510,11 +511,7 @@ export async function runChefWorkerCycle(
     if (!verification.ok) {
       stopRenewal();
       const error = verification.error ?? "Vérification échouée";
-      const ok = await control.transition({
-        taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-        target: "retryable", error: error.slice(0, 10_000),
-      });
-      return ok ? { state: "retryable", taskId: task.id, error } : { state: "lost_lease", taskId: task.id, error };
+      return recoverTask(error);
     }
 
     stopRenewal();

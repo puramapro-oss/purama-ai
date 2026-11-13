@@ -1,0 +1,134 @@
+{
+  "status": "PASS for tested code; PARTIEL for complete live product",
+  "timestamp_utc": "2026-11-12T22:34:02.977985+00:00",
+  "base_commit": "b9ba4b2fdaa1d8523e0274128941740cbe563072",
+  "branch": "feat/iao-adaptive-intelligence-20261112",
+  "runtime": {
+    "node": "v24.22.1",
+    "anthropic_sdk": "0.65.0"
+  },
+  "tests": {
+    "karta": {
+      "numTotalTests": 2796,
+      "numPassedTests": 2796,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true,
+      "files": 142
+    },
+    "site": {
+      "numTotalTests": 415,
+      "numPassedTests": 415,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "success": true,
+      "files": 18
+    }
+  },
+  "additional_checks": {
+    "native_http": {
+      "passed": 3,
+      "external_provider": false
+    },
+    "postgresql_pglite": {
+      "reported_tests": 7,
+      "subtests": 6,
+      "failed": 0
+    },
+    "karta_types": "PASS",
+    "karta_build": "PASS",
+    "site_types": "PASS",
+    "site_build": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 21,
+      "note": "existing React refresh warnings outside this change"
+    },
+    "database_contracts": "PASS"
+  },
+  "failed_attempts": [
+    {
+      "check": "initial full KARTA",
+      "cause": "test VM did not allow node:util/types; corrected runtime test loader; all 2796 pass on sequential rerun"
+    },
+    {
+      "check": "initial npm build/lint",
+      "cause": "npm default home cache full; rerun using workspace npm cache"
+    },
+    {
+      "check": "first lint",
+      "cause": "two intentional control-character checks needed local documented lint exceptions; test call formatting fixed"
+    }
+  ],
+  "review": {
+    "independent_agents": 2,
+    "gitnexus": {
+      "fts": false,
+      "graph": "partial",
+      "nodes": 22837,
+      "edges": 69466,
+      "flows": 622,
+      "dropped_entry_candidates": 1453,
+      "dropped_callees": 5280,
+      "budget_capped_walks": 42,
+      "risk_staged": "critical",
+      "risk_compare_main": "critical",
+      "staged_scope": {
+        "files": 29,
+        "symbols": 445,
+        "flows": 35
+      },
+      "compare_main_scope": {
+        "files": 1514,
+        "symbols": 9779,
+        "flows": 407,
+        "includes_unmerged_dependency_history": true
+      },
+      "listing_capped": true
+    }
+  },
+  "production": {
+    "deployed": false,
+    "migration_applied": false,
+    "external_provider_calls": false,
+    "mac_read_only": true,
+    "mac_repo_branch": "main",
+    "new_profile_present_on_mac": false,
+    "anthropic_config_key_names_present": true,
+    "perplexity_firecrawl_key_names_found_in_two_examined_env_files": false
+  },
+  "remaining": [
+    "Apply migration with runtime as one rollout after dependency integration",
+    "Qualify exact selected model catalogue on deployed provider/account; historic Creator Sonnet ID not implicitly allowed",
+    "Implement durable admission/reservation/settlement ports and authenticated private results route for consultation",
+    "Bind consultation controls to main chat; current saved controls affect agent tasks only",
+    "Configure and qualify Perplexity/Firecrawl accounts; no Bloxks inbound creator API verified",
+    "Measure real latency/cost/quality; no superiority or zero-bug guarantee"
+  ],
+  "source_sha256": {
+    ".github/workflows/purama-chef-hardening.yml": "5bf7f8e7808bc8cbbc4e4341ea2795d95bc587a3335e9759b904b30954a30c21",
+    "docs/iao-adaptive-intelligence-20261112.md": "f69f6cd808ccaef1e4892b22d586bd298c065567b8266364a14e1756b782b4d2",
+    "karta/src/agents/customAgent.ts": "51b9660bf609bb6d71b43d849a54c15bb00738d82c3e1d18302a5f8dfdfbc0f0",
+    "karta/src/claude/consultation.ts": "e79bead7458ea75f1c2dbf8ef2d38c96e464940f686c7761333f0ba1728a5bd5",
+    "karta/src/claude/execution-profile.ts": "57bfd62a6cba0aabfd83f18ceb7effbcee0e4f6e1251381f68cfb241e193ee3d",
+    "karta/src/claude/real.ts": "9fa9dcb724cafb4c516e284d88d219e451eb00620941bf69a24d37024cb7619f",
+    "karta/src/claude/types.ts": "a45f869f3d29a4fb597453320bd4320072d88cd8b5b310bfe902a2cf7fbca705",
+    "karta/src/engine/loop.ts": "bf18f7bd4312a0ccaa4b836866ab8c8053bbe3ec3b664512e5006bfb222232f5",
+    "karta/src/engine/types.ts": "18ecea75ce6cbd8155d7332da762dd808f1ca88cf4a9278d76b25d05b6c1a5d6",
+    "karta/src/knowledge/connected-research.ts": "8cd79acea6a4c6478b9418745816c84053df111bd3131c8fc53b47762bef1e87",
+    "karta/test/assistantPolicy.test.ts": "b8376dd66e22baf55a196324da5b62834e8c2bc4a6363d1b79b6a655a728d7f9",
+    "karta/test/claudeExecutionProfileTransport.test.ts": "62d66cdae0d20d1f7a357b414c51d070c590842f46e145e841683c04e8750f7a",
+    "karta/test/connectedResearch.native.mjs": "8420b8b2babfe0d6f4f348d6794b4e42d258cdab4ae89a4ca6e9772c8ef9ec96",
+    "karta/test/connectedResearch.test.ts": "f66783de3cf748b6a837030e81b91827c3e03eb0d57371169b7055528572f814",
+    "karta/test/customAgentModelSelection.test.ts": "462d6fbd22abf1fa51d7ccc1b28f73713a79cc487fa969f5d14f201eb34259dd",
+    "karta/test/executionProfile.test.ts": "0f042d55fdbfb00478fedd513e90b8931a1dd8caf8a2acc618528b7bc58afcb9",
+    "karta/test/modelConsultation.test.ts": "25468125afafb06d0367822ad66fd9d03af367f172a502dd55703b1fdb7f16ee",
+    "src/lib/creator-agent.ts": "1abbc73d7b727e494b1e0bc08aa0e7e7056b042e5c0c83389f580e5728edb628",
+    "src/lib/creator-execution-preferences.test.ts": "65d15def730e9b9582cdbcac953972470f29ba08b89c4798a80c1f3e7d4f44d7",
+    "src/pages/CreatorAgentDetail.execution.test.tsx": "c4c94ef000c846ad59ca7971606545b2d7816876f5be53eccc4acdec90405c4d",
+    "src/pages/CreatorAgentDetail.tsx": "8935cb0e69c3f94c0f473723129cd69809a8a776b1d37881c3df55c004e8baf6",
+    "supabase/migrations/20261112233000_creator_execution_preferences.sql": "7a26bd632fb2e92b43dd39cf779d30793fd7a2f9ed4b15531ccbff89437c7e72",
+    "tests/creator-execution-preferences.test.mjs": "466937b175d68e376bbd93b4793d93f5a5c8e936ffa15d4c66590e82bf041af2",
+    "vercel.json": "c2e251af28c7e57abf3a9e66fc0b53be2a7b1dee4dde874f27c44abc4820436a"
+  }
+}

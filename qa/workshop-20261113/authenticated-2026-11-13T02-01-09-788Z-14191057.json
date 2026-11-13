@@ -1,0 +1,56 @@
+{
+  "kind": "workshop-authenticated-qualification",
+  "version": 1,
+  "startedAt": "2026-11-13T02:01:09.790Z",
+  "outcome": "FAIL",
+  "stage": "verified_artifact",
+  "fixtureResponsesUsed": false,
+  "missionSubmission": "confirmed",
+  "startRequestCount": 1,
+  "observedStates": [
+    "active",
+    "verified_done"
+  ],
+  "checks": {
+    "realLogin": {
+      "outcome": "PASS",
+      "accounts": 2,
+      "distinctPrincipals": true
+    },
+    "otherAccountStatus": {
+      "outcome": "PASS",
+      "status": 404
+    },
+    "anonymousStatus": {
+      "outcome": "PASS",
+      "status": 401
+    },
+    "realMission": {
+      "outcome": "PASS",
+      "state": "verified_done"
+    },
+    "otherAccountArtifact": {
+      "outcome": "PASS",
+      "status": 404
+    },
+    "anonymousArtifact": {
+      "outcome": "PASS",
+      "status": 401
+    }
+  },
+  "captures": [],
+  "javascriptErrorCount": 0,
+  "monetaryCost": {
+    "status": "unknown",
+    "micros": null
+  },
+  "requestId": "8467a95d-e8e9-4f77-bec3-ba9428e955c2",
+  "missionId": "94c0d8cb-936d-4963-8afc-b74ef975e38f",
+  "commitSha": "027a291700e691209d05aea712f41446701db57b",
+  "tasksVerified": 3,
+  "tokensReported": 520087,
+  "failureCode": "STEP_FAILED",
+  "browserClosed": true,
+  "finishedAt": "2026-11-13T02:05:38.227Z",
+  "durationMs": 268437
+}

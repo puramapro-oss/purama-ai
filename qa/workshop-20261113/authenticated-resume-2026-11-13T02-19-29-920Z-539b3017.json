@@ -1,0 +1,95 @@
+{
+  "kind": "workshop-authenticated-artifact-resume",
+  "version": 1,
+  "startedAt": "2026-11-13T02:19:29.923Z",
+  "outcome": "PASS",
+  "stage": "complete",
+  "fixtureResponsesUsed": false,
+  "missionSubmission": "not_sent",
+  "startRequestCount": 0,
+  "observedStates": [],
+  "checks": {
+    "login": {
+      "outcome": "PASS"
+    },
+    "mission": {
+      "outcome": "PASS",
+      "tasks": 3,
+      "state": "verified_done"
+    },
+    "artifactApi": {
+      "outcome": "PASS",
+      "bytes": 3066,
+      "sha256": "3362d37b249b908d37a587132365ae5aabe91e5c08001f93b127775681fe1ffa",
+      "hasPreview": true
+    },
+    "resultVisible": {
+      "outcome": "PASS"
+    },
+    "artifactUiResponse": {
+      "status": 200,
+      "ok": true,
+      "missionMatches": true,
+      "commitMatches": true,
+      "archiveBytes": 3066,
+      "archiveBase64Length": 4088,
+      "previewBytes": 2948,
+      "previewCharacters": 2941
+    },
+    "sourceDownload": {
+      "outcome": "PASS",
+      "bytes": 3066,
+      "sha256": "3362d37b249b908d37a587132365ae5aabe91e5c08001f93b127775681fe1ffa"
+    },
+    "preview": {
+      "outcome": "PASS",
+      "initial": 0,
+      "final": 4,
+      "parentAccessBlocked": true
+    },
+    "mobile": {
+      "outcome": "PASS",
+      "viewport": 390
+    }
+  },
+  "captures": [
+    "authenticated-resume-2026-11-13T02-19-29-920Z-539b3017-desktop.png",
+    "authenticated-resume-2026-11-13T02-19-29-920Z-539b3017-mobile.png"
+  ],
+  "javascriptErrorCount": 0,
+  "monetaryCost": {
+    "status": "unknown",
+    "micros": null
+  },
+  "readOnlyResume": true,
+  "missionId": "94c0d8cb-936d-4963-8afc-b74ef975e38f",
+  "commitSha": "027a291700e691209d05aea712f41446701db57b",
+  "phases": [
+    "configuration",
+    "browser_start",
+    "ui_login",
+    "mission_status_api",
+    "artifact_api",
+    "mission_ui",
+    "artifact_ui_request",
+    "download_link",
+    "download_click",
+    "download_event",
+    "download_bytes",
+    "preview_open",
+    "preview_counter",
+    "desktop_capture",
+    "mobile",
+    "preserve_ui_archive",
+    "complete"
+  ],
+  "optionalCookieRefusals": 1,
+  "browserCapabilities": {
+    "secureContext": true,
+    "subtleCrypto": true,
+    "objectUrl": true
+  },
+  "archiveFile": "authenticated-resume-2026-11-13T02-19-29-920Z-539b3017-download.zip",
+  "finishedAt": "2026-11-13T02:19:43.067Z",
+  "durationMs": 13144
+}

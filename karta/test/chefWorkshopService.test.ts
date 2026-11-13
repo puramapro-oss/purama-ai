@@ -125,8 +125,7 @@ describe("workshop artifacts are bound to current ownership and a completely ver
     await expect(handleWorkshopRequest(owner,{action:"artifact",missionId})).rejects.toMatchObject({status:404});
     expect(h.artifact).not.toHaveBeenCalled();
   });
-  it.each(["active","missing-review","different-sha","missing-proof","duplicate-key","cancelled","unfinished"])
-    ("does not export an unqualified receipt: %s", async reason => {
+  it.each(["active","missing-review","different-sha","missing-proof","duplicate-key","cancelled","unfinished"])("does not export an unqualified receipt: %s", async reason => {
       qualify();
       if(reason==="active") rows.chef_missions[0].state="active";
       if(reason==="missing-review") rows.chef_tasks.pop();
@@ -138,8 +137,7 @@ describe("workshop artifacts are bound to current ownership and a completely ver
       await expect(handleWorkshopRequest(owner,{action:"artifact",missionId})).rejects.toMatchObject({status:409,code:"WORKSHOP_ARTIFACT_UNAVAILABLE"});
       expect(h.artifact).not.toHaveBeenCalled();
     });
-  it.each([{action:"artifact",missionId,path:"/etc/passwd"},{action:"artifact",missionId,commitSha:"a".repeat(40)},{action:"artifact",missionId:"../bad"}])
-    ("refuses browser-selected paths or commits before DB reads: %#", async body => {
+  it.each([{action:"artifact",missionId,path:"/etc/passwd"},{action:"artifact",missionId,commitSha:"a".repeat(40)},{action:"artifact",missionId:"../bad"}])("refuses browser-selected paths or commits before DB reads: %#", async body => {
       await expect(handleWorkshopRequest(owner,body)).rejects.toMatchObject({status:400});
       expect(h.from).not.toHaveBeenCalled(); expect(h.artifact).not.toHaveBeenCalled();
     });

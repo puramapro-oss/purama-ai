@@ -123,6 +123,13 @@ async function hashDownload(download) {
     return { bytes, sha256: hash.digest('hex') };
   } finally { stream.destroy(); }
 }
+async function declineOptionalCookies(page) {
+  const dialog = page.getByRole('dialog', { name: 'Gestion des cookies', exact: true });
+  if (await dialog.isVisible()) {
+    await dialog.getByRole('button', { name: 'Refuser tout', exact: true }).click({ timeout: 10000 });
+    receipt.optionalCookieRefusals = (receipt.optionalCookieRefusals ?? 0) + 1;
+  }
+}
 async function main() {
   let browser, config, owner, other, lastMission;
   let workDeadline = Date.now() + 585000;
@@ -150,6 +157,7 @@ async function main() {
     await page.goto(config.origin + '/dashboard/atelier', { waitUntil: 'domcontentloaded', timeout: timeout() });
     await page.getByLabel('Email', { exact: true }).fill(config.accounts[role].email, { timeout: timeout() });
     await page.getByLabel('Mot de passe', { exact: true }).fill(config.accounts[role].password, { timeout: timeout() });
+    await declineOptionalCookies(page);
     const authUrl = new URL(config.supabaseUrl + '/auth/v1/token');
     const authResponse = page.waitForResponse(response => {
       const url = new URL(response.url());
@@ -252,6 +260,7 @@ async function main() {
     requireCondition(artifact.preview?.mediaType === 'text/html', 'PREVIEW_UNAVAILABLE');
     const display = owner.page.getByTestId('workshop-result');
     await display.waitFor({ state: 'visible', timeout: timeout() });
+    await declineOptionalCookies(owner.page);
     await display.getByRole('button', { name: 'Accéder aux fichiers', exact: true }).click({ timeout: timeout() });
     const link = display.getByRole('link', { name: 'Télécharger les sources ZIP', exact: true });
     await link.waitFor({ state: 'visible', timeout: timeout() });

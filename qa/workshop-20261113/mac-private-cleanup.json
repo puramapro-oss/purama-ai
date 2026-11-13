@@ -1,0 +1,24 @@
+{
+  "processes": [
+    {
+      "name": "api-worker",
+      "exitCode": 0
+    },
+    {
+      "name": "edge",
+      "exitCode": -15
+    },
+    {
+      "name": "frontend",
+      "exitCode": 143
+    },
+    {
+      "name": "tunnel",
+      "exitCode": 0
+    }
+  ],
+  "allStopped": true,
+  "browserCredentialConfigsRemoved": 4,
+  "scope": "Only six private qualification directories created by this task; no user credentials modified",
+  "qualificationProvidersStillRunning": false
+}

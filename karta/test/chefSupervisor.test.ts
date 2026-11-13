@@ -4,6 +4,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { ProcessChefDriver } from "../src/chef/driver.js";
+import { CodexCliChefDriver } from "../src/chef/codex-cli-driver.js";
 import { ChefProcessStopUnconfirmedError } from "../src/chef/process.js";
 import type { ChefDriverResponse, ChefWorkerDriver } from "../src/chef/driver.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.js";
@@ -80,6 +81,23 @@ const passingVerifier: ChefVerifier = {
 };
 
 describe("CHEF autonomous worker cycle", () => {
+  it("retains the direct CLI capability refusal as a zero-usage external block without retry or verification", async () => {
+    const { control, transitions } = makeControl(makeTask({ capabilitySelection: {
+      mode: "manual", needs: [], selectedIds: [], excludedIds: [], maxSelected: 8,
+    } }));
+    // A missing executable proves the driver did not launch a subprocess.
+    const driver = new CodexCliChefDriver({ command: "/fixture/not-an-executable", allowedRoots: [process.cwd()] });
+    const verifier = { verify: vi.fn() };
+    const result = await runChefWorkerCycle(control, driver, verifier, {
+      missionId: "mission-1", workerId: "worker-1", provider: "codex",
+    });
+    expect(result.state).toBe("blocked_external");
+    expect(transitions).toEqual(["running", "blocked_external"]);
+    expect(control.recordUsage).toHaveBeenCalledWith(expect.objectContaining({ inputTokens: 0, outputTokens: 0, costMicros: 0 }));
+    expect(verifier.verify).not.toHaveBeenCalled();
+    expect(control.tryFinishMission).not.toHaveBeenCalled();
+  });
+
   it("does not claim work after an already requested daemon shutdown", async () => {
     const { control } = makeControl(makeTask());
     const cancel = new AbortController();

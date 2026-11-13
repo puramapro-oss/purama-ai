@@ -10,7 +10,11 @@ import {
   type WorkshopRun, type WorkshopRuntimeDependencies, type WorkshopWorker,
 } from "../src/chef/workshop-runtime.js";
 import { ChefProcessStopUnconfirmedError } from "../src/chef/process.js";
+import { SupabaseChefControlPlane } from "../src/chef/control-plane.js";
 import { runChefWorkerCycle, type ChefControlPlane, type ChefRuntimeTask } from "../src/chef/supervisor.js";
+
+const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc } }));
 
 const exec = promisify(execFile);
 const dirs: string[] = [];
@@ -46,7 +50,7 @@ function harness() {
   const run: WorkshopRun = { missionId, state: "active", repo: "org/example", cancelRequested: false };
   const deps: WorkshopRuntimeDependencies = {
     pollMs: 5, heartbeatMs: 20,
-    preflight: vi.fn(async p => ({ cwd: p.workdir, repositoryId: p.workdir + "/.git",
+    preflight: vi.fn(async p => ({ cwd: p.workdir, repositoryId: p.workdir + "/.git", branch: "main",
       codexCommand: "/trusted/bin/codex", verificationProfiles: p.verificationProfiles })),
     clean: vi.fn(async () => undefined),
     createWorker: vi.fn(() => worker()),
@@ -101,7 +105,7 @@ describe("workshop dispatcher", () => {
 
   it("rejects distinct project aliases sharing one physical repository", async () => {
     const h = harness();
-    h.deps.preflight = vi.fn(async p => ({ cwd: p.workdir, repositoryId: "/same/.git",
+    h.deps.preflight = vi.fn(async p => ({ cwd: p.workdir, repositoryId: "/same/.git", branch: "main",
       codexCommand: "/bin/codex", verificationProfiles: p.verificationProfiles }));
     await expect(runWorkshopRuntime([project(), project({ id: "second", workdir: "/trusted/second" })],
       undefined, h.deps)).rejects.toMatchObject({ code: "WORKSHOP_CONFIG" });
@@ -328,6 +332,7 @@ describe("workshop local preflight", () => {
     const fixture = await repository();
     const result = await preflightWorkshopProject(fixture.project, new AbortController().signal);
     expect(result.cwd).toMatch(/\/repo$/);
+    expect(result.branch).toBe((await exec("git", ["branch", "--show-current"], { cwd: fixture.cwd })).stdout.trim());
     expect(result.codexCommand).toMatch(/\/codex$/);
     expect(result.verificationProfiles).toHaveLength(2);
     await expect(assertCleanWorkshop(result.cwd, new AbortController().signal)).resolves.toBeUndefined();
@@ -419,4 +424,67 @@ describe("workshop local preflight", () => {
     await expect(preflightWorkshopProject({ ...fixture.project, codexCommand: local }, new AbortController().signal))
       .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
   });
+});
+
+describe("workshop branch binding", () => {
+  it.each(["stable", "driver switch", "verifier switch", "explicit assignment"] as const)(
+    "keeps the claim bound to its expected branch: %s", async (scenario) => {
+      const fixture = await repository();
+      const preflight = await preflightWorkshopProject(fixture.project, new AbortController().signal);
+      const initialBranch = (await exec("git", ["branch", "--show-current"], { cwd: fixture.cwd })).stdout.trim();
+      const initialSha = (await exec("git", ["rev-parse", "HEAD"], { cwd: fixture.cwd })).stdout.trim();
+      const assignedBranch = scenario === "explicit assignment" ? "assigned-branch" : null;
+      if (assignedBranch) await exec("git", ["switch", "-c", assignedBranch], { cwd: fixture.cwd });
+      rpc.mockImplementation(async (name: string) => {
+        if (name !== "chef_claim_next_task") throw new Error("Unexpected RPC: " + name);
+        return { error: null, data: [{
+          id: "branch-task", mission_id: missionId, brief_hash: "a".repeat(64),
+          instructions: "Review the project", worktree: fixture.cwd, access_mode: "read",
+          fencing_token: 1, attempt: 1, branch: assignedBranch,
+          verification_profiles: ["review"], allowed_paths: [],
+        }] };
+      });
+      const adapter = new SupabaseChefControlPlane({
+        repo: fixture.project.repo, defaultCwd: preflight.cwd, branch: preflight.branch,
+        defaultVerificationProfiles: fixture.project.reviewProfiles,
+      });
+      const unit = worker();
+      // Exercise the real SQL-row adapter rather than injecting branch into a task fixture.
+      unit.control.claimNext = adapter.claimNext.bind(adapter);
+      unit.driver.run = vi.fn<WorkshopWorker["driver"]["run"]>(async () => {
+        if (scenario === "driver switch") {
+          await exec("git", ["switch", "-c", "unexpected-branch"], { cwd: fixture.cwd });
+        }
+        return { schemaVersion: 1, status: "completed", summary: "Review complete" };
+      });
+      unit.verifier.verify = vi.fn<WorkshopWorker["verifier"]["verify"]>(async () => {
+        if (scenario === "verifier switch") {
+          await exec("git", ["switch", "-c", "unexpected-branch"], { cwd: fixture.cwd });
+        }
+        return { ok: true, evidence: [{
+          kind: "review", sha256: "b".repeat(64), payload: { profile: "review", ok: true },
+        }] };
+      });
+      const result = await runChefWorkerCycle(unit.control, unit.driver, unit.verifier, {
+        missionId, workerId: "branch-worker", provider: "codex",
+      });
+      expect((await exec("git", ["rev-parse", "HEAD"], { cwd: fixture.cwd })).stdout.trim()).toBe(initialSha);
+      expect((await exec("git", ["status", "--porcelain=v1"], { cwd: fixture.cwd })).stdout).toBe("");
+      if (scenario === "driver switch" || scenario === "verifier switch") {
+        expect(result).toMatchObject({
+          state: "blocked_external", error: "Branche réelle différente de la branche assignée",
+        });
+        expect(unit.control.addEvidence).not.toHaveBeenCalled();
+        expect(unit.control.tryFinishMission).not.toHaveBeenCalled();
+        expect(vi.mocked(unit.control.transition).mock.calls.some(([input]) => input.target === "verified_done")).toBe(false);
+      } else {
+        expect(result.state).toBe("verified_done");
+        expect(vi.mocked(unit.driver.run).mock.calls[0][0].branch).toBe(assignedBranch ?? initialBranch);
+        expect(vi.mocked(unit.control.addEvidence).mock.calls[0][1].payload)
+          .toMatchObject({ branch: assignedBranch ?? initialBranch, headSha: initialSha, clean: true });
+      }
+      expect(unit.verifier.verify).toHaveBeenCalledTimes(scenario === "driver switch" ? 0 : 1);
+      expect(unit.control.quarantineProcess).not.toHaveBeenCalled();
+    },
+  );
 });

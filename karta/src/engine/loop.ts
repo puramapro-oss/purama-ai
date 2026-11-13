@@ -108,12 +108,18 @@ export async function runAgentCycle(
         source: executionTrigger.source, reason: executionTrigger.payload!.reason,
       } };
     }
+    // A custom definition can be stale after context preparation. Only the
+    // freshly authorized row below may supply its explicit model preference.
+    let modelPreferences = definition.type.startsWith("custom:") ? undefined : definition.modelPreferences;
     if (!noBrief && definition.type.startsWith("custom:")) {
       try {
         // Admission, continuation and context reads may have awaited since the
         // worker's check. Re-read authority immediately before the model call.
         // This check is not atomic with the subsequent provider request.
-        await resolveAgentDefinition(definition.type, userId);
+        const currentDefinition = await resolveAgentDefinition(definition.type, userId);
+        if (!currentDefinition || currentDefinition.type !== definition.type) throw new CustomAgentAuthorizationError();
+        modelPreferences = currentDefinition.modelPreferences === undefined
+          ? undefined : { ...currentDefinition.modelPreferences };
       } catch (error) {
         if (!(error instanceof CustomAgentAuthorizationError)) throw error;
         return await finishOutcome(minimizeRunTrace({
@@ -149,6 +155,7 @@ export async function runAgentCycle(
     } : await getClaudeClient().decide({
       systemPrompt: definition.systemPrompt + (continuation ? APPROVAL_CONTINUATION_GUIDANCE : ""),
       context, tools: definition.tools, agentType: definition.type,
+      ...(modelPreferences !== undefined ? { preferences: modelPreferences } : {}),
       onUsage: receipt => { modelUsage ??= receipt; },
     });
     // One private/unknown call protects the entire decision, including earlier

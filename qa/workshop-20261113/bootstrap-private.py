@@ -61,6 +61,7 @@ def wait_http(url, headers=None, limit=45):
         stopping.wait(0.4)
     raise RuntimeError("Private HTTP readiness not reached")
 
+reuse_project = os.environ.get("WORKSHOP_QA_REUSE_PROJECT")
 gateway = None
 exit_code = 0
 try:
@@ -84,6 +85,13 @@ try:
             allowed={"accept","authorization","apikey","content-type","accept-profile","content-profile","prefer","x-client-info","x-supabase-api-version"}
             headers={k:v for k,v in self.headers.items() if k.lower() in allowed}
             body=self.rfile.read(length) if length else None
+            if reuse_project and self.path.startswith("/functions/") and self.command == "POST":
+                try:
+                    action = json.loads(body or b"{}").get("action")
+                except (ValueError, AttributeError):
+                    self.send_error(400);return
+                if action not in {"projects", "list", "status", "artifact"}:
+                    self.send_error(403);return
             req=urllib.request.Request(f"http://127.0.0.1:{dest}"+self.path,data=body,headers=headers,method=self.command)
             try:
                 response=urllib.request.urlopen(req,timeout=15)
@@ -117,22 +125,36 @@ try:
     gateway=ThreadingHTTPServer(("127.0.0.1",ports["gateway"]),Handler)
     threading.Thread(target=gateway.serve_forever,daemon=True).start()
     wait_http(supabase_url+"/auth/v1/health",{"apikey":credentials["SUPABASE_ANON_KEY"]})
-    project_id="qa-"+secrets.token_hex(5)
-    workdir=private/"project"
-    workdir.mkdir(mode=0o700)
-    (workdir/"README.md").write_text("Private acceptance fixture. Only index.html may change. No deployment, credentials or external resources.\n")
-    for args in [["init","-q"],["-c","user.name=PURAMA verification","-c","user.email=verification@example.invalid","add","README.md"],
-                 ["-c","user.name=PURAMA verification","-c","user.email=verification@example.invalid","-c","core.hooksPath=/dev/null","commit","-qm","Seed private workshop verification"]]:
-        subprocess.run(["/usr/bin/git","-C",str(workdir),*args],capture_output=True,check=True)
-    profiles=[{"name":name,"kind":kind,"command":str(node),"args":[str(qa/"verify-generated.mjs"),chrome],
-               "requirementKeys":["PRODUCT","QUALITY"],"timeoutMs":60000}
-              for name,kind in [("acceptance","test"),("independent-acceptance","review")]]
-    project={"id":project_id,"name":"Atelier de qualification","userIds":[accounts["owner"]["id"]],
-        "repo":"qa/"+project_id,"workdir":str(workdir),"allowedPaths":["index.html"],
-        "exportPaths":["index.html"],"previewEntry":"index.html","maxParallel":2,
-        "tokenBudget":1500000,"estimatedTokensPerTask":300000,
-        "codexCommand":"/Users/matissdornier/.local/bin/codex",
-        "verificationProfiles":profiles,"implementationProfiles":["acceptance"],"reviewProfiles":["independent-acceptance"]}
+    if reuse_project:
+        previous = Path(reuse_project).resolve()
+        if previous.name != "project.json" or not str(previous.parent).startswith("/private/tmp/purama-atelier-authenticated-"):
+            raise RuntimeError("Only an existing private qualification project can be resumed")
+        if previous.stat().st_mode & 0o077:
+            raise RuntimeError("Private project configuration permissions changed")
+        project = json.loads(previous.read_text())
+        if project["userIds"] != [accounts["owner"]["id"]]:
+            raise RuntimeError("Private project owner changed")
+        project_id = project["id"]
+        workdir = Path(project["workdir"]).resolve()
+        if workdir.parent != previous.parent or workdir.name != "project":
+            raise RuntimeError("Private project path changed")
+    else:
+        project_id="qa-"+secrets.token_hex(5)
+        workdir=private/"project"
+        workdir.mkdir(mode=0o700)
+        (workdir/"README.md").write_text("Private acceptance fixture. Only index.html may change. No deployment, credentials or external resources.\n")
+        for args in [["init","-q"],["-c","user.name=PURAMA verification","-c","user.email=verification@example.invalid","add","README.md"],
+                     ["-c","user.name=PURAMA verification","-c","user.email=verification@example.invalid","-c","core.hooksPath=/dev/null","commit","-qm","Seed private workshop verification"]]:
+            subprocess.run(["/usr/bin/git","-C",str(workdir),*args],capture_output=True,check=True)
+        profiles=[{"name":name,"kind":kind,"command":str(node),"args":[str(qa/"verify-generated.mjs"),chrome],
+                   "requirementKeys":["PRODUCT","QUALITY"],"timeoutMs":60000}
+                  for name,kind in [("acceptance","test"),("independent-acceptance","review")]]
+        project={"id":project_id,"name":"Atelier de qualification","userIds":[accounts["owner"]["id"]],
+            "repo":"qa/"+project_id,"workdir":str(workdir),"allowedPaths":["index.html"],
+            "exportPaths":["index.html"],"previewEntry":"index.html","maxParallel":2,
+            "tokenBudget":1500000,"estimatedTokensPerTask":300000,
+            "codexCommand":"/Users/matissdornier/.local/bin/codex",
+            "verificationProfiles":profiles,"implementationProfiles":["acceptance"],"reviewProfiles":["independent-acceptance"]}
     base_env={k:v for k,v in os.environ.items() if k in ["HOME","PATH","TMPDIR","LANG","LC_ALL","TERM"]}
     base_env.update({"SUPABASE_URL":supabase_url,"SUPABASE_SERVICE_ROLE_KEY":credentials["SUPABASE_SERVICE_ROLE_KEY"],
         "SUPABASE_ANON_KEY":credentials["SUPABASE_ANON_KEY"],"KARTA_ADMIN_TOKEN":secrets.token_hex(32),
@@ -159,7 +181,7 @@ try:
     save_private("project.json",json.dumps(project))
     public={"privateDirectory":str(private),"configPath":str(config_path),"ports":ports,
         "projectId":project_id,"workdir":str(workdir),"processes":[{"name":n,"pid":p.pid} for n,p in children],
-        "ready":True,"isolation":"Dedicated clone and private services only; no production activation"}
+        "ready":True,"artifactReadOnlyResume":bool(reuse_project),"isolation":"Dedicated clone and private services only; no production activation"}
     (qa/"private-bootstrap.json").write_text(json.dumps(public,indent=2)+"\n")
     print(json.dumps({"event":"PRIVATE_STACK_READY","configPath":str(config_path),"privateDirectory":str(private)}),flush=True)
     deadline=time.monotonic()+900

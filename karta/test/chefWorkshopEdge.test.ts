@@ -86,8 +86,7 @@ describe("CHEF workshop authenticated artifact receipts", () => {
     expect(result.headers.get("Cache-Control")).toBe("no-store");
     expect(h.rateLimit).toHaveBeenLastCalledWith("chef-workshop:artifact:"+owner,15,60000);
   });
-  it.each(["other-mission","bad-sha","bad-filename","bad-media","bad-size","bad-hash","bad-base64","bad-preview-hash","preview-overflow","preview-controls"])
-    ("refuses an inconsistent artifact: %s",async reason=>{
+  it.each(["other-mission","bad-sha","bad-filename","bad-media","bad-size","bad-hash","bad-base64","bad-preview-hash","preview-overflow","preview-controls"])("refuses an inconsistent artifact: %s",async reason=>{
       const h=harness();const artifact=artifactFixture();
       if(reason==="other-mission")artifact.missionId=requestId;
       if(reason==="bad-sha")artifact.commitSha="--help";
@@ -102,8 +101,7 @@ describe("CHEF workshop authenticated artifact receipts", () => {
       response(h,{ok:true,artifact});
       expect((await h.handle(request({action:"artifact",missionId}))).status).toBe(502);
     });
-  it.each([{action:"artifact",missionId,path:"/etc/passwd"},{action:"artifact",missionId,sha:"a".repeat(40)},{action:"artifact",missionId:"not-uuid"}])
-    ("rejects client-selected paths and commits: %#",async body=>{
+  it.each([{action:"artifact",missionId,path:"/etc/passwd"},{action:"artifact",missionId,sha:"a".repeat(40)},{action:"artifact",missionId:"not-uuid"}])("rejects client-selected paths and commits: %#",async body=>{
       const h=harness();expect((await h.handle(request(body))).status).toBe(400);expect(h.fetch).not.toHaveBeenCalled();
     });
   it("uses a separate bounded transport limit for artifacts without relaxing status responses",async()=>{

@@ -1,0 +1,100 @@
+{
+  "numTotalTests": 415,
+  "numPassedTests": 415,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "success": true,
+  "test_files": [
+    {
+      "path": "src/hooks/useAuth.continuation.test.tsx",
+      "tests": 17,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/auth-continuation.test.ts",
+      "tests": 82,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/creator-agent-distribution.test.ts",
+      "tests": 16,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/creator-agent-results.test.ts",
+      "tests": 8,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/creator-execution-preferences.test.ts",
+      "tests": 21,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/creator-model-request.test.ts",
+      "tests": 33,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/private-tool-results.test.ts",
+      "tests": 24,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/public-creator-model.test.ts",
+      "tests": 17,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/public-share.test.ts",
+      "tests": 72,
+      "status": "passed"
+    },
+    {
+      "path": "src/lib/safeNavigation.test.ts",
+      "tests": 12,
+      "status": "passed"
+    },
+    {
+      "path": "src/pages/CreatorAgentDetail.execution.test.tsx",
+      "tests": 4,
+      "status": "passed"
+    },
+    {
+      "path": "src/pages/CreatorAgentDetail.results.test.tsx",
+      "tests": 6,
+      "status": "passed"
+    },
+    {
+      "path": "src/pages/auth-continuation.test.tsx",
+      "tests": 15,
+      "status": "passed"
+    },
+    {
+      "path": "src/pages/creator-copy-lifecycle.test.tsx",
+      "tests": 19,
+      "status": "passed"
+    },
+    {
+      "path": "src/components/karta/PrivateToolResults.test.tsx",
+      "tests": 9,
+      "status": "passed"
+    },
+    {
+      "path": "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "tests": 13,
+      "status": "passed"
+    },
+    {
+      "path": "src/components/shared/CinematicIntro.test.tsx",
+      "tests": 22,
+      "status": "passed"
+    },
+    {
+      "path": "src/components/shared/ShareButtons.test.tsx",
+      "tests": 25,
+      "status": "passed"
+    }
+  ],
+  "raw_report_sha256": "1485a49ac9f882ceb990b8cc88976c6b62e340a17f4a1936b806a00c459a59bd"
+}

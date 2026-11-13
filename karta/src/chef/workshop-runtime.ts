@@ -42,6 +42,7 @@ export interface WorkshopRuntimeStore {
 export interface WorkshopPreflight {
   cwd: string;
   repositoryId: string;
+  branch: string;
   codexCommand: string;
   verificationProfiles: ChefVerificationProfile[];
 }
@@ -129,7 +130,8 @@ export async function preflightWorkshopProject(project: WorkshopProject, signal:
     if (top !== cwd) throw new Error("repository root");
     const common = await command(cwd, git, ["rev-parse", "--git-common-dir"], signal);
     const repositoryId = await realpath(resolve(cwd, common));
-    await assertCleanWorkshop(cwd, signal);
+    const snapshot = await captureWorkshopHead(cwd, signal);
+    const branch = snapshot.ref.slice("refs/heads/".length);
     for (const path of project.allowedPaths) {
       if (path.split("/").some(p => p.toLowerCase() === ".git")) throw new Error("git scope");
       let ancestor = resolve(cwd, path);
@@ -163,7 +165,7 @@ export async function preflightWorkshopProject(project: WorkshopProject, signal:
     // Constructor validates profile names, requirements and duplicates without executing them.
     new CommandChefVerifier(verificationProfiles, [cwd]);
     checkAbort(signal);
-    return { cwd, repositoryId, codexCommand, verificationProfiles };
+    return { cwd, repositoryId, branch, codexCommand, verificationProfiles };
   } catch (error) { throw fault(error, "WORKSHOP_PREFLIGHT"); }
 }
 
@@ -226,7 +228,7 @@ async function defaultDependencies(): Promise<WorkshopRuntimeDependencies> {
     createWorker(project, preflight) {
       return {
         control: new SupabaseChefControlPlane({
-          repo: project.repo, defaultCwd: preflight.cwd, worktree: preflight.cwd,
+          repo: project.repo, defaultCwd: preflight.cwd, worktree: preflight.cwd, branch: preflight.branch,
           defaultVerificationProfiles: project.implementationProfiles,
           capabilities: { driverProtocol: 1, verifier: "deterministic", workshop: project.id },
         }),
