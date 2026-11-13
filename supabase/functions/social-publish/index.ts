@@ -32,7 +32,7 @@ async function generateCaption(params: {
   }
   const client = new Anthropic({ apiKey });
   const msg = await client.messages.create({
-    model: "claude-sonnet-4-5",
+    model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
     max_tokens: 600,
     system:
       `Tu es un expert viral en réseaux sociaux. À partir du contenu fourni, génère une caption engageante (max 2-3 phrases, ton naturel, hooks forts) et 5 à 10 hashtags pertinents (sans le #). Réponds STRICTEMENT en JSON: {"caption": "...", "hashtags": ["...", "..."]}. Aucun markdown, aucune explication.`,

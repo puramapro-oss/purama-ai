@@ -15,6 +15,14 @@ services:
     network_mode: host
     depends_on:
       - karta-redis
+    # Exceeds the maximum application shutdown deadline (120s).
+    stop_grace_period: 130s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:'+(process.env.KARTA_PORT||4100)+'/health',{signal:AbortSignal.timeout(35000)}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 40s
+      start_period: 30s
+      retries: 3
     env_file:
       - .env
 

@@ -21,26 +21,38 @@ export async function runDailyReport(): Promise<void> {
   if (error) throw new Error(`runDailyReport: ${error.message}`);
 
   const byUser = groupByUser((data ?? []) as RunRow[]);
+  const notificationFailures: unknown[] = [];
 
   for (const [userId, runs] of byUser) {
-    const success = runs.filter((r) => r.status === "success").length;
+    const success = runs.filter((r) => r.status === "success" && r.mode !== "simulation").length;
     const errors = runs.filter((r) => r.status === "error").length;
     const awaiting = runs.filter((r) => r.status === "awaiting_approval").length;
-    const simulated = runs.filter((r) => r.mode === "simulation").length;
+    const simulated = runs.filter((r) => r.status === "simulated" || (r.status === "success" && r.mode === "simulation")).length;
+    const skipped = runs.filter((r) => r.status === "skipped").length;
+    const other = runs.length - success - errors - awaiting - simulated - skipped;
 
     const byAgent = new Map<string, number>();
     for (const run of runs) byAgent.set(run.agent_type, (byAgent.get(run.agent_type) ?? 0) + 1);
     const agentBreakdown = [...byAgent.entries()].map(([type, count]) => `${type}: ${count}`).join(", ");
 
-    await notify({
-      userId,
-      agentType: runs[0].agent_type,
-      title: "Rapport quotidien de tes agents IA",
-      body: `${runs.length} cycle(s) exécuté(s) (${agentBreakdown}). ${success} réussi(s), ${errors} en erreur, ${awaiting} en attente de validation${simulated > 0 ? `, ${simulated} en mode simulation` : ""}.`,
-      actionType: "daily_report",
-      priority: "low",
-      channels: ["in_app", "email"],
-    });
+    try {
+      await notify({
+        userId,
+        agentType: runs[0].agent_type,
+        title: "Rapport quotidien de tes agents IA",
+        body: `${runs.length} cycle(s) enregistré(s) (${agentBreakdown}). ${success} réussi(s) hors simulation, ${errors} en erreur, ${awaiting} en attente de validation ou de vérification, ${simulated} simulé(s), ${skipped} ignoré(s)${other > 0 ? `, ${other} en cours ou de statut à vérifier` : ""}.`,
+        actionType: "daily_report",
+        priority: "low",
+        channels: ["in_app", "email"],
+      });
+    } catch (notificationError) {
+      // Une notification déjà partiellement appliquée n'est pas répétée ici.
+      // Les autres destinataires doivent néanmoins recevoir leur propre rapport.
+      notificationFailures.push(notificationError);
+    }
+  }
+  if (notificationFailures.length > 0) {
+    throw new AggregateError(notificationFailures, `${notificationFailures.length}/${byUser.size} rapport(s) non confirmés — vérifier sans renvoi automatique`);
   }
 }
 

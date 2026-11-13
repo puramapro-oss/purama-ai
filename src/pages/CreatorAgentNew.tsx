@@ -42,7 +42,7 @@ const blank = (): DraftAgent => ({
   color: '#8B5CF6',
   category: 'productivity',
   system_prompt: '',
-  model: 'claude-sonnet-4-20250514',
+  model: 'claude-sonnet-4-6',
   temperature: 0.7,
   tools_enabled: [],
   schedule_cron: null,

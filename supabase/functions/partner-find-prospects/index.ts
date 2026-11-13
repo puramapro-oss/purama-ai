@@ -119,7 +119,7 @@ Retourne UNIQUEMENT un JSON valide: { "prospects": [...] }`;
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
         max_tokens: 2500,
         messages: [{ role: "user", content: claudePrompt }],
       }),
@@ -189,7 +189,9 @@ Retourne UNIQUEMENT un JSON valide: { "prospects": [...] }`;
     }
 
     // Bump stats
-    await admin.rpc("noop").catch(() => {/* ignore */});
+    try {
+      await admin.rpc("noop");
+    } catch { /* ignore */ }
 
     return json({ inserted: inserted.length, prospects: inserted });
   } catch (err) {

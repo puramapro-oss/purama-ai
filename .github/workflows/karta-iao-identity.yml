@@ -1,0 +1,31 @@
+name: KARTA IAO identity
+
+on:
+  pull_request:
+  push:
+    branches:
+      - codex/t03-iao-local-transport-20261014
+
+permissions:
+  contents: read
+
+jobs:
+  karta-iao:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: karta
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: karta/package-lock.json
+      - name: Install KARTA
+        run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit --incremental false --pretty false -p tsconfig.json
+      - name: Identity, facade and health tests
+        run: npx vitest run test/iaoIdentityBoundary.test.ts test/iao-facade.test.ts test/apiHealth.test.ts

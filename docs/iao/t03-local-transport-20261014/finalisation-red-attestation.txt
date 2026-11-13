@@ -1,0 +1,35 @@
+
+ RUN  v2.1.9 /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta
+
+ ❯ test/localComputeFabricProvider.test.ts (10 tests | 1 failed) 130ms
+   × local compute fabric provider > fails closed when the daemon does not attest local-only execution and accepted caps 7ms
+     → promise resolved "{ text: 'unattested answer', …(1) }" instead of rejecting
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > fails closed when the daemon does not attest local-only execution and accepted caps
+AssertionError: promise resolved "{ text: 'unattested answer', …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ Object {
++   "modelVersion": "unknown/unknown",
++   "text": "unattested answer",
++ }
+
+ ❯ test/localComputeFabricProvider.test.ts:64:7
+     62|     await expect(new LocalComputeFabricProvider({ socketPath, timeoutM…
+     63|       requestId: "r", idempotencyKey, payloadDigest, message: "questio…
+     64|     })).rejects.toThrow("memory-unavailable:compute-fabric");
+       |       ^
+     65|   });
+     66|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  15:17:28
+   Duration  341ms (transform 19ms, setup 0ms, collect 19ms, tests 130ms, environment 0ms, prepare 27ms)

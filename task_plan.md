@@ -1,5 +1,20 @@
 # PURAMA AI — Task Plan V3
 
+## T03 IAO — finalisation raccordement local (2026-10-27)
+
+- [x] Reprendre le worktree, les contrats, propriétaires, ACK et handoffs sans
+  modifier le WIP étranger.
+- [x] Préserver les preuves historiques 69/69 T03 et 2/2 T06 sans replay.
+- [x] Identifier les anciens adaptateurs `45e8dc1`/`3941b7e` et documenter la
+  partie réutilisable sans second transport ni complétion via SMARANA.
+- [ ] Recevoir un SHA T04 validé et son ACK (`BLOCKED_EXTERNAL`).
+- [ ] Recevoir un SHA T01 admis (`BLOCKED_EXTERNAL`).
+- [ ] Après ces deux gates seulement, implémenter l'unique adaptateur mémoire
+  `SmaranaIaoPort`, analyser son impact, puis obtenir l'ACK T06.
+- [ ] Tester sur le même SHA : conversation, SSE, annulation, reprise, erreurs,
+  permissions, mémoire réelle et zéro fallback payant (`NOT_TESTED_PRECONDITION`).
+- [ ] Remettre le candidat à la QA indépendante T08.
+
 ## RÈGLE PERMANENTE (Tissma, 2026-07-26)
 **Ne jamais bloquer le développement sur le crédit Anthropic.** Il sera rechargé juste avant le vrai
 lancement, pas avant. Tout le code doit être écrit, testé structurellement et déployé avec Claude
@@ -317,3 +332,99 @@ stricte, receipts/réconciliation, reprise après erreur. (Codes agents : voir E
 - [ ] Un agent créé par un vrai utilisateur, activé en `karta_enabled=true` avec de vrais outils (ex: Gmail connecté) : jamais exécuté avec un vrai appel Claude — le mock a seulement prouvé que le pipeline (déclenchement → décision → outils → log) fonctionne structurellement
 - [x] ~~Scheduler des agents créés...~~ Résolu 2026-07-27 (cf section "Clôture des phases restantes" en tête de fichier) — ne dépendait pas du crédit Anthropic, juste du temps réel d'attente
 - [x] ~~Page "Mes employés IA" test humain...~~ Résolu 2026-07-27 (Playwright réel, cf section "Clôture des phases restantes") — ne dépendait pas du crédit Anthropic
+
+## IAO OPTION B — LOCAL_DONE_VERIFIED (2026-10-07)
+
+- [x] Base KARTA autoritative `2f024bf3cc86af46b4dd705437426fcb2c456ba4`; branche isolée
+  `codex/iao-karta-integration-20261005`; aucun cherry-pick de la lignée runtime parallèle.
+- [x] Façade IAO mince intégrée aux primitives KARTA existantes. KARTA reste l'unique
+  moteur/lifecycle/queue et SMARANA l'unique mémoire via port injecté; sans runtime injecté,
+  les routes IAO échouent en `503`.
+- [x] Commits locaux atomiques : `62f8e9e`, `0245766`, `a4c50de`, `47acbb4`, `53fb4da`.
+- [x] Contrats durcis : identité/ownership serveur, isolation tenant+acteur, idempotence durable
+  tenant+acteur+requête, digests canoniques et rejet avant effet des payloads divergents,
+  staleness recalculée après await, reçus SMARANA strictement allowlistés, export one-shot borné,
+  erreurs génériques sans fuite PII/interne.
+- [x] Tests ciblés `npm test -- --run test/iao-facade.test.ts test/localComputeFabricProvider.test.ts` :
+  36/36 PASS. Suite `npm test` : 30 fichiers, 370/370 PASS.
+- [x] `npm run typecheck` PASS; `npm run build` PASS; lint N/A (aucun script `lint` dans
+  `karta/package.json`); `git diff --check` PASS.
+- [x] Gate SATYA applicable, commande hermétique canonique sur 6 fichiers : 136/136 PASS.
+- [x] GitNexus `detect-changes` pré-commit exécuté : 6 fichiers touchés, aucun symbole indexé
+  dans les nouveaux hunks; exhaustivité graphe explicitement non revendiquée.
+- [x] Revue indépendante sur `2f024bf3..53fb4da7362904f0548610d372cb34044bd17bff` :
+  `NO_FINDINGS`; rejeu indépendant ciblé 36/36 PASS.
+- [x] Aucun push, deploy, DB distante, provider réel, secret, migration, seconde IA, mémoire,
+  queue, scheduler ou orchestrateur.
+
+## T03 IAO — transport local annulable (2026-10-14)
+
+- Base : `108291708a3d6858d26519704eb793d29b67cee6`, worktree isole `t03-iao-local-transport-20261014`, branche `codex/t03-iao-local-transport-20261014`.
+- Lot inedit identifie : signal KARTA ignore par le transport HTTP Unix Compute Fabric ; aucun chevauchement produit avec le lot SMARANA `3941b7e`.
+- Reproduction conservee : `docs/iao/t03-local-transport-20261014/red.txt`, 5 echecs / 12 tests sur le produit de base.
+- Correction : signal natif HTTP + rejet avant dispatch + erreur d'annulation expurgee ; sockets fermees, effets toujours incertains apres envoi.
+- Validation finale : 15/15 tests cibles PASS ; gate KARTA 399/399 PASS (31 fichiers, 0 skip), typecheck, lint cible et build exit 0. Commandes et SHA-256 testes : `docs/iao/t03-local-transport-20261014/evidence.json`. Aucun provider/secret/DB reel utilise.
+- Impact produit avant edition LOW ; detect-changes staged HIGH (7 flux), sortie structuree MEDIUM (5) : collisions d identifiant vide documentees. Alerte examinee, graphe global UNKNOWN ; revue directe du scope et gate KARTA vertes. Voir rapport et preuves GitNexus.
+- Livraison : commit local `[CODEX] IAO: cancel local compute transport` ; retrouver le SHA par `git log -1 --format=%H -- docs/iao/t03-local-transport-20261014/RAPPORT.md`. Rapport : `docs/iao/t03-local-transport-20261014/RAPPORT.md`.
+
+## T03 IAO — finalisation (2026-10-14)
+
+- [x] Vérifier le SHA livré et relire les preuves du premier commit sans les rejouer comme preuves du delta.
+- [x] Refaire l'index GitNexus en stockage privé ; impacts avant édition LOW pour les trois symboles modifiés, exhaustivité globale UNKNOWN.
+- [x] Reproduire le défaut de confiance daemon : réponse sans attestation acceptée à tort.
+- [x] Exiger un reçu v2 local-only, plafonné et sans fallback payant, lié à la clé et au digest.
+- [x] Tester annulation, permissions, reprise, budgets et absence de fallback sur fixtures locales isolées.
+- [x] Prouver l'arrêt d'un calcul fixture à la déconnexion sans prétendre qualifier le daemon réel.
+- [x] Documenter l'intégration et le retour arrière fail-closed.
+- [ ] Qualifier le daemon réel et l'intégration serveur/SMARANA/VAJRA sur la lignée propriétaire : `UNKNOWN`, hors de cette livraison locale.
+
+## T03 IAO — clôture (2026-10-14)
+
+- [x] Vérifier la tête `0b7d08707611479f444fc860e89828c953180eda` et l'absence de WIP produit.
+- [x] Revoir les contrats IAO/KARTA/SMARANA et les frontières AKASHA/VAJRA sans créer de moteur, mémoire ou orchestrateur.
+- [x] Rejouer une gate locale isolée : 69/69 ciblés, 404/404 KARTA, typecheck, lint ciblé et build.
+- [x] Réindexer GitNexus en stockage privé et analyser les symboles avant toute décision d'édition.
+- [x] Ne modifier aucun symbole produit faute de défaut supplémentaire démontré.
+- [x] Documenter la collision précédente non reproduite, l'impact propriété `UNKNOWN` et la troncature globale du graphe.
+- [x] Préparer l'intégration et le retour arrière exacts des deux commits fonctionnels.
+- [ ] Qualifier le daemon et les raccords SMARANA/AKASHA/VAJRA réels : `UNKNOWN`, hors périmètre local.
+
+## T03 IAO — reprise T01 (2026-10-27)
+
+- [x] Reprendre le worktree exact, vérifier politique, espace, branche, HEAD, arbre et propreté.
+- [x] Inspecter les contrats IAO/KARTA et les commits/ACK propriétaires T03, T04 et T06 sans modifier leurs worktrees.
+- [x] Confirmer l'ordre de composition `T04 -> T03 -> T06` et l'absence de SHA d'adaptateur runtime T03/T04 courant.
+- [x] Rejouer uniquement les gates ciblées utiles : T03 69/69 et interface T06 2/2 PASS sur fixtures injectées.
+- [x] Préserver le candidat T01 non admissible, ses 147 entrées étrangères et le WIP documentaire T04.
+- [x] Documenter la remise et la séquence de déblocage sans créer de second cerveau ou transport.
+- [ ] Raccorder et qualifier Ollama réel : `NOT_TESTED_AUTHORITY`, bloqué par ACK T02 absent, pont T02 absent, adaptateur T03/T04 sans SHA, défaut SMARANA `source_object_ids` et contrat T07 absent.
+
+## T03 IAO — delta raccordement (2026-10-27)
+
+- [x] Constater le nouvel ACK T02 borné au daemon Homebrew existant, sans
+  étendre les droits start/stop/restart/download.
+- [x] Vérifier le correctif T04 en WIP, son environnement Lima `PARTIAL` et
+  l'absence de tests mémoire réels, commit candidat et réception propriétaire.
+- [x] Vérifier que T01 reste un merge WIP non admis au checkpoint
+  `40721466724e8a3dd703a433f2c21a09cdaad954`.
+- [x] Préserver T01, T04, leurs fichiers et leurs bases ; aucun appel Ollama ni
+  duplication de transport.
+- [ ] Implémenter et tester le runtime réel : `BLOCKED_PRECONDITIONS` jusqu'à
+  livraison T04 validée puis admission explicite d'un candidat T01 exact.
+
+## T03 IAO — delta d'autorité (2026-10-28)
+
+- [x] Vérifier l'ACK authentique de l'avenant Linux T04 dans les deux registres
+  et le claim propriétaire, sans l'étendre à T03.
+- [x] Vérifier en lecture seule que T04 n'a pas encore livré de SHA propre :
+  HEAD de base inchangé et sept fichiers WIP préservés.
+- [x] Vérifier que le worktree T03 est propre et que la cible T01 conditionnelle
+  reste absente avec admission QA à `NO`.
+- [x] Conserver les 69/69 historiques sans replay, faute de delta produit ou de
+  composition exécutable.
+- [ ] Implémenter l'adaptateur unique : `BLOCKED` jusqu'au SHA T04 validé, à la
+  réservation explicite des chemins T03, à l'admission de composition T01 et à
+  l'ACK d'interface T06.
+- [ ] Exécuter conversation/SSE/annulation/reprise/erreurs/permissions/mémoire
+  et zéro fallback sur Ollama réel : `NOT_TESTED_PRECONDITION` jusqu'à la
+  qualification T02 du daemon existant et du pont unique.

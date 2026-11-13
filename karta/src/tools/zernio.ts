@@ -1,6 +1,7 @@
 import { config } from "../config.js";
 import type { ToolDefinition } from "../engine/types.js";
 import { fetchWithTimeout } from "../lib/bounded-fetch.js";
+import { isOutputObject, isOutputText, requireOutput } from "./response-validation.js";
 
 export const zernioPublishTool: ToolDefinition<{ title: string; content: string }, { publicationId: string }> = {
   name: "zernio_publish",
@@ -8,7 +9,14 @@ export const zernioPublishTool: ToolDefinition<{ title: string; content: string 
   sensitive: false,
   async execute(params) {
     if (!config.zernioApiKey) throw new Error("ZERNIO_API_KEY non configurée côté KARTA");
+    const hostname = new URL(config.zernioBaseUrl).hostname.toLowerCase().replace(/\.+$/, "");
+    if (hostname === "zernio.com" || hostname.endsWith(".zernio.com")) {
+      // The public API uses /posts and requires authorized platform/account selection.
+      // This legacy tool has neither: never issue an invented public /publish request.
+      throw new Error("Zernio public non pris en charge : comptes et plateformes autorisés requis avant publication");
+    }
 
+    // Legacy custom adapter contract only: POST /publish -> { id: string }.
     const response = await fetchWithTimeout(`${config.zernioBaseUrl}/publish`, {
       method: "POST",
       headers: { Authorization: `Bearer ${config.zernioApiKey}`, "Content-Type": "application/json" },
@@ -16,7 +24,8 @@ export const zernioPublishTool: ToolDefinition<{ title: string; content: string 
     });
 
     if (!response.ok) throw new Error(`Zernio publish échoué (${response.status}): ${await response.text()}`);
-    const created = (await response.json()) as { id: string };
+    const created: unknown = await response.json();
+    requireOutput(isOutputObject(created) && isOutputText(created.id) && !("error" in created), "Zernio adapter");
     return { publicationId: created.id };
   },
 };

@@ -1,0 +1,98 @@
+
+ RUN  v2.1.9 /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta
+
+ ❯ test/localComputeFabricCancellation.test.ts (12 tests | 5 failed) 2144ms
+   × IAO cancellation through the real local Unix transport > rejects an already cancelled request before creating any HTTP request 9ms
+     → expected [Function] to throw error including 'memory-unavailable:cancelled' but got 'memory-unavailable:compute-fabric'
+   × IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=false) 509ms
+     → Matcher did not succeed in 500ms
+   × IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=true) 506ms
+     → Matcher did not succeed in 500ms
+   × IAO cancellation through the real local Unix transport > closes the transport when the shorter KARTA deadline expires 605ms
+     → Matcher did not succeed in 500ms
+   × IAO cancellation through the real local Unix transport > cancels the full IAO path, fences late output and replays without resending 504ms
+     → Matcher did not succeed in 500ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > rejects an already cancelled request before creating any HTTP request
+AssertionError: expected [Function] to throw error including 'memory-unavailable:cancelled' but got 'memory-unavailable:compute-fabric'
+
+Expected: "memory-unavailable:cancelled"
+Received: "memory-unavailable:compute-fabric"
+
+ ❯ test/localComputeFabricCancellation.test.ts:76:5
+     74|     const controller = new AbortController();
+     75|     controller.abort(new Error("private-cancellation-reason"));
+     76|     await expect(new LocalComputeFabricProvider({ socketPath: "/privat…
+       |     ^
+     77|       .complete(completionInput(controller.signal))).rejects.toThrow("…
+     78|     expect(dispatch).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=false)
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=true)
+Error: Matcher did not succeed in 500ms
+ ❯ test/localComputeFabricCancellation.test.ts:97:61
+     95|     await received.promise;
+     96|     controller.abort(new Error("private-cancellation-reason"));
+     97|     await expect.poll(() => disconnected, { timeout: 500 }).toBe(true);
+       |                                                             ^
+     98|     expect(await pending).toEqual(new Error("memory-unavailable:cancel…
+     99|     expect(getEventListeners(controller.signal, "abort")).toHaveLength…
+
+Caused by: AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes the transport when the shorter KARTA deadline expires
+Error: Matcher did not succeed in 500ms
+ ❯ test/localComputeFabricCancellation.test.ts:115:61
+    113|     const input = request();
+    114|     expect(await facade.submit(input)).toMatchObject({ status: "blocke…
+    115|     await expect.poll(() => disconnected, { timeout: 500 }).toBe(true);
+       |                                                             ^
+    116|     expect(await facade.submit(input)).toMatchObject({ status: "blocke…
+    117|     expect(calls).toBe(1);
+
+Caused by: AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > cancels the full IAO path, fences late output and replays without resending
+Error: Matcher did not succeed in 500ms
+ ❯ test/localComputeFabricCancellation.test.ts:140:61
+    138|     expect(facade.cancel(input.tenantId, input.actorId, input.requestI…
+    139|     expect(await pending).toMatchObject({ status: "cancelled", effect:…
+    140|     await expect.poll(() => disconnected, { timeout: 500 }).toBe(true);
+       |                                                             ^
+    141|     response.end(JSON.stringify({ text: "late answer" }));
+    142|     const replay = await facade.submit(input);
+
+Caused by: AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 7 passed (12)
+   Start at  05:09:15
+   Duration  2.39s (transform 34ms, setup 0ms, collect 33ms, tests 2.14s, environment 0ms, prepare 41ms)

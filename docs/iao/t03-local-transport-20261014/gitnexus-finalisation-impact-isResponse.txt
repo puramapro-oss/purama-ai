@@ -1,0 +1,46 @@
+{
+  "target": {
+    "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:isResponse",
+    "name": "isResponse",
+    "type": "Function",
+    "filePath": "karta/src/integrations/localComputeFabricProvider.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Integrations",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:requestFabric.fn@53:21.request@64:4",
+        "name": "request",
+        "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
