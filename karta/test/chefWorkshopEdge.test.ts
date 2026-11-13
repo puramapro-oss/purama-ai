@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import ts from "typescript";
 
 type Handler = (request: Request) => Promise<Response>;
@@ -26,6 +27,16 @@ const task = { id: taskId, key: "build", title: "Construire", state: "ready", pr
 const detail = { ...summary, tasks: [task] };
 const accepted = { ok: true, mission: detail };
 const overview = { ok: true, projects: [{ id: projectId, name: "Mon site", ready: true, maxParallel: 2 }], missions: [summary] };
+function artifactFixture() {
+  // A real ZIP produced independently with Python zipfile, containing index.html.
+  const base64 = "UEsDBBQAAAAAANoNbV1A7aWGHwAAAB8AAAAKAAAAaW5kZXguaHRtbDwhZG9jdHlwZSBodG1sPjxoMT5Cb25qb3VyPC9oMT5QSwECFAMUAAAAAADaDW1dQO2lhh8AAAAfAAAACgAAAAAAAAAAAAAAgAEAAAAAaW5kZXguaHRtbFBLBQYAAAAAAQABADgAAABHAAAAAAA=";
+  const bytes = Buffer.from(base64,"base64");
+  const content = "<!doctype html><h1>Bonjour</h1>";
+  return {missionId,commitSha:"a".repeat(40),archive:{fileName:"site-sources.zip",mediaType:"application/zip",base64,
+    sha256:createHash("sha256").update(bytes).digest("hex"),bytes:bytes.length},
+    preview:{fileName:"preview.html",mediaType:"text/html",content,
+      sha256:createHash("sha256").update(content).digest("hex"),bytes:Buffer.byteLength(content)}};
+}
 
 function harness() {
   const events: string[] = [];
@@ -64,6 +75,67 @@ function response(h: ReturnType<typeof harness>, body: unknown, status = 200) {
   h.fetch.mockImplementation(async () => Response.json(body, { status }));
 }
 afterEach(() => vi.useRealTimers());
+
+describe("CHEF workshop authenticated artifact receipts", () => {
+  it("binds the requested mission and verifies exact ZIP/HTML bytes before forwarding a public receipt", async () => {
+    const h=harness(); const artifact=artifactFixture();
+    response(h,{ok:true,artifact:{...artifact,secret:"PRIVATE",archive:{...artifact.archive,workdir:"PRIVATE"}}});
+    const result=await h.handle(request({action:"artifact",missionId:missionId.toUpperCase()}));
+    expect(result.status).toBe(200); expect(await result.json()).toEqual({ok:true,artifact});
+    expect(JSON.parse(h.fetch.mock.calls[0][1]?.body as string)).toEqual({action:"artifact",missionId});
+    expect(result.headers.get("Cache-Control")).toBe("no-store");
+    expect(h.rateLimit).toHaveBeenLastCalledWith("chef-workshop:artifact:"+owner,15,60000);
+  });
+  it.each(["other-mission","bad-sha","bad-filename","bad-media","bad-size","bad-hash","bad-base64","bad-preview-hash","preview-overflow","preview-controls"])("refuses an inconsistent artifact: %s",async reason=>{
+      const h=harness();const artifact=artifactFixture();
+      if(reason==="other-mission")artifact.missionId=requestId;
+      if(reason==="bad-sha")artifact.commitSha="--help";
+      if(reason==="bad-filename")artifact.archive.fileName="../../secret.zip";
+      if(reason==="bad-media")artifact.archive.mediaType="text/html";
+      if(reason==="bad-size")artifact.archive.bytes++;
+      if(reason==="bad-hash")artifact.archive.sha256="b".repeat(64);
+      if(reason==="bad-base64")artifact.archive.base64="x"+artifact.archive.base64;
+      if(reason==="bad-preview-hash")artifact.preview.sha256="b".repeat(64);
+      if(reason==="preview-overflow")artifact.preview.content="x".repeat(200*1024+1);
+      if(reason==="preview-controls")artifact.preview.content="<html>\0</html>";
+      response(h,{ok:true,artifact});
+      expect((await h.handle(request({action:"artifact",missionId}))).status).toBe(502);
+    });
+  it.each([{action:"artifact",missionId,path:"/etc/passwd"},{action:"artifact",missionId,sha:"a".repeat(40)},{action:"artifact",missionId:"not-uuid"}])("rejects client-selected paths and commits: %#",async body=>{
+      const h=harness();expect((await h.handle(request(body))).status).toBe(400);expect(h.fetch).not.toHaveBeenCalled();
+    });
+  it("uses a separate bounded transport limit for artifacts without relaxing status responses",async()=>{
+    const h=harness(); const large={ok:true,artifact:artifactFixture(),padding:"x".repeat(600_000)};
+    response(h,large);expect((await h.handle(request({action:"artifact",missionId}))).status).toBe(200);
+    response(h,{...accepted,padding:large.padding});expect((await h.handle(request({action:"status",missionId}))).status).toBe(502);
+  });
+  it("cancels an artifact response above six MiB",async()=>{
+    const h=harness(); const cancel=vi.fn();
+    h.fetch.mockImplementation(async()=>new Response(new ReadableStream<Uint8Array>({pull(c){c.enqueue(new Uint8Array(1024*1024));},cancel})));
+    expect((await h.handle(request({action:"artifact",missionId}))).status).toBe(502);expect(cancel).toHaveBeenCalledOnce();
+  });
+  it("keeps status and cancellation available after the heavier artifact quota is exhausted",async()=>{
+    const h=harness();response(h,{ok:true,artifact:artifactFixture()});
+    for(let i=0;i<15;i++)expect((await h.handle(request({action:"artifact",missionId}))).status).toBe(200);
+    expect((await h.handle(request({action:"artifact",missionId}))).status).toBe(429);
+    response(h,accepted);expect((await h.handle(request({action:"status",missionId}))).status).toBe(200);
+    expect((await h.handle(request({action:"cancel",missionId}))).status).toBe(200);
+  });
+  it("keeps the deadline effective during asynchronous artifact hash validation",async()=>{
+    vi.useFakeTimers();const h=harness();response(h,{ok:true,artifact:artifactFixture()});
+    const original=crypto.subtle.digest.bind(crypto.subtle);
+    let entered!:()=>void;const started=new Promise<void>(resolve=>{entered=resolve;});
+    let release!:()=>void;const hold=new Promise<void>(resolve=>{release=resolve;});
+    const hash=vi.spyOn(crypto.subtle,"digest").mockImplementationOnce(async(algorithm,data)=>{
+      entered();await hold;return original(algorithm,data);
+    });
+    try {
+      const pending=h.handle(request({action:"artifact",missionId}));
+      await started;await vi.advanceTimersByTimeAsync(10001);release();
+      expect((await pending).status).toBe(504);expect(vi.getTimerCount()).toBe(0);
+    } finally {hash.mockRestore();release();}
+  });
+});
 
 describe("CHEF workshop authenticated edge boundary", () => {
   it("handles preflight and rejects unsupported methods without accessing account services", async () => {

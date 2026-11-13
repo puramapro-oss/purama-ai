@@ -93,6 +93,18 @@ describe("server-registered workshop configuration", () => {
     changed.verificationProfiles[0].args = ["/trusted/different.mjs"];
     expect(workshopProjectHash(parse(changed))).not.toBe(hash);
   });
+  it("restricts export and HTML preview to the server-owned write scope", () => {
+    expect(parse({...fixture(),exportPaths:["src/public"],previewEntry:"src/public/index.html"}))
+      .toMatchObject({exportPaths:["src/public"],previewEntry:"src/public/index.html"});
+    for(const exportPaths of [["other"],["src/.env"],["src/auth.json"],["src/../other"],[":(glob)**"]]) {
+      expect(() => parse({...fixture(),exportPaths})).toThrow(/export/);
+    }
+    for(const previewEntry of ["other/index.html","src/../../other.html","src/index.js","src/.env.html"]) {
+      expect(() => parse({...fixture(),previewEntry})).toThrow(/aperçu/);
+    }
+    expect(() => parse({...fixture(),exportPaths:["tests"],previewEntry:"src/index.html"})).toThrow(/aperçu/);
+    expect(workshopProjectHash(parse({...fixture(),previewEntry:"src/index.html"}))).not.toBe(workshopProjectHash(parse()));
+  });
 });
 
 describe("workshop mission construction and input boundaries", () => {

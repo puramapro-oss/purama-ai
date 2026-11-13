@@ -1,3 +1,4 @@
+import { resolveTrustedGit } from "./trusted-git.js";
 import { randomUUID } from "node:crypto";
 import { constants } from "node:fs";
 import { access, realpath, stat } from "node:fs/promises";
@@ -41,6 +42,7 @@ export interface WorkshopRuntimeStore {
 export interface WorkshopPreflight {
   cwd: string;
   repositoryId: string;
+  branch: string;
   codexCommand: string;
   verificationProfiles: ChefVerificationProfile[];
 }
@@ -119,14 +121,17 @@ export async function preflightWorkshopProject(project: WorkshopProject, signal:
   try {
     checkAbort(signal);
     const cwd = await realpath(project.workdir);
+    // SQL fencing compares worktree identities exactly; aliases would leave tasks unclaimable.
+    if (cwd !== project.workdir) throw new Error("non-canonical worktree");
     if (!(await stat(cwd)).isDirectory() || cwd === "/") throw new Error("cwd");
     await access(cwd, constants.R_OK | constants.W_OK | constants.X_OK);
-    const git = await executable("git", cwd);
+    const git = await resolveTrustedGit(cwd);
     const top = await realpath(await command(cwd, git, ["rev-parse", "--show-toplevel"], signal));
     if (top !== cwd) throw new Error("repository root");
     const common = await command(cwd, git, ["rev-parse", "--git-common-dir"], signal);
     const repositoryId = await realpath(resolve(cwd, common));
-    await assertCleanWorkshop(cwd, signal);
+    const snapshot = await captureWorkshopHead(cwd, signal);
+    const branch = snapshot.ref.slice("refs/heads/".length);
     for (const path of project.allowedPaths) {
       if (path.split("/").some(p => p.toLowerCase() === ".git")) throw new Error("git scope");
       let ancestor = resolve(cwd, path);
@@ -147,15 +152,20 @@ export async function preflightWorkshopProject(project: WorkshopProject, signal:
     if (within(cwd, codexCommand)) throw new Error("mutable CLI");
     const version = await command(cwd, codexCommand, ["--version"], signal);
     if (!/^codex(?:-cli)?\s+\d+\.\d+/i.test(version)) throw new Error("CLI version");
-    await command(cwd, codexCommand, ["--ignore-user-config", "login", "status"], signal);
+    // --ignore-user-config belongs to exec, not the login subcommand.
+    // This status-only check performs no model or project command execution.
+    await command(cwd, codexCommand, ["login", "status"], signal);
     const verificationProfiles: ChefVerificationProfile[] = [];
     for (const profile of project.verificationProfiles) {
-      verificationProfiles.push({ ...profile, command: await executable(profile.command, cwd) });
+      const verifierCommand = await executable(profile.command, cwd);
+      // A model-controlled executable cannot certify the model's own output.
+      if (within(cwd, verifierCommand)) throw new Error("mutable verifier executable");
+      verificationProfiles.push({ ...profile, command: verifierCommand });
     }
     // Constructor validates profile names, requirements and duplicates without executing them.
     new CommandChefVerifier(verificationProfiles, [cwd]);
     checkAbort(signal);
-    return { cwd, repositoryId, codexCommand, verificationProfiles };
+    return { cwd, repositoryId, branch, codexCommand, verificationProfiles };
   } catch (error) { throw fault(error, "WORKSHOP_PREFLIGHT"); }
 }
 
@@ -218,7 +228,7 @@ async function defaultDependencies(): Promise<WorkshopRuntimeDependencies> {
     createWorker(project, preflight) {
       return {
         control: new SupabaseChefControlPlane({
-          repo: project.repo, defaultCwd: preflight.cwd, worktree: preflight.cwd,
+          repo: project.repo, defaultCwd: preflight.cwd, worktree: preflight.cwd, branch: preflight.branch,
           defaultVerificationProfiles: project.implementationProfiles,
           capabilities: { driverProtocol: 1, verifier: "deterministic", workshop: project.id },
         }),

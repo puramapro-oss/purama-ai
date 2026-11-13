@@ -1,7 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createHash, webcrypto } from 'node:crypto';
 import {
   consumeWorkshopDraft, isMissionRunning, isMissionTerminal, parseWorkshopDetail, parseWorkshopList,
-  requestWorkshop, safePreviewUrl, saveWorkshopDraft,
+  requestWorkshop, safePreviewUrl, saveWorkshopDraft, parseWorkshopArtifact, requestWorkshopArtifact, workshopPreviewDocument,
+  WORKSHOP_ARCHIVE_LIMIT, WORKSHOP_PREVIEW_LIMIT,
 } from './workshop';
 
 const transport = vi.hoisted(() => ({ invoke: vi.fn() }));
@@ -18,6 +20,71 @@ const mission = {
   usage: { tokens: 100, costMicros: 500 }, tasks: [task],
 };
 beforeEach(() => { transport.invoke.mockReset(); sessionStorage.clear(); });
+afterEach(() => vi.unstubAllGlobals());
+
+const hash = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex');
+const archiveBytes = new Uint8Array([80, 75, 5, 6, ...Array(18).fill(0)]);
+const artifact = () => ({
+  missionId: mission.id, commitSha: task.outputSha,
+  archive: { fileName: 'restaurant.zip', mediaType: 'application/zip', base64: Buffer.from(archiveBytes).toString('base64'), bytes: archiveBytes.length, sha256: hash(archiveBytes) },
+  preview: { fileName: 'index.html', mediaType: 'text/html', content: '<h1>Création réelle</h1>', bytes: Buffer.byteLength('<h1>Création réelle</h1>'), sha256: hash('<h1>Création réelle</h1>') },
+});
+const artifactIdentity = { missionId: mission.id, commitSha: task.outputSha };
+
+describe('verified workshop artifacts', () => {
+  beforeEach(() => { vi.stubGlobal('crypto', webcrypto); });
+  it('verifies exact archive and UTF-8 preview bytes against their digests', async () => {
+    const result = await parseWorkshopArtifact(artifact(), artifactIdentity);
+    expect(result.archive.data).toEqual(archiveBytes);
+    expect(result.preview?.content).toBe('<h1>Création réelle</h1>');
+  });
+  it('accepts a source archive without promising an HTML preview', async () => {
+    const sourceOnly = { ...artifact(), preview: undefined };
+    expect((await parseWorkshopArtifact(sourceOnly, artifactIdentity)).preview).toBeUndefined();
+  });
+  it('refuses a result bound to another mission or commit', async () => {
+    await expect(parseWorkshopArtifact({ ...artifact(), missionId: '00000000-0000-4000-8000-000000000099' }, artifactIdentity)).rejects.toThrow(/invalide/);
+    await expect(parseWorkshopArtifact({ ...artifact(), commitSha: 'b'.repeat(40) }, artifactIdentity)).rejects.toThrow(/invalide/);
+  });
+  it('refuses altered content before exposing a download or preview', async () => {
+    const badArchive = artifact(); badArchive.archive.sha256 = '0'.repeat(64);
+    await expect(parseWorkshopArtifact(badArchive, artifactIdentity)).rejects.toThrow(/empreinte/);
+    const badPreview = artifact(); badPreview.preview.content = badPreview.preview.content.replace('réelle', 'fausse');
+    await expect(parseWorkshopArtifact(badPreview, artifactIdentity)).rejects.toThrow();
+  });
+  it('enforces transport byte bounds, canonical base64 and safe filenames', async () => {
+    for (const patch of [
+      { bytes: WORKSHOP_ARCHIVE_LIMIT + 1 }, { bytes: archiveBytes.length - 1 },
+      { base64: '<script>' }, { fileName: '../secret.zip' }, { mediaType: 'text/html' },
+    ]) await expect(parseWorkshopArtifact({ ...artifact(), archive: { ...artifact().archive, ...patch } }, artifactIdentity)).rejects.toThrow(/invalide/);
+    for (const patch of [
+      { bytes: WORKSHOP_PREVIEW_LIMIT + 1 }, { bytes: 5 }, { fileName: '/index.html' }, { mediaType: 'image/svg+xml' },
+    ]) await expect(parseWorkshopArtifact({ ...artifact(), preview: { ...artifact().preview, ...patch } }, artifactIdentity)).rejects.toThrow(/invalide/);
+  });
+  it('sends only the mission identity and requires verified implementation evidence', async () => {
+    transport.invoke.mockResolvedValue({ data: { ok: true, artifact: artifact() }, error: null });
+    const complete = { ...parseWorkshopDetail(mission), tasks: [{ ...parseWorkshopDetail(mission).tasks[0], key: 'implementation' }] };
+    await expect(requestWorkshopArtifact(complete)).resolves.toMatchObject(artifactIdentity);
+    expect(transport.invoke.mock.calls[0][1].body).toEqual({ action: 'artifact', missionId: mission.id });
+    transport.invoke.mockClear();
+    await expect(requestWorkshopArtifact({ ...complete, state: 'active' })).rejects.toThrow(/invalide/);
+    await expect(requestWorkshopArtifact(parseWorkshopDetail(mission))).rejects.toThrow(/invalide/);
+    expect(transport.invoke).not.toHaveBeenCalled();
+  });
+  it('discards an aborted artifact without retaining its content', async () => {
+    const controller = new AbortController(); controller.abort();
+    await expect(parseWorkshopArtifact(artifact(), artifactIdentity, controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
+  });
+  it('places a restrictive policy before every untrusted HTML token', () => {
+    const content = '<script>parent.document.body.innerHTML="bad"</script>';
+    const preview = workshopPreviewDocument(content);
+    expect(preview.indexOf('Content-Security-Policy')).toBeLessThan(preview.indexOf(content));
+    expect(preview).toContain("connect-src 'none'");
+    expect(preview).toContain("frame-src 'none'");
+    expect(preview).toContain("form-action 'none'");
+    expect(preview).toContain("base-uri 'none'");
+  });
+});
 
 describe('workshop response boundary', () => {
   it('accepts verified evidence with a safe HTTPS preview', () => {

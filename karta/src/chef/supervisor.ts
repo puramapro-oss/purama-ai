@@ -172,7 +172,9 @@ export async function runChefWorkerCycle(
   }
 
   let executionBaseSha = task.baseSha;
-  if (task.accessMode === "write") {
+  // Read tasks also need an independent revision: their verifier must not turn
+  // a changed tree into a passing review, even when the driver reports no SHA.
+  {
     try {
       const baseline = await captureCleanGitBaseline({ cwd: task.cwd, expectedBranch: task.branch });
       if (task.baseSha && baseline.headSha.toLowerCase() !== task.baseSha.toLowerCase()) {
@@ -401,21 +403,36 @@ export async function runChefWorkerCycle(
       return recoverTask(error);
     }
 
+    const expectedOutputSha = task.accessMode === "read" ? executionBaseSha : response.outputSha;
     let gitEvidence: ChefVerificationEvidence | undefined;
-    if (task.accessMode === "write" && response.outputSha) {
+    if (expectedOutputSha) {
       try {
+        if (task.accessMode === "read" && response.outputSha &&
+            response.outputSha.toLowerCase() !== expectedOutputSha.toLowerCase()) {
+          throw new Error("Révision déclarée différente de la base de lecture");
+        }
         gitEvidence = await verifyCommittedGitState({
           cwd: task.cwd,
-          expectedHeadSha: response.outputSha,
+          expectedHeadSha: expectedOutputSha,
           expectedBranch: task.branch,
-          baseSha: executionBaseSha,
-          allowedPaths: task.allowedPaths,
+          ...(task.accessMode === "write" ? {
+            baseSha: executionBaseSha, allowedPaths: task.allowedPaths,
+          } : {}),
         });
       } catch (error) {
         if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git" };
         const message = error instanceof Error ? error.message : "État Git invalide";
         stopRenewal();
-        return recoverTask(message);
+        // Capability effects still require recoverTask's reconciliation on writes.
+        // Read revision conflicts must also block rather than replay the review.
+        if (task.accessMode === "write") return recoverTask(message);
+        const blocked = await control.transition({
+          taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+          target: "blocked_external", error: message.slice(0, 10_000),
+        });
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
+          : { state: "lost_lease", taskId: task.id, error: message };
       }
     }
 
@@ -423,7 +440,7 @@ export async function runChefWorkerCycle(
 
     const verifying = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-      target: "verifying", outputSha: response.outputSha,
+      target: "verifying", outputSha: expectedOutputSha,
     });
     if (lostLease || !verifying) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant vérification" };
     heartbeatState = "verifying";
@@ -449,20 +466,30 @@ export async function runChefWorkerCycle(
 
     // Observe Git again after the checks. This detects a changed final HEAD/worktree;
     // it is not a claim that commands executed inside an immutable snapshot.
-    if (task.accessMode === "write" && response.outputSha) {
+    if (expectedOutputSha) {
       try {
         gitEvidence = await verifyCommittedGitState({
           cwd: task.cwd,
-          expectedHeadSha: response.outputSha,
+          expectedHeadSha: expectedOutputSha,
           expectedBranch: task.branch,
-          baseSha: executionBaseSha,
-          allowedPaths: task.allowedPaths,
+          ...(task.accessMode === "write" ? {
+            baseSha: executionBaseSha, allowedPaths: task.allowedPaths,
+          } : {}),
         });
       } catch (error) {
         if (lostLease) return { state: "lost_lease", taskId: task.id, error: "Lease perdue pendant le contrôle Git final" };
         const message = error instanceof Error ? error.message : "État Git modifié pendant la vérification";
         stopRenewal();
-        return recoverTask(message);
+        // Capability effects still require recoverTask's reconciliation on writes.
+        // Read revision conflicts must also block rather than replay the review.
+        if (task.accessMode === "write") return recoverTask(message);
+        const blocked = await control.transition({
+          taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
+          target: "blocked_external", error: message.slice(0, 10_000),
+        });
+        return blocked
+          ? { state: "blocked_external", taskId: task.id, error: message }
+          : { state: "lost_lease", taskId: task.id, error: message };
       }
     }
 
@@ -491,7 +518,7 @@ export async function runChefWorkerCycle(
     if (options.signal?.aborted) return await releaseForShutdown();
     const done = await control.transition({
       taskId: task.id, workerId: options.workerId, fencingToken: task.fencingToken,
-      target: "verified_done", outputSha: response.outputSha,
+      target: "verified_done", outputSha: expectedOutputSha,
     });
     if (!done) return { state: "lost_lease", taskId: task.id, error: "Lease perdue avant validation finale" };
     await control.tryFinishMission(task.missionId);

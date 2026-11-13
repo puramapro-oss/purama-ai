@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { parseWorkshopProjects, type WorkshopProject } from "../src/chef/workshop-config.js";
@@ -10,7 +10,11 @@ import {
   type WorkshopRun, type WorkshopRuntimeDependencies, type WorkshopWorker,
 } from "../src/chef/workshop-runtime.js";
 import { ChefProcessStopUnconfirmedError } from "../src/chef/process.js";
+import { SupabaseChefControlPlane } from "../src/chef/control-plane.js";
 import { runChefWorkerCycle, type ChefControlPlane, type ChefRuntimeTask } from "../src/chef/supervisor.js";
+
+const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc } }));
 
 const exec = promisify(execFile);
 const dirs: string[] = [];
@@ -46,7 +50,7 @@ function harness() {
   const run: WorkshopRun = { missionId, state: "active", repo: "org/example", cancelRequested: false };
   const deps: WorkshopRuntimeDependencies = {
     pollMs: 5, heartbeatMs: 20,
-    preflight: vi.fn(async p => ({ cwd: p.workdir, repositoryId: p.workdir + "/.git",
+    preflight: vi.fn(async p => ({ cwd: p.workdir, repositoryId: p.workdir + "/.git", branch: "main",
       codexCommand: "/trusted/bin/codex", verificationProfiles: p.verificationProfiles })),
     clean: vi.fn(async () => undefined),
     createWorker: vi.fn(() => worker()),
@@ -101,7 +105,7 @@ describe("workshop dispatcher", () => {
 
   it("rejects distinct project aliases sharing one physical repository", async () => {
     const h = harness();
-    h.deps.preflight = vi.fn(async p => ({ cwd: p.workdir, repositoryId: "/same/.git",
+    h.deps.preflight = vi.fn(async p => ({ cwd: p.workdir, repositoryId: "/same/.git", branch: "main",
       codexCommand: "/bin/codex", verificationProfiles: p.verificationProfiles }));
     await expect(runWorkshopRuntime([project(), project({ id: "second", workdir: "/trusted/second" })],
       undefined, h.deps)).rejects.toMatchObject({ code: "WORKSHOP_CONFIG" });
@@ -233,6 +237,7 @@ describe("workshop dispatcher", () => {
   });
 
   it("cancels through the real CHEF cycle and finishes only after authenticated release", async () => {
+    const fixture = await repository();
     const h = harness();
     h.deps.cycle = runChefWorkerCycle;
     let claimed = false;
@@ -241,7 +246,7 @@ describe("workshop dispatcher", () => {
     const unit = worker();
     const task: ChefRuntimeTask = {
       id: "task-1", missionId, briefHash: "a".repeat(64), instructions: "Review the project",
-      cwd: process.cwd(), accessMode: "read", fencingToken: 1, attempt: 1, verificationProfiles: ["review"], allowedPaths: [],
+      cwd: fixture.cwd, accessMode: "read", fencingToken: 1, attempt: 1, verificationProfiles: ["review"], allowedPaths: [],
     };
     unit.control.claimNext = vi.fn(async () => {
       if (claimed) return null;
@@ -307,8 +312,8 @@ describe("workshop dispatcher", () => {
 async function repository(auth = true) {
   const root = await mkdtemp(join(tmpdir(), "chef-workshop-test-"));
   dirs.push(root);
-  const cwd = join(root, "repo");
-  await mkdir(cwd);
+  await mkdir(join(root, "repo"));
+  const cwd = await realpath(join(root, "repo"));
   await exec("git", ["init", "-q", cwd]);
   await exec("git", ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
     "-c", "core.hooksPath=/dev/null", "commit", "--allow-empty", "-qm", "fixture"], { cwd });
@@ -316,6 +321,7 @@ async function repository(auth = true) {
   await writeFile(codex, "#!" + process.execPath + "\n" +
     "if (process.argv.includes('--version')) { console.log('codex-cli 0.1.0'); }\n" +
     "else if (process.argv.includes('login') && process.argv.includes('status')) {" +
+    " if (process.argv.includes('--ignore-user-config')) process.exit(2);" +
     " console.error('private auth detail'); process.exit(" + (auth ? 0 : 1) + "); }\n" +
     "else { console.error('unexpected model invocation'); process.exit(77); }\n", { mode: 0o700 });
   return { root, cwd, codex, project: project({ workdir: cwd, codexCommand: codex }) };
@@ -326,6 +332,7 @@ describe("workshop local preflight", () => {
     const fixture = await repository();
     const result = await preflightWorkshopProject(fixture.project, new AbortController().signal);
     expect(result.cwd).toMatch(/\/repo$/);
+    expect(result.branch).toBe((await exec("git", ["branch", "--show-current"], { cwd: fixture.cwd })).stdout.trim());
     expect(result.codexCommand).toMatch(/\/codex$/);
     expect(result.verificationProfiles).toHaveLength(2);
     await expect(assertCleanWorkshop(result.cwd, new AbortController().signal)).resolves.toBeUndefined();
@@ -353,6 +360,14 @@ describe("workshop local preflight", () => {
       .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
   });
 
+  it("rejects a worktree alias before advertising a mismatched SQL identity", async () => {
+    const fixture = await repository();
+    const alias = join(fixture.root, "alias");
+    await symlink(fixture.cwd, alias);
+    await expect(preflightWorkshopProject({ ...fixture.project, workdir: alias }, new AbortController().signal))
+      .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+  });
+
   it("rejects a missing trusted verifier command", async () => {
     const fixture = await repository();
     fixture.project.verificationProfiles[0].command = join(fixture.root, "missing");
@@ -370,6 +385,35 @@ describe("workshop local preflight", () => {
       .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
   });
 
+  it("forbids a verifier executable stored inside its own worktree", async () => {
+    const fixture = await repository();
+    const local = join(fixture.cwd, "self-verifier");
+    await writeFile(local, "#!/bin/sh\nexit 0\n", { mode: 0o700 });
+    await exec("git", ["add", "self-verifier"], { cwd: fixture.cwd });
+    await exec("git", ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+      "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture verifier"], { cwd: fixture.cwd });
+    fixture.project.verificationProfiles[0].command = local;
+    await expect(preflightWorkshopProject(fixture.project, new AbortController().signal))
+      .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+  });
+
+  it("rejects a Git executable resolved inside the model worktree before invoking it", async () => {
+    const fixture = await repository();
+    const local = join(fixture.cwd, "git");
+    const marker = join(fixture.root, "untrusted-git-ran");
+    await writeFile(local, "#!" + process.execPath + "\nrequire('node:fs').writeFileSync(" + JSON.stringify(marker) + ", 'bad');\n", { mode: 0o700 });
+    await exec("git", ["add", "git"], { cwd: fixture.cwd });
+    await exec("git", ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+      "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture Git"], { cwd: fixture.cwd });
+    const priorPath = process.env.PATH;
+    try {
+      process.env.PATH = fixture.cwd + ":" + priorPath;
+      await expect(preflightWorkshopProject(fixture.project, new AbortController().signal))
+        .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
+      await expect(import("node:fs/promises").then(fs => fs.access(marker))).rejects.toMatchObject({ code: "ENOENT" });
+    } finally { process.env.PATH = priorPath; }
+  });
+
   it("forbids a mutable CLI stored inside its own worktree", async () => {
     const fixture = await repository();
     const local = join(fixture.cwd, "local-codex");
@@ -380,4 +424,67 @@ describe("workshop local preflight", () => {
     await expect(preflightWorkshopProject({ ...fixture.project, codexCommand: local }, new AbortController().signal))
       .rejects.toMatchObject({ code: "WORKSHOP_PREFLIGHT" });
   });
+});
+
+describe("workshop branch binding", () => {
+  it.each(["stable", "driver switch", "verifier switch", "explicit assignment"] as const)(
+    "keeps the claim bound to its expected branch: %s", async (scenario) => {
+      const fixture = await repository();
+      const preflight = await preflightWorkshopProject(fixture.project, new AbortController().signal);
+      const initialBranch = (await exec("git", ["branch", "--show-current"], { cwd: fixture.cwd })).stdout.trim();
+      const initialSha = (await exec("git", ["rev-parse", "HEAD"], { cwd: fixture.cwd })).stdout.trim();
+      const assignedBranch = scenario === "explicit assignment" ? "assigned-branch" : null;
+      if (assignedBranch) await exec("git", ["switch", "-c", assignedBranch], { cwd: fixture.cwd });
+      rpc.mockImplementation(async (name: string) => {
+        if (name !== "chef_claim_next_task") throw new Error("Unexpected RPC: " + name);
+        return { error: null, data: [{
+          id: "branch-task", mission_id: missionId, brief_hash: "a".repeat(64),
+          instructions: "Review the project", worktree: fixture.cwd, access_mode: "read",
+          fencing_token: 1, attempt: 1, branch: assignedBranch,
+          verification_profiles: ["review"], allowed_paths: [],
+        }] };
+      });
+      const adapter = new SupabaseChefControlPlane({
+        repo: fixture.project.repo, defaultCwd: preflight.cwd, branch: preflight.branch,
+        defaultVerificationProfiles: fixture.project.reviewProfiles,
+      });
+      const unit = worker();
+      // Exercise the real SQL-row adapter rather than injecting branch into a task fixture.
+      unit.control.claimNext = adapter.claimNext.bind(adapter);
+      unit.driver.run = vi.fn<WorkshopWorker["driver"]["run"]>(async () => {
+        if (scenario === "driver switch") {
+          await exec("git", ["switch", "-c", "unexpected-branch"], { cwd: fixture.cwd });
+        }
+        return { schemaVersion: 1, status: "completed", summary: "Review complete" };
+      });
+      unit.verifier.verify = vi.fn<WorkshopWorker["verifier"]["verify"]>(async () => {
+        if (scenario === "verifier switch") {
+          await exec("git", ["switch", "-c", "unexpected-branch"], { cwd: fixture.cwd });
+        }
+        return { ok: true, evidence: [{
+          kind: "review", sha256: "b".repeat(64), payload: { profile: "review", ok: true },
+        }] };
+      });
+      const result = await runChefWorkerCycle(unit.control, unit.driver, unit.verifier, {
+        missionId, workerId: "branch-worker", provider: "codex",
+      });
+      expect((await exec("git", ["rev-parse", "HEAD"], { cwd: fixture.cwd })).stdout.trim()).toBe(initialSha);
+      expect((await exec("git", ["status", "--porcelain=v1"], { cwd: fixture.cwd })).stdout).toBe("");
+      if (scenario === "driver switch" || scenario === "verifier switch") {
+        expect(result).toMatchObject({
+          state: "blocked_external", error: "Branche réelle différente de la branche assignée",
+        });
+        expect(unit.control.addEvidence).not.toHaveBeenCalled();
+        expect(unit.control.tryFinishMission).not.toHaveBeenCalled();
+        expect(vi.mocked(unit.control.transition).mock.calls.some(([input]) => input.target === "verified_done")).toBe(false);
+      } else {
+        expect(result.state).toBe("verified_done");
+        expect(vi.mocked(unit.driver.run).mock.calls[0][0].branch).toBe(assignedBranch ?? initialBranch);
+        expect(vi.mocked(unit.control.addEvidence).mock.calls[0][1].payload)
+          .toMatchObject({ branch: assignedBranch ?? initialBranch, headSha: initialSha, clean: true });
+      }
+      expect(unit.verifier.verify).toHaveBeenCalledTimes(scenario === "driver switch" ? 0 : 1);
+      expect(unit.control.quarantineProcess).not.toHaveBeenCalled();
+    },
+  );
 });

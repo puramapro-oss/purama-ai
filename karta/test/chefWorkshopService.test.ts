@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHash } from "node:crypto";
-const h = vi.hoisted(() => ({ from: vi.fn(), rpc: vi.fn(), stopped: vi.fn() }));
+const h = vi.hoisted(() => ({ from: vi.fn(), rpc: vi.fn(), stopped: vi.fn(), artifact: vi.fn() }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: { from: h.from, rpc: h.rpc } }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: h.stopped }));
+vi.mock("../src/chef/workshop-artifact.js", async importOriginal => ({
+  ...await importOriginal<typeof import("../src/chef/workshop-artifact.js")>(), buildWorkshopArtifact: h.artifact,
+}));
 import { buildWorkshopBrief, getWorkshopMission, handleWorkshopRequest } from "../src/chef/workshop-service.js";
 import { parseWorkshopProjects, workshopProjectHash } from "../src/chef/workshop-config.js";
 import { hashChefBrief } from "../src/chef/brief.js";
@@ -88,9 +91,62 @@ beforeEach(() => {
   }];
   h.from.mockImplementation(query);
   h.stopped.mockResolvedValue(false);
+  h.artifact.mockImplementation(async (_project, id, sha) => ({missionId:id,commitSha:sha,archive:{fileName:"sources.zip"}}));
   h.rpc.mockImplementation(async (name: string) => ({
     data: name === "chef_workshop_submit" ? missionId : name === "chef_workshop_cancel", error: null,
   }));
+});
+
+describe("workshop artifacts are bound to current ownership and a completely verified revision", () => {
+  function qualify() {
+    rows.chef_missions[0].state = "verified_done";
+    rows.chef_missions[0].finished_at = stamp;
+    rows.chef_tasks = ["implementation", "functional-review", "security-review"].map((key, n) => ({
+      id: `00000000-0000-4000-8000-00000000020${n}`, mission_id:missionId, task_key:key,
+      title:key, state:"verified_done", assigned_provider:"codex", provider:"codex", attempt:1,
+      output_sha:"a".repeat(40), created_at:stamp,
+    }));
+    rows.chef_evidence = rows.chef_tasks.map(task => ({task_id:task.id}));
+  }
+  it("exports the admitted immutable SHA without requiring a live worker or allowing path arguments", async () => {
+    qualify(); h.stopped.mockResolvedValue(true); rows.chef_workshop_runtimes = [];
+    expect(await handleWorkshopRequest(owner,{action:"artifact",missionId:missionId.toUpperCase()}))
+      .toMatchObject({ok:true,artifact:{missionId,commitSha:"a".repeat(40)}});
+    expect(h.artifact).toHaveBeenCalledExactlyOnceWith(parseWorkshopProjects()[0],missionId,"a".repeat(40));
+    expect(h.stopped).not.toHaveBeenCalled(); expect(h.rpc).not.toHaveBeenCalled();
+  });
+  it("refuses another owner's mission before reading any child rows", async () => {
+    qualify();
+    await expect(handleWorkshopRequest(other,{action:"artifact",missionId})).rejects.toMatchObject({status:404});
+    expect(queries).toHaveLength(1); expect(h.artifact).not.toHaveBeenCalled();
+  });
+  it("revokes archive access when the owner is removed from the current project catalogue", async () => {
+    qualify(); vi.stubEnv("CHEF_WORKSHOP_PROJECTS_JSON",JSON.stringify([{...projectFixture(),userIds:[other]}]));
+    await expect(handleWorkshopRequest(owner,{action:"artifact",missionId})).rejects.toMatchObject({status:404});
+    expect(h.artifact).not.toHaveBeenCalled();
+  });
+  it.each(["active","missing-review","different-sha","missing-proof","duplicate-key","cancelled","unfinished"])("does not export an unqualified receipt: %s", async reason => {
+      qualify();
+      if(reason==="active") rows.chef_missions[0].state="active";
+      if(reason==="missing-review") rows.chef_tasks.pop();
+      if(reason==="different-sha") rows.chef_tasks[1].output_sha="b".repeat(40);
+      if(reason==="missing-proof") rows.chef_evidence.pop();
+      if(reason==="duplicate-key") rows.chef_tasks[1].task_key="implementation";
+      if(reason==="cancelled") rows.chef_workshop_runs[0].cancel_requested_at=stamp;
+      if(reason==="unfinished") rows.chef_missions[0].finished_at=null;
+      await expect(handleWorkshopRequest(owner,{action:"artifact",missionId})).rejects.toMatchObject({status:409,code:"WORKSHOP_ARTIFACT_UNAVAILABLE"});
+      expect(h.artifact).not.toHaveBeenCalled();
+    });
+  it.each([{action:"artifact",missionId,path:"/etc/passwd"},{action:"artifact",missionId,commitSha:"a".repeat(40)},{action:"artifact",missionId:"../bad"}])("refuses browser-selected paths or commits before DB reads: %#", async body => {
+      await expect(handleWorkshopRequest(owner,body)).rejects.toMatchObject({status:400});
+      expect(h.from).not.toHaveBeenCalled(); expect(h.artifact).not.toHaveBeenCalled();
+    });
+  it("redacts Git, filesystem and export errors", async () => {
+    qualify(); h.artifact.mockRejectedValue(new Error("PRIVATE /home/secret-token"));
+    const pending=handleWorkshopRequest(owner,{action:"artifact",missionId});
+    await expect(pending).rejects.toMatchObject({status:409,code:"WORKSHOP_ARTIFACT_UNAVAILABLE"});
+    await expect(pending).rejects.not.toThrow(/PRIVATE|secret-token/);
+  });
 });
 afterEach(() => vi.unstubAllEnvs());
 

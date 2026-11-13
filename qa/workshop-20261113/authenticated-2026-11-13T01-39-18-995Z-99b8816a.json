@@ -1,0 +1,45 @@
+{
+  "kind": "workshop-authenticated-qualification",
+  "version": 1,
+  "startedAt": "2026-11-13T01:39:19.003Z",
+  "outcome": "FAIL",
+  "stage": "real_mission_execution",
+  "fixtureResponsesUsed": false,
+  "missionSubmission": "confirmed",
+  "startRequestCount": 1,
+  "observedStates": [
+    "active",
+    "external_required"
+  ],
+  "checks": {
+    "realLogin": {
+      "outcome": "PASS",
+      "accounts": 2,
+      "distinctPrincipals": true
+    },
+    "otherAccountStatus": {
+      "outcome": "PASS",
+      "status": 404
+    },
+    "anonymousStatus": {
+      "outcome": "PASS",
+      "status": 401
+    }
+  },
+  "captures": [],
+  "javascriptErrorCount": 0,
+  "monetaryCost": {
+    "status": "unknown",
+    "micros": null
+  },
+  "requestId": "3d025490-b2eb-4ed7-8168-4933fd607ddf",
+  "missionId": "c4413f9e-2f50-48eb-8431-a2a5fc8c0806",
+  "failureCode": "MISSION_NOT_VERIFIED_EXTERNAL_REQUIRED",
+  "cleanup": {
+    "cancellationRequested": true,
+    "stopConfirmed": true
+  },
+  "browserClosed": true,
+  "finishedAt": "2026-11-13T01:41:08.014Z",
+  "durationMs": 109011
+}

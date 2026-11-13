@@ -149,6 +149,8 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       userId = owner.data.user_id;
     }
 
+    // Mission ingestion may leave branch unassigned; keep the trusted worker binding.
+    const branch = typeof row.branch === "string" && row.branch ? row.branch : this.options.branch;
     return {
       id,
       missionId,
@@ -158,7 +160,7 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
       accessMode,
       fencingToken: safeInt(row.fencing_token, "fencingToken"),
       attempt: safeInt(row.attempt, "attempt"),
-      ...(typeof row.branch === "string" && row.branch ? { branch: row.branch } : {}),
+      ...(branch ? { branch } : {}),
       ...(typeof row.base_sha === "string" && row.base_sha ? { baseSha: row.base_sha } : {}),
       verificationProfiles: [...verificationProfiles],
       allowedPaths: [...allowedPaths],

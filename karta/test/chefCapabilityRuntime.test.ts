@@ -26,6 +26,14 @@ const contexts = () => ({
 const runtime = (): ChefCapabilityRuntime => ({ adapterProtocol: 1, now: () => now, resolveContext: () => contexts() });
 const temp: string[] = [];
 async function directory() { const dir = await mkdtemp(join(tmpdir(), "chef-capabilities-")); temp.push(dir); return dir; }
+async function repository() {
+  const cwd = await directory();
+  execFileSync("git", ["init", "--quiet", cwd]);
+  execFileSync("git", ["-c", "core.hooksPath=/dev/null", "-c", "commit.gpgsign=false",
+    "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+    "commit", "--allow-empty", "-qm", "baseline"], { cwd });
+  return cwd;
+}
 function request(cwd: string): ChefDriverRequest {
   return { schemaVersion: 1, ...binding, workerId: "w1", provider: "codex", fencingToken: 1,
     attempt: 1, instructions: "Coder le projet", cwd, accessMode: "read", allowedPaths: [],
@@ -160,7 +168,7 @@ describe("CHEF capability process admission", () => {
 
   it.each(["process.exit(1)", "console.log('logs only')", "console.log(JSON.stringify({schemaVersion:1,status:'completed',summary:''}))"])(
     "does not retry an uncertain capability process: %s", async (failure) => {
-      const cwd = await directory();
+      const cwd = await repository();
       const marker = join(cwd, "calls");
       const script = `require('node:fs').appendFileSync(${JSON.stringify(marker)},'x');${failure}`;
       const driver = new ProcessChefDriver({ provider: "codex", command: process.execPath,
@@ -186,7 +194,7 @@ describe("CHEF capability process admission", () => {
 
   it("keeps an interrupted capability task blocked even when shutdown is requested", async () => {
     const abort = new AbortController();
-    const input = request(process.cwd());
+    const input = request(await repository());
     const transitions: string[] = [];
     const control: ChefControlPlane = {
       heartbeat: async () => {}, claimNext: async () => ({ ...input, id: input.taskId, verificationProfiles: ["test"] }),
@@ -206,12 +214,10 @@ describe("CHEF capability process admission", () => {
 
   it.each(["verification failed", "verification threw", "shutdown during usage", "missing commit"])(
     "does not replay a completed adapter after %s", async (scenario) => {
-      const cwd = await directory();
+      const cwd = await repository();
       const abort = new AbortController();
       const input = request(cwd);
       if (scenario === "missing commit") {
-        execFileSync("git", ["init", "--quiet", cwd]);
-        execFileSync("git", ["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--allow-empty", "-qm", "baseline"], { cwd });
         input.accessMode = "write"; input.allowedPaths = ["."];
       }
       const driver = new ProcessChefDriver({ provider: "codex", command: process.execPath,

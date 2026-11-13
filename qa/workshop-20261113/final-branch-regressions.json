@@ -1,0 +1,12 @@
+{
+  "scope": "final runtime branch pin and claim fallback",
+  "impact": "LOW, index one commit behind",
+  "testFiles": 5,
+  "testsPassed": 98,
+  "newRegressionTests": 4,
+  "priorFailuresReproduced": 3,
+  "exitCode": 0,
+  "durationSeconds": 22.66,
+  "command": "Node22 vitest run test/chefWorkshopRuntime.test.ts test/chefVerificationGitIntegration.test.ts test/chefCapabilityPersistence.test.ts test/chefQuarantineAdapter.test.ts test/chefTrustedGit.test.ts --maxWorkers=2 --testTimeout=30000 --hookTimeout=30000",
+  "qualification": "Real preflight, real claim mapping with simulated RPC, real Git and supervisor; no provider calls"
+}

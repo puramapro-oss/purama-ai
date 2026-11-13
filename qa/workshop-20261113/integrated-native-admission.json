@@ -1,0 +1,9 @@
+{
+  "command": [
+    "--test",
+    "test/chefWorkshopConcurrency.native.mjs"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 3.1,
+  "baseIntegrated": "7755d4745ed6e9561fb9743f3b2b5820878dff11"
+}

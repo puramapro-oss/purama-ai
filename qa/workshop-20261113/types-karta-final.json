@@ -1,0 +1,6 @@
+{
+  "command": "Node22 tsc --noEmit -p karta/tsconfig.json",
+  "exitCode": 0,
+  "durationSeconds": 13.08,
+  "after": "runtime canonical workdir and Codex login fixes"
+}

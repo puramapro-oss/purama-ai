@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/chefWorkshopRuntime.test.ts",
+    "--maxWorkers=2"
+  ],
+  "exitCode": 0,
+  "seconds": 6.0
+}

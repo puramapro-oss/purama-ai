@@ -1,0 +1,125 @@
+{
+  "sourceCommit": "5046ed2c9f316286e6842c50ab30d86543509e0b",
+  "files": [
+    {
+      "name": "001_karta_core.sql",
+      "sha256": "668f63ef71fbc80c20a555ffb938964deb8f40470c91ca4753314919bc287e2d"
+    },
+    {
+      "name": "002_karta_global_kill_switch.sql",
+      "sha256": "08bd79d96ac3bef4c6bbd9f5b21c71a7f510a1713619d4e84a513dc58502e6a3"
+    },
+    {
+      "name": "003_karta_crm_leads.sql",
+      "sha256": "f922240c9b4bc4dc629f24c6a6d755fcb2c3fee604e5d166967706266e9d3b1f"
+    },
+    {
+      "name": "004_karta_custom_agents.sql",
+      "sha256": "be5819c9903b039b23c939e6caaef6cbad685d2393481353dd65620b68714bad"
+    },
+    {
+      "name": "005_karta_pending_actions.sql",
+      "sha256": "ba70a7dc15e62b68a58350f35672153ff853877c9bc7577983e3a14a0829d88e"
+    },
+    {
+      "name": "006_execution_claims.sql",
+      "sha256": "f76d3a598e11f340dfd0cd8706d17a8f372a1222f8a0de26e6a1f5c66a904f60"
+    },
+    {
+      "name": "007_runtime_hardening.sql",
+      "sha256": "80796b60b50fb1df761d1ab56addf7cedd87eda4909c1e8116def32069c8067b"
+    },
+    {
+      "name": "008_chef_control_plane.sql",
+      "sha256": "d3887f7e8e703bdb9a8b6ae2e05b03166cd978a18b2d8cc6c411d96aeeb8d714"
+    },
+    {
+      "name": "009_chef_hardening.sql",
+      "sha256": "e39b89765dec5518dffac02f1df357887fd5695ae21dc1b11f381394b2a6909f"
+    },
+    {
+      "name": "010_chef_reliability.sql",
+      "sha256": "e0e01f5d751a2147dc9f4903981bd72f0201ef023684bed63b30d66fb2e9bc68"
+    },
+    {
+      "name": "011_chef_runtime_policy.sql",
+      "sha256": "68b7c97ed879a961f9e7fa07febf56d934da45f4f548cf24401fbc8990c6cfaa"
+    },
+    {
+      "name": "012_chef_mission_ingest.sql",
+      "sha256": "db81833188cadfd045d57b3ea6b8fe186b251741e188b7b6396661f79bc15256"
+    },
+    {
+      "name": "013_chef_independent_review.sql",
+      "sha256": "ee9ff63cb4aa7bc66e1f5c91fca75d1df19709ea72fa8429612dcb83ffecfe2a"
+    },
+    {
+      "name": "014_chef_file_ownership.sql",
+      "sha256": "9a2cffeb016a0b79e844b29e301596b4cbb093e095123e023d7c1d0c3df38372"
+    },
+    {
+      "name": "015_chef_mission_file_ownership.sql",
+      "sha256": "f52b7255d5eee592c3baa417c6108215d67cd451272b1f9d8397eb617a3d5a67"
+    },
+    {
+      "name": "016_chef_scoped_evidence.sql",
+      "sha256": "a0ec6a17093cd381354ac2f4d811444df1b684396e5b672e8cd2d7a9eaa6a56b"
+    },
+    {
+      "name": "017_chef_evidence_generation.sql",
+      "sha256": "1f649de88f787bd3d0a4e4b98eb799579426cfd372c416749ec24b0b7c6ddf76"
+    },
+    {
+      "name": "018_karta_brief_claims.sql",
+      "sha256": "1f0d9bdf3c6fe638be2d2e618526fb2f2793ee0d97f91d69a66caa9a0cb4746c"
+    },
+    {
+      "name": "019_karta_approval_parent_guard.sql",
+      "sha256": "43d09f703d604a5eac3b10b68fede7367b9abb6eb904a469feb1c53ba4300849"
+    },
+    {
+      "name": "020_execution_fingerprints.sql",
+      "sha256": "2c6a11b6565cea29e3714d15ffee13ee30d148e25efa9ec9a6b5006224d78d0c"
+    },
+    {
+      "name": "021_chef_budget_admission.sql",
+      "sha256": "83f4dce22bbe6db490027b4645f5cf1628efa92907bf0833926eb886b1376863"
+    },
+    {
+      "name": "022_chef_mission_estimates.sql",
+      "sha256": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f"
+    },
+    {
+      "name": "023_chef_process_quarantine.sql",
+      "sha256": "997475e67e60519f4ec8f50a2a73d1795695cf7b44ce968f8afa955c337217fb"
+    },
+    {
+      "name": "024_chef_claim_budget_reconciliation.sql",
+      "sha256": "0d2dd0d725b80ff783928d5246b5b234e9a1d32510d4978a1df8e9634a4b5f6a"
+    },
+    {
+      "name": "025_brief_submission.sql",
+      "sha256": "55b242e92810ecd79fcbf8e5579a2b2dabca1d96480030d940be22050e3827b8"
+    },
+    {
+      "name": "026_pending_action_execution_origin.sql",
+      "sha256": "57cc09856de27bd1c47cb1dbd30b8d40edfd125840c9f789fe29028bf059501f"
+    },
+    {
+      "name": "027_approval_continuation_outbox.sql",
+      "sha256": "c0b2ee41efcc095a641ac4a5116c8d8311a12ce86ddfdc5199584948d8a9cdd0"
+    },
+    {
+      "name": "028_private_tool_results.sql",
+      "sha256": "e6eb16b19a3addc89e7597ed9966b1960c60915a59c22a47362baba2a3172d6e"
+    },
+    {
+      "name": "029_model_usage_receipts.sql",
+      "sha256": "ae75060c2e30eca8bfacd478163683e70a8457ab59bb1c36021b504123057b01"
+    },
+    {
+      "name": "030_chef_workshop.sql",
+      "sha256": "c4c86f81e7a7c5c6691edde5bd64762bef63acdddfb6ffdefef735db1ed12f4f"
+    }
+  ]
+}

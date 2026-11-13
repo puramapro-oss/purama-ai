@@ -1,3 +1,4 @@
+import { resolveTrustedGit } from "./trusted-git.js";
 import { constants } from "node:fs";
 import { lstat, mkdtemp, open, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -15,18 +16,19 @@ function environment(index?: string): NodeJS.ProcessEnv {
   return env;
 }
 async function git(cwd: string, args: string[], signal?: AbortSignal, index?: string, input?: string): Promise<string> {
+  const gitCommand = await resolveTrustedGit(cwd);
   if (["status","diff"].includes(args[0] ?? "")) {
     // Even status/diff may run a clean filter. Refuse configured local filters
     // before reading working-tree content; global/system configuration is disabled.
     const filters = await runChefProcess({
-      command:"git",args:["config","--null","--name-only","--get-regexp","^filter\\..*\\.(clean|smudge|process)$"],
+      command:gitCommand,args:["config","--null","--name-only","--get-regexp","^filter\\..*\\.(clean|smudge|process)$"],
       cwd,env:environment(index),signal,timeoutMs:5000,maxOutputBytes:65_536,
       label:"Configuration Git atelier",abortMessage:"Enregistrement Git annulé",timeoutMessage:"Configuration Git expirée",
     });
     if (filters.exitCode !== 1 || filters.stdout) throw new Error("Filtres Git non autorisés pour l’enregistrement automatique");
   }
   const result = await runChefProcess({
-    command: "git", args: ["-c","core.hooksPath=/dev/null","-c","core.fsmonitor=false",
+    command: gitCommand, args: ["-c","core.hooksPath=/dev/null","-c","core.fsmonitor=false",
       "-c","commit.gpgsign=false","-c","user.name=PURAMA CHEF","-c","user.email=chef@localhost",...args],
     cwd,env:environment(index),signal,input,timeoutMs:10_000,maxOutputBytes:2_097_152,
     label:"Git atelier",abortMessage:"Enregistrement Git annulé",timeoutMessage:"Enregistrement Git expiré",

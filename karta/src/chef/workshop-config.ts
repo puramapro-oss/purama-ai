@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { isAbsolute, normalize } from "node:path";
 import type { ChefVerificationProfile } from "./verifier.js";
+import { isWorkshopExportPath } from "./workshop-artifact.js";
 
 export const WORKSHOP_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const WORKSHOP_ID = /^[a-z0-9][a-z0-9-]{0,47}$/;
@@ -11,6 +12,8 @@ export interface WorkshopProject {
   repo: string;
   workdir: string;
   allowedPaths: string[];
+  exportPaths?: string[];
+  previewEntry?: string;
   maxParallel: number;
   tokenBudget: number;
   estimatedTokensPerTask: number;
@@ -98,6 +101,21 @@ export function parseWorkshopProjects(raw = process.env.CHEF_WORKSHOP_PROJECTS_J
       codexCommand: text(v.codexCommand ?? "codex", 1000),
       verificationProfiles, implementationProfiles, reviewProfiles,
     };
+    if (v.exportPaths !== undefined) {
+      project.exportPaths = strings(v.exportPaths);
+      if (project.exportPaths.some(path => !isWorkshopExportPath(path) ||
+          !allowedPaths.some(root => path === root || path.startsWith(root + "/")))) {
+        throw new Error("Périmètre export atelier invalide");
+      }
+    }
+    if (v.previewEntry !== undefined) {
+      const entry = text(v.previewEntry, 1000);
+      if (!isWorkshopExportPath(entry) || !/\.html?$/i.test(entry) ||
+          !(project.exportPaths ?? allowedPaths).some(root => entry === root || entry.startsWith(root + "/"))) {
+        throw new Error("Entrée aperçu atelier invalide");
+      }
+      project.previewEntry = entry;
+    }
     if (v.costBudgetMicros !== undefined) {
       project.costBudgetMicros = integer(v.costBudgetMicros, 0, 1_000_000_000);
       project.estimatedCostMicrosPerTask = integer(v.estimatedCostMicrosPerTask, 0, project.costBudgetMicros);

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUpRight, Check, CheckCircle2, Code2, Copy, Layers3, Loader2, RefreshCw, Square, Wand2 } from 'lucide-react';
+import { Check, CheckCircle2, Code2, Copy, Download, Eye, Layers3, Loader2, RefreshCw, Square, Wand2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  consumeWorkshopDraft, isMissionRunning, isMissionTerminal, requestWorkshop,
-  type MissionState, type TaskState, type WorkshopDetail, type WorkshopMission, type WorkshopProject,
+  consumeWorkshopDraft, isMissionRunning, isMissionTerminal, requestWorkshop, requestWorkshopArtifact, workshopPreviewDocument,
+  type MissionState, type TaskState, type WorkshopArtifact, type WorkshopDetail, type WorkshopMission, type WorkshopProject,
 } from '@/lib/workshop';
 
 const missionLabels: Record<MissionState, string> = {
@@ -36,6 +36,83 @@ function CommitReference({ sha }: { sha: string }) {
       {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
     </button>
     {failed && <span role="status">Sélectionnez la référence pour la copier.</span>}
+  </div>;
+}
+
+function WorkshopResult({ mission }: { mission: WorkshopDetail }) {
+  const [artifact, setArtifact] = useState<WorkshopArtifact | null>(null);
+  const [archiveUrl, setArchiveUrl] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewSize, setPreviewSize] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const request = useRef<AbortController | null>(null);
+  const alive = useRef(false);
+  useEffect(() => {
+    alive.current = true;
+    return () => { alive.current = false; request.current?.abort(); };
+  }, []);
+  useEffect(() => {
+    if (!artifact) return;
+    const url = URL.createObjectURL(new Blob([new Uint8Array(artifact.archive.data).buffer], { type: 'application/zip' }));
+    setArchiveUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [artifact]);
+  const load = async () => {
+    if (request.current) return;
+    const controller = new AbortController();
+    request.current = controller;
+    setError('');
+    setLoading(true);
+    try {
+      const result = await requestWorkshopArtifact(mission, controller.signal);
+      if (alive.current && !controller.signal.aborted) setArtifact(result);
+    } catch (failure) {
+      if (alive.current && !controller.signal.aborted && !isAbort(failure)) setError(message(failure));
+    } finally {
+      if (request.current === controller) request.current = null;
+      if (alive.current && !controller.signal.aborted) setLoading(false);
+    }
+  };
+  return <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-5" data-testid="workshop-result">
+    <h4 className="flex items-center gap-2 font-semibold"><CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-300" aria-hidden="true" /> Création vérifiée</h4>
+    <p className="mt-2 text-sm text-muted-foreground">Consultez le résultat ou téléchargez les fichiers de cette version.</p>
+    {!artifact && <button type="button" onClick={() => void load()} disabled={loading} aria-busy={loading}
+      className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-background px-4 py-2 text-sm font-semibold hover:bg-secondary disabled:opacity-60">
+      {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Download className="h-4 w-4" aria-hidden="true" />}
+      {loading ? 'Vérification des fichiers…' : error ? 'Réessayer les fichiers' : 'Accéder aux fichiers'}
+    </button>}
+    {error && <p role="alert" className="mt-3 text-sm text-amber-700 dark:text-amber-300">{error}</p>}
+    {artifact && <div className="mt-4 space-y-4">
+      <div className="flex flex-wrap gap-3">
+        {archiveUrl && <a href={archiveUrl} download={artifact.archive.fileName} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
+          <Download className="h-4 w-4" aria-hidden="true" /> Télécharger les sources ZIP
+        </a>}
+        {artifact.preview && <button type="button" aria-expanded={previewOpen} onClick={() => setPreviewOpen(open => !open)}
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-background px-4 py-2 text-sm font-semibold hover:bg-secondary">
+          <Eye className="h-4 w-4" aria-hidden="true" /> {previewOpen ? 'Fermer l’aperçu' : 'Afficher l’aperçu'}
+        </button>}
+      </div>
+      <p className="text-xs leading-relaxed text-muted-foreground">Archive des sources de cette version. La publication et les applications mobiles nécessitent leur propre validation.</p>
+      <CommitReference sha={artifact.commitSha} />
+      {!artifact.preview && <p className="text-sm text-muted-foreground">Les fichiers sont disponibles. Aucun aperçu HTML autonome n’est associé à cette version.</p>}
+      {artifact.preview && previewOpen && <div className="min-w-0 space-y-3">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Taille de l’aperçu">
+          {(['desktop', 'tablet', 'mobile'] as const).map(size => <button type="button" key={size} aria-pressed={previewSize === size} onClick={() => setPreviewSize(size)}
+            className={'min-h-11 rounded-lg border px-3 py-2 text-xs font-medium ' + (previewSize === size ? 'border-primary bg-primary/10' : 'border-border bg-background')}>
+            {{ desktop: 'Ordinateur', tablet: 'Tablette', mobile: 'Mobile' }[size]}
+          </button>)}
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border bg-secondary p-1">
+          <iframe title="Aperçu isolé de votre création" sandbox="allow-scripts" referrerPolicy="no-referrer"
+            allow="camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'; clipboard-read 'none'; clipboard-write 'none'"
+            srcDoc={workshopPreviewDocument(artifact.preview.content)}
+            style={{ width: previewSize === 'desktop' ? '100%' : previewSize === 'tablet' ? 768 : 375, maxWidth: '100%' }}
+            className="mx-auto block h-[520px] border-0 bg-white" />
+        </div>
+        <p className="text-xs leading-relaxed text-muted-foreground">L’aperçu est isolé de votre compte. Les ressources et services externes peuvent être bloqués dans cette vue.</p>
+      </div>}
+    </div>}
   </div>;
 }
 
@@ -313,11 +390,7 @@ function WorkshopSession({ userId }: { userId: string }) {
               </div>
             </div>
           </li>)}</ol>
-          {mission.state === 'verified_done' && <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-5" data-testid="workshop-result">
-            <h4 className="flex items-center gap-2 font-semibold"><CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-300" aria-hidden="true" /> Création vérifiée</h4>
-            <p className="mt-2 text-sm text-muted-foreground">Les étapes et leurs contrôles sont terminés. Les références des résultats sont disponibles ci-dessus.</p>
-            {mission.previewUrl && <a href={mission.previewUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">Ouvrir l’aperçu <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>}
-          </div>}
+          {mission.state === 'verified_done' && <WorkshopResult key={mission.id + ':' + mission.tasks.find(task => task.key === 'implementation')?.outputSha} mission={mission} />}
           {mission.state === 'cancelling' && <p role="status" className="text-sm text-muted-foreground">L’arrêt a été demandé. Le suivi reste actif jusqu’à sa confirmation par les agents.</p>}
           {!isMissionTerminal(mission.state) && mission.state !== 'cancelling' && <button type="button" onClick={() => void cancel()} disabled={!!pending} aria-busy={pending === 'cancel'}
             className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm hover:bg-secondary disabled:opacity-50">
