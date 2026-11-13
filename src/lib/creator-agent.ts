@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { createSessionId } from '@/lib/session-id';
 import { createRequestDeadline } from '@/lib/request-deadline';
+import { isPrivateToolResultId } from '@/lib/private-tool-results';
 import {
   isCreatorModelId, parsePublicCreatorModel, type PublicCreatorModel,
 } from '@/lib/public-creator-model';
@@ -38,6 +39,28 @@ export type AgentCategory =
 
 export type AgentModel = 'claude-sonnet-4-20250514' | 'claude-haiku-4-5-20251001';
 
+export interface CreatorExecutionPreferences {
+  reflection: 'auto' | 'standard' | 'deep' | 'maximum';
+  speed: 'standard' | 'fast' | 'ultra_fast';
+}
+
+/** Invalid stored choices must not silently turn into a successful save or a
+ * different execution profile. Callers handle an absent legacy column. */
+export function parseCreatorExecutionPreferences(value: unknown): CreatorExecutionPreferences {
+  const invalid = () => new Error('Les réglages d’exécution de cet agent sont invalides.');
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw invalid();
+  const keys = Reflect.ownKeys(value);
+  const reflection = Object.getOwnPropertyDescriptor(value, 'reflection');
+  const speed = Object.getOwnPropertyDescriptor(value, 'speed');
+  if (keys.length !== 2 || !keys.includes('reflection') || !keys.includes('speed')
+    || !reflection || !('value' in reflection) || typeof reflection.value !== 'string'
+    || !['auto', 'standard', 'deep', 'maximum'].includes(reflection.value)
+    || !speed || !('value' in speed) || typeof speed.value !== 'string'
+    || !['standard', 'fast', 'ultra_fast'].includes(speed.value)) throw invalid();
+  return { reflection: reflection.value as CreatorExecutionPreferences['reflection'], speed: speed.value as CreatorExecutionPreferences['speed'] };
+}
+
 export type RunTrigger = 'chat' | 'manual' | 'cron' | 'webhook' | 'api';
 export type RunStatus = 'pending' | 'running' | 'success' | 'error';
 
@@ -52,6 +75,8 @@ export interface CreatorAgent {
   category: AgentCategory | null;
   system_prompt: string;
   model: AgentModel;
+  /** Saved preferences for task execution; absent in legacy responses. */
+  execution_preferences?: CreatorExecutionPreferences;
   temperature: number;
   max_tokens: number;
   tools_enabled: string[];
@@ -128,6 +153,8 @@ export const TOOL_OPTIONS = [
   { value: 'calendar_create_event', label: 'Créer un événement Google Calendar' },
   { value: 'generate_pdf', label: 'Générer un PDF (rapport, facture, résumé...)' },
   { value: 'web_search', label: 'Recherche web en temps réel' },
+  { value: 'knowledge_search', label: 'Rechercher des références publiques (Crossref et Wikidata)' },
+  { value: 'quantum_simulate', label: 'Simuler un circuit quantique localement (sans matériel quantique)' },
   { value: 'send_notification', label: "Notifier l'utilisateur (app/email) quand une décision est nécessaire" },
 ] as const;
 
@@ -195,6 +222,9 @@ export async function getAgent(id: string): Promise<CreatorAgent> {
     .eq('id', id)
     .single();
   if (error) throw error;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'execution_preferences')) {
+    return { ...data, execution_preferences: parseCreatorExecutionPreferences(data.execution_preferences) } as CreatorAgent;
+  }
   return data as CreatorAgent;
 }
 
@@ -239,6 +269,9 @@ export async function updateAgent(
   // Strip unsafe fields
   const { id: _, user_id: __, created_at: ___, updated_at: ____, total_runs: _____, total_tokens: ______, is_template: _______, ...safe } = patch;
   void _; void __; void ___; void ____; void _____; void ______; void _______;
+  if (Object.prototype.hasOwnProperty.call(safe, 'execution_preferences')) {
+    safe.execution_preferences = parseCreatorExecutionPreferences(safe.execution_preferences);
+  }
   const { data, error } = await sb()
     .from('creator_agents')
     .update(safe)
@@ -246,6 +279,9 @@ export async function updateAgent(
     .select()
     .single();
   if (error) throw error;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'execution_preferences')) {
+    return { ...data, execution_preferences: parseCreatorExecutionPreferences(data.execution_preferences) } as CreatorAgent;
+  }
   return data as CreatorAgent;
 }
 
@@ -283,10 +319,19 @@ export async function chatWithAgent(
   sessionId: string,
   message: string,
   signal?: AbortSignal,
+  toolResultIds: readonly string[] = [],
 ): Promise<{ reply: string; tokens: number }> {
   signal?.throwIfAborted();
+  const selectedIds = [...toolResultIds];
+  if (selectedIds.length > 3 || selectedIds.some(id => !isPrivateToolResultId(id))
+    || new Set(selectedIds.map(id => id.toLowerCase())).size !== selectedIds.length) {
+    throw new Error('Choisis au maximum trois résultats privés distincts.');
+  }
   const { data, error } = await supabase.functions.invoke('creator-agent-chat', {
-    body: { agent_id: agentId, session_id: sessionId, message },
+    body: {
+      agent_id: agentId, session_id: sessionId, message,
+      ...(selectedIds.length > 0 ? { tool_result_ids: selectedIds } : {}),
+    },
     signal,
   });
   signal?.throwIfAborted();

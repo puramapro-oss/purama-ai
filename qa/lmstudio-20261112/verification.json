@@ -1,0 +1,170 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Europe/Paris",
+  "status": "PARTIEL",
+  "base_commit": "b170fcb647f8f70851ee918bff795de3a45b0328",
+  "branch": "feat/iao-local-desktop-20261112",
+  "environment": {
+    "node": "v24.22.1",
+    "sdk": "@anthropic-ai/sdk@0.65.0",
+    "vitest": "5.0.3",
+    "platform": "Linux",
+    "dependency_installation": "none; reused existing lockfile-compatible KARTA dependencies"
+  },
+  "gates": [
+    {
+      "name": "typecheck",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 6.21,
+      "status": "PASS"
+    },
+    {
+      "name": "build",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 2.72,
+      "status": "PASS"
+    },
+    {
+      "name": "sockets",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "test/lmStudioSocket.test.mjs"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 0.68,
+      "status": "PASS"
+    },
+    {
+      "name": "opt-in",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "scripts/qualify-lmstudio.ts"
+      ],
+      "cwd": "karta",
+      "expected_exit": 1,
+      "exit": 1,
+      "seconds": 0.21,
+      "status": "PASS"
+    },
+    {
+      "name": "targeted-regressions",
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/lmStudioTransport.test.ts test/real-claude.test.ts test/claudeTransportCost.test.ts test/claudeTransportDeadline.test.ts test/claudeDecisionCompleteness.test.ts test/claudeUsageTransport.test.ts test/loopModelAdmission.test.ts test/loopModelUsage.test.ts test/loopTracePrivacy.test.ts test/loop.test.ts --maxWorkers=1",
+      "exit": 0,
+      "files_pass": 10,
+      "tests_pass": 217,
+      "lmstudio_tests_included": 52,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS",
+      "log": "regressions-final.log"
+    },
+    {
+      "name": "npm-socket-script",
+      "command": "npm run test:lmstudio:sockets",
+      "cwd": "karta",
+      "exit": 0,
+      "tests_pass": 5,
+      "status": "PASS",
+      "log": "socket-npm.log"
+    }
+  ],
+  "code_sha256": {
+    "karta/src/claude/real.ts": "863cae94a43afbf6371def9a93be071aeaac56f07e6b8c40e89c9cdba2134b0b",
+    "karta/src/claude/lmstudio.ts": "11c99a7fcd5af25249ec1fc805151aefeed98f010b74df12bb04662f142aabe4",
+    "karta/test/lmStudioTransport.test.ts": "8592e6f899f7a6d0311286b4343b07f684610a9768bb95c57a8ead2571379c87",
+    "karta/test/lmStudioSocket.test.mjs": "58baa3326ecdf97ec75f50c44bfc0ff117e9ba0da8092785f33eb0bd2f4e43cd",
+    "karta/scripts/qualify-lmstudio.ts": "652e3678a38806827dd81c026b654846efea5f683a7817cd0bfcf37314728804",
+    "karta/package.json": "30e8de55bd41f98f6bb09061aba0a63e880688fbc3ea90c72c59ff1ab42340c7",
+    ".github/workflows/purama-chef-hardening.yml": "4fd51d67bb98a9154af501768471130075fbc820df2eba324ed12ad35bfd5630",
+    "vercel.json": "ef02a90599b492cdf2e93bf86fd083c79cf618e0676034736f69ac5824ddb6dd",
+    "docs/iao-lmstudio-heretic-20261112.md": "9fbcab575ed9f3c4ad945054f9228cfdb201e9effeeb286e13706a428661409d"
+  },
+  "log_sha256": {
+    "typecheck-initial.log": "63de4cac6dcea41a2acb1c2bb82cd5694c40a29d358dcc38c099b4a9a45d7d35",
+    "typecheck-second.log": "1e9da4180342bce451ecec168ecce691d14592cbbb9b40da5f2e76e9881e08c8",
+    "typecheck-verified.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-verified.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "regressions-final.log": "ac56497d2416a5eaed313884b94d3b6e2052f69060575eaa0f08e387af93bf1f",
+    "sockets-verified.log": "de9fedc2d1506fefa5136a538dc0635aeb1f28ada2570fd59cc0d97dc02d479f",
+    "opt-in-verified.log": "300f22639a66d13f5fc9acc5569542044f0ab67d138706d500fd76cc415a2d90",
+    "socket-npm.log": "46ce89358c7e4e416f55d64e07459b30e7f4d10b65cb266edf66a24418a379c4",
+    "gitnexus-impact-client.log": "712d6df7155c09af5f2995c5372b34eb9ef032e273fcc0e4aff27e1f6632e158",
+    "gitnexus-impact-decide.log": "ce6f0240a0484c1442f63fc938a83c95a5afde0a7384e8c13f7a41c2aec8f657",
+    "gitnexus-staged.log": "cbf2cc26268054d1cb1a70acba6335c553059e812675a2707f5ece604e9b15d1",
+    "gitnexus-main-exact.log": "f2da0b1944abc66b7daf5497d8dfdd47020b5bb1399db13edb2332fabf5b47a3"
+  },
+  "review": {
+    "independent_agent": "read-only final targeted review; no blocking finding; no independent test execution",
+    "resolved_finding": "reject duplicate loaded-instance ids within one model entry"
+  },
+  "impact": {
+    "constructor": "LOW; one direct caller, three upstream symbols",
+    "decide": "UNKNOWN; eleven unresolved dynamic receiver calls; targeted engine tests used",
+    "staged": "LOW; nine files, sixteen indexed symbols; graph does not exhaustively resolve callbacks",
+    "main_comparison": "CRITICAL; 1489 files, 7701 symbols, 450 processes including inherited consolidation; not a merge approval",
+    "fts": "unavailable; graph rebuilt with --skip-fts",
+    "publish_staged": "LOW; 22 files including proof logs, 16 indexed symbols"
+  },
+  "mac_read_only": {
+    "access": "MacDevBridge variants returned internal errors; Desktop Commander succeeded",
+    "disk_free_gib": 18.78,
+    "ollama_http": 200,
+    "ollama_model_count": 5,
+    "lmstudio_http": "unreachable at default loopback port",
+    "lmstudio_installation_search": "not found in /Applications, user Applications or Spotlight",
+    "fabric_socket": "exists; ConnectionRefusedError",
+    "new_model_downloads": 0,
+    "inferences": 0,
+    "service_mutations": 0,
+    "limitations": "no live governor thresholds, source hashes or protocol negotiation recertified"
+  },
+  "not_tested": [
+    "Heretic model quality or performance",
+    "real LM Studio inference on Mac",
+    "native IAO UI through Compute Fabric",
+    "offline end-to-end network egress",
+    "production deployment"
+  ],
+  "remaining": [
+    "repair and qualify owned Compute Fabric integration plus hardware admission",
+    "qualify model weights and local server before native activation",
+    "wire graphical selection through existing native bridge"
+  ],
+  "prior_errors": [
+    "initial production typecheck errors corrected",
+    "subsequent test fixture type mismatch corrected",
+    "initial gitnexus analyze invocation with unsupported option corrected",
+    "main branch name missing in isolated clone; comparison rerun using exact remote main SHA"
+  ],
+  "log_normalization": {
+    "regressions-final.log": {
+      "original_sha256": "cf8584996f44ac5219caa9d6aefa4b4b4880197f37623642e19c7c129468092a",
+      "change": "removed trailing blank lines only"
+    }
+  }
+}

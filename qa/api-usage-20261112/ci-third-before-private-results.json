@@ -1,0 +1,696 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "head": "65e96225fafcf39719890af65f5c2c8346b6ef61",
+  "base": "58baecb7f63d23ede5a2318078cbe8bac9807e78",
+  "ci_checkout": "7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+  "tree": "df22a2947cbdc102a5a5d82ae22799a1997e4566",
+  "run_id": 43170366699,
+  "run_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/43170366699",
+  "karta": {
+    "status": "PASS",
+    "tests": 2391,
+    "files": 131,
+    "types": "PASS",
+    "build": "PASS",
+    "migration_tests": 19,
+    "logger_finalization_tests": 17,
+    "deadline_tests": 21,
+    "usage_transport_tests": 10
+  },
+  "site": {
+    "status": "PASS",
+    "job_id": 131021919533,
+    "lint_errors": 0,
+    "lint_warnings": 21,
+    "build": "PASS",
+    "types": "PASS",
+    "browser_suites": "PASS"
+  },
+  "subscriptions": {
+    "status": "PASS",
+    "job_id": 131021920008,
+    "tests": 7
+  },
+  "jobs": [
+    {
+      "id": 131021919533,
+      "name": "site",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43170366699,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run denoland/setup-deno@v2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run test:dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Entraide public transport and account isolation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run npm run test:distribution:unit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run npm run test:distribution:sql",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Run npm run test:distribution:worker",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Run npm run test:distribution:chat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Run npm run test:contracts-auth",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Run npm run test:cross-app-jwt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Run npm run test:cross-app-jwt:deno",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Run npm run test:voice-settings",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Run npm run test:contracts-security",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "Run npm run test:contracts-ots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Run npm run test:contracts-native",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        },
+        {
+          "name": "Run npm run test:oauth",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Run deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        },
+        {
+          "name": "Run npm run test:commerce:plans",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Run npm run test:commerce:handlers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        },
+        {
+          "name": "Social publication core behavior",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Agent execution lifetime isolation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Social routes with the real Supabase SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Run npm run test:billing",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Stripe reconciliation with the real provider SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Run npm run test:founder",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        },
+        {
+          "name": "Run npm run test:founder:types",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31
+        },
+        {
+          "name": "Run npx tsc --noEmit -p tsconfig.app.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32
+        },
+        {
+          "name": "Prepare the locked Playwright image without Ubuntu downloads",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        },
+        {
+          "name": "Social browser behavior",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 34
+        },
+        {
+          "name": "Run npx tsc --noEmit -p tests/public/tsconfig.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 35
+        },
+        {
+          "name": "Run npm run typecheck:distribution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 36
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:distribution:browser",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 37
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:public",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 38
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:chat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 39
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:quality",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 40
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:oauth:browser",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 41
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:founder:browser",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 42
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:account-isolation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 43
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 44
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:wellbeing",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 45
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:voice-consent",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 46
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:ui-state",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 47
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:async-ui",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 48
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:mobile-auth",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 49
+        },
+        {
+          "name": "Archive voice consent and accessibility browser evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 50
+        },
+        {
+          "name": "Run npm audit --audit-level=high --omit=dev",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 51
+        },
+        {
+          "name": "Post Run denoland/setup-deno@v2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 100
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 101
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 102
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 103
+        }
+      ]
+    },
+    {
+      "id": 131021919800,
+      "name": "karta",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43170366699,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Approval outbox wrapper lifecycle (inert)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Preserve outbox wrapper lifecycle evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run node ../scripts/generate-supabase-contracts.mjs --check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run npm test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run node --test ../tests/oauth-google/state-sql.test.mjs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "OAuth state on native PostgreSQL",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Preserve native OAuth evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Run npm run typecheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Stripe reconciliation SQL invariants",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Social publication and account binding SQL invariants",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Run npm audit --audit-level=high --omit=dev",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 16
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        }
+      ]
+    },
+    {
+      "id": 131021920008,
+      "name": "subscription-concurrency",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43170366699,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run test:subscriptions:postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    }
+  ],
+  "selected_log_lines": [
+    "2026-11-12T06:45:29.7971425Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7dcb96aa241c1db2a966b520a688bbbec8d7bc9a:refs/remotes/pull/66/merge",
+    "2026-11-12T06:45:30.4841877Z  * [new ref]         7dcb96aa241c1db2a966b520a688bbbec8d7bc9a -> pull/66/merge",
+    "2026-11-12T06:45:30.6523064Z 7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+    "2026-11-12T06:46:29.2472117Z  ✓ test/claudeTransportDeadline.test.ts (21 tests) 66ms",
+    "2026-11-12T06:46:33.2951070Z  ✓ test/loggerFinalization.test.ts (17 tests) 3840ms",
+    "2026-11-12T06:47:02.7471824Z  ✓ test/loopModelUsage.test.ts (14 tests) 22ms",
+    "2026-11-12T06:47:04.5354861Z  ✓ test/modelUsage.test.ts (64 tests) 23ms",
+    "2026-11-12T06:47:18.9042368Z  ✓ test/modelUsageMigration.test.ts (19 tests) 3228ms",
+    "2026-11-12T06:47:19.1724381Z  ✓ test/claudeUsageTransport.test.ts (10 tests) 57ms",
+    "2026-11-12T06:47:31.2580501Z  ✓ test/runtimeUsageReadiness.test.ts (2 tests) 22ms",
+    "2026-11-12T06:47:34.4124573Z  Test Files  131 passed (131)",
+    "2026-11-12T06:47:34.4142845Z       Tests  2391 passed (2391)",
+    "2026-11-12T06:47:34.4150043Z    Duration  112.82s (tests 90%, import 7%, transform 1%)",
+    "2026-11-12T06:47:37.2018715Z # tests 18",
+    "2026-11-12T06:47:37.2020022Z # pass 18",
+    "2026-11-12T06:47:37.2020650Z # fail 0",
+    "2026-11-12T06:47:43.8562386Z ##[group]Run npm run typecheck",
+    "2026-11-12T06:47:43.8562724Z npm run typecheck",
+    "2026-11-12T06:47:50.5541043Z ##[group]Run npm run build",
+    "2026-11-12T06:47:50.5541382Z npm run build",
+    "2026-11-12T06:48:02.1210159Z # tests 24",
+    "2026-11-12T06:48:02.1210972Z # pass 24",
+    "2026-11-12T06:48:02.1211353Z # fail 0",
+    "2026-11-12T06:48:08.0036311Z # tests 40",
+    "2026-11-12T06:48:08.0037083Z # pass 40",
+    "2026-11-12T06:48:08.0037469Z # fail 0"
+  ],
+  "limits": [
+    "No live provider invoice reconciliation",
+    "No production deployment or migration",
+    "npm audit steps skipped by the pull-request workflow",
+    "Lint site has 21 existing warnings and zero errors"
+  ],
+  "workflow": {
+    "id": 43170366699,
+    "name": "PURAMA CHEF hardening",
+    "status": "completed",
+    "conclusion": "success",
+    "run_number": 293,
+    "jobs_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/43170366699/jobs",
+    "logs_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/runs/43170366699/logs",
+    "workflow_id": 368284292
+  },
+  "independent_review": {
+    "status": "PASS",
+    "commit": "65e96225fafcf39719890af65f5c2c8346b6ef61",
+    "scope": "Exact real.ts and types.ts Git objects after composition; no code edits or tests during independent review",
+    "findings": "Admission inside bounded; model/response per invocation; safe catch; callback after accepted full response and before decision validation"
+  },
+  "additional_job_log_lines": {
+    "site": [
+      "2026-11-12T06:45:29.6517084Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7dcb96aa241c1db2a966b520a688bbbec8d7bc9a:refs/remotes/pull/66/merge",
+      "2026-11-12T06:45:30.5646927Z  * [new ref]         7dcb96aa241c1db2a966b520a688bbbec8d7bc9a -> pull/66/merge",
+      "2026-11-12T06:45:30.7257018Z 7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+      "2026-11-12T06:45:44.5272532Z # tests 5",
+      "2026-11-12T06:45:44.5299655Z # pass 5",
+      "2026-11-12T06:45:44.5300000Z # fail 0",
+      "2026-11-12T06:45:47.4248321Z # tests 22",
+      "2026-11-12T06:45:47.4250152Z # pass 22",
+      "2026-11-12T06:45:47.4250612Z # fail 0",
+      "2026-11-12T06:45:58.4243103Z ✖ 21 problems (0 errors, 21 warnings)",
+      "2026-11-12T06:46:09.2516714Z  Test Files  12 passed (12)",
+      "2026-11-12T06:46:09.2518181Z       Tests  343 passed (343)",
+      "2026-11-12T06:46:11.8910274Z # tests 32",
+      "2026-11-12T06:46:11.8911175Z # pass 32",
+      "2026-11-12T06:46:11.8911572Z # fail 0",
+      "2026-11-12T06:46:12.2240360Z # tests 25",
+      "2026-11-12T06:46:12.2247104Z # pass 25",
+      "2026-11-12T06:46:12.2247487Z # fail 0",
+      "2026-11-12T06:46:13.1804152Z # tests 19",
+      "2026-11-12T06:46:13.1804855Z # pass 19",
+      "2026-11-12T06:46:13.1805192Z # fail 0",
+      "2026-11-12T06:46:22.9197455Z # tests 142",
+      "2026-11-12T06:46:22.9198269Z # pass 142",
+      "2026-11-12T06:46:22.9198825Z # fail 0",
+      "2026-11-12T06:46:23.8449310Z # tests 98",
+      "2026-11-12T06:46:23.8450108Z # pass 98",
+      "2026-11-12T06:46:23.8450536Z # fail 0",
+      "2026-11-12T06:46:25.8219811Z # tests 11",
+      "2026-11-12T06:46:25.8229648Z # pass 11",
+      "2026-11-12T06:46:25.8230222Z # fail 0",
+      "2026-11-12T06:46:55.8333185Z # tests 250",
+      "2026-11-12T06:46:55.8333915Z # pass 250",
+      "2026-11-12T06:46:55.8334258Z # fail 0",
+      "2026-11-12T06:46:58.3469886Z # tests 24",
+      "2026-11-12T06:46:58.3470579Z # pass 24",
+      "2026-11-12T06:46:58.3470895Z # fail 0",
+      "2026-11-12T06:47:06.8226720Z # tests 69",
+      "2026-11-12T06:47:06.8227670Z # pass 69",
+      "2026-11-12T06:47:06.8239411Z # fail 0",
+      "2026-11-12T06:47:10.7857672Z # tests 17",
+      "2026-11-12T06:47:10.7858970Z # pass 17",
+      "2026-11-12T06:47:10.7859622Z # fail 0",
+      "2026-11-12T06:47:16.1406408Z # tests 11",
+      "2026-11-12T06:47:16.1407071Z # pass 11",
+      "2026-11-12T06:47:16.1407601Z # fail 0",
+      "2026-11-12T06:47:24.6966790Z # tests 184",
+      "2026-11-12T06:47:24.6967504Z # pass 184",
+      "2026-11-12T06:47:24.6967867Z # fail 0",
+      "2026-11-12T06:47:27.7521475Z # tests 47",
+      "2026-11-12T06:47:27.7522132Z # pass 47",
+      "2026-11-12T06:47:27.7522459Z # fail 0",
+      "2026-11-12T06:50:21.3555896Z   45 passed (1.4m)",
+      "2026-11-12T06:54:05.4289682Z   156 passed (3.7m)",
+      "2026-11-12T06:54:27.7466060Z   14 passed (21.3s)",
+      "2026-11-12T06:57:47.5752412Z   156 passed (3.3m)",
+      "2026-11-12T06:58:44.3817195Z   28 passed (19.3s)",
+      "2026-11-12T06:59:06.5829177Z   29 passed (21.3s)",
+      "2026-11-12T06:59:22.2456581Z   17 passed (14.7s)",
+      "2026-11-12T06:59:35.4997044Z   17 passed (12.3s)",
+      "2026-11-12T06:59:42.8100833Z   20 passed (6.4s)",
+      "2026-11-12T06:59:42.8830028Z   name: iao-voice-accessibility-7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+      "2026-11-12T06:59:44.4696329Z Artifact iao-voice-accessibility-7dcb96aa241c1db2a966b520a688bbbec8d7bc9a.zip successfully finalized. Artifact ID 13922014076",
+      "2026-11-12T06:59:44.4698761Z Artifact iao-voice-accessibility-7dcb96aa241c1db2a966b520a688bbbec8d7bc9a has been successfully uploaded! Final size is 1817178 bytes. Artifact ID is 13922014076"
+    ],
+    "subscriptions": [
+      "2026-11-12T06:45:42.6680234Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7dcb96aa241c1db2a966b520a688bbbec8d7bc9a:refs/remotes/pull/66/merge",
+      "2026-11-12T06:45:43.6922028Z  * [new ref]         7dcb96aa241c1db2a966b520a688bbbec8d7bc9a -> pull/66/merge",
+      "2026-11-12T06:45:43.8171456Z 7dcb96aa241c1db2a966b520a688bbbec8d7bc9a",
+      "2026-11-12T06:45:49.9725324Z # tests 7",
+      "2026-11-12T06:45:49.9726717Z # pass 7",
+      "2026-11-12T06:45:49.9727059Z # fail 0"
+    ]
+  }
+}

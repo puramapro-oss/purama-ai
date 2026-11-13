@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
+import * as utilTypes from 'node:util/types';
 import ts from 'typescript';
 import * as zod from 'zod';
 import * as nodePolicy from '../src/claude/assistant-policy.js';
@@ -181,6 +182,7 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
     cache.set(path, module.exports);
     const blocked = (name: string) => () => { unexpected.push(name); throw new Error(`Unexpected external action: ${name}`); };
     const requireModule = (specifier: string): unknown => {
+      if (specifier === 'node:util/types') return utilTypes;
       if (specifier.startsWith('npm:zod@')) return zod;
       if (specifier.includes('@supabase/supabase-js')) return { createClient: () => db.client };
       if (specifier.includes('@anthropic-ai/sdk')) return FakeAnthropic;
@@ -189,6 +191,7 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
       const target = resolve(dirname(path), specifier).replace(/\.js$/, '.ts');
       if (target === resolve(repo, 'karta/src/config.ts')) return { config: {
         anthropicApiKey: 'test-only-not-a-secret', anthropicModelFast: 'test-fast', anthropicModelMain: 'test-main',
+        anthropicTimeoutMs: 60_000,
       } };
       if (target === resolve(repo, 'supabase/functions/_shared/zernio.ts'))
         return { corsHeaders: {}, publishPost: blocked('social publish') };
@@ -197,13 +200,14 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
     };
     runInNewContext(compiled, {
       module, exports: module.exports, require: requireModule,
+      process: { env: {} },
       Deno: { serve: register, env: { get: (name: string) => {
         if (options.env && Object.hasOwn(options.env, name)) return options.env[name];
         return name.endsWith('_URL') ? 'https://example.invalid' : 'test-only-not-a-secret';
       } } },
       fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
-      ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout,
+      ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout, performance,
       console: { error: vi.fn(), warn: vi.fn(), log: vi.fn() },
     }, { filename: path });
     return module.exports;

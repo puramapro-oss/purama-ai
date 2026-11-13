@@ -10,7 +10,10 @@ import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
 import { BriefSubmissionError, dispatchBrief, getBriefStatus, listBriefs, submitBrief } from "../engine/brief-submission.js";
+import { handleWorkshopRequest, WorkshopError } from "../chef/workshop-service.js";
 import type { StaticAgentType } from "../engine/types.js";
+import { handleConsultationRequest } from "./consultation.js";
+import type { ConsultationHost } from "./consultation-contract.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 
@@ -61,11 +64,16 @@ function readIdempotencyKey(req: IncomingMessage): string | undefined {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer(readiness?: () => Promise<RuntimeReadiness>) {
+export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, options: { consultationHost?: ConsultationHost | null } = {}) {
+  let host: Promise<ConsultationHost | null> | undefined;
+  const consultationHost = () => host ??= Object.hasOwn(options, "consultationHost")
+    ? Promise.resolve(options.consultationHost ?? null)
+    : import("../claude/consultation-host.js").then(module => module.createConsultationHost()).catch(() => null);
   const server = createServer((req, res) => {
-    void handleRequest(req, res, readiness).catch((error) => {
+    void handleRequest(req, res, readiness, consultationHost).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
+      else if (error instanceof WorkshopError) json(res, error.status, { ok: false, code: error.code, error: error.message });
       else if (error instanceof BriefSubmissionError) json(res, error.status, { error: error.message, code: error.code });
       else if (error instanceof CycleDeliveryConflictError) json(res, 409, { error: error.message });
       else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
@@ -80,7 +88,8 @@ export function startApiServer(readiness?: () => Promise<RuntimeReadiness>) {
 }
 
 async function handleRequest(req: IncomingMessage, res: ServerResponse,
-  readiness?: () => Promise<RuntimeReadiness>): Promise<void> {
+  readiness: (() => Promise<RuntimeReadiness>) | undefined,
+  consultationHost: () => Promise<ConsultationHost | null>): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
   if (req.method === "GET" && url.pathname === "/live") {
@@ -144,6 +153,23 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     json(res, 200, { ok: true });
     return;
   }
+
+  // Authenticated proxy supplies the owner in the path. Cancel/status remain
+  // available during degraded queue readiness; no browser can send the admin key.
+  const workshopMatch = url.pathname.match(/^\/workshop\/([0-9a-f-]{36})$/i);
+  if (req.method === "POST" && workshopMatch) {
+    if (url.search) throw new RequestError(400, "Paramètres atelier invalides");
+    const body = await readBody(req);
+    if (body.action === "start" && !await requireReady()) return;
+    res.setHeader("Cache-Control", "no-store");
+    json(res, 200, await handleWorkshopRequest(workshopMatch[1]!, body));
+    return;
+  }
+
+  // Private reads and cancellation remain available during an unrelated queue
+  // outage. Only new consultation work additionally requires runtime readiness.
+  if (await handleConsultationRequest(req, res, url, consultationHost, async () =>
+    !readiness || (await readiness().catch(() => ({ ready: false }))).ready)) return;
 
   if (!await requireReady()) return;
 

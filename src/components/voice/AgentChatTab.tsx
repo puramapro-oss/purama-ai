@@ -263,6 +263,8 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => {
+                // Enter can confirm an IME candidate before it becomes a message.
+                if (e.nativeEvent.isComposing || e.nativeEvent.keyCode === 229) return;
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   handleSend();

@@ -138,6 +138,12 @@ export interface AgentContextInput {
 
 export interface AgentDefinition {
   type: AgentType;
+  /** Explicit user choice, validated against the server model catalogue. */
+  modelPreferences?: {
+    model: string;
+    reflection?: "auto" | "standard" | "deep" | "maximum";
+    speed?: "standard" | "fast" | "ultra_fast";
+  };
   /**
    * Opt in to durable, exclusive acquisition of this pending memory key.
    * KARTA prepares the brief before inference and durably marks possible

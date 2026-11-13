@@ -7,10 +7,16 @@ const path = require('node:path');
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const localPackages = {
   'compat/decode-uri-component': '@purama/decode-uri-component-compat',
+  'compat/deepmerge': '@purama/expo-deepmerge-compat',
+  'compat/glob': '@purama/expo-glob-compat',
+  'compat/glob-minimatch': '@purama/glob-minimatch-guard',
   'compat/image-size': '@purama/metro-image-size-compat',
 };
 const localLinks = {
   'node_modules/decode-uri-component': 'compat/decode-uri-component',
+  'node_modules/deepmerge': 'compat/deepmerge',
+  'node_modules/glob': 'compat/glob',
+  'node_modules/minimatch': 'compat/glob-minimatch',
   'node_modules/image-size': 'compat/image-size',
 };
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');

@@ -3,42 +3,255 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Hors ligne — Purama AI</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src 'self'; child-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#101321" />
+  <title>Espace local — PURAMA</title>
   <style>
+    :root {
+      color-scheme: dark;
+      --background: #101321;
+      --panel: #191e30;
+      --panel-soft: #20263b;
+      --line: #414b68;
+      --text: #f4f5fb;
+      --muted: #c0c7db;
+      --accent: #c9b7ff;
+      --focus: #8ee8e4;
+      --success: #b5e9d0;
+      --warning: #ffe1a6;
+    }
     *, *::before, *::after { box-sizing: border-box; }
-    html, body {
-      margin: 0; padding: 0; min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: radial-gradient(ellipse at top, #1a0a2e 0%, #0A0A0F 60%);
-      color: #F8FAFC;
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
+    body {
+      margin: 0;
+      min-width: 280px;
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text);
+      background: radial-gradient(ellipse at top left, #262344 0, var(--background) 54%);
     }
-    .card {
-      max-width: 420px; width: 100%; text-align: center;
-      padding: 32px; border-radius: 20px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(20px);
-    }
-    .icon { font-size: 56px; margin-bottom: 16px; }
-    h1 { font-size: 22px; margin: 0 0 8px; font-weight: 700; }
-    p { font-size: 14px; color: rgba(248,250,252,0.6); margin: 0 0 24px; line-height: 1.5; }
+    button, input, textarea { font: inherit; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:hover { color: #e0d4ff; }
+    button, input, textarea { border-radius: 10px; }
     button {
-      background: linear-gradient(135deg, #8B5CF6, #06B6D4);
-      color: white; border: none; padding: 12px 24px;
-      border-radius: 12px; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: transform 0.2s;
+      min-height: 44px;
+      border: 1px solid #66718f;
+      padding: 9px 15px;
+      background: var(--panel-soft);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
     }
-    button:hover { transform: translateY(-1px); }
+    button:hover:not(:disabled) { background: #303954; }
+    button.primary { color: #20153a; background: #cbb9ff; border-color: #cbb9ff; }
+    button.primary:hover:not(:disabled) { background: #e0d3ff; }
+    button.danger { color: #ffcccc; background: transparent; border-color: #986d7a; }
+    button:disabled, input:disabled, textarea:disabled { opacity: .64; cursor: not-allowed; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+    [hidden] { display: none !important; }
+    .skip-link { position: absolute; left: 18px; top: -100px; padding: 10px 18px; background: var(--panel); z-index: 5; }
+    .skip-link:focus { top: 10px; }
+    .shell { max-width: 1200px; margin: 0 auto; padding: 28px 24px 40px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 750; letter-spacing: .15em; }
+    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #bda6fc; border-radius: 12px; color: #d6c6ff; letter-spacing: 0; }
+    .topbar a { font-size: .9rem; }
+    .intro { max-width: 800px; margin: 34px 0 25px; }
+    .eyebrow { color: var(--accent); font-weight: 650; font-size: .78rem; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 7px 0 12px; font-size: clamp(1.8rem, 4vw, 2.7rem); line-height: 1.16; letter-spacing: -.025em; }
+    h2 { font-size: 1.1rem; margin: 0; line-height: 1.4; }
+    p { margin: 0 0 12px; }
+    .muted, .intro p, .hint { color: var(--muted); }
+    .hint { font-size: .88rem; line-height: 1.55; }
+    .availability { display: flex; justify-content: space-between; align-items: center; gap: 20px; border: 1px solid var(--line); background: #191f33; padding: 18px 20px; border-radius: 14px; margin-bottom: 14px; }
+    .availability p { margin: 6px 0 0; max-width: 760px; }
+    .availability button { flex: 0 0 auto; }
+    #preparation-status[data-state="ready"], #storage-status[data-state="ready"], #save-status[data-state="saved"] { color: var(--success); }
+    #preparation-status[data-state="error"], #storage-status[data-state="error"], #save-status[data-state="error"], #save-status[data-state="conflict"] { color: var(--warning); }
+    #storage-status { margin: 0 0 20px; padding: 0 3px; font-size: .88rem; }
+    .workspace { display: grid; grid-template-columns: minmax(250px, 310px) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 15px; background: var(--panel); padding: 22px; min-width: 0; }
+    .panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 19px; }
+    .panel-heading .hint { margin: 0; }
+    label { display: block; font-size: .91rem; font-weight: 650; margin-bottom: 7px; }
+    input[type="text"], input[type="search"], textarea {
+      width: 100%;
+      border: 1px solid #697390;
+      background: #101626;
+      color: var(--text);
+      padding: 11px 13px;
+      box-shadow: none;
+    }
+    input::placeholder, textarea::placeholder { color: #aab4cb; opacity: 1; }
+    textarea { min-height: 365px; resize: vertical; line-height: 1.65; tab-size: 2; }
+    .field { margin-bottom: 18px; }
+    .library-actions { display: grid; gap: 12px; margin-bottom: 22px; }
+    .import-field { padding: 12px; background: #20263b; border-radius: 10px; border: 1px solid var(--line); }
+    input[type="file"] { max-width: 100%; width: 100%; font-size: .82rem; color: var(--muted); }
+    input[type="file"]::file-selector-button { border: 1px solid #7883a1; border-radius: 7px; padding: 8px; margin: 2px 8px 4px 0; color: var(--text); background: #303954; cursor: pointer; }
+    .import-field .hint { display: block; margin-top: 5px; font-size: .8rem; }
+    .search-field { margin-bottom: 12px; }
+    .library-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+    .library-meta button { padding: 5px 9px; font-size: .78rem; }
+    #document-list { list-style: none; padding: 0; margin: 15px 0 0; display: grid; gap: 8px; max-height: 490px; overflow-y: auto; padding-right: 3px; }
+    .text-item { display: block; width: 100%; text-align: left; padding: 11px 12px; border-color: var(--line); background: #141a2c; }
+    .text-item[aria-current="true"] { border-color: #c3acff; background: #302a47; }
+    .text-item-title { display: block; overflow-wrap: anywhere; }
+    .text-item-meta { display: block; color: var(--muted); font-size: .77rem; font-weight: 400; margin-top: 3px; }
+    .empty-state { padding: 24px 7px; font-size: .9rem; color: var(--muted); text-align: center; }
+    .kind { color: #dbceff; background: #322a48; padding: 4px 10px; border-radius: 20px; font-size: .78rem; }
+    .editor-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin-top: 7px; }
+    .editor-meta p { margin: 0; }
+    .editor-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 19px 0 14px; }
+    .local-speech { margin: 22px 0 0; border-top: 1px solid var(--line); padding-top: 18px; }
+    .local-speech .editor-actions { margin: 12px 0; }
+    #speech-status { margin: 0; overflow-wrap: anywhere; }
+    #speech-status[data-state="speaking"], #speech-status[data-state="complete"] { color: var(--success); }
+    #speech-status[data-state="error"], #speech-status[data-state="unavailable"], #speech-status[data-state="stop-unconfirmed"] { color: var(--warning); }
+    .delete-wrap { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 15px; }
+    #save-status { margin: 0; min-height: 1.6em; font-size: .91rem; }
+    .error { color: #ffe2b5; background: #3b2d24; border: 1px solid #a98350; padding: 14px 18px; border-radius: 12px; margin: 15px 0; overflow-wrap: anywhere; }
+    .backup { margin-top: 18px; }
+    .backup-actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: start; margin-top: 16px; }
+    .backup-actions > .import-field { flex: 1 1 260px; }
+    .restore-preview { padding: 15px; margin-top: 15px; border: 1px solid #9b87cb; border-radius: 10px; background: #242039; }
+    #backup-status { margin-top: 14px; overflow-wrap: anywhere; }
+    #backup-status[data-state="success"] { color: var(--success); }
+    #backup-status[data-state="error"] { color: var(--warning); }
+    #restore-summary { overflow-wrap: anywhere; }
+    .privacy { margin: 24px 4px 0; max-width: 920px; }
+    .privacy strong { color: #e0e4ef; }
+    .noscript { border: 2px solid var(--warning); padding: 16px; margin: 20px 0; color: var(--warning); }
+    @media (max-width: 760px) {
+      .shell { padding: 20px 16px 30px; }
+      .intro { margin-top: 26px; }
+      .availability { align-items: stretch; flex-direction: column; gap: 14px; padding: 17px; }
+      .availability button { align-self: flex-start; }
+      .workspace { grid-template-columns: 1fr; }
+      .panel { padding: 18px; }
+      .library-actions { grid-template-columns: 1fr; }
+      #document-list { max-height: 230px; }
+      textarea { min-height: 320px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }
   </style>
+  <script type="module" src="/offline-workspace.js"></script>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">📡</div>
-    <h1>Tu es hors ligne</h1>
-    <p>La page n’a pas pu être chargée. Vérifie ta connexion, puis appuie sur « Réessayer ».</p>
-    <button onclick="location.reload()">Réessayer</button>
-  </div>
+  <a class="skip-link" href="#editor-heading">Aller à l’éditeur</a>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">P</span> PURAMA</div>
+      <a href="/">Revenir à l’application</a>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <span class="eyebrow">Votre espace local</span>
+      <h1 id="page-title">Gardez le fil, même sans Internet.</h1>
+      <p>Écrivez un brouillon, retrouvez vos textes et ouvrez vos documents .txt ou .md sur cet appareil. Préparez d’abord cet espace pour pouvoir le rouvrir sans connexion et sans Mac.</p>
+      <p class="hint"><strong>La génération IA n’est pas disponible dans cet espace.</strong> La rédaction, la recherche et l’export utilisent des fonctions locales.</p>
+    </section>
+
+    <noscript><p class="noscript">JavaScript est nécessaire pour cet espace de rédaction local. Aucun texte ne peut être enregistré par cette page tant qu’il est désactivé.</p></noscript>
+
+    <section class="availability" aria-labelledby="preparation-heading">
+      <div>
+        <h2 id="preparation-heading">Préparer l’accès hors connexion</h2>
+        <p id="preparation-status" data-testid="preparation-status" data-state="checking" role="status" aria-live="polite" aria-atomic="true" class="hint">Vérification des fichiers disponibles dans ce navigateur…</p>
+      </div>
+      <button id="prepare-offline" data-testid="prepare-offline" type="button">Préparer cet espace</button>
+    </section>
+
+    <p id="storage-status" data-testid="storage-status" data-state="opening" role="status" aria-live="polite" aria-atomic="true">Ouverture du stockage de ce navigateur…</p>
+    <div id="error-message" data-testid="error-message" class="error" role="alert" aria-atomic="true" hidden></div>
+
+    <div class="workspace">
+      <section class="panel library" aria-labelledby="library-heading">
+        <div class="panel-heading"><h2 id="library-heading">Mes textes</h2></div>
+        <div class="library-actions">
+          <button id="new-draft" data-testid="new-draft" type="button">Nouveau brouillon</button>
+          <div class="import-field">
+            <label for="import-file">Importer un texte</label>
+            <input id="import-file" data-testid="import-file" type="file" accept=".txt,.md,text/plain,text/markdown" aria-describedby="import-hint" />
+            <span id="import-hint" class="hint">UTF-8 · 1 Mio maximum. Le fichier choisi est ouvert en texte brut puis enregistré ici si le stockage est disponible.</span>
+          </div>
+        </div>
+        <div class="field search-field">
+          <label for="search-input">Rechercher dans mes textes</label>
+          <input id="search-input" data-testid="search-input" type="search" placeholder="Un titre ou un passage…" autocomplete="off" aria-controls="document-list" />
+        </div>
+        <div class="library-meta">
+          <span id="library-count" class="hint" role="status" aria-live="polite">0 texte</span>
+          <button id="refresh-library" data-testid="refresh-library" type="button">Actualiser les textes</button>
+        </div>
+        <ul id="document-list" data-testid="document-list" aria-label="Textes enregistrés"></ul>
+      </section>
+
+      <section class="panel editor" aria-labelledby="editor-heading">
+        <div class="panel-heading">
+          <h2 id="editor-heading" tabindex="-1">Écrire et lire</h2>
+          <span id="document-kind" data-kind="draft" class="kind">Brouillon</span>
+        </div>
+        <div class="field">
+          <label for="document-title">Titre</label>
+          <input id="document-title" data-testid="document-title" type="text" maxlength="160" placeholder="Donnez un titre à votre texte" autocomplete="off" dir="auto" />
+        </div>
+        <div class="field">
+          <label for="document-body">Texte</label>
+          <textarea id="document-body" data-testid="document-body" rows="15" placeholder="Vos idées, vos notes, votre prochain projet…" aria-describedby="editor-hint character-count" dir="auto" spellcheck="true"></textarea>
+          <div class="editor-meta">
+            <p id="editor-hint" class="hint">Enregistrement manuel · 1 Mio maximum par texte</p>
+            <p id="character-count" class="hint">0 caractère · texte brut</p>
+          </div>
+        </div>
+        <div class="editor-actions">
+          <button id="save-document" data-testid="save-document" type="button" class="primary" disabled>Enregistrer</button>
+          <button id="export-document" data-testid="export-document" type="button">Exporter le texte</button>
+          <button id="save-copy" data-testid="save-copy" type="button" hidden>Enregistrer une copie</button>
+          <button id="reload-document" data-testid="reload-document" type="button" hidden>Recharger la version enregistrée</button>
+        </div>
+        <p id="save-status" data-testid="save-status" data-state="unsaved" role="status" aria-live="polite" aria-atomic="true">Nouveau brouillon — pas encore enregistré.</p>
+        <section class="local-speech" aria-labelledby="speech-heading">
+          <h2 id="speech-heading">Écouter mon texte</h2>
+          <p id="speech-hint" class="hint">Lecture du texte ouvert, même non enregistré, avec une voix française déclarée locale par le navigateur. Aucune voix distante en repli. La lecture s’arrête si vous modifiez le texte ou changez de document.</p>
+          <div class="editor-actions">
+            <button id="speak-text" data-testid="speak-text" type="button" aria-describedby="speech-hint speech-status" disabled>Écouter le texte</button>
+            <button id="stop-speech" data-testid="stop-speech" type="button" disabled>Arrêter la lecture</button>
+          </div>
+          <p id="speech-status" data-testid="speech-status" data-state="checking" class="hint" role="status" aria-live="polite" aria-atomic="true">Vérification des voix locales disponibles…</p>
+        </section>
+        <div class="delete-wrap">
+          <button id="delete-document" data-testid="delete-document" type="button" class="danger" disabled>Supprimer ce texte</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel backup" aria-labelledby="backup-heading">
+      <h2 id="backup-heading">Sauvegarder et retrouver mes textes</h2>
+      <p id="backup-hint" class="hint">La sauvegarde contient tous les textes enregistrés dans ce navigateur, même ceux masqués par une recherche. Enregistrez ou exportez séparément les modifications encore ouvertes dans l’éditeur.</p>
+      <div class="backup-actions">
+        <button id="backup-library" data-testid="backup-library" type="button" aria-describedby="backup-hint" disabled>Télécharger la sauvegarde</button>
+        <div class="import-field">
+          <label for="restore-file">Restaurer une sauvegarde de textes</label>
+          <input id="restore-file" data-testid="restore-file" type="file" accept=".json,application/json" aria-describedby="restore-hint" />
+          <span id="restore-hint" class="hint">Fichier PURAMA .json · 32 Mio et 2 000 textes maximum. Vérification avant ajout ; aucune version existante n’est remplacée.</span>
+        </div>
+      </div>
+      <div id="restore-preview" data-testid="restore-preview" class="restore-preview" hidden>
+        <p id="restore-summary"></p>
+        <div class="editor-actions">
+          <button id="confirm-restore" data-testid="confirm-restore" type="button" class="primary" disabled>Ajouter ces textes</button>
+          <button id="cancel-restore" data-testid="cancel-restore" type="button">Annuler</button>
+        </div>
+      </div>
+      <p id="backup-status" data-testid="backup-status" data-state="idle" class="hint" role="status" aria-live="polite" aria-atomic="true">La sauvegarde et la restauration fonctionnent sans Internet une fois cet espace préparé.</p>
+      <p class="hint">Le fichier téléchargé contient du texte lisible, sans chiffrement. Conservez-le dans un emplacement privé. Il contient uniquement cette bibliothèque de textes, pas votre compte, vos modèles IA ou la préparation de l’application.</p>
+    </section>
+
+    <footer class="privacy hint">
+      <p><strong>Vos textes appartiennent aux données de ce navigateur.</strong> Ils ne sont pas liés à votre compte PURAMA et ne sont pas automatiquement synchronisés. Une autre personne utilisant le même profil de navigateur peut les ouvrir.</p>
+      <p>Effacer les données du site peut supprimer les textes et la préparation hors connexion. <strong>Téléchargez régulièrement une sauvegarde de vos textes enregistrés.</strong> L’export d’un texte conserve aussi ses modifications non enregistrées ; la sauvegarde de la bibliothèque contient seulement les versions enregistrées.</p>
+    </footer>
+  </main>
 </body>
 </html>

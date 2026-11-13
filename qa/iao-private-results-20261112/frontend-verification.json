@@ -1,0 +1,101 @@
+{
+  "scope": "Private tool results frontend and shared display projection",
+  "status": "PASS",
+  "checked_at_utc": "2026-11-12T06:05:34.664526+00:00",
+  "files": {
+    "src/pages/CreatorAgentDetail.tsx": "a905f4b714bdfb7f249690fd560350fbaf0f261f005e6d5184e2e4daae68fb68",
+    "src/lib/creator-agent.ts": "be796ca1c3ab438b758ec12eba98ac0153b73e92e73588aa7329d70eff418c07",
+    "src/lib/private-tool-results.ts": "8eb25ee3f049cd2dd28c50729bf9af446abfde4e30a8165362e116b48eae983b",
+    "src/components/karta/PrivateToolResults.tsx": "2b6df62994b2a8bdb05cfb7350a12b1e5c5c563f769604dc82157664c1255aa2",
+    "karta/src/knowledge/private-result-view.ts": "52e02dec253f631141c7a599f04f439c175912554826287ee58aa2ebd6f2970b",
+    "src/lib/private-tool-results.test.ts": "9b29948664b9079f17d4a4ec41aa70703a8ac1ee51ad53d6ff2ad855a7a77805",
+    "src/lib/creator-agent-results.test.ts": "692c64cb4a7b43d33023f758cb088e4eb9c37e305c293820525a02a5a6264359",
+    "src/components/karta/PrivateToolResults.test.tsx": "7fff56dc19983167fa99b762afc631641e85640be4a11938de05938a9c09c744",
+    "src/pages/CreatorAgentDetail.results.test.tsx": "cef7cd42913021cb516a2bab6449704623f009fc67a00835d49a5219c9651f6b"
+  },
+  "typecheck_config": {
+    "extends": "/workspace/scratch/4f500ff8ab47/purama-ai/tsconfig.app.json",
+    "include": [
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/pages/CreatorAgentDetail.tsx",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/lib/creator-agent.ts",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/lib/private-tool-results.ts",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/components/karta/PrivateToolResults.tsx",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/lib/private-tool-results.test.ts",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/lib/creator-agent-results.test.ts",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/components/karta/PrivateToolResults.test.tsx",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/pages/CreatorAgentDetail.results.test.tsx",
+      "/workspace/scratch/4f500ff8ab47/purama-ai/src/vite-env.d.ts"
+    ]
+  },
+  "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+  "checks": [
+    {
+      "name": "frontend-targeted-tests",
+      "cmd": "node node_modules/vitest/vitest.mjs run src/lib/private-tool-results.test.ts src/lib/creator-agent-results.test.ts src/components/karta/PrivateToolResults.test.tsx src/pages/CreatorAgentDetail.results.test.tsx",
+      "chunk_id": "843a95",
+      "wall_time_seconds": 5.091747131,
+      "exit_code": 0,
+      "original_token_count": 58,
+      "output": "\n RUN  v4.1.12 /workspace/scratch/4f500ff8ab47/purama-ai\n\n\n Test Files  4 passed (4)\n      Tests  47 passed (47)\n   Start at  07:05:06\n   Duration  4.69s (transform 504ms, setup 0ms, import 1.24s, tests 595ms, environment 2.10s)\n\n"
+    },
+    {
+      "name": "frontend-scoped-typecheck",
+      "cmd": "node node_modules/typescript/bin/tsc --noEmit -p /workspace/scratch/4f500ff8ab47/result-ui-tsconfig.json",
+      "chunk_id": "3dda2d",
+      "wall_time_seconds": 3.337703924,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "name": "frontend-targeted-lint",
+      "cmd": "node node_modules/eslint/bin/eslint.js src/lib/private-tool-results.ts src/lib/creator-agent.ts src/pages/CreatorAgentDetail.tsx src/components/karta/PrivateToolResults.tsx karta/src/knowledge/private-result-view.ts src/lib/private-tool-results.test.ts src/lib/creator-agent-results.test.ts src/components/karta/PrivateToolResults.test.tsx src/pages/CreatorAgentDetail.results.test.tsx",
+      "chunk_id": "d6d691",
+      "wall_time_seconds": 2.083838062,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "name": "whitespace-check",
+      "cmd": "git diff --check",
+      "chunk_id": "fc231d",
+      "wall_time_seconds": 2.8102e-05,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    }
+  ],
+  "react_review": {
+    "skill": "vercel:react-best-practices",
+    "status": "PASS",
+    "observations": [
+      "Existing shadcn components and scoped state reused; no new dependency installed.",
+      "List and delete work is aborted and guarded by account, agent and session lifetime tokens, including A to B to A.",
+      "Only summary and provider-native validated HTTPS references enter UI state; provider content renders as text.",
+      "Selection max three, explicit send, and one existing chat request; opening or selecting results never invokes a model.",
+      "Pending delete is confirmed by the returned UUID before removing the row and selection.",
+      "Accessible labels and status/error roles; focus waits for the real textarea mount and returns to the results heading after delete.",
+      "Default chat request body and four-argument call remain unchanged with no selection.",
+      "47 targeted tests passed, including 15 actual DOM/component lifecycle cases."
+    ]
+  },
+  "independent_review": {
+    "agent": "/root/distributed_quota_audit",
+    "mode": "read-only",
+    "result": "No concrete defect found in four frontend files, request-scope/deadline usage and chatWithAgent.",
+    "tests_rerun_by_reviewer": false
+  },
+  "dependency_reuse": "Existing installed dependencies were linked into this checkout; React 18.3.1, jsdom 26.1.0, root Vitest 4.1.12. No package install or manifest/lock change.",
+  "not_verified": [
+    "Full application production build",
+    "Live server/database/browser end-to-end flow",
+    "Production deployment"
+  ],
+  "post_verification_whitespace_normalization": {
+    "file": "karta/src/knowledge/private-result-view.ts",
+    "before_sha256": "52e02dec253f631141c7a599f04f439c175912554826287ee58aa2ebd6f2970b",
+    "after_sha256": "2246757457ca8bef4d5b1f32385d58f06517e9f6d6606511c089617138ce60ab",
+    "change": "Removed redundant blank line at EOF; no executable text changed. Full exact-tree CI follows."
+  }
+}

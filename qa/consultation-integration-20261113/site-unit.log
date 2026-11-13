@@ -1,0 +1,33 @@
+
+ RUN  v4.1.12 /workspace/scratch/41a841bfe32d/purama-ai
+
+ ✓ src/pages/CreatorAgentDetail.execution.test.tsx (4 tests) 577ms
+     ✓ loads, edits, saves and reloads both choices without changing model or chat settings  331ms
+ ✓ src/components/voice/VoiceMode.accessibility.test.tsx (13 tests) 562ms
+ ✓ src/pages/CreatorAgentDetail.results.test.tsx (6 tests) 532ms
+     ✓ ouvre le composeur au clavier et joint uniquement les IDs à un seul envoi explicite  306ms
+ ✓ src/pages/creator-copy-lifecycle.test.tsx (19 tests) 474ms
+ ✓ src/pages/auth-continuation.test.tsx (15 tests) 542ms
+ ✓ src/components/ConsultationPanel.test.tsx (16 tests) 211ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx (3 tests) 227ms
+ ✓ src/components/shared/ShareButtons.test.tsx (25 tests) 242ms
+ ✓ src/components/shared/CinematicIntro.test.tsx (22 tests) 137ms
+ ✓ src/components/karta/PrivateToolResults.test.tsx (9 tests) 189ms
+ ✓ src/hooks/useAuth.continuation.test.tsx (17 tests) 35ms
+ ✓ src/lib/consultation-client.test.ts (31 tests) 28ms
+ ✓ src/lib/creator-model-request.test.ts (33 tests) 24ms
+ ✓ src/lib/private-tool-results.test.ts (24 tests) 22ms
+ ✓ src/lib/creator-execution-preferences.test.ts (21 tests) 14ms
+ ✓ src/lib/auth-continuation.test.ts (82 tests) 13ms
+ ✓ src/lib/creator-agent-distribution.test.ts (16 tests) 16ms
+ ✓ src/lib/creator-agent-results.test.ts (8 tests) 8ms
+ ✓ src/lib/public-share.test.ts (72 tests) 10ms
+ ✓ src/lib/public-creator-model.test.ts (17 tests) 7ms
+ ✓ src/lib/safeNavigation.test.ts (12 tests) 4ms
+
+ Test Files  21 passed (21)
+      Tests  465 passed (465)
+   Start at  02:13:24
+   Duration  16.54s (transform 687ms, setup 0ms, import 2.46s, tests 3.87s, environment 6.38s)
+
+JSON report written to /workspace/scratch/41a841bfe32d/purama-ai/qa/consultation-integration-20261113/site-results.json

@@ -1,0 +1,208 @@
+{
+  "status": "PARTIEL",
+  "recorded_at": "2026-11-12T04:55:58.947583+00:00",
+  "scope": "Public knowledge connectors and bounded local quantum simulator in the existing IAO/KARTA tool catalogue; candidate, not deployed.",
+  "base": {
+    "initial_commit": "8259b84e65ca89b01bd1b1fc46576cb60bb8a1ec",
+    "reconciled_commit": "cbd60006552f27771ef0f8b67623087c296fcf67",
+    "pull_request": 45,
+    "branch": "audit/unlazy-consolidation-20261111-ac3c"
+  },
+  "runtime": {
+    "node": "24.22.1",
+    "python": "3.12.14",
+    "qiskit": "2.6.2"
+  },
+  "checks": {
+    "targeted_tests": {
+      "status": "PASS",
+      "command": "node node_modules/vitest/vitest.mjs run test/knowledgeSearch.test.ts test/quantumSimulator.test.ts test/quantumTool.test.ts test/knowledgeQuantumIntegration.test.ts test/customRegistry.test.ts test/customAgent.test.ts test/customAuthorization.test.ts test/loopModelAdmission.test.ts test/loop.test.ts --maxWorkers=1 --no-file-parallelism --reporter=json",
+      "cwd": "karta",
+      "exit_code": 0,
+      "tests_passed": 248,
+      "tests_failed": 0,
+      "tests_pending": 0,
+      "new_tests": 147,
+      "test_files": 9,
+      "files": [
+        {
+          "path": "karta/test/customAgent.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "karta/test/customAuthorization.test.ts",
+          "status": "passed",
+          "tests": 46
+        },
+        {
+          "path": "karta/test/customRegistry.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "karta/test/knowledgeQuantumIntegration.test.ts",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "path": "karta/test/knowledgeSearch.test.ts",
+          "status": "passed",
+          "tests": 47
+        },
+        {
+          "path": "karta/test/loop.test.ts",
+          "status": "passed",
+          "tests": 14
+        },
+        {
+          "path": "karta/test/loopModelAdmission.test.ts",
+          "status": "passed",
+          "tests": 33
+        },
+        {
+          "path": "karta/test/quantumSimulator.test.ts",
+          "status": "passed",
+          "tests": 84
+        },
+        {
+          "path": "karta/test/quantumTool.test.ts",
+          "status": "passed",
+          "tests": 5
+        }
+      ],
+      "raw_report_sha256": "68cb5cf5c25605400b456a11ecd88ae511980e7171f792cbbbcc9ee6c1b0d543"
+    },
+    "targeted_typecheck": {
+      "status": "PASS",
+      "command": "node --max-old-space-size=256 node_modules/typescript/bin/tsc --noEmit --strict --noUnusedLocals --noUnusedParameters --noImplicitReturns --target ES2022 --module NodeNext --moduleResolution NodeNext --skipLibCheck src/knowledge/public-search.ts src/quantum/simulator.ts src/quantum/openqasm.ts src/tools/knowledge-search.ts src/tools/quantum.ts scripts/verify-knowledge-public.ts",
+      "cwd": "karta",
+      "exit_code": 0,
+      "observed": "No diagnostics; strict check of new production modules and public verification script. This is not the complete project typecheck."
+    },
+    "quantum_independent_oracle": {
+      "status": "PASS",
+      "command": "python scripts/verify-quantum-qiskit.py --output ../qa/knowledge-quantum-20261112/qiskit-oracle.json",
+      "cwd": "karta",
+      "exit_code": 0,
+      "case_count": 72,
+      "max_abs_probability_error": 1.3322676295501878e-15,
+      "probability_tolerance": 1e-12,
+      "report": "qiskit-oracle.json",
+      "report_sha256": "caa1da0a47199f545c4deff7789efe14e0d4b2e28bfbe50b206c8cb6f909f332",
+      "source_hashes_match_current_files": true,
+      "qpu_used": false
+    },
+    "public_live_smoke": {
+      "status": "PASS",
+      "command": "node --import tsx scripts/verify-knowledge-public.ts --live",
+      "cwd": "karta",
+      "exit_code": 0,
+      "executed_at": "2026-11-12T04:46:33.772Z",
+      "duration_ms": 5109,
+      "providers": [
+        "crossref",
+        "wikidata"
+      ],
+      "records_per_provider": 2,
+      "report": "knowledge-live-final.json",
+      "report_sha256": "2bb17b0995f4662b9fac279a3d1d7c7069d0113b251da251a201e4dbdb6ddbd7",
+      "source_hashes_match_current_files": true
+    },
+    "inherited_registry_names": {
+      "status": "PASS",
+      "input": [
+        "__proto__",
+        "constructor",
+        "toString"
+      ],
+      "before_resolved_count": 3,
+      "after_resolved_count": 0,
+      "exit_code_before": 0,
+      "exit_code_after": 0,
+      "regression_test": "karta/test/knowledgeQuantumIntegration.test.ts",
+      "interpretation": "Unregistered inherited properties are now ignored. No arbitrary code execution is claimed."
+    },
+    "static_diff_check": {
+      "status": "PASS",
+      "command": "git diff --cached --check",
+      "cwd": ".",
+      "exit_code": 0
+    },
+    "fresh_graph_analysis": {
+      "status": "BLOQUÉ",
+      "index_attempt_exit_codes": [
+        1,
+        1,
+        137
+      ],
+      "detect_changes_command": "gitnexus detect-changes --scope staged --repo <current checkout>",
+      "detect_changes_exit_code": 1,
+      "detect_changes_observed": "GitNexus Detect Changes (1.6.12)\nfile:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/workspace/scratch/4f500ff8ab47/purama-ai\" not found. Available: pura-capsule-022-20261112, purama-one-accessibility-20261112, iao-performance-inherited-37cd53, iao-connect-durable, purama-one-capsule-4aa997, purama-ai (/workspace/scratch/4eb2a799ec70/purama-ai), sutra-subtitles-60ab, karta-qa-native-6a6362-reprise, one-dreamforge-20261111, purama-ai (/workspace/scratch/9515c8d77e89/purama-ai), midas-auth-candidate-c080, midas-auth-20261111, midas-convergence-c080, midas-convergence-795-c080, midas-upstream-candidate-c080, iao-connect-gates-20261111-c7af, iao-connect-payment-20261111-c7af, purama-ai (/workspace/scratch/c7af123ff4f9/nov12-iao-audit), purama-ai (/workspace/scratch/dec42123c445/purama-ai-watch-native), iao-accessibility-f1f4b67ef5ca, iao-accessibility-f47c\n    at LocalBackend.selectToolRepository (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.1",
+      "supplementary_impact_report": "impact-before.json",
+      "interpretation": "Current checkout could not be indexed/registered. Prior graph was used only after file equality checks before edits; static scope review and targeted tests supplement it, not replace a successful current graph gate."
+    },
+    "full_karta_typecheck_local": {
+      "status": "BLOQUÉ",
+      "command": "npm run typecheck",
+      "cwd": "karta",
+      "observed_exit_codes": [
+        137,
+        134
+      ],
+      "observed": "Full checks were killed; the 256 MiB retry reported a JavaScript heap OOM. No successful full typecheck is claimed."
+    },
+    "full_karta_suite_local": {
+      "status": "BLOQUÉ",
+      "command": "node node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism --reporter=json",
+      "cwd": "karta",
+      "exit_code": 137,
+      "observed": "Killed before a final report; no complete-suite result is claimed."
+    },
+    "site_dependencies_local": {
+      "status": "BLOQUÉ",
+      "command": "npm ci --no-audit --no-fund --ignore-scripts",
+      "cwd": ".",
+      "exit_code": 228,
+      "observed": "ENOSPC; site lint, global types and build were not qualified locally."
+    },
+    "remote_ci": {
+      "status": "NON TESTÉ",
+      "observed": "No run has been received for this candidate at the time this file is committed. Subsequent workflow runs must be tied to the published commit/tree."
+    }
+  },
+  "independent_review": {
+    "scope": "Tool catalogue, permission and simulation boundaries, privacy traces, transport deadline",
+    "corrections": [
+      "A result becoming available at or after its monotonic deadline is rejected after the promise race resolves.",
+      "Registry lookup excludes inherited Object properties."
+    ],
+    "limitations": "Review and targeted tests do not establish all production behavior."
+  },
+  "source_sha256": {
+    "karta/scripts/requirements-quantum-verification.txt": "af845bb8fbe463b1e3b3ab1587247ea683c7ca38ff85e393a61fa66ea1f2a426",
+    "karta/scripts/verify-knowledge-public.ts": "7a186154585fc2667e5388d05dec17ebc95089ddfd5a04d1209398b70d8dfc7e",
+    "karta/scripts/verify-quantum-qiskit.py": "af89c4b1ef96b6e52c0ae3e4f8dfe435095cc89752c3bc2c7a4525df78ab5ba7",
+    "karta/src/knowledge/README.md": "7c1323bb552aaffa1c3d2629a76563313d98355f97a73b1673a2c9d107e29066",
+    "karta/src/knowledge/public-search.ts": "47bd9f82ae880696d3a83d06c6bbd296a7792e7d0288bd929d9e9f7f6e63dac0",
+    "karta/src/quantum/openqasm.ts": "47d81c927b136a442c35906f29a322bcc5ead2c2332c5b3e2e107e3df6028973",
+    "karta/src/quantum/simulator.ts": "ecea3993d0881d4dc51a6d44369067052051697ca0ebebeb597a806ea1388e8e",
+    "karta/src/tools/customRegistry.ts": "7006fe97841ad924e696c98c5ea0b1715a0224a5aa6bbe7ab222a7f9729acbbf",
+    "karta/src/tools/knowledge-search.ts": "db9da6ef016d36d713c5a9cd19dedf1ddd4cec336f69886c23b5f6b8fab13e13",
+    "karta/src/tools/quantum.ts": "5f1c48ef81f9e6442093eef11ca5d38f51150cdd14b57c29613d93c32d0fe916",
+    "karta/src/tools/registry.ts": "beee9fa1c1d0b458e9cf1fb01ba93404d311ab1bcfa65fd1815f61fda60a8f97",
+    "karta/test/knowledgeQuantumIntegration.test.ts": "219039b6a0b3b0e3d1014b6bd9d8ccab63e288b36cd69cc6b0131b3461603d75",
+    "karta/test/knowledgeSearch.test.ts": "fdba0f52cd8c70431f086b9a51365dbc31ef08ee9668518fe354eeb3874776f1",
+    "karta/test/quantumSimulator.test.ts": "e04ce5dbb0ab4519c1bab0f6feab08b8a4ddb9e8da01a64bf2e4eadf430a6f8c",
+    "karta/test/quantumTool.test.ts": "32e87ed9bc1ffa3e9f235249a5356dbe694e10cce64943541fcab1a70c50214d",
+    "src/lib/creator-agent.ts": "405513cf9cd2db1d5fe723e702220ba4d624547048734f8b89df9a4ca6c0cbb1",
+    "supabase/functions/creator-agent-generate/index.ts": "1e052c4014ec32c859b14620e01cf699b247ff10dedf72ba212fc8b73008f58e"
+  },
+  "not_implemented_or_not_qualified": [
+    "Chat search-to-synthesis or reinjection into SMARANA",
+    "Physical QPU execution, paid provider jobs, quantum advantage",
+    "Private database access, universal Internet/database access, other AI training datasets",
+    "Production deployment and activation of existing accounts",
+    "Distributed per-provider rate limits across multiple KARTA processes"
+  ]
+}

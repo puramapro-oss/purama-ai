@@ -1,0 +1,593 @@
+{
+  "schema_version": 1,
+  "phase": "Corrected PR66 candidate reception",
+  "candidate": "820e34d63d3b74b3c1efcac09287e9c01739050b",
+  "ci_checkout": "099fd8a6b69814020a6af2a10842962a1442276d",
+  "tree": "1cdae5930ca90e1183bac0781d87045a7ed522fa",
+  "run_id": 43168416008,
+  "run_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/43168416008",
+  "karta": {
+    "status": "PASS",
+    "tests": 2327,
+    "files": 128,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "migration_tests": 19,
+    "normalizer_tests": 64,
+    "transport_tests": 9,
+    "loop_tests": 14,
+    "probe_tests": 2,
+    "logger_finalization_tests": 17
+  },
+  "subscription_concurrency": {
+    "status": "PASS",
+    "tests": 7
+  },
+  "site": {
+    "status": "PARTIEL",
+    "detail": "Browser suites still running when consolidation advanced to merged PR63; candidate cannot establish the combined source tree."
+  },
+  "selected_karta_log_lines": [
+    "2026-11-12T06:29:10.5101438Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +099fd8a6b69814020a6af2a10842962a1442276d:refs/remotes/pull/66/merge",
+    "2026-11-12T06:29:11.4755784Z  * [new ref]         099fd8a6b69814020a6af2a10842962a1442276d -> pull/66/merge",
+    "2026-11-12T06:29:11.6096565Z [command]/usr/bin/git log -1 --format=%H",
+    "2026-11-12T06:29:11.6122789Z 099fd8a6b69814020a6af2a10842962a1442276d",
+    "2026-11-12T06:30:05.6872257Z  ✓ test/loggerFinalization.test.ts (17 tests) 3042ms",
+    "2026-11-12T06:30:32.2176277Z  ✓ test/loopModelUsage.test.ts (14 tests) 18ms",
+    "2026-11-12T06:30:33.8490167Z  ✓ test/modelUsage.test.ts (64 tests) 24ms",
+    "2026-11-12T06:30:46.7834832Z  ✓ test/modelUsageMigration.test.ts (19 tests) 2981ms",
+    "2026-11-12T06:30:47.6893879Z  ✓ test/claudeUsageTransport.test.ts (9 tests) 66ms",
+    "2026-11-12T06:30:58.2152898Z  ✓ test/runtimeUsageReadiness.test.ts (2 tests) 20ms",
+    "2026-11-12T06:31:00.5245878Z  Test Files  128 passed (128)",
+    "2026-11-12T06:31:00.5257174Z       Tests  2327 passed (2327)",
+    "2026-11-12T06:31:00.5263536Z    Duration  99.93s (tests 91%, import 7%, transform 2%)",
+    "2026-11-12T06:31:03.0115593Z # tests 18",
+    "2026-11-12T06:31:03.0116563Z # pass 18",
+    "2026-11-12T06:31:03.0116993Z # fail 0",
+    "2026-11-12T06:31:10.1186436Z ##[group]Run npm run typecheck",
+    "2026-11-12T06:31:10.1186897Z npm run typecheck",
+    "2026-11-12T06:31:15.7759708Z ##[group]Run npm run build",
+    "2026-11-12T06:31:15.7760180Z npm run build",
+    "2026-11-12T06:31:25.9772739Z # tests 24",
+    "2026-11-12T06:31:25.9782721Z # pass 24",
+    "2026-11-12T06:31:25.9784318Z # fail 0",
+    "2026-11-12T06:31:31.1585575Z # tests 40",
+    "2026-11-12T06:31:31.1592158Z # pass 40",
+    "2026-11-12T06:31:31.1603102Z # fail 0"
+  ],
+  "snapshot_interpretation": "qa/api-usage-20261112/evidence.json contient l'état des contrôles locaux avant la première publication (observed_at 06:15:24 UTC). Ses entrées NON TESTÉ relatives à la CI et au SQL sont historiques. Le champ remote_first_candidate et ci-first.json conservent ensuite les 39 échecs de la première CI. Cette réception du candidat corrigé les remplace pour le statut courant, sans effacer l'historique.",
+  "superseded_for_integration_by": {
+    "reason": "PR63 merged into the consolidation target while this CI was running; real.ts and types.ts require explicit conflict resolution.",
+    "base_commit": "58baecb7f63d23ede5a2318078cbe8bac9807e78"
+  },
+  "jobs_at_composition": [
+    {
+      "id": 131015744662,
+      "name": "karta",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43168416008,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Approval outbox wrapper lifecycle (inert)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Preserve outbox wrapper lifecycle evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run node ../scripts/generate-supabase-contracts.mjs --check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run npm test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run node --test ../tests/oauth-google/state-sql.test.mjs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "OAuth state on native PostgreSQL",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Preserve native OAuth evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Run npm run typecheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Stripe reconciliation SQL invariants",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Social publication and account binding SQL invariants",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Run npm audit --audit-level=high --omit=dev",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 16
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        }
+      ]
+    },
+    {
+      "id": 131015744969,
+      "name": "subscription-concurrency",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43168416008,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run test:subscriptions:postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 131015745190,
+      "name": "site",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_id": 43168416008,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run denoland/setup-deno@v2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run npm ci --no-audit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm run test:dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Entraide public transport and account isolation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run npm run test:distribution:unit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Run npm run test:distribution:sql",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Run npm run test:distribution:worker",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Run npm run test:distribution:chat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Run npm run test:contracts-auth",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Run npm run test:cross-app-jwt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Run npm run test:cross-app-jwt:deno",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Run npm run test:voice-settings",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Run npm run test:contracts-security",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "Run npm run test:contracts-ots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Run npm run test:contracts-native",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        },
+        {
+          "name": "Run npm run test:oauth",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Run deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        },
+        {
+          "name": "Run npm run test:commerce:plans",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Run npm run test:commerce:handlers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        },
+        {
+          "name": "Social publication core behavior",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Agent execution lifetime isolation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Social routes with the real Supabase SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Run npm run test:billing",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Stripe reconciliation with the real provider SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Run npm run test:founder",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        },
+        {
+          "name": "Run npm run test:founder:types",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31
+        },
+        {
+          "name": "Run npx tsc --noEmit -p tsconfig.app.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32
+        },
+        {
+          "name": "Prepare the locked Playwright image without Ubuntu downloads",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        },
+        {
+          "name": "Social browser behavior",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 34
+        },
+        {
+          "name": "Run npx tsc --noEmit -p tests/public/tsconfig.json",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 35
+        },
+        {
+          "name": "Run npm run typecheck:distribution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 36
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:distribution:browser",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 37
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:public",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 38
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:chat",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 39
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:quality",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 40
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:oauth:browser",
+          "status": "pending",
+          "conclusion": null,
+          "number": 41
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:founder:browser",
+          "status": "pending",
+          "conclusion": null,
+          "number": 42
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:account-isolation",
+          "status": "pending",
+          "conclusion": null,
+          "number": 43
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser",
+          "status": "pending",
+          "conclusion": null,
+          "number": 44
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:wellbeing",
+          "status": "pending",
+          "conclusion": null,
+          "number": 45
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:voice-consent",
+          "status": "pending",
+          "conclusion": null,
+          "number": 46
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:ui-state",
+          "status": "pending",
+          "conclusion": null,
+          "number": 47
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:async-ui",
+          "status": "pending",
+          "conclusion": null,
+          "number": 48
+        },
+        {
+          "name": "Run bash scripts/ci/run-site-browser.sh npm run test:mobile-auth",
+          "status": "pending",
+          "conclusion": null,
+          "number": 49
+        },
+        {
+          "name": "Archive voice consent and accessibility browser evidence",
+          "status": "pending",
+          "conclusion": null,
+          "number": 50
+        },
+        {
+          "name": "Run npm audit --audit-level=high --omit=dev",
+          "status": "pending",
+          "conclusion": null,
+          "number": 51
+        },
+        {
+          "name": "Post Run denoland/setup-deno@v2",
+          "status": "pending",
+          "conclusion": null,
+          "number": 100
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "pending",
+          "conclusion": null,
+          "number": 101
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "pending",
+          "conclusion": null,
+          "number": 102
+        }
+      ]
+    }
+  ]
+}

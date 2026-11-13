@@ -1,0 +1,242 @@
+
+ RUN  v5.0.3 /workspace/scratch/41a841bfe32d/purama-ai/karta
+
+ ✓ test/chatHistoryIsolation.test.ts (39 tests) 18253ms
+   ✓ migration preflight refuses an unreviewed schema (9)
+     ✓ rolls back both schemas when only conversations remain 1218ms
+     ✓ rolls back both schemas when only messages remain 1313ms
+     ✓ rolls back both schemas when an extra permissive conversation policy… 1422ms
+     ✓ rolls back both schemas when an extra permissive message policy exis… 1167ms
+     ✓ rolls back both schemas when a required policy is missing 1427ms
+     ✓ rolls back both schemas when a known name has an unexpected policy c… 1146ms
+     ✓ rolls back both schemas when a known name is unexpectedly restrictive 1523ms
+     ✓ rolls back both schemas when a table was replaced by a view 1420ms
+     ✓ refuses to report success when neither schema contains chat history 1122ms
+ ✓ test/commercePrivileges.test.ts (58 tests) 5478ms
+   ✓ commerce ACLs with influencers in public (29)
+     ✓ preserves own reads and blocks cross-account reads and coordinate updates 314ms
+ ✓ test/chefBudgetMigration.test.ts (3 tests) 5326ms
+   ✓ CHEF budget migration of existing claims (3)
+     ✓ refuses an unreserved historical capped claim rather than assuming a missing receipt is zero 2105ms
+     ✓ preserves charged historical totals, treats old synthetic zero costs as unknown and is replayable 1397ms
+     ✓ rejects mixed historical known and ambiguous cost receipts without changing charged totals 1822ms
+ ✓ test/chefEvidenceFreshness.test.ts (31 tests) 4076ms
+   ✓ CHEF evidence generation (31)
+     ✓ preserves pre-migration rows without certifying them as current evidence 1563ms
+ ✓ test/runtimeLifecycle.test.ts (10 tests) 4129ms
+   ✓ drains a real in-flight HTTP response before closing the queue 4057ms
+ ✓ test/modelConsultationStoreSql.test.ts (13 tests) 2848ms
+ ✓ test/approvalOutbox.test.ts (27 tests) 2566ms
+ ✓ test/overageCredit.test.ts (41 tests) 3548ms
+   ✓ stops the migration on historical duplicate sessions without deleting or rewriting a credit 1357ms
+ ✓ test/consultationIntegration.test.ts (5 tests) 2129ms
+ ✓ test/executionOriginMigration.test.ts (10 tests) 2894ms
+ ✓ test/briefClaims.test.ts (57 tests) 3248ms
+ ✓ test/chefBudgetReservations.test.ts (28 tests) 2699ms
+stdout | test/briefSubmissionFlow.test.ts
+[api] KARTA écoute sur :0
+
+ ✓ test/briefSubmissionFlow.test.ts (12 tests) 2529ms
+ ✓ test/privateToolResultsSql.test.ts (50 tests) 2457ms
+ ✓ test/partnerOutreach.test.ts (47 tests) 2764ms
+ ✓ test/briefDatabaseCycle.test.ts (13 tests) 2802ms
+ ✓ test/chefCapabilityPersistence.test.ts (31 tests) 2225ms
+ ✓ test/chefHardening.test.ts (15 tests) 2045ms
+ ✓ test/chefEstimates.test.ts (44 tests) 2359ms
+ ✓ test/chefProcessQuarantine.test.ts (18 tests) 2947ms
+ ✓ test/chefEvidenceGate.test.ts (17 tests) 2409ms
+ ✓ test/briefSubmission.test.ts (32 tests) 2529ms
+ ✓ test/chefBudgetAdmission.test.ts (18 tests) 2280ms
+stderr | test/approvalContinuation.test.ts > verified approval continuation through the real loop and SQL-finalized receipts > forbids replay after an uncertain approval insert, even when closing fails: true
+[loop] journalisation indisponible ; reprise automatique interdite
+
+ ✓ test/approvalContinuation.test.ts (42 tests) 2610ms
+ ✓ test/approvalParentGuard.test.ts (48 tests) 2513ms
+ ✓ test/queueDeliveryIdentity.test.ts (27 tests) 2185ms
+ ✓ test/subscriptionRevision.test.ts (25 tests) 2010ms
+ ✓ test/approval.test.ts (15 tests) 1866ms
+ ✓ test/approvalTriggerContext.test.ts (8 tests) 2103ms
+ ✓ test/chefControlPlane.test.ts (8 tests) 1877ms
+ ✓ test/connectPermissions.test.ts (4 tests) 1739ms
+ ✓ test/runtimeHardening.test.ts (3 tests) 1669ms
+ ✓ test/chefMission.test.ts (5 tests) 2152ms
+ ✓ test/loggerFinalization.test.ts (17 tests) 1975ms
+ ✓ test/subscriptionTrial.test.ts (28 tests) 1916ms
+ ✓ test/modelUsageMigration.test.ts (19 tests) 2013ms
+ ✓ test/walletRpcPermissions.test.ts (17 tests) 1839ms
+ ✓ test/chefRuntimePolicy.test.ts (4 tests) 1784ms
+ ✓ test/chefIndependentReview.test.ts (2 tests) 1666ms
+ ✓ test/assistantPolicy.test.ts (55 tests) 1309ms
+ ✓ test/chefSupervisor.test.ts (20 tests) 1090ms
+   ✓ CHEF autonomous worker cycle (20)
+     ✓ waits for a timed-out worker to finish before the retryable transition 951ms
+ ✓ test/chefProcess.test.ts (5 tests) 789ms
+   ✓ CHEF owned POSIX process group (5)
+     ✓ kills a surviving descendant in the owned group after its leader exits 336ms
+ ✓ test/chefCapabilityRuntime.test.ts (31 tests) 542ms
+stdout | test/consultationTransport.test.ts
+[api] KARTA écoute sur :0
+
+ ✓ test/consultationTransport.test.ts (53 tests) 358ms
+ ✓ test/chefDriver.test.ts (6 tests) 84ms
+ ✓ test/jev-tool.test.ts (34 tests) 342ms
+ ✓ test/chefCancellation.test.ts (7 tests) 168ms
+ ✓ test/publicChatAdmission.test.ts (11 tests) 152ms
+ ✓ test/chefGitState.test.ts (4 tests) 129ms
+ ✓ test/chefVerificationGitIntegration.test.ts (3 tests) 172ms
+ ✓ test/generative.test.ts (4 tests) 141ms
+ ✓ test/chefWorkerShutdown.test.ts (4 tests) 199ms
+ ✓ test/modelCatalog.test.ts (12 tests) 126ms
+ ✓ test/webCapabilityPlan.test.ts (47 tests) 141ms
+ ✓ test/kartaTriggerEdge.test.ts (87 tests) 101ms
+ ✓ test/staticAgentSchedulerCron.test.ts (3 tests) 56ms
+ ✓ test/approvalOutboxRelay.test.ts (18 tests) 66ms
+ ✓ test/chefBudgetAccounting.test.ts (12 tests) 22ms
+ ✓ test/consultationHost.test.ts (14 tests) 50ms
+ ✓ test/chefVerifier.test.ts (4 tests) 62ms
+ ✓ test/streaming.test.ts (10 tests) 58ms
+ ✓ test/knowledgeSearch.test.ts (53 tests) 89ms
+ ✓ test/chatEscalation.test.ts (49 tests) 59ms
+ ✓ test/modelConsultation.test.ts (41 tests) 70ms
+ ✓ test/connectedResearch.test.ts (84 tests) 83ms
+ ✓ test/coreSchedulerDrain.test.ts (15 tests) 44ms
+ ✓ test/privateToolResults.test.ts (34 tests) 78ms
+ ✓ test/privateToolResultsExecution.test.ts (18 tests) 49ms
+ ✓ test/chefEvidenceAdapter.test.ts (20 tests) 43ms
+ ✓ test/jev-client.test.ts (19 tests) 69ms
+ ✓ test/webSearchValidation.test.ts (41 tests) 38ms
+ ✓ test/claudeTransportDeadline.test.ts (21 tests) 39ms
+ ✓ test/webSearchEvidence.test.ts (59 tests) 38ms
+ ✓ test/approvalOutboxDeadline.test.ts (15 tests) 37ms
+stdout | test/apiSafety.test.ts
+[api] KARTA écoute sur :0
+
+stderr | test/apiSafety.test.ts > does not expose internal exception details
+[api] requête échouée
+
+ ✓ test/apiSafety.test.ts (9 tests) 30ms
+stderr | test/customAuthorization.test.ts > custom authority immediately before the provider request > reconciles a cancelled close once and preserves it after bookkeeping failure and reactivation
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/customAuthorization.test.ts (46 tests) 34ms
+ ✓ test/claudeExecutionProfileTransport.test.ts (14 tests) 31ms
+ ✓ test/claudeUsageTransport.test.ts (10 tests) 23ms
+ ✓ test/notifyReceipt.test.ts (39 tests) 37ms
+ ✓ test/knowledgeQuantumIntegration.test.ts (11 tests) 24ms
+ ✓ test/customAgentSchedulerCron.test.ts (3 tests) 37ms
+stdout | test/runtimeApiReadiness.test.ts
+[api] KARTA écoute sur :0
+
+ ✓ test/runtimeApiReadiness.test.ts (8 tests) 29ms
+ ✓ test/customAgentScheduler.test.ts (13 tests) 26ms
+ ✓ test/runtimeProbe.test.ts (11 tests) 31ms
+ ✓ test/quantumSimulator.test.ts (84 tests) 33ms
+ ✓ test/streamCompletionAudit.test.ts (23 tests) 23ms
+ ✓ test/webSearchCleanup.test.ts (9 tests) 26ms
+ ✓ test/staticAgentScheduler.test.ts (6 tests) 22ms
+ ✓ test/claudeTransportCost.test.ts (13 tests) 30ms
+ ✓ test/loopJevTracePrivacy.test.ts (3 tests) 19ms
+ ✓ test/modelConsultationStore.test.ts (13 tests) 16ms
+ ✓ test/jev-schema.test.ts (30 tests) 26ms
+stdout | test/apiDeliveryIdentity.test.ts
+[api] KARTA écoute sur :0
+
+ ✓ test/apiDeliveryIdentity.test.ts (4 tests) 21ms
+ ✓ test/loopTriggerContext.test.ts (37 tests) 36ms
+ ✓ test/approvalParams.test.ts (29 tests) 29ms
+stderr | test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > keeps the first receipt when both closes after an executed action remain unconfirmed
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > keeps the receipt after a rejected decision even when closing its error fails
+[loop] journalisation indisponible ; reprise automatique interdite
+
+ ✓ test/loopModelUsage.test.ts (14 tests) 14ms
+ ✓ test/chefCapabilitySelection.test.ts (55 tests) 21ms
+ ✓ test/webSearchTransportIntegrity.test.ts (6 tests) 19ms
+ ✓ test/webSearchPrivacy.test.ts (6 tests) 28ms
+ ✓ test/loopModelAdmission.test.ts (33 tests) 21ms
+ ✓ test/claudeDecisionCompleteness.test.ts (34 tests) 19ms
+stderr | test/loopBriefLifecycle.test.ts > effect barrier and immutable completion > does not replay an effect when closure remains ambiguous
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loopBriefLifecycle.test.ts > effect barrier and immutable completion > forbids automatic retry if an inference failure cannot be durably closed
+[loop] journalisation indisponible ; reprise automatique interdite
+
+stderr | test/loopBriefLifecycle.test.ts > effect barrier and immutable completion > preserves confirmed success when secondary bookkeeping fails
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loopBriefLifecycle.test.ts (35 tests) 24ms
+stderr | test/loopTracePrivacy.test.ts > private tool traces through the real agent cycle > retains executed evidence and forbids replay after bookkeeping fails
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loopTracePrivacy.test.ts (22 tests) 22ms
+ ✓ test/webSearchInputBoundary.test.ts (16 tests) 21ms
+ ✓ test/approvalTracePrivacy.test.ts (20 tests) 15ms
+ ✓ test/modelUsage.test.ts (64 tests) 14ms
+ ✓ test/chefBrief.test.ts (9 tests) 15ms
+ ✓ test/delegate.test.ts (16 tests) 10ms
+ ✓ test/agentContextContract.test.ts (33 tests) 16ms
+ ✓ test/brief.test.ts (18 tests) 11ms
+ ✓ test/cycleAdmissionPrivacy.test.ts (10 tests) 14ms
+ ✓ test/webAccessPlanTool.test.ts (10 tests) 12ms
+ ✓ test/customAgentModelSelection.test.ts (21 tests) 14ms
+stderr | test/loggerCycleFinalization.test.ts > a committed cycle remains final when secondary bookkeeping fails > preserves a newer approval resolution that occurs during notification
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > forbids automatic replay without tools or an execution key after an uncertain close
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of success without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of awaiting_approval without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+ ✓ test/loggerCycleFinalization.test.ts (6 tests) 12ms
+ ✓ test/runtimeUsageReadiness.test.ts (2 tests) 12ms
+ ✓ test/chefGitCancellation.test.ts (5 tests) 16ms
+ ✓ test/executionProfile.test.ts (27 tests) 11ms
+stderr | test/loop.test.ts > cycle outcomes and interruption > preserves committed success and forbids replay after a bookkeeping failure
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/loop.test.ts (14 tests) 13ms
+ ✓ test/approvalOutboxResolver.test.ts (4 tests) 11ms
+ ✓ test/sseConsumer.test.ts (5 tests) 16ms
+ ✓ test/chefQuarantineAdapter.test.ts (15 tests) 9ms
+ ✓ test/runtimeDeadline.test.ts (9 tests) 12ms
+ ✓ test/gmailTool.test.ts (5 tests) 10ms
+ ✓ test/approvalOutboxStartStop.test.ts (4 tests) 10ms
+ ✓ test/briefSubmissionClient.test.ts (4 tests) 6ms
+ ✓ test/executionOrigin.test.ts (29 tests) 8ms
+ ✓ test/chefSupervisorCancellation.test.ts (1 test) 8ms
+ ✓ test/chefBudgetAdapter.test.ts (7 tests) 6ms
+ ✓ test/quantumTool.test.ts (5 tests) 8ms
+ ✓ test/logger.test.ts (8 tests) 8ms
+ ✓ test/toolResult.test.ts (16 tests) 6ms
+ ✓ test/chatRequestScope.test.ts (17 tests) 6ms
+ ✓ test/sseFraming.test.ts (10 tests) 6ms
+ ✓ test/supabaseTool.test.ts (5 tests) 6ms
+ ✓ test/customAgentScanAbort.test.ts (2 tests) 5ms
+ ✓ test/customAgent.test.ts (4 tests) 5ms
+ ✓ test/gmail-token-crypto.test.ts (3 tests) 5ms
+ ✓ test/agentsRegistry.test.ts (4 tests) 5ms
+ ✓ test/runtimeConfig.test.ts (11 tests) 5ms
+ ✓ test/chefCostGovernor.test.ts (7 tests) 6ms
+ ✓ test/mockClaude.test.ts (7 tests) 10ms
+ ✓ test/actionAgentsMock.test.ts (4 tests) 4ms
+ ✓ test/customRegistry.test.ts (4 tests) 4ms
+ ✓ test/chefProtocol.test.ts (5 tests) 7ms
+ ✓ test/stripeIsolation.test.ts (3 tests) 6ms
+ ✓ test/autonomy.test.ts (7 tests) 4ms
+ ✓ test/modelQualityRouting.test.ts (9 tests) 4ms
+ ✓ test/real-claude.test.ts (4 tests) 3ms
+
+ Test Files  148 passed (148)
+      Tests  2913 passed (2913)
+   Start at  02:10:09
+   Duration  158.28s (tests 90%, import 7%, transform 2%, setup 1%)
+
+    Isolate  148 workers spawned · ~125ms startup each (spawn + environment, per file)
+             at least ~18.36s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /workspace/scratch/41a841bfe32d/purama-ai/qa/consultation-integration-20261113/karta-results.json

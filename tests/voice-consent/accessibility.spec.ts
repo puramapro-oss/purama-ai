@@ -121,6 +121,47 @@ test('text chat exposes named input and send controls', async ({ page }) => {
   expect(await pendingCount(page, 'synthesize')).toBe(0);
 });
 
+for (const composition of [
+  { name: 'native isComposing', isComposing: true, keyCode: 13 },
+  { name: 'legacy keyCode 229', isComposing: false, keyCode: 229 },
+]) {
+  test(`text chat preserves IME input until an explicit later send: ${composition.name}`, async ({ page }) => {
+    await page.evaluate(() => {
+      window.voiceHarness.autoPlay = false;
+      window.voiceHarness.setAgentView(true);
+    });
+    const input = page.getByRole('textbox', { name: 'Message pour Email IA', exact: true });
+    const draft = '日本語で相談したいです';
+    await input.fill(draft);
+    await input.focus();
+    // Synthetic DOM composition events exercise the application's handler;
+    // they do not stand in for a real operating-system IME qualification.
+    await input.dispatchEvent('compositionstart', { data: '' });
+    const observed = await input.evaluate((element, init) => {
+      const event = new KeyboardEvent('keydown', {
+        key: 'Enter', bubbles: true, cancelable: true,
+        isComposing: init.isComposing, keyCode: init.keyCode,
+      });
+      element.dispatchEvent(event);
+      return { isComposing: event.isComposing, keyCode: event.keyCode, defaultPrevented: event.defaultPrevented };
+    }, composition);
+    expect(observed).toEqual({ isComposing: composition.isComposing, keyCode: composition.keyCode, defaultPrevented: false });
+    await expect(input).toHaveValue(draft);
+    await expect(input).toBeFocused();
+    await expect(page.getByText('Démarre une conversation avec Email IA', { exact: true })).toBeVisible();
+    expect(await pendingCount(page, 'backend')).toBe(0);
+    await input.dispatchEvent('compositionend', { data: draft });
+    await input.press('Shift+Enter');
+    await expect(input).toHaveValue(`${draft}\n`);
+    expect(await pendingCount(page, 'backend')).toBe(0);
+    await input.press('Enter');
+    await expect.poll(() => pendingCount(page, 'backend')).toBe(1);
+    expect(await page.evaluate(() => window.voiceHarness.pending.find(item => item.kind === 'backend')?.args.body?.message)).toBe(draft);
+    expect(await pendingCount(page, 'media')).toBe(0);
+    expect(await pendingCount(page, 'synthesize')).toBe(0);
+  });
+}
+
 for (const layout of [
   { name: 'desktop', viewport: { width: 1280, height: 800 }, textScale: 1 },
   { name: 'narrow-320-text-200-percent', viewport: { width: 320, height: 640 }, textScale: 2 },

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=2"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 33.3,
+  "baseIntegrated": "7755d4745ed6e9561fb9743f3b2b5820878dff11",
+  "testFilesPassed": 20,
+  "testsPassed": 446
+}

@@ -1,3 +1,4 @@
+import { resolveTrustedGit } from "./trusted-git.js";
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -16,7 +17,7 @@ function gitEnv(): NodeJS.ProcessEnv {
 }
 
 async function git(cwd: string, args: string[]): Promise<string> {
-  const { stdout } = await execFileAsync("git", args, {
+  const { stdout } = await execFileAsync(await resolveTrustedGit(cwd), args, {
     cwd,
     timeout: 30_000,
     maxBuffer: 2 * 1024 * 1024,
@@ -59,7 +60,7 @@ function isAllowedPath(path: string, allowedPaths: string[]): boolean {
 
 async function changedPaths(cwd: string, baseSha: string, headSha: string): Promise<string[]> {
   const { stdout } = await execFileAsync(
-    "git",
+    await resolveTrustedGit(cwd),
     ["diff", "--name-only", "-z", "--diff-filter=ACDMRTUXB", baseSha, headSha, "--"],
     { cwd, timeout: 30_000, maxBuffer: 4 * 1024 * 1024, env: gitEnv(), encoding: "utf8" }
   );
@@ -99,7 +100,7 @@ export async function verifyCommittedGitState(input: {
   if (input.baseSha) {
     if (!SHA.test(input.baseSha)) throw new Error("Base SHA invalide");
     try {
-      await execFileAsync("git", ["merge-base", "--is-ancestor", input.baseSha, actualHead], {
+      await execFileAsync(await resolveTrustedGit(input.cwd), ["merge-base", "--is-ancestor", input.baseSha, actualHead], {
         cwd: input.cwd,
         timeout: 30_000,
         maxBuffer: 256 * 1024,

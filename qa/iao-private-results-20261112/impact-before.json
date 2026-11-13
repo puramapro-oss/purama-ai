@@ -1,0 +1,291 @@
+{
+  "recorded_at": "2026-11-12T05:49:04.755157+00:00",
+  "status": "PARTIEL",
+  "index_commit": "c81d316f1a7a308727806128ba3bbfa196365ee6",
+  "index_timestamp": "2026-11-12T00:54:39.654Z",
+  "note": "Prior graph used only as supplementary evidence; per-file source hashes checked before edits. Current checkout remains unregistered.",
+  "impacts": [
+    {
+      "symbol": "runAgentCycle",
+      "path": "karta/src/engine/loop.ts",
+      "matches_index_file_hash": true,
+      "sha256_before": "a0f5e8e4326c683e83e75eafa50e157276285ce0ff1b5d6e8175c2e5b8583aef",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "runAgentCycle",
+        "--direction",
+        "upstream",
+        "--file",
+        "karta/src/engine/loop.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit",
+        "--limit",
+        "15"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "result": {
+        "target": {
+          "id": "Function:karta/src/engine/loop.ts:runAgentCycle",
+          "name": "runAgentCycle",
+          "type": "Function",
+          "filePath": "karta/src/engine/loop.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 1,
+        "risk": "LOW",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1
+        },
+        "affected_processes": [],
+        "affected_modules": [
+          {
+            "name": "Engine",
+            "hits": 1,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:karta/src/queue/worker.ts:startAgentCycleWorker",
+              "name": "startAgentCycleWorker",
+              "filePath": "karta/src/queue/worker.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ]
+        }
+      },
+      "stdout": "{\n  \"target\": {\n    \"id\": \"Function:karta/src/engine/loop.ts:runAgentCycle\",\n    \"name\": \"runAgentCycle\",\n    \"type\": \"Function\",\n    \"filePath\": \"karta/src/engine/loop.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Engine\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Function:karta/src/queue/worker.ts:startAgentCycleWorker\",\n        \"name\": \"startAgentCycleWorker\",\n        \"filePath\": \"karta/src/queue/worker.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1794462542522,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "symbol": "resolvePendingAction",
+      "path": "karta/src/engine/approval.ts",
+      "matches_index_file_hash": true,
+      "sha256_before": "344f13556dfcd6c028fa4837dcd0e5af4b08007969c407d1c0cb4e148935d7c1",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "resolvePendingAction",
+        "--direction",
+        "upstream",
+        "--file",
+        "karta/src/engine/approval.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit",
+        "--limit",
+        "15"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "result": {
+        "target": {
+          "id": "Function:karta/src/engine/approval.ts:resolvePendingAction",
+          "name": "resolvePendingAction",
+          "type": "Function",
+          "filePath": "karta/src/engine/approval.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 2,
+        "risk": "LOW",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1,
+          "2": 1
+        },
+        "affected_processes": [
+          {
+            "name": "handleRequest",
+            "type": "Function",
+            "filePath": "karta/src/api/server.ts",
+            "affected_process_count": 6,
+            "total_hits": 6,
+            "earliest_broken_step": 1
+          }
+        ],
+        "affected_modules": [
+          {
+            "name": "Api",
+            "hits": 2,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:karta/src/api/server.ts:handleRequest",
+              "name": "handleRequest",
+              "filePath": "karta/src/api/server.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_4_handlerequest",
+                  "label": "HandleRequest → AddToRemoveQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_438_handlerequest",
+                  "label": "HandleRequest → Entries",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_449_handlerequest",
+                  "label": "HandleRequest → From",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_54_handlerequest",
+                  "label": "HandleRequest → RequestError",
+                  "processType": "intra_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_437_handlerequest",
+                  "label": "HandleRequest → Entries",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_448_handlerequest",
+                  "label": "HandleRequest → Query",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            }
+          ],
+          "2": [
+            {
+              "depth": 2,
+              "id": "Function:karta/src/api/server.ts:startApiServer.server@64:2",
+              "name": "server",
+              "filePath": "karta/src/api/server.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ]
+        }
+      },
+      "stdout": "{\n  \"target\": {\n    \"id\": \"Function:karta/src/engine/approval.ts:resolvePendingAction\",\n    \"name\": \"resolvePendingAction\",\n    \"type\": \"Function\",\n    \"filePath\": \"karta/src/engine/approval.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 2,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 1,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1,\n    \"2\": 1\n  },\n  \"affected_processes\": [\n    {\n      \"name\": \"handleRequest\",\n      \"type\": \"Function\",\n      \"filePath\": \"karta/src/api/server.ts\",\n      \"affected_process_count\": 6,\n      \"total_hits\": 6,\n      \"earliest_broken_step\": 1\n    }\n  ],\n  \"affected_modules\": [\n    {\n      \"name\": \"Api\",\n      \"hits\": 2,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Function:karta/src/api/server.ts:handleRequest\",\n        \"name\": \"handleRequest\",\n        \"filePath\": \"karta/src/api/server.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": [\n          {\n            \"id\": \"proc_4_handlerequest\",\n            \"label\": \"HandleRequest → AddToRemoveQueue\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          },\n          {\n            \"id\": \"proc_438_handlerequest\",\n            \"label\": \"HandleRequest → Entries\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          },\n          {\n            \"id\": \"proc_449_handlerequest\",\n            \"label\": \"HandleRequest → From\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          },\n          {\n            \"id\": \"proc_54_handlerequest\",\n            \"label\": \"HandleRequest → RequestError\",\n            \"processType\": \"intra_community\",\n            \"step\": 1\n          },\n          {\n            \"id\": \"proc_437_handlerequest\",\n            \"label\": \"HandleRequest → Entries\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          },\n          {\n            \"id\": \"proc_448_handlerequest\",\n            \"label\": \"HandleRequest → Query\",\n            \"processType\": \"cross_community\",\n            \"step\": 1\n          }\n        ]\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"Function:karta/src/api/server.ts:startApiServer.server@64:2\",\n        \"name\": \"server\",\n        \"filePath\": \"karta/src/api/server.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1794462543164,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "symbol": "CreatorChatMessageSchema",
+      "path": "supabase/functions/_shared/validation.ts",
+      "matches_index_file_hash": true,
+      "sha256_before": "aa30d1dd41abf52f42ed00ed402706c1fe85341a9f25e9d9579351e4bf154380",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "CreatorChatMessageSchema",
+        "--direction",
+        "upstream",
+        "--file",
+        "supabase/functions/_shared/validation.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit",
+        "--limit",
+        "15"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "result": {
+        "target": {
+          "id": "Const:supabase/functions/_shared/validation.ts:CreatorChatMessageSchema",
+          "name": "CreatorChatMessageSchema",
+          "type": "Const",
+          "filePath": "supabase/functions/_shared/validation.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 0,
+        "risk": "UNKNOWN",
+        "riskSharedAxes": "UNKNOWN",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "epistemic": "exact",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {},
+        "affected_processes": [],
+        "affected_modules": [],
+        "byDepth": {}
+      },
+      "stdout": "{\n  \"target\": {\n    \"id\": \"Const:supabase/functions/_shared/validation.ts:CreatorChatMessageSchema\",\n    \"name\": \"CreatorChatMessageSchema\",\n    \"type\": \"Const\",\n    \"filePath\": \"supabase/functions/_shared/validation.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {}\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1794462544121,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    },
+    {
+      "symbol": "supabase/functions/creator-agent-chat/index.ts",
+      "path": "supabase/functions/creator-agent-chat/index.ts",
+      "matches_index_file_hash": true,
+      "sha256_before": "722add066cc6fa009a3bdbd8e94c0f913a8f3768779f6491ac41d0c1716e385f",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "supabase/functions/creator-agent-chat/index.ts",
+        "--direction",
+        "upstream",
+        "--file",
+        "supabase/functions/creator-agent-chat/index.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit",
+        "--limit",
+        "15"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 1,
+      "result": {
+        "error": "Target 'supabase/functions/creator-agent-chat/index.ts' not found",
+        "target": {
+          "name": "supabase/functions/creator-agent-chat/index.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": null,
+        "risk": "UNKNOWN"
+      },
+      "stdout": "{\n  \"error\": \"Target 'supabase/functions/creator-agent-chat/index.ts' not found\",\n  \"target\": {\n    \"name\": \"supabase/functions/creator-agent-chat/index.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+      "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1794462544691,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "numTotalTests": 465,
+  "numPassedTests": 465,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "success": true,
+  "test_files": 21,
+  "startTime": 1794532404815,
+  "suites": [
+    {
+      "file": "src/components/ChatbotWidget.consultation.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "src/components/ConsultationPanel.test.tsx",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "file": "src/hooks/useAuth.continuation.test.tsx",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "file": "src/lib/auth-continuation.test.ts",
+      "status": "passed",
+      "tests": 82
+    },
+    {
+      "file": "src/lib/consultation-client.test.ts",
+      "status": "passed",
+      "tests": 31
+    },
+    {
+      "file": "src/lib/creator-agent-distribution.test.ts",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "file": "src/lib/creator-agent-results.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "file": "src/lib/creator-execution-preferences.test.ts",
+      "status": "passed",
+      "tests": 21
+    },
+    {
+      "file": "src/lib/creator-model-request.test.ts",
+      "status": "passed",
+      "tests": 33
+    },
+    {
+      "file": "src/lib/private-tool-results.test.ts",
+      "status": "passed",
+      "tests": 24
+    },
+    {
+      "file": "src/lib/public-creator-model.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "file": "src/lib/public-share.test.ts",
+      "status": "passed",
+      "tests": 72
+    },
+    {
+      "file": "src/lib/safeNavigation.test.ts",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "file": "src/pages/CreatorAgentDetail.execution.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "src/pages/CreatorAgentDetail.results.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "src/pages/auth-continuation.test.tsx",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "file": "src/pages/creator-copy-lifecycle.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "file": "src/components/karta/PrivateToolResults.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "file": "src/components/shared/CinematicIntro.test.tsx",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "file": "src/components/shared/ShareButtons.test.tsx",
+      "status": "passed",
+      "tests": 25
+    },
+    {
+      "file": "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "status": "passed",
+      "tests": 13
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { act, type HTMLAttributes, type PropsWithChildren } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import type { UseVoice } from '@/hooks/useVoice';
+import { sendAgentChatMessage } from '@/lib/agent-chat';
 import { AgentChatTab } from './AgentChatTab';
 import { VoiceMode } from './VoiceMode';
 
@@ -221,6 +222,45 @@ describe('VoiceMode: semantics and keyboard integration', () => {
 });
 
 describe('AgentChatTab: named text controls and reduced motion', () => {
+  it.each([
+    { name: 'native IME composition', init: { isComposing: true, keyCode: 13, shiftKey: false } },
+    { name: 'legacy IME key code 229', init: { isComposing: false, keyCode: 229, shiftKey: false } },
+    { name: 'Shift+Enter', init: { isComposing: false, keyCode: 13, shiftKey: true } },
+  ])('preserves the draft for $name and still sends on a later plain Enter', async ({ init }) => {
+    vi.mocked(sendAgentChatMessage).mockClear();
+    await act(async () => root.render(<AgentChatTab agentType="email" agentName="Email IA" agentEmoji="🤖" agentColor="#8B5CF6" />));
+    const input = host.querySelector('textarea')!;
+    const draft = '日本語で相談したいです';
+    const setValue = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!;
+    await act(async () => {
+      setValue.call(input, draft);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    expect(button('Envoyer le message').disabled).toBe(false);
+    input.focus();
+    if (!init.shiftKey) {
+      await act(async () => { input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true })); });
+    }
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...init });
+    expect(event.isComposing).toBe(init.isComposing);
+    expect(event.keyCode).toBe(init.keyCode);
+    await act(async () => { input.dispatchEvent(event); });
+    expect(sendAgentChatMessage).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
+    expect(input.value).toBe(draft);
+    expect(host.textContent).toContain('Démarre une conversation avec Email IA');
+    expect(fixture.voice.startRecording).not.toHaveBeenCalled();
+    expect(fixture.voice.speak).not.toHaveBeenCalled();
+    if (!init.shiftKey) {
+      await act(async () => { input.dispatchEvent(new CompositionEvent('compositionend', { data: draft, bubbles: true })); });
+    }
+    const submitEvent = await press(input, 'Enter');
+    expect(submitEvent.defaultPrevented).toBe(true);
+    expect(sendAgentChatMessage).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(sendAgentChatMessage).mock.calls[0][2]).toBe(draft);
+    expect(input.value).toBe('');
+  });
+
   it('names the message field and icon-only send button', async () => {
     await act(async () => root.render(<AgentChatTab agentType="email" agentName="Email IA" agentEmoji="🤖" agentColor="#8B5CF6" />));
     expect(host.querySelector('textarea')?.getAttribute('aria-label')).toBe('Message pour Email IA');

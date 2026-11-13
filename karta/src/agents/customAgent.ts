@@ -1,6 +1,8 @@
 import { supabase } from "../db/supabase.js";
 import { resolveCustomAgentTools } from "../tools/customRegistry.js";
 import type { AgentDefinition, CustomAgentType } from "../engine/types.js";
+import { isProxy } from "node:util/types";
+import { normalizeModelPreferences } from "../claude/execution-profile.js";
 
 /** Vue KARTA d'une ligne `creator_agents` — seules les colonnes utiles à l'exécution réelle. */
 export interface CustomAgentRow {
@@ -9,6 +11,10 @@ export interface CustomAgentRow {
   name: string;
   description: string | null;
   system_prompt: string;
+  /** Existing creator_agents choice; absent only in legacy rows/fixtures. */
+  model?: string;
+  /** Untrusted JSON from persistence; absent only before the preferences migration. */
+  execution_preferences?: unknown;
   tools_enabled: string[] | null;
   karta_enabled: boolean;
   is_active: boolean;
@@ -17,7 +23,7 @@ export interface CustomAgentRow {
 }
 
 const SELECT_COLUMNS =
-  "id, user_id, name, description, system_prompt, tools_enabled, karta_enabled, is_active, schedule_enabled, schedule_cron";
+  "id, user_id, name, description, system_prompt, model, execution_preferences, tools_enabled, karta_enabled, is_active, schedule_enabled, schedule_cron";
 
 export async function loadCustomAgent(agentId: string): Promise<CustomAgentRow | null> {
   const { data, error } = await supabase
@@ -49,10 +55,30 @@ export async function listKartaEnabledCustomAgents(signal?: AbortSignal): Promis
  * simulation, logs, notify) — 0 duplication du moteur. */
 export function buildCustomAgentDefinition(row: CustomAgentRow): AgentDefinition {
   const type: CustomAgentType = `custom:${row.id}`;
+  let modelPreferences: AgentDefinition["modelPreferences"] = row.model === undefined ? undefined : { model: row.model };
+  if (Object.hasOwn(row, "execution_preferences")) {
+    const stored = row.execution_preferences;
+    if (!stored || typeof stored !== "object" || isProxy(stored) || Array.isArray(stored)
+      || ![Object.prototype, null].includes(Object.getPrototypeOf(stored))) {
+      throw new Error("Réglages d’exécution invalides");
+    }
+    const keys = Reflect.ownKeys(stored);
+    const reflection = Object.getOwnPropertyDescriptor(stored, "reflection");
+    const speed = Object.getOwnPropertyDescriptor(stored, "speed");
+    if (keys.length !== 2 || !keys.includes("reflection") || !keys.includes("speed")
+      || !reflection || !("value" in reflection) || typeof reflection.value !== "string"
+      || !speed || !("value" in speed) || typeof speed.value !== "string") {
+      throw new Error("Réglages d’exécution invalides");
+    }
+    modelPreferences = normalizeModelPreferences({ model: row.model, reflection: reflection.value, speed: speed.value });
+  }
 
   return {
     type,
     systemPrompt: row.system_prompt,
+    // This is a preference, not provider authority. The model client validates
+    // it against the host catalogue before sharing context or spending tokens.
+    ...(modelPreferences !== undefined ? { modelPreferences } : {}),
     // Copy the descriptors: the shared registry and business payloads remain
     // untouched while personal agents keep private content out of run traces.
     tools: resolveCustomAgentTools(row.tools_enabled).map(tool => ({

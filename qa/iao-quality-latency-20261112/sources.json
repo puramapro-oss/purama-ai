@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-11-12",
+  "sources": [
+    {
+      "url": "https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/typescript",
+      "use": "Defaults timeout/retries; verified against installed SDK0.65.0 and exercised in tests."
+    },
+    {
+      "url": "https://nodejs.org/api/globals.html#class-abortcontroller",
+      "use": "Client cancellation semantics; server computation/cost still not guaranteed cancelled."
+    },
+    {
+      "url": "https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/",
+      "use": "Future qualification: exact prefix reuse accelerates prefill, not all decode."
+    },
+    {
+      "url": "https://github.com/ml-explore/mlx-lm",
+      "use": "Future Mac qualification: cache size/quantization may alter quality; no install here."
+    },
+    {
+      "url": "https://sre.google/sre-book/addressing-cascading-failures/",
+      "use": "Bounded concurrency/deadlines and retry load; existing worker concurrency retained."
+    },
+    {
+      "url": "https://docs.vllm.ai/en/latest/features/speculative_decoding/",
+      "use": "Future qualification: standard verification vs approximate variants; no enabling here."
+    }
+  ]
+}

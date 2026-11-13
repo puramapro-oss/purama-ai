@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run check:offline-assets && vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -46,7 +46,11 @@
     "test:distribution:chat": "node --experimental-vm-modules --test tests/creator-chat-authorization.test.mjs",
     "test:distribution:browser": "playwright test --config playwright.distribution.config.ts",
     "typecheck:distribution": "tsc --noEmit -p tests/distribution/tsconfig.json",
-    "test:billing": "node --experimental-vm-modules --test --test-concurrency=1 --test-timeout=30000 tests/billing/billing.test.mjs tests/billing-webhook/handler.test.mjs tests/billing-webhook/concurrency.test.mjs tests/billing/module-boundary.test.mjs tests/billing/subscription-state.test.mjs"
+    "test:billing": "node --experimental-vm-modules --test --test-concurrency=1 --test-timeout=30000 tests/billing/billing.test.mjs tests/billing-webhook/handler.test.mjs tests/billing-webhook/concurrency.test.mjs tests/billing/module-boundary.test.mjs tests/billing/subscription-state.test.mjs",
+    "check:offline-assets": "node scripts/check-offline-assets.mjs",
+    "prepare:offline-assets": "node scripts/check-offline-assets.mjs --write",
+    "test:offline": "node --test test/unit/service-worker-offline.test.mjs test/unit/offline-assets-release.test.mjs test/unit/offline-library-backup.test.mjs test/unit/offline-worker-activation.test.mjs",
+    "test:offline:browser": "playwright test --config playwright.offline.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",

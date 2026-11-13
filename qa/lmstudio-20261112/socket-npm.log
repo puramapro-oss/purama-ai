@@ -1,0 +1,18 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test:lmstudio:sockets
+> node --import tsx --test test/lmStudioSocket.test.mjs
+
+✔ real socket: local inventory, credentials, exact model and token receipt (65.902763ms)
+✔ real socket: tool decision validates but executes no tool (8.045115ms)
+✔ real socket: redirects do not forward the prompt or local token (6.771477ms)
+✔ real socket: a truncated answer is rejected with no retry (6.03664ms)
+✔ real socket: oversized inference body is bounded with no retry (44.866541ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 428.538251

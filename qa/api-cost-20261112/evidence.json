@@ -1,0 +1,538 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-12",
+  "user_timezone": "Europe/Paris",
+  "overall_status": "PARTIEL",
+  "scope": "Correction limitée du transport Claude réel de KARTA : reprises HTTP explicites et contexte JSON compact.",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "8259b84e65ca89b01bd1b1fc46576cb60bb8a1ec",
+  "branch_at_review": "audit/api-cost-20261112-4eb2",
+  "candidate_commit": null,
+  "candidate_note": "Snapshot of the reviewed worktree; the immutable published commit and CI run are identified in the pull request. No self-referential commit identifier is invented in this file.",
+  "sdk": {
+    "package": "@anthropic-ai/sdk",
+    "version": "0.65.0",
+    "installed_version_read": true,
+    "actual_sdk_used_by_transport_tests": true,
+    "provider_transport": "fetch intercepté ; aucun appel fournisseur réel dans la recette du transport"
+  },
+  "reviewed_files": [
+    {
+      "path": "karta/src/claude/real.ts",
+      "size_bytes": 5828,
+      "sha256": "b9ee9ab1d24894ec12c857d54d04fadfd99c467b59afddfa2fa861f409934598"
+    },
+    {
+      "path": "karta/test/claudeTransportCost.test.ts",
+      "size_bytes": 9075,
+      "sha256": "cd8b270f46ad3b6d6084d2f1f6ecc8bab46e3e4e66e9249acfd9020f39a7b21d"
+    },
+    {
+      "path": "karta/package-lock.json",
+      "size_bytes": 114833,
+      "sha256": "88a2f0648e44c30b67b3a9bc428c4294f13cd95dfc95baf11c542357c35014f8"
+    }
+  ],
+  "changes": [
+    "maxRetries: 0 dans le constructeur Anthropic utilisé par le chemin KARTA réel",
+    "JSON.stringify(input.context) sans indentation, mêmes valeurs JSON"
+  ],
+  "preserved_contracts": [
+    "modèles et seuils de sélection existants",
+    "max_tokens: 1024",
+    "politique système",
+    "schémas et validation des outils",
+    "rejet des réponses incomplètes",
+    "identités d'exécution et journal de reprise existants"
+  ],
+  "gates": [
+    {
+      "id": "transport_regressions_before",
+      "status": "PASS",
+      "meaning": "Reproduction des défauts avant correction, et non réussite de la suite avant correction.",
+      "cwd": "karta",
+      "command": "npm test -- test/claudeTransportCost.test.ts --maxWorkers=1 --reporter=verbose",
+      "exit_code": 1,
+      "exit_code_evidence": "Reçu direct du processus baseline et journal relu.",
+      "expected": "Échecs des contraintes d'une seule tentative et de contexte compact.",
+      "observed": {
+        "tests_total": 13,
+        "tests_passed": 5,
+        "tests_failed": 8,
+        "retry_cases": [
+          408,
+          409,
+          429,
+          500,
+          "connection_error"
+        ],
+        "http_attempts_per_retry_case": 3,
+        "compact_context_related_failures": 3
+      },
+      "log_name": "transport-before.log"
+    },
+    {
+      "id": "targeted_regressions_after",
+      "status": "PASS",
+      "cwd": "karta",
+      "command": "npm test -- test/claudeTransportCost.test.ts test/real-claude.test.ts test/claudeDecisionCompleteness.test.ts test/loopModelAdmission.test.ts --maxWorkers=1 --reporter=verbose",
+      "exit_code": null,
+      "exit_code_evidence": "Le journal relu contient le résumé Vitest complet mais pas de marqueur de code de sortie ; reçu d'exécution détenu par root.",
+      "expected": "Tous les contrôles ciblés réussissent, une seule tentative HTTP dans les cinq cas de reprise.",
+      "observed": {
+        "test_files_total": 4,
+        "test_files_passed": 4,
+        "tests_total": 84,
+        "tests_passed": 84,
+        "tests_failed": 0,
+        "new_transport_tests": 13,
+        "http_attempts_per_retry_case": 1,
+        "context_json_values_preserved": true,
+        "input_mutation_observed": false
+      },
+      "log_name": "transport-after.log"
+    },
+    {
+      "id": "typescript_and_build",
+      "status": "PASS",
+      "evidence_kind": "parent_tool_receipt_report",
+      "reported_by": "root",
+      "execution_session_id": 30992,
+      "reported_commands": [
+        "typecheck",
+        "build"
+      ],
+      "exact_shell_command_archived": false,
+      "exit_code": 0,
+      "full_log_archived": false,
+      "limitation": "Résultat communiqué par root ; aucun journal complet relu ou archivé par l'auteur de ce registre."
+    },
+    {
+      "id": "diff_whitespace",
+      "status": "PASS",
+      "cwd": ".",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "evidence_kind": "direct_tool_receipt",
+      "observed": "Aucune erreur de whitespace signalée."
+    },
+    {
+      "id": "full_karta_suite",
+      "status": "PARTIEL",
+      "cwd": "karta",
+      "command": "npm test -- --reporter=default",
+      "exit_code": null,
+      "exit_code_evidence": "Le journal relu ne contient pas de marqueur de code de sortie.",
+      "expected": "Réception complète de tous les tests KARTA.",
+      "observed": {
+        "test_files_total": 119,
+        "test_files_passed": 93,
+        "tests_total": 2066,
+        "tests_passed": 1496,
+        "worker_errors": 26,
+        "signal": "SIGKILL",
+        "uncredited_tests": 570
+      },
+      "cause_established": false,
+      "limitation": "Les tests interrompus ne sont pas réussis. Le journal ne suffit pas à attribuer les SIGKILL à une cause précise ni à démontrer une régression du correctif.",
+      "log_name": "karta-full.log"
+    },
+    {
+      "id": "database_single_worker_retry",
+      "status": "PARTIEL",
+      "cwd": "karta",
+      "command": "npm test -- test/chefBudgetMigration.test.ts --maxWorkers=1 --reporter=verbose",
+      "exit_code": null,
+      "exit_code_evidence": "Le journal relu ne contient pas de marqueur de code de sortie.",
+      "expected": "Réception des trois cas de migration CHEF avec un seul worker.",
+      "observed": {
+        "tests_total": 3,
+        "tests_passed": 1,
+        "worker_errors": 1,
+        "signal": "SIGKILL"
+      },
+      "cause_established": false,
+      "limitation": "La réduction du parallélisme n'a pas achevé cette réception.",
+      "log_name": "karta-db-single.log"
+    },
+    {
+      "id": "initial_local_model_smoke",
+      "status": "PARTIEL",
+      "evidence_kind": "parent_execution_report",
+      "reported_by": "root",
+      "route": "KARTA vers Ollama",
+      "model": "devstral:24b",
+      "required_output": "42",
+      "exact_output_criterion_passed": false,
+      "observed": "Résultat arithmétique correct avec une sortie explicative ; ne respecte pas la sortie exacte exigée.",
+      "second_scenario_reached": false,
+      "input_tokens_reported": 831,
+      "output_tokens_reported": 23,
+      "process_total_seconds_reported": 28.56,
+      "raw_result_reviewed_by_this_register_author": false,
+      "limitation": "Mesure ponctuelle rapportée par root ; durée du processus entier, pas délai du premier token. Aucun succès de format, benchmark de qualité, économie globale ou bascule de production n'en est déduit."
+    }
+  ],
+  "source_logs": [
+    {
+      "name": "transport-before.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/transport-before.log",
+      "size_bytes": 12694,
+      "sha256": "67ea099525a31fbfb06b09349bd1f570c39ab557217dee711e77167bd55d4708",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": false,
+      "summary_excerpt": [
+        "Test Files  1 failed (1)",
+        "Tests  8 failed | 5 passed (13)",
+        "expected \"vi.fn()\" to be called 1 times, but got 3 times"
+      ],
+      "repository_path": "qa/api-cost-20261112/transport-before.log",
+      "repository_artifact_sha256": "b20b13eadc5d63a4016e13255e030e949f51c25b12d9e1e466a07ff5fdd40b01",
+      "repository_artifact_size_bytes": 12693,
+      "normalization": "Only extra empty lines at end of the log were removed."
+    },
+    {
+      "name": "transport-after.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/transport-after.log",
+      "size_bytes": 14368,
+      "sha256": "2f0a82146930faa6516dfbf2dd35d8241d20036957a780102146f01d4bf1d093",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": false,
+      "summary_excerpt": [
+        "Test Files  4 passed (4)",
+        "Tests  84 passed (84)"
+      ],
+      "repository_path": "qa/api-cost-20261112/transport-after.log",
+      "repository_artifact_sha256": "f2c6e9dddd5e2255d8f9835fac57ac7aac6b49cffa6567ce2366b58f8ab488b2",
+      "repository_artifact_size_bytes": 14367,
+      "normalization": "Only extra empty lines at end of the log were removed."
+    },
+    {
+      "name": "karta-full.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/karta-full.log",
+      "size_bytes": 30842,
+      "sha256": "7e288f87b56e36b440185625fe78bb7afca7f5fe8110c5feced1a48bef539417",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": false,
+      "summary_excerpt": [
+        "Test Files  93 passed (119)",
+        "Tests  1496 passed (2066)",
+        "Errors  26 errors",
+        "Worker exited unexpectedly with signal SIGKILL"
+      ],
+      "repository_path": "qa/api-cost-20261112/karta-full.log",
+      "repository_artifact_sha256": "7b1f106ebe24685d58ba6135346a986dd7f0b5bfad6b1c54a491230807266b57",
+      "repository_artifact_size_bytes": 30841,
+      "normalization": "Only extra empty lines at end of the log were removed."
+    },
+    {
+      "name": "karta-db-single.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/karta-db-single.log",
+      "size_bytes": 1761,
+      "sha256": "172c418504b6f0695a85da16ea96bd4e3c5f60213089d4c8160395948fc3e25d",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": false,
+      "summary_excerpt": [
+        "Tests  1 passed (3)",
+        "Errors  1 error",
+        "Worker exited unexpectedly with signal SIGKILL"
+      ],
+      "repository_path": "qa/api-cost-20261112/karta-db-single.log",
+      "repository_artifact_sha256": "b18a14c87943258d3571e4137f5576854fa1f26c363eea37e25f9d92f4a688c2",
+      "repository_artifact_size_bytes": 1760,
+      "normalization": "Only extra empty lines at end of the log were removed."
+    },
+    {
+      "name": "impact-candidate.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/impact-candidate.log",
+      "size_bytes": 2141,
+      "sha256": "ddfc324312af15db99c76b51bcb179a6828730cad378dad71a7228a7859c7776",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": true,
+      "summary_excerpt": [
+        "\"impactedCount\": 3",
+        "\"risk\": \"LOW\"",
+        "\"direct\": 1",
+        "\"status\": \"diverged\""
+      ],
+      "repository_path": "qa/api-cost-20261112/impact-candidate.log",
+      "repository_artifact_sha256": "ddfc324312af15db99c76b51bcb179a6828730cad378dad71a7228a7859c7776",
+      "repository_artifact_size_bytes": 2141,
+      "normalization": "None; exact copy."
+    },
+    {
+      "name": "detect-staged.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/detect-staged.log",
+      "size_bytes": 539,
+      "sha256": "436a97ad820f07a27acb49970b1dc568d3533c53fcc79799b46398790bb8b93f",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": true,
+      "summary_excerpt": [
+        "Changes: 5 files, 2 symbols",
+        "Affected processes: 0",
+        "Risk level: low"
+      ],
+      "repository_path": "qa/api-cost-20261112/detect-staged.log",
+      "repository_artifact_sha256": "436a97ad820f07a27acb49970b1dc568d3533c53fcc79799b46398790bb8b93f",
+      "repository_artifact_size_bytes": 539,
+      "normalization": "None; exact copy."
+    },
+    {
+      "name": "detect-main.log",
+      "workspace_path_at_review": "/workspace/scratch/4eb2a799ec70/detect-main.log",
+      "size_bytes": 2998,
+      "sha256": "1c3ada1739c5961f5194cb9aff78afaf9022166ad2b052a828d9b1c3efc17fc3",
+      "reviewed": true,
+      "full_bytes_included_in_this_directory": true,
+      "summary_excerpt": [
+        "Changes: 1345 files, 12251 symbols",
+        "Affected processes: 584",
+        "Risk level: critical"
+      ],
+      "repository_path": "qa/api-cost-20261112/detect-main.log",
+      "repository_artifact_sha256": "1c3ada1739c5961f5194cb9aff78afaf9022166ad2b052a828d9b1c3efc17fc3",
+      "repository_artifact_size_bytes": 2998,
+      "normalization": "None; exact copy."
+    }
+  ],
+  "risk_tradeoff": {
+    "statement": "Les erreurs transitoires remontent immédiatement ; une livraison KARTA déjà admise n'est pas rejouée automatiquement par BullMQ.",
+    "availability": "La récupération automatique après une indisponibilité brève peut diminuer.",
+    "unknown_provider_outcome": "Une réponse perdue peut correspondre à une requête déjà facturée ; une erreur ne prouve pas un coût nul.",
+    "recovery": "Réconcilier l'identité et l'état de l'exécution avant toute reprise.",
+    "proxy_policy": "Une éventuelle politique de reprise du proxy est distincte et doit être qualifiée séparément."
+  },
+  "not_claimed": [
+    "économies financières globales ou pourcentage de réduction de la facture",
+    "équivalence de qualité d'un modèle local avec le fournisseur distant",
+    "réception réussie de la suite complète KARTA",
+    "fonctionnement réel d'OmniRoute déduit des URL de fixture",
+    "absence de coût après une réponse perdue",
+    "durcissement des identifiants en production déduit de l'isolation de la fixture",
+    "déploiement ou qualification de production"
+  ],
+  "counting_note": "Les suites ciblées et complètes se recouvrent ; leurs nombres de tests ne doivent pas être additionnés.",
+  "supplementary_evidence": [
+    {
+      "id": "gitnexus_target_impact",
+      "status": "PARTIEL",
+      "evidence_kind": "log_review_and_parent_provenance_report",
+      "operation": "impact createRealClaudeClient upstream",
+      "execution_exit_code_reported_by_root": 0,
+      "tool_version": "1.6.12",
+      "observed": {
+        "risk": "LOW",
+        "impacted_symbols": 3,
+        "direct_callers": 1,
+        "reported_affected_processes": 0,
+        "upstream_chain": [
+          "getClaudeClient",
+          "runAgentCycle",
+          "startAgentCycleWorker"
+        ],
+        "index_staleness": "diverged",
+        "fts_available": false
+      },
+      "index_provenance_reported_by_root": {
+        "copied_from_separate_workspace": true,
+        "indexed_commit_abbreviated": "c81d316",
+        "indexed_at": "2026-11-12T00:54:39Z",
+        "relevant_source_blobs_equal_to_base": 4,
+        "metadata_change": "association du chemin local seulement"
+      },
+      "limitation": "Le graphe copié n’est pas un index frais et complet du candidat. Les quatre égalités de blobs sont rapportées par root ; l’impact retourné a été relu dans le journal.",
+      "log_name": "impact-candidate.log"
+    },
+    {
+      "id": "gitnexus_staged_scope",
+      "status": "PARTIEL",
+      "execution_status": "PASS",
+      "evidence_kind": "log_review_and_parent_tool_receipt",
+      "operation": "detect_changes(scope=staged)",
+      "execution_exit_code_reported_by_root": 0,
+      "observed": {
+        "changed_files": 5,
+        "changed_symbols": 2,
+        "symbol_names": [
+          "createRealClaudeClient",
+          "decide"
+        ],
+        "reported_affected_processes": 0,
+        "risk": "LOW"
+      },
+      "limitation": "Résultat du contenu staged au moment de la commande ; les fichiers de ce registre ajoutés ensuite ne font pas partie de ce comptage. Le graphe reste partiel.",
+      "log_name": "detect-staged.log"
+    },
+    {
+      "id": "gitnexus_compare_main",
+      "status": "PARTIEL",
+      "execution_status": "PASS",
+      "evidence_kind": "log_review_and_parent_tool_receipt",
+      "operation": "detect_changes(scope=compare,base_ref=main)",
+      "execution_exit_code_reported_by_root": 0,
+      "observed": {
+        "changed_files": 1345,
+        "changed_symbols": 12251,
+        "reported_affected_processes": 584,
+        "risk": "CRITICAL",
+        "listing_capped": true
+      },
+      "interpretation": "La comparaison avec main comprend l’ascendance de consolidation ; ces chiffres ne décrivent pas le seul correctif du client.",
+      "high_risk_warning_delivered_reported_by_root": true,
+      "limitation": "Graphe partiel et liste plafonnée ; aucun PASS global d’impact n’en est déduit.",
+      "log_name": "detect-main.log"
+    },
+    {
+      "id": "local_devstral_second_harness",
+      "status": "PARTIEL",
+      "evidence_kind": "parent_execution_report",
+      "reported_by": "root",
+      "route": "KARTA vers Ollama",
+      "model": "devstral:24b",
+      "provider_calls_reported": 2,
+      "process_total_seconds_reported": 38.87,
+      "scenarios": [
+        {
+          "name": "exact_42",
+          "status": "FAILED",
+          "criterion": "sortie exacte 42",
+          "criterion_relaxed": false,
+          "seconds_reported": 33.289,
+          "input_tokens_reported": 831,
+          "output_tokens_reported": 17
+        },
+        {
+          "name": "record_fixture_tool",
+          "status": "PASS",
+          "seconds_reported": 1.718,
+          "input_tokens_reported": 179,
+          "cached_input_tokens_reported": 760,
+          "output_tokens_reported": 31
+        }
+      ],
+      "raw_result_reviewed_by_this_register_author": false,
+      "limitation": "Le format exact échoue encore ; l’appel d’outil de fixture passe. Les compteurs sont rapportés tels quels, sans calcul financier ni extrapolation de qualité ou de débit. Le premier essai interrompu reste conservé."
+    },
+    {
+      "id": "local_devstral_actual_client",
+      "status": "PARTIEL",
+      "evidence_kind": "observed_process_output",
+      "route": "KARTA candidate SDK to local Ollama, direct",
+      "model": "devstral:24b",
+      "bundle_sha256": "0700cfe653175990c996bfb67589af771ff5b5955f7b014eb58a0ecb0ed399ea",
+      "result": {
+        "status": "FAILED",
+        "model": "devstral:24b",
+        "calls": 2,
+        "usage": [
+          {
+            "input_tokens": 831,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 17
+          },
+          {
+            "input_tokens": 179,
+            "cache_read_input_tokens": 760,
+            "output_tokens": 31
+          }
+        ],
+        "results": [
+          {
+            "case": "arithmetic_exact_format",
+            "status": "FAILED",
+            "elapsedMs": 33289,
+            "observed": {
+              "summary": "Le résultat de la multiplication de 6 par 7 est 42.",
+              "toolCalls": []
+            },
+            "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Le résultat de la multiplication de 6 par 7 est 42.'\n- '42'\n"
+          },
+          {
+            "case": "structured_tool_decision",
+            "status": "PASS",
+            "elapsedMs": 1718,
+            "observed": {
+              "summary": "(aucun résumé texte — décision uniquement via appels d'outils)",
+              "toolCalls": [
+                {
+                  "tool": "record_fixture",
+                  "params": {
+                    "name": "Zoé",
+                    "amount": 12.5,
+                    "currency": "EUR"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "scope": "local client and two synthetic decisions; not production, global quality or OmniRoute"
+      },
+      "log_path": "qa/api-cost-20261112/local-devstral-output.log",
+      "log_sha256": "e3369fa70a5b54c21bbad4c87415898ff0a3f8027fdd95f40091cbdfc37a9117",
+      "exit_code": 1
+    },
+    {
+      "id": "local_qwen_actual_client",
+      "status": "PASS",
+      "evidence_kind": "observed_process_output",
+      "route": "KARTA candidate SDK to local Ollama, direct",
+      "model": "qwen3-coder:30b",
+      "bundle_sha256": "0700cfe653175990c996bfb67589af771ff5b5955f7b014eb58a0ecb0ed399ea",
+      "result": {
+        "status": "PASS",
+        "model": "qwen3-coder:30b",
+        "calls": 2,
+        "usage": [
+          {
+            "input_tokens": 941,
+            "cache_read_input_tokens": 0,
+            "output_tokens": 3
+          },
+          {
+            "input_tokens": 417,
+            "cache_read_input_tokens": 859,
+            "output_tokens": 47
+          }
+        ],
+        "results": [
+          {
+            "case": "arithmetic_exact_format",
+            "status": "PASS",
+            "elapsedMs": 48140,
+            "observed": {
+              "summary": "42",
+              "toolCalls": []
+            }
+          },
+          {
+            "case": "structured_tool_decision",
+            "status": "PASS",
+            "elapsedMs": 783,
+            "observed": {
+              "summary": "(aucun résumé texte — décision uniquement via appels d'outils)",
+              "toolCalls": [
+                {
+                  "tool": "record_fixture",
+                  "params": {
+                    "name": "Zoé",
+                    "amount": 12.5,
+                    "currency": "EUR"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "scope": "local client and two synthetic decisions; not production, global quality or OmniRoute"
+      },
+      "log_path": "qa/api-cost-20261112/local-qwen-output.log",
+      "log_sha256": "9f67480719c605820bbf502a3fd784183ed568ac943fc4aaa325cc722ac6872e",
+      "exit_code": 0
+    }
+  ],
+  "supplementary_evidence_owner": "root",
+  "supplementary_evidence_note": "Historical failures are retained. Subsequent runtime qualification and CI are distinguished from this local snapshot.",
+  "target_branch_observed_head": "cbd60006552f27771ef0f8b67623087c296fcf67",
+  "target_branch_delta_review": "4 commits, 5 paths; no overlap with production client, cost tests or evidence; preserve both Vercel exclusions during integration."
+}

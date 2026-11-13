@@ -1,0 +1,2 @@
+src/claude/lmstudio.ts(78,56): error TS2353: Object literal may only specify known properties, and 'cache' does not exist in type 'RequestInit'.
+src/claude/lmstudio.ts(100,42): error TS2694: Namespace '"/workspace/scratch/108c46b22c9d/purama-ai/karta/node_modules/@anthropic-ai/sdk/client".Anthropic' has no exported member 'ClientOptions'.

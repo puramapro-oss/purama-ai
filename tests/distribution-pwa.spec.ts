@@ -44,8 +44,9 @@ test.describe('PWA — ressources publiques et secours hors ligne', () => {
     const response = await page.goto('/offline.html', { waitUntil: 'domcontentloaded' });
     expect(response?.status()).toBe(200);
     expect(response?.headers()['content-type']).toMatch(/text\/html/);
-    await expect(page.getByRole('heading', { name: 'Tu es hors ligne', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Réessayer', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Gardez le fil, même sans Internet.', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Préparer cet espace', exact: true })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Texte', exact: true })).toBeEnabled();
   });
 
   test('le worker enregistré par l’application sert le secours après coupure réseau', async ({ page, context }) => {
@@ -68,7 +69,7 @@ test.describe('PWA — ressources publiques et secours hors ligne', () => {
       const response = await page.goto('/dashboard?offline-check=1', { waitUntil: 'domcontentloaded' });
       expect(response?.status()).toBe(200);
       expect(response?.fromServiceWorker()).toBe(true);
-      await expect(page.getByRole('heading', { name: 'Tu es hors ligne', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Gardez le fil, même sans Internet.', exact: true })).toBeVisible();
     } finally {
       await context.setOffline(false);
     }

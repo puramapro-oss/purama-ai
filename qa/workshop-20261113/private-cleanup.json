@@ -1,0 +1,21 @@
+{
+  "processes": [
+    {
+      "name": "api-worker",
+      "exitCode": 0
+    },
+    {
+      "name": "edge",
+      "exitCode": -15
+    },
+    {
+      "name": "frontend",
+      "exitCode": 143
+    },
+    {
+      "name": "tunnel",
+      "exitCode": 0
+    }
+  ],
+  "allStopped": true
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "workshop-authenticated-artifact-resume",
+  "version": 1,
+  "startedAt": "2026-11-13T02:14:32.197Z",
+  "outcome": "FAIL",
+  "stage": "ui_login",
+  "fixtureResponsesUsed": false,
+  "missionSubmission": "not_sent",
+  "startRequestCount": 0,
+  "observedStates": [],
+  "checks": {},
+  "captures": [],
+  "javascriptErrorCount": 0,
+  "monetaryCost": {
+    "status": "unknown",
+    "micros": null
+  },
+  "readOnlyResume": true,
+  "missionId": "94c0d8cb-936d-4963-8afc-b74ef975e38f",
+  "commitSha": "027a291700e691209d05aea712f41446701db57b",
+  "phases": [
+    "configuration",
+    "browser_start",
+    "ui_login"
+  ],
+  "failureCode": "STEP_FAILED",
+  "failureType": "Error",
+  "uiDiagnosticUnavailable": true,
+  "finishedAt": "2026-11-13T02:14:34.743Z",
+  "durationMs": 2546
+}

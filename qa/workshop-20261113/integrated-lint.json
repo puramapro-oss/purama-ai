@@ -1,0 +1,9 @@
+{
+  "command": [
+    "node_modules/eslint/bin/eslint.js",
+    "."
+  ],
+  "exitCode": 1,
+  "durationSeconds": 30.15,
+  "baseIntegrated": "7755d4745ed6e9561fb9743f3b2b5820878dff11"
+}

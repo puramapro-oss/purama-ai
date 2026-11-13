@@ -1,0 +1,134 @@
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-integration/karta
+
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 408 10ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 409 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 429 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 500 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > does not repeat a request after an ambiguous connection failure 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses the SDK's existing base URL setting without falling back to a different origin 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > keeps the default SDK endpoint available when no proxy is configured 3ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses only the explicit fixture API key and sends no ambient bearer credential 1ms
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > sends compact context while preserving every JSON value and leaving the input unchanged 8ms
+   → expected '{\n  "spaces": "  conserver   les esp…' to be '{"spaces":"  conserver   les espaces …' // Object.is equality
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a simple request 5ms
+   → expected { model: 'fixture-fast-model', …(4) } to strictly equal { model: 'fixture-fast-model', …(4) }
+ × test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a large request 2ms
+   → expected { model: 'fixture-main-model', …(4) } to strictly equal { model: 'fixture-main-model', …(4) }
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves a valid complete tool decision through the real SDK 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > still rejects a partial tool response without repeating inference or executing the tool 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > sends compact context while preserving every JSON value and leaving the input unchanged
+AssertionError: expected '{\n  "spaces": "  conserver   les esp…' to be '{"spaces":"  conserver   les espaces …' // Object.is equality
+
+- Expected
++ Received
+
+- {"spaces":"  conserver   les espaces  ","lines":"première\nseconde\r\n\ttroisième","unicode":"Été — 東京 😀","timestamp":"2026-11-12T05:30:00.123456+01:00","items":[null,true,false,0,-12.5,"",{"exact":"  interne\n  "}],"nested":{"nullable":null,"array":["a","b"],"empty":{}}}
++ {
++   "spaces": "  conserver   les espaces  ",
++   "lines": "première\nseconde\r\n\ttroisième",
++   "unicode": "Été — 東京 😀",
++   "timestamp": "2026-11-12T05:30:00.123456+01:00",
++   "items": [
++     null,
++     true,
++     false,
++     0,
++     -12.5,
++     "",
++     {
++       "exact": "  interne\n  "
++     }
++   ],
++   "nested": {
++     "nullable": null,
++     "array": [
++       "a",
++       "b"
++     ],
++     "empty": {}
++   }
++ }
+
+ ❯ test/claudeTransportCost.test.ts:174:25
+    172|     expect(JSON.parse(transmitted)).toStrictEqual(context);
+    173|     expect(JSON.stringify(context)).toBe(original);
+    174|     expect(transmitted).toBe(original);
+       |                         ^
+    175|     expect(Buffer.byteLength(transmitted, "utf8"))
+    176|       .toBeLessThan(Buffer.byteLength(JSON.stringify(context, null, 2)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a simple request
+AssertionError: expected { model: 'fixture-fast-model', …(4) } to strictly equal { model: 'fixture-fast-model', …(4) }
+
+- Expected
++ Received
+
+@@ -1,11 +1,13 @@
+  {
+    "max_tokens": 1024,
+    "messages": [
+      {
+        "content": "Contexte actuel:
+- {\"label\":\"fixture\"}
++ {
++   \"label\": \"fixture\"
++ }
+
+  Décide quelle(s) action(s) prendre.",
+        "role": "user",
+      },
+    ],
+
+ ❯ test/claudeTransportCost.test.ts:186:36
+    184|     const value = input({ context });
+    185|     await createRealClaudeClient().decide(value);
+    186|     expect(capturedRequest().body).toStrictEqual({
+       |                                    ^
+    187|       model,
+    188|       max_tokens: 1024,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a large request
+AssertionError: expected { model: 'fixture-main-model', …(4) } to strictly equal { model: 'fixture-main-model', …(4) }
+
+- Expected
++ Received
+
+@@ -1,11 +1,13 @@
+  {
+    "max_tokens": 1024,
+    "messages": [
+      {
+        "content": "Contexte actuel:
+- {\"details\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}
++ {
++   \"details\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"
++ }
+
+  Décide quelle(s) action(s) prendre.",
+        "role": "user",
+      },
+    ],
+
+ ❯ test/claudeTransportCost.test.ts:186:36
+    184|     const value = input({ context });
+    185|     await createRealClaudeClient().decide(value);
+    186|     expect(capturedRequest().body).toStrictEqual({
+       |                                    ^
+    187|       model,
+    188|       max_tokens: 1024,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 10 passed (13)
+   Start at  07:02:44
+   Duration  368ms (transform 46%, import 29%, tests 19%, setup 3%, worker 2%)

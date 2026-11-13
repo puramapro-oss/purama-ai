@@ -1,12 +1,25 @@
 import assert from 'node:assert/strict';
+import { webcrypto } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 
 const source = readFileSync(new URL('../public/sw.js', import.meta.url), 'utf8');
 const ORIGIN = 'https://purama.example';
-const CURRENT_CACHE = 'purama-static-v2';
-const OFFLINE_BODY = '<!doctype html><h1>Tu es hors ligne</h1>';
+const CURRENT_CACHE = 'purama-offline-v8';
+const ASSETS = ['/offline.html', '/offline-workspace.js', '/offline-library-backup.js', '/manifest.json'];
+const ASSET_BYTES = new Map(ASSETS.map((path) => [path, readFileSync(new URL('../public' + path, import.meta.url))]));
+const CONTENT_TYPES = new Map([
+  ['/offline.html', 'text/html; charset=utf-8'],
+  ['/offline-workspace.js', 'application/javascript; charset=utf-8'],
+  ['/offline-library-backup.js', 'application/javascript; charset=utf-8'],
+  ['/manifest.json', 'application/json; charset=utf-8'],
+]);
+const OFFLINE_BODY = ASSET_BYTES.get('/offline.html').toString('utf8');
+
+function assetResponse(path) {
+  return new Response(ASSET_BYTES.get(path), { headers: { 'Content-Type': CONTENT_TYPES.get(path) } });
+}
 
 function createWorker() {
   const handlers = new Map();
@@ -17,12 +30,11 @@ function createWorker() {
   };
   let network = async (request) => {
     const path = new URL(request.url, ORIGIN).pathname;
-    return new Response(path === '/offline.html' ? OFFLINE_BODY : '{"name":"Purama"}', {
-      headers: { 'Content-Type': path === '/offline.html' ? 'text/html' : 'application/json' },
-    });
+    return ASSET_BYTES.has(path) ? assetResponse(path) : new Response('Missing', { status: 404 });
   };
   const absolute = (request) => new URL(typeof request === 'string' ? request : request.url, ORIGIN).href;
-  const fetchMock = async (request) => {
+  const fetchMock = async (input, options) => {
+    const request = typeof input === 'string' ? new Request(input, options) : input;
     calls.fetch.push(request);
     return network(request);
   };
@@ -31,6 +43,17 @@ function createWorker() {
       if (!stores.has(name)) stores.set(name, new Map());
       const entries = stores.get(name);
       return {
+        async put(request, response) {
+          const bytes = await response.arrayBuffer();
+          entries.set(absolute(request), new Response(bytes, {
+            status: response.status, statusText: response.statusText, headers: response.headers,
+          }));
+          calls.lifecycle.push('put:' + new URL(absolute(request)).pathname);
+        },
+        async match(request) {
+          calls.matches.push({ url: absolute(request), cacheName: name });
+          return entries.get(absolute(request))?.clone();
+        },
         async addAll(requests) {
           // Model the observable atomic contract: do not cache a partial batch.
           const batch = await Promise.all(Array.from(requests, async (request) => {
@@ -83,6 +106,7 @@ function createWorker() {
   };
   runInNewContext(source, {
     self, caches, fetch: fetchMock, Request, Response, URL,
+    crypto: webcrypto, AbortController, setTimeout, clearTimeout,
     console: { warn: (...args) => calls.warnings.push(args) },
   }, { filename: 'public/sw.js' });
 
@@ -106,7 +130,9 @@ function createWorker() {
     setNetwork(implementation) { network = implementation; },
     seed(name, path, body) {
       if (!stores.has(name)) stores.set(name, new Map());
-      stores.get(name).set(absolute(path), new Response(body));
+      stores.get(name).set(absolute(path), new Response(body, {
+        headers: { 'Content-Type': CONTENT_TYPES.get(path) || 'text/plain' },
+      }));
     },
     navigation(path = '/dashboard', extra = {}) {
       return dispatch('fetch', {
@@ -131,19 +157,16 @@ function createWorker() {
 test('install caches only public static resources without cookies, then skips waiting', async () => {
   const worker = createWorker();
   await worker.dispatch('install').lifetime;
-  assert.deepEqual(worker.calls.fetch.map((request) => new URL(request.url).pathname).sort(), [
-    '/manifest.json', '/offline.html',
-  ]);
+  assert.deepEqual(worker.calls.fetch.map((request) => new URL(request.url).pathname).sort(), [...ASSETS].sort());
   for (const request of worker.calls.fetch) {
     assert.equal(request.method, 'GET');
     assert.equal(request.credentials, 'omit');
-    assert.equal(request.cache, 'reload');
+    assert.equal(request.cache, 'no-store');
     assert.equal(request.redirect, 'error');
   }
-  assert.deepEqual(worker.calls.lifecycle, ['precache-complete', 'skipWaiting']);
-  assert.deepEqual(Array.from(worker.stores.get(CURRENT_CACHE).keys()).sort(), [
-    ORIGIN + '/manifest.json', ORIGIN + '/offline.html',
-  ]);
+  assert.deepEqual(worker.calls.lifecycle.slice(0, -1).sort(), ASSETS.map((path) => 'put:' + path).sort());
+  assert.equal(worker.calls.lifecycle.at(-1), 'skipWaiting');
+  assert.deepEqual(Array.from(worker.stores.get(CURRENT_CACHE).keys()).sort(), ASSETS.map((path) => ORIGIN + path).sort());
 });
 
 test('offline installation rejects without replacing or deleting a previous cache', async () => {
@@ -159,11 +182,9 @@ test('offline installation rejects without replacing or deleting a previous cach
 
 test('a failed required precache resource does not silently activate a partial installation', async () => {
   const worker = createWorker();
-  worker.setNetwork(async (request) => new Response(
-    request.url.endsWith('/offline.html') ? OFFLINE_BODY : 'Missing',
-    { status: request.url.endsWith('/offline.html') ? 200 : 404 },
-  ));
-  await assert.rejects(worker.dispatch('install').lifetime, /Precache request failed/);
+  worker.setNetwork(async (request) => request.url.endsWith('/offline.html')
+    ? assetResponse('/offline.html') : new Response('Missing', { status: 404 }));
+  await assert.rejects(worker.dispatch('install').lifetime, /Invalid offline resource:/);
   assert.equal(worker.stores.get(CURRENT_CACHE).size, 0);
   assert.equal(worker.calls.lifecycle.includes('skipWaiting'), false);
 });
@@ -171,13 +192,17 @@ test('a failed required precache resource does not silently activate a partial i
 test('activate removes only this worker’s old caches and the known legacy cache', async () => {
   const worker = createWorker();
   for (const name of [
-    CURRENT_CACHE, 'purama-static-v1', 'purama-v1', 'other-app-v1',
-    'purama-another-app-v1', 'unrelated-purama-static-v1',
+    CURRENT_CACHE, 'purama-static-v1', 'purama-static-v2', 'purama-offline-v1', 'purama-offline-v7',
+    'purama-v1', 'other-app-v1', 'purama-another-app-v1', 'unrelated-purama-static-v1',
+    'purama-static-documents', 'purama-offline-documents', 'purama-offline-vnext',
   ]) worker.seed(name, '/offline.html', name);
   await worker.dispatch('activate').lifetime;
-  assert.deepEqual(worker.calls.deleted.sort(), ['purama-static-v1', 'purama-v1']);
+  assert.deepEqual(worker.calls.deleted.sort(), [
+    'purama-static-v1', 'purama-static-v2', 'purama-offline-v1', 'purama-offline-v7', 'purama-v1',
+  ].sort());
   assert.deepEqual(Array.from(worker.stores.keys()).sort(), [
     CURRENT_CACHE, 'other-app-v1', 'purama-another-app-v1', 'unrelated-purama-static-v1',
+    'purama-static-documents', 'purama-offline-documents', 'purama-offline-vnext',
   ].sort());
   assert.equal(worker.calls.lifecycle.at(-1), 'claim');
 });
@@ -198,13 +223,12 @@ test('activate waits for cleanup before claiming windows', async () => {
 test('successful navigation responses are never written into the static cache', async () => {
   const worker = createWorker();
   await worker.dispatch('install').lifetime;
+  const matchesBeforeNavigation = worker.calls.matches.length;
   worker.setNetwork(async () => new Response('Private dashboard for an authenticated account'));
   const response = await worker.navigation('/dashboard/billing?session=private');
   assert.equal(await response.text(), 'Private dashboard for an authenticated account');
-  assert.deepEqual(Array.from(worker.stores.get(CURRENT_CACHE).keys()).sort(), [
-    ORIGIN + '/manifest.json', ORIGIN + '/offline.html',
-  ]);
-  assert.equal(worker.calls.matches.length, 0);
+  assert.deepEqual(Array.from(worker.stores.get(CURRENT_CACHE).keys()).sort(), ASSETS.map((path) => ORIGIN + path).sort());
+  assert.equal(worker.calls.matches.length, matchesBeforeNavigation);
 });
 
 test('HTTP errors remain HTTP errors rather than being reported as offline success', async () => {
@@ -219,11 +243,14 @@ test('HTTP errors remain HTTP errors rather than being reported as offline succe
 test('offline navigation reads only this worker’s static fallback', async () => {
   const worker = createWorker();
   worker.seed('another-app', '/offline.html', 'Other application’s private fallback');
-  worker.seed(CURRENT_CACHE, '/offline.html', OFFLINE_BODY);
+  for (const path of ASSETS) worker.seed(CURRENT_CACHE, path, ASSET_BYTES.get(path));
   worker.setNetwork(async () => { throw new TypeError('Offline'); });
   const response = await worker.navigation('/dashboard?token=not-cached');
   assert.equal(await response.text(), OFFLINE_BODY);
-  assert.deepEqual(worker.calls.matches, [{ url: ORIGIN + '/offline.html', cacheName: CURRENT_CACHE }]);
+  assert.deepEqual(worker.calls.matches, [
+    { url: ORIGIN + '/offline.html', cacheName: CURRENT_CACHE },
+    ...ASSETS.map((path) => ({ url: ORIGIN + path, cacheName: CURRENT_CACHE })),
+  ]);
 });
 
 test('missing or inaccessible offline storage produces an explicit non-cacheable 503', async (t) => {
@@ -232,10 +259,10 @@ test('missing or inaccessible offline storage produces an explicit non-cacheable
       const worker = createWorker();
       worker.seed('another-app', '/offline.html', 'Must not use this fallback');
       worker.setNetwork(async () => { throw new TypeError('Offline'); });
-      if (failedStorage) worker.caches.match = async () => { throw new Error('Storage unavailable'); };
+      if (failedStorage) worker.caches.open = async () => { throw new Error('Storage unavailable'); };
       const response = await worker.navigation();
       assert.equal(response.status, 503);
-      assert.match(await response.text(), /Hors ligne/);
+      assert.equal(await response.text(), 'Espace hors connexion indisponible. Reconnectez-vous au site pour le préparer.');
       assert.match(response.headers.get('Content-Type'), /^text\/plain/);
       assert.equal(response.headers.get('Cache-Control'), 'no-store');
     });

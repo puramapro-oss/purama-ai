@@ -2,8 +2,12 @@ import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../config.js";
 import type { AgentDecision, AnyToolDefinition } from "../engine/types.js";
 import { schemaForTool, validateToolParams } from "../engine/tool-input.js";
+import { bounded } from "../runtime/lifecycle.js";
 import type { ClaudeClient, ClaudeDecideInput } from "./types.js";
 import { buildAssistantSystemPrompt } from "./assistant-policy.js";
+import { normalizeModelUsage } from "./usage.js";
+import { configuredModelCatalog, normalizeModelCatalog, resolveModelExecutionPlan, type ModelExecutionCapability } from "./execution-profile.js";
+import { createLmStudioTransport, type LmStudioOptions } from "./lmstudio.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -12,35 +16,108 @@ import { buildAssistantSystemPrompt } from "./assistant-policy.js";
  * avant le vrai lancement (règle permanente 2026-07-26 : ne bloque pas le dev, mais bloque le launch).
  */
 /**
- * Routage Haiku/Sonnet selon complexité (brief §PRICING "maximiser la marge") : un cycle avec peu
- * d'outils et peu de contexte est une décision simple (ex: choisir d'envoyer 1 relance générée à
- * partir de 2-3 champs) — Haiku suffit. Dès que le nombre d'outils ou le volume de contexte grandit,
- * la décision devient plus fine (arbitrages entre plusieurs actions possibles) — Sonnet reste utilisé.
+ * Keep the primary model for sensitive, financial/legal and unqualified custom
+ * decisions. Prompt length is a workload heuristic, not proof of equivalent
+ * quality. Preserve the existing fast route only outside these guarded cases;
+ * real model quality and cost still need workload-specific evaluation.
  */
 export function selectModel(input: ClaudeDecideInput): string {
+  if (input.preferences !== undefined) {
+    return resolveModelExecutionPlan(input.preferences, configuredModelCatalog(
+      config.anthropicModelMain, config.anthropicModelFast, process.env.KARTA_MODEL_PROFILES_JSON,
+    )).model;
+  }
+  if (input.agentType.startsWith("custom:") || input.tools.some(tool => tool.sensitive)
+    || ["legal", "compta", "facture-pro", "rapports-financiers", "chasseur-de-paiements"].includes(input.agentType)) {
+    return config.anthropicModelMain;
+  }
   const contextSize = JSON.stringify(input.context).length;
   const isSimple = input.tools.length <= 2 && contextSize < 2000 && input.systemPrompt.length < 1500;
   return isSimple ? config.anthropicModelFast : config.anthropicModelMain;
 }
 
-export function createRealClaudeClient(): ClaudeClient {
-  const client = new Anthropic({ apiKey: config.anthropicApiKey });
+export function createRealClaudeClient(options: {
+  modelCatalog?: ModelExecutionCapability[];
+  lmStudio?: LmStudioOptions;
+  /** An account qualified against Anthropic's own catalogue must use that same
+   * native endpoint and key, without inheriting a compatible gateway override. */
+  nativeAnthropicAccount?: { apiKey: string };
+} = {}): ClaudeClient {
+  if (options.lmStudio && options.nativeAnthropicAccount) {
+    throw new Error("Les transports LM Studio et Anthropic natif ne peuvent pas être combinés");
+  }
+  const timeoutMs = config.anthropicTimeoutMs;
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) {
+    throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
+  }
+  const modelCatalog = normalizeModelCatalog(options.modelCatalog ?? configuredModelCatalog(
+    config.anthropicModelMain, config.anthropicModelFast, process.env.KARTA_MODEL_PROFILES_JSON,
+  ));
+  // KARTA owns durable delivery/recovery. The SDK's implicit retries can repeat
+  // a paid inference after an ambiguous response, outside that execution log.
+  const local = options.lmStudio ? createLmStudioTransport(options.lmStudio) : undefined;
+  const client = new Anthropic({
+    apiKey: options.nativeAnthropicAccount?.apiKey ?? config.anthropicApiKey,
+    ...local?.clientOptions,
+    ...(options.nativeAnthropicAccount ? { baseURL: "https://api.anthropic.com", authToken: null } : {}),
+    timeout: timeoutMs,
+    maxRetries: 0,
+    // The SDK's debug logger can include complete prompts and provider bodies.
+    // KARTA records its own minimized traces instead.
+    logLevel: "off",
+  });
 
   return {
     isMock: false,
     async decide(input: ClaudeDecideInput): Promise<AgentDecision> {
-      const response = await client.messages.create({
-        model: selectModel(input),
-        max_tokens: 1024,
-        system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
-        messages: [
-          {
-            role: "user",
-            content: `Contexte actuel:\n${JSON.stringify(input.context, null, 2)}\n\nDécide quelle(s) action(s) prendre.`,
-          },
-        ],
-        tools: toAnthropicTools(input.tools),
-      });
+      if (input.signal?.aborted) throw new Error("Appel au modèle annulé : aucune décision disponible");
+      const plan = input.preferences === undefined ? undefined
+        : resolveModelExecutionPlan(input.preferences, modelCatalog, timeoutMs);
+      // A local transport is pinned to one loaded instance. A saved preference
+      // must match it exactly; do not silently replace the user's model or send
+      // a different model to the locally qualified route.
+      if (local && plan && plan.model !== local.model) {
+        throw new Error("Le modèle choisi ne correspond pas au modèle local qualifié : aucune action exécutable");
+      }
+      if (plan) input.onExecutionPlan?.(structuredClone(plan));
+      const requestTimeoutMs = plan?.timeoutMs ?? timeoutMs;
+      // Reuse the existing monotonic runtime bound. The SDK's fetch timeout
+      // ends at headers; awaiting the full APIPromise also covers JSON/error
+      // body consumption and discards late results from non-cooperative I/O.
+      const { model, response } = await bounded(async signal => {
+        // Select after admission so pre-cancelled calls do not read context;
+        // keep the same selected model for the request and its usage receipt.
+        const model = plan?.model ?? local?.model ?? selectModel(input);
+        const send = () => client.messages.create({
+          model,
+          max_tokens: plan?.maxOutputTokens ?? 1024,
+          ...plan?.providerOptions,
+          system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
+          messages: [
+            {
+              role: "user",
+              content: `Contexte actuel:\n${JSON.stringify(input.context)}\n\nDécide quelle(s) action(s) prendre.`,
+            },
+          ],
+          tools: toAnthropicTools(input.tools),
+        } as Anthropic.MessageCreateParamsNonStreaming, { signal, timeout: requestTimeoutMs, maxRetries: 0 });
+        const response = local ? await local.run(signal, input.tools.length > 0, send) : await send();
+        return { model, response };
+      }, requestTimeoutMs, input.signal)
+        .catch(() => {
+          // Neither a provider response nor a caller's abort reason is safe
+          // to copy into a public cycle error or the worker's failed log.
+          throw new Error(input.signal?.aborted
+            ? "Appel au modèle annulé : aucune décision disponible"
+            : "Réponse du modèle indisponible ou délai dépassé : aucune décision disponible");
+        });
+
+      // Rejected/truncated decisions can still consume provider tokens. Keep
+      // their receipt before validating content, without another HTTP request.
+      input.onUsage?.(normalizeModelUsage(response, model, client.baseURL));
+      if ((plan || local) && response.model !== model) {
+        throw new Error("Le fournisseur n’a pas confirmé le modèle choisi : aucune action exécutable");
+      }
 
       // This client requests only client tools, without stop sequences or a
       // server-tool continuation loop. Never turn a truncated, paused, refused

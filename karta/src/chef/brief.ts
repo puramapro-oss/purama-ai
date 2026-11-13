@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { normalizeChefCapabilitySelection, type ChefCapabilitySelection } from "./capability-selection.js";
 
 export type ChefProvider = "auto" | "codex" | "claude" | "glm";
 export type ChefAccessMode = "read" | "write";
@@ -27,6 +28,8 @@ export interface ChefBriefTask {
   estimatedTokens?: number;
   estimatedCostMicros?: number;
   verificationProfiles?: string[];
+  /** Optional selection contract. Absence preserves legacy task/driver behavior. */
+  capabilitySelection?: ChefCapabilitySelection;
 }
 
 export interface ChefBrief {
@@ -119,6 +122,7 @@ export function validateChefBrief(input: ChefBrief): void {
         throw new Error(`${label} invalide pour ${taskKey}`);
       }
     }
+    if (task.capabilitySelection !== undefined) normalizeChefCapabilitySelection(task.capabilitySelection);
     uniqueStrings(task.dependsOn, `dependsOn(${taskKey})`);
     const linked = uniqueStrings(task.requirementKeys, `requirementKeys(${taskKey})`);
     const verificationProfiles = uniqueStrings(task.verificationProfiles, `verificationProfiles(${taskKey})`);
@@ -197,6 +201,8 @@ export function normalizeChefBrief(input: ChefBrief): ChefBrief {
         ...(task.estimatedTokens !== undefined ? { estimatedTokens: task.estimatedTokens } : {}),
         ...(task.estimatedCostMicros !== undefined ? { estimatedCostMicros: task.estimatedCostMicros } : {}),
         verificationProfiles: [...(task.verificationProfiles ?? [])].sort(),
+        ...(task.capabilitySelection !== undefined
+          ? { capabilitySelection: normalizeChefCapabilitySelection(task.capabilitySelection) } : {}),
       }))
       .sort((a, b) => a.key.localeCompare(b.key)),
   };
