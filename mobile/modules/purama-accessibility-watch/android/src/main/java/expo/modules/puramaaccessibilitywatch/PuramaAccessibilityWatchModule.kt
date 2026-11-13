@@ -99,7 +99,7 @@ class PuramaAccessibilityWatchModule : Module(), MessageClient.OnMessageReceived
     Name("PuramaAccessibilityWatch")
     Events("onWatchMessage", "onWatchStatus")
     OnCreate {
-      foreground = appContext.reactContext?.lifecycleState == LifecycleState.RESUMED
+      foreground = appContext.hostingRuntimeContext.reactContext?.lifecycleState == LifecycleState.RESUMED
       engine.message = { if (!destroyed) sendEvent("onWatchMessage", mapOf("message" to it.toString())) }
       engine.status = { if (!destroyed) sendEvent("onWatchStatus", mapOf("message" to it.toString())); updateTicker() }
       engine.sendWire = ::sendPacket
