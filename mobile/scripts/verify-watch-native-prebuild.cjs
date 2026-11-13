@@ -31,7 +31,7 @@ const settings = fs.readFileSync(path.join(root, 'android/settings.gradle'), 'ut
 const inputs = ['app.json', 'package.json', 'package-lock.json', 'modules/purama-accessibility-watch/app.plugin.cjs',
   'modules/purama-accessibility-watch/expo-module.config.json', 'modules/purama-accessibility-watch/apple/WatchWire.swift',
   'modules/purama-accessibility-watch/apple/PuramaAccessibilityWatchModule.swift', 'modules/purama-accessibility-watch/apple/PuramaAccessibilityWatch.podspec',
-  'modules/purama-accessibility-watch/android/build.gradle', 'modules/purama-accessibility-watch/android/src/main/java/expo/modules/puramaaccessibilitywatch/WatchWire.kt',
+  'modules/purama-accessibility-watch/android/build.gradle', 'modules/purama-accessibility-watch/android/src/shared/java/expo/modules/puramaaccessibilitywatch/WatchWire.kt',
   'modules/purama-accessibility-watch/android/src/main/java/expo/modules/puramaaccessibilitywatch/PuramaAccessibilityWatchModule.kt',
   'watch/watchos/PuramaAccessibilityWatchApp.swift', 'watch/watchos/Info.plist', 'watch/wear/build.gradle', 'watch/wear/src/main/AndroidManifest.xml',
   'watch/wear/src/main/java/dev/purama/accessibilitywatch/WatchActivity.kt', 'watch/wear/src/main/res/values/wear.xml'];

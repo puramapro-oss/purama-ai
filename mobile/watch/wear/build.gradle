@@ -23,10 +23,9 @@ android {
   }
   buildTypes { debug { signingConfig signingConfigs.debug } }
   sourceSets {
-    main.java.srcDirs += '../../modules/purama-accessibility-watch/android/src/main/java'
+    main.java.srcDirs += '../../modules/purama-accessibility-watch/android/src/shared/java'
   }
   compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
   kotlinOptions { jvmTarget = '17' }
 }
-kotlin.sourceSets.getByName('main').kotlin.exclude('**/PuramaAccessibilityWatchModule.kt')
 dependencies { implementation 'com.google.android.gms:play-services-wearable:20.0.1' }
