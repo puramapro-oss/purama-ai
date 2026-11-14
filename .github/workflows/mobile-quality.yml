@@ -64,6 +64,8 @@ jobs:
         run: npm run test:watch-native 2>&1 | tee qa-results/watch-native-tests.log
       - name: Test the offline audit binding and refusal cases
         run: npm run test:audit-snapshot 2>&1 | tee qa-results/audit-snapshot-tests.log
+      - name: Test authorized registry renewal security guards (offline fixtures)
+        run: node --test tests/audit-ci-live.test.cjs 2>&1 | tee qa-results/audit-ci-live-tests.log
       - name: Check SDK dependency alignment
         run: npm run check:dependencies 2>&1 | tee qa-results/expo-install-check.log
       - name: Typecheck the mobile application
@@ -72,8 +74,10 @@ jobs:
         run: npm run export:android 2>&1 | tee qa-results/metro-android.log
       - name: Export iOS with Metro
         run: npm run export:ios 2>&1 | tee qa-results/metro-ios.log
-      - name: Audit snapshot binding — no registry request
-        run: npm run verify:audit-snapshot 2>&1 | tee qa-results/audit-snapshot-binding.log
+      - name: Verify approved audit or perform authorized fresh registry audit
+        env:
+          PURAMA_ALLOW_LIVE_AUDIT: '1'
+        run: node scripts/qualify-audit-ci.cjs 2>&1 | tee qa-results/audit-live-verification.log
       - name: Run Expo Doctor including public metadata checks
         run: npm exec --yes --package=expo-doctor@1.21.6 -- expo-doctor 2>&1 | tee qa-results/expo-doctor.log
       - name: Preserve qualification evidence
