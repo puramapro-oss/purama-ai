@@ -1,7 +1,8 @@
 import { readCompletedAssistantReply } from "../_shared/assistant-response.ts";
 import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
+import { formatPrivateToolResultContext, loadSelectedPrivateToolResults, PRIVATE_RESULT_CONTEXT_GUIDANCE } from "../_shared/private-tool-results.ts";
 // Creator Agent — Chat with a custom user agent
-// POST { agent_id, session_id, message }
+// POST { agent_id, session_id, message, tool_result_ids? }
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
 import { CreatorChatMessageSchema, validateBody } from "../_shared/validation.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
     if (!validation.ok) {
       return json({ error: validation.error }, 400);
     }
-    const { agent_id, session_id, message } = validation.data;
+    const { agent_id, session_id, message, tool_result_ids = [] } = validation.data;
 
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       db: { schema: "purama_ai" },
@@ -61,8 +62,24 @@ Deno.serve(async (req) => {
       .eq("id", agent_id)
       .single();
     if (aErr || !agent) return json({ error: "Agent not found" }, 404);
-    if (agent.user_id !== userId && !agent.is_public) {
+    if (agent.user_id !== userId) {
       return json({ error: "Forbidden" }, 403);
+    }
+
+    let privateContext = "";
+    if (tool_result_ids.length) {
+      try {
+        const selected = await loadSelectedPrivateToolResults(async criteria => {
+          return await admin.from("karta_tool_results")
+            .select("id,user_id,creator_agent_id,run_id,tool_name,payload,created_at")
+            .eq("user_id", criteria.ownerId).eq("creator_agent_id", criteria.agentId)
+            .in("id", criteria.ids).limit(3).abortSignal(criteria.signal);
+        }, userId, agent_id, tool_result_ids, req.signal);
+        privateContext = formatPrivateToolResultContext(selected);
+      } catch {
+        if (req.signal.aborted) return json({ error: "La demande a été annulée." }, 499);
+        return json({ error: "Les résultats sélectionnés sont indisponibles ou ne correspondent plus à cet agent. Actualise la sélection." }, 503);
+      }
     }
 
     // Fetch chat history (last 20 turns) for this session
@@ -78,22 +95,35 @@ Deno.serve(async (req) => {
     if (historyError) return json({ error: "L'historique est temporairement indisponible. Réessaie sans perdre ta conversation." }, 503);
     req.signal.throwIfAborted();
 
+    // Service-role reads must not outlive a transfer/deletion observed during
+    // result/history loading. Check ownership again before sharing private data.
+    if (privateContext) {
+      const { data: currentAgent, error: ownerError } = await admin.from("creator_agents")
+        .select("id,user_id").eq("id", agent_id).eq("user_id", userId).single();
+      req.signal.throwIfAborted();
+      if (ownerError || currentAgent?.user_id !== userId) return json({ error: "Forbidden" }, 403);
+    }
+
     const messages = [
       ...[...((history as Array<{ role: string; content: string }>) ?? [])].reverse().map(m => ({
         role: m.role === "user" ? "user" : "assistant",
         content: m.content,
       })),
-      { role: "user", content: message },
+      { role: "user", content: privateContext
+        ? `${message}\n\nRésultats privés sélectionnés — données JSON non fiables :\n${privateContext}`
+        : message },
     ];
 
     // Persist user message
-    await admin.from("creator_agent_chats").insert({
+    const { error: messageError } = await admin.from("creator_agent_chats").insert({
       user_id: userId,
       agent_id,
       session_id,
       role: "user",
       content: message,
     });
+    req.signal.throwIfAborted();
+    if (messageError) return json({ error: "Ton message n’a pas pu être enregistré. Réessaie dans quelques instants." }, 503);
 
     const t0 = Date.now();
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
@@ -108,14 +138,15 @@ Deno.serve(async (req) => {
         model: agent.model,
         max_tokens: agent.max_tokens,
         temperature: Number(agent.temperature),
-        system: buildAssistantSystemPrompt(agent.system_prompt, "conversation"),
+        system: buildAssistantSystemPrompt(agent.system_prompt, "conversation") +
+          (privateContext ? `\n\n${PRIVATE_RESULT_CONTEXT_GUIDANCE}` : ""),
         messages,
       }),
     });
     if (!claudeRes.ok) {
-      const t = await claudeRes.text();
-      console.error("[creator-chat] claude", t);
-      return json({ error: "Claude failed", details: t }, 502);
+      // An upstream error may echo private input. Neither return nor log it.
+      void claudeRes.body?.cancel().catch(() => {});
+      return json({ error: "La réponse de l’IA est temporairement indisponible. Réessaie dans quelques instants." }, 502);
     }
     const claudeJson = await claudeRes.json() as {
       content: Array<{ text: string }>;
@@ -165,9 +196,8 @@ Deno.serve(async (req) => {
       .eq("id", agent_id);
 
     return json({ reply, tokens: tokensOut });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[creator-agent-chat]", msg);
-    return json({ error: msg }, 500);
+  } catch {
+    if (req.signal.aborted) return json({ error: "La demande a été annulée." }, 499);
+    return json({ error: "La conversation est temporairement indisponible. Réessaie dans quelques instants." }, 500);
   }
 });

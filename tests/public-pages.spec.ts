@@ -23,12 +23,11 @@ test.describe('Pages publiques — Chargement & Contenu', () => {
       const response = await p.goto(page.path, { waitUntil: 'networkidle' });
       expect(response?.status()).toBe(200);
 
-      // Page has visible content (not blank)
-      const body = await p.locator('body').innerText();
-      expect(body?.length).toBeGreaterThan(10);
-
-      // Check rendered text, not a script, metadata or a hidden HTML string.
+      // Wait for the lazy route's rendered text before taking a length snapshot.
+      // Scripts, metadata and hidden HTML must not satisfy the content check.
       await expect(p.locator('body')).toContainText(new RegExp(page.content, 'i'), { useInnerText: true });
+      const body = await p.locator('body').innerText();
+      expect(body.length).toBeGreaterThan(10);
       await expect(p.getByRole('heading', { name: 'Une erreur est survenue', exact: true })).toHaveCount(0);
     });
   }

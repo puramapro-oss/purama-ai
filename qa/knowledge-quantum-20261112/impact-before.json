@@ -1,0 +1,263 @@
+{
+  "status": "PARTIEL",
+  "note": "Fresh full index failed twice with exit 1 and once with exit 137. Prior graph is supplementary only; targeted file equality checked before edits; static source review required. No authority for unrelated code changes.",
+  "prior_index_commit": "c81d316f1a7a308727806128ba3bbfa196365ee6",
+  "prior_index_timestamp": "2026-11-12T00:54:39.654Z",
+  "impacts": [
+    {
+      "symbol": "CUSTOM_AGENT_TOOLS",
+      "path": "karta/src/tools/customRegistry.ts",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "CUSTOM_AGENT_TOOLS",
+        "--direction",
+        "upstream",
+        "--file",
+        "karta/src/tools/customRegistry.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "same_file_bytes_as_prior_index_worktree": true,
+      "impact": {
+        "target": {
+          "id": "Const:karta/src/tools/customRegistry.ts:CUSTOM_AGENT_TOOLS",
+          "name": "CUSTOM_AGENT_TOOLS",
+          "type": "Const",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 0,
+        "risk": "UNKNOWN",
+        "riskSharedAxes": "UNKNOWN",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "epistemic": "exact",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {},
+        "affected_processes": [],
+        "affected_modules": [],
+        "byDepth": {}
+      }
+    },
+    {
+      "symbol": "resolveCustomAgentTools",
+      "path": "karta/src/tools/customRegistry.ts",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "resolveCustomAgentTools",
+        "--direction",
+        "upstream",
+        "--file",
+        "karta/src/tools/customRegistry.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "same_file_bytes_as_prior_index_worktree": true,
+      "impact": {
+        "target": {
+          "id": "Function:karta/src/tools/customRegistry.ts:resolveCustomAgentTools",
+          "name": "resolveCustomAgentTools",
+          "type": "Function",
+          "filePath": "karta/src/tools/customRegistry.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 5,
+        "risk": "LOW",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 2
+        },
+        "byDepthCounts": {
+          "1": 1,
+          "2": 1,
+          "3": 3
+        },
+        "affected_processes": [],
+        "affected_modules": [
+          {
+            "name": "Engine",
+            "hits": 4,
+            "impact": "direct"
+          },
+          {
+            "name": "Chef",
+            "hits": 1,
+            "impact": "indirect"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:karta/src/agents/customAgent.ts:buildCustomAgentDefinition",
+              "name": "buildCustomAgentDefinition",
+              "filePath": "karta/src/agents/customAgent.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ],
+          "2": [
+            {
+              "depth": 2,
+              "id": "Function:karta/src/engine/resolveDefinition.ts:resolveAgentDefinition",
+              "name": "resolveAgentDefinition",
+              "filePath": "karta/src/engine/resolveDefinition.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ],
+          "3": [
+            {
+              "depth": 3,
+              "id": "Function:karta/src/engine/approval.ts:resolvePendingAction",
+              "name": "resolvePendingAction",
+              "filePath": "karta/src/engine/approval.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            },
+            {
+              "depth": 3,
+              "id": "Function:karta/src/engine/loop.ts:runAgentCycle",
+              "name": "runAgentCycle",
+              "filePath": "karta/src/engine/loop.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            },
+            {
+              "depth": 3,
+              "id": "Function:karta/src/queue/worker.ts:startAgentCycleWorker",
+              "name": "startAgentCycleWorker",
+              "filePath": "karta/src/queue/worker.ts",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "TOOL_OPTIONS",
+      "path": "src/lib/creator-agent.ts",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "TOOL_OPTIONS",
+        "--direction",
+        "upstream",
+        "--file",
+        "src/lib/creator-agent.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "same_file_bytes_as_prior_index_worktree": true,
+      "impact": {
+        "target": {
+          "id": "Const:src/lib/creator-agent.ts:TOOL_OPTIONS",
+          "name": "TOOL_OPTIONS",
+          "type": "Const",
+          "filePath": "src/lib/creator-agent.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 0,
+        "risk": "UNKNOWN",
+        "riskSharedAxes": "UNKNOWN",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "epistemic": "exact",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {},
+        "affected_processes": [],
+        "affected_modules": [],
+        "byDepth": {}
+      }
+    },
+    {
+      "symbol": "REAL_TOOL_NAMES",
+      "path": "supabase/functions/creator-agent-generate/index.ts",
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "impact",
+        "REAL_TOOL_NAMES",
+        "--direction",
+        "upstream",
+        "--file",
+        "supabase/functions/creator-agent-generate/index.ts",
+        "--repo",
+        "/workspace/scratch/c7af123ff4f9/nov12-iao-audit"
+      ],
+      "cwd": "/workspace/scratch/4f500ff8ab47/purama-ai",
+      "exit_code": 0,
+      "same_file_bytes_as_prior_index_worktree": true,
+      "impact": {
+        "target": {
+          "id": "Const:supabase/functions/creator-agent-generate/index.ts:REAL_TOOL_NAMES",
+          "name": "REAL_TOOL_NAMES",
+          "type": "Const",
+          "filePath": "supabase/functions/creator-agent-generate/index.ts"
+        },
+        "direction": "upstream",
+        "impactedCount": 0,
+        "risk": "UNKNOWN",
+        "riskSharedAxes": "UNKNOWN",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "epistemic": "exact",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "byDepthCounts": {},
+        "affected_processes": [],
+        "affected_modules": [],
+        "byDepth": {}
+      }
+    }
+  ],
+  "exploration_query": {
+    "exit_code": 0,
+    "stdout": "{\n  \"processes\": [],\n  \"process_symbols\": [],\n  \"definitions\": [],\n  \"timing\": {\n    \"bm25\": 2.4,\n    \"vector\": 13.3,\n    \"merge\": 0,\n    \"symbol_lookup\": 0.2,\n    \"ranking\": 0,\n    \"formatting\": 0,\n    \"wall\": 16.5\n  },\n  \"warning\": \"FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset. (resolved: purama-ai/branch:feat/iao-dreamforge-creation-20261112, indexed 2026-11-12T00:54:39.654Z)\"\n}\n",
+    "stderr": "\n  GitNexus Query (1.6.12)\n{\"level\":40,\"time\":1794458458166,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  }
+}

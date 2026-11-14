@@ -1,0 +1,1091 @@
+{
+  "base": {
+    "repository": "puramapro-oss/purama-ai",
+    "pr": 45,
+    "url": "https://github.com/puramapro-oss/purama-ai/pull/45",
+    "state": "open",
+    "draft": true,
+    "headRef": "audit/unlazy-consolidation-20261111-ac3c",
+    "headSha": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+    "baseRef": "audit/reliability-oauth-20261110",
+    "baseSha": "c04e2cb683ff81efe8443f4aa32d3447afb3b143",
+    "verifiedAt": "2026-11-11T18:41:26.954Z",
+    "referenceKind": "Pinned consolidation head supplied for integration; no moving-head chase"
+  },
+  "sourceSnapshot": {
+    "tree": "3774728bac87d936b309fffa00730dfe011be442",
+    "trackedBlobs": 1729,
+    "verified": "Each of the 12 changed upstream blobs and file modes matches the remote recursive tree; local rebuilt tree and exact commit object match the pinned new base."
+  },
+  "gitnexus": {
+    "impacts": [
+      {
+        "target": {
+          "id": "Function:src/components/voice/VoiceMode.tsx:VoiceMode",
+          "name": "VoiceMode",
+          "type": "Function",
+          "filePath": "src/components/voice/VoiceMode.tsx"
+        },
+        "direction": "upstream",
+        "impactedCount": 6,
+        "risk": "CRITICAL",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 3,
+          "processes_affected": 5,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 3,
+          "2": 3
+        },
+        "affected_processes": [
+          {
+            "name": "CreatorAgentDetail",
+            "type": "Function",
+            "filePath": "src/pages/CreatorAgentDetail.tsx",
+            "affected_process_count": 7,
+            "total_hits": 7,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "LegalAgentChat",
+            "type": "Function",
+            "filePath": "src/pages/LegalAgentChat.tsx",
+            "affected_process_count": 7,
+            "total_hits": 7,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "ComptaAgent",
+            "type": "Function",
+            "filePath": "src/pages/ComptaAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "EmailAgent",
+            "type": "Function",
+            "filePath": "src/pages/EmailAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "PartnerAgent",
+            "type": "Function",
+            "filePath": "src/pages/PartnerAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          }
+        ],
+        "affected_modules": [
+          {
+            "name": "Pages",
+            "hits": 6,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab",
+              "name": "AgentChatTab",
+              "filePath": "src/components/voice/AgentChatTab.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            },
+            {
+              "depth": 1,
+              "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail",
+              "name": "CreatorAgentDetail",
+              "filePath": "src/pages/CreatorAgentDetail.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_99_creatoragentdetail",
+                  "label": "CreatorAgentDetail → CloseQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_94_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Resolve",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_170_creatoragentdetail",
+                  "label": "CreatorAgentDetail → UseRequestScope",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_173_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Interrupt",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_365_creatoragentdetail",
+                  "label": "CreatorAgentDetail → UseAuth",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_93_creatoragentdetail",
+                  "label": "CreatorAgentDetail → AssertCurrent",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_100_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Disconnect",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 1,
+              "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat",
+              "name": "LegalAgentChat",
+              "filePath": "src/pages/LegalAgentChat.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_139_legalagentchat",
+                  "label": "LegalAgentChat → Resolve",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_145_legalagentchat",
+                  "label": "LegalAgentChat → Disconnect",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_203_legalagentchat",
+                  "label": "LegalAgentChat → Interrupt",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_421_legalagentchat",
+                  "label": "LegalAgentChat → UseAuth",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_222_legalagentchat",
+                  "label": "LegalAgentChat → UseRequestScope",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_144_legalagentchat",
+                  "label": "LegalAgentChat → CloseQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_138_legalagentchat",
+                  "label": "LegalAgentChat → AssertCurrent",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            }
+          ],
+          "2": [
+            {
+              "depth": 2,
+              "id": "Function:src/pages/ComptaAgent.tsx:ComptaAgent",
+              "name": "ComptaAgent",
+              "filePath": "src/pages/ComptaAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_185_comptaagent",
+                  "label": "ComptaAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_67_comptaagent",
+                  "label": "ComptaAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 2,
+              "id": "Function:src/pages/EmailAgent.tsx:EmailAgent",
+              "name": "EmailAgent",
+              "filePath": "src/pages/EmailAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_131_emailagent",
+                  "label": "EmailAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_252_emailagent",
+                  "label": "EmailAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 2,
+              "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent",
+              "name": "PartnerAgent",
+              "filePath": "src/pages/PartnerAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_357_partneragent",
+                  "label": "PartnerAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_201_partneragent",
+                  "label": "PartnerAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "target": {
+          "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab",
+          "name": "AgentChatTab",
+          "type": "Function",
+          "filePath": "src/components/voice/AgentChatTab.tsx"
+        },
+        "direction": "upstream",
+        "impactedCount": 3,
+        "risk": "HIGH",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 3,
+          "processes_affected": 3,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 3
+        },
+        "affected_processes": [
+          {
+            "name": "ComptaAgent",
+            "type": "Function",
+            "filePath": "src/pages/ComptaAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "EmailAgent",
+            "type": "Function",
+            "filePath": "src/pages/EmailAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "PartnerAgent",
+            "type": "Function",
+            "filePath": "src/pages/PartnerAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          }
+        ],
+        "affected_modules": [
+          {
+            "name": "Pages",
+            "hits": 3,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:src/pages/ComptaAgent.tsx:ComptaAgent",
+              "name": "ComptaAgent",
+              "filePath": "src/pages/ComptaAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_185_comptaagent",
+                  "label": "ComptaAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_67_comptaagent",
+                  "label": "ComptaAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 1,
+              "id": "Function:src/pages/EmailAgent.tsx:EmailAgent",
+              "name": "EmailAgent",
+              "filePath": "src/pages/EmailAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_131_emailagent",
+                  "label": "EmailAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_252_emailagent",
+                  "label": "EmailAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 1,
+              "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent",
+              "name": "PartnerAgent",
+              "filePath": "src/pages/PartnerAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_357_partneragent",
+                  "label": "PartnerAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_201_partneragent",
+                  "label": "PartnerAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "target": {
+          "id": "Function:src/components/voice/VoiceMode.tsx:PhaseLabel",
+          "name": "PhaseLabel",
+          "type": "Function",
+          "filePath": "src/components/voice/VoiceMode.tsx"
+        },
+        "direction": "upstream",
+        "impactedCount": 7,
+        "risk": "CRITICAL",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 5,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1,
+          "2": 3,
+          "3": 3
+        },
+        "affected_processes": [
+          {
+            "name": "CreatorAgentDetail",
+            "type": "Function",
+            "filePath": "src/pages/CreatorAgentDetail.tsx",
+            "affected_process_count": 7,
+            "total_hits": 7,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "LegalAgentChat",
+            "type": "Function",
+            "filePath": "src/pages/LegalAgentChat.tsx",
+            "affected_process_count": 7,
+            "total_hits": 7,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "ComptaAgent",
+            "type": "Function",
+            "filePath": "src/pages/ComptaAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "EmailAgent",
+            "type": "Function",
+            "filePath": "src/pages/EmailAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "PartnerAgent",
+            "type": "Function",
+            "filePath": "src/pages/PartnerAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          }
+        ],
+        "affected_modules": [
+          {
+            "name": "Pages",
+            "hits": 7,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:src/components/voice/VoiceMode.tsx:VoiceMode",
+              "name": "VoiceMode",
+              "filePath": "src/components/voice/VoiceMode.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ],
+          "2": [
+            {
+              "depth": 2,
+              "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab",
+              "name": "AgentChatTab",
+              "filePath": "src/components/voice/AgentChatTab.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            },
+            {
+              "depth": 2,
+              "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail",
+              "name": "CreatorAgentDetail",
+              "filePath": "src/pages/CreatorAgentDetail.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_94_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Resolve",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_170_creatoragentdetail",
+                  "label": "CreatorAgentDetail → UseRequestScope",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_173_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Interrupt",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_365_creatoragentdetail",
+                  "label": "CreatorAgentDetail → UseAuth",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_99_creatoragentdetail",
+                  "label": "CreatorAgentDetail → CloseQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_93_creatoragentdetail",
+                  "label": "CreatorAgentDetail → AssertCurrent",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_100_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Disconnect",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 2,
+              "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat",
+              "name": "LegalAgentChat",
+              "filePath": "src/pages/LegalAgentChat.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_139_legalagentchat",
+                  "label": "LegalAgentChat → Resolve",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_145_legalagentchat",
+                  "label": "LegalAgentChat → Disconnect",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_203_legalagentchat",
+                  "label": "LegalAgentChat → Interrupt",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_421_legalagentchat",
+                  "label": "LegalAgentChat → UseAuth",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_222_legalagentchat",
+                  "label": "LegalAgentChat → UseRequestScope",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_144_legalagentchat",
+                  "label": "LegalAgentChat → CloseQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_138_legalagentchat",
+                  "label": "LegalAgentChat → AssertCurrent",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            }
+          ],
+          "3": [
+            {
+              "depth": 3,
+              "id": "Function:src/pages/ComptaAgent.tsx:ComptaAgent",
+              "name": "ComptaAgent",
+              "filePath": "src/pages/ComptaAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_185_comptaagent",
+                  "label": "ComptaAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_67_comptaagent",
+                  "label": "ComptaAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 3,
+              "id": "Function:src/pages/EmailAgent.tsx:EmailAgent",
+              "name": "EmailAgent",
+              "filePath": "src/pages/EmailAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_131_emailagent",
+                  "label": "EmailAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_252_emailagent",
+                  "label": "EmailAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 3,
+              "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent",
+              "name": "PartnerAgent",
+              "filePath": "src/pages/PartnerAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_357_partneragent",
+                  "label": "PartnerAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_201_partneragent",
+                  "label": "PartnerAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "target": {
+          "id": "Function:src/components/voice/VoiceMode.tsx:Waveform",
+          "name": "Waveform",
+          "type": "Function",
+          "filePath": "src/components/voice/VoiceMode.tsx"
+        },
+        "direction": "upstream",
+        "impactedCount": 7,
+        "risk": "CRITICAL",
+        "riskSharedAxes": "LOW",
+        "riskScale": {
+          "comparableAcrossKinds": true,
+          "unusedAxes": []
+        },
+        "epistemic": "exact",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 5,
+          "modules_affected": 1
+        },
+        "byDepthCounts": {
+          "1": 1,
+          "2": 3,
+          "3": 3
+        },
+        "affected_processes": [
+          {
+            "name": "CreatorAgentDetail",
+            "type": "Function",
+            "filePath": "src/pages/CreatorAgentDetail.tsx",
+            "affected_process_count": 7,
+            "total_hits": 7,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "LegalAgentChat",
+            "type": "Function",
+            "filePath": "src/pages/LegalAgentChat.tsx",
+            "affected_process_count": 7,
+            "total_hits": 7,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "ComptaAgent",
+            "type": "Function",
+            "filePath": "src/pages/ComptaAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "EmailAgent",
+            "type": "Function",
+            "filePath": "src/pages/EmailAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          },
+          {
+            "name": "PartnerAgent",
+            "type": "Function",
+            "filePath": "src/pages/PartnerAgent.tsx",
+            "affected_process_count": 2,
+            "total_hits": 2,
+            "earliest_broken_step": 1
+          }
+        ],
+        "affected_modules": [
+          {
+            "name": "Pages",
+            "hits": 7,
+            "impact": "direct"
+          }
+        ],
+        "byDepth": {
+          "1": [
+            {
+              "depth": 1,
+              "id": "Function:src/components/voice/VoiceMode.tsx:VoiceMode",
+              "name": "VoiceMode",
+              "filePath": "src/components/voice/VoiceMode.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            }
+          ],
+          "2": [
+            {
+              "depth": 2,
+              "id": "Function:src/components/voice/AgentChatTab.tsx:AgentChatTab",
+              "name": "AgentChatTab",
+              "filePath": "src/components/voice/AgentChatTab.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": []
+            },
+            {
+              "depth": 2,
+              "id": "Function:src/pages/CreatorAgentDetail.tsx:CreatorAgentDetail",
+              "name": "CreatorAgentDetail",
+              "filePath": "src/pages/CreatorAgentDetail.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_93_creatoragentdetail",
+                  "label": "CreatorAgentDetail → AssertCurrent",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_99_creatoragentdetail",
+                  "label": "CreatorAgentDetail → CloseQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_173_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Interrupt",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_365_creatoragentdetail",
+                  "label": "CreatorAgentDetail → UseAuth",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_100_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Disconnect",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_94_creatoragentdetail",
+                  "label": "CreatorAgentDetail → Resolve",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_170_creatoragentdetail",
+                  "label": "CreatorAgentDetail → UseRequestScope",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 2,
+              "id": "Function:src/pages/LegalAgentChat.tsx:LegalAgentChat",
+              "name": "LegalAgentChat",
+              "filePath": "src/pages/LegalAgentChat.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_144_legalagentchat",
+                  "label": "LegalAgentChat → CloseQueue",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_222_legalagentchat",
+                  "label": "LegalAgentChat → UseRequestScope",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_421_legalagentchat",
+                  "label": "LegalAgentChat → UseAuth",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_138_legalagentchat",
+                  "label": "LegalAgentChat → AssertCurrent",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_139_legalagentchat",
+                  "label": "LegalAgentChat → Resolve",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_145_legalagentchat",
+                  "label": "LegalAgentChat → Disconnect",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_203_legalagentchat",
+                  "label": "LegalAgentChat → Interrupt",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            }
+          ],
+          "3": [
+            {
+              "depth": 3,
+              "id": "Function:src/pages/ComptaAgent.tsx:ComptaAgent",
+              "name": "ComptaAgent",
+              "filePath": "src/pages/ComptaAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_185_comptaagent",
+                  "label": "ComptaAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_67_comptaagent",
+                  "label": "ComptaAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 3,
+              "id": "Function:src/pages/EmailAgent.tsx:EmailAgent",
+              "name": "EmailAgent",
+              "filePath": "src/pages/EmailAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_131_emailagent",
+                  "label": "EmailAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_252_emailagent",
+                  "label": "EmailAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            },
+            {
+              "depth": 3,
+              "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent",
+              "name": "PartnerAgent",
+              "filePath": "src/pages/PartnerAgent.tsx",
+              "relationType": "CALLS",
+              "confidence": 0.85,
+              "processes": [
+                {
+                  "id": "proc_201_partneragent",
+                  "label": "PartnerAgent → Close",
+                  "processType": "intra_community",
+                  "step": 1
+                },
+                {
+                  "id": "proc_357_partneragent",
+                  "label": "PartnerAgent → Cn",
+                  "processType": "cross_community",
+                  "step": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "indexLog": "gitnexus-index.log",
+    "limitations": [
+      "FTS disabled; no extension installation attempted.",
+      "Generated large QA JSON files omitted from indexing.",
+      "Call traversal bounds reported in the index log; absence of affected process edges is not proof of no impact."
+    ],
+    "impactIndexBase": "85cfd25a44913c77720842ca7f73a661854a447b",
+    "currentUiBaseVerifiedUnchanged": true
+  },
+  "initialProvenance": {
+    "base": {
+      "repository": "puramapro-oss/purama-ai",
+      "pr": 45,
+      "url": "https://github.com/puramapro-oss/purama-ai/pull/45",
+      "state": "open",
+      "draft": true,
+      "headRef": "audit/unlazy-consolidation-20261111-ac3c",
+      "headSha": "85cfd25a44913c77720842ca7f73a661854a447b",
+      "baseRef": "audit/reliability-oauth-20261110",
+      "baseSha": "c04e2cb683ff81efe8443f4aa32d3447afb3b143",
+      "verifiedAt": "2026-11-11T18:21:54.581Z"
+    },
+    "sourceSnapshot": {
+      "tree": "d69b737ded2a720c7d75a0123ea9f592caa97bb2",
+      "trackedBlobs": 1724,
+      "verified": "Each source file Git blob SHA and mode matched the remote recursive tree; local write-tree matches exact remote tree; exact base commit object reused in own shallow checkout."
+    }
+  },
+  "transposition": {
+    "status": "PASS",
+    "oldBase": "85cfd25a44913c77720842ca7f73a661854a447b",
+    "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+    "baseTree": "3774728bac87d936b309fffa00730dfe011be442",
+    "exactCommitObject": true,
+    "trackedBlobCount": 1729,
+    "remoteCommits": [
+      {
+        "sha": "1205f903e649b0c93375b52cdc1bab982abaefb2",
+        "message": "test(karta): preserve outbox harness receipts and verify inert lifecycle"
+      },
+      {
+        "sha": "ecb078c2a5a33b27a9498bcaec99a0a21b68a2f3",
+        "message": "fix: preserve optional error contract in completed KARTA replays"
+      },
+      {
+        "sha": "c016f9998cdd262e07bdc1391c4efebff8a69f10",
+        "message": "fix(security): upgrade root Vitest to patched 4.1.12"
+      },
+      {
+        "sha": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+        "message": "Merge reviewed outbox harness and replay-result contract into IAO consolidation"
+      }
+    ],
+    "upstreamChangedFiles": [
+      {
+        "path": ".github/workflows/purama-chef-hardening.yml",
+        "sha": "af9c2aa3797c135bc498ec2903a04ac979a2bbaa",
+        "mode": "100644"
+      },
+      {
+        "path": "ERRORS.md",
+        "sha": "798188c65fe6de8cf017c7ca24348838fe4beee8",
+        "mode": "100644"
+      },
+      {
+        "path": "karta/src/engine/logger.ts",
+        "sha": "7b7a14df28a0a3f0a6877ba8fe00ffe6160a2e7d",
+        "mode": "100644"
+      },
+      {
+        "path": "karta/test/logger.test.ts",
+        "sha": "83324374d53fdb9e3e401898e396def48d1990bb",
+        "mode": "100644"
+      },
+      {
+        "path": "package-lock.json",
+        "sha": "09ac95e5a33aeb48524350f68846b46b98bb0267",
+        "mode": "100644"
+      },
+      {
+        "path": "package.json",
+        "sha": "7f6b84d3648459bc94d715ad2935e2ae7dc5a662",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/approval-outbox-live-20261111/.gitignore",
+        "sha": "c18dd8d83ceed1806b50b0aaa46beb7e335fff13",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/approval-outbox-live-20261111/README.md",
+        "sha": "a3eb4e9fc3a3f6bf0a5dfe3d49e098945506c40e",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/approval-outbox-live-20261111/approvalOutboxNative.mjs",
+        "sha": "c4c545855f90f5c1f45902e069e178db08d1c21b",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/approval-outbox-live-20261111/run.py",
+        "sha": "69f32640deef17a2dd22ffa72958557ad0be1774",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/approval-outbox-live-20261111/test_wrapper_lifecycle.py",
+        "sha": "a1690aa60cc376cc7ad91eacc51905fc2d4adbec",
+        "mode": "100644"
+      },
+      {
+        "path": "vercel.json",
+        "sha": "a8879ea6721a221be6e90d6bf5f03f1eebd239bd",
+        "mode": "100644"
+      }
+    ],
+    "overlappingFiles": [
+      ".github/workflows/purama-chef-hardening.yml"
+    ],
+    "overlapResolution": "Only the seven-line artifact upload addition reapplied onto the new upstream workflow. KARTA workflow changes retained.",
+    "dependencyRuntime": {
+      "vitest": "4.1.12",
+      "installationPerformed": false
+    },
+    "deploymentOverride": {
+      "branch": "feat/iao-accessibility-20261111",
+      "enabled": false
+    },
+    "generatedAt": "2026-11-11T18:37:23.028Z",
+    "installedRuntime": "Vitest 4.1.12 already installed",
+    "unchangedUpstreamProductAndTestFiles": [
+      "src/components/voice/VoiceMode.tsx",
+      "src/components/voice/AgentChatTab.tsx",
+      "tests/voice-consent/lifecycle.spec.ts",
+      "tests/async-ui/lifecycle.spec.ts"
+    ]
+  }
+}

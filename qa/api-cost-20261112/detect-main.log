@@ -1,0 +1,40 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 1345 files, 12251 symbols
+Affected processes: 584
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 12236 more
+
+Affected execution flows:
+  • RunDailyReport → SendEmail (4 steps) — changed: sendEmail, deliver, notify
+  • RunDailyReport → Deliver (3 steps) — changed: deliver, notify
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized
+  • Execute → JevValidationError (7 steps) — changed: JevValidationError, validateJevRequest, exactKeys, keys, field, fail, execute
+  • RunChefWorkerCycle → Advance (5 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc, advance
+  • RunDailyReport → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt
+  • RunDailyReport → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify
+  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: tryFinishMission, housekeeping, ChefProcessStopUnconfirmedError, runChefWorkerCycle
+  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, assertRpc, runChefWorkerCycle
+  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc
+... and 574 more
+
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1794459395992,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

@@ -1,0 +1,18 @@
+apply plugin: 'com.android.library'
+apply plugin: 'expo-module-gradle-plugin'
+
+group = 'expo.modules.puramaaccessibilitywatch'
+version = '0.1.0'
+
+android {
+  namespace 'expo.modules.puramaaccessibilitywatch'
+  defaultConfig { versionCode 1; versionName '0.1.0' }
+  sourceSets { main.java.srcDir 'src/shared/java' }
+}
+
+dependencies {
+  implementation 'com.facebook.react:react-android'
+  implementation 'com.google.android.gms:play-services-wearable:20.0.1'
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.json:json:20250517'
+}

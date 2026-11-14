@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Hero } from '@/components/Hero';
 import { AIAgents } from '@/components/AIAgents';
 import { OriginForgeHero } from '@/components/OriginForgeHero';
@@ -10,17 +9,10 @@ import { Contact } from '@/components/Contact';
 import { PuramaComptaSection } from '@/components/PuramaComptaSection';
 import { Footer } from '@/components/Footer';
 import { ReferralBanner } from '@/components/influencer/ReferralBanner';
-import { useReferralTracking } from '@/hooks/useInfluencer';
 import { PublicActionsCounter } from '@/components/PublicActionsCounter';
 import { LiveDemoSection } from '@/components/LiveDemoSection';
 
 export default function Index() {
-  const { checkAndStoreReferral } = useReferralTracking();
-
-  useEffect(() => {
-    checkAndStoreReferral();
-  }, [checkAndStoreReferral]);
-
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg">

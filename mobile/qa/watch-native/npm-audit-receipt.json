@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "command": [
+    "npm",
+    "audit",
+    "--audit-level=high",
+    "--json"
+  ],
+  "cwd": "mobile",
+  "startedAt": "2026-11-12T04:27:14.276Z",
+  "finishedAt": "2026-11-12T04:27:51.943Z",
+  "exitCode": 0,
+  "reportSha256": "d654f8c8205622003585badcd4be0c4139733ea49c8683d88a15ed404874b3d8",
+  "packageLockSha256": "eb95c97933503d34e98c1b8b01b05eddb37fbdabcdd9187eb5a1aca2adb4a115",
+  "vulnerabilities": {
+    "info": 0,
+    "low": 1,
+    "moderate": 15,
+    "high": 0,
+    "critical": 0,
+    "total": 16
+  },
+  "scope": "Fresh registry report for the reconciled mobile lock. PASS means the existing high/critical gate, not zero advisories."
+}

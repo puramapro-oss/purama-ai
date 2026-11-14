@@ -1,4 +1,5 @@
 import { getClaudeClient } from "../claude/index.js";
+import type { ModelUsageReceipt } from "../claude/usage.js";
 import { isRunnable, loadAgentState, recordRunOutcome, requiresHumanApproval } from "./autonomy.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { startRun, type RunLogHandle } from "./logger.js";
@@ -8,6 +9,7 @@ import { armPendingBrief, claimPendingBrief, peekPendingBrief } from "./brief.js
 import { ExecutionOriginError, snapshotAgentExecutionTrigger } from "./execution-origin.js";
 import { APPROVAL_CONTINUATION_GUIDANCE, ApprovalContinuationError, loadApprovalContinuation } from "./approval-continuation.js";
 import { assertToolResult } from "./tool-result.js";
+import { persistPrivateToolResult } from "./private-tool-results.js";
 import { validateToolParams } from "./tool-input.js";
 import { CustomAgentAuthorizationError, resolveAgentDefinition } from "./resolveDefinition.js";
 import { minimizeRunTrace, PRIVATE_TRACE, shouldMinimizeToolTrace, summarizeToolError, summarizeToolParams, summarizeToolResult } from "./tool-trace.js";
@@ -48,14 +50,18 @@ export async function runAgentCycle(
   let finalizedOutcome: AgentRunResult | undefined;
   let completionAttempted = false;
   let briefArmed = false;
+  // Kept outside the business result: private-trace minimization must neither
+  // erase this server-owned receipt nor expose it in notifications/responses.
+  let modelUsage: ModelUsageReceipt | undefined;
   const finishOutcome = async (outcome: AgentRunResult): Promise<AgentRunResult> => {
     completionAttempted = true;
+    const storedOutcome = modelUsage ? { ...outcome, modelUsage } : outcome;
     try {
-      await run.finish(outcome);
+      await run.finish(storedOutcome);
     } catch {
       // Reconcile only this same candidate; never repeat an external action.
       // The logger's conditional write makes this one bounded retry safe.
-      await run.finish(outcome);
+      await run.finish(storedOutcome);
     }
     finalizedOutcome = outcome;
     if (outcome.status === "awaiting_approval") {
@@ -102,12 +108,18 @@ export async function runAgentCycle(
         source: executionTrigger.source, reason: executionTrigger.payload!.reason,
       } };
     }
+    // A custom definition can be stale after context preparation. Only the
+    // freshly authorized row below may supply its explicit model preference.
+    let modelPreferences = definition.type.startsWith("custom:") ? undefined : definition.modelPreferences;
     if (!noBrief && definition.type.startsWith("custom:")) {
       try {
         // Admission, continuation and context reads may have awaited since the
         // worker's check. Re-read authority immediately before the model call.
         // This check is not atomic with the subsequent provider request.
-        await resolveAgentDefinition(definition.type, userId);
+        const currentDefinition = await resolveAgentDefinition(definition.type, userId);
+        if (!currentDefinition || currentDefinition.type !== definition.type) throw new CustomAgentAuthorizationError();
+        modelPreferences = currentDefinition.modelPreferences === undefined
+          ? undefined : { ...currentDefinition.modelPreferences };
       } catch (error) {
         if (!(error instanceof CustomAgentAuthorizationError)) throw error;
         return await finishOutcome(minimizeRunTrace({
@@ -117,11 +129,34 @@ export async function runAgentCycle(
         }, definition.tools, true));
       }
     }
+    if (!noBrief) {
+      // Context, brief and ownership reads may have awaited since admission.
+      // Inference itself sends data and can incur cost, before any tool runs.
+      // Keep this after the custom-definition check and use a fresh global read.
+      let modelAllowed: boolean;
+      try {
+        const latest = await loadAgentState(userId, definition.type);
+        const stopped = await isGlobalKillSwitchActive(true);
+        modelAllowed = !stopped && isRunnable(latest).ok && !(mode === "live" && latest.simulationMode);
+      } catch {
+        // Static/public agents also need a safe diagnostic at this boundary.
+        throw new Error("Autorisation de l’appel au modèle non vérifiable");
+      }
+      if (!modelAllowed) {
+        return await finishOutcome(minimizeRunTrace({
+          status: "cancelled", decision: "Cycle annulé : arrêt ou autorisation modifiée avant l’appel au modèle",
+          toolsUsed: [], resultSummary: "Aucune requête au modèle ni action exécutée",
+          mock: false, retryable: false,
+        }, definition.tools, privateTrace));
+      }
+    }
     const decision = noBrief ? {
       summary: "Aucune consigne en attente", toolCalls: [], requiresApproval: false, mock: false,
     } : await getClaudeClient().decide({
       systemPrompt: definition.systemPrompt + (continuation ? APPROVAL_CONTINUATION_GUIDANCE : ""),
       context, tools: definition.tools, agentType: definition.type,
+      ...(modelPreferences !== undefined ? { preferences: modelPreferences } : {}),
+      onUsage: receipt => { modelUsage ??= receipt; },
     });
     // One private/unknown call protects the entire decision, including earlier
     // and deferred calls where the model could repeat the same private content.
@@ -244,6 +279,15 @@ export async function runAgentCycle(
           userId, agentType: definition.type, mode: "live", operationId: `${run.runId}:${index}`,
           trigger: snapshotAgentExecutionTrigger(executionTrigger, definition.type),
         });
+        // A partial result can still contain useful notices. Deliver it privately
+        // before checking completion; this does not make the tool successful.
+        const delivery = await persistPrivateToolResult({
+          userId, agentType: definition.type, runId: run.runId,
+          operationId: `${run.runId}:${index}`, toolName: tool.name, result,
+        });
+        if (delivery.status === "unavailable") {
+          throw new Error("Résultat privé indisponible après exécution de l’outil");
+        }
         assertToolResult(result);
         toolsUsed.push(traceRecord(call, summarizeToolResult(result, privateTrace), "executed"));
       } catch (error) {
@@ -276,12 +320,14 @@ export async function runAgentCycle(
       errorMessage: summarizeToolError(error, privateTrace, "Erreur du cycle"), mock,
       // A durable execution key is already claimed. No automatic replay of it,
       // even when logging fails after a completed external action.
-      retryable: !(error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) && !completionAttempted && !effectStarted && !executionKey && toolsUsed.length === 0,
+      // A received provider response must not trigger another inference even
+      // for a direct caller that omitted a durable execution key.
+      retryable: !(error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) && !completionAttempted && !effectStarted && !executionKey && modelUsage === undefined && toolsUsed.length === 0,
     }, definition.tools, privateTrace);
     // This fixed server-owned explanation is safe even for private continuations.
     if (error instanceof ApprovalContinuationError || error instanceof ExecutionOriginError) outcome = { ...outcome, errorMessage: error.message };
     if (!completionAttempted) {
-      await run.finish(outcome).catch(() => {
+      await run.finish(modelUsage ? { ...outcome, modelUsage } : outcome).catch(() => {
         // A durable brief can only become available in the confirmed closing
         // transaction. Never assume that happened after a lost response.
         if (definition.pendingBriefKey !== undefined) outcome.retryable = false;

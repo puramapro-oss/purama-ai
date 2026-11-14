@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-12T03:59:27.890Z",
+  "completedAt": "2026-11-12T03:59:42.234Z",
+  "command": [
+    "npm",
+    "audit",
+    "--audit-level=high",
+    "--json"
+  ],
+  "cwd": "mobile",
+  "exitCode": 0,
+  "node": "v24.22.1",
+  "reportSha256": "2b1a68e86dc143c1f2ce57fd28d12d07728f7faa287fd5b2a6ed6e64ab506a82",
+  "lockSha256": "abe4d0e8da4e05f5b32381c2923694acd2f28cab035bdd988369ab8a81194ada",
+  "stderr": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+}

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Content as DialogContentPrimitive } from '@radix-ui/react-dialog';
 import { X, Mic, MicOff, Loader2 } from 'lucide-react';
+import { Dialog, DialogClose, DialogDescription, DialogOverlay, DialogPortal, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import type { UseVoice } from '@/hooks/useVoice';
 import { useAuth } from '@/hooks/useAuth';
@@ -38,6 +40,7 @@ export function VoiceMode({
   const { user } = useAuth();
   const [turns] = useState(createRequestScope);
   const reducedMotion = useReducedMotion();
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const {
     isRecording, isTranscribing, isSpeaking,
     startRecording, stopRecording, cancelRecording,
@@ -146,81 +149,107 @@ export function VoiceMode({
   if (typeof window === 'undefined') return null;
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[10000] bg-background/95 backdrop-blur-2xl flex flex-col items-center justify-between py-10 px-6"
+    <Dialog open={open} onOpenChange={nextOpen => { if (!nextOpen) closeMode(); }}>
+      <DialogPortal>
+        <DialogOverlay className="z-[9999] motion-reduce:animate-none" />
+        {/* Reuse the existing Radix modal engine, with this fullscreen layout and
+            its single French close control instead of the shared panel styling. */}
+        <DialogContentPrimitive
+          aria-modal="true"
+          onOpenAutoFocus={() => {
+            returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          }}
+          onCloseAutoFocus={event => {
+            event.preventDefault();
+            if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus({ preventScroll: true });
+          }}
+          className="fixed inset-0 z-[10000] grid min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] justify-items-center gap-[8px] overflow-hidden bg-background/95 px-[12px] py-[12px] backdrop-blur-2xl sm:px-[24px] [@media_(min-width:640px)_and_(min-height:480px)]:gap-[16px] [@media_(min-width:640px)_and_(min-height:480px)]:py-[24px]"
           style={{
             background: `radial-gradient(ellipse at center, ${agentColor}22 0%, rgba(10,10,15,0.95) 60%, rgba(10,10,15,1) 100%)`,
           }}
         >
           {/* Header */}
-          <div className="w-full max-w-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex w-full max-w-2xl items-center justify-between gap-[8px]">
+            <div className="min-w-0">
+              <DialogTitle className="text-sm font-semibold text-foreground">
+                Mode vocal<span className="sr-only"> avec {agentName}</span>
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Active le micro pour parler. La transcription et la réponse restent consultables à l’écran.
+                Appuie sur Échap pour fermer.
+              </DialogDescription>
+            </div>
+            <DialogClose asChild>
+              <button
+                type="button"
+                aria-label="Fermer le mode vocal"
+                className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full border border-border bg-secondary/40 text-muted-foreground transition hover:bg-secondary/70 hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none"
+              >
+                <X aria-hidden="true" className="h-[20px] w-[20px]" />
+              </button>
+            </DialogClose>
+          </div>
+
+          {/* Center: status + waveform */}
+          <div
+            role="region"
+            aria-label="Transcription et réponse"
+            tabIndex={0}
+            className="flex min-h-0 min-w-0 w-full max-w-2xl flex-col items-center gap-[12px] overflow-y-auto overscroll-contain rounded-lg px-[4px] py-[8px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [@media_(min-width:640px)_and_(min-height:480px)]:gap-[24px] [@media_(min-width:640px)_and_(min-height:480px)]:py-[16px]"
+          >
+            <div className="flex w-full shrink-0 items-center justify-center gap-[8px]">
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+                aria-hidden="true"
+                className="hidden h-[48px] w-[48px] shrink-0 items-center justify-center rounded-2xl text-2xl [@media_(min-width:640px)_and_(min-height:480px)]:flex"
                 style={{ background: `${agentColor}25`, border: `1px solid ${agentColor}55` }}
               >
                 {agentEmoji}
               </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Mode vocal</p>
-                <p className="text-lg font-semibold text-foreground">{agentName}</p>
-              </div>
+              <p className="min-w-0 break-words text-center text-lg font-semibold text-foreground [overflow-wrap:anywhere]">{agentName}</p>
             </div>
-            <button
-              type="button"
-              onClick={closeMode}
-              aria-label="Fermer le mode vocal"
-              className="w-10 h-10 rounded-full border border-border bg-secondary/40 hover:bg-secondary/70 flex items-center justify-center text-muted-foreground hover:text-foreground transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+            <PhaseLabel phase={phase} agentName={agentName} reducedMotion={!!reducedMotion} />
 
-          {/* Center: status + waveform */}
-          <div className="flex flex-col items-center gap-8 flex-1 justify-center w-full max-w-2xl">
-            <PhaseLabel phase={phase} agentName={agentName} />
-
-            <Waveform bars={barArray} level={liveLevel} color={agentColor} active={phase !== 'idle' && !reducedMotion} />
+            <Waveform bars={barArray} level={liveLevel} color={agentColor} active={phase !== 'idle' && !reducedMotion} reducedMotion={!!reducedMotion} />
 
             {/* Live transcripts */}
-            <div className="w-full space-y-3 min-h-[120px]">
+            <div className="w-full shrink-0 space-y-3 min-h-[120px]">
               {userText && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={reducedMotion ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={reducedMotion ? { duration: 0 } : undefined}
                   className="text-right"
                 >
                   <p className="text-[11px] text-muted-foreground uppercase mb-1">Toi</p>
-                  <p className="text-sm text-foreground/90 italic">« {userText} »</p>
+                  <p className="whitespace-pre-wrap break-words text-sm italic text-foreground/90 [overflow-wrap:anywhere]">« {userText} »</p>
                 </motion.div>
               )}
               {agentText && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={reducedMotion ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={reducedMotion ? { duration: 0 } : undefined}
                 >
                   <p className="text-[11px] uppercase mb-1" style={{ color: agentColor }}>{agentName}</p>
-                  <p className="text-sm text-foreground/90 line-clamp-6">{agentText}</p>
+                  <p className="whitespace-pre-wrap break-words text-sm text-foreground/90 [overflow-wrap:anywhere]">{agentText}</p>
                 </motion.div>
               )}
             </div>
           </div>
 
           {/* Mic tap button */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex w-full max-w-2xl flex-col items-center gap-[4px]">
             <button
               type="button"
               onClick={handleMicTap}
               disabled={phase === 'thinking'}
-              aria-label="Activer/désactiver le micro"
+              aria-label={phase === 'listening' ? "Terminer l'enregistrement"
+                : phase === 'speaking' ? 'Interrompre la réponse'
+                  : phase === 'thinking' ? 'Traitement en cours'
+                    : 'Activer le micro'}
               className={cn(
-                'relative w-20 h-20 rounded-full flex items-center justify-center transition-all',
-                'border-2 shadow-2xl',
+                'relative h-[64px] w-[64px] shrink-0 rounded-full flex items-center justify-center transition-all [@media_(min-width:640px)_and_(min-height:480px)]:h-[80px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[80px]',
+                'border-2 shadow-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:animate-none motion-reduce:transition-none',
                 phase === 'listening' && 'bg-red-500/20 border-red-500/60 animate-pulse',
                 phase === 'speaking' && 'bg-accent-purple/20 border-accent-purple/60',
                 phase === 'thinking' && 'bg-secondary border-border',
@@ -229,27 +258,27 @@ export function VoiceMode({
               style={phase === 'idle' ? { boxShadow: `0 0 40px ${agentColor}40` } : undefined}
             >
               {phase === 'thinking' ? (
-                <Loader2 className="w-8 h-8 animate-spin text-accent-purple" />
+                <Loader2 aria-hidden="true" className="h-[28px] w-[28px] animate-spin text-accent-purple motion-reduce:animate-none [@media_(min-width:640px)_and_(min-height:480px)]:h-[32px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[32px]" />
               ) : phase === 'listening' ? (
-                <MicOff className="w-8 h-8 text-red-400" />
+                <MicOff aria-hidden="true" className="h-[28px] w-[28px] text-red-400 [@media_(min-width:640px)_and_(min-height:480px)]:h-[32px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[32px]" />
               ) : (
-                <Mic className="w-8 h-8" style={{ color: agentColor }} />
+                <Mic aria-hidden="true" className="h-[28px] w-[28px] [@media_(min-width:640px)_and_(min-height:480px)]:h-[32px] [@media_(min-width:640px)_and_(min-height:480px)]:w-[32px]" style={{ color: agentColor }} />
               )}
             </button>
-            <p className="text-[11px] text-muted-foreground text-center">
+            <p className="max-w-full text-center text-xs text-muted-foreground">
               {phase === 'idle' && 'Appuie pour parler'}
               {phase === 'listening' && 'Appuie pour envoyer'}
               {phase === 'thinking' && 'Réflexion en cours…'}
               {phase === 'speaking' && 'Appuie pour interrompre'}
             </p>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </DialogContentPrimitive>
+      </DialogPortal>
+    </Dialog>
   );
 }
 
-function PhaseLabel({ phase, agentName }: { phase: Phase; agentName: string }) {
+function PhaseLabel({ phase, agentName, reducedMotion }: { phase: Phase; agentName: string; reducedMotion: boolean }) {
   const map: Record<Phase, string> = {
     idle: `Bonjour, je suis ${agentName}`,
     listening: 'Je t\'écoute…',
@@ -258,19 +287,20 @@ function PhaseLabel({ phase, agentName }: { phase: Phase; agentName: string }) {
   };
   return (
     <motion.p
-      key={phase}
-      initial={{ opacity: 0, y: 6 }}
+      initial={reducedMotion ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="text-center text-xl font-light text-foreground/90"
+      transition={reducedMotion ? { duration: 0 } : undefined}
+      role="status"
+      className="shrink-0 text-center text-xl font-light text-foreground/90"
     >
       {map[phase]}
     </motion.p>
   );
 }
 
-function Waveform({ bars, level, color, active }: { bars: number[]; level: number; color: string; active: boolean }) {
+function Waveform({ bars, level, color, active, reducedMotion }: { bars: number[]; level: number; color: string; active: boolean; reducedMotion: boolean }) {
   return (
-    <div className="flex items-center justify-center gap-1.5 h-32 w-full">
+    <div aria-hidden="true" className="hidden h-[128px] w-full shrink-0 items-center justify-center gap-[6px] [@media_(min-width:640px)_and_(min-height:480px)]:flex">
       {bars.map((i) => {
         // Each bar pulses with a phase offset for organic feel
         const phase = (i / bars.length) * Math.PI * 2;
@@ -282,8 +312,8 @@ function Waveform({ bars, level, color, active }: { bars: number[]; level: numbe
           <motion.span
             key={i}
             animate={{ height: h }}
-            transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-            className="w-1.5 rounded-full"
+            transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 220, damping: 18 }}
+            className="min-w-0 max-w-[0.375rem] flex-1 rounded-full"
             style={{
               background: `linear-gradient(180deg, ${color}, ${color}66)`,
               boxShadow: active ? `0 0 12px ${color}80` : undefined,

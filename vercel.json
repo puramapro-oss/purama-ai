@@ -8,6 +8,13 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "codex/iao-atelier-multiagents-20261112": false,
+      "feat/iao-adaptive-intelligence-20261112": false,
+      "feat/iao-local-desktop-20261112": false,
+      "fix/iao-wealth-continuity-20261112": false,
+      "fix/iao-ime-composition-20261112": false,
+      "audit/api-cost-20261112-4eb2": false,
+      "feat/iao-accessibility-20261111": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
       "fix/iao-websearch-validation-20261110": false,
@@ -15,7 +22,22 @@
       "audit/iao-integrated-20261110-14d16": false,
       "codex/iao-compassion-consent-20261110": false,
       "audit/iao-reconciled-20261110": false,
-      "audit/reliability-oauth-20261110": false
+      "audit/reliability-oauth-20261110": false,
+      "fix/iao-preference-persistence-20261110": false,
+      "audit/unlazy-consolidation-20261111-ac3c": false,
+      "perf/iao-quality-latency-20261112": false,
+      "fix/iao-outbox-deadline-20261111": false,
+      "audit/iao-billing-finance-chef-20261111": false,
+      "audit/connect-persistence-20261111": false,
+      "test/karta-native-harness-20261111": false,
+      "audit/iao-replay-result-contract-20261111": false,
+      "fix/connect-provisioning-recovery-20261111": false,
+      "audit/connect-provisioning-gates-20261111": false,
+      "audit/iao-native-outbox-cleanup-20261111-6b119b0513aa": false,
+      "audit/subscription-identity-20261112": false,
+      "fix/oauth-shared-deadline-20261112": false,
+      "audit/api-usage-20261112-4eb2": false,
+      "codex/iao-workshop-artifacts-20261113": false
     }
   }
 }

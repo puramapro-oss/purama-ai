@@ -1,0 +1,11 @@
+✔ native HTTP: one real POST and fragmented UTF-8 response (36.21067ms)
+✔ native HTTP: a redirect is never followed or retried (8.003536ms)
+✔ native HTTP: malformed truncated response is never accepted (4.129816ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 281.67325

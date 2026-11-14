@@ -1,0 +1,100 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run test/claudeTransportCost.test.ts test/real-claude.test.ts test/claudeDecisionCompleteness.test.ts test/loopModelAdmission.test.ts --maxWorkers=1 --reporter=verbose
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-ai/karta
+
+ ✓ test/loopModelAdmission.test.ts > model admission for static agents > does not send context to the model after a global stop during context construction 7ms
+ ✓ test/loopModelAdmission.test.ts > model admission for static agents > does not send context to the model after a disabled stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for static agents > does not send context to the model after a individual stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for static agents > does not send context to the model after a simulation stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a global stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a disabled stop during context construction 0ms
+ ✓ test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a individual stop during context construction 0ms
+ ✓ test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a simulation stop during context construction 0ms
+ ✓ test/loopModelAdmission.test.ts > model admission for custom agents > does not send context to the model after a global stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for custom agents > does not send context to the model after a disabled stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for custom agents > does not send context to the model after a individual stop during context construction 1ms
+ ✓ test/loopModelAdmission.test.ts > model admission for custom agents > does not send context to the model after a simulation stop during context construction 0ms
+ ✓ test/loopModelAdmission.test.ts > the last asynchronous admission boundaries > checks a global stop after the final custom-definition read resolves 0ms
+ ✓ test/loopModelAdmission.test.ts > the last asynchronous admission boundaries > preserves the existing refusal when custom-agent ownership is revoked 0ms
+ ✓ test/loopModelAdmission.test.ts > the last asynchronous admission boundaries > checks the stop after a verified executed approval continuation 1ms
+ ✓ test/loopModelAdmission.test.ts > the last asynchronous admission boundaries > checks the stop after a verified rejected approval continuation 0ms
+ ✓ test/loopModelAdmission.test.ts > the last asynchronous admission boundaries > observes a global stop that arrives while the fresh state read is pending 1ms
+ ✓ test/loopModelAdmission.test.ts > unverifiable admission and privacy for static agents > fails closed without exposing a stateRead transport diagnostic 1ms
+ ✓ test/loopModelAdmission.test.ts > unverifiable admission and privacy for static agents > fails closed without exposing a global transport diagnostic 0ms
+ ✓ test/loopModelAdmission.test.ts > unverifiable admission and privacy for brief agents > fails closed without exposing a stateRead transport diagnostic 0ms
+ ✓ test/loopModelAdmission.test.ts > unverifiable admission and privacy for brief agents > fails closed without exposing a global transport diagnostic 1ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > does not add model-admission reads to an empty brief (simulation=false) 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > does not add model-admission reads to an empty brief (simulation=true) 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > keeps a stable static request functional with exactly one model call 1ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > keeps a stable brief request functional with exactly one model call 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > keeps a stable custom request functional with exactly one model call 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > keeps an initially simulated cycle simulated after live mode is enabled 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > also prevents a simulated model request after a global stop 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > keeps inference available when lower autonomy requires human approval of the action 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > reconciles the same cancellation after one lost closing acknowledgement 1ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > never turns unconfirmed cancellation into success or permission to retry effects 1ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > preserves a confirmed cancellation when secondary bookkeeping fails 0ms
+ ✓ test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > returns a previously cancelled delivery without rebuilding context or retrying the model 0ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 408 9ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 409 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 429 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 500 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > does not repeat a request after an ambiguous connection failure 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses the SDK's existing base URL setting without falling back to a different origin 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > keeps the default SDK endpoint available when no proxy is configured 2ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses only the explicit fixture API key and sends no ambient bearer credential 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > sends compact context while preserving every JSON value and leaving the input unchanged 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a simple request 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a large request 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves a valid complete tool decision through the real SDK 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > still rejects a partial tool response without repeating inference or executing the tool 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "max_tokens" even if a tool block looks executable 3ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "model_context_window_exceeded" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "pause_turn" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "refusal" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "stop_sequence" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "unknown_provider_stop" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason null even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason undefined even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > accepts completed text and auxiliary thinking blocks without changing the text 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > accepts tool_use without a text summary and preserves parallel calls in order 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > accepts a nonempty text summary with a completed tool request 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not qualify empty content as a completed KARTA decision 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not qualify blank text as a completed KARTA decision 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not qualify thinking only as a completed KARTA decision 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects tool_use without a client tool call 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects an end_turn that still contains an executable client tool call 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: null input 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: array input 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: missing required argument 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: wrong argument type 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: blank tool name 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: unknown tool 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: missing tool id 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: duplicate tool id 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not copy provider payload or argument names into validation errors 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "max_tokens" 2ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "model_context_window_exceeded" 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "pause_turn" 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "refusal" 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with null 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > does not execute a valid first tool if a later tool fails its input schema 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > keeps the valid tool path functional and executes it once 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > keeps a complete no-action decision as a successful cycle without effects 0ms
+ ✓ test/real-claude.test.ts > selectModel — routage Haiku/Sonnet selon complexité > choisit Haiku pour un cycle simple (peu d'outils, petit contexte) 1ms
+ ✓ test/real-claude.test.ts > selectModel — routage Haiku/Sonnet selon complexité > choisit Sonnet dès que le nombre d'outils dépasse le seuil 0ms
+ ✓ test/real-claude.test.ts > selectModel — routage Haiku/Sonnet selon complexité > choisit Sonnet dès que le contexte est volumineux 0ms
+ ✓ test/real-claude.test.ts > selectModel — routage Haiku/Sonnet selon complexité > choisit Sonnet dès que le system prompt est long 0ms
+
+ Test Files  4 passed (4)
+      Tests  84 passed (84)
+   Start at  05:44:53
+   Duration  1.85s (import 58%, transform 33%, tests 6%, setup 2%, worker 1%)
+
+    Isolate  4 workers spawned · ~149ms startup each (spawn + environment, per file)
+             at least ~447ms faster with isolate: false — reuses workers across files instead of one per file

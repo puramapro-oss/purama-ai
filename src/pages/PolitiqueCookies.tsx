@@ -13,7 +13,7 @@ export default function PolitiqueCookies() {
       </header>
       <main className="container mx-auto px-4 py-16 max-w-3xl prose prose-invert">
         <h1 className="text-3xl font-bold mb-8 gradient-text-cyan-purple">Politique de Cookies</h1>
-        <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : février 2025</p>
+        <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : 11 novembre 2026</p>
 
         <h2>1. Qu'est-ce qu'un cookie ?</h2>
         <p>Un cookie est un petit fichier texte déposé sur votre appareil lors de votre visite sur notre site. Il permet de stocker des informations relatives à votre navigation.</p>
@@ -21,12 +21,12 @@ export default function PolitiqueCookies() {
         <h2>2. Cookies utilisés</h2>
 
         <h3>Cookies strictement nécessaires</h3>
-        <p>Ces cookies sont indispensables au fonctionnement du site et ne peuvent pas être désactivés.</p>
+        <p>Les traceurs strictement nécessaires à un service que vous demandez peuvent être exemptés de consentement lorsqu'ils répondent aux conditions légales. Les autres traceurs nécessitent votre consentement, sauf exemption applicable.</p>
         <table className="w-full text-sm">
-          <thead><tr><th className="text-left p-2">Cookie</th><th className="text-left p-2">Finalité</th><th className="text-left p-2">Durée</th></tr></thead>
+          <thead><tr><th className="text-left p-2">Cookie ou stockage</th><th className="text-left p-2">Finalité</th><th className="text-left p-2">Durée</th></tr></thead>
           <tbody>
             <tr><td className="p-2">sb-*-auth-token</td><td className="p-2">Authentification utilisateur</td><td className="p-2">Session</td></tr>
-            <tr><td className="p-2">cookie_consent</td><td className="p-2">Mémorisation de votre choix cookies</td><td className="p-2">13 mois</td></tr>
+            <tr><td className="p-2">cookie_consent (stockage local du navigateur)</td><td className="p-2">Mémorisation de votre acceptation ou de votre refus</td><td className="p-2">390 jours avant renouvellement du choix</td></tr>
           </tbody>
         </table>
 
@@ -58,7 +58,8 @@ export default function PolitiqueCookies() {
         </ul>
 
         <h2>4. Durée de validité du consentement</h2>
-        <p>Conformément aux recommandations de la CNIL, votre consentement concernant les cookies est valable pour une durée maximale de 13 mois.</p>
+        <p>La durée de mémorisation du choix relatif aux traceurs doit être adaptée au contexte. La CNIL considère généralement qu'une conservation du consentement comme du refus pendant six mois constitue une bonne pratique, à apprécier au cas par cas. Le consentement reste révocable à tout moment.</p>
+        <p>Cette durée ne doit pas être confondue avec la durée de vie d'un traceur. La référence à treize mois concerne notamment la durée pertinente de certains traceurs de mesure d'audience pouvant être exemptés de consentement sous conditions ; elle ne fixe pas une durée générale de validité du consentement.</p>
       </main>
       <Footer />
     </div>

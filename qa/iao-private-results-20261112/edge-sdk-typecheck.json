@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-11-12T06:08:06.135886+00:00",
+  "scope": "Edge private-result helper and actual installed Supabase SDK type compatibility",
+  "status": "PASS",
+  "command": "node --max-old-space-size=256 node_modules/typescript/bin/tsc --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --lib ES2022,DOM private-result-edge-contract.tmp.ts",
+  "cwd": "karta",
+  "exit_code": 0,
+  "fixture_source": "import { createClient } from \"@supabase/supabase-js\";\nimport { loadSelectedPrivateToolResults } from \"../supabase/functions/_shared/private-tool-results.ts\";\nconst client = createClient(\"https://fixture.invalid\", \"fixture-only\");\nvoid loadSelectedPrivateToolResults(async criteria => await client.from(\"karta_tool_results\")\n  .select(\"id,user_id,creator_agent_id,run_id,tool_name,payload,created_at\")\n  .eq(\"user_id\", criteria.ownerId).eq(\"creator_agent_id\", criteria.agentId)\n  .in(\"id\", criteria.ids).limit(3).abortSignal(criteria.signal),\n  \"owner\", \"agent\", [], new AbortController().signal);\n",
+  "notes": [
+    "A first recursive structural-builder type caused TS2589; replacing it with a typed query callback passed the actual SDK contract.",
+    "Full app typecheck with 256 MiB ended with heap exhaustion (exit134); global typecheck remains for CI."
+  ]
+}

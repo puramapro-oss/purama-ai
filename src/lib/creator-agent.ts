@@ -1,9 +1,34 @@
 // Frontend client for the Creator Agent (meta-agent that builds custom agents).
 import { supabase } from '@/integrations/supabase/client';
 import { createSessionId } from '@/lib/session-id';
+import { createRequestDeadline } from '@/lib/request-deadline';
+import { isPrivateToolResultId } from '@/lib/private-tool-results';
+import {
+  isCreatorModelId, parsePublicCreatorModel, type PublicCreatorModel,
+} from '@/lib/public-creator-model';
 
 type AnyTable = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 const sb = () => (supabase as unknown as { from: (t: string) => AnyTable });
+const creatorRpc = supabase as unknown as {
+  rpc: (name: string, args: Record<string, unknown>) => AnyTable;
+};
+
+// A lost response may still have committed a copy on the server. Bound the
+// client wait, cancel its transport, and let the caller retry the same copy ID.
+async function creatorModelRequest<T>(
+  operation: (signal: AbortSignal) => PromiseLike<T>,
+  signal?: AbortSignal,
+): Promise<T> {
+  const transport = new AbortController();
+  const deadline = createRequestDeadline(20_000, signal);
+  try {
+    return await deadline.wait(async () => await operation(transport.signal));
+  } finally {
+    transport.abort();
+    deadline.close();
+  }
+}
+
 
 // =============================================================
 // Types
@@ -13,6 +38,28 @@ export type AgentCategory =
   | 'content' | 'dev' | 'finance' | 'autre';
 
 export type AgentModel = 'claude-sonnet-4-20250514' | 'claude-haiku-4-5-20251001';
+
+export interface CreatorExecutionPreferences {
+  reflection: 'auto' | 'standard' | 'deep' | 'maximum';
+  speed: 'standard' | 'fast' | 'ultra_fast';
+}
+
+/** Invalid stored choices must not silently turn into a successful save or a
+ * different execution profile. Callers handle an absent legacy column. */
+export function parseCreatorExecutionPreferences(value: unknown): CreatorExecutionPreferences {
+  const invalid = () => new Error('Les réglages d’exécution de cet agent sont invalides.');
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw invalid();
+  const keys = Reflect.ownKeys(value);
+  const reflection = Object.getOwnPropertyDescriptor(value, 'reflection');
+  const speed = Object.getOwnPropertyDescriptor(value, 'speed');
+  if (keys.length !== 2 || !keys.includes('reflection') || !keys.includes('speed')
+    || !reflection || !('value' in reflection) || typeof reflection.value !== 'string'
+    || !['auto', 'standard', 'deep', 'maximum'].includes(reflection.value)
+    || !speed || !('value' in speed) || typeof speed.value !== 'string'
+    || !['standard', 'fast', 'ultra_fast'].includes(speed.value)) throw invalid();
+  return { reflection: reflection.value as CreatorExecutionPreferences['reflection'], speed: speed.value as CreatorExecutionPreferences['speed'] };
+}
 
 export type RunTrigger = 'chat' | 'manual' | 'cron' | 'webhook' | 'api';
 export type RunStatus = 'pending' | 'running' | 'success' | 'error';
@@ -28,6 +75,8 @@ export interface CreatorAgent {
   category: AgentCategory | null;
   system_prompt: string;
   model: AgentModel;
+  /** Saved preferences for task execution; absent in legacy responses. */
+  execution_preferences?: CreatorExecutionPreferences;
   temperature: number;
   max_tokens: number;
   tools_enabled: string[];
@@ -104,6 +153,8 @@ export const TOOL_OPTIONS = [
   { value: 'calendar_create_event', label: 'Créer un événement Google Calendar' },
   { value: 'generate_pdf', label: 'Générer un PDF (rapport, facture, résumé...)' },
   { value: 'web_search', label: 'Recherche web en temps réel' },
+  { value: 'knowledge_search', label: 'Rechercher des références publiques (Crossref et Wikidata)' },
+  { value: 'quantum_simulate', label: 'Simuler un circuit quantique localement (sans matériel quantique)' },
   { value: 'send_notification', label: "Notifier l'utilisateur (app/email) quand une décision est nécessaire" },
 ] as const;
 
@@ -130,26 +181,38 @@ export async function listMyAgents(userId: string): Promise<CreatorAgent[]> {
   return (data ?? []) as CreatorAgent[];
 }
 
-export async function listTemplates(): Promise<CreatorAgent[]> {
-  const { data, error } = await sb()
-    .from('creator_agents')
-    .select('*')
-    .eq('is_template', true)
-    .order('name', { ascending: true });
+async function listPublicCreatorModels(kind: 'official' | 'community', signal?: AbortSignal): Promise<PublicCreatorModel[]> {
+  const { data, error } = await creatorModelRequest<{ data: unknown; error: unknown }>(
+    requestSignal => creatorRpc.rpc('public_creator_models', { p_kind: kind }).abortSignal(requestSignal), signal,
+  );
   if (error) throw error;
-  return (data ?? []) as CreatorAgent[];
+  if (!Array.isArray(data)) throw new Error('Le catalogue de modèles est indisponible.');
+  // One malformed community record must not make everybody's catalogue fail.
+  return data.flatMap((row: unknown) => {
+    const model = parsePublicCreatorModel(row);
+    return model ? [model] : [];
+  });
 }
 
-export async function listPublicAgents(): Promise<CreatorAgent[]> {
-  const { data, error } = await sb()
-    .from('creator_agents')
-    .select('*')
-    .eq('is_public', true)
-    .eq('is_template', false)
-    .order('total_runs', { ascending: false })
-    .limit(50);
+export async function listTemplates(signal?: AbortSignal): Promise<PublicCreatorModel[]> {
+  return listPublicCreatorModels('official', signal);
+}
+
+export async function listPublicAgents(signal?: AbortSignal): Promise<PublicCreatorModel[]> {
+  return listPublicCreatorModels('community', signal);
+}
+
+export async function getPublicCreatorModel(id: string, signal?: AbortSignal): Promise<PublicCreatorModel | null> {
+  if (!isCreatorModelId(id)) return null;
+  const { data, error } = await creatorModelRequest<{ data: unknown; error: unknown }>(
+    requestSignal => creatorRpc.rpc('public_creator_models', { p_id: id }).abortSignal(requestSignal), signal,
+  );
   if (error) throw error;
-  return (data ?? []) as CreatorAgent[];
+  if (!Array.isArray(data)) throw new Error('Le modèle est indisponible.');
+  if (data.length === 0) return null;
+  const model = data.length === 1 ? parsePublicCreatorModel(data[0]) : null;
+  if (!model || model.id !== id.toLowerCase()) throw new Error('Le modèle est indisponible.');
+  return model;
 }
 
 export async function getAgent(id: string): Promise<CreatorAgent> {
@@ -159,6 +222,9 @@ export async function getAgent(id: string): Promise<CreatorAgent> {
     .eq('id', id)
     .single();
   if (error) throw error;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'execution_preferences')) {
+    return { ...data, execution_preferences: parseCreatorExecutionPreferences(data.execution_preferences) } as CreatorAgent;
+  }
   return data as CreatorAgent;
 }
 
@@ -203,6 +269,9 @@ export async function updateAgent(
   // Strip unsafe fields
   const { id: _, user_id: __, created_at: ___, updated_at: ____, total_runs: _____, total_tokens: ______, is_template: _______, ...safe } = patch;
   void _; void __; void ___; void ____; void _____; void ______; void _______;
+  if (Object.prototype.hasOwnProperty.call(safe, 'execution_preferences')) {
+    safe.execution_preferences = parseCreatorExecutionPreferences(safe.execution_preferences);
+  }
   const { data, error } = await sb()
     .from('creator_agents')
     .update(safe)
@@ -210,6 +279,9 @@ export async function updateAgent(
     .select()
     .single();
   if (error) throw error;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'execution_preferences')) {
+    return { ...data, execution_preferences: parseCreatorExecutionPreferences(data.execution_preferences) } as CreatorAgent;
+  }
   return data as CreatorAgent;
 }
 
@@ -221,21 +293,22 @@ export async function deleteAgent(id: string): Promise<void> {
 export async function cloneTemplate(
   userId: string,
   templateId: string,
+  copyId: string = crypto.randomUUID(),
+  signal?: AbortSignal,
 ): Promise<CreatorAgent> {
-  const tpl = await getAgent(templateId);
-  return createAgent(userId, {
-    name: tpl.name,
-    description: tpl.description,
-    emoji: tpl.emoji,
-    color: tpl.color,
-    category: tpl.category,
-    system_prompt: tpl.system_prompt,
-    model: tpl.model,
-    temperature: tpl.temperature,
-    max_tokens: tpl.max_tokens,
-    tools_enabled: tpl.tools_enabled,
-    cloned_from: tpl.id,
-  });
+  if (![userId, templateId, copyId].every(isCreatorModelId)) throw new Error('Demande de copie invalide.');
+  const { data, error } = await creatorModelRequest<{ data: CreatorAgent | null; error: unknown }>(
+    requestSignal => creatorRpc.rpc('clone_public_creator_model', {
+      p_source_id: templateId,
+      p_copy_id: copyId,
+      p_expected_user_id: userId,
+    }).single().abortSignal(requestSignal), signal,
+  );
+  if (error) throw error;
+  if (!data || data.id !== copyId || data.user_id !== userId || data.cloned_from !== templateId) {
+    throw new Error('La copie n’a pas pu être confirmée.');
+  }
+  return data as CreatorAgent;
 }
 
 // =============================================================
@@ -246,10 +319,19 @@ export async function chatWithAgent(
   sessionId: string,
   message: string,
   signal?: AbortSignal,
+  toolResultIds: readonly string[] = [],
 ): Promise<{ reply: string; tokens: number }> {
   signal?.throwIfAborted();
+  const selectedIds = [...toolResultIds];
+  if (selectedIds.length > 3 || selectedIds.some(id => !isPrivateToolResultId(id))
+    || new Set(selectedIds.map(id => id.toLowerCase())).size !== selectedIds.length) {
+    throw new Error('Choisis au maximum trois résultats privés distincts.');
+  }
   const { data, error } = await supabase.functions.invoke('creator-agent-chat', {
-    body: { agent_id: agentId, session_id: sessionId, message },
+    body: {
+      agent_id: agentId, session_id: sessionId, message,
+      ...(selectedIds.length > 0 ? { tool_result_ids: selectedIds } : {}),
+    },
     signal,
   });
   signal?.throwIfAborted();

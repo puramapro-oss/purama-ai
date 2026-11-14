@@ -3,6 +3,7 @@ import { resolveAgentDefinition } from "./resolveDefinition.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { isRunnable, loadAgentState } from "./autonomy.js";
 import { assertToolResult } from "./tool-result.js";
+import { persistPrivateToolResult } from "./private-tool-results.js";
 import { validateToolParams } from "./tool-input.js";
 import { shouldMinimizeToolTrace, summarizeToolError, summarizeToolResult } from "./tool-trace.js";
 import { restoreAgentExecutionTrigger, snapshotAgentExecutionTrigger } from "./execution-origin.js";
@@ -81,6 +82,13 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
           const result = await tool.execute(pending.tool_params, {
             userId: pending.user_id, agentType: pending.agent_type as AgentType, mode: "live", trigger: executionTrigger, operationId: pending.id,
           });
+          const delivery = await persistPrivateToolResult({
+            userId: pending.user_id, agentType: pending.agent_type,
+            runId: pending.run_id, operationId: pending.id, toolName: tool.name, result,
+          });
+          if (delivery.status === "unavailable") {
+            throw new Error("Résultat privé indisponible après exécution de l’outil");
+          }
           assertToolResult(result);
           status = "executed";
           resultSummary = summarizeToolResult(result, privateTrace);

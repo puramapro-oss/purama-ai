@@ -64,14 +64,31 @@ export async function getVoiceSettings(userId: string): Promise<VoiceSettings> {
 }
 
 export async function saveVoiceSettings(userId: string, patch: Partial<VoiceSettings>): Promise<VoiceSettings> {
-  const current = await getVoiceSettings(userId);
-  const next = { ...current, ...patch, user_id: userId, updated_at: new Date().toISOString() };
-  const { data, error } = await sb()
+  // Never write a previously read snapshot: another window may have changed
+  // unrelated settings, including its choice to disable voice.
+  const changes = { ...patch, user_id: userId, updated_at: new Date().toISOString() };
+  const updateExisting = () => sb()
     .from('voice_settings')
-    .upsert(next, { onConflict: 'user_id' })
+    .update(changes)
+    .eq('user_id', userId)
     .select()
-    .single();
-  if (error) throw error;
+    .maybeSingle();
+  const result = await updateExisting();
+  if (result.error) throw result.error;
+  let data = result.data;
+  if (!data) {
+    // Preserve the client defaults and the requested choices on first creation.
+    // A competing creation must never reset an existing row to these defaults.
+    const { error } = await sb().from('voice_settings').upsert(
+      { ...DEFAULT_VOICE_SETTINGS, ...changes },
+      { onConflict: 'user_id', ignoreDuplicates: true },
+    );
+    if (error) throw error;
+    const saved = await updateExisting();
+    if (saved.error) throw saved.error;
+    data = saved.data;
+  }
+  if (!data) throw new Error('Voice settings could not be saved.');
   return {
     user_id: data.user_id,
     provider: data.provider,

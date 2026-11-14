@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-11-13",
+  "scope": "Existing authorized Mac Anthropic account; minimal public prompt, no customer data",
+  "model_list": {
+    "status": 200,
+    "configured_main": "claude-sonnet-4-6",
+    "configured_fast": "claude-haiku-4-5-20251001",
+    "configured_models_active": true
+  },
+  "inference": {
+    "model": "claude-haiku-4-5-20251001",
+    "max_tokens": 16,
+    "requests": 1,
+    "http_status": 400,
+    "error_type": "invalid_request_error",
+    "classification": "insufficient_credit",
+    "raw_body_retained": false,
+    "billing_cost": "unknown"
+  },
+  "configuration_changed": false,
+  "credentials_exported": false,
+  "production_migration": false,
+  "deployment": false,
+  "note": "Sanitized receipt of the live tool observation. A successful model list does not qualify billing or end-to-end service."
+}

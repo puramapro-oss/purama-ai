@@ -1,0 +1,511 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-11T19:21:46.221339+00:00",
+  "overallStatus": "PARTIEL",
+  "scope": "IAO: interface du mode vocal et commandes de saisie écrite",
+  "base": {
+    "repository": "puramapro-oss/purama-ai",
+    "pr": 45,
+    "url": "https://github.com/puramapro-oss/purama-ai/pull/45",
+    "state": "open",
+    "draft": true,
+    "headRef": "audit/unlazy-consolidation-20261111-ac3c",
+    "headSha": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+    "baseRef": "audit/reliability-oauth-20261110",
+    "baseSha": "c04e2cb683ff81efe8443f4aa32d3447afb3b143",
+    "verifiedAt": "2026-11-11T18:41:26.954Z",
+    "referenceKind": "Pinned consolidation head supplied for integration; no moving-head chase"
+  },
+  "exactBaseTree": "3774728bac87d936b309fffa00730dfe011be442",
+  "localBranch": "feat/iao-accessibility-20261111",
+  "workingDirectory": "/workspace/scratch/f1f4b67ef5ca/iao-accessibility",
+  "publication": {
+    "performedByThisTask": false,
+    "remoteWrites": 0,
+    "files": [
+      "src/components/voice/VoiceMode.tsx",
+      "src/components/voice/AgentChatTab.tsx",
+      "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "tests/voice-consent/accessibility.spec.ts",
+      "tests/voice-consent/lifecycle.spec.ts",
+      "tests/async-ui/lifecycle.spec.ts",
+      ".github/workflows/purama-chef-hardening.yml",
+      "vercel.json",
+      "qa/accessibility-20261111/README.md",
+      "qa/accessibility-20261111/evidence/base-and-impact.json",
+      "qa/accessibility-20261111/evidence/voice-boundaries.json",
+      "qa/accessibility-20261111/MANIFEST.json"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      ".gitnexus",
+      "*.log",
+      "test-results",
+      "playwright-report",
+      "index GitNexus et binaires"
+    ]
+  },
+  "fileIntegrity": [
+    {
+      "path": "src/components/voice/VoiceMode.tsx",
+      "sha256": "d495ee00ec2db0a407e59b4e9cc1e1328235c19fd8e0796a8c551d00c479b173",
+      "bytes": 14542
+    },
+    {
+      "path": "src/components/voice/AgentChatTab.tsx",
+      "sha256": "bbf5e77456a151d43dd6fc152f806a268d22faf2f60affce64bbf75ad5c86e96",
+      "bytes": 12193
+    },
+    {
+      "path": "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "sha256": "274547b5d3769960d60d391e3b2f4dcf6cc6480e58604237f72b091e80829baa",
+      "bytes": 10768
+    },
+    {
+      "path": "tests/voice-consent/accessibility.spec.ts",
+      "sha256": "e25fd74a3d2954f72c927b0ae83a0306fcf619d2132d034a946cdd2591ba5e3f",
+      "bytes": 12195
+    },
+    {
+      "path": "tests/voice-consent/lifecycle.spec.ts",
+      "sha256": "ff915dbcd7c4e6331110236369e7a11228217764e8e198d75a7a18069dccd746",
+      "bytes": 16945
+    },
+    {
+      "path": "tests/async-ui/lifecycle.spec.ts",
+      "sha256": "bd17b99f1d4e8dcc5290055052bb465daebe4b9633cddc31ae5d961bdd9c6392",
+      "bytes": 13808
+    },
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "sha256": "55cacb3fb13b8aa755cf350ff2f1111d5bcae643804200de93a5490702a240a9",
+      "bytes": 9363
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "345bdc69464f723825a3b8122dc0f264f509c46a864d798ba5eeaf18d4603b51",
+      "bytes": 1090
+    },
+    {
+      "path": "qa/accessibility-20261111/README.md",
+      "sha256": "39621de419eb332f6596e2f6895bff4206ff23cea820001774b99bf226e6a74d",
+      "bytes": 11615
+    },
+    {
+      "path": "qa/accessibility-20261111/evidence/base-and-impact.json",
+      "sha256": "15f25a968b5aea4b107bf73af479c01e2e438ef890575ce9fdc950d8b62870e3",
+      "bytes": 37024
+    },
+    {
+      "path": "qa/accessibility-20261111/evidence/voice-boundaries.json",
+      "sha256": "dfcfc2354710077360119ef1b40b0a73a66191e6b90802035c6d75bcfe04f8f5",
+      "bytes": 2627
+    }
+  ],
+  "validation": {
+    "initialRegression": {
+      "status": "PASS",
+      "detail": "Défauts reproduits avant correction : 8 échecs et 1 succès dans la première série de 9 tests DOM.",
+      "evidenceLocalOnly": "qa/accessibility-20261111/evidence/dom-before.log"
+    },
+    "finalDomTests": {
+      "status": "PASS",
+      "command": "node node_modules/vitest/vitest.mjs run src/components/voice/VoiceMode.accessibility.test.tsx",
+      "exitCode": 0,
+      "passed": 10,
+      "failed": 0,
+      "environment": "jsdom ; React et Radix réels ; voix et animations décoratives simulées",
+      "evidenceLocalOnly": "../iao-pr53-ci-evidence/responsive-dom.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "runtimeVersion": "4.1.12"
+    },
+    "targetedLint": {
+      "status": "PASS",
+      "command": "node node_modules/eslint/bin/eslint.js src/components/voice/VoiceMode.tsx tests/voice-consent/accessibility.spec.ts",
+      "exitCode": 0,
+      "evidenceLocalOnly": "../iao-pr53-ci-evidence/responsive-lint.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "scope": "Incremental check of both changed executable files; prior files remain unchanged from their previous PASS."
+    },
+    "applicationTypecheck": {
+      "status": "PASS",
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
+      "exitCode": 0,
+      "evidenceLocalOnly": "../iao-pr53-ci-evidence/responsive-typecheck.log",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
+    },
+    "productionBuild": {
+      "status": "NON TESTÉ",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "finalCandidateVerified": false,
+      "currentBaseAttempted": false,
+      "detail": "Aucun build local après transposition ; les essais antérieurs sont archivés dans previousQualification.",
+      "next": "Build du commit candidat à qualifier en CI."
+    },
+    "browserDiscovery": {
+      "status": "PASS",
+      "commands": [
+        "node node_modules/@playwright/test/cli.js test --config tests/voice-consent/playwright.config.ts --list",
+        "node node_modules/@playwright/test/cli.js test --config tests/async-ui/playwright.config.ts --list"
+      ],
+      "exitCodes": [
+        0,
+        0
+      ],
+      "voiceConsentScenarios": 27,
+      "existingVoiceConsentScenarios": 21,
+      "addedAccessibilityScenarios": 6,
+      "asyncUiScenarios": 17,
+      "detail": "27 scénarios reconnus, dont le format paysage court. Mesures géométriques ajoutées à la boucle de réponse longue ; aucune exécution navigateur locale. Les 17 scénarios async-ui restent ceux de la précédente découverte.",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363"
+    },
+    "browserExecution": {
+      "status": "NON TESTÉ",
+      "runner": ".github/workflows/purama-chef-hardening.yml",
+      "commands": [
+        "bash scripts/ci/run-site-browser.sh npm run test:voice-consent",
+        "bash scripts/ci/run-site-browser.sh npm run test:async-ui"
+      ],
+      "harness": "tests/voice-consent/harness.tsx",
+      "transport": "tests/voice-consent/transport.ts",
+      "hardwarePermission": "Aucune autorisation matérielle ; mediaDevices, MediaRecorder et Audio simulés avant montage. Le scénario clavier vérifie zéro appel au double getUserMedia.",
+      "screenshots": {
+        "directory": "test-results/voice-consent",
+        "creation": "testInfo.outputPath + page.screenshot + testInfo.attach",
+        "cases": [
+          "desktop keyboard modal",
+          "desktop long answer",
+          "320 × 640 text 200% long answer",
+          "640 × 360 text 200% long answer",
+          "failure in a new accessibility scenario when the page remains available"
+        ],
+        "artifactName": "iao-voice-accessibility-${{ github.sha }}",
+        "retentionDays": 14,
+        "status": "NON TESTÉ"
+      }
+    },
+    "hardwareAndAssistiveTechnology": {
+      "status": "NON TESTÉ",
+      "cases": [
+        "microphone physique",
+        "synthèse réelle",
+        "lecteur d’écran",
+        "contacteur",
+        "appareil mobile réel",
+        "zoom navigateur réel"
+      ]
+    },
+    "preservedVoiceBoundaries": {
+      "status": "PASS",
+      "evidence": "qa/accessibility-20261111/evidence/voice-boundaries.json",
+      "detail": "Portions de contrôle des tours, lecture automatique, capture, transcription, synthèse, annulation et fichiers réseau inchangés par comparaison exacte."
+    },
+    "gitNexus": {
+      "status": "PASS",
+      "preEditImpact": "HIGH/CRITICAL signalé avant les modifications produit.",
+      "postEditChangedFiles": 12,
+      "postEditChangedSymbols": 7,
+      "detail": "Index d’impact initial 85cfd25 conservé ; les sources UI amont sont inchangées. La comparaison exacte des blobs confirme que cette composition ne modifie aucun composant ou test d’accessibilité. L’absence de processus remontés ne constitue pas une preuve indépendante de non-régression.",
+      "evidence": "qa/accessibility-20261111/evidence/base-and-impact.json",
+      "localDiffEvidence": "../iao-pr53-ci-evidence/composition-ee5059d5/gitnexus-detect-changes.log",
+      "finalIndexScope": "Comparaison avec l’arbre exact de ee5059d5 : 12 fichiers propres à l’accessibilité, 7 symboles indexés attendus. Les fichiers Connect sont identiques à la nouvelle base.",
+      "base": "ee5059d5d6c9a9c29c92a2c5892457d24b081f22",
+      "referenceTree": "05587a7b54aac6f61366a182f1a24fe73d92a6cf"
+    },
+    "workflowEvidence": {
+      "status": "PASS",
+      "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "parsed": true,
+      "onlyOneUploaderAdded": true,
+      "runtimeAndExistingStepsUnchanged": true,
+      "upstreamKartaChangesPreserved": true,
+      "action": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "condition": "always()",
+      "path": "test-results/voice-consent",
+      "retentionDays": 14
+    },
+    "deploymentOverride": {
+      "status": "PASS",
+      "base": "ee5059d5d6c9a9c29c92a2c5892457d24b081f22",
+      "branch": "feat/iao-accessibility-20261111",
+      "enabled": false,
+      "allOtherVercelConfigurationUnchanged": true,
+      "newKeyFirst": true,
+      "existingKeyRelativeOrderPreserved": true
+    }
+  },
+  "nextOwner": "Coordinateur : publier uniquement sur feat/iao-accessibility-20261111 un commit de merge avec les parents [6ae2ce12a99c4f5bea51af350d52a46f45d412db, ee5059d5d6c9a9c29c92a2c5892457d24b081f22], puis qualifier la composition en CI. Aucun build local supplémentaire.",
+  "recordType": "Relevé de qualification locale avant publication et CI",
+  "currentStatusLocations": [
+    "PR correspondant à cette correction IAO",
+    "Dossier partagé ONE associé à la PR #4"
+  ],
+  "recordInterpretation": "Les statuts sont ceux du contrôle local horodaté ; les résultats distants et l’état courant sont suivis dans les emplacements ci-dessus.",
+  "previousQualification": {
+    "base": {
+      "repository": "puramapro-oss/purama-ai",
+      "pr": 45,
+      "url": "https://github.com/puramapro-oss/purama-ai/pull/45",
+      "state": "open",
+      "draft": true,
+      "headRef": "audit/unlazy-consolidation-20261111-ac3c",
+      "headSha": "85cfd25a44913c77720842ca7f73a661854a447b",
+      "baseRef": "audit/reliability-oauth-20261110",
+      "baseSha": "c04e2cb683ff81efe8443f4aa32d3447afb3b143",
+      "verifiedAt": "2026-11-11T18:21:54.581Z"
+    },
+    "exactBaseTree": "d69b737ded2a720c7d75a0123ea9f592caa97bb2",
+    "generatedAt": "2026-11-11T18:29:05.328Z",
+    "domTests": {
+      "passed": 10,
+      "vitest": "3.2.7"
+    },
+    "productionBuild": {
+      "status": "PARTIEL",
+      "finalCandidateVerified": false,
+      "attempts": [
+        {
+          "command": "node node_modules/vite/bin/vite.js build",
+          "exitCode": 137,
+          "detail": "Processus tué après 4 261 modules transformés ; compilation concurrente signalée par le coordinateur.",
+          "evidenceLocalOnly": "qa/accessibility-20261111/evidence/build-interrupted-137.log"
+        },
+        {
+          "command": "NODE_OPTIONS=--max-old-space-size=2048 node node_modules/vite/bin/vite.js build",
+          "exitCode": 130,
+          "detail": "Arrêt volontaire de la seule session de build IAO 50563 à la demande du coordinateur ; aucune relance.",
+          "evidenceLocalOnly": "qa/accessibility-20261111/evidence/build.log"
+        }
+      ],
+      "next": "Valider npm run build sur le même commit candidat en CI. Aucun nouveau build local nécessaire si cette CI réussit."
+    }
+  },
+  "responsiveAmendment": {
+    "recordType": "Local responsive correction qualification; browser geometry remains unexecuted",
+    "recordedAt": "2026-11-11T18:58:15.844Z",
+    "publishedParent": "00e81a29b36d42485520408bc5802d32451b3c92",
+    "parentTree": "0c3093b92d8a955190151936c6a10701cfc9f9fa",
+    "observation": {
+      "kind": "static CSS minimum-size analysis",
+      "browserFailureObserved": false,
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "rootFontSize": 32,
+      "oldMinimumHeights": {
+        "header": 96,
+        "readingRegion": 256,
+        "primaryControl": 160,
+        "paddingAndGaps": 152,
+        "total": 664
+      },
+      "excludedFromOldMinimum": [
+        "helper text height",
+        "additional title wrapping"
+      ]
+    },
+    "changes": {
+      "layout": "header / minmax(0,1fr) reading region / primary action",
+      "smallScreenClosePx": 44,
+      "smallScreenPrimaryPx": 64,
+      "readingRegionMinHeightCss": 0,
+      "decorativeWaveformHiddenBelowPx": 640,
+      "agentNameInScrollableRegion": true,
+      "userTextClamped": false,
+      "userTextFontReduced": false,
+      "largeLayoutRequires": {
+        "minWidthPx": 640,
+        "minHeightPx": 480
+      },
+      "largeScreenPrimaryPx": 80,
+      "decorationAndSpacingBoundedInPixels": true,
+      "heightConditionCompiledLocally": true
+    },
+    "upcomingBrowserAssertions": {
+      "states": [
+        "opened",
+        "processing",
+        "long-answer-end"
+      ],
+      "controlsFullyInsideViewport": true,
+      "minTargetPx": 44,
+      "minUsefulReadingRegionPx": 128,
+      "measuredUsing": "Playwright boundingBox and actual window.innerWidth/innerHeight",
+      "newArbitraryWaits": false,
+      "status": "NON TESTÉ",
+      "formats": [
+        {
+          "width": 1280,
+          "height": 800,
+          "textScale": 1
+        },
+        {
+          "width": 320,
+          "height": 640,
+          "textScale": 2
+        },
+        {
+          "width": 640,
+          "height": 360,
+          "textScale": 2
+        }
+      ]
+    },
+    "voiceLogic": {
+      "status": "PASS",
+      "completeComponentPrefixBeforeJsxUnchanged": true,
+      "sha256": "63e9e831e37ce452bbf392b5decab0a981c2abaff22c0a304635e133e764d0e4"
+    },
+    "localChecks": {
+      "dom": {
+        "status": "PASS",
+        "vitest": "4.1.12",
+        "passed": 10,
+        "failed": 0
+      },
+      "lint": {
+        "status": "PASS"
+      },
+      "typecheck": {
+        "status": "PASS"
+      },
+      "browserDiscovery": {
+        "status": "PASS",
+        "scenarios": 27
+      },
+      "browserGeometry": {
+        "status": "NON TESTÉ"
+      },
+      "build": {
+        "status": "NON TESTÉ"
+      },
+      "cssMediaCompilation": {
+        "status": "PASS",
+        "condition": "(min-width:640px) and (min-height:480px)",
+        "notBrowserEvidence": true
+      },
+      "gitNexus": {
+        "status": "PASS",
+        "changedFilesInTotalCandidate": 12,
+        "changedIndexedSymbols": 7,
+        "indexBehindCommits": 1,
+        "unchangedUpstreamUiPreviouslyVerified": true
+      }
+    },
+    "sourceFiles": [
+      {
+        "path": "src/components/voice/VoiceMode.tsx",
+        "sha256": "d495ee00ec2db0a407e59b4e9cc1e1328235c19fd8e0796a8c551d00c479b173"
+      },
+      {
+        "path": "tests/voice-consent/accessibility.spec.ts",
+        "sha256": "e25fd74a3d2954f72c927b0ae83a0306fcf619d2132d034a946cdd2591ba5e3f"
+      }
+    ]
+  },
+  "integrationComposition": {
+    "recordType": "Relevé local horodaté avant publication et CI de la composition ; qualifications précédentes conservées",
+    "recordedAt": "2026-11-11T19:21:46.221339+00:00",
+    "status": "PARTIEL",
+    "parents": [
+      "6ae2ce12a99c4f5bea51af350d52a46f45d412db",
+      "ee5059d5d6c9a9c29c92a2c5892457d24b081f22"
+    ],
+    "testedAccessibilityHead": "6ae2ce12a99c4f5bea51af350d52a46f45d412db",
+    "testedAccessibilityTree": "994019dd2d640df59acebfce21851b0d7e3499f6",
+    "newBase": "ee5059d5d6c9a9c29c92a2c5892457d24b081f22",
+    "newBaseTree": "05587a7b54aac6f61366a182f1a24fe73d92a6cf",
+    "mergeBase": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+    "conflict": {
+      "path": "vercel.json",
+      "kind": "Deux ajouts de clés en fin de la même map, reproduits par git merge-file sur copies immuables",
+      "resolution": "Toutes les règles de la nouvelle base sont conservées avec leur ordre relatif ; la clé feat/iao-accessibility-20261111=false est placée en première position."
+    },
+    "upstreamFilesPreservedExactly": [
+      {
+        "path": ".github/workflows/connect-provisioning.yml",
+        "gitBlob": "541181ef7570493e1283ac715018378af1863169",
+        "mode": "100644"
+      },
+      {
+        "path": "qa/connect-provisioning-20261111/README.md",
+        "gitBlob": "5354645eab94aa043895bf0103ec157003076708",
+        "mode": "100644"
+      },
+      {
+        "path": "supabase/functions/connect-account-session/index.ts",
+        "gitBlob": "e5699b0ee282711d75b9f76ca9516deab6958cf4",
+        "mode": "100644"
+      },
+      {
+        "path": "supabase/migrations/20261111183000_connect_account_provisioning.sql",
+        "gitBlob": "a9e38c799c595c50d8f2e7b92d2b8e9d7b93c60d",
+        "mode": "100644"
+      },
+      {
+        "path": "tests/commerce/connect-provider-fixture.ts",
+        "gitBlob": "a60cdb1f0184ba5c918545cb861f7a1e75d8c88f",
+        "mode": "100644"
+      },
+      {
+        "path": "tests/commerce/connect-provisioning-postgres.py",
+        "gitBlob": "1c1ba77fc204e916cb8766539f82025ce45b0641",
+        "mode": "100644"
+      },
+      {
+        "path": "tests/commerce/connect-provisioning.test.ts",
+        "gitBlob": "111fcb7918c1ebeb52937008991b08190bdd2630",
+        "mode": "100644"
+      }
+    ],
+    "runtimeAndTestFilesUnchangedFromPassingCandidate": true,
+    "priorCandidateCi": {
+      "status": "PASS",
+      "runId": 43082993454,
+      "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/43082993454",
+      "testedMerge": "7d7bd373a1a4d6e5693ef6a14412f706d55a0cec",
+      "testedBase": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+      "jobs": [
+        "site",
+        "karta",
+        "subscription-concurrency"
+      ],
+      "unitTests": 340,
+      "voiceDomTestsIncluded": 10,
+      "voiceConsentBrowserTests": 27,
+      "asyncUiBrowserTests": 17,
+      "geometryAssertions": "PASS aux trois formats et trois états ; les PNG sont archivés, les valeurs JSON brutes ne le sont pas.",
+      "notQualificationOfNewComposition": true
+    },
+    "localChecks": {
+      "upstreamBlobHashes": "PASS",
+      "rebuiltNewBaseTree": "PASS",
+      "vercelJsonAndAllRules": "PASS",
+      "relativeExistingKeyOrder": "PASS",
+      "unchangedUiAndTests": "PASS",
+      "gitNexus": "PASS",
+      "gitNexusScope": {
+        "referenceTree": "05587a7b54aac6f61366a182f1a24fe73d92a6cf",
+        "files": 12,
+        "indexedSymbols": 7,
+        "scope": "compare",
+        "noNewUiOrTestSourceChanges": true
+      }
+    },
+    "compositionCi": {
+      "status": "NON TESTÉ",
+      "owner": "Coordinateur après publication du commit de merge"
+    },
+    "localBuild": {
+      "status": "NON TESTÉ",
+      "detail": "Aucun nouveau build local demandé ; la CI existante qualifie la composition."
+    },
+    "evidenceLocalOnly": "../iao-pr53-ci-evidence/composition-ee5059d5",
+    "currentStatusLocations": [
+      "https://github.com/puramapro-oss/purama-ai/pull/53",
+      "Dossier partagé ONE associé à la PR #4"
+    ]
+  }
+}

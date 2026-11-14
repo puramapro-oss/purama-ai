@@ -15,10 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.purama.purama_ai",
+      "bundleIdentifier": "dev.purama.purama-ai",
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Purama AI utilise la camera pour scanner des documents et prendre des photos de preuves.",
+        "NSMicrophoneUsageDescription": "À votre demande, le parcours accessible analyse les sons sur votre téléphone. Vous pouvez arrêter le microphone à tout moment.",
         "NSPhotoLibraryUsageDescription": "Purama AI accede a ta galerie pour joindre des images a tes conversations.",
         "NSFaceIDUsageDescription": "Purama AI utilise Face ID pour securiser ton compte."
       },
@@ -36,6 +37,7 @@
       "versionCode": 1,
       "permissions": [
         "CAMERA",
+        "RECORD_AUDIO",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "POST_NOTIFICATIONS"
@@ -49,6 +51,7 @@
       "expo-router",
       "expo-secure-store",
       "expo-font",
+      "./modules/purama-accessibility-watch/app.plugin.cjs",
       [
         "expo-splash-screen",
         {

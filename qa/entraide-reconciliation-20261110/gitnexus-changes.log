@@ -1,0 +1,31 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 32 files, 32 symbols
+Affected processes: 6
+Risk level: high
+
+Changed symbols:
+  Function persistMissionCollective → src/lib/entraide.ts
+  Function loadMissionCollective → src/lib/entraide.ts
+  Function createMissionInDB → src/lib/entraide.ts
+  Function getLastDeclineOrExpiry → src/lib/entraide.ts
+  Interface MissionCreate → src/pages/Entraide.tsx
+  Property description → src/pages/Entraide.tsx
+  Property id → src/pages/Entraide.tsx
+  Property max_participants → src/pages/Entraide.tsx
+  Property min_participants → src/pages/Entraide.tsx
+  Property title → src/pages/Entraide.tsx
+  Property visibility → src/pages/Entraide.tsx
+  Function EntraideWorkspace → src/pages/Entraide.tsx
+  Function mutationFn → src/pages/Entraide.tsx
+  Function onSuccess → src/pages/Entraide.tsx
+  Function editProfile → src/pages/Entraide.tsx
+... and 17 more
+
+Affected execution flows:
+  • LoadMissionCollective → EntraideHttpError (3 steps) — changed: loadMissionCollective
+  • LoadMissionCollective → ErrorMessage (3 steps) — changed: loadMissionCollective
+  • Entraide → ToProfileDraft (3 steps) — changed: EntraideWorkspace
+  • PersistMissionCollective → EntraideHttpError (3 steps) — changed: persistMissionCollective
+  • PersistMissionCollective → ErrorMessage (3 steps) — changed: persistMissionCollective
+  • Entraide → Cn (4 steps) — changed: EntraideWorkspace

@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vite/bin/vite.js",
+    "build"
+  ],
+  "cwd": "/Users/matissdornier/purama-worktrees/iao-atelier-multiagents-20261112",
+  "exitCode": 0,
+  "seconds": 51.99
+}

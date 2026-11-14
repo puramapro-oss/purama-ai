@@ -1,0 +1,97 @@
+name: Connect provisioning recovery
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/connect-provisioning.yml'
+      - 'supabase/functions/connect-account-session/**'
+      - 'supabase/migrations/*connect*'
+      - 'tests/commerce/connect*'
+      - 'tests/commerce/deno.json'
+      - 'tests/commerce/serve-capture.ts'
+      - 'tests/connect-sdk/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: connect-provisioning-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inert-handler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      DENO_NO_UPDATE_CHECK: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: v2.9.6
+      - name: Configure the isolated Deno cache
+        shell: bash
+        run: |
+          printf 'DENO_DIR=%s/connect-sdk-deno-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Verify the native Deno runtime
+        run: deno --version
+      - name: Exercise the handler with inert database and Stripe adapters
+        run: >-
+          deno test --no-lock --no-prompt --deny-net --deny-run
+          --allow-env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,STRIPE_SECRET_KEY
+          --config tests/commerce/deno.json
+          tests/commerce/connect-handler.test.ts
+          tests/commerce/connect-provisioning.test.ts
+      - name: Typecheck the real handler with the official dependency graph
+        run: >-
+          deno check --no-config --node-modules-dir=none
+          --lock=tests/connect-sdk/deno.lock --frozen-lockfile
+          supabase/functions/connect-account-session/index.ts
+      - name: Preload and typecheck the real Stripe SDK transport tests
+        run: >-
+          deno test --no-run --no-prompt --deny-net --deny-run --node-modules-dir=none
+          --lock=tests/connect-sdk/deno.lock --frozen-lockfile
+          --config tests/connect-sdk/deno.json
+          tests/connect-sdk/handler.test.ts
+      - name: Exercise the real SDK against an inert HTTP transport
+        run: >-
+          deno test --cached-only --no-prompt --deny-net --deny-run --node-modules-dir=none
+          --allow-env=SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,STRIPE_SECRET_KEY
+          --lock=tests/connect-sdk/deno.lock --frozen-lockfile
+          --config tests/connect-sdk/deno.json
+          tests/connect-sdk/handler.test.ts
+
+  native-postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify recovery, concurrency and privileges in a private cluster
+        shell: bash
+        env:
+          CONNECT_PROVISIONING_REPORT: ${{ runner.temp }}/connect-provisioning-postgres.json
+        run: |
+          set -euo pipefail
+          pg_bin=/usr/lib/postgresql/16/bin
+          for pg_tool in initdb pg_ctl psql; do
+            if [[ ! -x "$pg_bin/$pg_tool" ]]; then
+              printf '::error::Preinstalled PostgreSQL binary is unavailable: %s\n' "$pg_bin/$pg_tool"
+              exit 1
+            fi
+          done
+          python3 tests/commerce/connect-provisioning-postgres.py \
+            --pg-bin "$pg_bin" \
+            --report "$CONNECT_PROVISIONING_REPORT"
+      - name: Preserve the native PostgreSQL result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: connect-provisioning-postgres
+          path: ${{ runner.temp }}/connect-provisioning-postgres.json
+          if-no-files-found: error
+          retention-days: 14

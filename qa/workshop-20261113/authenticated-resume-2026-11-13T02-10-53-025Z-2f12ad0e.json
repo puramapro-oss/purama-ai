@@ -1,0 +1,67 @@
+{
+  "kind": "workshop-authenticated-artifact-resume",
+  "version": 1,
+  "startedAt": "2026-11-13T02:10:53.029Z",
+  "outcome": "FAIL",
+  "stage": "artifact_ui_request",
+  "fixtureResponsesUsed": false,
+  "missionSubmission": "not_sent",
+  "startRequestCount": 0,
+  "observedStates": [],
+  "checks": {
+    "login": {
+      "outcome": "PASS"
+    },
+    "mission": {
+      "outcome": "PASS",
+      "tasks": 3,
+      "state": "verified_done"
+    },
+    "artifactApi": {
+      "outcome": "PASS",
+      "bytes": 3066,
+      "sha256": "3362d37b249b908d37a587132365ae5aabe91e5c08001f93b127775681fe1ffa",
+      "hasPreview": true
+    },
+    "resultVisible": {
+      "outcome": "PASS"
+    }
+  },
+  "captures": [
+    "authenticated-resume-2026-11-13T02-10-53-025Z-2f12ad0e-result.png"
+  ],
+  "javascriptErrorCount": 0,
+  "monetaryCost": {
+    "status": "unknown",
+    "micros": null
+  },
+  "readOnlyResume": true,
+  "missionId": "94c0d8cb-936d-4963-8afc-b74ef975e38f",
+  "commitSha": "027a291700e691209d05aea712f41446701db57b",
+  "phases": [
+    "configuration",
+    "browser_start",
+    "ui_login",
+    "mission_status_api",
+    "artifact_api",
+    "mission_ui",
+    "artifact_ui_request"
+  ],
+  "browserCapabilities": {
+    "secureContext": true,
+    "subtleCrypto": true,
+    "objectUrl": true
+  },
+  "failureCode": "STEP_FAILED",
+  "failureType": "TimeoutError",
+  "alertCategories": [],
+  "selectors": {
+    "result": 1,
+    "files": 1,
+    "retry": 0,
+    "download": 0,
+    "preview": 0
+  },
+  "finishedAt": "2026-11-13T02:11:14.932Z",
+  "durationMs": 21903
+}

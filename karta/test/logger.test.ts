@@ -44,3 +44,28 @@ it("records mocked results with simulation mode",async()=>{
  await run.finish({status:"simulated",decision:"mock",toolsUsed:[],resultSummary:"none",mock:true});
  expect(h.rows.get("same")?.mode).toBe("simulation");
 });
+
+it("keeps a successful replay identical across JSON transport without a null error field", async () => {
+ const run = await startRun("u", "compta", trigger, "live", "optional-success");
+ const outcome = { status: "success" as const, decision: "done", toolsUsed: [], resultSummary: "done", mock: false };
+ await run.finish(outcome);
+ expect(h.rows.get("optional-success")?.error_message).toBeNull();
+ const repeated = await startRun("u", "compta", trigger, "live", "optional-success");
+ expect(JSON.parse(JSON.stringify(repeated.existingResult))).toStrictEqual({ ...outcome, retryable: false });
+ expect(h.rows.size).toBe(1);
+});
+it.each(["", "The checked operation failed"])("preserves a stored string error including %j", async errorMessage => {
+ const run = await startRun("u", "compta", trigger, "live", "string-error");
+ const outcome = { status: "error" as const, decision: "failed", toolsUsed: [], resultSummary: "failed", errorMessage, mock: false };
+ await run.finish(outcome);
+ const repeated = await startRun("u", "compta", trigger, "live", "string-error");
+ expect(JSON.parse(JSON.stringify(repeated.existingResult))).toStrictEqual({ ...outcome, retryable: false });
+});
+it("keeps an uncertain unfinished replay explicit and non-retryable", async () => {
+ await startRun("u", "compta", trigger, "live", "uncertain");
+ const repeated = await startRun("u", "compta", trigger, "live", "uncertain");
+ expect(repeated.existingResult).toMatchObject({ status: "error", retryable: false });
+ expect(typeof repeated.existingResult?.errorMessage).toBe("string");
+ expect(repeated.existingResult?.errorMessage?.length).toBeGreaterThan(0);
+ await expect(repeated.finish({ status: "success", decision: "later", toolsUsed: [], resultSummary: "later", mock: false })).rejects.toThrow();
+});

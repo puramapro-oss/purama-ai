@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-12T23:56:39.000524+00:00",
+  "branch": "codex/iao-atelier-multiagents-20261112",
+  "baseSha": "1df7220287fab837fb27cd151a521c2b7577fc9c",
+  "codeValidation": "PASS_AFTER_CORRECTIONS",
+  "productStatus": "PARTIEL",
+  "deployed": false,
+  "targetedUniqueTests": 303,
+  "targetedTests": {
+    "kartaWorkshop": 276,
+    "frontend": 19,
+    "browserFixtures": 3,
+    "nativePostgresConcurrency": 5
+  },
+  "builds": {
+    "frontend": "PASS",
+    "karta": "PASS"
+  },
+  "typechecks": {
+    "frontend": "PASS",
+    "karta": "PASS",
+    "edgeDeno": "PASS"
+  },
+  "liveArtifact": {
+    "kind": "LIVE_GENERATED_ARTIFACT_BROWSER",
+    "status": "PASS",
+    "sourceCommit": "8fd73068c1321a16bf3b9ca5fc3336b71c3825dc",
+    "checks": [
+      "title",
+      "three clicks + keyboard activation",
+      "counter=4",
+      "320px without overflow",
+      "French language",
+      "no external requests",
+      "no browser errors"
+    ],
+    "externalRequests": 0,
+    "browserErrors": 0,
+    "providerUsage": {
+      "inputTokens": 109698,
+      "outputTokens": 1662,
+      "cachedInputTokens": 80768
+    }
+  },
+  "runtimeEnvironmentCheck": {
+    "exitCode": 1,
+    "code": "WORKSHOP_CONFIG",
+    "reason": "No registered project catalogue on this host"
+  },
+  "gitnexus": {
+    "changedFilesBeforeEvidence": 47,
+    "changedSymbols": 13,
+    "affectedFlows": 15,
+    "risk": "HIGH"
+  },
+  "initialRunNotes": [
+    "KARTA full run: 2709 pass, 3 fail; PGlite timing cases passed on Node22, supervisor fixture fixed and 20 tests passed.",
+    "Frontend full run on Node26: 387 pass, 22 localStorage harness failures; the 22 cases pass on Node22.",
+    "Final new KARTA batch: 275 pass, 1 preflight-wait fixture failure; corrected fixture and all 31 adapter tests pass."
+  ],
+  "sourceSha256": {
+    ".github/workflows/purama-chef-hardening.yml": "901119d46459f29e69b23d86a92be6d09d4f48f22e5b7f80e9a249475e17dbc3",
+    "karta/WORKSHOP.md": "757efd03f451fc8b8aea1e653c8fb5cdadbf27a85809aa9c611c30de0f6855b2",
+    "karta/migrations/030_chef_workshop.sql": "c4c86f81e7a7c5c6691edde5bd64762bef63acdddfb6ffdefef735db1ed12f4f",
+    "karta/package.json": "ba51f9a99bb4408f22a3c8900e7fe195f3751c264c3af458ef801ecaf5f17c58",
+    "karta/src/api/server.ts": "0780a4c2ee762e8ff6d3ad4518a3b6d9595324e3a215afaac63cbc8938e640d3",
+    "karta/src/chef/codex-cli-driver.ts": "54fc1ff92c1df67d30310281e957fcd4d9be73813b09b3131a3f8b772838148d",
+    "karta/src/chef/workshop-config.ts": "ce02e8fc838ce7e9a6eca27d4b47bef021932fa911fa2825cef4bc25f24ab6ee",
+    "karta/src/chef/workshop-git.ts": "5d4212f9789fc8dc00c49ac3481bd4b4fd9c0df3c82fe7b74363c4d49acd85b7",
+    "karta/src/chef/workshop-main.ts": "23a7734579b2b20ffff80013fc1372fce512e5d8a26b7abd49ef52d66ec7e01f",
+    "karta/src/chef/workshop-runtime.ts": "9dc61f29da99ff2d9b0620fbc031f48c37084e418402701b34f37eee3cf6ed02",
+    "karta/src/chef/workshop-service.ts": "52a2f13f21d8c699247c2cd83ff659d03b0cf49151066e7e9c5cacc6b074c232",
+    "karta/test/chefCodexCliDriver.test.ts": "6758dde8065632c32039e8bb63bcd705efca4407fc7fc5bbdf5ad4dcadebfd2c",
+    "karta/test/chefSupervisor.test.ts": "a0c8b1b7bc768e5d15baa37057905cdc636230583e1fe7d5f8b7d6dbd4448de7",
+    "karta/test/chefWorkshopAdmission.test.ts": "cd7a089fd1f0a4f0e2cc943450e31584cc2e8cbd3028b3b7717a2b5d1bf2a1eb",
+    "karta/test/chefWorkshopApi.test.ts": "ef18f856a2f2c9512b99f7f9b4b20beb9a84b64113c4722e123b4f162e63ab10",
+    "karta/test/chefWorkshopConcurrency.native.mjs": "d408665608d39f582314136499ca7efc90dcfe1cc5ccf62de7efefa8c2cf4bae",
+    "karta/test/chefWorkshopConfig.test.ts": "d0392023f854b9c3c061421344382f281258e16485b6eb43bf2a62b9af88f5e5",
+    "karta/test/chefWorkshopEdge.test.ts": "b41cea8f6012b3bf98499242b1081e6681a280665ac63ef843b34d9a87ceb1e6",
+    "karta/test/chefWorkshopGit.test.ts": "cb522252732bab3eda205530b551ab179565a46064a098a6e0cdf52f1c4db3d6",
+    "karta/test/chefWorkshopRuntime.test.ts": "11bed1b30db577bbacaa006a32829ebd7442f14202237409a44a2db56b6c4754",
+    "karta/test/chefWorkshopService.test.ts": "f2d00a16234f12af61e87c0fc107569d028e867f6da8be8af267826d6ad0955c",
+    "karta/workshop-projects.example.json": "a19e353c90c4087bb454e05400721eef424e96f70190001824875cb7715a3dd3",
+    "src/App.tsx": "9e988f9c4727be40413aaef98830e3e452409483a4b744c3ce45c68cb5d69fa4",
+    "src/components/OriginForgeDemo.tsx": "5d323d6c0eb108577171228abe13a9c974ad7508e070ae21de5e9c713d531820",
+    "src/components/dashboard/DashboardLayout.tsx": "5a615c2c576f4676d18fbbd703839726faa403d897d9a0be4b4fe0609125ff0e",
+    "src/lib/workshop.test.ts": "b1674255e9e0d86bbcd82b4fb9a19944ca04897aa232f865f64ba02d377b9e89",
+    "src/lib/workshop.ts": "f18958da4a937f61d95b074a1cb93e3dea48b219ffbbb811da335eb190dc5c90",
+    "src/pages/Workshop.test.tsx": "ae752346492a9d390d666353db8497d20815eee24a1c7822f8233f2036aaf0a9",
+    "src/pages/Workshop.tsx": "7d9332502881340a9f9b67a25ff99feafb2056ffc6911ac6f0e24f7988079000",
+    "supabase/functions/chef-workshop/index.ts": "bbb77871fe1c2664f73a1b1873fd16314031cc3f802c38033459122866a886ff",
+    "tests/workshop-state/README.md": "edc0b9ca477945e12077483d4ccbabc1f7f5473ca0527afd1ff050482f298daa",
+    "tests/workshop-state/auth.ts": "550f217d57c157ed249a1bcccf3a59aec2d9314c33af5f3c524d3cb848e62691",
+    "tests/workshop-state/harness.tsx": "edc56935f62d417ff79b7736f8760803512b53dd7e706017c45ff2fe16dac93a",
+    "tests/workshop-state/index.html": "9c20f289573c6d8825b3b4b5c749101a0eff5cd8c6165c34843d54b921d8549d",
+    "tests/workshop-state/playwright.config.ts": "2917791976e43fd82644e460e8b435e3c9627ae172b2b829cac99ac0fac5c6c0",
+    "tests/workshop-state/transport.ts": "25cd7c8b99c5970e8b6721fd86dce70f554d2b2fc142ae05d759dd3b4e346acd",
+    "tests/workshop-state/vite.config.ts": "b6a4ee80d584e85af56f776d394d176a3ecfa4b93eb52f6322802ce2db82ec17",
+    "tests/workshop-state/workshop.spec.ts": "3af7bed8412203b32257e7145cc25a96fb42a145899ed86ef5b6dde48e70bd1e"
+  }
+}

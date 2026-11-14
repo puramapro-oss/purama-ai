@@ -2,6 +2,7 @@ import { Queue } from "bullmq";
 import { Redis } from "ioredis";
 import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
+import { bounded } from "../runtime/lifecycle.js";
 import type { AgentType } from "../engine/types.js";
 import { createCycleDelivery, CycleDeliveryConflictError, resolveCycleDelivery } from "./delivery-identity.js";
 import { enqueueCycleDelivery, type AgentCycleJobData, type CycleDeliveryQueue } from "./queues.js";
@@ -43,30 +44,12 @@ function isLease(value: unknown): value is Lease {
     && (value.resolution === "executed" || value.resolution === "rejected") && value.protocol === 1;
 }
 
-/** Abort HTTP and bound Redis waits. The private Redis producer additionally
- * rejects offline commands and has its own command/connect timeouts. */
-async function deadline<T>(operation: (signal: AbortSignal) => Promise<T>, parent?: AbortSignal, ms = IO_TIMEOUT_MS): Promise<T> {
-  const controller = new AbortController();
-  const abort = () => controller.abort();
-  parent?.addEventListener("abort", abort, { once: true });
-  if (parent?.aborted) controller.abort();
-  const timer = setTimeout(abort, ms);
-  let rejectAbort: (() => void) | undefined;
-  try {
-    controller.signal.throwIfAborted();
-    return await Promise.race([
-      operation(controller.signal),
-      new Promise<never>((_, reject) => {
-        rejectAbort = () => reject(new Error("Continuation temporarily unavailable"));
-        controller.signal.addEventListener("abort", rejectAbort, { once: true });
-        if (controller.signal.aborted) rejectAbort();
-      }),
-    ]);
-  } finally {
-    clearTimeout(timer);
-    parent?.removeEventListener("abort", abort);
-    if (rejectAbort) controller.signal.removeEventListener("abort", rejectAbort);
-  }
+/** Share the runtime's monotonic admission and final-handoff checks for each
+ * HTTP/Redis wait, including cancellation before the timer callback runs.
+ * The private Redis producer also rejects offline commands and has its own
+ * command/connect timeouts. Return the guarded Promise without re-adopting it. */
+function deadline<T>(operation: (signal: AbortSignal) => Promise<T>, parent?: AbortSignal, ms = IO_TIMEOUT_MS): Promise<T> {
+  return bounded(operation, ms, parent);
 }
 
 /** One bounded batch. A receipt is an exact SQL run identity, regardless of the
@@ -229,7 +212,12 @@ export function startApprovalOutboxRelay(): ApprovalOutboxRelay {
     queue,
     rpc: async (name, params, signal) => supabase.rpc(name, params).abortSignal(signal),
   }, async () => {
-    try { await deadline(() => queue.close()); }
-    finally { redis.disconnect(); }
+    // Keep BullMQ's error forwarder until its lazy initialization settles.
+    // One deadline bounds stop without closing the queue before a late rejection.
+    redis.disconnect();
+    await deadline(async () => {
+      try { await queue.waitUntilReady(); } catch { /* The owned connection is disconnected. */ }
+      await queue.close();
+    });
   });
 }

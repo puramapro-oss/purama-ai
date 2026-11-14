@@ -1,0 +1,2872 @@
+{
+  "recorded_at": "2026-11-11T05:48:45.715051+00:00",
+  "scope": "One isolated candidate in PR45, composing PR37-44, immutable PR46 (PR28, finance from PR22, cancellation guards from PR18), and bounded offline/referral fixes. Not main, production, or full portfolio completion.",
+  "input_parents": [
+    "ab6901cb79ba222952457452e2ae1156b19b9433",
+    "0d38a925f9c0367deb5b9f77eb86b8b71b9da499",
+    "88dfee31ae18854b799439c92afc617cf01d34ea",
+    "9907571c3cc307f5de0e1e02fcca4b028b51b625",
+    "548c41d13001d27256017af697c16d74e78cd61b",
+    "70f6c5a81fb4cdd274c2d84338d603d8fd5fa255"
+  ],
+  "source_tree_before_receipt": "4b54173dc2c6dd3cac878b2cdad45e9bc9490173",
+  "configuration_conflicts_resolved": [
+    "vercel.json: union of disabled branches plus candidate branch",
+    "CHEF workflow: preserve OAuth and Stripe checks, add creator-agent-chat check"
+  ],
+  "donor_preservation": {
+    "PR43": {
+      "exact": 14,
+      "total": 14
+    },
+    "PR41": {
+      "exact": 7,
+      "total": 7
+    },
+    "PR37": {
+      "exact": 5,
+      "total": 5
+    },
+    "PR38": {
+      "exact": 6,
+      "total": 9,
+      "composed": [
+        "workflow",
+        "package.json",
+        "vercel.json"
+      ]
+    },
+    "PR42": {
+      "exact": 48,
+      "total": 50,
+      "composed": [
+        "workflow",
+        "package.json"
+      ]
+    }
+  },
+  "dependency_reuse": {
+    "root_locked_package_versions_verified": 622,
+    "karta_locked_package_versions_verified": 153,
+    "mismatches": 0,
+    "installations": 0,
+    "candidate_cache_isolated": true
+  },
+  "impact": {
+    "tool": "GitNexus1.6.12",
+    "files": 85,
+    "symbols": 111,
+    "affected_flows": 21,
+    "risk": "critical",
+    "limits": "Call graph includes inference limits; index flow tracing is bounded, so absent paths are not proof of absence."
+  },
+  "local_gates": [
+    {
+      "gate": "karta-tests",
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=$EVIDENCE_DIR/karta-result.json"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 124,
+      "seconds": 240.014,
+      "log_sha256": "4ad19eec54c4e0d611c82475a9c5706bfc58a894be8aa416fbd7c7d48aeb2608"
+    },
+    {
+      "gate": "karta-types",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 24.089,
+      "log_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7"
+    },
+    {
+      "gate": "karta-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "karta",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 15.163,
+      "log_sha256": "62c5076d5c141d2825f050903a7e40cfc2100cacc55c106f67b8c686770bb6ed"
+    },
+    {
+      "gate": "site-dependencies",
+      "command": [
+        "npm",
+        "run",
+        "test:dependencies"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 9.344,
+      "log_sha256": "63be6b2284ccaeebc504b4af1a8ffbe217926f9efeecdc779e54c51ab4dbfc60"
+    },
+    {
+      "gate": "voice-settings",
+      "command": [
+        "npm",
+        "run",
+        "test:voice-settings"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 5.861,
+      "log_sha256": "29f99606696e9222d1d94a1e7b0698ee2ee5773890e4bb5c1f0101efe4d0ae4a"
+    },
+    {
+      "gate": "contracts-auth",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-auth"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 74.334,
+      "log_sha256": "338734a0b3196cdf2d9b1f9f88492e642a0671c2cf47177d5af6afeae75d017b"
+    },
+    {
+      "gate": "oauth-handlers",
+      "command": [
+        "npm",
+        "run",
+        "test:oauth"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 46.336,
+      "log_sha256": "610daea137f6d888919a13ea26941cf924f6510cfb1017a94472b09319f71368"
+    },
+    {
+      "gate": "contracts-security",
+      "command": [
+        "npm",
+        "run",
+        "test:contracts-security"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 86.116,
+      "log_sha256": "1510a1a21f2bc6510556cac7d8e4dc1a3532e08df806b3ef8c22ac66dbe6ab46"
+    },
+    {
+      "gate": "distribution-worker",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:worker"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 2.168,
+      "log_sha256": "095e622df58adfb9769983b564773f37d06c38da9e6f1d17987e0b1b8308c44e"
+    },
+    {
+      "gate": "distribution-chat",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:chat"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 3.207,
+      "log_sha256": "0475a884a954af9d213e872f3d83d67bd8eeba4c9761c1338f61ae6052ef77c6"
+    },
+    {
+      "gate": "distribution-unit",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:unit",
+        "--",
+        "--maxWorkers=1"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 1,
+      "seconds": 38.898,
+      "log_sha256": "b94ef907fa2f8b8280c6ca5fa768ee4fd0fab1a77054a8374427107cb27fdc89"
+    },
+    {
+      "gate": "site-types",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 42.377,
+      "log_sha256": "18613ddbee6bb1383ee22d4a41b90885223169ef27a680cb63aac1cdd738279f"
+    },
+    {
+      "gate": "distribution-types",
+      "command": [
+        "npm",
+        "run",
+        "typecheck:distribution"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 6.019,
+      "log_sha256": "11f6519f35c723917a85231a843dfde295456fac4f84f5989fcaa3bfd6ec4881"
+    },
+    {
+      "gate": "database-contracts",
+      "command": [
+        "npm",
+        "run",
+        "check:database-contracts"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 7.525,
+      "log_sha256": "a8c0b8d42c5b27e9d45eb5dc1254464ea60125cb948a78b487d390808b0d8e7d"
+    },
+    {
+      "gate": "site-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": ".",
+      "expected_exit": 0,
+      "exit": 0,
+      "seconds": 31.208,
+      "log_sha256": "849ae4adf3ab6ae8515f1db3c14aa07fa4d3e091ddb80bf8aebfcbd902f6c05d"
+    },
+    {
+      "gate": "site-audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--audit-level=high",
+        "--json"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "seconds": 15.81,
+      "lock_unchanged": true,
+      "report_sha256": "1f3766278d5d8be9595416d258e07fc9d0fc26467bcba8d2b24ab555ed72bd4d",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 3,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 3
+      },
+      "error": null,
+      "advisories": [
+        {
+          "package": "bitcore-lib",
+          "severity": "low",
+          "fixAvailable": {
+            "name": "opentimestamps",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          },
+          "via": [
+            "elliptic"
+          ]
+        },
+        {
+          "package": "elliptic",
+          "severity": "low",
+          "fixAvailable": {
+            "name": "opentimestamps",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          },
+          "via": [
+            "https://github.com/advisories/GHSA-848j-6mx2-7j84"
+          ]
+        },
+        {
+          "package": "opentimestamps",
+          "severity": "low",
+          "fixAvailable": {
+            "name": "opentimestamps",
+            "version": "0.0.0",
+            "isSemVerMajor": true
+          },
+          "via": [
+            "bitcore-lib"
+          ]
+        }
+      ]
+    },
+    {
+      "gate": "karta-audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--audit-level=high",
+        "--json"
+      ],
+      "cwd": "karta",
+      "exit": 0,
+      "seconds": 12.23,
+      "lock_unchanged": true,
+      "report_sha256": "38dc0601eb9af9b5fa211ebb4d0eb66c963cb4c20a4e86f3286bb4b5564114e6",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "error": null,
+      "advisories": []
+    },
+    {
+      "gate": "distribution-unit-node26-compatible",
+      "command": [
+        "npm",
+        "run",
+        "test:distribution:unit",
+        "--",
+        "--maxWorkers=1"
+      ],
+      "cwd": ".",
+      "env": {
+        "NODE_OPTIONS": "--max-old-space-size=2048 --no-experimental-webstorage"
+      },
+      "exit": 0,
+      "seconds": 25.1,
+      "log_sha256": "1ff108d50b99c1123e70c470e0c6ce325ec23029e8ca566236bc9928164a4e26",
+      "prior_attempt": "Initial Node26 run:22 fixture failures. Same330 assertions pass with native WebStorage disabled; no source or assertion changed."
+    }
+  ],
+  "pending": [
+    "Fresh CI on exact submitted candidate",
+    "Native/device and production qualification"
+  ],
+  "blocked": [
+    "New mobile registry audit: previous automatic approval rejection documented in mobile/compat/README.md; not retried.",
+    "Production identity and canonical database reconciliation remain unqualified."
+  ],
+  "unchanged": [
+    "Existing worktrees/branches/main",
+    "Production services, DNS, data, payments and trading",
+    "Existing migration workers"
+  ],
+  "local_distribution_tests": {
+    "passed": 330,
+    "failed": 0,
+    "files": 11,
+    "node": "26.0.0",
+    "env_flag": "--no-experimental-webstorage",
+    "initial_environment_failure_preserved": true
+  },
+  "follow_up_integrations": [
+    {
+      "recorded_at": "2026-11-11T05:59:44.601995+00:00",
+      "base_commit": "8585b0b306a906a6afb5b472dddbaa850cb3e66e",
+      "source_pr": 44,
+      "source_commit": "8c764d196e419228521b508161792d4b8174543f",
+      "reason": "Replace the private approval outbox Promise.race deadline with the already qualified monotonic bounded helper. Preserve all 15 new regressions.",
+      "exact_source_blobs": {
+        "karta/src/queue/approval-outbox.ts": "97ff805d650ce32e80c55ff9e4998f55e13c87c1",
+        "karta/test/approvalOutboxDeadline.test.ts": "a6b850d948ccb1bd0a31b858090ec0fbd1ab3ce0"
+      },
+      "configuration_conflict": "Union of Vercel-disabled branches; all values remain false.",
+      "impact": {
+        "risk": "CRITICAL",
+        "impacted_count": 314,
+        "summary": {
+          "direct": 6,
+          "processes_affected": 153,
+          "modules_affected": 20
+        },
+        "limit": "Fresh static graph; transitive graph counts do not establish dynamic reachability or exhaustive runtime coverage."
+      },
+      "local_gate": {
+        "gate": "outbox-deadline-targeted",
+        "command": [
+          "npm",
+          "test",
+          "--",
+          "test/approvalOutboxDeadline.test.ts",
+          "test/approvalOutboxRelay.test.ts",
+          "test/runtimeDeadline.test.ts",
+          "--maxWorkers=1",
+          "--reporter=json",
+          "--outputFile=$EVIDENCE_DIR/outbox-deadline-result.json"
+        ],
+        "cwd": "karta",
+        "exit": 0,
+        "seconds": 2.155,
+        "log_sha256": "23207d8289984c07d18e90d131d840b810e6b013a453dd46abd5bb99b4f74696",
+        "tests": {
+          "numTotalTests": 42,
+          "numPassedTests": 42,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTotalTestSuites": 5,
+          "numPassedTestSuites": 5,
+          "numFailedTestSuites": 0,
+          "success": true
+        },
+        "test_files": [
+          {
+            "file": "approvalOutboxDeadline.test.ts",
+            "status": "passed",
+            "assertions": 15
+          },
+          {
+            "file": "approvalOutboxRelay.test.ts",
+            "status": "passed",
+            "assertions": 18
+          },
+          {
+            "file": "runtimeDeadline.test.ts",
+            "status": "passed",
+            "assertions": 9
+          }
+        ]
+      },
+      "initial_candidate_ci": {
+        "commit": "8585b0b306a906a6afb5b472dddbaa850cb3e66e",
+        "chef_run": 42968271166,
+        "karta": "success:1969 tests /113 files",
+        "mobile_run": 42968271175,
+        "mobile": "success",
+        "site": "in progress when recorded",
+        "qualification_limit": "Initial candidate only. Final merged head requires fresh CI."
+      }
+    }
+  ],
+  "commission_reconciliation": {
+    "recorded_at": "2026-11-11T06:21:17.600666+00:00",
+    "source_commit": "ba50905d4c93abea2bbcba0032dae69cd6299f49",
+    "base_candidate": "001bc66dc40cd1b24419be3b93cfa7f1ba33b350",
+    "scope": "Atomic commission, relative counters and in-app notification; durable email admission and proof. Not the whole subscription activation or production migration.",
+    "reused_files": 8,
+    "composition": "All donor blobs preserved, except webhook keeps the existing createSubscriptionClient SDK type inference. Additional synthetic subscriptions.sql fixture preserved exactly.",
+    "native": {
+      "success": true,
+      "counts": {
+        "tests": 27,
+        "pass": 27,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "node_version": "v22.23.4",
+      "postgres_version": "postgres (PostgreSQL) 18.4 (Homebrew)",
+      "driver_version": "8.23.0",
+      "driver_sha256": "3fad6e6d3d976edbabe0cbc9e1d39f4340bcb719bbbb186a0d3a24f3dbd4a94c",
+      "inputs_unchanged": true,
+      "source_fingerprints": {
+        "tests/commerce/run-commission-postgres-native.py": "4ce73508daabd3c3a3460cad0a9fe4a742ff0705ab1016ff9bd9be0b8833ea13",
+        "tests/commerce/commission-postgres.native.mjs": "7cbe1a84946b229d70504ea8185c6a39bb3bdb3f784b0fc05ec61760ae95b5e4",
+        "supabase/migrations/20261110142000_checkout_commission_atomic.sql": "a16978fcc538f38d31efc461d4a631c3570d60926e0b123f8761106477a85ffd",
+        "supabase/migrations/20261110000100_commerce_privileges.sql": "4d9f7f48f14977d8e677801cbb4ff0d10728608a6887073bd2e7b8efd4a71d9a",
+        "supabase/migrations/20260122235510_766a8ba1-97fb-4567-8b4b-7acb02073bd7.sql": "f88cf7632e90ac3b06ff2d2776bb971b512ac071af701c9708a8f557ccb39d6b",
+        "supabase/migrations/20260122220606_b16f6034-6be4-472b-bc83-57d8767a4721.sql": "29dd70fcb7a979305412d969394c65304976c561f7283ffc7bfd4eec462e146e",
+        "karta/test/fixtures/subscriptions.sql": "36fa8e8982021b8152407d1539b3f83883e16f3221e817422d8832a0694b5114",
+        "supabase/functions/stripe-webhook/commission.ts": "80a467761acf534e79cb2cf4d441743537adc2bcfa7cbc1800982e1c698db2bb",
+        "supabase/functions/stripe-webhook/index.ts": "5d84e252f7314797dcbb7085a0571ec3bcb41856ea332848f28600152440ee2a",
+        "tests/commerce/native-driver/package.json": "2692eaf1e6db69d452e82eadc9eef2760cc9c22c3ac429e8e1a9577f476abc03",
+        "tests/commerce/native-driver/package-lock.json": "2058188a1139beb5df4d38238cd140485bc3381428f2ffd005416028cc37f864"
+      },
+      "tcp_listen_addresses": "",
+      "cleanup": {
+        "stopped": true,
+        "cluster_removed": true,
+        "pid_file_absent": true,
+        "postmaster_absent": true,
+        "socket_absent": true,
+        "errors": [],
+        "status_exit_code": 3
+      },
+      "full_report_sha256": "d4fc6026a2d54a27ca3eb5954d2420781476b0acc88f5f7eb9537dfd795e31c9",
+      "test_log_sha256": "efc89bb546171f30785c8b27f375ff5d0ca4887ee53231526f94e154792feb01"
+    },
+    "initial_runner_failure": {
+      "before_tests": true,
+      "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+      "cleanup": {
+        "stopped": true,
+        "cluster_removed": true,
+        "pid_file_absent": true,
+        "postmaster_absent": true,
+        "socket_absent": true,
+        "errors": [],
+        "status_exit_code": 3
+      },
+      "report_sha256": "0d707d167297b6c13461212069c172f8021622361874d06bddf9684df5cd5367",
+      "correction": "Regular empty PG config files with mode0600 replace /dev/null; retain strict identity parsing."
+    },
+    "local_gates": [
+      {
+        "gate": "commission-handlers",
+        "command": [
+          "npm",
+          "run",
+          "test:commerce:handlers"
+        ],
+        "exit": 0,
+        "seconds": 4.21,
+        "log_sha256": "27b20859152d26ae791a0aa66e9d6c73e7e9645d73603f0dc0be19999a2bd4e7"
+      },
+      {
+        "gate": "commission-contracts",
+        "command": [
+          "node",
+          "scripts/generate-supabase-contracts.mjs",
+          "--check"
+        ],
+        "exit": 0,
+        "seconds": 4.773,
+        "log_sha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3"
+      },
+      {
+        "gate": "commission-plans",
+        "command": [
+          "npm",
+          "run",
+          "test:commerce:plans"
+        ],
+        "exit": 0,
+        "seconds": 1.312,
+        "log_sha256": "2493ddddad4e60a5f8ec20a1a4eae14f8f826c45ad985f2965c4707755c1d546"
+      },
+      {
+        "gate": "commission-production-sdk",
+        "command": [
+          "deno",
+          "check",
+          "--no-config",
+          "--no-lock",
+          "--node-modules-dir=manual",
+          "--cached-only",
+          "supabase/functions/stripe-webhook/index.ts"
+        ],
+        "exit": 0,
+        "seconds": 2.769,
+        "log_sha256": "f4d873d5a9db6785bb63e15d6806136962e7785148ea9bab003215295dbf88da"
+      }
+    ],
+    "actual_test_counts": {
+      "deno_handlers_passed": 107,
+      "plans_passed": 17,
+      "postgres_native_passed": 27
+    },
+    "ci": "Pending new candidate commit; the previous001bc66 CHEF42969409637 and mobile42969409690 both succeeded.",
+    "deployment": "No production database or provider contacted. Migration refuses historical duplicates without deletion.",
+    "status": "HISTORICAL_LOCAL_CHECKPOINT_ONLY_SUPERSEDED_BY_FINANCIAL_RECONCILIATION_JOURNAL",
+    "not_in_final_candidate": true
+  },
+  "billing_referral_local_checkpoint": {
+    "recorded_at": "2026-11-11T07:08:06.209233+00:00",
+    "status": "LOCAL_QUALIFIED_NOT_PUBLISHED_FINANCIAL_RECONCILIATION_PENDING",
+    "base_checkpoint": "c08574839ad0e388f18f4c4901c72a067f6dce55",
+    "merged_pr28": "e6a58261b0f3e18740e10b06d1b74d6088c06830",
+    "referral_donor": "347f162e03a84cb873e181ed5c6476bc978978ab",
+    "new_concurrent_pr46": "ca47f4693ffb6440faa130043a4e79f85090a35b",
+    "reason_for_publication_hold": "PR46 contains subscription identity/revision and a reconciliation journal. R2 idempotency does not by itself establish commission entitlement or settlement. Review before choosing one published writer.",
+    "production_changed": false,
+    "proofs": {
+      "billing": {
+        "receipt": [
+          {
+            "gate": "final-billing",
+            "command": [
+              "npm",
+              "run",
+              "test:billing"
+            ],
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 16.496,
+            "log_sha256": "301df6c4402bfd90727215c6974cce52f5000890ec098c28a7a82a4e5f219b7f"
+          },
+          {
+            "gate": "final-commerce-handlers",
+            "command": [
+              "npm",
+              "run",
+              "test:commerce:handlers"
+            ],
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 1.845,
+            "log_sha256": "b94b18313b801147fc392463d2e89f30894ccefeb38be7fd3cda51c87f3689d7"
+          },
+          {
+            "gate": "final-billing-sdk",
+            "command": [
+              "deno",
+              "check",
+              "--no-config",
+              "--no-lock",
+              "--node-modules-dir=manual",
+              "--cached-only",
+              "supabase/functions/stripe-webhook/index.ts",
+              "supabase/functions/create-checkout/index.ts",
+              "supabase/functions/customer-portal/index.ts"
+            ],
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 4.737,
+            "log_sha256": "767da762d477ff93b6f0be22264b3ea55ebc712da7eb447a1320a152dd10fb23"
+          }
+        ],
+        "receipt_sha256": "4c5bc3e6ae89a8d7fd3a4beb3e3c7ffd209d6e0755b8bba9ea4dfcc96603734a"
+      },
+      "native_commission": {
+        "receipt": {
+          "gate": "assembly-commission-native",
+          "command": [
+            "python3",
+            "tests/commerce/run-commission-postgres-native.py",
+            "--node-bin",
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "--pg-bin",
+            "/opt/homebrew/opt/postgresql@18/bin",
+            "--driver",
+            "/opt/homebrew/lib/node_modules/pg/lib/index.js",
+            "--expected-driver-version",
+            "8.23.0",
+            "--fixture-root",
+            "/private/tmp/purama-commission-native-clusters",
+            "--output",
+            "/private/tmp/purama-commission-native-results"
+          ],
+          "exit": 0,
+          "seconds": 5.408,
+          "log_sha256": "9cd3944af72e05b122de9377245d839cf45dceab951d0f75538b88f0179fab72",
+          "report_path": "/private/tmp/purama-commission-native-results/commission-native-50ad32e0ee65/result.json",
+          "run_id": "commission-native-50ad32e0ee65",
+          "success": true,
+          "counts": {
+            "tests": 27,
+            "pass": 27,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "inputs_unchanged": true,
+          "cleanup": {
+            "stopped": true,
+            "cluster_removed": true,
+            "pid_file_absent": true,
+            "postmaster_absent": true,
+            "socket_absent": true,
+            "errors": [],
+            "status_exit_code": 3
+          },
+          "driver_version": "8.23.0",
+          "error": null
+        },
+        "receipt_sha256": "da99f39207fc731db20d5c072e37e781156c2f6b95185ffddd14b57efb7cc8bc"
+      },
+      "types_build_trial": {
+        "receipt": [
+          {
+            "gate": "assembly-subscription-unit",
+            "command": [
+              "npm",
+              "test",
+              "--",
+              "test/subscriptionTrial.test.ts",
+              "--maxWorkers=1",
+              "--reporter=json",
+              "--outputFile=$EVIDENCE_DIR/assembly-subscription-result.json"
+            ],
+            "cwd": "karta",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 6.242,
+            "log_sha256": "86a75b69cbe4c7a41b04465316ea9154efb63b91947d1ae824aea9de322d52a0",
+            "tests": {
+              "numTotalTests": 28,
+              "numPassedTests": 28,
+              "numFailedTests": 0,
+              "numPendingTests": 0,
+              "success": true
+            }
+          },
+          {
+            "gate": "assembly-karta-types",
+            "command": [
+              "npm",
+              "run",
+              "typecheck"
+            ],
+            "cwd": "karta",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 10.645,
+            "log_sha256": "cc83947d967b172085915d2de896d2ad2d53cccc5df67e6e01c40f4d775826a7"
+          },
+          {
+            "gate": "assembly-karta-build",
+            "command": [
+              "npm",
+              "run",
+              "build"
+            ],
+            "cwd": "karta",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 8.666,
+            "log_sha256": "62c5076d5c141d2825f050903a7e40cfc2100cacc55c106f67b8c686770bb6ed"
+          },
+          {
+            "gate": "assembly-site-types",
+            "command": [
+              "npm",
+              "run",
+              "typecheck"
+            ],
+            "cwd": ".",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 29.902,
+            "log_sha256": "18613ddbee6bb1383ee22d4a41b90885223169ef27a680cb63aac1cdd738279f"
+          },
+          {
+            "gate": "assembly-database-contracts",
+            "command": [
+              "node",
+              "scripts/generate-supabase-contracts.mjs",
+              "--check"
+            ],
+            "cwd": ".",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 3.894,
+            "log_sha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3"
+          },
+          {
+            "gate": "assembly-plans",
+            "command": [
+              "npm",
+              "run",
+              "test:commerce:plans"
+            ],
+            "cwd": ".",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 1.001,
+            "log_sha256": "7ed3e779e0d6c97a2efc2016cdaa175fa6c209a0e32b3de354e6e117a2c9958e"
+          },
+          {
+            "gate": "assembly-site-build",
+            "command": [
+              "npm",
+              "run",
+              "build"
+            ],
+            "cwd": ".",
+            "node": "v22.23.4",
+            "exit": 0,
+            "seconds": 19.524,
+            "log_sha256": "4dd4a96d090073fe8dc9ed01fad5cf4a93ecc8cb8012cc635bb5e107b03da9da"
+          }
+        ],
+        "receipt_sha256": "4a728fcf741506996938269dc9653939a03d95a76781605017a6f1cd94f0dd2e"
+      },
+      "referral_offline": {
+        "receipt": {
+          "observed_at": "2026-11-11T07:04:07.015076+00:00",
+          "head_before_parent_commit": "c08574839ad0e388f18f4c4901c72a067f6dce55",
+          "donor_referral_commit": "347f162e03a84cb873e181ed5c6476bc978978ab",
+          "state": "staged_not_committed",
+          "files": {
+            "src/hooks/useSubscription.ts": {
+              "sha256": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e",
+              "bytes": 3253
+            },
+            "tests/billing/subscription-state.test.mjs": {
+              "sha256": "b3d06ded9ed40c4878726722853aeaf91036be87efe429bf2220f320a294e946",
+              "bytes": 8467
+            },
+            "src/hooks/useInfluencer.ts": {
+              "sha256": "3a41bd18e4646df2e3cd557d89fa7ae09126ce24c97211485cf9286d6edb4bd6",
+              "bytes": 11551
+            },
+            "src/components/influencer/ReferralBanner.tsx": {
+              "sha256": "b2db82d2901dd311cde6e09514e13d6d8238bd98b780667c63aaa0e1d884aabb",
+              "bytes": 2528
+            },
+            "src/pages/Index.tsx": {
+              "sha256": "ac18fe99c43dbf2307224ffa084fcfffbe2183ac9f1e8d2eb88540dd350139fc",
+              "bytes": 2732
+            },
+            "src/pages/GoRedirect.tsx": {
+              "sha256": "405584c312e329b3b3135140f69c7d6f6e2011b408b02089c4d508220816bfe5",
+              "bytes": 1270
+            },
+            "src/pages/Pricing.tsx": {
+              "sha256": "fdfa29f389c1debf5de860fd9bbc094ca79ded39b9c27dc9884e3e6be48831e6",
+              "bytes": 18805
+            },
+            "tests/quality/commerce-ui.spec.ts": {
+              "sha256": "d64f03450c53e5e24286c1d71f27e166611ea110e5dea40b6d9b3bcbff960b7a",
+              "bytes": 38809
+            }
+          },
+          "runtime": "Node 22.23.4",
+          "checks": {
+            "offline_before": "6 PASS, 2 FAIL before the isPending fix",
+            "offline_stable_after": "5 runs of 8 PASS after gcTime Infinity fixture correction",
+            "referral_storage_final": "21 PASS, real production hook, in-memory boundaries, 0 network",
+            "withdrawal_before": "1 PASS, 3 FAIL",
+            "withdrawal_after": "4 PASS, same probe, 0 network",
+            "app_typecheck": "PASS after final withdrawal fix",
+            "targeted_eslint": "PASS after final withdrawal fix",
+            "existing_auth_share_copy_tests": "188 PASS before final withdrawal fix",
+            "playwright_collection": "101 tests, 3 files, including 35 referral cases",
+            "independent_review": "Agent A reports PASS using actual hook declarations with React/JSDOM: document withdrawal, recapture, stable callbacks"
+          },
+          "limitations": [
+            "Playwright 1.64.1 browser binaries absent; cached Chromium/headless revision1217 differs from required1248. No browser tests executed locally.",
+            "No quality server started; port4176 observed free.",
+            "GitNexus useReferralTracking impact CRITICAL,172 symbols; index behind1 commit and broad QA edges. Parent notified before edits.",
+            "Complete composed-tree CI still required.",
+            "No live provider, payment or production validation."
+          ],
+          "proof_files": [
+            "subscription-offline-stability-20261111.log",
+            "r3-storage-final.log",
+            "r3-withdrawal-before.log",
+            "r3-withdrawal-after.log",
+            "r3-withdrawal-typecheck.log",
+            "r3-withdrawal-lint.log",
+            "r3-withdrawal-collection.log",
+            "r3-existing-unit.log"
+          ]
+        },
+        "receipt_sha256": "87c7c68153b4abfcf58ea5d71e98a2afe7fa589254c9a16c7a23abebdf1d7f36"
+      }
+    },
+    "actual_counts": {
+      "billing": 128,
+      "deno_commerce": 111,
+      "commission_postgres": 27,
+      "trial_unit": 28,
+      "plans": 17,
+      "referral_storage": 21,
+      "withdrawal_regression": 4,
+      "playwright_collection_only": 101,
+      "playwright_referral_collection_only": 35
+    },
+    "dependencies": {
+      "karta_added_dev_packages": 14,
+      "changed_preexisting_locked_versions": 0,
+      "root_lock_unchanged": true,
+      "removed_redundant_native_driver_package": true,
+      "local_native_pg": "8.23.0",
+      "proposed_ci_pg": "8.23.1",
+      "ci_pg_qualification": "PENDING"
+    },
+    "limits": [
+      "Browser cases were collected, not executed locally: required Playwright binaries absent.",
+      "Local native commission success does not establish financial policy, provider settlement, or production entitlement.",
+      "PR46 supersession decision and final composed CI still pending.",
+      "No deployed service, production database, payment, email or migration worker changed."
+    ],
+    "historical_wrapper": {
+      "state": "SUPERSEDED_DECISION_RECORDED_IN_SOURCE_TRANSITION",
+      "checkpoint": "9a3e84c2fd138139bd48a195452eea91b25ad089",
+      "embedded_pending_language_retained_as_contemporaneous_receipt": true,
+      "final_candidate_uses_pr46_journal_not_r2_writer": true
+    }
+  },
+  "source_transition": {
+    "recorded_at": "2026-11-11T07:15:54.327469+00:00",
+    "published_previous_head": "001bc66dc40cd1b24419be3b93cfa7f1ba33b350",
+    "immutable_pr46_input": "ca47f4693ffb6440faa130043a4e79f85090a35b",
+    "archived_local_checkpoint": "9a3e84c2fd138139bd48a195452eea91b25ad089",
+    "archive_branch": "audit/unlazy-local-r2-checkpoint-20261111-ac3c",
+    "foreign_branch_modified": false,
+    "reason": "R2 idempotency alone does not prove contractual commission entitlement. PR46 also fixes stale subscription projection using exact identity and database revision. One journal writer is retained; commission entitlement and settlement stay unqualified.",
+    "referral_input": "347f162e03a84cb873e181ed5c6476bc978978ab",
+    "current_referral_checkpoint": "9a3e84c2fd138139bd48a195452eea91b25ad089",
+    "preserved_original_pr46_ci_failure": {
+      "run": 42976467531,
+      "subscription_concurrency_passed": 7,
+      "karta_passed": 2030,
+      "karta_failed": 14,
+      "karta_failure": "Inert Stripe key fixture violates newly required key prefix.",
+      "site_failure": "TS2353: revenue provider fixture customer-create type omits email.",
+      "downstream_skipped": true,
+      "site_subgates": {
+        "job_id": 130376601231,
+        "url": "https://github.com/puramapro-oss/purama-ai/actions/runs/42976467531/job/130376601231",
+        "billing_started_at": "2026-11-11T07:02:49Z",
+        "billing_completed_at": "2026-11-11T07:02:53Z",
+        "billing": {
+          "tests": 156,
+          "pass": 156,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0
+        },
+        "commerce_deno": {
+          "pass": 86,
+          "fail": 0
+        },
+        "not_final_candidate": true
+      }
+    },
+    "previous_candidate_ci": {
+      "head": "001bc66dc40cd1b24419be3b93cfa7f1ba33b350",
+      "tree": "d29a21b0057c6228a2501ceade1fb31636e140b7",
+      "chef_run": 42969409637,
+      "mobile_run": 42969409690,
+      "status": "SUCCESS",
+      "karta_tests": 1984,
+      "karta_test_files": 114
+    },
+    "final_composed_ci": "PENDING_NEW_COMMIT"
+  },
+  "final_composed_local_verification": {
+    "recorded_at": "2026-11-11T07:20:19.448625+00:00",
+    "head_before_commit": "ca47f4693ffb6440faa130043a4e79f85090a35b",
+    "status": "PARTIAL_NEW_CI_REQUIRED",
+    "commerce_handlers_passed": 86,
+    "overage_passed": 41,
+    "billing": {
+      "passed": 121,
+      "failed": 0,
+      "cancelled": 2,
+      "timeout_ms": 3000,
+      "result": "NOT_PASS",
+      "affected_files": [
+        "tests/billing/billing.test.mjs",
+        "tests/billing/subscription-state.test.mjs"
+      ],
+      "guards_assertions_runner_timeout_unchanged": true
+    },
+    "revenue_sdk_local": "BLOCKED_BEFORE_TESTS_EXACT_NPM_STRIPE18.5.0_NOT_CACHED",
+    "proofs": {
+      "composed_local": {
+        "receipt": {
+          "recorded_at": "2026-11-11T07:16:39.310038+00:00",
+          "head_before_commit": "ca47f4693ffb6440faa130043a4e79f85090a35b",
+          "node": "v22.23.4",
+          "gates": [
+            {
+              "gate": "billing-final46",
+              "command": [
+                "npm",
+                "run",
+                "test:billing"
+              ],
+              "exit": 1,
+              "seconds": 12.703,
+              "log_sha256": "fda1bacca43a16253d8aecfc5093260e35befede692018404eaf17473a21345d",
+              "summary": [
+                "# tests 123",
+                "# suites 0",
+                "# pass 121",
+                "# fail 0",
+                "# cancelled 2",
+                "# skipped 0",
+                "# todo 0",
+                "# duration_ms 11885.349584"
+              ]
+            },
+            {
+              "gate": "commerce-final46",
+              "command": [
+                "npm",
+                "run",
+                "test:commerce:handlers"
+              ],
+              "exit": 0,
+              "seconds": 4.853,
+              "log_sha256": "9e4c323a2cbbc881789bbc9faa1387812d7adebd84a8cb6717ed17d275dff3c2",
+              "summary": [
+                "ok | 86 passed | 0 failed (700ms)"
+              ]
+            }
+          ],
+          "inputs": {
+            "package.json": "80e1a4a497d81d39d888a90b28a96b2ab9e2c6e3122076c58f670f97bf069806",
+            "src/hooks/useSubscription.ts": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e",
+            "tests/billing/subscription-state.test.mjs": "b3d06ded9ed40c4878726722853aeaf91036be87efe429bf2220f320a294e946",
+            "supabase/functions/stripe-webhook/index.ts": "4bf4f143a217c8862fd304fe4b13ea20e851319f49f44af4b6b1c9acc5795a48",
+            "supabase/functions/_shared/billing-boundary.ts": "7e7014545795c8d0ae0d9cb20cd4697852b4086b7d56440bb9a4de4d8f37e25c",
+            "tests/billing-webhook/handler.test.mjs": "6b3d00041367887ede18012e0ae2d5e0612d7cef2325c46bc99fe707c4e5879a",
+            "tests/billing-webhook/concurrency.test.mjs": "1eca4e351ce7f9e6c66e19fe45f607e88e4c1576404bff1be265f05dc9fac986",
+            "tests/commerce/webhook-provider-fixture.ts": "a40373cc79c4e114a42d69f3355b6a7a7e066c6f387c0bc8b4e1f2ad5a75305f",
+            "tests/commerce/webhook-handler.test.ts": "49902f02ffca980901887781d972b179eabfae1d300d2e592be86fd777482f89"
+          },
+          "inputs_unchanged": true
+        },
+        "receipt_sha256": "ffaba23611f24286700b0aa41a65ee499456b3ce747a1b50de3d38bb4f287804"
+      },
+      "fixture_repairs": {
+        "receipt": {
+          "timestamp": "2026-11-11T07:18:35.096503+00:00",
+          "base": "ca47f4693ffb6440faa130043a4e79f85090a35b",
+          "status": "PARTIEL",
+          "files": [
+            {
+              "path": "tests/revenue/provider-fixture.ts",
+              "sha256": "9b2786880734418a63349f7cf4a162ac778a74877408d0d3191d3251cd579c2c",
+              "staged_blob": "2ebf6c43c91c824e802216cc41d59b95316fe50a"
+            },
+            {
+              "path": "karta/test/overageCredit.test.ts",
+              "sha256": "96a62ea7266bde26232eb6fc2f559d50ee294469571068bf4aee5c8cb55ebd17",
+              "staged_blob": "35423620593ae52cfc6a777bbeae0ece6e60ac4b"
+            }
+          ],
+          "handler_unchanged": true,
+          "overage": {
+            "status": "PASS",
+            "passed": 41,
+            "failed": 0,
+            "node": "22.23.4",
+            "receipt": "pr46-fixtures-overage-qualified.json",
+            "initial_receipt": "pr46-fixtures-overage.json",
+            "intermediate_receipt": "pr46-fixtures-overage-final.json"
+          },
+          "revenue_sdk": {
+            "status": "BLOQUE_AVANT_TESTS",
+            "tests_executed": 0,
+            "reason": "npm:stripe@18.5.0 not present in verified Deno cache; cached-only refused fetch; no install or substitute",
+            "receipt": "pr46-fixtures-revenue.json"
+          },
+          "limits": [
+            "Only targeted KARTA suite executed; parent owns full CI",
+            "No production, network provider, install, commit or push"
+          ],
+          "notes": [
+            "Configured inert test key reaches actual handler",
+            "Existing mismatch negative remains 503 and zero credits; envelope matches configured mode while session contradicts it",
+            "Added foreign-mode journal and replay case checks exact public receipt, durable SQL row, zero credit calls and no credited rows",
+            "New-case HTTP recorded expectation corrected to real public receipt; 40/41 retained before final 41/41"
+          ]
+        },
+        "receipt_sha256": "cf0810f00c2cae6d129af9f49448b1ec64b5a8e4b96e9d0733eaeb8cb69566b9"
+      },
+      "referral_on46": {
+        "receipt": {
+          "created_utc": "2026-11-11T07:18:56.033523+00:00",
+          "owner": "/root/audit_portfolio",
+          "base_head": "ca47f4693ffb6440faa130043a4e79f85090a35b",
+          "branch": "audit/unlazy-consolidation-20261111-ac3c",
+          "checkpoint": "9a3e84c2fd138139bd48a195452eea91b25ad089",
+          "status": "PASS scoped restoration and static gates; browser execution pending CI",
+          "scope": [
+            {
+              "path": "src/hooks/useSubscription.ts",
+              "sha256": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e",
+              "git_blob": "6ba987e7eef567f89f1b5453bb715da3661370d2",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "tests/billing/subscription-state.test.mjs",
+              "sha256": "b3d06ded9ed40c4878726722853aeaf91036be87efe429bf2220f320a294e946",
+              "git_blob": "aeff1922cb8e6b4b59ea43e60f92cb6301764b14",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "src/hooks/useInfluencer.ts",
+              "sha256": "3a41bd18e4646df2e3cd557d89fa7ae09126ce24c97211485cf9286d6edb4bd6",
+              "git_blob": "5e9707d1799f6196c1aaa8902fcae0875060ce3c",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "src/components/influencer/ReferralBanner.tsx",
+              "sha256": "b2db82d2901dd311cde6e09514e13d6d8238bd98b780667c63aaa0e1d884aabb",
+              "git_blob": "a90097552034609f2f93dc43f4f24958a1e35309",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "src/pages/Index.tsx",
+              "sha256": "ac18fe99c43dbf2307224ffa084fcfffbe2183ac9f1e8d2eb88540dd350139fc",
+              "git_blob": "d63eddc417a83047ff5b9c13f773a6736b5cfe83",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "src/pages/GoRedirect.tsx",
+              "sha256": "405584c312e329b3b3135140f69c7d6f6e2011b408b02089c4d508220816bfe5",
+              "git_blob": "be467a9feb04da16d733d847997c0fb795cec9ca",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "src/pages/Pricing.tsx",
+              "sha256": "fdfa29f389c1debf5de860fd9bbc094ca79ded39b9c27dc9884e3e6be48831e6",
+              "git_blob": "487a5471ed92f2c7757ea3035ab3fc1d8463f757",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "tests/quality/commerce-ui.spec.ts",
+              "sha256": "d64f03450c53e5e24286c1d71f27e166611ea110e5dea40b6d9b3bcbff960b7a",
+              "git_blob": "33a54d13ca441009bc189b9413a832f982cd3721",
+              "exact_checkpoint_9a3e84c": true
+            },
+            {
+              "path": "tests/revenue/README.md",
+              "sha256": "0d26aaf424d08c16da2362c67de4a9b07bf9b9e293801fb6d63fa0a89c279b89",
+              "git_blob": "ad05df5fa372d9dd54876b3398a05db6761058c4",
+              "exact_checkpoint_9a3e84c": false
+            }
+          ],
+          "preservation": {
+            "all_eight_checkpoint_blobs_exact": true,
+            "all_six_R3_preimages_on_46_equal_original_R3_preimages": true,
+            "subscription_delta_only_pending_guard": true,
+            "server_and_other_46_changes_untouched": true,
+            "README_change": "Only obsolete PDF/contract paragraph corrected after comparing current PDF template and InfluencerDashboard sources"
+          },
+          "gates": [
+            {
+              "name": "TypeScript app",
+              "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
+              "returncode": 0,
+              "log": ".git/unlazy-gates/r3-on46-typecheck.log",
+              "evidence": "Remote supervisor PID56639 returned exit code 0"
+            },
+            {
+              "name": "ESLint scoped sources and browser tests",
+              "returncode": 0,
+              "log": ".git/unlazy-gates/r3-on46-lint.log",
+              "evidence": "Remote supervisor PID56639 returned exit code 0"
+            },
+            {
+              "name": "Playwright collection only",
+              "returncode": 0,
+              "tests": 101,
+              "files": 3,
+              "referral_cases": 35,
+              "log": ".git/unlazy-gates/r3-on46-collection.log"
+            },
+            {
+              "name": "git diff cached check owned scope",
+              "returncode": 0
+            },
+            {
+              "name": "staged and working tree owned paths identical",
+              "pass": true
+            }
+          ],
+          "runtime": "Node 22.23.4; CI=true; NODE_OPTIONS=--max-old-space-size=2048; each gate bounded at 55 seconds",
+          "prior_evidence_retained": {
+            "manifest": ".git/unlazy-gates/r3-final-verification.json",
+            "offline_stability": ".git/unlazy-gates/subscription-offline-stability-20261111.log",
+            "withdrawal_before": ".git/unlazy-gates/r3-withdrawal-before.log",
+            "withdrawal_after": ".git/unlazy-gates/r3-withdrawal-after.log",
+            "final_storage_probe": ".git/unlazy-gates/r3-storage-final.log"
+          },
+          "impact": {
+            "index": "behind one commit; no indexing by this agent",
+            "useSubscription": "CRITICAL",
+            "useReferralTracking": "HIGH",
+            "ReferralBanner": "LOW",
+            "Index_GoRedirect_Pricing": "UNKNOWN",
+            "user_warning": "Parent confirmed warning shared before restoration"
+          },
+          "limitations": [
+            "Playwright 1.64.1 browsers are not installed in the local cache; no browser execution, install, download or server start occurred in this restoration.",
+            "101 cases were collected only. Full composed CI remains required on the final published SHA.",
+            "Current full billing, revenue/provider and native qualification is owned by parent and agent A, not asserted by this receipt.",
+            "The financial journal is not a contractual commission calculation or payment engine; historical signed contract and applicable commercial basis remain unproven."
+          ],
+          "git_actions": "Staged only the nine owned paths. No commit, push, PR modification, service or deployment."
+        },
+        "receipt_sha256": "617162ca42f1ffaf8e438925efe1b939de585bfab41c302336dcda67417aaa85"
+      }
+    },
+    "handler_same_as_pr46": true,
+    "production_mutated": false,
+    "historical_wrapper": {
+      "state": "PRE_DEADLINE_FIX_CHECKPOINT",
+      "epoch": "ca47f469 plus referral/offline before1d78e272",
+      "new_local_billing_result": "billing_deadline_reconciliation"
+    }
+  },
+  "historical_root_fields": {
+    "epoch": "Initial PR37-43 consolidation before PR44, R2, PR28 and PR46",
+    "initial_published_commit": "8585b0b306a906a6afb5b472dddbaa850cb3e66e",
+    "fields": [
+      "input_parents",
+      "source_tree_before_receipt",
+      "configuration_conflicts_resolved",
+      "donor_preservation",
+      "dependency_reuse",
+      "impact",
+      "local_gates"
+    ],
+    "not_final_candidate_proof": true
+  },
+  "final_index": {
+    "status": "PASS",
+    "seconds": 66.5,
+    "node_version": "22.23.4",
+    "nodes": 17482,
+    "edges": 47670,
+    "clusters": 711,
+    "reported_flows": 604,
+    "limits": "Candidate-entry and per-entry branching limits retained; absent flow is not evidence of absence.",
+    "log_sha256": "2dba12ae39dc8ca0b9025f3418bd8ef92db2d309e08fb8a77ffbefd2d51ec4a2"
+  },
+  "node22_sql_gate_repair": {
+    "recorded_at": "2026-11-11T07:32:48.306301+00:00",
+    "previous_ci_head": "c694ccda1fa5f374773c111db1a494495671ad3f",
+    "previous_ci_run": 42979110270,
+    "previous_ci_tree": "bd0b0b0fdd2cb039a492ad20f4acd50a04ccb9f6",
+    "previous_ci_karta": {
+      "test_files": 117,
+      "tests": 2045,
+      "pass": 2045,
+      "fail": 0,
+      "oauth_sql": 18,
+      "oauth_postgres_native": 11,
+      "types": "PASS",
+      "build": "PASS",
+      "journal_sql": "NOT_RUN_BAD_NODE22_OPTION_EXIT9"
+    },
+    "merged_fixture_followup": "5e2342fdab06201b920c762130676862f0d66789",
+    "fixture_composition": "Provider fixture exact from5e2342f; overage uses its inert key and keeps our extra deferred-mode replay case. No product source changed.",
+    "workflow_change": "Remove only --test-isolation=none; retain --test, concurrency1 and timeout30000.",
+    "actual_sql_tests": {
+      "pass": 24,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "seconds": 9.861
+    },
+    "concurrency_probe": {
+      "pass": 3,
+      "max_active": 1
+    },
+    "timeout_probe": {
+      "operation_ms": 35000,
+      "timeout_ms": 30000,
+      "observed_duration_ms": 30008,
+      "expected_exit": 1,
+      "observed_exit": 1,
+      "result": "PASS_EXPECTED_TIMEOUT"
+    },
+    "direct_launch_rejected": "Without --test the same operation completed at35006ms exit0; the requested timeout was silently ineffective. Not used.",
+    "source_inputs_unchanged": 7,
+    "receipt": {
+      "status": "PASS_LOCAL_CI_PENDING",
+      "timestamp": "2026-11-11T07:31:42.756839+00:00",
+      "head": "c694ccda1fa5f374773c111db1a494495671ad3f",
+      "merge_head": "5e2342fdab06201b920c762130676862f0d66789",
+      "changed_paths": [
+        ".github/workflows/purama-chef-hardening.yml"
+      ],
+      "workflow_before_sha256": "a0963e38a8e67beec0b73e29dd09a0cbbf715da1358e99f117d14ff2ab67e1c7",
+      "workflow_after_sha256": "84713266383872410a0754f286697748adfc273ab0a81d555084c6c1f7b878f0",
+      "staged_blob": "a3ef67a378cff384b724e2a4ee4344ad4f88cbcb",
+      "old_command": "node --test --test-isolation=none --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs",
+      "new_command": "node --test --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs",
+      "node_version": "22.23.4",
+      "pglite_version": "0.5.8",
+      "initial_ci_failure": {
+        "run_id": 42979110270,
+        "job_id": 130385054043,
+        "exit_code": 9,
+        "tests_executed_in_journal_gate": 0,
+        "reason": "node: bad option: --test-isolation=none",
+        "log": "agent-a-ci42979110270-karta-failed.log",
+        "log_sha256": "8cf4d251304529459774f1fafa02b73968678807e9be34eb918d6ab4e3ce1407"
+      },
+      "rejected_direct_variant": {
+        "reason": "Without --test the CLI timeout was ignored; 35000ms operation completed successfully.",
+        "receipt": "pr46-node22-direct-timeout.json",
+        "exit_code": 0,
+        "elapsed_seconds": 35.539
+      },
+      "qualified_sql": {
+        "receipt": "pr46-node22-runner-inbox-sql.json",
+        "tests": 24,
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0,
+        "exit_code": 0,
+        "elapsed_seconds": 9.861,
+        "log_sha256": "522255b98b18ff5b2d9087e8af51e60bbdd78edd586958e6952b310c86ce2b95"
+      },
+      "concurrency_probe": {
+        "receipt": "pr46-node22-runner-concurrency.json",
+        "passed": 3,
+        "maximum_active": 1,
+        "exit_code": 0
+      },
+      "effective_timeout_probe": {
+        "receipt": "pr46-node22-runner-timeout.json",
+        "expected_exit_code": 1,
+        "actual_exit_code": 1,
+        "configured_ms": 30000,
+        "operation_ms": 35000,
+        "reported_test_duration_ms": 30008.197458,
+        "elapsed_seconds": 30.329,
+        "result": "testTimeoutFailure, cancelled1; expected negative probe passed",
+        "log_sha256": "723251584b6407603259b6adf75baa63ffbd45aaa81eaf71a7cb7da16a472fa7"
+      },
+      "source_inputs_unchanged": {
+        "tests/revenue/inbox-sql.test.mjs": "d1ac3e575f2b48d7948e89fb7f87dddabbec57c94c31a631e44c4ffc15a2ddf8",
+        "supabase/functions/_shared/stripe-reconciliation.ts": "e53ed00ea8f68213335262447cac5fd7083cc5f79922dd23573e16bd132dfc75",
+        "supabase/migrations/20261110100000_stripe_reconciliation_events.sql": "ea0fd650f32bcd8edc9f88adc389c53a2c515a34ae288fa35062abe4b6c300af",
+        "supabase/migrations/20261110000200_overage_credit_idempotency.sql": "113f109f085df796da9b5bded51e636e9d2d67ebc28a7b623ed3b6f55448beff",
+        "karta/test/fixtures/subscriptions.sql": "36fa8e8982021b8152407d1539b3f83883e16f3221e817422d8832a0694b5114",
+        "supabase/migrations/20260727000000_subscriptions_security_and_trial.sql": "d896da9d463026292c5df56877207caff60104f7ce8a4ccaeb27d38314e1bb0e",
+        "supabase/migrations/20261110043500_trial_admission_atomic.sql": "fefd2f8420b5ef5dfd7f0f263109284d839601b81adbab70472d46c8c89672e0"
+      },
+      "no_dependency_install": true,
+      "no_other_workflow_change": true,
+      "remaining": "Run the unchanged assertions and corrected command in the next CI; no commit or push by this agent"
+    },
+    "receipt_sha256": "f6cf19a338e028e329860a742277a7414cb6ac602c7a1d74b5889bfa2bdfe8ca",
+    "new_ci_required": true,
+    "previous_ci_site": {
+      "job_id": 130385054039,
+      "completed_at": "2026-11-11T07:35:25Z",
+      "status": "SUCCESS",
+      "billing": 164,
+      "real_stripe_sdk_tests": 39,
+      "commerce_deno": 86,
+      "quality_browser_chromium": 156,
+      "referral_in_quality": 35,
+      "billing_scope_in_quality": 35,
+      "quality_no_skips": true,
+      "npm_audit": "SKIPPED",
+      "not_new_commit_qualification": true
+    }
+  },
+  "billing_deadline_reconciliation": {
+    "recorded_at": "2026-11-11T07:41:46.844384+00:00",
+    "source_commit": "1d78e27287d9c24712e86df3f3529c2caf2bd481",
+    "base_checkpoint": "15c07706edf2af5349541b511b02debc8433a985",
+    "per_case_timeout_ms": 3000,
+    "file_timeout_ms": 30000,
+    "stricter_timeout_preserved": true,
+    "offline_hooks_preserved": true,
+    "functional_tests": {
+      "pass": 164,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "independent_timeout_probes": {
+      "pass": 3,
+      "default_ms": 3001.87,
+      "stricter_400_ms": 402.01,
+      "capped_10000_ms": 3003.94,
+      "expected_failure_exit": 1
+    },
+    "proofs": {
+      "actual_billing": {
+        "receipt": {
+          "recorded_at": "2026-11-11T07:38:36.497606+00:00",
+          "gate": "billing-final-with-per-case-deadline",
+          "exit": 0,
+          "seconds": 18.82,
+          "node": "v22.23.4",
+          "summary": [
+            "# tests 164",
+            "# suites 0",
+            "# pass 164",
+            "# fail 0",
+            "# cancelled 0",
+            "# skipped 0",
+            "# todo 0",
+            "# duration_ms 18068.023125"
+          ],
+          "inputs": {
+            "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+            "tests/billing/test-case.mjs": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+            "tests/billing/billing.test.mjs": "bbf7b415b0b5b28ffb30555e3cd3d8a9225882926299830546d8dd25560035d7",
+            "tests/billing-webhook/handler.test.mjs": "c7d4d28ca55a1b1a388db2492da09b3a0080058dede2aba4ccd56a5e528f2e65",
+            "tests/billing-webhook/concurrency.test.mjs": "add817378b5d32faab91048f1a3b3b6e11bac0baceb263fadda8c4e78236762f",
+            "tests/billing/module-boundary.test.mjs": "baa59c7b85244f3d511baff20f08dac6dfdd71941bfd741e292819ccd72d5c8f",
+            "tests/billing/subscription-state.test.mjs": "971982f4b870eb401a4abff5ebc5fe1e6432d73aaea8a2e8c23cab19506cf10b",
+            "src/hooks/useSubscription.ts": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e"
+          },
+          "inputs_unchanged": true,
+          "log_sha256": "e617ce13a1168f653d8b6aa536f157d4ed8c73fec41201fa1fc1421b5400df7c"
+        },
+        "receipt_sha256": "a7e86e2645b65ed7feffbcaded0eebe6c2ab755cbb11a39281883a547509b677"
+      },
+      "independent_deadline_review": {
+        "receipt": {
+          "status": "PASS",
+          "review": "independent real Node22 timeout probes; no application source changes",
+          "timestamp": "2026-11-11T07:40:34.520381+00:00",
+          "head": "15c07706edf2af5349541b511b02debc8433a985",
+          "merge_head": "1d78e27287d9c24712e86df3f3529c2caf2bd481",
+          "wrapper_identical_to_commit": "1d78e27287d9c24712e86df3f3529c2caf2bd481",
+          "wrapper_sha256": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+          "node": "22.23.4",
+          "file_timeout_ms": 30000,
+          "cases": [
+            {
+              "mode": "default",
+              "status": "PASS_EXPECTED_TIMEOUT",
+              "expected_timeout_ms": 3000,
+              "exit_code": 1,
+              "body": {
+                "mode": "default",
+                "body_elapsed_ms": 3001.870958,
+                "aborted": true,
+                "node": "v22.23.4"
+              },
+              "log_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/billing-wrapper-probe-default.log",
+              "log_sha256": "cb8dba4f7aaa42be223a4388f14435facdf340d7e3141dc54053356e04b28c4c",
+              "probe_sha256": "ea6bb60460a24dec5f443ca1ba5a87f8dcd3d5c0fc0f53812a1640525cb1cb64"
+            },
+            {
+              "mode": "stricter",
+              "status": "PASS_EXPECTED_TIMEOUT",
+              "expected_timeout_ms": 400,
+              "exit_code": 1,
+              "body": {
+                "mode": "stricter",
+                "body_elapsed_ms": 402.01395799999995,
+                "aborted": true,
+                "node": "v22.23.4"
+              },
+              "log_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/billing-wrapper-probe-stricter.log",
+              "log_sha256": "81a8fb72364fb15b1337792616f8ab4cb590a1604972e250b879d06da2ea4ce8",
+              "probe_sha256": "4601dd62c1a01131ec6e8c00bab3d0eae0411da2cae68a62b0bb85d799842c7c"
+            },
+            {
+              "mode": "capped",
+              "status": "PASS_EXPECTED_TIMEOUT",
+              "expected_timeout_ms": 3000,
+              "exit_code": 1,
+              "body": {
+                "mode": "capped",
+                "body_elapsed_ms": 3003.9412079999997,
+                "aborted": true,
+                "node": "v22.23.4"
+              },
+              "log_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/billing-wrapper-probe-capped.log",
+              "log_sha256": "cf862bc03f8fbe22e1a8facea00504c5d1829984f0c28cb5fd6606a920cd7f32",
+              "probe_sha256": "d1a8c6e82229cc86f31d97e2c868ff5b32c59a51f9f02a739f906c130c0ee201"
+            }
+          ],
+          "interpretation": "Each probe intentionally exceeds its per-case deadline: testTimeoutFailure, cancelled1 and process exit1 are expected. These three controls are not added to the 164 application tests.",
+          "hooks": "after/beforeEach/afterEach remain imported from node:test in subscription-state.test.mjs",
+          "inputs_unchanged": {
+            "tests/billing/test-case.mjs": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+            "tests/billing/subscription-state.test.mjs": "971982f4b870eb401a4abff5ebc5fe1e6432d73aaea8a2e8c23cab19506cf10b",
+            "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4"
+          },
+          "no_network_or_install": true,
+          "no_git_mutation": true,
+          "limits": "The probes demonstrate cooperative async cancellation and timeout reporting, not preemption of a synchronously blocked JavaScript event loop. Entire-file timeout remains the separate CLI bound."
+        },
+        "receipt_sha256": "8ab85c3d9a054c3d1cdf75721164935c1ebf58f983b65c82bdf4b87e7433fe1b"
+      }
+    },
+    "new_ci_required": true
+  },
+  "social_entraide_integration": {
+    "status": "PASS_LOCAL_PENDING_COMMON_CI",
+    "qualified_core": {
+      "head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+      "tree": "6e842d921de93b94a1540da43e8820f5ef6f1e40",
+      "chef_run": 42981609057,
+      "mobile_run": 42981608972,
+      "status": "ALL_JOBS_SUCCESS",
+      "checkout": "bcdb3afe45bc672240d361bded92a81d546560c7",
+      "checkout_tree_equals_head": true,
+      "karta_tests": 2045,
+      "karta_files": 117,
+      "billing_tests": 164,
+      "real_stripe_sdk_tests": 39,
+      "journal_sql_tests": 24,
+      "oauth_native_tests": 11,
+      "subscription_native_tests": 7,
+      "quality_chromium_tests": 156,
+      "referral_tests_within_quality": 35,
+      "audit_steps_skipped": true,
+      "production_qualified": false
+    },
+    "social": {
+      "commit": "deb01eb0cd6921bab3f69adb300988b8579222b4",
+      "tree": "36b8df1dad1a70864296a2deb95d0e47f5f38f23",
+      "parents": [
+        "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+        "fb2e7ea6aa1b8d35d54702927112f40e8ae82ac9"
+      ],
+      "receipt_sha256": "5e71137aa7dfcfb32ee90f47a4c19435ed8075ef95d0b7efc0c2b3925342c438",
+      "evidence_directory": "qa/social-reconciliation-20261111",
+      "gates": {
+        "social-core": {
+          "status": "PASS",
+          "cases": 104,
+          "exit_code": 0,
+          "log_sha256": "69179635e45ab754d4594a09caa8bd232f126d70e278c5a10ece0c822d5b8354"
+        },
+        "social-sdk": {
+          "status": "PASS",
+          "cases": 14,
+          "exit_code": 0,
+          "log_sha256": "3a4b0467a7ad880d9bc570f057fa558fe7a23cc24dbf1442f3685f0ab5c19630"
+        },
+        "social-sql": {
+          "status": "PASS",
+          "cases": 40,
+          "exit_code": 0,
+          "log_sha256": "14bc57af1ad43506f852a894f45883c5f80795d098042f12106d90fa1b4f64cf"
+        },
+        "assistant-policy-final": {
+          "status": "PASS",
+          "cases": 55,
+          "exit_code": 0,
+          "log_sha256": "14e2697e0684891a1ce5c54d102d27f51e676fa82a65b3396c4061db87f267f8"
+        },
+        "social-browser-final": {
+          "status": "PASS",
+          "cases": 29,
+          "exit_code": 0,
+          "log_sha256": "f8a7e53d7c97ed7bcbe51d198990f2495e10646ebef98495295bc073b2ab394b"
+        },
+        "social-hook-final": {
+          "status": "PASS",
+          "cases": 11,
+          "exit_code": 0,
+          "log_sha256": "7ac1e2eba9c454d970c6e73b6cedcb8fe6b6b7beb0422c29a4e8f5098bd2f0ee"
+        },
+        "social-production-sdk": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "3981b35cb5540c2b08cf5f215e4550e4b36f61f18cf3f3542979a1951ccb0877"
+        },
+        "database-contracts": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3"
+        },
+        "workflow-union": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "bae57606f56f0051baf9c72d87b5f9229126ec119a154d4401eb17a46bd9ffd4"
+        },
+        "site-typecheck-final": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "site-build-final": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "77315f6fc355b14573a8adf9ffaeb8676550829049ee15c46a4252bca002cb21"
+        },
+        "site-lint-final": {
+          "status": "PASS",
+          "cases": null,
+          "exit_code": 0,
+          "log_sha256": "3ca0260213af8c1b6d9114836f7837b4d32e5f9ab53c89fd36e863ed6f90b065"
+        }
+      },
+      "graph": {
+        "index-final": {
+          "receipt_sha256": "d64aba3c9c9fdc7c522774430f448085bf344e88263e0bfd8b051c528ddef8ee",
+          "log_sha256": "cc792c79ab3aaf35cec28784c31a7250f16117fd46aacec8239b8ae19e278434",
+          "analysis": null
+        },
+        "detect-staged": {
+          "receipt_sha256": "a21f9bdd2512c6c89f39e8ea341d4c88dca71b0bd4696a26e6a91ee95034b8f0",
+          "log_sha256": "a984f96e052cdc7a1d1de7ac536de15e4c91a55a2fe17d4d6bc07542472fdd81",
+          "analysis": {
+            "format": "GitNexus CLI text",
+            "files": 51,
+            "symbols": 1138,
+            "processes": 49,
+            "risk": "CRITICAL",
+            "listing_capped": true,
+            "counts_cover_full_analysis": true,
+            "preview_lines": [
+              "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • RunDemo → SocialConnectionError (4 steps) — changed: beginSocialConnection, begin, SocialConnectionError",
+              "  • RunDemo → IsOAuthSocialPlatform (4 steps) — changed: isOAuthSocialPlatform, beginSocialConnection, begin",
+              "  • RunDemo → IsSocialUserId (4 steps) — changed: isSocialUserId, beginSocialConnection, begin",
+              "  • RunDemo → Now (4 steps) — changed: beginSocialConnection, begin, now",
+              "  • HandleSocialAccountsRequest → Authenticate (3 steps) — changed: authenticate, handleSocialAccountsRequest, identity",
+              "  • ReconcileSocialPost → Query (3 steps) — changed: reconcileSocialPost, Query, from"
+            ]
+          }
+        },
+        "detect-compare-base": {
+          "receipt_sha256": "628e89737db2ae340ad035cccad1447ab9458074516551ff2a94936882150a77",
+          "log_sha256": "b4c0c84c5024d7b29ebf38f9d861abde17d7a036a453f6bcec8bbfdb535c9642",
+          "analysis": {
+            "format": "GitNexus CLI text",
+            "files": 51,
+            "symbols": 1138,
+            "processes": 49,
+            "risk": "CRITICAL",
+            "listing_capped": true,
+            "counts_cover_full_analysis": true,
+            "preview_lines": [
+              "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+              "  • RunDemo → SocialConnectionError (4 steps) — changed: SocialConnectionError, beginSocialConnection, begin",
+              "  • RunDemo → IsOAuthSocialPlatform (4 steps) — changed: isOAuthSocialPlatform, beginSocialConnection, begin",
+              "  • RunDemo → IsSocialUserId (4 steps) — changed: isSocialUserId, beginSocialConnection, begin",
+              "  • RunDemo → Now (4 steps) — changed: beginSocialConnection, begin, now",
+              "  • HandleSocialAccountsRequest → Authenticate (3 steps) — changed: authenticate, handleSocialAccountsRequest, identity",
+              "  • ReconcileSocialPost → Query (3 steps) — changed: Query, reconcileSocialPost, from"
+            ]
+          }
+        },
+        "detect-compare-main": {
+          "receipt_sha256": "2b61dbe28d3d603eefc2adc3029bc10658ddb644bb4714048e0e7557523cc006",
+          "log_sha256": "183541440981380a69bcaed045b87c3bcb02d854e422ffb86d229122fcb1fb2f",
+          "analysis": {
+            "format": "GitNexus CLI text",
+            "files": 1202,
+            "symbols": 10970,
+            "processes": 587,
+            "risk": "CRITICAL",
+            "listing_capped": true,
+            "counts_cover_full_analysis": true,
+            "preview_lines": [
+              "  • RunDailyReport → SendEmail (4 steps) — changed: sendEmail, deliver, notify",
+              "  • RunDailyReport → Deliver (3 steps) — changed: deliver, notify",
+              "  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized",
+              "  • Execute → JevValidationError (7 steps) — changed: JevValidationError, validateJevRequest, exactKeys, keys, field, fail, execute",
+              "  • RunChefWorkerCycle → Advance (5 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc, advance",
+              "  • RunDailyReport → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt",
+              "  • RunDailyReport → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify",
+              "  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: ChefProcessStopUnconfirmedError, tryFinishMission, housekeeping, runChefWorkerCycle",
+              "  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, assertRpc",
+              "  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc"
+            ]
+          }
+        }
+      },
+      "source_files": 47,
+      "proof_files": 4
+    },
+    "entraide": {
+      "commit": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+      "tree": "95d56c0c06754bb3bf09dcda78db7a0c9ecc4cd3",
+      "receipt_sha256": "65caaa8c8dd52d167d7b633ed9ed6312742ffe49fa750d467257c5a1bbe2bd9b",
+      "evidence_directory": "qa/entraide-integration-20261111",
+      "qualifications": {
+        "postgres_native": {
+          "tests": 92,
+          "pass": 92,
+          "fail": 0,
+          "skipped": 0,
+          "runtime": "PostgreSQL18.4 / Node22.23.4 / pg8.23.0",
+          "evidence": "native-result.json"
+        },
+        "http_sdk_frontend": {
+          "tests": 30,
+          "pass": 30,
+          "fail": 0,
+          "skipped": 0,
+          "private_matching_required": true,
+          "evidence": "http-sdk-frontend-30.log"
+        },
+        "ui_regression": {
+          "same_cases": 9,
+          "before_pass": 3,
+          "before_fail": 6,
+          "after_pass": 9,
+          "after_fail": 0,
+          "skipped": 0,
+          "evidence": "ui-account-receipt.json"
+        },
+        "public_ci_command": {
+          "tests": 22,
+          "pass": 22,
+          "fail": 0,
+          "skipped": 0,
+          "overlap_with_http_sdk_frontend": 13,
+          "additional_ui_cases": 9,
+          "evidence": "public-ci-tests.log"
+        },
+        "site_typecheck": "PASS without private package",
+        "site_build": "PASS without private package, synthetic public configuration",
+        "site_lint": {
+          "exit": 0,
+          "errors": 0,
+          "warnings": 21
+        },
+        "edge_typecheck": "PASS all four entries, cached-only SDK and canonical generated matching",
+        "workflow_lint": "PASS two workflows",
+        "generated_contracts": {
+          "exit": 0,
+          "evidence": "generated-contracts.json",
+          "catalog_sources": [
+            "p3_schema.sql",
+            "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql"
+          ],
+          "all_migrations_discovered": false
+        }
+      },
+      "donor_selection": {
+        "paths_total": 80,
+        "paths_selected": 78,
+        "paths_omitted": [
+          "src/lib/entraide.ts",
+          "tests/entraide/compatibility-client.test.mjs"
+        ],
+        "omitted_compatibility_tests": 2,
+        "reason": "No application consumer or package export surface; old adapter absent from the core. Private implementation is preserved in the donor and is not duplicated."
+      },
+      "private_runtime_prerequisite": {
+        "package": "@purama/entraide0.1.0",
+        "matching_source_sha256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24",
+        "generated_bundle_sha256": "b1fa6f3626855835b1e550ba5a96ff3d8f6a78a1e6135d12a4cfb31da06ff4d2",
+        "builder": "scripts/build-entraide-matching.mjs",
+        "frontend_requires_private_package": false,
+        "edge_runtime_requires_generated_bundle": true,
+        "public_ci_does_not_qualify_private_adapter": true
+      },
+      "graph": {
+        "cold_index": "TIMEOUT at150s, preserved",
+        "warm_index": "PASS",
+        "detect_changes": {
+          "status": "PASS",
+          "scope": "staged",
+          "files": 113,
+          "symbols_reported": 819,
+          "affected_processes_reported": 15,
+          "risk": "HIGH",
+          "coverage": "Budgeted graph result, not exhaustive. Some displayed items are limited by CLI output.",
+          "stdout": "Changes: 113 files, 819 symbols\nAffected processes: 15\nRisk level: high\n\nChanged symbols:\n  Const root → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const files → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const configPath → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const input → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const config → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const domain → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const options → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property allowImportingTsExtensions → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property noEmit → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property paths → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const tracked → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Function inspect → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property selected → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property dependencyDiagnostics → qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property files → qa/entraide-reconciliation-20261110/typecheck.mjs\n... and 804 more\n\nAffected execution flows:\n  • App → Cn (5 steps) — changed: App\n  • App → UseAuth (5 steps) — changed: App\n  • App → EmptyActivity (5 steps) — changed: App\n  • App → RemovePreferenceListener (4 steps) — changed: App\n  • App → HandleOpen (4 steps) — changed: App\n  • App → WellbeingCopy (4 steps) — changed: App\n  • App → ApplySession (3 steps) — changed: App\n  • App → Skip (3 steps) — changed: App\n  • App → RememberIntroSeen (3 steps) — changed: App\n  • Entraide → ToProfileDraft (3 steps) — changed: EntraideWorkspace, Entraide, toProfileDraft\n... and 5 more\n",
+          "stdout_sha256": "7459644bc5d3dd2718e82cb441c8ca7014113855abbeb5ffe88154ff0086945a"
+        },
+        "seconds": 118.37,
+        "nodes": 18388,
+        "edges": 50565,
+        "flows_reported": 594,
+        "limits": [
+          "FTS intentionally disabled",
+          "2 historical large JSON proofs skipped above512KiB",
+          "1172 of1372 process entry candidates unranked,3336 callees omitted by branching budget",
+          "2018 cross-language field sites not linked; absent graph relationship is not proof of absence"
+        ],
+        "targeted_impacts": [
+          {
+            "target": "App",
+            "file": "src/App.tsx",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:src/App.tsx:App",
+                "name": "App",
+                "type": "Function",
+                "filePath": "src/App.tsx"
+              },
+              "direction": "upstream",
+              "impactedCount": 0,
+              "risk": "UNKNOWN",
+              "riskSharedAxes": "UNKNOWN",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+              "epistemic": "exact",
+              "summary": {
+                "direct": 0,
+                "processes_affected": 0,
+                "modules_affected": 0
+              },
+              "byDepthCounts": {},
+              "affected_processes": [],
+              "affected_modules": []
+            },
+            "log_sha256": "30826d41ad2b0fdd8302b5ca13d49f072695058eb8853ffd12e5928b2e0dd85f"
+          },
+          {
+            "target": "EntraideWorkspace",
+            "file": "src/pages/Entraide.tsx",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:src/pages/Entraide.tsx:EntraideWorkspace",
+                "name": "EntraideWorkspace",
+                "type": "Function",
+                "filePath": "src/pages/Entraide.tsx"
+              },
+              "direction": "upstream",
+              "impactedCount": 1,
+              "risk": "LOW",
+              "riskSharedAxes": "LOW",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "epistemic": "exact",
+              "summary": {
+                "direct": 1,
+                "processes_affected": 1,
+                "modules_affected": 1
+              },
+              "byDepthCounts": {
+                "1": 1
+              },
+              "affected_processes": [
+                {
+                  "name": "Entraide",
+                  "type": "Function",
+                  "filePath": "src/pages/Entraide.tsx",
+                  "affected_process_count": 3,
+                  "total_hits": 3,
+                  "earliest_broken_step": 1
+                }
+              ],
+              "affected_modules": [
+                {
+                  "name": "Pages",
+                  "hits": 1,
+                  "impact": "direct"
+                }
+              ]
+            },
+            "log_sha256": "4b20f1e1945d1ef33a12aca5ae391e8668ab348ee939e56abcffdbfa17ae3626"
+          },
+          {
+            "target": "createEntraideHandler",
+            "file": "supabase/functions/_shared/entraide-http.ts",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:supabase/functions/_shared/entraide-http.ts:createEntraideHandler",
+                "name": "createEntraideHandler",
+                "type": "Function",
+                "filePath": "supabase/functions/_shared/entraide-http.ts"
+              },
+              "direction": "upstream",
+              "impactedCount": 4,
+              "risk": "LOW",
+              "riskSharedAxes": "LOW",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "epistemic": "exact",
+              "summary": {
+                "direct": 4,
+                "processes_affected": 0,
+                "modules_affected": 0
+              },
+              "byDepthCounts": {
+                "1": 4
+              },
+              "affected_processes": [],
+              "affected_modules": []
+            },
+            "log_sha256": "e72c11c4329782d0b02dc9d84b6aeef3d15a01635c9348e709ead451a413176f"
+          },
+          {
+            "target": "createSupabaseEntraidePorts",
+            "file": "supabase/functions/_shared/entraide-supabase.ts",
+            "exit": 0,
+            "result": {
+              "target": {
+                "id": "Function:supabase/functions/_shared/entraide-supabase.ts:createSupabaseEntraidePorts",
+                "name": "createSupabaseEntraidePorts",
+                "type": "Function",
+                "filePath": "supabase/functions/_shared/entraide-supabase.ts"
+              },
+              "direction": "upstream",
+              "impactedCount": 5,
+              "risk": "LOW",
+              "riskSharedAxes": "LOW",
+              "riskScale": {
+                "comparableAcrossKinds": true,
+                "unusedAxes": []
+              },
+              "epistemic": "exact",
+              "summary": {
+                "direct": 1,
+                "processes_affected": 0,
+                "modules_affected": 0
+              },
+              "byDepthCounts": {
+                "1": 1,
+                "2": 4
+              },
+              "affected_processes": [],
+              "affected_modules": []
+            },
+            "log_sha256": "b5ae175d80495488117dc0750bb13053cc3341eb7ed6fd9af5fdd548a49190e3"
+          }
+        ]
+      }
+    },
+    "agent_execution": {
+      "sha256": "db84778fdec06746b8a6dfb8dcd2d7351beeb1b3c6a49e725554233c33f1f160",
+      "receipt": {
+        "recorded_at": "2026-11-11T08:31:56.818707+00:00",
+        "phase": "final local qualification after independent SDK identity review",
+        "base_head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+        "production_file": "src/hooks/useAgentExecution.ts",
+        "before_sha256": "9d80f3b86875c942ab1e6fb6b21d04fcbfeb94f2daa2292db234b2e9c49c6ee6",
+        "after_sha256": "cc69a601f6200c55cb3864727af78e7a42da4f2922ef1072620c14308baa67cb",
+        "test_file": "tests/social-agent-execution.test.mjs",
+        "test_sha256": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+        "runtime": "Node22.23.4/React18.3.1/JSDOM26.1.0",
+        "boundary": "Production React hook and scope helpers. Eleven permanent cases, including real Supabase/PostgREST SDK with inert fetch. No hosted Auth, database or provider qualification.",
+        "gates": {
+          "before": {
+            "exit_code": 1,
+            "counts": {
+              "tests": 10,
+              "pass": 1,
+              "fail": 9,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "d0b4e0c9869d5f271cb9def12dc3c7ee6285b5bb6a2d06a276f25765fabf177f"
+          },
+          "after": {
+            "exit_code": 0,
+            "counts": {
+              "tests": 10,
+              "pass": 10,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "046da0d3668245b1bf2bcd8c60f15063776076898a1b3fa78e5e79ad6aa142a4"
+          },
+          "before-sdk-headers": {
+            "exit_code": 1,
+            "counts": {
+              "tests": 11,
+              "pass": 10,
+              "fail": 1,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "59fe085dddf62ff7104203cdf100baac375a52fd9fa47e3d9b2b10ea2d33878e"
+          },
+          "after-sdk-headers": {
+            "exit_code": 0,
+            "counts": {
+              "tests": 11,
+              "pass": 11,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "5e9bafe791451acfeb4d758db54012003ce657caa8b92d8fdb270eacdd208d7c"
+          },
+          "independent-sdk-bearer-before": {
+            "exit_code": 1,
+            "counts": {
+              "tests": 1,
+              "pass": 0,
+              "fail": 1,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "e06dce2943ea123833c411074677fd5a257a694135e6351d7c147d53bef618cb"
+          },
+          "independent-sdk-bearer-after": {
+            "exit_code": 0,
+            "counts": {
+              "tests": 1,
+              "pass": 1,
+              "fail": 0,
+              "cancelled": 0,
+              "skipped": 0,
+              "todo": 0
+            },
+            "log_sha256": "9d53db6dad6b28f6177a94587569f338640fa23dea3f61ee3317c4897bd21fb3"
+          }
+        },
+        "gitnexus": {
+          "impact_file": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/root-agent-execution-review/impact-before.log",
+          "risk": "LOW",
+          "resolved_upstream_callers": 2,
+          "log_sha256": "3f5cdac4c16034cf988934078d170367ef84c81ea6cd7a00595ea5d0ed161203"
+        },
+        "status": "PASS",
+        "production_sha256": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+        "initial_phase_receipt_sha256": "626a86a28f70cd3fcfff73a596ddbe75afd84fbfff07815329cd0c7a7606415e",
+        "fixes": [
+          "Per-owner and per-agent state and request leases",
+          "Captured session owner and explicit bearer for proxy invocation",
+          "Same bearer captured on both PostgREST requests without mutating global client headers",
+          "AbortSignal passed to proxy and PostgREST; guards after each await",
+          "Reset and unmount invalidate old requests; duplicate admission denied"
+        ],
+        "independent_review": {
+          "status": "PASS",
+          "reviewer": "audit_portfolio",
+          "validation_helper_unchanged": true,
+          "reset_layout_loop_found": false
+        },
+        "installed_packages": {
+          "react": "18.3.1",
+          "jsdom": "26.1.0",
+          "typescript": "5.8.3",
+          "@supabase/supabase-js": "2.91.0",
+          "@supabase/postgrest-js": "2.91.0"
+        },
+        "diff_check": {
+          "exit_code": 0,
+          "output": ""
+        }
+      }
+    },
+    "entraide_browser": {
+      "sha256": "b87272ed41c72ae88ce887ee556cc655ed1cf32d8bd53038b79d7f5c82718225",
+      "receipt": {
+        "status": "PASS_LOCAL_CHROMIUM_HTTP_POSTGRES",
+        "source_commit": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "source_tree": "95d56c0c06754bb3bf09dcda78db7a0c9ecc4cd3",
+        "run_id": "entraide-native-a1ad617d948a",
+        "started_at_utc": "2026-11-11T08:41:41.788063+00:00",
+        "finished_at_utc": "2026-11-11T08:42:14.872908+00:00",
+        "browser": {
+          "browser": "Chromium via installed Google Chrome",
+          "version": "157.0.8103.39",
+          "bundle_version": "8103.39",
+          "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+          "firefox_expected_absent": true,
+          "firefox_app_absent": true
+        },
+        "actual_trace_user_agents": [
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+        ],
+        "recorded_page_network_origins": [
+          "http://127.0.0.1:65504"
+        ],
+        "node": "v22.23.4",
+        "postgres": "postgres (PostgreSQL) 18.4 (Homebrew)",
+        "pg_driver": {
+          "path": "/opt/homebrew/lib/node_modules/pg/lib/index.js",
+          "version": "8.23.0",
+          "sha256": "3fad6e6d3d976edbabe0cbc9e1d39f4340bcb719bbbb186a0d3a24f3dbd4a94c",
+          "package_sha256": "e42dd36cba6e9dd8dbb6f773a2f7be8a8c3c273e18b155e42e75961a4cb8bc28"
+        },
+        "counts": {
+          "tests": 3,
+          "pass": 3,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "playwright_stats": {
+          "startTime": "2026-11-11T08:41:47.041Z",
+          "duration": 27178.349000000002,
+          "expected": 3,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "case_results": [
+          {
+            "title": "profil enregistré, mission privée publiée, Bob rejoint et Alice déclare la fin",
+            "status": "passed",
+            "duration_ms": 6317,
+            "retry": 0,
+            "http_events": 24,
+            "lost_confirmations_after_commit": 0,
+            "browser_errors": [],
+            "screenshot": {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/screenshots/mission-declared-complete.png",
+              "sha256": "84ee18b9856002fa7667f8b053d5f6dd0729d9319bafb69a60ef263886d711b6",
+              "bytes": 126821
+            },
+            "final_state_counts": {
+              "profiles": 2,
+              "missions": 1,
+              "participants": 2,
+              "contacts": 0,
+              "blocks": 0
+            },
+            "mission_statuses": [
+              "terminee"
+            ],
+            "contact_statuses": []
+          },
+          {
+            "title": "contact accepté puis bloqué et débloqué sans réactiver l’acceptation",
+            "status": "passed",
+            "duration_ms": 7608,
+            "retry": 0,
+            "http_events": 15,
+            "lost_confirmations_after_commit": 0,
+            "browser_errors": [],
+            "screenshot": {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/screenshots/contact-unblocked-without-restoring-consent.png",
+              "sha256": "f0d5e77cb8637f6ef3fb27dfe10664a9a2f534e78afa6886c78e2af2d7c21b42",
+              "bytes": 65319
+            },
+            "final_state_counts": {
+              "profiles": 2,
+              "missions": 1,
+              "participants": 2,
+              "contacts": 1,
+              "blocks": 0
+            },
+            "mission_statuses": [
+              "terminee"
+            ],
+            "contact_statuses": [
+              "blocked"
+            ]
+          },
+          {
+            "title": "brouillon préservé, créations reprises sans doublon et interface à 390 pixels",
+            "status": "passed",
+            "duration_ms": 6185,
+            "retry": 0,
+            "http_events": 18,
+            "lost_confirmations_after_commit": 2,
+            "browser_errors": [
+              {
+                "kind": "console",
+                "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+                "url": "http://127.0.0.1:65504/functions/v1/entraide-missions"
+              },
+              {
+                "kind": "console",
+                "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+                "url": "http://127.0.0.1:65504/functions/v1/entraide-missions"
+              }
+            ],
+            "screenshot": {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/screenshots/mobile-390px.png",
+              "sha256": "b89a416c1b76187d6e5241039035aa4d4a2a0da93ba57958215c6b53f4da4ced",
+              "bytes": 54685
+            },
+            "final_state_counts": {
+              "profiles": 2,
+              "missions": 4,
+              "participants": 5,
+              "contacts": 1,
+              "blocks": 0
+            },
+            "mission_statuses": [
+              "terminee",
+              "ouverte",
+              "ouverte",
+              "ouverte"
+            ],
+            "contact_statuses": [
+              "blocked"
+            ]
+          }
+        ],
+        "total_http_events": 57,
+        "lost_confirmations_after_real_commit": 2,
+        "unexpected_http_errors": [],
+        "source_inputs_unchanged": true,
+        "assertions_or_timeouts_changed": false,
+        "tests_retried": false,
+        "native_92_reexecuted": false,
+        "source_commit_modified": false,
+        "matching_source_sha256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24",
+        "matching_bundle_sha256": "b1fa6f3626855835b1e550ba5a96ff3d8f6a78a1e6135d12a4cfb31da06ff4d2",
+        "source_input_manifest_sha256": "ccf656c24498af5baa41d7be72e051f4398c82cec5d7a65d374529b9b7c6589e",
+        "cleanup": {
+          "stopped": true,
+          "cluster_removed": true,
+          "pid_file_absent": true,
+          "postmaster_absent": true,
+          "socket_absent": true,
+          "tcp_port_free": true,
+          "errors": [],
+          "status_exit_code": 3,
+          "http_server_port_closed": true,
+          "owned_browser_processes_after_test": [],
+          "owned_browser_processes_before_removal": []
+        },
+        "cluster_identity": {
+          "port": "65491",
+          "data_directory": "/private/tmp/entraide-ac3c/c-57ba9308a147/data",
+          "server_version": "18.4 (Homebrew)",
+          "listen_addresses": "127.0.0.1",
+          "system_identifier": "7706831344339589261",
+          "unix_socket_directories": "/private/tmp/entraide-ac3c/c-57ba9308a147/socket"
+        },
+        "proofs": {
+          "runner_result": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/result.json",
+            "sha256": "500abd229abc7c00bc3b8b108f0d3a084b8ae76ef678c4a9d80b468f16ac209a"
+          },
+          "playwright_json": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/playwright-report.json",
+            "sha256": "dd77dafc1d15b3b6129a7c2d50d24139ca533f64c582d4700192451570c046cf"
+          },
+          "browser_log": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/browser-http-postgres.log",
+            "sha256": "540f67afd0301c21a0860a5c13a862952069490bb9c79ea6cc75dad32b6d304e"
+          },
+          "runtime_runner": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/run-browser-native.py",
+            "sha256": "66bb26e7b6f7097bca1f559f27dfce6483f7c1c8da8104e51a062abc15557949"
+          },
+          "chromium_config": {
+            "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/browser.chromium.config.mjs",
+            "sha256": "eebc66d4a9af9350eed89875eecfec7148c6d740a95b182df36db14064634ff4"
+          },
+          "distinct_traces": [
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-contact-accepté-pu-8eb36-ans-réactiver-l’acceptation-entraide-local/trace-alice-0.zip",
+              "bytes": 349778,
+              "sha256": "a37fe1ea1c6720a69b06260e5f877ca8041f97a24952a0a406f92ed039d754e8"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-contact-accepté-pu-8eb36-ans-réactiver-l’acceptation-entraide-local/trace-bob-1.zip",
+              "bytes": 512448,
+              "sha256": "98648cca2a59b02494ec73fa43753df0da13e5393ff59450982b8012f5c6f820"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-brouillon-préservé-ed523-n-et-interface-à-390-pixels-entraide-local/trace-alice-0.zip",
+              "bytes": 2297622,
+              "sha256": "44d6df7207343809180df78e20a6faebf4b2d2e905cd5b600712fc511cf8997f"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/trace-alice-0.zip",
+              "bytes": 1038347,
+              "sha256": "a7531b671909a539b61ee1a2b9072b55dcc702755f340f3a8775d8ce804ee3aa"
+            },
+            {
+              "path": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-browser-20261111/results/entraide-native-a1ad617d948a/artifacts/browser-profil-enregistré--7710b-int-et-Alice-déclare-la-fin-entraide-local/trace-bob-1.zip",
+              "bytes": 750801,
+              "sha256": "b7631fd269fee0e4a592023275fb016b4a6802091344f61f7fd25c1d9f9252ac"
+            }
+          ]
+        },
+        "coverage": [
+          "Real Entraide page/React Query/transport/CSS",
+          "Actual HTTP handlers and mission/contact PostgreSQL RPCs",
+          "Canonical matching function",
+          "Lost confirmation after committed SQL; same retry ID yields one row",
+          "Contact consent, revocation and non-reactivation",
+          "390px horizontal overflow assertions"
+        ],
+        "fixtures": [
+          "Alice/Bob synthetic authentication",
+          "SQL profile ports replacing Supabase PostgREST",
+          "Remote Google Fonts omitted"
+        ],
+        "not_verified": [
+          "Hosted Supabase Auth/PostgREST",
+          "Deployed Edge runtime and production database",
+          "Physical devices",
+          "Current Firefox execution"
+        ],
+        "supersedes_prior_non_tested_statement": "The local Entraide browser→HTTP→SQL boundary is now qualified on8fecab1. Earlier QA receipt remains a dated pre-browser snapshot. Hosted/deployed limits still apply.",
+        "source_or_provider_mutation": false,
+        "installation": false,
+        "push": false,
+        "deployment": false
+      }
+    },
+    "protected_paths_review": {
+      "count": 69,
+      "reviewer": "audit_portfolio",
+      "same_as_f766_in_both_children": true,
+      "receipt_file": null
+    },
+    "limits": [
+      "A new common CI is required on the actual composed commit.",
+      "Canonical matching remains private and generated locally; no private implementation is committed.",
+      "Hosted Supabase Auth/PostgREST, deployed Edge, real providers, physical devices, and production load are not qualified by these isolated tests.",
+      "Child browser and native proofs apply to their explicit commits; source identity is checked in the composition."
+    ],
+    "publication": {
+      "push": false,
+      "ci_triggered": false,
+      "deployment": false,
+      "provider_calls": false
+    },
+    "recorded_at": "2026-11-11T08:57:20.106519+00:00",
+    "composition": {
+      "phase": "local composition with both root proof documents; common CI still required",
+      "parents": [
+        "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "deb01eb0cd6921bab3f69adb300988b8579222b4"
+      ],
+      "base": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+      "merge_conflicts": 0,
+      "expected_changed_paths": 163,
+      "actual_changed_paths": 163,
+      "unexpected_paths": [],
+      "workflow_union_before_timeout_sha256": "de9015e5233901a07514f5248a5ea0645a0f6b34b9c9c079cca258857caac6db",
+      "workflow_sha256": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383",
+      "only_additional_workflow_change": "Entraide public file deadline30000ms, matching tested local command",
+      "workflow_impact": {
+        "risk": "UNKNOWN",
+        "exit_code": 1,
+        "reason": "Configuration target not represented; exact manual union independently checked, full CI required"
+      },
+      "source_tree_before_receipt": "06ad544e2444da3765513d70ef8168fe75706220",
+      "remote_push": false,
+      "guarded_edit_attempts": [
+        "No edit when a single-line matcher rejected the folded YAML command",
+        "No edit when impact returned UNKNOWN with exit1; retained as unknown, manual configuration review used"
+      ],
+      "path_count_epoch": "163 paths before the two root proof documents; 165 paths including them",
+      "final_changed_paths_including_root_proofs": 165,
+      "final_staged_paths_against_first_parent": 53
+    },
+    "composed_local_gates": {
+      "sources_before": {
+        "src/hooks/useAgentExecution.ts": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+        "tests/social-agent-execution.test.mjs": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+        "src/pages/Entraide.tsx": "9e3e7c352a7e01edb0bee91dc1e11323c6777cca0533e36f7fd9028f235be867",
+        "tests/entraide/ui-account-scope.test.mjs": "b1857d57ab7c41a133e62e0062b483a3f50ec1d864ac746a52d265da25c3fa8f",
+        "tests/entraide/frontend.test.mjs": "94821491e4a74f55f47161312b7e5560514044e494b8026934177c8dcabf2829",
+        "src/lib/entraide-http.ts": "49f09190efee61448ecddfbd0c9393e6eb33fa15a72806dbac20d7f32f018591",
+        "src/App.tsx": "8b4eff9a28b07476d1455e6b031a4703767e23b82f2ab2839c0dbbdcb50cda43",
+        ".github/workflows/purama-chef-hardening.yml": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383",
+        "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+        "package-lock.json": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a"
+      },
+      "sources_after": {
+        "src/hooks/useAgentExecution.ts": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+        "tests/social-agent-execution.test.mjs": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+        "src/pages/Entraide.tsx": "9e3e7c352a7e01edb0bee91dc1e11323c6777cca0533e36f7fd9028f235be867",
+        "tests/entraide/ui-account-scope.test.mjs": "b1857d57ab7c41a133e62e0062b483a3f50ec1d864ac746a52d265da25c3fa8f",
+        "tests/entraide/frontend.test.mjs": "94821491e4a74f55f47161312b7e5560514044e494b8026934177c8dcabf2829",
+        "src/lib/entraide-http.ts": "49f09190efee61448ecddfbd0c9393e6eb33fa15a72806dbac20d7f32f018591",
+        "src/App.tsx": "8b4eff9a28b07476d1455e6b031a4703767e23b82f2ab2839c0dbbdcb50cda43",
+        ".github/workflows/purama-chef-hardening.yml": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383",
+        "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+        "package-lock.json": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a"
+      },
+      "sources_unchanged": true,
+      "gates": [
+        {
+          "label": "public-tests",
+          "exit_code": 0,
+          "duration_seconds": 14.098,
+          "command": [
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "--test",
+            "--test-concurrency=1",
+            "--test-timeout=30000",
+            "tests/social-agent-execution.test.mjs",
+            "tests/entraide/frontend.test.mjs",
+            "tests/entraide/ui-account-scope.test.mjs"
+          ],
+          "log_sha256": "d60778da85ea92d34949cae5406b970fc6fe46b148003cbb9802f6caaaa90798",
+          "tail": "30 - session acquisition must complete for the same owner before a proxy call\n  ---\n  duration_ms: 18.353042\n  type: 'test'\n  ...\n# Subtest: concurrent submissions admit a single execution until it settles\nok 31 - concurrent submissions admit a single execution until it settles\n  ---\n  duration_ms: 7.398166\n  type: 'test'\n  ...\n# Subtest: the proxy receives the captured owner bearer and an abortable signal\nok 32 - the proxy receives the captured owner bearer and an abortable signal\n  ---\n  duration_ms: 14.063625\n  type: 'test'\n  ...\n# Subtest: real PostgREST retains captured A bearer when SDK session moves to B before React commits\nok 33 - real PostgREST retains captured A bearer when SDK session moves to B before React commits\n  ---\n  duration_ms: 200.641042\n  type: 'test'\n  ...\n1..33\n# tests 33\n# suites 0\n# pass 33\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 13898.162125\n"
+        },
+        {
+          "label": "site-types",
+          "exit_code": 0,
+          "duration_seconds": 44.289,
+          "command": [
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit",
+            "-p",
+            "tsconfig.app.json"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        },
+        {
+          "label": "workflow-lint",
+          "exit_code": 0,
+          "duration_seconds": 1.398,
+          "command": [
+            "/opt/homebrew/bin/actionlint",
+            ".github/workflows/purama-chef-hardening.yml",
+            ".github/workflows/entraide-project-flow.yml"
+          ],
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tail": ""
+        }
+      ],
+      "actionlint_found": true
+    },
+    "entraide_input_identity": {
+      "matched": 29,
+      "paths": [
+        "scripts/build-entraide-matching.mjs",
+        "src/lib/entraide-http.ts",
+        "supabase/functions/_shared/response.ts",
+        "supabase/functions/_shared/rate-limit.ts",
+        "supabase/functions/_shared/entraide-http.ts",
+        "supabase/functions/_shared/entraide-runtime.ts",
+        "supabase/functions/_shared/entraide-supabase.ts",
+        "supabase/migrations/20260904000000_entraide.sql",
+        "supabase/migrations/20260905000000_entraide_profile_privacy.sql",
+        "supabase/migrations/20261110020000_entraide_contact_atomic.sql",
+        "supabase/migrations/20261110021000_entraide_missions_atomic.sql",
+        "supabase/migrations/20261110022000_entraide_mission_requests.sql",
+        "tests/entraide/applied-pr23-db.test.mjs",
+        "tests/entraide/concurrency-db.test.mjs",
+        "tests/entraide/contact-db.test.mjs",
+        "tests/entraide/db-harness.mjs",
+        "tests/entraide/fixtures/pr17-20261110000000_entraide_missions_atomic.sql",
+        "tests/entraide/fixtures/pr17-20261110001000_entraide_own_profile.sql",
+        "tests/entraide/fixtures/pr23-20261110021000_entraide_missions_atomic.sql",
+        "tests/entraide/frontend.test.mjs",
+        "tests/entraide/http.test.mjs",
+        "tests/entraide/missions-db.test.mjs",
+        "tests/entraide/native-required.mjs",
+        "tests/entraide/package-lock.json",
+        "tests/entraide/package.json",
+        "tests/entraide/preflight-db.test.mjs",
+        "tests/entraide/reconciliation-db.test.mjs",
+        "tests/entraide/response-contract.test.mjs",
+        "tests/entraide/supabase-adapter.test.mjs"
+      ],
+      "explicitly_separate_inputs": [
+        {
+          "path": ".git/entraide-integration/run-native.py",
+          "reason": "local runner evidence, not application source"
+        },
+        {
+          "path": "supabase/functions/_shared/vendor/entraide-matching.js",
+          "reason": "private generated bundle; source and bundle hashes retained in child native/browser receipts"
+        }
+      ],
+      "mismatches": []
+    },
+    "graph_reconciliation": {
+      "recorded_at": "2026-11-11T09:23:55.826587+00:00",
+      "source_receipt": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-reindex-evidence.json",
+      "source_receipt_sha256": "0326d512463bd9005ab92d47467b4639f3a6a870bb7c4054f283900551b6178a",
+      "proof_scope": "Full private graph rebuild and detector reruns on the frozen composed source, before this documentation-only finalization. Child graph results remain tied to their original commits.",
+      "evidence": {
+        "status": "PASS_REBUILT_WITH_EXPLICIT_GRAPH_LIMITATIONS",
+        "index": {
+          "command": [
+            "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+            "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+            "analyze",
+            "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+            "--force",
+            "--no-parse-cache",
+            "--index-only",
+            "--skip-fts",
+            "--workers",
+            "1",
+            "--name",
+            "purama-ai-unlazy-ac3c",
+            "--default-branch",
+            "main"
+          ],
+          "started_at": "2026-11-11T09:07:56.121058+00:00",
+          "finished_at": "2026-11-11T09:10:21.611734+00:00",
+          "duration_seconds": 145.489,
+          "exit_code": 0,
+          "timeout": false,
+          "log_sha256": "4bf331f9398528afadc015e21b5a098b302ba07d334083d4639ac6cc075c99e8"
+        },
+        "fresh_index_stats": {
+          "files": 1511,
+          "nodes": 19573,
+          "edges": 54690,
+          "communities": 818,
+          "processes": 609,
+          "embeddings": 0
+        },
+        "detect": [
+          {
+            "scope": "staged",
+            "command": [
+              "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+              "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+              "detect-changes",
+              "--scope",
+              "staged",
+              "--repo",
+              "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+              "--limit",
+              "10000"
+            ],
+            "started_at": "2026-11-11T09:10:21.972782+00:00",
+            "duration_seconds": 1.211,
+            "exit_code": 0,
+            "log_sha256": "fb401cd59ffd2425e296693ed9bbbe04dc689b736f3931e8fadc1fffbe0bf6d3",
+            "analysis": {
+              "files": 53,
+              "symbols": 1147,
+              "processes": 48,
+              "risk": "CRITICAL",
+              "listing_capped": true,
+              "preview_flows": [
+                "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • RunDemo → SocialConnectionError (4 steps) — changed: SocialConnectionError, beginSocialConnection, begin",
+                "  • RunDemo → IsOAuthSocialPlatform (4 steps) — changed: isOAuthSocialPlatform, beginSocialConnection, begin",
+                "  • RunDemo → IsSocialUserId (4 steps) — changed: isSocialUserId, beginSocialConnection, begin",
+                "  • RunDemo → Now (4 steps) — changed: beginSocialConnection, begin, now",
+                "  • HandleSocialAccountsRequest → Authenticate (3 steps) — changed: authenticate, handleSocialAccountsRequest, identity",
+                "  • ReconcileSocialPost → Query (3 steps) — changed: Query, reconcileSocialPost, from"
+              ]
+            }
+          },
+          {
+            "scope": "compare-core",
+            "command": [
+              "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+              "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+              "detect-changes",
+              "--scope",
+              "compare",
+              "--base-ref",
+              "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+              "--repo",
+              "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+              "--limit",
+              "10000"
+            ],
+            "started_at": "2026-11-11T09:10:23.184511+00:00",
+            "duration_seconds": 1.53,
+            "exit_code": 0,
+            "log_sha256": "1b257a30aa10e9512d34d512c94c1a75cbe1b21e9f8820ee1a7d42514b32976f",
+            "analysis": {
+              "files": 165,
+              "symbols": 1972,
+              "processes": 61,
+              "risk": "CRITICAL",
+              "listing_capped": true,
+              "preview_flows": [
+                "  • SocialSettings → Interrupt (9 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Now (8 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → RequestDeadlineError (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • SocialSettings → Stop (7 steps) — changed: refresh, SocialSettings, listAccounts, invoke, getSocialSession",
+                "  • App → Cn (5 steps) — changed: App",
+                "  • App → UseAuth (5 steps) — changed: App",
+                "  • App → EmptyActivity (5 steps) — changed: App",
+                "  • App → RemovePreferenceListener (4 steps) — changed: App",
+                "  • App → HandleOpen (4 steps) — changed: App",
+                "  • App → WellbeingCopy (4 steps) — changed: App"
+              ]
+            }
+          },
+          {
+            "scope": "compare-main",
+            "command": [
+              "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+              "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+              "detect-changes",
+              "--scope",
+              "compare",
+              "--base-ref",
+              "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+              "--repo",
+              "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c",
+              "--limit",
+              "10000"
+            ],
+            "started_at": "2026-11-11T09:10:24.715409+00:00",
+            "duration_seconds": 3.839,
+            "exit_code": 0,
+            "log_sha256": "b7369879aa63d411173a57ea20ac9032bfe15a2b52c68344dfc9b91432ecc1a2",
+            "analysis": {
+              "files": 1298,
+              "symbols": 11785,
+              "processes": 578,
+              "risk": "CRITICAL",
+              "listing_capped": true,
+              "preview_flows": [
+                "  • RunDailyReport → SendEmail (4 steps) — changed: sendEmail, deliver, notify",
+                "  • RunDailyReport → Deliver (3 steps) — changed: deliver, notify",
+                "  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized",
+                "  • Execute → JevValidationError (7 steps) — changed: JevValidationError, validateJevRequest, exactKeys, keys, field, fail, execute",
+                "  • RunChefWorkerCycle → Advance (5 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc, advance",
+                "  • RunDailyReport → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt",
+                "  • RunDailyReport → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify",
+                "  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: tryFinishMission, housekeeping, ChefProcessStopUnconfirmedError, runChefWorkerCycle",
+                "  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, assertRpc",
+                "  • RunChefWorkerCycle → Rpc (4 steps) — changed: tryFinishMission, housekeeping, runChefWorkerCycle, rpc"
+              ]
+            }
+          }
+        ],
+        "unchanged": {
+          "head": true,
+          "source_file_count": true,
+          "source_manifest_sha256": true,
+          "index_raw_sha256": true,
+          "stage_entries_sha256": true,
+          "status_sha256": true,
+          "staged_diff_sha256": true,
+          "unstaged_diff_sha256": true,
+          "global_files": true
+        },
+        "before_manifest": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-reindex-before.json",
+        "after_manifest": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-reindex-after.json",
+        "old_results": {
+          "classification": "UNRELIABLE_INSTRUMENTATION",
+          "preserved": true,
+          "sha256": {
+            "phase2-index.log": "73c47207f5715465203117343f63f47ae267e87fc008f66c629d0449ba6ffe82",
+            "phase2-index.json": "4a7f0f62309050726576da5ec46b87a741101eef155f287abb1cab986c7af6a0",
+            "phase2-detect-receipts.json": "cc7d8400deb7f4697f28b13408f0900d8d5ae61ba60175f6b91ce42c58831c5f",
+            "phase2-detect-staged.log": "8396ffcb82c4536e8f0b3b4162cf8b7dde21d9d14470387dbbe8b3f499d2da8e",
+            "phase2-detect-compare-core.log": "f63520e319e4d31f46352ca2b263ce9be8126fbb5729b23cfd3b8392bb8c7c55",
+            "phase2-detect-compare-main.log": "d38a06031327a2385a4dd11bb5462ed5fdef1fd84cf9165cb98daa21acdfee7c"
+          },
+          "metadata_preserved": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-incremental-meta-preserved.json"
+        },
+        "private_tool_home": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.git/unlazy-gates/phase2-full-tool-home",
+        "global_configuration_changed": false,
+        "code_changed": false,
+        "stage_changed": false,
+        "scope": "Only the owned primary clone private index and new evidence under .git/unlazy-gates; no code/stage/commit/push/CI modification.",
+        "semantic_review": {
+          "reviewed_at": "2026-11-11T09:12:05.860908+00:00",
+          "result": "PASS_FOR_REPAIR_OF_OBSERVED_INCONSISTENCY",
+          "scope": "CLI previews only; not an exhaustive validation of every graph edge",
+          "observations": [
+            "Staged preview now links SocialSettings to refresh/listAccounts/invoke/getSocialSession, social OAuth to beginSocialConnection/begin, and social handlers to authenticate/reconcileSocialPost.",
+            "Core comparison includes SocialSettings flows and App flow changes attributable to the composed social/Entraide changes.",
+            "Historical comparison shows distinct RunDailyReport, HandleRequest, Execute and RunChefWorkerCycle changes rather than a repeated unrelated symbol.",
+            "The previously observed repeated DynamicAgentFormContent/root mapping is absent from the current CLI previews."
+          ],
+          "full_graph_correctness_proven": false,
+          "cause": "The full rebuild removed the observed inconsistent mappings; the precise incremental-cache defect was not proven."
+        },
+        "comparison": [
+          {
+            "scope": "staged",
+            "before_unreliable": {
+              "files": 53,
+              "symbols": 196,
+              "processes": 598
+            },
+            "after_full_rebuild": {
+              "files": 53,
+              "symbols": 1147,
+              "processes": 48,
+              "risk": "CRITICAL"
+            }
+          },
+          {
+            "scope": "compare-core",
+            "before_unreliable": {
+              "files": 165,
+              "symbols": 349,
+              "processes": 598
+            },
+            "after_full_rebuild": {
+              "files": 165,
+              "symbols": 1972,
+              "processes": 61,
+              "risk": "CRITICAL"
+            }
+          },
+          {
+            "scope": "compare-main",
+            "before_unreliable": {
+              "files": 1298,
+              "symbols": 2171,
+              "processes": 609
+            },
+            "after_full_rebuild": {
+              "files": 1298,
+              "symbols": 11785,
+              "processes": 578,
+              "risk": "CRITICAL"
+            }
+          }
+        ],
+        "limits": {
+          "listing_capped": true,
+          "fts_enabled": false,
+          "large_files_skipped": [
+            "qa/iao-runtime-finalization-20261110/verification.json",
+            "qa/ots-stamp-atomicity-20261110/native-final.json"
+          ],
+          "cross_language_property_links_declined": 2172,
+          "entry_point_candidates_total": 1462,
+          "entry_point_candidates_dropped": 1262,
+          "callee_branches_skipped": 3580,
+          "walks_cut_by_budget": 36,
+          "name_fallback_call_sites": 177,
+          "name_fallback_distinct_pairs": 40,
+          "name_fallback_impossible_refusals": 554,
+          "absence_of_flow_is_not_absence_of_code_path": true,
+          "main_comparison_ref": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+          "main_comparison_is_historical_and_separate_from_core": true
+        },
+        "runtime": {
+          "node": "v22.23.4",
+          "gitnexus": "1.6.12",
+          "memory_mode": "off",
+          "node_max_old_space_size_mib": 2048,
+          "workers": 1,
+          "analyze_timeout_seconds": 360,
+          "home_unchanged": "/Users/matissdornier",
+          "private_index_path": "/Users/matissdornier/purama-worktrees/unlazy-consolidation-20261111-ac3c/.gitnexus",
+          "parse_cache_disabled": true,
+          "index_only": true,
+          "help_log_sha256": "b2bc187973b5547c81d09e644548ec462cc8925c240d0c47aad1adc419b7a803"
+        },
+        "automatic_approval_rejection_observed": false,
+        "no_source_or_stage_mutation": true,
+        "new_tests_or_ci_executed": false
+      },
+      "invariant_fingerprints": {
+        "head": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "source_file_count": 1720,
+        "source_manifest_sha256": "07f2807f2d795a39ae1caf4cef8404be1b28bfb2aeade5eac1e015a292ca41c3",
+        "index_raw_sha256": "5c41a4440b94bc3165213c379fb7fe6986e8e0665e12f6b502e708bd6afa300a",
+        "stage_entries_sha256": "f8bb6f43680f7e6ee338e8a917ee25c589ad6f3df21d16207e75491351d73cd8",
+        "status_sha256": "261a5a0cebf3a839b7398e9cab7666816a709eb10eb87f3489e2f23a3fb152b8",
+        "staged_diff_sha256": "a3526f1a417d48e4fe3346417d4064c66d867c3371bdf889df910b5cc5236411",
+        "unstaged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "global_files": {
+          "/Users/matissdornier/.gitconfig": "8040606950a53be102382ebc51bc2dd900dde2a10a84c71d0f0f1b7efeb9a4bb",
+          "/Users/matissdornier/.gitnexus/config.json": null,
+          "/Users/matissdornier/.gitnexus/registry.json": "4f35c135113dca9cda1174a85cab19236c1c1cc83893cdc869001637ec4266d1",
+          "/Users/matissdornier/.gitnexus/update-check.json": "d11acb9e033a661720a77af8a8cee4f584172f15da3707aa6cf38b692abffbc5"
+        }
+      },
+      "finalization_preflight": {
+        "head": "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4",
+        "merge_head": "deb01eb0cd6921bab3f69adb300988b8579222b4",
+        "staged_paths": 53,
+        "paths_since_core": 165,
+        "nonproof_composition_paths": 163,
+        "no_unmerged_paths": true,
+        "source_files_identical_to_rebuild_snapshot": true,
+        "protected_files_against_core": {
+          "count": 69,
+          "stage_and_worktree_exact": true,
+          "sha256": {
+            "bun.lockb": "570b2bffe5052345e4a55eddc0077d6cef9b44f618123e9d746f4230bab0f298",
+            "components.json": "9820835141c54e5b5dfbb68b3c3790db73c9ebfb967884ae3fccd058d698a1a6",
+            "package-lock.json": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a",
+            "package.json": "989bc21eb8f9dc75da9121442b65d3ae7c94274b001140bf837a85e5d58f2db4",
+            "src/components/auth/AuthProvider.tsx": "c6724608ad3fb66b4115a5ead3d1d92ae31b14233e1df7204e2e922220e70cf8",
+            "src/components/auth/ProtectedRoute.tsx": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f",
+            "src/components/influencer/AchievementBadges.tsx": "c86af41592a041f4217b201e2bf531fab58fa1180be3937cbcfd03304a7bbca5",
+            "src/components/influencer/InfluencerLeaderboard.tsx": "42c0ea19b9e9363d04ac35b4dbe5f4402cae7ec1d1cd65e32bf1011c5aba4e94",
+            "src/components/influencer/PerformanceCharts.tsx": "911edc4d16d88d711c08cf9cc360fd9f7e3260047b414592d5e584a0430febef",
+            "src/components/influencer/ReferralBanner.tsx": "b2db82d2901dd311cde6e09514e13d6d8238bd98b780667c63aaa0e1d884aabb",
+            "src/components/influencer/TierBadge.tsx": "e6669c623e2721fc23563363e79b3edf3d3cc7a7744fcbe9bb3d9d80d1911029",
+            "src/components/influencer/TierProgress.tsx": "a85503c95b2d3a58cfb7ff0424d02bd717b9af7aeca0aa3ca0a1b27b54ba104c",
+            "src/components/influencer/TierUpgradeConfetti.tsx": "141d5e63dac59cb45c8c45f968d81326c371a6ca6e5f3e21ffc36e760c1be017",
+            "src/hooks/useInfluencer.ts": "3a41bd18e4646df2e3cd557d89fa7ae09126ce24c97211485cf9286d6edb4bd6",
+            "src/hooks/useReferral.ts": "d43d25c6a595b71cf1035ab05d8aa93bc3b36ef01cfc08ef0c39affee5e78d49",
+            "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+            "src/hooks/useSubscription.ts": "da83b2bd410319d24666b2bfc34e518cb6615fcd1c4ea8c6b4e8e23edfcde96e",
+            "src/lib/plans.ts": "529d81a0f700a1726625ebee2c0e4f6b21a7fbca1ddb754991106cc0b53fdade",
+            "src/lib/request-scope.ts": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0",
+            "src/lib/stripe-connect.ts": "d4022d777704f617600d41c2d1d9fd790bd084ec0c5dc35e08bc70830f8ea836",
+            "src/pages/AdminInfluencers.tsx": "0b3ba466b56cd7a0de4bcc6fa0bb48d0758770eada4e9f48b288071708e3358a",
+            "src/pages/DashboardBilling.tsx": "575dcfd1a7aa447d175dd69e78cf8bcd57bbd54ab125412576be9a565feb4c61",
+            "src/pages/GoRedirect.tsx": "405584c312e329b3b3135140f69c7d6f6e2011b408b02089c4d508220816bfe5",
+            "src/pages/Index.tsx": "ac18fe99c43dbf2307224ffa084fcfffbe2183ac9f1e8d2eb88540dd350139fc",
+            "src/pages/InfluencerDashboard.tsx": "34bbbe0b3de257fef347304fe674c9be17702f4d671747d6f5a2f36dca7d8b60",
+            "src/pages/InfluencerSignup.tsx": "8ced50dac542ec89cc5ddd9b67584a4d5620090c7ead420f6b60ea264953d403",
+            "src/pages/Pricing.tsx": "fdfa29f389c1debf5de860fd9bbc094ca79ded39b9c27dc9884e3e6be48831e6",
+            "supabase/functions/_shared/billing-boundary.ts": "7e7014545795c8d0ae0d9cb20cd4697852b4086b7d56440bb9a4de4d8f37e25c",
+            "supabase/functions/_shared/stripe-reconciliation.ts": "e53ed00ea8f68213335262447cac5fd7083cc5f79922dd23573e16bd132dfc75",
+            "supabase/functions/_shared/stripe-subscription-state.ts": "05abba8b9ef62489888e62fd83fe8c5cce2d33b18013921fd28bba71fb4bc2a5",
+            "supabase/functions/check-subscription/index.ts": "45a52f3f716f0328ccdf3bde0b087038a069bff546b3474ac0049e80bbf55c97",
+            "supabase/functions/create-checkout/index.ts": "388034d63cbde5544666ebddb81261363fe40d4192f428037ce30e2f53377b1b",
+            "supabase/functions/customer-portal/index.ts": "fbbd1146bccb4ba21720fc7dba64f3eb4ee470653716d107e5cc39953ad42988",
+            "supabase/functions/process-influencer-payments/index.ts": "bf0067ce1cc78a242ebfdbb719b57a7e9a39913c349c84581f707fbd1d07b489",
+            "supabase/functions/stripe-webhook/index.ts": "4bf4f143a217c8862fd304fe4b13ea20e851319f49f44af4b6b1c9acc5795a48",
+            "supabase/functions/stripe-webhook/overage.ts": "1ccd86ab33813987fa7f2f6baa12e51ba3aa5fa06496d4a05cfcbc25cc572133",
+            "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql": "586178ff7ceb246b06bfc6764ad1e43140e967f63548126616c6b51001a44ef0",
+            "supabase/migrations/20260727000000_subscriptions_security_and_trial.sql": "d896da9d463026292c5df56877207caff60104f7ce8a4ccaeb27d38314e1bb0e",
+            "supabase/migrations/20261110100000_stripe_reconciliation_events.sql": "ea0fd650f32bcd8edc9f88adc389c53a2c515a34ae288fa35062abe4b6c300af",
+            "supabase/migrations/20261111100000_subscription_projection_revision.sql": "a49c8d45a399d04b149066b7c51cfbc095abbac68e18440868c8623d6c941470",
+            "tests/billing-webhook/README.md": "7c59d1a3eee90ec7369c7acc77a9827de3142cd49b5d444e4b8b99cf6d9df8ac",
+            "tests/billing-webhook/concurrency.test.mjs": "add817378b5d32faab91048f1a3b3b6e11bac0baceb263fadda8c4e78236762f",
+            "tests/billing-webhook/fixture.mjs": "e5da4e3bb384f64a71023e06f5f781091165f753f96b2d89e3355feda94da1df",
+            "tests/billing-webhook/handler.test.mjs": "c7d4d28ca55a1b1a388db2492da09b3a0080058dede2aba4ccd56a5e528f2e65",
+            "tests/billing/billing.test.mjs": "bbf7b415b0b5b28ffb30555e3cd3d8a9225882926299830546d8dd25560035d7",
+            "tests/billing/fixture.mjs": "bb37e8ecfadf10ef636d16630b0edded55ff0f8dcb40b4fc22e50b9e0b9cb537",
+            "tests/billing/module-boundary.test.mjs": "baa59c7b85244f3d511baff20f08dac6dfdd71941bfd741e292819ccd72d5c8f",
+            "tests/billing/subscription-state.test.mjs": "971982f4b870eb401a4abff5ebc5fe1e6432d73aaea8a2e8c23cab19506cf10b",
+            "tests/billing/test-case.mjs": "6ba1e863c170f79aa820d2bbd6abe181e74b241ba036511f6e36b851f2d34a75",
+            "tests/commerce/subscription-handler.test.ts": "4a1646ead9f04ecdfca15a83ea25b4dceccddede02ac54206c5c711eb463d836",
+            "tests/commerce/subscription-provider-fixture.ts": "3b6190f8cfe4e3614c73cab968d865fc170e73dc92e4d93c24ee6d33a92f7f77",
+            "tests/commerce/subscription-state.test.ts": "e08ad25449df641614c9295d5f34f8e3702333eb9db9ad91d5030be6bafa0f02",
+            "tests/quality/billing-dashboard-scope-harness.html": "89bce1143b4b8b500c3299bef39a2bddc36d5aa5e24b11ee70cc31e7f28b04f1",
+            "tests/quality/billing-dashboard-scope-harness.tsx": "05982202656efd5b06871483312a2a7a63e98a5de8ba9081cfe74c51b8c3d598",
+            "tests/quality/billing-dashboard-scope.spec.ts": "5524e25ab697a1e467e58f37763da3c7ea96c6ba93a49b5b906636e8d89292e5",
+            "tests/quality/billing-scope-harness.html": "98a8533d10acf95d19bec1cc89d6e311019ef2bd906ff3f0cce2742feab277da",
+            "tests/quality/billing-scope-harness.tsx": "6bdfc0ab49b954306632105db267eab92248e06de0d08ab94c3118eee9e3a5e1",
+            "tests/quality/billing-scope.spec.ts": "a790dda6e3c6456debc947167f7610bd600950b8e9af96906b44f43c76a4d377",
+            "tests/quality/commerce-ui.spec.ts": "d64f03450c53e5e24286c1d71f27e166611ea110e5dea40b6d9b3bcbff960b7a",
+            "tests/revenue/README.md": "0d26aaf424d08c16da2362c67de4a9b07bf9b9e293801fb6d63fa0a89c279b89",
+            "tests/revenue/deno.json": "9d9df1d3ed87e91794aa2d77c46f6fa39d8569fe51bcef92a5b462d6c2170a52",
+            "tests/revenue/inbox-sql.test.mjs": "d1ac3e575f2b48d7948e89fb7f87dddabbec57c94c31a631e44c4ffc15a2ddf8",
+            "tests/revenue/provider-fixture.ts": "8f2ffa7a1bd0278e9010280678ae5e1b1ad1ad507ad2a6d265e3d7581ee16836",
+            "tests/revenue/serve-fixture.ts": "2fd733d95f3325bd81ce9c496ae8bc4934699c2f605aef74d98e38558d0f3e2d",
+            "tests/revenue/webhook.test.ts": "400cdfaef4e3bfe3c916f1fcc7b20c8df9ae8efc737eb9519f2645841b6ce6de",
+            "tsconfig.app.json": "3d44641a0151484d5adb5c764a4766a8e31076d2fd557dbe8c6e1c87863058f7",
+            "tsconfig.json": "3a667cdf83b8335029de6380d1dc190d298d976df6c16259d562786ef13e3f07",
+            "tsconfig.node.json": "a96b9ba5e40d95b92adf56431fdf9cbe25b5c2557621f0666615bff6889dfc50",
+            "vercel.json": "94d154fe6218cb485af7d87b2256ccdba17b5b7de61cf66038148b08a4b6373f"
+          }
+        },
+        "child_composition": {
+          "child_paths": {
+            "8fecab1c3fd60c9fffd12aaaab3e111d7ebcf4f4": 113,
+            "deb01eb0cd6921bab3f69adb300988b8579222b4": 51
+          },
+          "only_common_child_path": ".github/workflows/purama-chef-hardening.yml",
+          "all_child_blobs_except_explicit_workflow_union_match": true,
+          "workflow_sha256": "dd43e4c96c107f01ca9a0fc0dc87234e0ee65014c5bd65c9cf23150bbfe51383"
+        }
+      },
+      "new_common_ci_required": true
+    }
+  }
+}

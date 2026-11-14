@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-11T08:16:16.246265+00:00",
+  "source_pr": 23,
+  "source_sha": "f69b2a9a4af0e866848bf3ab860817df8b97c527",
+  "base_sha": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+  "selected_source_paths": 78,
+  "omitted": {
+    "src/lib/entraide.ts": {
+      "sha256": "4c6fd94038f6bac10d27ad157259bfca7d3b1dc5fba43abcd8bcb15954931b14",
+      "preserved_copy": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/historical-only/entraide.ts"
+    },
+    "tests/entraide/compatibility-client.test.mjs": {
+      "sha256": "296722b647cabc747d4228adde6c7ee8b449077f72d3917659c7bed15c1df55d",
+      "preserved_copy": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/historical-only/compatibility-client.test.mjs"
+    }
+  },
+  "reason": "Historical compatibility adapter absent from the core, no application consumers, no published package exports; only its two compatibility tests consume it. Active page uses entraide-http. Private transitions are not copied or replaced. Donor PR/ref remains intact.",
+  "package_public_surface": {
+    "private": true,
+    "main": null,
+    "module": null,
+    "types": null,
+    "exports": null,
+    "files": null,
+    "bin": null
+  },
+  "native_test_count_unchanged": 92,
+  "omitted_private_compatibility_cases": 2
+}

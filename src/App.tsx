@@ -42,6 +42,7 @@ const GoRedirect = lazy(() => import('@/pages/GoRedirect'));
 const Concours = lazy(() => import('@/pages/Concours'));
 const Classement = lazy(() => import('@/pages/Classement'));
 const Forge = lazy(() => import('@/pages/Forge'));
+const Workshop = lazy(() => import('@/pages/Workshop'));
 const PuramaCompta = lazy(() => import('@/pages/PuramaCompta'));
 const SocialAgent = lazy(() => import('@/pages/SocialAgent'));
 const DashboardOverview = lazy(() => import('@/pages/DashboardOverview'));
@@ -79,6 +80,7 @@ const CreatorAgentPage = lazy(() => import('@/pages/CreatorAgent'));
 const CreatorAgentNew = lazy(() => import('@/pages/CreatorAgentNew'));
 const CreatorAgentDetail = lazy(() => import('@/pages/CreatorAgentDetail'));
 const CreatorAgentTemplates = lazy(() => import('@/pages/CreatorAgentTemplates'));
+const PublicCreatorModel = lazy(() => import('@/pages/PublicCreatorModel'));
 const CreatorAgentRuns = lazy(() => import('@/pages/CreatorAgentRuns'));
 const Wallet = lazy(() => import('@/pages/Wallet'));
 const Boutique = lazy(() => import('@/pages/Boutique'));
@@ -92,6 +94,7 @@ const Gratitude = lazy(() => import('@/pages/Gratitude'));
 const Financer = lazy(() => import('@/pages/Financer'));
 const Reglement = lazy(() => import('@/pages/Reglement'));
 const Fiscal = lazy(() => import('@/pages/Fiscal'));
+const Entraide = lazy(() => import('@/pages/Entraide'));
 
 function PageFallback() {
   return (
@@ -144,6 +147,7 @@ export default function App() {
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/modeles/:id" element={<PublicCreatorModel />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pricing" element={<Pricing />} />
@@ -162,6 +166,7 @@ export default function App() {
             
             {/* Dashboard routes with sidebar layout */}
             <Route path="/dashboard" element={<DashboardRoute><DashboardOverview /></DashboardRoute>} />
+              <Route path="/dashboard/atelier" element={<DashboardRoute><Workshop /></DashboardRoute>} />
             <Route path="/dashboard/agents" element={<DashboardRoute><DashboardAgents /></DashboardRoute>} />
             <Route path="/dashboard/employees" element={<DashboardRoute><MyEmployees /></DashboardRoute>} />
             <Route path="/dashboard/auto-agents" element={<Navigate to="/dashboard/agents" replace />} />
@@ -203,6 +208,7 @@ export default function App() {
             <Route path="/dashboard/tirage" element={<DashboardRoute><Tirage /></DashboardRoute>} />
             <Route path="/dashboard/aide" element={<DashboardRoute><Aide /></DashboardRoute>} />
             <Route path="/dashboard/guide" element={<DashboardRoute><Guide /></DashboardRoute>} />
+            <Route path="/dashboard/entraide" element={<DashboardRoute><Entraide /></DashboardRoute>} />
             <Route path="/dashboard/breathe" element={<DashboardRoute><Breathe /></DashboardRoute>} />
             <Route path="/dashboard/gratitude" element={<DashboardRoute><Gratitude /></DashboardRoute>} />
             <Route path="/dashboard/sites" element={<Navigate to="/dashboard" replace />} />

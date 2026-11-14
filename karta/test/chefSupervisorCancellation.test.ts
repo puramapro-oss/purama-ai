@@ -4,6 +4,16 @@ import { runChefWorkerCycle } from "../src/chef/supervisor.js";
 import type { ChefControlPlane, ChefRuntimeTask } from "../src/chef/supervisor.js";
 import type { ChefVerificationResult, ChefVerifier } from "../src/chef/verifier.js";
 
+// These cases isolate accounting/cancellation; real Git mutations are exercised in
+// chefVerificationGitIntegration.test.ts with private temporary repositories.
+vi.mock("../src/chef/git-state.js", () => ({
+  captureCleanGitBaseline: vi.fn(async () => ({ headSha: "a".repeat(40) })),
+  verifyCommittedGitState: vi.fn(async () => ({
+    kind: "receipt", sha256: "9".repeat(64),
+    payload: { profile: "git-state", ok: true, headSha: "a".repeat(40), clean: true },
+  })),
+}));
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((complete) => { resolve = complete; });
