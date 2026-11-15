@@ -8,6 +8,7 @@ import { buildAssistantSystemPrompt } from "./assistant-policy.js";
 import { normalizeModelUsage } from "./usage.js";
 import { configuredModelCatalog, normalizeModelCatalog, resolveModelExecutionPlan, type ModelExecutionCapability } from "./execution-profile.js";
 import { createLmStudioTransport, type LmStudioOptions } from "./lmstudio.js";
+import { applyPublicPromptCache, parseAnthropicPromptCacheMode } from "./prompt-cache.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -50,6 +51,7 @@ export function createRealClaudeClient(options: {
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) {
     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
   }
+  const promptCacheMode = parseAnthropicPromptCacheMode(config.anthropicPromptCache);
   const modelCatalog = normalizeModelCatalog(options.modelCatalog ?? configuredModelCatalog(
     config.anthropicModelMain, config.anthropicModelFast, process.env.KARTA_MODEL_PROFILES_JSON,
   ));
@@ -66,6 +68,8 @@ export function createRealClaudeClient(options: {
     // KARTA records its own minimized traces instead.
     logLevel: "off",
   });
+  const nativePromptCache = !local && (client.baseURL === "https://api.anthropic.com"
+    || client.baseURL === "https://api.anthropic.com/");
 
   return {
     isMock: false,
@@ -92,7 +96,8 @@ export function createRealClaudeClient(options: {
           model,
           max_tokens: plan?.maxOutputTokens ?? 1024,
           ...plan?.providerOptions,
-          system: buildAssistantSystemPrompt(input.systemPrompt, 'task'),
+          system: applyPublicPromptCache(buildAssistantSystemPrompt(input.systemPrompt, 'task'),
+            promptCacheMode, nativePromptCache, input.tools.length > 0),
           messages: [
             {
               role: "user",

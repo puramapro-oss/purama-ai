@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "perf/iao-memory-cost-20261115": false,
       "codex/iao-atelier-multiagents-20261112": false,
       "feat/iao-adaptive-intelligence-20261112": false,
       "feat/iao-local-desktop-20261112": false,

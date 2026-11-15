@@ -1,0 +1,36 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 1772 files, 18325 symbols
+Affected processes: 539
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 18310 more
+
+Affected execution flows:
+  • ResolveChefCapabilities → ExactKeys (4 steps) — changed: resolveChefCapabilities, parseContext, validBinding, exactKeys
+  • ResolveChefCapabilities → Id (4 steps) — changed: resolveChefCapabilities, parseContext, validBinding, id
+  • Evaluate → Choice (4 steps) — changed: evaluate, planWebCapabilityAccess, parseWebAccessIntent, choice
+  • Evaluate → Id (4 steps) — changed: evaluate, planWebCapabilityAccess, parseWebAccessIntent, id
+  • HandleRequest → RequestError (3 steps) — changed: RequestError, handleRequest, readActive
+  • ResolveChefCapabilities → Identifiers (3 steps) — changed: resolveChefCapabilities, normalizeChefCapabilitySelection, identifiers
+  • Evaluate → Amount (3 steps) — changed: evaluate, planWebCapabilityAccess, amount
+  • Evaluate → WebAccessPlanResult (3 steps) — changed: evaluate, planWebCapabilityAccess, webAccessPlanResult
+  • HandleRequest → AddToRemoveQueue (7 steps) — changed: handleRequest, digest, isAuthorized
+  • ResolveChefCapabilities → Trap (5 steps) — changed: resolveChefCapabilities, parseContext, validBinding, record, trap
+... and 529 more
