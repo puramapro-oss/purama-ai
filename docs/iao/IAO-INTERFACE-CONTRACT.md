@@ -31,7 +31,7 @@ The recheck accepts the result only when all of the following hold:
 - `tenantId` and `actorId` are non-empty strings.
 - `session.tenantId` equals `tenantId`, and `session.userId` equals `actorId`.
 - `session.appSlug` is exactly `purama-ai`. A ONE launch offer is not an IAO session.
-- `session.sessionId` is a UUID.
+- `session.sessionId` is a canonical UUID: eight, four, four, four, then twelve hex digits, with version nibble 1 through 5 and RFC 4122 variant nibble 8, 9, a, or b. Nil and non-canonical forms are rejected.
 - `session.issuedAt` and `session.expiresAt` are finite numbers, `issuedAt` is not in the future, `expiresAt` is still ahead, and `expiresAt - issuedAt` is at most 15 minutes.
 
 KARTA freezes that tenant, actor, and session before reading the body or dispatching. IAO responses on these routes set `Cache-Control: no-store`. Routes that are not IAO routes keep their existing cache header and are not authenticated by this gate.
