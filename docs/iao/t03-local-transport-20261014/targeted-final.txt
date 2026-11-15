@@ -1,0 +1,9 @@
+
+ RUN  v2.1.9 /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta
+
+ ✓ test/localComputeFabricCancellation.test.ts (15 tests) 513ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  05:12:04
+   Duration  946ms (transform 94ms, setup 0ms, collect 178ms, tests 513ms, environment 0ms, prepare 73ms)

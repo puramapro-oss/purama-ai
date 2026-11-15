@@ -1,0 +1,219 @@
+{
+  "baseCommit": "108291708a3d6858d26519704eb793d29b67cee6",
+  "branch": "codex/t03-iao-local-transport-20261014",
+  "worktree": "/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014",
+  "nodeVersion": "v26.0.0",
+  "scope": "LOCAL_DELTA_VERIFIED; real daemon and real server integration UNKNOWN",
+  "fileSha256": {
+    "karta/src/integrations/localComputeFabricProvider.ts": "d174dc213b749ea654a341ed64b2bd9fbd5b7e275b74daa45957b1a405feac2b",
+    "karta/test/localComputeFabricProvider.test.ts": "23523c9af011377714a299cc9f83a0981a3ba5951f4855515881622d8bc1339a",
+    "karta/test/localComputeFabricCancellation.test.ts": "f8de36eeb0b5fea47200a28860d2e504198f6433b8f87f8ccf69a5faaff8e307",
+    "docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md": "d99aa413431799312860a51d2d15aff7e9e02fb14e7c51100df03dd212333ffc",
+    "karta/package.json": "b59229d986db80c6f545e14e2e77bad4160bdb92aca1fb17e16c5cbc1bc4687a",
+    "karta/package-lock.json": "67557f836ea95aa7c353b162355de05eb4362f1237e567e7ca80480dc86aaeff",
+    "karta/tsconfig.json": "dd13f7cc0c1c6c52c7f0a43c6b77068952e50be38d4d83178f18381cb98badf5",
+    "karta/tsconfig.build.json": "727041493e4c3be0c2f0bfd744a808f68378f4df1b319b52e641b02626c923c9",
+    "karta/vitest.config.ts": "628cd106719cdf1b3ca0e9b976fc9da8d53b932838c532541634f12b616c1fce",
+    "eslint.config.js": "c55264234fef783629810643d995cd522c3adaeb60e7157906310607292015a3"
+  },
+  "specSha256": {
+    "_ULTIMATE_PRODUCT_PASS/IAO_LIVE_EXPERIENCE.md": "c417753f9c419c547e0aa71daa7566edb0685968ec919fcaa31f20697d7d62de",
+    "_ULTIMATE_PRODUCT_PASS/CONTRACTS-COMMUNS.md": "bcac63f52a055bd4264ab996080f587999c68e07558d37eed94053c428708c93",
+    "DIRECTIVE-AKASHA.md": "103e099e8ab963851d70ef43a6c7c533f7310a18046a08da182fcf80952d7223",
+    "CODEX-DIRECTIVE-PURA-AKASHA.md": "4eaf95e99ed3e690b834932b98474d29dbd4142b0fcc1a9892b67a0565c990a0",
+    "SMARANA-BRIEF.md": "1554162acde33651c33c23ae005ed500b49109b77077ffa6bdefd9583ee2af95"
+  },
+  "dependencies": {
+    "vitest": "2.1.9",
+    "typescript": "5.9.3"
+  },
+  "validation": [
+    {
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/localComputeFabricCancellation.test.ts --no-cache",
+      "phase": "red on base product; first 12 tests",
+      "result": "5 failed / 7 passed",
+      "artifact": "red.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/localComputeFabricCancellation.test.ts test/localComputeFabricProvider.test.ts --no-cache",
+      "phase": "first correction",
+      "exitCode": 0,
+      "result": "21 passed",
+      "artifact": "targeted.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/localComputeFabricCancellation.test.ts --no-cache",
+      "phase": "final source",
+      "exitCode": 0,
+      "result": "15 passed",
+      "artifact": "targeted-final.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "npm test -- --no-cache",
+      "phase": "final gate",
+      "exitCode": 0,
+      "result": "399 passed; 31 files; 0 failed; 0 skipped",
+      "artifact": "full-tests.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "artifact": "typecheck.txt"
+    },
+    {
+      "cwd": ".",
+      "command": "node node_modules/eslint/bin/eslint.js karta/src/integrations/localComputeFabricProvider.ts karta/test/localComputeFabricCancellation.test.ts --max-warnings 0",
+      "exitCode": 0,
+      "artifact": "lint.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run build",
+      "exitCode": 0,
+      "artifact": "build.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run test/localComputeFabricCancellation.test.ts test/localComputeFabricProvider.test.ts --no-cache",
+      "phase": "finalisation targeted",
+      "exitCode": 0,
+      "result": "29 passed",
+      "artifact": "finalisation-targeted.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "npm test -- --no-cache",
+      "phase": "finalisation full gate",
+      "exitCode": 0,
+      "result": "404 passed; 31 files; 0 failed; 0 skipped",
+      "artifact": "finalisation-full-tests.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run typecheck",
+      "phase": "finalisation",
+      "exitCode": 0,
+      "artifact": "finalisation-typecheck.txt"
+    },
+    {
+      "cwd": ".",
+      "command": "node node_modules/eslint/bin/eslint.js karta/src/integrations/localComputeFabricProvider.ts karta/test/localComputeFabricProvider.test.ts karta/test/localComputeFabricCancellation.test.ts --max-warnings 0",
+      "phase": "finalisation",
+      "exitCode": 0,
+      "artifact": "finalisation-lint.txt"
+    },
+    {
+      "cwd": "karta",
+      "command": "npm run build",
+      "phase": "finalisation",
+      "exitCode": 0,
+      "artifact": "finalisation-build.txt"
+    }
+  ],
+  "precommit": {
+    "testedSourceConfigHashes": "final source, tests, procedure and unchanged package/config hashes recorded above",
+    "gitnexus": {
+      "beforeEditProductImpact": "LOW",
+      "stagedCliRisk": "HIGH, 7 flows",
+      "structuredRisk": "MEDIUM, 5 flows",
+      "assessment": "UNKNOWN: empty node IDs collide across files; global graph also truncated",
+      "artifacts": [
+        "gitnexus-detect-changes.txt",
+        "gitnexus-detect-changes.json",
+        "gitnexus-empty-id.json",
+        "gitnexus-finalisation-detect-staged.txt",
+        "gitnexus-finalisation-detect-base.txt",
+        "gitnexus-finalisation-context-protocol-version.txt",
+        "gitnexus-finalisation-impact-protocol-version.txt",
+        "finalisation-direct-scope.txt"
+      ]
+    },
+    "gitleaks": {
+      "command": "git diff --cached --no-ext-diff --unified=0 | gitleaks stdin --redact --no-banner --no-color",
+      "exitCode": 0,
+      "artifact": "finalisation-gitleaks.txt"
+    }
+  },
+  "closure": {
+    "headBeforeClosure": "0b7d08707611479f444fc860e89828c953180eda",
+    "productSourceChanged": false,
+    "scope": "local fixtures and static contract review only; real SMARANA, AKASHA, VAJRA, daemon and server integration UNKNOWN",
+    "compatibility": {
+      "IAO_KARTA": "LOCAL_PASS",
+      "SMARANA_port_contract": "LOCAL_PASS; real adapter UNKNOWN",
+      "AKASHA_non_interference": "LOCAL_PASS; real ledger UNKNOWN",
+      "VAJRA_permission_boundaries": "LOCAL_PASS; real broker UNKNOWN",
+      "compute_fabric_client": "LOCAL_PASS; real daemon UNKNOWN"
+    },
+    "validation": [
+      {
+        "command": "node node_modules/vitest/vitest.mjs run test/localComputeFabricCancellation.test.ts test/localComputeFabricProvider.test.ts test/iao-facade.test.ts --no-cache",
+        "cwd": "karta",
+        "result": "69 passed; 3 files",
+        "exitCode": 0,
+        "artifact": "closure-targeted.txt"
+      },
+      {
+        "command": "npm test -- --no-cache",
+        "cwd": "karta",
+        "result": "404 passed; 31 files; 0 failed; 0 skipped",
+        "exitCode": 0,
+        "artifact": "closure-full-tests.txt"
+      },
+      {
+        "command": "npm run typecheck",
+        "cwd": "karta",
+        "exitCode": 0,
+        "artifact": "closure-typecheck.txt"
+      },
+      {
+        "command": "node node_modules/eslint/bin/eslint.js karta/src/integrations/localComputeFabricProvider.ts karta/test/localComputeFabricProvider.test.ts karta/test/localComputeFabricCancellation.test.ts karta/src/iao/kartaRuntimePort.ts karta/src/iao/iaoFacade.ts karta/test/iao-facade.test.ts --max-warnings 0",
+        "cwd": ".",
+        "exitCode": 0,
+        "artifact": "closure-lint.txt"
+      },
+      {
+        "command": "npm run build",
+        "cwd": "karta",
+        "exitCode": 0,
+        "artifact": "closure-build.txt"
+      }
+    ],
+    "gitnexus": {
+      "version": "1.6.12",
+      "storage": "isolated under /private/tmp; shared index untouched",
+      "symbolRisk": {
+        "complete": "LOW",
+        "requestFabric": "LOW",
+        "isResponse": "LOW",
+        "buildMemoryPrompt": "LOW",
+        "protocol_version": "UNKNOWN"
+      },
+      "compareBase": "LOW; 99 symbols; 0 affected processes",
+      "previousForeignRemappingReproduced": false,
+      "globalGraph": "UNKNOWN: 751 entry-point candidates dropped, 1001 callees skipped, 3 walks cut by budget",
+      "stagedClosure": "LOW; 12 symbols; 0 affected processes"
+    },
+    "artifactSha256": {
+      "closure-targeted.txt": "d5176c16cede46d92f255047f66b5dd6d06fdd6837140436c519f13904ab8d35",
+      "closure-full-tests.txt": "6b4a53651a379cf4a3a68a46a4682410cd6905b65596ef0c843658f9776db7fe",
+      "closure-typecheck.txt": "3bf4b3065269b1824e1942b7d671b01498b5a939706335967e3745a3f76c01aa",
+      "closure-lint.txt": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "closure-build.txt": "cd806407967d7855ae4b40ff1a967135b6ee6786fb8a28c1310c580f7369ffb1",
+      "closure-gitnexus-index.txt": "77fce672989b2e65a50a3b5867c466b5929fa5abf22ce5e159cb1de04cc948b9",
+      "closure-gitnexus-impact-complete.txt": "2ef783b03bad297c077123c9247d7d608c6b00ce18307e3832cd34cb259f7764",
+      "closure-gitnexus-impact-requestFabric.txt": "65f7be5c677af2aaa9f1d92959643b72138c33dd3e9e03f31a4309a5dc796a4c",
+      "closure-gitnexus-impact-isResponse.txt": "4228151f0dc0d92370ff54dd67b64b70eb7b21171f95f0b3a9d8d7a49511483b",
+      "closure-gitnexus-impact-buildMemoryPrompt.txt": "735e8292e9bfca73ba149d72bcf699f856ac2f84979933f434cd8bed25eb8b22",
+      "closure-gitnexus-impact-protocol-version.txt": "503325fb088a89a0e3c1757e66b4dbe1b40d81b80dd9ebaf682b97de0626a55b",
+      "closure-gitnexus-detect-base.txt": "deafb009552523013fba6b78ea026a506520ae4628bb3351509aea10845a8232",
+      "closure-gitnexus-index-final.txt": "2fd7928558ea63b1899732f396b433fed8292d63c290db653e95de84253df9ec",
+      "closure-gitnexus-detect-staged.txt": "108d4ae258e631d6c5b1ca94ec789b21cc5285303190324784b0d76ab983df71"
+    }
+  }
+}

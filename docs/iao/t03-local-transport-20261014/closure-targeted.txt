@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta
+
+ ✓ test/iao-facade.test.ts (40 tests) 15ms
+ ✓ test/localComputeFabricProvider.test.ts (13 tests) 133ms
+ ✓ test/localComputeFabricCancellation.test.ts (16 tests) 582ms
+
+ Test Files  3 passed (3)
+      Tests  69 passed (69)
+   Start at  15:46:12
+   Duration  859ms (transform 83ms, setup 0ms, collect 122ms, tests 731ms, environment 0ms, prepare 104ms)

@@ -1,0 +1,32 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 17 files, 26 symbols
+Affected processes: 7
+Risk level: high
+
+Changed symbols:
+  Section Reprise T03 IAO → BATON.md
+  Section T03 IAO — transport local annulable (2026-10-14) → BATON.md
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section 2026-10-14 — T03 transport local IAO → ERRORS.md
+  Section T03 — IAO : annulation du transport local Compute Fabric → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Recherche du lot libre → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Parcours fonctionnel livré → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Budgets et séparation local/client → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Preuves et commandes → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Impact et limites de livraison → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Class LocalComputeFabricProvider → karta/src/integrations/localComputeFabricProvider.ts
+  Method complete → karta/src/integrations/localComputeFabricProvider.ts
+  Function requestFabric → karta/src/integrations/localComputeFabricProvider.ts
+  Function finishError → karta/src/integrations/localComputeFabricProvider.ts
+  Function request → karta/src/integrations/localComputeFabricProvider.ts
+... and 11 more
+
+Affected execution flows:
+  • StartAgentCycleWorker → Decide (4 steps) — changed: promise
+  • StartAgentCycleWorker → Finish (4 steps) — changed: promise
+  • StartAgentCycleWorker → BuildContext (4 steps) — changed: promise
+  • HandleScheduledConsumerRequest → FetchAccounts (3 steps) — changed: promise
+  • HandleScheduledConsumerRequest → MarkFailed (3 steps) — changed: promise
+  • HandleScheduledConsumerRequest → MarkPublished (3 steps) — changed: promise
+  • HandleScheduledConsumerRequest → Publish (3 steps) — changed: promise

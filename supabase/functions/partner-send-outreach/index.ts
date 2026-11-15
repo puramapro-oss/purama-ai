@@ -98,7 +98,7 @@ ${emailType.startsWith("relance") ? "→ relance courte, angle différent du pr�
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: Deno.env.get("ANTHROPIC_MODEL_MAIN") ?? "claude-sonnet-4-6",
         max_tokens: 1500,
         system: claudeSystem,
         messages: [{ role: "user", content: claudeUser }],

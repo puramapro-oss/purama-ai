@@ -8,6 +8,16 @@ function required(name: string, fallback?: string): string {
   return value;
 }
 
+/** Node timers overflow above 2^31-1; reject nonfinite/fractional/out-of-range values. */
+export function boundedMilliseconds(name: string, fallback: number, min: number, max: number): number {
+  const raw = process.env[name];
+  const value = raw === undefined ? fallback : Number(raw);
+  if (raw?.trim() === "" || !Number.isInteger(value) || value < min || value > max) {
+    throw new Error(`Invalid lifecycle timeout: ${name}`);
+  }
+  return value;
+}
+
 export const config = {
   supabaseUrl: required("SUPABASE_URL", "https://auth.purama.dev"),
   supabaseServiceRoleKey: required("SUPABASE_SERVICE_ROLE_KEY", ""),
@@ -38,6 +48,9 @@ export const config = {
   docusealApiKey: process.env.DOCUSEAL_API_KEY ?? "",
   docusealBaseUrl: process.env.DOCUSEAL_BASE_URL ?? "http://docuseal:3000",
   apolloApiKey: process.env.APOLLO_API_KEY ?? "",
+
+  shutdownTimeoutMs: boundedMilliseconds("KARTA_SHUTDOWN_TIMEOUT_MS", 30_000, 1_000, 120_000),
+  readinessTimeoutMs: boundedMilliseconds("KARTA_READINESS_TIMEOUT_MS", 5_000, 100, 30_000),
 
   port: Number(process.env.KARTA_PORT ?? 4100),
   adminToken: process.env.KARTA_ADMIN_TOKEN ?? "",

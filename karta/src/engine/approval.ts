@@ -124,7 +124,9 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
   }
 
   await finalizePendingAction(pending, status, resultSummary);
-  return { ok: true, resultSummary };
+  return status === "failed"
+    ? { ok: false, error: resultSummary }
+    : { ok: true, resultSummary };
 }
 
 async function finalizePendingAction(pending: PendingActionRow, status: FinalStatus, resultSummary: string): Promise<void> {

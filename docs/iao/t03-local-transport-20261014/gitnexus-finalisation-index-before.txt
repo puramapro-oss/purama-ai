@@ -1,0 +1,12 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+Warning: npm 11.x can crash while installing gitnexus via npx (npm/arborist "node.target is null"). Prefer: pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-build=tree-sitter dlx gitnexus@latest analyze or npm install -g gitnexus@latest. See https://github.com/abhigyanpatwari/GitNexus/issues/1939
+{"level":40,"time":1791983784658,"name":"gitnexus","msg":"[scope-resolution] 59 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: accent (typescript), action (typescript), action_payload (typescript), action_type (typescript), action_url (typescript), background (typescript), border (typescript), colors (typescript), error (typescript), file (typescript), …"}
+{"level":40,"time":1791983784715,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":751,"entryPointsUnexplored":0,"walksCutByBudget":3,"tracesDepthCapped":0,"calleesDropped":1001,"processesDropped":0},"msg":"[processes] 376 flows reported, but whole flows are MISSING: 751 of 951 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 1001 callee(s) skipped at maxBranching, 3 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+
+  Repository indexed successfully (12.9s)
+
+  8,102 nodes | 17,244 edges | 251 clusters | 376 flows
+  /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014

@@ -1,0 +1,254 @@
+{
+  "summary": {
+    "changed_count": 26,
+    "affected_count": 5,
+    "changed_files": 17,
+    "risk_level": "medium"
+  },
+  "changed_symbols": [
+    {
+      "id": "Section:BATON.md:L1:Reprise T03 IAO",
+      "name": "Reprise T03 IAO",
+      "type": "Section",
+      "filePath": "BATON.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:BATON.md:L3:T03 IAO — transport local annulable (2026-10-14)",
+      "name": "T03 IAO — transport local annulable (2026-10-14)",
+      "type": "Section",
+      "filePath": "BATON.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:ERRORS.md:L1:ERRORS.md — Purama AI",
+      "name": "ERRORS.md — Purama AI",
+      "type": "Section",
+      "filePath": "ERRORS.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:ERRORS.md:L52:2026-10-14 — T03 transport local IAO",
+      "name": "2026-10-14 — T03 transport local IAO",
+      "type": "Section",
+      "filePath": "ERRORS.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/iao/t03-local-transport-20261014/RAPPORT.md:L1:T03 — IAO : annulation du transport local Compute Fabric",
+      "name": "T03 — IAO : annulation du transport local Compute Fabric",
+      "type": "Section",
+      "filePath": "docs/iao/t03-local-transport-20261014/RAPPORT.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/iao/t03-local-transport-20261014/RAPPORT.md:L10:Recherche du lot libre",
+      "name": "Recherche du lot libre",
+      "type": "Section",
+      "filePath": "docs/iao/t03-local-transport-20261014/RAPPORT.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/iao/t03-local-transport-20261014/RAPPORT.md:L29:Parcours fonctionnel livré",
+      "name": "Parcours fonctionnel livré",
+      "type": "Section",
+      "filePath": "docs/iao/t03-local-transport-20261014/RAPPORT.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/iao/t03-local-transport-20261014/RAPPORT.md:L42:Budgets et séparation local/client",
+      "name": "Budgets et séparation local/client",
+      "type": "Section",
+      "filePath": "docs/iao/t03-local-transport-20261014/RAPPORT.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/iao/t03-local-transport-20261014/RAPPORT.md:L54:Preuves et commandes",
+      "name": "Preuves et commandes",
+      "type": "Section",
+      "filePath": "docs/iao/t03-local-transport-20261014/RAPPORT.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/iao/t03-local-transport-20261014/RAPPORT.md:L70:Impact et limites de livraison",
+      "name": "Impact et limites de livraison",
+      "type": "Section",
+      "filePath": "docs/iao/t03-local-transport-20261014/RAPPORT.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:karta/src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider",
+      "name": "LocalComputeFabricProvider",
+      "type": "Class",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider.complete#1",
+      "name": "complete",
+      "type": "Method",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:requestFabric",
+      "name": "requestFabric",
+      "type": "Function",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:requestFabric.fn@53:21.finishError@55:4",
+      "name": "finishError",
+      "type": "Function",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/integrations/localComputeFabricProvider.ts:requestFabric.fn@53:21.request@64:4",
+      "name": "request",
+      "type": "Function",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/localComputeFabricCancellation.test.ts:cleanups",
+      "name": "cleanups",
+      "type": "Const",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:deferred",
+      "name": "deferred",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "",
+      "name": "promise",
+      "type": "Property",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:socketServer",
+      "name": "socketServer",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:completionInput",
+      "name": "completionInput",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:request",
+      "name": "request",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:memory",
+      "name": "memory",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:fn@71:67.fn@81:86.pending@93:4",
+      "name": "pending",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:fn@71:67.fn@228:85.pending@232:4",
+      "name": "pending",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:fn@71:67.fn@241:74.interrupted@255:4",
+      "name": "interrupted",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/localComputeFabricCancellation.test.ts:fn@71:67.fn@265:84.fn@267:42.heartbeat@269:6",
+      "name": "heartbeat",
+      "type": "Function",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_9_startagentcycleworke",
+      "name": "StartAgentCycleWorker → Decide",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "promise",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_50_handlescheduledconsu",
+      "name": "HandleScheduledConsumerRequest → FetchAccounts",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "promise",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_51_handlescheduledconsu",
+      "name": "HandleScheduledConsumerRequest → MarkFailed",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "promise",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_52_handlescheduledconsu",
+      "name": "HandleScheduledConsumerRequest → MarkPublished",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "promise",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_53_handlescheduledconsu",
+      "name": "HandleScheduledConsumerRequest → Publish",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "promise",
+          "step": 3
+        }
+      ]
+    }
+  ]
+}

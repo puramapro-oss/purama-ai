@@ -1,0 +1,49 @@
+
+  GitNexus Context (1.6.12)
+{
+  "status": "ambiguous",
+  "message": "Found 5 symbols matching 'protocol_version'. Use uid, file_path, or kind to disambiguate.",
+  "totalCandidates": 5,
+  "candidates": [
+    {
+      "uid": "",
+      "name": "protocol_version",
+      "kind": "",
+      "filePath": "karta/test/localComputeFabricProvider.test.ts",
+      "line": 28,
+      "score": 0.5
+    },
+    {
+      "uid": "",
+      "name": "protocol_version",
+      "kind": "",
+      "filePath": "karta/test/localComputeFabricCancellation.test.ts",
+      "line": 51,
+      "score": 0.5
+    },
+    {
+      "uid": "",
+      "name": "protocol_version",
+      "kind": "",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "line": 27,
+      "score": 0.5
+    },
+    {
+      "uid": "",
+      "name": "protocol_version",
+      "kind": "",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "line": 57,
+      "score": 0.5
+    },
+    {
+      "uid": "",
+      "name": "protocol_version",
+      "kind": "",
+      "filePath": "karta/src/integrations/localComputeFabricProvider.ts",
+      "line": 71,
+      "score": 0.5
+    }
+  ]
+}

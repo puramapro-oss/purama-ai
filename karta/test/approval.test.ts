@@ -163,7 +163,7 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     executeMock.mockRejectedValue(new Error("Gmail send échoué (500)"));
     const result = await resolvePendingAction("pending-1", "approve");
 
-    expect(result.ok).toBe(true); // la résolution réussit ; c'est l'exécution de l'outil qui échoue
+    expect(result).toMatchObject({ ok: false, error: "Gmail send échoué (500)" });
     expect(state.pending?.status).toBe("failed");
     expect(state.run?.status).toBe("error");
   });
@@ -172,10 +172,30 @@ describe("approval — mécanisme de validation humaine réel (fix bloquant QA 2
     executeMock.mockResolvedValue({ ok: false, error: "envoi refusé par Gmail" });
     const result = await resolvePendingAction("pending-1", "approve");
 
-    expect(result.ok).toBe(true);
+    expect(result).toMatchObject({ ok: false, error: expect.stringContaining("envoi refusé par Gmail") });
     expect(state.pending?.status).toBe("failed"); // AVANT le contrat strict : "executed" (mensonge)
     expect(String(state.pending?.result_summary)).toContain("envoi refusé par Gmail");
     expect(state.run?.status).toBe("error");
+  });
+
+  it("retourne ok:false si l'outil dépasse son timeout, sans autoriser un second claim", async () => {
+    vi.useFakeTimers();
+    try {
+      executeMock.mockImplementation(() => new Promise<never>(() => {}));
+      const pendingResolution = resolvePendingAction("pending-1", "approve");
+      await vi.advanceTimersByTimeAsync(30_500);
+      const result = await pendingResolution;
+
+      expect(result).toMatchObject({ ok: false, error: expect.stringContaining("timeout") });
+      expect(state.pending?.status).toBe("failed");
+      expect(state.run?.status).toBe("error");
+
+      const replay = await resolvePendingAction("pending-1", "approve");
+      expect(replay).toMatchObject({ ok: false, error: "Action déjà traitée" });
+      expect(executeMock).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("approuver un outil qui retourne void est un succès légitime (contrat : null/undefined = ok)", async () => {

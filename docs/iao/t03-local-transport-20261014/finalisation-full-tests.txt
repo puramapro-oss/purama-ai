@@ -1,0 +1,143 @@
+
+> karta-engine@1.0.0 test
+> vitest run --no-cache
+
+
+ RUN  v2.1.9 /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta
+
+ ✓ test/autonomy.test.ts (9 tests) 2ms
+ ✓ test/memory.test.ts (5 tests) 2ms
+stdout | test/approval.test.ts > reconcileOrphanPendingActions — clôture des 'processing' orphelins au boot > retourne le nombre d'actions 'processing' orphelines clôturées en échec
+[approval] reconcileOrphanPendingActions: 2 action(s) "processing" orpheline(s) clôturée(s) en échec
+
+stdout | test/approval.test.ts > reconcileOrphanPendingActions — clôture des 'processing' orphelins au boot > PRÉDICATS — ne réconcilie QUE les 'processing' orphelins de plus de 10min, en 'failed'
+[approval] reconcileOrphanPendingActions: 1 action(s) "processing" orpheline(s) clôturée(s) en échec
+
+ ✓ test/approval.test.ts (14 tests) 8ms
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > returns 503 at startup and 200 only after dependency readiness (kill switch may be active)
+[api] KARTA écoute sur :4100
+
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > returns 503 on dependency failure, without leaking dependency errors
+[api] KARTA écoute sur :4100
+
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > returns 503 when shutdown races an awaited successful probe
+[api] KARTA écoute sur :4100
+
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > bounds a hanging health probe
+[api] KARTA écoute sur :4100
+
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > checks readiness again immediately before writing HTTP 200
+[api] KARTA écoute sur :4100
+
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > rejects new work on startup and shutdown while preserving an admitted trigger
+[api] KARTA écoute sur :4100
+
+stdout | test/apiHealth.test.ts > HTTP lifecycle admission and readiness > waits for active approval side effects even after a client disconnects
+[api] KARTA écoute sur :4100
+
+ ✓ test/iao-facade.test.ts (40 tests) 17ms
+ ✓ test/schedulerLifecycle.test.ts (9 tests) 57ms
+stdout | test/apiHealth.test.ts > HTTP routing of IAO cancellation > routes POST /iao/requests/:id/cancel to the IAO handler ahead of admin authorization
+[api] KARTA écoute sur :4100
+[api] KARTA écoute sur :4100
+
+ ✓ test/apiHealth.test.ts (8 tests) 60ms
+ ✓ test/tool-result.test.ts (33 tests) 103ms
+ ✓ test/localComputeFabricProvider.test.ts (13 tests) 140ms
+stderr | test/worker.test.ts > processAgentCycleJob — verrou anti-double par (agentType, userId) > vrai parallélisme : 2 jobs du MÊME (agent,user) en Promise.all → exactement 1 exécution
+[worker] cycle legal:user-1 (cron/test) SKIPPÉ — un cycle est déjà en cours pour cet agent et cet utilisateur
+
+stderr | test/worker.test.ts > processAgentCycleJob — verrou anti-double par (agentType, userId) > C2 — charge concurrency native (5 jobs du même agent en parallèle) : exactement 1 exécution, 4 skips propres
+[worker] cycle legal:user-1 (cron/test) SKIPPÉ — un cycle est déjà en cours pour cet agent et cet utilisateur
+[worker] cycle legal:user-1 (cron/test) SKIPPÉ — un cycle est déjà en cours pour cet agent et cet utilisateur
+[worker] cycle legal:user-1 (cron/test) SKIPPÉ — un cycle est déjà en cours pour cet agent et cet utilisateur
+[worker] cycle legal:user-1 (cron/test) SKIPPÉ — un cycle est déjà en cours pour cet agent et cet utilisateur
+
+ ✓ test/notify.test.ts (23 tests) 8ms
+stdout | test/logger.test.ts > reconcileStaleRuns — clôture des runs orphelins au démarrage (P0 2026-09-26) > retourne le nombre de runs 'running' orphelins réconciliés en erreur
+[logger] reconcileStaleRuns: 2 run(s) "running" orphelin(s) réconcilié(s) en erreur
+
+ ✓ test/logger.test.ts (4 tests) 4ms
+ ✓ test/cycle-lock.test.ts (5 tests) 4ms
+ ✓ test/worker.test.ts (10 tests) 52ms
+ ✓ test/mockClaude.test.ts (7 tests) 3ms
+ ✓ test/providerResponses.test.ts (89 tests) 224ms
+ ✓ test/resolveDefinition.test.ts (10 tests) 3ms
+ ✓ test/customRegistry.test.ts (9 tests) 4ms
+stdout | test/runtime.test.ts > KARTA runtime ownership > entry point owns the existing handles and probes uncached DB, Redis and worker state
+[karta] démarrage — mockClaude=undefined port=undefined
+
+ ✓ test/gmailTool.test.ts (3 tests) 3ms
+stderr | test/loop.test.ts > runAgentCycle > un outil sensible en attente d'approbation n'est jamais exécuté (autonomie niveau 2)
+[loop] notify(email) a échoué : [TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo ENOTFOUND example.invalid
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:121:26) {
+    errno: -3008,
+    code: 'ENOTFOUND',
+    syscall: 'getaddrinfo',
+    hostname: 'example.invalid'
+  }
+}
+
+ ✓ test/customAgent.test.ts (4 tests) 3ms
+ ✓ test/actionAgentsMock.test.ts (4 tests) 2ms
+ ✓ test/supabase-client.test.ts (2 tests) 2ms
+ ✓ test/dailyReport.test.ts (3 tests) 3ms
+ ✓ test/bounded-fetch.test.ts (3 tests) 6ms
+stdout | test/runtime.test.ts > KARTA runtime ownership > fails shutdown when installed BullMQ emits a jobs cleanup error while resolving close
+[karta] démarrage — mockClaude=undefined port=undefined
+
+ ✓ test/supabaseTool.test.ts (3 tests) 3ms
+ ✓ test/real-claude.test.ts (4 tests) 3ms
+ ✓ test/gmail-token-crypto.test.ts (3 tests) 3ms
+ ✓ test/configBounds.test.ts (12 tests) 3ms
+stdout | test/runtime.test.ts > KARTA runtime ownership > fails shutdown when installed BullMQ emits a locks cleanup error while resolving close
+[karta] démarrage — mockClaude=undefined port=undefined
+
+ ✓ test/localComputeFabricCancellation.test.ts (16 tests) 698ms
+stderr | test/loop.test.ts > runAgentCycle > les outils déjà exécutés restent journalisés si l'écriture du journal échoue APRÈS (sideEffectsCommitted=true)
+[loop] finish(legal) a échoué après une erreur de cycle : Error: boom écriture karta_runs
+    at Object.finish (/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta/test/loop.test.ts:200:17)
+    at runAgentCycle (/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta/src/engine/loop.ts:196:15)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta/test/loop.test.ts:225:20
+    at file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1262:5)
+    at startTests (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1271:3)
+
+stdout | test/runtime.test.ts > KARTA runtime ownership > fails shutdown when installed BullMQ emits a children cleanup error while resolving close
+[karta] démarrage — mockClaude=undefined port=undefined
+
+stderr | test/loop.test.ts > runAgentCycle > concurrence : deux cycles parallèles ne se contaminent pas (état par invocation, pas par module)
+[loop] finish(legal) a échoué après une erreur de cycle : Error: boom écriture karta_runs (legal)
+    at Object.finish (/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta/test/loop.test.ts:332:44)
+    at runAgentCycle (/Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta/src/engine/loop.ts:196:15)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at /Users/matissdornier/purama/.worktrees/t03-iao-local-transport-20261014/karta/test/loop.test.ts:364:41
+    at file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:533:5
+    at runTest (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1056:11)
+    at runSuite (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runSuite (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1205:15)
+    at runFiles (file:///Users/matissdornier/purama/purama-ai/karta/node_modules/@vitest/runner/dist/index.js:1262:5)
+
+ ✓ test/loop.test.ts (11 tests) 314ms
+ ✓ test/agentsRegistry.test.ts (4 tests) 3ms
+stdout | test/runtime.test.ts > KARTA runtime ownership > fails shutdown when installed BullMQ emits a blocking cleanup error while resolving close
+[karta] démarrage — mockClaude=undefined port=undefined
+
+stdout | test/runtime.test.ts > KARTA runtime ownership > fails shutdown when installed BullMQ emits a connection cleanup error while resolving close
+[karta] démarrage — mockClaude=undefined port=undefined
+
+ ✓ test/runtime.test.ts (33 tests) 772ms
+ ✓ test/run-lock.test.ts (11 tests) 4094ms
+   ✓ withRunSerialization — sérialisation opportuniste des patchs d'un même run (sous-lot 8) > Redis down (set throw) → dégradation : fn exécutée sans verrou, aucune erreur remontée 2048ms
+   ✓ withRunSerialization — sérialisation opportuniste des patchs d'un même run (sous-lot 8) > RESILIENCE — crash du process + recovery (P0 IAO sous-lot 8) > verrou zombie (pas libéré) → après expiration TTL, peut être réacquis (process restart) 2039ms
+
+ Test Files  31 passed (31)
+      Tests  404 passed (404)
+   Start at  15:21:38
+   Duration  4.47s (transform 962ms, setup 0ms, collect 3.72s, tests 6.60s, environment 3ms, prepare 1.70s)

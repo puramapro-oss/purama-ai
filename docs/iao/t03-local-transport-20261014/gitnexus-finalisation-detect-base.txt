@@ -1,0 +1,32 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 34 files, 44 symbols
+Affected processes: 7
+Risk level: high
+
+Changed symbols:
+  Section Reprise T03 IAO → BATON.md
+  Section T03 IAO — transport local annulable (2026-10-14) → BATON.md
+  Section T03 IAO — finalisation protocole local v2 (2026-10-14) → BATON.md
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section 2026-10-14 — T03 transport local IAO → ERRORS.md
+  Section 2026-10-14 — T03 reçu Compute Fabric → ERRORS.md
+  Section Procédure d'intégration réversible — protocole Compute Fabric v2 → docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md
+  Section Contrat requis du daemon existant → docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md
+  Section Qualification isolée avant câblage → docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md
+  Section Intégration → docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md
+  Section Retour arrière → docs/iao/t03-local-transport-20261014/INTEGRATION-REVERSIBLE.md
+  Section T03 — IAO : annulation du transport local Compute Fabric → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Recherche du lot libre → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Parcours fonctionnel livré → docs/iao/t03-local-transport-20261014/RAPPORT.md
+  Section Budgets et séparation local/client → docs/iao/t03-local-transport-20261014/RAPPORT.md
+... and 29 more
+
+Affected execution flows:
+  • StartAgentCycleWorker → Decide (4 steps) — changed: protocol_version
+  • StartAgentCycleWorker → Finish (4 steps) — changed: protocol_version
+  • StartAgentCycleWorker → BuildContext (4 steps) — changed: protocol_version
+  • HandleScheduledConsumerRequest → FetchAccounts (3 steps) — changed: protocol_version
+  • HandleScheduledConsumerRequest → MarkFailed (3 steps) — changed: protocol_version
+  • HandleScheduledConsumerRequest → MarkPublished (3 steps) — changed: protocol_version
+  • HandleScheduledConsumerRequest → Publish (3 steps) — changed: protocol_version

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { rateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -333,6 +334,44 @@ serve(async (req) => {
   }
 
   try {
+    // Authentication check — le frontend (useAgentExecution.ts) exige déjà un
+    // utilisateur connecté avant d'appeler cette fonction ; ce garde-fou server-side
+    // manquait, permettant un appel direct anonyme à de vraies actions n8n (CRM,
+    // facturation, juridique...). 0 cas d'usage anonyme légitime identifié.
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Non autorisé" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      db: { schema: 'purama_ai' },
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Non autorisé" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const userId = user.id;
+    const userEmail = user.email || "no-email@user.com";
+
+    // Rate limiting (20 req/hour, même budget que /chat)
+    const rateLimitResult = rateLimit(`agent-proxy:${userId}`, 20, 3600000);
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Trop de tentatives. Réessaie dans 1 heure." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { agentSlug, formData } = await req.json();
 
     if (!agentSlug) {
@@ -340,26 +379,6 @@ serve(async (req) => {
         JSON.stringify({ success: false, error: "agentSlug is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
-    }
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const authHeader = req.headers.get("Authorization");
-    
-    const supabase = createClient(supabaseUrl, supabaseKey, { db: { schema: 'purama_ai' }, global: { headers: authHeader ? { Authorization: authHeader } : {} },
-    });
-
-    // Get user from auth header if available
-    let userId = "anonymous";
-    let userEmail = "anonymous@user.com";
-    
-    if (authHeader) {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        userId = user.id;
-        userEmail = user.email || "no-email@user.com";
-      }
     }
 
     // Fetch webhook_slug from agents table

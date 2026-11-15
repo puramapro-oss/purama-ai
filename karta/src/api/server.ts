@@ -1,14 +1,17 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { config } from "../config.js";
 import { supabase } from "../db/supabase.js";
-import { setGlobalKillSwitch, isGlobalKillSwitchActive } from "../engine/killswitch.js";
+import { setGlobalKillSwitch } from "../engine/killswitch.js";
 import { enqueueAgentCycle } from "../queue/queues.js";
 import { AGENT_REGISTRY } from "../agents/index.js";
 import { loadCustomAgent } from "../agents/customAgent.js";
 import { resolvePendingAction } from "../engine/approval.js";
 import type { StaticAgentType } from "../engine/types.js";
+import type { KartaRuntime } from "../runtime.js";
+import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
+const MAX_REQUEST_BODY_BYTES = 256 * 1024;
 
 function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -17,7 +20,13 @@ function json(res: ServerResponse, status: number, body: unknown): void {
 
 async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
   const chunks: Buffer[] = [];
-  for await (const chunk of req) chunks.push(chunk as Buffer);
+  let size = 0;
+  for await (const chunk of req) {
+    const buffer = chunk as Buffer;
+    size += buffer.length;
+    if (size > MAX_REQUEST_BODY_BYTES) throw new Error("request-body-too-large");
+    chunks.push(buffer);
+  }
   if (chunks.length === 0) return {};
   return JSON.parse(Buffer.concat(chunks).toString("utf-8")) as Record<string, unknown>;
 }
@@ -28,31 +37,77 @@ function isAuthorized(req: IncomingMessage): boolean {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer() {
+export function startApiServer(runtime: KartaRuntime, options: { iaoRuntime?: IaoRouteRuntime } = {}) {
+  const requests = new Set<Promise<void>>();
+  let stopping = false;
+  let closing: Promise<void> | undefined;
   const server = createServer((req, res) => {
-    void handleRequest(req, res).catch((error) => {
+    const request = handleRequest(req, res, runtime, stopping, options.iaoRuntime).catch((error: unknown) => {
       console.error("[api] erreur non gérée:", error);
-      json(res, 500, { error: error instanceof Error ? error.message : "erreur interne" });
+      if (!res.headersSent && !res.destroyed) {
+        json(res, 500, { error: "erreur interne" });
+      }
+    });
+    requests.add(request);
+    void request.then(() => requests.delete(request));
+  });
+  const ready = new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(config.port, () => {
+      server.removeListener("error", reject);
+      console.log(`[api] KARTA écoute sur :${config.port}`);
+      resolve();
     });
   });
-
-  server.listen(config.port, () => console.log(`[api] KARTA écoute sur :${config.port}`));
-  return server;
+  void ready.catch(() => {}); // owned by runtime, avoid an early unhandled listen error
+  // Keep errors observable without crashing outside the coordinated shutdown path.
+  server.on("error", (error) => {
+    console.error("[api] server error:", error);
+    void runtime.stop(1);
+  });
+  const stop = (): void => {
+    stopping = true;
+    closing ??= ready.then(() => new Promise<void>((resolve, reject) => {
+      server.close((error) => error ? reject(error) : resolve());
+      server.closeIdleConnections();
+    }), () => {});
+    void closing.catch(() => {});
+  };
+  return {
+    server,
+    ready,
+    stop,
+    async drain(): Promise<void> {
+      stop();
+      // Track the handler itself as well as the socket: disconnected clients may
+      // leave approval/trigger side effects in flight after the HTTP close callback.
+      await Promise.all([closing, ...requests]);
+    },
+  };
 }
 
-async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise<void> {
+async function handleRequest(req: IncomingMessage, res: ServerResponse,
+  runtime: KartaRuntime, stopping: boolean, iaoRuntime: IaoRouteRuntime | undefined): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
   if (req.method === "GET" && url.pathname === "/health") {
-    const globalKillSwitch = await isGlobalKillSwitchActive();
-    json(res, 200, {
-      status: "ok",
+    const health = await runtime.health();
+    const ready = health.ready && runtime.state === "ready";
+    json(res, ready ? 200 : 503, {
+      status: ready ? "ok" : "not_ready",
       mockClaude: config.mockClaude,
-      globalKillSwitch,
+      globalKillSwitch: health.globalKillSwitch,
       timestamp: new Date().toISOString(),
     });
     return;
   }
+
+  if (stopping || runtime.state !== "ready") {
+    json(res, 503, { error: "KARTA indisponible" });
+    return;
+  }
+
+  if (isIaoPath(req.method, url.pathname) && await handleIaoRoute(req, res, iaoRuntime, readBody, json)) return;
 
   if (!isAuthorized(req)) {
     json(res, 401, { error: "Non autorisé (KARTA_ADMIN_TOKEN manquant ou invalide)" });

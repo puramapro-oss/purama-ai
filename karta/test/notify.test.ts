@@ -1,75 +1,93 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 
-process.env.SUPABASE_URL = "https://example.invalid";
-process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
-process.env.RESEND_API_KEY = "test-resend";
-
-const fetchMock = vi.fn();
-vi.stubGlobal("fetch", fetchMock);
-
-// supabase-js capture `fetch` à l'import du module (avant stubGlobal) et notify.ts l'utilise
-// pour résoudre l'email du user : mock pour tenir tout le chemin email sous test.
-vi.mock("../src/db/supabase.js", () => ({
-  supabase: {
-    auth: {
-      admin: {
-        getUserById: vi.fn(async () => ({ data: { user: { email: "dest@example.com" } }, error: null })),
-      },
-    },
-  },
+const mocks = vi.hoisted(() => ({
+  fetch: vi.fn(),
+  getUserById: vi.fn(),
+  config: { supabaseUrl: "https://example.invalid", supabaseServiceRoleKey: "test-key", resendApiKey: "test-resend", resendFromEmail: "noreply@example.com" },
 }));
+vi.mock("../src/config.js", () => ({ config: mocks.config }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: { auth: { admin: { getUserById: mocks.getUserById } } } }));
+import { notify, type NotifyInput } from "../src/engine/notify.js";
 
-const { notify } = await import("../src/engine/notify.js");
+const input: NotifyInput = { userId: "u1", agentType: "legal", title: "Avis", body: "Texte", channels: ["in_app"] };
+const accepted = { ok: true, notification_id: "n1", push_sent: 1, push_failed: 0 };
+const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
-function okResponse() {
-  return { ok: true, text: async () => "" } as unknown as Response;
-}
+beforeEach(() => {
+  vi.clearAllMocks();
+  mocks.config.resendApiKey = "test-resend";
+  mocks.getUserById.mockResolvedValue({ data: { user: { email: "user@example.com" } }, error: null });
+  mocks.fetch.mockRejectedValue(new Error("unexpected network request"));
+  vi.stubGlobal("fetch", mocks.fetch);
+});
+afterEach(() => vi.unstubAllGlobals());
 
-describe("notify — timeout AbortSignal sur les fetch (P0 IAO 2026-09-26 sous-lot 5)", () => {
-  beforeEach(() => fetchMock.mockReset());
-
-  it("in-app seul : 1 fetch vers agent-push-send, AVEC signal de timeout branché", async () => {
-    fetchMock.mockResolvedValue(okResponse());
-
-    await notify({ userId: "u1", agentType: "compta", title: "t", body: "b", channels: ["in_app"] });
-
-    expect(fetchMock).toHaveBeenCalledOnce();
-    const [, options] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(options.signal).toBeInstanceOf(AbortSignal); // le branchement du timeout est la garantie testée
+describe("confirmation des notifications", () => {
+  it("confirme l'enregistrement in-app et ne demande pas un email non souhaité", async () => {
+    mocks.fetch.mockResolvedValueOnce(reply(accepted));
+    await expect(notify(input)).resolves.toBeUndefined();
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    expect(mocks.getUserById).not.toHaveBeenCalled();
   });
 
-  it("channel email : 2e fetch vers Resend, également borné par un signal", async () => {
-    fetchMock.mockResolvedValue(okResponse());
-
-    await notify({ userId: "u1", agentType: "compta", title: "t", body: "b", channels: ["in_app", "email"] });
-
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    const resendOptions = fetchMock.mock.calls[1] as unknown[] as [string, RequestInit];
-    expect(resendOptions[0]).toContain("api.resend.com");
-    expect(resendOptions[1].signal).toBeInstanceOf(AbortSignal);
+  it.each([{}, null, [], { ok: false, notification_id: "n1" }, { ok: true, notification_id: " " }, { ...accepted, error: "denied" }])("refuse un accusé de notification invalide : %j", async (body) => {
+    mocks.fetch.mockResolvedValueOnce(reply(body));
+    await expect(notify({ ...input, channels: ["in_app", "email"] })).rejects.toThrow("non confirmé");
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    expect(mocks.getUserById).not.toHaveBeenCalled();
   });
 
-  it("borne réelle : chaque fetch de notification est borné à 15s via AbortSignal.timeout", async () => {
-    // AbortSignal.timeout s'appuie sur un timer natif non fakeable — on vérifie donc le
-    // BRANCHEMENT (chaque fetch reçoit une borne de 15_000ms). Le comportement
-    // "abort → rejet du fetch" est une garantie native d'undici, pas du code testé ;
-    // l'aval du rejet par loop.ts (.catch non fatal) est déjà couvert par loop.test.ts.
+  it("signale une configuration email absente après l'enregistrement sans le répéter", async () => {
+    mocks.config.resendApiKey = "";
+    mocks.fetch.mockResolvedValueOnce(reply(accepted));
+    await expect(notify({ ...input, channels: ["in_app", "email"] })).rejects.toThrow("email demandé non envoyé");
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([{ data: { user: null }, error: null }, { data: { user: null }, error: { message: "private auth detail" } }])("signale un destinataire non confirmé", async (result) => {
+    mocks.fetch.mockResolvedValueOnce(reply(accepted));
+    mocks.getUserById.mockResolvedValueOnce(result);
+    await expect(notify({ ...input, channels: ["in_app", "email"] })).rejects.toThrow("destinataire email non confirmé");
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("signale un refus Resend sans inclure son contenu sensible dans l'erreur", async () => {
+    mocks.fetch.mockResolvedValueOnce(reply(accepted)).mockResolvedValueOnce(reply({ error: "sensitive payload" }, 429));
+    await expect(notify({ ...input, channels: ["in_app", "email"] })).rejects.toThrow(/^notify: notification enregistrée mais Resend a répondu 429$/);
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([{}, { id: 42 }, { id: " " }, { error: "provider failure" }, { id: "email-1", error: { message: "denied" } }])("ne considère pas HTTP 200 seul comme confirmation email : %j", async (body) => {
+    mocks.fetch.mockResolvedValueOnce(reply(accepted)).mockResolvedValueOnce(reply(body));
+    await expect(notify({ ...input, channels: ["in_app", "email"] })).rejects.toThrow("acceptation de l'email non confirmée");
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([{ push_sent: 0 }, { push_sent: -1 }, { push_sent: "1" }, { push_failed: 1 }, { push_failed: undefined }])("signale un push non confirmé mais tente encore l'email demandé : %j", async (override) => {
+    mocks.fetch.mockResolvedValueOnce(reply({ ...accepted, ...override })).mockResolvedValueOnce(reply({ id: "email-1" }));
+    await expect(notify({ ...input, channels: ["in_app", "push", "email"] })).rejects.toThrow("push non confirmé");
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("envoie le contenu non fiable comme texte et confirme seulement les accusés fournisseurs", async () => {
+    const body = '<img src="https://example.invalid/tracker"> & "texte"';
+    mocks.fetch.mockResolvedValueOnce(reply(accepted)).mockResolvedValueOnce(reply({ id: "email-1" }));
+    await expect(notify({ ...input, body, channels: ["in_app", "push", "email"] })).resolves.toBeUndefined();
+    const request = JSON.parse(mocks.fetch.mock.calls[1][1].body);
+    expect(request.text).toBe(body);
+    expect(request).not.toHaveProperty("html");
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("borne les deux appels réseau à 15 secondes", async () => {
     const timeoutSpy = vi.spyOn(AbortSignal, "timeout");
-    fetchMock.mockResolvedValue(okResponse());
+    mocks.fetch.mockResolvedValueOnce(reply(accepted)).mockResolvedValueOnce(reply({ id: "email-1" }));
 
-    await notify({ userId: "u1", agentType: "compta", title: "t", body: "b", channels: ["in_app", "email"] });
+    await notify({ ...input, channels: ["in_app", "email"] });
 
-    expect(timeoutSpy).toHaveBeenCalledTimes(2); // agent-push-send + Resend
+    expect(timeoutSpy).toHaveBeenCalledTimes(2);
     expect(timeoutSpy).toHaveBeenNthCalledWith(1, 15_000);
     expect(timeoutSpy).toHaveBeenNthCalledWith(2, 15_000);
     timeoutSpy.mockRestore();
-  });
-
-  it("réponse HTTP en erreur → message FR avec statut (comportement inchangé)", async () => {
-    fetchMock.mockResolvedValue({ ok: false, status: 502, text: async () => "upstream" } as unknown as Response);
-
-    await expect(
-      notify({ userId: "u1", agentType: "compta", title: "t", body: "b" })
-    ).rejects.toThrow(/agent-push-send a répondu 502/);
   });
 });
