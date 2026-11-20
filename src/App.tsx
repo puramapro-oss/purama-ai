@@ -1,10 +1,10 @@
+import './i18n';
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
-import { Loader2 } from 'lucide-react';
-import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
+import { PageFallback } from '@/components/AppFallback';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
@@ -96,32 +96,6 @@ const Reglement = lazy(() => import('@/pages/Reglement'));
 const Fiscal = lazy(() => import('@/pages/Fiscal'));
 const Entraide = lazy(() => import('@/pages/Entraide'));
 
-function PageFallback() {
-  return (
-    <div className="flex h-screen w-full items-center justify-center bg-background">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-    </div>
-  );
-}
-
-function ErrorFallback({ error }: FallbackProps) {
-  const message = error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="text-center max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-foreground">Une erreur est survenue</h1>
-        <p className="text-muted-foreground mb-4">{message}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
-        >
-          Recharger la page
-        </button>
-      </div>
-    </div>
-  );
-}
-
 const queryClient = new QueryClient();
 
 function DashboardRoute({ children }: { children: React.ReactNode }) {
@@ -134,8 +108,7 @@ function DashboardRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <ThemeProvider attribute="class" defaultTheme="dark" storageKey="purama-theme">
+    <ThemeProvider attribute="class" defaultTheme="dark" storageKey="purama-theme">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <BrowserRouter>
@@ -240,7 +213,6 @@ export default function App() {
           </BrowserRouter>
         </AuthProvider>
       </QueryClientProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    </ThemeProvider>
   );
 }
