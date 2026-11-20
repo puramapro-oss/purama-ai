@@ -14,6 +14,7 @@ import { handleWorkshopRequest, WorkshopError } from "../chef/workshop-service.j
 import type { StaticAgentType } from "../engine/types.js";
 import { handleConsultationRequest } from "./consultation.js";
 import type { ConsultationHost } from "./consultation-contract.js";
+import { handleIaoRoute, isIaoPath, type IaoRouteRuntime } from "./iaoRoutes.js";
 
 const VALID_AGENT_TYPES = Object.keys(AGENT_REGISTRY) as StaticAgentType[];
 
@@ -64,13 +65,18 @@ function readIdempotencyKey(req: IncomingMessage): string | undefined {
 }
 
 /** API interne KARTA : health check public, endpoints mutants (kill switch, trigger manuel) protégés par bearer token. */
-export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, options: { consultationHost?: ConsultationHost | null } = {}) {
+export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, options: {
+  consultationHost?: ConsultationHost | null;
+  iaoRuntime?: IaoRouteRuntime;
+  lifetime?: AbortSignal;
+} = {}) {
   let host: Promise<ConsultationHost | null> | undefined;
+  const activeRequests = new Set<Promise<void>>();
   const consultationHost = () => host ??= Object.hasOwn(options, "consultationHost")
     ? Promise.resolve(options.consultationHost ?? null)
     : import("../claude/consultation-host.js").then(module => module.createConsultationHost()).catch(() => null);
   const server = createServer((req, res) => {
-    void handleRequest(req, res, readiness, consultationHost).catch((error) => {
+    const active = handleRequest(req, res, readiness, consultationHost, options.iaoRuntime, options.lifetime).catch((error) => {
       if (res.destroyed || res.headersSent) return;
       if (error instanceof RequestError) json(res, error.status, { error: error.message });
       else if (error instanceof WorkshopError) json(res, error.status, { ok: false, code: error.code, error: error.message });
@@ -78,18 +84,23 @@ export function startApiServer(readiness?: () => Promise<RuntimeReadiness>, opti
       else if (error instanceof CycleDeliveryConflictError) json(res, 409, { error: error.message });
       else { console.error("[api] requête échouée"); json(res, 500, { error: "Erreur interne" }); }
     });
+    activeRequests.add(active);
+    const finished = () => { activeRequests.delete(active); };
+    void active.then(finished, finished);
   });
 
   server.requestTimeout = 15_000;
   server.headersTimeout = 10_000;
   server.setTimeout(15_000, socket => socket.destroy());
   server.listen(config.port, () => console.log(`[api] KARTA écoute sur :${config.port}`));
-  return server;
+  return Object.assign(server, {
+    async drainRequests(): Promise<void> { await Promise.allSettled(activeRequests); },
+  });
 }
 
 async function handleRequest(req: IncomingMessage, res: ServerResponse,
   readiness: (() => Promise<RuntimeReadiness>) | undefined,
-  consultationHost: () => Promise<ConsultationHost | null>): Promise<void> {
+  consultationHost: () => Promise<ConsultationHost | null>, iaoRuntime?: IaoRouteRuntime, lifetime?: AbortSignal): Promise<void> {
   const url = new URL(req.url ?? "/", `http://localhost:${config.port}`);
 
   if (req.method === "GET" && url.pathname === "/live") {
@@ -97,8 +108,9 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     return;
   }
   if (req.method === "GET" && url.pathname === "/health") {
-    const state = await readiness?.().catch(() => ({ ready: false, phase: "failed" as const }))
+    const observed = await readiness?.().catch(() => ({ ready: false, phase: "failed" as const }))
       ?? { ready: false, phase: "starting" as const };
+    const state = observed.ready && lifetime?.aborted ? { ...observed, ready: false, phase: "stopping" } : observed;
     json(res, state.ready ? 200 : 503, {
       status: state.ready ? "ok" : "unavailable",
       ...state,
@@ -108,13 +120,21 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     return;
   }
 
+  const readyForWork = async () => !readiness || (await readiness().catch(() => ({ ready: false }))).ready;
+
+  if (isIaoPath(req.method, url.pathname)) {
+    const host = iaoRuntime && readiness && await readyForWork() && !lifetime?.aborted ? iaoRuntime : undefined;
+    await handleIaoRoute(req, res, host, readBody, json);
+    return;
+  }
+
   if (!isAuthorized(req)) {
     json(res, 401, { error: "Non autorisé (KARTA_ADMIN_TOKEN manquant ou invalide)" });
     return;
   }
 
   const requireReady = async (): Promise<boolean> => {
-    if (readiness && !(await readiness().catch(() => ({ ready: false }))).ready) {
+    if (!await readyForWork() || lifetime?.aborted) {
       json(res, 503, { error: "KARTA temporairement indisponible" });
       return false;
     }

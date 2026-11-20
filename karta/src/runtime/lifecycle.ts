@@ -4,10 +4,11 @@ type Stopper = { stop(): void | Promise<void> };
 type Worker = { waitUntilReady(): Promise<unknown>; close(force?: boolean): Promise<void> };
 type Phase = "starting" | "ready" | "stopping" | "stopped" | "failed";
 export interface RuntimeReadiness { ready: boolean; phase: Phase; globalKillSwitch?: boolean }
+export type RuntimeHttpServer = Server & { drainRequests?: () => Promise<void> };
 export interface RuntimeDependencies {
   probe(signal: AbortSignal): Promise<{ globalKillSwitch: boolean }>;
   startWorker(): Worker;
-  startHttp(readiness: () => Promise<RuntimeReadiness>): Server;
+  startHttp(readiness: () => Promise<RuntimeReadiness>, lifetime: AbortSignal): RuntimeHttpServer;
   startSchedulers(): Stopper[];
   startCustomScheduler(): Stopper;
   startRelay(): Stopper;
@@ -65,12 +66,14 @@ function listening(server: Server): Promise<void> {
   });
 }
 
-function drainHttp(server?: Server): Promise<void> {
-  if (!server) return Promise.resolve();
-  return new Promise((resolve, reject) => server.close(error => {
+async function drainHttp(server?: RuntimeHttpServer): Promise<void> {
+  if (!server) return;
+  await new Promise<void>((resolve, reject) => server.close(error => {
     if (error && (error as NodeJS.ErrnoException).code !== "ERR_SERVER_NOT_RUNNING") reject(new Error("HTTP shutdown failed"));
     else resolve();
   }));
+  // A disconnected client can leave an admitted operation running after the socket closes.
+  await server.drainRequests?.();
 }
 
 /** One controller owns startup, ingress, producers, draining and forced cleanup. */
@@ -79,7 +82,7 @@ export function createRuntime(deps: RuntimeDependencies, options: { probeMs?: nu
   const probeMs = options.probeMs ?? 5_000;
   let phase: Phase = "starting";
   let worker: Worker | undefined;
-  let server: Server | undefined;
+  let server: RuntimeHttpServer | undefined;
   const producers: Stopper[] = [];
   let started = false;
   let stopped: Promise<boolean> | undefined;
@@ -135,7 +138,7 @@ export function createRuntime(deps: RuntimeDependencies, options: { probeMs?: nu
       worker = deps.startWorker();
       await bounded(() => worker!.waitUntilReady(), probeMs, lifetime.signal);
       if (lifetime.signal.aborted) throw new Error();
-      server = deps.startHttp(readiness);
+      server = deps.startHttp(readiness, lifetime.signal);
       await bounded(() => listening(server!), probeMs, lifetime.signal);
       if (lifetime.signal.aborted) throw new Error();
       producers.push(...deps.startSchedulers());

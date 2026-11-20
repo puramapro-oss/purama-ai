@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { addMonths } from 'date-fns';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -167,21 +168,28 @@ export function useInfluencer() {
     mutationFn: async () => {
       if (!influencer?.id || !user?.id) throw new Error('Non authentifié');
 
-      const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 1);
+      const expiresAt = addMonths(new Date(), 1);
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('influencers')
         .update({
           expires_at: expiresAt.toISOString(),
         })
-        .eq('id', influencer.id);
+        .eq('id', influencer.id)
+        .select('id,expires_at')
+        .single();
 
       if (error) throw error;
+      if (data?.id !== influencer.id || Date.parse(data.expires_at) !== expiresAt.getTime()) {
+        throw new Error('Le renouvellement du lien n’a pas pu être confirmé.');
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['influencer', user?.id] });
       toast.success('Lien renouvelé pour 1 mois !');
+    },
+    onError: () => {
+      toast.error('Le renouvellement du lien n’a pas pu être confirmé.');
     },
   });
 

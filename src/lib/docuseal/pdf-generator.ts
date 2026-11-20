@@ -1,6 +1,8 @@
 // HTML template variable substitution
 // Fills {{variable_name}} placeholders from a data record. DocuSeal renders HTML → PDF.
 
+import { addMonths } from 'date-fns';
+
 export interface RenderVariables {
   [key: string]: string | number | boolean | null | undefined;
 }
@@ -114,10 +116,4 @@ export function buildAmbassadeurVariables(input: {
 // ─── Date helpers ─────────────────────────────────────────────────────
 function formatDateFr(d: Date): string {
   return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-}
-
-function addMonths(d: Date, months: number): Date {
-  const copy = new Date(d.getTime());
-  copy.setMonth(copy.getMonth() + months);
-  return copy;
 }
