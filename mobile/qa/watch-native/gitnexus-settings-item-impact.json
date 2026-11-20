@@ -1,0 +1,62 @@
+{
+  "target": {
+    "id": "Function:mobile/app/(tabs)/settings.tsx:SettingsItem",
+    "name": "SettingsItem",
+    "type": "Function",
+    "filePath": "mobile/app/(tabs)/settings.tsx"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [
+    {
+      "name": "SettingsScreen",
+      "type": "Function",
+      "filePath": "mobile/app/(tabs)/settings.tsx",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "(tabs)",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:mobile/app/(tabs)/settings.tsx:SettingsScreen",
+        "name": "SettingsScreen",
+        "filePath": "mobile/app/(tabs)/settings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_56_settingsscreen",
+            "label": "SettingsScreen → Badge",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}

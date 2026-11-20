@@ -7,6 +7,7 @@ export interface GratitudeEntry {
 
 export const MAX_JOURNAL_ENTRIES = 500;
 export const MAX_JOURNAL_TEXT = 2000;
+export const MAX_JOURNAL_SERIALIZED_LENGTH = 2_500_000;
 
 export function gratitudeStorageKey(ownerId: string): string {
   return `purama_gratitude:v2:${encodeURIComponent(ownerId)}`;
@@ -30,7 +31,7 @@ function isEntry(value: unknown): value is GratitudeEntry {
 // Only a versioned, explicitly retained journal belonging to the active account
 // may be restored. The old unscoped key is deliberately never read or migrated.
 export function decodeGratitudeJournal(raw: string | null, ownerId: string): GratitudeEntry[] | null {
-  if (!raw || raw.length > 2_500_000) return null;
+  if (!raw || raw.length > MAX_JOURNAL_SERIALIZED_LENGTH) return null;
   try {
     const value = JSON.parse(raw);
     if (!value || value.version !== 2 || value.ownerId !== ownerId || value.retention !== 'device') return null;
@@ -59,7 +60,7 @@ export type JournalMutation =
   | { kind: 'enable'; entries: GratitudeEntry[]; expectedRaw: string | null }
   | { kind: 'disable' };
 
-export type JournalMutationError = 'storageError' | 'invalid' | 'limit' | 'conflict' | 'revoked' | 'locksUnavailable' | 'busy' | 'cancelled';
+export type JournalMutationError = 'storageError' | 'invalid' | 'limit' | 'sizeLimit' | 'conflict' | 'revoked' | 'locksUnavailable' | 'busy' | 'cancelled';
 export type JournalMutationResult = { ok: true; snapshot: JournalSnapshot } | { ok: false; reason: JournalMutationError };
 
 /**
@@ -105,6 +106,7 @@ export async function mutateGratitudeJournal(ownerId: string, mutation: JournalM
       if (entries.length > MAX_JOURNAL_ENTRIES) return { ok: false, reason: 'limit' };
       if (new Set(entries.map(entry => entry.id)).size !== entries.length) return { ok: false, reason: 'invalid' };
       const updatedRaw = encodeGratitudeJournal(entries, ownerId);
+      if (updatedRaw.length > MAX_JOURNAL_SERIALIZED_LENGTH) return { ok: false, reason: 'sizeLimit' };
       localStorage.setItem(key, updatedRaw);
       return { ok: true, snapshot: { entries, remember: true, raw: updatedRaw } };
     });

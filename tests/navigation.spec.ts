@@ -38,9 +38,10 @@ test.describe('Navigation — Liens & Boutons', () => {
   test('Pricing — cartes visibles', async ({ page }) => {
     await page.goto('/pricing', { waitUntil: 'networkidle' });
 
-    // Should have pricing tiers
-    const text = await page.locator('body').textContent();
-    expect(text?.toLowerCase()).toMatch(/gratuit|free|starter|pro|premium/i);
+    // The route is lazy: wait for the four real cards, not a pre-render body.
+    for (const name of ['Découverte', 'Starter', 'Premium', 'Ultime']) {
+      await expect(page.getByRole('heading', { name, exact: true, level: 3 })).toBeVisible();
+    }
   });
 
   test('Footer links — mentions légales, CGV, CGU', async ({ page }) => {

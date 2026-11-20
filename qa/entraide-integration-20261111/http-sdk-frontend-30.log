@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: envoie apikey, un unique Bearer, JSON et le signal au bon endpoint
+ok 1 - envoie apikey, un unique Bearer, JSON et le signal au bon endpoint
+  ---
+  duration_ms: 252.406791
+  type: 'test'
+  ...
+# Subtest: GET accepte un jeton brut sans envoyer de corps
+ok 2 - GET accepte un jeton brut sans envoyer de corps
+  ---
+  duration_ms: 65.84825
+  type: 'test'
+  ...
+# Subtest: utilise la clé publique configurée par le vrai client de l’application, avec repli ANON compatible
+ok 3 - utilise la clé publique configurée par le vrai client de l’application, avec repli ANON compatible
+  ---
+  duration_ms: 174.955417
+  type: 'test'
+  ...
+# Subtest: conserve le corps et son ID pour une seconde tentative après perte de réponse
+ok 4 - conserve le corps et son ID pour une seconde tentative après perte de réponse
+  ---
+  duration_ms: 48.733917
+  type: 'test'
+  ...
+# Subtest: refuse les URL externes et traversées avant tout envoi de jeton
+ok 5 - refuse les URL externes et traversées avant tout envoi de jeton
+  ---
+  duration_ms: 34.317333
+  type: 'test'
+  ...
+# Subtest: refuse la session vide et la configuration incomplète avant le réseau
+ok 6 - refuse la session vide et la configuration incomplète avant le réseau
+  ---
+  duration_ms: 100.817667
+  type: 'test'
+  ...
+# Subtest: refuse les configurations HTTP distantes et les identifiants dans une URL
+ok 7 - refuse les configurations HTTP distantes et les identifiants dans une URL
+  ---
+  duration_ms: 95.92425
+  type: 'test'
+  ...
+# Subtest: autorise Supabase local HTTP pour la validation en développement
+ok 8 - autorise Supabase local HTTP pour la validation en développement
+  ---
+  duration_ms: 32.372
+  type: 'test'
+  ...
+# Subtest: affiche un conflit de révision français sans divulguer les détails du serveur
+ok 9 - affiche un conflit de révision français sans divulguer les détails du serveur
+  ---
+  duration_ms: 44.283333
+  type: 'test'
+  ...
+# Subtest: masque les erreurs brutes JSON et HTML inconnues
+ok 10 - masque les erreurs brutes JSON et HTML inconnues
+  ---
+  duration_ms: 43.932791
+  type: 'test'
+  ...
+# Subtest: conserve Retry-After et explique la limite de contact
+ok 11 - conserve Retry-After et explique la limite de contact
+  ---
+  duration_ms: 25.366458
+  type: 'test'
+  ...
+# Subtest: ne confirme pas un succès HTTP au corps invalide ou contenant une erreur
+ok 12 - ne confirme pas un succès HTTP au corps invalide ou contenant une erreur
+  ---
+  duration_ms: 25.307208
+  type: 'test'
+  ...
+# Subtest: préserve l’annulation pendant la requête et pendant la lecture de sa réponse
+ok 13 - préserve l’annulation pendant la requête et pendant la lecture de sa réponse
+  ---
+  duration_ms: 20.980208
+  type: 'test'
+  ...
+# Subtest: HTTP responses use numeric status; preflight, no-store, auth and methods remain usable
+ok 14 - HTTP responses use numeric status; preflight, no-store, auth and methods remain usable
+  ---
+  duration_ms: 516.865708
+  type: 'test'
+  ...
+# Subtest: Malformed, oversized, foreign-owner and incomplete-coordinate writes are rejected before persistence
+ok 15 - Malformed, oversized, foreign-owner and incomplete-coordinate writes are rejected before persistence
+  ---
+  duration_ms: 30.4995
+  type: 'test'
+  ...
+# Subtest: Exact routes do not let suffixes reach list or mutate resources
+ok 16 - Exact routes do not let suffixes reach list or mutate resources
+  ---
+  duration_ms: 2.910958
+  type: 'test'
+  ...
+# Subtest: Burst limiter uses the real shared limiter and returns 429 before a 21st profile write
+ok 17 - Burst limiter uses the real shared limiter and returns 429 before a 21st profile write
+  ---
+  duration_ms: 15.116084
+  type: 'test'
+  ...
+# Subtest: Storage and auth outages, and malformed RPC output, never produce success or expose raw errors
+ok 18 - Storage and auth outages, and malformed RPC output, never produce success or expose raw errors
+  ---
+  duration_ms: 8.412916
+  type: 'test'
+  ...
+# Subtest: HTTP→PostgreSQL lifecycle: private by default, no outsider read, replay-safe public creation, owner revisions and terminal state
+ok 19 - HTTP→PostgreSQL lifecycle: private by default, no outsider read, replay-safe public creation, owner revisions and terminal state
+  ---
+  duration_ms: 436.35475
+  type: 'test'
+  ...
+# Subtest: HTTP→PostgreSQL contacts: stable send, recipient-only response, accepted-channel revocation and private block list
+ok 20 - HTTP→PostgreSQL contacts: stable send, recipient-only response, accepted-channel revocation and private block list
+  ---
+  duration_ms: 293.931084
+  type: 'test'
+  ...
+# Subtest: Supabase adapter scopes own coordinates, batches both block directions and exports no coordinate or block list
+ok 21 - Supabase adapter scopes own coordinates, batches both block directions and exports no coordinate or block list
+  ---
+  duration_ms: 5.353625
+  type: 'test'
+  ...
+# Subtest: Bounded matching explicitly marks incomplete scans
+ok 22 - Bounded matching explicitly marks incomplete scans
+  ---
+  duration_ms: 49.015292
+  type: 'test'
+  ...
+# Subtest: SDK 2.91.0 builds a profile GET scoped by actor and purama_ai schema
+ok 23 - SDK 2.91.0 builds a profile GET scoped by actor and purama_ai schema
+  ---
+  duration_ms: 74.208167
+  type: 'test'
+  ...
+# Subtest: real maybeSingle handles absence and prevents a provider row from changing the actor scope
+ok 24 - real maybeSingle handles absence and prevents a provider row from changing the actor scope
+  ---
+  duration_ms: 14.691458
+  type: 'test'
+  ...
+# Subtest: real upsert posts one array row, pins its actor and requests defaults for omitted fields
+ok 25 - real upsert posts one array row, pins its actor and requests defaults for omitted fields
+  ---
+  duration_ms: 11.156916
+  type: 'test'
+  ...
+# Subtest: provider errors parsed by the SDK reject profile reads, writes and RPC calls
+ok 26 - provider errors parsed by the SDK reject profile reads, writes and RPC calls
+  ---
+  duration_ms: 11.266625
+  type: 'test'
+  ...
+# Subtest: real RPC serializes the server-selected actor separately from the contact payload
+ok 27 - real RPC serializes the server-selected actor separately from the contact payload
+  ---
+  duration_ms: 8.515875
+  type: 'test'
+  ...
+# Subtest: auth.getUser reaches the provider with the caller header and distinguishes rejection from outage
+ok 28 - auth.getUser reaches the provider with the caller header and distinguishes rejection from outage
+  ---
+  duration_ms: 14.344084
+  type: 'test'
+  ...
+# Subtest: handler plus real SDK derive p_actor from getUser, ignoring unverified token claims and rejecting body authority
+ok 29 - handler plus real SDK derive p_actor from getUser, ignoring unverified token claims and rejecting body authority
+  ---
+  duration_ms: 19.672583
+  type: 'test'
+  ...
+# Subtest: handler plus real SDK turn a PostgREST failure into a generic 503 without exposing provider detail
+ok 30 - handler plus real SDK turn a PostgREST failure into a generic 503 without exposing provider detail
+  ---
+  duration_ms: 5.568
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4624.063916

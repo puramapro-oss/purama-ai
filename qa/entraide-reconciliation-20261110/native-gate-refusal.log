@@ -1,0 +1,95 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> purama-entraide-protocol-tests@1.0.0 test:native
+> node --import ./native-required.mjs --test --test-concurrency=1 contact-db.test.mjs missions-db.test.mjs reconciliation-db.test.mjs concurrency-db.test.mjs response-contract.test.mjs
+
+file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3
+  throw new Error('Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.');
+        ^
+
+Error: Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.
+    at file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:96:9)
+
+Node.js v24.22.1
+✖ concurrency-db.test.mjs (81.899766ms)
+file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3
+  throw new Error('Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.');
+        ^
+
+Error: Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.
+    at file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:96:9)
+
+Node.js v24.22.1
+✖ contact-db.test.mjs (74.313131ms)
+file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3
+  throw new Error('Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.');
+        ^
+
+Error: Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.
+    at file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:96:9)
+
+Node.js v24.22.1
+✖ missions-db.test.mjs (228.218498ms)
+file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3
+  throw new Error('Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.');
+        ^
+
+Error: Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.
+    at file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:96:9)
+
+Node.js v24.22.1
+✖ reconciliation-db.test.mjs (220.457808ms)
+file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3
+  throw new Error('Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.');
+        ^
+
+Error: Native PostgreSQL gate requires ENTRAIDE_DATABASE_URL; use test:sql for PGlite.
+    at file:///workspace/scratch/6a3b4f291e34/reconcile-entraide/tests/entraide/native-required.mjs:3:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:96:9)
+
+Node.js v24.22.1
+✖ response-contract.test.mjs (104.957708ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 722.978329
+
+✖ failing tests:
+
+test at concurrency-db.test.mjs:1:1
+✖ concurrency-db.test.mjs (81.899766ms)
+  'test failed'
+
+test at contact-db.test.mjs:1:1
+✖ contact-db.test.mjs (74.313131ms)
+  'test failed'
+
+test at missions-db.test.mjs:1:1
+✖ missions-db.test.mjs (228.218498ms)
+  'test failed'
+
+test at reconciliation-db.test.mjs:1:1
+✖ reconciliation-db.test.mjs (220.457808ms)
+  'test failed'
+
+test at response-contract.test.mjs:1:1
+✖ response-contract.test.mjs (104.957708ms)
+  'test failed'

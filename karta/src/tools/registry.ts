@@ -7,6 +7,8 @@ export { zernioPublishTool } from "./zernio.js";
 export { apolloSearchPeopleTool } from "./apollo.js";
 export { generatePdfTool } from "./pdf.js";
 export { webSearchTool } from "./websearch.js";
+export { knowledgeSearchTool } from "./knowledge-search.js";
+export { quantumSimulateTool } from "./quantum.js";
 export { sendNotificationTool } from "./notification-tool.js";
 export { delegateToAgentTool } from "./delegate.js";
 // Planning only. The host must inject its authenticated account/permission resolver.

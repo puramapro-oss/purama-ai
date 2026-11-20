@@ -29,6 +29,10 @@ verify_jwt = false
 [functions.escalate-chat]
 verify_jwt = false
 
+# The handler verifies the current user with auth.getUser before every action.
+[functions.iao-consultation]
+verify_jwt = false
+
 [functions.social-callback]
 verify_jwt = false
 

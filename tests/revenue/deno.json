@@ -1,0 +1,10 @@
+{
+  "imports": {
+    "https://deno.land/std@0.190.0/http/server.ts": "./serve-fixture.ts",
+    "https://esm.sh/stripe@18.5.0": "./provider-fixture.ts",
+    "https://esm.sh/@supabase/supabase-js@2.91.0": "./provider-fixture.ts",
+    "npm:@supabase/supabase-js@2.91.0": "./provider-fixture.ts",
+    "stripe-sdk-test": "npm:stripe@18.5.0"
+  },
+  "compilerOptions": { "strict": true }
+}

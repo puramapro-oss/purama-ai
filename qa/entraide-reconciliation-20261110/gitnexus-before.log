@@ -1,0 +1,16 @@
+
+  GitNexus Analyzer (1.6.12)
+[2K
+Index lock: OS socket lock unavailable here — using the file lock.
+{"level":40,"time":1794285427279,"name":"gitnexus","msg":"[scope-resolution] 261 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: VITE_SUPABASE_ANON_KEY (javascript), VITE_SUPABASE_URL (javascript), after (javascript), calls (javascript), headers (javascript), history (javascript), response (javascript), accent (typescript), action (typescript), action_payload (typescript), …"}
+{"level":40,"time":1794285427489,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":739,"entryPointsUnexplored":0,"walksCutByBudget":2,"tracesDepthCapped":0,"calleesDropped":1006,"processesDropped":0},"msg":"[processes] 364 flows reported, but whole flows are MISSING: 739 of 939 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 1006 callee(s) skipped at maxBranching, 2 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2K
+FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+{"level":30,"time":1794285430839,"name":"gitnexus","msg":"name-fallback resolution: 11 call sites (7 distinct caller-file/name pairs), 0 refused as impossible (guessed/refused by language: javascript 11/0)"}
+
+  Repository indexed successfully (37.4s)
+
+  8,045 nodes | 17,486 edges | 249 clusters | 364 flows
+  /workspace/scratch/6a3b4f291e34/reconcile-entraide
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.

@@ -13,7 +13,11 @@ export const ChatMessageSchema = z.object({
 });
 
 // Custom-agent chat always needs an agent identifier; universal chat may use agent_type.
-export const CreatorChatMessageSchema = ChatMessageSchema.required({ agent_id: true });
+export const CreatorChatMessageSchema = ChatMessageSchema.required({ agent_id: true }).extend({
+  tool_result_ids: z.array(z.string().uuid().toLowerCase()).max(3)
+    .refine(ids => new Set(ids).size === ids.length, "Les résultats sélectionnés doivent être distincts.")
+    .optional(),
+});
 
 export const AgentRunSchema = z.object({
   agent_id: z.string().uuid(),

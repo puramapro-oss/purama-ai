@@ -1,0 +1,16 @@
+{
+  "status": "BLOCKED",
+  "checkedDate": "2026-11-13",
+  "publicAuthGateway": "still points to OVH",
+  "publicAuthHealth": 502,
+  "hostingerAuthHealth": 502,
+  "generalSupabaseOriginals": "stopped on both hosts; untouched",
+  "canonicalSourceSelected": false,
+  "reconciliationReceipt": "CLOSURE.json from existing reconcile-20261111-0030/results",
+  "existingDataDifferences": true,
+  "sourceCopiesPreserved": true,
+  "legacyCronJobsOnHostinger": 7,
+  "productionMutation": false,
+  "unrelatedMidasStack": "untouched",
+  "publicReadiness": "Private qualification clone is not an authorized canonical production data source"
+}

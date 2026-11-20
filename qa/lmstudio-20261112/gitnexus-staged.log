@@ -1,0 +1,24 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1794510883654,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 9 files, 16 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Interface LmStudioOptions → karta/src/claude/lmstudio.ts
+  Const busyOrigins → karta/src/claude/lmstudio.ts
+  Const MAX_RESPONSE_BYTES → karta/src/claude/lmstudio.ts
+  Method decide → karta/src/claude/real.ts
+  Const model → karta/test/lmStudioSocket.test.mjs
+  Const requests → karta/test/lmStudioSocket.test.mjs
+  Const responseMode → karta/test/lmStudioSocket.test.mjs
+  Const redirectHits → karta/test/lmStudioSocket.test.mjs
+  Const origin → karta/test/lmStudioSocket.test.mjs
+  Const redirectOrigin → karta/test/lmStudioSocket.test.mjs
+  Const model → karta/test/lmStudioTransport.test.ts
+  Const origin → karta/test/lmStudioTransport.test.ts
+  Const transport → karta/test/lmStudioTransport.test.ts
+  Const execute → karta/test/lmStudioTransport.test.ts
+  Const tool → karta/test/lmStudioTransport.test.ts
+... and 1 more

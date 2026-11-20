@@ -1,0 +1,21 @@
+[
+  {
+    "label": "edge-types",
+    "started_at": "2026-11-11T08:14:01.273737+00:00",
+    "exit": 0,
+    "command": [
+      "/opt/homebrew/bin/deno",
+      "check",
+      "--no-config",
+      "--no-lock",
+      "--cached-only",
+      "--node-modules-dir=manual",
+      "supabase/functions/entraide-contact/index.ts",
+      "supabase/functions/entraide-matches/index.ts",
+      "supabase/functions/entraide-missions/index.ts",
+      "supabase/functions/entraide-profil/index.ts"
+    ],
+    "log": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/edge-types.log",
+    "sha256": "c2333845af6a1452aa6a51a057186b533a869832fda66357498b9808cee51d54"
+  }
+]

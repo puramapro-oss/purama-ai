@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 18.66,
+  "after": "branch fallback and test formatting fixes"
+}

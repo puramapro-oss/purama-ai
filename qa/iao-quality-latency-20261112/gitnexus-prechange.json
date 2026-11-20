@@ -1,0 +1,284 @@
+{
+  "status": "PARTIEL",
+  "verified": "Real GitNexus query, resource reads, context and upstream impact executed before edits, including exact UID for decide. Candidate and indexed karta/src source trees are identical at the recorded commits.",
+  "limitations": [
+    "Fresh index failed exit 1 (reported by parent, log lacks failure diagnostic).",
+    "Fallback index 3714510 is 8 commits behind its checkout HEAD; candidate is 8259b84, not the same checkout.",
+    "FTS and vector search unavailable in fallback; symbol/graph queries use installed tool fallback.",
+    "Dynamic object methods and interfaces have unresolved call sites; zero graph dependents is UNKNOWN, not safe/unreferenced.",
+    "No application files changed by this subtask. No detect_changes performed yet; mandatory before commit belongs to post-edit phase."
+  ],
+  "indexCommit": "3714510a824010f4b705c0e5171e062735f5f22b",
+  "candidateHead": "8259b84e65ca89b01bd1b1fc46576cb60bb8a1ec",
+  "allKartaSourceBlobsIdenticalAtCommits": true,
+  "targetFilesVerifiedIdentical": [
+    {
+      "file": "karta/src/claude/real.ts",
+      "indexedGitBlob": "b81e7d30268efc5581b8d3eb6d72b1f23d7e31c9",
+      "candidateGitBlob": "b81e7d30268efc5581b8d3eb6d72b1f23d7e31c9",
+      "indexedSha256": "7c411f3952c63604660fc101bb82ca45d58829763f5b734140f190caf780d509",
+      "candidateWorkingSha256": "7c411f3952c63604660fc101bb82ca45d58829763f5b734140f190caf780d509",
+      "identical": true
+    },
+    {
+      "file": "karta/src/claude/types.ts",
+      "indexedGitBlob": "d9bab7a24778739f96c44f88c232f91b82ca5cc5",
+      "candidateGitBlob": "d9bab7a24778739f96c44f88c232f91b82ca5cc5",
+      "indexedSha256": "773a5b65ee72187cb4279dc05d1140f1290aede2215cb8f62b9994bf9d14cb55",
+      "candidateWorkingSha256": "773a5b65ee72187cb4279dc05d1140f1290aede2215cb8f62b9994bf9d14cb55",
+      "identical": true
+    },
+    {
+      "file": "karta/src/agents/legalAgent.ts",
+      "indexedGitBlob": "246fee51864ce9e86648278a8d1369dca29d38e6",
+      "candidateGitBlob": "246fee51864ce9e86648278a8d1369dca29d38e6",
+      "indexedSha256": "99491f3d8d9ddb0a6ed014a1951a4ae44e308406237a2b2f53327b6af5a30dc6",
+      "candidateWorkingSha256": "99491f3d8d9ddb0a6ed014a1951a4ae44e308406237a2b2f53327b6af5a30dc6",
+      "identical": true
+    },
+    {
+      "file": "karta/src/agents/comptaAgent.ts",
+      "indexedGitBlob": "5de5b8d999785958c90c1733869808ac05230249",
+      "candidateGitBlob": "5de5b8d999785958c90c1733869808ac05230249",
+      "indexedSha256": "b0e00b06a27dfeea00b46ec85a4543d2ceb5f5e4256cb1138c76935285998e0f",
+      "candidateWorkingSha256": "b0e00b06a27dfeea00b46ec85a4543d2ceb5f5e4256cb1138c76935285998e0f",
+      "identical": true
+    },
+    {
+      "file": "karta/src/agents/partnerAgent.ts",
+      "indexedGitBlob": "c070961a6ea528bf5f2ae4769cf00c88e78977cf",
+      "candidateGitBlob": "c070961a6ea528bf5f2ae4769cf00c88e78977cf",
+      "indexedSha256": "5820bac889606d03dce42eedd6f22e3eda683367e1590ba12e585476a35735ea",
+      "candidateWorkingSha256": "5820bac889606d03dce42eedd6f22e3eda683367e1590ba12e585476a35735ea",
+      "identical": true
+    },
+    {
+      "file": "karta/src/config.ts",
+      "indexedGitBlob": "a47b806287aa343fcaf6dd696bde8e786b3f2168",
+      "candidateGitBlob": "a47b806287aa343fcaf6dd696bde8e786b3f2168",
+      "indexedSha256": "a7fef77d187c2e3b9749f212bf0083bf5d9ddada9e11dadd200d3567fde06a36",
+      "candidateWorkingSha256": "a7fef77d187c2e3b9749f212bf0083bf5d9ddada9e11dadd200d3567fde06a36",
+      "identical": true
+    },
+    {
+      "file": "karta/src/runtime/lifecycle.ts",
+      "indexedGitBlob": "f7ae40ff4877e3eea5af01edca78aeaf66b48d00",
+      "candidateGitBlob": "f7ae40ff4877e3eea5af01edca78aeaf66b48d00",
+      "indexedSha256": "9f34bb50886e30e4739e9812a49ec8ad3234fac2913fe888f57a0f8481fec9db",
+      "candidateWorkingSha256": "9f34bb50886e30e4739e9812a49ec8ad3234fac2913fe888f57a0f8481fec9db",
+      "identical": true
+    }
+  ],
+  "dynamicCallers": {
+    "legal/compta/partner buildContext": "karta/src/engine/loop.ts lines 93-94; registry karta/src/agents/index.ts lines 26-28",
+    "createRealClaudeClient.decide": "karta/src/engine/loop.ts line 143 via getClaudeClient().decide",
+    "config": "18 current source import lines found"
+  },
+  "symbols": [
+    {
+      "symbol": "createRealClaudeClient",
+      "riskReportedByGitNexus": "LOW",
+      "impactedCount": 3,
+      "directCallers": [
+        {
+          "name": "getClaudeClient",
+          "filePath": "karta/src/claude/index.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        }
+      ],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": null
+    },
+    {
+      "symbol": "selectModel",
+      "riskReportedByGitNexus": "LOW",
+      "impactedCount": 1,
+      "directCallers": [
+        {
+          "name": "decide",
+          "filePath": "karta/src/claude/real.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        }
+      ],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": null
+    },
+    {
+      "symbol": "decide",
+      "riskReportedByGitNexus": "UNKNOWN",
+      "impactedCount": 0,
+      "directCallers": [],
+      "processesAffected": 0,
+      "epistemic": "lower-bound",
+      "boundaries": [
+        "2 call sites invoking `decide` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+      ],
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    {
+      "symbol": "ClaudeDecideInput",
+      "riskReportedByGitNexus": "LOW",
+      "impactedCount": 6,
+      "directCallers": [
+        {
+          "name": "index.ts",
+          "filePath": "karta/src/claude/index.ts",
+          "relationType": "IMPORTS",
+          "confidence": 1
+        },
+        {
+          "name": "mock.ts",
+          "filePath": "karta/src/claude/mock.ts",
+          "relationType": "IMPORTS",
+          "confidence": 1
+        },
+        {
+          "name": "real.ts",
+          "filePath": "karta/src/claude/real.ts",
+          "relationType": "IMPORTS",
+          "confidence": 1
+        },
+        {
+          "name": "ClaudeClient",
+          "filePath": "karta/src/claude/types.ts",
+          "relationType": "USES",
+          "confidence": 0.53
+        }
+      ],
+      "processesAffected": 0,
+      "epistemic": "lower-bound",
+      "boundaries": [
+        "ClaudeDecideInput is an interface with 1 interface-level consumer; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher."
+      ],
+      "riskNote": null
+    },
+    {
+      "symbol": "runAgentCycle",
+      "riskReportedByGitNexus": "LOW",
+      "impactedCount": 1,
+      "directCallers": [
+        {
+          "name": "startAgentCycleWorker",
+          "filePath": "karta/src/queue/worker.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        }
+      ],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": null
+    },
+    {
+      "symbol": "legal-buildContext",
+      "riskReportedByGitNexus": "UNKNOWN",
+      "impactedCount": 0,
+      "directCallers": [],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    {
+      "symbol": "compta-buildContext",
+      "riskReportedByGitNexus": "UNKNOWN",
+      "impactedCount": 0,
+      "directCallers": [],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    {
+      "symbol": "partner-buildContext",
+      "riskReportedByGitNexus": "UNKNOWN",
+      "impactedCount": 0,
+      "directCallers": [],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    {
+      "symbol": "config",
+      "riskReportedByGitNexus": "UNKNOWN",
+      "impactedCount": 0,
+      "directCallers": [],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    {
+      "symbol": "required",
+      "riskReportedByGitNexus": "MEDIUM",
+      "impactedCount": 46,
+      "directCallers": [
+        {
+          "name": "config.ts",
+          "filePath": "karta/src/config.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        }
+      ],
+      "processesAffected": 0,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": null
+    },
+    {
+      "symbol": "bounded",
+      "riskReportedByGitNexus": "CRITICAL",
+      "impactedCount": 28,
+      "directCallers": [
+        {
+          "name": "finalizePendingAction",
+          "filePath": "karta/src/engine/approval.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        },
+        {
+          "name": "resolvePendingAction",
+          "filePath": "karta/src/engine/approval.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        },
+        {
+          "name": "deadline",
+          "filePath": "karta/src/queue/approval-outbox.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        },
+        {
+          "name": "readiness",
+          "filePath": "karta/src/runtime/lifecycle.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        },
+        {
+          "name": "start",
+          "filePath": "karta/src/runtime/lifecycle.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        },
+        {
+          "name": "stop",
+          "filePath": "karta/src/runtime/lifecycle.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85
+        }
+      ],
+      "processesAffected": 4,
+      "epistemic": "exact",
+      "boundaries": [],
+      "riskNote": null
+    }
+  ],
+  "artifacts": "Same directory: context-*.json, impact-*.json, impact-decide-exact-uid.json, resource-*.txt, manual-reference-supplement.json"
+}

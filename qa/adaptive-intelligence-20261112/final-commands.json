@@ -1,0 +1,192 @@
+[
+  {
+    "name": "karta-full-final",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=${WORKSPACE}/adaptive-validation-raw/karta-final.json"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 151.73,
+    "log_section": "karta-full-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "karta-types-final",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.json"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 5.54,
+    "log_section": "karta-types-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "karta-build-final",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.build.json"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 3.0,
+    "log_section": "karta-build-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "research-native-final",
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "--test",
+      "test/connectedResearch.native.mjs"
+    ],
+    "cwd": "karta",
+    "exit_code": 0,
+    "seconds": 0.65,
+    "log_section": "research-native-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-unit-final",
+    "command": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "--reporter=json",
+      "--outputFile=${WORKSPACE}/adaptive-validation-raw/site-final.json"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "seconds": 13.9,
+    "log_section": "site-unit-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "preferences-sql-final",
+    "command": [
+      "node",
+      "--test",
+      "tests/creator-execution-preferences.test.mjs"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "seconds": 3.12,
+    "log_section": "preferences-sql-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-types-final",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.app.json"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "seconds": 13.38,
+    "log_section": "site-types-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-build-final",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": ".",
+    "exit_code": 228,
+    "seconds": 0.16,
+    "log_section": "site-build-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-lint-final",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "cwd": ".",
+    "exit_code": 228,
+    "seconds": 0.14,
+    "log_section": "site-lint-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "database-contracts-final",
+    "command": [
+      "node",
+      "scripts/generate-supabase-contracts.mjs",
+      "--check"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "seconds": 2.31,
+    "log_section": "database-contracts-final.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-build-retry",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "env": {
+      "npm_config_cache": "${WORKSPACE}/npm-cache"
+    },
+    "cwd": ".",
+    "exit_code": 0,
+    "seconds": 12.15,
+    "log_section": "site-build-retry.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-lint-retry",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "env": {
+      "npm_config_cache": "${WORKSPACE}/npm-cache"
+    },
+    "cwd": ".",
+    "exit_code": 1,
+    "seconds": 10.19,
+    "log_section": "site-lint-retry.log",
+    "log": "validation-output.txt"
+  },
+  {
+    "name": "site-lint-pass",
+    "command": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "env": {
+      "npm_config_cache": "workspace cache"
+    },
+    "cwd": ".",
+    "exit_code": 0,
+    "log_section": "site-lint-pass.log",
+    "log": "validation-output.txt"
+  }
+]

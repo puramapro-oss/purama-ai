@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Send, Loader2, Check, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { publishEverywhere, type Platform } from '@/lib/social';
+import { publicationLabel, type PublicationResult, type PublicationStatus } from '@/lib/social-publish-request';
+import { useAuth } from '@/hooks/useAuth';
+import { createRequestScope } from '@/lib/request-scope';
 
 interface Props {
   content: string;
@@ -14,7 +17,7 @@ interface Props {
   className?: string;
 }
 
-type Status = 'idle' | 'publishing' | 'done' | 'error';
+type Status = 'idle' | 'publishing' | 'error' | PublicationStatus;
 
 export function PublishEverywhereButton({
   content,
@@ -25,14 +28,28 @@ export function PublishEverywhereButton({
   onPublished,
   className,
 }: Props) {
-  const [status, setStatus] = useState<Status>('idle');
+  const { user } = useAuth();
+  const userId = user?.id;
+  const [requests] = useState(createRequestScope);
+  const fingerprint = JSON.stringify({ content, mediaUrls, contentType, agentName, platforms });
+  const [state, setState] = useState<{ fingerprint: string; status: Status; result?: PublicationResult }>({ fingerprint, status: 'idle' });
+  const status = state.fingerprint === fingerprint ? state.status : 'idle';
+  const result = state.fingerprint === fingerprint ? state.result : undefined;
+
+  useLayoutEffect(() => {
+    setState({ fingerprint, status: 'idle' });
+    return () => requests.invalidate();
+  }, [userId, fingerprint, requests]);
 
   const handlePublish = async () => {
-    if (!content && (!mediaUrls || mediaUrls.length === 0)) {
+    if (!userId) return;
+    if (!content.trim() && (!mediaUrls || mediaUrls.length === 0)) {
       toast.error('Aucun contenu à publier');
       return;
     }
-    setStatus('publishing');
+    const request = requests.begin('publish');
+    if (!request) return;
+    setState({ fingerprint, status: 'publishing' });
     try {
       const result = await publishEverywhere({
         content,
@@ -40,51 +57,57 @@ export function PublishEverywhereButton({
         contentType,
         agentName,
         platforms,
-      });
-      setStatus('done');
-      toast.success('✅ Publié partout !', {
-        description: 'Votre contenu est en route sur tous vos réseaux.',
-      });
-      onPublished?.(result.post_id);
-      setTimeout(() => setStatus('idle'), 4000);
+      }, { ownerId: userId, signal: request.signal });
+      if (!request.current()) return;
+      setState({ fingerprint, status: result.status, result });
+      if (result.status === 'published') {
+        toast.success(publicationLabel(result.status), { description: 'Le fournisseur a confirmé les destinations demandées.' });
+        onPublished?.(result.post_id);
+      } else if (result.status === 'scheduled') {
+        toast.info(publicationLabel(result.status), { description: 'La demande est enregistrée pour la date prévue.' });
+      } else {
+        toast.warning(publicationLabel(result.status), {
+          description: result.error || 'Consultez le résultat par réseau. Aucun renvoi automatique.',
+        });
+      }
     } catch (error) {
-      setStatus('error');
+      if (!request.current()) return;
+      setState({ fingerprint, status: 'error' });
       const message = error instanceof Error ? error.message : String(error);
-      toast.error('❌ Échec de la publication', { description: message });
-      setTimeout(() => setStatus('idle'), 4000);
+      toast.warning('Résultat non confirmé', { description: message });
+    } finally {
+      request.finish();
     }
   };
 
   return (
-    <Button
-      onClick={handlePublish}
-      disabled={status === 'publishing'}
-      variant={status === 'done' ? 'outline' : 'default'}
-      className={
-        className ??
-        'gap-2 bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground hover:opacity-90'
-      }
-    >
-      {status === 'idle' && (
-        <>
-          <Send className="w-4 h-4" /> Publier partout
-        </>
+    <div className="space-y-2">
+      <Button
+        onClick={handlePublish}
+        disabled={!userId || status === 'publishing' || status === 'published' || status === 'scheduled' || status === 'partial' || status === 'failed'}
+        variant={status === 'published' ? 'outline' : 'default'}
+        className={className ?? 'gap-2 bg-gradient-to-r from-accent-cyan to-accent-purple text-primary-foreground hover:opacity-90'}
+      >
+        {status === 'idle' && <><Send className="w-4 h-4" /> Publier sur mes réseaux</>}
+        {status === 'publishing' && <><Loader2 className="w-4 h-4 animate-spin" /> Vérification en cours…</>}
+        {status === 'published' && <><Check className="w-4 h-4 text-green-500" /> Publication confirmée</>}
+        {status === 'scheduled' && 'Publication programmée'}
+        {status === 'partial' && <><AlertCircle className="w-4 h-4" /> Publication partielle</>}
+        {status === 'failed' && <><AlertCircle className="w-4 h-4" /> Publication non effectuée</>}
+        {(status === 'error' || status === 'publish_unconfirmed') && <><AlertCircle className="w-4 h-4" /> Vérifier le résultat</>}
+      </Button>
+      {(status === 'error' || status === 'publish_unconfirmed') && (
+        <p role="status" className="text-xs text-amber-500">Résultat à confirmer. Cette vérification conserve la même demande, sans nouvelle publication.</p>
       )}
-      {status === 'publishing' && (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" /> Publication...
-        </>
+      {result?.platform_results && result.platform_results.length > 0 && (
+        <ul aria-label="Résultat par réseau" className="text-xs text-muted-foreground space-y-1">
+          {result.platform_results.map((platform, index) => (
+            <li key={`${platform.platform}-${platform.accountId}-${index}`}>
+              {platform.platform} : {platform.status === 'published' ? 'publié' : platform.status === 'failed' ? 'échec confirmé' : 'à confirmer'}
+            </li>
+          ))}
+        </ul>
       )}
-      {status === 'done' && (
-        <>
-          <Check className="w-4 h-4 text-green-500" /> Publié !
-        </>
-      )}
-      {status === 'error' && (
-        <>
-          <AlertCircle className="w-4 h-4 text-red-500" /> Réessayer
-        </>
-      )}
-    </Button>
+    </div>
   );
 }

@@ -75,6 +75,8 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
   name: string;
   description: string;
   sensitive: boolean;
+  /** Requires a claimed human approval even at the highest autonomy level. */
+  requiresExplicitApproval?: true;
   /**
    * Server-owned trace policy, independent of the approval flag above. A tool
    * marked metadata_only protects the whole cycle, including model summaries,
@@ -138,6 +140,12 @@ export interface AgentContextInput {
 
 export interface AgentDefinition {
   type: AgentType;
+  /** Explicit user choice, validated against the server model catalogue. */
+  modelPreferences?: {
+    model: string;
+    reflection?: "auto" | "standard" | "deep" | "maximum";
+    speed?: "standard" | "fast" | "ultra_fast";
+  };
   /**
    * Opt in to durable, exclusive acquisition of this pending memory key.
    * KARTA prepares the brief before inference and durably marks possible

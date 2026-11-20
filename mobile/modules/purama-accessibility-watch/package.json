@@ -1,0 +1,7 @@
+{
+  "name": "purama-accessibility-watch",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "description": "Local native companion transport for the existing ONE accessibility contract"
+}

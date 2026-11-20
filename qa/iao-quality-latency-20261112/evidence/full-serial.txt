@@ -1,0 +1,158 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 --no-file-parallelism --reporter=dot
+
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-performance/karta
+
+stderr | test/customAuthorization.test.ts > custom authority immediately before the provider request > reconciles a cancelled close once and preserves it after bookkeeping failure and reactivation
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+·····································································································x··································································································································································································································stdout | test/briefSubmissionFlow.test.ts
+[api] KARTA écoute sur :0
+
+···························································································································································································stderr | test/loopBriefLifecycle.test.ts > effect barrier and immutable completion > does not replay an effect when closure remains ambiguous
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loopBriefLifecycle.test.ts > effect barrier and immutable completion > forbids automatic retry if an inference failure cannot be durably closed
+[loop] journalisation indisponible ; reprise automatique interdite
+
+stderr | test/loopBriefLifecycle.test.ts > effect barrier and immutable completion > preserves confirmed success when secondary bookkeeping fails
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+····························································································································································stderr | test/approvalContinuation.test.ts > verified approval continuation through the real loop and SQL-finalized receipts > forbids replay after an uncertain approval insert, even when closing fails: true
+[loop] journalisation indisponible ; reprise automatique interdite
+
+·························································································································································································································stderr | test/loopTracePrivacy.test.ts > private tool traces through the real agent cycle > retains executed evidence and forbids replay after bookkeeping fails
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+···························································································································································································································································································································································································································································································································································································································································································stderr | test/loggerCycleFinalization.test.ts > a committed cycle remains final when secondary bookkeeping fails > preserves a newer approval resolution that occurs during notification
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > forbids automatic replay without tools or an execution key after an uncertain close
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of success without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+stderr | test/loggerCycleFinalization.test.ts > bounded reconciliation of the first cycle outcome > stops after two unconfirmed closes of awaiting_approval without replaying effects
+[loop] clôture non confirmée après réconciliation ; reprise automatique interdite
+
+···························································stderr | test/loop.test.ts > cycle outcomes and interruption > preserves committed success and forbids replay after a bookkeeping failure
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+·······································································································stdout | test/runtimeApiReadiness.test.ts
+[api] KARTA écoute sur :0
+
+·······························································stdout | test/apiDeliveryIdentity.test.ts
+[api] KARTA écoute sur :0
+
+················································································································stdout | test/apiSafety.test.ts
+[api] KARTA écoute sur :0
+
+stderr | test/apiSafety.test.ts > does not expose internal exception details
+[api] requête échouée
+
+···········································································································
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/assistantPolicy.test.ts > real provider request construction > adds the task policy once through createRealClaudeClient with a simulated SDK transport
+Error: KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis
+ ❯ createRealClaudeClient src/claude/real.ts:37:15
+     35|   }
+     36|   const client = new Anthropic({
+     37|     apiKey: config.anthropicApiKey,
+       |               ^
+     38|     timeout: timeoutMs,
+     39|     maxRetries: 0,
+ ❯ test/assistantPolicy.test.ts:286:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 5 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/37cd53c7c075/iao-performance/karta/test/queueDeliveryIdentity.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/37cd53c7c075/iao-performance/karta/test/subscriptionRevision.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/37cd53c7c075/iao-performance/karta/test/approvalParentGuard.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/37cd53c7c075/iao-performance/karta/test/chefBudgetMigration.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/37cd53c7c075/iao-performance/karta/test/approval.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 115 passed (121)
+      Tests  1 failed | 1998 passed (2115)
+     Errors  5 errors
+   Start at  05:48:01
+   Duration  166.54s (tests 87%, import 10%, transform 2%, setup 1%)
+
+    Isolate  121 workers spawned · ~143ms startup each (spawn + environment, per file)
+             at least ~17.10s faster with isolate: false — reuses workers across files instead of one per file

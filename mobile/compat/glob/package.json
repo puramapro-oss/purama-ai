@@ -1,0 +1,17 @@
+{
+  "name": "@purama/expo-glob-compat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Use the upstream raw glob entry with the scoped bounded matcher adapter",
+  "type": "module",
+  "main": "index.cjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": { "types": "./index.d.ts", "import": "./index.mjs", "require": "./index.cjs" },
+    "./raw": { "types": "./index.d.ts", "import": "./index.mjs", "require": "./index.cjs" },
+    "./package.json": "./package.json"
+  },
+  "files": ["index.cjs", "index.mjs", "index.d.ts"],
+  "engines": { "node": ">=20.19.4" },
+  "dependencies": { "glob-upstream": "npm:glob@13.0.7" }
+}

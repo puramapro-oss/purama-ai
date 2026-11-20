@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "scope": "Generated native projects, not compiled binaries",
+  "generatedAt": "2026-11-12T04:16:50.149Z",
+  "phoneTarget": "PuramaAI",
+  "watchTarget": "\"PuramaAccessibilityWatch\"",
+  "sources": [
+    "../watch/watchos/PuramaAccessibilityWatchApp.swift",
+    "../modules/purama-accessibility-watch/apple/WatchWire.swift"
+  ],
+  "androidWearTarget": ":puramaAccessibilityWatch",
+  "sourceSha256": {
+    "app.json": "6fa37ad4d7c6802a1f303833a031f1740105320bc90c803ebf76662bdbacb1a2",
+    "package.json": "73ad76504748ea91ed57c866c0d19212dd1ee1c99a81af12a0499aa092191e19",
+    "package-lock.json": "b022903391801032687a6a4a6df4af916b28069176b0662bf1c80276de02e47a",
+    "modules/purama-accessibility-watch/app.plugin.cjs": "61a634c571b28f98176df26c48f92c061ff5dff63afc0977e48f339cba999bbc",
+    "modules/purama-accessibility-watch/expo-module.config.json": "61c2a2b1e15d0347dd79e0f340057da9189189a3c87809bf91ee266853950ba1",
+    "modules/purama-accessibility-watch/apple/WatchWire.swift": "394e7cff4dd86bc61579fc6c18825abf87225221c98235d49813c444cf1a172c",
+    "modules/purama-accessibility-watch/apple/PuramaAccessibilityWatchModule.swift": "3b523691bd404659685b7b469767cc4517cdcdc0ded907b6151db20edc10601a",
+    "modules/purama-accessibility-watch/apple/PuramaAccessibilityWatch.podspec": "555eb6f443b838a14c2d08cd45df8140720a16ad62833bf7198ae7382af57973",
+    "modules/purama-accessibility-watch/android/build.gradle": "e3c30907f7939641bbcc834eb2befe191bcc37d9deb1d8f8ab39842693d0c768",
+    "modules/purama-accessibility-watch/android/src/main/java/expo/modules/puramaaccessibilitywatch/WatchWire.kt": "2356b197c4c588b08d3e4779f3b3d1e11fa0bfb8bae7e9f393d624173b6cc43b",
+    "modules/purama-accessibility-watch/android/src/main/java/expo/modules/puramaaccessibilitywatch/PuramaAccessibilityWatchModule.kt": "da149160f72fbb81d670ed7ff384fdad378e7fd82c093deeed247f2fba4e2785",
+    "watch/watchos/PuramaAccessibilityWatchApp.swift": "ec6f86e553746316e5ca81ad5ee76664c58c37da3a3a2b616eb69b7a6fbb1058",
+    "watch/watchos/Info.plist": "bc522993438d68a14f602f30a01edb6f0da47cd95c90f0137e8aa37cb697c866",
+    "watch/wear/build.gradle": "6cec397e4eb0ef505ce7cba6eccd8115e0117448e645365aeaa3e1a4a4ed2fa7",
+    "watch/wear/src/main/AndroidManifest.xml": "9c94aeaffa800b5f327e3c8751d41b4955920e7141fad48291e60adc933e679a",
+    "watch/wear/src/main/java/dev/purama/accessibilitywatch/WatchActivity.kt": "3a0b4d58382de44c19eeff83cd9f0e019455ec8ae9d3b899a9409fb907f6a5d0",
+    "watch/wear/src/main/res/values/wear.xml": "2dd5a46dc73cc0d3e6e28554f8930774a33dadf7a18dbc3508b515213630aa52"
+  }
+}

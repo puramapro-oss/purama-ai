@@ -1,0 +1,540 @@
+{
+  "recorded_at": "2026-11-11T08:39:28.134023+00:00",
+  "status": "PASS_LOCAL_SOURCE_GATES",
+  "scope": "Isolated social composition, not hosted provider or production qualification",
+  "base": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+  "social_donor": "fb2e7ea6aa1b8d35d54702927112f40e8ae82ac9",
+  "merge_base": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+  "qualified_source_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+  "branch": "audit/unlazy-social-20261111-ac3c",
+  "clone": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+  "paths": [
+    ".github/workflows/purama-chef-hardening.yml",
+    "karta/test/assistantPolicy.test.ts",
+    "src/components/agent/DynamicAgentForm.tsx",
+    "src/components/social/PublishEverywhereButton.tsx",
+    "src/hooks/useAgentExecution.ts",
+    "src/lib/social-publish-request.ts",
+    "src/lib/social.ts",
+    "src/pages/SocialSettings.tsx",
+    "supabase/functions/_shared/social-connection-core.ts",
+    "supabase/functions/_shared/social-connection-provider.ts",
+    "supabase/functions/_shared/social-connection-store.ts",
+    "supabase/functions/_shared/social-db.ts",
+    "supabase/functions/_shared/social-management-core.ts",
+    "supabase/functions/_shared/social-management-store.ts",
+    "supabase/functions/_shared/social-publish-core.ts",
+    "supabase/functions/_shared/social-publish-reconcile.ts",
+    "supabase/functions/_shared/social-publish-store.ts",
+    "supabase/functions/_shared/social-state.ts",
+    "supabase/functions/_shared/zernio.ts",
+    "supabase/functions/social-accounts/index.ts",
+    "supabase/functions/social-autopilot-config/index.ts",
+    "supabase/functions/social-callback/index.ts",
+    "supabase/functions/social-connect/index.ts",
+    "supabase/functions/social-publish-scheduled/handler.ts",
+    "supabase/functions/social-publish-scheduled/index.ts",
+    "supabase/functions/social-publish/handler.ts",
+    "supabase/functions/social-publish/index.ts",
+    "supabase/migrations/20261110000300_social_publish_idempotency.sql",
+    "supabase/migrations/20261110000400_social_account_binding.sql",
+    "tests/social-agent-execution.test.mjs",
+    "tests/social-browser/harness.jsx",
+    "tests/social-browser/index.html",
+    "tests/social-browser/run.mjs",
+    "tests/social-browser/supabase-fixture.js",
+    "tests/social-connection/binding-sql.test.mjs",
+    "tests/social-connection/connection.test.ts",
+    "tests/social-connection/deno.json",
+    "tests/social-connection/handler-sdk.test.ts",
+    "tests/social-management/handler-sdk.test.ts",
+    "tests/social-management/handlers.test.ts",
+    "tests/social-publish/client-intent.test.ts",
+    "tests/social-publish/fake-db.ts",
+    "tests/social-publish/migration-sql.test.mjs",
+    "tests/social-publish/provider.test.ts",
+    "tests/social-publish/publish.test.ts",
+    "tests/social-publish/runtime.test.ts",
+    "tests/social-publish/scheduled.test.ts"
+  ],
+  "source_manifest": "source-manifest.json",
+  "source_manifest_sha256": "cecdd70233b4f55e924ae9e0170ceaa19b0d3426df8bdf7ffe212f1c4dfbdd09",
+  "social_donor_exact_files": 39,
+  "social_donor_files_with_reproduced_lifetime_correction": [
+    "src/components/agent/DynamicAgentForm.tsx",
+    "tests/social-browser/harness.jsx",
+    "tests/social-browser/run.mjs",
+    "tests/social-browser/supabase-fixture.js"
+  ],
+  "additional_reviewed_paths": [
+    "src/hooks/useAgentExecution.ts",
+    "tests/social-agent-execution.test.mjs"
+  ],
+  "outside_scope_source_delta": 0,
+  "financial_and_revenue_sources_equal_base": true,
+  "billing_timeout_wrapper_equal_base": true,
+  "creator_agent_false_owner_fixture_absent": true,
+  "server_gate_reuse": {
+    "original_tree": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+    "final_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+    "changed_paths_between_gates": [
+      ".github/workflows/purama-chef-hardening.yml",
+      "src/components/agent/DynamicAgentForm.tsx",
+      "src/hooks/useAgentExecution.ts",
+      "tests/social-agent-execution.test.mjs",
+      "tests/social-browser/harness.jsx",
+      "tests/social-browser/run.mjs",
+      "tests/social-browser/supabase-fixture.js"
+    ],
+    "server_migrations_sdk_fixtures_and_assistant_policy_unchanged": true
+  },
+  "gates": [
+    {
+      "gate": "social-core",
+      "command": [
+        "/opt/homebrew/bin/deno",
+        "test",
+        "--no-config",
+        "--no-lock",
+        "--cached-only",
+        "--no-prompt",
+        "--deny-net",
+        "--deny-run",
+        "tests/social-publish/client-intent.test.ts",
+        "tests/social-publish/provider.test.ts",
+        "tests/social-publish/publish.test.ts",
+        "tests/social-publish/scheduled.test.ts",
+        "tests/social-connection/connection.test.ts",
+        "tests/social-management/handlers.test.ts"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:17:35.097943+00:00",
+      "finished_at": "2026-11-11T08:17:40.323075+00:00",
+      "elapsed_seconds": 5.224,
+      "exit_code": 0,
+      "timeout": false,
+      "tree_before": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "tree_after": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "source_unchanged": true,
+      "log_sha256": "69179635e45ab754d4594a09caa8bd232f126d70e278c5a10ece0c822d5b8354",
+      "runtime": {
+        "node": "v22.23.4",
+        "deno": "deno 2.9.7 (stable, release, aarch64-apple-darwin)"
+      },
+      "status": "PASS",
+      "cases": 104,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/social-core.log",
+      "receipt_sha256": "d7ee069bf0f6d5ffcb35015c17218242121220063b8f9c1fab6b428617b6e64b"
+    },
+    {
+      "gate": "social-sdk",
+      "command": [
+        "/opt/homebrew/bin/deno",
+        "test",
+        "--no-lock",
+        "--cached-only",
+        "--no-prompt",
+        "--deny-net",
+        "--deny-run",
+        "--allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET",
+        "--config",
+        "tests/social-connection/deno.json",
+        "tests/social-connection/handler-sdk.test.ts",
+        "tests/social-management/handler-sdk.test.ts",
+        "tests/social-publish/runtime.test.ts"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:17:40.423722+00:00",
+      "finished_at": "2026-11-11T08:17:45.470415+00:00",
+      "elapsed_seconds": 5.047,
+      "exit_code": 0,
+      "timeout": false,
+      "tree_before": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "tree_after": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "source_unchanged": true,
+      "log_sha256": "3a4b0467a7ad880d9bc570f057fa558fe7a23cc24dbf1442f3685f0ab5c19630",
+      "runtime": {
+        "node": "v22.23.4",
+        "deno": "deno 2.9.7 (stable, release, aarch64-apple-darwin)"
+      },
+      "status": "PASS",
+      "cases": 14,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/social-sdk.log",
+      "receipt_sha256": "1c3245faef13c41b649620f552593b0702d23351ee6933ba5f6a954981bb61e1"
+    },
+    {
+      "gate": "social-sql",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-timeout=30000",
+        "tests/social-publish/migration-sql.test.mjs",
+        "tests/social-connection/binding-sql.test.mjs"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:17:45.570145+00:00",
+      "finished_at": "2026-11-11T08:17:57.502675+00:00",
+      "elapsed_seconds": 11.933,
+      "exit_code": 0,
+      "timeout": false,
+      "tree_before": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "tree_after": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "source_unchanged": true,
+      "log_sha256": "14bc57af1ad43506f852a894f45883c5f80795d098042f12106d90fa1b4f64cf",
+      "runtime": {
+        "node": "v22.23.4",
+        "deno": "deno 2.9.7 (stable, release, aarch64-apple-darwin)"
+      },
+      "status": "PASS",
+      "cases": 40,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/social-sql.log",
+      "receipt_sha256": "b0ee33b89fc9788260bc491f5b2064d14b3be0a0966bfc0928c6d6e842189afa"
+    },
+    {
+      "gate": "assistant-policy-final",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/karta/node_modules/vitest/vitest.mjs",
+        "run",
+        "test/assistantPolicy.test.ts",
+        "--maxWorkers=1"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/karta",
+      "started_at": "2026-11-11T08:27:39.872938+00:00",
+      "finished_at": "2026-11-11T08:27:48.823978+00:00",
+      "elapsed_seconds": 8.951,
+      "exit_code": 0,
+      "log_sha256": "14e2697e0684891a1ce5c54d102d27f51e676fa82a65b3396c4061db87f267f8",
+      "node": "v22.23.4",
+      "note": "Targeted independent gate; UI lifetime qualification follows after root hook stabilization.",
+      "status": "PASS",
+      "cases": 55,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/assistant-policy-final.log",
+      "receipt_sha256": "22d0ff9f093d36fca05fdc670ae8595635257a1db335c34e0cab51d6f832105e"
+    },
+    {
+      "gate": "social-browser-final",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "tests/social-browser/run.mjs"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:32:00.490640+00:00",
+      "finished_at": "2026-11-11T08:33:54.160974+00:00",
+      "elapsed_seconds": 113.671,
+      "exit_code": 0,
+      "timeout": false,
+      "source_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+      "source_unchanged": true,
+      "source_manifest": "final-source-manifest.json",
+      "log_sha256": "f8a7e53d7c97ed7bcbe51d198990f2495e10646ebef98495295bc073b2ab394b",
+      "node": "v22.23.4",
+      "status": "PASS",
+      "cases": 29,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/social-browser-final.log",
+      "receipt_sha256": "4a00d2f43598d6f25a9a96d23d9114881fc54b6dc8208c06cba59768fd4c4082"
+    },
+    {
+      "gate": "social-hook-final",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-timeout=30000",
+        "tests/social-agent-execution.test.mjs"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:33:54.161786+00:00",
+      "finished_at": "2026-11-11T08:33:56.393443+00:00",
+      "elapsed_seconds": 2.232,
+      "exit_code": 0,
+      "timeout": false,
+      "source_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+      "source_unchanged": true,
+      "source_manifest": "final-source-manifest.json",
+      "log_sha256": "7ac1e2eba9c454d970c6e73b6cedcb8fe6b6b7beb0422c29a4e8f5098bd2f0ee",
+      "node": "v22.23.4",
+      "status": "PASS",
+      "cases": 11,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/social-hook-final.log",
+      "receipt_sha256": "71b25fc678192820bcf0d45bc657ff1de228768173e6854a47bea907471f2ff3"
+    },
+    {
+      "gate": "social-production-sdk",
+      "command": [
+        "/opt/homebrew/bin/deno",
+        "check",
+        "--no-config",
+        "--no-lock",
+        "--node-modules-dir=manual",
+        "--cached-only",
+        "supabase/functions/social-accounts/index.ts",
+        "supabase/functions/social-autopilot-config/index.ts",
+        "supabase/functions/social-callback/index.ts",
+        "supabase/functions/social-connect/index.ts",
+        "supabase/functions/social-publish/index.ts",
+        "supabase/functions/social-publish-scheduled/index.ts"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:17:57.774805+00:00",
+      "finished_at": "2026-11-11T08:18:00.159763+00:00",
+      "elapsed_seconds": 2.385,
+      "exit_code": 0,
+      "timeout": false,
+      "tree_before": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "tree_after": "4f91431f5e1f24be8de1cba061ef0f4c2945ad11",
+      "source_unchanged": true,
+      "log_sha256": "3981b35cb5540c2b08cf5f215e4550e4b36f61f18cf3f3542979a1951ccb0877",
+      "runtime": {
+        "node": "v22.23.4",
+        "deno": "deno 2.9.7 (stable, release, aarch64-apple-darwin)"
+      },
+      "status": "PASS",
+      "cases": null,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/social-production-sdk.log",
+      "receipt_sha256": "439ba5ef8e4fc78e3b6321c2cee10f38e192095d068af9abffa2e009da71ea32"
+    },
+    {
+      "gate": "database-contracts",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "scripts/generate-supabase-contracts.mjs",
+        "--check"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:27:48.826517+00:00",
+      "finished_at": "2026-11-11T08:27:57.499972+00:00",
+      "elapsed_seconds": 8.674,
+      "exit_code": 0,
+      "log_sha256": "5226e3f9447397b2212c506e493a570fd102ba0d61337f5213f04f015664f3f3",
+      "node": "v22.23.4",
+      "note": "Targeted independent gate; UI lifetime qualification follows after root hook stabilization.",
+      "status": "PASS",
+      "cases": null,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/database-contracts.log",
+      "receipt_sha256": "5bc3cf3bdcdea9335f1986898e6792572cc2947a517094a009f2fdbe7a2b8f65"
+    },
+    {
+      "gate": "workflow-union",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/validate-workflow.cjs"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:30:20.475260+00:00",
+      "finished_at": "2026-11-11T08:30:20.937504+00:00",
+      "elapsed_seconds": 0.462,
+      "exit_code": 0,
+      "log_sha256": "bae57606f56f0051baf9c72d87b5f9229126ec119a154d4401eb17a46bd9ffd4",
+      "node": "v22.23.4",
+      "status": "PASS",
+      "cases": null,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/workflow-union.log",
+      "receipt_sha256": "2af252ec866ae714883d09cebe92d05abc41d57e7537c1ec51292db8ea159f87"
+    },
+    {
+      "gate": "site-typecheck-final",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.app.json"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:33:56.394964+00:00",
+      "finished_at": "2026-11-11T08:34:45.510304+00:00",
+      "elapsed_seconds": 49.116,
+      "exit_code": 0,
+      "timeout": false,
+      "source_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+      "source_unchanged": true,
+      "source_manifest": "final-source-manifest.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "node": "v22.23.4",
+      "status": "PASS",
+      "cases": null,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/site-typecheck-final.log",
+      "receipt_sha256": "aceb69ec25b30f0af63ede548e1ab5667a0998ec425834faecfd7477d65d5a40"
+    },
+    {
+      "gate": "site-build-final",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:34:45.512293+00:00",
+      "finished_at": "2026-11-11T08:35:12.168867+00:00",
+      "elapsed_seconds": 26.657,
+      "exit_code": 0,
+      "timeout": false,
+      "source_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+      "source_unchanged": true,
+      "source_manifest": "final-source-manifest.json",
+      "log_sha256": "77315f6fc355b14573a8adf9ffaeb8676550829049ee15c46a4252bca002cb21",
+      "node": "v22.23.4",
+      "status": "PASS",
+      "cases": null,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/site-build-final.log",
+      "receipt_sha256": "46d07d0f18324f6bfa5487cd0959b93363ac12609e8666c8d62a4d5b01576b0c"
+    },
+    {
+      "gate": "site-lint-final",
+      "command": [
+        "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "."
+      ],
+      "cwd": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c",
+      "started_at": "2026-11-11T08:35:12.170972+00:00",
+      "finished_at": "2026-11-11T08:35:42.046998+00:00",
+      "elapsed_seconds": 29.877,
+      "exit_code": 0,
+      "timeout": false,
+      "source_tree": "ce02db70bb0d4bb4127939713f32add59b7c1813",
+      "source_unchanged": true,
+      "source_manifest": "final-source-manifest.json",
+      "log_sha256": "3ca0260213af8c1b6d9114836f7837b4d32e5f9ab53c89fd36e863ed6f90b065",
+      "node": "v22.23.4",
+      "status": "PASS",
+      "cases": null,
+      "log_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/site-lint-final.log",
+      "receipt_sha256": "f4dc8199b8d3269bcbd2a1ad7572120da3699a279a3c6479cc042611ed3a2d5d"
+    }
+  ],
+  "regressions": {
+    "autopilot": {
+      "before": {
+        "pass": 5,
+        "fail": 4,
+        "source_unchanged": true,
+        "log_sha256": "57dd2180259649b4b9b0d1a07ed0800bf4071af6250935f50b329e2ae1d81575",
+        "receipt_sha256": "3ad30010706a2575ea0f1a75659706c94790ba5a05c6c82e91cefd9e893edcaa"
+      },
+      "after": {
+        "same_nine_cases_pass": 9,
+        "included_in_browser_total": 29,
+        "log_sha256": "f8a7e53d7c97ed7bcbe51d198990f2495e10646ebef98495295bc073b2ab394b"
+      },
+      "failure_modes": [
+        "A -> B -> A",
+        "logout then same-owner login",
+        "view unmount",
+        "agent change"
+      ],
+      "fix": "An independent abortable lease per background autopilot remains registered until settlement; generation admission is released independently."
+    },
+    "agent_execution": {
+      "receipt": "agent-execution-review.json",
+      "receipt_sha256": "db84778fdec06746b8a6dfb8dcd2d7351beeb1b3c6a49e725554233c33f1f160",
+      "final_production_sha256": "a44da3fe6f03f6b537d3b09eac980b9b170c06740af27ea22468a0546e6fa364",
+      "test_sha256": "9f69f62ec835eb89350d8bfe78a81da1f35c318f84265d229bcb94a651f681f8",
+      "note": "The copied receipt after_sha256 identifies the first intermediate phase; production_sha256 is the final SDK-header correction."
+    },
+    "preserved_initial_command_failure": {
+      "gate": "assistant-policy",
+      "exit_code": 1,
+      "reason": "Local invocation used unsupported Vitest --minWorkers; no tests started. Corrected to --maxWorkers=1; 55/55 passed.",
+      "log_sha256": "10b2ddbc0bdf3c2507b23b86ff9d2999fa0289639a346eb6a1b5fe9c5e1ca1a8"
+    }
+  },
+  "pre_edit_graph": {
+    "baseline_index_exit_code": 0,
+    "baseline_index_log_sha256": "749d733dbc999ea00c665a0ade8a9f697f74a75649aa28e36af0c3f5b5f83d5f",
+    "calls": 29,
+    "risk_counts": {
+      "LOW": 17,
+      "MEDIUM": 2,
+      "UNKNOWN": 10,
+      "HIGH": 0,
+      "CRITICAL": 0
+    },
+    "limits": [
+      "FTS intentionally disabled; empty concept query is not evidence of absent flows",
+      "Anonymous/new functions are UNKNOWN and were reviewed textually",
+      "Process and call-site truncation warnings retained in index log"
+    ],
+    "records_path": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/impact-existing-symbols.json"
+  },
+  "final_graph_gate_paths": {
+    "index": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/index-final.json",
+    "staged": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/detect-staged.json",
+    "compare_base": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/detect-compare-base.json",
+    "compare_default_main": "/Users/matissdornier/purama-worktrees/unlazy-social-20261111-ac3c/.git/social-gates/detect-compare-main.json"
+  },
+  "workflow": {
+    "sha256": "b69d7b0656b33baf04772c3a7346bfe7217d2e1a4f26f554e61e4e5358a24847",
+    "all_prior_steps_preserved_in_order": true,
+    "retained_steps": {
+      "karta": 12,
+      "site": 43,
+      "subscription-concurrency": 4
+    },
+    "added_steps": {
+      "karta": 1,
+      "site": 4,
+      "subscription-concurrency": 0
+    },
+    "revenue_sql_occurrences": 1,
+    "stripe_sdk_gate_occurrences": 1,
+    "node_test_timeout_ms": 30000
+  },
+  "local_environment": {
+    "node": "22.23.4",
+    "deno": "2.9.7",
+    "ci_deno_pin": "2.9.6",
+    "chrome": "157.0.8103.39",
+    "playwright": "1.64.1",
+    "supabase_js": "2.91.0",
+    "pglite": "0.5.8",
+    "root_lock_version_matches": 641,
+    "karta_lock_version_matches": 160,
+    "package_installation_performed": false,
+    "application_lockfiles_equal_base": true,
+    "missing_native_pg_dependencies": "KARTA pg8.23.1 and its13 dependencies were absent locally; none was required for these PGlite social gates."
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 21,
+    "warning_paths_outside_changed_scope": true,
+    "warning_paths": [
+      "mobile/hooks/useAuth.tsx",
+      "src/components/CookieConsent.tsx",
+      "src/components/ui/badge.tsx",
+      "src/components/ui/button.tsx",
+      "src/components/ui/form.tsx",
+      "src/components/ui/navigation-menu.tsx",
+      "src/components/ui/sidebar.tsx",
+      "src/components/ui/sonner.tsx",
+      "src/components/ui/toggle.tsx",
+      "tests/chat/auth.tsx",
+      "tests/oauth-google/browser/entry.tsx",
+      "tests/quality/billing-dashboard-scope-harness.tsx",
+      "tests/quality/billing-scope-harness.tsx",
+      "tests/voice-consent/auth.tsx",
+      "tests/voice-consent/harness.tsx",
+      "tests/wellbeing/auth.tsx",
+      "tests/wellbeing/harness.tsx"
+    ],
+    "test_harness_jsx": "The existing ESLint configuration excludes harness.jsx; it was compiled and executed in all29 browser scenarios."
+  },
+  "boundaries": [
+    "No push, PR mutation, new CI trigger, deployment or hosted migration",
+    "No actual publication, OAuth provider connection, X spend or paid caption request",
+    "Browser aborts every external request and finished with zero external attempts",
+    "Deno runtime suites deny network and subprocess permissions; cached-only module loading used locally",
+    "Production Deno check used cached-only; its full diagnostic log, including Download lines emitted by Deno, is retained; network tracing was not claimed",
+    "Local macOS qualification does not replace the final combined Linux CI",
+    "No full KARTA rerun, mobile rerun, dependency audit or production load test in this bounded social phase"
+  ],
+  "deployment_prerequisites": [
+    "Apply social publication migration00300 before account-binding migration00400 in the existing reviewed schemas",
+    "Legacy account evidence and uncertain publication identity are not fabricated; affected accounts require verified reconnection or review",
+    "Keep X publication and paid caption generation refused until their server-side prerequisites exist"
+  ],
+  "published": false,
+  "production_changed": false
+}

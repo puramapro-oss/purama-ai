@@ -1,0 +1,318 @@
+{
+  "created_at": "2026-11-11T08:27:18.252419+00:00",
+  "status": "PASS_LOCAL_QUALIFICATION_NOT_PUSHED",
+  "base_head": "f7660e43bb72b29408611593d62c1bcee53ce4a1",
+  "donor_head": "f69b2a9a4af0e866848bf3ab860817df8b97c527",
+  "prerequisite_head": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+  "donor_selection": {
+    "paths_total": 80,
+    "paths_selected": 78,
+    "paths_omitted": [
+      "src/lib/entraide.ts",
+      "tests/entraide/compatibility-client.test.mjs"
+    ],
+    "omitted_compatibility_tests": 2,
+    "reason": "No application consumer or package export surface; old adapter absent from the core. Private implementation is preserved in the donor and is not duplicated."
+  },
+  "qualifications": {
+    "postgres_native": {
+      "tests": 92,
+      "pass": 92,
+      "fail": 0,
+      "skipped": 0,
+      "runtime": "PostgreSQL18.4 / Node22.23.4 / pg8.23.0",
+      "evidence": "native-result.json"
+    },
+    "http_sdk_frontend": {
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "skipped": 0,
+      "private_matching_required": true,
+      "evidence": "http-sdk-frontend-30.log"
+    },
+    "ui_regression": {
+      "same_cases": 9,
+      "before_pass": 3,
+      "before_fail": 6,
+      "after_pass": 9,
+      "after_fail": 0,
+      "skipped": 0,
+      "evidence": "ui-account-receipt.json"
+    },
+    "public_ci_command": {
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "overlap_with_http_sdk_frontend": 13,
+      "additional_ui_cases": 9,
+      "evidence": "public-ci-tests.log"
+    },
+    "site_typecheck": "PASS without private package",
+    "site_build": "PASS without private package, synthetic public configuration",
+    "site_lint": {
+      "exit": 0,
+      "errors": 0,
+      "warnings": 21
+    },
+    "edge_typecheck": "PASS all four entries, cached-only SDK and canonical generated matching",
+    "workflow_lint": "PASS two workflows",
+    "generated_contracts": {
+      "exit": 0,
+      "evidence": "generated-contracts.json",
+      "catalog_sources": [
+        "p3_schema.sql",
+        "supabase/migrations/20260422180000_v4_1_stripe_connect_opentimestamps.sql"
+      ],
+      "all_migrations_discovered": false
+    }
+  },
+  "invariants": {
+    "native_sql_tests_unchanged": true,
+    "five_migrations_exact": true,
+    "retired_pr17_production_writer_absent": true,
+    "current_auth_provider_guard_scope_unchanged": true,
+    "root_and_karta_package_locks_unchanged": true,
+    "all_previous_chef_steps_byte_identical_after_removing_single_added_step": true,
+    "canonical_private_package_modified": false,
+    "private_generated_bundle_tracked": false,
+    "real_provider_or_production_database_access": false,
+    "installation": false,
+    "push": false,
+    "deployment": false
+  },
+  "private_runtime_prerequisite": {
+    "package": "@purama/entraide0.1.0",
+    "matching_source_sha256": "a81b93a2d14c5ebcc9fe3b2fa86eca982c04aeda30c1b6cd8e5f433b25b20e24",
+    "generated_bundle_sha256": "b1fa6f3626855835b1e550ba5a96ff3d8f6a78a1e6135d12a4cfb31da06ff4d2",
+    "builder": "scripts/build-entraide-matching.mjs",
+    "frontend_requires_private_package": false,
+    "edge_runtime_requires_generated_bundle": true,
+    "public_ci_does_not_qualify_private_adapter": true
+  },
+  "gitnexus": {
+    "cold_index": "TIMEOUT at150s, preserved",
+    "warm_index": "PASS",
+    "detect_changes": {
+      "status": "PASS",
+      "scope": "staged",
+      "files": 113,
+      "symbols_reported": 819,
+      "affected_processes_reported": 15,
+      "risk": "HIGH",
+      "coverage": "Budgeted graph result, not exhaustive. Some displayed items are limited by CLI output.",
+      "stdout": "Changes: 113 files, 819 symbols\nAffected processes: 15\nRisk level: high\n\nChanged symbols:\n  Const root \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const files \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const configPath \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const input \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const config \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const domain \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const options \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property allowImportingTsExtensions \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property noEmit \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property paths \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Const tracked \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Function inspect \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property selected \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property dependencyDiagnostics \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n  Property files \u2192 qa/entraide-reconciliation-20261110/typecheck.mjs\n... and 804 more\n\nAffected execution flows:\n  \u2022 App \u2192 Cn (5 steps) \u2014 changed: App\n  \u2022 App \u2192 UseAuth (5 steps) \u2014 changed: App\n  \u2022 App \u2192 EmptyActivity (5 steps) \u2014 changed: App\n  \u2022 App \u2192 RemovePreferenceListener (4 steps) \u2014 changed: App\n  \u2022 App \u2192 HandleOpen (4 steps) \u2014 changed: App\n  \u2022 App \u2192 WellbeingCopy (4 steps) \u2014 changed: App\n  \u2022 App \u2192 ApplySession (3 steps) \u2014 changed: App\n  \u2022 App \u2192 Skip (3 steps) \u2014 changed: App\n  \u2022 App \u2192 RememberIntroSeen (3 steps) \u2014 changed: App\n  \u2022 Entraide \u2192 ToProfileDraft (3 steps) \u2014 changed: EntraideWorkspace, Entraide, toProfileDraft\n... and 5 more\n",
+      "stdout_sha256": "7459644bc5d3dd2718e82cb441c8ca7014113855abbeb5ffe88154ff0086945a"
+    },
+    "seconds": 118.37,
+    "nodes": 18388,
+    "edges": 50565,
+    "flows_reported": 594,
+    "limits": [
+      "FTS intentionally disabled",
+      "2 historical large JSON proofs skipped above512KiB",
+      "1172 of1372 process entry candidates unranked,3336 callees omitted by branching budget",
+      "2018 cross-language field sites not linked; absent graph relationship is not proof of absence"
+    ],
+    "targeted_impacts": [
+      {
+        "target": "App",
+        "file": "src/App.tsx",
+        "exit": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/App.tsx:App",
+            "name": "App",
+            "type": "Function",
+            "filePath": "src/App.tsx"
+          },
+          "direction": "upstream",
+          "impactedCount": 0,
+          "risk": "UNKNOWN",
+          "riskSharedAxes": "UNKNOWN",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.",
+          "epistemic": "exact",
+          "summary": {
+            "direct": 0,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {},
+          "affected_processes": [],
+          "affected_modules": []
+        },
+        "log_sha256": "30826d41ad2b0fdd8302b5ca13d49f072695058eb8853ffd12e5928b2e0dd85f"
+      },
+      {
+        "target": "EntraideWorkspace",
+        "file": "src/pages/Entraide.tsx",
+        "exit": 0,
+        "result": {
+          "target": {
+            "id": "Function:src/pages/Entraide.tsx:EntraideWorkspace",
+            "name": "EntraideWorkspace",
+            "type": "Function",
+            "filePath": "src/pages/Entraide.tsx"
+          },
+          "direction": "upstream",
+          "impactedCount": 1,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 1,
+            "modules_affected": 1
+          },
+          "byDepthCounts": {
+            "1": 1
+          },
+          "affected_processes": [
+            {
+              "name": "Entraide",
+              "type": "Function",
+              "filePath": "src/pages/Entraide.tsx",
+              "affected_process_count": 3,
+              "total_hits": 3,
+              "earliest_broken_step": 1
+            }
+          ],
+          "affected_modules": [
+            {
+              "name": "Pages",
+              "hits": 1,
+              "impact": "direct"
+            }
+          ]
+        },
+        "log_sha256": "4b20f1e1945d1ef33a12aca5ae391e8668ab348ee939e56abcffdbfa17ae3626"
+      },
+      {
+        "target": "createEntraideHandler",
+        "file": "supabase/functions/_shared/entraide-http.ts",
+        "exit": 0,
+        "result": {
+          "target": {
+            "id": "Function:supabase/functions/_shared/entraide-http.ts:createEntraideHandler",
+            "name": "createEntraideHandler",
+            "type": "Function",
+            "filePath": "supabase/functions/_shared/entraide-http.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 4,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 4,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {
+            "1": 4
+          },
+          "affected_processes": [],
+          "affected_modules": []
+        },
+        "log_sha256": "e72c11c4329782d0b02dc9d84b6aeef3d15a01635c9348e709ead451a413176f"
+      },
+      {
+        "target": "createSupabaseEntraidePorts",
+        "file": "supabase/functions/_shared/entraide-supabase.ts",
+        "exit": 0,
+        "result": {
+          "target": {
+            "id": "Function:supabase/functions/_shared/entraide-supabase.ts:createSupabaseEntraidePorts",
+            "name": "createSupabaseEntraidePorts",
+            "type": "Function",
+            "filePath": "supabase/functions/_shared/entraide-supabase.ts"
+          },
+          "direction": "upstream",
+          "impactedCount": 5,
+          "risk": "LOW",
+          "riskSharedAxes": "LOW",
+          "riskScale": {
+            "comparableAcrossKinds": true,
+            "unusedAxes": []
+          },
+          "epistemic": "exact",
+          "summary": {
+            "direct": 1,
+            "processes_affected": 0,
+            "modules_affected": 0
+          },
+          "byDepthCounts": {
+            "1": 1,
+            "2": 4
+          },
+          "affected_processes": [],
+          "affected_modules": []
+        },
+        "log_sha256": "b5ae175d80495488117dc0750bb13053cc3341eb7ed6fd9af5fdd548a49190e3"
+      }
+    ]
+  },
+  "source_sha256": {
+    "scripts/build-entraide-matching.mjs": "d9071db41ae5c610187b129b9b68fe9b10734c0f749152d9aff0c473f9632e98",
+    "src/lib/entraide-http.ts": "49f09190efee61448ecddfbd0c9393e6eb33fa15a72806dbac20d7f32f018591",
+    "src/pages/Entraide.tsx": "9e3e7c352a7e01edb0bee91dc1e11323c6777cca0533e36f7fd9028f235be867",
+    "supabase/functions/_shared/entraide-http.ts": "d1aa07eb0b5a988f9a7c6a9c7cd3aaf4cb6afe64cfb666d64d140661938d2a9c",
+    "supabase/functions/_shared/entraide-runtime.ts": "52af2136493fe886a8ef5935a179697a6f53cdde713e1ca32c98b9d0e565843d",
+    "supabase/functions/_shared/entraide-supabase.ts": "896772e2a1c4bcba87a4339fdce2c10e355cf1fb0bdba2c134c9e3730204d09f",
+    "supabase/functions/entraide-contact/index.ts": "b7fdcac153b116deedac08e2a72e101099689fc6418c33c2f09fe688500df528",
+    "supabase/functions/entraide-matches/index.ts": "cf0f5c4d4aff2849735cfb71ed6418831a8f7835a69c44593d927c080af713fc",
+    "supabase/functions/entraide-missions/index.ts": "87e44583a405a3d6ebcd78e9e423cf6ce83975a118f948328b642b92aff98d01",
+    "supabase/functions/entraide-profil/index.ts": "fa7ff1b89d38eec80c7532c35f2593522ac94fa58d2d7c32b648cb22a05302c8",
+    "supabase/migrations/20261110020000_entraide_contact_atomic.sql": "d7af586a69ea327d4d18117f7147dbb6b257ddc5374b9b86c1e8c08754cff171",
+    "supabase/migrations/20261110021000_entraide_missions_atomic.sql": "31eb27ff79cbceab930b16db6de57e7f0ca9b7cf0392ab4d215461a878b2bb41",
+    "supabase/migrations/20261110022000_entraide_mission_requests.sql": "437be52037110cadc224e9fbe234c6f7dc1ee3be783a033238d151c758ddddbf",
+    "src/App.tsx": "8b4eff9a28b07476d1455e6b031a4703767e23b82f2ab2839c0dbbdcb50cda43",
+    "src/components/dashboard/DashboardLayout.tsx": "db9764171cf1858fcf07dfb9dee311394a72e1c4c805c0aa5213a45b66b036cf",
+    "src/i18n/locales/fr.json": "c4f8672d7df2bc8be63dbdcced2fa9fa3556b2036960179f7470159815e4252c",
+    "src/i18n/locales/en.json": "786980e041168cb6437281ccc5b4ad88e7bbc9aefeab7ad431cc4a87bce10e59",
+    "src/hooks/useRequestScope.ts": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84",
+    "supabase/migrations/20260904000000_entraide.sql": "d313dae5f8965f84d3ab8a69131f97d8398e054b1b50878a9ada5b763f8b6027",
+    "supabase/migrations/20260905000000_entraide_profile_privacy.sql": "91baf2db736f77f4e901c4b7a97ab42801df56b11027421ae7fed25a7d62c586"
+  },
+  "limits": [
+    "No hosted Supabase Auth/PostgREST or deployed Edge test.",
+    "No current full-browser or physical-device certification; new account-scope gate renders real React/Query with inert HTTP in JSDOM.",
+    "Historical PR23 browser receipts remain historical.",
+    "Private matching must be prepared and qualified with the four functions and schema before staging/deployment."
+  ],
+  "selection_verification": {
+    "selected_donor_paths": 78,
+    "byte_identical_donor_paths": 75,
+    "documented_changes": [
+      ".github/workflows/entraide-project-flow.yml",
+      "src/pages/Entraide.tsx",
+      "tests/entraide/README.md"
+    ],
+    "credential_pattern_findings": [],
+    "private_matching_source_not_archived": true,
+    "new_logs_contain_synthetic_test_state_versions_hashes_paths_only": true
+  },
+  "staged_categories": {
+    "PR23_selected": 78,
+    "baseline_SQL": 2,
+    "route_navigation": 4,
+    "new_UI_test": 1,
+    "CHEF_gate": 1,
+    "new_QA_evidence": 27,
+    "UNEXPECTED": 0
+  },
+  "site_build_provider_environment": "Synthetic public fixture; environment files absent."
+}

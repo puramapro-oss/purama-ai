@@ -1,0 +1,324 @@
+{
+  "verifiedAt": "2026-11-12T06:07:36.816497+00:00",
+  "base": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+  "priorCandidate": "f3537bbe91fd2a6daf66ee1f8e45b02f7b13d363",
+  "purpose": "Reconcile PR63 with the API cost changes already integrated into consolidation; preserve both sets of protections and assertions.",
+  "changesSincePriorCandidate": [
+    "Preserve upstream compact JSON and its durable-delivery comment in real.ts",
+    "Add only anthropicTimeoutMs:60000 to the upstream test configuration",
+    "Merge all upstream deployment exclusions with the review branch exclusion",
+    "Record this qualification separately from historical evidence"
+  ],
+  "preservedPriorApplicationAndTestFiles": [
+    "karta/.env.example",
+    "karta/src/agents/comptaAgent.ts",
+    "karta/src/agents/legalAgent.ts",
+    "karta/src/agents/partnerAgent.ts",
+    "karta/src/claude/types.ts",
+    "karta/src/config.ts",
+    "karta/test/agentContextContract.test.ts",
+    "karta/test/assistantPolicy.test.ts",
+    "karta/test/claudeTransportDeadline.test.ts",
+    "karta/test/modelQualityRouting.test.ts"
+  ],
+  "costAssertionsUnchanged": true,
+  "regressionBeforeSerializationFix": {
+    "command": "NODE_OPTIONS=--max-old-space-size=384 ./node_modules/.bin/vitest run test/claudeTransportCost.test.ts --maxWorkers=1 --reporter=verbose",
+    "cwd": "karta",
+    "exitCode": 1,
+    "passed": 10,
+    "failed": 3,
+    "interpretation": "The compatible timeout fixture was already present; failures show loss of upstream compact request formatting in a naive combination, not loss of JSON values."
+  },
+  "targetedQualification": {
+    "command": "NODE_OPTIONS=--max-old-space-size=384 ./node_modules/.bin/vitest run test/claudeTransportCost.test.ts test/claudeTransportDeadline.test.ts test/modelQualityRouting.test.ts test/agentContextContract.test.ts test/assistantPolicy.test.ts test/claudeDecisionCompleteness.test.ts test/runtimeDeadline.test.ts --maxWorkers=1 --reporter=verbose",
+    "cwd": "karta",
+    "exitCode": 0,
+    "passed": 173,
+    "files": 7
+  },
+  "initialTypecheck": {
+    "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "cwd": "karta",
+    "exitCode": 137,
+    "status": "PARTIEL: process killed; cause not established; superseded for the result by the successful serial retry below"
+  },
+  "compilerQualification": [
+    {
+      "name": "typecheck-retry",
+      "command": [
+        "node",
+        "--max-old-space-size=512",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "cwd": "/workspace/scratch/37cd53c7c075/iao-integration/karta",
+      "exitCode": 0,
+      "seconds": 5.55,
+      "log": "/workspace/scratch/37cd53c7c075/evidence/integration-20261112/typecheck-retry.log"
+    },
+    {
+      "name": "build",
+      "command": [
+        "node",
+        "--max-old-space-size=512",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "cwd": "/workspace/scratch/37cd53c7c075/iao-integration/karta",
+      "exitCode": 0,
+      "seconds": 3.116,
+      "log": "/workspace/scratch/37cd53c7c075/evidence/integration-20261112/build.log"
+    }
+  ],
+  "vercelMerge": {
+    "exitCode": 0,
+    "ruleCount": 25,
+    "preservedJsonExactly": "new base JSON plus this review branch false rule"
+  },
+  "impact": {
+    "status": "PARTIEL",
+    "executedAt": "2026-11-12T06:03:38.474Z",
+    "candidate": "/workspace/scratch/37cd53c7c075/iao-integration",
+    "target": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+    "index": {
+      "commit": "3714510a824010f4b705c0e5171e062735f5f22b",
+      "indexedAt": "2026-11-11T23:00:51.896Z",
+      "storage": "/workspace/scratch/37cd53c7c075/evidence/gitnexus-integration-inherited-index",
+      "commitsBehindTarget": 25
+    },
+    "blobComparison": [
+      {
+        "path": "AGENTS.md",
+        "index": "124eb31a394f409940834ae4faf8f98d3e6457d1",
+        "pr63Base": "124eb31a394f409940834ae4faf8f98d3e6457d1",
+        "qualifiedBase": "124eb31a394f409940834ae4faf8f98d3e6457d1",
+        "target": "124eb31a394f409940834ae4faf8f98d3e6457d1"
+      },
+      {
+        "path": "karta/src/claude/real.ts",
+        "index": "b81e7d30268efc5581b8d3eb6d72b1f23d7e31c9",
+        "pr63Base": "b81e7d30268efc5581b8d3eb6d72b1f23d7e31c9",
+        "qualifiedBase": "b81e7d30268efc5581b8d3eb6d72b1f23d7e31c9",
+        "target": "32821cb3b65a38d7ee77195cdf68338a0bb89f75"
+      },
+      {
+        "path": "karta/src/claude/index.ts",
+        "index": "94140b2c37de0ca3505bbe4b34a7d8d1e80a55f7",
+        "pr63Base": "94140b2c37de0ca3505bbe4b34a7d8d1e80a55f7",
+        "qualifiedBase": "94140b2c37de0ca3505bbe4b34a7d8d1e80a55f7",
+        "target": "94140b2c37de0ca3505bbe4b34a7d8d1e80a55f7"
+      },
+      {
+        "path": "karta/src/claude/types.ts",
+        "index": "d9bab7a24778739f96c44f88c232f91b82ca5cc5",
+        "pr63Base": "d9bab7a24778739f96c44f88c232f91b82ca5cc5",
+        "qualifiedBase": "d9bab7a24778739f96c44f88c232f91b82ca5cc5",
+        "target": "d9bab7a24778739f96c44f88c232f91b82ca5cc5"
+      },
+      {
+        "path": "karta/src/config.ts",
+        "index": "a47b806287aa343fcaf6dd696bde8e786b3f2168",
+        "pr63Base": "a47b806287aa343fcaf6dd696bde8e786b3f2168",
+        "qualifiedBase": "a47b806287aa343fcaf6dd696bde8e786b3f2168",
+        "target": "a47b806287aa343fcaf6dd696bde8e786b3f2168"
+      },
+      {
+        "path": "karta/src/engine/loop.ts",
+        "index": "16bc7de2c2b5c31a7575fa2e650b5e28026d248d",
+        "pr63Base": "16bc7de2c2b5c31a7575fa2e650b5e28026d248d",
+        "qualifiedBase": "16bc7de2c2b5c31a7575fa2e650b5e28026d248d",
+        "target": "16bc7de2c2b5c31a7575fa2e650b5e28026d248d"
+      },
+      {
+        "path": "karta/src/queue/worker.ts",
+        "index": "2b324ff69bb7a787554852e67c9cf5423a268084",
+        "pr63Base": "2b324ff69bb7a787554852e67c9cf5423a268084",
+        "qualifiedBase": "2b324ff69bb7a787554852e67c9cf5423a268084",
+        "target": "2b324ff69bb7a787554852e67c9cf5423a268084"
+      },
+      {
+        "path": "karta/src/runtime/lifecycle.ts",
+        "index": "f7ae40ff4877e3eea5af01edca78aeaf66b48d00",
+        "pr63Base": "f7ae40ff4877e3eea5af01edca78aeaf66b48d00",
+        "qualifiedBase": "f7ae40ff4877e3eea5af01edca78aeaf66b48d00",
+        "target": "f7ae40ff4877e3eea5af01edca78aeaf66b48d00"
+      },
+      {
+        "path": "karta/test/real-claude.test.ts",
+        "index": "81abe43aa740e19eeeaa3b2ea6e868ac16628670",
+        "pr63Base": "81abe43aa740e19eeeaa3b2ea6e868ac16628670",
+        "qualifiedBase": "81abe43aa740e19eeeaa3b2ea6e868ac16628670",
+        "target": "81abe43aa740e19eeeaa3b2ea6e868ac16628670"
+      },
+      {
+        "path": "karta/test/claudeDecisionCompleteness.test.ts",
+        "index": "7e0ac58656c3824359d7861ee930bcac0265f70f",
+        "pr63Base": "7e0ac58656c3824359d7861ee930bcac0265f70f",
+        "qualifiedBase": "7e0ac58656c3824359d7861ee930bcac0265f70f",
+        "target": "7e0ac58656c3824359d7861ee930bcac0265f70f"
+      },
+      {
+        "path": "karta/test/claudeTransportCost.test.ts",
+        "index": null,
+        "pr63Base": null,
+        "qualifiedBase": null,
+        "target": "d73f2f2ffc0418848310e398b4c5ffa5f1588de3"
+      },
+      {
+        "path": "karta/src/agents/legalAgent.ts",
+        "index": "246fee51864ce9e86648278a8d1369dca29d38e6",
+        "pr63Base": "246fee51864ce9e86648278a8d1369dca29d38e6",
+        "qualifiedBase": "246fee51864ce9e86648278a8d1369dca29d38e6",
+        "target": "246fee51864ce9e86648278a8d1369dca29d38e6"
+      },
+      {
+        "path": "karta/src/agents/comptaAgent.ts",
+        "index": "5de5b8d999785958c90c1733869808ac05230249",
+        "pr63Base": "5de5b8d999785958c90c1733869808ac05230249",
+        "qualifiedBase": "5de5b8d999785958c90c1733869808ac05230249",
+        "target": "5de5b8d999785958c90c1733869808ac05230249"
+      },
+      {
+        "path": "karta/src/agents/partnerAgent.ts",
+        "index": "c070961a6ea528bf5f2ae4769cf00c88e78977cf",
+        "pr63Base": "c070961a6ea528bf5f2ae4769cf00c88e78977cf",
+        "qualifiedBase": "c070961a6ea528bf5f2ae4769cf00c88e78977cf",
+        "target": "c070961a6ea528bf5f2ae4769cf00c88e78977cf"
+      }
+    ],
+    "symbols": [
+      {
+        "tag": "factory",
+        "uid": "Function:karta/src/claude/real.ts:createRealClaudeClient",
+        "contextStatus": "found",
+        "risk": "LOW",
+        "impactedCount": 3,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        }
+      },
+      {
+        "tag": "decide",
+        "uid": "Method:karta/src/claude/real.ts:createRealClaudeClient.decide@30:4#1",
+        "contextStatus": "found",
+        "risk": "UNKNOWN",
+        "impactedCount": 0,
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "boundaries": [
+          "2 call sites invoking `decide` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+        ]
+      },
+      {
+        "tag": "model",
+        "uid": "Function:karta/src/claude/real.ts:selectModel",
+        "contextStatus": "found",
+        "risk": "LOW",
+        "impactedCount": 1,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        }
+      },
+      {
+        "tag": "legal",
+        "uid": "Method:karta/src/agents/legalAgent.ts:legalAgent.buildContext#1",
+        "contextStatus": "found",
+        "risk": "UNKNOWN",
+        "impactedCount": 0,
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        }
+      },
+      {
+        "tag": "compta",
+        "uid": "Method:karta/src/agents/comptaAgent.ts:comptaAgent.buildContext#1",
+        "contextStatus": "found",
+        "risk": "UNKNOWN",
+        "impactedCount": 0,
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        }
+      },
+      {
+        "tag": "partner",
+        "uid": "Method:karta/src/agents/partnerAgent.ts:partnerAgent.buildContext#1",
+        "contextStatus": "found",
+        "risk": "UNKNOWN",
+        "impactedCount": 0,
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        }
+      }
+    ],
+    "limitations": [
+      "Historical index; changed real.ts and new transport-cost tests are not freshly indexed.",
+      "Dynamic decide/buildContext dispatch is not resolved; UNKNOWN does not mean safe.",
+      "Six BuildContext→Entries paths cross name-inferred test helpers and are not proof of production flows."
+    ],
+    "sourceMutationByTool": false
+  },
+  "sourceSha256": {
+    "karta/.env.example": "e3469a43d64f15cc793790966f7a19f4aef5608b79cd38ee66d1dbff7e8d2186",
+    "karta/src/agents/comptaAgent.ts": "c0bed4d30277eff1f6f515d4a3c3828243da9936c1802205a69e8c8dcb716d94",
+    "karta/src/agents/legalAgent.ts": "b039331f570b4999a194abc687b36b4a879d704c6fd6c434ce22b11458fb9783",
+    "karta/src/agents/partnerAgent.ts": "b6dd32992188a88a0766cbb9fc632ffb9271a67a33226deda43759cf0795d823",
+    "karta/src/claude/real.ts": "00d3cbd1e9f2510869c028e775b5d0cfe169bd33b84b9a96a21197f4cf96b06f",
+    "karta/src/claude/types.ts": "c5948a90ea8fd833168eed096945f2d3bef10c2124e551308406f3a07f909427",
+    "karta/src/config.ts": "c3e1397ef29c451d7be6e42343c62fc1dc51980ecea42d312780052eb841016a",
+    "karta/test/agentContextContract.test.ts": "f3e7479ca7699d85f2383d80747948b30bbc142dd7aed8ac98ad9f6236487f9c",
+    "karta/test/assistantPolicy.test.ts": "d78aa2bbc672dae36dc74db52fb5ac9f981402d7a814e71de0f102e7a4decc32",
+    "karta/test/claudeTransportDeadline.test.ts": "c4bacdd296ffef885dc949ab423675e9524b83c7f15c30d2ad7c9bed7f951b41",
+    "karta/test/modelQualityRouting.test.ts": "ea713c3cd35cd2656681b5b8abd9082932e4d1957718f2699fe3c5d4f8e9ea4b",
+    "karta/test/claudeTransportCost.test.ts": "0d87e818a343ce8d7411ac58319e58bd2a05eeb6e1eb7d09578f07f3da3cd059",
+    "vercel.json": "aa94ea75a9799907771d7ad504b4e0c86dc96c1113a72eaf783823f25b57e9b7"
+  },
+  "logs": [
+    {
+      "name": "cost-before",
+      "path": "integration-evidence/cost-before.txt",
+      "rawSha256": "78a72cd576567e24800ced4157ad10cf3ed0c489e9e75ba9610db5cb8bcaa8ba",
+      "sha256": "90278ceff0acf477e73c79f3c20c66492bb8ba4a245ea44cbc55a15cad15746f",
+      "normalization": "Trailing blank lines only; no substantive log changes."
+    },
+    {
+      "name": "targeted-after",
+      "path": "integration-evidence/targeted-after.txt",
+      "rawSha256": "d5ba1e113389289157dc5a9e22ea97f2aa6323c8072983bce5b9b9762acfbe46",
+      "sha256": "76a9e6e1a8311dd3bdd6810886f4e17318f5f38e60dc882a8045d579623ad7d6",
+      "normalization": "Trailing blank lines only; no substantive log changes."
+    },
+    {
+      "name": "typecheck-retry",
+      "path": "integration-evidence/typecheck-retry.txt",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "normalization": "Trailing blank lines only; no substantive log changes."
+    },
+    {
+      "name": "build",
+      "path": "integration-evidence/build.txt",
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "normalization": "Trailing blank lines only; no substantive log changes."
+    }
+  ],
+  "fullCi": "Pending publication on this composition; do not substitute previous CI runs.",
+  "production": "Not deployed; no live provider calls or side effects in these tests."
+}

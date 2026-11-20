@@ -1,0 +1,15 @@
+{
+  "processes": [],
+  "process_symbols": [],
+  "definitions": [],
+  "timing": {
+    "bm25": 0.5,
+    "vector": 9.7,
+    "merge": 0,
+    "symbol_lookup": 0,
+    "ranking": 0,
+    "formatting": 0,
+    "wall": 10.5
+  },
+  "warning": "FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset. (resolved: purama-ai/branch:feat/iao-dreamforge-creation-20261112, indexed 2026-11-12T00:54:39.654Z)"
+}

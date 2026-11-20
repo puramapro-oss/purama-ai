@@ -1,0 +1,137 @@
+name: Native accessibility watch verification
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-native-watch.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-watch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_NO_DOTENV: '1'
+      NODE_OPTIONS: --max-old-space-size=2048
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx3072m -Dorg.gradle.workers.max=2
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install the existing mobile lock
+        run: npm ci --no-audit --no-fund
+      - name: Qualify the JS boundary
+        run: |
+          mkdir -p qa/watch-native
+          git rev-parse HEAD HEAD^{tree} > qa/watch-native/android-checkout.txt
+          node --test tests/watch-native/*.test.cjs 2>&1 | tee qa/watch-native/android-js-tests.log
+          npm run typecheck
+      - name: Generate existing phone and companion projects
+        run: |
+          npx expo prebuild --no-install --platform all 2>&1 | tee qa/watch-native/android-prebuild.log
+          node scripts/verify-watch-native-prebuild.cjs
+          npx expo-modules-autolinking resolve --platform android --json > qa/watch-native/android-autolinking.json
+      - name: Compile phone module and Wear companion and run Kotlin protocol tests
+        run: |
+          cd android
+          ./gradlew :app:assembleDebug :puramaAccessibilityWatch:assembleDebug :purama-accessibility-watch:testDebugUnitTest --no-daemon --max-workers=2 2>&1 | tee ../qa/watch-native/android-build.log
+      - name: Prepare debug APKs for physical qualification
+        run: |
+          artifact_dir="$RUNNER_TEMP/native-watch-debug-apks"
+          mkdir -p "$artifact_dir/phone" "$artifact_dir/wear"
+          cp android/app/build/outputs/apk/debug/*.apk "$artifact_dir/phone/"
+          cp watch/wear/build/outputs/apk/debug/*.apk "$artifact_dir/wear/"
+          (
+            cd "$artifact_dir"
+            sha256sum phone/*.apk wear/*.apk > SHA256SUMS
+          )
+          cp "$artifact_dir/SHA256SUMS" qa/watch-native/android-apk-sha256.txt
+          git rev-parse HEAD HEAD^{tree} > "$artifact_dir/checkout.txt"
+      - name: Preserve debug phone and Wear APKs with SHA-256 manifest
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-watch-debug-apks-${{ github.sha }}
+          path: ${{ runner.temp }}/native-watch-debug-apks/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+      - name: Preserve qualification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-watch-android-${{ github.sha }}
+          path: |
+            mobile/qa/watch-native/
+            mobile/modules/purama-accessibility-watch/android/build/test-results/
+          retention-days: 14
+
+  apple:
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_NO_DOTENV: '1'
+      NODE_OPTIONS: --max-old-space-size=2048
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Record Apple toolchain and compile protocol tests
+        run: |
+          mkdir -p qa/watch-native
+          git rev-parse HEAD HEAD^{tree} > qa/watch-native/apple-checkout.txt
+          xcodebuild -version | tee qa/watch-native/xcode-version.log
+          xcrun swiftc modules/purama-accessibility-watch/apple/WatchWire.swift tests/watch-native/apple/main.swift -o "$RUNNER_TEMP/purama-watch-protocol-tests"
+          "$RUNNER_TEMP/purama-watch-protocol-tests" | tee qa/watch-native/swift-protocol-tests.log
+      - name: Install the existing mobile lock
+        run: npm ci --no-audit --no-fund
+      - name: Generate existing phone and companion projects
+        run: |
+          npx expo prebuild --no-install --platform all 2>&1 | tee qa/watch-native/apple-prebuild.log
+          node scripts/verify-watch-native-prebuild.cjs
+          npx expo-modules-autolinking resolve --platform apple --json > qa/watch-native/apple-autolinking.json
+          cd ios
+          pod install 2>&1 | tee ../qa/watch-native/cocoapods.log
+      - name: Compile watchOS and existing iOS app for simulators without signing
+        run: |
+          node scripts/verify-watch-native-apple-build.cjs 2>&1 | tee qa/watch-native/apple-build.log
+      - name: Preserve qualification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-watch-apple-${{ github.sha }}
+          path: mobile/qa/watch-native/
+          retention-days: 14

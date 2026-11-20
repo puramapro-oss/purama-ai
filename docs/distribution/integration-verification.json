@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-11-10T23:32:29.325664+00:00",
+  "scope": "Selective distribution delta on PR33, not all PURAMA branches or production",
+  "source": {
+    "base": "90d8f30322e864ccfd186e97cbfe7edf3afec9a9",
+    "base_pr": 33,
+    "initial_distribution": "d5bd08c47fedd12e6eab1b74cd8ef5a6aed60a40",
+    "initial_distribution_pr": 25,
+    "default_branch_compared": "d116dc8a6429ea76c67167a195eb3f723f2251fb",
+    "branch": "codex/distribution-integrated-20261110",
+    "followup_base": "82ddfc62afd6b2f4b89e43e953b1d57481d5a35c",
+    "pull_request": 42
+  },
+  "checks": [
+    {
+      "name": "distribution unit tests",
+      "status": "PASS",
+      "passed": 330,
+      "failed": 0,
+      "skipped": 0,
+      "files": 11,
+      "report_sha256": "1e3efa501fad89e4461dfa7dae96f7a1a2ff95fa61f1b6604b8894659bae4869"
+    },
+    {
+      "name": "SQL scenarios",
+      "status": "PASS",
+      "passed": 31,
+      "runner_reported_tests": 32,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "fc7f1108ae4850ee2966b6fae137750d7a6f51f58f9e03043ec8b2b65e771e22",
+      "receipt_sha256": "036504bc550369100ceb4a9c6df4c640ce7404c719b848ce942fddb49b85c34d"
+    },
+    {
+      "name": "service worker VM",
+      "status": "PASS",
+      "passed": 25,
+      "runner_reported_tests": 25,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "8964de26d9980425a9b952ada05e1561011e7671f0963e62f3e954762ed3d42a",
+      "receipt_sha256": "aa806a6a7868bf6885fcac9e6aa24069ded6b89d14e02edcffdfdbdc7e98faa8"
+    },
+    {
+      "name": "chat handler VM",
+      "status": "PASS",
+      "passed": 19,
+      "runner_reported_tests": 19,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "a0b53239048d7abfaff6cbe35e2857253ae877eec60ee81733206781a8557134",
+      "receipt_sha256": "7e3d5aa2134c65b9744574ddde46d07d600479ca0ec51117a4bcc68d6e5cfe04"
+    },
+    {
+      "name": "types-app",
+      "status": "PASS",
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "types-distribution",
+      "status": "PASS",
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "lint",
+      "status": "PASS",
+      "exit": 0,
+      "log_sha256": "d2d11d346ca17d6be7b4b38bc7c33712c58178e8fb0e63cc38b93466be166c3b"
+    },
+    {
+      "name": "production build",
+      "status": "PASS",
+      "exit": 0,
+      "log_sha256": "d494665ae427dc34ba724cb2c67759650df5dbe8f0f38f189d1c3af1ffa9628d"
+    },
+    {
+      "name": "distribution browsers",
+      "status": "PASS",
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "retries": 0,
+      "projects": {
+        "desktop": {
+          "passed": 15,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0
+        },
+        "tablet": {
+          "passed": 15,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0
+        },
+        "mobile": {
+          "passed": 15,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0
+        }
+      },
+      "report_sha256": "1ff5ec8f661b72abe8c255e7f70d8f7df5f0759655f2f47dd59580d46a869c7c"
+    },
+    {
+      "name": "existing mobile-auth browsers",
+      "status": "PASS",
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "exit": 0,
+      "log_sha256": "2987e87906bc2bf5b0bbe3a5d625201566713058cf0dc45b47664c6a81aab1e1",
+      "report_sha256": "21d987ec1a2f71d883a58d15d9e173533525a76a1f99f22caee18e704ab8f64f"
+    },
+    {
+      "name": "existing wellbeing browsers",
+      "status": "PASS",
+      "passed": 24,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "exit": 0,
+      "log_sha256": "3f96b5a3ec7f7bf8a6f1cd8606bb6b8a3876d7883ad4c83465b514edfb1c8869",
+      "report_sha256": "eb30d454163b0e2ed420b1594d9d3494b5db1c9cf2c9dbc78e5de6ceaab24460"
+    },
+    {
+      "name": "existing async-ui browsers",
+      "status": "PASS",
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "exit": 0,
+      "log_sha256": "77172f81e038c5aab1c0ad36d89b3ef7bcbda198c626169b7cd671a6a13d1ed4",
+      "report_sha256": "eaa80cab52da51c88bf1326b1098e346a043990e73e20ee56786b25586dbcc1f"
+    },
+    {
+      "name": "native Deno creator-agent-chat check",
+      "status": "PASS",
+      "exit": 0,
+      "runtime": "Deno 2.9.7 / TypeScript 6.0.3",
+      "ci_runtime": "Deno 2.9.6, to be checked by hosted CI",
+      "sources_stable": true,
+      "log_sha256": "806b4fc0fd6ee75c5d9fdd3881476eecadce5b99572c5e567c76492bbfd54ee7"
+    },
+    {
+      "name": "public test TypeScript and targeted ESLint",
+      "status": "PASS",
+      "exit": 0,
+      "scope": [
+        "tests/navigation.spec.ts",
+        "tests/public-pages.spec.ts",
+        "tests/performance.spec.ts"
+      ],
+      "evidence": "Commands completed after all three public test edits; hosted CI retains full gates."
+    },
+    {
+      "name": "targeted KARTA policy fixture",
+      "status": "PASS",
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "report_sha256": "19b32baa689d97bc02935b68046a00de916c802097eea78e8923f94126aa5a0b",
+      "log_sha256": "63691833f308224b7354fdd4b44a2c60810c20a6fa153b5f1fe2f5c0285484c9",
+      "scope": "Targeted followup after initial hosted CI; not a full suite rerun"
+    },
+    {
+      "name": "complete quality navigation case",
+      "status": "PASS",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "report_sha256": "9b4b132f4777387c153c2452a299a9e90f60df662a68af1eebc510430ec71205",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Targeted followup after initial hosted CI; not a full suite rerun"
+    }
+  ],
+  "auth_subset": {
+    "included_in_unit_total": true,
+    "passed": 32,
+    "provider": 17,
+    "pages": 15
+  },
+  "runtime": {
+    "cloud_node": "v22.23.4",
+    "mac_node": "v22.23.3",
+    "mac_npm": "10.9.10",
+    "playwright": "1.64.1",
+    "pglite": "0.5.16",
+    "vitest": "3.2.7",
+    "jsdom": "26.1.0",
+    "zod": "4.6.7",
+    "mac_npm_ci_with_scripts": true,
+    "lock_unchanged_after_ci": true,
+    "physical_mobile_devices": false
+  },
+  "graph": {
+    "status": "PARTIEL",
+    "pre_edit": "22 targeted impact calls on exact consolidation base, LOW or UNKNOWN; literal entry points reviewed",
+    "initial_result_validated": false,
+    "initial_result_preserved": {
+      "changed_count": 451,
+      "affected_count": 394,
+      "changed_files": 42,
+      "risk_level": "critical"
+    },
+    "full_rebuild_exit": 0,
+    "verified_symbol_identities": 6,
+    "empty_id_nodes": 0,
+    "reviewed_42_file_delta": {
+      "changed_count": 558,
+      "affected_count": 44,
+      "changed_files": 42,
+      "risk_level": "critical"
+    },
+    "reviewed_roots": {
+      "App": 9,
+      "Login": 5,
+      "Signup": 5,
+      "CreatorAgentPage": 8,
+      "HandleClone": 8,
+      "CreatePrivateCopy": 8,
+      "CreatorAgentTemplates": 1
+    },
+    "remaining_rpc_homonym_processes": 6,
+    "remaining_rpc_homonym_candidates": 5,
+    "main_comparison": {
+      "changed_count": 7058,
+      "affected_count": 529,
+      "changed_files": 768,
+      "risk_level": "critical",
+      "listed_symbols": 1000,
+      "truncated": true
+    },
+    "main_listing_truncated": true,
+    "inherited_default_branch_scope_is_not_the_owned_delta": true,
+    "final_staged_check": {
+      "status": "PARTIEL_STATIC_COVERAGE",
+      "changed_files": 48,
+      "changed_symbols": 586,
+      "affected_flows": 44,
+      "risk_level": "critical",
+      "response_truncated": false,
+      "response_degraded": false,
+      "identity_checks_passed": 6,
+      "empty_id_nodes": 0,
+      "affected_flows_unchanged_from_42_file_review": true,
+      "new_symbols": {
+        "documentation_sections": 15,
+        "native_lcp_collector_elements": 13
+      },
+      "full_rebuild_exit": 0,
+      "full_rebuild_seconds": 59.8,
+      "global_walk_limits": {
+        "unexplored_entrypoints": 973,
+        "pruned_callee_branches": 2151,
+        "budget_cut_walks": 33
+      },
+      "code_test_configuration_inputs": 45,
+      "documentation_metadata_finalized_after_graph_capture": true,
+      "evidence_sha256": {
+        "integration-final-staged48-review.json": "8b41d8d5f3ecde06e0aa475ee26e35e8c43fc0e6417ae4ffa06220584ea8a3f0",
+        "integration-final-staged48-graph-raw.json": "2c2ecde7fca08b3897414124da4852b90c515a033e71bc15e034e515a4a3c7e8",
+        "integration-final-staged48-detect-owned.json": "4c64d9b8a50f0b2ef59e9a15c03e28418984cdbdb554871dc9ec8652b9e9e957",
+        "integration-final-staged48-detect-main.json": "66b77bbd78278f2269d441adbe1d53188aa00494b97a342700129f3c94afa990",
+        "integration-final-staged48-proof-hashes.json": "433b924362b9328f85baa48c83c474df497222c810abd3390065aa4b5df25e88"
+      }
+    },
+    "limits": "This is not exhaustive execution-flow proof. Worker event callbacks and the anonymous Pricing test are not indexed as callable flows; ShareButtons has zero reported processes despite two verified JSX mounts. The VoiceSettingsCard resource still contains heuristic cross-runtime stop/resolve edges; it is not in owned affected processes after repair. The cloneTemplate context also maps rpc calls to five KARTA test double methods; six owned Rpc-labelled processes are therefore not validated as runtime dependencies. Keep critical and the complete 44-process list without subtracting suspect paths into a new score.",
+    "evidence_sha256": {
+      "integration-graph-review-after-rebuild-raw.json": "8196a3f8c486b94d15246958bb080ffc5e59ee7fdeaf1a38dfd33e6f77f9a2cc",
+      "integration-detect-owned-after-rebuild.json": "8cbad22d279a05e74af2816ec687eaccda3c3c0b8db7e7504c8f02c941cca4e6",
+      "integration-detect-main-after-rebuild.json": "f09e852cb80f244d5bcc3dab228f859b9d93c19a62c1d6b675e4c7f727fcdeae",
+      "integration-pricing-test-impact-after-rebuild.json": "b9cfffd555ae2711aff7a3513135f5d7246af7d37ef84c34479bc43bb0a0e7d7",
+      "integration-pricing-test-impact-supplement-after-rebuild.json": "497faa265f181dcfde6e1220e9b1346363e6704341ab12a330777abd28c114c4",
+      "integration-graph-after-rebuild-execution.log": "d6adac35656d8fb8cdc51008db812ba0f272f6381e6aa9121293426cf4e2f708",
+      "integration-processes-owned-after-rebuild.json": "1bfe02ee960bcbe21c16941f66efe373505be7f05d0b5553a5ff5fd5c9da1498"
+    },
+    "ci_followup_check": {
+      "status": "PARTIEL_STATIC_COVERAGE",
+      "full_rebuild_exit": 0,
+      "identity_checks_passed": 6,
+      "empty_id_nodes": 0,
+      "backend_disposed": true,
+      "since_82dd": {
+        "changed_files": 5,
+        "changed_count": 5,
+        "affected_count": 0,
+        "risk_level": "low",
+        "qualification": "Five documentation sections materialized in final precommit read; this score does not qualify either test callback"
+      },
+      "cumulative_since_90d8": {
+        "changed_files": 50,
+        "changed_count": 587,
+        "affected_count": 44,
+        "risk_level": "critical",
+        "affected_flows_unchanged_from_prior_review": true
+      },
+      "main_comparison": {
+        "changed_files": 768,
+        "changed_count": 7059,
+        "affected_count": 529,
+        "risk_level": "critical",
+        "listed_symbols": 1000,
+        "truncated": true
+      },
+      "test_impacts": "UNKNOWN File nodes, literal runner and handler/router entry points verified",
+      "invocation_correction": "Use target_uid for a File UID. Initial target name lookups retained; corrected KARTA call occurred after editing against indexed pre-change contents.",
+      "documentation_metadata_finalized_after_graph_capture": true,
+      "full_rebuild_seconds": 56.506,
+      "evidence_sha256": {
+        "hosted-followup-final-review.json": "34f592edc1c0a150f81cd75f0ae142bdce45b14f6dafef0799bda295a6d83452",
+        "hosted-followup-final-graph-raw.json": "06bd5c6c404ce69ea2123afdf6d6671d7bf916114674fc50a42d408929e404b1",
+        "hosted-followup-final-detect-owned.json": "367ab1aec19d709b87cd6f77cdae2dea7093071e662d776513fd050b69cbe59c",
+        "hosted-followup-final-detect-cumulative.json": "06ec0a634f682b14b62d6346f967b958c205a3ccdb7b9b5d62303d4851df2a71",
+        "hosted-followup-final-detect-main.json": "f18b9034c440e97f1cb04f944647af4365324bbdb9e66a7fcd67e4f3ca1b39b7",
+        "hosted-followup-final-proof-hashes.json": "6191a8a9fda6dae6a289524e1183ef5da132e75c5aff6dd2c6b345b00c288598"
+      },
+      "precommit_metadata_finalization": {
+        "owned_report_sha256": "2247a87998e51b266365a270ecddf82f8d2892d8283f715e101e5c30c2f57ee4",
+        "cumulative_report_sha256": "06ec0a634f682b14b62d6346f967b958c205a3ccdb7b9b5d62303d4851df2a71",
+        "main_report_sha256": "cd0ebeeba7e68a9f61b0e0a6326964943626f69a6c475de54f73d8663752196b",
+        "five_symbols_all_type_Section": true
+      }
+    }
+  },
+  "hosted_ci": {
+    "status": "PARTIEL_AT_CAPTURE",
+    "pull_request": 42,
+    "must_verify_published_sha": true,
+    "initial_run": 42920364921,
+    "initial_sha": "82ddfc62afd6b2f4b89e43e953b1d57481d5a35c",
+    "initial_merge_sha": "6834ba28d51dc261b1ca304eb4318cb7d8a04def",
+    "initial_tree": "b32f190331cb30daac9b9e2e47fd7be9e2bea630",
+    "initial_checkout_tree_matches_candidate": true,
+    "initial_conclusion": "failure",
+    "initial_karta": {
+      "passed": 1636,
+      "failed": 1,
+      "total": 1637,
+      "reason": "Positive history fixture changed owner to stranger; handler correctly refused before history",
+      "log_sha256": "d3f56756af037465a11e24a2206b964846c3e27eff9ef57f3632406d83ae4c59"
+    },
+    "initial_site": {
+      "distribution_unit_passed": 330,
+      "distribution_sql_runner_passed": 32,
+      "distribution_sql_scenarios_passed": 31,
+      "worker_passed": 25,
+      "chat_handler_passed": 19,
+      "distribution_browser_passed": 45,
+      "public_browser_passed": 156,
+      "chat_browser_passed": 14,
+      "quality_passed": 77,
+      "quality_failed": 1,
+      "reason": "Signup link now preserves exact next=/dashboard; old URL regex omitted continuation",
+      "later_browser_suites_not_executed": 8,
+      "log_sha256": "429cf34639e45b3edff79cb433545191833e7fedc76ab41a2669d804759f0d5b"
+    },
+    "followup": "Both discriminating targeted reruns pass. Complete hosted run must be verified after publishing the correction commit and recorded in PR42."
+  },
+  "diagnostics_preserved": [
+    "Original account-lifecycle and RPC baseline failures",
+    "Initial catalogue-reload failure",
+    "Chat harness assertion correction followed by a new discriminating baseline",
+    "Cloud production build interrupted with signal9; Mac build on same sources succeeded",
+    "Cloud browser download failed; matching browser run succeeded on Mac",
+    "Initial GitNexus inconsistent identities and global flow truncation",
+    "Six public DOM assertions read early snapshots; assertions now await actual required content without removing criteria",
+    "Initial public run interrupted at89/7/60; final targeted run20/21 and unchanged isolated desktop LCP1/1 retained separately",
+    "Initial hosted CI:1636/1637 KARTA and77/78 quality; two incompatible inherited test fixtures, corrected without changing product or assertions",
+    "KARTA local discriminating fixture baseline54/55 followed by55/55; full quality navigation case1/1 after exact URL assertion",
+    "Corrected File UID impact invocation; original name lookup diagnostics and actual chronology retained"
+  ],
+  "limits": [
+    "Synthetic provider responses in browser tests; no real OAuth or AI provider execution",
+    "SQL executes original Creator Agent and distribution migrations in one PGlite connection; not the entire migration chain, native concurrency, or deployed PostgREST",
+    "WebKit viewport emulation is not a physical iPad or iPhone test",
+    "Real push delivery is not tested",
+    "No production migration, main merge, or ONE admission",
+    "Other PR3 security migrations remain in their source branch and are not declared integrated",
+    "Intermittent missing native desktop LCP remains locally observed; isolated success does not establish a root cause or field performance"
+  ],
+  "preserved_consolidation": [
+    {
+      "path": "src/components/shared/SpiritualLayer.tsx",
+      "unchanged": true,
+      "sha256": "1ab59ea627d8162ecf1e5fdba2f35b0ca06fc68025a89c13be36156023672a9c"
+    },
+    {
+      "path": "src/pages/CreatorAgentDetail.tsx",
+      "unchanged": true,
+      "sha256": "95678b15855e71fdb8b10e1aa049bb4b9564b0f329624a026fa65660712a2be0"
+    },
+    {
+      "path": "src/lib/request-deadline.ts",
+      "unchanged": true,
+      "sha256": "12a2dcc7b77e7712ea3e0c4bc37335d2768bc81116464c25c4b9df1d3a790483"
+    },
+    {
+      "path": "src/lib/request-scope.ts",
+      "unchanged": true,
+      "sha256": "bf7ac04ecca7f9fec9e7d47012555f4ad0fd85fbccd7cede57675f20983470d0"
+    },
+    {
+      "path": "src/hooks/useRequestScope.ts",
+      "unchanged": true,
+      "sha256": "4718ca25bcc32b35e4db1ecc9d49e9303181eaf21d9af9b7a3dc977ed0608b84"
+    },
+    {
+      "path": "playwright.config.ts",
+      "unchanged": true,
+      "sha256": "396252c0e2916a7177ec237fbfee482b1739b5caf29937441fb115348f6bf0b2"
+    },
+    {
+      "path": "tests/pwa.spec.ts",
+      "unchanged": true,
+      "sha256": "9084ead6f5c5e95ba6cb2f96b4737e7c2a2d2d8ba74cbcf6c3a132bff8e4c83c"
+    },
+    {
+      "path": "src/lib/creator-agent.ts chatWithAgent",
+      "unchanged": true
+    },
+    {
+      "path": "src/lib/creator-agent.ts newSessionId",
+      "unchanged": true
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/purama-chef-hardening.yml",
+      "sha256": "3da624c44b8349054c5f058b940b446f38c6f23a808cefbe7b577775bebd7b87"
+    },
+    {
+      "path": "karta/test/assistantPolicy.test.ts",
+      "sha256": "8b62d4ad3e787e08664dc4ed54d81ac49b4b898de932f3a014df835c53570b19"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c777bcbb581f513bba2f6a30f199fdcc676715f314933f0458cdbef2e52e8378"
+    },
+    {
+      "path": "playwright.distribution.config.ts",
+      "sha256": "1956238924ae0910d312b5c2293862c12caef460fac7a23dd746b561f075e41b"
+    },
+    {
+      "path": "public/offline.html",
+      "sha256": "d76c62c10bd145bc9e5b14f773f5d22b0fc3fd50345270f6d81fa10b9dbd4aba"
+    },
+    {
+      "path": "public/sw.js",
+      "sha256": "432e34c236a257cab543c5ef0fef33dfc2663f103b97703606909c3e253dff7d"
+    },
+    {
+      "path": "src/App.tsx",
+      "sha256": "9fa3b313d7531d2d35d782ace953c0c9fd99b97f83da12fffefb4452563c0ee1"
+    },
+    {
+      "path": "src/components/auth/AuthProvider.tsx",
+      "sha256": "c6724608ad3fb66b4115a5ead3d1d92ae31b14233e1df7204e2e922220e70cf8"
+    },
+    {
+      "path": "src/components/shared/CinematicIntro.test.tsx",
+      "sha256": "0904a090a7ff3010e11ab2f73a2d2fbf589bcd6603d331edda2f5595266a762b"
+    },
+    {
+      "path": "src/components/shared/CinematicIntro.tsx",
+      "sha256": "07fdcb13e0088d278f9ce9f40744ef6532911938f3259c62a9967cd6811d95c0"
+    },
+    {
+      "path": "src/components/shared/ShareButtons.test.tsx",
+      "sha256": "bd4013928fbf8af277d81a50b8d6de415d579a6baf7399c68975b39bc03eaeab"
+    },
+    {
+      "path": "src/components/shared/ShareButtons.tsx",
+      "sha256": "3eda7378f767672775ab1751bf675b6d302a4b15c1b63185c6ce8d840c13c05a"
+    },
+    {
+      "path": "src/hooks/useAuth.continuation.test.tsx",
+      "sha256": "64d5389df520828edc43798d340368c6112b2cff4032a0e5a3f7ac46e595a8a5"
+    },
+    {
+      "path": "src/hooks/useAuth.ts",
+      "sha256": "32858cec7e4ed5c5679ef94f5b59af96e1e1a9a50d8fd29c6e37150a3147c97b"
+    },
+    {
+      "path": "src/lib/auth-continuation.test.ts",
+      "sha256": "c61379b3b9c32051682858299e1e12a82b34b11172a562026e203c73d9ed67f5"
+    },
+    {
+      "path": "src/lib/auth-continuation.ts",
+      "sha256": "9efe2cbe13e2544beff8ce1c66f464f195b196ecd4225bea4f70e86c63f638f5"
+    },
+    {
+      "path": "src/lib/creator-agent-distribution.test.ts",
+      "sha256": "ce2d6fb45c5c106c8e76f8bac0ab8a10054165bf2e62a2e61a09e8433568c5fc"
+    },
+    {
+      "path": "src/lib/creator-agent.ts",
+      "sha256": "ca0a09a514fe5df8ad62255d2e1526a989aee2485ae67e9936ca09eb6bf4b363"
+    },
+    {
+      "path": "src/lib/creator-model-request.test.ts",
+      "sha256": "6413e5cee97693b9ee20315cae2e5414d4fb27a911d87807127ce478fadade38"
+    },
+    {
+      "path": "src/lib/public-creator-model.test.ts",
+      "sha256": "267c722cd1a810f096939812e5df008693f814b32a047b43a18a6a5e647ed430"
+    },
+    {
+      "path": "src/lib/public-creator-model.ts",
+      "sha256": "080fafa5210e36a21ab1400d624d6d7b18a788db6f06058f51ba34d55faa21ef"
+    },
+    {
+      "path": "src/lib/public-share.test.ts",
+      "sha256": "171783899246b1e9a5d7e109a215a31f0537564489acdaceb92223ebdafe8612"
+    },
+    {
+      "path": "src/lib/public-share.ts",
+      "sha256": "ab56e4102bf0d9c736ceaebd44274fa5d06f861d8e7fe1af9e4541695bc303e9"
+    },
+    {
+      "path": "src/lib/safeNavigation.test.ts",
+      "sha256": "844725d9c250dcae955e6976c157580024b8d36e13711e84918577fabca1f178"
+    },
+    {
+      "path": "src/lib/safeNavigation.ts",
+      "sha256": "721bc9d2d0d854c343f4586087b6099f2fe4e046fcf58dda13d75e4fc0f4e7c0"
+    },
+    {
+      "path": "src/pages/CreatorAgent.tsx",
+      "sha256": "53df7652af164ec7576e9f83f582f23e14c6fd51beb9857d79a8a6ada33a5e60"
+    },
+    {
+      "path": "src/pages/CreatorAgentTemplates.tsx",
+      "sha256": "b12c4a6d45627b2f5e1ab276c2f2bee3143052dfd5a42e40a402f2bec8be3496"
+    },
+    {
+      "path": "src/pages/Login.tsx",
+      "sha256": "9b78db63675b6f27fcb6e4cabdaafdb223249cc1e52907ac918530ebbd55715b"
+    },
+    {
+      "path": "src/pages/PublicCreatorModel.tsx",
+      "sha256": "fa4dbb8ee31d69ed83e75aeb89916271310cce3a685cc643dedc2a988b08c0c8"
+    },
+    {
+      "path": "src/pages/Signup.tsx",
+      "sha256": "f0ff2b49b39b2e8285513aa7a368721495187b6eaf373dd2d556eaad9d04671f"
+    },
+    {
+      "path": "src/pages/auth-continuation.test.tsx",
+      "sha256": "e22f57bda4933d158dc53b03f86255bcf755b24022b4090588bf61611efe4ce4"
+    },
+    {
+      "path": "src/pages/creator-copy-lifecycle.test.tsx",
+      "sha256": "04328615049c8c6267bebf2587877bcefdfd6d09a0173dabbaa791a17549da62"
+    },
+    {
+      "path": "supabase/functions/creator-agent-chat/index.ts",
+      "sha256": "722add066cc6fa009a3bdbd8e94c0f913a8f3768779f6491ac41d0c1716e385f"
+    },
+    {
+      "path": "supabase/migrations/20261110001000_creator_public_distribution.sql",
+      "sha256": "d81e1c867c89ee45ba647282465d0b9b5c7e4428d0ca1dc494f87c1454c630b1"
+    },
+    {
+      "path": "tests/creator-chat-authorization.test.mjs",
+      "sha256": "5f88a85c3df06304e15d22fdd8c7c7eea82c31e67921ade212cd52b53c8c1dec"
+    },
+    {
+      "path": "tests/creator-public-distribution.test.mjs",
+      "sha256": "bc141ea5a177a592181a397e88ea6b6c4e9a675da7ab313bea8653fce4e04271"
+    },
+    {
+      "path": "tests/distribution-pwa.spec.ts",
+      "sha256": "8310cb0ae097684f173f104e3c1b5d4b0a9f83134a3523a913bd8353466f9264"
+    },
+    {
+      "path": "tests/distribution.spec.ts",
+      "sha256": "64963b2c5960f96390eb96d9bbb13b94eba44566a37a593994dde093d2338ef4"
+    },
+    {
+      "path": "tests/distribution/tsconfig.json",
+      "sha256": "b7799ab5178721be02eea0b59ddbf1226d681714fc09f52548411bb8cd7f5e82"
+    },
+    {
+      "path": "tests/distribution/vite.config.ts",
+      "sha256": "822029b4c146ec5d27257ed85dd9ff9d346d34a949779157781280bbaa359eea"
+    },
+    {
+      "path": "tests/navigation.spec.ts",
+      "sha256": "29bcd69c675f0b8860f8597acfae93836d2cc93829071e988e7c24b34674f402"
+    },
+    {
+      "path": "tests/performance.spec.ts",
+      "sha256": "f343b5a9c6184c4ed9f7ddff7a39a15245758d5ecee7d132b0d80d1155cea207"
+    },
+    {
+      "path": "tests/public-pages.spec.ts",
+      "sha256": "b981a56deccceeece47cc48c18db0b1d41c78f047b7b17c6c8ce75678d4413df"
+    },
+    {
+      "path": "tests/quality/database-pages.spec.ts",
+      "sha256": "292446c61dd4caf43e1f56b1cb2102b7ebded82cc3467b1768e91b84d157b881"
+    },
+    {
+      "path": "tests/service-worker-distribution.test.mjs",
+      "sha256": "8f65017dbc40078f38ece34b23dc363bf128610d86987a593f9a65eda6a6a920"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "19b425e649004fad6413543ac51b170d9d71212ee7bdcff62e3cf5860c889c9f"
+    }
+  ],
+  "public_diagnostics": {
+    "status": "PARTIEL",
+    "initial_full_suite": {
+      "passed": 89,
+      "failed": 7,
+      "skipped": 60,
+      "interrupted_within_skipped": 1,
+      "not_run": 59,
+      "exit": 130,
+      "report_sha256": "20c71a1617aa5df911ace2ed4f51b3b2b0fbc245cb595b142e3f7363a8e28817"
+    },
+    "first_targeted_desktop": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "note": "Two DOM assertion fixes, prior LCP collector; not the final performance test",
+      "report_sha256": "2c830270ce63fbf4e368cce6a5b5807dedb3b5d37f246550835fafe704c2aa51"
+    },
+    "final_targeted_three_projects": {
+      "passed": 20,
+      "failed": 1,
+      "skipped": 0,
+      "retries": 0,
+      "failure": "Desktop native LCP and FCP absent during observation window",
+      "tablet_lcp_ms": 3244,
+      "mobile_lcp_ms": 2876,
+      "report_sha256": "c3dd4956a14dc56f111473dd5aa244f3814ab243e1357748c5ccdfb9ecce93d0"
+    },
+    "isolated_desktop_same_sources_and_engine": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "retries": 0,
+      "lcp_ms": 2976,
+      "native_candidates_ms": [
+        2384,
+        2788,
+        2976
+      ],
+      "fcp_ms": 1764,
+      "compiled_files_unchanged": 180,
+      "report_sha256": "f81adf4fbc04f88669821c6aa42af53353050d50040d443365023c408bce5f1e"
+    },
+    "root_cause_established": false,
+    "isolated_success_does_not_replace_failed_batch": true,
+    "native_assertions": [
+      "supported",
+      "no collector error",
+      "visible",
+      "finite",
+      "greater than zero",
+      "less than 4000 ms"
+    ],
+    "observation_window_ms": 5000
+  },
+  "qualification_reuse": {
+    "unchanged_original_code_test_configuration_inputs": 45,
+    "changed_followup_test_files": [
+      "karta/test/assistantPolicy.test.ts",
+      "tests/quality/database-pages.spec.ts"
+    ],
+    "product_inputs_changed_since_initial_ci": false,
+    "workflow_changed_since_initial_ci": false,
+    "basis": "Only two existing test expectations/fixtures and documentation change after82dd. KARTA fixture is excluded from UI content paths and distribution Vitest; no product file, dependency lock, test threshold, retry or skip changed."
+  }
+}

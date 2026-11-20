@@ -1,0 +1,752 @@
+{
+  "numTotalTests": 2913,
+  "numPassedTests": 2913,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "success": true,
+  "test_files": 148,
+  "startTime": 1794532209503,
+  "suites": [
+    {
+      "file": "karta/test/actionAgentsMock.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/agentContextContract.test.ts",
+      "status": "passed",
+      "tests": 33
+    },
+    {
+      "file": "karta/test/agentsRegistry.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/apiDeliveryIdentity.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/apiSafety.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "file": "karta/test/approval.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "file": "karta/test/approvalContinuation.test.ts",
+      "status": "passed",
+      "tests": 42
+    },
+    {
+      "file": "karta/test/approvalOutbox.test.ts",
+      "status": "passed",
+      "tests": 27
+    },
+    {
+      "file": "karta/test/approvalOutboxDeadline.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "file": "karta/test/approvalOutboxRelay.test.ts",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "file": "karta/test/approvalOutboxResolver.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/approvalOutboxStartStop.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/approvalParams.test.ts",
+      "status": "passed",
+      "tests": 29
+    },
+    {
+      "file": "karta/test/approvalParentGuard.test.ts",
+      "status": "passed",
+      "tests": 48
+    },
+    {
+      "file": "karta/test/approvalTracePrivacy.test.ts",
+      "status": "passed",
+      "tests": 20
+    },
+    {
+      "file": "karta/test/approvalTriggerContext.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "file": "karta/test/assistantPolicy.test.ts",
+      "status": "passed",
+      "tests": 55
+    },
+    {
+      "file": "karta/test/autonomy.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "file": "karta/test/brief.test.ts",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "file": "karta/test/briefClaims.test.ts",
+      "status": "passed",
+      "tests": 57
+    },
+    {
+      "file": "karta/test/briefDatabaseCycle.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "file": "karta/test/briefSubmission.test.ts",
+      "status": "passed",
+      "tests": 32
+    },
+    {
+      "file": "karta/test/briefSubmissionClient.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/briefSubmissionFlow.test.ts",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "file": "karta/test/chatEscalation.test.ts",
+      "status": "passed",
+      "tests": 49
+    },
+    {
+      "file": "karta/test/chatHistoryIsolation.test.ts",
+      "status": "passed",
+      "tests": 39
+    },
+    {
+      "file": "karta/test/chatRequestScope.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "file": "karta/test/chefBrief.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "file": "karta/test/chefBudgetAccounting.test.ts",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "file": "karta/test/chefBudgetAdapter.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "file": "karta/test/chefBudgetMigration.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/chefBudgetReservations.test.ts",
+      "status": "passed",
+      "tests": 28
+    },
+    {
+      "file": "karta/test/chefCancellation.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "file": "karta/test/chefCapabilityPersistence.test.ts",
+      "status": "passed",
+      "tests": 31
+    },
+    {
+      "file": "karta/test/chefCapabilityRuntime.test.ts",
+      "status": "passed",
+      "tests": 31
+    },
+    {
+      "file": "karta/test/chefCapabilitySelection.test.ts",
+      "status": "passed",
+      "tests": 55
+    },
+    {
+      "file": "karta/test/chefControlPlane.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "file": "karta/test/chefCostGovernor.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "file": "karta/test/chefDriver.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "karta/test/chefEstimates.test.ts",
+      "status": "passed",
+      "tests": 44
+    },
+    {
+      "file": "karta/test/chefEvidenceAdapter.test.ts",
+      "status": "passed",
+      "tests": 20
+    },
+    {
+      "file": "karta/test/chefEvidenceFreshness.test.ts",
+      "status": "passed",
+      "tests": 31
+    },
+    {
+      "file": "karta/test/chefEvidenceGate.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "file": "karta/test/chefGitCancellation.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/chefGitState.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/chefHardening.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "file": "karta/test/chefIndependentReview.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "file": "karta/test/chefMission.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/chefProcess.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/chefProcessQuarantine.test.ts",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "file": "karta/test/chefProtocol.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/chefQuarantineAdapter.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "file": "karta/test/chefRuntimePolicy.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/chefSupervisor.test.ts",
+      "status": "passed",
+      "tests": 20
+    },
+    {
+      "file": "karta/test/chefSupervisorCancellation.test.ts",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "file": "karta/test/chefVerificationGitIntegration.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/chefVerifier.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/chefWorkerShutdown.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/claudeDecisionCompleteness.test.ts",
+      "status": "passed",
+      "tests": 34
+    },
+    {
+      "file": "karta/test/claudeExecutionProfileTransport.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "file": "karta/test/claudeTransportCost.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "file": "karta/test/claudeTransportDeadline.test.ts",
+      "status": "passed",
+      "tests": 21
+    },
+    {
+      "file": "karta/test/claudeUsageTransport.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/commercePrivileges.test.ts",
+      "status": "passed",
+      "tests": 58
+    },
+    {
+      "file": "karta/test/connectPermissions.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/connectedResearch.test.ts",
+      "status": "passed",
+      "tests": 84
+    },
+    {
+      "file": "karta/test/consultationHost.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "file": "karta/test/consultationIntegration.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/consultationTransport.test.ts",
+      "status": "passed",
+      "tests": 53
+    },
+    {
+      "file": "karta/test/coreSchedulerDrain.test.ts",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "file": "karta/test/customAgent.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/customAgentModelSelection.test.ts",
+      "status": "passed",
+      "tests": 21
+    },
+    {
+      "file": "karta/test/customAgentScanAbort.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "file": "karta/test/customAgentScheduler.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "file": "karta/test/customAgentSchedulerCron.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/customAuthorization.test.ts",
+      "status": "passed",
+      "tests": 46
+    },
+    {
+      "file": "karta/test/customRegistry.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/cycleAdmissionPrivacy.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/delegate.test.ts",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "file": "karta/test/executionOrigin.test.ts",
+      "status": "passed",
+      "tests": 29
+    },
+    {
+      "file": "karta/test/executionOriginMigration.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/executionProfile.test.ts",
+      "status": "passed",
+      "tests": 27
+    },
+    {
+      "file": "karta/test/generative.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/gmail-token-crypto.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/gmailTool.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/jev-client.test.ts",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "file": "karta/test/jev-schema.test.ts",
+      "status": "passed",
+      "tests": 30
+    },
+    {
+      "file": "karta/test/jev-tool.test.ts",
+      "status": "passed",
+      "tests": 34
+    },
+    {
+      "file": "karta/test/kartaTriggerEdge.test.ts",
+      "status": "passed",
+      "tests": 87
+    },
+    {
+      "file": "karta/test/knowledgeQuantumIntegration.test.ts",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "file": "karta/test/knowledgeSearch.test.ts",
+      "status": "passed",
+      "tests": 53
+    },
+    {
+      "file": "karta/test/logger.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "file": "karta/test/loggerCycleFinalization.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "karta/test/loggerFinalization.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "file": "karta/test/loop.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "file": "karta/test/loopBriefLifecycle.test.ts",
+      "status": "passed",
+      "tests": 35
+    },
+    {
+      "file": "karta/test/loopJevTracePrivacy.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/loopModelAdmission.test.ts",
+      "status": "passed",
+      "tests": 33
+    },
+    {
+      "file": "karta/test/loopModelUsage.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "file": "karta/test/loopTracePrivacy.test.ts",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "file": "karta/test/loopTriggerContext.test.ts",
+      "status": "passed",
+      "tests": 37
+    },
+    {
+      "file": "karta/test/mockClaude.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "file": "karta/test/modelCatalog.test.ts",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "file": "karta/test/modelConsultation.test.ts",
+      "status": "passed",
+      "tests": 41
+    },
+    {
+      "file": "karta/test/modelConsultationStore.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "file": "karta/test/modelConsultationStoreSql.test.ts",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "file": "karta/test/modelQualityRouting.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "file": "karta/test/modelUsage.test.ts",
+      "status": "passed",
+      "tests": 64
+    },
+    {
+      "file": "karta/test/modelUsageMigration.test.ts",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "file": "karta/test/notifyReceipt.test.ts",
+      "status": "passed",
+      "tests": 39
+    },
+    {
+      "file": "karta/test/overageCredit.test.ts",
+      "status": "passed",
+      "tests": 41
+    },
+    {
+      "file": "karta/test/partnerOutreach.test.ts",
+      "status": "passed",
+      "tests": 47
+    },
+    {
+      "file": "karta/test/privateToolResults.test.ts",
+      "status": "passed",
+      "tests": 34
+    },
+    {
+      "file": "karta/test/privateToolResultsExecution.test.ts",
+      "status": "passed",
+      "tests": 18
+    },
+    {
+      "file": "karta/test/privateToolResultsSql.test.ts",
+      "status": "passed",
+      "tests": 50
+    },
+    {
+      "file": "karta/test/publicChatAdmission.test.ts",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "file": "karta/test/quantumSimulator.test.ts",
+      "status": "passed",
+      "tests": 84
+    },
+    {
+      "file": "karta/test/quantumTool.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/queueDeliveryIdentity.test.ts",
+      "status": "passed",
+      "tests": 27
+    },
+    {
+      "file": "karta/test/real-claude.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "file": "karta/test/runtimeApiReadiness.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "file": "karta/test/runtimeConfig.test.ts",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "file": "karta/test/runtimeDeadline.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "file": "karta/test/runtimeHardening.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/runtimeLifecycle.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/runtimeProbe.test.ts",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "file": "karta/test/runtimeUsageReadiness.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "file": "karta/test/sseConsumer.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/sseFraming.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/staticAgentScheduler.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "karta/test/staticAgentSchedulerCron.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/streamCompletionAudit.test.ts",
+      "status": "passed",
+      "tests": 23
+    },
+    {
+      "file": "karta/test/streaming.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/stripeIsolation.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "file": "karta/test/subscriptionRevision.test.ts",
+      "status": "passed",
+      "tests": 25
+    },
+    {
+      "file": "karta/test/subscriptionTrial.test.ts",
+      "status": "passed",
+      "tests": 28
+    },
+    {
+      "file": "karta/test/supabaseTool.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "file": "karta/test/toolResult.test.ts",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "status": "passed",
+      "tests": 17
+    },
+    {
+      "file": "karta/test/webAccessPlanTool.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "file": "karta/test/webCapabilityPlan.test.ts",
+      "status": "passed",
+      "tests": 47
+    },
+    {
+      "file": "karta/test/webSearchCleanup.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "file": "karta/test/webSearchEvidence.test.ts",
+      "status": "passed",
+      "tests": 59
+    },
+    {
+      "file": "karta/test/webSearchInputBoundary.test.ts",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "file": "karta/test/webSearchPrivacy.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "karta/test/webSearchTransportIntegrity.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "file": "karta/test/webSearchValidation.test.ts",
+      "status": "passed",
+      "tests": 41
+    }
+  ]
+}

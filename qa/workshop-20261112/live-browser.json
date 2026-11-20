@@ -1,0 +1,21 @@
+{
+  "kind": "LIVE_GENERATED_ARTIFACT_BROWSER",
+  "status": "PASS",
+  "sourceCommit": "8fd73068c1321a16bf3b9ca5fc3336b71c3825dc",
+  "checks": [
+    "title",
+    "three clicks + keyboard activation",
+    "counter=4",
+    "320px without overflow",
+    "French language",
+    "no external requests",
+    "no browser errors"
+  ],
+  "externalRequests": 0,
+  "browserErrors": 0,
+  "providerUsage": {
+    "inputTokens": 109698,
+    "outputTokens": 1662,
+    "cachedInputTokens": 80768
+  }
+}

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.91.0";
-import { cancelResponseQuietly, createRequestDeadline, RequestDeadlineError } from "../../../src/lib/request-deadline.ts";
+import { cancelResponseQuietly, createRequestDeadline, RequestDeadlineError } from "../_shared/request-deadline.ts";
 import { readRequestText, readBoundedBytes, RequestBodyError } from "../_shared/request-body.ts";
 import {
   consumeOAuthState, issueOAuthState, isGoogleConnectionProvider, OAuthStateError,

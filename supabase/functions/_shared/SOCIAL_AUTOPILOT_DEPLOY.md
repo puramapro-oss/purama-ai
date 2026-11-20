@@ -10,13 +10,40 @@ psql "$DATABASE_URL" -f supabase/migrations/20260406120000_social_autopilot.sql
 
 ## 2. Set edge function secrets
 
-```bash
-supabase secrets set \
-  ZERNIO_API_KEY='sk_e95ed9fb3d9daea6de54cc054e62296db591ad9de634a24d9856099c2528f1d9' \
-  ZERNIO_BASE_URL='https://zernio.com/api/v1' \
-  ANTHROPIC_API_KEY='sk-ant-...' \
-  APP_URL='https://agentiapuramafr.lovable.app'
+Provision `ZERNIO_API_KEY` and `ANTHROPIC_API_KEY` from the deployment
+environment's secret store. Never put provider credentials in this guide,
+tracked environment files, shell history, CI output, or logs.
+
+For a Supabase-managed project, prepare a private environment file **outside
+the repository**, with permissions `0600`. This is a template only; replace
+the placeholders through the secret store or a local editor without printing
+the values:
+
+```dotenv
+ZERNIO_API_KEY=REPLACE_WITH_SECRET_FROM_ZERNIO
+ZERNIO_BASE_URL=https://zernio.com/api/v1
+ANTHROPIC_API_KEY=REPLACE_WITH_SECRET_FROM_ANTHROPIC
+APP_URL=https://agentiapuramafr.lovable.app
 ```
+
+After confirming the linked Supabase project is the intended target:
+
+```bash
+set +x
+# This variable contains a path only, never a credential.
+SOCIAL_SECRETS_FILE='/absolute/path/outside-repository/social-autopilot.env'
+chmod 600 "$SOCIAL_SECRETS_FILE"
+supabase secrets set --env-file "$SOCIAL_SECRETS_FILE"
+```
+
+Do not provision the placeholder values. For self-hosted edge functions,
+use the existing deployment secret mechanism instead of the managed-project
+command above.
+
+Any real credential previously committed must be treated as exposed.
+Removing it from this guide does not invalidate it or erase Git history.
+The credential owner must coordinate replacement in dependent environments
+and revocation of the old key; do not reuse a previously published value.
 
 `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` are
 auto-injected by the Supabase platform.

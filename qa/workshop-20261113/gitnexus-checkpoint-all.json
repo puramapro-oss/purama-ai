@@ -1,0 +1,12 @@
+{
+  "scope": "all",
+  "base": "working changes",
+  "exitCode": 0,
+  "files": 21,
+  "symbols": 126,
+  "processes": 9,
+  "risk": "high",
+  "listingCapped": false,
+  "indexBase": "5046ed2c9f316286e6842c50ab30d86543509e0b",
+  "output": "Changes: 21 files, 126 symbols\nAffected processes: 9\nRisk level: high\n\nChanged symbols:\n  Section Atelier IAO : création de sites et d’applications → karta/WORKSHOP.md\n  Section Parcours livré → karta/WORKSHOP.md\n  Section Configuration de l’hôte → karta/WORKSHOP.md\n  Section Enregistrement Git → karta/WORKSHOP.md\n  Section Vérifications et coûts → karta/WORKSHOP.md\n  Section Arrêt, reprise et défaillances → karta/WORKSHOP.md\n  Section Validation reproductible → karta/WORKSHOP.md\n  Function git → karta/src/chef/git-state.ts\n  Function changedPaths → karta/src/chef/git-state.ts\n  Function verifyCommittedGitState → karta/src/chef/git-state.ts\n  Function runChefWorkerCycle → karta/src/chef/supervisor.ts\n  Property error → karta/src/chef/supervisor.ts\n  Property state → karta/src/chef/supervisor.ts\n  Property taskId → karta/src/chef/supervisor.ts\n  Property error → karta/src/chef/supervisor.ts\n... and 111 more\n\nAffected execution flows:\n  • WorkshopSession → Invalid (7 steps) — changed: text, WorkshopSession\n  • RunChefWorkerCycle → Advance (5 steps) — changed: runChefWorkerCycle\n  • RunChefWorkerCycle → ChefProcessStopUnconfirmedError (4 steps) — changed: runChefWorkerCycle\n  • RunChefWorkerCycle → AssertRpc (4 steps) — changed: runChefWorkerCycle\n  • RunChefWorkerCycle → Rpc (4 steps) — changed: runChefWorkerCycle\n  • HandleWorkshopRequest → WorkshopError (4 steps) — changed: handleWorkshopRequest\n  • Start → Invalid (7 steps) — changed: text\n  • HandleWorkshopRequest → Query (3 steps) — changed: handleWorkshopRequest\n  • HandleWorkshopRequest → From (3 steps) — changed: handleWorkshopRequest\n\n  GitNexus Detect Changes (1.6.12)\n"
+}

@@ -24,6 +24,16 @@ jobs:
         working-directory: karta
     steps:
       - uses: actions/checkout@v4
+      - name: Approval outbox wrapper lifecycle (inert)
+        run: >-
+          python3 ../qa/approval-outbox-live-20261111/test_wrapper_lifecycle.py
+          --evidence "$RUNNER_TEMP/karta-outbox-wrapper-tests.json"
+      - name: Preserve outbox wrapper lifecycle evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: karta-outbox-wrapper-lifecycle
+          path: ${{ runner.temp }}/karta-outbox-wrapper-tests.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,6 +42,21 @@ jobs:
       - run: npm ci --no-audit
       - run: node ../scripts/generate-supabase-contracts.mjs --check
       - run: npm test
+      - name: Connected research native HTTP boundaries
+        run: node --import tsx --test test/connectedResearch.native.mjs
+      - name: LM Studio transport over local HTTP (synthetic server)
+        run: npm run test:lmstudio:sockets
+      - name: Workshop admission races on a private native PostgreSQL cluster
+        id: workshop_concurrency
+        run: node --test test/chefWorkshopConcurrency.native.mjs
+      - name: Preserve workshop concurrency evidence
+        if: ${{ always() && steps.workshop_concurrency.outcome != '' && steps.workshop_concurrency.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-workshop-concurrency-${{ github.sha }}
+          path: test-results/workshop-native-concurrency.json
+          if-no-files-found: error
+          retention-days: 14
       - run: node --test ../tests/oauth-google/state-sql.test.mjs
       - name: OAuth state on native PostgreSQL
         working-directory: .
@@ -49,6 +74,19 @@ jobs:
           path: ${{ runner.temp }}/purama-oauth-native-results
       - run: npm run typecheck
       - run: npm run build
+      - name: Stripe reconciliation SQL invariants
+        working-directory: .
+        env:
+          PGLITE_MODULE: ${{ github.workspace }}/karta/node_modules/@electric-sql/pglite/dist/index.js
+        run: node --test --test-concurrency=1 --test-timeout=30000 tests/revenue/inbox-sql.test.mjs
+      - name: Social publication and account binding SQL invariants
+        working-directory: .
+        env:
+          PGLITE_MODULE: ${{ github.workspace }}/karta/node_modules/@electric-sql/pglite/dist/index.js
+        run: >-
+          node --test --test-concurrency=1 --test-timeout=30000
+          tests/social-publish/migration-sql.test.mjs
+          tests/social-connection/binding-sql.test.mjs
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
 
@@ -66,33 +104,145 @@ jobs:
           deno-version: v2.9.6
       - run: npm ci --no-audit
       - run: npm run test:dependencies
+      - name: Entraide public transport and account isolation
+        run: >-
+          node --test --test-concurrency=1 --test-timeout=30000
+          tests/entraide/frontend.test.mjs tests/entraide/ui-account-scope.test.mjs
       - run: npm run lint
+      - run: npm run test:distribution:unit
+      - run: npm run test:distribution:sql
+      - name: Saved agent execution preferences and ownership
+        run: node --test tests/creator-execution-preferences.test.mjs
+      - run: npm run test:distribution:worker
+      - run: npm run test:distribution:chat
       - run: npm run test:contracts-auth
       - run: npm run test:cross-app-jwt
+      - run: npm run test:cross-app-jwt:deno
+      - run: npm run test:voice-settings
+      - run: npm run test:offline
       - run: npm run test:contracts-security
       - run: npm run test:contracts-ots
       - run: npm run test:contracts-native
       - run: npm run test:oauth
-      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts
+      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/chef-workshop/index.ts
       - run: npm run test:commerce:plans
+      - name: Authenticated model consultation Edge contract
+        run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/iao-consultation/index.ts
       - run: npm run test:commerce:handlers
+      - name: Social publication core behavior
+        run: >-
+          deno test --no-config --no-lock --no-prompt --deny-net --deny-run
+          tests/social-publish/client-intent.test.ts
+          tests/social-publish/provider.test.ts
+          tests/social-publish/publish.test.ts
+          tests/social-publish/scheduled.test.ts
+          tests/social-connection/connection.test.ts
+          tests/social-management/handlers.test.ts
+      - name: Agent execution lifetime isolation
+        run: node --test --test-concurrency=1 --test-timeout=30000 tests/social-agent-execution.test.mjs
+      - name: Social routes with the real Supabase SDK
+        run: >-
+          deno test --no-lock --no-prompt --deny-net --deny-run
+          --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET
+          --config tests/social-connection/deno.json
+          tests/social-connection/handler-sdk.test.ts
+          tests/social-management/handler-sdk.test.ts
+          tests/social-publish/runtime.test.ts
+      - run: npm run test:billing
+      - name: Stripe reconciliation with the real provider SDK
+        run: >-
+          deno test --no-lock --no-prompt --deny-net --deny-run
+          --node-modules-dir=none
+          --allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,PURAMA_BILLING_ORIGIN
+          --config tests/revenue/deno.json tests/revenue/webhook.test.ts
       - run: npm run test:founder
       - run: npm run test:founder:types
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
-      - run: npx playwright install --with-deps chromium
+      - name: Prepare the locked Playwright image without Ubuntu downloads
+        run: bash scripts/ci/run-site-browser.sh --prepare
+      - name: Workshop account isolation and mission lifecycle
+        env:
+          PLAYWRIGHT_EXECUTABLE_PATH: /opt/google/chrome/chrome
+        run: node_modules/.bin/playwright test --config tests/workshop-state/playwright.config.ts
+      - name: Social browser behavior
+        # Packaged Chrome keeps its existing AppArmor profile and browser sandbox.
+        env:
+          SOCIAL_BROWSER_EXECUTABLE: /opt/google/chrome/chrome
+        run: node tests/social-browser/run.mjs
       - run: npx tsc --noEmit -p tests/public/tsconfig.json
-      - run: npm run test:public
-      - run: npm run test:chat
-      - run: npm run test:quality
-      - run: npm run test:oauth:browser
-      - run: npm run test:founder:browser
-      - run: npm run test:account-isolation
-      - run: npm run test:contracts-ots:browser
-      - run: npm run test:wellbeing
-      - run: npm run test:voice-consent
-      - run: npm run test:ui-state
-      - run: npm run test:async-ui
-      - run: npm run test:mobile-auth
+      - run: npm run typecheck:distribution
+      - run: bash scripts/ci/run-site-browser.sh npm run test:distribution:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:public
+      - name: Offline workspace browser tests
+        id: offline_browser
+        run: bash scripts/ci/run-site-browser.sh npm run test:offline:browser
+      - name: Archive offline workspace browser evidence
+        if: ${{ always() && steps.offline_browser.outcome != '' && steps.offline_browser.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-offline-${{ github.sha }}
+          path: |
+            test-results/offline
+            test-results/offline-report.json
+          if-no-files-found: error
+          retention-days: 14
+      - run: bash scripts/ci/run-site-browser.sh npm run test:chat
+      - run: bash scripts/ci/run-site-browser.sh npm run test:quality
+      - run: bash scripts/ci/run-site-browser.sh npm run test:oauth:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:founder:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:account-isolation
+      - run: bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser
+      - run: bash scripts/ci/run-site-browser.sh npm run test:wellbeing
+      - run: bash scripts/ci/run-site-browser.sh npm run test:voice-consent
+      - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
+      - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
+      - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
+      - name: Archive voice consent and accessibility browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-voice-accessibility-${{ github.sha }}
+          path: test-results/voice-consent
+          retention-days: 14
       - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
         run: npm audit --audit-level=high --omit=dev
+
+  subscription-concurrency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: karta
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: local-trial-fixture-only
+          PGDATA: /var/lib/postgresql/purama-trial-data
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PURAMA_TRIAL_TEST_PG_HOST: 127.0.0.1
+      PURAMA_TRIAL_TEST_PG_PORT: 5432
+      PURAMA_TRIAL_TEST_PG_USER: postgres
+      PURAMA_TRIAL_TEST_PG_PASSWORD: local-trial-fixture-only
+      PURAMA_TRIAL_TEST_PG_DATA: /var/lib/postgresql/purama-trial-data
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: karta/package-lock.json
+      - run: npm ci --no-audit
+      - run: npm run test:subscriptions:postgres
+      - name: Private tool result concurrency on native PostgreSQL
+        run: node --test test/privateToolResults.native.mjs
+      - name: Model consultation admission and cancellation concurrency
+        run: node --test test/consultationStore.native.mjs

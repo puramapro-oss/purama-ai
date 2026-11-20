@@ -1,0 +1,150 @@
+{
+  "executed_at": "2026-11-12T04:44:43.520Z",
+  "node_version": "v24.22.1",
+  "command": "node --import tsx: knowledgeSearchTool.execute public quantum computing, two sources, two results/source",
+  "duration_ms": 5446,
+  "checked_files_sha256": {
+    "src/tools/knowledge-search.ts": "db9da6ef016d36d713c5a9cd19dedf1ddd4cec336f69886c23b5f6b8fab13e13",
+    "src/knowledge/public-search.ts": "47bd9f82ae880696d3a83d06c6bbd296a7792e7d0288bd929d9e9f7f6e63dac0"
+  },
+  "result": {
+    "ok": true,
+    "status": "complete",
+    "message": "Métadonnées reçues des sources demandées ; contenu non vérifié et aucun texte intégral consulté.",
+    "results": [
+      {
+        "source": "crossref",
+        "native_id": "10.1093/oso/9780198854227.003.0015",
+        "canonical_id": "doi:10.1093/oso/9780198854227.003.0015",
+        "url": "https://doi.org/10.1093/oso/9780198854227.003.0015",
+        "title": "Quantum Computing I",
+        "text": "Quantum Computing I — Oxford University Press — book-chapter",
+        "language": null,
+        "provider_published_date": "2020-05-07",
+        "retrieved_at": "2026-11-12T04:44:48.962Z",
+        "metadata_license": null,
+        "content_license": null,
+        "provider_ranks": [
+          1
+        ]
+      },
+      {
+        "source": "crossref",
+        "native_id": "10.1093/oso/9780198854227.003.0016",
+        "canonical_id": "doi:10.1093/oso/9780198854227.003.0016",
+        "url": "https://doi.org/10.1093/oso/9780198854227.003.0016",
+        "title": "Quantum Computing II",
+        "text": "Quantum Computing II — Oxford University Press — book-chapter",
+        "language": null,
+        "provider_published_date": "2020-05-07",
+        "retrieved_at": "2026-11-12T04:44:48.962Z",
+        "metadata_license": null,
+        "content_license": null,
+        "provider_ranks": [
+          2
+        ]
+      },
+      {
+        "source": "wikidata",
+        "native_id": "Q17995793",
+        "canonical_id": "wikidata:Q17995793",
+        "url": "https://www.wikidata.org/wiki/Q17995793",
+        "title": "quantum computing",
+        "text": "study of a model of computation",
+        "language": "en",
+        "provider_published_date": null,
+        "retrieved_at": "2026-11-12T04:44:45.779Z",
+        "metadata_license": "CC0-1.0",
+        "content_license": null,
+        "provider_ranks": [
+          1
+        ]
+      },
+      {
+        "source": "wikidata",
+        "native_id": "Q111450292",
+        "canonical_id": "wikidata:Q111450292",
+        "url": "https://www.wikidata.org/wiki/Q111450292",
+        "title": "Quantum Computing Inc",
+        "text": "company from Leesburg, Virginia, USA",
+        "language": "en",
+        "provider_published_date": null,
+        "retrieved_at": "2026-11-12T04:44:45.779Z",
+        "metadata_license": "CC0-1.0",
+        "content_license": null,
+        "provider_ranks": [
+          2
+        ]
+      }
+    ],
+    "evidence": {
+      "schema_version": 1,
+      "retrieval_id": "8a197102-6eaf-4d60-b3c9-043ced91a13b",
+      "scope": "selected_public_sources",
+      "content_kind": "metadata_only",
+      "verification_status": "unverified",
+      "source_text_trust": "untrusted_data",
+      "page_read_by_karta": false,
+      "full_text_retrieved": false,
+      "requested_language": "en",
+      "selected_sources": [
+        "crossref",
+        "wikidata"
+      ],
+      "sources": [
+        {
+          "source": "crossref",
+          "status": "ok",
+          "result_count": 2,
+          "duplicate_results_removed": 0,
+          "retrieved_at": "2026-11-12T04:44:48.962Z"
+        },
+        {
+          "source": "wikidata",
+          "status": "ok",
+          "result_count": 2,
+          "duplicate_results_removed": 0,
+          "retrieved_at": "2026-11-12T04:44:45.779Z"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "One public search per selected source; no private data or account credentials.",
+    "No load test, multi-worker quota validation, production deployment, or full-text verification."
+  ],
+  "checks": {
+    "unit": {
+      "command": "npm test -- --run test/knowledgeSearch.test.ts",
+      "cwd": "karta",
+      "expected": "All targeted tests pass",
+      "exit_code": 0,
+      "observed": {
+        "test_files_passed": 1,
+        "tests_passed": 47,
+        "tests_failed": 0,
+        "duration_ms": 333
+      }
+    },
+    "typecheck_targeted": {
+      "command": "node --max-old-space-size=128 node_modules/typescript/bin/tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --strict --skipLibCheck --noUnusedLocals --noUnusedParameters --noImplicitReturns --types node src/knowledge/public-search.ts src/tools/knowledge-search.ts test/knowledgeSearch.test.ts",
+      "cwd": "karta",
+      "expected": "No type errors",
+      "exit_code": 0,
+      "observed": "No diagnostic output"
+    },
+    "live": {
+      "command": "node --import tsx --input-type=module",
+      "cwd": "karta",
+      "invocation": "await knowledgeSearchTool.execute({query:'quantum computing',sources:['crossref','wikidata'],limit:2,language:'en'}, {userId:'public-smoke-test',agentType:'legal',mode:'live'})",
+      "expected": "Complete metadata retrieval from both selected sources",
+      "exit_code": 0,
+      "observed": {
+        "status": "complete",
+        "crossref_hits": 2,
+        "wikidata_hits": 2,
+        "duration_ms": 5446
+      }
+    }
+  }
+}

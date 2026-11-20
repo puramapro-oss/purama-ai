@@ -1,0 +1,65 @@
+TAP version 13
+# You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+# Subtest: current account can still confirm its real profile mutation
+ok 1 - current account can still confirm its real profile mutation
+  ---
+  duration_ms: 500.297417
+  type: 'test'
+  ...
+# Subtest: old profile response cannot toast or write cache after changing to B
+ok 2 - old profile response cannot toast or write cache after changing to B
+  ---
+  duration_ms: 180.999125
+  type: 'test'
+  ...
+# Subtest: old profile response cannot announce success after logout
+ok 3 - old profile response cannot announce success after logout
+  ---
+  duration_ms: 74.101125
+  type: 'test'
+  ...
+# Subtest: A-B-A cannot let the first lifetime replace the freshly read A profile
+ok 4 - A-B-A cannot let the first lifetime replace the freshly read A profile
+  ---
+  duration_ms: 180.890125
+  type: 'test'
+  ...
+# Subtest: a current server refusal remains visible and does not confirm a save
+ok 5 - a current server refusal remains visible and does not confirm a save
+  ---
+  duration_ms: 85.442792
+  type: 'test'
+  ...
+# Subtest: late contact confirmation cannot notify or populate an expired account cache
+ok 6 - late contact confirmation cannot notify or populate an expired account cache
+  ---
+  duration_ms: 154.7665
+  type: 'test'
+  ...
+# Subtest: late mission creation cannot notify or populate an expired account cache
+ok 7 - late mission creation cannot notify or populate an expired account cache
+  ---
+  duration_ms: 164.820833
+  type: 'test'
+  ...
+# Subtest: late mission action cannot publish a success or overwrite the cached revision after account change
+ok 8 - late mission action cannot publish a success or overwrite the cached revision after account change
+  ---
+  duration_ms: 143.566666
+  type: 'test'
+  ...
+# Subtest: current mission retry preserves the exact intent and expected revision
+ok 9 - current mission retry preserves the exact intent and expected revision
+  ---
+  duration_ms: 130.688834
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5289.589416

@@ -1,0 +1,57 @@
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/mobile/hooks/useAuth.tsx
+  201:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/CookieConsent.tsx
+  120:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/badge.tsx
+  29:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/button.tsx
+  47:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/form.tsx
+  129:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/navigation-menu.tsx
+  111:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/sidebar.tsx
+  636:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/sonner.tsx
+  27:19  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/src/components/ui/toggle.tsx
+  37:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/chat/auth.tsx
+  10:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/oauth-google/browser/entry.tsx
+  15:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+  20:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+  30:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/quality/billing-dashboard-scope-harness.tsx
+  31:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/quality/billing-scope-harness.tsx
+  16:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/voice-consent/auth.tsx
+  10:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/voice-consent/harness.tsx
+  22:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+  38:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/wellbeing/auth.tsx
+  17:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/wellbeing/harness.tsx
+  44:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+  53:10  warning  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+
+✖ 21 problems (0 errors, 21 warnings)

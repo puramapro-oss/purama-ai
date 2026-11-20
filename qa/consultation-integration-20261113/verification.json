@@ -1,0 +1,133 @@
+{
+  "schema": "purama.iao-consultation.validation.v1",
+  "date": "2026-11-13",
+  "scope": "PR73 R2: authenticated consultation UI, host, existing CHEF resource authority, provider catalogue and account binding",
+  "parent_sha": "1ac911984291da967f2313d41a4e3975a8c0bc7d",
+  "base_branch": "feat/iao-capability-selection-20261112",
+  "base_sha": "b9ba4b2fdaa1d8523e0274128941740cbe563072",
+  "status": "PARTIEL_SERVICE_REEL",
+  "local_full_suite_baseline": {
+    "karta": {
+      "pass": 2913,
+      "fail": 0,
+      "skipped": 0,
+      "test_files": 148,
+      "note": "Before final SQL completion/brief namespace guards. Final targeted regression recorded separately."
+    },
+    "site": {
+      "pass": 465,
+      "fail": 0,
+      "skipped": 0,
+      "test_files": 21
+    }
+  },
+  "types_and_builds": {
+    "karta": "PASS",
+    "site": "PASS"
+  },
+  "lint": {
+    "status": "PASS",
+    "errors": 0,
+    "preexisting_warnings": 21
+  },
+  "native_research_http": {
+    "pass": 3,
+    "real_sockets": true,
+    "external_provider": false
+  },
+  "creator_preferences_sql": {
+    "pass": 7,
+    "scenarios": 6,
+    "engine": "PGlite PostgreSQL/WASM"
+  },
+  "proof_scope": [
+    "Production React components and real frontend transport with synthetic network responses",
+    "Real Edge/index, installed auth SDK boundary and loopback HTTP; synthetic authentication/admission/provider responses",
+    "Production host → real SQL/store → installed inference SDK; synthetic provider HTTP",
+    "Durable SQL invariants on PostgreSQL/WASM; not a multi-connection lock proof",
+    "Native PostgreSQL 18 multi-connection suite wired to CI; not locally available"
+  ],
+  "integration_invariants": [
+    "Exact selected model; only real advertised capability profiles",
+    "Existing public chat preserved, consultation explicit and authenticated",
+    "No browser authority over owner, provider account, budget or price",
+    "One owner/operation admission; ambiguous requests never retried into inference",
+    "Cancellation durable before or after creation; uncertainty retains reserved resources",
+    "Observed token counters distinct from estimated ceilings and unknown billed cost",
+    "Result retrievable across host restart and private to its owner",
+    "Native catalogue and inference bound to the same provider/key",
+    "Private usage receipts excluded from wire; full responses retained with bounded excerpts"
+  ],
+  "live_provider_probe": "provider-readiness.json",
+  "remaining": [
+    "Deployment of migration/runtime/Edge/site has not been performed",
+    "Existing Mac global mock flag remains true",
+    "Native Anthropic inference refused for insufficient credit",
+    "Operator policy and real finite resource grants must be qualified before activation",
+    "Perplexity/Firecrawl real accounts and e2e external integration not qualified",
+    "OpenAI/Gemini/Bloxks native integrations are not provided by this change"
+  ],
+  "production": {
+    "migrations_applied": false,
+    "deployed": false,
+    "mock_flag_changed": false,
+    "credits_purchased": false
+  },
+  "known_limits": [
+    "Consensus between models is not independent verification",
+    "Speed bounds work/deadlines; no guaranteed latency",
+    "GitNexus graph is partial and noisy; SQL paths manually reviewed",
+    "Per-instance Edge rate limiting is not a distributed admission budget",
+    "New owner resource grants are explicit operator provisioning, not automatic subscription entitlements"
+  ],
+  "final_sql_host_regression": {
+    "numTotalTests": 93,
+    "numPassedTests": 93,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true,
+    "files": [
+      {
+        "name": "chefBudgetAccounting.test.ts",
+        "tests": 12,
+        "status": "passed"
+      },
+      {
+        "name": "chefBudgetAdmission.test.ts",
+        "tests": 18,
+        "status": "passed"
+      },
+      {
+        "name": "chefBudgetReservations.test.ts",
+        "tests": 28,
+        "status": "passed"
+      },
+      {
+        "name": "consultationIntegration.test.ts",
+        "tests": 5,
+        "status": "passed"
+      },
+      {
+        "name": "modelConsultationStore.test.ts",
+        "tests": 13,
+        "status": "passed"
+      },
+      {
+        "name": "modelConsultationStoreSql.test.ts",
+        "tests": 17,
+        "status": "passed"
+      }
+    ]
+  },
+  "final_sql_guards": [
+    "Code-mission completion cannot close an empty consultation grant",
+    "Code briefs and consultation allocations have disjoint identities, in both creation orders"
+  ],
+  "impact": {
+    "risk": "CRITICAL",
+    "staged_symbols": 186,
+    "staged_flows": 576,
+    "comparison_to_main_files": 1546,
+    "limitations": "Lists and graph are incomplete; comparisons include stacked dependencies. Runtime, API, UI and SQL boundaries independently reviewed; no claim of full graph coverage."
+  }
+}

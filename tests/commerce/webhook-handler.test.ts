@@ -16,7 +16,7 @@ function checkout(overrides: Record<string, unknown> = {}) {
     created: now - 60, livemode: false, ...overrides };
 }
 async function send(type: string, object: unknown, signature = 'inert-valid-signature') {
-  fixture.event = { id: 'evt_fixture', type, data: { object }, created: now, livemode: false };
+  fixture.event = { id: `evt_${type.replaceAll('.', '_')}`, type, data: { object }, created: now, livemode: false };
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (signature) headers['stripe-signature'] = signature;
   return handler(new Request('https://fixture.invalid/webhook', { method: 'POST', headers, body: '{}' }));
@@ -40,20 +40,20 @@ Deno.test('webhook: unpaid or missing payment status cannot grant a subscription
   for (const status of ['unpaid', undefined]) {
     resetFixture();
     assert.equal((await send('checkout.session.completed', checkout({ payment_status: status,
-      metadata: { referral_code: 'INERT', influencer_id: 'fixture-influencer' } }))).status, 200);
+      metadata: { referral_code: 'INERT', influencer_id: 'fixture-influencer' } }))).status, status === 'unpaid' ? 200 : 503);
     assert.equal(fixture.writes.length, 0); assert.equal(fixture.subscriptionRow.plan_type, 'free');
   }
 });
 Deno.test('webhook: unknown and prototype-like checkout products never fall back to pro', async () => {
   for (const product of ['prod_unknown', 'constructor', '__proto__']) {
     resetFixture(); fixture.subscription.items.data[0].price.product = product;
-    assert.equal((await send('checkout.session.completed', checkout())).status, 500);
+    assert.equal((await send('checkout.session.completed', checkout())).status, 503);
     assert.equal(fixture.writes.length, 0); assert.equal(fixture.subscriptionRow.plan_type, 'free');
   }
 });
 Deno.test('webhook: unknown subscription-update products never fall back to pro', async () => {
   resetFixture(); fixture.subscription.items.data[0].price.product = 'prod_unknown';
-  assert.equal((await update()).status, 500); assert.equal(grants().length, 0);
+  assert.equal((await update()).status, 503); assert.equal(grants().length, 0);
 });
 Deno.test('webhook: a known expanded product and customer preserve exact identity', async () => {
   resetFixture(); fixture.subscription.items.data[0].price.product = { id: 'prod_UHwPBOGTleT37J' };
@@ -69,40 +69,67 @@ Deno.test('webhook: deleted products and ambiguous or paginated items require re
     if (shape === 'multiple') fixture.subscription.items.data.push({ price: { product: 'prod_UHwPBOGTleT37J' } });
     if (shape === 'paginated') fixture.subscription.items.has_more = true;
     if (shape === 'empty') fixture.subscription.items.data = [];
-    assert.equal((await send('checkout.session.completed', checkout())).status, 500);
+    assert.equal((await send('checkout.session.completed', checkout())).status, 503);
     assert.equal(grants().length, 0);
   }
 });
 Deno.test('webhook: open and expired checkout sessions cannot activate access', async () => {
   for (const status of ['open', 'expired']) {
-    resetFixture(); assert.equal((await send('checkout.session.completed', checkout({ status }))).status, 500);
+    resetFixture(); assert.equal((await send('checkout.session.completed', checkout({ status }))).status, 503);
     assert.equal(grants().length, 0);
   }
 });
 Deno.test('webhook: a paid checkout does not turn a non-active subscription active', async () => {
   for (const status of ['incomplete', 'past_due', 'canceled', 'unpaid', 'paused']) {
     resetFixture(); fixture.subscription.status = status;
-    assert.equal((await send('checkout.session.completed', checkout())).status, 200); assert.equal(grants().length, 0);
+    assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
   }
 });
 Deno.test('webhook: an active subscription still requires its current paid invoice', async () => {
   for (const type of ['checkout.session.completed', 'customer.subscription.updated']) {
     resetFixture(); fixture.invoice.status = 'open';
-    assert.equal((await send(type, type.startsWith('checkout') ? checkout() : fixture.subscription)).status, 500);
+    assert.equal((await send(type, type.startsWith('checkout') ? checkout() : fixture.subscription)).status, 503);
     assert.equal(grants().length, 0);
   }
+});
+Deno.test('webhook: every current-state synchronization retains the paid-invoice requirement', async () => {
+  for (const type of ['customer.subscription.updated', 'customer.subscription.deleted', 'invoice.payment_failed']) {
+    resetFixture(); fixture.invoice.status = 'open';
+    assert.equal((await send(type, type.startsWith('invoice') ? fixture.invoice : fixture.subscription)).status, 503);
+    assert.equal(fixture.observations.size, 1);
+    assert.equal(grants().length, 0);
+    assert.equal(fixture.calls.filter(x => x.operation === 'retrieveInvoice').length, 1);
+  }
+});
+Deno.test('webhook: a failed one-off invoice preserves the active subscription', async () => {
+  resetFixture(); fixture.subscriptionRow.plan_type = 'pro';
+  const oneOff = { ...fixture.invoice, subscription: null, status: 'open' };
+  assert.equal((await send('invoice.payment_failed', oneOff)).status, 200);
+  assert.equal(fixture.observations.size, 1);
+  assert.equal(grants().length, 0);
+  assert.equal(fixture.subscriptionRow.status, 'active');
+  assert.equal(fixture.calls.filter(x => x.operation === 'retrieveSubscription').length, 0);
+});
+Deno.test('webhook: a delayed failed invoice re-reads the now-paid subscription and retains trial history', async () => {
+  resetFixture(); fixture.subscriptionRow.plan_type = 'pro';
+  const failed = { ...fixture.invoice, status: 'open' };
+  assert.equal((await send('invoice.payment_failed', failed)).status, 200);
+  assert.equal(fixture.subscriptionRow.status, 'active');
+  assert.equal(fixture.subscriptionRow.has_used_trial, true);
+  assert.equal(fixture.calls.filter(x => x.operation === 'retrieveSubscription').length, 1);
+  assert.equal(fixture.calls.filter(x => x.operation === 'retrieveInvoice').length, 1);
 });
 Deno.test('webhook: a missing or unrelated invoice cannot confirm paid access', async () => {
   for (const shape of ['missing', 'other-customer']) {
     resetFixture();
     if (shape === 'missing') fixture.subscription.latest_invoice = null;
     else fixture.invoice.customer = 'cus_other';
-    assert.equal((await update()).status, 500); assert.equal(grants().length, 0);
+    assert.equal((await update()).status, 503); assert.equal(grants().length, 0);
   }
 });
 Deno.test('webhook: checkout and subscription must identify the same customer', async () => {
   resetFixture(); fixture.subscription.customer = 'cus_other'; fixture.invoice.customer = 'cus_other';
-  assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
+  assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
 });
 Deno.test('webhook: existing Stripe trials retain trialing and the provider deadline', async () => {
   for (const paymentStatus of ['paid', 'no_payment_required']) {
@@ -123,12 +150,19 @@ Deno.test('webhook: trial-update replay cannot restart or extend the provider de
 Deno.test('webhook: an expired or unproven legacy trial cannot grant access', async () => {
   for (const deadline of [null, now - 1]) {
     resetFixture(); fixture.subscription.status = 'trialing'; fixture.subscription.trial_end = deadline;
-    assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
+    assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
   }
 });
-Deno.test('webhook: no-payment-required is not inferred to be a paid active subscription', async () => {
-  resetFixture(); assert.equal((await send('checkout.session.completed', checkout({ payment_status: 'no_payment_required' }))).status, 200);
+Deno.test('webhook: no-payment-required with an open invoice is never inferred to be paid', async () => {
+  resetFixture(); fixture.invoice.status = 'open';
+  assert.equal((await send('checkout.session.completed', checkout({ payment_status: 'no_payment_required' }))).status, 503);
   assert.equal(grants().length, 0);
+});
+Deno.test('webhook: an entirely discounted checkout still requires the current paid invoice', async () => {
+  resetFixture();
+  assert.equal((await send('checkout.session.completed', checkout({ payment_status: 'no_payment_required' }))).status, 200);
+  assert.equal(grants().length, 1);
+  assert.equal(fixture.calls.filter(x => x.operation === 'retrieveInvoice').length, 1);
 });
 Deno.test('webhook: confirmed delayed subscription payment reaches the real handler', async () => {
   resetFixture(); assert.equal((await send('checkout.session.completed', checkout({ payment_status: 'unpaid' }))).status, 200);
@@ -173,7 +207,7 @@ Deno.test('webhook: delayed overage remains isolated from subscription activatio
   assert.equal(fixture.creditedSessions.size, 1); assert.equal(grants().length, 0);
 });
 Deno.test('webhook: an unconfirmed async pack is rejected without any credit', async () => {
-  resetFixture(); assert.equal((await send('checkout.session.async_payment_succeeded', pack('unpaid'))).status, 500);
+  resetFixture(); assert.equal((await send('checkout.session.async_payment_succeeded', pack('unpaid'))).status, 503);
   assert.equal(fixture.creditedSessions.size, 0); assert.equal(grants().length, 0);
 });
 Deno.test('webhook: an unrelated one-time payment never grants a subscription', async () => {
@@ -181,7 +215,8 @@ Deno.test('webhook: an unrelated one-time payment never grants a subscription', 
   assert.equal(fixture.writes.length, 0); assert.equal(fixture.creditedSessions.size, 0);
 });
 Deno.test('webhook: deletion never clears the consumed-trial marker', async () => {
-  resetFixture(); assert.equal((await send('customer.subscription.deleted', fixture.subscription)).status, 200);
+  resetFixture(); fixture.subscription.status = 'canceled';
+  assert.equal((await send('customer.subscription.deleted', fixture.subscription)).status, 200);
   assert.equal(fixture.subscriptionRow.status, 'canceled'); assert.equal(fixture.subscriptionRow.plan_type, 'free');
   assert.equal(fixture.subscriptionRow.has_used_trial, true);
 });
@@ -190,13 +225,13 @@ const nonSubscriptionWrites = () => fixture.writes.filter(x => x.table !== 'subs
 function referralCheckout() {
   fixture.influencer = { id: 'fixture-influencer', user_id: 'fixture-beneficiary', commission_rate: 30,
     total_revenue: 0, total_sales: 0, beneficiary_name: 'Fixture' };
-  return checkout({ metadata: { influencer_id: 'fixture-influencer', referral_code: 'FIXTURE', user_id: 'untrusted-metadata-user' } });
+  return checkout({ metadata: { influencer_id: 'fixture-influencer', referral_code: 'FIXTURE', user_id: fixture.subscriptionRow.user_id } });
 }
-Deno.test('webhook: persisted customer binding works without display email or metadata authority', async () => {
+Deno.test('webhook: a persisted binding cannot override contradictory server metadata', async () => {
   resetFixture(); fixture.users = [];
   assert.equal((await send('checkout.session.completed', checkout({ customer_email: null,
-    metadata: { user_id: 'untrusted-other-user' } }))).status, 200);
-  assert.equal(fixture.subscriptionRow.plan_type, 'pro'); assert.equal(grants().length, 1);
+    metadata: { user_id: 'untrusted-other-user' } }))).status, 503);
+  assert.equal(fixture.subscriptionRow.plan_type, 'free'); assert.equal(grants().length, 0);
   assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 0);
 });
 Deno.test('webhook: stored binding wins over a different account with the same display email', async () => {
@@ -205,58 +240,59 @@ Deno.test('webhook: stored binding wins over a different account with the same d
   assert.equal(fixture.subscriptionRow.plan_type, 'pro');
   assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 0);
 });
-Deno.test('webhook: legacy exact lookup reaches users after the first 20000 accounts', async () => {
+Deno.test('webhook: server ownership reaches the exact user without enumerating a 20000-account email catalog', async () => {
   resetFixture(); fixture.subscriptionRow.stripe_customer_id = null;
   const target = fixture.users[0];
   fixture.users = Array.from({ length: 20000 }, (_, i) => ({ id: `legacy-${i}`, email: `legacy-${i}@example.invalid` }));
   fixture.users.push(target);
-  assert.equal((await send('checkout.session.completed', checkout())).status, 200);
+  assert.equal((await send('checkout.session.completed', checkout({ metadata: { user_id: target.id } }))).status, 200);
   assert.equal(fixture.subscriptionRow.plan_type, 'pro'); assert.equal(fixture.subscriptionRow.stripe_customer_id, 'cus_fixture');
   const pages = fixture.calls.filter(x => x.operation === 'listUsers').map(x => x.value);
-  assert.equal(pages.length, 22); assert.deepEqual(pages[21], { page: 22, perPage: 1000 });
+  assert.equal(pages.length, 0);
+  assert.equal(fixture.calls.filter(x => x.operation === 'getUserById').length, 1);
   fixture.calls = [];
-  assert.equal((await send('checkout.session.completed', checkout())).status, 200);
+  assert.equal((await send('checkout.session.completed', checkout({ metadata: { user_id: target.id } }))).status, 200);
   assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 0);
 });
-Deno.test('webhook: a later duplicate exact email is rejected before the first match can grant', async () => {
+Deno.test('webhook: duplicate email catalog matches cannot authorize an unbound legacy session', async () => {
   resetFixture(); fixture.subscriptionRow.stripe_customer_id = null; const target = fixture.users[0];
   fixture.users = [target, ...Array.from({ length: 999 }, (_, i) => ({ id: `other-${i}`, email: `other-${i}@example.invalid` })),
     { id: 'second-account-with-same-email', email: target.email }];
-  assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
+  assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
 });
-Deno.test('webhook: legacy pagination errors after a match never authorize partial results', async () => {
+Deno.test('webhook: broken email catalog pages cannot authorize an unbound legacy session', async () => {
   for (const malformed of [false, true]) {
     resetFixture(); fixture.subscriptionRow.stripe_customer_id = null;
     if (malformed) fixture.malformedUserPage = 2; else fixture.failUserPage = 2;
-    assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
+    assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
   }
 });
-Deno.test('webhook: repeated pages and bounded catalog exhaustion fail closed', async () => {
+Deno.test('webhook: repeated and unbounded email catalogs are never enumerated for ownership', async () => {
   resetFixture(); fixture.subscriptionRow.stripe_customer_id = null; fixture.repeatUserPage = true;
-  assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
-  assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 2);
+  assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
+  assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 0);
   resetFixture(); fixture.subscriptionRow.stripe_customer_id = null; fixture.neverEndingUserPages = true;
-  assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
-  assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 50);
+  assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
+  assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 0);
 });
-Deno.test('webhook: absent legacy user or missing email cannot be replaced by metadata.user_id', async () => {
+Deno.test('webhook: session metadata cannot replace missing provider ownership regardless of display email', async () => {
   for (const email of ['absent@example.invalid', null]) {
-    resetFixture(); fixture.subscriptionRow.stripe_customer_id = null;
+    resetFixture(); fixture.subscriptionRow.stripe_customer_id = null; fixture.customer.metadata = {};
     assert.equal((await send('checkout.session.completed', checkout({ customer_email: email,
-      metadata: { user_id: fixture.subscriptionRow.user_id } }))).status, 500);
+      metadata: { user_id: fixture.subscriptionRow.user_id } }))).status, 503);
     assert.equal(grants().length, 0);
   }
 });
 Deno.test('webhook: exact legacy matching neither folds case nor invents a local subscription', async () => {
   resetFixture(); fixture.subscriptionRow.stripe_customer_id = null;
-  assert.equal((await send('checkout.session.completed', checkout({ customer_email: 'FIXTURE@example.invalid' }))).status, 500);
+  assert.equal((await send('checkout.session.completed', checkout({ customer_email: 'FIXTURE@example.invalid' }))).status, 503);
   assert.equal(grants().length, 0);
   resetFixture(); fixture.subscriptionAbsent = true;
-  assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
+  assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
 });
 Deno.test('webhook: legacy fallback cannot replace another persisted customer binding', async () => {
   resetFixture(); fixture.subscriptionRow.stripe_customer_id = 'cus_other';
-  assert.equal((await send('checkout.session.completed', checkout())).status, 500);
+  assert.equal((await send('checkout.session.completed', checkout())).status, 503);
   assert.equal(fixture.subscriptionRow.stripe_customer_id, 'cus_other'); assert.equal(grants().length, 0);
 });
 Deno.test('webhook: ambiguous customer bindings and lookup failures never fall back to email', async () => {
@@ -264,13 +300,13 @@ Deno.test('webhook: ambiguous customer bindings and lookup failures never fall b
     resetFixture();
     if (broken === 'failed') fixture.failLookup = true;
     else fixture.additionalSubscriptions.push({ ...fixture.subscriptionRow, id: 'duplicate-row', user_id: 'other-user' });
-    assert.equal((await send('checkout.session.completed', checkout())).status, 500); assert.equal(grants().length, 0);
+    assert.equal((await send('checkout.session.completed', checkout())).status, 503); assert.equal(grants().length, 0);
     assert.equal(fixture.calls.filter(x => x.operation === 'listUsers').length, 0);
   }
 });
 Deno.test('webhook: a customer binding changed during persistence cannot be overwritten', async () => {
   resetFixture(); fixture.changeCustomerOnWrite = 'cus_reassigned';
-  assert.equal((await send('checkout.session.completed', referralCheckout())).status, 500);
+  assert.equal((await send('checkout.session.completed', referralCheckout())).status, 503);
   assert.equal(fixture.subscriptionRow.stripe_customer_id, 'cus_reassigned');
   assert.equal(fixture.subscriptionRow.plan_type, 'free'); assert.equal(nonSubscriptionWrites().length, 0);
 });
@@ -278,23 +314,24 @@ Deno.test('webhook: all four subscription writes fail retryably before later eff
   for (const type of ['checkout.session.completed', 'customer.subscription.updated', 'customer.subscription.deleted', 'invoice.payment_failed']) {
     resetFixture(); fixture.failPersistence = true;
     const object = type.startsWith('checkout') ? referralCheckout() : type.startsWith('invoice') ? fixture.invoice : fixture.subscription;
-    assert.equal((await send(type, object)).status, 500, type);
+    assert.equal((await send(type, object)).status, 503, type);
     assert.equal(nonSubscriptionWrites().length, 0, type);
     assert.equal(fixture.calls.some(x => x.operation === 'inert.email'), false);
   }
 });
 Deno.test('webhook: missing write receipt stops before commission even when the row was changed', async () => {
   resetFixture(); fixture.missingWriteReceipt = true;
-  assert.equal((await send('checkout.session.completed', referralCheckout())).status, 500);
+  assert.equal((await send('checkout.session.completed', referralCheckout())).status, 503);
   assert.equal(fixture.subscriptionRow.plan_type, 'pro'); assert.equal(nonSubscriptionWrites().length, 0);
 });
-Deno.test('webhook: retry after a failed subscription write reaches commission only once', async () => {
+Deno.test('webhook: retry after a failed subscription write applies rights without speculative commissions', async () => {
   resetFixture(); fixture.failPersistence = true; const session = referralCheckout();
-  assert.equal((await send('checkout.session.completed', session)).status, 500);
+  assert.equal((await send('checkout.session.completed', session)).status, 503);
   assert.equal(nonSubscriptionWrites().length, 0);
   fixture.failPersistence = false;
   assert.equal((await send('checkout.session.completed', session)).status, 200);
-  assert.equal(fixture.writes.filter(x => x.table === 'commissions' && x.operation === 'insert').length, 1);
+  assert.equal(fixture.writes.filter(x => x.table === 'commissions' && x.operation === 'insert').length, 0);
+  assert.equal(fixture.observations.size, 1);
   assert.equal(fixture.subscriptionRow.plan_type, 'pro');
 });
 Deno.test('webhook: missing or ambiguous bindings for updates, deletion and invoice failure require reconciliation', async () => {
@@ -303,7 +340,7 @@ Deno.test('webhook: missing or ambiguous bindings for updates, deletion and invo
       resetFixture();
       if (broken === 'missing') fixture.subscriptionAbsent = true;
       else fixture.additionalSubscriptions.push({ ...fixture.subscriptionRow, id: 'duplicate-row', user_id: 'other-user' });
-      assert.equal((await send(type, type.startsWith('invoice') ? fixture.invoice : fixture.subscription)).status, 500);
+      assert.equal((await send(type, type.startsWith('invoice') ? fixture.invoice : fixture.subscription)).status, 503);
       assert.equal(grants().length, 0);
     }
   }

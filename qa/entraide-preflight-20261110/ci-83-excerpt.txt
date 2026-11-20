@@ -1,0 +1,14 @@
+GitHub Actions run 42840462976, successful retry job 130156377488.
+This is an excerpt of the downloaded real job log. The checkout is the PR merge of head 8914d209cd92c2c1e4408a81eaeadc6faea483d8 with main d116dc8a6429ea76c67167a195eb3f723f2251fb.
+
+2026-11-10T21:55:08.0775660Z HEAD is now at 06b0709 Merge 8914d209cd92c2c1e4408a81eaeadc6faea483d8 into d116dc8a6429ea76c67167a195eb3f723f2251fb
+2026-11-10T21:55:08.0817650Z [command]/usr/bin/git log -1 --format=%H
+2026-11-10T21:55:09.9535918Z ##[group]Run npm run test:native --prefix tests/entraide
+2026-11-10T21:55:09.9536445Z npm run test:native --prefix tests/entraide
+2026-11-10T21:55:10.0518600Z > purama-entraide-protocol-tests@1.0.0 test:native
+2026-11-10T21:55:15.7533073Z ℹ tests 83
+2026-11-10T21:55:15.7533924Z ℹ pass 83
+2026-11-10T21:55:15.7534268Z ℹ fail 0
+2026-11-10T21:55:15.7535021Z ℹ skipped 0
+2026-11-10T21:55:17.0634603Z  waiting for server to start....2026-11-10 21:55:01.621 UTC [53] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-11-10T21:55:17.0655783Z  2026-11-10 21:55:02.046 UTC [1] LOG:  starting PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit

@@ -1,0 +1,121 @@
+{
+  "status": "PASS",
+  "startedAt": "2026-11-12T23:15:15.295Z",
+  "isolation": "new private temporary cluster; Unix socket only; no existing PostgreSQL service used",
+  "checks": [
+    {
+      "name": "same request id admits exactly one mission across two connections",
+      "status": "PASS",
+      "durationMs": 87,
+      "observedLockWait": true,
+      "missions": 1,
+      "runs": 1
+    },
+    {
+      "name": "two request ids sharing one project yield one admission and one busy response",
+      "status": "PASS",
+      "durationMs": 185,
+      "observedLockWait": true,
+      "rejectedCode": "PW423",
+      "runs": 1
+    },
+    {
+      "name": "two consumer instances cannot both acquire one live project lease",
+      "status": "PASS",
+      "durationMs": 96,
+      "observedLockWait": true,
+      "leaseWinners": 1
+    },
+    {
+      "name": "cancellation commits first and prevents the concurrent task claim",
+      "status": "PASS",
+      "durationMs": 195,
+      "observedLockWait": true,
+      "claimedTasks": 0,
+      "cancellationFinalized": true
+    },
+    {
+      "name": "claim commits first and cancellation retains its active scope until worker stop receipt",
+      "status": "PASS",
+      "durationMs": 235,
+      "observedLockWait": true,
+      "claimedTasks": 1,
+      "finalizationBeforeStop": false,
+      "finalizationAfterStop": true
+    }
+  ],
+  "migrations": [
+    {
+      "file": "008_chef_control_plane.sql",
+      "sha256": "d3887f7e8e703bdb9a8b6ae2e05b03166cd978a18b2d8cc6c411d96aeeb8d714"
+    },
+    {
+      "file": "009_chef_hardening.sql",
+      "sha256": "e39b89765dec5518dffac02f1df357887fd5695ae21dc1b11f381394b2a6909f"
+    },
+    {
+      "file": "010_chef_reliability.sql",
+      "sha256": "e0e01f5d751a2147dc9f4903981bd72f0201ef023684bed63b30d66fb2e9bc68"
+    },
+    {
+      "file": "011_chef_runtime_policy.sql",
+      "sha256": "68b7c97ed879a961f9e7fa07febf56d934da45f4f548cf24401fbc8990c6cfaa"
+    },
+    {
+      "file": "012_chef_mission_ingest.sql",
+      "sha256": "db81833188cadfd045d57b3ea6b8fe186b251741e188b7b6396661f79bc15256"
+    },
+    {
+      "file": "013_chef_independent_review.sql",
+      "sha256": "ee9ff63cb4aa7bc66e1f5c91fca75d1df19709ea72fa8429612dcb83ffecfe2a"
+    },
+    {
+      "file": "014_chef_file_ownership.sql",
+      "sha256": "9a2cffeb016a0b79e844b29e301596b4cbb093e095123e023d7c1d0c3df38372"
+    },
+    {
+      "file": "015_chef_mission_file_ownership.sql",
+      "sha256": "f52b7255d5eee592c3baa417c6108215d67cd451272b1f9d8397eb617a3d5a67"
+    },
+    {
+      "file": "016_chef_scoped_evidence.sql",
+      "sha256": "a0ec6a17093cd381354ac2f4d811444df1b684396e5b672e8cd2d7a9eaa6a56b"
+    },
+    {
+      "file": "017_chef_evidence_generation.sql",
+      "sha256": "1f649de88f787bd3d0a4e4b98eb799579426cfd372c416749ec24b0b7c6ddf76"
+    },
+    {
+      "file": "021_chef_budget_admission.sql",
+      "sha256": "83f4dce22bbe6db490027b4645f5cf1628efa92907bf0833926eb886b1376863"
+    },
+    {
+      "file": "022_chef_mission_estimates.sql",
+      "sha256": "64e22428cd21e14046cf4de19fb1377e1a1e286e559e1149df3583eacc4cff2f"
+    },
+    {
+      "file": "023_chef_process_quarantine.sql",
+      "sha256": "997475e67e60519f4ec8f50a2a73d1795695cf7b44ce968f8afa955c337217fb"
+    },
+    {
+      "file": "024_chef_claim_budget_reconciliation.sql",
+      "sha256": "0d2dd0d725b80ff783928d5246b5b234e9a1d32510d4978a1df8e9634a4b5f6a"
+    },
+    {
+      "file": "030_chef_workshop.sql",
+      "sha256": "c4c86f81e7a7c5c6691edde5bd64762bef63acdddfb6ffdefef735db1ed12f4f"
+    }
+  ],
+  "cleanup": {
+    "stopped": true,
+    "removed": true
+  },
+  "postgresVersion": "postgres (PostgreSQL) 18.4 (Homebrew)",
+  "privateCluster": "/tmp/purama-workshop-pg-uBxmKg",
+  "port": 50791,
+  "connectionPids": [
+    34621,
+    34622
+  ],
+  "finishedAt": "2026-11-12T23:15:23.199Z"
+}

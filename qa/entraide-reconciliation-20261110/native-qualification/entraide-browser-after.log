@@ -1,0 +1,15 @@
+
+Running 3 tests using 1 worker
+
+(node:40) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Browserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+  ✓  1 [entraide-local] › tests/entraide/browser.spec.mjs:120:1 › profil enregistré, mission privée publiée, Bob rejoint et Alice déclare la fin (4.2s)
+  ✓  2 [entraide-local] › tests/entraide/browser.spec.mjs:179:1 › contact accepté puis bloqué et débloqué sans réactiver l’acceptation (1.6s)
+  ✓  3 [entraide-local] › tests/entraide/browser.spec.mjs:215:1 › brouillon préservé, créations reprises sans doublon et interface à 390 pixels (1.9s)
+
+  3 passed (11.1s)

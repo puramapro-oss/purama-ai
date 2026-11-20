@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-15",
+  "timezone": "Europe/Paris",
+  "base_commit": "4df3d8dd973f4b89f81158c780d21bc2811538a6",
+  "branch": "perf/iao-memory-cost-20261115",
+  "checks": [
+    {
+      "name": "targeted_sdk_regression",
+      "cwd": "karta",
+      "command": "npm test -- --run test/claudePromptCacheTransport.test.ts test/claudeTransportCost.test.ts test/claudeUsageTransport.test.ts test/claudeTransportDeadline.test.ts test/lmStudioTransport.test.ts test/modelQualityRouting.test.ts test/claudeExecutionProfileTransport.test.ts test/modelUsage.test.ts test/loopModelUsage.test.ts",
+      "exit_status": 0,
+      "tests_passed": 230,
+      "files_passed": 9,
+      "evidence": "karta-targeted-tests.log"
+    },
+    {
+      "name": "types",
+      "cwd": "karta",
+      "command": "npm run typecheck",
+      "exit_status": 0,
+      "evidence": "karta-typecheck.log"
+    },
+    {
+      "name": "build",
+      "cwd": "karta",
+      "command": "npm run build",
+      "exit_status": 0,
+      "evidence": "karta-build.log"
+    },
+    {
+      "name": "targeted_lint",
+      "command": "/workspace/scratch/f0eafae75433/purama-one-integration/node_modules/.bin/eslint --config /workspace/scratch/dbbe217d403a/karta-eslint.config.mjs karta/src/claude/prompt-cache.ts karta/src/claude/real.ts karta/src/config.ts karta/test/claudePromptCacheTransport.test.ts",
+      "exit_status": 0,
+      "evidence": "karta-lint.log",
+      "note": "Reused installed ESLint 9.39.5 and repository rule configuration, excluding the unavailable React Refresh rule for these non-React TypeScript files. Original root dependency directory is absent; no project dependency installation or lockfile changes."
+    },
+    {
+      "name": "git_diff",
+      "command": "git diff --check",
+      "exit_status": 0
+    },
+    {
+      "name": "gitnexus_scope",
+      "command": "gitnexus detect_changes -r iao-memory-cost-20261115 --scope all --limit 80",
+      "exit_status": 0,
+      "changed_files": 6,
+      "changed_symbols": 32,
+      "affected_flows": 3,
+      "risk": "medium",
+      "evidence": "karta-detect-changes.txt"
+    },
+    {
+      "name": "vercel_rule_preservation",
+      "method": "Parsed HEAD and working vercel.json; removed new false branch key from working object and asserted deep equality.",
+      "exit_status": 0
+    },
+    {
+      "name": "gitnexus_main_comparison",
+      "risk": "critical",
+      "files": 1772,
+      "symbols": 18325,
+      "flows": 539,
+      "evidence": "karta-compare-main.txt",
+      "scope": "Whole consolidation, including inherited work; not only this patch"
+    }
+  ],
+  "sha256": {
+    "karta/src/claude/prompt-cache.ts": "f6b4898c3ed4d69196a42ffd01c338f9f7bb75a227d35bdc09349e41640000ab",
+    "karta/src/claude/real.ts": "d48318fa1e388e83ae0ea135b4e588a717520f32797faeed8f4f8224ba607cef",
+    "karta/src/config.ts": "bd46cd414123a875b6ccf08df9c02aa4d313df15683892f1809d80a4cce523d3",
+    "karta/test/claudePromptCacheTransport.test.ts": "6a249209770161c9113900358f667bb47be1d51cf9856937fabecd3aec434af4",
+    "karta/.env.example": "72a38d2ba02c9d148c31640d5f41dd6d5a433813c857d5bb96e7746761465523",
+    "vercel.json": "98e9d0df3e3d60a809953293f7c2c84e4d527c89367ced2ac420df7d0c482dcd"
+  },
+  "not_tested": [
+    "Live provider cache hit and invoice",
+    "Real-model generation quality and latency",
+    "Production activation"
+  ],
+  "activation": "off by default; no real environment changed"
+}

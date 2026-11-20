@@ -1,6 +1,7 @@
 import { supabase } from "../db/supabase.js";
 import { isDeepStrictEqual } from "node:util";
 import type { AgentTrigger, AgentType, ToolCallRecord, AgentRunResult } from "./types.js";
+import type { ModelUsageReceipt } from "../claude/usage.js";
 
 export interface RunLogHandle {
   runId: string;
@@ -18,6 +19,8 @@ export interface RunLogHandle {
     resultSummary: string;
     errorMessage?: string;
     mock: boolean;
+    /** Provider metadata only; omitted means unknown, never a zero-cost claim. */
+    modelUsage?: ModelUsageReceipt;
   }) => Promise<void>;
 }
 
@@ -83,7 +86,7 @@ export async function startRun(
           decision: row.decision ?? "",
           toolsUsed: Array.isArray(row.tools_used) ? row.tools_used : [],
           resultSummary: row.result_summary ?? "Exécution déjà réservée : vérifier son résultat avant toute reprise",
-          errorMessage: known ? row.error_message : "Résultat de l'exécution précédente à réconcilier",
+          errorMessage: known ? row.error_message ?? undefined : "Résultat de l'exécution précédente à réconcilier",
           mock: row.claude_mock === true,
           retryable: false,
         },
@@ -113,6 +116,7 @@ export async function startRun(
           result_summary: outcome.resultSummary,
           error_message: outcome.errorMessage ?? null,
           claude_mock: outcome.mock,
+          model_usage: outcome.modelUsage ? JSON.parse(JSON.stringify(outcome.modelUsage)) as ModelUsageReceipt : null,
           duration_ms: Date.now() - startedAt,
           finished_at: new Date().toISOString(),
         };
@@ -138,7 +142,7 @@ export async function startRun(
         // move the status back to "running". Zero affected rows is not success.
         try {
           const stored = await supabase.from("karta_runs")
-            .select("status,mode,decision,tools_used,result_summary,error_message,claude_mock,duration_ms,finished_at")
+            .select("status,mode,decision,tools_used,result_summary,error_message,claude_mock,model_usage,duration_ms,finished_at")
             .eq("id", runId).eq("user_id", userId).eq("agent_type", agentType).single();
           if (!stored.error && matchesCompletion(stored.data, completion)) {
             finalized = true;
@@ -168,6 +172,7 @@ interface CompletionPatch {
   result_summary: string;
   error_message: string | null;
   claude_mock: boolean;
+  model_usage: ModelUsageReceipt | null;
   duration_ms: number;
   finished_at: string;
 }
@@ -179,6 +184,7 @@ function matchesCompletion(value: unknown, expected: CompletionPatch): boolean {
     && actual.decision === expected.decision && actual.result_summary === expected.result_summary
     && actual.error_message === expected.error_message && actual.claude_mock === expected.claude_mock
     && actual.duration_ms === expected.duration_ms
+    && isDeepStrictEqual(actual.model_usage, expected.model_usage)
     && isDeepStrictEqual(actual.tools_used, expected.tools_used)
     && (typeof actual.finished_at === "string" || actual.finished_at instanceof Date)
     && new Date(actual.finished_at).getTime() === new Date(expected.finished_at).getTime();

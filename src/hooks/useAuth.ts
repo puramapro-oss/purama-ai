@@ -5,9 +5,9 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName?: string, next?: string) => Promise<{ error: Error | null; hasSession?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: () => Promise<{ error: Error | null }>;
+  signInWithGoogle: (next?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
