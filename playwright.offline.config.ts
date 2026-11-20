@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: '.',
-  testMatch: ['test/browser/offline-workspace.spec.ts', 'test/browser/offline-build.spec.ts'],
+  testMatch: ['test/browser/offline-workspace.spec.ts', 'test/browser/offline-build.spec.ts', 'test/browser/startup.spec.ts'],
   outputDir: 'test-results/offline',
   timeout: 45_000,
   expect: { timeout: 6_000 },
