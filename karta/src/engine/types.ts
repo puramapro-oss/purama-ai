@@ -75,6 +75,8 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
   name: string;
   description: string;
   sensitive: boolean;
+  /** Requires a claimed human approval even at the highest autonomy level. */
+  requiresExplicitApproval?: true;
   /**
    * Server-owned trace policy, independent of the approval flag above. A tool
    * marked metadata_only protects the whole cycle, including model summaries,

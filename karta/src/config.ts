@@ -38,7 +38,7 @@ export const config = {
 
   tavilyApiKey: process.env.TAVILY_API_KEY ?? "",
   zernioApiKey: process.env.ZERNIO_API_KEY ?? "",
-  zernioBaseUrl: process.env.ZERNIO_BASE_URL ?? "https://zernio.com/api/v1",
+  zernioBaseUrl: process.env.ZERNIO_BASE_URL?.trim() ?? "",
   docusealApiKey: process.env.DOCUSEAL_API_KEY ?? "",
   docusealBaseUrl: process.env.DOCUSEAL_BASE_URL ?? "http://docuseal:3000",
   apolloApiKey: process.env.APOLLO_API_KEY ?? "",
