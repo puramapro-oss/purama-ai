@@ -2,7 +2,7 @@ import { beforeAll, afterAll, beforeEach, describe, expect, it, vi } from "vites
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 type ApprovalRpcParams = { p_id: string; p_decision?: string; p_status?: string; p_summary?: string };
-const h = vi.hoisted(() => ({ db: null as PGlite | null, execute: vi.fn(), enqueue: vi.fn(), failFinalize: false, stopped: false }));
+const h = vi.hoisted(() => ({ db: null as PGlite | null, execute: vi.fn(), enqueue: vi.fn(), failFinalize: false, stopped: false, explicitApproval: false }));
 function database() {
   if (!h.db) throw new Error("Approval test database has not been initialized");
   return h.db;
@@ -21,7 +21,7 @@ vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: (name: string, p: App
 } } }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.stopped }));
 vi.mock("../src/engine/autonomy.js", () => ({ loadAgentState: async () => ({ simulationMode: false }), isRunnable: () => ({ ok: true }) }));
-vi.mock("../src/engine/resolveDefinition.js", () => ({ resolveAgentDefinition: async () => ({ tools: [{ name: "act", execute: h.execute }] }) }));
+vi.mock("../src/engine/resolveDefinition.js", () => ({ resolveAgentDefinition: async () => ({ tools: [{ name: "act", execute: h.execute, requiresExplicitApproval: h.explicitApproval }] }) }));
 vi.mock("../src/queue/queues.js", () => ({ enqueueAgentCycle: h.enqueue }));
 const { resolvePendingAction } = await import("../src/engine/approval.js");
 const uid = "00000000-0000-4000-8000-000000000001";
@@ -36,6 +36,7 @@ beforeAll(async () => {
 });
 afterAll(async () => { await h.db?.close(); });
 beforeEach(async () => {
+  h.explicitApproval = false;
   vi.clearAllMocks(); h.failFinalize = false; h.stopped = false; h.execute.mockResolvedValue({ ok: true }); h.enqueue.mockResolvedValue("resume-job");
   await database().exec("TRUNCATE auth.users CASCADE; INSERT INTO purama_ai.karta_global_state(id,kill_switch) VALUES('global',false) ON CONFLICT(id) DO UPDATE SET kill_switch=false;");
   await database().query("INSERT INTO auth.users VALUES ($1)", [uid]);
@@ -45,6 +46,13 @@ beforeEach(async () => {
 });
 async function state() { return (await database().query<{ status: string; tools_used: unknown }>("SELECT status,tools_used FROM purama_ai.karta_runs WHERE id=$1",[rid])).rows[0]; }
 describe("approval with real PostgreSQL SQL in PGlite (single backend)", () => {
+  it("passes the claimed approval ID to an explicitly gated action exactly once", async () => {
+    h.explicitApproval = true;
+    expect((await resolvePendingAction(aid, "approve")).ok).toBe(true);
+    expect((await resolvePendingAction(aid, "approve")).ok).toBe(false);
+    expect(h.execute).toHaveBeenCalledOnce();
+    expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({ userId: uid, mode: "live", operationId: aid, approvedActionId: aid }));
+  });
   it("executes and atomically patches the parent", async () => { expect((await resolvePendingAction(aid,"approve")).ok).toBe(true); expect((await state()).status).toBe("success"); expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({userId:uid,operationId:aid})); });
   it("commits one durable continuation without depending on Redis", async () => {
     expect((await resolvePendingAction(aid,"approve")).ok).toBe(true);

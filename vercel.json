@@ -18,6 +18,7 @@
       "feat/iao-accessibility-20261111": false,
       "audit/dependency-security-20261109": false,
       "repair/iao-quality-20261109": false,
+      "fix/iao-publication-approval-20261120": false,
       "fix/iao-websearch-validation-20261110": false,
       "audit/iao-release-consolidation-20261110": false,
       "fix/iao-calendar-months-20261120": false,

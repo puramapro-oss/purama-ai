@@ -81,6 +81,7 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
         } else {
           const result = await tool.execute(pending.tool_params, {
             userId: pending.user_id, agentType: pending.agent_type as AgentType, mode: "live", trigger: executionTrigger, operationId: pending.id,
+            ...(tool.requiresExplicitApproval ? { approvedActionId: pending.id } : {}),
           });
           const delivery = await persistPrivateToolResult({
             userId: pending.user_id, agentType: pending.agent_type,

@@ -258,7 +258,7 @@ export async function runAgentCycle(
           break;
         }
       }
-      const needsApproval = decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
+      const needsApproval = tool.requiresExplicitApproval || decision.requiresApproval || requiresHumanApproval(latest, tool.sensitive);
       if (needsApproval) {
         // Pending approval creation is itself durable work: its response can
         // be lost after commit, so it must not allow an automatic duplicate.
