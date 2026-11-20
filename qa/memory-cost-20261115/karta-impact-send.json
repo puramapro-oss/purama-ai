@@ -1,0 +1,168 @@
+{
+  "target": {
+    "id": "Function:karta/src/claude/real.ts:createRealClaudeClient.decide@71:4.fn@86:48.send@90:8",
+    "name": "send",
+    "type": "Function",
+    "filePath": "karta/src/claude/real.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 9,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "11 call sites invoking `send` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 11,
+    "dispatchBoundary": 0,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 2,
+    "processes_affected": 1,
+    "modules_affected": 2
+  },
+  "byDepthCounts": {
+    "1": 2,
+    "2": 3,
+    "3": 4
+  },
+  "affected_processes": [
+    {
+      "name": "decide",
+      "type": "Function",
+      "filePath": "karta/src/claude/real.ts",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 4,
+      "impact": "indirect"
+    },
+    {
+      "name": "Claude",
+      "hits": 4,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:karta/src/claude/lmstudio.ts:createLmStudioTransport.run@108:2",
+        "name": "run",
+        "filePath": "karta/src/claude/lmstudio.ts",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:karta/src/claude/real.ts:createRealClaudeClient.decide@71:4#1",
+        "name": "decide",
+        "filePath": "karta/src/claude/real.ts",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": [
+          {
+            "id": "proc_195_decide",
+            "label": "Decide → OwnKeys",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_293_decide",
+            "label": "Decide → Trap",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_207_decide",
+            "label": "Decide → Invalid",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:qa/workshop-20261112/live-driver-check.ts",
+        "name": "live-driver-check.ts",
+        "filePath": "qa/workshop-20261112/live-driver-check.ts",
+        "relationType": "CALLS",
+        "confidence": 0.7,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/chef/supervisor.ts:runChefWorkerCycle",
+        "name": "runChefWorkerCycle",
+        "filePath": "karta/src/chef/supervisor.ts",
+        "relationType": "CALLS",
+        "confidence": 0.7,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:karta/src/claude/lmstudio.ts:createLmStudioTransport",
+        "name": "createLmStudioTransport",
+        "filePath": "karta/src/claude/lmstudio.ts",
+        "relationType": "USES",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/worker-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/worker-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:defaultDependencies",
+        "name": "defaultDependencies",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "USES",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/chef/workshop-runtime.ts:runWorkshopRuntime.projectLoop@307:2",
+        "name": "projectLoop",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "CALLS",
+        "confidence": 0.7,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Function:karta/src/claude/real.ts:createRealClaudeClient",
+        "name": "createRealClaudeClient",
+        "filePath": "karta/src/claude/real.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
