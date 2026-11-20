@@ -13,7 +13,7 @@ async function main(): Promise<void> {
   queues.agentCycleQueue.on("error", () => console.error("[karta] file temporairement indisponible"));
   const runtime = createRuntime({
     probe: probe.probeRuntime,
-    startHttp: api.startApiServer,
+    startHttp: (readiness, lifetime) => api.startApiServer(readiness, { lifetime }),
     startWorker: () => {
       const worker = workers.startAgentCycleWorker();
       worker.on("error", () => console.error("[karta] worker temporairement indisponible"));

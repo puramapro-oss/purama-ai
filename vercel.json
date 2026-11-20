@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "perf/iao-memory-cost-20261115": false,
       "codex/iao-atelier-multiagents-20261112": false,
       "feat/iao-adaptive-intelligence-20261112": false,
       "feat/iao-local-desktop-20261112": false,
@@ -20,6 +21,7 @@
       "fix/iao-websearch-validation-20261110": false,
       "audit/iao-release-consolidation-20261110": false,
       "fix/iao-calendar-months-20261120": false,
+      "audit/iao-session-consolidation-20261120": false,
       "audit/iao-integrated-20261110-14d16": false,
       "codex/iao-compassion-consent-20261110": false,
       "audit/iao-reconciled-20261110": false,

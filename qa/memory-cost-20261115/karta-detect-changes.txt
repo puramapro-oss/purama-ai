@@ -1,0 +1,26 @@
+Changes: 6 files, 32 symbols
+Affected processes: 3
+Risk level: medium
+
+Changed symbols:
+  TypeAlias AnthropicPromptCacheMode → karta/src/claude/prompt-cache.ts
+  Function parseAnthropicPromptCacheMode → karta/src/claude/prompt-cache.ts
+  Function applyPublicPromptCache → karta/src/claude/prompt-cache.ts
+  Function createRealClaudeClient → karta/src/claude/real.ts
+  Method decide → karta/src/claude/real.ts
+  Function send → karta/src/claude/real.ts
+  Const config → karta/src/config.ts
+  Property anthropicPromptCache → karta/src/config.ts
+  Function h → karta/test/claudePromptCacheTransport.test.ts
+  Const network → karta/test/claudePromptCacheTransport.test.ts
+  Const usage → karta/test/claudePromptCacheTransport.test.ts
+  Const privateRole → karta/test/claudePromptCacheTransport.test.ts
+  Const privateContext → karta/test/claudePromptCacheTransport.test.ts
+  Const localModel → karta/test/claudePromptCacheTransport.test.ts
+  Const tool → karta/test/claudePromptCacheTransport.test.ts
+... and 17 more
+
+Affected execution flows:
+  • Decide → OwnKeys (5 steps) — changed: decide
+  • Decide → Invalid (4 steps) — changed: decide
+  • Decide → Trap (5 steps) — changed: decide
