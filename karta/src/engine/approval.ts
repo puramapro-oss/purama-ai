@@ -1,4 +1,5 @@
 import { supabase } from "../db/supabase.js";
+import { executeClaimedTool } from "./approved-execution.js";
 import { resolveAgentDefinition } from "./resolveDefinition.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
 import { isRunnable, loadAgentState } from "./autonomy.js";
@@ -79,9 +80,8 @@ export async function resolvePendingAction(id: string, decision: ResolveDecision
           status = "cancelled";
           resultSummary = "Action annulée : arrêt ou autorisation modifiée";
         } else {
-          const result = await tool.execute(pending.tool_params, {
+          const result = await executeClaimedTool(tool, pending.tool_params, {
             userId: pending.user_id, agentType: pending.agent_type as AgentType, mode: "live", trigger: executionTrigger, operationId: pending.id,
-            ...(tool.requiresExplicitApproval ? { approvedActionId: pending.id } : {}),
           });
           const delivery = await persistPrivateToolResult({
             userId: pending.user_id, agentType: pending.agent_type,

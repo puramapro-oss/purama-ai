@@ -1,6 +1,7 @@
 import { beforeAll, afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
+import { consumeClaimedApproval } from "../src/engine/approved-execution.js";
 type ApprovalRpcParams = { p_id: string; p_decision?: string; p_status?: string; p_summary?: string };
 const h = vi.hoisted(() => ({ db: null as PGlite | null, execute: vi.fn(), enqueue: vi.fn(), failFinalize: false, stopped: false, explicitApproval: false }));
 function database() {
@@ -48,10 +49,15 @@ async function state() { return (await database().query<{ status: string; tools_
 describe("approval with real PostgreSQL SQL in PGlite (single backend)", () => {
   it("passes the claimed approval ID to an explicitly gated action exactly once", async () => {
     h.explicitApproval = true;
+    h.execute.mockImplementationOnce(async (_params, context) => {
+      expect(consumeClaimedApproval(context)).toBe(true);
+      expect(consumeClaimedApproval(context)).toBe(false);
+      return { ok: true };
+    });
     expect((await resolvePendingAction(aid, "approve")).ok).toBe(true);
     expect((await resolvePendingAction(aid, "approve")).ok).toBe(false);
     expect(h.execute).toHaveBeenCalledOnce();
-    expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({ userId: uid, mode: "live", operationId: aid, approvedActionId: aid }));
+    expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({ userId: uid, mode: "live", operationId: aid }));
   });
   it("executes and atomically patches the parent", async () => { expect((await resolvePendingAction(aid,"approve")).ok).toBe(true); expect((await state()).status).toBe("success"); expect(h.execute).toHaveBeenCalledWith({}, expect.objectContaining({userId:uid,operationId:aid})); });
   it("commits one durable continuation without depending on Redis", async () => {

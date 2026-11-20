@@ -109,8 +109,6 @@ export interface ToolExecutionContext {
   trigger?: AgentTrigger;
   /** Stable identity of this attempt; providers may use it as an idempotency key. */
   operationId?: string;
-  /** Set by the approval dispatcher after it exclusively claims this pending action. */
-  approvedActionId?: string;
 }
 
 export interface ToolCallRecord {

@@ -1,4 +1,5 @@
 import { config } from "../config.js";
+import { consumeClaimedApproval } from "../engine/approved-execution.js";
 import type { ToolDefinition } from "../engine/types.js";
 
 export const zernioPublishTool: ToolDefinition<{ title: string; content: string }, { publicationId: string }> = {
@@ -16,7 +17,7 @@ export const zernioPublishTool: ToolDefinition<{ title: string; content: string 
     additionalProperties: false,
   },
   async execute(params, context) {
-    if (context?.mode !== "live" || !context.approvedActionId || context.approvedActionId !== context.operationId) {
+    if (!consumeClaimedApproval(context)) {
       throw new Error("Publication Zernio : approbation explicite requise pour cette action");
     }
     if (!config.zernioApiKey) throw new Error("ZERNIO_API_KEY non configurée côté KARTA");
