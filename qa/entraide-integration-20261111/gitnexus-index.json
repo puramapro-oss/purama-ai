@@ -1,0 +1,9 @@
+{
+  "status": "TIMEOUT",
+  "timeout_seconds": 150,
+  "process_exit": 1,
+  "index_complete": false,
+  "stdout_log": "gitnexus-index.log",
+  "reason": "Fresh cold analysis did not complete within the explicit bound; no claim of complete coverage.",
+  "no_approval_rejection": true
+}

@@ -1,0 +1,35 @@
+{
+  "baseline_head": "ca2f92b2887c711d152cbfd7e3615c3264a875a8",
+  "baseline_kind": "working tree after the root OAuth changes, before this config patch",
+  "source_before_sha256": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0",
+  "files": [
+    {
+      "path": "src/lib/email-agent.ts",
+      "sha256": "8055d9c73909d9725562c03f2ca1b4d67c48810bd3ce09eecad66af5aaf26bfa",
+      "bytes": 17764
+    },
+    {
+      "path": "tests/oauth-gmail/config.test.mjs",
+      "sha256": "20919c892a46207d83e2d3a54a00b40da22ec8603cb5c6af2d3aa393bfa75e1b",
+      "bytes": 12184
+    }
+  ],
+  "status": "PASS_LOCAL_SCOPE",
+  "runtime": "Node v24.22.1 Linux",
+  "before": {
+    "total": 13,
+    "pass": 5,
+    "fail": 8
+  },
+  "after": {
+    "total": 13,
+    "pass": 13,
+    "fail": 0,
+    "skipped": 0
+  },
+  "lint": "PASS",
+  "live_provider": "NOT_TESTED",
+  "database_column_permissions": "UNCHANGED_NOT_QUALIFIED",
+  "full_typecheck_and_ci": "ROOT_ASSEMBLY",
+  "mac_clone": "NOT_MODIFIED"
+}

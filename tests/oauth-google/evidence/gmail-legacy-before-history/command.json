@@ -1,0 +1,35 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "tests/ui-state/playwright.config.ts",
+    "email-lifecycle.spec.ts",
+    "--grep",
+    "legacy success query"
+  ],
+  "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code",
+  "baselineHead": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "sourcesBefore": {
+    "src/pages/EmailAgent.tsx": "4c1f550d1278e87125bedb456bb3806d4f37298fa41af91e8f239b931e60a72f",
+    "src/pages/EmailAgentSettings.tsx": "a821e768b891903ce034269adb8e2751b2b07db445bc77ea0c45cc69582640d0",
+    "src/lib/email-agent.ts": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0",
+    "src/components/auth/ProtectedRoute.tsx": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f",
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "29c195e8cc3d918c8f3b3c922801b9b778e2bb1328ec23e114686fab3770c070",
+    "tests/ui-state/email-lifecycle.spec.ts": "7417271c70f994786c0a893c2601f45fefb75aec9aa729d139874212121c8396"
+  },
+  "childExitCode": 1,
+  "durationSeconds": 33.174,
+  "sourcesAfter": {
+    "src/pages/EmailAgent.tsx": "4c1f550d1278e87125bedb456bb3806d4f37298fa41af91e8f239b931e60a72f",
+    "src/pages/EmailAgentSettings.tsx": "a821e768b891903ce034269adb8e2751b2b07db445bc77ea0c45cc69582640d0",
+    "src/lib/email-agent.ts": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0",
+    "src/components/auth/ProtectedRoute.tsx": "d8343c1479922ac8182bb5f9096bf0171c9164fadbf408702f5fd5f026d1b21f",
+    "tests/ui-state/transport.ts": "56d94ddabce6ce632470186b02c0748c6811290d921bec90e1b5cb5f44527277",
+    "tests/ui-state/harness.tsx": "29c195e8cc3d918c8f3b3c922801b9b778e2bb1328ec23e114686fab3770c070",
+    "tests/ui-state/email-lifecycle.spec.ts": "7417271c70f994786c0a893c2601f45fefb75aec9aa729d139874212121c8396"
+  },
+  "sourceUnchanged": true
+}

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "/home/agent/.npm/_npx/e9d0974d303a22d1/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "--index-only",
+    "--name",
+    "purama-current-audit-20261110-2220-retry",
+    "--workers",
+    "1"
+  ],
+  "env": {
+    "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "268435456",
+    "GITNEXUS_INDEX_LOCK_TIMEOUT_MS": "15000",
+    "GITNEXUS_STORAGE_PATH": "/workspace/scratch/1d67ec79327f/gitnexus-current-audit-retry"
+  },
+  "exit": 1,
+  "seconds": 11.58,
+  "log": "qa/reliability-audit-20261110/gitnexus-local-retry.log"
+}

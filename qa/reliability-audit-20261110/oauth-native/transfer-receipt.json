@@ -1,0 +1,52 @@
+{
+  "files": {
+    "baseline/result.json": {
+      "sha256": "22418c864176b081d0783b9366cc37d2aeb75471f55f28ebb26186537d7a9656",
+      "bytes": 11854
+    },
+    "baseline/transcript.json": {
+      "sha256": "e63028dc751760f34275aeb9ca9c943e581cf932431c90bdb14bfb232ef0e221",
+      "bytes": 44784
+    },
+    "baseline/postgres.log": {
+      "sha256": "22d352ecf849f2c48615859db6cd21a14ba4b26325d296aca55ee258d4ff1bcc",
+      "bytes": 7471
+    },
+    "baseline/migration.sql": {
+      "sha256": "aa53db76df986c60817253d34ae9c46757d3a47efeef23f36a1dfbfa47ce49dc",
+      "bytes": 4190
+    },
+    "baseline/oauth-state.ts": {
+      "sha256": "a6df9cafec0e97af3536099c6f930e2eabd4675b9d5b51739993c492837d08b5",
+      "bytes": 3106
+    },
+    "final/result.json": {
+      "sha256": "e04dba6ce8d394bbb2f7197fc62406696f7e3d3ad671edb263789e6cff2d2907",
+      "bytes": 10854
+    },
+    "final/transcript.json": {
+      "sha256": "5ed92d19d054330cd54d3469709cc1ead39b6b5a01e375651d51cc41b906e9cb",
+      "bytes": 45190
+    },
+    "final/postgres.log": {
+      "sha256": "74a30b34a0a2a1db2994b480b371c8c2fc60a65bfb5f8937807c1b16ef5d4966",
+      "bytes": 7471
+    },
+    "final/migration.sql": {
+      "sha256": "e0b0e94339d2f83966603bbfeeea74cfa6e1669808c06c6dfd16d6f8bc65ec67",
+      "bytes": 4650
+    },
+    "final/oauth-state.ts": {
+      "sha256": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2",
+      "bytes": 3399
+    },
+    "verify_native.py": {
+      "sha256": "2474b629686dd265434b5f2594e41a2e79da4316ecf005a76deed3f48b3cf4d0",
+      "bytes": 25349
+    }
+  },
+  "remaining_clusters": [],
+  "archive_sha256": "49838533258f9e952d4ed8993443ae8edc418a6542550e84d22bf21b47a7200b",
+  "archive_bytes": 27054,
+  "local_files_verified": true
+}

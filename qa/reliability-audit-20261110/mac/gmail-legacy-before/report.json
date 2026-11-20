@@ -1,0 +1,118 @@
+{
+  "config": {
+    "configFile": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state/playwright.config.ts",
+    "rootDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-legacy-before/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/tests/ui-state",
+        "testIgnore": [],
+        "testMatch": [
+          "*.spec.ts"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/gmail-legacy-before/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/vite/bin/vite.js --config tests/ui-state/vite.config.ts --mode test",
+      "cwd": "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/",
+      "url": "http://127.0.0.1:4197/tests/ui-state/index.html",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "email-lifecycle.spec.ts",
+      "file": "email-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "email dashboard: a legacy success query cannot claim an unconnected Gmail account is connected",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5839,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T22:08:43.265Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "93c90085d0c0e7e115ac-9a829446cf1a93c91570",
+          "file": "email-lifecycle.spec.ts",
+          "line": 126,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T22:08:31.087Z",
+    "duration": 22849.864999999998,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

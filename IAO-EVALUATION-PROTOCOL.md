@@ -608,3 +608,56 @@ La compilation locale de l'application a atteint la limite de heap de 640 MiB ap
 Le workflow reste sous Node 22. Les contrôles externes Node 22 et PostgreSQL natif portent sur un gel identifié par son arbre et ses empreintes ; leurs résultats doivent être rattachés séparément à ce gel. Les tests PGlite locaux n'établissent pas à eux seuls une preuve de concurrence PostgreSQL multiconnexion. Les anciens résultats navigateur Aether restent des preuves de leur version d'origine, sans être présentés comme une réexécution de ce rapprochement.
 
 L'intégration Entraide, les connecteurs authentifiés réels, les fournisseurs, la production et les mesures de charge restent des périmètres distincts. Ce lot ne déploie pas l'application et n'applique aucune migration à une base existante.
+
+## Révocation avant l’appel au modèle — 10 novembre 2026
+
+Ce lot prolonge le candidat PR33 au commit `90d8f30322e864ccfd186e97cbfe7edf3afec9a9`. Il conserve les composants KARTA, CHEF, SMARANA et AKASHA et renforce la boucle existante. Les correctifs de planification de la PR34 étaient déjà présents dans cette base et ne sont pas réappliqués. La PR36 reste un travail parallèle distinct.
+
+### Défaut reproduit et comportement corrigé
+
+Un arrêt pouvait survenir pendant les lectures asynchrones du contexte, de la consigne ou des autorisations. Les outils étaient encore contrôlés avant leur exécution, mais le contexte pouvait déjà être envoyé au modèle après cet arrêt. Cette inférence pouvait ainsi transmettre des données et engager un coût avant le refus de l’action.
+
+`runAgentCycle` relit désormais l’état de l’agent puis l’arrêt global immédiatement avant d’obtenir le client du modèle. Ce contrôle suit celui de la propriété des agents personnalisés. Un arrêt global, une désactivation, un arrêt individuel ou un passage du mode réel au mode simulation annule le cycle avant l’inférence. Si ces lectures échouent, une erreur fixe remplace le diagnostic brut ; cette protection s’applique aussi aux agents statiques dont les traces ne sont pas privées.
+
+La vérification réutilise la clôture existante du run et le mécanisme SQL de conservation des consignes. Aucun nouvel orchestrateur, protocole d’approbation, schéma SQL ou verrou de dépendances n’est introduit. Un cycle sans consigne disponible conserve son chemin court. Un cycle commencé en simulation ne reçoit jamais ensuite le droit d’exécuter des actions réelles.
+
+### Contre-épreuves et non-régression
+
+Le nouveau fichier `loopModelAdmission.test.ts` comporte 33 cas. Sur le code de départ, 24 échouent et 9 passent ; après correction, les 33 passent. Il couvre les trois familles d’agents, les quatre changements d’état, les dernières attentes d’autorisation, les erreurs de lecture, les traces, les acquittements de clôture et les chemins normaux. Les attentes concurrentes sont contrôlées par des promesses explicites, sans délai arbitraire.
+
+Cinq cas sont ajoutés aux huit cas existants de `briefDatabaseCycle.test.ts`, dont les corps restent inchangés. Ils traversent le contexte métier, la vraie couche RPC de consignes, le journal et les migrations PostgreSQL exécutées par PGlite. Avant correction, ces cinq nouveaux cas échouent ; après correction, les treize passent. Ils vérifient notamment :
+
+- aucune inférence, aucun armement de consigne et aucun effet après l’arrêt ;
+- la conservation de l’identité et du contenu exacts de la consigne ;
+- un rejeu de la même demande qui reste annulé après réactivation ;
+- une nouvelle livraison qui reprend la consigne d’origine avant une consigne plus récente ;
+- la conservation de la limite de trois tentatives, suivie d’une réconciliation explicite ;
+- l’absence du contenu privé dans les journaux et résultats examinés.
+
+Ces 38 nouveaux cas sont compris dans la campagne finale, et les 46 cas des deux fichiers ciblés ne doivent pas être additionnés à son total.
+
+### Vérification de la version publiée
+
+| Contrôle | Résultat et portée |
+| --- | --- |
+| Deux fichiers ciblés | **46/46 PASS**, dont 38 nouveaux cas ; sorties 0 et sources inchangées. |
+| Campagne locale élargie | **PARTIEL : 1 216 cas PASS sur 72 fichiers uniques** ; 23 fichiers restent non qualifiés par cette campagne. Aucun reçu interrompu ne contribue à ce total. |
+| TypeScript KARTA | **PASS**, Node 22.23.4, heap 512 MiB, sortie 0, sources inchangées. |
+| Compilation KARTA | **PASS**, sortie 0, sources inchangées. |
+| Contrats Supabase générés | **PASS**, contrôle sans modification des fichiers. |
+| Migrations et dépendances | **PASS pour l’intégrité** : 26 migrations actives et deux lockfiles inchangés. |
+| GitNexus avant édition | **PASS dans KARTA**, impact MEDIUM de la boucle ; index global non disponible. Le contrôle final avant commit est consigné dans la PR. |
+| CI de cette nouvelle version | **NON TESTÉE à la création de ce relevé** ; le workflow de PR doit établir son résultat après publication. |
+| Runtime ONE et fournisseurs réels | **BLOQUÉ / NON TESTÉS** dans cette session. |
+
+Les preuves, sélections, versions de runtime, empreintes et incidents sont enregistrés dans [aether-model-admission-20261110.json](karta/test/evidence/aether-model-admission-20261110.json). Chaque fichier de la campagne finale ne compte qu’une fois. Les campagnes historiques de ce document et les échecs attendus sur le code de départ restent distincts.
+
+Une première exécution groupée a été interrompue par un `SIGKILL` du worker de `assistantPolicy.test.ts` : 51 de ses 55 cas avaient terminé et quatre étaient encore en attente. L’ensemble du groupe est exclu de la campagne acceptée malgré ses 964 cas terminés. Une exécution isolée du fichier a ensuite terminé avec 55/55 et le groupe des 63 autres fichiers avec 913/913. Les suites PGlite sont exécutées séquentiellement avec une seule tâche de compilation WebAssembly. Les assertions, délais Vitest et configurations applicatives ne sont pas affaiblis ; aucun retry automatique n’est activé. La cause des anciens `SIGKILL` reste inconnue.
+
+### Portée et limites conservées
+
+Les deux nouvelles lectures précèdent l’envoi au modèle mais ne sont pas atomiques avec une requête externe. Ce correctif ne rappelle pas une requête déjà envoyée. Les appels SQL n’acquièrent pas ici de délai maximal applicatif global ; aucune mesure de latence réelle ni aucun objectif de disponibilité en production n’est déclaré validé.
+
+La reprise d’approbation associée à une consigne reste protégée par la garde existante : transférer sa filiation durable nécessite un protocole couvrant les échecs et les rejeux. Supprimer cette garde ou remettre arbitrairement une consigne à l’état prêt permettrait de rejouer un travail déjà résolu. Ce lot n’effectue pas ce changement.
+
+PGlite prouve les propriétés exercées sur sa base locale, pas la concurrence PostgreSQL native à plusieurs connexions. Le parcours complet dans ONE, les comptes et connecteurs authentifiés, les fournisseurs réels, la charge et la production restent à qualifier sur une cible accessible. Aucune migration de production ni aucun déploiement n’est exécuté par ce lot. Le statut des contrôles distants ultérieurs est porté dans la PR et la continuité canonique, avec leur commit exact.

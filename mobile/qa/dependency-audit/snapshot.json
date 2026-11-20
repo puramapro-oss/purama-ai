@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-12T04:27:51.943Z",
+  "maximumAgeHours": 24,
+  "reportSha256": "d654f8c8205622003585badcd4be0c4139733ea49c8683d88a15ed404874b3d8",
+  "registryMultisetSha256": "4c83bda269f82010462b557a69557787828b33477bed05a33a3adc90074ee157",
+  "registryPackageInstances": 876,
+  "source": {
+    "command": [
+      "npm",
+      "audit",
+      "--audit-level=high",
+      "--json"
+    ],
+    "receiptSha256": "18ed483a0ad0be1a01d09113efcf6816f3e5cf5472ae78795c8e52ab6349299c",
+    "exitCode": 0
+  },
+  "status": "Fresh registry audit captured for this dependency graph. The CI gate checks exact local binding and freshness without making another registry request.",
+  "remainingAdvisories": [
+    "GHSA-3g3m-2fjr-6pw4",
+    "GHSA-g3hv-75wg-m249",
+    "GHSA-gcqx-w48m-w2h4"
+  ],
+  "scopeLimit": "Registry package versions, URLs and integrity values only. Local adapter code is reviewed separately. Native execution, signing and store admission are not qualified."
+}

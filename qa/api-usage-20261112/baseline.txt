@@ -1,0 +1,203 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-api-usage-20261112/karta
+
+stderr | test/loopModelUsage.test.ts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+
+ ❯ test/loopModelUsage.test.ts (10 tests | 6 failed) 17ms
+   ❯ model usage attached to the server-owned KARTA run (10)
+     × stores the receipt for success while keeping the public trace private 9ms
+     × stores the receipt for awaiting_approval while keeping the public trace private 1ms
+     × stores the receipt for simulated while keeping the public trace private 1ms
+     × stores the receipt for error while keeping the public trace private 1ms
+     × keeps provider counters when decision validation throws before any tool 1ms
+     × reconciles the same receipt after a lost journal acknowledgement without another inference 1ms
+ ❯ test/claudeUsageTransport.test.ts (9 tests | 8 failed) 26ms
+   ❯ provider usage through the real installed SDK (9)
+     × reports bounded counters without changing the accepted decision or issuing another request 13ms
+     × retains usage before rejecting max_tokens 2ms
+     × retains usage before rejecting refusal 1ms
+     × retains usage before rejecting pause_turn 1ms
+     × retains usage before rejecting unknown 1ms
+     × retains usage even when the response content fails local validation 1ms
+     × keeps omitted usage unknown without rejecting an otherwise complete compatible response 2ms
+     × distinguishes the native endpoint without storing its URL 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > reports bounded counters without changing the accepted decision or issuing another request
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { version: 1, …(11) } ]
+
+Number of calls: 0
+
+ ❯ test/claudeUsageTransport.test.ts:40:22
+     38|     const result = await createRealClaudeClient().decide(input());
+     39|     expect(result).toStrictEqual({ summary: "PRIVATE_OUTPUT", toolCall…
+     40|     expect(observed).toHaveBeenCalledExactlyOnceWith({ version: 1, api…
+       |                      ^
+     41|       requestedModel: "fixture-fast", responseModel: "fixture-actual",…
+     42|       inputTokens: 120, outputTokens: 7, cacheReadInputTokens: 900, ca…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting max_tokens
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting refusal
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting pause_turn
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage before rejecting unknown
+AssertionError: expected "vi.fn()" to be called once, but got 0 times
+ ❯ test/claudeUsageTransport.test.ts:55:22
+     53|     network.mockImplementation(async () => response(reason));
+     54|     await expect(createRealClaudeClient().decide(input())).rejects.toT…
+     55|     expect(observed).toHaveBeenCalledOnce();
+       |                      ^
+     56|     expect(observed.mock.calls[0][0]).toMatchObject({ inputTokens: 120…
+     57|     expect(network).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > retains usage even when the response content fails local validation
+AssertionError: expected "vi.fn()" to be called once, but got 0 times
+ ❯ test/claudeUsageTransport.test.ts:63:22
+     61|     network.mockImplementation(async () => response("end_turn", null));
+     62|     await expect(createRealClaudeClient().decide(input())).rejects.toT…
+     63|     expect(observed).toHaveBeenCalledOnce();
+       |                      ^
+     64|     expect(observed.mock.calls[0][0].inputTokens).toBe(120);
+     65|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > keeps omitted usage unknown without rejecting an otherwise complete compatible response
+AssertionError: expected "vi.fn()" to be called once, but got 0 times
+ ❯ test/claudeUsageTransport.test.ts:70:22
+     68|     network.mockImplementation(async () => response("end_turn", undefi…
+     69|     await expect(createRealClaudeClient().decide(input())).resolves.to…
+     70|     expect(observed).toHaveBeenCalledOnce();
+       |                      ^
+     71|     expect(observed.mock.calls[0][0]).toMatchObject({ inputTokens: nul…
+     72|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  test/claudeUsageTransport.test.ts > provider usage through the real installed SDK > distinguishes the native endpoint without storing its URL
+AssertionError: expected "vi.fn()" to be called once, but got 0 times
+ ❯ test/claudeUsageTransport.test.ts:84:22
+     82|     vi.stubEnv("ANTHROPIC_BASE_URL", undefined);
+     83|     await createRealClaudeClient().decide(input());
+     84|     expect(observed).toHaveBeenCalledOnce();
+       |                      ^
+     85|     expect(observed.mock.calls[0][0].routeKind).toBe("anthropic");
+     86|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > stores the receipt for success while keeping the public trace private
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > stores the receipt for awaiting_approval while keeping the public trace private
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > stores the receipt for simulated while keeping the public trace private
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > stores the receipt for error while keeping the public trace private
+AssertionError: expected undefined to strictly equal { version: 1, …(11) }
+
+- Expected:
+{
+  "apiFormat": "anthropic_messages",
+  "cacheCreation1hInputTokens": null,
+  "cacheCreation5mInputTokens": null,
+  "cacheCreationInputTokens": null,
+  "cacheReadInputTokens": null,
+  "inputTokens": 120,
+  "outputTokens": 8,
+  "requestedModel": "fixture-model",
+  "responseId": "msg_receipt",
+  "responseModel": "fixture-model-v1",
+  "routeKind": "compatible",
+  "version": 1,
+}
+
++ Received:
+undefined
+
+ ❯ test/loopModelUsage.test.ts:56:50
+     54|     expect(result.status).toBe(status);
+     55|     expect(h.finish).toHaveBeenCalledOnce();
+     56|     expect(h.finish.mock.calls[0][0].modelUsage).toStrictEqual(receipt…
+       |                                                  ^
+     57|     expect(h.start.mock.calls[0][0]).toBe("server-user");
+     58|     expect(JSON.stringify(h.finish.mock.calls)).not.toContain("PRIVATE…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > keeps provider counters when decision validation throws before any tool
+AssertionError: expected undefined to strictly equal { version: 1, …(11) }
+
+- Expected:
+{
+  "apiFormat": "anthropic_messages",
+  "cacheCreation1hInputTokens": null,
+  "cacheCreation5mInputTokens": null,
+  "cacheCreationInputTokens": null,
+  "cacheReadInputTokens": null,
+  "inputTokens": 120,
+  "outputTokens": 8,
+  "requestedModel": "fixture-model",
+  "responseId": "msg_receipt",
+  "responseModel": "fixture-model-v1",
+  "routeKind": "compatible",
+  "version": 1,
+}
+
++ Received:
+undefined
+
+ ❯ test/loopModelUsage.test.ts:68:50
+     66|     const result = await run();
+     67|     expect(result).toMatchObject({ status: "error", retryable: false }…
+     68|     expect(h.finish.mock.calls[0][0].modelUsage).toStrictEqual(receipt…
+       |                                                  ^
+     69|     expect(h.execute).not.toHaveBeenCalled();
+     70|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > reconciles the same receipt after a lost journal acknowledgement without another inference
+AssertionError: expected undefined to strictly equal { version: 1, …(11) }
+
+- Expected:
+{
+  "apiFormat": "anthropic_messages",
+  "cacheCreation1hInputTokens": null,
+  "cacheCreation5mInputTokens": null,
+  "cacheCreationInputTokens": null,
+  "cacheReadInputTokens": null,
+  "inputTokens": 120,
+  "outputTokens": 8,
+  "requestedModel": "fixture-model",
+  "responseId": "msg_receipt",
+  "responseModel": "fixture-model-v1",
+  "routeKind": "compatible",
+  "version": 1,
+}
+
++ Received:
+undefined
+
+ ❯ test/loopModelUsage.test.ts:92:50
+     90|     expect((await run()).status).toBe("success");
+     91|     expect(h.finish).toHaveBeenCalledTimes(2);
+     92|     expect(h.finish.mock.calls[0][0].modelUsage).toStrictEqual(receipt…
+       |                                                  ^
+     93|     expect(h.finish.mock.calls[1][0]).toStrictEqual(h.finish.mock.call…
+     94|     expect(h.decide).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  14 failed | 5 passed (19)
+   Start at  07:03:20
+   Duration  1.31s (import 66%, transform 28%, tests 4%, setup 1%, worker 1%)

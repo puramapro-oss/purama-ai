@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+    "/Users/matissdornier/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c",
+    "--index-only",
+    "--skip-fts",
+    "--workers",
+    "2"
+  ],
+  "uses_own_existing_caches": true,
+  "other_gates_concurrent": false,
+  "timeout_seconds": 150,
+  "exit": 0,
+  "seconds": 118.37,
+  "log": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/gitnexus-index-warm.log",
+  "sha256": "a798ea962f5581b894d3f722e08fcd074b25a290c14643539e7b4796754ba8c7"
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "before integration of7755d474; after trusted executable and empty-preview fixes",
+  "command": "Node22 vitest run test/chefTrustedGit.test.ts test/chefGitState.test.ts test/chefWorkshopGit.test.ts test/chefWorkshopArtifact.test.ts test/chefWorkshopRuntime.test.ts test/chefVerificationGitIntegration.test.ts --maxWorkers=2 --testTimeout=30000 --hookTimeout=30000",
+  "testFiles": 6,
+  "testsPassed": 100,
+  "markerRegressionTests": 7,
+  "markerExecutions": 0,
+  "exitCode": 0,
+  "durationSeconds": 26.57,
+  "typecheck": {
+    "command": "Node22 tsc --noEmit",
+    "exitCode": 0,
+    "durationSeconds": 12.37
+  }
+}

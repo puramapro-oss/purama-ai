@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -9,9 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useReferralTracking } from '@/hooks/useInfluencer';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PLAN_LIST, type Plan, type PlanId } from '@/lib/plans';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
+import { createRequestDeadline, RequestDeadlineError } from '@/lib/request-deadline';
 
 const ICONS: Record<string, typeof Zap> = {
   free: Gift,
@@ -29,11 +32,31 @@ const COLORS: Record<string, string> = {
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const referralSearch = searchParams.toString();
+  const { checkAndStoreReferral, getStoredReferral, clearReferral } = useReferralTracking();
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  useEffect(() => {
+    checkAndStoreReferral(referralSearch);
+    setReferralCode(getStoredReferral()?.code ?? null);
+  }, [checkAndStoreReferral, getStoredReferral, referralSearch]);
   const { user } = useAuth();
+  const accountKey = user?.id ?? 'signed-out';
+  const [loadingPlan, setLoadingPlan] = useScopedState<string | null>(accountKey, null);
+  const captureScope = useRequestScope(accountKey);
+  const pending = useRef<(() => boolean) | null>(null);
+  const checkoutIntent = useRef<{ priceId: string; referralCode: string | null; requestId: string } | null>(null);
+  useLayoutEffect(() => {
+    pending.current = null;
+    checkoutIntent.current = null;
+    setLoadingPlan(null);
+  }, [accountKey, setLoadingPlan]);
   const nav = useNavigate();
-  const { planId: currentPlanId, hasUsedTrial, refresh: refreshSubscription } = useSubscription();
+  const {
+    planId: currentPlanId, hasUsedTrial, hasSubscription, isTrialing,
+    isLoading: subscriptionLoading, isError: subscriptionError,
+    refresh: refreshSubscription,
+  } = useSubscription();
 
   // A redirect query is user-controlled; only server billing evidence proves payment.
   const success = searchParams.get('success') === 'true';
@@ -41,17 +64,40 @@ export default function Pricing() {
 
   /** Démarre l'essai 14 jours sans carte (RPC start_trial — jamais d'appel Stripe à cette étape). */
   const handleStartTrial = async (plan: Plan) => {
+    const current = captureScope();
+    pending.current = current;
+    const deadline = createRequestDeadline(20_000);
     setLoadingPlan(plan.id);
     try {
-      const { error } = await supabase.rpc('start_trial', { p_plan_type: plan.id });
+      const { error } = await deadline.wait(async () => supabase.rpc('start_trial', { p_plan_type: plan.id }));
+      if (!current()) return;
       if (error) throw error;
       toast.success(`✨ Essai ${plan.name} démarré — 14 jours, sans carte`);
       refreshSubscription();
       nav('/dashboard');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (!current()) return;
+      const message = e instanceof RequestDeadlineError ? 'La demande d’essai met trop de temps à répondre. Vérifie ton abonnement avant de réessayer.'
+        : e && typeof e === 'object' && 'message' in e && typeof e.message === 'string'
+        ? e.message : 'Impossible de démarrer l’essai. Réessaie dans un instant.';
+      toast.error('Erreur', { description: message });
     } finally {
-      setLoadingPlan(null);
+      deadline.close();
+      if (pending.current === current) pending.current = null;
+      if (current()) setLoadingPlan(null);
+    }
+  };
+
+  const handleRemoveReferral = () => {
+    if (pending.current?.() || loadingPlan) return;
+    const removed = clearReferral();
+    setReferralCode(null);
+    checkoutIntent.current = null;
+    const nextSearch = new URLSearchParams(searchParams);
+    nextSearch.delete('ref');
+    setSearchParams(nextSearch, { replace: true });
+    if (!removed) {
+      toast.info('Code retiré pour cette visite. Ton navigateur empêche sa suppression durable ; il peut réapparaître après un rechargement.');
     }
   };
 
@@ -62,20 +108,36 @@ export default function Pricing() {
       toast.error('Plan indisponible');
       return;
     }
+    const current = captureScope();
+    pending.current = current;
+    const deadline = createRequestDeadline(20_000);
     setLoadingPlan(plan.id);
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
-      });
+      const referral = getStoredReferral()?.code ?? null;
+      setReferralCode(referral);
+      if (checkoutIntent.current?.priceId !== priceId || checkoutIntent.current?.referralCode !== referral) {
+        checkoutIntent.current = { priceId, referralCode: referral, requestId: crypto.randomUUID() };
+      }
+      const requestId = checkoutIntent.current.requestId;
+      const { data, error } = await deadline.wait(() => supabase.functions.invoke('create-checkout', {
+        body: { priceId, requestId, ...(referral ? { referralCode: referral } : {}) },
+      }));
+      if (!current()) return;
       if (error) throw error;
       const url: unknown = (data as { url?: unknown } | null)?.url;
       if (typeof url !== 'string' || !url.trim()) throw new Error('Aucune URL de checkout');
       const redirect = new URL(url);
-      if (redirect.protocol !== 'https:') throw new Error('URL de paiement non sécurisée');
+      if (redirect.protocol !== 'https:' || redirect.hostname !== 'checkout.stripe.com' || redirect.port || redirect.username || redirect.password) throw new Error('URL de paiement non sécurisée');
       window.location.assign(redirect.href);
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-      setLoadingPlan(null);
+      if (!current()) return;
+      toast.error('Erreur', { description: e instanceof RequestDeadlineError
+        ? 'Le paiement met trop de temps à répondre. Réessaie dans un instant.'
+        : e instanceof Error ? e.message : 'Impossible de lancer le paiement. Réessaie dans un instant.' });
+    } finally {
+      deadline.close();
+      if (pending.current === current) pending.current = null;
+      if (current()) setLoadingPlan(null);
     }
   };
 
@@ -84,15 +146,20 @@ export default function Pricing() {
       nav(`/login?next=${encodeURIComponent('/pricing')}`);
       return;
     }
+    if (pending.current?.() || loadingPlan || subscriptionLoading || subscriptionError) return;
     if (plan.id === 'free') {
       toast.success('Tu es déjà sur le plan Découverte 🎉');
       return;
     }
-    if (plan.id === (currentPlanId as PlanId)) {
+    if (plan.id === (currentPlanId as PlanId) && !isTrialing) {
       toast.success(`Tu es déjà sur le plan ${plan.name} 🎉`);
       return;
     }
-    if (!hasUsedTrial) {
+    if (hasSubscription && !isTrialing) {
+      nav('/dashboard/billing');
+      return;
+    }
+    if (!hasUsedTrial && !isTrialing) {
       handleStartTrial(plan);
     } else {
       handleCheckout(plan);
@@ -141,6 +208,33 @@ export default function Pricing() {
           </p>
         </motion.div>
 
+        {user && subscriptionError && (
+          <div role="alert" className="max-w-3xl mx-auto mb-6 rounded-lg border border-destructive/40 p-4">
+            <p>Impossible de vérifier ton abonnement. Réessaie avant de choisir une offre.</p>
+            <Button variant="outline" className="mt-3" onClick={refreshSubscription}>
+              Réessayer
+            </Button>
+          </div>
+        )}
+
+        {referralCode && (
+          <div role="status" className="max-w-3xl mx-auto mb-6 rounded-lg border border-primary/30 p-4">
+            <p className="font-medium break-all">Code de parrainage : {referralCode}.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Son éligibilité sera vérifiée au paiement. Tu peux le retirer pour continuer sans ce code.
+            </p>
+            <Button variant="outline" className="mt-3" disabled={!!loadingPlan} onClick={handleRemoveReferral}>
+              Retirer le code
+            </Button>
+          </div>
+        )}
+
+        {user && (hasUsedTrial || isTrialing) && (!hasSubscription || isTrialing) && (
+          <p className="max-w-3xl mx-auto mb-6 text-sm text-muted-foreground text-center">
+            S’abonner ouvre un paiement Stripe, sans nouvel essai gratuit. Le montant et la périodicité sont confirmés avant le paiement.
+          </p>
+        )}
+
         {/* Bandeau vert /financer — UPDATE-BRIEF point 1 */}
         <motion.a
           href="/financer"
@@ -170,6 +264,7 @@ export default function Pricing() {
 
         <div className="flex items-center justify-center gap-3 mb-12">
           <button
+            disabled={!!loadingPlan}
             onClick={() => setBillingCycle('monthly')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               billingCycle === 'monthly' ? 'bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/30' : 'text-muted-foreground'
@@ -178,6 +273,7 @@ export default function Pricing() {
             Mensuel
           </button>
           <button
+            disabled={!!loadingPlan}
             onClick={() => setBillingCycle('yearly')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
               billingCycle === 'yearly' ? 'bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/30' : 'text-muted-foreground'
@@ -245,18 +341,22 @@ export default function Pricing() {
 
                 <Button
                   onClick={() => handlePlanClick(plan)}
-                  disabled={loadingPlan === plan.id || plan.id === currentPlanId}
+                  disabled={!!loadingPlan || (!!user && (subscriptionLoading || subscriptionError || (plan.id === currentPlanId && !isTrialing)))}
                   className={`w-full mb-5 ${
                     plan.highlight ? 'bg-accent-purple hover:bg-accent-purple/90' : ''
                   }`}
                   variant={plan.id === 'free' ? 'outline' : 'default'}
                 >
                   {loadingPlan === plan.id && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  {plan.id === currentPlanId
+                  {user && subscriptionLoading
+                    ? 'Vérification de ton abonnement…'
+                    : user && plan.id === currentPlanId && !isTrialing
                     ? 'Plan actuel'
                     : plan.id === 'free'
                       ? 'Commencer gratuitement'
-                      : hasUsedTrial
+                      : hasSubscription && !isTrialing
+                        ? 'Gérer mon abonnement'
+                        : hasUsedTrial || isTrialing
                         ? "S'abonner"
                         : 'Essai 14 jours, sans carte'}
                 </Button>

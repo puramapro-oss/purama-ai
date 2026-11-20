@@ -42,7 +42,10 @@ const h = vi.hoisted(() => ({
 
 vi.mock("../src/db/supabase.js", () => ({
   supabase: {
-    rpc: h.rpc,
+    rpc: (...args: unknown[]) => {
+      const response = Promise.resolve(h.rpc(...args));
+      return Object.assign(response, { abortSignal: (_signal: AbortSignal) => response });
+    },
     from: () => { throw new Error("Unexpected table access in admission test"); },
   },
 }));
@@ -247,7 +250,7 @@ describe("approval admission handles private claim-RPC failures", () => {
 
     expect(result.ok).toBe(false);
     expect(JSON.stringify(result)).not.toContain(PRIVATE_MARKER);
-    expect(h.rpc).toHaveBeenCalledExactlyOnceWith("karta_claim_pending_action", {
+    expect(h.rpc).toHaveBeenCalledExactlyOnceWith("karta_claim_pending_action_bounded", {
       p_id: "admission-test-pending", p_decision: "approve",
     });
     expect(h.globalStop).not.toHaveBeenCalled();

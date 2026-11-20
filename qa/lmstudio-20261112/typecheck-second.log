@@ -1,0 +1,9 @@
+test/lmStudioTransport.test.ts(84,72): error TS2322: Type '{ sensitive: true; name: string; description: string; inputSchema: { type: string; properties: { label: { type: string; }; }; required: string[]; additionalProperties: boolean; }; execute: Mock<Procedure>; }' is not assignable to type 'AnyToolDefinition'.
+  The types of 'inputSchema.type' are incompatible between these types.
+    Type 'string' is not assignable to type '"object"'.
+test/lmStudioTransport.test.ts(105,50): error TS2322: Type '{ name: string; description: string; sensitive: boolean; inputSchema: { type: string; properties: { label: { type: string; }; }; required: string[]; additionalProperties: boolean; }; execute: Mock<Procedure>; }' is not assignable to type 'AnyToolDefinition'.
+  The types of 'inputSchema.type' are incompatible between these types.
+    Type 'string' is not assignable to type '"object"'.
+test/lmStudioTransport.test.ts(212,50): error TS2322: Type '{ name: string; description: string; sensitive: boolean; inputSchema: { type: string; properties: { label: { type: string; }; }; required: string[]; additionalProperties: boolean; }; execute: Mock<Procedure>; }' is not assignable to type 'AnyToolDefinition'.
+  The types of 'inputSchema.type' are incompatible between these types.
+    Type 'string' is not assignable to type '"object"'.

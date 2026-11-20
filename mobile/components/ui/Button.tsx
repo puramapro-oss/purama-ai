@@ -1,7 +1,9 @@
-import { TouchableOpacity, Text, ActivityIndicator, ViewStyle } from "react-native";
+import type { ComponentRef, Ref } from "react";
+import { TouchableOpacity, Text, ActivityIndicator, ViewStyle, TextStyle, StyleProp, AccessibilityState } from "react-native";
 import { COLORS } from "@/lib/constants";
 
 interface ButtonProps {
+  ref?: Ref<ComponentRef<typeof TouchableOpacity>>;
   title: string;
   onPress: () => void;
   variant?: "primary" | "secondary" | "ghost" | "danger";
@@ -10,9 +12,14 @@ interface ButtonProps {
   className?: string;
   style?: ViewStyle;
   testID?: string;
+  textStyle?: StyleProp<TextStyle>;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityState?: AccessibilityState;
 }
 
 export function Button({
+  ref,
   title,
   onPress,
   variant = "primary",
@@ -21,6 +28,10 @@ export function Button({
   className = "",
   style,
   testID,
+  textStyle,
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityState,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -41,7 +52,12 @@ export function Button({
 
   return (
     <TouchableOpacity
+      ref={ref}
       testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? title}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{ ...accessibilityState, disabled: isDisabled, busy: loading }}
       onPress={onPress}
       disabled={isDisabled}
       className={`${baseClass} ${variantClass} ${isDisabled ? "opacity-50" : ""} ${className}`}
@@ -51,7 +67,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={variant === "primary" ? "#fff" : COLORS.accent} size="small" />
       ) : (
-        <Text className={textClass}>{title}</Text>
+        <Text className={textClass} style={textStyle}>{title}</Text>
       )}
     </TouchableOpacity>
   );

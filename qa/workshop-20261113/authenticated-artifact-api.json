@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "ok": true,
+  "keys": [
+    "ok",
+    "artifact"
+  ],
+  "missionId": "94c0d8cb-936d-4963-8afc-b74ef975e38f",
+  "commitSha": "027a291700e691209d05aea712f41446701db57b",
+  "archiveBytes": 3066,
+  "archiveDigestMatches": true,
+  "previewBytes": 2948,
+  "archiveMembers": [
+    "index.html"
+  ],
+  "zipIntegrity": true
+}

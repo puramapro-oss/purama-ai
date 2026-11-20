@@ -3,45 +3,43 @@ import type { AgentState, AgentType, AgentRunResult } from "./types.js";
 
 /** Charge l'état d'autonomie d'un agent pour un user. Crée une ligne par défaut (niveau 1, simulation) si absente. */
 export async function loadAgentState(userId: string, agentType: AgentType): Promise<AgentState> {
-  const { data, error } = await supabase
+  const selectState = () => supabase
     .from("karta_agent_state")
     .select("*")
     .eq("user_id", userId)
-    .eq("agent_type", agentType)
-    .maybeSingle();
+    .eq("agent_type", agentType);
+  const { data, error } = await selectState().maybeSingle();
 
   if (error) {
     throw new Error(`loadAgentState(${agentType}): ${error.message}`);
   }
 
-  if (data) {
-    return {
-      userId,
-      agentType,
-      isEnabled: data.is_enabled,
-      autonomyLevel: data.autonomy_level,
-      killSwitch: data.kill_switch,
-      simulationMode: data.simulation_mode,
-    };
-  }
-
-  const { data: created, error: insertError } = await supabase
-    .from("karta_agent_state")
-    .insert({ user_id: userId, agent_type: agentType })
-    .select("*")
-    .single();
-
-  if (insertError) {
-    throw new Error(`loadAgentState(${agentType}) création par défaut: ${insertError.message}`);
+  let row = data;
+  if (!row) {
+    const created = await supabase.from("karta_agent_state")
+      .insert({ user_id: userId, agent_type: agentType }).select("*").single();
+    if (created.error?.code === "23505") {
+      // Another caller inserted the user's state between the read and the insert.
+      const winner = await selectState().single();
+      if (winner.error || !winner.data) {
+        throw new Error(`loadAgentState(${agentType}) relecture après 23505: ${winner.error?.message ?? "ligne absente"}`);
+      }
+      row = winner.data;
+    } else {
+      if (created.error || !created.data) {
+        throw new Error(`loadAgentState(${agentType}) création par défaut: ${created.error?.message ?? "ligne absente"}`);
+      }
+      row = created.data;
+    }
   }
 
   return {
     userId,
     agentType,
-    isEnabled: created.is_enabled,
-    autonomyLevel: created.autonomy_level,
-    killSwitch: created.kill_switch,
-    simulationMode: created.simulation_mode,
+    isEnabled: row.is_enabled,
+    autonomyLevel: row.autonomy_level,
+    killSwitch: row.kill_switch,
+    simulationMode: row.simulation_mode,
   };
 }
 

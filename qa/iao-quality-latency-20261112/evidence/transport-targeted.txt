@@ -1,0 +1,15 @@
+COMMAND: ['./node_modules/.bin/vitest', 'run', 'test/claudeTransportDeadline.test.ts', 'test/claudeDecisionCompleteness.test.ts', 'test/runtimeDeadline.test.ts', '--maxWorkers=1']
+CWD: /workspace/scratch/37cd53c7c075/iao-performance/karta
+EXIT: 0
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-performance/karta
+
+
+ Test Files  3 passed (3)
+      Tests  63 passed (63)
+   Start at  05:44:10
+   Duration  22.60s (transform 77%, import 23%)
+
+  Transform  transforming modules took 16.87s · 77% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns

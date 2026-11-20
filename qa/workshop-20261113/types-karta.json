@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.json"
+  ],
+  "cwd": "/Users/matissdornier/purama-worktrees/iao-atelier-multiagents-20261112/karta",
+  "exitCode": 0,
+  "seconds": 14.27
+}

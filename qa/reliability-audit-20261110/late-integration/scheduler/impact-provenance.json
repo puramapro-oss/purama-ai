@@ -1,0 +1,11 @@
+{
+  "kind": "Selected metadata fields from the actual index receipt",
+  "index_alias": "purama-reliability-audit-mac-20261110",
+  "lastCommit": "0bfd44cbe9c87e9c58568a10210db15c6f20c89d",
+  "indexedAt": "2026-11-10T22:33:30.946Z",
+  "cron_source_sha256": "bb4ab70ae63aa4f4a300e1626140c7d92cba10698e878c5a062c49181416cd4f",
+  "indexed_cron_sha256": "bb4ab70ae63aa4f4a300e1626140c7d92cba10698e878c5a062c49181416cd4f",
+  "indexed_static_test_sha256": "6abc0d9fb6699a4b703a7cf167ea73cbf01209cb36eceb0937112c11ea117321",
+  "new_core_test_indexed": false,
+  "limitations": "Index contains PR40 working-tree cron but not PR39 runtime. New index.main → createRuntime → Stopper contract reviewed manually."
+}

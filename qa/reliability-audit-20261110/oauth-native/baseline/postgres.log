@@ -1,0 +1,49 @@
+2026-11-10 22:48:57.684 CET [87274] LOG:  starting PostgreSQL 18.4 (Homebrew) on aarch64-apple-darwin25.4.0, compiled by Apple clang version 21.0.0 (clang-2100.0.123.102), 64-bit
+2026-11-10 22:48:57.684 CET [87274] LOG:  listening on IPv4 address "127.0.0.1", port 53396
+2026-11-10 22:48:57.693 CET [87280] LOG:  database system was shut down at 2026-11-10 22:48:57 CET
+2026-11-10 22:48:57.696 CET [87274] LOG:  database system is ready to accept connections
+2026-11-10 22:48:59.291 CET [87337] ERROR:  Invalid OAuth state request
+2026-11-10 22:48:59.291 CET [87337] CONTEXT:  PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 12 at RAISE
+2026-11-10 22:48:59.291 CET [87337] STATEMENT:  SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('bad','00000000-0000-4000-8000-000000000001','google_connections','gmail');
+2026-11-10 22:48:59.351 CET [87339] ERROR:  Invalid OAuth state request
+2026-11-10 22:48:59.351 CET [87339] CONTEXT:  PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 12 at RAISE
+2026-11-10 22:48:59.351 CET [87339] STATEMENT:  SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000005','00000000-0000-4000-8000-000000000001','email_agent_gmail','google_drive');
+2026-11-10 22:48:59.401 CET [87341] ERROR:  Invalid OAuth state request
+2026-11-10 22:48:59.401 CET [87341] CONTEXT:  PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 12 at RAISE
+2026-11-10 22:48:59.401 CET [87341] STATEMENT:  SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000006',NULL,'google_connections','gmail');
+2026-11-10 22:48:59.621 CET [87351] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:48:59.621 CET [87351] STATEMENT:  SET ROLE anon; SELECT * FROM purama_ai.oauth_connection_states;
+2026-11-10 22:48:59.670 CET [87353] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:48:59.670 CET [87353] STATEMENT:  SET ROLE anon; INSERT INTO purama_ai.oauth_connection_states VALUES ('0000000000000000000000000000000000000000000000000000000000000009','00000000-0000-4000-8000-000000000001','google_connections','gmail',clock_timestamp(),clock_timestamp()+interval '10 minutes',NULL);
+2026-11-10 22:48:59.729 CET [87355] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:48:59.729 CET [87355] STATEMENT:  SET ROLE anon; UPDATE purama_ai.oauth_connection_states SET consumed_at=clock_timestamp() WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';
+2026-11-10 22:48:59.784 CET [87358] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:48:59.784 CET [87358] STATEMENT:  SET ROLE anon; DELETE FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';
+2026-11-10 22:48:59.822 CET [87360] ERROR:  permission denied for function create_oauth_connection_state
+2026-11-10 22:48:59.822 CET [87360] STATEMENT:  SET ROLE anon; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000a','00000000-0000-4000-8000-000000000001','google_connections','gmail');
+2026-11-10 22:48:59.871 CET [87362] ERROR:  permission denied for function consume_oauth_connection_state
+2026-11-10 22:48:59.871 CET [87362] STATEMENT:  SET ROLE anon; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000008','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;
+2026-11-10 22:48:59.924 CET [87364] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:48:59.924 CET [87364] STATEMENT:  SET ROLE authenticated; SELECT * FROM purama_ai.oauth_connection_states;
+2026-11-10 22:48:59.977 CET [87366] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:48:59.977 CET [87366] STATEMENT:  SET ROLE authenticated; INSERT INTO purama_ai.oauth_connection_states VALUES ('0000000000000000000000000000000000000000000000000000000000000009','00000000-0000-4000-8000-000000000001','google_connections','gmail',clock_timestamp(),clock_timestamp()+interval '10 minutes',NULL);
+2026-11-10 22:49:00.023 CET [87368] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:49:00.023 CET [87368] STATEMENT:  SET ROLE authenticated; UPDATE purama_ai.oauth_connection_states SET consumed_at=clock_timestamp() WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';
+2026-11-10 22:49:00.076 CET [87370] ERROR:  permission denied for table oauth_connection_states
+2026-11-10 22:49:00.076 CET [87370] STATEMENT:  SET ROLE authenticated; DELETE FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';
+2026-11-10 22:49:00.127 CET [87372] ERROR:  permission denied for function create_oauth_connection_state
+2026-11-10 22:49:00.127 CET [87372] STATEMENT:  SET ROLE authenticated; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000a','00000000-0000-4000-8000-000000000001','google_connections','gmail');
+2026-11-10 22:49:00.184 CET [87374] ERROR:  permission denied for function consume_oauth_connection_state
+2026-11-10 22:49:00.184 CET [87374] STATEMENT:  SET ROLE authenticated; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000008','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;
+2026-11-10 22:49:04.714 CET [87488] ERROR:  duplicate key value violates unique constraint "oauth_connection_states_pkey"
+2026-11-10 22:49:04.714 CET [87488] CONTEXT:  SQL statement "INSERT INTO purama_ai.oauth_connection_states(state_hash, user_id, purpose, provider, created_at, expires_at)
+	  VALUES (p_state_hash, p_user_id, p_purpose, p_provider, created, expires)"
+	PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 20 at SQL statement
+2026-11-10 22:49:04.714 CET [87488] STATEMENT:  SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000e','00000000-0000-4000-8000-000000000001','google_connections','gmail');
+2026-11-10 22:49:05.184 CET [87274] LOG:  received fast shutdown request
+2026-11-10 22:49:05.185 CET [87274] LOG:  aborting any active transactions
+2026-11-10 22:49:05.188 CET [87274] LOG:  background worker "logical replication launcher" (PID 87283) exited with exit code 1
+2026-11-10 22:49:05.188 CET [87278] LOG:  shutting down
+2026-11-10 22:49:05.189 CET [87278] LOG:  checkpoint starting: shutdown immediate
+2026-11-10 22:49:05.202 CET [87278] LOG:  checkpoint complete: wrote 99 buffers (4.8%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.005 s, total=0.014 s; sync files=66, longest=0.001 s, average=0.001 s; distance=351 kB, estimate=351 kB; lsn=0/17E2C90, redo lsn=0/17E2C90
+2026-11-10 22:49:05.210 CET [87274] LOG:  database system is shut down

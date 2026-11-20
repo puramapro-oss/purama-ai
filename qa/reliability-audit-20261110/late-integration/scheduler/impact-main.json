@@ -1,0 +1,56 @@
+[
+  {
+    "symbol": "startSchedulers",
+    "command": [
+      "/opt/homebrew/bin/node",
+      "/Users/matissdornier/.npm/_npx/e46929201c1128dd/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "startSchedulers",
+      "--file",
+      "karta/src/scheduler/cron.ts",
+      "--direction",
+      "upstream",
+      "--repo",
+      "purama-reliability-audit-mac-20261110"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"Function:karta/src/scheduler/cron.ts:startSchedulers\",\n    \"name\": \"startSchedulers\",\n    \"type\": \"Function\",\n    \"filePath\": \"karta/src/scheduler/cron.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 1,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {\n    \"1\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"File:karta/src/index.ts\",\n        \"name\": \"index.ts\",\n        \"filePath\": \"karta/src/index.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n"
+  },
+  {
+    "symbol": "startGuardedSchedule",
+    "command": [
+      "/opt/homebrew/bin/node",
+      "/Users/matissdornier/.npm/_npx/e46929201c1128dd/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "startGuardedSchedule",
+      "--file",
+      "karta/src/scheduler/cron.ts",
+      "--direction",
+      "upstream",
+      "--repo",
+      "purama-reliability-audit-mac-20261110"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"Function:karta/src/scheduler/cron.ts:startGuardedSchedule\",\n    \"name\": \"startGuardedSchedule\",\n    \"type\": \"Function\",\n    \"filePath\": \"karta/src/scheduler/cron.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 2,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1,\n    \"2\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Scheduler\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Function:karta/src/scheduler/cron.ts:startSchedulers\",\n        \"name\": \"startSchedulers\",\n        \"filePath\": \"karta/src/scheduler/cron.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"File:karta/src/index.ts\",\n        \"name\": \"index.ts\",\n        \"filePath\": \"karta/src/index.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n"
+  },
+  {
+    "symbol": "runScheduledCycle",
+    "command": [
+      "/opt/homebrew/bin/node",
+      "/Users/matissdornier/.npm/_npx/e46929201c1128dd/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "runScheduledCycle",
+      "--file",
+      "karta/src/scheduler/cron.ts",
+      "--direction",
+      "upstream",
+      "--repo",
+      "purama-reliability-audit-mac-20261110"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"Function:karta/src/scheduler/cron.ts:runScheduledCycle\",\n    \"name\": \"runScheduledCycle\",\n    \"type\": \"Function\",\n    \"filePath\": \"karta/src/scheduler/cron.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 2,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 1,\n    \"processes_affected\": 0,\n    \"modules_affected\": 1\n  },\n  \"byDepthCounts\": {\n    \"1\": 1,\n    \"2\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [\n    {\n      \"name\": \"Scheduler\",\n      \"hits\": 1,\n      \"impact\": \"direct\"\n    }\n  ],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"Function:karta/src/scheduler/cron.ts:startSchedulers\",\n        \"name\": \"startSchedulers\",\n        \"filePath\": \"karta/src/scheduler/cron.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"File:karta/src/index.ts\",\n        \"name\": \"index.ts\",\n        \"filePath\": \"karta/src/index.ts\",\n        \"relationType\": \"CALLS\",\n        \"confidence\": 0.85,\n        \"processes\": []\n      }\n    ]\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n"
+  }
+]

@@ -1,0 +1,46 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/loopModelUsage.test.ts -t without a durable key
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-api-usage-20261112/karta
+
+stderr | test/loopModelUsage.test.ts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+
+ ❯ test/loopModelUsage.test.ts (14 tests | 1 failed | 13 skipped) 14ms
+   ❯ model usage attached to the server-owned KARTA run (14)
+     × does not offer automatic inference replay after a receipt without a durable key 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/loopModelUsage.test.ts > model usage attached to the server-owned KARTA run > does not offer automatic inference replay after a receipt without a durable key
+AssertionError: expected { status: 'error', …(6) } to match object { status: 'error', retryable: false }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "retryable": false,
++   "retryable": true,
+    "status": "error",
+  }
+
+ ❯ test/loopModelUsage.test.ts:162:20
+    160|     h.decide.mockImplementation(async (input: ObservedInput) => { inpu…
+    161|     const result = await runAgentCycle("server-user", definition(), { …
+    162|     expect(result).toMatchObject({ status: "error", retryable: false }…
+       |                    ^
+    163|     expect(h.finish.mock.calls[0][0].modelUsage).toEqual(receipt);
+    164|     expect(h.decide).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  07:09:28
+   Duration  868ms (import 57%, transform 39%, tests 2%, setup 1%, worker 1%)

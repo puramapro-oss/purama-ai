@@ -1,0 +1,79 @@
+{
+  "created_at": "2026-11-11T08:22:49.420694+00:00",
+  "files": {
+    ".git/entraide-integration/native-results/entraide-native-60d9e5d01a9e/result.json": {
+      "archive": "native-result.json",
+      "sha256": "53b66008ddad85ac169970cdd1b9f582af89ca931e2eb51a6eb55cabb8ec806c",
+      "bytes": 21602,
+      "archive_sha256": "53b66008ddad85ac169970cdd1b9f582af89ca931e2eb51a6eb55cabb8ec806c"
+    },
+    ".git/entraide-integration/native-results/entraide-native-60d9e5d01a9e/entraide-native-tests.log": {
+      "archive": "native-92.log",
+      "sha256": "e877ee80d065d2b209ef68a73fa06c791357d1beed8e31b54b1ee300f82f6ee4",
+      "bytes": 22307,
+      "archive_sha256": "e877ee80d065d2b209ef68a73fa06c791357d1beed8e31b54b1ee300f82f6ee4"
+    },
+    ".git/entraide-integration/native-results/entraide-native-60d9e5d01a9e/entraide-http-sdk-frontend.log": {
+      "archive": "http-sdk-frontend-30.log",
+      "sha256": "d7f23c715535a5843142e48da98796d01cd55ae82dfde8ae8694dd6b2dd2af0e",
+      "bytes": 7186,
+      "archive_sha256": "d7f23c715535a5843142e48da98796d01cd55ae82dfde8ae8694dd6b2dd2af0e"
+    },
+    ".git/entraide-integration/run-native.py": {
+      "archive": "native-runner-evidence.py.txt",
+      "sha256": "72b83c8791a03423bb6ebc336ff09b2993755b560c7a207fda3405231e0f201f",
+      "bytes": 21484,
+      "archive_sha256": "72b83c8791a03423bb6ebc336ff09b2993755b560c7a207fda3405231e0f201f"
+    },
+    ".git/entraide-integration/selection.json": {
+      "archive": "selection.json",
+      "sha256": "e60eb4c1f25a787955fb6711fc5ebadb26ac0885c44e6ea54165e7a5cae16023",
+      "bytes": 1343,
+      "archive_sha256": "e60eb4c1f25a787955fb6711fc5ebadb26ac0885c44e6ea54165e7a5cae16023"
+    },
+    ".git/entraide-ui-verification.json": {
+      "archive": "ui-account-receipt.json",
+      "sha256": "5c3720d55d4c9bb95a73f00393868c9beb0a492755b7c93cafc448d49e4a81ba",
+      "bytes": 5029,
+      "archive_sha256": "5c3720d55d4c9bb95a73f00393868c9beb0a492755b7c93cafc448d49e4a81ba"
+    },
+    ".git/entraide-ui-account-before-full.log": {
+      "archive": "ui-account-before.log",
+      "sha256": "7869d284df41ceb812ed25350a3f2f879aa8ae1c419cea64cfabfc4f49d4e287",
+      "bytes": 7293,
+      "archive_sha256": "0866c58651aaa20c62eefbe10c6b9fd24c03e1e3ef8c581c9428287f4bebc45d"
+    },
+    ".git/entraide-ui-account-after.log": {
+      "archive": "ui-account-after.log",
+      "sha256": "99ec2eb96f7d4314260831f51f973253808aea4b3b4ed3597c08b7c9d9414e6d",
+      "bytes": 2248,
+      "archive_sha256": "99ec2eb96f7d4314260831f51f973253808aea4b3b4ed3597c08b7c9d9414e6d"
+    },
+    ".git/entraide-integration/edge-types.json": {
+      "archive": "edge-types.json",
+      "sha256": "99c63d8f6f263a685b2688417138a25853a17692230ef1336ef90e44efddf58b",
+      "bytes": 696,
+      "archive_sha256": "99c63d8f6f263a685b2688417138a25853a17692230ef1336ef90e44efddf58b"
+    },
+    ".git/entraide-integration/edge-types.log": {
+      "archive": "edge-types.log",
+      "sha256": "c2333845af6a1452aa6a51a057186b533a869832fda66357498b9808cee51d54",
+      "bytes": 256,
+      "archive_sha256": "c2333845af6a1452aa6a51a057186b533a869832fda66357498b9808cee51d54"
+    },
+    ".git/entraide-integration/public-ci-tests.log": {
+      "archive": "public-ci-tests.log",
+      "sha256": "0fb0e650a98eac85836e7297a527119eb1c9ddba581d364dfd69f7283955373e",
+      "bytes": 5003,
+      "archive_sha256": "0fb0e650a98eac85836e7297a527119eb1c9ddba581d364dfd69f7283955373e"
+    },
+    ".git/entraide-integration/workflows-final.log": {
+      "archive": "workflow-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "archive_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  },
+  "private_canonical_code_archived": false,
+  "normalization_receipt": "log-normalization.json"
+}

@@ -1,0 +1,41 @@
+{
+  "reviewed_at_utc": "2026-11-10T22:00:14Z",
+  "workflow_path": ".github/workflows/purama-chef-hardening.yml",
+  "workflow_sha256_at_review": "cae03d727d63d142728a9a587ab7877b03201a729a5f899be166a5b504943d39",
+  "launcher_sha256": "6faaac18a6010e74b3c34babda51d29d6b548b5b17ba5831fb8d465750f6ce9d",
+  "review_status": "PASS",
+  "hosted_ci_status": "NON TESTE by this subagent; this is a source review plus local Linux native execution",
+  "checks": {
+    "runner_image_pinned": "ubuntu-24.04",
+    "working_directory": "Step overrides karta defaults with repository root",
+    "identity": "No sudo or container user override in job or launcher; local Linux benchmark ran as UID 1000",
+    "binaries": "Explicit PG_BIN locally; complete installations searched through PATH, pg_config, and /usr/lib/postgresql on hosted Ubuntu",
+    "private_cluster": "Unique new data directory under fixture root, localhost dynamic port, no Unix socket, PG environment cleared",
+    "no_existing_service": "No systemctl or pg_ctl targeting existing directories; data_directory checked before fixtures",
+    "evidence": "Upload artifact step uses always() and same runner.temp output path",
+    "port_race": "Bind reservation released before postgres start; competing bind causes setup failure, not a fallback connection; fixtures require startup and identity success",
+    "forced_cancellation_limit": "Application cleanup verified on completed executions; external SIGKILL/runner cancellation not simulated"
+  },
+  "linux_execution": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "uid": 1000,
+    "server_version": "16.15 (Debian 16.15-1.pgdg13+2)",
+    "run_id": "oauth_native_5f8c49c793",
+    "groups_passed": 11,
+    "groups_failed": 0,
+    "command_and_exit": "linux-pg16/execution.json",
+    "result": "linux-pg16/result.json",
+    "cleanup": {
+      "stopped": true,
+      "cluster_removed": true,
+      "port_closed": true,
+      "errors": []
+    },
+    "fixture_root_removed": true
+  },
+  "official_sources": [
+    "https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md",
+    "https://docs.github.com/en/actions/reference/runners/github-hosted-runners#administrative-privileges",
+    "https://www.postgresql.org/docs/18/app-initdb.html"
+  ]
+}

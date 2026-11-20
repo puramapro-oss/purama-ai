@@ -1,0 +1,36 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 235 files, 738 symbols
+Affected processes: 81
+Risk level: critical
+
+Changed symbols:
+  TypeAlias SchedulerController → karta/src/scheduler/cron.ts
+  Function startGuardedSchedule → karta/src/scheduler/cron.ts
+  Function isActive → karta/src/scheduler/cron.ts
+  Function task → karta/src/scheduler/cron.ts
+  Function stop → karta/src/scheduler/cron.ts
+  Property destroy → karta/src/scheduler/cron.ts
+  Property stop → karta/src/scheduler/cron.ts
+  Function startSchedulers → karta/src/scheduler/cron.ts
+  Function runScheduledCycle → karta/src/scheduler/cron.ts
+  Interface Timer → karta/test/staticAgentScheduler.test.ts
+  Property expression → karta/test/staticAgentScheduler.test.ts
+  Property callback → karta/test/staticAgentScheduler.test.ts
+  Property stop → karta/test/staticAgentScheduler.test.ts
+  Property destroy → karta/test/staticAgentScheduler.test.ts
+  Function state → karta/test/staticAgentScheduler.test.ts
+... and 723 more
+
+Affected execution flows:
+  • VoiceSettingsCard → Resolve (8 steps) — changed: stop
+  • HandleCallback → RequestBodyError (5 steps) — changed: invokeOAuth, handleCallback
+  • Purpose_and_actor → Client_env (5 steps) — changed: purpose_and_actor, consume, json_sql, sql, client_env
+  • Purpose_and_actor → Psql_command (5 steps) — changed: purpose_and_actor, consume, json_sql, sql, psql_command
+  • HandleCallback → ValidContext (4 steps) — changed: clearOAuthContext, readOAuthContext, validContext, handleCallback
+  • HandleCallback → RequestDeadlineError (4 steps) — changed: invokeOAuth, handleCallback
+  • HandleCallback → Now (4 steps) — changed: invokeOAuth, handleCallback
+  • ConnectionRequiredAlert → UseRequestScope (3 steps) — changed: useUserConnections
+  • HandleCallback → OAuthClientError (3 steps) — changed: OAuthClientError, invokeOAuth, handleCallback
+  • ProviderJson → EndedStream (3 steps) — changed: providerJson
+... and 71 more

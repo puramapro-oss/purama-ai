@@ -1,0 +1,211 @@
+TAP version 13
+# You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+# Subtest: current account can still confirm its real profile mutation
+ok 1 - current account can still confirm its real profile mutation
+  ---
+  duration_ms: 524.302541
+  type: 'test'
+  ...
+# Subtest: old profile response cannot toast or write cache after changing to B
+not ok 2 - old profile response cannot toast or write cache after changing to B
+  ---
+  duration_ms: 204.338625
+  type: 'test'
+  location: '/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:159:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    A late success must not announce itself in B
+    + actual - expected
+
+    + [
+    +   'Profil d’entraide enregistré.'
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'Profil d’entraide enregistré.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:164:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: old profile response cannot announce success after logout
+not ok 3 - old profile response cannot announce success after logout
+  ---
+  duration_ms: 84.299541
+  type: 'test'
+  location: '/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:169:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    No old success notice may cross logout
+    + actual - expected
+
+    + [
+    +   'Profil d’entraide enregistré.'
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'Profil d’entraide enregistré.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:173:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: A-B-A cannot let the first lifetime replace the freshly read A profile
+not ok 4 - A-B-A cannot let the first lifetime replace the freshly read A profile
+  ---
+  duration_ms: 189.928625
+  type: 'test'
+  location: '/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:177:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The first A lifetime must not overwrite, notify or refetch in the new A lifetime
+    + actual - expected
+
+      {
+        cached: [
+    +     'A obsolete'
+    -     'A current'
+        ],
+    +   displayed: 'A obsolete',
+    +   notices: [
+    +     'Profil d’entraide enregistré.'
+    +   ],
+    +   reads: 3
+    -   displayed: 'A current',
+    -   notices: [],
+    -   reads: 2
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    notices:
+    displayed: 'A current'
+    cached:
+      0: 'A current'
+    reads: 2
+  actual:
+    notices:
+      0: 'Profil d’entraide enregistré.'
+    displayed: 'A obsolete'
+    cached:
+      0: 'A obsolete'
+    reads: 3
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:183:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a current server refusal remains visible and does not confirm a save
+ok 5 - a current server refusal remains visible and does not confirm a save
+  ---
+  duration_ms: 60.200875
+  type: 'test'
+  ...
+# Subtest: late contact confirmation cannot notify or populate an expired account cache
+not ok 6 - late contact confirmation cannot notify or populate an expired account cache
+  ---
+  duration_ms: 150.319
+  type: 'test'
+  location: '/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:223:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+    + [
+    +   'Demande de contact envoyée.'
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'Demande de contact envoyée.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:231:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: late mission creation cannot notify or populate an expired account cache
+not ok 7 - late mission creation cannot notify or populate an expired account cache
+  ---
+  duration_ms: 197.3245
+  type: 'test'
+  location: '/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:235:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+    + [
+    +   'Mission collective créée.'
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'Mission collective créée.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:245:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: late mission action cannot publish a success or overwrite the cached revision after account change
+not ok 8 - late mission action cannot publish a success or overwrite the cached revision after account change
+  ---
+  duration_ms: 208.094291
+  type: 'test'
+  location: '/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:249:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+    + [
+    +   'La mission est visible dans le réseau.'
+    + ]
+    - []
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'La mission est visible dans le réseau.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/tests/entraide/ui-account-scope.test.mjs:255:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: current mission retry preserves the exact intent and expected revision
+ok 9 - current mission retry preserves the exact intent and expected revision
+  ---
+  duration_ms: 216.910167
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 3
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5389.245

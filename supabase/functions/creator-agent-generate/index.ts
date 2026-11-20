@@ -26,6 +26,8 @@ const REAL_TOOL_NAMES = [
   "calendar_create_event",
   "generate_pdf",
   "web_search",
+  "knowledge_search",
+  "quantum_simulate",
   "send_notification",
 ] as const;
 
@@ -78,7 +80,11 @@ Outils réels disponibles pour "suggested_tools" — utilise EXACTEMENT ces noms
 - calendar_create_event : crée un événement Google Calendar
 - generate_pdf : génère un PDF téléchargeable (rapport, facture, résumé...)
 - web_search : recherche web en temps réel
+- knowledge_search : recherche bornée de métadonnées publiques dans Crossref et Wikidata ; sources non vérifiées, pas de lecture des articles complets. Envoyer seulement les termes publics nécessaires, jamais un profil privé.
+- quantum_simulate : simulation locale de circuits quantiques idéaux, sur ordinateur classique, sans QPU ni réseau ; aucune preuve d'avantage quantique. Utiliser uniquement pour des expériences de circuits définis.
 - send_notification : notifie l'utilisateur (app/email) quand une décision humaine est nécessaire
+
+Les résultats complets de ces outils ne sont pas encore réinjectés dans le chat ni dans une seconde décision du même cycle KARTA. Ne propose pas un agent qui promettrait automatiquement une synthèse de ces résultats, un accès universel aux données ou un calcul quantique matériel.
 
 Critères de qualité du system_prompt :
 - Tutoiement par défaut sauf si l'utilisateur précise vouvoiement

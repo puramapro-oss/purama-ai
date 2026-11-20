@@ -20,18 +20,17 @@ async function startModeTurn(page: Page, agentView = false) {
   } else {
     await page.evaluate(() => window.voiceHarness.setModeOpen(true));
   }
-  const mic = page.getByRole('button', { name: 'Activer/désactiver le micro', exact: true });
-  await mic.click();
+  await page.getByRole('button', { name: 'Activer le micro', exact: true }).click();
   await expect.poll(() => count(page, 'media')).toBe(1);
   await page.evaluate(() => window.voiceHarness.resolve('media'));
   await expect(page.getByText('Appuie pour envoyer', { exact: true })).toBeVisible();
-  await mic.click();
+  await page.getByRole('button', { name: "Terminer l'enregistrement", exact: true }).click();
   await expect.poll(() => count(page, 'transcribe')).toBe(1);
 }
 
 async function openAgentChat(page: Page) {
   await page.evaluate(() => window.voiceHarness.setAgentView(true));
-  const input = page.getByPlaceholder('Parle à Email IA…');
+  const input = page.getByRole('textbox', { name: 'Message pour Email IA', exact: true });
   await expect(input).toBeVisible();
   return input;
 }
@@ -45,7 +44,7 @@ async function startInlineDictation(page: Page) {
 }
 
 async function prepareAutomaticReply(page: Page, reply: string) {
-  const input = page.getByPlaceholder('Parle à Email IA…');
+  const input = page.getByRole('textbox', { name: 'Message pour Email IA', exact: true });
   await input.fill('Question de cette conversation');
   await input.press('Enter');
   await expect.poll(() => count(page, 'backend')).toBe(1);

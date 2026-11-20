@@ -1,0 +1,16 @@
+✔ preflight refuses a private unified RPC before committing a second contact authority (391.424085ms)
+✔ preflight refuses private schema footprints even without the unified RPC (99.729034ms)
+✔ preflight refuses an unknown contact RPC without replacing its body or grants (117.935773ms)
+✔ preflight refuses exact PR17 authority with a pre-existing visibility column (113.282845ms)
+✔ preflight refuses altered PR17 authority before any contact RPC or ACL installation (100.01936ms)
+✔ preflight refuses an orphan mission receipt registry without adopting it (95.1355ms)
+✔ preflight refuses an orphan mission version column without a known authority or registry (148.633383ms)
+✔ preflight preserves an incompatible committed PR17 receipt instead of partially upgrading contacts (172.886568ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1350.015054

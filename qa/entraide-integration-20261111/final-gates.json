@@ -1,0 +1,42 @@
+[
+  {
+    "label": "public-ci-tests",
+    "exit_code": 0,
+    "seconds": 8.63,
+    "command": [
+      "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+      "--test",
+      "--test-concurrency=1",
+      "tests/entraide/frontend.test.mjs",
+      "tests/entraide/ui-account-scope.test.mjs"
+    ],
+    "log": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/public-ci-tests.log",
+    "sha256": "0fb0e650a98eac85836e7297a527119eb1c9ddba581d364dfd69f7283955373e"
+  },
+  {
+    "label": "site-types-without-private",
+    "exit_code": 0,
+    "seconds": 74.44,
+    "command": [
+      "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "tsconfig.app.json"
+    ],
+    "log": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/site-types-without-private.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "site-lint",
+    "exit_code": 0,
+    "seconds": 33.48,
+    "command": [
+      "/Users/matissdornier/purama-patches/iao-integrated-20261110/runtime/node_modules/node/bin/node",
+      "node_modules/eslint/bin/eslint.js",
+      "."
+    ],
+    "log": "/Users/matissdornier/purama-worktrees/unlazy-entraide-20261111-ac3c/.git/entraide-integration/site-lint.log",
+    "sha256": "65c424198517c0b18e58c4712c7e6a67ef20ae5324146f736983503e57fefd87"
+  }
+]

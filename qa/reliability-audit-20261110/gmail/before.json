@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "tests/oauth-gmail/handler.test.mjs"
+  ],
+  "exit": 1,
+  "seconds": 1.028,
+  "handler_sha256": "1415e283b645ad82dbb963cc4b01b58e8b11ad9b4ee78551cf14c2f67134884e"
+}

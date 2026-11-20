@@ -15,7 +15,7 @@ export default function MentionsLegales() {
       </header>
       <main className="container mx-auto px-4 py-16 max-w-3xl prose prose-invert">
         <h1 className="text-3xl font-bold mb-8 gradient-text-cyan-purple">Mentions Légales</h1>
-        <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : février 2025</p>
+        <p className="text-sm text-muted-foreground mb-8">Dernière mise à jour : 11 novembre 2026</p>
 
         <h2>1. Éditeur du site</h2>
         <ul>
@@ -40,9 +40,7 @@ export default function MentionsLegales() {
         <p>Les données sont hébergées par Supabase Inc., 970 Toa Payoh North #07-04, Singapore 318992.</p>
 
         <h2>3. Propriété intellectuelle</h2>
-        <p>
-          L'ensemble du contenu du site Purama AI (textes, images, logos, graphismes, logiciels, bases de données) est protégé par le droit de la propriété intellectuelle. Toute reproduction, représentation, modification ou exploitation, même partielle, sans autorisation préalable écrite est interdite.
-        </p>
+        <p>Les contenus du site Purama AI peuvent être protégés par des droits de propriété intellectuelle détenus par leurs titulaires respectifs. Leur reproduction, représentation, modification ou exploitation nécessite une autorisation lorsque la loi l'exige, sous réserve des exceptions légales et des droits accordés par les licences applicables. Les composants, logiciels et contenus tiers restent soumis à leurs propres licences ; les présentes mentions légales ne retirent pas les droits que ces licences accordent.</p>
 
         <h2>4. Données personnelles</h2>
         <p>
@@ -57,9 +55,8 @@ export default function MentionsLegales() {
         </p>
 
         <h2>6. Loi applicable</h2>
-        <p>
-          Les présentes mentions légales sont soumises au droit français. En cas de litige, les tribunaux français seront seuls compétents.
-        </p>
+        <p>Les présentes mentions légales sont régies par le droit français, sans priver le consommateur des dispositions impératives protectrices qui lui sont applicables.</p>
+        <p>Les litiges relèvent des juridictions compétentes selon les règles légales applicables. En France, le consommateur peut notamment saisir les juridictions prévues par le Code de procédure civile ou celle du lieu où il demeurait lors de la conclusion du contrat ou de la survenance du fait dommageable, conformément à l'article R631-3 du Code de la consommation. Les règles internationales de compétence éventuellement applicables demeurent réservées.</p>
       </main>
       <Footer />
     </div>

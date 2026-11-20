@@ -1,0 +1,16 @@
+{
+  "command": "node < qa/reliability-audit-20261110/late-integration/scheduler/assertion-preservation.js.txt",
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+  "result": {
+    "chunk_id": "81b693",
+    "wall_time_seconds": 0.206334122,
+    "exit_code": 0,
+    "original_token_count": 369,
+    "output": "{\n  \"tests\": [\n    {\n      \"path\": \"karta/test/coreSchedulerDrain.test.ts\",\n      \"baseline\": \"2e2f71375986d3a1adb3f8b791a668ca739683f3\",\n      \"assertions\": 43,\n      \"all_assertions_identical\": true,\n      \"scenarios\": 15,\n      \"all_scenarios_identical\": true,\n      \"source_identical\": false,\n      \"sha256\": \"7c87b5a9847bd1d122de0759c51d7b070c3a6bc73789f68c52422b31c1460427\"\n    },\n    {\n      \"path\": \"karta/test/staticAgentScheduler.test.ts\",\n      \"baseline\": \"54971f5a511be752fa70ed94306cdb322f29ff81\",\n      \"assertions\": 13,\n      \"all_assertions_identical\": true,\n      \"scenarios\": 6,\n      \"all_scenarios_identical\": true,\n      \"source_identical\": false,\n      \"sha256\": \"73352d8f78163c6df1709e89d4c60b85dd807ad1e49aef6525637948f677f9f5\"\n    },\n    {\n      \"path\": \"karta/test/staticAgentSchedulerCron.test.ts\",\n      \"baseline\": \"54971f5a511be752fa70ed94306cdb322f29ff81\",\n      \"assertions\": 9,\n      \"all_assertions_identical\": true,\n      \"scenarios\": 3,\n      \"all_scenarios_identical\": true,\n      \"source_identical\": true,\n      \"sha256\": \"9cd77ff4a53188566fa454aec4cb007cdf6c0e3aa3f7316718e782af2957b76b\"\n    }\n  ],\n  \"preserved_cron_declarations\": [\n    {\n      \"name\": \"CORE_SCHEDULES\",\n      \"identical\": true\n    },\n    {\n      \"name\": \"ACTION_SCHEDULES\",\n      \"identical\": true\n    },\n    {\n      \"name\": \"runScheduledCycle\",\n      \"identical\": true\n    }\n  ],\n  \"cron_sha256\": \"0bb2de145b86bbc6c377e90eb70f939f779343cc221d16754f9f4cd7aeb7b972\"\n}\n"
+  },
+  "counts": {
+    "assertions": 65,
+    "scenarios": 24
+  },
+  "scope": "Every assertion call and scenario name preserved in order against original PR39 and PR40 tests; runScheduledCycle and both cadence arrays unchanged."
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PARTIEL",
+  "command": "gitnexus detect-changes --scope staged --limit 10",
+  "exitCode": 0,
+  "risk": "UNKNOWN for the final public-route hunks; the full native checkpoint was CRITICAL by extent",
+  "raw": "Diff touched 10 file(s) but no indexed symbols overlap those hunks — not a clean tree.\n",
+  "reason": "The index predates the imported public route symbols. No indexed overlap is not a clean-tree claim. Three source files were reviewed and qualified by 22 public-route cases and the final typecheck. No logic beyond the declared native/public access scope is changed."
+}

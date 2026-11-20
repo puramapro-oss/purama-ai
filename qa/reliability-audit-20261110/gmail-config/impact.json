@@ -1,0 +1,47 @@
+{
+  "status": "OBSERVED_TOOL_RESULTS_SUMMARIZED",
+  "tool": "GitNexus CLI 1.6.12",
+  "repo": "iao-resume-cb46",
+  "index_source_sha256": "6eea3d344c716d54bbc12866df74f823bbd4d0f1dcd768ea2982a5077377ca06",
+  "index_staleness_commits": 5,
+  "symbol_source_equality": true,
+  "symbols": [
+    {
+      "id": "Function:src/lib/email-agent.ts:getConfig",
+      "direction": "upstream",
+      "risk": "UNKNOWN",
+      "impacted_count": 0,
+      "resolved_processes": 0
+    },
+    {
+      "id": "Function:src/lib/email-agent.ts:updateConfig",
+      "direction": "upstream",
+      "risk": "UNKNOWN",
+      "impacted_count": 0,
+      "resolved_processes": 0
+    },
+    {
+      "id": "Function:src/lib/email-agent.ts:disconnectGmail",
+      "direction": "upstream",
+      "risk": "UNKNOWN",
+      "impacted_count": 0,
+      "resolved_processes": 0
+    }
+  ],
+  "manual_risk": "CRITICAL",
+  "manual_callers": {
+    "getConfig": [
+      "src/pages/EmailAgent.tsx",
+      "src/pages/EmailAgentSettings.tsx"
+    ],
+    "updateConfig": [
+      "src/pages/EmailAgent.tsx",
+      "src/pages/EmailAgentSettings.tsx",
+      "disconnectGmail (before this patch)"
+    ],
+    "disconnectGmail": [
+      "src/pages/EmailAgentSettings.tsx"
+    ]
+  },
+  "limit": "No graph callers resolved; manual call-site review required. Shared index was not modified."
+}

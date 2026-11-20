@@ -1,0 +1,98 @@
+{
+  "recorded_at": "2026-11-12T06:08:35.908213+00:00",
+  "base_commit": "5ca6add91f1c94ce0e0baf42a1934521270ebd47",
+  "checks": [
+    {
+      "name": "knowledge-retry-after-regression",
+      "status": "PASS",
+      "tests": 53,
+      "failed_before_fix": 6,
+      "exit_code": 0,
+      "receipt": "retry-after-after.json"
+    },
+    {
+      "name": "private-result-projection-and-sql",
+      "status": "PASS",
+      "tests": 81,
+      "unit_tests": 32,
+      "sql_tests": 49,
+      "exit_code": 0,
+      "verified_by": "result_path_audit",
+      "command": "node node_modules/vitest/vitest.mjs run test/privateToolResults.test.ts test/privateToolResultsSql.test.ts --maxWorkers=1 --no-file-parallelism --pool=forks --execArgv=--wasm-num-compilation-tasks=1 --execArgv=--liftoff-only --execArgv=--max-old-space-size=256",
+      "cwd": "karta",
+      "notes": "Final 49 SQL cases include actual projection -> RPC -> shared view, with a Unicode DOI and a partial result."
+    },
+    {
+      "name": "assistant-policy-and-projection-regression",
+      "status": "PASS",
+      "tests": 87,
+      "exit_code": 0,
+      "receipt": "karta-private-policy.json",
+      "notes": "Overlaps the same 32 projection cases; do not sum as independent tests."
+    },
+    {
+      "name": "engine-direct-and-approved-execution",
+      "status": "PASS",
+      "tests": 18,
+      "exit_code": 0,
+      "receipt": "engine-execution.json"
+    },
+    {
+      "name": "creator-chat-edge-handler",
+      "status": "PASS",
+      "tests": 46,
+      "exit_code": 0,
+      "receipt": "edge-chat.tap"
+    },
+    {
+      "name": "frontend-readers-and-components",
+      "status": "PASS",
+      "tests": 47,
+      "exit_code": 0,
+      "receipt": "frontend-verification.json"
+    },
+    {
+      "name": "edge-sdk-types",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "edge-sdk-typecheck.json"
+    },
+    {
+      "name": "full-local-app-typecheck",
+      "status": "BLOQUÉ",
+      "exit_code": 134,
+      "cause": "V8 heap exhausted at the explicit 256 MiB local limit. No global typecheck success claimed; CI is the gate."
+    },
+    {
+      "name": "native-postgresql-concurrency",
+      "status": "NON TESTÉ",
+      "tests_written": 6,
+      "syntax_check_exit_code": 0,
+      "notes": "No local PostgreSQL server; the existing disposable PostgreSQL18 CI job is extended to execute this suite."
+    },
+    {
+      "name": "production-deployment",
+      "status": "NON TESTÉ",
+      "notes": "No application database mutation, deployed worker/Edge/frontend, model provider call or QPU submission."
+    }
+  ],
+  "source_sha256": {
+    ".github/workflows/purama-chef-hardening.yml": "33495433870d0e8c8a70caf0eea6aac8c87c755f39d1bf4ee017a05f1e02bc95",
+    "karta/migrations/028_private_tool_results.sql": "e6eb16b19a3addc89e7597ed9966b1960c60915a59c22a47362baba2a3172d6e",
+    "karta/src/engine/loop.ts": "bcd1989a3a54954f4850a696a4f493026c767b8b6bfdd8fac39a2c2831819e7e",
+    "karta/src/engine/approval.ts": "6b2a2fc47ec8a47746b4533393707bf99fcd5ecdc73dec18c77fdc9a0a59d608",
+    "karta/src/engine/private-tool-results.ts": "54af9279ae68d6d795955079e5368114c138f442723a0bc67d090989172773fb",
+    "karta/src/knowledge/public-search.ts": "119805ba70f4cc7ca1b778fff12e5b9bc2bc63ecd2898ffbc4660a11c9c90511",
+    "karta/src/knowledge/private-result-view.ts": "52e02dec253f631141c7a599f04f439c175912554826287ee58aa2ebd6f2970b",
+    "supabase/functions/_shared/private-tool-results.ts": "cabe8a4230b9486e34eba6af9e9a77ceacf8d7fd6b16050422ab832709ecb9ac",
+    "supabase/functions/_shared/validation.ts": "ffb139d0f6bbacb4daddb3f3972c12f44e1f35f4ac7e48d64ec92cb99ee2b159",
+    "supabase/functions/creator-agent-chat/index.ts": "76eee907420b761589c8d80abdb7df53107f80d99168675e01587543095b7cc5",
+    "tests/creator-chat-authorization.test.mjs": "b8e4b7c874f465a6e75ad0d61a3047eca03855add22581f8fb7b1fe871e256ad"
+  },
+  "independent_review": "Engine/Edge inspected by result_path_audit; frontend inspected by distributed_quota_audit; tests are synthetic and make no provider calls.",
+  "post_verification_whitespace_normalization": {
+    "file": "karta/src/knowledge/private-result-view.ts",
+    "before_sha256": "52e02dec253f631141c7a599f04f439c175912554826287ee58aa2ebd6f2970b",
+    "after_sha256": "2246757457ca8bef4d5b1f32385d58f06517e9f6d6606511c089617138ce60ab"
+  }
+}

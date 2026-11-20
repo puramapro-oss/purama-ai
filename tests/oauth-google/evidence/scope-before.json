@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern=scope",
+    "tests/oauth-google/handler.test.mjs"
+  ],
+  "exitCode": 1,
+  "sourceSha256": "f2560991be92e2e9e9df89267eb1925658bb3db9296d2ab9a9bf5bd5b5cb7fb4"
+}

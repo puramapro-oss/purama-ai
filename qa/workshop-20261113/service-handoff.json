@@ -1,0 +1,6 @@
+{
+  "command": "Node22 vitest run test/chefWorkshopService.test.ts --maxWorkers=1 --testTimeout=20000",
+  "exitCode": 0,
+  "durationSeconds": 1.31,
+  "after": "clarified mandatory host verification handoff"
+}

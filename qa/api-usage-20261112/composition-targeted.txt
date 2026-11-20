@@ -1,0 +1,17 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/modelUsage.test.ts test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts test/runtimeUsageReadiness.test.ts test/runtimeProbe.test.ts test/claudeTransportCost.test.ts test/claudeDecisionCompleteness.test.ts test/real-claude.test.ts test/loop.test.ts test/loopTracePrivacy.test.ts test/loopJevTracePrivacy.test.ts test/logger.test.ts test/loggerCycleFinalization.test.ts test/runtimeApiReadiness.test.ts test/claudeTransportDeadline.test.ts test/modelQualityRouting.test.ts test/agentContextContract.test.ts test/assistantPolicy.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-api-usage-20261112/karta
+
+
+ Test Files  18 passed (18)
+      Tests  331 passed (331)
+   Start at  07:42:33
+   Duration  8.04s (import 51%, tests 35%, transform 12%, setup 1%, worker 1%)
+
+    Isolate  18 workers spawned · ~118ms startup each (spawn + environment, per file)
+             at least ~2.00s faster with isolate: false — reuses workers across files instead of one per file
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

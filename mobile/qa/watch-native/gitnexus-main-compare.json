@@ -1,0 +1,9 @@
+{
+  "status": "BLOQUÉ",
+  "defaultBranch": "main",
+  "verifiedMainSha": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "command": "gitnexus detect-changes --scope compare --base-ref main",
+  "exitCode": 1,
+  "reason": "Historical blobs missing from the borrowed partial clone. Local refetch failed because the donor cannot pack absent promisor objects. The staged analysis completed separately; no historical PASS claimed.",
+  "raw": "Error: Git diff failed: Command failed: git -c core.quotePath=false diff --ignore-cr-at-eol --no-ext-diff --color=never --src-prefix=a/ --dst-prefix=b/ main -U0\nfatal: unable to read b5954ccac3fe26e8fa80c1fd3bdf9a575895f42c\n\n"
+}

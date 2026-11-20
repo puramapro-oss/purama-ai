@@ -1,0 +1,687 @@
+[
+  {
+    "label": "initdb",
+    "command": [
+      "/opt/homebrew/opt/postgresql@18/bin/initdb",
+      "-D",
+      "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data",
+      "--username=oauth_test_admin",
+      "--auth=trust",
+      "--no-locale",
+      "--encoding=UTF8"
+    ],
+    "exit_code": 0,
+    "stdout": "The files belonging to this database system will be owned by user \"matissdornier\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are enabled.\n\ncreating directory /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... Europe/Paris\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    '/opt/homebrew/opt/postgresql@18/bin/pg_ctl' -D /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data -l logfile start\n\n",
+    "stderr": ""
+  },
+  {
+    "label": "pg-start",
+    "command": [
+      "/opt/homebrew/opt/postgresql@18/bin/pg_ctl",
+      "-D",
+      "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data",
+      "-l",
+      "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/final-e0b0e943/postgres.log",
+      "-o",
+      "-h 127.0.0.1 -p 53653 -k '' -c shared_buffers=16MB -c max_connections=32",
+      "-w",
+      "-t",
+      "20",
+      "start"
+    ],
+    "exit_code": 0,
+    "stdout": "waiting for server to start.... done\nserver started\n",
+    "stderr": ""
+  },
+  {
+    "label": "cluster-identity",
+    "sql": "SELECT jsonb_build_object('data_directory', current_setting('data_directory'), 'server_version', current_setting('server_version'), 'listen_addresses', current_setting('listen_addresses'), 'unix_socket_directories', current_setting('unix_socket_directories'), 'system_identifier', system_identifier::text) FROM pg_control_system();",
+    "exit_code": 0,
+    "stdout": "{\"data_directory\": \"/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data\", \"server_version\": \"18.4 (Homebrew)\", \"listen_addresses\": \"127.0.0.1\", \"system_identifier\": \"7706663745260292200\", \"unix_socket_directories\": \"\"}\n",
+    "stderr": ""
+  },
+  {
+    "label": "fixture-schema",
+    "sql": "CREATE ROLE anon NOLOGIN NOBYPASSRLS; CREATE ROLE authenticated NOLOGIN NOBYPASSRLS; CREATE ROLE service_role NOLOGIN NOBYPASSRLS; CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY); CREATE SCHEMA purama_ai; GRANT USAGE ON SCHEMA purama_ai TO anon, authenticated, service_role; INSERT INTO auth.users(id) VALUES ('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002'),('00000000-0000-4000-8000-000000000003');",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "label": "actual-migration",
+    "sql": "-- Deploy before either OAuth handler. Old browser-created states deliberately\n-- have no admission record and must restart authorization.\nCREATE TABLE purama_ai.oauth_connection_states (\n  state_hash text PRIMARY KEY CHECK (state_hash ~ '^[0-9a-f]{64}$'),\n  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,\n  purpose text NOT NULL CHECK (purpose IN ('google_connections', 'email_agent_gmail')),\n  provider text NOT NULL,\n  created_at timestamptz NOT NULL DEFAULT pg_catalog.clock_timestamp(),\n  expires_at timestamptz NOT NULL,\n  consumed_at timestamptz,\n  CHECK (\n    (purpose = 'google_connections' AND provider IN ('google_sheets', 'gmail', 'google_calendar', 'google_drive'))\n    OR (purpose = 'email_agent_gmail' AND provider = 'gmail')\n  ),\n  CHECK (expires_at > created_at)\n);\n\nCREATE INDEX oauth_connection_states_user_expiry\n  ON purama_ai.oauth_connection_states(user_id, expires_at);\n\nALTER TABLE purama_ai.oauth_connection_states ENABLE ROW LEVEL SECURITY;\nREVOKE ALL ON TABLE purama_ai.oauth_connection_states FROM PUBLIC, anon, authenticated;\nGRANT SELECT, INSERT, UPDATE, DELETE ON TABLE purama_ai.oauth_connection_states TO service_role;\nCREATE POLICY oauth_connection_states_service\n  ON purama_ai.oauth_connection_states FOR ALL TO service_role\n  USING (true) WITH CHECK (true);\n\nCREATE FUNCTION purama_ai.create_oauth_connection_state(\n  p_state_hash text,\n  p_user_id uuid,\n  p_purpose text,\n  p_provider text\n) RETURNS timestamptz\nLANGUAGE plpgsql SECURITY INVOKER SET search_path = ''\nAS $function$\nDECLARE\n  created timestamptz := pg_catalog.clock_timestamp();\n  expires timestamptz := created + interval '10 minutes';\nBEGIN\n  IF p_state_hash IS NULL OR p_state_hash !~ '^[0-9a-f]{64}$' OR p_user_id IS NULL\n     OR p_purpose IS NULL OR p_provider IS NULL\n     OR NOT (\n       (p_purpose = 'google_connections' AND p_provider IN ('google_sheets', 'gmail', 'google_calendar', 'google_drive'))\n       OR (p_purpose = 'email_agent_gmail' AND p_provider = 'gmail')\n     ) THEN\n    RAISE EXCEPTION 'Invalid OAuth state request' USING ERRCODE = '22023';\n  END IF;\n\n  -- Reclaim this actor's expired receipts when a fresh flow starts. No live\n  -- state from another tab/provider is invalidated by this maintenance step.\n  DELETE FROM purama_ai.oauth_connection_states AS s\n  WHERE s.user_id = p_user_id AND s.expires_at <= created;\n\n  INSERT INTO purama_ai.oauth_connection_states(state_hash, user_id, purpose, provider, created_at, expires_at)\n  VALUES (p_state_hash, p_user_id, p_purpose, p_provider, created, expires);\n  RETURN expires;\nEND;\n$function$;\n\nCREATE FUNCTION purama_ai.consume_oauth_connection_state(\n  p_state_hash text,\n  p_purpose text,\n  p_actor_id uuid\n) RETURNS TABLE(user_id uuid, provider text, return_path text)\nLANGUAGE plpgsql SECURITY INVOKER SET search_path = ''\nAS $function$\nDECLARE\n  observed purama_ai.oauth_connection_states%ROWTYPE;\n  admitted_at timestamptz;\nBEGIN\n  IF p_state_hash IS NULL OR p_state_hash !~ '^[0-9a-f]{64}$'\n     OR p_purpose IS NULL OR p_purpose NOT IN ('google_connections', 'email_agent_gmail')\n     OR p_actor_id IS NULL THEN\n    RETURN;\n  END IF;\n\n  -- Acquire the row before deciding its lifetime. UPDATE predicates alone may\n  -- have been evaluated before waiting behind a SELECT FOR UPDATE that did not\n  -- modify the row. The clock below is therefore sampled only after the lock.\n  SELECT s.* INTO observed\n  FROM purama_ai.oauth_connection_states AS s\n  WHERE s.state_hash = p_state_hash AND s.purpose = p_purpose AND s.user_id = p_actor_id\n  FOR UPDATE;\n  IF NOT FOUND THEN RETURN; END IF;\n  admitted_at := pg_catalog.clock_timestamp();\n  IF observed.consumed_at IS NOT NULL OR observed.expires_at <= admitted_at THEN RETURN; END IF;\n\n  -- Both flows require the same verified human actor. The unauthenticated\n  -- provider GET callback is only a relay to the browser, never an admission.\n  RETURN QUERY\n  UPDATE purama_ai.oauth_connection_states AS s\n  SET consumed_at = admitted_at\n  WHERE s.state_hash = observed.state_hash\n  RETURNING s.user_id, s.provider,\n    CASE s.purpose WHEN 'google_connections' THEN '/mes-connexions'::text\n      ELSE '/dashboard/email-agent'::text END;\nEND;\n$function$;\n\nREVOKE ALL ON FUNCTION purama_ai.create_oauth_connection_state(text, uuid, text, text) FROM PUBLIC, anon, authenticated;\nREVOKE ALL ON FUNCTION purama_ai.consume_oauth_connection_state(text, text, uuid) FROM PUBLIC, anon, authenticated;\nGRANT EXECUTE ON FUNCTION purama_ai.create_oauth_connection_state(text, uuid, text, text) TO service_role;\nGRANT EXECUTE ON FUNCTION purama_ai.consume_oauth_connection_state(text, text, uuid) TO service_role;\n",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "label": "metadata",
+    "sql": "SELECT jsonb_build_object('rls_enabled',(SELECT relrowsecurity FROM pg_class WHERE oid='purama_ai.oauth_connection_states'::regclass),'service_bypasses_rls',(SELECT rolbypassrls FROM pg_roles WHERE rolname='service_role'),'functions',(SELECT jsonb_agg(jsonb_build_object('name',proname,'security_definer',prosecdef,'config',proconfig)) FROM pg_proc WHERE oid IN ('purama_ai.create_oauth_connection_state(text,uuid,text,text)'::regprocedure,'purama_ai.consume_oauth_connection_state(text,text,uuid)'::regprocedure)));",
+    "exit_code": 0,
+    "stdout": "{\"functions\": [{\"name\": \"create_oauth_connection_state\", \"config\": [\"search_path=\\\"\\\"\"], \"security_definer\": false}, {\"name\": \"consume_oauth_connection_state\", \"config\": [\"search_path=\\\"\\\"\"], \"security_definer\": false}], \"rls_enabled\": true, \"service_bypasses_rls\": false}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000001','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:27.906204+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "lifetime",
+    "sql": "SELECT jsonb_build_object('lifetime_seconds',extract(epoch FROM expires_at-created_at),'user_id',user_id,'provider',provider,'pending',consumed_at IS NULL) FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000001';",
+    "exit_code": 0,
+    "stdout": "{\"pending\": true, \"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"google_drive\", \"lifetime_seconds\": 600.000000}\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000001','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [{\"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"google_drive\", \"return_path\": \"/mes-connexions\"}], \"backend_pid\": 88364}\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000001','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88366}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000002','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:28.608701+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000002','email_agent_gmail','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88373}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000002';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000002','google_connections','00000000-0000-4000-8000-000000000002'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88377}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000002';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000002','google_connections',NULL) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88382}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000002';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000002','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [{\"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"google_drive\", \"return_path\": \"/mes-connexions\"}], \"backend_pid\": 88387}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000003','00000000-0000-4000-8000-000000000001','email_agent_gmail','gmail');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:29.732613+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000003','email_agent_gmail',NULL) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88401}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000003';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000003','email_agent_gmail','00000000-0000-4000-8000-000000000002'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88407}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000003';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000003','email_agent_gmail','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [{\"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"gmail\", \"return_path\": \"/dashboard/email-agent\"}], \"backend_pid\": 88415}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000004','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:30.610169+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "expire-fixture",
+    "sql": "UPDATE purama_ai.oauth_connection_states SET created_at=clock_timestamp()-interval '11 minutes', expires_at=clock_timestamp()-interval '1 minute' WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000004';",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000004','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88424}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000004';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "invalid-create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('bad','00000000-0000-4000-8000-000000000001','google_connections','gmail');",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  22023: Invalid OAuth state request\nCONTEXT:  PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 12 at RAISE\nLOCATION:  exec_stmt_raise, pl_exec.c:3923\n"
+  },
+  {
+    "label": "invalid-create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000005','00000000-0000-4000-8000-000000000001','email_agent_gmail','google_drive');",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  22023: Invalid OAuth state request\nCONTEXT:  PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 12 at RAISE\nLOCATION:  exec_stmt_raise, pl_exec.c:3923\n"
+  },
+  {
+    "label": "invalid-create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000006',NULL,'google_connections','gmail');",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  22023: Invalid OAuth state request\nCONTEXT:  PL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 12 at RAISE\nLOCATION:  exec_stmt_raise, pl_exec.c:3923\n"
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('bad','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88447}\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000007','unknown-purpose','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88453}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000008','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:31.985749+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "anon-select",
+    "sql": "SET ROLE anon; SELECT * FROM purama_ai.oauth_connection_states;",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "anon-insert",
+    "sql": "SET ROLE anon; INSERT INTO purama_ai.oauth_connection_states VALUES ('0000000000000000000000000000000000000000000000000000000000000009','00000000-0000-4000-8000-000000000001','google_connections','gmail',clock_timestamp(),clock_timestamp()+interval '10 minutes',NULL);",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "anon-update",
+    "sql": "SET ROLE anon; UPDATE purama_ai.oauth_connection_states SET consumed_at=clock_timestamp() WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "anon-delete",
+    "sql": "SET ROLE anon; DELETE FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "anon-create_rpc",
+    "sql": "SET ROLE anon; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000a','00000000-0000-4000-8000-000000000001','google_connections','gmail');",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for function create_oauth_connection_state\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "anon-consume_rpc",
+    "sql": "SET ROLE anon; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000008','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for function consume_oauth_connection_state\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "authenticated-select",
+    "sql": "SET ROLE authenticated; SELECT * FROM purama_ai.oauth_connection_states;",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "authenticated-insert",
+    "sql": "SET ROLE authenticated; INSERT INTO purama_ai.oauth_connection_states VALUES ('0000000000000000000000000000000000000000000000000000000000000009','00000000-0000-4000-8000-000000000001','google_connections','gmail',clock_timestamp(),clock_timestamp()+interval '10 minutes',NULL);",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "authenticated-update",
+    "sql": "SET ROLE authenticated; UPDATE purama_ai.oauth_connection_states SET consumed_at=clock_timestamp() WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "authenticated-delete",
+    "sql": "SET ROLE authenticated; DELETE FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for table oauth_connection_states\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "authenticated-create_rpc",
+    "sql": "SET ROLE authenticated; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000a','00000000-0000-4000-8000-000000000001','google_connections','gmail');",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for function create_oauth_connection_state\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "authenticated-consume_rpc",
+    "sql": "SET ROLE authenticated; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000008','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  42501: permission denied for function consume_oauth_connection_state\nLOCATION:  aclcheck_error, aclchk.c:2795\n"
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='0000000000000000000000000000000000000000000000000000000000000008';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000b','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:34.827114+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "observe-locks",
+    "sql": "SELECT COALESCE(jsonb_agg(jsonb_build_object('pid',pid,'app',application_name,'state',state,'wait_event_type',wait_event_type,'wait_event',wait_event)), '[]'::jsonb) FROM pg_stat_activity WHERE application_name IN ('oauth_native_8f09719908_parallel-00','oauth_native_8f09719908_parallel-01','oauth_native_8f09719908_parallel-02','oauth_native_8f09719908_parallel-03','oauth_native_8f09719908_parallel-04','oauth_native_8f09719908_parallel-05','oauth_native_8f09719908_parallel-06','oauth_native_8f09719908_parallel-07','oauth_native_8f09719908_parallel-08','oauth_native_8f09719908_parallel-09','oauth_native_8f09719908_parallel-10','oauth_native_8f09719908_parallel-11');",
+    "exit_code": 0,
+    "stdout": "[{\"app\": \"oauth_native_8f09719908_parallel-00\", \"pid\": 88506, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-01\", \"pid\": 88507, \"state\": \"active\", \"wait_event\": \"transactionid\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-02\", \"pid\": 88508, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-06\", \"pid\": 88509, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-03\", \"pid\": 88510, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-04\", \"pid\": 88511, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-05\", \"pid\": 88513, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-08\", \"pid\": 88512, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-07\", \"pid\": 88514, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-10\", \"pid\": 88516, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-09\", \"pid\": 88517, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-11\", \"pid\": 88519, \"state\": \"idle\", \"wait_event\": null, \"wait_event_type\": null}]\n",
+    "stderr": ""
+  },
+  {
+    "label": "observe-locks",
+    "sql": "SELECT COALESCE(jsonb_agg(jsonb_build_object('pid',pid,'app',application_name,'state',state,'wait_event_type',wait_event_type,'wait_event',wait_event)), '[]'::jsonb) FROM pg_stat_activity WHERE application_name IN ('oauth_native_8f09719908_parallel-00','oauth_native_8f09719908_parallel-01','oauth_native_8f09719908_parallel-02','oauth_native_8f09719908_parallel-03','oauth_native_8f09719908_parallel-04','oauth_native_8f09719908_parallel-05','oauth_native_8f09719908_parallel-06','oauth_native_8f09719908_parallel-07','oauth_native_8f09719908_parallel-08','oauth_native_8f09719908_parallel-09','oauth_native_8f09719908_parallel-10','oauth_native_8f09719908_parallel-11');",
+    "exit_code": 0,
+    "stdout": "[{\"app\": \"oauth_native_8f09719908_parallel-00\", \"pid\": 88506, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-01\", \"pid\": 88507, \"state\": \"active\", \"wait_event\": \"transactionid\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-02\", \"pid\": 88508, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-06\", \"pid\": 88509, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-03\", \"pid\": 88510, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-04\", \"pid\": 88511, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-05\", \"pid\": 88513, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-08\", \"pid\": 88512, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-07\", \"pid\": 88514, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-10\", \"pid\": 88516, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-09\", \"pid\": 88517, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}, {\"app\": \"oauth_native_8f09719908_parallel-11\", \"pid\": 88519, \"state\": \"active\", \"wait_event\": \"tuple\", \"wait_event_type\": \"Lock\"}]\n",
+    "stderr": ""
+  },
+  {
+    "label": "concurrency-holder",
+    "exit_code": 0,
+    "stdout": "88492\n000000000000000000000000000000000000000000000000000000000000000b\nLOCK_READY\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-00",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88506}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-01",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [{\"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"google_drive\", \"return_path\": \"/mes-connexions\"}], \"backend_pid\": 88507}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-02",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88508}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-03",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88510}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-04",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88511}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-05",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88513}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-06",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88509}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-07",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88514}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-08",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88512}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-09",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88517}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-10",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88516}\n",
+    "stderr": ""
+  },
+  {
+    "label": "parallel-11",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88519}\n",
+    "stderr": ""
+  },
+  {
+    "label": "query",
+    "sql": "SELECT count(*) FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000b' AND consumed_at IS NOT NULL;",
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000c','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:36.418625+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "short-expiry-fixture",
+    "sql": "UPDATE purama_ai.oauth_connection_states SET created_at=clock_timestamp()-interval '1 minute', expires_at=clock_timestamp()+interval '3 seconds' WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "label": "observe-locks",
+    "sql": "SELECT COALESCE(jsonb_agg(jsonb_build_object('pid',pid,'app',application_name,'state',state,'wait_event_type',wait_event_type,'wait_event',wait_event)), '[]'::jsonb) FROM pg_stat_activity WHERE application_name IN ('oauth_native_8f09719908_expiry-client');",
+    "exit_code": 0,
+    "stdout": "[{\"app\": \"oauth_native_8f09719908_expiry-client\", \"pid\": 88557, \"state\": \"active\", \"wait_event\": null, \"wait_event_type\": null}]\n",
+    "stderr": ""
+  },
+  {
+    "label": "observe-locks",
+    "sql": "SELECT COALESCE(jsonb_agg(jsonb_build_object('pid',pid,'app',application_name,'state',state,'wait_event_type',wait_event_type,'wait_event',wait_event)), '[]'::jsonb) FROM pg_stat_activity WHERE application_name IN ('oauth_native_8f09719908_expiry-client');",
+    "exit_code": 0,
+    "stdout": "[{\"app\": \"oauth_native_8f09719908_expiry-client\", \"pid\": 88557, \"state\": \"active\", \"wait_event\": \"transactionid\", \"wait_event_type\": \"Lock\"}]\n",
+    "stderr": ""
+  },
+  {
+    "label": "valid-before-wait",
+    "sql": "SELECT expires_at>clock_timestamp() FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-observer",
+    "sql": "SELECT expires_at<=clock_timestamp() FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "f\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-observer",
+    "sql": "SELECT expires_at<=clock_timestamp() FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "f\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-observer",
+    "sql": "SELECT expires_at<=clock_timestamp() FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "f\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-observer",
+    "sql": "SELECT expires_at<=clock_timestamp() FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-holder",
+    "exit_code": 0,
+    "stdout": "88553\n000000000000000000000000000000000000000000000000000000000000000c\nLOCK_READY\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-client",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88557}\n",
+    "stderr": ""
+  },
+  {
+    "label": "expiry-final",
+    "sql": "SELECT jsonb_build_object('expires_at',expires_at,'consumed_at',consumed_at,'observed_at',clock_timestamp()) FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000c';",
+    "exit_code": 0,
+    "stdout": "{\"expires_at\": \"2026-11-10T22:51:39.720045+01:00\", \"consumed_at\": null, \"observed_at\": \"2026-11-10T22:51:40.33588+01:00\"}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000d','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:40.581622+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume-rollback",
+    "sql": "BEGIN; SET LOCAL ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000d','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r; ROLLBACK;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [{\"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"google_drive\", \"return_path\": \"/mes-connexions\"}], \"backend_pid\": 88605}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pending",
+    "sql": "SELECT consumed_at IS NULL FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000d';",
+    "exit_code": 0,
+    "stdout": "t\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000d','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [{\"user_id\": \"00000000-0000-4000-8000-000000000001\", \"provider\": \"google_drive\", \"return_path\": \"/mes-connexions\"}], \"backend_pid\": 88610}\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000d','google_connections','00000000-0000-4000-8000-000000000001'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88613}\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000e','00000000-0000-4000-8000-000000000002','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:42.212813+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000f','00000000-0000-4000-8000-000000000001','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:42.600739+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "query",
+    "sql": "UPDATE purama_ai.oauth_connection_states SET created_at=clock_timestamp()-interval '11 minutes', expires_at=clock_timestamp()-interval '1 minute' WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000f';",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "label": "issue-rollback",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('000000000000000000000000000000000000000000000000000000000000000e','00000000-0000-4000-8000-000000000001','google_connections','gmail');",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "ERROR:  23505: duplicate key value violates unique constraint \"oauth_connection_states_pkey\"\nCONTEXT:  SQL statement \"INSERT INTO purama_ai.oauth_connection_states(state_hash, user_id, purpose, provider, created_at, expires_at)\n  VALUES (p_state_hash, p_user_id, p_purpose, p_provider, created, expires)\"\nPL/pgSQL function purama_ai.create_oauth_connection_state(text,uuid,text,text) line 20 at SQL statement\nSCHEMA NAME:  purama_ai\nTABLE NAME:  oauth_connection_states\nCONSTRAINT NAME:  oauth_connection_states_pkey\nLOCATION:  _bt_check_unique, nbtinsert.c:673\n"
+  },
+  {
+    "label": "query",
+    "sql": "SELECT count(*) FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000f';",
+    "exit_code": 0,
+    "stdout": "1\n",
+    "stderr": ""
+  },
+  {
+    "label": "query",
+    "sql": "SELECT user_id FROM purama_ai.oauth_connection_states WHERE state_hash='000000000000000000000000000000000000000000000000000000000000000e';",
+    "exit_code": 0,
+    "stdout": "00000000-0000-4000-8000-000000000002\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000010','00000000-0000-4000-8000-000000000003','google_connections','google_drive');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:43.506526+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "create",
+    "sql": "SET ROLE service_role; SELECT purama_ai.create_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000011','00000000-0000-4000-8000-000000000003','email_agent_gmail','gmail');",
+    "exit_code": 0,
+    "stdout": "2026-11-10 23:01:43.848809+01\n",
+    "stderr": ""
+  },
+  {
+    "label": "delete-fixture-actor",
+    "sql": "DELETE FROM auth.users WHERE id='00000000-0000-4000-8000-000000000003';",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "label": "query",
+    "sql": "SELECT count(*) FROM purama_ai.oauth_connection_states WHERE user_id='00000000-0000-4000-8000-000000000003';",
+    "exit_code": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000010','google_connections','00000000-0000-4000-8000-000000000003'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88639}\n",
+    "stderr": ""
+  },
+  {
+    "label": "consume",
+    "sql": "SET ROLE service_role; SELECT jsonb_build_object('backend_pid', pg_backend_pid(), 'receipts', COALESCE(jsonb_agg(to_jsonb(r)), '[]'::jsonb)) FROM purama_ai.consume_oauth_connection_state('0000000000000000000000000000000000000000000000000000000000000011','email_agent_gmail','00000000-0000-4000-8000-000000000003'::uuid) AS r;",
+    "exit_code": 0,
+    "stdout": "{\"receipts\": [], \"backend_pid\": 88641}\n",
+    "stderr": ""
+  },
+  {
+    "label": "pg-stop",
+    "command": [
+      "/opt/homebrew/opt/postgresql@18/bin/pg_ctl",
+      "-D",
+      "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data",
+      "-m",
+      "fast",
+      "-w",
+      "-t",
+      "15",
+      "stop"
+    ],
+    "exit_code": 0,
+    "stdout": "waiting for server to shut down.... done\nserver stopped\n",
+    "stderr": ""
+  },
+  {
+    "label": "pg-status-after-stop",
+    "command": [
+      "/opt/homebrew/opt/postgresql@18/bin/pg_ctl",
+      "-D",
+      "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/oauth-native/cluster-oauth_native_8f09719908/data",
+      "status"
+    ],
+    "exit_code": 3,
+    "stdout": "pg_ctl: no server running\n",
+    "stderr": ""
+  }
+]

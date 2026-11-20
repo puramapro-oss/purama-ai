@@ -1,0 +1,12 @@
+[
+  {
+    "scope": "site",
+    "source": "/Users/matissdornier/purama/.coord/handoffs/CHATGPT-ONE-UNIFIED-AUDIT-20261110/continuation-11b50b3a/iao-validation/code/node_modules",
+    "lock_sha256": "7d6aa7a9cc26f6cdb8738d06eff6de1c3bcd77031ccd1ae5789ef3ba0d511d63"
+  },
+  {
+    "scope": "karta",
+    "source": "/Users/matissdornier/purama/.coord/handoffs/CHATGPT-ONE-UNIFIED-AUDIT-20261110/continuation-11b50b3a/iao-validation/code/karta/node_modules",
+    "lock_sha256": "3417aa1dc313e50c492c0ce825476180654275ae9752b84ec232baaa9adf9e6c"
+  }
+]

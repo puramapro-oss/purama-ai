@@ -1,0 +1,27 @@
+{
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "src/pages/OAuthCallback.tsx",
+    "src/hooks/useUserConnections.ts",
+    "src/lib/oauth-google.ts",
+    "supabase/functions/oauth-google/index.ts",
+    "supabase/functions/_shared/oauth-state.ts"
+  ],
+  "exitCode": 0,
+  "sourcesBefore": {
+    "src/pages/OAuthCallback.tsx": "5701e64ad335157e606ac386582d359f192c1939ab41addbaa3e13d99f7a11fd",
+    "src/hooks/useUserConnections.ts": "b7b7aa1ff6083873fff1d965015646eb97e34978267233635a237e692c255e46",
+    "src/lib/oauth-google.ts": "113f5318fee60aa9b016a941889d41955b276b1f3fbb5c5403d65011de1404e4",
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2"
+  },
+  "sourcesAfter": {
+    "src/pages/OAuthCallback.tsx": "5701e64ad335157e606ac386582d359f192c1939ab41addbaa3e13d99f7a11fd",
+    "src/hooks/useUserConnections.ts": "b7b7aa1ff6083873fff1d965015646eb97e34978267233635a237e692c255e46",
+    "src/lib/oauth-google.ts": "113f5318fee60aa9b016a941889d41955b276b1f3fbb5c5403d65011de1404e4",
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2"
+  },
+  "sourceUnchanged": true
+}

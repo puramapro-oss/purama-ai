@@ -1,0 +1,18 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile.json=../qa/static-scheduler-20261110/baseline-real-cron.json",
+    "test/staticAgentSchedulerCron.test.ts"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+  "exit_code": 1,
+  "elapsed_seconds": 0.903,
+  "git_head": "1a49ad646b529c6fb95335105c8a4e5f28468d76",
+  "source_sha256": "1ffd9be9ce8a69beeef51ee21b08a33ea9208f4194f550d6c1c6bef98a7ffb08",
+  "test_sha256": "9cd77ff4a53188566fa454aec4cb007cdf6c0e3aa3f7316718e782af2957b76b"
+}

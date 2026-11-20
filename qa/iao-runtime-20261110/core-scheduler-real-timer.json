@@ -1,0 +1,10 @@
+{
+  "test": "actual node-cron 4.6.0 task.execute/stop/destroy",
+  "harness": "VM callbacks bridged to the host realm because node-cron uses instanceof Function",
+  "source": "karta/src/scheduler/cron.ts",
+  "sourceSha256": "915686985a8d89d0246e8e7e3f470f990b7afa07b072f06e96e364ecc7c375b0",
+  "userReads": 1,
+  "stoppedBeforeReadFinished": false,
+  "enqueues": 0,
+  "pass": true
+}

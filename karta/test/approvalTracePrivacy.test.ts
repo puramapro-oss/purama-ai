@@ -11,7 +11,10 @@ const h = vi.hoisted(() => ({
   from: vi.fn(), select: vi.fn(), eq: vi.fn(), parentRead: vi.fn(),
 }));
 
-vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: h.rpc, from: h.from } }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc: (...args: unknown[]) => {
+  const response = Promise.resolve(h.rpc(...args));
+  return Object.assign(response, { abortSignal: (_signal: AbortSignal) => response });
+}, from: h.from } }));
 vi.mock("../src/engine/resolveDefinition.js", () => ({ resolveAgentDefinition: h.resolveDefinition }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.stopped }));
 vi.mock("../src/engine/autonomy.js", () => ({ loadAgentState: h.loadState, isRunnable: () => ({ ok: true }) }));
@@ -67,7 +70,7 @@ beforeEach(() => {
   h.resolveDefinition.mockImplementation(async () => ({ tools: h.tools }));
   h.enqueue.mockResolvedValue("resume-job");
   h.rpc.mockImplementation(async (name: string) => {
-    if (name === "karta_claim_pending_action") {
+    if (name === "karta_claim_pending_action_bounded") {
       if (h.claimed) return { data: [], error: null };
       h.claimed = true;
       return { data: [h.pending], error: null };
@@ -88,7 +91,7 @@ describe("private tool traces through the real approval resolver", () => {
     expect(h.execute.mock.calls[0][1]).toMatchObject({ userId: "private-user", operationId: "private-pending", mode: "live" });
     expect(finalizations()).toHaveLength(1);
     expect(finalizations()[0]).toMatchObject({ p_id: "private-pending", p_status: "executed" });
-    expect(h.enqueue).toHaveBeenCalledOnce();
+    expect(h.enqueue).not.toHaveBeenCalled();
     expect(params).toEqual({ payload: { text: PRIVATE_MARKER } });
     expectPrivateTraceAbsent(result);
   });
@@ -213,7 +216,7 @@ describe("private tool traces through the real approval resolver", () => {
     expect(result.ok).toBe(true);
     expect(finalizations()[0].p_status).toBe("rejected");
     expect(h.execute).not.toHaveBeenCalled();
-    expect(h.enqueue).toHaveBeenCalledOnce();
+    expect(h.enqueue).not.toHaveBeenCalled();
     expectPrivateTraceAbsent(result);
   });
 
@@ -229,7 +232,7 @@ describe("private tool traces through the real approval resolver", () => {
 
   it("does not repeat an effect after a private finalization failure", async () => {
     h.rpc.mockImplementation(async (name: string) => {
-      if (name === "karta_claim_pending_action") {
+      if (name === "karta_claim_pending_action_bounded") {
         if (h.claimed) return { data: [], error: null };
         h.claimed = true;
         return { data: [h.pending], error: null };

@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "recorded_at": "2026-11-10T23:05:47.286729+00:00",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)qa/**",
+    ":(exclude)tests/oauth-google/evidence/**"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "scope": "Source, executable tests and workflow changes; archived raw evidence is excluded and remains unmodified."
+}

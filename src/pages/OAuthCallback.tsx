@@ -1,86 +1,93 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
+import { createRequestScope } from '@/lib/request-scope';
+import { clearOAuthContext, invokeOAuth, OAuthClientError, readOAuthContext } from '@/lib/oauth-google';
 import { toast } from 'sonner';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function OAuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
-  const [message, setMessage] = useState('Connexion en cours...');
+  const { user, loading } = useAuth();
+  const userId = user?.id ?? null;
+  const code = searchParams.get('code');
+  const state = searchParams.get('state');
+  const denied = searchParams.get('error');
+  const scopeKey = JSON.stringify([userId, loading, code, state, denied]);
+  const capture = useRequestScope(scopeKey);
+  const [requests] = useState(createRequestScope);
+  const [status, setStatus] = useScopedState<'processing' | 'success' | 'error'>(scopeKey, 'processing');
+  const [message, setMessage] = useScopedState(scopeKey, 'Connexion en cours...');
+  const [returnPath, setReturnPath] = useScopedState(scopeKey, '/mes-connexions');
+  useLayoutEffect(() => () => requests.invalidate(), [scopeKey, requests]);
 
   useEffect(() => {
+    if (loading) return;
+    const current = capture();
+    const request = requests.begin('callback');
+    if (!request) return;
+    let redirectTimer: ReturnType<typeof setTimeout> | undefined;
+    const admitted = () => current() && request.current();
     const handleCallback = async () => {
-      const code = searchParams.get('code');
-      const state = searchParams.get('state');
-      const error = searchParams.get('error');
-
-      if (error) {
-        setStatus('error');
-        setMessage('Autorisation refusée');
-        toast.error('Connexion annulée');
-        setTimeout(() => navigate('/mes-connexions'), 2000);
-        return;
-      }
-
-      if (!code || !state) {
-        setStatus('error');
-        setMessage('Paramètres manquants');
-        setTimeout(() => navigate('/mes-connexions'), 2000);
-        return;
-      }
-
-      // Verify state matches
-      const storedState = sessionStorage.getItem('oauth_state');
-      if (state !== storedState) {
-        setStatus('error');
-        setMessage('État invalide - possible attaque CSRF');
-        setTimeout(() => navigate('/mes-connexions'), 2000);
-        return;
-      }
-
       try {
-        // Exchange code for tokens via edge function
-        const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/oauth-google?action=callback&code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Erreur de connexion');
+        setStatus('processing');
+        setMessage('Connexion en cours...');
+        const context = readOAuthContext();
+        if (!context || !state || state !== context.state) {
+          setStatus('error'); setMessage('Cette connexion est invalide ou ancienne. Recommencez depuis vos connexions.'); return;
         }
-
-        sessionStorage.removeItem('oauth_state');
-        setStatus('success');
-        setMessage('Compte connecté avec succès !');
+        const destination = context.purpose === 'email_agent_gmail' ? '/dashboard/email-agent' : '/mes-connexions';
+        setReturnPath(destination);
+        if (!userId || context.userId !== userId) {
+          setStatus('error'); setMessage('Connectez-vous au compte qui a démarré cette connexion, puis recommencez.'); return;
+        }
+        if (denied) {
+          clearOAuthContext(state);
+          setStatus('error'); setMessage('Autorisation refusée'); return;
+        }
+        if (!code) {
+          setStatus('error'); setMessage('Paramètres manquants. Recommencez la connexion.'); return;
+        }
+        const endpoint = context.purpose === 'email_agent_gmail' ? 'email-agent-gmail-oauth' : 'oauth-google';
+        const result = await invokeOAuth(endpoint, { action: 'callback', code, state }, userId, request.signal);
+        if (!admitted()) return;
+        if (readOAuthContext()?.state !== state) {
+          setStatus('error'); setMessage('Une autre connexion a été démarrée. Reprenez depuis vos connexions.'); return;
+        }
+        if (result.success !== true || result.provider !== context.provider || result.returnUrl !== destination) {
+          throw new OAuthClientError();
+        }
+        clearOAuthContext(state);
+        if (!admitted()) return;
+        setStatus('success'); setMessage('Compte connecté avec succès !');
         toast.success('Compte connecté avec succès');
-        
-        setTimeout(() => {
-          navigate(data.returnUrl || '/mes-connexions');
+        redirectTimer = setTimeout(() => {
+          if (current()) navigate(destination, { replace: true });
         }, 1500);
-
-      } catch (err) {
-        console.error('OAuth callback error:', err);
+      } catch (error) {
+        if (!admitted()) return;
         setStatus('error');
-        setMessage(err instanceof Error ? err.message : 'Erreur de connexion');
-        toast.error('Erreur lors de la connexion');
-        setTimeout(() => navigate('/mes-connexions'), 2000);
-      }
+        setMessage(error instanceof OAuthClientError && error.status === 409
+          ? 'Cette connexion a expiré ou a déjà été utilisée. Recommencez depuis vos connexions.'
+          : error instanceof OAuthClientError && error.status === 401
+            ? 'Votre session a changé. Reconnectez-vous puis recommencez la connexion.'
+            : error instanceof OAuthClientError && error.status === 403
+              ? 'Les autorisations nécessaires n’ont pas toutes été accordées. Recommencez la connexion pour les vérifier.'
+              : 'La connexion n’a pas pu être confirmée. Recommencez depuis vos connexions.');
+      } finally { request.finish(); }
     };
-
-    handleCallback();
-  }, [searchParams, navigate]);
+    void handleCallback();
+    return () => {
+      if (redirectTimer !== undefined) clearTimeout(redirectTimer);
+      requests.cancel('callback');
+    };
+  }, [loading, userId, code, state, denied, capture, navigate, requests, setStatus, setMessage, setReturnPath]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="glass-effect rounded-2xl p-12 text-center max-w-md">
+      <div className="glass-effect rounded-2xl p-12 text-center max-w-md" role="status" aria-live="polite">
         {status === 'processing' && (
           <>
             <Loader2 className="w-16 h-16 mx-auto mb-4 text-primary animate-spin" />
@@ -88,7 +95,6 @@ export default function OAuthCallback() {
             <p className="text-muted-foreground">{message}</p>
           </>
         )}
-        
         {status === 'success' && (
           <>
             <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500" />
@@ -96,13 +102,17 @@ export default function OAuthCallback() {
             <p className="text-muted-foreground">{message}</p>
           </>
         )}
-        
         {status === 'error' && (
           <>
             <XCircle className="w-16 h-16 mx-auto mb-4 text-destructive" />
             <h1 className="text-xl font-semibold text-foreground mb-2">Erreur</h1>
             <p className="text-muted-foreground">{message}</p>
           </>
+        )}
+        {status !== 'processing' && (
+          <Link className="inline-block mt-6 text-primary underline" to={returnPath} replace>
+            Retour à mes connexions
+          </Link>
         )}
       </div>
     </div>

@@ -1,0 +1,94 @@
+name: Mobile SDK quality
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-quality.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: mobile
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_NO_DOTENV: '1'
+      NODE_OPTIONS: --max-old-space-size=1024
+      npm_config_audit: 'false'
+      npm_config_fund: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.1
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Use the qualified npm resolver
+        run: npm install --global npm@11.9.0 --ignore-scripts --no-audit --no-fund
+      - name: Record checkout and runtime
+        run: |
+          mkdir -p qa-results
+          {
+            git rev-parse HEAD HEAD^{tree}
+            node --version
+            npm --version
+            sha256sum package.json package-lock.json
+          } | tee qa-results/identity.log
+      - name: Install the exact mobile lock
+        run: npm ci --no-audit --no-fund 2>&1 | tee qa-results/npm-ci.log
+      - name: Check the installed dependency tree
+        run: npm ls --all --json > qa-results/npm-tree.json
+      - name: Exercise actual consumers and security regressions
+        run: npm run test:dependencies 2>&1 | tee qa-results/dependency-compat.log
+      - name: Exercise local communication and account activation boundaries
+        run: npm run test:local-communication 2>&1 | tee qa-results/local-communication.log
+      - name: Verify watch protocol and ONE document lifecycle
+        run: npm run test:watch-native 2>&1 | tee qa-results/watch-native-tests.log
+      - name: Test the offline audit binding and refusal cases
+        run: npm run test:audit-snapshot 2>&1 | tee qa-results/audit-snapshot-tests.log
+      - name: Test authorized registry renewal security guards (offline fixtures)
+        run: node --test tests/audit-ci-live.test.cjs 2>&1 | tee qa-results/audit-ci-live-tests.log
+      - name: Check SDK dependency alignment
+        run: npm run check:dependencies 2>&1 | tee qa-results/expo-install-check.log
+      - name: Typecheck the mobile application
+        run: npm run typecheck 2>&1 | tee qa-results/typecheck.log
+      - name: Export Android with Metro
+        run: npm run export:android 2>&1 | tee qa-results/metro-android.log
+      - name: Export iOS with Metro
+        run: npm run export:ios 2>&1 | tee qa-results/metro-ios.log
+      - name: Verify approved audit or perform authorized fresh registry audit
+        env:
+          PURAMA_ALLOW_LIVE_AUDIT: '1'
+        run: node scripts/qualify-audit-ci.cjs 2>&1 | tee qa-results/audit-live-verification.log
+      - name: Run Expo Doctor including public metadata checks
+        run: npm exec --yes --package=expo-doctor@1.21.6 -- expo-doctor 2>&1 | tee qa-results/expo-doctor.log
+      - name: Preserve qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-quality-results
+          path: |
+            mobile/qa-results/
+            mobile/dist/android/metadata.json
+            mobile/dist/android/assetmap.json
+            mobile/dist/ios/metadata.json
+            mobile/dist/ios/assetmap.json
+          retention-days: 14

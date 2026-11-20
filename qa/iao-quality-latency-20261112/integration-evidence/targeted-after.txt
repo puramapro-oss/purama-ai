@@ -1,0 +1,184 @@
+
+ RUN  v5.0.3 /workspace/scratch/37cd53c7c075/iao-integration/karta
+
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 408 11ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 409 2ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 429 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > makes one HTTP attempt when the provider returns 500 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > does not repeat a request after an ambiguous connection failure 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses the SDK's existing base URL setting without falling back to a different origin 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > keeps the default SDK endpoint available when no proxy is configured 2ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > uses only the explicit fixture API key and sends no ambient bearer credential 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > sends compact context while preserving every JSON value and leaving the input unchanged 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a simple request 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves model, output allowance, policy and tool contract for a large request 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves a valid complete tool decision through the real SDK 1ms
+ ✓ test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > still rejects a partial tool response without repeating inference or executing the tool 1ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > resolves the actual Deno re-export to the one canonical Node source 73ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > encodes role/context delimiters while preserving multilingual data exactly 2ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: "" 1ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: "  " 0ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: null 0ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an absent or non-string role: 12 0ms
+ ✓ test/assistantPolicy.test.ts > canonical policy assembly > rejects an invalid policy kind and keeps task instructions free of the conversation layer 0ms
+ ✓ test/assistantPolicy.test.ts > real provider request construction > adds the core and conversation policy once in the actual streaming transport 55ms
+ ✓ test/assistantPolicy.test.ts > real provider request construction > adds the task policy once through createRealClaudeClient with a simulated SDK transport 54ms
+ ✓ test/assistantPolicy.test.ts > agent-chat server model selection > uses the server main model when configuration is configured 63ms
+ ✓ test/assistantPolicy.test.ts > agent-chat server model selection > uses the server main model when configuration is unset 38ms
+ ✓ test/assistantPolicy.test.ts > agent-chat server model selection > does not let a client model override the server configuration 30ms
+ ✓ test/assistantPolicy.test.ts > chat server model selection > uses the server main model when configuration is configured 30ms
+ ✓ test/assistantPolicy.test.ts > chat server model selection > uses the server main model when configuration is unset 33ms
+ ✓ test/assistantPolicy.test.ts > chat server model selection > does not let a client model override the server configuration 31ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > sends the most recent 20 own messages in chronological order and preserves the latest refusal 54ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > fails closed on a history outage before inference or a chat write 37ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > runs the real Zod schema and rejects a malformed session before model work 32ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects truncated answer before saving any assistant answer 22ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects paused answer before saving any assistant answer 22ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects empty answer before saving any assistant answer 23ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > rejects tool instruction before saving any assistant answer 49ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > propagates request cancellation to the provider and stores no assistant response 30ms
+ ✓ test/assistantPolicy.test.ts > agent-chat real handler > does not persist a late response even when provider JSON finishes after cancellation 22ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > sends the most recent 20 own messages in chronological order and preserves the latest refusal 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > fails closed on a history outage before inference or a chat write 21ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > runs the real Zod schema and rejects a malformed session before model work 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects truncated answer before saving any assistant answer 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects paused answer before saving any assistant answer 28ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects empty answer before saving any assistant answer 22ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > rejects tool instruction before saving any assistant answer 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > propagates request cancellation to the provider and stores no assistant response 19ms
+ ✓ test/assistantPolicy.test.ts > creator-agent-chat real handler > does not persist a late response even when provider JSON finishes after cancellation 18ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > sends the most recent 20 own messages in chronological order and preserves the latest refusal 79ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > fails closed on a history outage before inference or a chat write 19ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > runs the real Zod schema and rejects a malformed session before model work 24ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects truncated answer before saving any assistant answer 29ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects paused answer before saving any assistant answer 23ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects empty answer before saving any assistant answer 68ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > rejects tool instruction before saving any assistant answer 20ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > propagates request cancellation to the provider and stores no assistant response 18ms
+ ✓ test/assistantPolicy.test.ts > legal-chat real handler > does not persist a late response even when provider JSON finishes after cancellation 20ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > rejects a client system role before the actual provider is invoked 18ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > preserves the existing 50 by 4,000 character server contract without trimming 20ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > does not let client input increase the server limits 18ms
+ ✓ test/assistantPolicy.test.ts > authenticated chat contract > does not let client input increase the server limits 17ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > creator-agent-generate sends its actual task prompt and stops at simulated provider failure 11ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > creator-agent-run sends its actual task prompt and stops at simulated provider failure 17ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > legal-build-case sends its actual task prompt and stops at simulated provider failure 29ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > legal-generate-document sends its actual task prompt and stops at simulated provider failure 10ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > partner-find-prospects sends its actual task prompt and stops at simulated provider failure 12ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > partner-generate-contract sends its actual task prompt and stops at simulated provider failure 22ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > partner-send-outreach sends its actual task prompt and stops at simulated provider failure 24ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > social publication rejects caption generation before storage, model or publication effects 48ms
+ ✓ test/assistantPolicy.test.ts > task endpoints > forces the saved legal success probability to null even when the model returns 99 21ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > HTTP 408 makes exactly one provider attempt and exposes no provider body 11ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > HTTP 409 makes exactly one provider attempt and exposes no provider body 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > HTTP 429 makes exactly one provider attempt and exposes no provider body 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > HTTP 500 makes exactly one provider attempt and exposes no provider body 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > does not send a pre-cancelled request or expose its private cancellation reason 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > bounds an uncooperative fetch and ignores its later response 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > bounds the whole HTTP 200 body after headers have arrived 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > bounds the whole HTTP 429 body after headers have arrived 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > cancels a pending body promptly without waiting for the deadline 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects a late handoff even before the deadline timer gets CPU time 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > does not retry a connection failure or return its private cause 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > isolates cancellation between simultaneous requests on the same client 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > preserves a complete decision and tool order without logging private content in SDK debug mode 2ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects invalid timeout 0 before any provider attempt 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects invalid timeout 999 before any provider attempt 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects invalid timeout 1000.5 before any provider attempt 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects invalid timeout 120001 before any provider attempt 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects invalid timeout NaN before any provider attempt 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport deadline > rejects invalid timeout Infinity before any provider attempt 1ms
+ ✓ test/claudeTransportDeadline.test.ts > real SDK transport through the real KARTA cycle > keeps a timed-out durable cycle closed when a valid tool decision arrives late 3ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "max_tokens" even if a tool block looks executable 3ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "model_context_window_exceeded" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "pause_turn" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "refusal" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "stop_sequence" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "unknown_provider_stop" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason "" even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason null even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects stop reason undefined even if a tool block looks executable 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > accepts completed text and auxiliary thinking blocks without changing the text 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > accepts tool_use without a text summary and preserves parallel calls in order 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > accepts a nonempty text summary with a completed tool request 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not qualify empty content as a completed KARTA decision 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not qualify blank text as a completed KARTA decision 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not qualify thinking only as a completed KARTA decision 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects tool_use without a client tool call 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > rejects an end_turn that still contains an executable client tool call 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: null input 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: array input 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: missing required argument 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: wrong argument type 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: blank tool name 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: unknown tool 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: missing tool id 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > validates the entire decision before returning it: duplicate tool id 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real Claude decision completeness > does not copy provider payload or argument names into validation errors 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "max_tokens" 2ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "model_context_window_exceeded" 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "pause_turn" 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with "refusal" 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > executes and queues no action when the decision ends with null 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > does not execute a valid first tool if a later tool fails its input schema 0ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > keeps the valid tool path functional and executes it once 1ms
+ ✓ test/claudeDecisionCompleteness.test.ts > real client through the KARTA loop, with a mocked provider transport > keeps a complete no-action decision as a successful cycle without effects 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > preserves complete data, owner scoping and query limits 4ms
+ ✓ test/agentContextContract.test.ts > legal business context > keeps absent/inactive configuration distinct from read errors (null) 1ms
+ ✓ test/agentContextContract.test.ts > legal business context > keeps absent/inactive configuration distinct from read errors ({"is_active":false}) 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > accepts legitimately empty data when the reads succeeded 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > resolved database failure > rejects incomplete context without leaking the response from legal_agent_config 1ms
+ ✓ test/agentContextContract.test.ts > legal business context > resolved database failure > rejects incomplete context without leaking the response from legal_documents 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > resolved database failure > rejects incomplete context without leaking the response from legal_impayes 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > rejected database failure > rejects incomplete context without leaking the response from legal_agent_config 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > rejected database failure > rejects incomplete context without leaking the response from legal_documents 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > rejected database failure > rejects incomplete context without leaking the response from legal_impayes 0ms
+ ✓ test/agentContextContract.test.ts > legal business context > prevents inference and action approval in the real cycle after a failed context read 2ms
+ ✓ test/agentContextContract.test.ts > compta business context > preserves complete data, owner scoping and query limits 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > keeps absent/inactive configuration distinct from read errors (null) 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > keeps absent/inactive configuration distinct from read errors ({"is_active":false}) 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > accepts legitimately empty data when the reads succeeded 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > resolved database failure > rejects incomplete context without leaking the response from compta_agent_config 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > resolved database failure > rejects incomplete context without leaking the response from compta_transactions 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > resolved database failure > rejects incomplete context without leaking the response from compta_invoices 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > rejected database failure > rejects incomplete context without leaking the response from compta_agent_config 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > rejected database failure > rejects incomplete context without leaking the response from compta_transactions 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > rejected database failure > rejects incomplete context without leaking the response from compta_invoices 0ms
+ ✓ test/agentContextContract.test.ts > compta business context > prevents inference and action approval in the real cycle after a failed context read 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > preserves complete data, owner scoping and query limits 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > keeps absent/inactive configuration distinct from read errors (null) 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > keeps absent/inactive configuration distinct from read errors ({"is_active":false}) 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > accepts legitimately empty data when the reads succeeded 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > resolved database failure > rejects incomplete context without leaking the response from partner_agent_config 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > resolved database failure > rejects incomplete context without leaking the response from partner_prospects 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > rejected database failure > rejects incomplete context without leaking the response from partner_agent_config 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > rejected database failure > rejects incomplete context without leaking the response from partner_prospects 0ms
+ ✓ test/agentContextContract.test.ts > partner business context > prevents inference and action approval in the real cycle after a failed context read 0ms
+ ✓ test/agentContextContract.test.ts > legal independent context reads > starts both lazy requests before either result is available, then waits for both 0ms
+ ✓ test/agentContextContract.test.ts > compta independent context reads > starts both lazy requests before either result is available, then waits for both 0ms
+ ✓ test/runtimeDeadline.test.ts > preserves a result handed back before the monotonic deadline 3ms
+ ✓ test/runtimeDeadline.test.ts > rejects a resolution at monotonic time 5 before the timer runs 1ms
+ ✓ test/runtimeDeadline.test.ts > rejects a resolution at monotonic time 6 before the timer runs 1ms
+ ✓ test/runtimeDeadline.test.ts > classifies a rejection after the deadline as interruption 1ms
+ ✓ test/runtimeDeadline.test.ts > preserves the original rejection before the deadline 0ms
+ ✓ test/runtimeDeadline.test.ts > rejects parent cancellation during the final Promise handoff 1ms
+ ✓ test/runtimeDeadline.test.ts > never invokes an operation for an already cancelled parent 1ms
+ ✓ test/runtimeDeadline.test.ts > does not start a worker from a dependency probe completed after its budget 2ms
+ ✓ test/runtimeDeadline.test.ts > reports an incomplete drain when the final queue closure finishes after its budget 1ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short legal request requires less quality 2ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short compta request requires less quality 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short facture-pro request requires less quality 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short rapports-financiers request requires less quality 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not infer that a short chasseur-de-paiements request requires less quality 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > keeps the primary model for an unqualified custom agent with a short prompt 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > keeps the primary model when even one available action is sensitive 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > keeps the existing fast route for short non-sensitive requests 0ms
+ ✓ test/modelQualityRouting.test.ts > model routing preserves the primary model for consequential decisions > does not alter a large-context primary route 0ms
+
+ Test Files  7 passed (7)
+      Tests  173 passed (173)
+   Start at  07:03:11
+   Duration  4.42s (tests 46%, import 36%, transform 15%, setup 1%, worker 1%)
+
+    Isolate  7 workers spawned · ~136ms startup each (spawn + environment, per file)
+             at least ~818ms faster with isolate: false — reuses workers across files instead of one per file

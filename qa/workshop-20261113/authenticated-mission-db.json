@@ -1,0 +1,33 @@
+{
+  "tasks": [
+    {
+      "state": "verified_done",
+      "attempt": 1,
+      "taskKey": "security-review",
+      "commitSha": "027a291700e691209d05aea712f41446701db57b",
+      "evidenceCount": 4
+    },
+    {
+      "state": "verified_done",
+      "attempt": 1,
+      "taskKey": "implementation",
+      "commitSha": "027a291700e691209d05aea712f41446701db57b",
+      "evidenceCount": 4
+    },
+    {
+      "state": "verified_done",
+      "attempt": 1,
+      "taskKey": "functional-review",
+      "commitSha": "027a291700e691209d05aea712f41446701db57b",
+      "evidenceCount": 4
+    }
+  ],
+  "missionId": "94c0d8cb-936d-4963-8afc-b74ef975e38f",
+  "finishedAt": "2026-11-13T02:05:21.313192+00:00",
+  "missionState": "verified_done",
+  "tokensReported": 520087,
+  "monetaryCost": "unknown",
+  "environment": "private Hostinger clone + actual Supabase Auth/REST/Edge/KARTA/Codex and Chrome, no production activation",
+  "modelCalls": 3,
+  "sourceGuardNote": "Final branch fallback regression was added after this real generation; verified separately."
+}

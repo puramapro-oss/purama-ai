@@ -1,0 +1,33 @@
+PASS leaving a rejected callback cancels its pending redirect
+PASS late callback success cannot cross an account change
+PASS double initiation admits only one session read
+PASS HTTP 200 without an explicit success receipt is rejected
+PASS a session read from another account cannot start authorization
+PASS a network rejection during initiation is handled and can be retried
+PASS a current explicit success clears only its state and navigates internally
+PASS Gmail uses the same authenticated browser callback with its own purpose
+PASS an older callback cannot erase a newer connection state
+PASS callback completion after unmount cannot notify or redirect
+PASS StrictMode does not let an expired session read exchange the code
+PASS an A-B-A identity cycle never revives the first callback
+PASS authorization returned after unmount cannot leave for Google
+PASS untrusted authorization destinations never replace the stored state
+PASS connection metadata query does not request provider credentials
+PASS timed-out authorization releases the lock and rejects a late session
+FAIL a timed-out callback ignores a provider result arriving afterward: expect(locator).toBeVisible() failed
+
+Locator: getByRole('heading', { name: 'Erreur', exact: true })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "to.be.visible" with timeout 5000ms
+  - waiting for getByRole('heading', { name: 'Erreur', exact: true })
+
+PASS callback rejects a foreign return destination despite success true
+PASS partial consent asks the user to review permissions without claiming success
+PASS Gmail initiation stores the returned actor-bound purpose and state
+PASS Gmail initiation rejects a foreign URL without replacing the prior state
+PASS cancelled Gmail initiation cannot store a late response
+{"status":"FAIL","checks":22,"pass":21,"fail":1}

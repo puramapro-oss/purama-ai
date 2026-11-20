@@ -1,0 +1,143 @@
+TAP version 13
+# Subtest: envoie apikey, un unique Bearer, JSON et le signal au bon endpoint
+ok 1 - envoie apikey, un unique Bearer, JSON et le signal au bon endpoint
+  ---
+  duration_ms: 313.555875
+  type: 'test'
+  ...
+# Subtest: GET accepte un jeton brut sans envoyer de corps
+ok 2 - GET accepte un jeton brut sans envoyer de corps
+  ---
+  duration_ms: 71.702042
+  type: 'test'
+  ...
+# Subtest: utilise la clé publique configurée par le vrai client de l’application, avec repli ANON compatible
+ok 3 - utilise la clé publique configurée par le vrai client de l’application, avec repli ANON compatible
+  ---
+  duration_ms: 180.0125
+  type: 'test'
+  ...
+# Subtest: conserve le corps et son ID pour une seconde tentative après perte de réponse
+ok 4 - conserve le corps et son ID pour une seconde tentative après perte de réponse
+  ---
+  duration_ms: 60.086917
+  type: 'test'
+  ...
+# Subtest: refuse les URL externes et traversées avant tout envoi de jeton
+ok 5 - refuse les URL externes et traversées avant tout envoi de jeton
+  ---
+  duration_ms: 30.555583
+  type: 'test'
+  ...
+# Subtest: refuse la session vide et la configuration incomplète avant le réseau
+ok 6 - refuse la session vide et la configuration incomplète avant le réseau
+  ---
+  duration_ms: 103.619708
+  type: 'test'
+  ...
+# Subtest: refuse les configurations HTTP distantes et les identifiants dans une URL
+ok 7 - refuse les configurations HTTP distantes et les identifiants dans une URL
+  ---
+  duration_ms: 93.662792
+  type: 'test'
+  ...
+# Subtest: autorise Supabase local HTTP pour la validation en développement
+ok 8 - autorise Supabase local HTTP pour la validation en développement
+  ---
+  duration_ms: 38.6875
+  type: 'test'
+  ...
+# Subtest: affiche un conflit de révision français sans divulguer les détails du serveur
+ok 9 - affiche un conflit de révision français sans divulguer les détails du serveur
+  ---
+  duration_ms: 44.090875
+  type: 'test'
+  ...
+# Subtest: masque les erreurs brutes JSON et HTML inconnues
+ok 10 - masque les erreurs brutes JSON et HTML inconnues
+  ---
+  duration_ms: 43.545958
+  type: 'test'
+  ...
+# Subtest: conserve Retry-After et explique la limite de contact
+ok 11 - conserve Retry-After et explique la limite de contact
+  ---
+  duration_ms: 30.324583
+  type: 'test'
+  ...
+# Subtest: ne confirme pas un succès HTTP au corps invalide ou contenant une erreur
+ok 12 - ne confirme pas un succès HTTP au corps invalide ou contenant une erreur
+  ---
+  duration_ms: 23.648084
+  type: 'test'
+  ...
+# Subtest: préserve l’annulation pendant la requête et pendant la lecture de sa réponse
+ok 13 - préserve l’annulation pendant la requête et pendant la lecture de sa réponse
+  ---
+  duration_ms: 23.410417
+  type: 'test'
+  ...
+# You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+# Subtest: current account can still confirm its real profile mutation
+ok 14 - current account can still confirm its real profile mutation
+  ---
+  duration_ms: 638.13625
+  type: 'test'
+  ...
+# Subtest: old profile response cannot toast or write cache after changing to B
+ok 15 - old profile response cannot toast or write cache after changing to B
+  ---
+  duration_ms: 235.429709
+  type: 'test'
+  ...
+# Subtest: old profile response cannot announce success after logout
+ok 16 - old profile response cannot announce success after logout
+  ---
+  duration_ms: 84.364583
+  type: 'test'
+  ...
+# Subtest: A-B-A cannot let the first lifetime replace the freshly read A profile
+ok 17 - A-B-A cannot let the first lifetime replace the freshly read A profile
+  ---
+  duration_ms: 210.332584
+  type: 'test'
+  ...
+# Subtest: a current server refusal remains visible and does not confirm a save
+ok 18 - a current server refusal remains visible and does not confirm a save
+  ---
+  duration_ms: 101.627791
+  type: 'test'
+  ...
+# Subtest: late contact confirmation cannot notify or populate an expired account cache
+ok 19 - late contact confirmation cannot notify or populate an expired account cache
+  ---
+  duration_ms: 173.6885
+  type: 'test'
+  ...
+# Subtest: late mission creation cannot notify or populate an expired account cache
+ok 20 - late mission creation cannot notify or populate an expired account cache
+  ---
+  duration_ms: 259.000417
+  type: 'test'
+  ...
+# Subtest: late mission action cannot publish a success or overwrite the cached revision after account change
+ok 21 - late mission action cannot publish a success or overwrite the cached revision after account change
+  ---
+  duration_ms: 289.268667
+  type: 'test'
+  ...
+# Subtest: current mission retry preserves the exact intent and expected revision
+ok 22 - current mission retry preserves the exact intent and expected revision
+  ---
+  duration_ms: 169.924458
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8411.845583

@@ -1,0 +1,18 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/modelUsage.test.ts test/claudeUsageTransport.test.ts test/loopModelUsage.test.ts test/runtimeUsageReadiness.test.ts test/runtimeProbe.test.ts test/claudeTransportCost.test.ts test/claudeDecisionCompleteness.test.ts test/real-claude.test.ts test/loop.test.ts test/loopTracePrivacy.test.ts test/loopJevTracePrivacy.test.ts test/logger.test.ts test/loggerCycleFinalization.test.ts test/runtimeApiReadiness.test.ts test/claudeTransportDeadline.test.ts test/modelQualityRouting.test.ts test/agentContextContract.test.ts test/assistantPolicy.test.ts test/privateToolResults.test.ts test/privateToolResultsExecution.test.ts test/knowledgeSearch.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/4eb2a799ec70/purama-api-usage-20261112/karta
+
+
+ Test Files  21 passed (21)
+      Tests  436 passed (436)
+   Start at  08:07:45
+   Duration  9.06s (import 48%, tests 34%, transform 13%, worker 2%, setup 1%)
+
+     Import  90 modules were evaluated 119 times · 3.13s total, 48% of tracked time
+             ~762ms faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

@@ -1,0 +1,64 @@
+
+ RUN  v5.0.3 /Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code/karta
+
+ ❯ test/overageCredit.test.ts (38 tests | 1 failed) 19545ms
+   ✓ legacy overage: real webhook and PostgreSQL credit boundary (37)
+     ✓ credits a confirmed session once and retains the signed payment month on redelivery 290ms
+     ✓ serializes a burst of deliveries into one credit under the real SQL unique constraint 231ms
+     ✓ does not grant completed Checkout credits with unpaid status 31ms
+     ✓ does not grant completed Checkout credits with no_payment_required status 31ms
+     ✓ waits for delayed payment success and grants once in the successful event month 56ms
+     ✓ does not acknowledge an inconsistent delayed success as a credit 20ms
+     ✓ ignores delayed failures and unrelated async sessions without issuing credits 13ms
+     ✓ requires signature verification before crediting: null 15ms
+     ✓ requires signature verification before crediting: fixture-invalid 23ms
+     ✓ rejects invalid owner before any persistent credit 21ms
+     ✓ rejects missing payment intent before any persistent credit 31ms
+     ✓ rejects invalid amount before any persistent credit 31ms
+     ✓ rejects fractional amount before any persistent credit 41ms
+     ✓ rejects invalid currency before any persistent credit 31ms
+     ✓ rejects incomplete session before any persistent credit 31ms
+     ✓ rejects missing timestamp before any persistent credit 30ms
+     ✓ rejects time before creation before any persistent credit 31ms
+     ✓ rejects mode mismatch before any persistent credit 26ms
+     ✓ supports an expanded payment intent without trusting its other fields 37ms
+     ✓ returns a retryable error on persistence failure and grants once on retry 37ms
+     ✓ requires a persisted receipt and safely retries after a lost acknowledgement 52ms
+     ✓ rejects reuse of a session for another user through the real webhook 116ms
+     ✓ rejects a conflicting session payload atomically: {"p_actions":2001} 69ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_amount_total":1800} 85ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_currency":"usd"} 76ms
+     ✓ rejects a conflicting session payload atomically: {"p_stripe_payment_intent_id":"pi_other"} 82ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_livemode":true} 38ms
+     ✓ rejects a conflicting session payload atomically: {"p_payment_confirmed_at":"2026-11-01T00:00:01Z"} 40ms
+     ✓ accepts another event ID for the same evidenced payment without replacing its first receipt 51ms
+     ✓ rejects reusing a payment event for a different session, including crossed existing receipts 82ms
+     ✓ forbids credit RPC access from anon 24ms
+     ✓ forbids credit RPC access from authenticated 24ms
+     ✓ forbids credit RPC access from public_only 34ms
+     ✓ cannot be bypassed by a client direct insert despite broad historical table grants 49ms
+     ✓ enforces session and event uniqueness for direct trusted inserts outside the helper 50ms
+     ✓ keeps historical credits intact and refuses to invent missing payment evidence on replay 51ms
+     ✓ can reapply the migration without changing credits or payment proof 89ms
+   × stops the migration on historical duplicate sessions without deleting or rewriting a credit 7688ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/overageCredit.test.ts > stops the migration on historical duplicate sessions without deleting or rewriting a credit
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/overageCredit.test.ts:340:1
+    338| });
+    339|
+    340| it('stops the migration on historical duplicate sessions without delet…
+       | ^
+    341|   const db = await database(false);
+    342|   try {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 passed (38)
+   Start at  22:38:37
+   Duration  23.17s (tests 87%, import 10%, transform 3%)

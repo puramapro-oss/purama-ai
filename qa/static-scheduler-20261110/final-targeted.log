@@ -1,0 +1,34 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 --reporter=default --reporter=json --outputFile.json=../qa/static-scheduler-20261110/final-targeted.json test/staticAgentScheduler.test.ts test/staticAgentSchedulerCron.test.ts test/agentsRegistry.test.ts test/customAgent.test.ts test/customAuthorization.test.ts test/queueDeliveryIdentity.test.ts test/customAgentScheduler.test.ts test/customAgentSchedulerCron.test.ts test/customAgentScanAbort.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta
+
+ ✓ test/customAuthorization.test.ts (46 tests) 46ms
+ ✓ test/queueDeliveryIdentity.test.ts (27 tests) 2501ms
+ ✓ test/customAgentScheduler.test.ts (13 tests) 49ms
+ ✓ test/staticAgentScheduler.test.ts (6 tests) 66ms
+ ✓ test/staticAgentSchedulerCron.test.ts (3 tests) 56ms
+ ✓ test/customAgentSchedulerCron.test.ts (3 tests) 44ms
+ ✓ test/customAgent.test.ts (4 tests) 6ms
+ ✓ test/agentsRegistry.test.ts (4 tests) 7ms
+ ✓ test/customAgentScanAbort.test.ts (2 tests) 5ms
+
+ Test Files  9 passed (9)
+      Tests  108 passed (108)
+   Start at  22:33:26
+   Duration  5.77s (tests 63%, import 20%, transform 14%, setup 1%, worker 1%)
+
+    Isolate  9 workers spawned · ~142ms startup each (spawn + environment, per file)
+             at least ~1.14s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/static-scheduler-20261110/final-targeted.json
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+stderr | test/customAuthorization.test.ts > custom authority immediately before the provider request > reconciles a cancelled close once and preserves it after bookkeeping failure and reactivation
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+stderr | test/agentsRegistry.test.ts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+

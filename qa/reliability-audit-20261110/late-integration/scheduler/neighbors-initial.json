@@ -1,0 +1,45 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "test/runtimeLifecycle.test.ts",
+    "test/runtimeApiReadiness.test.ts",
+    "test/customAgentScheduler.test.ts",
+    "test/customAgentSchedulerCron.test.ts",
+    "test/customAgentScanAbort.test.ts",
+    "test/queueDeliveryIdentity.test.ts"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta",
+  "env": {},
+  "capture_kind": "Exact structured tool results; output fields are the text returned by exec_command/write_stdin, not reconstructed raw terminal logs.",
+  "captures": [
+    {
+      "key": "scheduler_reconciliation_validation_start_1",
+      "result": {
+        "chunk_id": "cd5718",
+        "wall_time_seconds": 1.001024221,
+        "session_id": 69563,
+        "original_token_count": 109,
+        "output": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> karta-engine@1.0.0 test\n> vitest run --maxWorkers=1 test/runtimeLifecycle.test.ts test/runtimeApiReadiness.test.ts test/customAgentScheduler.test.ts test/customAgentSchedulerCron.test.ts test/customAgentScanAbort.test.ts test/queueDeliveryIdentity.test.ts\n\n\n RUN  v5.0.3 /workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta\n\n"
+      }
+    },
+    {
+      "key": "scheduler_reconciliation_validation_end_2",
+      "result": {
+        "chunk_id": "8933e8",
+        "wall_time_seconds": 0.000010163,
+        "exit_code": 1,
+        "original_token_count": 398,
+        "output": "⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯\n\nVitest caught 1 unhandled error during the test run.\nThis might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.\n\n⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯\nError: [vitest-pool]: Worker forks emitted error.\n ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21\n ❯ EventEmitter.emit node:events:514:28\n ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22\n ❯ ChildProcess.emit node:events:514:28\n ❯ ChildProcess._handle.onexit node:internal/child_process:324:12\n\nCaused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/1d67ec79327f/purama-ai-current-audit/karta/test/queueDeliveryIdentity.test.ts\n ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33\n ❯ ChildProcess.emit node:events:514:28\n ❯ ChildProcess._handle.onexit node:internal/child_process:324:12\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n\n Test Files  5 passed (6)\n      Tests  36 passed (63)\n     Errors  1 error\n   Start at  23:58:33\n   Duration  16.19s (transform 53%, tests 30%, setup 13%, import 3%)\n\n  Transform  transforming modules took 7.38s · 53% of tracked time, re-done on every run\n             persist transforms across runs with fsModuleCache: true\n             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns\n\n"
+      }
+    }
+  ],
+  "status": "PARTIEL_INTERRUPTED",
+  "passed": 36,
+  "planned": 63,
+  "interrupted_file": "test/queueDeliveryIdentity.test.ts",
+  "cause": "Worker SIGKILL observed; precise cause not established",
+  "exit_code": 1
+}

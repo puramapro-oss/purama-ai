@@ -1,0 +1,10 @@
+[
+  {
+    "version": "PostgreSQL 18.6 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit",
+    "current_user": "entraide_test",
+    "inet_server_addr": "127.0.0.1",
+    "inet_server_port": 55439,
+    "pg_backend_pid": 27,
+    "data_directory": "/workspace/scratch/6a3b4f291e34/continuation/native-evidence/pg-entraide/data"
+  }
+]

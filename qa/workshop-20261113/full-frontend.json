@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/Users/matissdornier/.npm/_npx/52027bd8fc0022aa/node_modules/node/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=2"
+  ],
+  "cwd": "/Users/matissdornier/purama-worktrees/iao-atelier-multiagents-20261112",
+  "exitCode": 0,
+  "seconds": 66.96
+}

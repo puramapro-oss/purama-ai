@@ -1,0 +1,11 @@
+Changes: 5 files, 2 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Function createRealClaudeClient → karta/src/claude/real.ts
+  Method decide → karta/src/claude/real.ts
+
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1794459395177,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

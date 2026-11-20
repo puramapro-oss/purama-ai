@@ -1,38 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gift, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useReferralTracking } from '@/hooks/useInfluencer';
-import { supabase } from '@/integrations/supabase/client';
 
 export function ReferralBanner() {
-  const { getStoredReferral, clearReferral } = useReferralTracking();
-  const [referral, setReferral] = useState<{ code: string; influencerName?: string } | null>(null);
+  const { t } = useTranslation();
+  const { checkAndStoreReferral, getStoredReferral } = useReferralTracking();
+  const { search } = useLocation();
+  const [referral, setReferral] = useState<{ code: string } | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    let active = true;
-    const stored = getStoredReferral();
-    if (stored) {
-      // Fetch influencer name
-      const fetchInfluencer = async () => {
-        const { data } = await supabase
-          .from('influencers')
-          .select('beneficiary_name, promo_code')
-          .eq('promo_code', stored.code)
-          .maybeSingle();
-
-        if (active && data) {
-          setReferral({
-            code: data.promo_code,
-            influencerName: data.beneficiary_name || undefined,
-          });
-        }
-      };
-      void fetchInfluencer().catch(() => {});
-    }
-    return () => { active = false; };
-  }, [getStoredReferral]);
+    checkAndStoreReferral(search);
+    setReferral(getStoredReferral());
+  }, [checkAndStoreReferral, getStoredReferral, search]);
 
   if (!referral || dismissed) return null;
 
@@ -53,8 +37,8 @@ export function ReferralBanner() {
               <p className="font-medium">
                 Invitation PURAMA : consultez les prix et conditions avant paiement.
               </p>
-              <p className="text-sm opacity-90">
-                {referral.influencerName ? `Invitation de ${referral.influencerName}` : `Code : ${referral.code}`}
+              <p className="text-sm opacity-90 break-all">
+                Code enregistré : {referral.code}. Son éligibilité sera vérifiée au paiement.
               </p>
             </div>
           </div>
@@ -72,6 +56,7 @@ export function ReferralBanner() {
               variant="ghost"
               className="text-white hover:bg-white/20"
               onClick={() => setDismissed(true)}
+              aria-label={t('common.close')}
             >
               <X className="w-4 h-4" />
             </Button>

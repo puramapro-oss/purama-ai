@@ -1,0 +1,41 @@
+✔ callback refuses an unverified actor before provider or privileged client (114.621921ms)
+✔ refresh refuses an unverified actor before reading or refreshing a connection (69.361652ms)
+✔ refresh cannot target another account with a valid caller token (77.617372ms)
+✔ failed connection persistence cannot become successful refresh (99.822914ms)
+✔ authorize requires a verified actor (35.742953ms)
+✔ callback rejects the old self-selected Base64 state (24.184416ms)
+✔ success contract is bound to the current server-side state (35.669071ms)
+✔ authorize stores a digest of an opaque state and chooses scopes on the server (24.319149ms)
+✔ browser-selected scopes and state cannot replace the server authorization policy (34.210289ms)
+✔ expired callback state is rejected before Google (20.423372ms)
+✔ already missing callback state is rejected before Google (20.297423ms)
+✔ wrong actor callback state is rejected before Google (28.141095ms)
+✔ wrong purpose callback state is rejected before Google (21.826572ms)
+✔ simultaneous callbacks using one state cannot exchange the code twice (35.057271ms)
+✔ state storage failure refuses callback admission (22.010038ms)
+✔ a state consumed before a failed provider call cannot be replayed (26.006886ms)
+✔ missing access token cannot produce a connected receipt (45.544718ms)
+✔ blank access token cannot produce a connected receipt (21.59232ms)
+✔ negative lifetime cannot produce a connected receipt (25.287355ms)
+✔ unrecognized token type cannot produce a connected receipt (25.470479ms)
+✔ missing offline consent cannot produce a connected receipt (26.639327ms)
+✔ refresh updates only the verified actor and never returns provider credentials (23.40226ms)
+✔ a disappeared connection cannot be reported as refreshed (22.66362ms)
+✔ a pending identity lookup reaches the total deadline before privileged work (46.746313ms)
+✔ a provider ignoring cancellation still produces a bounded HTTP failure (49.379262ms)
+✔ a token response with an unbounded body cannot keep the request pending (46.469948ms)
+✔ an oversized token response is refused without persistence (21.075924ms)
+✔ provider redirects are not allowed to carry client credentials elsewhere (22.793826ms)
+✔ an already cancelled callback makes no identity, storage or provider call (23.291354ms)
+✔ POST authorize requires a verified human actor before any privileged port (17.685727ms)
+✔ POST callback requires a verified human actor before any privileged port (18.152048ms)
+✔ revocation after provider exchange prevents connection persistence (36.495023ms)
+✔ failure after state admission cannot trigger a second provider exchange (23.571205ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1969.863887

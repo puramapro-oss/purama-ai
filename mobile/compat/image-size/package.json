@@ -1,0 +1,13 @@
+{
+  "name": "@purama/metro-image-size-compat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Metro synchronous Buffer/path facade using the patched upstream image parser",
+  "type": "commonjs",
+  "main": "index.cjs",
+  "files": ["index.cjs"],
+  "engines": { "node": ">=20.19.4" },
+  "dependencies": {
+    "image-size-upstream": "npm:image-size@2.0.3"
+  }
+}

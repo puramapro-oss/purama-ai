@@ -1,0 +1,37 @@
+{
+  "read_only": true,
+  "checks": [
+    {
+      "url": "https://purama.dev/",
+      "method": "GET",
+      "exit": 0,
+      "result": "404 0.211576",
+      "stderr": "",
+      "at": "2026-11-10T22:24:17.110233+00:00"
+    },
+    {
+      "url": "https://purama-ai.purama.dev/",
+      "method": "GET",
+      "exit": 0,
+      "result": "402 0.272483",
+      "stderr": "",
+      "at": "2026-11-10T22:24:17.527288+00:00"
+    },
+    {
+      "url": "https://auth.purama.dev/auth/v1/health",
+      "method": "GET",
+      "exit": 0,
+      "result": "502 0.507414",
+      "stderr": "",
+      "at": "2026-11-10T22:24:18.137075+00:00"
+    },
+    {
+      "url": "https://auth.purama.dev/functions/v1/oauth-google",
+      "method": "GET",
+      "exit": 0,
+      "result": "502 0.551980",
+      "stderr": "",
+      "at": "2026-11-10T22:24:18.992839+00:00"
+    }
+  ]
+}

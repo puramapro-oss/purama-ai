@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tests/oauth-gmail/config.test.mjs"
+  ],
+  "cwd": "/workspace/scratch/1d67ec79327f/gmail-config-boundary-20261110/before",
+  "node": "v24.22.1",
+  "exit_code": 1,
+  "duration_seconds": 0.874,
+  "inputs_before": {
+    "src/lib/email-agent.ts": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0",
+    "tests/oauth-gmail/config.test.mjs": "20919c892a46207d83e2d3a54a00b40da22ec8603cb5c6af2d3aa393bfa75e1b"
+  },
+  "inputs_after": {
+    "src/lib/email-agent.ts": "fc58235d7055f4f707539bfdf0127a2806b94b7d706cdb861aea09e0353f94a0",
+    "tests/oauth-gmail/config.test.mjs": "20919c892a46207d83e2d3a54a00b40da22ec8603cb5c6af2d3aa393bfa75e1b"
+  }
+}

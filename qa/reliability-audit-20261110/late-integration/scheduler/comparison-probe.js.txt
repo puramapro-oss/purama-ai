@@ -1,0 +1,29 @@
+const {execFileSync}=require('node:child_process');
+const {compileFunction}=require('node:vm');
+const ts=require('./karta/node_modules/typescript');
+const actualCron=require('./karta/node_modules/node-cron');
+const refs={PR39:'2e2f71375986d3a1adb3f8b791a668ca739683f3',PR40:'54971f5a511be752fa70ed94306cdb322f29ff81'};
+const flush=()=>new Promise(done=>setImmediate(done));
+const deferred=()=>{let resolve;const promise=new Promise(done=>resolve=done);return {promise,resolve};};
+function load(ref,real=false){
+ const source=execFileSync('git',['show',ref+':karta/src/scheduler/cron.ts'],{encoding:'utf8'});
+ const state={rows:[],queue:[],logs:[],now:Date.parse('2026-11-10T12:00:00Z'),list:async()=>['user-a']};
+ class ClockDate extends Date{constructor(...args){super(...(args.length?args:[state.now]));}static now(){return state.now;}}
+ const fakeCron={validate:()=>true,schedule(expression,callback){const row={callback,stop(){},destroy(){}};state.rows.push(row);return row;}};
+ const modules={'node-cron':real?actualCron:fakeCron,'../config.js':{config:{dailyReportCron:'0 8 * * *'}},'../agents/index.js':{listActiveUserIds:()=>state.list()},'../queue/queues.js':{enqueueAgentCycle:async(...args)=>{state.queue.push(args);return 'queued';}},'./dailyReport.js':{runDailyReport:async()=>undefined}};
+ const module={exports:{}};const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
+ compileFunction(compiled,['module','exports','require','Date','console'])(module,module.exports,name=>{if(!(name in modules))throw Error('Unexpected dependency');return modules[name];},ClockDate,{error:(...args)=>state.logs.push(args.map(String).join(' '))});
+ state.start=module.exports.startSchedulers;state.context={date:new Date('2026-11-10T12:00:00Z'),dateLocalIso:'2026-11-10T12:00:00Z',triggeredAt:new Date()};return state;
+}
+(async()=>{
+ const result={};
+ for(const[name,ref]of Object.entries(refs)){
+  result[name]={};
+  {const h=load(ref),scan=deferred();h.list=()=>scan.promise;h.start();const work=h.rows[0].callback(h.context);await flush();h.now=Date.parse('2026-11-10T12:01:05Z');scan.resolve(['user-a']);await work;await flush();result[name].delayedSlot=h.queue[0][1].dedupeKey;}
+  {const h=load(ref);const tasks=h.start();await tasks[0].destroy();await h.rows[0].callback(h.context);await flush();result[name].enqueueAfterDestroy=h.queue.length;}
+  {const h=load(ref);h.list=async()=>{throw Error('PRIVATE_DATABASE_DETAIL');};h.start();await h.rows[0].callback(h.context);await flush();result[name].providerDetailLogged=h.logs.some(x=>x.includes('PRIVATE_DATABASE_DETAIL'));}
+  {const before=new Set(actualCron.getTasks().keys()),h=load(ref,true),tasks=h.start(),created=[...actualCron.getTasks()].filter(([id])=>!before.has(id)).map(([,task])=>task);try{await Promise.all(tasks.map(task=>task.stop()));await flush();result[name].registryAfterStop=created.filter(task=>actualCron.getTasks().has(task.id)).length;result[name].statuses=[...new Set(created.map(task=>task.getStatus()))];}finally{await Promise.all(created.map(task=>task.destroy()));await flush();}}
+ }
+ result.actualCronRegistryEmpty=actualCron.getTasks().size===0;
+ console.log(JSON.stringify(result,null,2));
+})().catch(error=>{console.error(error.stack);process.exitCode=1;});

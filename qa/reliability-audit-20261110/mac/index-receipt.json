@@ -1,0 +1,42 @@
+[
+  {
+    "name": "clone",
+    "command": [
+      "git",
+      "clone",
+      "--filter=blob:none",
+      "--no-checkout",
+      "https://github.com/puramapro-oss/purama-ai.git",
+      "/Users/matissdornier/purama-patches/reliability-audit-20261110-2127/code"
+    ],
+    "exit": 0,
+    "seconds": 1.32
+  },
+  {
+    "name": "checkout",
+    "command": [
+      "git",
+      "checkout",
+      "--detach",
+      "1a49ad646b529c6fb95335105c8a4e5f28468d76"
+    ],
+    "exit": 0,
+    "seconds": 5.15
+  },
+  {
+    "name": "gitnexus",
+    "command": [
+      "npx",
+      "--yes",
+      "gitnexus@1.6.12",
+      "analyze",
+      "--index-only",
+      "--name",
+      "purama-reliability-audit-mac-20261110",
+      "--workers",
+      "1"
+    ],
+    "exit": 0,
+    "seconds": 228.54
+  }
+]

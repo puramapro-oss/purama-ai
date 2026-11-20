@@ -1,0 +1,207 @@
+{
+  "created_at": "2026-11-13T01:06:53.292458+00:00",
+  "scope": "Local composition of existing IAO PR68+73+71+74 on PR45; no production deployment or financial/provider action",
+  "local_status": "PASS",
+  "remote_ci_status": "NON_TESTE",
+  "production_status": "NON_TESTE",
+  "inputs": {
+    "consolidation": "1df7220287fab837fb27cd151a521c2b7577fc9c",
+    "capabilities": "b9ba4b2fdaa1d8523e0274128941740cbe563072",
+    "adaptive": "1ac911984291da967f2313d41a4e3975a8c0bc7d",
+    "local": "0785602eaa3ac9df0c3ccf049acfc551cb1b3624",
+    "workshop": "5046ed2c9f316286e6842c50ab30d86543509e0b"
+  },
+  "corrections": [
+    "Merged cloud model preferences and pinned LM Studio route without silent substitution; usage is retained before rejecting provider model mismatch.",
+    "Aligned qualified model identifiers with the existing LM Studio @ syntax.",
+    "Unsupported capability selection is blocked before any Codex CLI/Git effect, with known zero usage and a durable external block.",
+    "Distinct migration numbers: 030 capability selection then 031 workshop; both are applied in workshop SQL fixtures.",
+    "Native PostgreSQL workshop races are required in CI; Linux binary support and nonzero exit on missing prerequisites; old evidence unchanged.",
+    "Preserved all incoming HTTP checks, scripts and existing Vercel branch exclusions; disabled Vercel deployment for the integration branch."
+  ],
+  "checks": [
+    {
+      "name": "KARTA complete final suite",
+      "status": "PASS",
+      "files": 152,
+      "tests": 3136,
+      "failed": 0,
+      "skipped": 0,
+      "command": "cd karta && node_modules/.bin/vitest run --maxWorkers=1",
+      "evidence": "karta-final.log"
+    },
+    {
+      "name": "UI complete Vitest suite",
+      "status": "PASS",
+      "files": 20,
+      "tests": 434,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "ui-tests.log"
+    },
+    {
+      "name": "Model composition regression recheck",
+      "status": "PASS",
+      "files": 3,
+      "tests": 98,
+      "included_in_karta_total": true,
+      "evidence": "model-composition-final.log"
+    },
+    {
+      "name": "Native HTTP transports",
+      "status": "PASS",
+      "tests": 8,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "http-transports.log"
+    },
+    {
+      "name": "KARTA and UI typechecks/builds",
+      "status": "PASS",
+      "details": "KARTA tsc noEmit + build; UI tsc noEmit + vite production build; offline release assets checked separately."
+    },
+    {
+      "name": "ESLint",
+      "status": "PASS",
+      "errors": 0,
+      "existing_warnings": 21,
+      "evidence": "lint.log"
+    },
+    {
+      "name": "Offline release assets",
+      "status": "PASS",
+      "exact_assets": 4
+    },
+    {
+      "name": "Generated Supabase contracts",
+      "status": "PASS"
+    },
+    {
+      "name": "Native PostgreSQL local prerequisites",
+      "status": "NON_TESTE",
+      "exit_code": 1,
+      "details": "No PostgreSQL server binaries on this host. The required CI step must run all five native races; this local result is not a pass.",
+      "evidence": "native-prerequisite.json"
+    }
+  ],
+  "initial_failures": [
+    {
+      "scope": "Parallel local KARTA run",
+      "status": "FAIL",
+      "details": "2835 passed; 10 worker SIGKILL errors. Not accepted as success. Final serialized full suite passed after reducing temporary-memory pressure.",
+      "evidence": "initial-parallel-failure.log"
+    },
+    {
+      "scope": "Parallel UI typecheck",
+      "status": "FAIL",
+      "exit_code": 137,
+      "details": "Killed without TypeScript diagnostics; rerun passed.",
+      "evidence": "initial-ui-memory-failure.log"
+    }
+  ],
+  "impact": {
+    "staged": {
+      "files": 117,
+      "symbols": 1565,
+      "processes": 49,
+      "risk": "CRITICAL"
+    },
+    "against_main": {
+      "files": 1594,
+      "symbols": 11321,
+      "processes": 542,
+      "risk": "CRITICAL"
+    },
+    "limits": [
+      "Graph process extraction is capped; interface/dynamic dispatch is incomplete.",
+      "Initial graph rebuild succeeded. Composed graph was constructed, but final shared registry registration failed because its temporary filesystem was full. Impact/detect_changes remained readable and were executed.",
+      "The latest small regex and test corrections were covered by direct review and final tests; the graph is not an exhaustive proof."
+    ],
+    "independent_review": "Two independent static reviews; model @ mismatch found, corrected and regression tested."
+  },
+  "limits": [
+    "PR70 historical transport and PR58 native-watch composition are outside this candidate.",
+    "The workshop UI still does not expose capabilities; the direct CLI adapter is deliberately not certified to execute selected resources.",
+    "Consultation remains a server function, not a fully integrated paid authenticated chat flow.",
+    "LM Studio real server/weights, production identity, production database migrations, hosted runtime, payment systems, mobile devices/stores and endurance were not tested here.",
+    "CI audits that are skipped on pull requests remain unqualified; no new vulnerability audit is claimed."
+  ],
+  "source_sha256": {
+    ".github/workflows/purama-chef-hardening.yml": "e043516cc965d93d5cacc37c7a1afafc743f14364b7be54a87d2439bae954c3d",
+    "karta/WORKSHOP.md": "43602606b04975098bc110eafe6fbd4c05b5178e045a440d21ea4208069f45c9",
+    "karta/migrations/030_chef_capability_selection.sql": "a1af7443ff907eafaf14a7c30f1d7e8b910b5530430374ef25d521c94c49f1a9",
+    "karta/migrations/031_chef_workshop.sql": "c4c86f81e7a7c5c6691edde5bd64762bef63acdddfb6ffdefef735db1ed12f4f",
+    "karta/package.json": "0f1f958f62da55e3a275540a47763ef25de42ff86d25b996da0991788ebe70a5",
+    "karta/scripts/qualify-lmstudio.ts": "652e3678a38806827dd81c026b654846efea5f683a7817cd0bfcf37314728804",
+    "karta/src/agents/customAgent.ts": "51b9660bf609bb6d71b43d849a54c15bb00738d82c3e1d18302a5f8dfdfbc0f0",
+    "karta/src/api/server.ts": "0780a4c2ee762e8ff6d3ad4518a3b6d9595324e3a215afaac63cbc8938e640d3",
+    "karta/src/chef/brief.ts": "60f0b3b25e23be74512da427ac6a7538cbde932d283427fbb1e82cf0af8370c7",
+    "karta/src/chef/capability-runtime.ts": "5bf153844a8bd965e6d9b2664412f6c343d6e63e324e274ecfe673e4ab00f918",
+    "karta/src/chef/capability-selection.ts": "103711a52177ed745a443a9f6116cc0410da6cdeb98bead1eada9f754886e8f8",
+    "karta/src/chef/codex-cli-driver.ts": "8773c84b5b7227bbe9ebe43eacf42461785a93464cdce706f841420e60ac209d",
+    "karta/src/chef/control-plane.ts": "77d3672bc12b72670d1ad9c40eddb4b60ab0c628b763e76bf647d6ea732eb496",
+    "karta/src/chef/driver.ts": "f96d7219394a2b383d82afc09b2133c0cd033c7d07741f84ef06a8c2c343403d",
+    "karta/src/chef/supervisor.ts": "ad34df325b8be21eb2aab1ea775f0a1a39f05e8ac200996741aed86e33d56873",
+    "karta/src/chef/worker-main.ts": "be6fb0cd16646ca4685511f9e785b11ca42a2b5ca0a25c3791a8c46f3d3eaa0d",
+    "karta/src/chef/workshop-config.ts": "ce02e8fc838ce7e9a6eca27d4b47bef021932fa911fa2825cef4bc25f24ab6ee",
+    "karta/src/chef/workshop-git.ts": "5d4212f9789fc8dc00c49ac3481bd4b4fd9c0df3c82fe7b74363c4d49acd85b7",
+    "karta/src/chef/workshop-main.ts": "23a7734579b2b20ffff80013fc1372fce512e5d8a26b7abd49ef52d66ec7e01f",
+    "karta/src/chef/workshop-runtime.ts": "9dc61f29da99ff2d9b0620fbc031f48c37084e418402701b34f37eee3cf6ed02",
+    "karta/src/chef/workshop-service.ts": "52a2f13f21d8c699247c2cd83ff659d03b0cf49151066e7e9c5cacc6b074c232",
+    "karta/src/claude/consultation.ts": "e79bead7458ea75f1c2dbf8ef2d38c96e464940f686c7761333f0ba1728a5bd5",
+    "karta/src/claude/execution-profile.ts": "c49a8a216bef3ff059f75562044b46716c54a70481e75bb1e0737920d5d46ce5",
+    "karta/src/claude/lmstudio.ts": "11c99a7fcd5af25249ec1fc805151aefeed98f010b74df12bb04662f142aabe4",
+    "karta/src/claude/real.ts": "67152795bbfa710d2bc3fca7e72f7239d647d41afd99ca948233705f9df0e010",
+    "karta/src/claude/types.ts": "a45f869f3d29a4fb597453320bd4320072d88cd8b5b310bfe902a2cf7fbca705",
+    "karta/src/engine/loop.ts": "bf18f7bd4312a0ccaa4b836866ab8c8053bbe3ec3b664512e5006bfb222232f5",
+    "karta/src/engine/types.ts": "18ecea75ce6cbd8155d7332da762dd808f1ca88cf4a9278d76b25d05b6c1a5d6",
+    "karta/src/knowledge/connected-research.ts": "8cd79acea6a4c6478b9418745816c84053df111bd3131c8fc53b47762bef1e87",
+    "karta/test/assistantPolicy.test.ts": "b8376dd66e22baf55a196324da5b62834e8c2bc4a6363d1b79b6a655a728d7f9",
+    "karta/test/chefCapabilityPersistence.test.ts": "72729dbe674af89b8e497c3c1cd6367621f5bf5b7a5c85eb8b074362068caaf5",
+    "karta/test/chefCapabilityRuntime.test.ts": "9a460557b0c4a33e80bd687efaab9a9bd8640bef85dac84217c831e863092504",
+    "karta/test/chefCapabilitySelection.test.ts": "54a5be7c0beff28edbe1545cd66db2186663a08877ff307da6914cd55893c85e",
+    "karta/test/chefCodexCliDriver.test.ts": "9dd7b4894592471c28557bccf7df8e5d336a95dcf39f9fdf0a0ebc73b77382e4",
+    "karta/test/chefSupervisor.test.ts": "a642d11af0a4e15e48db826215aa757533ff33d1d360e6274d13100b95c3da90",
+    "karta/test/chefWorkshopAdmission.test.ts": "055795d4c52cbc92c6067593d0d394a90f2aa2a4fc7310c19c3d3259fbcd759e",
+    "karta/test/chefWorkshopApi.test.ts": "ef18f856a2f2c9512b99f7f9b4b20beb9a84b64113c4722e123b4f162e63ab10",
+    "karta/test/chefWorkshopConcurrency.native.mjs": "1615f90f08b85ffd32ce5f53adc01c4de0cd4669b6bb0e8a4f5b24bdc34e20f6",
+    "karta/test/chefWorkshopConfig.test.ts": "d0392023f854b9c3c061421344382f281258e16485b6eb43bf2a62b9af88f5e5",
+    "karta/test/chefWorkshopEdge.test.ts": "b41cea8f6012b3bf98499242b1081e6681a280665ac63ef843b34d9a87ceb1e6",
+    "karta/test/chefWorkshopGit.test.ts": "cb522252732bab3eda205530b551ab179565a46064a098a6e0cdf52f1c4db3d6",
+    "karta/test/chefWorkshopRuntime.test.ts": "11bed1b30db577bbacaa006a32829ebd7442f14202237409a44a2db56b6c4754",
+    "karta/test/chefWorkshopService.test.ts": "f2d00a16234f12af61e87c0fc107569d028e867f6da8be8af267826d6ad0955c",
+    "karta/test/claudeExecutionProfileTransport.test.ts": "62d66cdae0d20d1f7a357b414c51d070c590842f46e145e841683c04e8750f7a",
+    "karta/test/connectedResearch.native.mjs": "8420b8b2babfe0d6f4f348d6794b4e42d258cdab4ae89a4ca6e9772c8ef9ec96",
+    "karta/test/connectedResearch.test.ts": "f66783de3cf748b6a837030e81b91827c3e03eb0d57371169b7055528572f814",
+    "karta/test/customAgentModelSelection.test.ts": "462d6fbd22abf1fa51d7ccc1b28f73713a79cc487fa969f5d14f201eb34259dd",
+    "karta/test/executionProfile.test.ts": "0f042d55fdbfb00478fedd513e90b8931a1dd8caf8a2acc618528b7bc58afcb9",
+    "karta/test/lmStudioSocket.test.mjs": "58baa3326ecdf97ec75f50c44bfc0ff117e9ba0da8092785f33eb0bd2f4e43cd",
+    "karta/test/lmStudioTransport.test.ts": "01ee2cde20f96832b2e9ad24e83b23117ec8bd30be14e2c375194180a7ca80a2",
+    "karta/test/migrationOrder.test.ts": "16429187bccb6c506c88d653f176bf9b26ff673e0cb954fa0ae440147e50fe9a",
+    "karta/test/modelConsultation.test.ts": "25468125afafb06d0367822ad66fd9d03af367f172a502dd55703b1fdb7f16ee",
+    "karta/workshop-projects.example.json": "a19e353c90c4087bb454e05400721eef424e96f70190001824875cb7715a3dd3",
+    "src/App.tsx": "9e988f9c4727be40413aaef98830e3e452409483a4b744c3ce45c68cb5d69fa4",
+    "src/components/OriginForgeDemo.tsx": "5d323d6c0eb108577171228abe13a9c974ad7508e070ae21de5e9c713d531820",
+    "src/components/dashboard/DashboardLayout.tsx": "5a615c2c576f4676d18fbbd703839726faa403d897d9a0be4b4fe0609125ff0e",
+    "src/lib/creator-agent.ts": "1abbc73d7b727e494b1e0bc08aa0e7e7056b042e5c0c83389f580e5728edb628",
+    "src/lib/creator-execution-preferences.test.ts": "65d15def730e9b9582cdbcac953972470f29ba08b89c4798a80c1f3e7d4f44d7",
+    "src/lib/workshop.test.ts": "b1674255e9e0d86bbcd82b4fb9a19944ca04897aa232f865f64ba02d377b9e89",
+    "src/lib/workshop.ts": "f18958da4a937f61d95b074a1cb93e3dea48b219ffbbb811da335eb190dc5c90",
+    "src/pages/CreatorAgentDetail.execution.test.tsx": "c4c94ef000c846ad59ca7971606545b2d7816876f5be53eccc4acdec90405c4d",
+    "src/pages/CreatorAgentDetail.tsx": "8935cb0e69c3f94c0f473723129cd69809a8a776b1d37881c3df55c004e8baf6",
+    "src/pages/Workshop.test.tsx": "ae752346492a9d390d666353db8497d20815eee24a1c7822f8233f2036aaf0a9",
+    "src/pages/Workshop.tsx": "7d9332502881340a9f9b67a25ff99feafb2056ffc6911ac6f0e24f7988079000",
+    "supabase/functions/chef-workshop/index.ts": "bbb77871fe1c2664f73a1b1873fd16314031cc3f802c38033459122866a886ff",
+    "supabase/migrations/20261112233000_creator_execution_preferences.sql": "7a26bd632fb2e92b43dd39cf779d30793fd7a2f9ed4b15531ccbff89437c7e72",
+    "tests/creator-execution-preferences.test.mjs": "466937b175d68e376bbd93b4793d93f5a5c8e936ffa15d4c66590e82bf041af2",
+    "tests/workshop-state/README.md": "edc0b9ca477945e12077483d4ccbabc1f7f5473ca0527afd1ff050482f298daa",
+    "tests/workshop-state/auth.ts": "550f217d57c157ed249a1bcccf3a59aec2d9314c33af5f3c524d3cb848e62691",
+    "tests/workshop-state/harness.tsx": "edc56935f62d417ff79b7736f8760803512b53dd7e706017c45ff2fe16dac93a",
+    "tests/workshop-state/index.html": "9c20f289573c6d8825b3b4b5c749101a0eff5cd8c6165c34843d54b921d8549d",
+    "tests/workshop-state/playwright.config.ts": "2917791976e43fd82644e460e8b435e3c9627ae172b2b829cac99ac0fac5c6c0",
+    "tests/workshop-state/transport.ts": "25cd7c8b99c5970e8b6721fd86dce70f554d2b2fc142ae05d759dd3b4e346acd",
+    "tests/workshop-state/vite.config.ts": "b6a4ee80d584e85af56f776d394d176a3ecfa4b93eb52f6322802ce2db82ec17",
+    "tests/workshop-state/workshop.spec.ts": "3af7bed8412203b32257e7145cc25a96fb42a145899ed86ef5b6dde48e70bd1e",
+    "vercel.json": "b1ff31405aabceecaa214bf558d3903420798f548f9605955dfe7442a135aab3"
+  }
+}

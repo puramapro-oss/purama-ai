@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/agent/.npm/_npx/7a40be787520bede/node_modules/deno/deno",
+    "check",
+    "--no-config",
+    "--no-lock",
+    "--cached-only",
+    "--node-modules-dir=manual",
+    "supabase/functions/oauth-google/index.ts",
+    "supabase/functions/email-agent-gmail-oauth/index.ts"
+  ],
+  "exit": 0,
+  "seconds": 1.364,
+  "sources": {
+    "supabase/functions/oauth-google/index.ts": "7edc37e13b735c13e0dcf73c6e9239bc068ba0b428821e21ed190617125bc1d3",
+    "supabase/functions/email-agent-gmail-oauth/index.ts": "352d3b42b001e99b4de32205b56db6231c6c0cf61ee3378e2f871a3a6dad2212",
+    "supabase/functions/_shared/oauth-state.ts": "cf6b4e0d4431dc655ea6bbb82615a926f3348d5f5a68dbdbf587187efe41b5c2"
+  },
+  "unchanged": true
+}

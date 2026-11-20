@@ -1,0 +1,563 @@
+TAP version 13
+# Subtest: already-applied \#23 upgrades additively without replaying 021000 or resetting records, counters, visibility and consent
+ok 1 - already-applied \#23 upgrades additively without replaying 021000 or resetting records, counters, visibility and consent
+  ---
+  duration_ms: 774.469417
+  type: 'test'
+  ...
+# Subtest: the additive upgrade installs durable request receipts with service-only access
+ok 2 - the additive upgrade installs durable request receipts with service-only access
+  ---
+  duration_ms: 100.644334
+  type: 'test'
+  ...
+# Subtest: reapplying the known additive upgrade preserves complete receipts and mission state
+ok 3 - reapplying the known additive upgrade preserves complete receipts and mission state
+  ---
+  duration_ms: 47.94475
+  type: 'test'
+  ...
+# Subtest: an unknown altered command body is refused before additive changes
+ok 4 - an unknown altered command body is refused before additive changes
+  ---
+  duration_ms: 30.172625
+  type: 'test'
+  ...
+# Subtest: an unrecognized request registry is refused without adopting or rewriting it
+ok 5 - an unrecognized request registry is refused without adopting or rewriting it
+  ---
+  duration_ms: 31.739875
+  type: 'test'
+  ...
+# Subtest: native concurrency: only one participant can take the final place
+ok 6 - native concurrency: only one participant can take the final place
+  ---
+  duration_ms: 554.477209
+  type: 'test'
+  ...
+# Subtest: native concurrency: duplicate command IDs replay one persisted contact
+ok 7 - native concurrency: duplicate command IDs replay one persisted contact
+  ---
+  duration_ms: 136.356916
+  type: 'test'
+  ...
+# Subtest: native concurrency: one mission request has one effect and one durable receipt
+ok 8 - native concurrency: one mission request has one effect and one durable receipt
+  ---
+  duration_ms: 116.413625
+  type: 'test'
+  ...
+# Subtest: native concurrency: simultaneous requests cannot exceed ten sends in one UTC day
+ok 9 - native concurrency: simultaneous requests cannot exceed ten sends in one UTC day
+  ---
+  duration_ms: 254.496584
+  type: 'test'
+  ...
+# Subtest: contact SQL protocol with real roles and persisted state
+    # Subtest: RPC is invoker-only, empty search_path, and executable by service_role only
+    ok 1 - RPC is invoker-only, empty search_path, and executable by service_role only
+      ---
+      duration_ms: 93.985667
+      type: 'test'
+      ...
+    # Subtest: raw client writes cannot bypass the contact or block protocol
+    ok 2 - raw client writes cannot bypass the contact or block protocol
+      ---
+      duration_ms: 215.71425
+      type: 'test'
+      ...
+    # Subtest: actor, UUID, payload, message and foreign-key validation fail without writes
+    ok 3 - actor, UUID, payload, message and foreign-key validation fail without writes
+      ---
+      duration_ms: 619.860958
+      type: 'test'
+      ...
+    # Subtest: same id and content replay once; conflicting actor, target or message never leaks a row
+    ok 4 - same id and content replay once; conflicting actor, target or message never leaks a row
+      ---
+      duration_ms: 261.891125
+      type: 'test'
+      ...
+    # Subtest: omitted and null messages are equivalent, an empty string is distinct
+    ok 5 - omitted and null messages are equivalent, an empty string is distinct
+      ---
+      duration_ms: 107.419584
+      type: 'test'
+      ...
+    # Subtest: daily capacity allows ten sends and preserves retries when full
+    ok 6 - daily capacity allows ten sends and preserves retries when full
+      ---
+      duration_ms: 378.848833
+      type: 'test'
+      ...
+    # Subtest: quota uses complete UTC days, excluding previous and next day even in another timezone
+    ok 7 - quota uses complete UTC days, excluding previous and next day even in another timezone
+      ---
+      duration_ms: 54.96
+      type: 'test'
+      ...
+    # Subtest: RLS and list expose only participating requests and the actor own blocks
+    ok 8 - RLS and list expose only participating requests and the actor own blocks
+      ---
+      duration_ms: 239.921083
+      type: 'test'
+      ...
+    # Subtest: a recipient private block is enforced; only its owner can undo it
+    ok 9 - a recipient private block is enforced; only its owner can undo it
+      ---
+      duration_ms: 193.736625
+      type: 'test'
+      ...
+    # Subtest: only the recipient may respond, and a response cannot be overwritten
+    ok 10 - only the recipient may respond, and a response cannot be overwritten
+      ---
+      duration_ms: 208.516458
+      type: 'test'
+      ...
+    # Subtest: declining starts a pair-specific cooldown without penalising another recipient
+    ok 11 - declining starts a pair-specific cooldown without penalising another recipient
+      ---
+      duration_ms: 128.94725
+      type: 'test'
+      ...
+    # Subtest: TTL expires at exactly 336 hours across DST and commits expiry despite a business error
+    ok 12 - TTL expires at exactly 336 hours across DST and commits expiry despite a business error
+      ---
+      duration_ms: 120.844459
+      type: 'test'
+      ...
+    # Subtest: a request one millisecond before the TTL boundary may still be accepted
+    ok 13 - a request one millisecond before the TTL boundary may still be accepted
+      ---
+      duration_ms: 37.476958
+      type: 'test'
+      ...
+    # Subtest: listing expires the actor pending requests only and preserves accepted consent
+    ok 14 - listing expires the actor pending requests only and preserves accepted consent
+      ---
+      duration_ms: 43.71875
+      type: 'test'
+      ...
+    # Subtest: cooldown ends at exactly 168 hours across DST, not one millisecond earlier
+    ok 15 - cooldown ends at exactly 168 hours across DST, not one millisecond earlier
+      ---
+      duration_ms: 44.507333
+      type: 'test'
+      ...
+    # Subtest: lazy expiry uses its original deadline for cooldown instead of the observation time
+    ok 16 - lazy expiry uses its original deadline for cooldown instead of the observation time
+      ---
+      duration_ms: 43.187792
+      type: 'test'
+      ...
+    # Subtest: incomplete historical refusal timestamps fail closed
+    ok 17 - incomplete historical refusal timestamps fail closed
+      ---
+      duration_ms: 67.761458
+      type: 'test'
+      ...
+    # Subtest: blocking atomically revokes pending and accepted requests in both directions
+    ok 18 - blocking atomically revokes pending and accepted requests in both directions
+      ---
+      duration_ms: 201.5265
+      type: 'test'
+      ...
+    # Subtest: a block response returns the persisted blocked request and closes the reverse request
+    ok 19 - a block response returns the persisted blocked request and closes the reverse request
+      ---
+      duration_ms: 152.73275
+      type: 'test'
+      ...
+    # Subtest: an existing legacy block cannot be bypassed by accepting a pending request
+    ok 20 - an existing legacy block cannot be bypassed by accepting a pending request
+      ---
+      duration_ms: 79.873708
+      type: 'test'
+      ...
+    # Subtest: a block insertion failure is surfaced and cannot acknowledge a successful block
+    ok 21 - a block insertion failure is surfaced and cannot acknowledge a successful block
+      ---
+      duration_ms: 102.7405
+      type: 'test'
+      ...
+    # Subtest: a request update failure rolls back a block already inserted in the command
+    ok 22 - a request update failure rolls back a block already inserted in the command
+      ---
+      duration_ms: 71.103083
+      type: 'test'
+      ...
+    1..22
+ok 10 - contact SQL protocol with real roles and persisted state
+  ---
+  duration_ms: 4077.064417
+  type: 'test'
+  ...
+# Subtest: migration keeps SECURITY INVOKER, empty search_path and service-only execution
+ok 11 - migration keeps SECURITY INVOKER, empty search_path and service-only execution
+  ---
+  duration_ms: 532.131416
+  type: 'test'
+  ...
+# Subtest: migration refuses the competing SECURITY DEFINER RPC and rolls back without altering it
+ok 12 - migration refuses the competing SECURITY DEFINER RPC and rolls back without altering it
+  ---
+  duration_ms: 6.931667
+  type: 'test'
+  ...
+# Subtest: real anon/authenticated roles cannot invoke the RPC or read private tables directly
+ok 13 - real anon/authenticated roles cannot invoke the RPC or read private tables directly
+  ---
+  duration_ms: 187.723125
+  type: 'test'
+  ...
+# Subtest: creation defaults to private and atomically includes only its organizer at revision zero
+ok 14 - creation defaults to private and atomically includes only its organizer at revision zero
+  ---
+  duration_ms: 45.641583
+  type: 'test'
+  ...
+# Subtest: stable create ID replays current state but conflicts on another author or content
+ok 15 - stable create ID replays current state but conflicts on another author or content
+  ---
+  duration_ms: 287.818167
+  type: 'test'
+  ...
+# Subtest: create replay checks original visibility while returning the current published or hidden state
+ok 16 - create replay checks original visibility while returning the current published or hidden state
+  ---
+  duration_ms: 491.226584
+  type: 'test'
+  ...
+# Subtest: invalid creation and injected authority fields produce no mission or participant
+ok 17 - invalid creation and injected authority fields produce no mission or participant
+  ---
+  duration_ms: 549.733
+  type: 'test'
+  ...
+# Subtest: a failure in the organizer insertion rolls back the already inserted parent mission
+ok 18 - a failure in the organizer insertion rolls back the already inserted parent mission
+  ---
+  duration_ms: 42.014708
+  type: 'test'
+  ...
+# Subtest: list/get expose public missions and private missions only to owners or existing participants
+ok 19 - list/get expose public missions and private missions only to owners or existing participants
+  ---
+  duration_ms: 275.101209
+  type: 'test'
+  ...
+# Subtest: a legacy private participant can leave, then loses read and replay access without another effect
+ok 20 - a legacy private participant can leave, then loses read and replay access without another effect
+  ---
+  duration_ms: 172.208917
+  type: 'test'
+  ...
+# Subtest: joins enforce the collective quorum and capacity; retries consume no further place or revision
+ok 21 - joins enforce the collective quorum and capacity; retries consume no further place or revision
+  ---
+  duration_ms: 180.226333
+  type: 'test'
+  ...
+# Subtest: leave changes only that participant and reopens a recruiting mission when quorum is lost
+ok 22 - leave changes only that participant and reopens a recruiting mission when quorum is lost
+  ---
+  duration_ms: 125.833167
+  type: 'test'
+  ...
+# Subtest: departure during execution preserves en_cours; it never recruits again automatically
+ok 23 - departure during execution preserves en_cours; it never recruits again automatically
+  ---
+  duration_ms: 189.610542
+  type: 'test'
+  ...
+# Subtest: organizer cannot silently abandon ouverte, prete or en_cours missions
+ok 24 - organizer cannot silently abandon ouverte, prete or en_cours missions
+  ---
+  duration_ms: 275.776125
+  type: 'test'
+  ...
+# Subtest: participants and other members cannot change lifecycle or visibility for the organizer
+ok 25 - participants and other members cannot change lifecycle or visibility for the organizer
+  ---
+  duration_ms: 376.906292
+  type: 'test'
+  ...
+# Subtest: organizer transitions require the current revision and preserve terminal states
+ok 26 - organizer transitions require the current revision and preserve terminal states
+  ---
+  duration_ms: 456.528
+  type: 'test'
+  ...
+# Subtest: an old optional revision blocks a new membership effect but not a harmless replay
+ok 27 - an old optional revision blocks a new membership effect but not a harmless replay
+  ---
+  duration_ms: 177.83825
+  type: 'test'
+  ...
+# Subtest: cancellation is allowed in each non-terminal state without deleting participants
+ok 28 - cancellation is allowed in each non-terminal state without deleting participants
+  ---
+  duration_ms: 426.485333
+  type: 'test'
+  ...
+# Subtest: malformed revisions and injected membership/status fields cannot mutate a mission
+ok 29 - malformed revisions and injected membership/status fields cannot mutate a mission
+  ---
+  duration_ms: 264.403583
+  type: 'test'
+  ...
+# Subtest: database constraints reject invalid privacy and revisions even outside the RPC
+ok 30 - database constraints reject invalid privacy and revisions even outside the RPC
+  ---
+  duration_ms: 99.714083
+  type: 'test'
+  ...
+# Subtest: an owner publishes to recruit, then unpublishes while preserving existing participants and their access
+ok 31 - an owner publishes to recruit, then unpublishes while preserving existing participants and their access
+  ---
+  duration_ms: 333.550875
+  type: 'test'
+  ...
+# Subtest: visibility changes require a current revision; harmless replays do not consume another revision
+ok 32 - visibility changes require a current revision; harmless replays do not consume another revision
+  ---
+  duration_ms: 208.524875
+  type: 'test'
+  ...
+# Subtest: visibility cannot change once work has started or the mission has closed
+ok 33 - visibility cannot change once work has started or the mission has closed
+  ---
+  duration_ms: 227.122459
+  type: 'test'
+  ...
+# Subtest: applying the migration makes pre-existing records private without rewriting their participants
+ok 34 - applying the migration makes pre-existing records private without rewriting their participants
+  ---
+  duration_ms: 8.409209
+  type: 'test'
+  ...
+# Subtest: preflight refuses a private unified RPC before committing a second contact authority
+ok 35 - preflight refuses a private unified RPC before committing a second contact authority
+  ---
+  duration_ms: 502.63675
+  type: 'test'
+  ...
+# Subtest: preflight refuses private schema footprints even without the unified RPC
+ok 36 - preflight refuses private schema footprints even without the unified RPC
+  ---
+  duration_ms: 437.7045
+  type: 'test'
+  ...
+# Subtest: preflight refuses an unknown contact RPC without replacing its body or grants
+ok 37 - preflight refuses an unknown contact RPC without replacing its body or grants
+  ---
+  duration_ms: 417.931875
+  type: 'test'
+  ...
+# Subtest: preflight refuses exact PR17 authority with a pre-existing visibility column
+ok 38 - preflight refuses exact PR17 authority with a pre-existing visibility column
+  ---
+  duration_ms: 515.295833
+  type: 'test'
+  ...
+# Subtest: preflight refuses altered PR17 authority before any contact RPC or ACL installation
+ok 39 - preflight refuses altered PR17 authority before any contact RPC or ACL installation
+  ---
+  duration_ms: 386.082208
+  type: 'test'
+  ...
+# Subtest: preflight refuses an orphan mission receipt registry without adopting it
+ok 40 - preflight refuses an orphan mission receipt registry without adopting it
+  ---
+  duration_ms: 432.82875
+  type: 'test'
+  ...
+# Subtest: preflight refuses an orphan mission version column without a known authority or registry
+ok 41 - preflight refuses an orphan mission version column without a known authority or registry
+  ---
+  duration_ms: 424.431083
+  type: 'test'
+  ...
+# Subtest: preflight preserves an incompatible committed PR17 receipt instead of partially upgrading contacts
+ok 42 - preflight preserves an incompatible committed PR17 receipt instead of partially upgrading contacts
+  ---
+  duration_ms: 488.932
+  type: 'test'
+  ...
+# Subtest: preflight resumes the exact contact-only installation without changing it and completes both protocols
+ok 43 - preflight resumes the exact contact-only installation without changing it and completes both protocols
+  ---
+  duration_ms: 717.734334
+  type: 'test'
+  ...
+# Subtest: unknown legacy authority still fails closed without replacement
+ok 44 - unknown legacy authority still fails closed without replacement
+  ---
+  duration_ms: 567.442125
+  type: 'test'
+  ...
+# Subtest: actual \#17 schema upgrades without changing identity, membership or lifecycle and is private by default
+ok 45 - actual \#17 schema upgrades without changing identity, membership or lifecycle and is private by default
+  ---
+  duration_ms: 71.620209
+  type: 'test'
+  ...
+# Subtest: the legacy definer is removed and request receipts remain service-only
+ok 46 - the legacy definer is removed and request receipts remain service-only
+  ---
+  duration_ms: 120.372208
+  type: 'test'
+  ...
+# Subtest: legacy receipt identities, raw results and timestamps survive with an explicit counter translation
+ok 47 - legacy receipt identities, raw results and timestamps survive with an explicit counter translation
+  ---
+  duration_ms: 3.966791
+  type: 'test'
+  ...
+# Subtest: a migrated creation receipt maps its original request to the original mission, without creating another one
+ok 48 - a migrated creation receipt maps its original request to the original mission, without creating another one
+  ---
+  duration_ms: 34.965375
+  type: 'test'
+  ...
+# Subtest: a migrated start receipt replays after a newer completion without repeating or reverting the effect
+ok 49 - a migrated start receipt replays after a newer completion without repeating or reverting the effect
+  ---
+  duration_ms: 81.90125
+  type: 'test'
+  ...
+# Subtest: the retained own-profile RPC still scopes coordinates to auth.uid()
+ok 50 - the retained own-profile RPC still scopes coordinates to auth.uid()
+  ---
+  duration_ms: 38.708917
+  type: 'test'
+  ...
+# Subtest: durable joins and leaves cannot be resurrected by out-of-order retries
+ok 51 - durable joins and leaves cannot be resurrected by out-of-order retries
+  ---
+  duration_ms: 229.287542
+  type: 'test'
+  ...
+# Subtest: durable visibility receipts never re-publish after an explicit unpublish
+ok 52 - durable visibility receipts never re-publish after an explicit unpublish
+  ---
+  duration_ms: 196.156959
+  type: 'test'
+  ...
+# Subtest: a stored receipt never restores access after leaving a private mission
+ok 53 - a stored receipt never restores access after leaving a private mission
+  ---
+  duration_ms: 228.209458
+  type: 'test'
+  ...
+# Subtest: a request identity is actor-scoped and cannot change action, mission, payload or precondition
+ok 54 - a request identity is actor-scoped and cannot change action, mission, payload or precondition
+  ---
+  duration_ms: 208.236583
+  type: 'test'
+  ...
+# Subtest: business failures roll back request reservations and leave a reusable unconsumed identity
+ok 55 - business failures roll back request reservations and leave a reusable unconsumed identity
+  ---
+  duration_ms: 116.538333
+  type: 'test'
+  ...
+# Subtest: malformed request identities are refused without reserving or changing a mission
+ok 56 - malformed request identities are refused without reserving or changing a mission
+  ---
+  duration_ms: 181.82475
+  type: 'test'
+  ...
+# Subtest: HTTP accepts an in-flight \#17 creation retry and returns its real mission through the canonical private DTO
+ok 57 - HTTP accepts an in-flight \#17 creation retry and returns its real mission through the canonical private DTO
+  ---
+  duration_ms: 97.016084
+  type: 'test'
+  ...
+# Subtest: HTTP translates the legacy write precondition once and rejects mixed counters or actor injection
+ok 58 - HTTP translates the legacy write precondition once and rejects mixed counters or actor injection
+  ---
+  duration_ms: 144.228875
+  type: 'test'
+  ...
+# Subtest: an empty or malformed mission can never produce the previously reproduced false HTTP 200
+ok 59 - an empty or malformed mission can never produce the previously reproduced false HTTP 200
+  ---
+  duration_ms: 73.0035
+  type: 'test'
+  ...
+# Subtest: valid mission output is whitelisted at the envelope, row and participant levels
+ok 60 - valid mission output is whitelisted at the envelope, row and participant levels
+  ---
+  duration_ms: 1.869667
+  type: 'test'
+  ...
+# Subtest: mission get, lifecycle and creation responses must match the route or stable creation ID
+ok 61 - mission get, lifecycle and creation responses must match the route or stable creation ID
+  ---
+  duration_ms: 16.659208
+  type: 'test'
+  ...
+# Subtest: mission identifiers, state, revisions, visibility, bounds and timestamps must be valid
+ok 62 - mission identifiers, state, revisions, visibility, bounds and timestamps must be valid
+  ---
+  duration_ms: 17.202292
+  type: 'test'
+  ...
+# Subtest: participants have valid identifiers and join dates while historical rows remain readable
+ok 63 - participants have valid identifiers and join dates while historical rows remain readable
+  ---
+  duration_ms: 3.711459
+  type: 'test'
+  ...
+# Subtest: mission lists validate every row and discard unrelated response data
+ok 64 - mission lists validate every row and discard unrelated response data
+  ---
+  duration_ms: 2.178167
+  type: 'test'
+  ...
+# Subtest: contact responses validate known states and expose only the stored DTO contract
+ok 65 - contact responses validate known states and expose only the stored DTO contract
+  ---
+  duration_ms: 5.149958
+  type: 'test'
+  ...
+# Subtest: malformed contacts never escape through send or list responses
+ok 66 - malformed contacts never escape through send or list responses
+  ---
+  duration_ms: 12.147792
+  type: 'test'
+  ...
+# Subtest: contact send and response outcomes must match their creation or route ID
+ok 67 - contact send and response outcomes must match their creation or route ID
+  ---
+  duration_ms: 2.956833
+  type: 'test'
+  ...
+# Subtest: contact lists validate all block IDs and block commands return a strict success shape
+ok 68 - contact lists validate all block IDs and block commands return a strict success shape
+  ---
+  duration_ms: 5.864833
+  type: 'test'
+  ...
+# Subtest: matching results validate user IDs, bounded finite scores, reasons and optional scan metadata
+ok 69 - matching results validate user IDs, bounded finite scores, reasons and optional scan metadata
+  ---
+  duration_ms: 15.231083
+  type: 'test'
+  ...
+# Subtest: business errors are preserved safely and malformed errors become generic 503 responses
+ok 70 - business errors are preserved safely and malformed errors become generic 503 responses
+  ---
+  duration_ms: 3.066458
+  type: 'test'
+  ...
+1..70
+# tests 92
+# suites 0
+# pass 92
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20947.197584

@@ -1,0 +1,81 @@
+{
+  "base": "7f26963c215ebfe6eb6c69dfb41140fd56e15363",
+  "generatedAt": "2026-11-11T18:41:26.956Z",
+  "status": "PASS",
+  "exactSections": [
+    {
+      "path": "src/components/voice/VoiceMode.tsx",
+      "label": "voice lifecycle, closeMode, phase sync and handleMicTap",
+      "equal": true,
+      "bytes": 2168,
+      "baseSha256": "91241833175a0e1699e51bc19771062f2a640ada7f4b37b6596578d604d27855",
+      "patchSha256": "91241833175a0e1699e51bc19771062f2a640ada7f4b37b6596578d604d27855"
+    },
+    {
+      "path": "src/components/voice/AgentChatTab.tsx",
+      "label": "autoplay effect, submit, handleSend and newSession",
+      "equal": true,
+      "bytes": 2719,
+      "baseSha256": "0f66477cba424b6868773b23fa1e65e39b7e2bf18dff4c87e370291223820d2e",
+      "patchSha256": "0f66477cba424b6868773b23fa1e65e39b7e2bf18dff4c87e370291223820d2e"
+    }
+  ],
+  "untouchedFiles": [
+    {
+      "path": "src/hooks/useVoice.tsx",
+      "equal": true,
+      "sha256": "671ebfb2112b31ae14f79cdd2e878b1b6853535a7d22adaccfc8486ca6863585"
+    },
+    {
+      "path": "src/lib/voice.ts",
+      "equal": true,
+      "sha256": "41416013a9783421dbc3af6bb6389bc160660182596623e4fca0e79d5401bdf8"
+    },
+    {
+      "path": "src/lib/agent-chat.ts",
+      "equal": true,
+      "sha256": "403c9c0ad0346e7bdc2c6184eea086896b176e5807bb6b42683d18019fabc1f3"
+    },
+    {
+      "path": "package.json",
+      "equal": true,
+      "sha256": "ac11a1f9ce40428587123cad6e159e277384cbc0fc5acdd46ac5f3a13960cfeb"
+    },
+    {
+      "path": "package-lock.json",
+      "equal": true,
+      "sha256": "30f79a02c277a5f5e2a03c5bc48ed1b62e4ad5c1cfab087a557c8c0c4324eee9"
+    }
+  ],
+  "previousQualification": {
+    "base": "85cfd25a44913c77720842ca7f73a661854a447b",
+    "generatedAt": "2026-11-11T18:27:27.667Z",
+    "untouchedFiles": [
+      {
+        "path": "src/hooks/useVoice.tsx",
+        "equal": true,
+        "sha256": "671ebfb2112b31ae14f79cdd2e878b1b6853535a7d22adaccfc8486ca6863585"
+      },
+      {
+        "path": "src/lib/voice.ts",
+        "equal": true,
+        "sha256": "41416013a9783421dbc3af6bb6389bc160660182596623e4fca0e79d5401bdf8"
+      },
+      {
+        "path": "src/lib/agent-chat.ts",
+        "equal": true,
+        "sha256": "403c9c0ad0346e7bdc2c6184eea086896b176e5807bb6b42683d18019fabc1f3"
+      },
+      {
+        "path": "package.json",
+        "equal": true,
+        "sha256": "fce810096ad954b76f94a3b69b3e23603d79a46cc6a2e26692a99db732a75b3f"
+      },
+      {
+        "path": "package-lock.json",
+        "equal": true,
+        "sha256": "6383a59746941f0d4b9060f6c8700e26a543a3954eb4d0421c752938254eb59a"
+      }
+    ]
+  }
+}

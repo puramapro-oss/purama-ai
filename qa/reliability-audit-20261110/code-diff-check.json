@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "Production code, runnable tests, workflow and native SQL runner",
+  "commands": [
+    [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      ".",
+      ":!qa/**",
+      ":!tests/oauth-google/evidence/**"
+    ],
+    [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      "qa/reliability-audit-20261110/oauth-native/run-native.sh",
+      "qa/reliability-audit-20261110/oauth-native/verify_native.py"
+    ]
+  ],
+  "raw_receipts": "Original stdout and Playwright error contexts are retained verbatim. The full staged diff reports trailing whitespace in these raw receipts, not in source/test code. This is not represented as a full-tree whitespace PASS."
+}

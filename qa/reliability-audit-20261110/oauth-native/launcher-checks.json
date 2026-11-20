@@ -1,0 +1,44 @@
+{
+  "invalid_pg_bin": {
+    "command": [
+      "bash",
+      "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/reliability-audit-20261110/oauth-native/run-native.sh",
+      "--help"
+    ],
+    "env": {
+      "PG_BIN": "/deliberately-missing-oauth-native-bin"
+    },
+    "exit_code": 2,
+    "stderr": "Missing executable: /deliberately-missing-oauth-native-bin/initdb\n"
+  },
+  "python_ast": "PASS",
+  "native_final": "11/11 PASS",
+  "same_runner_before_after": true,
+  "source_identity": "PASS",
+  "bash_syntax": {
+    "command": [
+      "bash",
+      "-n",
+      "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/reliability-audit-20261110/oauth-native/run-native.sh"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+    "env": {},
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "explicit_pg_bin_help": {
+    "command": [
+      "bash",
+      "/workspace/scratch/1d67ec79327f/purama-ai-current-audit/qa/reliability-audit-20261110/oauth-native/run-native.sh",
+      "--help"
+    ],
+    "cwd": "/workspace/scratch/1d67ec79327f/purama-ai-current-audit",
+    "env": {
+      "PG_BIN": "/workspace/scratch/682d6789af78/sutra-runtime-20261110/postgres16/usr/lib/postgresql/16/bin"
+    },
+    "exit_code": 0,
+    "stdout": "postgres (PostgreSQL) 16.15 (Debian 16.15-1.pgdg13+2)\npsql (PostgreSQL) 16.15 (Debian 16.15-1.pgdg13+2)\nusage: verify_native.py [-h] --pg-bin PG_BIN --migration MIGRATION --helper\n                        HELPER --fixture-root FIXTURE_ROOT --output OUTPUT\n\noptions:\n  -h, --help            show this help message and exit\n  --pg-bin PG_BIN\n  --migration MIGRATION\n  --helper HELPER\n  --fixture-root FIXTURE_ROOT\n  --output OUTPUT\n",
+    "stderr": ""
+  }
+}

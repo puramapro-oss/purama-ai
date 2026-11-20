@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 34.99,
+  "baseIntegrated": "7755d4745ed6e9561fb9743f3b2b5820878dff11"
+}

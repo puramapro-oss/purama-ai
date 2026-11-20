@@ -1,0 +1,48 @@
+✔ authorize stores a digest of an opaque state and chooses scopes on the server (370.425226ms)
+✔ browser-selected scopes and state cannot replace the server authorization policy (164.227259ms)
+✖ a declared partial scope cannot be persisted as a Gmail connection (205.519518ms)
+✖ scope matching is exact and case-sensitive during refresh (135.430728ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1609.931713
+
+✖ failing tests:
+
+test at tests/oauth-google/handler.test.mjs:228:1
+✖ a declared partial scope cannot be persisted as a Gmail connection (205.519518ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 403
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:232:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/oauth-google/handler.test.mjs:235:1
+✖ scope matching is exact and case-sensitive during refresh (135.430728ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 403
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/1d67ec79327f/purama-ai-current-audit/tests/oauth-google/handler.test.mjs:239:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

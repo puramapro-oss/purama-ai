@@ -1,0 +1,11 @@
+{
+  "status": "PARTIEL",
+  "scope": "staged",
+  "risk": "CRITICAL",
+  "changedFiles": 47,
+  "changedSymbols": 1023,
+  "affectedProcesses": 21,
+  "listingCapped": true,
+  "index": "21,153 nodes; FTS unavailable; partial process resolution",
+  "raw": "LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.\n\nChanges: 47 files, 1023 symbols\nAffected processes: 21\nRisk level: critical\n\nChanged symbols:\n  Function SettingsItem → mobile/app/(tabs)/settings.tsx\n  Function SettingsScreen → mobile/app/(tabs)/settings.tsx\n  Const labels → mobile/app/accessibility-watch.tsx\n  Property doorbell → mobile/app/accessibility-watch.tsx\n  Property horn → mobile/app/accessibility-watch.tsx\n  Property siren → mobile/app/accessibility-watch.tsx\n  Property speech → mobile/app/accessibility-watch.tsx\n  Property knock → mobile/app/accessibility-watch.tsx\n  Property vehicle → mobile/app/accessibility-watch.tsx\n  Const availableKinds → mobile/app/accessibility-watch.tsx\n  Const statusText → mobile/app/accessibility-watch.tsx\n  Property discovering → mobile/app/accessibility-watch.tsx\n  Property idle → mobile/app/accessibility-watch.tsx\n  Property connected → mobile/app/accessibility-watch.tsx\n  Property disconnected → mobile/app/accessibility-watch.tsx\n... and 1008 more\n\nAffected execution flows:\n  • VoiceSettingsCard → Resolve (8 steps) — changed: close\n  • AccessibleOneScreen → ClosePendingAuthorization (4 steps) — changed: back, stop, AccessibleOneScreen, closePendingAuthorization\n  • AccessibleOneScreen → ParseOneOrigin (4 steps) — changed: buildOneNativeHostScript, parseOneOrigin, open, AccessibleOneScreen\n  • AccessibleOneScreen → Subscribe (4 steps) — changed: createOneWebBridge, open, AccessibleOneScreen, subscribe\n  • SettingsScreen → Badge (3 steps) — changed: SettingsScreen, SettingsItem\n  • Definition → WatchFailure (3 steps) — changed: WatchFailure, stop, definition\n  • Definition → Message (3 steps) — changed: definition, end, message\n  • Definition → SendWire (3 steps) — changed: definition, end, sendWire\n  • Definition → Now (3 steps) — changed: definition, end, now\n  • Definition → Message (3 steps) — changed: definition, end, message\n... and 11 more\n"
+}
