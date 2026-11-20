@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-calendar-months-20261120": false,
       "codex/iao-atelier-multiagents-20261112": false,
       "feat/iao-adaptive-intelligence-20261112": false,
       "feat/iao-local-desktop-20261112": false,
