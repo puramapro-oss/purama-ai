@@ -103,11 +103,43 @@ test('a login never opens a practice; explicit choice, stop and Escape work', as
   expect(await page.evaluate(() => Object.keys(localStorage).filter(key => /awakening|gratitude|affirmation/.test(key)))).toEqual([]);
 });
 
-test('spiritual content is explicitly selected, reversible and not saved', async ({ page }) => {
+test('spiritual content is explicitly selected, reversible and not saved', async ({ page, baseURL }) => {
+  const localOrigin = new URL(path, baseURL).origin;
+  const externalFonts: string[] = [];
+  await page.route('**/*', async route => {
+    const url = new URL(route.request().url());
+    const external = url.origin !== localOrigin;
+    if (external && (route.request().resourceType() === 'font' || url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com')) {
+      externalFonts.push(url.host);
+      return route.abort();
+    }
+    return route.continue();
+  });
   await page.goto(path);
+  const loadedFaces = await page.evaluate(async () => {
+    const requests = [
+      ['300 16px "Space Grotesk"', 'Bonjour'],
+      ['700 16px "Space Grotesk"', 'Ł'],
+      ['400 16px "Space Grotesk"', 'ệ'],
+      ['900 16px Orbitron', 'PURAMA'],
+    ];
+    return Promise.all(requests.map(async ([font, sample]) => (await document.fonts.load(font, sample)).length));
+  });
+  expect(loadedFaces.every(count => count > 0)).toBe(true);
+  expect(externalFonts).toEqual([]);
   await page.getByRole('button', { name: 'Pause facultative' }).click();
   await page.getByRole('button', { name: 'Un moment spirituel, si tu le souhaites' }).click();
   await expect(page.getByText('Si cela correspond à tes convictions', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Choisir une autre pause' }).click();
+  await page.getByRole('button', { name: 'Une pause simple' }).click();
+  await expect(page.getByText('Si cela correspond à tes convictions', { exact: false })).toHaveCount(0);
+  await expect(page.getByText('Prends un instant pour remarquer', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'J’ai terminé cette pause' }).click();
+  await page.getByRole('button', { name: 'Utile', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('Merci');
+  await page.getByRole('button', { name: 'Fermer', exact: true }).click();
+  await page.getByRole('button', { name: 'Pause facultative' }).click();
+  await page.getByRole('button', { name: 'Un moment spirituel, si tu le souhaites' }).click();
   await page.getByRole('button', { name: 'J’ai terminé cette pause' }).click();
   await page.getByRole('button', { name: 'Inconfortable', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('Tu peux arrêter');

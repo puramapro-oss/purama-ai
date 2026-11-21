@@ -5,6 +5,7 @@ on:
     paths:
       - '.claude/skills/wealth-engine/SKILL.md'
       - '.github/workflows/wealth-engine-continuity.yml'
+      - 'scripts/ci/check-wealth-diff.sh'
 
 permissions:
   contents: read
@@ -55,7 +56,7 @@ jobs:
           git cat-file -e "$PR_BASE_SHA^{commit}"
           git status --porcelain=v1 --untracked-files=all > "$EVIDENCE_DIR/status-before.txt"
           test ! -s "$EVIDENCE_DIR/status-before.txt"
-          git diff --check "$PR_BASE_SHA" "$PR_HEAD_SHA" 2>&1 | tee "$EVIDENCE_DIR/diff-check.log"
+          bash scripts/ci/check-wealth-diff.sh "$PR_BASE_SHA" "$PR_HEAD_SHA" 2>&1 | tee "$EVIDENCE_DIR/diff-check.log"
           git diff --name-status "$PR_BASE_SHA" "$PR_HEAD_SHA" > "$EVIDENCE_DIR/changed-files.txt"
           git diff --no-ext-diff --binary "$PR_BASE_SHA" "$PR_HEAD_SHA" > "$EVIDENCE_DIR/candidate.patch"
           python3 - <<'PY'
