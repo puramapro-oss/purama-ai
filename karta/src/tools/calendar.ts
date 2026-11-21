@@ -27,7 +27,7 @@ export const calendarCreateEventTool: ToolDefinition<
     if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) {
       throw new Error("Dates Calendar invalides");
     }
-    if (params.attendeeEmail && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(params.attendeeEmail)) {
+    if (params.attendeeEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(params.attendeeEmail)) {
       throw new Error("Email participant invalide");
     }
 

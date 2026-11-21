@@ -1,0 +1,26 @@
+{
+  "observed_at_utc": "2026-11-21T23:47:17.694226+00:00",
+  "gates": [
+    {
+      "name": "karta-typecheck",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "karta-build",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

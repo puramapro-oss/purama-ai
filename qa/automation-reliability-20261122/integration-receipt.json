@@ -1,0 +1,14 @@
+{
+  "source_base": "812830f9bba392f8fcb109a844f083638520a273",
+  "preserved_current_base": "2890f3c78665b19dde08272aec170709e08225fd",
+  "preserved_upstream_tree": "ef9e6794b0592a170fa0f73920bb970e37c90058",
+  "review_branch": "codex/automation-reliability-20261122-529e",
+  "automatic_git_deployment_disabled": true,
+  "existing_deployment_flags_preserved": 36,
+  "native_local_status": "BLOQUE",
+  "native_scenarios_executed": 0,
+  "native_test_scenarios_pending_ci": 8,
+  "native_harness_sha256": "4b656c6a2ac6943083f2c25f3b6fbe7ae035481a4304a359440c95c3bb106df9",
+  "migration_expected_sha256": "5bcba773e889db61727562c863cac1eec6c337abd709d925193d0ff1e4a67a04",
+  "external_side_effects_executed": 0
+}

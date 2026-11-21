@@ -2,6 +2,7 @@ import { supabase } from "../db/supabase.js";
 import { config } from "../config.js";
 import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { extractGmailPlainText, gmailHeader, readBoundedGmailJson, type GmailBodyContent } from "./gmail-message.js";
 
 interface EmailAgentConfigRow {
   gmail_refresh_token: string | null;
@@ -10,6 +11,7 @@ interface EmailAgentConfigRow {
 }
 
 const GMAIL_LIST_LIMIT = 50;
+const GMAIL_MAX_LIST_PAGES = 5;
 const SYNC_OVERLAP_MS = 2 * 60 * 1000;
 const DAILY_SEND_LIMIT = 400;
 const HEADER_BREAK = /[\r\n]/;
@@ -91,12 +93,13 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
   return refreshed.access_token;
 }
 
-export interface GmailMessageSummary {
+export interface GmailMessageSummary extends GmailBodyContent {
   id: string;
   threadId: string;
   from: string;
   subject: string;
   snippet: string;
+  replyToMessageId: string;
 }
 
 /**
@@ -106,7 +109,7 @@ export interface GmailMessageSummary {
  */
 export async function listNewGmailMessages(userId: string, lastSyncAt: string | null): Promise<GmailMessageSummary[]> {
   const accessToken = await getGmailAccessToken(userId);
-  if (!accessToken) return [];
+  if (!accessToken) throw new Error("Gmail OAuth absent : collecte impossible, synchronisation non avancée");
 
   let query = "is:unread";
   if (lastSyncAt) {
@@ -116,53 +119,63 @@ export async function listNewGmailMessages(userId: string, lastSyncAt: string | 
     }
   }
 
-  const listResponse = await fetch(
-    `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${GMAIL_LIST_LIMIT}&q=${encodeURIComponent(query)}`,
-    { headers: { Authorization: `Bearer ${accessToken}` } }
-  );
-
-  if (!listResponse.ok) {
-    throw new Error(`Gmail list échoué (${listResponse.status}): ${await listResponse.text()}`);
-  }
-
-  const list = (await listResponse.json()) as { messages?: Array<{ id?: unknown; threadId?: unknown }> };
-  const rawMessages = list.messages ?? [];
   const seen = new Set<string>();
+  const seenPages = new Set<string>();
   const messages: Array<{ id: string; threadId: string }> = [];
-  for (const m of rawMessages) {
-    if (typeof m.id !== "string" || typeof m.threadId !== "string" || !m.id || !m.threadId) {
-      throw new Error("Réponse Gmail list invalide");
+  let pageToken: string | undefined;
+  for (let page = 0; page < GMAIL_MAX_LIST_PAGES; page++) {
+    const pageParam = pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "";
+    const listResponse = await fetch(
+      `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${GMAIL_LIST_LIMIT}&q=${encodeURIComponent(query)}${pageParam}`,
+      { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(20_000) }
+    );
+    if (!listResponse.ok) throw new Error(`Gmail list échoué (${listResponse.status})`);
+    const list = (await readBoundedGmailJson(listResponse)) as { messages?: Array<{ id?: unknown; threadId?: unknown }>; nextPageToken?: unknown };
+    const rawMessages = list.messages ?? [];
+    if (!Array.isArray(rawMessages) || rawMessages.length > GMAIL_LIST_LIMIT) throw new Error("Réponse Gmail list invalide");
+    for (const m of rawMessages) {
+      if (typeof m.id !== "string" || typeof m.threadId !== "string" || !m.id || !m.threadId) throw new Error("Réponse Gmail list invalide");
+      if (!seen.has(m.id)) {
+        seen.add(m.id);
+        messages.push({ id: m.id, threadId: m.threadId });
+      }
     }
-    if (!seen.has(m.id)) {
-      seen.add(m.id);
-      messages.push({ id: m.id, threadId: m.threadId });
-    }
+    if (list.nextPageToken === undefined || list.nextPageToken === "") break;
+    if (typeof list.nextPageToken !== "string" || list.nextPageToken.length > 4096 || seenPages.has(list.nextPageToken)) throw new Error("Pagination Gmail invalide ou répétée : synchronisation non avancée");
+    if (page === GMAIL_MAX_LIST_PAGES - 1) throw new Error("Pagination Gmail incomplète après cinq pages : synchronisation non avancée");
+    seenPages.add(list.nextPageToken);
+    pageToken = list.nextPageToken;
   }
 
   const summaries: GmailMessageSummary[] = [];
+  let contextBytes = 0;
   for (const m of messages) {
     const detailResponse = await fetch(
-      `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(m.id)}?format=metadata&metadataHeaders=From&metadataHeaders=Subject`,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(m.id)}?format=full`,
+      { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(20_000) }
     );
     if (!detailResponse.ok) {
       throw new Error(`Gmail message ${m.id} illisible (${detailResponse.status})`);
     }
-    const detail = (await detailResponse.json()) as {
+    const detail = (await readBoundedGmailJson(detailResponse)) as {
+      id?: unknown;
+      threadId?: unknown;
       snippet?: unknown;
-      payload?: { headers?: Array<{ name?: unknown; value?: unknown }> };
+      payload?: unknown;
     };
-    const headers = detail.payload?.headers ?? [];
-    const headerValue = (name: string) => {
-      const entry = headers.find((h) => h.name === name);
-      return typeof entry?.value === "string" ? entry.value : undefined;
-    };
+    if (detail.id !== m.id || detail.threadId !== m.threadId) throw new Error("Identité du message Gmail incohérente");
+    const content = extractGmailPlainText(detail.payload);
+    contextBytes += Buffer.byteLength(content.body ?? "", "utf8");
+    // Fail before the caller advances last_sync_at; a truncated batch is not a completed sync.
+    if (contextBytes > 256 * 1024) throw new Error("Lot Gmail trop volumineux : synchronisation non avancée");
     summaries.push({
       id: m.id,
       threadId: m.threadId,
-      from: headerValue("From") ?? "inconnu",
-      subject: headerValue("Subject") ?? "(sans sujet)",
+      from: gmailHeader(detail.payload, "From") ?? "inconnu",
+      subject: gmailHeader(detail.payload, "Subject") ?? "(sans sujet)",
       snippet: typeof detail.snippet === "string" ? detail.snippet : "",
+      replyToMessageId: m.id,
+      ...content,
     });
   }
 
@@ -206,16 +219,17 @@ export async function buildGmailInboxContext(userId: string): Promise<Record<str
 }
 
 export const gmailCreateDraftTool: ToolDefinition<
-  { threadId: string; to: string; subject: string; body: string },
+  { threadId: string; replyToMessageId?: string; to: string; subject: string; body: string },
   { draftId: string }
 > = {
   name: "gmail_create_draft",
-  description: "Crée un brouillon de réponse Gmail (n'envoie rien — nécessite validation humaine avant envoi).",
+  description: "Crée un brouillon de réponse Gmail lié au message parent (replyToMessageId), avec sujet et destinataire vérifiés ; n'envoie rien.",
   sensitive: false,
   inputSchema: {
     type: "object",
     properties: {
       threadId: { type: "string", minLength: 1, maxLength: 256 },
+      replyToMessageId: { type: "string", minLength: 1, maxLength: 256 },
       to: { type: "string", minLength: 3, maxLength: 320 },
       subject: { type: "string", minLength: 1, maxLength: 998 },
       body: { type: "string", maxLength: 2_000_000 },
@@ -225,14 +239,14 @@ export const gmailCreateDraftTool: ToolDefinition<
   },
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
-    if (typeof params.threadId !== "string" || !params.threadId || params.threadId.length > 256) {
-      throw new Error("Thread Gmail invalide");
-    }
+    assertGmailId(params.threadId);
+    assertReplyInput(params, ctx.agentType === "email" || ctx.agentType === "repondeur-intelligent");
 
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
-    const raw = buildRawEmail(params.to, params.subject, params.body);
+    const reply = await gmailReplyHeaders(params, accessToken);
+    const raw = buildRawEmail(params.to, params.subject, params.body, reply);
     const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/drafts", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
@@ -246,9 +260,80 @@ export const gmailCreateDraftTool: ToolDefinition<
   },
 };
 
-export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: string }, { messageId: string }> = {
+interface GmailReplyInput {
+  threadId?: string;
+  replyToMessageId?: string;
+}
+
+interface GmailReplyHeaders {
+  inReplyTo: string;
+  references: string;
+}
+
+function assertGmailId(value: unknown): asserts value is string {
+  if (typeof value !== "string" || !/^[A-Za-z0-9_-]{1,256}$/.test(value)) throw new Error("Identifiant Gmail invalide");
+}
+
+function assertReplyInput(params: GmailReplyInput, replyRequired = false): void {
+  if (replyRequired && (!params.threadId || !params.replyToMessageId)) throw new Error("Ce rôle de réponse exige threadId et replyToMessageId");
+  if (params.threadId !== undefined) assertGmailId(params.threadId);
+  if (params.replyToMessageId !== undefined) {
+    assertGmailId(params.replyToMessageId);
+    if (params.threadId === undefined) throw new Error("Fil Gmail requis pour une réponse");
+  }
+}
+
+function singleMailbox(value: string): string {
+  const match = /^(?:[^<>]*<([^<>]+)>|([^<>]+))$/.exec(value);
+  if (match?.[1] && value.slice(0, value.indexOf("<")).includes("@")) throw new Error("Destinataire parent Gmail ambigu");
+  const address = (match?.[1] ?? match?.[2] ?? "").trim();
+  assertEmailAddress(address);
+  if (/[,;:<>]/.test(address)) throw new Error("Destinataire parent Gmail ambigu");
+  return address.toLowerCase();
+}
+
+/** Resolve reply headers from this user's mailbox, never from model-supplied RFC headers. */
+async function gmailReplyHeaders(params: GmailReplyInput & { to: string; subject: string }, accessToken: string): Promise<GmailReplyHeaders | undefined> {
+  assertReplyInput(params);
+  if (!params.threadId) return undefined;
+  const headersQuery = "format=full";
+  const url = params.replyToMessageId
+    ? `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(params.replyToMessageId)}?${headersQuery}`
+    : `https://gmail.googleapis.com/gmail/v1/users/me/threads/${encodeURIComponent(params.threadId)}?${headersQuery}`;
+  const response = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(20_000) });
+  if (!response.ok) throw new Error(`Parent Gmail illisible (${response.status})`);
+  const value = await readBoundedGmailJson(response) as { id?: unknown; threadId?: unknown; payload?: unknown; messages?: Array<{ id?: unknown; threadId?: unknown; payload?: unknown }> };
+  let parent = value;
+  if (!params.replyToMessageId) {
+    // Preserve legacy single-message replies without guessing among multiple parents.
+    if (value.id !== params.threadId || !Array.isArray(value.messages) || value.messages.length !== 1) {
+      throw new Error("Message parent Gmail requis pour ce fil ambigu");
+    }
+    parent = value.messages[0]!;
+  }
+  assertGmailId(parent.id);
+  if ((params.replyToMessageId && parent.id !== params.replyToMessageId) || parent.threadId !== params.threadId) throw new Error("Fil ou message parent Gmail incohérent");
+  if (extractGmailPlainText(parent.payload).bodyStatus !== "complete") throw new Error("Texte parent Gmail non lu intégralement : revue requise");
+  const subject = gmailHeader(parent.payload, "Subject");
+  if (subject !== params.subject) throw new Error("Le sujet de la réponse doit correspondre au sujet du parent Gmail");
+  const from = gmailHeader(parent.payload, "From");
+  if (!from || singleMailbox(from) !== params.to.toLowerCase()) throw new Error("Destinataire différent du parent Gmail : revue requise");
+  const replyTo = gmailHeader(parent.payload, "Reply-To");
+  if (replyTo && singleMailbox(replyTo) !== singleMailbox(from)) throw new Error("Adresse Reply-To différente : revue du destinataire requise");
+  const inReplyTo = gmailHeader(parent.payload, "Message-ID");
+  const validMessageId = (value: string) => /^<[^<>\s@]+@[^<>\s@]+>$/.test(value);
+  if (!inReplyTo || !validMessageId(inReplyTo)) throw new Error("Message-ID du parent Gmail invalide");
+  const ancestors = gmailHeader(parent.payload, "References")?.trim().split(/\s+/).filter(Boolean) ?? [];
+  if (ancestors.some(value => !validMessageId(value))) throw new Error("References du parent Gmail invalides");
+  const references = [...ancestors, inReplyTo].join(" ");
+  assertHeader("In-Reply-To", inReplyTo, 998);
+  assertHeader("References", references, 998);
+  return { inReplyTo, references };
+}
+
+export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: string } & GmailReplyInput, { messageId: string }> = {
   name: "gmail_send",
-  description: "Envoie réellement un email au nom de l'utilisateur — action sensible.",
+  description: "Envoie réellement un email — action sensible. Pour une réponse, fournir threadId et replyToMessageId du parent, en conservant son sujet et son destinataire.",
   sensitive: true,
   inputSchema: {
     type: "object",
@@ -256,23 +341,27 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
       to: { type: "string", minLength: 3, maxLength: 320 },
       subject: { type: "string", minLength: 1, maxLength: 998 },
       body: { type: "string", maxLength: 2_000_000 },
+      threadId: { type: "string", minLength: 1, maxLength: 256 },
+      replyToMessageId: { type: "string", minLength: 1, maxLength: 256 },
     },
     required: ["to", "subject", "body"],
     additionalProperties: false,
   },
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
+    assertReplyInput(params, ctx.agentType === "email" || ctx.agentType === "repondeur-intelligent");
 
     const accessToken = await getGmailAccessToken(ctx.userId);
     if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
 
+    const reply = await gmailReplyHeaders(params, accessToken);
     // On ne consomme une réservation qu'une fois l'authentification réellement disponible.
     await assertUnderDailySendLimit(ctx.userId);
-    const raw = buildRawEmail(params.to, params.subject, params.body);
+    const raw = buildRawEmail(params.to, params.subject, params.body, reply);
     const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ raw }),
+      body: JSON.stringify({ raw, ...(params.threadId ? { threadId: params.threadId } : {}) }),
     });
 
     if (!response.ok) throw new Error(`Gmail send échoué (${response.status}): ${await response.text()}`);
@@ -298,8 +387,13 @@ async function assertUnderDailySendLimit(userId: string): Promise<void> {
   }
 }
 
-export function buildRawEmail(to: string, subject: string, body: string): string {
+export function buildRawEmail(to: string, subject: string, body: string, reply?: GmailReplyHeaders): string {
   assertMessageInput(to, subject, body);
-  const message = [`To: ${to}`, `Subject: ${subject}`, "Content-Type: text/plain; charset=utf-8", "", body].join("\r\n");
+  if (reply) {
+    assertHeader("In-Reply-To", reply.inReplyTo, 998);
+    assertHeader("References", reply.references, 998);
+  }
+  const replyHeaders = reply ? [`In-Reply-To: ${reply.inReplyTo}`, `References: ${reply.references}`] : [];
+  const message = [`To: ${to}`, `Subject: ${subject}`, ...replyHeaders, "Content-Type: text/plain; charset=utf-8", "", body].join("\r\n");
   return Buffer.from(message).toString("base64url");
 }
