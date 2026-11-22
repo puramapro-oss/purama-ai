@@ -71,5 +71,20 @@
     "passed": 10,
     "total": 10,
     "exit_code": 0
+  },
+  "ci_correction": {
+    "head": "c1de755577dcf550f3dd030c13fbc85024340dc9",
+    "run": 44970355743,
+    "identity_run": 44970355810,
+    "tests_total": 3962,
+    "tests_passed": 3951,
+    "tests_failed": 11,
+    "failing_suite": "emailDraftReconciliation.test.ts",
+    "cause": "PostgreSQL regexp repetition bound512 exceeds255",
+    "fix": "Separate length guard <=512 and ASCII class with +",
+    "sql_boundary_cases_added": 9,
+    "sql_reconciliation_cases_expected": 40,
+    "final_migration_sha256": "771e575601fb335e56a366bc7b2377c27994eb4f8dde25d1885cc25580f3efc3",
+    "new_ci_required": true
   }
 }

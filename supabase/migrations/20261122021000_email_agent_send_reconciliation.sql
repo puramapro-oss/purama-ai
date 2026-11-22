@@ -67,7 +67,10 @@ DECLARE
   matches BOOLEAN;
 BEGIN
   IF p_user_id IS NULL OR p_action_id IS NULL OR p_dispatch_updated_at IS NULL
-    OR p_provider_message_id IS NULL OR p_provider_message_id !~ '^[A-Za-z0-9_-]{1,512}$'
+    -- PostgreSQL regexp repetition bounds stop at 255. Keep the 512-byte
+    -- identifier contract with a separate length guard instead of {1,512}.
+    OR p_provider_message_id IS NULL OR length(p_provider_message_id)>512
+    OR p_provider_message_id !~ '^[A-Za-z0-9_-]+$'
     OR p_raw_sha256 IS NULL OR p_raw_sha256 !~ '^[0-9a-f]{64}$'
     OR p_provider_internal_date_ms IS NULL OR p_provider_internal_date_ms<=0 THEN
     RETURN jsonb_build_object('status','blocked','reason','invalid_provider_evidence');

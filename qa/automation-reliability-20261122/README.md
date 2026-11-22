@@ -160,3 +160,11 @@ Les essais locaux PGlite de réconciliation ont été interrompus avant exécuti
 - Les migrations, les 115 scénarios sender, les 31 scénarios SQL de rapprochement, les neuf scénarios navigateur supplémentaires et le typage de la composition complète doivent terminer en CI. Les tentatives locales SQL/SIGKILL ou navigateur/EPERM restent NON TESTÉ/BLOQUÉ.
 
 Reçu : [resume-verification.json](./resume-verification.json). Les preuves finales hébergées sont liées au SHA dans la PR86 et dans le registre de preuves, sans reclasser les échecs locaux.
+
+### Correction après la CI de reprise
+
+La tête `c1de755` a exécuté **3 962 tests** : 3 951 PASS et onze échecs, tous dans la suite SQL de rapprochement. Les 115 tests du sender et les vingt tests purs de frontière passent. Le finaliseur levait une exception avant ses contrôles métier : la borne `{1,512}` du garde d’identifiant dépasse la borne maximale de 255 des expressions régulières PostgreSQL.
+
+Le garde conserve le contrat de 1 à 512 caractères autorisés avec une vérification de longueur séparée et une classe répétée avec `+`. Neuf contre-épreuves SQL couvrent la chaîne vide, 1/255/256/512/513 caractères, le slash, l’espace et le saut de ligne. Aucune assertion précédente n’est supprimée. La suite de rapprochement comporte maintenant **40 scénarios**, à recevoir sur le nouveau SHA.
+
+Source technique : [documentation PostgreSQL, expressions régulières](https://www.postgresql.org/docs/current/functions-matching.html). La première CI de reprise reste en échec ; elle n’est pas remplacée rétroactivement par le résultat suivant.

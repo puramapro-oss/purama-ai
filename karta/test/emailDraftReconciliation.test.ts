@@ -87,6 +87,21 @@ function harness(options:Options={}){
   return {handler,reads};
 }
 describe('Gmail reconciliation confirms evidence without sending or granting a retry',()=>{
+  it.each([
+    ['',false],['a',true],['a'.repeat(255),true],['a'.repeat(256),true],
+    ['a'.repeat(512),true],['a'.repeat(513),false],['a/b',false],['a b',false],['a\n',false],
+  ])('validates provider id bounds without raising a SQL regexp error: %j',async(id,valid)=>{
+    const c=await cfg();
+    const reply=await rpc('email_agent_reconcile_finish',{
+      p_user_id:user,p_action_id:secondAction,p_dispatch_updated_at:c.stamp,
+      p_connection_email:owner,p_connection_updated_at:c.stamp,
+      p_provider_message_id:id,p_raw_sha256:'a'.repeat(64),p_provider_internal_date_ms:Date.now(),
+    });
+    expect(reply.error).toBeNull();
+    expect(reply.data).toMatchObject({reason:valid?'dispatch_not_found':'invalid_provider_evidence'});
+    expect((await state()).status).toBe('unknown');
+    expect((await cfg()).total_auto_replied).toBe(7);
+  });
   it('confirms a saved receipt and atomically updates the log and counter once',async()=>{
     const h=harness();const response=await h.handler(request());
     expect(response.status).toBe(200);expect(await response.json()).toMatchObject({status:'sent',reconciled:true,matches_current_preview:true,provider_message_id:'sent-1',provider_check_performed:true});
