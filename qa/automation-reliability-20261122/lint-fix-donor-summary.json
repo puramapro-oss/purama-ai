@@ -1,0 +1,19 @@
+{
+  "commit": "de72dc535076fa5317b9c49aa563579c3134be7f",
+  "lint": {
+    "files": 4,
+    "errors": 0,
+    "warnings": 0,
+    "suppressed": 0
+  },
+  "tests": {
+    "passed": 90,
+    "failed": 0,
+    "pending": 0
+  },
+  "independent_comparisons": 4455,
+  "divergences": 0,
+  "handler_typescript_exit": 0,
+  "author_final_karta_typecheck": "interrupted SIGKILL/137, not PASS",
+  "migration_sha256": "5bcba773e889db61727562c863cac1eec6c337abd709d925193d0ff1e4a67a04"
+}

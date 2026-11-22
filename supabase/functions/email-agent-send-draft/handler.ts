@@ -1,5 +1,6 @@
 // Cross-runtime handler. No network operation is retried after a possible send.
 import { readApprovedDraftSnapshot, readApprovedParent, type ApprovedParent } from "./draft-snapshot.ts";
+import { hasAsciiControl, hasNulOrNewline } from "./text-guards.ts";
 type Row = Record<string, unknown>;
 type RpcResult = { data: Row | null; error: unknown };
 export type DraftSenderDependencies = {
@@ -18,7 +19,7 @@ const corsHeaders = {
 };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const opaqueId = /^[A-Za-z0-9_-]{1,512}$/;
-const mailbox = /^[^\s@<>,;:\x00-\x1f\x7f]+@[^\s@<>,;:\x00-\x1f\x7f]+\.[^\s@<>,;:\x00-\x1f\x7f]+$/;
+const mailbox = /^[^\s@<>,;:]+@[^\s@<>,;:]+\.[^\s@<>,;:]+$/;
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -49,9 +50,9 @@ function encodeHeader(value: string): string {
   return `=?UTF-8?B?${btoa(binary)}?=`;
 }
 function sendRequest(payload: Row, parent?: ApprovedParent): { url: string; body: Row } {
-  if (typeof payload.recipient !== "string" || !mailbox.test(payload.recipient)
+  if (typeof payload.recipient !== "string" || hasAsciiControl(payload.recipient) || !mailbox.test(payload.recipient)
     || payload.recipient.length > 950
-    || typeof payload.subject !== "string" || /[\r\n\x00]/.test(payload.subject)
+    || typeof payload.subject !== "string" || hasNulOrNewline(payload.subject)
     || payload.subject.length > 998) throw new Error("Invalid approved headers");
   if (payload.gmail_draft_id != null && payload.gmail_draft_id !== "") {
     if (typeof payload.gmail_draft_id !== "string" || !opaqueId.test(payload.gmail_draft_id)) {
@@ -118,7 +119,7 @@ export function createDraftSender(deps: DraftSenderDependencies): (req: Request)
       const payload = reserved.payload as Row;
       outbound = sendRequest(payload);
       access = await deps.prepareAccess(userId);
-      if (!access.accessToken || !mailbox.test(access.gmailEmail)
+      if (!access.accessToken || hasAsciiControl(access.gmailEmail) || !mailbox.test(access.gmailEmail)
         || !Number.isFinite(Date.parse(access.connectionUpdatedAt))
         || payload.gmail_email !== access.gmailEmail) throw new Error("Connection changed");
       const profile = await deps.fetch("https://gmail.googleapis.com/gmail/v1/users/me/profile", {

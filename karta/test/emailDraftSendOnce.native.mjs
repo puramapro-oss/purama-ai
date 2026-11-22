@@ -141,7 +141,7 @@ async function check(name, body) {
   const at = Date.now();
   try {
     const detail = await body();
-    report.checks.push({ name, status: 'PASS', elapsed_ms: Date.now() - at, ...detail });
+    report.checks.push({ name, status: 'PASS', elapsed_ms: Date.now() - at, details: detail });
     console.log(JSON.stringify({ name, status: 'PASS' }));
   } catch (error) {
     report.checks.push({ name, status: 'FAIL', elapsed_ms: Date.now() - at, error: error.message, code: error.code });

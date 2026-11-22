@@ -384,6 +384,50 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
     await db.query(`UPDATE purama_ai.email_agent_logs SET ${field}=$1 WHERE id=$2`,["safe@example.invalid\r\nBcc: injected@example.invalid",log]);
     const h=harness();expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);
   });
+  it.each([31,127])("still rejects address control code %s before Gmail access",async(code)=>{
+    await db.query("UPDATE purama_ai.email_agent_logs SET from_email=$1 WHERE id=$2",[`recipient${String.fromCharCode(code)}@example.invalid`,log]);
+    const h=harness();expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);
+  });
+  it("still rejects a NUL in a provider-supplied address",async()=>{
+    // PostgreSQL text cannot store NUL; Gmail metadata is the actual JSON boundary.
+    await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1",[log]);
+    const h=harness({parent:{payload:{headers:[
+      {name:"Message-ID",value:"<parent@example.invalid>"},{name:"From",value:`recipient${String.fromCharCode(0)}@example.invalid`},
+      {name:"Subject",value:"Approved subject"},
+    ]}}});
+    expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);
+  });
+  it.each([0,31,127])("still rejects parent Message-ID control code %s",async(code)=>{
+    await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1",[log]);
+    const h=harness({parent:{payload:{headers:[
+      {name:"Message-ID",value:`<parent${String.fromCharCode(code)}@example.invalid>`},
+      {name:"From",value:"recipient@example.invalid"},{name:"Subject",value:"Approved subject"},
+    ]}}});
+    expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);
+  });
+  it.each([9,11,127])("preserves allowed internal header code %s",async(code)=>{
+    const subject=`App${String.fromCharCode(code)}roved subject`;
+    await db.query("UPDATE purama_ai.email_agent_logs SET ai_subject=$1 WHERE id=$2",[`Re: ${subject}`,log]);
+    const h=harness({rawDraft:Buffer.from(approvedRaw().replace("Approved subject",subject)).toString("base64url"),parent:{payload:{headers:[
+      {name:"Message-ID",value:"<parent@example.invalid>"},{name:"From",value:"recipient@example.invalid"},{name:"Subject",value:subject},
+    ]}}});
+    expect((await h.handler(request())).status).toBe(200);expect(h.sends).toHaveLength(1);
+  });
+  it.each([9,11,127])("preserves 7bit body code %s without treating it as non-ASCII",async(code)=>{
+    const body=`Approved${String.fromCharCode(code)}body`;
+    await db.query("UPDATE purama_ai.email_agent_logs SET ai_response=$1 WHERE id=$2",[body,log]);
+    const raw=approvedRaw().replace("Approved body",body).replace("charset=UTF-8","charset=us-ascii")
+      .replace("MIME-Version:","Content-Transfer-Encoding: 7bit\r\nMIME-Version:");
+    const h=harness({rawDraft:Buffer.from(raw).toString("base64url")});
+    expect((await h.handler(request())).status).toBe(200);expect(h.sends).toHaveLength(1);
+  });
+  it.each([128,233])("still rejects body code %s under 7bit",async(code)=>{
+    const body=`Approved${String.fromCharCode(code)}body`;
+    await db.query("UPDATE purama_ai.email_agent_logs SET ai_response=$1 WHERE id=$2",[body,log]);
+    const raw=approvedRaw().replace("Approved body",body).replace("MIME-Version:","Content-Transfer-Encoding: 7bit\r\nMIME-Version:");
+    const h=harness({rawDraft:Buffer.from(raw).toString("base64url")});
+    expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);
+  });
   it("rejects invalid auth, input and methods before reserving",async()=>{
     const h=harness();expect((await h.handler(request({log_id:log},"Bearer wrong"))).status).toBe(401);
     expect((await h.handler(request({log_id:"not-a-uuid"}))).status).toBe(400);expect((await h.handler(request(null))).status).toBe(400);

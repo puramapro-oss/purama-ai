@@ -1,10 +1,11 @@
 // Deliberately narrow MIME acceptance: simple UTF-8 text only. Unsupported
 // drafts remain unsent for review; no attachment or recipient is discarded.
+import { hasAsciiControl, hasNonAscii, hasNulOrNewline } from "./text-guards.ts";
 type Row = Record<string, unknown>;
 type HeadersMap = Map<string, string[]>;
 const opaqueId = /^[A-Za-z0-9_-]{1,512}$/;
-const email = /^[^\s@<>,;:\x00-\x1f\x7f]+@[^\s@<>,;:\x00-\x1f\x7f]+\.[^\s@<>,;:\x00-\x1f\x7f]+$/;
-const messageId = /^<[^<>\s@\x00-\x1f\x7f]+@[^<>\s@\x00-\x1f\x7f]+>$/;
+const email = /^[^\s@<>,;:]+@[^\s@<>,;:]+\.[^\s@<>,;:]+$/;
+const messageId = /^<[^<>\s@]+@[^<>\s@]+>$/;
 function fail(): never { throw new Error("draft_content_unverified"); }
 const utf8 = (bytes: Uint8Array): string => new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes);
 
@@ -36,10 +37,10 @@ function decodeHeader(value: string): string {
     .replace(/=\?([^?]+)\?([bq])\?([^?]*)\?=/gi, (_match, charset: string, mode: string, text: string) => {
       if (!/^(utf-8|us-ascii)$/i.test(charset)) fail();
       const word=mode.toLowerCase()==="b" ? utf8(base64Bytes(text,false)) : quotedPrintable(text,true);
-      if(charset.toLowerCase()==="us-ascii" && /[^\x00-\x7f]/.test(word)) fail();
+      if(charset.toLowerCase()==="us-ascii" && hasNonAscii(word)) fail();
       return word;
     });
-  if (decoded.includes("=?") || /[\r\n\x00]/.test(decoded)) fail();
+  if (decoded.includes("=?") || hasNulOrNewline(decoded)) fail();
   return decoded;
 }
 function one(headers: HeadersMap, name: string, required = true): string {
@@ -48,9 +49,9 @@ function one(headers: HeadersMap, name: string, required = true): string {
   return values[0]??"";
 }
 function address(value: string): string {
-  if (email.test(value.trim())) return value.trim().toLowerCase();
+  if (!hasAsciiControl(value.trim()) && email.test(value.trim())) return value.trim().toLowerCase();
   const wrapped=value.trim().match(/^(?:"[^"\r\n]*"|[^<>"@,;]+)?\s*<([^<>]+)>$/);
-  if (!wrapped || !email.test(wrapped[1])) fail();
+  if (!wrapped || hasAsciiControl(wrapped[1]) || !email.test(wrapped[1])) fail();
   return wrapped[1].toLowerCase();
 }
 function parseMime(raw: string): { headers: HeadersMap; body: string } {
@@ -82,13 +83,13 @@ function parseMime(raw: string): { headers: HeadersMap; body: string } {
   }
   const encoding=one(headers,"content-transfer-encoding",false).toLowerCase();
   const encodedBody=normalized.slice(boundary+2);
-  if((!encoding||encoding==="7bit") && /[^\x00-\x7f]/.test(encodedBody)) fail();
+  if((!encoding||encoding==="7bit") && hasNonAscii(encodedBody)) fail();
   let body:string;
   if(!encoding||encoding==="7bit"||encoding==="8bit") body=encodedBody;
   else if(encoding==="base64") body=utf8(base64Bytes(encodedBody.replace(/[ \t\n]/g,""),false));
   else if(encoding==="quoted-printable") body=quotedPrintable(encodedBody);
   else return fail();
-  if(/[^\x00-\x7f]/.test(body) && !/charset\s*=\s*"?utf-8"?/i.test(contentType)) fail();
+  if(hasNonAscii(body) && !/charset\s*=\s*"?utf-8"?/i.test(contentType)) fail();
   return {headers,body};
 }
 function canonicalBody(body: string): string {
@@ -133,10 +134,10 @@ export async function readApprovedParent(fetcher: typeof fetch, accessToken: str
   const parentRfcId=one(parentHeaders,"message-id").trim();
   const parentFrom=one(parentHeaders,"from"),parentReplyTo=one(parentHeaders,"reply-to",false);
   const subject=(value:string)=>decodeHeader(value).trim().replace(/^(?:re:\s*)+/i,"").trim();
-  if(!messageId.test(parentRfcId)||parentRfcId.length>900||address(parentReplyTo||parentFrom)!==address(payload.recipient)
+  if(hasAsciiControl(parentRfcId)||!messageId.test(parentRfcId)||parentRfcId.length>900||address(parentReplyTo||parentFrom)!==address(payload.recipient)
     ||subject(one(parentHeaders,"subject"))!==subject(payload.subject)) fail();
   const references=one(parentHeaders,"references",false).trim().split(/\s+/).filter(Boolean);
-  if(references.length>100||references.some(value=>!messageId.test(value)||value.length>900)) fail();
+  if(references.length>100||references.some(value=>hasAsciiControl(value)||!messageId.test(value)||value.length>900)) fail();
   return {rfcId:parentRfcId,threadId,references:[...new Set(references.filter(value=>value!==parentRfcId)),parentRfcId]};
 }
 
@@ -157,7 +158,7 @@ export async function readApprovedDraftSnapshot(
     ||canonicalBody(mime.body)!==canonicalBody(payload.body)
     ||one(mime.headers,"in-reply-to")!==parentRfcId) fail();
   const references=one(mime.headers,"references").split(/\s+/);
-  if(references.some(value=>!messageId.test(value))||references.at(-1)!==parentRfcId) fail();
+  if(references.some(value=>hasAsciiControl(value)||!messageId.test(value))||references.at(-1)!==parentRfcId) fail();
   const from=one(mime.headers,"from",false),replyTo=one(mime.headers,"reply-to",false),sender=one(mime.headers,"sender",false);
   if(from&&address(from)!==address(gmailEmail)||replyTo&&address(replyTo)!==address(gmailEmail)
     ||sender&&address(sender)!==address(gmailEmail)) fail();

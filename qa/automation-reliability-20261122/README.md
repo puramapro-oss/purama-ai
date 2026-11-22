@@ -97,3 +97,36 @@ exécuté pour cette réception.
 La branche `codex/automation-reliability-20261122-529e` possède un réglage explicite
 `git.deploymentEnabled=false`. Les 36 réglages existants et toute la configuration
 Vercel restante sont conservés. La proposition reste un brouillon de revue.
+
+## Première CI et corrections après publication
+
+Sur `d45cc3b`, le run [44964459198](https://github.com/puramapro-oss/purama-ai/actions/runs/44964459198)
+a passé **3 744 tests KARTA sur 173 fichiers** et les assertions des huit scénarios
+PostgreSQL natifs (16.16, trois connexions distinctes, nettoyage réussi). Le
+checkout `39780a2` possède les mêmes fichiers que la tête publiée.
+Le job site a échoué sur **huit erreurs `no-control-regex`** des nouveaux
+validateurs : les étapes suivantes, dont Deno, ont été ignorées et ne sont pas
+comptées comme réussies.
+
+Une collision du format de rapport natif a également été détectée : le détail
+métier `status=sending` écrasait le verdict d’un scénario dont les assertions
+avaient pourtant terminé. Les détails sont désormais imbriqués dans `details`,
+sans modifier les assertions. Le rapport du run suivant doit être vérifié
+séparément. Les corrections des validateurs conservent leur comportement et
+ne désactivent aucune règle de contrôle statique.
+
+### Réception du correctif de contrôle statique
+
+Le donneur `de72dc535076fa5317b9c49aa563579c3134be7f` remplace les regex de contrôle
+par trois prédicats explicites. La contre-revue a exécuté **4 455 comparaisons**,
+sans divergence. Le lint ciblé termine avec zéro erreur, avertissement ou
+suppression ; le handler passe son typage et ses **90/90 tests**. La migration SQL
+est inchangée.
+
+Le passage commun suivant a été interrompu par SIGKILL sur le worker PGlite :
+**122 tests terminés sur 212 prévus, code de sortie 1**. Son `success:true` JSON
+partiel n’est pas utilisé comme preuve de réussite. Le log et son reçu sont
+conservés. Les 90 tests du donneur restent une preuve séparée sur les mêmes
+fichiers ; la suite complète du candidat doit être vérifiée dans la nouvelle CI.
+Les interruptions du typage dans le clone auteur ne sont pas converties en PASS ;
+le résultat de typage de la composition est enregistré dans le reçu voisin.
