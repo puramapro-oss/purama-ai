@@ -65,6 +65,67 @@ function validateCalendarTimeZone(
   return value;
 }
 
+/** A conflict proves an ID exists, not that the requested appointment still exists. */
+function matchesCalendarReplayReceipt(value: unknown, expected: {
+  eventId: string; title: string; start: CalendarInstant; end: CalendarInstant;
+  timeZone?: string; attendeeEmail?: string;
+}): boolean {
+  const isRecord = (item: unknown): item is Record<string, unknown> =>
+    !!item && typeof item === "object" && !Array.isArray(item);
+  // Domain case is insignificant; do not infer local-part aliases, dots or +tags.
+  const emailIdentity = (email: unknown): string | undefined => {
+    if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return undefined;
+    const at = email.lastIndexOf("@");
+    return email.slice(0, at + 1) + email.slice(at + 1).toLowerCase();
+  };
+  if (!isRecord(value) || value.id !== expected.eventId || value.summary !== expected.title
+    || (value.status !== undefined && value.status !== "confirmed")
+    || (value.eventType !== undefined && value.eventType !== "default")
+    || (value.endTimeUnspecified !== undefined && value.endTimeUnspecified !== false)
+    || (value.attendeesOmitted !== undefined && value.attendeesOmitted !== false)
+    || (value.recurrence !== undefined && (!Array.isArray(value.recurrence) || value.recurrence.length !== 0))
+    || value.recurringEventId !== undefined || value.originalStartTime !== undefined) return false;
+
+  try {
+    const canonicalZone = (zone: string) => new Intl.DateTimeFormat("en", { timeZone: zone }).resolvedOptions().timeZone;
+    const expectedZone = expected.timeZone === undefined ? undefined : canonicalZone(expected.timeZone);
+    for (const field of ["start", "end"] as const) {
+      const instant = value[field];
+      if (!isRecord(instant) || instant.date !== undefined
+        || parseCalendarInstant(instant.dateTime).timestamp !== expected[field].timestamp) return false;
+      // Google may normalize dateTime to a different offset. Compare its instant
+      // separately from the explicit zone; a missing zone cannot prove that intent.
+      if (expectedZone !== undefined && (typeof instant.timeZone !== "string"
+        || canonicalZone(instant.timeZone) !== expectedZone)) return false;
+    }
+
+    if (value.attendees !== undefined && !Array.isArray(value.attendees)) return false;
+    const expectedEmail = emailIdentity(expected.attendeeEmail);
+    const organizer = isRecord(value.organizer) ? value.organizer : null;
+    let matchingAttendees = 0;
+    let ownOrganizerEntries = 0;
+    for (const attendee of value.attendees ?? []) {
+      if (!isRecord(attendee) || (attendee.additionalGuests !== undefined && attendee.additionalGuests !== 0)
+        || attendee.asyncOperation !== undefined) return false;
+      const email = emailIdentity(attendee.email);
+      if (!email) return false;
+      if (expectedEmail !== undefined && email === expectedEmail) {
+        matchingAttendees++;
+      } else if (attendee.organizer === true && attendee.self === true && organizer?.self === true
+        && email === emailIdentity(organizer.email)) {
+        // Google can include the current calendar's owner as a separate attendee.
+        ownOrganizerEntries++;
+      } else {
+        return false;
+      }
+    }
+    return matchingAttendees === (expectedEmail === undefined ? 0 : 1) && ownOrganizerEntries <= 1;
+  } catch {
+    // Invalid or incomplete provider data is unresolved, never a confirmation.
+    return false;
+  }
+}
+
 /** Calendar uses its own existing OAuth connection; Gmail consent does not grant Calendar access. */
 export const calendarCreateEventTool: ToolDefinition<
   { title: string; startIso: string; endIso: string; timeZone?: string; attendeeEmail?: string },
@@ -134,7 +195,12 @@ export const calendarCreateEventTool: ToolDefinition<
         `https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(eventId)}`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      if (existing.ok) return { eventId };
+      if (existing.ok && matchesCalendarReplayReceipt(existing.value, {
+        eventId, title, start, end, timeZone, attendeeEmail,
+      })) return { eventId };
+      // Never mint a replacement ID after an uncertain/conflicting external effect.
+      // The engine already stops automatic retries after a tool exception.
+      throw new Error("Rendez-vous Calendar non confirmé : vérifier l'événement avant toute reprise");
     }
 
     if (!response.ok) throw new Error(`Calendar create event échoué (${response.status})`);
