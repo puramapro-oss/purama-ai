@@ -1,0 +1,66 @@
+{
+  "source_commit": "2890f3c78665b19dde08272aec170709e08225fd",
+  "scope": [
+    {
+      "path": "karta/src/scheduler/customAgents.ts",
+      "sha256": "1d5b5f68083c385e8435938c8124254a4567927f1aa9b541ed4c76dc9b5ee687"
+    },
+    {
+      "path": "karta/src/scheduler/cron.ts",
+      "sha256": "0bb2de145b86bbc6c377e90eb70f939f779343cc221d16754f9f4cd7aeb7b972"
+    },
+    {
+      "path": "karta/src/scheduler/dailyReport.ts",
+      "sha256": "54fedeb047492bc20c3144c936f552f050d4fe959a11c56c6ddbf53c34b8cd07"
+    },
+    {
+      "path": "karta/src/runtime/lifecycle.ts",
+      "sha256": "e3177f1f0abd5fc7b882cd1025d8ad8ec38247b4c226c9d0c18de55bc3fdad37"
+    },
+    {
+      "path": "karta/src/index.ts",
+      "sha256": "45a15fe2dec6f6ae77ba731d3885faafa8720cbc2da143ff4da6ff2e3abb3c50"
+    },
+    {
+      "path": "karta/src/agents/customAgent.ts",
+      "sha256": "51b9660bf609bb6d71b43d849a54c15bb00738d82c3e1d18302a5f8dfdfbc0f0"
+    },
+    {
+      "path": "karta/src/queue/queues.ts",
+      "sha256": "0f42eaa8fa0cc0be8c5536b163f2b46f43f8be66582bd9d0b624784fceffe533"
+    },
+    {
+      "path": "karta/test/customAgentScheduler.test.ts",
+      "sha256": "b9d644216f828dde016a132d6ffbbf2dc521117392cd76d539f7d78e585786bc"
+    },
+    {
+      "path": "karta/test/customAgentSchedulerCron.test.ts",
+      "sha256": "8828fb740e4fd0b9830c9be7285d19f307d9d2cebeabd15a8fc1965530432ccc"
+    },
+    {
+      "path": "karta/test/coreSchedulerDrain.test.ts",
+      "sha256": "7c87b5a9847bd1d122de0759c51d7b070c3a6bc73789f68c52422b31c1460427"
+    },
+    {
+      "path": "karta/test/staticAgentScheduler.test.ts",
+      "sha256": "73352d8f78163c6df1709e89d4c60b85dd807ad1e49aef6525637948f677f9f5"
+    },
+    {
+      "path": "karta/test/staticAgentSchedulerCron.test.ts",
+      "sha256": "9cd77ff4a53188566fa454aec4cb007cdf6c0e3aa3f7316718e782af2957b76b"
+    },
+    {
+      "path": "karta/test/runtimeLifecycle.test.ts",
+      "sha256": "265e03c7d2ca792344ccb4cac3f1c1599e5e46f727b0e7e658cc53050b7d0c08"
+    },
+    {
+      "path": "karta/test/runtimeDeadline.test.ts",
+      "sha256": "bca393442739b65ab5e048bb80cd807ee339c6fb241e678c8445bace60ac9cac"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "8b077697dfdf478a7f595d45f638976af2a88b89a00ccaee0f22c516b61e9137"
+    }
+  ],
+  "limitations": "Scoped analysis fixture; the full pre-edit index was used for impact, with exact source-hash match."
+}

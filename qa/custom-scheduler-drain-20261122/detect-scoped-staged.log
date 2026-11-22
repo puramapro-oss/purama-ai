@@ -1,0 +1,23 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 5 files, 33 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Interface SchedulerWork → karta/src/scheduler/customAgents.ts
+  Function createSchedulerWork → karta/src/scheduler/customAgents.ts
+  Function destroyTask → karta/src/scheduler/customAgents.ts
+  Function cleanup → karta/src/scheduler/customAgents.ts
+  Function refreshSchedules → karta/src/scheduler/customAgents.ts
+  Function task → karta/src/scheduler/customAgents.ts
+  Function cycle → karta/src/scheduler/customAgents.ts
+  Function startCustomAgentScheduler → karta/src/scheduler/customAgents.ts
+  Function stop → karta/src/scheduler/customAgents.ts
+  Function callback → karta/test/customAgentScheduler.test.ts
+  Interface Timer → karta/test/customSchedulerDrain.test.ts
+  Function state → karta/test/customSchedulerDrain.test.ts
+  Function validate → karta/test/customSchedulerDrain.test.ts
+  Function schedule → karta/test/customSchedulerDrain.test.ts
+  Function context → karta/test/customSchedulerDrain.test.ts
+... and 18 more

@@ -1,0 +1,131 @@
+{
+  "project": "puramapro-oss/purama-ai",
+  "design_status": "PRET_A_CODER",
+  "authorization": "Validation collective du 21 novembre 2026, demande du 22 novembre de finir le code existant.",
+  "base_commit": "2890f3c78665b19dde08272aec170709e08225fd",
+  "branch": "fix/custom-scheduler-drain-20261122-dcfb",
+  "scope": "Custom-agent scheduler identity and shutdown; no provider calls or deployment.",
+  "observed_utc": "2026-11-22T00:05:24.074792+00:00",
+  "runtime": {
+    "node": "24.22.3",
+    "vitest": "5.0.3"
+  },
+  "sources": [
+    {
+      "path": "karta/src/scheduler/customAgents.ts",
+      "sha256": "612671bb390572c86c9789c5769b9bf4466ec196c5d8a7df19875160c8ed8001"
+    },
+    {
+      "path": "karta/test/customAgentScheduler.test.ts",
+      "sha256": "6228769ee122facc7fc3ac7d81a4d00bbb6309bec99b579460911fc883d182a6"
+    },
+    {
+      "path": "karta/test/customAgentSchedulerCron.test.ts",
+      "sha256": "076ae8ac6337e97d4d5185cbd49f31ade08618d8f2fb1b758cb4defeb6f99fc1"
+    },
+    {
+      "path": "karta/test/customSchedulerDrain.test.ts",
+      "sha256": "0c7fdea496bbd34185c2d37593b012f887ea8b2d8bec2b27ed932f39947fd701"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "d15a41558afa395a6e72421fdcf03fee978764b10316cc8d616896636a627b96"
+    }
+  ],
+  "gates": [
+    {
+      "name": "original regressions",
+      "command": "node node_modules/vitest/vitest.mjs run test/customSchedulerDrain.test.ts --maxWorkers=1",
+      "cwd": "karta",
+      "exit": 1,
+      "tests": 10,
+      "failed": 10,
+      "expectation": "Reproduction before product changes",
+      "log": "regression-before.log"
+    },
+    {
+      "name": "six-field cron regressions",
+      "command": "node node_modules/vitest/vitest.mjs run test/customSchedulerDrain.test.ts --maxWorkers=1",
+      "cwd": "karta",
+      "exit": 1,
+      "tests": 12,
+      "failed": 2,
+      "passed": 10,
+      "expectation": "Reproduction before preserving scheduled seconds",
+      "log": "seconds-before.log"
+    },
+    {
+      "name": "final scheduler and runtime tests",
+      "command": "node node_modules/vitest/vitest.mjs run test/customSchedulerDrain.test.ts test/customAgentScheduler.test.ts test/customAgentSchedulerCron.test.ts test/coreSchedulerDrain.test.ts test/staticAgentScheduler.test.ts test/staticAgentSchedulerCron.test.ts test/runtimeLifecycle.test.ts test/runtimeDeadline.test.ts --maxWorkers=1",
+      "cwd": "karta",
+      "exit": 0,
+      "files": 8,
+      "passed": 72,
+      "failed": 0,
+      "skipped": 0,
+      "log": "final-tests.log"
+    },
+    {
+      "name": "complete KARTA typecheck",
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "cwd": "karta",
+      "exit": 0,
+      "log": "typecheck-final.log"
+    },
+    {
+      "name": "complete KARTA build",
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc -p tsconfig.build.json",
+      "cwd": "karta",
+      "exit": 0,
+      "log": "build-final.log"
+    },
+    {
+      "name": "git diff whitespace",
+      "command": "git diff --check",
+      "cwd": ".",
+      "exit": 0
+    }
+  ],
+  "gitnexus": {
+    "pre_edit_index_commit": "812830f9bba392f8fcb109a844f083638520a273",
+    "indexed_target_sha256": "1d5b5f68083c385e8435938c8124254a4567927f1aa9b541ed4c76dc9b5ee687",
+    "target_identical_to_indexed_source": true,
+    "risks": {
+      "destroyTask": "CRITICAL",
+      "refreshSchedules": "LOW",
+      "startCustomAgentScheduler": "UNKNOWN"
+    },
+    "full_rebuild": "BLOCKED: process killed during full rebuild; successful target detection is scoped and not a global rebuild.",
+    "scoped_source_snapshot": "scope-provenance.json",
+    "scoped_detection": {
+      "exit": 0,
+      "files": 5,
+      "scope": "16 files: 15 exact base blobs plus new regression suite",
+      "exact_changed_source_match": true,
+      "log": "detect-scoped-staged.log",
+      "status": "PARTIAL",
+      "changed_symbols_reported": 33,
+      "scoped_final_refresh_exit": 137,
+      "note": "The initial scoped index succeeded. Its refresh after the seconds correction was killed; detect-changes exits0 with5 changed files, but the final graph is not certified complete. Keep the pre-edit CRITICAL risk; do not infer low global impact."
+    },
+    "default_main_comparison": "BLOCKED: main reference unavailable in the isolated snapshot; this is not a qualification of main."
+  },
+  "limitations": [
+    "No real Redis, Gmail or phone transport used.",
+    "No production migration, deployment, or continuous operation certified.",
+    "Five-field cron keeps minute keys; six-field cron now retains seconds. Drain old scheduler processes before switching producer versions.",
+    "Full repository main-branch integration is not certified by the scoped graph."
+  ],
+  "resource_failures_preserved": {
+    "full_index": [
+      "analyze-before.log",
+      "analyze-karta-before.log",
+      "analyze-after.log",
+      "analyze-bounded-final.log"
+    ],
+    "typecheck": [
+      "typecheck-serial.log"
+    ],
+    "note": "Initial parallel runs killed137; isolated384MiB typecheck exhausted its heap134; serial512MiB complete typecheck and build succeeded. Assertions and compiler checks unchanged."
+  }
+}

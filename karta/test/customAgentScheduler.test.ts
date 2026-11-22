@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { TaskContext } from "node-cron";
 
 interface Timer {
   expression: string;
@@ -17,8 +18,11 @@ const state = vi.hoisted(() => ({
 vi.mock("node-cron", () => ({
   default: {
     validate: state.valid,
-    schedule: vi.fn((expression: string, callback: () => unknown) => {
-      const task = { expression, callback, stop: vi.fn(), destroy: vi.fn() };
+    schedule: vi.fn((expression: string, callback: (context: TaskContext) => unknown) => {
+      const task = { expression, callback: () => {
+        const date = new Date();
+        return callback({ date, dateLocalIso: date.toISOString(), triggeredAt: date });
+      }, stop: vi.fn(), destroy: vi.fn() };
       state.tasks.push(task);
       return task;
     }),
