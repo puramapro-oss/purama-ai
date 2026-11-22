@@ -1,0 +1,353 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> karta-engine@1.0.0 test
+> vitest run --reporter=dot test/localComputeFabricCancellation.test.ts test/localComputeFabricProvider.test.ts test/iao-facade.test.ts
+
+
+ RUN  v5.0.3 /tmp/iao-memory-baseline/karta
+
+·xxxxxxxxxx···xxxxx·xxxxxxxxx·············································
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 24 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=false)
+Error: listen EPERM: operation not permitted /tmp/iao-c-4dM4Oj/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:96:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=true)
+Error: listen EPERM: operation not permitted /tmp/iao-c-fqr7VB/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:96:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > stops a cancellable fixture-daemon computation after the client disconnects
+Error: listen EPERM: operation not permitted /tmp/iao-c-dirz4z/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:118:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes the transport when the shorter KARTA deadline expires
+Error: listen EPERM: operation not permitted /tmp/iao-c-sfcYHH/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:144:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > cancels the full IAO path, fences late output and replays without resending
+Error: listen EPERM: operation not permitted /tmp/iao-c-Rw6XEL/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:163:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > retains scoped identity and fixed local budgets when the caller reconstructs KARTA
+Error: listen EPERM: operation not permitted /tmp/iao-c-AYi1k8/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:199:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > does not redirect, retry or fall back on HTTP 302
+Error: listen EPERM: operation not permitted /tmp/iao-c-thlSQp/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:233:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > does not redirect, retry or fall back on HTTP 429
+Error: listen EPERM: operation not permitted /tmp/iao-c-uOMMVH/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:233:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > does not redirect, retry or fall back on HTTP 500
+Error: listen EPERM: operation not permitted /tmp/iao-c-IQ5GyJ/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:233:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > releases cancellation listeners after success and ignores a later abort
+Error: listen EPERM: operation not permitted /tmp/iao-c-pJdotS/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:247:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes a truncated response without accepting partial output or retrying
+Error: listen EPERM: operation not permitted /tmp/iao-c-kllr7s/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:259:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > handles an abort immediately after dispatch starts without sending a request
+Error: listen EPERM: operation not permitted /tmp/iao-c-ch1pNJ/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:274:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > isolates cancellation between concurrent requests on one provider
+Error: listen EPERM: operation not permitted /tmp/iao-c-i7wZFm/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:289:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/24]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > keeps the absolute fabric deadline and releases signal listeners on timeout
+Error: listen EPERM: operation not permitted /tmp/iao-c-AtglnT/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:311:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > accepts the strict local response contract
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-soHWVF/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:56:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > fails closed when the daemon does not attest local-only execution and accepted caps
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-v57OKj/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:74:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-2523GG/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-i4pLRp/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-pTCFGa/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-OATMPu/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-NICk2N/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-XXzcom/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > enforces one absolute deadline even while the provider streams
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-eFBJSU/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:97:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/24]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > bounds the accumulated response
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-Gh1hMh/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:109:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/24]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  24 failed | 50 passed (74)
+   Start at  21:30:17
+   Duration  616ms (transform 47%, tests 30%, import 13%, setup 6%, worker 4%)
