@@ -1,0 +1,213 @@
+(node:13) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider: actual contract, frozen account ID and stable idempotency header (8.318695ms)
+✔ provider: HTTP 207 preserves a partial result per platform (0.579627ms)
+✔ provider: pending, malformed, wrong account, missing ID and misleading 207 never confirm publication (0.240004ms)
+✔ provider: timeout after a remote side effect performs exactly one POST (10.749557ms)
+✔ provider: X, invalid media and absent credentials perform zero outbound calls (0.576062ms)
+✔ provider: reconciliation uses GET for the recorded ID only (0.573468ms)
+✔ provider: disconnect targets the account, confirms 200/404 and rejects 202 (1.024133ms)
+✖ provider: expired synchronous transport cannot confirm publish (51.706607ms)
+✖ provider: expired synchronous transport cannot confirm inspect (51.238656ms)
+✖ provider: expired synchronous transport cannot confirm disconnect (50.897911ms)
+✖ provider: the same absolute deadline covers synchronous body work (52.207848ms)
+✖ provider: a response arriving after timeout is cancelled without being read (12.649665ms)
+✖ provider: an unfinished response body is cancelled after timeout (13.095133ms)
+✖ provider: disconnect HTTP 200 remains confirmed when body cancellation never settles (20.714604ms)
+✖ provider: disconnect HTTP 404 remains confirmed when body cancellation never settles (21.682204ms)
+✖ provider: a rejected HTTP status does not await an uncooperative body cancellation (21.433676ms)
+✖ provider: invalid UTF-8 cannot become a confirmed JSON receipt (1.341493ms)
+✔ provider: the existing decoded byte limit remains exact (26.73399ms)
+✖ provider: expiry during the parsed-response handoff cannot confirm a result (51.265485ms)
+✖ provider: publish includes final receipt normalization in its deadline (51.30972ms)
+✖ provider: inspect includes final receipt normalization in its deadline (50.904361ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 8
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 681.525221
+
+✖ failing tests:
+
+test at tests/social-publish/provider.test.ts:105:8
+✖ provider: expired synchronous transport cannot confirm publish (51.706607ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:112:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:105:8
+✖ provider: expired synchronous transport cannot confirm inspect (51.238656ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:112:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:105:8
+✖ provider: expired synchronous transport cannot confirm disconnect (50.897911ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:112:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:121:6
+✖ provider: the same absolute deadline covers synchronous body work (52.207848ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:133:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:141:6
+✖ provider: a response arriving after timeout is cancelled without being read (12.649665ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:160:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:167:6
+✖ provider: an unfinished response body is cancelled after timeout (13.095133ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:179:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:187:8
+✖ provider: disconnect HTTP 200 remains confirmed when body cancellation never settles (20.714604ms)
+  Error: Provider outcome unknown after timeout
+      at Timeout.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/supabase/functions/_shared/zernio.ts:118:14)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)
+
+test at tests/social-publish/provider.test.ts:187:8
+✖ provider: disconnect HTTP 404 remains confirmed when body cancellation never settles (21.682204ms)
+  Error: Provider outcome unknown after timeout
+      at Timeout.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/supabase/functions/_shared/zernio.ts:118:14)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7)
+
+test at tests/social-publish/provider.test.ts:203:6
+✖ provider: a rejected HTTP status does not await an uncooperative body cancellation (21.433676ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /HTTP 400/. Input:
+
+  'Error: Provider outcome unknown after timeout'
+
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:208:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Provider outcome unknown after timeout
+        at Timeout.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/supabase/functions/_shared/zernio.ts:118:14)
+        at listOnTimeout (node:internal/timers:685:17)
+        at process.processTimers (node:internal/timers:618:7),
+    expected: /HTTP 400/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:215:6
+✖ provider: invalid UTF-8 cannot become a confirmed JSON receipt (1.341493ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:222:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:242:6
+✖ provider: expiry during the parsed-response handoff cannot confirm a result (51.265485ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:253:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:262:8
+✖ provider: publish includes final receipt normalization in its deadline (51.30972ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:279:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/social-publish/provider.test.ts:262:8
+✖ provider: inspect includes final receipt normalization in its deadline (50.904361ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts:279:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /timeout|deadline/i,
+    operator: 'rejects',
+    diff: 'simple'
+  }

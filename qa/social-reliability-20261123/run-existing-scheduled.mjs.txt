@@ -1,0 +1,5 @@
+import { test } from 'node:test';
+
+globalThis.fetch = async () => { throw new Error('Unexpected network access in isolated social review'); };
+globalThis.Deno = { test };
+await import('/workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-publish/scheduled.test.ts');

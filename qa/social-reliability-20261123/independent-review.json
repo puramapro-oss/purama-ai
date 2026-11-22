@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "captured_at_utc": "2026-11-22T23:17:32.489327+00:00",
+  "status": "PASS",
+  "scope": "Revues indépendantes de deux lots de code et tests, par le même relecteur ; pas une certification exhaustive.",
+  "reviewer": "/root/recherche_social_meta_tiktok",
+  "distinct_reviewers": 1,
+  "reviews": [
+    {
+      "lot": "Équité du consommateur de publications programmées",
+      "status": "PASS",
+      "files": [
+        "supabase/functions/social-publish-scheduled/handler.ts",
+        "tests/social-publish/scheduled.test.ts"
+      ],
+      "sha256": {
+        "supabase/functions/social-publish-scheduled/handler.ts": "1e8ecf245cd1f71168ede7c510e7fbdd47457dc1b4505507786c4f2cd93899c9",
+        "tests/social-publish/scheduled.test.ts": "4bfc95e133b433c54ae4640a4b401b104ae1fc819d3cf9fb9158652ac017dcc8"
+      },
+      "checks": [
+        "Admission équitable des deux files, max50 par file et max2 travaux par invocation.",
+        "Attente des branches admises avant le retour, y compris après erreur ou échéance d’admission.",
+        "Comparaisons conditionnelles de statut et identité conservées ; aucun POST ajouté à la réconciliation.",
+        "Six scénarios ajoutés ; assertions hors callbacks susceptibles d’intercepter les exceptions.",
+        "Demande de revue appliquée : vérifier published pour due-0 et pending-0 après l’échéance, en plus des lignes non admises."
+      ],
+      "evidence": "Diff réel relu par le relecteur ; confirmation de concordance des empreintes transmise à l’intégrateur dans la conversation de tâche.",
+      "limitations": [
+        "Revue statique indépendante ; le résultat des tests provient des reçus d’exécution.",
+        "Les 50 tours de microtâches des barrières peuvent nécessiter une adaptation lors d’un refactoring ; aucun défaut bloquant relevé."
+      ]
+    },
+    {
+      "lot": "Échéance et nettoyage du transport fournisseur",
+      "status": "PASS",
+      "files": [
+        "supabase/functions/_shared/zernio.ts",
+        "tests/social-publish/provider.test.ts"
+      ],
+      "sha256": {
+        "supabase/functions/_shared/zernio.ts": "ac5de6d77263950cf1a8f357abe33a4decd66ffcc11f67b3bd9843ce57e9ded7",
+        "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64"
+      },
+      "completed_at_utc": "2026-11-22T23:13:23.465354+00:00",
+      "checks": [
+        "late response and unclaimed response cleanup",
+        "in-flight body cancellation",
+        "absolute deadline before and after parse, handoff, normalization and public return",
+        "DELETE 200/404 nonblocking cleanup",
+        "HTTP 207 normalization unchanged",
+        "no path to a second request"
+      ],
+      "test_rerun_by_reviewer": false,
+      "evidence": "provider-provider-verification.json",
+      "limitations": [
+        "Deno natif et compilation de types non établis par la revue."
+      ]
+    }
+  ],
+  "source_hashes_match_composed_receipt": true,
+  "remaining_gates": "Deno natif, types, SDK réel et contrôle GitNexus final relèvent de la qualification et de l’intégration ; aucun statut CI n’est inventé."
+}
