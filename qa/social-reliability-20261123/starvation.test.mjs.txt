@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { handleScheduledConsumerRequest, MAX_RUN_MS } from '/workspace/scratch/ccfbf7e5800b/purama-ai/supabase/functions/social-publish-scheduled/handler.ts';
+import { FakeDb, NOW, post, providerResult } from '/workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-publish/fake-db.ts';
+
+globalThis.fetch = async () => { throw new Error('Unexpected network access in isolated social review'); };
+const request = () => new Request('https://app.invalid/social-publish-scheduled', {
+  method: 'POST', headers: { Authorization: 'Bearer cron-fixture' },
+});
+
+test('scheduled: ready reconciliation progresses under sustained scheduled publish load', async () => {
+  const pending = post({ id: 'old-pending', status: 'publish_unconfirmed', zernio_post_id: 'external-old' });
+  const db = new FakeDb([pending, ...Array.from({ length: 12 }, (_, index) => post({ id: 'due-' + index }))]);
+  let reads = 0;
+  let writes = 0;
+  let clock = NOW;
+  const summaries = [];
+  for (let round = 0; round < 3; round++) {
+    const startedAt = clock;
+    db.clock = clock;
+    const response = await handleScheduledConsumerRequest(request(), db, 'cron-fixture', async () => {
+      writes++;
+      clock += 29_000;
+      db.clock = clock;
+      return providerResult({ externalPostId: 'new-external-' + writes });
+    }, () => clock, async (id) => {
+      reads++;
+      return providerResult({ externalPostId: id });
+    });
+    assert.equal(response.status, 200);
+    summaries.push({ round, elapsed: clock - startedAt, ...await response.json() });
+    clock = NOW + (round + 1) * 600_000;
+  }
+  console.log(JSON.stringify({ scenario: 'sustained-load', maxRunMs: MAX_RUN_MS, reads, writes, pendingStatus: db.tables.social_posts.find(row => row.id === pending.id)?.status, summaries }));
+  assert.ok(reads >= 1, 'An eligible old provider result must not be indefinitely starved by new publications');
+  assert.equal(db.tables.social_posts.find(row => row.id === pending.id)?.status, 'published');
+});

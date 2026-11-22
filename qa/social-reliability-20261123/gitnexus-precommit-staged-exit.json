@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--repo",
+    "purama-social-reliability-20261123",
+    "--limit",
+    "80",
+    "--scope",
+    "staged"
+  ],
+  "started_at": "2026-11-22T23:19:31.328281+00:00",
+  "ended_at": "2026-11-22T23:19:32.667998+00:00",
+  "exit_code": 0
+}

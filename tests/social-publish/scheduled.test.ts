@@ -189,3 +189,186 @@ Deno.test("reconciliation: DB error or concurrent status change cannot produce a
   assert.equal(outcome.status, "publish_unconfirmed");
   assert.equal(db.tables.social_posts[0].status, "publish_unconfirmed");
 });
+
+// Fair scheduling regressions: these use real handlers and inert providers.
+function held<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((done) => { resolve = done; });
+  return { promise, resolve };
+}
+
+for (const slowQueue of ["scheduled", "reconciliation"] as const) {
+  Deno.test("scheduled: sustained " + slowQueue + " load cannot starve the other queue", async () => {
+    // Keep both queues non-empty across all three invocations, including
+    // when the fast queue processes its full batch in an invocation.
+    const backlog = 3 * MAX_BATCH + 5;
+    const due = Array.from({ length: backlog }, (_, index) => post({ id: "due-" + index }));
+    const pending = Array.from({ length: backlog }, (_, index) => post({
+      id: "pending-" + index, status: "publish_unconfirmed", zernio_post_id: "remote-" + index,
+    }));
+    const db = new FakeDb([...due, ...pending]);
+    let clock = NOW;
+    let posts = 0;
+    let gets = 0;
+    for (let invocation = 0; invocation < 3; invocation++) {
+      clock = NOW + invocation * 600_000;
+      db.clock = clock;
+      const response = await handleScheduledConsumerRequest(request(), db, "cron-fixture", async () => {
+        posts++;
+        if (slowQueue === "scheduled") clock += 29_000;
+        db.clock = clock;
+        return providerResult({ externalPostId: "created-" + posts });
+      }, () => clock, async (id) => {
+        gets++;
+        if (slowQueue === "reconciliation") clock += 29_000;
+        db.clock = clock;
+        return providerResult({ externalPostId: id });
+      });
+      assert.equal(response.status, 200);
+      const body = await response.json();
+      assert.ok(body.processed > 0, "Due publications must make progress in this invocation");
+      assert.ok(body.reconciled > 0, "Existing provider results must make progress in this invocation");
+    }
+    assert.ok(posts > 0 && gets > 0);
+    assert.equal(db.tables.social_posts.filter((row) => typeof row.id === "string" && row.id.startsWith("pending-") && row.status === "published").length, gets);
+  });
+}
+
+Deno.test("scheduled: each admitted round starts both queues and settles before the next round", async () => {
+  const db = new FakeDb([
+    post({ id: "due-0" }), post({ id: "due-1" }),
+    post({ id: "pending-0", status: "publish_unconfirmed", zernio_post_id: "remote-0" }),
+    post({ id: "pending-1", status: "publish_unconfirmed", zernio_post_id: "remote-1" }),
+  ]);
+  const write = held<ReturnType<typeof providerResult>>();
+  const read = held<ReturnType<typeof providerResult>>();
+  const started: string[] = [];
+  let clock = NOW;
+  let returned = false;
+  const operation = handleScheduledConsumerRequest(request(), db, "cron-fixture", async () => {
+    started.push("POST");
+    return await write.promise;
+  }, () => clock, async () => {
+    started.push("GET");
+    return await read.promise;
+  }).then((response) => { returned = true; return response; });
+  try {
+    for (let turn = 0; turn < 50; turn++) await Promise.resolve();
+    assert.deepEqual([...started].sort(), ["GET", "POST"]);
+    assert.equal(returned, false);
+    // The round was admitted before the deadline. Both results must still be
+    // persisted, but no second round may start after the admission window.
+    clock = NOW + MAX_RUN_MS;
+    write.resolve(providerResult());
+    for (let turn = 0; turn < 50; turn++) await Promise.resolve();
+    assert.equal(returned, false, "The unfinished read must be awaited");
+    assert.equal(started.length, 2);
+  } finally {
+    clock = NOW + MAX_RUN_MS;
+    write.resolve(providerResult());
+    read.resolve(providerResult({ externalPostId: "remote-0" }));
+    await operation;
+  }
+  const body = await (await operation).json();
+  assert.equal(body.processed, 1);
+  assert.equal(body.reconciled, 1);
+  assert.equal(db.tables.social_posts.find((row) => row.id === "due-0")?.status, "published");
+  assert.equal(db.tables.social_posts.find((row) => row.id === "pending-0")?.status, "published");
+  assert.equal(db.tables.social_posts.find((row) => row.id === "due-1")?.status, "scheduled");
+  assert.equal(db.tables.social_posts.find((row) => row.id === "pending-1")?.status, "publish_unconfirmed");
+});
+
+Deno.test("scheduled: a failed claim waits for its already admitted reconciliation before returning", async () => {
+  const db = new FakeDb([
+    post(),
+    post({ id: "pending", status: "publish_unconfirmed", zernio_post_id: "remote-pending" }),
+  ]);
+  db.faults.push({ when: (query) => query.op === "update" && query.values.status === "publishing", kind: "error" });
+  const read = held<ReturnType<typeof providerResult>>();
+  let posts = 0;
+  let gets = 0;
+  let returned = false;
+  const operation = handleScheduledConsumerRequest(request(), db, "cron-fixture", async () => {
+    posts++;
+    return providerResult();
+  }, () => NOW, async () => {
+    gets++;
+    return await read.promise;
+  }).then((response) => { returned = true; return response; });
+  try {
+    for (let turn = 0; turn < 50; turn++) await Promise.resolve();
+    assert.equal(gets, 1);
+    assert.equal(posts, 0);
+    assert.equal(returned, false);
+  } finally {
+    read.resolve(providerResult({ externalPostId: "remote-pending" }));
+    await operation;
+  }
+  assert.equal((await operation).status, 503);
+  assert.equal(db.tables.social_posts.find((row) => row.id === "pending")?.status, "published");
+  assert.equal(posts, 0);
+});
+
+Deno.test("scheduled: both queues retain their batch limits and at most two provider operations", async () => {
+  const due = Array.from({ length: MAX_BATCH + 5 }, (_, index) => post({ id: "due-" + index }));
+  const pending = Array.from({ length: MAX_BATCH + 5 }, (_, index) => post({
+    id: "pending-" + index, status: "publish_unconfirmed", zernio_post_id: "remote-" + index,
+  }));
+  const db = new FakeDb([...due, ...pending]);
+  let active = 0;
+  let maximumActive = 0;
+  let posts = 0;
+  let gets = 0;
+  const provider = async (externalPostId: string) => {
+    active++;
+    maximumActive = Math.max(maximumActive, active);
+    await Promise.resolve();
+    active--;
+    return providerResult({ externalPostId });
+  };
+  const response = await handleScheduledConsumerRequest(request(), db, "cron-fixture", (params) => {
+    posts++;
+    return provider("created-" + params.postId);
+  }, () => NOW, (id) => {
+    gets++;
+    return provider(id);
+  });
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.processed, MAX_BATCH);
+  assert.equal(body.reconciled, MAX_BATCH);
+  assert.equal(posts, MAX_BATCH);
+  assert.equal(gets, MAX_BATCH);
+  assert.ok(maximumActive <= 2);
+  assert.equal(active, 0);
+  assert.equal(db.tables.social_posts.filter((row) => row.status === "scheduled").length, 5);
+  assert.equal(db.tables.social_posts.filter((row) => row.status === "publish_unconfirmed").length, 5);
+});
+
+Deno.test("scheduled: pending snapshot failure stops the round before any provider request", async () => {
+  const db = new FakeDb([
+    post({ id: "due" }),
+    post({ id: "pending", status: "publish_unconfirmed", zernio_post_id: "remote-pending" }),
+  ]);
+  db.faults.push({
+    when: (query) => query.op === "select" && query.filters.some((filter) =>
+      filter.key === "status" && filter.op === "eq" && filter.value === "publish_unconfirmed"
+    ),
+    kind: "error",
+  });
+  let posts = 0;
+  let gets = 0;
+  const response = await handleScheduledConsumerRequest(request(), db, "cron-fixture", async () => {
+    posts++;
+    return providerResult();
+  }, () => NOW, async (id) => {
+    gets++;
+    return providerResult({ externalPostId: id });
+  });
+  assert.equal(response.status, 503);
+  assert.equal(posts, 0);
+  assert.equal(gets, 0);
+  assert.equal(db.tables.social_posts.find((row) => row.id === "due")?.status, "scheduled");
+  assert.equal(db.tables.social_posts.find((row) => row.id === "pending")?.status, "publish_unconfirmed");
+  assert.equal(db.queries.some((query) => query.op === "update" && query.values.status === "publishing"), false);
+});

@@ -67,8 +67,23 @@ export async function handleScheduledConsumerRequest(
     let partial = 0;
     let failed = 0;
     let unconfirmed = 0;
-    for (const candidate of candidates) {
-      if (now() - startedAt >= MAX_RUN_MS) break;
+    let reconciled = 0;
+    let reconciledPublished = 0;
+    let reconciledPartial = 0;
+    let reconciledFailed = 0;
+    let reconciliationUnconfirmed = 0;
+    let pending: unknown[] = [];
+    if (now() - startedAt < MAX_RUN_MS) {
+      const { data, error } = await supabase.from("social_posts")
+        .select("*").eq("status", "publish_unconfirmed")
+        .not("zernio_post_id", "is", null).not("target_accounts", "is", null)
+        .lte("updated_at", staleBefore)
+        .order("updated_at", { ascending: true }).limit(MAX_BATCH);
+      if (error || !Array.isArray(data)) throw new Error("Could not read pending confirmations");
+      pending = data;
+    }
+
+    const publishCandidate = async (candidate: unknown): Promise<void> => {
       const row = rowObject(candidate);
       if (!row || typeof row.id !== "string" || typeof row.user_id !== "string") {
         throw new Error("Invalid scheduled candidate");
@@ -80,7 +95,7 @@ export async function handleScheduledConsumerRequest(
         .eq("id", row.id).eq("user_id", row.user_id)
         .eq("status", "scheduled").lte("scheduled_at", nowIso).select("*");
       if (error || !Array.isArray(data) || data.length > 1) throw new Error("Claim was not confirmed");
-      if (!data.length) continue; // Another worker claimed or cancelled it.
+      if (!data.length) return; // Another worker claimed or cancelled it.
       const post = parseSocialPost(data[0]);
       if (post.id !== row.id || post.user_id !== row.user_id) throw new Error("Unexpected claim owner");
       const outcome = await executeSocialPublish(post, createPublishDeps(supabase, publish, now));
@@ -89,31 +104,34 @@ export async function handleScheduledConsumerRequest(
       else if (outcome.status === "partial") partial++;
       else if (outcome.status === "failed") failed++;
       else unconfirmed++;
-    }
+    };
 
-    let reconciled = 0;
-    let reconciledPublished = 0;
-    let reconciledPartial = 0;
-    let reconciledFailed = 0;
-    let reconciliationUnconfirmed = 0;
-    if (now() - startedAt < MAX_RUN_MS) {
-      const { data: pending, error } = await supabase.from("social_posts")
-        .select("*").eq("status", "publish_unconfirmed")
-        .not("zernio_post_id", "is", null).not("target_accounts", "is", null)
-        .lte("updated_at", staleBefore)
-        .order("updated_at", { ascending: true }).limit(MAX_BATCH);
-      if (error || !Array.isArray(pending)) throw new Error("Could not read pending confirmations");
-      for (const row of pending) {
-        if (now() - startedAt >= MAX_RUN_MS) break;
-        const post = parseSocialPost(row);
-        // No provider ID means manual review, never another POST.
-        if (!post.zernio_post_id) continue;
-        const result = await reconcileSocialPost(supabase, post, inspect);
-        reconciled++;
-        if (result.status === "published") reconciledPublished++;
-        else if (result.status === "partial") reconciledPartial++;
-        else if (result.status === "failed") reconciledFailed++;
-        else reconciliationUnconfirmed++;
+    const reconcileCandidate = async (row: unknown): Promise<void> => {
+      const post = parseSocialPost(row);
+      // No provider ID means manual review, never another POST.
+      if (!post.zernio_post_id) return;
+      const result = await reconcileSocialPost(supabase, post, inspect);
+      reconciled++;
+      if (result.status === "published") reconciledPublished++;
+      else if (result.status === "partial") reconciledPartial++;
+      else if (result.status === "failed") reconciledFailed++;
+      else reconciliationUnconfirmed++;
+    };
+
+    // Admit at most one item from each queue per round. Waiting for both
+    // prevents a busy or slow queue from consuming every admission slot.
+    // MAX_RUN_MS stops new rounds, not already admitted external requests;
+    // each queue keeps its MAX_BATCH limit and concurrency is at most two.
+    for (let index = 0; index < Math.max(candidates.length, pending.length); index++) {
+      if (now() - startedAt >= MAX_RUN_MS) break;
+      const round: Promise<void>[] = [];
+      if (index < candidates.length) round.push(publishCandidate(candidates[index]));
+      if (index < pending.length) round.push(reconcileCandidate(pending[index]));
+      // A sibling may already hold a durable claim. Await its outcome even
+      // if the other branch fails, rather than returning with work in flight.
+      const settled = await Promise.allSettled(round);
+      for (const result of settled) {
+        if (result.status === "rejected") throw result.reason;
       }
     }
 

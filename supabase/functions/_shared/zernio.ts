@@ -5,6 +5,8 @@ import {
   type ProviderPublishResult,
   type SocialAccountTarget,
 } from "./social-publish-core.ts";
+import { cancelResponseQuietly, createRequestDeadline } from "./request-deadline.ts";
+import { readBoundedBytes } from "./request-body.ts";
 
 export type Platform =
   | "youtube" | "tiktok" | "instagram" | "facebook" | "threads"
@@ -51,32 +53,22 @@ function identifier(value: unknown): string | undefined {
   return undefined;
 }
 
-async function readBoundedJson(response: Response): Promise<unknown> {
+function assertZernioDeadline(endsAt: number): void {
+  if (performance.now() >= endsAt) throw new Error("Provider outcome unknown after timeout");
+}
+
+async function readBoundedJson(response: Response, signal: AbortSignal, endsAt: number): Promise<unknown> {
   if (!response.body) throw new Error("Empty provider response");
-  const reader = response.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  try {
-    while (true) {
-      const chunk = await reader.read();
-      if (chunk.done) break;
-      size += chunk.value.byteLength;
-      if (size > MAX_RESPONSE_BYTES) {
-        await reader.cancel();
-        throw new Error("Provider response is too large");
-      }
-      chunks.push(chunk.value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.length;
-  }
-  return JSON.parse(new TextDecoder().decode(bytes));
+  const bytes = await readBoundedBytes({ headers: response.headers, body: response.body, signal }, {
+    maxBytes: MAX_RESPONSE_BYTES,
+    deadline: endsAt,
+    // Fetch may decode compression while retaining the encoded Content-Length.
+    matchContentLength: false,
+  });
+  assertZernioDeadline(endsAt);
+  const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+  assertZernioDeadline(endsAt);
+  return value;
 }
 
 async function requestZernioJson(
@@ -84,7 +76,7 @@ async function requestZernioJson(
   options: RequestInit,
   transport: ZernioTransportOptions = {},
   acceptNotFound = false,
-): Promise<{ httpStatus: number; data: unknown }> {
+): Promise<{ httpStatus: number; data: unknown; endsAt: number }> {
   const apiKey = transport.apiKey ?? Deno.env.get("ZERNIO_API_KEY") ?? "";
   if (!apiKey) throw new PublishNotStartedError("Connexion au fournisseur non configurée.");
   let base: string;
@@ -110,45 +102,56 @@ async function requestZernioJson(
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > ZERNIO_TIMEOUT_MS) {
     throw new PublishNotStartedError("Délai fournisseur invalide.");
   }
+  const endsAt = performance.now() + timeoutMs;
   const controller = new AbortController();
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const deadline = new Promise<never>((_resolve, reject) => {
-    timer = setTimeout(() => {
-      controller.abort();
-      reject(new Error("Provider outcome unknown after timeout"));
-    }, timeoutMs);
-  });
-  const request = async () => {
-    const res = await (transport.fetchImpl ?? fetch)(
-      base.replace(/\/$/, "") + path,
-      {
-        ...options,
-        redirect: "error",
-        signal: controller.signal,
-        headers: {
-          Authorization: "Bearer " + apiKey,
-          "Content-Type": "application/json",
-          ...(options.headers || {}),
+  const deadline = createRequestDeadline(timeoutMs, controller.signal);
+  const checkDeadline = () => { deadline.check(); assertZernioDeadline(endsAt); };
+  let response: Response | undefined;
+  try {
+    const res = await deadline.wait(async () => {
+      checkDeadline();
+      const received = await (transport.fetchImpl ?? fetch)(
+        base.replace(/\/$/, "") + path,
+        {
+          ...options,
+          redirect: "error",
+          signal: controller.signal,
+          headers: {
+            Authorization: "Bearer " + apiKey,
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+          },
         },
-      },
-    );
+      );
+      try { checkDeadline(); } catch (error) {
+        // The caller no longer owns a response delivered after expiry/closure.
+        cancelResponseQuietly(received.body);
+        throw error;
+      }
+      response = received;
+      return received;
+    });
+    checkDeadline();
+    let data: unknown;
     if (acceptNotFound && (res.status === 200 || res.status === 404)) {
       // Account DELETE is confirmed by these documented HTTP statuses; a
       // missing JSON body must not turn a confirmed disconnect into a retry.
-      await res.body?.cancel();
-      return { httpStatus: res.status, data: {} };
-    }
-    if (!res.ok) {
+      data = {};
+    } else {
       // Never disclose the upstream body or retry a failed write implicitly.
-      await res.body?.cancel();
-      throw new Error("Provider request not confirmed (HTTP " + res.status + ")");
+      if (!res.ok) throw new Error("Provider request not confirmed (HTTP " + res.status + ")");
+      data = await deadline.wait(() => readBoundedJson(res, controller.signal, endsAt));
     }
-    return { httpStatus: res.status, data: await readBoundedJson(res) };
-  };
-  try {
-    return await Promise.race([request(), deadline]);
+    checkDeadline();
+    return { httpStatus: res.status, data, endsAt };
+  } catch (error) {
+    try { checkDeadline(); } catch { throw new Error("Provider outcome unknown after timeout"); }
+    throw error;
   } finally {
-    if (timer !== undefined) clearTimeout(timer);
+    controller.abort();
+    deadline.close();
+    // Cleanup is best-effort; an unresolved cancel must not hide a known status.
+    cancelResponseQuietly(response?.body);
   }
 }
 
@@ -252,7 +255,10 @@ export async function publishPost(params: {
       metadata: { puramaPostId: params.postId },
     }),
   }, transport);
-  return normalizeZernioPublishResult(result.data, params.targets, result.httpStatus);
+  assertZernioDeadline(result.endsAt);
+  const normalized = normalizeZernioPublishResult(result.data, params.targets, result.httpStatus);
+  assertZernioDeadline(result.endsAt);
+  return normalized;
 }
 
 /** Retrieve a previously recorded provider ID; this never creates a post. */
@@ -267,7 +273,10 @@ export async function inspectPost(
   const result = await requestZernioJson("/posts/" + encodeURIComponent(externalPostId), {
     method: "GET",
   }, transport);
-  return normalizeZernioPublishResult(result.data, targets, result.httpStatus);
+  assertZernioDeadline(result.endsAt);
+  const normalized = normalizeZernioPublishResult(result.data, targets, result.httpStatus);
+  assertZernioDeadline(result.endsAt);
+  return normalized;
 }
 
 /** Disconnect one account; never delete its entire provider profile. */
@@ -284,7 +293,9 @@ export async function disconnectConnectedAccount(
     transport,
     true,
   );
+  assertZernioDeadline(result.endsAt);
   if (result.httpStatus !== 200 && result.httpStatus !== 404) {
     throw new Error("Déconnexion fournisseur non confirmée.");
   }
+  assertZernioDeadline(result.endsAt);
 }

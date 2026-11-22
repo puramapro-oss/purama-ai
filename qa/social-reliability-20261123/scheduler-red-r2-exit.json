@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node",
+    "--experimental-transform-types",
+    "--test",
+    "run-scheduled-review.mjs"
+  ],
+  "cwd": "/workspace/scratch/2c704d52ca75/work/social-review",
+  "source": "/workspace/scratch/2c704d52ca75/work/social-review/baseline",
+  "exit_code": 1,
+  "handler_sha256": "b3174a112e0c569a90c9d79cc9d67298ee3a639c14699aed15835a00ea2131f2"
+}

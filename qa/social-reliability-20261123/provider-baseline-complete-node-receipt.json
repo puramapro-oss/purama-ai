@@ -1,0 +1,27 @@
+{
+  "runtime": "Node compatibility runner for Deno.test cases, not native Deno",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--experimental-transform-types",
+    "--test",
+    "--test-concurrency=1",
+    "/workspace/scratch/2c704d52ca75/evidence/social-provider-deadline-20261122/run-provider.mjs"
+  ],
+  "cwd": "/workspace/scratch/2c704d52ca75/work/purama-social-fairness",
+  "startedAt": "2026-11-22T23:10:37.519838+00:00",
+  "hashesBefore": {
+    "supabase/functions/_shared/zernio.ts": "7575dcae5d8e97c290ed3163c31b2b5a14f437e618dc9ffba1ed70fd59dd12c8",
+    "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64",
+    "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  },
+  "network": "global fetch rejects; adapters use inert fixture responses",
+  "exitCode": 1,
+  "finishedAt": "2026-11-22T23:10:38.280180+00:00",
+  "hashesAfter": {
+    "supabase/functions/_shared/zernio.ts": "7575dcae5d8e97c290ed3163c31b2b5a14f437e618dc9ffba1ed70fd59dd12c8",
+    "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64",
+    "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+  }
+}

@@ -1,0 +1,106 @@
+[social-publish] Could not persist uncertain outcome existing-post
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish] Reconciliation attempt write not confirmed existing-post
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+(node:13) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scheduled: two workers racing for one row send exactly one POST (12.03968ms)
+✔ scheduled: stale publishing is quarantined, never reset and reposted (1.477622ms)
+✔ scheduled: lost response and failed anomaly writes are never automatically retried (2.397221ms)
+✔ scheduled: failed or lost claim writes perform no provider call (0.854252ms)
+✔ scheduled: changed, inactive and unverified bindings fail before posting (1.742534ms)
+✔ scheduled: a partial provider result remains partial (0.658212ms)
+✔ scheduled: run deadline leaves rows unclaimed and batch remains bounded (16.161587ms)
+✔ scheduled: rejected cron credentials never touch DB or provider (0.810657ms)
+✔ reconciliation: actual GET transitions pending to published without a POST (9.84615ms)
+✔ reconciliation: foreign post ID, account and missing ID never confirm (1.21227ms)
+✔ reconciliation: rows without server-owned destinations or provider ID cannot starve eligible reads (0.938426ms)
+✔ reconciliation: an unavailable provider ID is deferred without starving later pending posts (0.267085ms)
+✔ reconciliation: DB error or concurrent status change cannot produce a false confirmation (0.516993ms)
+✖ scheduled: sustained scheduled load cannot starve the other queue (2.986841ms)
+✔ scheduled: sustained reconciliation load cannot starve the other queue (27.223382ms)
+✖ scheduled: each admitted round starts both queues and settles before the next round (2.327908ms)
+✖ scheduled: a failed claim waits for its already admitted reconciliation before returning (1.084922ms)
+✔ scheduled: both queues retain their batch limits and at most two provider operations (6.3242ms)
+✖ scheduled: pending snapshot failure stops the round before any provider request (1.019996ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 15
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 405.035536
+
+✖ failing tests:
+
+test at baseline/tests/social-publish/fairness-regressions.test.ts:20:8
+✖ scheduled: sustained scheduled load cannot starve the other queue (2.986841ms)
+  AssertionError [ERR_ASSERTION]: Existing provider results must make progress in this invocation
+      at TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/social-review/baseline/tests/social-publish/fairness-regressions.test.ts:49:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at baseline/tests/social-publish/fairness-regressions.test.ts:56:6
+✖ scheduled: each admitted round starts both queues and settles before the next round (2.327908ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+  -   'GET',
+      'POST'
+    ]
+
+      at TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/social-review/baseline/tests/social-publish/fairness-regressions.test.ts:76:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'POST' ],
+    expected: [ 'GET', 'POST' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at baseline/tests/social-publish/fairness-regressions.test.ts:98:6
+✖ scheduled: a failed claim waits for its already admitted reconciliation before returning (1.084922ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/social-review/baseline/tests/social-publish/fairness-regressions.test.ts:117:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at baseline/tests/social-publish/fairness-regressions.test.ts:165:6
+✖ scheduled: pending snapshot failure stops the round before any provider request (1.019996ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  1 !== 0
+
+      at TestContext.<anonymous> (/workspace/scratch/2c704d52ca75/work/social-review/baseline/tests/social-publish/fairness-regressions.test.ts:186:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
