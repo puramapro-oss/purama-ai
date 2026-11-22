@@ -1,0 +1,31 @@
+✔ config read requests public metadata without credentials or worker cursors (93.765179ms)
+✔ first config creation returns the same public projection and existing defaults (39.677952ms)
+✔ all editable settings including false, null and empty arrays remain writable (41.191591ms)
+✔ saving a stale config after reconnection preserves the fresh Gmail credentials and metadata (28.595968ms)
+✔ runtime whitelist blocks ownership, provider fields, counters, timestamps and unknown columns (26.651994ms)
+✔ protected-only and empty patches fail before any database mutation (89.744624ms)
+✔ inherited properties never become settings writes (35.527897ms)
+✔ read errors remain errors and do not trigger default creation (24.124597ms)
+✔ write errors cannot be acknowledged as saved settings (21.429432ms)
+✔ a concurrent first-creation conflict remains visible and never retries as an overwrite (51.258023ms)
+✔ explicit Gmail disconnection only clears the display account and disables the agent (38.589434ms)
+✔ Gmail disconnection rejects missing, foreign or contradictory write receipts (74.858596ms)
+✔ Gmail disconnection propagates a rejected database write (18.02798ms)
+✔ the actual client requests an owner-bound complete server preview (116.353625ms)
+✔ a mismatched preview owner, log or incomplete body is never admitted (175.71532ms)
+✔ account change prevents invocation of approval, send and reconciliation (24.655543ms)
+✔ aborting during session lookup prevents a later endpoint request (21.003983ms)
+✔ approval submits only the immutable version and checks the exact approval receipt (28.973267ms)
+✔ a 2xx response without a durable provider receipt is never a send success (118.23025ms)
+✔ confirmed send exposes only its verified receipt (11.977279ms)
+✔ reconciliation preserves the distinction between an older send and the current draft (11.359475ms)
+✔ reject targets the expected owner and requires a persisted receipt (53.328686ms)
+✔ pending list and counter include approved drafts awaiting a send, excluding rejected drafts (10.741931ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1244.977327

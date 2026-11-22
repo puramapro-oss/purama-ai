@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "tests/oauth-gmail/config.test.mjs",
+    "tests/oauth-gmail/draft-approval-client.test.mjs"
+  ],
+  "exit_code": 0,
+  "status": "PASS",
+  "tail": "splay account and disables the agent (38.589434ms)\n\u2714 Gmail disconnection rejects missing, foreign or contradictory write receipts (74.858596ms)\n\u2714 Gmail disconnection propagates a rejected database write (18.02798ms)\n\u2714 the actual client requests an owner-bound complete server preview (116.353625ms)\n\u2714 a mismatched preview owner, log or incomplete body is never admitted (175.71532ms)\n\u2714 account change prevents invocation of approval, send and reconciliation (24.655543ms)\n\u2714 aborting during session lookup prevents a later endpoint request (21.003983ms)\n\u2714 approval submits only the immutable version and checks the exact approval receipt (28.973267ms)\n\u2714 a 2xx response without a durable provider receipt is never a send success (118.23025ms)\n\u2714 confirmed send exposes only its verified receipt (11.977279ms)\n\u2714 reconciliation preserves the distinction between an older send and the current draft (11.359475ms)\n\u2714 reject targets the expected owner and requires a persisted receipt (53.328686ms)\n\u2714 pending list and counter include approved drafts awaiting a send, excluding rejected drafts (10.741931ms)\n\u2139 tests 23\n\u2139 suites 0\n\u2139 pass 23\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1244.977327\n"
+}

@@ -5,6 +5,9 @@ import type { ToolDefinition } from "../engine/types.js";
 import { extractGmailPlainText, gmailHeader, readBoundedGmailJson, type GmailBodyContent } from "./gmail-message.js";
 
 interface EmailAgentConfigRow {
+  id: string;
+  gmail_email: string | null;
+  updated_at: string;
   gmail_refresh_token: string | null;
   gmail_access_token: string | null;
   gmail_token_expiry: string | null;
@@ -15,6 +18,93 @@ const GMAIL_MAX_LIST_PAGES = 5;
 const SYNC_OVERLAP_MS = 2 * 60 * 1000;
 const DAILY_SEND_LIMIT = 400;
 const HEADER_BREAK = /[\r\n]/;
+const GMAIL_CREDENTIAL_TIMEOUT_MS = 20_000;
+
+function usableGmailToken(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0 && value.length <= 16_384
+    && [...value].every(char => char.charCodeAt(0) > 32 && char.charCodeAt(0) < 127);
+}
+
+// The Edge OAuth handler uses the same total-deadline/CAS contract. Keep this
+// adapter inside the Node package: its build cannot import Edge runtime files.
+function gmailCredentialDeadline() {
+  const controller = new AbortController();
+  const endsAt = performance.now() + GMAIL_CREDENTIAL_TIMEOUT_MS;
+  const error = new Error("Délai de connexion Gmail dépassé");
+  let failure: Error | undefined;
+  let closed = false;
+  let rejectDeadline!: (reason: Error) => void;
+  const stopped = new Promise<never>((_, reject) => { rejectDeadline = reject; });
+  void stopped.catch(() => {});
+  const expire = () => {
+    if (closed || failure) return;
+    failure = error; controller.abort(); rejectDeadline(error);
+  };
+  const timer = setTimeout(expire, GMAIL_CREDENTIAL_TIMEOUT_MS);
+  const check = () => {
+    if (performance.now() >= endsAt) expire();
+    if (failure) throw failure;
+    if (closed) throw new Error("Connexion Gmail terminée");
+  };
+  return {
+    signal: controller.signal,
+    active: () => !closed && !failure && performance.now() < endsAt,
+    check,
+    async wait<T>(operation: () => PromiseLike<T>): Promise<T> {
+      check();
+      const result = await Promise.race([operation(), stopped]);
+      check(); return result;
+    },
+    close: () => { closed = true; clearTimeout(timer); controller.abort(); },
+  };
+}
+
+function cancelGmailCredentialBody(body: { cancel(): Promise<unknown> } | null | undefined): void {
+  try { void body?.cancel().catch(() => {}); } catch { /* A broken cleanup cannot hold a deadline open. */ }
+}
+
+async function gmailCredentialJson(
+  url: string, init: RequestInit, deadline: ReturnType<typeof gmailCredentialDeadline>, maxBytes: number,
+): Promise<Record<string, unknown>> {
+  let response: Response | undefined;
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  try {
+    await deadline.wait(async () => {
+      response = await fetch(url, { ...init, redirect: "error", credentials: "omit", signal: deadline.signal });
+      // A transport that ignores AbortSignal may resolve after the caller left.
+      if (!deadline.active()) cancelGmailCredentialBody(response.body);
+      return response;
+    });
+    deadline.check();
+    if (!response?.ok || response.redirected || !response.body) throw new Error("Réponse Google indisponible");
+    reader = response.body.getReader();
+    const bytes: Uint8Array[] = [];
+    let size = 0;
+    let emptyChunks = 0;
+    for (;;) {
+      const part = await deadline.wait(() => reader!.read());
+      if (part.done) break;
+      if (!(part.value instanceof Uint8Array)) throw new Error("Réponse Google invalide");
+      if (part.value.byteLength === 0 && ++emptyChunks > 64) throw new Error("Flux Google invalide");
+      size += part.value.byteLength;
+      if (size > maxBytes) throw new Error("Réponse Google trop volumineuse");
+      bytes.push(part.value.slice());
+    }
+    const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(bytes)));
+    deadline.check();
+    if (value === null || typeof value !== "object" || Array.isArray(value)) throw new Error("Réponse Google invalide");
+    return value as Record<string, unknown>;
+  } catch {
+    deadline.check();
+    // Never expose provider bodies, headers or credentials in an agent error.
+    throw new Error("Réponse de connexion Gmail invalide ou indisponible");
+  } finally {
+    if (reader) {
+      cancelGmailCredentialBody(reader);
+      try { reader.releaseLock(); } catch { /* A timed-out reader may still be pending. */ }
+    } else cancelGmailCredentialBody(response?.body);
+  }
+}
 
 function assertHeader(name: string, value: string, maxLength: number): void {
   if (typeof value !== "string" || value.length === 0 || value.length > maxLength || HEADER_BREAK.test(value)) {
@@ -39,58 +129,75 @@ function assertMessageInput(to: string, subject: string, body: string): void {
 
 /** Rafraîchit et retourne un access token Gmail valide pour ce user, ou null si OAuth jamais complété. */
 export async function getGmailAccessToken(userId: string): Promise<string | null> {
-  const { data, error } = await supabase
-    .from("email_agent_config")
-    .select("gmail_refresh_token, gmail_access_token, gmail_token_expiry")
-    .eq("user_id", userId)
-    .maybeSingle<EmailAgentConfigRow>();
+  const deadline = gmailCredentialDeadline();
+  try {
+    const { data, error } = await deadline.wait(async () => await supabase
+      .from("email_agent_config")
+      .select("id,gmail_email,updated_at,gmail_refresh_token,gmail_access_token,gmail_token_expiry")
+      .eq("user_id", userId)
+      .abortSignal(deadline.signal)
+      .maybeSingle<EmailAgentConfigRow>());
+    if (error) throw new Error("Stockage de connexion Gmail indisponible");
+    if (!data?.gmail_refresh_token) return null;
 
-  if (error) throw new Error(`getGmailAccessToken: ${error.message}`);
-  if (!data?.gmail_refresh_token) return null;
-
-  const stillValid = data.gmail_token_expiry && new Date(data.gmail_token_expiry).getTime() > Date.now() + 60_000;
-  if (stillValid && data.gmail_access_token) return decryptGmailToken(data.gmail_access_token);
-
-  if (!config.googleClientId || !config.googleClientSecret) {
-    throw new Error("GOOGLE_CLIENT_ID/SECRET non configurés côté KARTA — impossible de rafraîchir le token Gmail");
-  }
-
-  const response = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: config.googleClientId,
-      client_secret: config.googleClientSecret,
-      refresh_token: decryptGmailToken(data.gmail_refresh_token),
-      grant_type: "refresh_token",
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Refresh token Gmail échoué (${response.status}): ${await response.text()}`);
-  }
-
-  const refreshed = (await response.json()) as { access_token?: unknown; expires_in?: unknown };
-  if (
-    typeof refreshed.access_token !== "string" ||
-    refreshed.access_token.length === 0 ||
-    typeof refreshed.expires_in !== "number" ||
-    !Number.isFinite(refreshed.expires_in) ||
-    refreshed.expires_in <= 0
-  ) {
-    throw new Error("Réponse OAuth Gmail invalide");
-  }
-
-  const { error: updateError } = await supabase
-    .from("email_agent_config")
-    .update({
-      gmail_access_token: encryptGmailToken(refreshed.access_token),
-      gmail_token_expiry: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
-    })
-    .eq("user_id", userId);
-
-  if (updateError) throw new Error(`Mise à jour du token Gmail échouée: ${updateError.message}`);
-  return refreshed.access_token;
+    const stillValid = data.gmail_token_expiry && new Date(data.gmail_token_expiry).getTime() > Date.now() + 60_000;
+    if (stillValid && data.gmail_access_token) {
+      const token = decryptGmailToken(data.gmail_access_token);
+      if (!usableGmailToken(token)) throw new Error("Token Gmail enregistré invalide");
+      return token;
+    }
+    if (typeof data.id !== "string" || !data.id || typeof data.gmail_email !== "string"
+      || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.gmail_email)
+      || typeof data.updated_at !== "string" || !Number.isFinite(Date.parse(data.updated_at))) {
+      throw new Error("Identité de connexion Gmail incomplète : reconnecter ce compte");
+    }
+    if (!config.googleClientId || !config.googleClientSecret) {
+      throw new Error("GOOGLE_CLIENT_ID/SECRET non configurés côté KARTA — impossible de rafraîchir le token Gmail");
+    }
+    const refreshToken = decryptGmailToken(data.gmail_refresh_token);
+    if (!usableGmailToken(refreshToken)) throw new Error("Refresh token Gmail enregistré invalide");
+    const refreshed = await gmailCredentialJson("https://oauth2.googleapis.com/token", {
+      method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ client_id: config.googleClientId, client_secret: config.googleClientSecret,
+        refresh_token: refreshToken, grant_type: "refresh_token" }),
+    }, deadline, 64 * 1024);
+    if (!usableGmailToken(refreshed.access_token)
+      || typeof refreshed.token_type !== "string" || refreshed.token_type.toLowerCase() !== "bearer"
+      || typeof refreshed.expires_in !== "number" || !Number.isSafeInteger(refreshed.expires_in) || refreshed.expires_in <= 0
+      || refreshed.refresh_token !== undefined && !usableGmailToken(refreshed.refresh_token)
+      || refreshed.scope !== undefined && (typeof refreshed.scope !== "string"
+        || !refreshed.scope.split(" ").includes("https://www.googleapis.com/auth/gmail.modify"))) {
+      throw new Error("Réponse OAuth Gmail invalide");
+    }
+    const expiresAt = new Date(Date.now() + refreshed.expires_in * 1000);
+    if (!Number.isFinite(expiresAt.valueOf())) throw new Error("Durée du token Gmail invalide");
+    const profile = await gmailCredentialJson("https://gmail.googleapis.com/gmail/v1/users/me/profile", {
+      headers: { Authorization: `Bearer ${refreshed.access_token}` },
+    }, deadline, 16 * 1024);
+    if (typeof profile.emailAddress !== "string" || profile.emailAddress.toLowerCase() !== data.gmail_email.toLowerCase()) {
+      throw new Error("Identité du compte Gmail incohérente");
+    }
+    deadline.check();
+    let write = supabase
+      .from("email_agent_config")
+      .update({ gmail_access_token: encryptGmailToken(refreshed.access_token as string),
+        gmail_token_expiry: expiresAt.toISOString(),
+        ...(refreshed.refresh_token !== undefined ? { gmail_refresh_token: encryptGmailToken(refreshed.refresh_token as string) } : {}),
+      })
+      .eq("id", data.id).eq("user_id", userId).eq("gmail_email", data.gmail_email)
+      .eq("gmail_refresh_token", data.gmail_refresh_token).eq("updated_at", data.updated_at);
+    // Include credential values too: a coarse or preserved version timestamp
+    // must not let two refreshes overwrite one another or resurrect old data.
+    write = data.gmail_access_token === null ? write.is("gmail_access_token", null)
+      : write.eq("gmail_access_token", data.gmail_access_token);
+    write = data.gmail_token_expiry === null ? write.is("gmail_token_expiry", null)
+      : write.eq("gmail_token_expiry", data.gmail_token_expiry);
+    const { data: written, error: updateError } = await deadline.wait(async () => await write
+      .abortSignal(deadline.signal).select("id").maybeSingle<{ id: string }>());
+    if (updateError) throw new Error("Persistance de connexion Gmail indisponible");
+    if (written?.id !== data.id) throw new Error("Connexion Gmail modifiée : recharger avant de réessayer");
+    return refreshed.access_token;
+  } finally { deadline.close(); }
 }
 
 export interface GmailMessageSummary extends GmailBodyContent {

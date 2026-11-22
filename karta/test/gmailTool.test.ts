@@ -24,6 +24,7 @@ vi.mock("../src/db/supabase.js", () => ({
       select: vi.fn().mockReturnThis(),
       update: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
+      abortSignal: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn(async () => ({
         data: {
           gmail_refresh_token: "refresh-token",

@@ -103,6 +103,28 @@ export interface EmailAgentLog {
   created_at: string;
 }
 
+export interface EmailDraftPreview {
+  approval_id: string;
+  user_id: string;
+  log_id: string;
+  expires_at: string;
+  payload: {
+    gmail_email: string;
+    gmail_message_id: string;
+    gmail_thread_id: string | null;
+    gmail_draft_id: string | null;
+    recipient: string;
+    subject: string;
+    body: string;
+  };
+}
+
+export interface EmailDraftReceipt {
+  action_id: string;
+  provider_message_id: string;
+  matches_current_preview: boolean;
+}
+
 export interface EmailAgentRule {
   id: string;
   user_id: string;
@@ -341,40 +363,47 @@ export async function listLogs(
     .limit(opts.limit ?? 50);
   if (opts.action) q = q.eq('action_taken', opts.action);
   if (opts.category) q = q.eq('category', opts.category);
-  if (opts.pendingOnly) q = q.is('user_approved', null).eq('action_taken', 'draft');
+  if (opts.pendingOnly) q = q.or('user_approved.is.null,user_approved.eq.true').eq('action_taken', 'draft');
   const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as EmailAgentLog[];
 }
 
 export async function approveLog(
-  logId: string,
+  preview: EmailDraftPreview,
   feedback?: string,
+  signal?: AbortSignal,
 ): Promise<void> {
-  const { error } = await sb()
-    .from('email_agent_logs')
-    .update({
-      user_approved: true,
-      user_feedback: feedback ?? null,
-      feedback_at: new Date().toISOString(),
-    })
-    .eq('id', logId);
-  if (error) throw error;
+  const result = await invokeDraftEndpoint('email-agent-send-draft', {
+    action: 'approve', user_id: preview.user_id, log_id: preview.log_id,
+    approval_id: preview.approval_id, feedback: feedback ?? null,
+  }, preview.user_id, signal);
+  if (result.ok !== true || result.status !== 'approved' || result.approval_id !== preview.approval_id
+    || result.log_id !== preview.log_id || result.user_id !== preview.user_id) {
+    throw new Error('Cet aperçu ne peut plus être approuvé. Actualisez-le avant de continuer.');
+  }
 }
 
 export async function rejectLog(
   logId: string,
+  userId: string,
   feedback?: string,
 ): Promise<void> {
-  const { error } = await sb()
+  const { data, error } = await sb()
     .from('email_agent_logs')
     .update({
       user_approved: false,
       user_feedback: feedback ?? null,
       feedback_at: new Date().toISOString(),
     })
-    .eq('id', logId);
+    .eq('id', logId)
+    .eq('user_id', userId)
+    .select('id,user_id,user_approved')
+    .single();
   if (error) throw error;
+  if (!data || data.id !== logId || data.user_id !== userId || data.user_approved !== false) {
+    throw new Error('Le rejet n’est pas confirmé. Actualisez l’activité.');
+  }
 }
 
 export async function pendingDraftsCount(userId: string): Promise<number> {
@@ -383,7 +412,7 @@ export async function pendingDraftsCount(userId: string): Promise<number> {
     .select('id', { count: 'exact', head: true })
     .eq('user_id', userId)
     .eq('action_taken', 'draft')
-    .is('user_approved', null);
+    .or('user_approved.is.null,user_approved.eq.true');
   if (error) throw error;
   return count ?? 0;
 }
@@ -548,11 +577,72 @@ export async function disconnectGmail(userId: string): Promise<void> {
 }
 
 // =============================================================
-// Approve a draft → tells n8n to actually send it
+// A server preview binds the account, recipient, subject and full body reviewed.
 // =============================================================
-export async function sendDraft(logId: string): Promise<void> {
-  const { error } = await supabase.functions.invoke('email-agent-send-draft', {
-    body: { log_id: logId },
+async function invokeDraftEndpoint(
+  endpoint: 'email-agent-send-draft' | 'email-agent-reconcile-draft',
+  body: Record<string, unknown>,
+  userId: string,
+  signal?: AbortSignal,
+): Promise<Record<string, unknown>> {
+  if (signal?.aborted) throw new Error('Opération annulée');
+  const { data: auth, error: authError } = await supabase.auth.getSession();
+  if (authError || !auth.session?.access_token || auth.session.user.id !== userId) {
+    throw new Error('Le compte a changé. Rouvrez le brouillon dans le compte concerné.');
+  }
+  if (signal?.aborted) throw new Error('Opération annulée');
+  const { data, error } = await supabase.functions.invoke(endpoint, {
+    body, headers: { Authorization: `Bearer ${auth.session.access_token}` }, signal,
   });
-  if (error) throw error;
+  if (signal?.aborted) throw new Error('Opération annulée');
+  if (error || !data || typeof data !== 'object' || Array.isArray(data)) {
+    throw new Error('Résultat non confirmé. Actualisez l’aperçu ou vérifiez le résultat dans Gmail.');
+  }
+  return data as Record<string, unknown>;
+}
+
+export async function getDraftPreview(userId: string, logId: string, signal?: AbortSignal): Promise<EmailDraftPreview> {
+  const result = await invokeDraftEndpoint('email-agent-send-draft', {
+    action: 'preview', user_id: userId, log_id: logId,
+  }, userId, signal);
+  const payload = result.payload as EmailDraftPreview['payload'] | undefined;
+  if (result.ok !== true || result.status !== 'ready' || result.user_id !== userId || result.log_id !== logId
+    || typeof result.approval_id !== 'string' || !/^[0-9a-f-]{36}$/i.test(result.approval_id)
+    || typeof result.expires_at !== 'string' || !Number.isFinite(Date.parse(result.expires_at))
+    || !payload || typeof payload.gmail_email !== 'string' || !payload.gmail_email
+    || typeof payload.recipient !== 'string' || !payload.recipient
+    || typeof payload.subject !== 'string' || typeof payload.body !== 'string' || !payload.body.trim()
+    || payload.body.length > 1_000_000 || typeof payload.gmail_message_id !== 'string'
+    || (payload.gmail_thread_id !== null && typeof payload.gmail_thread_id !== 'string')
+    || (payload.gmail_draft_id !== null && typeof payload.gmail_draft_id !== 'string')) {
+    throw new Error('Aucun nouvel envoi autorisé pour cet aperçu. Vérifiez le résultat dans Gmail si un envoi a déjà été tenté.');
+  }
+  return { approval_id: result.approval_id, user_id: userId, log_id: logId,
+    expires_at: result.expires_at, payload: { ...payload } };
+}
+
+function draftReceipt(result: Record<string, unknown>): EmailDraftReceipt {
+  if (result.ok !== true || result.status !== 'sent' || typeof result.action_id !== 'string' || !result.action_id
+    || typeof result.provider_message_id !== 'string' || !result.provider_message_id.trim()
+    || typeof result.matches_current_preview !== 'boolean') {
+    throw new Error('L’envoi n’est pas confirmé. Vérifiez le résultat dans Gmail sans renvoyer.');
+  }
+  return { action_id: result.action_id, provider_message_id: result.provider_message_id,
+    matches_current_preview: result.matches_current_preview };
+}
+
+export async function sendDraft(preview: EmailDraftPreview, signal?: AbortSignal): Promise<EmailDraftReceipt> {
+  const result = await invokeDraftEndpoint('email-agent-send-draft', {
+    action: 'send', user_id: preview.user_id, log_id: preview.log_id, approval_id: preview.approval_id,
+  }, preview.user_id, signal);
+  return draftReceipt(result);
+}
+
+export async function reconcileDraft(userId: string, logId: string, signal?: AbortSignal): Promise<EmailDraftReceipt> {
+  const result = await invokeDraftEndpoint('email-agent-reconcile-draft', { log_id: logId }, userId, signal);
+  const receipt = draftReceipt(result);
+  if (result.reconciled !== true) {
+    throw new Error('Le rapprochement de cet envoi n’est pas confirmé.');
+  }
+  return receipt;
 }

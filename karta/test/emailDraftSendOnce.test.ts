@@ -6,6 +6,8 @@ const handlerUrl = new URL("../../supabase/functions/email-agent-send-draft/hand
 const { createDraftSender } = await import(/* @vite-ignore */ handlerUrl);
 const historical = readFileSync(new URL("../../supabase/migrations/20260406210000_email_agent.sql", import.meta.url), "utf8");
 const migration = readFileSync(new URL("../../supabase/migrations/20261122004000_email_agent_send_reservations.sql", import.meta.url), "utf8");
+const approvalMigration = readFileSync(new URL("../../supabase/migrations/20261122020000_email_agent_draft_approvals.sql", import.meta.url), "utf8");
+let approvalId = "";
 const user = "00000000-0000-4000-8000-000000000001";
 const other = "00000000-0000-4000-8000-000000000002";
 const log = "00000000-0000-4000-8000-000000000011";
@@ -23,12 +25,14 @@ beforeAll(async () => {
     INSERT INTO auth.users(id) VALUES ('${user}'), ('${other}');`);
   await db.exec(historical);
   await db.exec(migration);
+  await db.exec(approvalMigration);
 });
 beforeEach(async () => {
-  await db.exec("RESET ROLE; TRUNCATE purama_ai.email_agent_dispatches, purama_ai.email_agent_logs, purama_ai.email_agent_config, purama_ai.email_agent_memory");
+  await db.exec("RESET ROLE; TRUNCATE purama_ai.email_agent_draft_previews, purama_ai.email_agent_dispatches, purama_ai.email_agent_logs, purama_ai.email_agent_config, purama_ai.email_agent_memory");
   await db.query(`INSERT INTO purama_ai.email_agent_config(user_id,gmail_email)
     VALUES ($1,'owner@example.invalid'),($2,'other@example.invalid')`, [user,other]);
   await insertLog();
+  await reviewCurrent();
 });
 afterAll(async () => { await db?.close(); });
 async function insertLog(id=log, owner=user, message="incoming-1") {
@@ -38,7 +42,9 @@ async function insertLog(id=log, owner=user, message="incoming-1") {
   [id,owner,message]);
 }
 const fnArgs: Record<string,string[]> = {
-  email_agent_send_reserve:["p_user_id","p_log_id","p_claim_token"],
+  email_agent_send_reserve:["p_user_id","p_log_id","p_claim_token","p_approval_id"],
+  email_agent_draft_preview:["p_user_id","p_log_id"],
+  email_agent_draft_approve:["p_user_id","p_log_id","p_approval_id","p_feedback"],
   email_agent_send_begin:["p_user_id","p_action_id","p_claim_token","p_connection_email","p_connection_updated_at"],
   email_agent_send_finish:["p_user_id","p_action_id","p_claim_token","p_outcome","p_provider_message_id"],
 };
@@ -46,7 +52,7 @@ async function rpc(name:string,args:Row):Promise<{data:Row|null;error:unknown}> 
   const keys=fnArgs[name];
   if(!keys) throw new Error(`Unexpected RPC ${name}`);
   try {
-    const r=await db.query<{value:Row}>(`SELECT purama_ai.${name}(${keys.map((_,i)=>`$${i+1}`).join(",")}) AS value`,keys.map(key=>args[key]??null));
+    const r=await db.query<{value:Row}>(`SELECT purama_ai.${name}(${keys.map((_,i)=>`$${i+1}`).join(",")}) AS value`,keys.map(key=>key==="p_approval_id"&&!Object.hasOwn(args,key)?approvalId:args[key]??null));
     return {data:r.rows[0].value,error:null};
   } catch(error) { return {data:null,error}; }
 }
@@ -54,6 +60,12 @@ async function mustRpc(name:string,args:Row) {
   const r=await rpc(name,args);
   if(r.error||!r.data) throw r.error??new Error("No RPC data");
   return r.data;
+}
+async function reviewCurrent() {
+  const preview=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:log});
+  expect(preview.status).toBe("ready");
+  approvalId=String(preview.approval_id);
+  expect(await mustRpc("email_agent_draft_approve",{p_user_id:user,p_log_id:log,p_approval_id:approvalId})).toMatchObject({status:"approved"});
 }
 async function config() {
   return (await db.query<{gmail_email:string;stamp:string}>("SELECT gmail_email,updated_at::text AS stamp FROM purama_ai.email_agent_config WHERE user_id=$1",[user])).rows[0];
@@ -67,12 +79,12 @@ async function begin(actionId:unknown, token=claim) {
 async function state() { return (await db.query<Row>("SELECT * FROM purama_ai.email_agent_dispatches WHERE user_id=$1",[user])).rows[0]; }
 async function count() { return (await db.query<{n:number}>("SELECT total_auto_replied AS n FROM purama_ai.email_agent_config WHERE user_id=$1",[user])).rows[0].n; }
 function request(body:unknown={log_id:log},authorization="Bearer valid") {
-  return new Request("https://example.invalid/send",{method:"POST",headers:{Authorization:authorization,"Content-Type":"application/json"},body:JSON.stringify(body)});
+  return new Request("https://example.invalid/send",{method:"POST",headers:{Authorization:authorization,"Content-Type":"application/json"},body:JSON.stringify(body&&typeof body==="object"?{user_id:user,approval_id:approvalId,...body}:body)});
 }
 type Options = {
   provider?: "timeout"|"server"|"missing_id"|"malformed"|"rejected"|"throttled";
   identity?:string; authenticated?:string|null;
-  onPrepared?:()=>Promise<void>; onProfile?:()=>Promise<void>; onSend?:()=>Promise<void>;
+  beforeAccess?:()=>Promise<void>; onPrepared?:()=>Promise<void>; onProfile?:()=>Promise<void>; onSend?:()=>Promise<void>;
   rawDraft?:string; parent?:Row; draftResponse?:()=>Response;
   failAt?:"reserve"|"begin_before_commit"|"begin_after_commit"|"finish_before_commit"|"finish_after_commit"|"all_finish";
 };
@@ -101,6 +113,7 @@ function harness(options:Options={}) {
       return rpc(name,args);
     },
     prepareAccess:async()=>{
+      await options.beforeAccess?.();
       const cfg=await config();await options.onPrepared?.();
       return {accessToken:"test-only-token",gmailEmail:cfg.gmail_email,connectionUpdatedAt:cfg.stamp};
     },
@@ -139,11 +152,37 @@ function harness(options:Options={}) {
 describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   it("persists the provider receipt and source log atomically before success",async()=>{
     const h=harness();const response=await h.handler(request());
-    expect(response.status).toBe(200);expect(await response.json()).toMatchObject({ok:true,status:"sent",provider_message_id:"provider-message-1"});
+    expect(response.status).toBe(200);expect(await response.json()).toMatchObject({ok:true,status:"sent",provider_message_id:"provider-message-1",matches_current_preview:true});
     expect(h.sends).toHaveLength(1);expect(h.sends[0].body).toEqual({id:"draft-1",message:{raw:h.draftReads[0],threadId:"thread-1"}});
     expect(await state()).toMatchObject({status:"sent",provider_message_id:"provider-message-1"});
     expect((await db.query<Row>("SELECT action_taken,user_approved FROM purama_ai.email_agent_logs WHERE id=$1",[log])).rows[0]).toMatchObject({action_taken:"auto_reply",user_approved:true});
     expect(await count()).toBe(1);
+  });
+  it("keeps a different current draft pending when its approved predecessor completes during an edit",async()=>{
+    const h=harness({onSend:async()=>{
+      await db.query("UPDATE purama_ai.email_agent_logs SET ai_response='New draft written during Gmail POST' WHERE id=$1",[log]);
+    }});
+    const response=await h.handler(request());
+    expect(response.status).toBe(200);expect(await response.json()).toMatchObject({status:"sent",matches_current_preview:false});
+    expect(await state()).toMatchObject({status:"sent",provider_message_id:"provider-message-1"});
+    expect((await db.query<Row>("SELECT action_taken,ai_response FROM purama_ai.email_agent_logs WHERE id=$1",[log])).rows[0])
+      .toMatchObject({action_taken:"draft",ai_response:"New draft written during Gmail POST"});
+    const replay=await h.handler(request());expect(replay.status).toBe(409);
+    expect(await replay.json()).toMatchObject({reason:"previous_send_differs"});
+    expect(h.sends).toHaveLength(1);expect(await count()).toBe(1);
+  });
+  it("records a completed send without undoing a refusal or its feedback during Gmail POST",async()=>{
+    let reviewedAt:unknown;
+    const h=harness({onSend:async()=>{
+      const changed=await db.query<Row>("UPDATE purama_ai.email_agent_logs SET user_approved=false,user_feedback='Withdrawn while sending',feedback_at=clock_timestamp() WHERE id=$1 RETURNING feedback_at::text AS stamp",[log]);
+      reviewedAt=changed.rows[0].stamp;
+    }});
+    const response=await h.handler(request());
+    expect(response.status).toBe(200);expect(await response.json()).toMatchObject({status:"sent",matches_current_preview:true});
+    expect((await db.query<Row>("SELECT user_approved,user_feedback,feedback_at::text AS stamp FROM purama_ai.email_agent_logs WHERE id=$1",[log])).rows[0])
+      .toEqual({user_approved:false,user_feedback:"Withdrawn while sending",stamp:reviewedAt});
+    expect(await state()).toMatchObject({status:"sent",provider_message_id:"provider-message-1"});
+    await h.handler(request());expect(h.sends).toHaveLength(1);expect(await count()).toBe(1);
   });
   it("twenty interleaved handler calls emit exactly one Gmail POST",async()=>{
     const h=harness();const responses=await Promise.all(Array.from({length:20},()=>h.handler(request())));
@@ -186,7 +225,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
     expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);
   });
   it("does not send another owner's log",async()=>{
-    const h=harness({authenticated:other});expect((await h.handler(request())).status).toBe(409);
+    const h=harness({authenticated:other});expect((await h.handler(request({log_id:log,user_id:other}))).status).toBe(409);
     expect(h.sends).toHaveLength(0);expect(await state()).toBeUndefined();
   });
   it.each([null,false])("requires explicit approval, received %s",async(approved)=>{
@@ -210,9 +249,19 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
     const h=harness({onProfile:async()=>{await db.query(`UPDATE purama_ai.email_agent_config SET ${field}=$1 WHERE user_id=$2`,[field==="gmail_email"?"replacement@example.invalid":"test-only-change",user]);}});
     await h.handler(request());expect(await state()).toMatchObject({status:"blocked",reason:"gmail_connection_changed"});expect(h.sends).toHaveLength(0);
   });
+  it("rejects an A-B-A Gmail connection replacement between reservation and access preparation",async()=>{
+    const h=harness({beforeAccess:async()=>{
+      await db.query("UPDATE purama_ai.email_agent_config SET gmail_email='temporary@example.invalid' WHERE user_id=$1",[user]);
+      await db.query("UPDATE purama_ai.email_agent_config SET gmail_email='owner@example.invalid' WHERE user_id=$1",[user]);
+    }});
+    expect((await h.handler(request())).status).toBe(409);
+    expect(await state()).toMatchObject({status:"blocked",reason:"gmail_connection_changed"});
+    expect(h.sends).toHaveLength(0);expect(await count()).toBe(0);
+  });
   it.each(["email","domain","memory"])("honors recipient exclusion from %s",async(kind)=>{
     if(kind==="memory") await db.query("INSERT INTO purama_ai.email_agent_memory(user_id,contact_email,is_blocked) VALUES ($1,'recipient@example.invalid',true)",[user]);
     else await db.query(`UPDATE purama_ai.email_agent_config SET ${kind==="email"?"excluded_emails":"excluded_domains"}=$1 WHERE user_id=$2`,[[kind==="email"?"recipient@example.invalid":"example.invalid"],user]);
+    await reviewCurrent();
     const h=harness();await h.handler(request());expect(await state()).toMatchObject({status:"blocked",reason:"recipient_blocked"});expect(h.sends).toHaveLength(0);
   });
   it("keeps suppression after source log deletion and reimport",async()=>{
@@ -257,7 +306,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET created_at='2020-01-01',user_approved=$1 WHERE id=$2",[approved,log]);
     const cutoff=(await db.query<Row>("SELECT installed_at::text FROM purama_ai.email_agent_send_policy")).rows[0];
     await db.exec("UPDATE purama_ai.email_agent_send_policy SET legacy_backfill_completed=false");
-    await db.exec(migration);await db.exec(migration);
+    await db.exec(migration);await db.exec(approvalMigration);await db.exec(migration);await db.exec(approvalMigration);
     expect((await db.query<Row>("SELECT installed_at::text FROM purama_ai.email_agent_send_policy")).rows[0]).toEqual(cutoff);
     await db.query("UPDATE purama_ai.email_agent_logs SET user_approved=true,feedback_at=clock_timestamp() WHERE id=$1",[log]);
     const h=harness();await h.handler(request());expect(await state()).toMatchObject({status:"unknown",reason:"historical_outcome_unverified"});expect(h.sends).toHaveLength(0);
@@ -270,11 +319,11 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   it("initial backfill captures legacy rows with a future created_at",async()=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET created_at='2099-01-01' WHERE id=$1",[log]);
     await db.exec("UPDATE purama_ai.email_agent_send_policy SET legacy_backfill_completed=false");
-    await db.exec(migration);
+    await db.exec(migration);await db.exec(approvalMigration);
     const h=harness();await h.handler(request());expect(await state()).toMatchObject({status:"unknown",reason:"historical_outcome_unverified"});expect(h.sends).toHaveLength(0);
   });
   it("a repeated migration leaves a new approved first emission eligible",async()=>{
-    await db.exec(migration);
+    await db.exec(migration);await db.exec(approvalMigration);
     const h=harness();expect((await h.handler(request())).status).toBe(200);expect(h.sends).toHaveLength(1);
   });
   it("denies authenticated direct ledger access and service RPCs",async()=>{
@@ -292,6 +341,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   });
   it("builds fallback only from the frozen approved payload",async()=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL,ai_response='Réponse approuvée' WHERE id=$1",[log]);
+    await reviewCurrent();
     const h=harness();expect((await h.handler(request({log_id:log,to:"attacker@example.invalid",body:"changed"}))).status).toBe(200);
     expect(h.sends[0].url.endsWith("/messages/send")).toBe(true);expect(h.sends[0].body.threadId).toBe("thread-1");
     const raw=Buffer.from(String(h.sends[0].body.raw),"base64url").toString("utf8");
@@ -344,6 +394,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   });
   it.each(["ascii charset","missing charset","7bit","missing transfer encoding"])("rejects non-ASCII text declared as %s",async(kind)=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET ai_response='Réponse approuvée' WHERE id=$1",[log]);
+    await reviewCurrent();
     let raw=approvedRaw().replace("Approved body","Réponse approuvée");
     if(kind==="ascii charset") raw=raw.replace("charset=UTF-8","charset=us-ascii").replace("MIME-Version:","Content-Transfer-Encoding: 8bit\r\nMIME-Version:");
     if(kind==="missing charset") raw=raw.replace("; charset=UTF-8","").replace("MIME-Version:","Content-Transfer-Encoding: 8bit\r\nMIME-Version:");
@@ -354,6 +405,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   it("rejects a us-ascii encoded word containing non-ASCII bytes",async()=>{
     const subject="Re: Réponse";
     await db.query("UPDATE purama_ai.email_agent_logs SET ai_subject=$1 WHERE id=$2",[subject,log]);
+    await reviewCurrent();
     const raw=approvedRaw().replace("Re: Approved subject",`=?us-ascii?B?${Buffer.from(subject).toString("base64")}?=`);
     const h=harness({rawDraft:Buffer.from(raw).toString("base64url"),parent:{payload:{headers:[
       {name:"Message-ID",value:"<parent@example.invalid>"},{name:"From",value:"recipient@example.invalid"},{name:"Subject",value:"Réponse"},
@@ -369,12 +421,14 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   });
   it.each(["From","Subject","Message-ID"])("rejects an unverified fallback parent %s",async(header)=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1",[log]);
+    await reviewCurrent();
     const headers=[{name:"Message-ID",value:"<parent@example.invalid>"},{name:"From",value:"recipient@example.invalid"},{name:"Subject",value:"Approved subject"}];
     headers.find(value=>value.name===header)!.value=header==="From"?"wrong@example.invalid":header==="Subject"?"Different topic":"not-a-message-id";
     const h=harness({parent:{payload:{headers}}});expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);
   });
   it("rejects a fallback parent Message-ID containing multiple at signs",async()=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1",[log]);
+    await reviewCurrent();
     const h=harness({parent:{payload:{headers:[
       {name:"Message-ID",value:"<parent@nested@example.invalid>"},{name:"From",value:"recipient@example.invalid"},{name:"Subject",value:"Approved subject"},
     ]}}});
@@ -382,15 +436,18 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   });
   it.each(["from_email","ai_subject"])("blocks CRLF in %s before Gmail access",async(field)=>{
     await db.query(`UPDATE purama_ai.email_agent_logs SET ${field}=$1 WHERE id=$2`,["safe@example.invalid\r\nBcc: injected@example.invalid",log]);
+    await reviewCurrent();
     const h=harness();expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);
   });
   it.each([31,127])("still rejects address control code %s before Gmail access",async(code)=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET from_email=$1 WHERE id=$2",[`recipient${String.fromCharCode(code)}@example.invalid`,log]);
+    await reviewCurrent();
     const h=harness();expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);
   });
   it("still rejects a NUL in a provider-supplied address",async()=>{
     // PostgreSQL text cannot store NUL; Gmail metadata is the actual JSON boundary.
     await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1",[log]);
+    await reviewCurrent();
     const h=harness({parent:{payload:{headers:[
       {name:"Message-ID",value:"<parent@example.invalid>"},{name:"From",value:`recipient${String.fromCharCode(0)}@example.invalid`},
       {name:"Subject",value:"Approved subject"},
@@ -399,6 +456,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   });
   it.each([0,31,127])("still rejects parent Message-ID control code %s",async(code)=>{
     await db.query("UPDATE purama_ai.email_agent_logs SET gmail_draft_id=NULL WHERE id=$1",[log]);
+    await reviewCurrent();
     const h=harness({parent:{payload:{headers:[
       {name:"Message-ID",value:`<parent${String.fromCharCode(code)}@example.invalid>`},
       {name:"From",value:"recipient@example.invalid"},{name:"Subject",value:"Approved subject"},
@@ -408,6 +466,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   it.each([9,11,127])("preserves allowed internal header code %s",async(code)=>{
     const subject=`App${String.fromCharCode(code)}roved subject`;
     await db.query("UPDATE purama_ai.email_agent_logs SET ai_subject=$1 WHERE id=$2",[`Re: ${subject}`,log]);
+    await reviewCurrent();
     const h=harness({rawDraft:Buffer.from(approvedRaw().replace("Approved subject",subject)).toString("base64url"),parent:{payload:{headers:[
       {name:"Message-ID",value:"<parent@example.invalid>"},{name:"From",value:"recipient@example.invalid"},{name:"Subject",value:subject},
     ]}}});
@@ -416,6 +475,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   it.each([9,11,127])("preserves 7bit body code %s without treating it as non-ASCII",async(code)=>{
     const body=`Approved${String.fromCharCode(code)}body`;
     await db.query("UPDATE purama_ai.email_agent_logs SET ai_response=$1 WHERE id=$2",[body,log]);
+    await reviewCurrent();
     const raw=approvedRaw().replace("Approved body",body).replace("charset=UTF-8","charset=us-ascii")
       .replace("MIME-Version:","Content-Transfer-Encoding: 7bit\r\nMIME-Version:");
     const h=harness({rawDraft:Buffer.from(raw).toString("base64url")});
@@ -424,6 +484,7 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
   it.each([128,233])("still rejects body code %s under 7bit",async(code)=>{
     const body=`Approved${String.fromCharCode(code)}body`;
     await db.query("UPDATE purama_ai.email_agent_logs SET ai_response=$1 WHERE id=$2",[body,log]);
+    await reviewCurrent();
     const raw=approvedRaw().replace("Approved body",body).replace("MIME-Version:","Content-Transfer-Encoding: 7bit\r\nMIME-Version:");
     const h=harness({rawDraft:Buffer.from(raw).toString("base64url")});
     expect((await h.handler(request())).status).toBe(409);expect(h.sends).toHaveLength(0);
@@ -434,5 +495,110 @@ describe("email-agent-send-draft durable at-most-one provider attempt",()=>{
     expect((await h.handler(new Request("https://example.invalid",{method:"GET"}))).status).toBe(405);
     expect((await h.handler(new Request("https://example.invalid",{method:"OPTIONS"}))).status).toBe(200);
     expect(await state()).toBeUndefined();expect(h.sends).toHaveLength(0);
+  });
+
+  it("returns the complete server preview without Gmail access or a send reservation",async()=>{
+    const body="Début\n"+"Texte intégral. ".repeat(5000)+"\nFIN NON TRONQUÉE";
+    await db.query("UPDATE purama_ai.email_agent_logs SET ai_response=$1,user_approved=NULL,feedback_at=NULL WHERE id=$2",[body,log]);
+    const h=harness();const response=await h.handler(request({action:"preview",log_id:log}));
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ok:true,status:"ready",user_id:user,log_id:log,
+      payload:{gmail_email:"owner@example.invalid",recipient:"recipient@example.invalid",subject:"Re: Approved subject",body}});
+    expect(await state()).toBeUndefined();expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);
+  });
+  it("a legacy boolean or log_id-only POST cannot authorize the new sender",async()=>{
+    const h=harness();expect((await h.handler(request({log_id:log,approval_id:null}))).status).toBe(400);
+    expect((await db.query<{value:Row}>("SELECT purama_ai.email_agent_send_reserve($1,$2,$3) AS value",[user,log,claim])).rows[0].value)
+      .toMatchObject({claimed:false,status:"blocked",reason:"versioned_approval_required"});
+    expect(await state()).toBeUndefined();expect(h.sends).toHaveLength(0);
+  });
+  it("a fetched preview is not approval even when a client writes the old boolean",async()=>{
+    const fresh=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:log});
+    await db.query("UPDATE purama_ai.email_agent_logs SET user_approved=true WHERE id=$1",[log]);
+    const h=harness();expect((await h.handler(request({log_id:log,approval_id:fresh.approval_id}))).status).toBe(409);
+    expect(h.profiles).toHaveLength(0);expect(h.sends).toHaveLength(0);expect(await state()).toBeUndefined();
+  });
+  it.each(["ai_response","ai_subject","from_email","gmail_message_id","gmail_thread_id","gmail_draft_id"])(
+    "refuses a changed %s between preview and approval",async(field)=>{
+      const fresh=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:log});
+      await db.query(`UPDATE purama_ai.email_agent_logs SET ${field}=$1 WHERE id=$2`,["changed@example.invalid",log]);
+      const h=harness();const response=await h.handler(request({action:"approve",log_id:log,approval_id:fresh.approval_id}));
+      expect(response.status).toBe(409);expect(await response.json()).toMatchObject({reason:"stale_approval"});
+      expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);expect(await state()).toBeUndefined();
+    });
+  it.each(["gmail_email","gmail_access_token"])("refuses a connection change in %s after preview",async(field)=>{
+    const fresh=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:log});
+    await db.query(`UPDATE purama_ai.email_agent_config SET ${field}=$1 WHERE user_id=$2`,["changed@example.invalid",user]);
+    const h=harness();expect((await h.handler(request({action:"approve",log_id:log,approval_id:fresh.approval_id}))).status).toBe(409);
+    expect(h.sends).toHaveLength(0);expect(await state()).toBeUndefined();
+  });
+  it("refuses content edited after approval but before the reservation",async()=>{
+    await db.query("UPDATE purama_ai.email_agent_logs SET ai_response='Changed after explicit approval' WHERE id=$1",[log]);
+    const h=harness();const response=await h.handler(request());
+    expect(response.status).toBe(409);expect(await response.json()).toMatchObject({reason:"stale_approval"});
+    expect(await state()).toBeUndefined();expect(h.profiles).toHaveLength(0);expect(h.sends).toHaveLength(0);
+  });
+  it("does not overwrite a rejection received while an approval request was waiting",async()=>{
+    const fresh=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:log});
+    await db.query("UPDATE purama_ai.email_agent_logs SET user_approved=false,feedback_at=clock_timestamp() WHERE id=$1",[log]);
+    const h=harness();expect((await h.handler(request({action:"approve",log_id:log,approval_id:fresh.approval_id}))).status).toBe(409);
+    expect((await db.query<{user_approved:boolean}>("SELECT user_approved FROM purama_ai.email_agent_logs WHERE id=$1",[log])).rows[0].user_approved).toBe(false);
+    expect(h.sends).toHaveLength(0);
+  });
+  it("binds preview requests to the account displayed by the client",async()=>{
+    const h=harness({authenticated:other});
+    for(const action of ["preview","approve","send"]) expect((await h.handler(request({action,log_id:log}))).status).toBe(403);
+    expect(await state()).toBeUndefined();expect(h.sends).toHaveLength(0);
+  });
+  it("does not approve a foreign token or a token belonging to another log",async()=>{
+    await insertLog(replacement,user,"incoming-2");
+    const wrong=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:replacement});
+    const h=harness();expect((await h.handler(request({action:"approve",log_id:log,approval_id:wrong.approval_id}))).status).toBe(409);
+    expect(h.sends).toHaveLength(0);
+  });
+  it("approves the same preview idempotently without replacing its first feedback",async()=>{
+    const fresh=await mustRpc("email_agent_draft_preview",{p_user_id:user,p_log_id:log});
+    const h=harness();
+    const first=await h.handler(request({action:"approve",log_id:log,approval_id:fresh.approval_id,feedback:"First review"}));
+    expect(first.status).toBe(200);expect(await first.json()).toMatchObject({ok:true,status:"approved",approval_id:fresh.approval_id});
+    expect((await h.handler(request({action:"approve",log_id:log,approval_id:fresh.approval_id,feedback:"Late feedback"}))).status).toBe(200);
+    expect((await db.query<{user_feedback:string}>("SELECT user_feedback FROM purama_ai.email_agent_logs WHERE id=$1",[log])).rows[0].user_feedback).toBe("First review");
+    expect(h.sends).toHaveLength(0);
+  });
+  it.each(["approve","send"])("checks expiry at the %s boundary",async(action)=>{
+    await db.query("UPDATE purama_ai.email_agent_draft_previews SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1",[approvalId]);
+    const h=harness();expect((await h.handler(request({action,log_id:log}))).status).toBe(409);
+    expect(h.sends).toHaveLength(0);expect(h.profiles).toHaveLength(0);expect(await state()).toBeUndefined();
+  });
+  it("checks preview expiry again immediately before the send transition",async()=>{
+    const h=harness({onProfile:async()=>{await db.query("UPDATE purama_ai.email_agent_draft_previews SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1",[approvalId]);}});
+    expect((await h.handler(request())).status).toBe(409);expect(await state()).toMatchObject({status:"blocked",reason:"versioned_approval_changed"});
+    expect(h.sends).toHaveLength(0);
+  });
+  it("does not replay an old approval after a newer preview was approved",async()=>{
+    const prior=approvalId;await reviewCurrent();expect(approvalId).not.toBe(prior);
+    const h=harness();expect((await h.handler(request({log_id:log,approval_id:prior}))).status).toBe(409);
+    expect((await h.handler(request())).status).toBe(200);expect(h.sends).toHaveLength(1);
+  });
+  it("does not describe changed current text as sent using a prior receipt",async()=>{
+    const h=harness();expect((await h.handler(request())).status).toBe(200);
+    await db.query("UPDATE purama_ai.email_agent_logs SET ai_response='A new unapproved text',action_taken='draft' WHERE id=$1",[log]);
+    const response=await h.handler(request());expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({reason:"previous_send_differs"});
+    expect(h.sends).toHaveLength(1);expect(await count()).toBe(1);
+  });
+  it("keeps preview records private and blocks service bypass of unversioned helpers",async()=>{
+    for(const role of ["anon","authenticated"]) {
+      await db.exec(`SET ROLE ${role}`);
+      try {
+        await expect(db.query("SELECT * FROM purama_ai.email_agent_draft_previews")).rejects.toThrow(/permission denied/i);
+        await expect(db.query("SELECT purama_ai.email_agent_draft_approve($1,$2,$3,NULL)",[user,log,approvalId])).rejects.toThrow(/permission denied/i);
+      } finally {await db.exec("RESET ROLE");}
+    }
+    await db.exec("SET ROLE service_role");
+    try {
+      await expect(db.query("SELECT purama_ai.email_agent_send_reserve_unversioned_internal($1,$2,$3)",[user,log,claim])).rejects.toThrow(/permission denied/i);
+      await expect(db.query("SELECT purama_ai.email_agent_send_begin_unversioned_internal($1,$2,$3,NULL,NULL)",[user,log,claim])).rejects.toThrow(/permission denied/i);
+    } finally {await db.exec("RESET ROLE");}
   });
 });

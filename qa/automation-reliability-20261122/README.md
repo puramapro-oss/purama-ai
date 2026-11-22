@@ -130,3 +130,33 @@ conservés. Les 90 tests du donneur restent une preuve séparée sur les mêmes
 fichiers ; la suite complète du candidat doit être vérifiée dans la nouvelle CI.
 Les interruptions du typage dans le clone auteur ne sont pas converties en PASS ;
 le résultat de typage de la composition est enregistré dans le reçu voisin.
+
+
+<!-- PURAMA:COMPLEMENTS:20261122:529E -->
+## Compléments de la reprise du 22 novembre
+
+Autorisation : poursuite explicite de Matiss après PR86 ; validation collective PRET_A_CODER du 21 novembre conservée. Base fonctionnelle : arbre `7eaa1db545956e18b47e2bff3017287cb3d15dd2`, tête publiée `25fc534`. La PR87 reçue entretemps doit être préservée dans la composition.
+
+| Critère de réception | Responsable et périmètre | Preuve requise |
+| --- | --- | --- |
+| Approbation liée à l’aperçu exact | approval_snapshot : UI, sender, migration 020000 | Ancien aperçu et autre compte refusés ; aucun double clic ni faux succès après édition. |
+| Rapprochement sans renvoi | root : nouvel endpoint, validation MIME partagée, migration 021000 | Message SENT vérifié, compteur unique, édition et refus conservés, aucune permission de réémission. |
+| Connexion Gmail préservée au refresh | gmail_token_refresh : getGmailAccessToken | Courses de reconnexion/révocation refusées, compte vérifié, réponses bornées. |
+| Rendez-vous précis et connexion Calendar | telephone_execution : outil Calendar existant | Instants et fuseau cohérents, contrôle tardif, connexion google_calendar utilisée. |
+| Composition et concurrence SQL | root | Tests du code composé, Deno, navigateur et PostgreSQL natif ; résultats liés au SHA. |
+| Exploitation | runtime_recovery_diagnosis : lectures seules | Source d’identité canonique qualifiée avant remise en service ; aucun ancien conteneur redémarré par hypothèse. |
+
+Les essais locaux PGlite de réconciliation ont été interrompus avant exécution : worker SIGKILL dans Vitest, puis code 137 en pool threads. Le champ JSON success:true partiel est rejeté. Aucun résultat SQL local n’est déclaré PASS ; les mêmes assertions doivent terminer dans la CI. Le graphe GitNexus historique ne résout pas les nouvelles frontières SQL/HTTP : risque UNKNOWN, jamais assimilé à LOW.
+
+### Réception locale du complément
+
+- Approbation immuable : aperçu de dix minutes lié au compte, au contenu et à la version de connexion ; validation explicite ; ancien protocole sans version fermé.
+- Rapprochement : lecture Gmail bornée et comparaison du MIME réellement envoyé ; aucune réémission ; conservation des éditions, refus, feedback et de leur date. Les reçus déjà persistés sont identifiés comme tels, sans prétendre relire Gmail.
+- Reconnexion : course A → B → A refusée avant l’envoi ; refresh Gmail conditionnel à la connexion d’origine et contrôle du profil.
+- Calendar : connexion dédiée google_calendar, fuseau IANA et décalage explicites, dates impossibles et rendez-vous expirés refusés. La composition opérateur reste hors de ce correctif.
+- Composition ciblée : **232/232 tests purs PASS** dans le rapport complet ; typage strict du rapprochement et lint de ses huit fichiers PASS, zéro avertissement. Les suites auteur recoupent ce total et ne s’y additionnent pas.
+- Contre-revue : vingt scénarios de frontières HTTP/MIME PASS ; deux défauts reproduits puis corrigés (annulation de lecture et réponse minimale de fil). La date de refus est désormais protégée par des scénarios SQL et natifs dédiés.
+- Le harnais PostgreSQL conserve ses huit contrôles initiaux et ajoute huit contrôles d’approbation/réconciliation/concurrence. **Seize scénarios natifs attendus, non exécutés localement**.
+- Les migrations, les 115 scénarios sender, les 31 scénarios SQL de rapprochement, les neuf scénarios navigateur supplémentaires et le typage de la composition complète doivent terminer en CI. Les tentatives locales SQL/SIGKILL ou navigateur/EPERM restent NON TESTÉ/BLOQUÉ.
+
+Reçu : [resume-verification.json](./resume-verification.json). Les preuves finales hébergées sont liées au SHA dans la PR86 et dans le registre de preuves, sans reclasser les échecs locaux.

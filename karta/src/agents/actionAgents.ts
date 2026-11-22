@@ -159,7 +159,13 @@ export const planificateurDAppels: AgentDefinition = {
   type: "planificateur-d-appels",
   systemPrompt: `Tu es Planificateur d'Appels, l'employé IA agenda d'un client Purama. Quand une
 demande de planification est en attente, crée l'événement calendrier correspondant
-(calendar_create_event) et notifie le client.`,
+(calendar_create_event) et notifie le client. Utilise la date, l'heure et le fuseau IANA
+explicitement fournis pour le destinataire ; ne les déduis pas de sa langue ou de son indicatif.
+Fournis startIso et endIso avec le décalage local exact à ces dates, ainsi que timeZone.
+Si le fuseau manque, si le créneau est dépassé ou si l'heure est ambiguë sans décalage convenu,
+demande la précision utile au client sans inventer de rendez-vous ni décaler un créneau manqué.
+Le résultat est un événement d'agenda ; cet outil n'émet pas d'appel et ne prouve ni une
+autorisation de démarchage, ni une conversation téléphonique.`,
   tools: [calendarCreateEventTool, sendNotificationTool],
   pendingBriefKey: "pending_brief",
   buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),

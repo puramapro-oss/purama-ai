@@ -7,7 +7,18 @@ interface RegisteredJob {
   cronExpr: string;
 }
 
+interface SchedulerWork {
+  cycles: Set<Promise<void>>;
+  cleanups: Set<Promise<void>>;
+  cleanupFailed: boolean;
+}
+
+function createSchedulerWork(): SchedulerWork {
+  return { cycles: new Set(), cleanups: new Set(), cleanupFailed: false };
+}
+
 const registeredJobs = new Map<string, RegisteredJob>();
+let currentWork = createSchedulerWork();
 let generation = 0;
 let stopped = false;
 let refreshInFlight: Promise<void> | null = null;
@@ -18,14 +29,18 @@ const SCAN_TIMEOUT_MS = 30_000;
 type SchedulerController = Pick<ScheduledTask, "stop" | "destroy">;
 let activeScheduler: SchedulerController | null = null;
 
-function destroyTask(task: ScheduledTask): void {
+function destroyTask(task: ScheduledTask, owner: SchedulerWork): void {
   // Inline node-cron timers destroy synchronously, but its public contract also
   // permits asynchronous implementations. Never detach a rejected cleanup promise.
   try {
-    void Promise.resolve(task.destroy()).catch(() => {
+    const cleanup = Promise.resolve(task.destroy()).catch(() => {
+      owner.cleanupFailed = true;
       console.error("[custom-agents] destruction du timer non confirmée");
     });
+    owner.cleanups.add(cleanup);
+    void cleanup.then(() => { owner.cleanups.delete(cleanup); });
   } catch {
+    owner.cleanupFailed = true;
     console.error("[custom-agents] destruction du timer non confirmée");
   }
 }
@@ -63,6 +78,7 @@ export async function refreshCustomAgentSchedules(): Promise<void> {
 }
 
 async function refreshSchedules(scanGeneration: number, signal: AbortSignal): Promise<void> {
+  const owner = currentWork;
   const agents = await listKartaEnabledCustomAgents(signal);
   if (signal.aborted || stopped || scanGeneration !== generation) return;
   const stillValid = new Map(agents.map((a) => [a.id, a]));
@@ -72,7 +88,7 @@ async function refreshSchedules(scanGeneration: number, signal: AbortSignal): Pr
     const shouldRun = agent && agent.schedule_enabled && agent.schedule_cron === job.cronExpr;
     if (!shouldRun) {
       registeredJobs.delete(id);
-      destroyTask(job.task);
+      destroyTask(job.task, owner);
     }
   }
 
@@ -85,23 +101,35 @@ async function refreshSchedules(scanGeneration: number, signal: AbortSignal): Pr
     }
 
     const cronExpr = agent.schedule_cron;
-    const task = cron.schedule(cronExpr, async () => {
+    const slotEnd = cronExpr.trim().split(/\s+/).length === 6 ? 19 : 16;
+    const task = cron.schedule(cronExpr, (context) => {
       // stop/destroy cannot retract an already-dispatched timer callback. Also
       // reject callbacks from removed schedules and previous runtime generations.
       if (stopped || scanGeneration !== generation || registeredJobs.get(agent.id)?.task !== task) return;
-      const slot = new Date().toISOString().slice(0, 16);
-      try {
-        await enqueueAgentCycle(
-          {
-            agentType: `custom:${agent.id}`,
-            userId: agent.user_id,
-            trigger: { type: "cron", source: `custom-agent:${agent.name}`, payload: { slot } },
-          },
-          { dedupeKey: `cron|custom:${agent.id}|${agent.user_id}|${slot}` }
-        );
-      } catch {
-        console.error("[custom-agents] mise en file non confirmée : vérifier la demande avant toute reprise");
-      }
+      // Register before running the callback so shutdown can drain every admitted
+      // producer, even when its timer was replaced by a later database scan.
+      const cycle = Promise.resolve().then(async () => {
+        if (stopped || scanGeneration !== generation || registeredJobs.get(agent.id)?.task !== task) return;
+        try {
+          // Delayed callbacks and separate instances share the scheduled instant,
+          // not their local wall clock. Preserve minute keys for five-field cron,
+          // and retain seconds for six-field cron so distinct ticks never merge.
+          const slot = context.date.toISOString().slice(0, slotEnd);
+          await enqueueAgentCycle(
+            {
+              agentType: `custom:${agent.id}`,
+              userId: agent.user_id,
+              trigger: { type: "cron", source: `custom-agent:${agent.name}`, payload: { slot } },
+            },
+            { dedupeKey: `cron|custom:${agent.id}|${agent.user_id}|${slot}` }
+          );
+        } catch {
+          console.error("[custom-agents] mise en file non confirmée : vérifier la demande avant toute reprise");
+        }
+      });
+      owner.cycles.add(cycle);
+      void cycle.then(() => { owner.cycles.delete(cycle); }, () => { owner.cycles.delete(cycle); });
+      return cycle;
     });
     registeredJobs.set(agent.id, { task, cronExpr });
   }
@@ -110,7 +138,9 @@ async function refreshSchedules(scanGeneration: number, signal: AbortSignal): Pr
 /** Démarre le scheduler des agents créés : 1er scan immédiat + réévaluation toutes les 5 min. */
 export function startCustomAgentScheduler(): SchedulerController {
   if (activeScheduler) return activeScheduler;
+  if (stopped) currentWork = createSchedulerWork();
   stopped = false;
+  const owner = currentWork;
   const schedulerGeneration = generation;
   const refreshSafely = async () => {
     if (stopped || schedulerGeneration !== generation) return;
@@ -122,19 +152,36 @@ export function startCustomAgentScheduler(): SchedulerController {
     }
   };
   const scanTimer = cron.schedule("*/5 * * * *", refreshSafely);
-  const stop = () => {
-    if (activeScheduler !== controller) return;
+  let stopping: Promise<void> | undefined;
+  const stop = (): Promise<void> => {
+    if (stopping) return stopping;
+    if (activeScheduler !== controller) return Promise.resolve();
     // Invalidate callbacks and outstanding reads before touching timer resources.
     stopped = true;
     generation++;
     activeScheduler = null;
+    const retiringScan = refreshInFlight;
     refreshAbort?.abort();
     refreshAbort = null;
     refreshInFlight = null;
     const retired = [...registeredJobs.values()];
     registeredJobs.clear();
-    destroyTask(scanTimer);
-    for (const job of retired) destroyTask(job.task);
+    destroyTask(scanTimer, owner);
+    for (const job of retired) destroyTask(job.task, owner);
+    // The scan's abort is an expected retirement, while a failed timer cleanup
+    // must be observable by the runtime. Its global deadline bounds stalled work.
+    stopping = Promise.allSettled([
+      ...owner.cycles, ...owner.cleanups,
+      ...(retiringScan ? [retiringScan.catch(() => undefined)] : []),
+    ]).then(results => {
+      if (owner.cleanupFailed || results.some(result => result.status === "rejected")) {
+        throw new Error("Arrêt du planificateur personnalisé non confirmé");
+      }
+    });
+    // Fire-and-forget callers remain safe; callers awaiting stop still receive
+    // its failure. Each controller drains only its own runtime generation.
+    void stopping.catch(() => undefined);
+    return stopping;
   };
   const controller: SchedulerController = { stop, destroy: stop };
   activeScheduler = controller;

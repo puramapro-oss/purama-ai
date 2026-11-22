@@ -1,0 +1,75 @@
+{
+  "recorded_at_utc": "2026-11-22T01:11:19.724422+00:00",
+  "status": "PARTIEL_AWAITING_COMPOSED_CI",
+  "baseline_published_head": "25fc534db7b4e794e0fc826f000a70dbee1a9088",
+  "donors": {
+    "approval": "fe27ffe29f4c2b245e8c0688de08c02058cbde05",
+    "calendar": "beae9f35808f047be7df2d12a1364a044618d419",
+    "gmail_refresh": "c2f609806d8882374d4a8478d0fd99a1050a58cb"
+  },
+  "pure_composed_tests": {
+    "success": true,
+    "numTotalTests": 232,
+    "numPassedTests": 232,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "test_report_sha256": "48b42bafdba5c3e1f8faf40fb77e65147ce0f98777bf73d1e577e8c67e044a12",
+  "root_lint": {
+    "exit_code": 0,
+    "files": 8,
+    "errors": 0,
+    "warnings": 0
+  },
+  "reconcile_handler_strict_typecheck": {
+    "exit_code": 0
+  },
+  "native_harness_syntax": {
+    "exit_code": 0,
+    "expected_checks": 16
+  },
+  "local_sql": {
+    "status": "NON_TESTE",
+    "executed_assertions": 0,
+    "attempts": [
+      "Vitest report success:true with worker SIGKILL rejected",
+      "diagnostic repeat confirms worker killed before SQL suite",
+      "thread pool interrupted exit137"
+    ],
+    "hosted_same_assertions_required": true
+  },
+  "independent_reviews": {
+    "reconciliation_boundary": "20/20 pure assertions PASS; fixed request cancellation/deadline and minimal thread candidate shape",
+    "approval": "A to B to A connection race fixed at begin; client 10/10 PASS",
+    "feedback_timestamp": "reconcile_finish now preserves feedback_at with explicit SQL and native counterexamples"
+  },
+  "production_effects": false,
+  "provider_calls_real": false,
+  "historical_migration_sha256": "5bcba773e889db61727562c863cac1eec6c337abd709d925193d0ff1e4a67a04",
+  "new_migration_hashes": {
+    "20261122021000_email_agent_send_reconciliation.sql": "8568be52a2ada493c2db75dab3c113c37bc6de06f7409b6f47175d3bbd8fb32d",
+    "20261122020000_email_agent_draft_approvals.sql": "2373a34ba3b4bd4c159a15dcdd9f1964d6f6c10debad969b05cdb64c1bda820c"
+  },
+  "gitnexus": {
+    "index": "812830f9bba392f8fcb109a844f083638520a273",
+    "staged": {
+      "exit_code": 0,
+      "files": 50,
+      "symbols": 69,
+      "flows": 10,
+      "risk": "HIGH"
+    },
+    "compare_main": {
+      "exit_code": 137,
+      "status": "BLOQUE",
+      "reason": "SIGKILL, no final result"
+    },
+    "new_http_sql_frontiers": "UNKNOWN",
+    "prior_main_divergence": "CRITICAL on historical analysis; not reduced by the partial current check"
+  },
+  "composed_client_tests": {
+    "passed": 10,
+    "total": 10,
+    "exit_code": 0
+  }
+}

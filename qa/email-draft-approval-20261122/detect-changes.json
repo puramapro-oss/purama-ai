@@ -1,0 +1,17 @@
+{
+  "command": [
+    "node",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "detect_changes",
+    "--scope",
+    "all",
+    "--repo",
+    "/workspace/scratch/529e43e3c136/approval-snapshot-20261122/repo"
+  ],
+  "cwd": "/workspace/scratch/529e43e3c136/approval-snapshot-20261122/repo",
+  "exit_code": 1,
+  "status": "BLOQUE",
+  "stdout": "",
+  "stderr": "\n  GitNexus Detect Changes (1.6.12)\nfile:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/workspace/scratch/529e43e3c136/approval-snapshot-20261122/repo\" not found. Available: purama-ai\n    at LocalBackend.selectToolRepository (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.3\n",
+  "reason": "Le clone exact ne dispose pas d’un index enregistré. Le seul index disponible concerne une révision historique dans le dépôt source ; son analyse ne vaut pas validation de ce diff."
+}

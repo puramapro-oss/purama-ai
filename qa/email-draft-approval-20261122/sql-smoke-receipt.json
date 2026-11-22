@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=512",
+    "/workspace/scratch/529e43e3c136/approval-snapshot-20261122/evidence/sql-smoke.cjs"
+  ],
+  "exit_code": -9,
+  "output": "",
+  "error": ""
+}

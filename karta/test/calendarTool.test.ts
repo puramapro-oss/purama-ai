@@ -2,8 +2,12 @@ import { createHash } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ToolExecutionContext } from "../src/engine/types.js";
 
-const dependencies = vi.hoisted(() => ({ getToken: vi.fn() }));
-vi.mock("../src/tools/gmail.js", () => ({ getGmailAccessToken: dependencies.getToken }));
+const dependencies = vi.hoisted(() => ({ getToken: vi.fn(), assertCurrent: vi.fn() }));
+vi.mock("../src/db/supabase.js", () => ({ supabase: {} }));
+vi.mock("../src/tools/google-calendar-connection.js", async (original) => ({
+  ...await original<typeof import("../src/tools/google-calendar-connection.js")>(),
+  getGoogleCalendarConnection: dependencies.getToken,
+}));
 import { calendarCreateEventTool } from "../src/tools/calendar.js";
 
 const context: ToolExecutionContext = {
@@ -12,18 +16,22 @@ const context: ToolExecutionContext = {
 };
 const appointment = {
   title: "Appel demandé", startIso: "2026-11-23T10:30:00+01:00", endIso: "2026-11-23T11:00:00+01:00",
+  timeZone: "Europe/Paris",
 };
 let transport: ReturnType<typeof vi.fn<typeof fetch>>;
 
 beforeEach(() => {
-  dependencies.getToken.mockReset().mockResolvedValue("test-only-calendar-token");
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-11-22T00:00:00Z"));
+  dependencies.assertCurrent.mockReset().mockResolvedValue(undefined);
+  dependencies.getToken.mockReset().mockResolvedValue({ accessToken: "test-only-calendar-token", assertCurrent: dependencies.assertCurrent });
   transport = vi.fn<typeof fetch>(async () => new Response(JSON.stringify({ id: "calendar-event-1" }), {
     status: 200, headers: { "Content-Type": "application/json" },
   }));
   // Every provider request is intercepted. These tests cannot create invitations.
   vi.stubGlobal("fetch", transport);
 });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("calendar_create_event attendee validation", () => {
   it.each(["person@example.com", "contact@purama.dev", "a@b.co", "sam+appel@example.co.uk"])(
@@ -38,7 +46,8 @@ describe("calendar_create_event attendee validation", () => {
       expect(JSON.parse(String(init?.body))).toEqual({
         id: createHash("sha256").update(context.operationId!).digest("hex"),
         summary: appointment.title,
-        start: { dateTime: appointment.startIso }, end: { dateTime: appointment.endIso },
+        start: { dateTime: appointment.startIso, timeZone: appointment.timeZone },
+        end: { dateTime: appointment.endIso, timeZone: appointment.timeZone },
         attendees: [{ email: attendeeEmail }],
       });
     },
@@ -76,7 +85,7 @@ describe("calendar_create_event attendee validation", () => {
   it("still requires the user's OAuth token before provider I/O", async () => {
     dependencies.getToken.mockResolvedValueOnce(null);
     await expect(calendarCreateEventTool.execute({ ...appointment, attendeeEmail: "person@example.com" }, context))
-      .rejects.toThrow("Google OAuth non complété");
+      .rejects.toThrow("Google Calendar OAuth non complété");
     expect(transport).not.toHaveBeenCalled();
   });
 

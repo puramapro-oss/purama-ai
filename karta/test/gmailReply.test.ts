@@ -5,6 +5,7 @@ vi.mock("../src/lib/gmail-token-crypto.js", () => ({ decryptGmailToken: (v: stri
 vi.mock("../src/config.js", () => ({ config: {} }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc, from: () => ({
   select() { return this; }, eq() { return this; },
+  abortSignal() { return this; },
   update(value: Record<string, unknown>) { configUpdates.push(value); return { eq: async () => ({ error: null }) }; },
   async maybeSingle() { return { data: { is_active: true, gmail_refresh_token: mailbox.oauthAvailable ? "fixture-refresh" : null, gmail_access_token: "fixture-access", gmail_token_expiry: new Date(Date.now() + 3600000).toISOString() }, error: null }; },
 }) } }));

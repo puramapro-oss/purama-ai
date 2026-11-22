@@ -8,6 +8,7 @@ type Result = { data: unknown; error: null | { message: string; code: string }; 
 type Request = { table: string; ownerId: string; sessionId?: string; done: boolean; resolve: (result: Result) => void };
 type ReplyRequest = { sessionId: string; message: string; signal?: AbortSignal; done: boolean; resolve: (result: Result) => void };
 type WriteRequest = { table: string; ownerId: string; data: Record<string, unknown>; done: boolean; resolve: (result: Result) => void };
+type EmailRequest = { name: string; body: Record<string, unknown>; signal?: AbortSignal; done: boolean; resolve: (result: Result) => void };
 const loadedConfigs = new Map<string, Record<string, unknown>>();
 export const harness = {
   pending: [] as Request[],
@@ -15,6 +16,16 @@ export const harness = {
   writes: [] as { table: string; ownerId: string; payload: Record<string, unknown> }[],
   deferWrites: false,
   pendingWrites: [] as WriteRequest[],
+  currentUserId: ACCOUNT_A as string | null,
+  emailLogs: [] as Record<string, unknown>[],
+  emailCalls: [] as EmailRequest[],
+  resolveEmail(index: number, data: unknown, error = false) {
+    const pending = harness.emailCalls[index];
+    if (!pending || pending.done) throw new Error(`No pending email request ${index}`);
+    pending.done = true;
+    // Deliberately deliver after cancellation to test actual UI/client guards.
+    pending.resolve({ data, error: error ? { message: 'Fixture unavailable', code: '503' } : null });
+  },
   setIdentity: (_id: string | null) => {},
   defer(table: string, ownerId: string, sessionId?: string): Promise<Result> {
     return new Promise(resolve => harness.pending.push({ table, ownerId, sessionId, resolve, done: false }));
@@ -71,6 +82,7 @@ class Query implements PromiseLike<Result> {
   order() { return this; }
   limit() { return this; }
   is() { return this; }
+  or() { return this; }
   update(payload: Record<string, unknown>) { this.payload = payload; return this; }
   maybeSingle() { return this.run(); }
   single() { return this.run(); }
@@ -79,7 +91,8 @@ class Query implements PromiseLike<Result> {
     const ownerId = this.filters.user_id;
     if (this.payload) {
       harness.writes.push({ table: this.table, ownerId, payload: structuredClone(this.payload) });
-      const data = { ...loadedConfigs.get(`${this.table}:${ownerId}`), ...this.payload, user_id: ownerId };
+      const data = { ...loadedConfigs.get(`${this.table}:${ownerId}`), ...this.payload, user_id: ownerId,
+        ...(this.table === 'email_agent_logs' ? { id: this.filters.id } : {}) };
       this.result = harness.deferWrites
         ? new Promise(resolve => harness.pendingWrites.push({ table: this.table, ownerId, data, done: false, resolve }))
         : Promise.resolve({ data, error: null });
@@ -87,7 +100,10 @@ class Query implements PromiseLike<Result> {
       this.result = harness.defer(this.table, ownerId);
     } else if (this.table === 'voice_settings') {
       this.result = Promise.resolve({ data: null, error: null });
-    } else if (['email_agent_logs', 'agent_chat_messages', 'agent_chat_history'].includes(this.table)) {
+    } else if (this.table === 'email_agent_logs') {
+      const rows = harness.emailLogs.filter(log => log.user_id === ownerId);
+      this.result = Promise.resolve({ data: rows, error: null, count: rows.length });
+    } else if (['agent_chat_messages', 'agent_chat_history'].includes(this.table)) {
       this.result = Promise.resolve({ data: [], error: null, count: 0 });
     } else if (this.table === 'legal_chat_history') {
       const sessionId = this.filters.session_id;
@@ -109,11 +125,19 @@ class Query implements PromiseLike<Result> {
 }
 export const supabase = {
   from: (table: string) => new Query(table),
+  auth: { getSession: async () => ({ data: { session: harness.currentUserId ? {
+    user: { id: harness.currentUserId }, access_token: 'local-fixture-only-token',
+  } : null }, error: null }) },
   functions: {
-    invoke: (name: string, options: { body: { session_id: string; message: string }; signal?: AbortSignal }) => {
+    invoke: (name: string, options: { body: Record<string, unknown>; signal?: AbortSignal }) => {
+      if (['email-agent-send-draft', 'email-agent-reconcile-draft'].includes(name)) {
+        return new Promise<Result>(resolve => harness.emailCalls.push({
+          name, body: structuredClone(options.body), signal: options.signal, done: false, resolve,
+        }));
+      }
       if (name !== 'legal-chat') throw new Error('No provider call authorized in UI ownership fixture');
       return new Promise<Result>(resolve => harness.replies.push({
-        sessionId: options.body.session_id, message: options.body.message,
+        sessionId: String(options.body.session_id), message: String(options.body.message),
         signal: options.signal, done: false, resolve,
       }));
     },

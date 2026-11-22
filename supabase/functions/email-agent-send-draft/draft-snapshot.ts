@@ -105,8 +105,12 @@ function apiHeaders(value: unknown): HeadersMap {
   return result;
 }
 
-async function read(fetcher: typeof fetch, accessToken: string, url: string, limit: number): Promise<Row> {
+export async function read(fetcher: typeof fetch, accessToken: string, url: string, limit: number): Promise<Row> {
   const response=await fetcher(url,{headers:{Authorization:`Bearer ${accessToken}`},signal:AbortSignal.timeout(20_000)});
+  return readResponse(response,limit);
+}
+
+export async function readResponse(response: Response, limit: number): Promise<Row> {
   if(!response.ok||!response.body) fail();
   const reader=response.body.getReader(),chunks:Uint8Array[]=[];
   let length=0;
@@ -152,7 +156,20 @@ export async function readApprovedDraftSnapshot(
   if(draft.id!==draftId||!draft.message||typeof draft.message!=="object") fail();
   const message=draft.message as Row;
   if(message.threadId!==threadId||typeof message.raw!=="string"||!message.raw) fail();
-  const mime=parseMime(utf8(base64Bytes(message.raw,true)));
+  verifyApprovedMessageRaw(message.raw,payload,gmailEmail,parentRfcId);
+  // Gmail drafts.send explicitly accepts id + message.raw. Reusing these exact
+  // validated bytes prevents a later remote edit changing recipients or body.
+  return {raw:message.raw,threadId};
+}
+
+// Shared by the sender and the read-only provider reconciliation path. Neither
+// path weakens MIME/recipient checks or silently removes unsupported content.
+export function verifyApprovedMessageRaw(
+  raw: string, payload: Row, gmailEmail: string, parentRfcId: string, requireFrom = false,
+): void {
+  if(typeof payload.recipient!=="string"||typeof payload.subject!=="string"
+    ||typeof payload.body!=="string") fail();
+  const mime=parseMime(utf8(base64Bytes(raw,true)));
   if(address(one(mime.headers,"to"))!==address(payload.recipient)
     ||decodeHeader(one(mime.headers,"subject"))!==payload.subject
     ||canonicalBody(mime.body)!==canonicalBody(payload.body)
@@ -160,9 +177,6 @@ export async function readApprovedDraftSnapshot(
   const references=one(mime.headers,"references").split(/\s+/);
   if(references.some(value=>hasAsciiControl(value)||!messageId.test(value))||references.at(-1)!==parentRfcId) fail();
   const from=one(mime.headers,"from",false),replyTo=one(mime.headers,"reply-to",false),sender=one(mime.headers,"sender",false);
-  if(from&&address(from)!==address(gmailEmail)||replyTo&&address(replyTo)!==address(gmailEmail)
+  if(requireFrom&&!from||from&&address(from)!==address(gmailEmail)||replyTo&&address(replyTo)!==address(gmailEmail)
     ||sender&&address(sender)!==address(gmailEmail)) fail();
-  // Gmail drafts.send explicitly accepts id + message.raw. Reusing these exact
-  // validated bytes prevents a later remote edit changing recipients or body.
-  return {raw:message.raw,threadId};
 }

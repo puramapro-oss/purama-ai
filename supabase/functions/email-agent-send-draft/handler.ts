@@ -28,9 +28,9 @@ function json(body: unknown, status: number): Response {
 }
 function resultResponse(result: Row): Response {
   if (result.status === "sent" && typeof result.provider_message_id === "string"
-    && result.provider_message_id.trim()) {
+    && result.provider_message_id.trim() && typeof result.matches_current_preview === "boolean") {
     return json({ ok: true, status: "sent", action_id: result.action_id,
-      provider_message_id: result.provider_message_id }, 200);
+      provider_message_id: result.provider_message_id, matches_current_preview: result.matches_current_preview }, 200);
   }
   // Existing UI interprets *any* 2xx as "sent". In-progress/unknown MUST be 409.
   return json({ ok: false, error: "Email not confirmed sent", status: result.status ?? "unknown",
@@ -88,6 +88,17 @@ export function createDraftSender(deps: DraftSenderDependencies): (req: Request)
     if (!input || typeof input.log_id !== "string" || !uuid.test(input.log_id)) {
       return json({ error: "Valid log_id required" }, 400);
     }
+    if (typeof input.user_id !== "string" || !uuid.test(input.user_id) || input.user_id !== userId) {
+      return json({ error: "The displayed account no longer matches the session" }, 403);
+    }
+    const action = input.action ?? "send";
+    if (!["preview", "approve", "send"].includes(String(action))) return json({ error: "Invalid action" }, 400);
+    if (action !== "preview" && (typeof input.approval_id !== "string" || !uuid.test(input.approval_id))) {
+      return json({ error: "Versioned preview approval required", reason: "versioned_approval_required" }, 400);
+    }
+    if (input.feedback != null && (typeof input.feedback !== "string" || input.feedback.length > 4000)) {
+      return json({ error: "Invalid feedback" }, 400);
+    }
     const claimToken = (deps.newClaimToken ?? (() => crypto.randomUUID()))();
     const common: Row = { p_user_id: userId, p_claim_token: claimToken };
     let reserved: Row;
@@ -96,7 +107,21 @@ export function createDraftSender(deps: DraftSenderDependencies): (req: Request)
       if (r.error || !r.data) throw new Error("Durable dispatch unavailable");
       return r.data;
     };
-    try { reserved = await call("email_agent_send_reserve", { ...common, p_log_id: input.log_id }); }
+    if (action === "preview" || action === "approve") {
+      try {
+        const result = await call(action === "preview" ? "email_agent_draft_preview" : "email_agent_draft_approve", {
+          p_user_id: userId, p_log_id: input.log_id,
+          ...(action === "approve" ? { p_approval_id: input.approval_id, p_feedback: input.feedback ?? null } : {}),
+        });
+        if (result.status === (action === "preview" ? "ready" : "approved")) {
+          return json({ ...result, ok: true }, 200);
+        }
+        return resultResponse(result);
+      } catch { return json({ error: "Versioned approval unavailable", status: "unknown" }, 503); }
+    }
+    try { reserved = await call("email_agent_send_reserve", {
+      ...common, p_log_id: input.log_id, p_approval_id: input.approval_id,
+    }); }
     catch { return json({ error: "Durable reservation unavailable", status: "unknown" }, 503); }
     if (reserved.claimed !== true) return resultResponse(reserved);
     if (typeof reserved.action_id !== "string" || !uuid.test(reserved.action_id)

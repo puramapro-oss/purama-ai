@@ -54,10 +54,14 @@ const logId = '00000000-0000-4000-8000-000000000011';
 const replacement = '00000000-0000-4000-8000-000000000012';
 const claimA = '00000000-0000-4000-8000-000000000021';
 const claimB = '00000000-0000-4000-8000-000000000022';
+let approvalId;
 const sourcePaths = [
   'supabase/migrations/20260406210000_email_agent.sql',
   'supabase/migrations/20261122004000_email_agent_send_reservations.sql',
+  'supabase/migrations/20261122020000_email_agent_draft_approvals.sql',
+  'supabase/migrations/20261122021000_email_agent_send_reconciliation.sql',
   'karta/test/emailDraftSendOnce.test.ts',
+  'karta/test/emailDraftReconciliation.test.ts',
 ];
 const authorPins = {
   'supabase/migrations/20260406210000_email_agent.sql': '7665c631663bb6d2c252543d16af553c31a88b1692963b12f22c9da15fb7c458',
@@ -67,7 +71,22 @@ const sources = new Map();
 
 async function scalar(client, sql, values) { return (await client.query(sql, values)).rows[0].value; }
 async function reserve(client, token = claimA, user = owner, id = logId) {
-  return scalar(client, 'SELECT purama_ai.email_agent_send_reserve($1,$2,$3) AS value', [user, id, token]);
+  return scalar(client, 'SELECT purama_ai.email_agent_send_reserve($1,$2,$3,$4) AS value', [user, id, token, approvalId]);
+}
+async function preview(client = coordinator) {
+  const value = await scalar(client, 'SELECT purama_ai.email_agent_draft_preview($1,$2) AS value', [owner, logId]);
+  assert.equal(value.status, 'ready');
+  return value.approval_id;
+}
+async function approve(client, id) {
+  return scalar(client, 'SELECT purama_ai.email_agent_draft_approve($1,$2,$3,$4) AS value', [owner, logId, id, null]);
+}
+async function reconcileContext() {
+  return scalar(coordinator, 'SELECT purama_ai.email_agent_reconcile_context($1,$2) AS value', [owner, logId]);
+}
+async function reconcileFinish(client, context, snapshot, receipt = 'provider-native-fixture-1') {
+  return scalar(client, 'SELECT purama_ai.email_agent_reconcile_finish($1,$2,$3,$4,$5,$6,$7,$8) AS value',
+    [owner, context.action_id, context.dispatch_updated_at, snapshot.gmail_email, snapshot.stamp, receipt, 'a'.repeat(64), Date.now()]);
 }
 async function connectionSnapshot() {
   return (await coordinator.query('SELECT gmail_email,updated_at::text AS stamp FROM purama_ai.email_agent_config WHERE user_id=$1', [owner])).rows[0];
@@ -92,9 +111,11 @@ async function insertLog(id = logId) {
     VALUES($1,$2,'incoming-1','thread-1','draft-1','recipient@example.invalid','faq','draft','Approved body','Re: Approved subject',true,clock_timestamp())`, [id, owner]);
 }
 async function reset() {
-  await coordinator.query('TRUNCATE purama_ai.email_agent_dispatches,purama_ai.email_agent_logs,purama_ai.email_agent_config,purama_ai.email_agent_memory');
+  await coordinator.query('TRUNCATE purama_ai.email_agent_dispatches,purama_ai.email_agent_draft_previews,purama_ai.email_agent_logs,purama_ai.email_agent_config,purama_ai.email_agent_memory');
   await coordinator.query("INSERT INTO purama_ai.email_agent_config(user_id,gmail_email) VALUES($1,'owner@example.invalid'),($2,'other@example.invalid')", [owner, other]);
   await insertLog();
+  approvalId = await preview();
+  assert.equal((await approve(coordinator, approvalId)).status, 'approved');
 }
 async function waitForLock(pid) {
   const deadline = Date.now() + 4000;
@@ -204,8 +225,9 @@ async function main() {
     CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$
       SELECT NULLIF(current_setting('request.jwt.claim.sub',true),'')::uuid $$;`);
   await coordinator.query('INSERT INTO auth.users(id) VALUES($1),($2)', [owner, other]);
-  await coordinator.query(sources.get(sourcePaths[0]).toString('utf8'));
-  await coordinator.query(sources.get(sourcePaths[1]).toString('utf8'));
+  for (const path of sourcePaths.filter(path => path.endsWith('.sql'))) {
+    await coordinator.query(sources.get(path).toString('utf8'));
+  }
   await Promise.all([first.query('SET ROLE service_role'), second.query('SET ROLE service_role')]);
 
   await check('two independent concurrent reservations admit exactly one owner claim', async () => {
@@ -311,6 +333,12 @@ async function main() {
           ['reserve', () => reserve(coordinator)],
           ['begin', () => begin(coordinator, reserved.action_id, cfg)],
           ['finish', () => finish(coordinator, reserved.action_id)],
+          ['preview read', () => coordinator.query('SELECT * FROM purama_ai.email_agent_draft_previews')],
+          ['preview', () => preview(coordinator)],
+          ['approve', () => approve(coordinator, approvalId)],
+          ['reconcile context', () => reconcileContext()],
+          ['reconcile finish', () => reconcileFinish(coordinator,
+            { action_id: reserved.action_id, dispatch_updated_at: new Date().toISOString() }, cfg)],
         ];
         for (const [operation, call] of operations) {
           let code;
@@ -335,6 +363,116 @@ async function main() {
     const observed = await counters();
     assert.deepEqual(observed, { dispatches: 1, total_auto_replied: 0, auto_reply_logs: 0 });
     return { prior_reservation: again, begin: blocked, counters: observed };
+  });
+  await check('the previous unversioned contract cannot reserve and private internals stay inaccessible', async () => {
+    const result = await scalar(first, 'SELECT purama_ai.email_agent_send_reserve($1,$2,$3) AS value', [owner, logId, claimA]);
+    assert.equal(result.claimed, false);
+    assert.equal(result.reason, 'versioned_approval_required');
+    let code;
+    try { await scalar(first, 'SELECT purama_ai.email_agent_send_reserve_unversioned_internal($1,$2,$3) AS value', [owner, logId, claimA]); }
+    catch (error) { code = error.code; }
+    assert.equal(code, '42501');
+    assert.equal((await counters()).dispatches, 0);
+    return { result, private_internal_denial: code };
+  });
+  await check('concurrent approval binds one immutable preview without sending', async () => {
+    const id = await preview();
+    const result = await race(c => approve(c, id), c => approve(c, id));
+    assert.equal(result.first.status, 'approved');
+    assert.equal(result.second.status, 'approved');
+    const binding = (await coordinator.query(`SELECT l.feedback_at=p.approved_at AS exact_binding
+      FROM purama_ai.email_agent_logs l JOIN purama_ai.email_agent_draft_previews p ON p.log_id=l.id WHERE p.id=$1`, [id])).rows[0];
+    assert.equal(binding.exact_binding, true);
+    assert.equal((await counters()).dispatches, 0);
+    return { ...result, binding };
+  });
+  await check('a changed preview and an expired approval cannot cross the send boundary', async () => {
+    await coordinator.query("UPDATE purama_ai.email_agent_logs SET ai_response='changed after approval' WHERE id=$1", [logId]);
+    const stale = await reserve(first);
+    assert.equal(stale.claimed, false);
+    assert.equal((await counters()).dispatches, 0);
+    approvalId = await preview();
+    assert.equal((await approve(coordinator, approvalId)).status, 'approved');
+    const reserved = await reserve(first);
+    assert.equal(reserved.claimed, true);
+    await coordinator.query("UPDATE purama_ai.email_agent_draft_previews SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1", [approvalId]);
+    const blocked = await begin(first, reserved.action_id, await connectionSnapshot());
+    assert.equal(blocked.status, 'blocked');
+    assert.equal(blocked.reason, 'versioned_approval_changed');
+    assert.deepEqual(await counters(), { dispatches: 1, total_auto_replied: 0, auto_reply_logs: 0 });
+    return { stale, expired: blocked };
+  });
+  await check('two native reconciliation sessions persist one receipt and one counter increment', async () => {
+    const reserved = await reserve(coordinator);
+    await begin(coordinator, reserved.action_id, await connectionSnapshot());
+    await finish(coordinator, reserved.action_id, 'unknown');
+    const context = await reconcileContext(), cfg = await connectionSnapshot();
+    assert.equal(context.eligible, true);
+    const result = await race(c => reconcileFinish(c, context, cfg), c => reconcileFinish(c, context, cfg));
+    assert.equal(result.first.status, 'sent');
+    assert.equal(result.second.status, 'sent');
+    assert.equal(result.first.matches_current_preview, true);
+    assert.deepEqual(await counters(), { dispatches: 1, total_auto_replied: 1, auto_reply_logs: 1 });
+    const proof = (await coordinator.query('SELECT reconciliation_proof FROM purama_ai.email_agent_dispatches WHERE id=$1', [reserved.action_id])).rows[0];
+    assert.equal(proof.reconciliation_proof.source, 'gmail_messages_get');
+    return { ...result, proof, counters: await counters() };
+  });
+  await check('an A to B to A Gmail reconnection invalidates the reserved preview version', async () => {
+    const reserved = await reserve(coordinator), previous = await connectionSnapshot();
+    assert.equal(reserved.claimed, true);
+    await coordinator.query("UPDATE purama_ai.email_agent_config SET gmail_email='replacement@example.invalid' WHERE user_id=$1", [owner]);
+    await coordinator.query("UPDATE purama_ai.email_agent_config SET gmail_email='owner@example.invalid' WHERE user_id=$1", [owner]);
+    const current = await connectionSnapshot();
+    assert.notEqual(current.stamp, previous.stamp);
+    const blocked = await begin(first, reserved.action_id, current);
+    assert.equal(blocked.status, 'blocked');
+    assert.equal(blocked.reason, 'gmail_connection_changed');
+    assert.equal(blocked.claimed, false);
+    assert.deepEqual(await counters(), { dispatches: 1, total_auto_replied: 0, auto_reply_logs: 0 });
+    return { blocked, previous_version: previous.stamp, current_version: current.stamp };
+  });
+  await check('sender completion racing reconciliation cannot double the receipt or counter', async () => {
+    const reserved = await reserve(coordinator);
+    await begin(coordinator, reserved.action_id, await connectionSnapshot());
+    await coordinator.query("UPDATE purama_ai.email_agent_dispatches SET dispatch_started_at=clock_timestamp()-interval '3 minutes' WHERE id=$1", [reserved.action_id]);
+    const context = await reconcileContext(), cfg = await connectionSnapshot();
+    assert.equal(context.eligible, true);
+    const result = await race(c => reconcileFinish(c, context, cfg), c => finish(c, reserved.action_id));
+    assert.equal(result.first.status, 'sent');
+    assert.equal(result.second.status, 'sent');
+    assert.deepEqual(await counters(), { dispatches: 1, total_auto_replied: 1, auto_reply_logs: 1 });
+    return { ...result, counters: await counters() };
+  });
+  await check('reconciliation preserves a later refusal and its timestamp without a body edit', async () => {
+    const reserved = await reserve(coordinator);
+    await begin(coordinator, reserved.action_id, await connectionSnapshot());
+    await finish(coordinator, reserved.action_id, 'unknown');
+    const context = await reconcileContext(), cfg = await connectionSnapshot();
+    await coordinator.query(`UPDATE purama_ai.email_agent_logs SET user_approved=false,
+      user_feedback='Do not approve a retry',feedback_at='2026-11-22T01:23:45.123Z' WHERE id=$1`, [logId]);
+    const result = await reconcileFinish(first, context, cfg);
+    assert.equal(result.status, 'sent');
+    assert.equal(result.matches_current_preview, true);
+    const item = (await coordinator.query(`SELECT user_approved,user_feedback,
+      feedback_at='2026-11-22T01:23:45.123Z'::timestamptz AS exact_timestamp
+      FROM purama_ai.email_agent_logs WHERE id=$1`, [logId])).rows[0];
+    assert.deepEqual(item, { user_approved: false, user_feedback: 'Do not approve a retry', exact_timestamp: true });
+    assert.deepEqual(await counters(), { dispatches: 1, total_auto_replied: 1, auto_reply_logs: 1 });
+    return { result, item };
+  });
+  await check('reconciliation preserves a later edit and never approves the new draft', async () => {
+    const reserved = await reserve(coordinator);
+    await begin(coordinator, reserved.action_id, await connectionSnapshot());
+    await finish(coordinator, reserved.action_id, 'unknown');
+    const context = await reconcileContext(), cfg = await connectionSnapshot();
+    await coordinator.query("UPDATE purama_ai.email_agent_logs SET ai_response='new draft',user_approved=false WHERE id=$1", [logId]);
+    const result = await reconcileFinish(first, context, cfg);
+    assert.equal(result.status, 'sent');
+    assert.equal(result.matches_current_preview, false);
+    const item = (await coordinator.query('SELECT ai_response,action_taken,user_approved FROM purama_ai.email_agent_logs WHERE id=$1', [logId])).rows[0];
+    assert.deepEqual(item, { ai_response: 'new draft', action_taken: 'draft', user_approved: false });
+    assert.deepEqual(await counters(), { dispatches: 1, total_auto_replied: 1, auto_reply_logs: 0 });
+    return { result, item };
   });
   for (const source of report.sources) assert.equal(hash(await readFile(join(repo, source.path))), source.sha256, `Source changed during native run: ${source.path}`);
   report.sources_unchanged_after = true;

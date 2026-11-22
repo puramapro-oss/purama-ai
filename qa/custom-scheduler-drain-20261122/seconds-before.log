@@ -1,0 +1,69 @@
+
+ RUN  v5.0.3 /workspace/scratch/dcfb234e0a8f/iao-work/karta
+
+ ❯ test/customSchedulerDrain.test.ts (12 tests | 2 failed) 63ms
+   ❯ custom scheduler stable delivery and producer drain (10)
+     × keeps six distinct deliveries for a valid ten-second cron schedule 9ms
+     × keeps a six-field tick stable when its callback is delayed across a minute boundary 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > keeps six distinct deliveries for a valid ten-second cron schedule
+AssertionError: expected [ …(6) ] to deeply equal [ …(6) ]
+
+- Expected
++ Received
+
+  [
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:00",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:10",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:20",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:30",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:40",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:50",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+  ]
+
+ ❯ test/customSchedulerDrain.test.ts:97:69
+     95|     for (const second of seconds) await timer.callback(context(`2026-1…
+     96|     await controller.stop();
+     97|     expect(state.enqueue.mock.calls.map(call => call[1].dedupeKey)).to…
+       |                                                                     ^
+     98|       `cron|custom:custom-drain|user-drain|2026-11-22T08:00:${second}`…
+     99|     expect(new Set(state.enqueue.mock.calls.map(call => call[1].dedupe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > keeps a six-field tick stable when its callback is delayed across a minute boundary
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:50",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00:50",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+  ]
+
+ ❯ test/customSchedulerDrain.test.ts:113:69
+    111|     await timer.callback(context("2026-11-22T08:00:50.000Z"));
+    112|     await controller.stop();
+    113|     expect(state.enqueue.mock.calls.map(call => call[1].dedupeKey)).to…
+       |                                                                     ^
+    114|       "cron|custom:custom-drain|user-drain|2026-11-22T08:00:50",
+    115|       "cron|custom:custom-drain|user-drain|2026-11-22T08:00:50",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 10 passed (12)
+   Start at  01:04:15
+   Duration  296ms (tests 41%, transform 39%, import 14%, setup 4%, worker 3%)
