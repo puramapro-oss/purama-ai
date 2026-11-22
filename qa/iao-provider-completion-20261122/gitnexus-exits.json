@@ -1,0 +1,36 @@
+[
+  {
+    "name": "gitnexus-staged",
+    "command": [
+      "node",
+      "--max-old-space-size=512",
+      "/tmp/iao-gitnexus-tools/node_modules/gitnexus/dist/cli/index.js",
+      "detect_changes",
+      "--scope",
+      "staged",
+      "--repo",
+      "iao-completion-20261122",
+      "--limit",
+      "200"
+    ],
+    "exit_status": 0
+  },
+  {
+    "name": "gitnexus-compare-main",
+    "command": [
+      "node",
+      "--max-old-space-size=512",
+      "/tmp/iao-gitnexus-tools/node_modules/gitnexus/dist/cli/index.js",
+      "detect_changes",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "main",
+      "--repo",
+      "iao-completion-20261122",
+      "--limit",
+      "60"
+    ],
+    "exit_status": 0
+  }
+]

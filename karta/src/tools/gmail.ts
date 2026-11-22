@@ -2,7 +2,9 @@ import { supabase } from "../db/supabase.js";
 import { config } from "../config.js";
 import { decryptGmailToken, encryptGmailToken } from "../lib/gmail-token-crypto.js";
 import type { ToolDefinition } from "../engine/types.js";
+import { assertToolResult } from "../engine/tool-result.js";
 import { extractGmailPlainText, gmailHeader, readBoundedGmailJson, type GmailBodyContent } from "./gmail-message.js";
+import { createProviderDeadline, requestProviderJson, type ProviderDeadline } from "./provider-http.js";
 
 interface EmailAgentConfigRow {
   id: string;
@@ -19,6 +21,7 @@ const SYNC_OVERLAP_MS = 2 * 60 * 1000;
 const DAILY_SEND_LIMIT = 400;
 const HEADER_BREAK = /[\r\n]/;
 const GMAIL_CREDENTIAL_TIMEOUT_MS = 20_000;
+const GMAIL_ACTION_TIMEOUT_MS = 40_000;
 
 function usableGmailToken(value: unknown): value is string {
   return typeof value === "string" && value.length > 0 && value.length <= 16_384
@@ -28,35 +31,7 @@ function usableGmailToken(value: unknown): value is string {
 // The Edge OAuth handler uses the same total-deadline/CAS contract. Keep this
 // adapter inside the Node package: its build cannot import Edge runtime files.
 function gmailCredentialDeadline() {
-  const controller = new AbortController();
-  const endsAt = performance.now() + GMAIL_CREDENTIAL_TIMEOUT_MS;
-  const error = new Error("Délai de connexion Gmail dépassé");
-  let failure: Error | undefined;
-  let closed = false;
-  let rejectDeadline!: (reason: Error) => void;
-  const stopped = new Promise<never>((_, reject) => { rejectDeadline = reject; });
-  void stopped.catch(() => {});
-  const expire = () => {
-    if (closed || failure) return;
-    failure = error; controller.abort(); rejectDeadline(error);
-  };
-  const timer = setTimeout(expire, GMAIL_CREDENTIAL_TIMEOUT_MS);
-  const check = () => {
-    if (performance.now() >= endsAt) expire();
-    if (failure) throw failure;
-    if (closed) throw new Error("Connexion Gmail terminée");
-  };
-  return {
-    signal: controller.signal,
-    active: () => !closed && !failure && performance.now() < endsAt,
-    check,
-    async wait<T>(operation: () => PromiseLike<T>): Promise<T> {
-      check();
-      const result = await Promise.race([operation(), stopped]);
-      check(); return result;
-    },
-    close: () => { closed = true; clearTimeout(timer); controller.abort(); },
-  };
+  return createProviderDeadline(GMAIL_CREDENTIAL_TIMEOUT_MS, "Délai de connexion Gmail dépassé");
 }
 
 function cancelGmailCredentialBody(body: { cancel(): Promise<unknown> } | null | undefined): void {
@@ -128,8 +103,8 @@ function assertMessageInput(to: string, subject: string, body: string): void {
 }
 
 /** Rafraîchit et retourne un access token Gmail valide pour ce user, ou null si OAuth jamais complété. */
-export async function getGmailAccessToken(userId: string): Promise<string | null> {
-  const deadline = gmailCredentialDeadline();
+export async function getGmailAccessToken(userId: string, inheritedDeadline?: ProviderDeadline): Promise<string | null> {
+  const deadline = inheritedDeadline ?? gmailCredentialDeadline();
   try {
     const { data, error } = await deadline.wait(async () => await supabase
       .from("email_agent_config")
@@ -197,7 +172,7 @@ export async function getGmailAccessToken(userId: string): Promise<string | null
     if (updateError) throw new Error("Persistance de connexion Gmail indisponible");
     if (written?.id !== data.id) throw new Error("Connexion Gmail modifiée : recharger avant de réessayer");
     return refreshed.access_token;
-  } finally { deadline.close(); }
+  } finally { if (!inheritedDeadline) deadline.close(); }
 }
 
 export interface GmailMessageSummary extends GmailBodyContent {
@@ -348,22 +323,29 @@ export const gmailCreateDraftTool: ToolDefinition<
     assertMessageInput(params.to, params.subject, params.body);
     assertGmailId(params.threadId);
     assertReplyInput(params, ctx.agentType === "email" || ctx.agentType === "repondeur-intelligent");
-
-    const accessToken = await getGmailAccessToken(ctx.userId);
-    if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
-
-    const reply = await gmailReplyHeaders(params, accessToken);
-    const raw = buildRawEmail(params.to, params.subject, params.body, reply);
-    const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/drafts", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ message: { threadId: params.threadId, raw } }),
-    });
-
-    if (!response.ok) throw new Error(`Gmail create draft échoué (${response.status}): ${await response.text()}`);
-    const created = (await response.json()) as { id?: unknown };
-    if (typeof created.id !== "string" || !created.id) throw new Error("Réponse Gmail draft invalide");
-    return { draftId: created.id };
+    const deadline = createProviderDeadline(GMAIL_ACTION_TIMEOUT_MS, "Délai de l’action Gmail dépassé");
+    let postStarted = false;
+    try {
+      const accessToken = await getGmailAccessToken(ctx.userId, deadline);
+      if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
+      const reply = await gmailReplyHeaders(params, accessToken, deadline);
+      const raw = buildRawEmail(params.to, params.subject, params.body, reply);
+      const body = JSON.stringify({ message: { threadId: params.threadId, raw } });
+      deadline.check();
+      postStarted = true;
+      const created = await requestProviderJson("https://gmail.googleapis.com/gmail/v1/users/me/drafts", {
+        method: "POST", headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" }, body,
+      }, deadline, 64 * 1024);
+      if (!created || typeof created !== "object" || Array.isArray(created)) throw new Error("Reçu Gmail invalide");
+      assertToolResult(created);
+      const id = (created as Record<string, unknown>).id;
+      assertGmailId(id);
+      deadline.check();
+      return { draftId: id };
+    } catch (error) {
+      if (postStarted) throw new Error("Brouillon Gmail non confirmé : vérifier son état avant toute reprise");
+      throw error;
+    } finally { deadline.close(); }
   },
 };
 
@@ -400,16 +382,20 @@ function singleMailbox(value: string): string {
 }
 
 /** Resolve reply headers from this user's mailbox, never from model-supplied RFC headers. */
-async function gmailReplyHeaders(params: GmailReplyInput & { to: string; subject: string }, accessToken: string): Promise<GmailReplyHeaders | undefined> {
+async function gmailReplyHeaders(
+  params: GmailReplyInput & { to: string; subject: string }, accessToken: string, deadline: ProviderDeadline,
+): Promise<GmailReplyHeaders | undefined> {
+  deadline.check();
   assertReplyInput(params);
   if (!params.threadId) return undefined;
   const headersQuery = "format=full";
   const url = params.replyToMessageId
     ? `https://gmail.googleapis.com/gmail/v1/users/me/messages/${encodeURIComponent(params.replyToMessageId)}?${headersQuery}`
     : `https://gmail.googleapis.com/gmail/v1/users/me/threads/${encodeURIComponent(params.threadId)}?${headersQuery}`;
-  const response = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(20_000) });
-  if (!response.ok) throw new Error(`Parent Gmail illisible (${response.status})`);
-  const value = await readBoundedGmailJson(response) as { id?: unknown; threadId?: unknown; payload?: unknown; messages?: Array<{ id?: unknown; threadId?: unknown; payload?: unknown }> };
+  const value = await requestProviderJson(url, { headers: { Authorization: `Bearer ${accessToken}` } }, deadline, 2 * 1024 * 1024) as {
+    id?: unknown; threadId?: unknown; payload?: unknown; messages?: Array<{ id?: unknown; threadId?: unknown; payload?: unknown }>;
+  };
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Parent Gmail invalide");
   let parent = value;
   if (!params.replyToMessageId) {
     // Preserve legacy single-message replies without guessing among multiple parents.
@@ -457,39 +443,47 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
   async execute(params, ctx) {
     assertMessageInput(params.to, params.subject, params.body);
     assertReplyInput(params, ctx.agentType === "email" || ctx.agentType === "repondeur-intelligent");
-
-    const accessToken = await getGmailAccessToken(ctx.userId);
-    if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
-
-    const reply = await gmailReplyHeaders(params, accessToken);
-    // On ne consomme une réservation qu'une fois l'authentification réellement disponible.
-    await assertUnderDailySendLimit(ctx.userId);
-    const raw = buildRawEmail(params.to, params.subject, params.body, reply);
-    const response = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ raw, ...(params.threadId ? { threadId: params.threadId } : {}) }),
-    });
-
-    if (!response.ok) throw new Error(`Gmail send échoué (${response.status}): ${await response.text()}`);
-    const sent = (await response.json()) as { id?: unknown };
-    if (typeof sent.id !== "string" || !sent.id) throw new Error("Réponse Gmail send invalide");
-    return { messageId: sent.id };
+    const deadline = createProviderDeadline(GMAIL_ACTION_TIMEOUT_MS, "Délai de l’action Gmail dépassé");
+    let postStarted = false;
+    try {
+      const accessToken = await getGmailAccessToken(ctx.userId, deadline);
+      if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
+      const reply = await gmailReplyHeaders(params, accessToken, deadline);
+      // Keep a possibly consumed reservation after an uncertain result. Refunding
+      // or retrying cannot prove that the provider did not accept the message.
+      await assertUnderDailySendLimit(ctx.userId, deadline);
+      const raw = buildRawEmail(params.to, params.subject, params.body, reply);
+      const body = JSON.stringify({ raw, ...(params.threadId ? { threadId: params.threadId } : {}) });
+      deadline.check();
+      postStarted = true;
+      const sent = await requestProviderJson("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
+        method: "POST", headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" }, body,
+      }, deadline, 64 * 1024);
+      if (!sent || typeof sent !== "object" || Array.isArray(sent)) throw new Error("Reçu Gmail invalide");
+      assertToolResult(sent);
+      const id = (sent as Record<string, unknown>).id;
+      assertGmailId(id);
+      deadline.check();
+      return { messageId: id };
+    } catch (error) {
+      if (postStarted) throw new Error("Envoi Gmail non confirmé : vérifier son état avant toute reprise");
+      throw error;
+    } finally { deadline.close(); }
   },
 };
 
 /** Réservation atomique : deux workers concurrents ne peuvent plus dépasser le plafond. */
-async function assertUnderDailySendLimit(userId: string): Promise<void> {
+async function assertUnderDailySendLimit(userId: string, deadline: ProviderDeadline): Promise<void> {
   const today = new Date().toISOString().slice(0, 10);
-  const { data, error } = await supabase.rpc("karta_reserve_daily_counter", {
+  const { data, error } = await deadline.wait(() => supabase.rpc("karta_reserve_daily_counter", {
     p_user_id: userId,
     p_counter_key: "gmail_send",
     p_day: today,
     p_limit: DAILY_SEND_LIMIT,
-  });
+  }).abortSignal(deadline.signal));
 
-  if (error) throw new Error(`Réservation du quota Gmail impossible: ${error.message}`);
-  if (typeof data !== "number" || data < 1 || data > DAILY_SEND_LIMIT) {
+  if (error) throw new Error("Réservation du quota Gmail impossible");
+  if (typeof data !== "number" || !Number.isSafeInteger(data) || data < 1 || data > DAILY_SEND_LIMIT) {
     throw new Error(`Limite quotidienne d'envoi Gmail atteinte (${DAILY_SEND_LIMIT}/jour, anti-ban) — réessaie demain`);
   }
 }

@@ -51,7 +51,7 @@ vi.mock("../src/db/supabase.js", async () => {
   }) };
 });
 
-const { getGmailAccessToken } = await import("../src/tools/gmail.js");
+const { getGmailAccessToken, gmailCreateDraftTool } = await import("../src/tools/gmail.js");
 const { encryptGmailToken, decryptGmailToken } = await import("../src/lib/gmail-token-crypto.js");
 const owner = "00000000-0000-4000-8000-000000000001";
 const rowId = "00000000-0000-4000-8000-000000000011";
@@ -81,6 +81,48 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("Gmail credential refresh keeps its original connection", () => {
+  it.each([
+    ["completes within the inherited budget", 12_000, 8_000, true],
+    ["does not reset the inherited budget after refresh", 15_000, 15_000, false],
+  ] as const)("%s through profile, guarded persistence, parent and draft", async (_name, oauthDelay, parentDelay, succeeds) => {
+    vi.useFakeTimers();
+    const parent = { id: "parent-1", threadId: "thread-1", payload: {
+      mimeType: "text/plain", headers: [
+        { name: "From", value: "camille@example.invalid" },
+        { name: "Subject", value: "Question" },
+        { name: "Message-ID", value: "<parent@example.invalid>" },
+      ], body: { size: 7, data: Buffer.from("Bonjour").toString("base64url") },
+    } };
+    provider.mockImplementation(async (input: string | URL | Request, init?: RequestInit) => {
+      expect(init?.signal?.aborted).toBe(false);
+      const url = String(input);
+      const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+      if (url.endsWith("/token")) { await delay(oauthDelay); return tokenResponse(); }
+      if (url.endsWith("/profile")) { await delay(oauthDelay); return profileResponse(); }
+      if (url.includes("/messages/parent-1?")) { await delay(parentDelay); return Response.json(parent); }
+      if (url.endsWith("/drafts")) return Response.json({ id: "draft-after-refresh" });
+      throw new Error("Unexpected provider fixture URL");
+    });
+    const outcome = gmailCreateDraftTool.execute({ to: "camille@example.invalid", subject: "Question", body: "Réponse",
+      threadId: "thread-1", replyToMessageId: "parent-1" }, { userId: owner, agentType: "email", mode: "live" })
+      .then(value => ({ value, error: undefined }), error => ({ value: undefined, error: error as Error }));
+    await vi.advanceTimersByTimeAsync(40_001);
+    const observed = await outcome;
+    if (succeeds) {
+      expect(observed).toEqual({ value: { draftId: "draft-after-refresh" }, error: undefined });
+    } else {
+      expect(observed.value).toBeUndefined();
+      expect(observed.error?.message).toMatch(/Délai/);
+    }
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(state.writes).toHaveLength(1);
+    expect(decryptGmailToken(state.row!.gmail_access_token!)).toBe("fresh-access-token");
+    expect(provider.mock.calls.filter(([url]) => String(url).endsWith("/drafts"))).toHaveLength(succeeds ? 1 : 0);
+    const signal = (provider.mock.calls[0]![1] as RequestInit).signal;
+    for (const [, init] of provider.mock.calls) expect(init?.signal).toBe(signal);
+    expect(signal?.aborted).toBe(true);
+  });
+
   it("keeps the disconnected and valid cached-token contracts", async () => {
     state.row = null;
     await expect(getGmailAccessToken(owner)).resolves.toBeNull();
