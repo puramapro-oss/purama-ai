@@ -1,7 +1,8 @@
 import http from "node:http";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import type { IaoCompletionPort, IaoContextPack } from "../iao/kartaRuntimePort.js";
+import { types } from "node:util";
+import type { IaoCompletionPort, IaoContextPack, IaoContextSource } from "../iao/kartaRuntimePort.js";
 
 export type LocalComputeFabricProviderOptions = Readonly<{ socketPath?: string; timeoutMs?: number; maxContextChars?: number }>;
 const DEFAULT_SOCKET = join(homedir(), ".local/share/purama-engines/compute-fabric.sock");
@@ -40,7 +41,7 @@ export function buildMemoryPrompt(context: IaoContextPack, message: string, maxC
   if (message.length > MAX_MESSAGE_CHARS) throw new Error("memory-denied:compute-fabric-input");
   let remaining = Math.max(0, maxContextChars);
   const selected: string[] = [];
-  for (const source of [...context.sources].filter((item) => item.authorized && item.sensitivity === "normal").sort((a, b) => b.relevance - a.relevance)) {
+  for (const source of memorySources(context).filter((item) => item.authorized === true && item.sensitivity === "normal").sort((a, b) => b.relevance - a.relevance)) {
     if (remaining <= 0) break;
     const text = source.text.slice(0, remaining);
     if (text) { selected.push(text); remaining -= text.length; }
@@ -51,6 +52,47 @@ export function buildMemoryPrompt(context: IaoContextPack, message: string, maxC
     "<authorized_memory_json>", JSON.stringify(selected), "</authorized_memory_json>",
     "<user_message>", message, "</user_message>",
   ].join("\n");
+}
+
+/** The injected memory port must return passive data, not executable object behavior. */
+function memorySources(context: unknown): IaoContextSource[] {
+  const sources = ownData(memoryRecord(context), "sources");
+  if (typeof sources !== "object" || sources === null || types.isProxy(sources) || !Array.isArray(sources) ||
+    Object.getPrototypeOf(sources) !== Array.prototype || Object.hasOwn(sources, Symbol.iterator)) {
+    throw new Error("memory-denied:compute-fabric-input");
+  }
+  const result: IaoContextSource[] = [];
+  // Index descriptors avoid invoking an iterator or an accessor, including in a sparse array.
+  // Validate the entire pack before sorting/truncating so a late malformed record cannot be hidden.
+  for (let index = 0; index < sources.length; index++) {
+    const record = memoryRecord(ownData(sources, String(index)));
+    const text = ownData(record, "text");
+    const authorized = ownData(record, "authorized");
+    const sensitivity = ownData(record, "sensitivity");
+    const relevance = ownData(record, "relevance");
+    if (typeof text !== "string" || typeof authorized !== "boolean" || typeof relevance !== "number" || !Number.isFinite(relevance) ||
+      (sensitivity !== "normal" && sensitivity !== "personal" && sensitivity !== "finance" && sensitivity !== "health")) {
+      throw new Error("memory-denied:compute-fabric-input");
+    }
+    result.push({ text, authorized, sensitivity, relevance });
+  }
+  return result;
+}
+
+function memoryRecord(value: unknown): object {
+  // Check proxies before reflection: even getPrototypeOf/getOwnPropertyDescriptor can execute a trap.
+  if (typeof value !== "object" || value === null || types.isProxy(value)) {
+    throw new Error("memory-denied:compute-fabric-input");
+  }
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) throw new Error("memory-denied:compute-fabric-input");
+  return value;
+}
+
+function ownData(value: object, key: string): unknown {
+  const descriptor = Object.getOwnPropertyDescriptor(value, key);
+  if (!descriptor || !Object.hasOwn(descriptor, "value")) throw new Error("memory-denied:compute-fabric-input");
+  return descriptor.value;
 }
 
 type FabricRequest = {
