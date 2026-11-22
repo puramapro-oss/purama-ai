@@ -1,0 +1,33 @@
+{
+  "source_root": "/workspace/scratch/ccfbf7e5800b/purama-ai",
+  "files": [
+    {
+      "path": "supabase/functions/social-publish-scheduled/handler.ts",
+      "sha256": "b3174a112e0c569a90c9d79cc9d67298ee3a639c14699aed15835a00ea2131f2"
+    },
+    {
+      "path": "supabase/functions/_shared/social-publish-core.ts",
+      "sha256": "8d42350d7fefbdb9d1ab00c979e0003950a190db05594a4e95cec49dd5a16256"
+    },
+    {
+      "path": "supabase/functions/_shared/social-publish-store.ts",
+      "sha256": "9d3fd2a91541f171ec7f29be71ac21c5c55acc8885002d80605c83543f7fd7b7"
+    },
+    {
+      "path": "supabase/functions/_shared/social-publish-reconcile.ts",
+      "sha256": "c3de56c4e3add5d2a932461e0417202be2295c2a2efa88bfcf0bfba625afe8f0"
+    },
+    {
+      "path": "supabase/functions/_shared/zernio.ts",
+      "sha256": "7575dcae5d8e97c290ed3163c31b2b5a14f437e618dc9ffba1ed70fd59dd12c8"
+    },
+    {
+      "path": "tests/social-publish/scheduled.test.ts",
+      "sha256": "ec7ae793e39a2b1f19b7e0b13db36debede47f97190f907f6983e653c28689a8"
+    },
+    {
+      "path": "tests/social-publish/fake-db.ts",
+      "sha256": "27ef1dd05369e28d790cc7214071b16bd90e58b1e7ec10dc39f77646fc1bbe43"
+    }
+  ]
+}

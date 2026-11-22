@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "capture": "Qualification locale avant publication de la PR ; les états CI ultérieurs sont à consulter dans la PR.",
+  "captured_at_utc": "2026-11-22T23:17:32.489327+00:00",
+  "user_timezone": "Europe/Paris",
+  "repository": "puramapro-oss/purama-ai",
+  "branch": "fix/social-publish-reliability-20261123",
+  "source_base": "5a01da79e810c8f4a900ebc95ae544006b9333d6",
+  "overall_status": "PARTIEL",
+  "local_behaviour_status": "PASS",
+  "runtime": "Node 24 avec adaptateur Deno.test ; aucune exécution Deno native dans cette qualification locale.",
+  "composition": {
+    "status": "PASS",
+    "total": 124,
+    "passed": 124,
+    "failed": 0,
+    "exit_code": 0,
+    "started_at_utc": "2026-11-22T23:13:08.861168+00:00",
+    "ended_at_utc": "2026-11-22T23:13:09.896310+00:00",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "--experimental-transform-types",
+      "--test",
+      "--test-concurrency=1",
+      "/workspace/scratch/2c704d52ca75/work/run-social-composed.mjs"
+    ],
+    "cwd": "/workspace/scratch/2c704d52ca75/work/purama-social-fairness",
+    "files": [
+      "tests/social-publish/client-intent.test.ts",
+      "tests/social-publish/provider.test.ts",
+      "tests/social-publish/publish.test.ts",
+      "tests/social-publish/scheduled.test.ts",
+      "tests/social-connection/connection.test.ts",
+      "tests/social-management/handlers.test.ts"
+    ],
+    "log": "composed-node.log",
+    "receipt": "composed-node-exit.json",
+    "runner_source": "run-social-composed.mjs.txt",
+    "source_hashes_stable_before_after": true,
+    "source_sha256": {
+      "supabase/functions/_shared/zernio.ts": "ac5de6d77263950cf1a8f357abe33a4decd66ffcc11f67b3bd9843ce57e9ded7",
+      "supabase/functions/social-publish-scheduled/handler.ts": "1e8ecf245cd1f71168ede7c510e7fbdd47457dc1b4505507786c4f2cd93899c9",
+      "tests/social-publish/provider.test.ts": "41e5387d9f475db7f43f0d606fede1471f549a1c280bc6c2b2a499534379fd64",
+      "tests/social-publish/scheduled.test.ts": "4bfc95e133b433c54ae4640a4b401b104ae1fc819d3cf9fb9158652ac017dcc8"
+    },
+    "counting_rule": "Les 19 tests scheduler et les 21 tests provider font partie des 124 ; ne pas les additionner."
+  },
+  "targeted_checks": {
+    "scheduler_baseline": {
+      "status": "PASS",
+      "meaning": "Défaut reproduit sur le handler original avec les scénarios supplémentaires.",
+      "total": 19,
+      "passed": 15,
+      "failed": 4,
+      "exit_code": 1,
+      "receipt": "scheduler-red-r2-exit.json",
+      "log": "scheduler-red-r2.log"
+    },
+    "scheduler_candidate": {
+      "status": "PASS",
+      "total": 19,
+      "passed": 19,
+      "failed": 0,
+      "exit_code": 0,
+      "receipt": "scheduler-green-final-exit.json",
+      "log": "scheduler-green-final.log",
+      "included_in_composition": true
+    },
+    "provider_baseline": {
+      "status": "PASS",
+      "meaning": "Défauts reproduits sur le transport original avec les tests de régression.",
+      "total": 21,
+      "passed": 8,
+      "failed": 13,
+      "exit_code": 1,
+      "receipt": "provider-baseline-complete-node-receipt.json"
+    },
+    "provider_candidate": {
+      "status": "PASS",
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "exit_code": 0,
+      "receipt": "provider-green-node-receipt.json",
+      "included_in_composition": true
+    }
+  },
+  "behaviour_and_limits": {
+    "scheduler_admission_deadline_ms": 45000,
+    "scheduler_deadline_is_hard_completion_bound": false,
+    "batch_limit_per_queue_per_invocation": 50,
+    "maximum_admitted_operations_per_round": 2,
+    "maximum_concurrency_per_invocation": 2,
+    "inflight_round_is_settled_before_next_round_or_error_response": true,
+    "pending_snapshot_failure": "503 avant nouvelle prise en charge scheduled et avant tout POST ou GET fournisseur du tour.",
+    "provider_default_request_deadline_ms": 30000,
+    "provider_max_request_deadline_ms": 30000,
+    "provider_deadline": "Échéance absolue vérifiée lors des passages de contrôle, lecture, parsing, normalisation et retour ; ce mécanisme ne préempte pas un travail CPU synchrone.",
+    "uncertain_write": "Résultat incertain conservé ; aucun nouvel envoi automatique ajouté.",
+    "reconciliation": "Lecture de l’identifiant fournisseur et des destinations conservées ; aucune publication depuis cette voie."
+  },
+  "unchanged_shared_helpers": {
+    "supabase/functions/_shared/request-deadline.ts": {
+      "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+      "changed": false
+    },
+    "supabase/functions/_shared/request-body.ts": {
+      "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+      "changed": false
+    }
+  },
+  "gitnexus": {
+    "initial_index_status": "PASS",
+    "initial_index_receipt": "gitnexus-initial-index-exit.json",
+    "initial_index_log": "gitnexus-initial-index.log",
+    "nodes": 28318,
+    "edges": 90554,
+    "clusters": 1215,
+    "flows": 553,
+    "limitations": [
+      "FTS désactivé ; recherche de mots-clés dégradée.",
+      "Plafonds de résolution et de parcours : 1902 candidats d’entrée non retenus, 6652 appels ignorés par la limite de branchement, 34 parcours coupés par budget.",
+      "Échec ENOSPC de sauvegarde du cache de parsing signalé ; indexation terminée avec sortie 0.",
+      "inspectPost : risque UNKNOWN, aucun appelant résolu ; cela ne démontre pas une absence d’utilisation."
+    ],
+    "impact": {
+      "requestZernioJson": "HIGH",
+      "publishPost": "HIGH",
+      "readBoundedJson": "LOW",
+      "disconnectConnectedAccount": "LOW",
+      "inspectPost": "UNKNOWN"
+    },
+    "final_detect_changes": {
+      "status": "NON TESTÉ",
+      "owner": "Agent intégrateur /root",
+      "result": null,
+      "instruction": "Renseigner la preuve finale avant commit ; ce document ne préjuge pas son résultat."
+    }
+  },
+  "independent_reviews": {
+    "status": "PASS",
+    "count": 2,
+    "distinct_reviewers": 1,
+    "report": "independent-review.json",
+    "scope": "Deux revues de lots, indépendantes de leurs auteurs ; ne remplacent pas une exécution."
+  },
+  "pending_gates": [
+    {
+      "gate": "Deno natif et vérification de types des six fichiers sociaux",
+      "status": "NON TESTÉ",
+      "owner": "CI de la PR / agent intégrateur"
+    },
+    {
+      "gate": "Trois suites utilisant le véritable SDK Supabase",
+      "status": "NON TESTÉ",
+      "owner": "CI de la PR / agent intégrateur"
+    },
+    {
+      "gate": "État CI du futur commit publié",
+      "status": "NON TESTÉ",
+      "owner": "Agent intégrateur",
+      "result": null
+    },
+    {
+      "gate": "Comptes et fournisseurs réels",
+      "status": "NON TESTÉ",
+      "owner": "Qualification opérationnelle distincte"
+    },
+    {
+      "gate": "Déploiement et comportement en production",
+      "status": "NON TESTÉ",
+      "owner": "Qualification opérationnelle distincte"
+    }
+  ],
+  "external_effects_during_local_checks": {
+    "real_provider_calls": false,
+    "real_publications": false,
+    "deployment": false
+  },
+  "source_manifest": "source-manifest-final.json",
+  "publication": {
+    "status_at_capture": "Avant publication",
+    "pull_request_url": null,
+    "instruction": "Consulter ensuite la PR pour le commit, les résultats CI et la décision d’intégration ; ne pas déduire ces états des tests locaux."
+  }
+}

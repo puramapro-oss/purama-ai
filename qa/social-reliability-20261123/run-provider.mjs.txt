@@ -1,0 +1,6 @@
+import { test } from 'node:test';
+
+// Compatibility runner only: every network operation must use the test adapter.
+globalThis.fetch = async () => { throw new Error('Unexpected network access in isolated provider review'); };
+globalThis.Deno = { test, env: { get: () => undefined } };
+await import('/workspace/scratch/2c704d52ca75/work/purama-social-fairness/tests/social-publish/provider.test.ts');

@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "requestZernioJson",
+    "--direction",
+    "upstream",
+    "--repo",
+    "purama-social-reliability-20261123",
+    "--file",
+    "supabase/functions/_shared/zernio.ts",
+    "--summary-only"
+  ],
+  "env": {
+    "GITNEXUS_STORAGE_PATH": "/workspace/scratch/2c704d52ca75/work/gitnexus-social-index",
+    "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728"
+  },
+  "exitCode": 0,
+  "stdout": "{\n  \"target\": {\n    \"id\": \"Function:supabase/functions/_shared/zernio.ts:requestZernioJson\",\n    \"name\": \"requestZernioJson\",\n    \"type\": \"Function\",\n    \"filePath\": \"supabase/functions/_shared/zernio.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 9,\n  \"risk\": \"HIGH\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 3,\n    \"processes_affected\": 3,\n    \"modules_affected\": 2\n  },\n  \"byDepthCounts\": {\n    \"1\": 3,\n    \"2\": 4,\n    \"3\": 2\n  },\n  \"affected_processes\": [\n    {\n      \"name\": \"handleSocialAccountsRequest\",\n      \"type\": \"Function\",\n      \"filePath\": \"supabase/functions/_shared/social-management-core.ts\",\n      \"affected_process_count\": 4,\n      \"total_hits\": 4,\n      \"earliest_broken_step\": 1\n    },\n    {\n      \"name\": \"handleSocialPublishRequest\",\n      \"type\": \"Function\",\n      \"filePath\": \"supabase/functions/social-publish/handler.ts\",\n      \"affected_process_count\": 2,\n      \"total_hits\": 2,\n      \"earliest_broken_step\": 1\n    },\n    {\n      \"name\": \"publishCandidate\",\n      \"type\": \"Function\",\n      \"filePath\": \"supabase/functions/social-publish-scheduled/handler.ts\",\n      \"affected_process_count\": 1,\n      \"total_hits\": 1,\n      \"earliest_broken_step\": 1\n    }\n  ],\n  \"affected_modules\": [\n    {\n      \"name\": \"_shared\",\n      \"hits\": 6,\n      \"impact\": \"direct\"\n    },\n    {\n      \"name\": \"Hooks\",\n      \"hits\": 1,\n      \"impact\": \"indirect\"\n    }\n  ]\n}\n",
+  "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795389000707,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n",
+  "finishedAt": "2026-11-22T23:10:00.946803+00:00"
+}

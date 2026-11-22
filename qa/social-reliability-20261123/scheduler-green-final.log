@@ -1,0 +1,35 @@
+[social-publish] Could not persist uncertain outcome existing-post
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish] Reconciliation attempt write not confirmed existing-post
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+(node:13) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scheduled: two workers racing for one row send exactly one POST (8.939635ms)
+✔ scheduled: stale publishing is quarantined, never reset and reposted (0.956102ms)
+✔ scheduled: lost response and failed anomaly writes are never automatically retried (1.907087ms)
+✔ scheduled: failed or lost claim writes perform no provider call (1.223107ms)
+✔ scheduled: changed, inactive and unverified bindings fail before posting (1.740781ms)
+✔ scheduled: a partial provider result remains partial (0.681988ms)
+✔ scheduled: run deadline leaves rows unclaimed and batch remains bounded (10.673045ms)
+✔ scheduled: rejected cron credentials never touch DB or provider (0.296338ms)
+✔ reconciliation: actual GET transitions pending to published without a POST (5.95744ms)
+✔ reconciliation: foreign post ID, account and missing ID never confirm (0.902302ms)
+✔ reconciliation: rows without server-owned destinations or provider ID cannot starve eligible reads (0.56182ms)
+✔ reconciliation: an unavailable provider ID is deferred without starving later pending posts (0.177192ms)
+✔ reconciliation: DB error or concurrent status change cannot produce a false confirmation (0.525676ms)
+✔ scheduled: sustained scheduled load cannot starve the other queue (4.579385ms)
+✔ scheduled: sustained reconciliation load cannot starve the other queue (4.52855ms)
+✔ scheduled: each admitted round starts both queues and settles before the next round (1.297397ms)
+✔ scheduled: a failed claim waits for its already admitted reconciliation before returning (0.509963ms)
+✔ scheduled: both queues retain their batch limits and at most two provider operations (5.184979ms)
+✔ scheduled: pending snapshot failure stops the round before any provider request (0.555501ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 246.813106

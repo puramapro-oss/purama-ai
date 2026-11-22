@@ -1,0 +1,31 @@
+(node:13) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ provider: actual contract, frozen account ID and stable idempotency header (13.656617ms)
+✔ provider: HTTP 207 preserves a partial result per platform (1.267232ms)
+✔ provider: pending, malformed, wrong account, missing ID and misleading 207 never confirm publication (0.264611ms)
+✔ provider: timeout after a remote side effect performs exactly one POST (10.634386ms)
+✔ provider: X, invalid media and absent credentials perform zero outbound calls (0.640256ms)
+✔ provider: reconciliation uses GET for the recorded ID only (0.89352ms)
+✔ provider: disconnect targets the account, confirms 200/404 and rejects 202 (2.256745ms)
+✔ provider: expired synchronous transport cannot confirm publish (51.18758ms)
+✔ provider: expired synchronous transport cannot confirm inspect (51.291954ms)
+✔ provider: expired synchronous transport cannot confirm disconnect (50.895719ms)
+✔ provider: the same absolute deadline covers synchronous body work (52.507971ms)
+✔ provider: a response arriving after timeout is cancelled without being read (13.206188ms)
+✔ provider: an unfinished response body is cancelled after timeout (10.919729ms)
+✔ provider: disconnect HTTP 200 remains confirmed when body cancellation never settles (0.665193ms)
+✔ provider: disconnect HTTP 404 remains confirmed when body cancellation never settles (0.319672ms)
+✔ provider: a rejected HTTP status does not await an uncooperative body cancellation (0.506268ms)
+✔ provider: invalid UTF-8 cannot become a confirmed JSON receipt (0.880431ms)
+✔ provider: the existing decoded byte limit remains exact (16.465174ms)
+✔ provider: expiry during the parsed-response handoff cannot confirm a result (51.21484ms)
+✔ provider: publish includes final receipt normalization in its deadline (51.719667ms)
+✔ provider: inspect includes final receipt normalization in its deadline (51.065759ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 625.919443

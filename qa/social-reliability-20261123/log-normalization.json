@@ -1,0 +1,65 @@
+{
+  "operation": "Trailing spaces/tabs per line and trailing empty lines removed from exported logs only; assertions, results and source code unchanged. Raw source logs remain in the task evidence directories.",
+  "files": {
+    "composed-node.log": {
+      "original_sha256": "f0be7fdceb296ad1e42bea4d616287bf72274a47707c0359436cf3cd1f22a5ed",
+      "saved_sha256": "f0be7fdceb296ad1e42bea4d616287bf72274a47707c0359436cf3cd1f22a5ed",
+      "original_bytes": 12096,
+      "saved_bytes": 12096
+    },
+    "gitnexus-initial-index.log": {
+      "original_sha256": "7ef887547b1a24769102b10c672db5a040b90063faf04baf82da323c820dd771",
+      "saved_sha256": "2648b030e59bf1e87d51444f8a2f8c01a7892724701c2736ff8418962fcaed34",
+      "original_bytes": 46560,
+      "saved_bytes": 46559
+    },
+    "gitnexus-precommit-compare-main.log": {
+      "original_sha256": "b0418cbdcc565dcedccd8ec012a1d303491262638fd53cea8c96194ff156ae29",
+      "saved_sha256": "b0418cbdcc565dcedccd8ec012a1d303491262638fd53cea8c96194ff156ae29",
+      "original_bytes": 3030,
+      "saved_bytes": 3030
+    },
+    "gitnexus-precommit-staged.log": {
+      "original_sha256": "68c545f5f32ae47601fe12d6a12a7790ba44de16c2186bb4b629761e2cbe4685",
+      "saved_sha256": "68c545f5f32ae47601fe12d6a12a7790ba44de16c2186bb4b629761e2cbe4685",
+      "original_bytes": 1705,
+      "saved_bytes": 1705
+    },
+    "provider-baseline-complete-node.log": {
+      "original_sha256": "4cefe18ad62af8ecd90723629b1c6d76f7c6d62e447c11d00cfce678d369354b",
+      "saved_sha256": "78b195ff195044bc510bab8e8fd56b0336efa495b8e8125f30e71e43adaada70",
+      "original_bytes": 10682,
+      "saved_bytes": 10669
+    },
+    "provider-diff-check.log": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "saved_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_bytes": 0,
+      "saved_bytes": 0
+    },
+    "provider-green-node.log": {
+      "original_sha256": "305715251f37e9fc56497f4ff67ac98618ed5c60fcc45c613e9edaaf88e068dc",
+      "saved_sha256": "d5d7365e72c70cbb6b88842522dcad1ee364b29f72e8670c59dc2e73b55420da",
+      "original_bytes": 2166,
+      "saved_bytes": 2165
+    },
+    "scheduler-diff-check.log": {
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "saved_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_bytes": 0,
+      "saved_bytes": 0
+    },
+    "scheduler-green-final.log": {
+      "original_sha256": "0d6dce98c7c65d3608a9b6cf799449db41205b9d7c6518d8a30a10f26596e2d1",
+      "saved_sha256": "0d6dce98c7c65d3608a9b6cf799449db41205b9d7c6518d8a30a10f26596e2d1",
+      "original_bytes": 2572,
+      "saved_bytes": 2572
+    },
+    "scheduler-red-r2.log": {
+      "original_sha256": "bbbdc08f765998d1ac62c51e4dd45d5caf63322513c42fb75c3d663ae72c2447",
+      "saved_sha256": "b8cff293794d7c65f57c654889fb783aec1976906a9f3dbad0d5385c195a8f94",
+      "original_bytes": 5471,
+      "saved_bytes": 5459
+    }
+  }
+}

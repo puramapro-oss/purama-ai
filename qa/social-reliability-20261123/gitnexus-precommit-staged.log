@@ -1,0 +1,28 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795389572483,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 35 files, 34 symbols
+Affected processes: 2
+Risk level: medium
+
+Changed symbols:
+  TypeAlias Platform → supabase/functions/_shared/zernio.ts
+  Function readBoundedJson → supabase/functions/_shared/zernio.ts
+  Function requestZernioJson → supabase/functions/_shared/zernio.ts
+  Function request → supabase/functions/_shared/zernio.ts
+  Property data → supabase/functions/_shared/zernio.ts
+  Property httpStatus → supabase/functions/_shared/zernio.ts
+  Property data → supabase/functions/_shared/zernio.ts
+  Property httpStatus → supabase/functions/_shared/zernio.ts
+  Function inspectPost → supabase/functions/_shared/zernio.ts
+  Function disconnectConnectedAccount → supabase/functions/_shared/zernio.ts
+  Function handleScheduledConsumerRequest → supabase/functions/social-publish-scheduled/handler.ts
+  Function publishCandidate → supabase/functions/social-publish-scheduled/handler.ts
+  Function reconcileCandidate → supabase/functions/social-publish-scheduled/handler.ts
+  Function blockProviderClock → tests/social-publish/provider.test.ts
+  Function fixture → tests/social-publish/provider.test.ts
+... and 19 more
+
+Affected execution flows:
+  • HandleScheduledConsumerRequest → Query (3 steps) — changed: handleScheduledConsumerRequest
+  • PublishCandidate → Query (3 steps) — changed: publishCandidate
