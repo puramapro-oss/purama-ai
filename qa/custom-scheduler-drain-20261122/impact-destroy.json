@@ -1,0 +1,90 @@
+{
+  "target": {
+    "id": "Function:karta/src/scheduler/customAgents.ts:destroyTask",
+    "name": "destroyTask",
+    "type": "Function",
+    "filePath": "karta/src/scheduler/customAgents.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 32,
+  "risk": "CRITICAL",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 2,
+    "processes_affected": 3,
+    "modules_affected": 6
+  },
+  "byDepthCounts": {
+    "1": 2,
+    "2": 17,
+    "3": 13
+  },
+  "affected_processes": [
+    {
+      "name": "VoiceSettingsCard",
+      "type": "Function",
+      "filePath": "src/components/voice/VoiceSettingsCard.tsx",
+      "affected_process_count": 7,
+      "total_hits": 22,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "CreatorAgentDetail",
+      "type": "Function",
+      "filePath": "src/pages/CreatorAgentDetail.tsx",
+      "affected_process_count": 7,
+      "total_hits": 22,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "LegalAgentChat",
+      "type": "Function",
+      "filePath": "src/pages/LegalAgentChat.tsx",
+      "affected_process_count": 7,
+      "total_hits": 22,
+      "earliest_broken_step": 2
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Hooks",
+      "hits": 14,
+      "impact": "direct"
+    },
+    {
+      "name": "Chef",
+      "hits": 10,
+      "impact": "indirect"
+    },
+    {
+      "name": "Scheduler",
+      "hits": 3,
+      "impact": "indirect"
+    },
+    {
+      "name": "Runtime",
+      "hits": 2,
+      "impact": "indirect"
+    },
+    {
+      "name": "_shared",
+      "hits": 2,
+      "impact": "direct"
+    },
+    {
+      "name": "Iao",
+      "hits": 1,
+      "impact": "indirect"
+    }
+  ],
+  "staleness": {
+    "status": "behind",
+    "commitsBehind": 7,
+    "hint": "⚠️ Index is 7 commits behind HEAD. Run analyze tool to update."
+  }
+}

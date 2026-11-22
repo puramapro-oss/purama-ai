@@ -1,0 +1,181 @@
+
+ RUN  v5.0.3 /workspace/scratch/dcfb234e0a8f/iao-work/karta
+
+ ❯ test/customSchedulerDrain.test.ts (10 tests | 10 failed) 38ms
+   ❯ custom scheduler stable delivery and producer drain (8)
+     × keeps one scheduled identity when the same tick is dispatched in different minutes 19ms
+     × does not collapse different scheduled ticks when both callbacks arrive in the same minute 5ms
+     × waits for an already started enqueue and keeps stop idempotent 3ms
+     × drains every overlapping callback, including a replaced schedule 1ms
+     × keeps an old drain separate from a restarted scheduler 1ms
+     × waits for asynchronous destruction of a timer retired by a rescan 1ms
+     × reports synchronous cleanup failure after draining without exposing its details 1ms
+     × reports asynchronous cleanup failure after draining without exposing its details 1ms
+   ❯ custom scheduler through the real runtime lifecycle (2)
+     × keeps queue resources alive until an admitted producer finishes 2ms
+     × reports an uncooperative enqueue as a failed shutdown at the runtime deadline 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > keeps one scheduled identity when the same tick is dispatched in different minutes
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+    "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:01",
+  ]
+
+ ❯ test/customSchedulerDrain.test.ts:66:69
+     64|     await controller.stop();
+     65|     expect(state.enqueue).toHaveBeenCalledTimes(2);
+     66|     expect(state.enqueue.mock.calls.map(call => call[1].dedupeKey)).to…
+       |                                                                     ^
+     67|       "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+     68|       "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > does not collapse different scheduled ticks when both callbacks arrive in the same minute
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+-   "cron|custom:custom-drain|user-drain|2026-11-22T08:10",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:20",
++   "cron|custom:custom-drain|user-drain|2026-11-22T08:20",
+  ]
+
+ ❯ test/customSchedulerDrain.test.ts:81:69
+     79|     await scheduledTimer().callback(context("2026-11-22T08:10:00.000Z"…
+     80|     await controller.stop();
+     81|     expect(state.enqueue.mock.calls.map(call => call[1].dedupeKey)).to…
+       |                                                                     ^
+     82|       "cron|custom:custom-drain|user-drain|2026-11-22T08:00",
+     83|       "cron|custom:custom-drain|user-drain|2026-11-22T08:10",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > waits for an already started enqueue and keeps stop idempotent
+AssertionError: expected 'resolved' to be 'pending' // Object.is equality
+
+Expected: "pending"
+Received: "resolved"
+
+ ❯ test/customSchedulerDrain.test.ts:101:29
+     99|     try {
+    100|       await tick();
+    101|       expect(status.status).toBe("pending");
+       |                             ^
+    102|       expect(repeated).toBe(stopping);
+    103|       await scheduledTimer().callback(context("2026-11-22T08:10:00.000…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > drains every overlapping callback, including a replaced schedule
+AssertionError: expected 'resolved' to be 'pending' // Object.is equality
+
+Expected: "pending"
+Received: "resolved"
+
+ ❯ test/customSchedulerDrain.test.ts:129:29
+    127|     try {
+    128|       first.resolve("first"); await oldRun; await tick();
+    129|       expect(status.status).toBe("pending");
+       |                             ^
+    130|       second.resolve("second"); await newRun; await stopping;
+    131|       expect(status.status).toBe("resolved");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > keeps an old drain separate from a restarted scheduler
+AssertionError: expected 'resolved' to be 'pending' // Object.is equality
+
+Expected: "pending"
+Received: "resolved"
+
+ ❯ test/customSchedulerDrain.test.ts:151:32
+    149|     await tick();
+    150|     try {
+    151|       expect(oldStatus.status).toBe("pending");
+       |                                ^
+    152|       first.resolve("old confirmed"); await oldRun; await oldStop;
+    153|       expect(nextTimer.destroy).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > waits for asynchronous destruction of a timer retired by a rescan
+AssertionError: expected 'resolved' to be 'pending' // Object.is equality
+
+Expected: "pending"
+Received: "resolved"
+
+ ❯ test/customSchedulerDrain.test.ts:173:43
+    171|     const stopping = Promise.resolve(controller.stop()); const status …
+    172|     try {
+    173|       await tick(); expect(status.status).toBe("pending");
+       |                                           ^
+    174|       cleanup.resolve(); await stopping; expect(status.status).toBe("r…
+    175|     } finally { cleanup.resolve(); await stopping; }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > reports synchronous cleanup failure after draining without exposing its details
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler stable delivery and producer drain > reports asynchronous cleanup failure after draining without exposing its details
+AssertionError: expected 'resolved' to be 'pending' // Object.is equality
+
+Expected: "pending"
+Received: "resolved"
+
+ ❯ test/customSchedulerDrain.test.ts:191:43
+    189|     const stopping = Promise.resolve(controller.stop()); const status …
+    190|     try {
+    191|       await tick(); expect(status.status).toBe("pending");
+       |                                           ^
+    192|       delivery.resolve("confirmed"); await execution;
+    193|       await expect(stopping).rejects.toThrow("Arrêt du planificateur p…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler through the real runtime lifecycle > keeps queue resources alive until an admitted producer finishes
+AssertionError: expected [ 'worker-closed', …(2) ] to not include 'queue-closed'
+ ❯ test/customSchedulerDrain.test.ts:226:40
+    224|     const stopping = runtime.stop();
+    225|     try {
+    226|       await tick(); expect(events).not.toContain("queue-closed"); expe…
+       |                                        ^
+    227|       delivery.resolve("confirmed"); await execution;
+    228|       expect(await stopping).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  test/customSchedulerDrain.test.ts > custom scheduler through the real runtime lifecycle > reports an uncooperative enqueue as a failed shutdown at the runtime deadline
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/customSchedulerDrain.test.ts:238:36
+    236|     const timer = scheduledTimer(); const execution = timer.callback(c…
+    237|     try {
+    238|       expect(await runtime.stop()).toBe(false);
+       |                                    ^
+    239|       expect(events).toContain("redis-disconnected");
+    240|       await timer.callback(context("2026-11-22T08:10:00.000Z"));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  00:56:45
+   Duration  908ms (transform 57%, tests 14%, import 13%, setup 13%, worker 3%)

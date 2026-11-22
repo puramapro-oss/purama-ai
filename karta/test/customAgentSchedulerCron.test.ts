@@ -22,6 +22,32 @@ afterEach(async () => {
 });
 
 describe("custom-agent scheduler with real node-cron", () => {
+  it("waits for the producer of a real executing task before confirming shutdown", async () => {
+    let resolve!: (value: string) => void;
+    state.enqueue.mockReturnValueOnce(new Promise<string>(done => { resolve = done; }));
+    const { default: cron } = await import("node-cron");
+    const { startCustomAgentScheduler } = await import("../src/scheduler/customAgents.js");
+    const controller = startCustomAgentScheduler();
+    await flush();
+    const task = [...cron.getTasks().values()].find(candidate => candidate.getPattern() === agent.schedule_cron)!;
+    const execution = task.execute();
+    await flush();
+    expect(state.enqueue).toHaveBeenCalledOnce();
+    const stopping = Promise.resolve(controller.stop());
+    let stopped = false;
+    void stopping.then(() => { stopped = true; });
+    try {
+      await flush();
+      expect(stopped).toBe(false);
+      expect(cron.getTasks().size).toBe(0);
+      resolve("confirmed");
+      await execution;
+      await stopping;
+      expect(stopped).toBe(true);
+      expect(task.getStatus()).toBe("destroyed");
+    } finally { resolve("confirmed"); await execution; await stopping; }
+  });
+
   it("removes the scan and agent timers from the real registry on stop", async () => {
     const { default: cron } = await import("node-cron");
     const { startCustomAgentScheduler } = await import("../src/scheduler/customAgents.js");

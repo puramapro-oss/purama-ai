@@ -1,0 +1,9 @@
+
+  GitNexus Detect Changes (1.6.12)
+fatal: ambiguous argument 'main': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Error: Git diff failed: Command failed: git -c core.quotePath=false diff --ignore-cr-at-eol --no-ext-diff --color=never --src-prefix=a/ --dst-prefix=b/ main -U0
+fatal: ambiguous argument 'main': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
