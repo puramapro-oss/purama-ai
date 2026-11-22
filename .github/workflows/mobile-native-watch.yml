@@ -55,9 +55,101 @@ jobs:
           node scripts/verify-watch-native-prebuild.cjs
           npx expo-modules-autolinking resolve --platform android --json > qa/watch-native/android-autolinking.json
       - name: Compile phone module and Wear companion and run Kotlin protocol tests
+        id: android_native_build
         run: |
           cd android
-          ./gradlew :app:assembleDebug :puramaAccessibilityWatch:assembleDebug :purama-accessibility-watch:testDebugUnitTest --no-daemon --max-workers=2 2>&1 | tee ../qa/watch-native/android-build.log
+          ./gradlew :app:assembleDebug :puramaAccessibilityWatch:assembleDebug :purama-accessibility-watch:testDebugUnitTest --no-daemon --max-workers=2 --info --stacktrace 2>&1 | tee ../qa/watch-native/android-build.log
+      - name: Diagnose Android dependency resolution failure
+        if: ${{ failure() && steps.android_native_build.outcome == 'failure' }}
+        timeout-minutes: 2
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import re
+          import subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          root = Path.cwd().resolve()
+          report = {
+              "recorded_at": datetime.now(timezone.utc).isoformat(),
+              "scope": "diagnostics_only_after_android_build_failure",
+              "files": [],
+              "pom_requests": [],
+          }
+          # Record bounded metadata, never whole configuration files or credentials.
+          for relative in (
+              "android/settings.gradle",
+              "android/build.gradle",
+              "android/gradle.properties",
+              "android/gradle/wrapper/gradle-wrapper.properties",
+              "node_modules/@react-native/gradle-plugin/settings.gradle.kts",
+              "node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml",
+          ):
+              entry = {"path": relative}
+              try:
+                  path = root / relative
+                  if path.is_symlink() or not path.resolve().is_relative_to(root):
+                      entry["status"] = "skipped_nonlocal_path"
+                  elif not path.is_file():
+                      entry["status"] = "missing"
+                  else:
+                      with path.open("rb") as source:
+                          data = source.read(65537)
+                      if len(data) > 65536:
+                          entry["status"] = "skipped_size_limit"
+                      else:
+                          source = data.decode("utf-8", errors="replace")
+                          entry.update(status="recorded", bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+                          entry["marker_lines"] = {
+                              marker: [number for number, line in enumerate(source.splitlines(), 1) if marker in line]
+                              for marker in (
+                                  "mavenCentral()", "google()", "gradlePluginPortal()",
+                                  "com.facebook.react.settings", "expo-autolinking-settings",
+                                  "org.gradle.toolchains.foojay-resolver-convention",
+                              )
+                          }
+                          foojay = re.search(r'foojay-resolver-convention[\'\"]\s*\)?\s*version\s*[\'\"]([0-9]+\.[0-9]+\.[0-9]+)[\'\"]', source)
+                          if foojay:
+                              entry["foojay_version"] = foojay.group(1)
+                          distribution = re.search(r'https(?:\\)?:\/\/services\.gradle\.org/distributions/gradle-[0-9.]+-(?:bin|all)\.zip', source)
+                          if distribution:
+                              entry["gradle_distribution"] = distribution.group(0).replace("\\:", ":")
+              except OSError:
+                  entry["status"] = "unreadable"
+              report["files"].append(entry)
+
+          # Probe only the three exact public POM URLs from the failed resolution.
+          # No redirects, retries, response bodies, stderr, or environment dumps.
+          for url in (
+              "https://repo.maven.apache.org/maven2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom",
+              "https://dl.google.com/dl/android/maven2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom",
+              "https://plugins.gradle.org/m2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom",
+          ):
+              entry = {"url": url, "method": "GET", "redirects_followed": False}
+              try:
+                  request = subprocess.run(
+                      ["curl", "--disable", "--silent", "--output", "/dev/null", "--proto", "=https",
+                       "--connect-timeout", "5", "--max-time", "15", "--max-filesize", "65536", "--retry", "0",
+                       "--write-out", "%{http_code} %{time_total}", url],
+                      stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=20, check=False,
+                  )
+                  entry["curl_exit"] = request.returncode
+                  metrics = re.fullmatch(r"([0-9]{3}) ([0-9]+(?:\.[0-9]+)?)", request.stdout.strip())
+                  if metrics:
+                      entry.update(http_status=int(metrics.group(1)), seconds=float(metrics.group(2)))
+              except subprocess.TimeoutExpired:
+                  entry["status"] = "process_timeout"
+              except OSError:
+                  entry["status"] = "curl_unavailable"
+              report["pom_requests"].append(entry)
+
+          output = root / "qa/watch-native/android-dependency-diagnostics.json"
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text(json.dumps(report, indent=2) + "\n")
+          print(output.read_text())
+          PY
       - name: Prepare debug APKs for physical qualification
         run: |
           artifact_dir="$RUNNER_TEMP/native-watch-debug-apks"
