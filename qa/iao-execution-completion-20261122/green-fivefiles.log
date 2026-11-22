@@ -1,0 +1,152 @@
+Check tests/social-connection/connection.test.ts
+Check tests/social-management/handlers.test.ts
+Check tests/social-publish/provider.test.ts
+Check tests/social-publish/publish.test.ts
+Check tests/social-publish/scheduled.test.ts
+running 34 tests from ./tests/social-connection/connection.test.ts
+state binds the user, platform and profile with a random one-use nonce ... ok (2ms)
+expired/future state and short secrets cannot authorize a callback ... ok (753µs)
+authorized flow creates one stable profile, verifies external identity and binds once ... ok (2ms)
+callback refuses another profile before provider reads or writes ... ok (944µs)
+callback refuses another platform before provider reads or writes ... ok (675µs)
+callback refuses missing account before provider reads or writes ... ok (695µs)
+callback refuses duplicate account param before provider reads or writes ... ok (473µs)
+valid HMAC without registered intent does not authorize writes ... ok (634µs)
+provider account/profile mismatch or disconnected account never binds ... ok (1ms)
+a superseded or cancelled intent cannot bind; callback errors are sanitized ... ok (1ms)
+uncertain creation is reconciled by a read, without a repeated POST ... ok (509µs)
+a racing successful callback is never reported as cancelled after a zero-row update ... ok (429µs)
+concurrent initial requests claim profile creation once ... ok (324µs)
+database failure does not consume the intent or claim successful binding ... ok (627µs)
+connect HTTP gates method/origin/authentication before privileged dependencies ... ok (8ms)
+callback HTTP rejects forged state before privileged client and avoids false success on replay ... ok (1ms)
+schema selection preserves purama_ai and rejects silent fallbacks ... ok (225µs)
+real provider adapter verifies identity from authenticated account response ... ok (4ms)
+provider refuses foreign profiles, duplicate IDs and incomplete cursor pages ... ok (1ms)
+absence is returned only after an explicit complete final cursor page ... ok (1ms)
+provider follows bounded cursor pagination and normalizes platform names ... ok (1ms)
+account reconnect and enable flags are reflected in publishability ... ok (702µs)
+profile POST uses stable idempotency and rejects contradictory profile evidence ... ok (759µs)
+OAuth URL uses documented camelCase profileId and redirect_url; insecure URLs fail ... ok (611µs)
+provider deadline: non-cooperative fetch rejects once and discards a late response ... ok (19ms)
+provider deadline: a body without EOF is cancelled without confirming an account ... ok (15ms)
+provider byte cap: over-limit stream is rejected before EOF despite hanging cancellation ... ok (836µs)
+provider byte cap: multibyte UTF-8 cannot bypass the one-MiB limit ... ok (4ms)
+provider byte cap: a valid response exactly at the byte limit remains accepted ... ok (3ms)
+provider deadline: headers and body share one budget ... ok (151ms)
+provider deadline: invalid timeout configuration is rejected before any transport ... ok (469µs)
+provider HTTP refusal cleans its unread body and preserves public error classification ... ok (759µs)
+provider deadline: timed-out profile creation stays uncertain and cannot issue another POST ... ok (17ms)
+provider deadline: a late account verification never completes the OAuth binding ... ok (16ms)
+running 41 tests from ./tests/social-management/handlers.test.ts
+accounts: GET without authentication has no side effects ... ok (6ms)
+accounts: DELETE without authentication has no side effects ... ok (292µs)
+accounts: only authenticated owner is used for listing ... ok (476µs)
+accounts: verified disconnect stops local posting first and targets one account ... ok (542µs)
+accounts: legacy unverified binding never calls the provider ... ok (262µs)
+accounts: changed binding cannot disconnect a newly reconnected account ... ok (240µs)
+accounts: failed local write prevents any provider operation ... ok (440µs)
+accounts: another profile is never disconnected with the shared key ... ok (188µs)
+accounts: verifyAccount timeout keeps local posting disabled without false success ... ok (297µs)
+accounts: disconnectAccount timeout keeps local posting disabled without false success ... ok (423µs)
+accounts: SQL error is not confused with an absent account ... ok (444µs)
+accounts: unsupported method does not authenticate or mutate ... ok (214µs)
+config: missing authentication cannot read configuration ... ok (443µs)
+config: legacy AI flags cannot advertise an implicit generation ... ok (226µs)
+config: rejects other user without writing ... ok (176µs)
+config: rejects unknown key without writing ... ok (102µs)
+config: rejects string boolean without writing ... ok (149µs)
+config: rejects unknown platform without writing ... ok (206µs)
+config: rejects invalid timezone without writing ... ok (12ms)
+config: rejects implicit caption without writing ... ok (270µs)
+config: rejects implicit hashtags without writing ... ok (118µs)
+config: no verified target means no autopilot activation ... ok (252µs)
+config: unfunded X cannot be enabled automatically ... ok (131µs)
+config: verified selection activates once under the authenticated user ... ok (584µs)
+config: database read error is not a success or default fallback ... ok (272µs)
+config: database write error is not a success or default fallback ... ok (99µs)
+account store: conditional write includes tenant and provider binding snapshot ... ok (290µs)
+account store: zero affected rows is a concurrency conflict ... ok (169µs)
+accounts: uncertain DELETE holds the reconnect lock ... ok (191µs)
+accounts: retry GET failure cannot release a previous uncertain DELETE ... ok (210µs)
+accounts: provider confirmation is preserved if final database write fails ... ok (280µs)
+accounts: a second request never repeats an uncertain provider DELETE ... ok (149µs)
+accounts: a live disconnect owner cannot be unlocked by a reader ... ok (112µs)
+accounts: complete provider absence resolves a finished uncertain request with GET only ... ok (127µs)
+accounts: incomplete provider listing cannot unlock a disconnect ... ok (187µs)
+account store: an already pending snapshot cannot claim another provider DELETE ... ok (161µs)
+config: concurrency conflicts are explicit and never reported as saved ... ok (277µs)
+config: the original database version accompanies the validated write ... ok (215µs)
+config store: compare-and-swap uses owner and database timestamp without replacing it ... ok (247µs)
+config store: zero affected rows refuses a stale overwrite ... ok (331µs)
+config store: concurrent first insert is a conflict without an upsert overwrite ... ok (98µs)
+running 7 tests from ./tests/social-publish/provider.test.ts
+provider: actual contract, frozen account ID and stable idempotency header ... ok (7ms)
+provider: HTTP 207 preserves a partial result per platform ... ok (538µs)
+provider: pending, malformed, wrong account, missing ID and misleading 207 never confirm publication ... ok (121µs)
+provider: timeout after a remote side effect performs exactly one POST ... ok (11ms)
+provider: X, invalid media and absent credentials perform zero outbound calls ... ok (748µs)
+provider: reconciliation uses GET for the recorded ID only ... ok (354µs)
+provider: disconnect targets the account, confirms 200/404 and rejects 202 ... ok (735µs)
+running 16 tests from ./tests/social-publish/publish.test.ts
+history: authenticated GET reads only owner rows without provider access or private provider response ... ok (7ms)
+immediate: concurrent identical requests and subsequent retries produce one remote effect ... ok (4ms)
+immediate: reusing a key with changed payload is rejected, preserving the first intent ... ok (1ms)
+immediate: lost provider response stays uncertain across retry without repost ... ok (1ms)
+immediate: insert committed but acknowledgement lost cannot trigger a second POST ...
+------- post-test output -------
+[social-publish] Request could not be completed; reuse the same request key
+----- post-test output end -----
+immediate: insert committed but acknowledgement lost cannot trigger a second POST ... ok (1ms)
+immediate: DB result write error cannot be reported as published ... ok (788µs)
+immediate: DB result write empty cannot be reported as published ... ok (1ms)
+immediate: DB result write after_error cannot be reported as published ...
+------- post-test output -------
+[social-publish] Could not persist uncertain outcome post-1
+----- post-test output end -----
+immediate: DB result write after_error cannot be reported as published ... ok (882µs)
+immediate: failure of both result writes leaves the durable publishing claim ...
+------- post-test output -------
+[social-publish] Could not persist uncertain outcome post-1
+----- post-test output end -----
+immediate: failure of both result writes leaves the durable publishing claim ... ok (775µs)
+immediate: actual provider 207 stays partial all the way through HTTP response and DB ... ok (3ms)
+immediate: unverified, inactive, foreign and X accounts perform no outbound call ... ok (1ms)
+immediate: caption generation is rejected before lookup or publication, including existing requests ... ok (916µs)
+immediate: invalid caption option types fail before storage or provider access ... ok (903µs)
+immediate: false and omitted caption options retain one normal publication identity ... ok (581µs)
+immediate: authentication, missing key and DB read errors fail before provider access ...
+------- post-test output -------
+[social-publish] Request could not be completed; reuse the same request key
+----- post-test output end -----
+immediate: authentication, missing key and DB read errors fail before provider access ... ok (584µs)
+immediate: scheduling saves prepared content without any provider or caption generation ... ok (509µs)
+running 13 tests from ./tests/social-publish/scheduled.test.ts
+scheduled: two workers racing for one row send exactly one POST ... ok (7ms)
+scheduled: stale publishing is quarantined, never reset and reposted ... ok (544µs)
+scheduled: lost response and failed anomaly writes are never automatically retried ...
+------- post-test output -------
+[social-publish] Could not persist uncertain outcome existing-post
+----- post-test output end -----
+scheduled: lost response and failed anomaly writes are never automatically retried ... ok (917µs)
+scheduled: failed or lost claim writes perform no provider call ...
+------- post-test output -------
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+[social-publish-scheduled] Database operation not confirmed; no claimed post will be replayed
+----- post-test output end -----
+scheduled: failed or lost claim writes perform no provider call ... ok (736µs)
+scheduled: changed, inactive and unverified bindings fail before posting ... ok (943µs)
+scheduled: a partial provider result remains partial ... ok (320µs)
+scheduled: run deadline leaves rows unclaimed and batch remains bounded ... ok (2ms)
+scheduled: rejected cron credentials never touch DB or provider ... ok (189µs)
+reconciliation: actual GET transitions pending to published without a POST ... ok (3ms)
+reconciliation: foreign post ID, account and missing ID never confirm ... ok (693µs)
+reconciliation: rows without server-owned destinations or provider ID cannot starve eligible reads ... ok (762µs)
+reconciliation: an unavailable provider ID is deferred without starving later pending posts ... ok (433µs)
+reconciliation: DB error or concurrent status change cannot produce a false confirmation ...
+------- post-test output -------
+[social-publish] Reconciliation attempt write not confirmed existing-post
+----- post-test output end -----
+reconciliation: DB error or concurrent status change cannot produce a false confirmation ... ok (332µs)
+
+ok | 111 passed | 0 failed (1s)

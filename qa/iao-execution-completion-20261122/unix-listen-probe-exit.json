@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "node",
+    "--input-type=module",
+    "-e",
+    "import { createServer } from 'node:net';\nconst path = '/tmp/iao-runtime-evidence-ccfbf7e5800b/listen-probe.sock';\nconst server = createServer();\nserver.once('error', error => {\n  console.log(JSON.stringify({probe:'unix-listen-without-product-import',code:error.code,syscall:error.syscall,externalCalls:0}));\n  process.exitCode = 1;\n});\nserver.listen(path, () => {\n  console.log(JSON.stringify({probe:'unix-listen-without-product-import',listening:true,externalCalls:0}));\n  server.close();\n});"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 1
+}

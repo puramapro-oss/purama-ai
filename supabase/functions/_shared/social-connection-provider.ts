@@ -3,6 +3,8 @@
 // https://github.com/zernio-dev/zernio-dotnet/blob/main/docs/ProfilesApi.md
 // https://github.com/zernio-dev/zernio-dotnet/blob/main/docs/AccountsApi.md
 import { isOAuthSocialPlatform, isZernioId } from "./social-state.ts";
+import { cancelResponseQuietly, createRequestDeadline, RequestDeadlineError } from "./request-deadline.ts";
+import { readBoundedBytes } from "./request-body.ts";
 
 export interface VerifiedSocialAccount {
   accountId: string;
@@ -82,41 +84,70 @@ export function createZernioConnectionProvider(options: {
 }): SocialConnectionProvider {
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? 15_000;
-  if (!options.apiKey || timeoutMs < 1 || timeoutMs > 30_000) {
+  if (!options.apiKey || !Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 30_000) {
     throw new SocialProviderError("social_provider_not_configured");
   }
 
   async function request(path: string, init: RequestInit = {}): Promise<Record<string, unknown>> {
-    let response: Response;
+    const controller = new AbortController();
+    const endsAt = performance.now() + timeoutMs;
+    const deadline = createRequestDeadline(timeoutMs, controller.signal);
+    const checkDeadline = () => {
+      deadline.check();
+      // Setup time must not extend the absolute budget shared with the reader.
+      if (performance.now() >= endsAt) throw new RequestDeadlineError();
+    };
+    let response: Response | undefined;
     try {
-      response = await fetchImpl(`https://zernio.com/api/v1${path}`, {
-        ...init, redirect: "error", signal: AbortSignal.timeout(timeoutMs),
-        headers: {
-          Authorization: `Bearer ${options.apiKey}`, Accept: "application/json",
-          "Content-Type": "application/json", ...init.headers,
-        },
-      });
-    } catch {
-      throw new SocialProviderError("provider_request_uncertain", true);
-    }
-    if (!response.ok) {
-      // Never reflect provider bodies, tokens, URLs or billing URLs to the browser.
-      throw new SocialProviderError(
-        response.status === 402 ? "provider_billing_required" : "provider_request_rejected",
-        response.status >= 500 || response.status === 409,
-      );
-    }
-    try {
-      const text = await response.text();
-      if (text.length > 1_048_576) throw new Error("response too large");
-      const body = object(JSON.parse(text));
-      if (path.startsWith("/accounts?") && response.headers.get("X-Result-Truncated")?.toLowerCase() === "true") {
-        const pagination = object(body.pagination);
-        if (typeof pagination.nextCursor !== "string" || !pagination.nextCursor) throw new Error("truncated accounts");
+      let current: Response;
+      try {
+        current = await deadline.wait(async () => {
+          checkDeadline();
+          const received = await fetchImpl(`https://zernio.com/api/v1${path}`, {
+            ...init, redirect: "error", signal: controller.signal,
+            headers: {
+              Authorization: `Bearer ${options.apiKey}`, Accept: "application/json",
+              "Content-Type": "application/json", ...init.headers,
+            },
+          });
+          try { checkDeadline(); } catch (error) {
+            // The transport may hand over its body after the caller has returned.
+            cancelResponseQuietly(received.body);
+            throw error;
+          }
+          // Retain ownership if expiry wins during wait's asynchronous handoff.
+          response = received;
+          return received;
+        });
+        checkDeadline();
+      } catch {
+        throw new SocialProviderError("provider_request_uncertain", true);
       }
-      return body;
-    } catch {
-      throw new SocialProviderError("provider_response_invalid", true);
+      if (!current.ok) {
+        // Never reflect provider bodies, tokens, URLs or billing URLs to the browser.
+        throw new SocialProviderError(
+          current.status === 402 ? "provider_billing_required" : "provider_request_rejected",
+          current.status >= 500 || current.status === 409,
+        );
+      }
+      try {
+        const bytes = await deadline.wait(() => readBoundedBytes({
+          headers: current.headers, body: current.body, signal: controller.signal,
+        }, { maxBytes: 1_048_576, deadline: endsAt, matchContentLength: false }));
+        const body = object(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)));
+        if (path.startsWith("/accounts?") && current.headers.get("X-Result-Truncated")?.toLowerCase() === "true") {
+          const pagination = object(body.pagination);
+          if (typeof pagination.nextCursor !== "string" || !pagination.nextCursor) throw new Error("truncated accounts");
+        }
+        checkDeadline();
+        return body;
+      } catch {
+        throw new SocialProviderError("provider_response_invalid", true);
+      }
+    } finally {
+      controller.abort();
+      deadline.close();
+      cancelResponseQuietly(response?.body);
     }
   }
 

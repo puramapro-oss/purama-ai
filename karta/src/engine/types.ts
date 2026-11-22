@@ -136,6 +136,8 @@ export interface AgentDecision {
 /** Context prepared by KARTA, never copied from untrusted trigger fields. */
 export interface AgentContextInput {
   pendingBrief?: string;
+  /** Server-owned pre-inference mode. Missing/unknown modes never authorize live context reads. */
+  executionMode?: "simulation" | "live";
 }
 
 export interface AgentDefinition {

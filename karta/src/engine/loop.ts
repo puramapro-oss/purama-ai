@@ -1,4 +1,5 @@
 import { getClaudeClient } from "../claude/index.js";
+import { config } from "../config.js";
 import type { ModelUsageReceipt } from "../claude/usage.js";
 import { isRunnable, loadAgentState, recordRunOutcome, requiresHumanApproval } from "./autonomy.js";
 import { isGlobalKillSwitchActive } from "./killswitch.js";
@@ -96,7 +97,12 @@ export async function runAgentCycle(
       ...(expectedBriefId ? { expectedBriefId } : {}) });
     const noBrief = definition.pendingBriefKey !== undefined && brief === null;
     const baseContext = noBrief ? {} : brief
-      ? await definition.buildContext(userId, trigger, { pendingBrief: brief.brief })
+      ? await definition.buildContext(userId, trigger, {
+        pendingBrief: brief.brief,
+        // Use the server's selection setting without instantiating a model
+        // client before the fresh authorization gate below.
+        executionMode: mode === "simulation" || config.mockClaude !== false ? "simulation" : "live",
+      })
       : await definition.buildContext(userId, trigger);
     const context = { ...baseContext };
     // Business data may not impersonate the server's execution facts.

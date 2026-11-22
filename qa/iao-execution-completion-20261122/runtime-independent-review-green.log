@@ -1,0 +1,24 @@
+Independent review on current TypeScript source using Node + existing tsx.
+No provider, database, deployment or external transport calls.
+Both processes returned exit code 0.
+
+{"stage":"completion","turns":5,"interruption":"parent-abort","result":"blocked","effect":"uncertain","pass":true}
+{"stage":"completion","turns":5,"interruption":"deadline","result":"blocked","effect":"uncertain","pass":true}
+{"stage":"completion","turns":6,"interruption":"parent-abort","result":"accepted","effect":null,"pass":true}
+{"stage":"completion","turns":6,"interruption":"deadline","result":"accepted","effect":null,"pass":true}
+{"stage":"control","turns":5,"interruption":"parent-abort","result":"blocked","effect":"uncertain","pass":true}
+{"stage":"control","turns":5,"interruption":"deadline","result":"blocked","effect":"uncertain","pass":true}
+{"stage":"control","turns":6,"interruption":"parent-abort","result":"blocked","effect":"uncertain","pass":true}
+{"stage":"control","turns":6,"interruption":"deadline","result":"blocked","effect":"uncertain","pass":true}
+{"stage":"control","turns":7,"interruption":"parent-abort","result":"accepted","effect":null,"pass":true}
+{"stage":"control","turns":7,"interruption":"deadline","result":"accepted","effect":null,"pass":true}
+{"suite":"independent final handoff and post-commit","passed":10,"externalCalls":0}
+
+{"stage":"completion","interruption":"abort","throws":false,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"completion","interruption":"abort","throws":true,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"completion","interruption":"deadline","throws":false,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"completion","interruption":"deadline","throws":true,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"control","interruption":"abort","throws":false,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"control","interruption":"abort","throws":true,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"control","interruption":"deadline","throws":false,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}
+{"stage":"control","interruption":"deadline","throws":true,"result":"blocked","effect":"uncertain","dependency":"memory-unavailable:karta-runtime","pass":true}

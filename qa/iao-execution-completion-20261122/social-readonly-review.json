@@ -1,0 +1,47 @@
+{
+  "status": "PARTIEL",
+  "method": "Read-only source and test review; no real database or provider request; no changes to social lot.",
+  "reviewed_files": [
+    "karta/src/tools/social-status.ts",
+    "karta/src/agents/actionAgents.ts",
+    "karta/src/tools/registry.ts",
+    "karta/test/socialStatusTool.test.ts",
+    "karta/test/socialStatusSdk.test.ts",
+    "karta/test/socialStatusRegistry.test.ts",
+    "karta/src/engine/loop.ts",
+    "karta/src/engine/tool-trace.ts",
+    "karta/src/engine/private-tool-results.ts",
+    "karta/src/tools/customRegistry.ts"
+  ],
+  "no_concrete_security_defect_identified": [
+    "Owner only from ToolExecutionContext, controlled by engine; no dynamic owner/schema/columns parameters.",
+    "Query is owner-filtered and every returned row including pagination sentinel is owner-validated.",
+    "Fixed output projection excludes content, tokens and raw provider result/error fields.",
+    "Bounded keyset page over canonical UUIDs, strict ordering and duplicate checks, no claim of a snapshot.",
+    "Stored association and publication metadata explicitly do not imply current provider health or new publication.",
+    "Simulation returns simulated/no evidence and skips database/schema selection.",
+    "Registered only for existing maitre-des-publicites, not user-custom tools.",
+    "Trace minimization is implemented by existing engine.",
+    "Supabase SDK tests inject HTTP transport and check method, schema, owner, cursor and projection; these tests were reviewed, not rerun by this reviewer."
+  ],
+  "findings": [
+    {
+      "severity": "functional gap, blocking end-to-end usage claim",
+      "title": "Stored social metadata is executed then discarded in the registered agent path",
+      "evidence": [
+        "karta/src/engine/loop.ts: single decide happens before the tool loop; subsequent tool parameters come from that prior decision.",
+        "karta/src/engine/loop.ts: tool result goes only to persistPrivateToolResult, assertToolResult and minimized trace; no subsequent model turn or result-to-context handoff.",
+        "karta/src/engine/private-tool-results.ts: persistPrivateToolResult allows only knowledge_search and quantum_simulate on custom agents, so social_status on maitre-des-publicites returns not_applicable.",
+        "karta/src/tools/social-status.ts sets metadata_only, so trace output does not preserve items or nextAfterId."
+      ],
+      "impact": "The registered tool can read a first page, but neither the model nor the client receives its metadata/cursor through this path. It cannot use that result to plan subsequent page reads or adapt the generated offer.",
+      "recommendation": "Use an existing authorized private result delivery or a bounded result-to-next-step flow under its own impact analysis and tests; until then qualify this lot as a safe read component with incomplete product consumption. Do not expose raw tool data through telemetry to bypass this gap.",
+      "changed_by_reviewer": false
+    }
+  ],
+  "followup": {
+    "status": "resolved",
+    "review": "social-context-readonly-review.json",
+    "note": "The post-decision result-consumption gap was corrected through awaited pre-inference context. Preserve this file as the historical finding."
+  }
+}

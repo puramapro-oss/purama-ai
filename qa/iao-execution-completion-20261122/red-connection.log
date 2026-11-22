@@ -1,0 +1,147 @@
+Check tests/social-connection/connection.test.ts
+running 34 tests from ./tests/social-connection/connection.test.ts
+state binds the user, platform and profile with a random one-use nonce ... ok (2ms)
+expired/future state and short secrets cannot authorize a callback ... ok (882µs)
+authorized flow creates one stable profile, verifies external identity and binds once ... ok (3ms)
+callback refuses another profile before provider reads or writes ... ok (1ms)
+callback refuses another platform before provider reads or writes ... ok (698µs)
+callback refuses missing account before provider reads or writes ... ok (832µs)
+callback refuses duplicate account param before provider reads or writes ... ok (610µs)
+valid HMAC without registered intent does not authorize writes ... ok (812µs)
+provider account/profile mismatch or disconnected account never binds ... ok (2ms)
+a superseded or cancelled intent cannot bind; callback errors are sanitized ... ok (1ms)
+uncertain creation is reconciled by a read, without a repeated POST ... ok (518µs)
+a racing successful callback is never reported as cancelled after a zero-row update ... ok (580µs)
+concurrent initial requests claim profile creation once ... ok (382µs)
+database failure does not consume the intent or claim successful binding ... ok (820µs)
+connect HTTP gates method/origin/authentication before privileged dependencies ... ok (8ms)
+callback HTTP rejects forged state before privileged client and avoids false success on replay ... ok (1ms)
+schema selection preserves purama_ai and rejects silent fallbacks ... ok (197µs)
+real provider adapter verifies identity from authenticated account response ... ok (923µs)
+provider refuses foreign profiles, duplicate IDs and incomplete cursor pages ... ok (584µs)
+absence is returned only after an explicit complete final cursor page ... ok (725µs)
+provider follows bounded cursor pagination and normalizes platform names ... ok (193µs)
+account reconnect and enable flags are reflected in publishability ... ok (239µs)
+profile POST uses stable idempotency and rejects contradictory profile evidence ... ok (368µs)
+OAuth URL uses documented camelCase profileId and redirect_url; insecure URLs fail ... ok (339µs)
+provider deadline: non-cooperative fetch rejects once and discards a late response ... FAILED (205ms)
+provider deadline: a body without EOF is cancelled without confirming an account ... FAILED (201ms)
+provider byte cap: over-limit stream is rejected before EOF despite hanging cancellation ... FAILED (202ms)
+provider byte cap: multibyte UTF-8 cannot bypass the one-MiB limit ... FAILED (3ms)
+provider byte cap: a valid response exactly at the byte limit remains accepted ... ok (2ms)
+provider deadline: headers and body share one budget ... FAILED (174ms)
+provider deadline: invalid timeout configuration is rejected before any transport ... FAILED (387µs)
+provider HTTP refusal cleans its unread body and preserves public error classification ... FAILED (803µs)
+provider deadline: timed-out profile creation stays uncertain and cannot issue another POST ... FAILED (202ms)
+provider deadline: a late account verification never completes the OAuth binding ... FAILED (202ms)
+
+ ERRORS
+
+provider deadline: non-cooperative fetch rejects once and discards a late response => ./tests/social-connection/connection.test.ts:318:6
+error: AssertionError: the adapter must terminate before the watchdog
++ actual - expected
+
++ 'watchdog'
+- 'rejected'
+
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+         ^
+    at assertUncertainProviderFailure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:312:10)
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:341:3
+
+provider deadline: a body without EOF is cancelled without confirming an account => ./tests/social-connection/connection.test.ts:347:6
+error: AssertionError: the adapter must terminate before the watchdog
++ actual - expected
+
++ 'watchdog'
+- 'rejected'
+
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+         ^
+    at assertUncertainProviderFailure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:312:10)
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:364:3
+
+provider byte cap: over-limit stream is rejected before EOF despite hanging cancellation => ./tests/social-connection/connection.test.ts:368:6
+error: AssertionError: the adapter must terminate before the watchdog
++ actual - expected
+
++ 'watchdog'
+- 'rejected'
+
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+         ^
+    at assertUncertainProviderFailure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:312:10)
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:382:3
+
+provider byte cap: multibyte UTF-8 cannot bypass the one-MiB limit => ./tests/social-connection/connection.test.ts:386:6
+error: AssertionError: Missing expected rejection.
+  await assert.rejects(() => provider.findProfiles({ externalId: "fixture", name: "fixture" }),
+  ^
+    at async file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:391:3
+
+provider deadline: headers and body share one budget => ./tests/social-connection/connection.test.ts:403:6
+error: AssertionError: the adapter must terminate before the watchdog
++ actual - expected
+
++ 'fulfilled'
+- 'rejected'
+
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+         ^
+    at assertUncertainProviderFailure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:312:10)
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:419:3
+
+provider deadline: invalid timeout configuration is rejected before any transport => ./tests/social-connection/connection.test.ts:422:6
+error: AssertionError: Missing expected exception.
+    assert.throws(() => createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs,
+           ^
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:425:12
+
+provider HTTP refusal cleans its unread body and preserves public error classification => ./tests/social-connection/connection.test.ts:432:6
+error: AssertionError: Expected values to be strictly equal:
+
+false !== true
+
+    assert.equal(wasCancelled, true);
+           ^
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:447:12
+
+provider deadline: timed-out profile creation stays uncertain and cannot issue another POST => ./tests/social-connection/connection.test.ts:451:6
+error: AssertionError: the adapter must terminate before the watchdog
++ actual - expected
+
++ 'watchdog'
+- 'rejected'
+
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+         ^
+    at assertUncertainProviderFailure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:312:10)
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:467:3
+
+provider deadline: a late account verification never completes the OAuth binding => ./tests/social-connection/connection.test.ts:474:6
+error: AssertionError: the adapter must terminate before the watchdog
++ actual - expected
+
++ 'watchdog'
+- 'rejected'
+
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+         ^
+    at assertUncertainProviderFailure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:312:10)
+    at file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/social-connection/connection.test.ts:483:3
+
+ FAILURES
+
+provider deadline: non-cooperative fetch rejects once and discards a late response => ./tests/social-connection/connection.test.ts:318:6
+provider deadline: a body without EOF is cancelled without confirming an account => ./tests/social-connection/connection.test.ts:347:6
+provider byte cap: over-limit stream is rejected before EOF despite hanging cancellation => ./tests/social-connection/connection.test.ts:368:6
+provider byte cap: multibyte UTF-8 cannot bypass the one-MiB limit => ./tests/social-connection/connection.test.ts:386:6
+provider deadline: headers and body share one budget => ./tests/social-connection/connection.test.ts:403:6
+provider deadline: invalid timeout configuration is rejected before any transport => ./tests/social-connection/connection.test.ts:422:6
+provider HTTP refusal cleans its unread body and preserves public error classification => ./tests/social-connection/connection.test.ts:432:6
+provider deadline: timed-out profile creation stays uncertain and cannot issue another POST => ./tests/social-connection/connection.test.ts:451:6
+provider deadline: a late account verification never completes the OAuth binding => ./tests/social-connection/connection.test.ts:474:6
+
+FAILED | 25 passed | 9 failed (1s)
+
+error: Test failed

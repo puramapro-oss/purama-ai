@@ -47,46 +47,69 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
     if (signal?.aborted) controller.abort();
     else signal?.addEventListener("abort", forward, { once: true });
     let stage: Stage = "context";
+    let deadline: StageDeadline | undefined;
     try {
       if (request.type === "memory-control") {
         stage = "control";
-        return await this.#control(request, controller);
+        deadline = createStageDeadline(this.timeoutMs);
+        const result = await this.#control(request, controller, deadline);
+        assertCurrent(deadline, controller);
+        return result;
       }
       if (request.type !== "conversation" || request.memoryControl) return blocked("memory-denied:unsupported-request");
+      deadline = createStageDeadline(this.timeoutMs);
       const prepared = await bounded(() => this.smarana.buildContext({
         idempotencyKey: durableRequestKey(request), payloadDigest: smaranaPayloadDigest(request),
         tenantId: request.tenantId, actorId: request.actorId,
         conversationId: request.conversationId, message: request.prompt, signal: controller.signal,
-      }), this.timeoutMs, controller);
-      assertUuid(prepared.operationId);
+      }), deadline, controller);
+      assertCurrent(deadline, controller);
+      const operationId = prepared.operationId;
+      assertUuid(operationId);
+      const context = prepared.context;
+      assertCurrent(deadline, controller);
       stage = "completion";
+      deadline = createStageDeadline(this.timeoutMs);
       const completion = await bounded(() => this.completion.complete({
         requestId: request.requestId, idempotencyKey: completionIdempotencyKey(request),
-        payloadDigest: completionPayloadDigest(request), message: request.prompt, context: prepared.context,
+        payloadDigest: completionPayloadDigest(request), message: request.prompt, context,
         signal: controller.signal,
-      }), this.timeoutMs, controller);
-      if (!completion.text.trim() || completion.text.length > 256_000 || !completion.modelVersion.trim()) {
+      }), deadline, controller);
+      assertCurrent(deadline, controller);
+      const { text, modelVersion } = completion;
+      if (!text.trim() || text.length > 256_000 || !modelVersion.trim()) {
         throw new Error("memory-unavailable:compute-fabric-malformed");
       }
-      return {
-        kind: "accepted", preview: completion.text,
-        evidence: evidence(request.requestId, prepared.operationId),
+      const result: KartaIaoResult = {
+        kind: "accepted", preview: text,
+        evidence: evidence(request.requestId, operationId),
       };
+      assertCurrent(deadline, controller);
+      return result;
     } catch (error) {
+      // Validation can itself cross the deadline or abort before throwing.
+      // Preserve interruption evidence through the public acceptance boundary.
+      if (deadline) {
+        try { assertCurrent(deadline, controller); } catch (interruption) { error = interruption; }
+      }
       return blocked(safeDependency(error), effectAfter(stage, error));
     } finally {
       signal?.removeEventListener("abort", forward);
     }
   }
 
-  async #control(request: IaoRequest, controller: AbortController): Promise<KartaIaoResult> {
+  async #control(request: IaoRequest, controller: AbortController, deadline: StageDeadline): Promise<KartaIaoResult> {
     if (!request.memoryControl) return blocked("memory-denied:missing-control");
-    const receipt = normalizeIaoReceipt(await bounded(() => this.smarana.control({
+    const returned = await bounded(() => this.smarana.control({
       idempotencyKey: durableRequestKey(request), payloadDigest: smaranaPayloadDigest(request),
       tenantId: request.tenantId, actorId: request.actorId,
       action: request.memoryControl!.action, data: request.memoryControl!.data, signal: controller.signal,
-    }), this.timeoutMs, controller), request.memoryControl.action);
-    return { kind: "accepted", memoryControl: receipt, evidence: evidence(request.requestId, receipt.operationId) };
+    }), deadline, controller);
+    assertCurrent(deadline, controller);
+    const receipt = normalizeIaoReceipt(returned, request.memoryControl.action);
+    const result: KartaIaoResult = { kind: "accepted", memoryControl: receipt, evidence: evidence(request.requestId, receipt.operationId) };
+    assertCurrent(deadline, controller);
+    return result;
   }
 }
 
@@ -129,27 +152,64 @@ const CANCELLED = "memory-unavailable:cancelled";
 /** Internal evidence that this dependency was never invoked. */
 class PreDispatchCancellation extends Error {}
 
+/** One absolute budget survives every Promise handoff and local validation of its stage. */
+type StageDeadline = {
+  readonly expiresAt: number;
+  dispatched: boolean;
+  interruptionCause?: typeof TIMEOUT | typeof CANCELLED;
+};
+
+function createStageDeadline(timeoutMs: number): StageDeadline {
+  return { expiresAt: performance.now() + timeoutMs, dispatched: false };
+}
+
+function interruption(deadline: StageDeadline, message: typeof TIMEOUT | typeof CANCELLED): Error {
+  deadline.interruptionCause ??= message;
+  return deadline.dispatched ? new Error(deadline.interruptionCause) : new PreDispatchCancellation(deadline.interruptionCause);
+}
+
+function assertCurrent(deadline: StageDeadline, controller: AbortController): void {
+  const message = deadline.interruptionCause ??
+    (controller.signal.aborted ? CANCELLED : performance.now() >= deadline.expiresAt ? TIMEOUT : undefined);
+  if (message) {
+    const error = interruption(deadline, message);
+    controller.abort();
+    throw error;
+  }
+}
+
 /** Timeout aborts the shared controller so every downstream port sees the same interruption; an aborted signal never dispatches. */
-function bounded<T>(start: () => Promise<T>, timeoutMs: number, controller: AbortController): Promise<T> {
+async function bounded<T>(start: () => Promise<T>, deadline: StageDeadline, controller: AbortController): Promise<T> {
   const { signal } = controller;
-  return new Promise<T>((resolve, reject) => {
-    if (signal.aborted) { reject(new PreDispatchCancellation(CANCELLED)); return; }
-    const timer = setTimeout(() => { controller.abort(); reject(new Error(TIMEOUT)); }, timeoutMs);
-    let dispatched = false;
-    const onAbort = () => {
-      clearTimeout(timer);
-      reject(dispatched ? new Error(CANCELLED) : new PreDispatchCancellation(CANCELLED));
-    };
-    signal.addEventListener("abort", onAbort, { once: true });
-    Promise.resolve().then(() => {
-      if (signal.aborted) throw new PreDispatchCancellation(CANCELLED);
-      dispatched = true;
-      return start();
-    }).then(resolve, reject).finally(() => {
-      clearTimeout(timer);
-      signal.removeEventListener("abort", onAbort);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let onAbort: (() => void) | undefined;
+  try {
+    assertCurrent(deadline, controller);
+    const result = await new Promise<T>((resolve, reject) => {
+      onAbort = () => reject(interruption(deadline, CANCELLED));
+      signal.addEventListener("abort", onAbort, { once: true });
+      timer = setTimeout(() => {
+        // Record the cause before abort synchronously invokes the listener.
+        reject(interruption(deadline, TIMEOUT));
+        controller.abort();
+      }, Math.max(0, Math.ceil(deadline.expiresAt - performance.now())));
+      Promise.resolve().then(() => {
+        assertCurrent(deadline, controller);
+        deadline.dispatched = true;
+        return start();
+      }).then(resolve, reject);
     });
-  });
+    assertCurrent(deadline, controller);
+    return result;
+  } catch (error) {
+    assertCurrent(deadline, controller);
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    if (onAbort) signal.removeEventListener("abort", onAbort);
+    // A successful context and the following completion share this controller.
+    // Only interruption may abort it; normal cleanup must keep it usable.
+  }
 }
 
 /** Only an interruption yields effect knowledge; a context build is a read with a durable receipt, never a user-visible effect. */

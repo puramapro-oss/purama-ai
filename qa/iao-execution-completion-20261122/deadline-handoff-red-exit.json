@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "npm",
+    "test",
+    "--",
+    "test/kartaRuntimeDeadline.test.ts",
+    "--maxWorkers=1"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 1
+}

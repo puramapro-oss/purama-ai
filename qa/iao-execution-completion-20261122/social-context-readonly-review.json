@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "prepared_at": "2026-11-22T22:36:26.186786+00:00",
+  "status": "PASS",
+  "scope": "Read-only independent review of the result-consumption fix; no product edits and no duplicate test/build runs.",
+  "files": [
+    {
+      "path": "karta/src/agents/social-status-context.ts",
+      "sha256": "80d28d47b13b307c908ab7d34b14a8b101c53e4bc4b26078d4e8014d3c0617aa"
+    },
+    {
+      "path": "karta/src/engine/loop.ts",
+      "sha256": "3a2af008739007f4f15e29f711d64d9ace0d9984f6841c2c329a42de7783aaae"
+    },
+    {
+      "path": "karta/src/engine/types.ts",
+      "sha256": "dc80a25e8f4d8b81c61049ba2ac24afbc0edf0f83c685a34c53d5b4c76b582f9"
+    },
+    {
+      "path": "karta/src/agents/actionAgents.ts",
+      "sha256": "9335cb3a78879867840ca591a03ba99b18294906e066b1771baa411cd1163955"
+    },
+    {
+      "path": "karta/test/socialStatusCycle.test.ts",
+      "sha256": "cf61d69d203736e9faa4821077fbf17e87f2fa5f96b013d3fd07bc83fb73ddcc"
+    }
+  ],
+  "previous_finding": "social-readonly-review.json described metadata discarded by a post-decision read tool.",
+  "previous_finding_status": "resolved in the reviewed source",
+  "verified_by_inspection": [
+    {
+      "topic": "Data reaches inference before action",
+      "evidence": "runAgentCycle awaits buildContext before getClaudeClient().decide; buildSocialBriefContext awaits both reader calls; real.ts serializes this context in the SDK message. The old post-decision social_status tool is removed from this agent."
+    },
+    {
+      "topic": "Simulation, mock and unknown client",
+      "evidence": "executionMode is supplied from server state and strict isMock === false. Missing/live-unknown/simulation modes and missing brief return from the builder without reader.execute. getClaudeClient caches the selected real/mock instance."
+    },
+    {
+      "topic": "Authority",
+      "evidence": "The builder ignores _trigger, uses the engine-provided userId and prepared pendingBrief/executionMode. The existing reader still validates owner UUID, fixed agent capability, scoped SQL and returned rows including sentinel."
+    },
+    {
+      "topic": "Unavailability and pagination",
+      "evidence": "Rejected/non-read pages become explicit unavailable resources without items. Promise.allSettled preserves the available resource. Context marks partial/unavailable separately, fixed first-page limits 14/10, atomicSnapshot false and providerHealth not_checked; underlying hasMore/nextAfterId remain intact."
+    },
+    {
+      "topic": "Traces",
+      "evidence": "definition.pendingBriefKey keeps privateTrace enabled independently of the removed read tool. Decision, params/results, notifications, stored run outcome and replay remain minimized by the existing engine."
+    },
+    {
+      "topic": "Integration tests inspected",
+      "evidence": "socialStatusCycle.test.ts preserves the actual Supabase and model SDKs but replaces HTTP boundaries; asserts scoped SQL, SDK context, derived PDF params, read-before-decide ordering, two bounded parallel queries, no reads for excluded modes, foreign-sentinel exclusion and trace canaries."
+    }
+  ],
+  "test_execution_by_this_reviewer": false,
+  "test_result_reported_by_parent": {
+    "passed": 14,
+    "total": 14,
+    "note": "Parent is also executing full KARTA tests, typecheck and build; this reviewer did not duplicate them."
+  },
+  "new_blocking_findings": [],
+  "limitations": [
+    "The context is a bounded first-page view sorted by UUID, not a most-recent or exhaustive social history.",
+    "No new provider health check or publication occurs.",
+    "No real database, model API, account or social provider was exercised in this review.",
+    "The existing per-page deadlines bound waiting; synchronous JavaScript remains non-preemptible."
+  ],
+  "product_writes_by_reviewer": false
+}
