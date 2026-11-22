@@ -89,10 +89,11 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
     } catch (error) {
       // Validation can itself cross the deadline or abort before throwing.
       // Preserve interruption evidence through the public acceptance boundary.
+      let failure = error;
       if (deadline) {
-        try { assertCurrent(deadline, controller); } catch (interruption) { error = interruption; }
+        try { assertCurrent(deadline, controller); } catch (interruption) { failure = interruption; }
       }
-      return blocked(safeDependency(error), effectAfter(stage, error));
+      return blocked(safeDependency(failure), effectAfter(stage, failure));
     } finally {
       signal?.removeEventListener("abort", forward);
     }

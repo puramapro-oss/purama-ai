@@ -511,3 +511,185 @@ for (const phase of ["transport", "parsing"] as const) {
     }
   });
 }
+
+function socialInputRequest(body: BodyInit, extra: RequestInit = {}): Request {
+  return new Request("https://database.example/connect", {
+    method: "POST", headers: { Authorization: "Bearer valid", Origin: "https://app.example" },
+    body, duplex: "half", ...extra,
+  } as RequestInit);
+}
+
+Deno.test("connect body: excessive bytes without EOF stop before non-cooperative cleanup", async () => {
+  const f = fixture();
+  let source!: ReadableStreamDefaultController<Uint8Array>;
+  let cancelled = 0;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) { source = controller; controller.enqueue(new Uint8Array(16_385).fill(32)); },
+    cancel() { cancelled++; return new Promise<void>(() => {}); },
+  });
+  const request = socialInputRequest(body);
+  const pending = createSocialConnectHandler(f.http)(request);
+  const observed = await observeProvider(pending);
+  if (observed.status === "watchdog") source.error(new Error("synthetic oversized-body cleanup"));
+  await pending;
+  assert.equal(observed.status, "fulfilled", "oversized input must finish without waiting for EOF");
+  if (observed.status !== "fulfilled") return;
+  assert.equal(observed.value.status, 413);
+  assert.equal((await observed.value.json()).code, "request_too_large");
+  assert.equal(cancelled, 1);
+  assert.equal(request.body?.locked, false);
+  assert.equal(f.calls.dependencies, 0);
+});
+
+for (const timing of ["before", "during"] as const) {
+  Deno.test(`connect body: cancellation ${timing} a stalled read refuses before dependencies`, async () => {
+    const f = fixture();
+    const parent = new AbortController();
+    let source!: ReadableStreamDefaultController<Uint8Array>;
+    let cancelled = 0;
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) { source = controller; },
+      pull() {
+        if (timing === "during") queueMicrotask(() => parent.abort());
+        return new Promise<void>(() => {});
+      },
+      cancel() { cancelled++; return new Promise<void>(() => {}); },
+    }, { highWaterMark: 0 });
+    const request = socialInputRequest(body, { signal: parent.signal });
+    if (timing === "before") parent.abort();
+    const pending = createSocialConnectHandler(f.http)(request);
+    const observed = await observeProvider(pending);
+    if (observed.status === "watchdog") source.error(new Error("synthetic cancelled-body cleanup"));
+    await pending;
+    assert.equal(observed.status, "fulfilled", "cancelled input must not wait for its producer");
+    if (observed.status !== "fulfilled") return;
+    assert.equal(observed.value.status, 408);
+    assert.equal((await observed.value.json()).code, "request_timeout");
+    assert.equal(cancelled, 1);
+    assert.equal(request.body?.locked, false);
+    assert.equal(f.calls.dependencies, 0);
+  });
+}
+
+for (const elapsed of [4_999, 5_000]) {
+  Deno.test(`connect body: the five-second absolute boundary is respected at ${elapsed} ms`, async () => {
+    const f = fixture();
+    let now = 0;
+    let pulled = false;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled = true; now = elapsed;
+        controller.enqueue(new TextEncoder().encode(JSON.stringify({ platform: "youtube" })));
+        controller.close();
+      },
+    }, { highWaterMark: 0 });
+    const request = socialInputRequest(body);
+    const previousNow = Object.getOwnPropertyDescriptor(performance, "now");
+    Object.defineProperty(performance, "now", { configurable: true, value: () => now });
+    try {
+      const response = await createSocialConnectHandler(f.http)(request);
+      assert.equal(response.status, elapsed < 5_000 ? 200 : 408);
+      if (elapsed >= 5_000) assert.equal((await response.json()).code, "request_timeout");
+      assert.equal(f.calls.dependencies, elapsed < 5_000 ? 1 : 0);
+      assert.equal(pulled, true);
+      assert.equal(request.body?.locked, false);
+    } finally {
+      if (previousNow) Object.defineProperty(performance, "now", previousNow);
+      else Reflect.deleteProperty(performance, "now");
+    }
+  });
+}
+
+for (const bom of [false, true]) {
+  Deno.test(`connect body: normalized 4096-unit Unicode input accepts leading BOM=${bom}`, async () => {
+    const f = fixture();
+    const empty = JSON.stringify({ platform: "youtube", padding: "" });
+    const text = JSON.stringify({ platform: "youtube", padding: "界".repeat(4_096 - empty.length) });
+    assert.equal(text.length, 4_096);
+    const body = (bom ? "\uFEFF" : "") + text;
+    assert(new TextEncoder().encode(body).length > 4_096);
+    const response = await createSocialConnectHandler(f.http)(socialInputRequest(body));
+    assert.equal(response.status, 200);
+    assert.equal(f.calls.dependencies, 1);
+    assert.equal((await response.json()).url, "https://provider.example/authorize");
+  });
+}
+
+Deno.test("connect body: 4097 Unicode units retain the existing character refusal", async () => {
+  const f = fixture();
+  const empty = JSON.stringify({ platform: "youtube", padding: "" });
+  const body = JSON.stringify({ platform: "youtube", padding: "界".repeat(4_097 - empty.length) });
+  assert.equal(body.length, 4_097);
+  assert(new TextEncoder().encode(body).length < 16_384);
+  const response = await createSocialConnectHandler(f.http)(socialInputRequest(body));
+  assert.equal(response.status, 413);
+  assert.equal((await response.json()).code, "request_too_large");
+  assert.equal(f.calls.dependencies, 0);
+});
+
+Deno.test("connect body: malformed UTF-8 is rejected instead of replaced inside valid JSON", async () => {
+  const f = fixture();
+  const encoder = new TextEncoder();
+  const prefix = encoder.encode('{"platform":"youtube","padding":"');
+  const suffix = encoder.encode('"}');
+  const bytes = new Uint8Array(prefix.length + suffix.length + 1);
+  bytes.set(prefix); bytes[prefix.length] = 0xff; bytes.set(suffix, prefix.length + 1);
+  const response = await createSocialConnectHandler(f.http)(socialInputRequest(bytes));
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).code, "invalid_request");
+  assert.equal(f.calls.dependencies, 0);
+});
+
+for (const length of ["invalid", "1", "999"]) {
+  Deno.test(`connect body: inconsistent Content-Length ${length} is refused`, async () => {
+    const f = fixture();
+    const request = socialInputRequest(JSON.stringify({ platform: "youtube" }), {
+      headers: { Authorization: "Bearer valid", Origin: "https://app.example", "Content-Length": length },
+    });
+    const response = await createSocialConnectHandler(f.http)(request);
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).code, "invalid_request");
+    assert.equal(f.calls.dependencies, 0);
+  });
+}
+
+Deno.test("connect body: a producer failure is a sanitized client error before dependencies", async () => {
+  const f = fixture();
+  const body = new ReadableStream<Uint8Array>({
+    pull(controller) { controller.error(new Error("synthetic-private-producer-detail")); },
+  }, { highWaterMark: 0 });
+  const request = socialInputRequest(body);
+  const response = await createSocialConnectHandler(f.http)(request);
+  assert.equal(response.status, 400);
+  const payload = await response.json();
+  assert.equal(payload.code, "invalid_request");
+  assert(!JSON.stringify(payload).includes("synthetic-private-producer-detail"));
+  assert.equal(request.body?.locked, false);
+  assert.equal(f.calls.dependencies, 0);
+});
+
+Deno.test("connect body: an excessive declared length refuses before reading the producer", async () => {
+  const f = fixture();
+  let source!: ReadableStreamDefaultController<Uint8Array>;
+  let pulls = 0, cancelled = 0;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) { source = controller; },
+    pull() { pulls++; return new Promise<void>(() => {}); },
+    cancel() { cancelled++; },
+  }, { highWaterMark: 0 });
+  const request = socialInputRequest(body, {
+    headers: { Authorization: "Bearer valid", Origin: "https://app.example", "Content-Length": "16385" },
+  });
+  const pending = createSocialConnectHandler(f.http)(request);
+  const observed = await observeProvider(pending);
+  if (observed.status === "watchdog") source.error(new Error("synthetic declared-body cleanup"));
+  await pending;
+  assert.equal(observed.status, "fulfilled");
+  if (observed.status !== "fulfilled") return;
+  assert.equal(observed.value.status, 413);
+  assert.equal((await observed.value.json()).code, "request_too_large");
+  assert.equal(pulls, 0);
+  assert.equal(cancelled, 1);
+  assert.equal(request.body?.locked, false);
+  assert.equal(f.calls.dependencies, 0);
+});

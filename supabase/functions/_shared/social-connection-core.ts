@@ -3,6 +3,7 @@ import { createSocialCallbackState, hashSocialCallbackState, isOAuthSocialPlatfo
 import { normalizeSocialPlatform, SocialProviderError, type SocialConnectionProvider,
   type VerifiedSocialAccount } from "./social-connection-provider.ts";
 import { resolveSocialSchema } from "./social-db.ts";
+import { readRequestText, RequestBodyError } from "./request-body.ts";
 
 export class SocialConnectionError extends Error {
   constructor(public readonly code: string, public readonly status = 400) {
@@ -173,7 +174,21 @@ export function createSocialConnectHandler(options: SocialConnectionHttpOptions)
       if (request.method !== "POST") throw new SocialConnectionError("method_not_allowed", 405);
       const userId = await options.getUserId(request);
       if (!userId) throw new SocialConnectionError("unauthorized", 401);
-      const text = await request.text();
+      let text: string;
+      try {
+        // Keep the existing UTF-16 length limit below; the byte ceiling also
+        // admits its valid multibyte inputs while bounding an unfinished stream.
+        const decoded = await readRequestText(request, { maxBytes: 16_384, timeoutMs: 5_000 });
+        // Normalize one leading UTF-8 BOM consistently across HTTP runtimes.
+        text = decoded.startsWith("\uFEFF") ? decoded.slice(1) : decoded;
+      } catch (error) {
+        if (error instanceof RequestBodyError) {
+          const code = error.status === 413 ? "request_too_large"
+            : error.status === 408 ? "request_timeout" : "invalid_request";
+          throw new SocialConnectionError(code, error.status);
+        }
+        throw error;
+      }
       if (text.length > 4096) throw new SocialConnectionError("request_too_large", 413);
       let body: unknown;
       try { body = JSON.parse(text); } catch { throw new SocialConnectionError("invalid_json"); }

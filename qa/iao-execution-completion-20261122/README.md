@@ -214,3 +214,43 @@ Le raccordement d'une publication KARTA au parcours social authentifié exige é
 délégation d'identité concrète. Une clé de service serveur ne remplace pas le jeton utilisateur
 attendu par les routes sociales. La nouvelle capacité de lecture ne prétend pas résoudre ce
 raccordement d'écriture.
+
+## Reprise du 23 novembre 2026 — lint et corps entrant social
+
+La qualification historique ci-dessus appartient au premier commit
+`370ba539c3bc1bcb58f1e67cf7a17985f6ce59a1`. Ses deux campagnes GitHub ont ensuite
+réussi les 4 299 tests KARTA dans 189 fichiers ; le job du site s'est arrêté au lint
+`no-ex-assign`. Le correctif de cette affectation conserve l'objet erreur/interruption
+avec une variable locale.
+
+L'audit complémentaire a reproduit une lecture entrante non bornée dans
+`createSocialConnectHandler` : `request.text()` attendait EOF avant de vérifier
+4 096 unités UTF-16, même après annulation du signal. La correction réutilise
+`readRequestText`, avec 16 384 octets et 5 000 ms, puis conserve le contrôle
+4 096 unités. Le plafond de transport ne casse pas les entrées Unicode valides
+qui dépassent 4 096 octets. Un BOM initial est normalisé ; cette normalisation
+étend la cohérence sous Deno, dont la lecture précédente conservait ce BOM.
+UTF-8 invalide et Content-Length incohérent sont refusés explicitement.
+
+Les contrôles d'origine, méthode, identité et plateforme, les écritures du store,
+le fournisseur, le callback et les helpers partagés restent inchangés. Les refus
+400/408/413 arrivent avant création des dépendances privilégiées. Le délai porte
+sur le corps entrant, pas sur toute l'authentification ou transaction OAuth.
+
+Les 14 nouveaux cas passent de 2 réussites / 12 échecs avant correction à 14/14.
+La campagne des six fichiers sociaux passe 130/130, les routes avec le vrai SDK
+Supabase 2.91.0 passent 14/14, le runtime ciblé passe 55/55. Six contre-épreuves
+indépendantes du lecteur, avec le vrai SDK 2.110.8, passent aussi. Les campagnes
+se recouvrent et ne s'additionnent pas. Lint final : zéro erreur, 22 avertissements
+existants ; typecheck et build KARTA : codes de sortie 0.
+
+Le premier essai SDK manquait de dépendances à la racine ; la tentative de
+résolution via cache a été interrompue. Le passage final a utilisé le résolveur
+manuel original et les six packages Supabase verrouillés à 2.91.0 déjà installés,
+sans réseau de test ni sous-processus. Le lien de résolution temporaire a été retiré.
+Ces erreurs de préparation restent archivées, sans être attribuées au produit.
+
+Voir `followup-20261123.json`, les deux contre-revues et
+`followup-20261123-evidence.json` pour les commandes, empreintes et journaux.
+L'ancienne `verification.json` demeure une preuve historique, sans réécriture de
+ses résultats. La nouvelle CI et l'état du commit de reprise sont suivis dans la PR #91.
