@@ -1,0 +1,107 @@
+{
+  "scope": "Approbation versionnée Gmail et affichage des reçus, sans envoi réel ni déploiement",
+  "base_commit": "d1d2f732ab07630c53e79fa3989346a6753e2eb9",
+  "base_tree": "7eaa1db545956e18b47e2bff3017287cb3d15dd2",
+  "recorded_at_utc": "2026-11-22T01:10:02.783011+00:00",
+  "overall_status": "PARTIEL — candidat local, qualification SQL et navigateur en CI requise",
+  "gates": {
+    "client_config_node": {
+      "status": "PASS",
+      "tests": 23,
+      "failures": 0,
+      "exit_code": 0
+    },
+    "eslint": {
+      "status": "PASS",
+      "files": 8,
+      "errors": 0,
+      "warnings": 0,
+      "exit_code": 0
+    },
+    "typecheck_ui_and_actual_imports": {
+      "status": "PASS",
+      "exit_code": 0
+    },
+    "typecheck_handler_strict": {
+      "status": "PASS",
+      "exit_code": 0
+    },
+    "typecheck_sender_test_karta_options": {
+      "status": "PASS",
+      "exit_code": 0,
+      "typeRoots": "Dépendances KARTA existantes explicitement résolues depuis le tsconfig temporaire externe"
+    },
+    "typecheck_full_site_final": {
+      "status": "BLOQUE",
+      "exit_code": -9,
+      "detail": "SIGKILL sans diagnostic. Un passage précédent était code 0 avant le dernier ajout au reçu ; il ne vaut pas PASS de la version finale."
+    },
+    "sql_handler": {
+      "status": "NON TESTE",
+      "attempt_exit_code": 1,
+      "collected_at_attempt": 111,
+      "executed": 0,
+      "reported_success_ignored": true,
+      "current_expected_scenarios": 115,
+      "detail": "Rapport Vitest partiel sans assertion exécutée ; quatre contre-épreuves ajoutées ensuite. Aucun résultat SQL PASS."
+    },
+    "sql_direct_smoke": {
+      "status": "BLOQUE",
+      "exit_code": -9,
+      "observed_assertions": 0
+    },
+    "browser": {
+      "status": "BLOQUE",
+      "planned_scenarios": 9,
+      "executed_product_assertions": 0,
+      "exit_code": 1,
+      "reason": "Chromium système : socket() Operation not permitted, SIGABRT avant la création de page. Première tentative : binaire Playwright absent."
+    },
+    "gitnexus_exact_index": {
+      "status": "BLOQUE",
+      "analysis_exit_code": 1,
+      "exact_index_available": false,
+      "historical_source_commit": "812830f9bba392f8fcb109a844f083638520a273",
+      "historical_source": "/workspace/scratch/529e43e3c136/calendar-email-20261122/repo/.gitnexus",
+      "commits_behind_at_analysis": 10,
+      "identity_metadata_modified": false
+    },
+    "gitnexus_detect_changes": {
+      "status": "BLOQUE",
+      "exit_code": 1,
+      "reason": "Le clone exact n’est pas enregistré ; l’index historique source ne peut pas qualifier ce diff."
+    },
+    "real_provider_delivery": {
+      "status": "NON TESTE",
+      "emails_sent": 0,
+      "calls_made": 0
+    }
+  },
+  "review": {
+    "high_risk_notified": "listLogs : 2 appelants directs, 3 processus, 6 symboles impactés dans l’index historique. Filtre commun aligné avec pendingDraftsCount et couvert par test Node.",
+    "unknown_scope": "Fonctions SQL/handler nouvelles absentes de l’index ; portée non certifiée par GitNexus. Revue statique, typages ciblés et contre-revue humaine/agent consignés.",
+    "aba_connection_gap": "Découvert par contre-revue et corrigé dans begin ; scénario SQL écrit et typé, non exécuté localement.",
+    "finish_review_preservation": "Mutation et retrait pendant POST : finaliseur conditionnel et compteurs conservés. Contre-épreuves écrites, typées, non exécutées localement."
+  },
+  "old_migration_sha256": "5bcba773e889db61727562c863cac1eec6c337abd709d925193d0ff1e4a67a04",
+  "sources_sha256": {
+    "supabase/migrations/20261122020000_email_agent_draft_approvals.sql": "2373a34ba3b4bd4c159a15dcdd9f1964d6f6c10debad969b05cdb64c1bda820c",
+    "supabase/functions/email-agent-send-draft/handler.ts": "e5983228b41220665ba0a7a02d07f4bd69428561a419c1bdccc521baea034a53",
+    "supabase/functions/email-agent-send-draft/README.md": "88ca6da3907178ac3a24787579c68a4a89a43a94e557bc28404ee06022a49105",
+    "src/lib/email-agent.ts": "31e7550a26db89495206c4658d16cb93c32b513b4b5a9647b0f56b4e22c6e011",
+    "src/pages/EmailAgentLogs.tsx": "605ca06cc974ef33ebadba77ff7ef0b57e06cda639dcdffdd2ad89a8c3faf7fa",
+    "karta/test/emailDraftSendOnce.test.ts": "8321c9a36148dd55ddeee263de9e77ebf093358e62f2830e1ee33db6aef2abf0",
+    "tests/oauth-gmail/draft-approval-client.test.mjs": "02ea5236bd04641feea26f3fdabe38343395cc067267841c85710e8893d43ff9",
+    "tests/ui-state/email-draft-approval.spec.ts": "d2f7194bbe490ad98719ccb6cb2821bd9805a2c0a82e50d11267b201cc47a880",
+    "tests/ui-state/AuthFixture.tsx": "d7f2dc2a522d57f3412ee21bcdd408a39f5a41f9812df53efc684b2b76c97edc",
+    "tests/ui-state/harness.tsx": "522982d545a01cbe6185c0846aec328499bfb05b5d28dafd49008ecec96f8892",
+    "tests/ui-state/transport.ts": "3052a9ccb080556978de52125215479f425b0f354d7b5d9465aa9ad51dbc3f02",
+    "tests/ui-state/vite.config.ts": "03ab397cd20222e2f2a4f0860daea7512c0640832e98a5f588b04d7776bc3d55"
+  },
+  "next_required": [
+    "Composer la migration 020000 avant la migration de réconciliation 021000 et les modules du parent.",
+    "Exécuter les tests SQL du handler, les connexions PostgreSQL natives et les scénarios navigateur en CI sur le commit composé.",
+    "Exécuter detect_changes sur le dépôt de composition et publier ses limites de couverture.",
+    "Aucun déploiement ni envoi réel ne découle de ces reçus locaux."
+  ]
+}

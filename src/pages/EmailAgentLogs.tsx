@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -17,9 +17,9 @@ import {
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  listLogs, approveLog, rejectLog, sendDraft,
+  listLogs, approveLog, rejectLog, sendDraft, getDraftPreview, reconcileDraft,
   ACTION_META, CATEGORY_META,
-  type EmailAgentLog, type EmailAction,
+  type EmailAgentLog, type EmailAction, type EmailDraftPreview,
 } from '@/lib/email-agent';
 
 export default function EmailAgentLogs() {
@@ -30,56 +30,152 @@ export default function EmailAgentLogs() {
   const [selected, setSelected] = useState<EmailAgentLog | null>(null);
   const [feedback, setFeedback] = useState('');
   const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<EmailDraftPreview | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [operationError, setOperationError] = useState('');
+  const [reconciliation, setReconciliation] = useState('');
+  const owner = user?.id;
+  const ownerRef = useRef(owner);
+  ownerRef.current = owner;
+  const listVersion = useRef(0);
+  const viewVersion = useRef(0);
+  const busyRef = useRef(false);
+  const operation = useRef<AbortController | null>(null);
+  const invalidateRequests = useCallback(() => {
+    ++listVersion.current; ++viewVersion.current; operation.current?.abort();
+  }, []);
 
-  const refresh = async () => {
-    if (!user) return;
+  const refresh = useCallback(async () => {
+    const version = ++listVersion.current;
+    if (!owner) { setLogs([]); setLoading(false); return; }
     setLoading(true);
     try {
       const opts: { limit: number; pendingOnly?: boolean; action?: EmailAction } = { limit: 200 };
       if (filter === 'pending') opts.pendingOnly = true;
       else if (filter !== 'all') opts.action = filter;
-      setLogs(await listLogs(user.id, opts));
+      const rows = await listLogs(owner, opts);
+      if (version === listVersion.current && ownerRef.current === owner) {
+        setLogs(rows.filter(log => log.user_id === owner));
+      }
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (version === listVersion.current && ownerRef.current === owner) {
+        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      }
     } finally {
-      setLoading(false);
+      if (version === listVersion.current && ownerRef.current === owner) setLoading(false);
+    }
+  }, [owner, filter]);
+
+  useEffect(() => {
+    ++viewVersion.current;
+    operation.current?.abort();
+    busyRef.current = false;
+    setBusy(false); setLogs([]); setSelected(null); setPreview(null);
+    setFeedback(''); setOperationError(''); setReconciliation('');
+    void refresh();
+    return invalidateRequests;
+  }, [refresh, invalidateRequests]);
+
+  const closeSelection = () => {
+    ++viewVersion.current;
+    operation.current?.abort();
+    busyRef.current = false;
+    setBusy(false); setSelected(null); setPreview(null); setFeedback('');
+    setOperationError(''); setReconciliation(''); setPreviewLoading(false);
+  };
+
+  const openLog = async (log: EmailAgentLog) => {
+    if (log.user_id !== ownerRef.current || busyRef.current) return;
+    const version = ++viewVersion.current;
+    operation.current?.abort();
+    const controller = new AbortController();
+    operation.current = controller;
+    setSelected(log); setPreview(null); setFeedback(''); setOperationError(''); setReconciliation('');
+    setPreviewLoading(log.action_taken === 'draft' && log.user_approved !== false);
+    if (log.action_taken !== 'draft' || log.user_approved === false) return;
+    try {
+      const loaded = await getDraftPreview(log.user_id, log.id, controller.signal);
+      if (version === viewVersion.current && ownerRef.current === log.user_id) setPreview(loaded);
+    } catch (e) {
+      if (version === viewVersion.current && ownerRef.current === log.user_id) {
+        setOperationError(e instanceof Error ? e.message : String(e));
+      }
+    } finally {
+      if (version === viewVersion.current && ownerRef.current === log.user_id) setPreviewLoading(false);
     }
   };
 
-  useEffect(() => { refresh(); /* eslint-disable-line */ }, [user?.id, filter]);
-
   const handleApprove = async () => {
-    if (!selected) return;
+    if (!selected || !preview || busyRef.current || selected.user_id !== ownerRef.current
+      || preview.user_id !== selected.user_id || preview.log_id !== selected.id) return;
+    if (Date.parse(preview.expires_at) <= Date.now()) {
+      setPreview(null); setOperationError('Cet aperçu a expiré. Actualisez-le avant de continuer.'); return;
+    }
+    const version = viewVersion.current;
+    const reviewed = preview;
+    const current = () => version === viewVersion.current && ownerRef.current === reviewed.user_id;
+    busyRef.current = true;
     setBusy(true);
+    setOperationError('');
     try {
-      await approveLog(selected.id, feedback || undefined);
-      if (selected.action_taken === 'draft') {
-        await sendDraft(selected.id);
+      await approveLog(reviewed, feedback || undefined, operation.current?.signal);
+      if (!current()) return;
+      const receipt = await sendDraft(reviewed, operation.current?.signal);
+      if (!current()) return;
+      if (!receipt.matches_current_preview) {
+        setPreview(null);
+        setReconciliation('Le contenu approuvé a été envoyé ; le brouillon actuel est différent.');
+        void refresh();
+        return;
       }
-      toast.success('✅ Approuvé et envoyé');
-      setSelected(null);
-      setFeedback('');
-      refresh();
+      toast.success('Envoi confirmé par Gmail');
+      closeSelection();
+      void refresh();
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (current()) { setPreview(null); setOperationError(e instanceof Error ? e.message : String(e)); }
     } finally {
-      setBusy(false);
+      if (current()) { busyRef.current = false; setBusy(false); }
     }
   };
 
   const handleReject = async () => {
-    if (!selected) return;
+    if (!selected || busyRef.current || selected.user_id !== ownerRef.current) return;
+    const item = selected;
+    const version = viewVersion.current;
+    const current = () => version === viewVersion.current && ownerRef.current === item.user_id;
+    busyRef.current = true;
     setBusy(true);
     try {
-      await rejectLog(selected.id, feedback || undefined);
-      toast.success('Rejeté — l\'agent va apprendre');
-      setSelected(null);
-      setFeedback('');
-      refresh();
+      await rejectLog(item.id, item.user_id, feedback || undefined);
+      if (!current()) return;
+      toast.success('Brouillon marqué comme rejeté');
+      closeSelection();
+      void refresh();
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (current()) setOperationError(e instanceof Error ? e.message : String(e));
     } finally {
-      setBusy(false);
+      if (current()) { busyRef.current = false; setBusy(false); }
+    }
+  };
+
+  const handleReconcile = async () => {
+    if (!selected || busyRef.current || selected.user_id !== ownerRef.current) return;
+    const item = selected;
+    const version = viewVersion.current;
+    const current = () => version === viewVersion.current && ownerRef.current === item.user_id;
+    busyRef.current = true;
+    setBusy(true); setPreview(null); setOperationError(''); setReconciliation('');
+    try {
+      const receipt = await reconcileDraft(item.user_id, item.id, operation.current?.signal);
+      if (!current()) return;
+      setReconciliation(receipt.matches_current_preview
+        ? 'Envoi confirmé dans Gmail. Aucune nouvelle tentative n’a été effectuée.'
+        : 'Envoi précédent confirmé ; le brouillon actuel est différent. Aucun nouvel envoi n’a été effectué.');
+      void refresh();
+    } catch (e) {
+      if (current()) setOperationError(e instanceof Error ? e.message : String(e));
+    } finally {
+      if (current()) { busyRef.current = false; setBusy(false); }
     }
   };
 
@@ -119,14 +215,14 @@ export default function EmailAgentLogs() {
         </Card>
       ) : (
         <div className="space-y-2">
-          {logs.map(log => {
+          {logs.filter(log => log.user_id === owner).map(log => {
             const action = ACTION_META[log.action_taken] ?? ACTION_META.ignore;
             const cat = CATEGORY_META[log.category] ?? CATEGORY_META.normal;
-            const isPending = log.action_taken === 'draft' && log.user_approved === null;
+            const isPending = log.action_taken === 'draft' && log.user_approved !== false;
             return (
               <button
                 key={log.id}
-                onClick={() => setSelected(log)}
+                onClick={() => void openLog(log)}
                 className={`w-full text-left flex items-start gap-3 p-4 rounded-lg border transition-all ${
                   isPending
                     ? 'border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/10'
@@ -168,9 +264,9 @@ export default function EmailAgentLogs() {
       )}
 
       {/* Detail dialog */}
-      <Dialog open={!!selected} onOpenChange={o => !o && setSelected(null)}>
+      <Dialog open={!!selected && selected.user_id === owner} onOpenChange={o => !o && closeSelection()}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          {selected && (
+          {selected && selected.user_id === owner && (
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
@@ -208,7 +304,21 @@ export default function EmailAgentLogs() {
                   </div>
                 )}
 
-                {selected.ai_response && (
+                {previewLoading && <p role="status" className="text-sm text-muted-foreground">Chargement de l’aperçu à valider…</p>}
+                {preview && (
+                  <section aria-label="Aperçu à approuver" className="space-y-2">
+                    <p className="text-xs"><strong>Compte expéditeur :</strong> {preview.payload.gmail_email}</p>
+                    <p className="text-xs"><strong>Destinataire :</strong> {preview.payload.recipient}</p>
+                    <p className="text-xs"><strong>Objet :</strong> {preview.payload.subject || '(sans objet)'}</p>
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Texte complet à envoyer</p>
+                    <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3 text-xs whitespace-pre-wrap break-words text-foreground/90 max-h-64 overflow-y-auto">
+                      {preview.payload.body}
+                    </div>
+                  </section>
+                )}
+                {operationError && <p role="alert" className="text-sm text-destructive">{operationError}</p>}
+                {reconciliation && <p role="status" className="text-sm text-foreground">{reconciliation}</p>}
+                {selected.ai_response && selected.action_taken !== 'draft' && (
                   <div>
                     <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">Réponse proposée</p>
                     <div className="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3 text-xs whitespace-pre-wrap text-foreground/90 max-h-64 overflow-y-auto">
@@ -217,29 +327,39 @@ export default function EmailAgentLogs() {
                   </div>
                 )}
 
-                {selected.action_taken === 'draft' && selected.user_approved === null && (
+                {selected.action_taken === 'draft' && selected.user_approved !== false && (
                   <div>
                     <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">Feedback (optionnel)</p>
                     <Textarea
                       rows={2}
                       placeholder="Ce qui était bien ou ce qu'il faut améliorer…"
                       value={feedback}
+                      maxLength={4000}
+                      disabled={busy}
                       onChange={e => setFeedback(e.target.value)}
                     />
                   </div>
                 )}
               </div>
               <DialogFooter className="gap-2">
-                {selected.action_taken === 'draft' && selected.user_approved === null && (
+                {selected.action_taken === 'draft' && selected.user_approved !== false && (
                   <>
+                    <Button variant="outline" onClick={() => void openLog(selected)} disabled={busy || previewLoading}>
+                      Actualiser l’aperçu
+                    </Button>
                     <Button variant="outline" onClick={handleReject} disabled={busy} className="text-red-400 hover:text-red-300">
                       <X className="w-4 h-4 mr-2" /> Rejeter
                     </Button>
-                    <Button onClick={handleApprove} disabled={busy}>
+                    <Button onClick={handleApprove} disabled={busy || previewLoading || !preview}>
                       {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
                       Approuver & envoyer
                     </Button>
                   </>
+                )}
+                {['draft', 'auto_reply'].includes(selected.action_taken) && (
+                  <Button variant="outline" onClick={handleReconcile} disabled={busy || previewLoading}>
+                    Vérifier le résultat dans Gmail
+                  </Button>
                 )}
                 {selected.user_approved !== null && (
                   <Badge variant={selected.user_approved ? 'default' : 'secondary'}>

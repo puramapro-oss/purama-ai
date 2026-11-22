@@ -57,6 +57,17 @@ jobs:
           path: test-results/workshop-native-concurrency.json
           if-no-files-found: error
           retention-days: 14
+      - name: Gmail manual draft reservations on private native PostgreSQL
+        id: email_draft_native
+        run: node test/emailDraftSendOnce.native.mjs
+      - name: Preserve Gmail native reservation evidence
+        if: ${{ always() && steps.email_draft_native.outcome != '' && steps.email_draft_native.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gmail-draft-native-${{ github.sha }}
+          path: test-results/email-draft-send-once-native.json
+          if-no-files-found: error
+          retention-days: 14
       - run: node --test ../tests/oauth-google/state-sql.test.mjs
       - name: OAuth state on native PostgreSQL
         working-directory: .
@@ -124,7 +135,9 @@ jobs:
       - run: npm run test:contracts-ots
       - run: npm run test:contracts-native
       - run: npm run test:oauth
-      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/chef-workshop/index.ts
+      - name: Gmail versioned draft approval client
+        run: node --test tests/oauth-gmail/draft-approval-client.test.mjs
+      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/email-agent-send-draft/index.ts supabase/functions/email-agent-reconcile-draft/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/chef-workshop/index.ts
       - run: npm run test:commerce:plans
       - name: Authenticated model consultation Edge contract
         run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/iao-consultation/index.ts

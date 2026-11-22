@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'node:path';
 export default defineConfig({
-  cacheDir: "node_modules/.vite-ui-state",
+  cacheDir: "test-results/ui-state/.vite-cache",
   plugins: [react()],
   resolve: { dedupe: ["react", "react-dom"], alias: [
     { find: '@/hooks/useAuth', replacement: resolve('tests/ui-state/auth-state.ts') },

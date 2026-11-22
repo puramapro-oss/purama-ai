@@ -1,0 +1,10 @@
+RUN  v5.0.3 /workspace/scratch/529e43e3c136/gmail-reliability/repo/karta
+
+
+ Test Files  4 passed (4)
+      Tests  58 passed (58)
+   Start at  00:43:21
+   Duration  1.16s (transform 39%, tests 36%, import 15%, setup 6%, worker 4%)
+
+    Isolate  4 workers spawned · ~176ms startup each (spawn + environment, per file)
+             at least ~527ms faster with isolate: false — reuses workers across files instead of one per file

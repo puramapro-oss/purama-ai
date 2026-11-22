@@ -1,0 +1,43 @@
+
+ RUN  v5.0.3 /workspace/scratch/529e43e3c136/calendar-email-20261122/repo/karta
+
+stderr | test/customAuthorization.test.ts > custom authority immediately before the provider request > reconciles a cancelled close once and preserves it after bookkeeping failure and reactivation
+[loop] suivi secondaire indisponible ; résultat final conservé
+
+ ✓ test/customAuthorization.test.ts (46 tests) 44ms
+ ✓ test/gmailReply.test.ts (29 tests) 64ms
+ ✓ test/gmailMessage.test.ts (20 tests) 28ms
+ ✓ test/calendarTool.test.ts (18 tests) 22ms
+ ✓ test/gmailTool.test.ts (5 tests) 13ms
+ ✓ test/actionAgentsMock.test.ts (4 tests) 5ms
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../e2ed1eeef5d4/iao-audit/karta/node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../e2ed1eeef5d4/iao-audit/karta/node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/529e43e3c136/calendar-email-20261122/repo/karta/test/emailDraftSendOnce.test.ts
+ ❯ ChildProcess.emitUnexpectedExit ../../../../e2ed1eeef5d4/iao-audit/karta/node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  6 passed (7)
+      Tests  122 passed (212)
+     Errors  1 error
+   Start at  01:08:35
+   Duration  2.94s (transform 53%, tests 19%, import 19%, setup 6%, worker 3%)
+
+    Isolate  7 workers spawned · ~149ms startup each (spawn + environment, per file)
+             at least ~894ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /workspace/scratch/529e43e3c136/composition-after-ci-test-report.json

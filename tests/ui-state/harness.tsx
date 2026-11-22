@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import PartnerAgentSettings from '@/pages/PartnerAgentSettings';
 import EmailAgentSettings from '@/pages/EmailAgentSettings';
 import EmailAgent from '@/pages/EmailAgent';
+import EmailAgentLogs from '@/pages/EmailAgentLogs';
 import ComptaAgentSettings from '@/pages/ComptaAgentSettings';
 import LegalAgentChat from '@/pages/LegalAgentChat';
 import '@/index.css';
@@ -14,7 +15,7 @@ declare global { interface Window { uiStateToastHistory: () => string[] } }
 // cannot make a forbidden-success assertion pass by timing alone.
 window.uiStateToastHistory = () => toast.getHistory().flatMap(entry =>
   'title' in entry && typeof entry.title === 'string' ? [entry.title] : []);
-const pages = { partner: PartnerAgentSettings, email: EmailAgentSettings, emailDashboard: EmailAgent, compta: ComptaAgentSettings, legal: LegalAgentChat };
+const pages = { partner: PartnerAgentSettings, email: EmailAgentSettings, emailDashboard: EmailAgent, emailLogs: EmailAgentLogs, compta: ComptaAgentSettings, legal: LegalAgentChat };
 const kind = new URLSearchParams(location.search).get('page') || 'partner';
 if (!(kind in pages)) throw new Error('Unknown fixture page');
 const Page = pages[kind as keyof typeof pages];

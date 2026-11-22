@@ -24,6 +24,7 @@ vi.mock("../src/db/supabase.js", () => ({
       select: vi.fn().mockReturnThis(),
       update: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
+      abortSignal: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn(async () => ({
         data: {
           gmail_refresh_token: "refresh-token",
@@ -41,7 +42,9 @@ vi.mock("../src/config.js", () => ({
 }));
 
 const { buildRawEmail, gmailSendTool } = await import("../src/tools/gmail.js");
-const ctx = { userId: "user-1", agentType: "email" as const, mode: "live" as const };
+// Standalone messages remain available to a separately authorized custom role.
+// The inbox reply roles must now provide parent identities (covered in gmailReply.test.ts).
+const ctx = { userId: "user-1", agentType: "custom:standalone-mail" as const, mode: "live" as const };
 
 beforeEach(() => {
   reserved = 0;

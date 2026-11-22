@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "node_modules/eslint/bin/eslint.js",
+    "src/lib/email-agent.ts",
+    "src/pages/EmailAgentLogs.tsx",
+    "supabase/functions/email-agent-send-draft/handler.ts",
+    "tests/ui-state/AuthFixture.tsx",
+    "tests/ui-state/harness.tsx",
+    "tests/ui-state/transport.ts",
+    "tests/ui-state/vite.config.ts",
+    "tests/ui-state/email-draft-approval.spec.ts",
+    "--format",
+    "json"
+  ],
+  "exit_code": 0,
+  "files": 8,
+  "errors": 0,
+  "warnings": 0
+}

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "tests/ui-state/playwright.config.ts",
+    "tests/ui-state/email-draft-approval.spec.ts"
+  ],
+  "executable": "/usr/bin/chromium",
+  "exit_code": 1,
+  "stats": {
+    "startTime": "2026-11-22T01:05:20.481Z",
+    "duration": 7629.386,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 9,
+    "flaky": 0
+  },
+  "errors": [],
+  "status": "NOT_PASS"
+}
