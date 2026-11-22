@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=1"
+  ],
+  "cwd": "karta",
+  "exit_status": 1
+}

@@ -1,0 +1,265 @@
+{
+  "date": "2026-11-22",
+  "timezone": "Europe/Paris",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "4c81084e18b34c6bda60f615853887ca51f0e45e",
+  "base_branch": "audit/reliability-oauth-20261110",
+  "branch": "fix/iao-provider-completion-20261122",
+  "status": "PARTIEL",
+  "scope": "Shared bounded provider HTTP; existing Gmail draft/send and DocuSeal creation; regression and integration tests; review-branch deployment flag only.",
+  "checks": [
+    {
+      "name": "final_focused",
+      "cwd": "karta",
+      "command": "node --max-old-space-size=256 node_modules/vitest/vitest.mjs run test/gmailActionDeadline.test.ts test/gmailTool.test.ts test/gmailReply.test.ts test/gmailTokenRefresh.test.ts test/providerHttp.test.ts test/docusealTool.test.ts test/providerCompletion.test.ts --maxWorkers=1",
+      "exit_status": 0,
+      "status": "PASS",
+      "files": 7,
+      "tests_passed": 175,
+      "evidence": "final-focused-tests.log"
+    },
+    {
+      "name": "types",
+      "cwd": "karta",
+      "command": "NODE_OPTIONS=--max-old-space-size=1536 npm run typecheck",
+      "exit_status": 0,
+      "status": "PASS",
+      "evidence": "final-typecheck.log",
+      "note": "Final source and all tests, including providerCompletion.test.ts."
+    },
+    {
+      "name": "build",
+      "cwd": "karta",
+      "command": "NODE_OPTIONS=--max-old-space-size=1536 npm run build",
+      "exit_status": 0,
+      "status": "PASS",
+      "evidence": "final-build.log"
+    },
+    {
+      "name": "full_karta",
+      "cwd": "karta",
+      "command": "node --max-old-space-size=256 node_modules/vitest/vitest.mjs run --maxWorkers=1",
+      "exit_status": 1,
+      "status": "PARTIEL",
+      "tests_passed": 4093,
+      "tests_failed": 24,
+      "test_total": 4117,
+      "files_passed": 181,
+      "files_failed": 2,
+      "evidence": [
+        "final-full-tests.log",
+        "full-test-exit.json"
+      ],
+      "note": "All 24 failures are listen EPERM on Unix sockets. No test exclusions or permission changes."
+    },
+    {
+      "name": "baseline_unix_comparison",
+      "base_commit": "4c81084e18b34c6bda60f615853887ca51f0e45e",
+      "command": "node --max-old-space-size=256 node_modules/vitest/vitest.mjs run --maxWorkers=1 test/localComputeFabricCancellation.test.ts test/localComputeFabricProvider.test.ts",
+      "exit_status": 1,
+      "status": "PASS for reproduction; BLOQUÉ for socket behavior",
+      "tests_passed": 5,
+      "tests_failed": 24,
+      "evidence": [
+        "baseline-unix-tests.log",
+        "baseline-unix-exit.json"
+      ],
+      "note": "Exact same 24 listen EPERM failures before this patch; this does not prove the prevented transport behavior."
+    },
+    {
+      "name": "gitnexus_final_index",
+      "command": "GITNEXUS_STORAGE_PATH=/tmp/iao-gitnexus-index GITNEXUS_LBUG_BUFFER_POOL_SIZE=536870912 node --max-old-space-size=1024 /tmp/iao-gitnexus-tools/node_modules/gitnexus/dist/cli/index.js analyze --index-only --skip-fts --workers 1 --name iao-completion-20261122",
+      "exit_status": 0,
+      "status": "PASS",
+      "nodes": 28265,
+      "edges": 88295,
+      "flows": 551,
+      "evidence": "gitnexus-final-index.log"
+    },
+    {
+      "name": "gitnexus_code_staged",
+      "exit_status": 0,
+      "status": "PASS",
+      "files": 10,
+      "symbols": 183,
+      "flows": 2,
+      "risk": "medium",
+      "evidence": "gitnexus-staged.log",
+      "note": "Code/tests staged before evidence and branch configuration."
+    },
+    {
+      "name": "gitnexus_main_comparison",
+      "exit_status": 0,
+      "status": "PARTIEL",
+      "files": 1890,
+      "symbols": 19892,
+      "flows": 530,
+      "risk": "critical",
+      "evidence": "gitnexus-compare-main.log",
+      "note": "Inherited consolidation versus main; PR targets consolidation, not main. Printed symbol listing is capped."
+    },
+    {
+      "name": "vercel_branch_rule",
+      "status": "PASS for JSON equality; UNKNOWN in symbol graph",
+      "method": "Parse HEAD and working JSON. Assert branch key absent in HEAD and false in working copy; remove just that key and assert deep equality.",
+      "exit_status": 0,
+      "impact_exit_status": 1,
+      "impact_evidence": "vercel-impact.log",
+      "note": "GitNexus does not resolve deploymentEnabled; no config symbol was claimed as analyzed successfully."
+    },
+    {
+      "name": "independent_review",
+      "status": "PASS",
+      "method": "Independent agent inspection after fixing contradictory receipts; no new blocking defect found. Not an additional executed test suite."
+    },
+    {
+      "name": "diff_check",
+      "command": "git diff --cached --check",
+      "exit_status": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "gitnexus_final_staged",
+      "command": "GITNEXUS_STORAGE_PATH=/tmp/iao-gitnexus-index GITNEXUS_LBUG_BUFFER_POOL_SIZE=536870912 node --max-old-space-size=512 /tmp/iao-gitnexus-tools/node_modules/gitnexus/dist/cli/index.js detect_changes --scope staged --repo iao-completion-20261122 --limit 240",
+      "exit_status": 0,
+      "status": "PASS",
+      "files": 32,
+      "symbols": 194,
+      "flows": 2,
+      "risk": "medium",
+      "evidence": "gitnexus-final-staged.log",
+      "note": "Includes code, tests, branch configuration and evidence prepared at execution time; excludes its own subsequently added output log."
+    }
+  ],
+  "regression_observations": [
+    {
+      "evidence": "gmail-baseline-red.log",
+      "failed": 21,
+      "passed": 7
+    },
+    {
+      "evidence": "gmail-review-red.log",
+      "failed": 6
+    },
+    {
+      "evidence": "docuseal-review-red.log",
+      "failed": 6
+    },
+    {
+      "evidence": "focused-tests.log",
+      "passed": 167
+    },
+    {
+      "evidence": "integration-tests.log",
+      "passed": 8
+    },
+    {
+      "evidence": "docuseal-green.log",
+      "passed": 45,
+      "note": "Subset of the 167 and 175; never add it to those totals."
+    }
+  ],
+  "limits": [
+    "The 175 focused tests are included in the full suite count of 4117.",
+    "Provider and model responses are fixtures. Approval claim/finalization/outbox use production PostgreSQL migrations in single-backend PGlite, not live providers or concurrent native PostgreSQL.",
+    "Unix socket scenarios require a permitted runner; no sandbox or test gate was bypassed.",
+    "GitNexus FTS is unavailable; dynamic receivers and process extraction caps remain. Manual registry/engine review and integration tests complement the graph.",
+    "Deadlines bound local completion, not synchronous event-loop blocking or retroactive cancellation of accepted external effects.",
+    "An ambiguous POST remains unconfirmed. There is no automatic retry or optimistic quota refund.",
+    "These deadlines do not cover every IAO tool and do not prove universal mission completion.",
+    "No live provider action, paid model benchmark, Mac activation or production deployment was performed."
+  ],
+  "remaining": [
+    "Review PR on exact source revision and qualify blocked Unix socket cases in existing CI.",
+    "Qualify native PostgreSQL concurrency using existing CI gates.",
+    "Qualify live Gmail and self-hosted DocuSeal contracts before activation.",
+    "Future separate lot: persist CHEF retry diagnostics into the next attempt and connect review failures to linked repair missions with new evidence.",
+    "Model quality, latency and total cost comparisons on the target Mac remain untested."
+  ],
+  "source_sha256": {
+    "karta/src/tools/docuseal.ts": "5955b8a2307a7dc3d677c3dd65190dd31ebcf5fbf3cd2d252e6ef8ab99d3459b",
+    "karta/src/tools/gmail.ts": "38db3d8155af27f95c2143fc8e8385bd8a73b52bb70eec2d6c389f71138dd14c",
+    "karta/src/tools/provider-http.ts": "fae5afd93adc7b1d9fb6f3ba34635a7ee5d9794ad8a61e2cd67a377f134f7eb6",
+    "karta/test/docusealTool.test.ts": "ee66f2b5eacc6024d2a560a32193e2169d46f85abaad62a7c245632487733962",
+    "karta/test/gmailActionDeadline.test.ts": "328cb8857b56c75f7e15c1a67a2a77bc2a97a007eb463eedba46a9c21d4eb625",
+    "karta/test/gmailReply.test.ts": "9a62b909eabcbd540944c588a7523805f189798c2e09206a0878d3743b12180f",
+    "karta/test/gmailTokenRefresh.test.ts": "d84807918099057b30d92d46645a6a641d1321ad08f44709a704514a1dd7e0bc",
+    "karta/test/gmailTool.test.ts": "7c7d1bf2ea3dfa991bfe034768a6b162a2357da83f682be1b4db1d94945badca",
+    "karta/test/providerCompletion.test.ts": "7a4f42b32a847e9d400921287753c8257e01d752ebb693a725a5d67f492240f9",
+    "karta/test/providerHttp.test.ts": "99d5460852551d11c560b054897c1f290dd47663e84b47f803aadbcec03d9e53",
+    "vercel.json": "5a3a29668d305b0b0a4d20291f2deef6d4479a2ade9d4d7c79ea9c13bf477b39"
+  },
+  "source_git_blobs": {
+    "karta/src/tools/docuseal.ts": "6efaed6648721d824ac3cb9fba15492f8b41117e",
+    "karta/src/tools/gmail.ts": "39ca1ea9e7be7928dc562996fd7a0258e64baa1e",
+    "karta/src/tools/provider-http.ts": "49687994e38dbab57577f1b53915aaa733c5846b",
+    "karta/test/docusealTool.test.ts": "4b5e91640ccf61f619157c8be53d3215ec6a6880",
+    "karta/test/gmailActionDeadline.test.ts": "8988305c544e16b4e5d4e97f1de3f99ea68eb932",
+    "karta/test/gmailReply.test.ts": "e2bb5f5e6d8c728c6fa804ff65b9ccc0c57c4f8c",
+    "karta/test/gmailTokenRefresh.test.ts": "f8ab2f4bf1e361b8bb54669febcc80bd93253b88",
+    "karta/test/gmailTool.test.ts": "c2c7d5c4dcf7a9798c3f054a89dd7877bfc07907",
+    "karta/test/providerCompletion.test.ts": "aec69eeaf51276e25262145813df3e4d7e786114",
+    "karta/test/providerHttp.test.ts": "f65bad1811bf8951f0cb926303f2a6d0a1ee488a",
+    "vercel.json": "a0c5dd9341849b6d997c8f983ee7c46e70e3284b"
+  },
+  "log_formatting": {
+    "method": "Only surplus trailing LF bytes removed to satisfy git diff --check; no diagnostic or result text changed.",
+    "files": [
+      {
+        "file": "gmail-review-red.log",
+        "original_sha256": "305122bd72caf35290bae3a2edfaeaadd4436b638675c1933e45397d9ce98813",
+        "stored_sha256": "b1e40c66a6185528c46740fea468e8181c4a5df6ad1e8775614ce49a670a933f"
+      },
+      {
+        "file": "gitnexus-final-index.log",
+        "original_sha256": "98017574e6e2c19bcfbd2a9e03b9dafdd49b7415e6c0d0386da326fb812389af",
+        "stored_sha256": "6ee9c4597065b9521820e26fb68e5bf3e0c9253d7dc24a31c933a5b7baa4da87"
+      },
+      {
+        "file": "final-focused-tests.log",
+        "original_sha256": "7a37c7ee57c7b57f0d63e9e01f9904aa5fabcc1ebc22ef22a9c4cd116a43fdf5",
+        "stored_sha256": "7b32dfb37b6284d86bda9884a41b8f1d180ae0830d2679afdbcf2823ea38b8b1"
+      },
+      {
+        "file": "gmail-baseline-red.log",
+        "original_sha256": "c5b4995e3bb2191d38d6083964c24d20e94c1b1094f2841908b5e2922e6356e6",
+        "stored_sha256": "c714928d1c940f3ef4b8fae6bbcd94ecd1a38949366101f9354d00e64d83cef1"
+      },
+      {
+        "file": "focused-tests.log",
+        "original_sha256": "6b8241bdf97b6b34f6cf7b84efb70d91d46d973724a252f330a69c3d27069920",
+        "stored_sha256": "8e93df938e14b6b20ae8a17331b1d5739f25f992fe30936f87e8a918dbdc7922"
+      },
+      {
+        "file": "final-full-tests.log",
+        "original_sha256": "c37215b1d9f42572bc9da84c87f5901a2c5090535598dfc4dc1da3271037cfff",
+        "stored_sha256": "0875fee9b6b55183a3fe106f5c9c9e08aed34fb8283304ccd9f6b9d3a715a0db"
+      },
+      {
+        "file": "baseline-unix-tests.log",
+        "original_sha256": "68a0e17d3a8ad8f1d694eb519a00787b2ff55a08fc96a8d764294cbd752c15ac",
+        "stored_sha256": "9ed8f3c7c37de51c518bc685c66f1ea01fa7c8998cf59786a1d39655cd28b4c8"
+      },
+      {
+        "file": "docuseal-green.log",
+        "original_sha256": "f4ef9e08e27ed058a1345951badc33a44666e1c0747dd26e5b12bd4bcd7e3844",
+        "stored_sha256": "cefa39cabe97769bb507ff5d5b677529cb8b16031d6576180c5a0a7160f177f4"
+      },
+      {
+        "file": "docuseal-review-red.log",
+        "original_sha256": "142fbfd66aa2bd003478c5d7f91125518848f98d9444caf97ee8fdd4e0689828",
+        "stored_sha256": "9ea4026a4e3e5d91597e2e1506dc1e63de97ef52bb7f121fcc063f977f8e05a8"
+      },
+      {
+        "file": "integration-tests.log",
+        "original_sha256": "dcaf61079da94367027e4f70d13f46fd6f9f3fe36a6365495f9869e07c47bb60",
+        "stored_sha256": "e3a4b98a3ba80d3a4f6cb143a87b46dd066b0a56ffc8c634daa63eadacdd4bc6"
+      },
+      {
+        "file": "final-build.log",
+        "original_sha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd",
+        "stored_sha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05"
+      }
+    ]
+  }
+}

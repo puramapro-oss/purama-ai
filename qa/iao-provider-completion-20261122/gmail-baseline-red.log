@@ -1,0 +1,431 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/gmailActionDeadline.test.ts (28 tests | 21 failed) 70ms
+   ❯ Gmail draft has one action deadline (9)
+     × preserves the authenticated parent and uses one signal through the POST 28ms
+     × settles an uncooperative POST without retry or accepting its late receipt 3ms
+     × does not start a POST when the parent completes after expiry 2ms
+     × refuses a malformed provider receipt: " " 2ms
+     × refuses a malformed provider receipt: "bad\nidentifier" 2ms
+     × refuses a malformed provider receipt: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 1ms
+     × refuses a malformed provider receipt: {"id":"nested"} 2ms
+     × does not expose a provider error body 2ms
+   ❯ Gmail send has one action deadline (9)
+     × preserves the authenticated parent and uses one signal through the POST 2ms
+     × settles an uncooperative POST without retry or accepting its late receipt 1ms
+     × does not start a POST when the parent completes after expiry 1ms
+     × refuses a malformed provider receipt: " " 2ms
+     × refuses a malformed provider receipt: "bad\nidentifier" 1ms
+     × refuses a malformed provider receipt: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 1ms
+     × refuses a malformed provider receipt: {"id":"nested"} 1ms
+     × does not expose a provider error body 1ms
+   ❯ Gmail send quota and cumulative budget (10)
+     × never sends after a quota reservation resolves late 1ms
+     × rejects invalid quota receipts: NaN 2ms
+     × rejects invalid quota receipts: 1.5 1ms
+     × does not reset the total budget between credentials, parent, quota and POST 2ms
+     × checks elapsed monotone time before starting a POST even if the timer has not fired 2ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 21 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > preserves the authenticated parent and uses one signal through the POST
+AssertionError: expected AbortSignal { aborted: false } to be AbortSignal { aborted: true } // Object.is equality
+
+- Expected
++ Received
+
+  AbortSignal {
+    Symbol(kEvents): undefined,
+    Symbol(events.maxEventTargetListeners): 0,
+    Symbol(events.maxEventTargetListenersWarned): false,
+    Symbol(kHandlers): undefined,
+-   Symbol(kAborted): true,
+-   Symbol(kReason): AbortError {
+-     "message": "This operation was aborted",
+-   },
++   Symbol(kAborted): false,
++   Symbol(kReason): undefined,
+    Symbol(kComposite): false,
++   Symbol(kTimeout): true,
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:60:33
+     58|     const calls = fetchMock.mock.calls as Array<[string, RequestInit]>;
+     59|     expect(calls).toHaveLength(2);
+     60|     expect(calls[0]![1].signal).toBe(h.credentialSignals[0]);
+       |                                 ^
+     61|     expect(calls[1]![0]).toMatch(new RegExp(suffix + "$"));
+     62|     expect(calls[1]![1].signal).toBe(h.credentialSignals[0]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > settles an uncooperative POST without retry or accepting its late receipt
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > settles an uncooperative POST without retry or accepting its late receipt
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/gmailActionDeadline.test.ts:75:27
+     73|     const lateResponse = json({ id: "late-receipt" });
+     74|     const cancel = vi.spyOn(lateResponse.body!, "cancel");
+     75|     try { expect(settled).toBe(true); }
+       |                           ^
+     76|     finally { late.resolve(lateResponse); }
+     77|     const observed = await outcome;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > does not start a POST when the parent completes after expiry
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > does not start a POST when the parent completes after expiry
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/gmailActionDeadline.test.ts:91:27
+     89|     const outcome = tool.execute(params, ctx).then(() => false, () => …
+     90|     await vi.advanceTimersByTimeAsync(40_001);
+     91|     try { expect(settled).toBe(true); }
+       |                           ^
+     92|     finally { late.resolve(json(parent())); }
+     93|     expect(await outcome).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > refuses a malformed provider receipt: " "
+AssertionError: promise resolved "{ draftId: ' ' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "draftId": " ",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > refuses a malformed provider receipt: "bad\nidentifier"
+AssertionError: promise resolved "{ draftId: 'bad\nidentifier' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "draftId": "bad
++ identifier",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > refuses a malformed provider receipt: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+AssertionError: promise resolved "{ draftId: 'aaaaaaaaaaaaaaaaaaaaaaaa…' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "draftId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > refuses a malformed provider receipt: {"id":"nested"}
+AssertionError: expected [Function] to throw error matching /non confirmé/i but got 'Réponse Gmail draft invalide'
+
+- Expected:
+/non confirmé/i
+
++ Received:
+"Réponse Gmail draft invalide"
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail draft has one action deadline > does not expose a provider error body
+AssertionError: expected 'Gmail create draft échoué (503): priv…' to match /non confirmé.*vérifier/i
+
+- Expected:
+/non confirmé.*vérifier/i
+
++ Received:
+"Gmail create draft échoué (503): private-provider-body secret-token camille@example.com"
+
+ ❯ test/gmailActionDeadline.test.ts:122:28
+    120|     fetchMock.mockImplementation(async (url: string) => url.endsWith(s…
+    121|     const error = await tool.execute(params, ctx).then(() => null, err…
+    122|     expect(error?.message).toMatch(/non confirmé.*vérifier/i);
+       |                            ^
+    123|     expect(error?.message).not.toMatch(/private-provider|secret-token|…
+    124|     expect(text).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > preserves the authenticated parent and uses one signal through the POST
+AssertionError: expected AbortSignal { aborted: false } to be AbortSignal { aborted: true } // Object.is equality
+
+- Expected
++ Received
+
+  AbortSignal {
+    Symbol(kEvents): undefined,
+    Symbol(events.maxEventTargetListeners): 0,
+    Symbol(events.maxEventTargetListenersWarned): false,
+    Symbol(kHandlers): undefined,
+-   Symbol(kAborted): true,
+-   Symbol(kReason): AbortError {
+-     "message": "This operation was aborted",
+-   },
++   Symbol(kAborted): false,
++   Symbol(kReason): undefined,
+    Symbol(kComposite): false,
++   Symbol(kTimeout): true,
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:60:33
+     58|     const calls = fetchMock.mock.calls as Array<[string, RequestInit]>;
+     59|     expect(calls).toHaveLength(2);
+     60|     expect(calls[0]![1].signal).toBe(h.credentialSignals[0]);
+       |                                 ^
+     61|     expect(calls[1]![0]).toMatch(new RegExp(suffix + "$"));
+     62|     expect(calls[1]![1].signal).toBe(h.credentialSignals[0]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > refuses a malformed provider receipt: " "
+AssertionError: promise resolved "{ messageId: ' ' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": " ",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > refuses a malformed provider receipt: "bad\nidentifier"
+AssertionError: promise resolved "{ messageId: 'bad\nidentifier' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": "bad
++ identifier",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > refuses a malformed provider receipt: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+AssertionError: promise resolved "{ messageId: 'aaaaaaaaaaaaaaaaaaaaaa…' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > refuses a malformed provider receipt: {"id":"nested"}
+AssertionError: expected [Function] to throw error matching /non confirmé/i but got 'Réponse Gmail send invalide'
+
+- Expected:
+/non confirmé/i
+
++ Received:
+"Réponse Gmail send invalide"
+
+ ❯ test/gmailActionDeadline.test.ts:113:46
+    111|     "refuses a malformed provider receipt: %j", async id => {
+    112|       fetchMock.mockImplementation(async (url: string) => json(url.end…
+    113|       await expect(tool.execute(params, ctx)).rejects.toThrow(/non con…
+       |                                              ^
+    114|       expect(fetchMock.mock.calls.filter(([url]) => String(url).endsWi…
+    115|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send has one action deadline > does not expose a provider error body
+AssertionError: expected 'Gmail send échoué (503): private-prov…' to match /non confirmé.*vérifier/i
+
+- Expected:
+/non confirmé.*vérifier/i
+
++ Received:
+"Gmail send échoué (503): private-provider-body secret-token camille@example.com"
+
+ ❯ test/gmailActionDeadline.test.ts:122:28
+    120|     fetchMock.mockImplementation(async (url: string) => url.endsWith(s…
+    121|     const error = await tool.execute(params, ctx).then(() => null, err…
+    122|     expect(error?.message).toMatch(/non confirmé.*vérifier/i);
+       |                            ^
+    123|     expect(error?.message).not.toMatch(/private-provider|secret-token|…
+    124|     expect(text).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send quota and cumulative budget > never sends after a quota reservation resolves late
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/gmailActionDeadline.test.ts:136:27
+    134|       .then(value => { settled = true; return value; });
+    135|     await vi.advanceTimersByTimeAsync(40_001);
+    136|     try { expect(settled).toBe(true); }
+       |                           ^
+    137|     finally { late.resolve({ data: 1, error: null }); }
+    138|     expect(await outcome).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send quota and cumulative budget > rejects invalid quota receipts: NaN
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send quota and cumulative budget > rejects invalid quota receipts: 1.5
+AssertionError: promise resolved "{ messageId: 'receipt-1' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": "receipt-1",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:146:53
+    144|   it.each([NaN, 1.5, 0, -1, Infinity, 401, "1"])("rejects invalid quot…
+    145|     h.quota.mockResolvedValueOnce({ data, error: null });
+    146|     await expect(gmailSendTool.execute(params, ctx)).rejects.toThrow(/…
+       |                                                     ^
+    147|     expect(fetchMock).toHaveBeenCalledTimes(1);
+    148|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send quota and cumulative budget > does not reset the total budget between credentials, parent, quota and POST
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/gmailActionDeadline.test.ts:158:21
+    156|       .then(value => { settled = true; return value; });
+    157|     await vi.advanceTimersByTimeAsync(40_001);
+    158|     expect(settled).toBe(true);
+       |                     ^
+    159|     expect(await outcome).toBe(true);
+    160|     await vi.advanceTimersByTimeAsync(10_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/21]⎯
+
+ FAIL  test/gmailActionDeadline.test.ts > Gmail send quota and cumulative budget > checks elapsed monotone time before starting a POST even if the timer has not fired
+AssertionError: promise resolved "{ messageId: 'receipt-1' }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "messageId": "receipt-1",
+  }
+
+ ❯ test/gmailActionDeadline.test.ts:171:53
+    169|       return { data: 1, error: null };
+    170|     });
+    171|     await expect(gmailSendTool.execute(params, ctx)).rejects.toThrow(/…
+       |                                                     ^
+    172|     expect(fetchMock).toHaveBeenCalledTimes(1);
+    173|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/21]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  21 failed | 7 passed (28)
+   Start at  19:30:40
+   Duration  428ms (transform 46%, tests 37%, import 11%, setup 3%, worker 2%)

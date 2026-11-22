@@ -19,7 +19,10 @@ vi.mock("../src/lib/gmail-token-crypto.js", () => ({
 
 vi.mock("../src/db/supabase.js", () => ({
   supabase: {
-    rpc,
+    rpc: (...args: Parameters<typeof rpc>) => {
+      const request = rpc(...args);
+      return Object.assign(request, { abortSignal: () => request });
+    },
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
       update: vi.fn().mockReturnThis(),

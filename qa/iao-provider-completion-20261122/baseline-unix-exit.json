@@ -1,0 +1,16 @@
+{
+  "base_sha": "4c81084e18b34c6bda60f615853887ca51f0e45e",
+  "cwd": "/tmp/iao-provider-baseline/karta",
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=1",
+    "test/localComputeFabricCancellation.test.ts",
+    "test/localComputeFabricProvider.test.ts"
+  ],
+  "started_at": "2026-11-22T19:08:38.830776+00:00",
+  "finished_at": "2026-11-22T19:08:39.702320+00:00",
+  "exit_code": 1
+}

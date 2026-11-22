@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-provider-completion-20261122": false,
       "fix/custom-scheduler-drain-20261122-dcfb": false,
       "perf/iao-memory-cost-20261115": false,
       "codex/iao-atelier-multiagents-20261112": false,
