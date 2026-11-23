@@ -18,8 +18,8 @@ vi.mock('@/lib/consultation-client', async original => ({
 let root: Root;
 let host: HTMLDivElement;
 const pendingKey = (owner = OWNER) => `purama.consultation.pending.${owner}`;
-async function render(owner = OWNER, token = 'first-token') {
-  await act(async () => { root.render(<ConsultationPanel userId={owner} accessToken={token} />); });
+async function render(owner = OWNER, token = 'first-token', technicalDetails = false) {
+  await act(async () => { root.render(<ConsultationPanel userId={owner} accessToken={token} technicalDetails={technicalDetails} />); });
 }
 function button(label: string) {
   const found = [...host.querySelectorAll<HTMLButtonElement>('button')].find(element => element.textContent?.trim() === label);
@@ -66,7 +66,10 @@ afterEach(async () => {
 describe('ConsultationPanel — actual controls and lifecycle', () => {
   it('sends the chosen model, reflection, speed and opt-in public research exactly once', async () => {
     const pending = deferred<ConsultationOperation>(); api.consult.mockReturnValueOnce(pending.promise);
-    await render();
+    await render(OWNER, 'first-token', true);
+    const settings = host.querySelector('details')!;
+    await act(async () => { settings.querySelector('summary')!.click(); });
+    expect(settings.open).toBe(true);
     await fill('Question de consultation', 'Ma question confidentielle.');
     await fill('Réflexion de la consultation', 'maximum');
     await fill('Vitesse de la consultation', 'ultra_fast');
@@ -86,10 +89,12 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
     expect(Object.values(sessionStorage).join('')).not.toMatch(/confidentielle|token|publique/);
     await act(async () => { pending.resolve(operationFixture(request.operationId)); });
     expect(host.textContent).toContain('Une réponse utile.');
+    expect(host.textContent).toContain('Modèle : primary-model');
+    expect(host.textContent).toContain('perplexity');
   });
 
   it('keeps over-limit selections and public inputs visible after changing profile, blocking submission until adjusted', async () => {
-    await render(); await fill('Question de consultation', 'Question');
+    await render(OWNER, 'first-token', true); await fill('Question de consultation', 'Question');
     await review('reviewer-model'); await review('third-model');
     await fill('Requêtes publiques', 'première\ndeuxième'); await fill('Pages HTTPS', 'https://example.com/1\nhttps://example.com/2');
     await fill('Vitesse de la consultation', 'ultra_fast');
@@ -110,21 +115,77 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
   });
 
   it.each([
-    ['simulation_enabled', 'mode simulation'], ['budget_unavailable', 'capacité financée'], ['account_unavailable', 'compte fournisseur'],
-    ['model_unavailable', 'Aucun modèle compatible'], ['not_configured', 'pas encore configurée'],
+    ['simulation_enabled', 'mode simulation'], ['budget_unavailable', 'capacité financée'], ['account_unavailable', 'capacité d’analyse'],
+    ['model_unavailable', 'Aucune capacité d’analyse compatible'], ['not_configured', 'pas encore configurée'],
     ['paused', 'suspendue par l’exploitation'], ['service_unavailable', 'temporairement indisponible'],
   ] as const)('shows %s without an enabled consultation control', async (reason, label) => {
     api.catalog.mockResolvedValueOnce({ ...catalogFixture(), available: false, reason, models: [] });
     await render(); expect(host.textContent).toContain(label);
-    expect(field('Modèle principal').matches(':disabled')).toBe(true);
-    expect(field('Réflexion de la consultation').matches(':disabled')).toBe(true);
+    expect(field('Question de consultation').matches(':disabled')).toBe(true);
+    expect(host.querySelector('select')).toBeNull();
     expect(button('Lancer la consultation').disabled).toBe(true);
     expect(api.consult).not.toHaveBeenCalled();
+  });
+
+  it('uses the qualified standard profile without exposing engines or adding reviewer calls', async () => {
+    const catalog = catalogFixture();
+    catalog.models[0].profiles = catalog.models[0].profiles.filter(profile => profile.reflection === 'maximum');
+    api.catalog.mockResolvedValueOnce(catalog);
+    await render();
+    expect(host.querySelector('[aria-label="Analyse approfondie PURAMA"]')).not.toBeNull();
+    expect(host.querySelector('select, input[type="checkbox"]')).toBeNull();
+    expect(host.textContent).not.toMatch(/primary-model|reviewer-model|third-model|fourth-model|Perplexity|Firecrawl|Réglages techniques/);
+    await fill('Question de consultation', 'Question publique'); await click('Lancer la consultation');
+    expect(api.consult).toHaveBeenCalledExactlyOnceWith({
+      operationId: expect.any(String), question: 'Question publique',
+      preferences: { model: 'reviewer-model', reflection: 'auto', speed: 'standard' },
+      reviewerModels: [], research: { queries: [], urls: [] },
+    }, expect.any(AbortSignal));
+    expect(host.textContent).toContain('Une réponse utile.');
+    expect(host.textContent).not.toMatch(/primary-model|reviewer-model|perplexity|Modèle :/);
+    expect(host.textContent).toContain('Une source publique');
+    expect(host.textContent).toContain('2026-11-13T10:00:00.000Z');
+    expect(host.querySelector('a')?.href).toBe('https://example.com/source');
+  });
+
+  it('keeps public analysis unavailable when no qualified automatic standard profile exists', async () => {
+    const catalog = catalogFixture();
+    for (const model of catalog.models) model.profiles = model.profiles.filter(profile => profile.reflection === 'maximum');
+    api.catalog.mockResolvedValueOnce(catalog);
+    await render(); await fill('Question de consultation', 'Question');
+    expect(host.textContent).toContain('L’analyse automatique est temporairement indisponible');
+    expect(host.textContent).not.toMatch(/Choisissez un modèle|primary-model/);
+    expect(button('Lancer la consultation').disabled).toBe(true);
+    await click('Lancer la consultation');
+    expect(api.consult).not.toHaveBeenCalled();
+  });
+
+  it('clears technical choices and draft research when the same account loses technical presentation', async () => {
+    await render(OWNER, 'first-token', true);
+    await fill('Modèle principal', 'third-model');
+    await fill('Réflexion de la consultation', 'maximum');
+    await review('reviewer-model');
+    await fill('Question de consultation', 'Brouillon technique');
+    await fill('Requêtes publiques', 'Recherche préparée');
+    await render();
+    expect(host.querySelector('select, input[type="checkbox"]')).toBeNull();
+    expect(field('Question de consultation').value).toBe('');
+    expect(field('Requêtes publiques').value).toBe('');
+    await fill('Question de consultation', 'Nouvelle question'); await click('Lancer la consultation');
+    expect(api.consult).toHaveBeenCalledTimes(1);
+    expect(api.consult.mock.calls[0][0]).toMatchObject({
+      question: 'Nouvelle question', preferences: { model: 'primary-model', reflection: 'auto', speed: 'standard' },
+      reviewerModels: [], research: { queries: [], urls: [] },
+    });
+    expect(host.textContent).not.toMatch(/third-model|reviewer-model|perplexity/);
   });
 
   it('does not launch research implicitly and blocks explicit inputs when the provider is unavailable', async () => {
     api.catalog.mockResolvedValueOnce({ ...catalogFixture(), research: { search: false, scrape: false } });
     await render(); await fill('Question de consultation', 'Question');
+    expect(host.textContent).toContain('Recherche web indisponible.');
+    expect(host.textContent).toContain('Lecture des pages indisponible.');
+    expect(host.textContent).not.toMatch(/Perplexity|Firecrawl/);
     await fill('Requêtes publiques', 'Une requête');
     expect(button('Lancer la consultation').disabled).toBe(true);
     expect(host.textContent).toContain('Retirez les requêtes pour continuer');
@@ -185,11 +246,12 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
 
   it('clears the old account before paint, aborts its work and does not surface its late result', async () => {
     const pending = deferred<ConsultationOperation>(); api.consult.mockReturnValueOnce(pending.promise);
-    await render(); await fill('Question de consultation', 'Secret du premier compte'); await click('Lancer la consultation');
+    await render(OWNER, 'first-token', true); await fill('Question de consultation', 'Secret du premier compte'); await click('Lancer la consultation');
     const [request, signal] = api.consult.mock.calls[0];
     await render(OTHER_OWNER, 'second-token');
     expect(signal.aborted).toBe(true);
     expect(field('Question de consultation').value).toBe('');
+    expect(host.querySelector('select')).toBeNull();
     expect(host.textContent).not.toContain('Vérifier le résultat');
     expect(sessionStorage.getItem(pendingKey(OTHER_OWNER))).toBeNull();
     await act(async () => { pending.resolve(operationFixture(request.operationId)); });

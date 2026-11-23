@@ -5,7 +5,7 @@ import { describe, it, mock } from 'node:test';
 import { runInNewContext } from 'node:vm';
 
 const source = readFileSync(new URL('../../public/sw.js', import.meta.url), 'utf8');
-const currentCache = 'purama-offline-v8';
+const currentCache = 'purama-offline-v10';
 const assets = ['/offline.html', '/offline-workspace.js', '/offline-library-backup.js', '/manifest.json'];
 const assetBytes = new Map(assets.map((path) => [
   path, readFileSync(new URL('../../public' + path, import.meta.url)),

@@ -4,9 +4,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChatbotWidget } from './ChatbotWidget';
 import { catalogFixture, deferred, operationFixture, OWNER, OTHER_OWNER } from '@/test/consultation-fixtures';
+import { SUPER_ADMIN_EMAIL } from '@/lib/constants';
 
 const { auth, invoke, from, legacyFetch } = vi.hoisted(() => ({
-  auth: { user: null as { id: string; is_anonymous?: boolean } | null, session: null as { access_token: string } | null, loading: false },
+  auth: { user: null as { id: string; is_anonymous?: boolean; email?: string; email_confirmed_at?: string } | null,
+    session: null as { access_token: string } | null, loading: false },
   invoke: vi.fn(), from: vi.fn(), legacyFetch: vi.fn(),
 }));
 vi.mock('@/hooks/useAuth', () => ({ useAuth: () => auth }));
@@ -79,17 +81,21 @@ describe('ChatbotWidget — connected private consultation mode', () => {
     await fill('Votre message', 'Ancienne discussion privée'); await click('Envoyer le message');
     expect(host.textContent).toContain('Réponse du chat habituel.');
     expect(legacyFetch).toHaveBeenCalledTimes(1);
-    await click('Consultation IA');
-    expect(host.querySelector('[aria-label="Consultation entre modèles"]')).not.toBeNull();
+    await click('Analyse approfondie');
+    expect(host.querySelector('[aria-label="Analyse approfondie PURAMA"]')).not.toBeNull();
+    expect(host.querySelector('select')).toBeNull();
     expect(host.querySelector('[aria-label="Votre message"]')).toBeNull();
     expect(host.textContent).not.toContain('Ancienne discussion privée');
     await fill('Question de consultation', 'Question indépendante'); await click('Lancer la consultation');
     const request = invoke.mock.calls.find(call => call[1].body.action === 'consult');
     expect(request?.[0]).toBe('iao-consultation');
     expect(request?.[1].headers).toMatchObject({ Authorization: 'Bearer first-token' });
-    expect(request?.[1].body).toMatchObject({ action: 'consult', question: 'Question indépendante', reviewerModels: [], research: { queries: [], urls: [] } });
+    expect(request?.[1].body).toMatchObject({ action: 'consult', question: 'Question indépendante',
+      preferences: { model: 'primary-model', reflection: 'auto', speed: 'standard' },
+      reviewerModels: [], research: { queries: [], urls: [] } });
     expect(JSON.stringify(request?.[1].body)).not.toMatch(/Ancienne|chat habituel|messages|userId|budget/);
     expect(host.textContent).toContain('Une réponse utile.');
+    expect(host.textContent).not.toMatch(/primary-model|perplexity|Modèle principal|Modèle :/);
     expect(legacyFetch).toHaveBeenCalledTimes(1);
     await click('Conversation');
     expect(host.textContent).toContain('Ancienne discussion privée'); expect(host.textContent).toContain('Réponse du chat habituel.');
@@ -100,6 +106,23 @@ describe('ChatbotWidget — connected private consultation mode', () => {
       { role: 'user', content: 'Suite de la conversation' },
     ]);
     expect(invoke.mock.calls.filter(call => call[1].body.action === 'consult')).toHaveLength(1);
+  });
+
+  it('shows technical controls only for the verified founder and removes them on loss of verification', async () => {
+    auth.user = { id: OWNER, email: SUPER_ADMIN_EMAIL };
+    await render(); await click("Ouvrir l'assistant PURA"); await click('Analyse approfondie');
+    expect(host.querySelector('[aria-label="Modèle principal"]')).toBeNull();
+    auth.user = { id: OWNER, email: SUPER_ADMIN_EMAIL, email_confirmed_at: '2026-11-13T10:00:00Z' };
+    await render();
+    expect(host.textContent).toContain('Réglages techniques du fondateur');
+    expect(host.querySelector('[aria-label="Modèle principal"]')).not.toBeNull();
+    await fill('Question de consultation', 'Brouillon du fondateur');
+    auth.user = { id: OWNER, email: SUPER_ADMIN_EMAIL };
+    await render();
+    expect(host.querySelector('[aria-label="Modèle principal"]')).toBeNull();
+    expect(host.querySelector<HTMLTextAreaElement>('[aria-label="Question de consultation"]')?.value).toBe('');
+    expect(host.textContent).not.toContain('primary-model');
+    expect(invoke.mock.calls.filter(call => call[1].body.action === 'consult')).toHaveLength(0);
   });
 
   it('keeps public chat usable without exposing private consultation to visitors or anonymous sessions', async () => {
@@ -117,16 +140,19 @@ describe('ChatbotWidget — connected private consultation mode', () => {
   it('aborts and clears the old private panel when the account changes, keeping old results out of the new account', async () => {
     const pending = deferred<unknown>();
     invoke.mockImplementation(async (_name, { body }) => body.action === 'consult' ? pending.promise : { data: { ok: true, catalog: catalogFixture() }, error: null });
-    await render(); await click("Ouvrir l'assistant PURA"); await click('Consultation IA');
+    auth.user = { id: OWNER, email: SUPER_ADMIN_EMAIL, email_confirmed_at: '2026-11-13T10:00:00Z' };
+    await render(); await click("Ouvrir l'assistant PURA"); await click('Analyse approfondie');
+    expect(host.querySelector('[aria-label="Modèle principal"]')).not.toBeNull();
     await fill('Question de consultation', 'Secret du premier compte'); await click('Lancer la consultation');
     const request = invoke.mock.calls.find(call => call[1].body.action === 'consult')![1];
     auth.user = { id: OTHER_OWNER }; auth.session = { access_token: 'second-token' };
     await render();
     expect(request.signal.aborted).toBe(true);
     expect(host.textContent).not.toContain('Secret du premier compte');
-    expect(host.querySelector('[aria-label="Consultation entre modèles"]')).toBeNull();
+    expect(host.querySelector('[aria-label="Analyse approfondie PURAMA"]')).toBeNull();
     await act(async () => { pending.resolve({ data: { ok: true, operation: operationFixture(request.body.operationId) }, error: null }); });
-    await click('Consultation IA');
+    await click('Analyse approfondie');
+    expect(host.querySelector('[aria-label="Modèle principal"]')).toBeNull();
     expect(host.textContent).not.toContain('Une réponse utile.');
     expect(host.textContent).not.toContain('Vérifier le résultat');
     expect(invoke.mock.calls.at(-1)?.[1].headers).toMatchObject({ Authorization: 'Bearer second-token' });

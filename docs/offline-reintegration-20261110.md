@@ -1,5 +1,51 @@
 # IAO — Réintégration et vérification du socle de textes hors connexion
 
+## Continuité du 23 novembre 2026
+
+Périmètre autorisé par Matiss le 23 novembre 2026 : une seule expérience PURAMA/IAO, sauvegarde automatique des créations locales et reprise après coupure, sans interface ni mémoire concurrente. Le nouveau lien OGAM fait l’objet d’une évaluation séparée ; aucune capacité native ou synchronisation distante n’est supposée disponible du seul fait de cette évaluation.
+
+Base initiale de ce correctif : `aa3220fca64ba786fb4fcb18daf379ce0d17e7c5`, branche de réception existante `audit/reliability-oauth-20261110`. Avant livraison, reprise en avance rapide de `a898622f52891975134ae297f8cd0786a9ab20df`, intégrant le chantier HTTP déjà fusionné, sans chevauchement avec les fichiers de ce lot. Branche réservée : `fix/iao-offline-continuity-20261123`. La branche `main` observée ne contient pas ce workspace ; elle n’est pas utilisée comme substitut à la base d’intégration. Les modifications des autres checkouts sont préservées.
+
+Responsables : agent `audit_existant_hors_ligne` pour `public/offline-workspace.js`, `public/offline.html`, `public/sw.js`, le manifeste des ressources et le test unitaire du worker ; agent `audit_ogam` pour la présentation publique, ses tests et la recette navigateur `test/browser/offline-workspace.spec.ts` ; agent `contre_revue_continuite` pour la contre-revue indépendante ; intégrateur racine pour ce document, les preuves et la livraison. Conception de cette correction : `PRET_A_CODER`, fondée sur l’instruction actuelle de sauvegarde automatique et sur le stockage/CAS déjà validé.
+
+Critères de réception du lot :
+
+- Une saisie non vide est enregistrée automatiquement dans le store existant, sans nouvelle base ni désactivation du clavier pendant l’écriture.
+- L’interface annonce la conservation uniquement après validation de la transaction ; les nouvelles frappes ne sont pas écrasées par l’accusé d’une écriture antérieure.
+- Une fermeture puis réouverture hors ligne retrouve le texte dont l’enregistrement est confirmé.
+- Les conflits entre onglets et suppressions concurrentes restent visibles et récupérables, sans écrasement ni résurrection silencieuse.
+- Une panne/quota de stockage reste visible ; pas de faux succès ni de boucle de tentatives incontrôlée.
+- Aucune synchronisation cloud, aucun appel externe et aucune inférence simulée ne sont introduits.
+- La version du cache et les empreintes des ressources sont actualisées ensemble ; les tests ciblés existants et nouveaux passent sur la révision livrée.
+
+État initial : sauvegarde manuelle présente ; persistance automatique de la saisie non implémentée. Le correctif ajoute cette persistance au même store et rouvre un document récent, sauf saisie déjà commencée. Il ne mémorise pas exactement le dernier document sélectionné. Le statut enregistré exige la confirmation de transaction ; les événements de fermeture ne garantissent pas à eux seuls la conservation d’une dernière frappe en cas d’arrêt brutal. La génération native, la mémoire SMARANA locale liée au compte, le chiffrement et la synchronisation entre appareils restent des chantiers distincts du lot et ne sont pas déclarés livrés par ses tests.
+
+Périmètre d’interface complémentaire, confié à `audit_ogam` : `src/components/ChatbotWidget.tsx`, `src/components/ConsultationPanel.tsx` et leurs tests. Le parcours public conserve la capacité d’analyse approfondie avec sélection interne depuis le catalogue autorisé, sans noms ni sélecteurs de modèles/fournisseurs. Les contrôles techniques sont réservés à l’affichage fondateur déjà défini par `isSuperAdmin` et un courriel vérifié ; ce choix d’affichage ne remplace jamais l’autorisation serveur. Aucune revue multi-modèles ni recherche payante n’est activée implicitement. Les références documentaires restent visibles. La réception vérifie les vues publique/fondateur, le contrat client existant et le changement d’identité.
+
+OGAM a été examiné au commit `f7789fee644e16123a723e51433057d75ded2b53` (version 0.0.125). Son cœur MIT est une source possible de composants natifs ; il dépend aussi de paquets partagés externes au dépôt et de fonctions Pro à qualifier séparément. Personal Mesh est un échange direct entre appareils appairés, pas le raccordement au compte PURAMA. Aucun code OGAM, poids, paquet Pro ou second stockage n’est importé par ce correctif. La décision de réutilisation sélective et le contrat de synchronisation figurent dans la même spécification canonique, mise à jour le 23 novembre 2026.
+
+### Vérification du correctif du 23 novembre
+
+| Contrôle | Résultat observé |
+| --- | --- |
+| Régression initiale, saisie sans clic sur Enregistrer | RED : la source d’origine ne conserve pas automatiquement le texte |
+| Contrats des vrais modules dans JSDOM 29.1.1 et fake-indexeddb 6.2.4 | PASS — 16 scénarios, aucun ignoré ; DOM et stockage sont des doubles de test |
+| `npm run test:offline` | PASS — 69 tests, aucun ignoré |
+| `npm run test:distribution:worker` | PASS — 25 tests, aucun ignoré, après alignement de la fixture sur le cache v10 |
+| `npm run check:offline-assets` | PASS — cache `purama-offline-v10`, quatre tailles et SHA-256 conformes |
+| Vitest ciblé ConsultationPanel, ChatbotWidget et consultation-client | PASS — 54 tests |
+| `npm run typecheck` | PASS — sortie 0 |
+| `npm run lint` | PASS — sortie 0 ; 22 avertissements dans des fichiers hors du lot |
+| `npm run build` | PASS — sortie 0, intégrité des ressources incluse |
+| Contre-revue indépendante du produit modifié | PASS — observations sur les courses, l’état enregistré et les relectures corrigées |
+| Navigateur Chromium dans le conteneur de travail | BLOQUÉ — création de socket refusée ; qualification reportée au workflow PR existant |
+
+Les seize scénarios temporaires VM ont accéléré la correction ; ils ne remplacent pas les scénarios Playwright conservés dans le dépôt. Les exécutions navigateur réelles et leurs conclusions sont attachées à la [PR 97](https://github.com/puramapro-oss/purama-ai/pull/97). La première CI a révélé une fixture de distribution encore fixée sur le cache v8, corrigée vers v10 avant la nouvelle exécution ; aucune ressource produit n’a été modifiée pour contourner cet échec. Les tests sur appareils physiques, l’inférence locale et la synchronisation de compte sont NON TESTÉS par ce lot.
+
+## Historique de qualification du 10 novembre 2026
+
+Les résultats et chemins qui suivent décrivent la livraison historique. Ils ne constituent pas une exécution des changements du 23 novembre.
+
 Date : 10 novembre 2026. Statut global : **PARTIEL**. Ce lot est un candidat local isolé ; il ne qualifie ni l’ensemble de PURAMA ONE ni les capacités natives décrites dans la spécification.
 
 ## Source et propriété du travail

@@ -23,6 +23,7 @@ import { parseSSEStream } from '@/lib/sse';
 import { createRequestScope, type RequestLease } from '@/lib/request-scope';
 import { prepareChatMessages, CHAT_MAX_MESSAGE_LENGTH } from '../../supabase/functions/_shared/chat-input';
 import { ConsultationPanel } from '@/components/ConsultationPanel';
+import { isSuperAdmin } from '@/lib/constants';
 
 interface Message {
   id: string;
@@ -58,6 +59,7 @@ const CHATBOT_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/
 
 export function ChatbotWidget() {
   const { user, session, loading: authLoading } = useAuth();
+  const technicalConsultation = !authLoading && Boolean(user?.email_confirmed_at && isSuperAdmin(user?.email));
   const [requests] = useState(createRequestScope);
   const [isOpen, setIsOpen] = useState(false);
   const [consultationOpen, setConsultationOpen] = useState(false);
@@ -397,11 +399,12 @@ export function ChatbotWidget() {
               <button type="button" aria-pressed={!consultationOpen} className="flex-1 px-3 py-2 text-sm focus-visible:outline focus-visible:outline-primary"
                 onClick={() => setConsultationOpen(false)}>Conversation</button>
               <button type="button" aria-pressed={consultationOpen} className="flex-1 px-3 py-2 text-sm focus-visible:outline focus-visible:outline-primary"
-                onClick={() => { stopActiveRequest(); setShowHistory(false); setConsultationOpen(true); }}>Consultation IA</button>
+                onClick={() => { stopActiveRequest(); setShowHistory(false); setConsultationOpen(true); }}>Analyse approfondie</button>
             </div>}
 
             {consultationOpen && user && !user.is_anonymous && session?.access_token
-              ? <ConsultationPanel key={user.id} userId={user.id} accessToken={session.access_token} />
+              ? <ConsultationPanel key={`${user.id}:${technicalConsultation ? 'technical' : 'public'}`} userId={user.id}
+                  accessToken={session.access_token} technicalDetails={technicalConsultation} />
               : <>
 
             {/* History Panel */}
