@@ -56,8 +56,8 @@ export default function AgentChatScreen() {
           <Ionicons name="sparkles" size={20} color={agent.color} />
         </View>
         <View className="flex-1">
-          <Text className="text-white font-bold">{agent.name}</Text>
-          <Text className="text-white/40 text-xs">{agent.category}</Text>
+          <Text className="text-white font-bold">PURAMA</Text>
+          <Text className="text-white/40 text-xs">{agent.name} · service connecté</Text>
         </View>
         <TouchableOpacity testID="agent-clear" onPress={() => {}} className="p-2">
           <Ionicons name="trash-outline" size={20} color="rgba(255,255,255,0.3)" />

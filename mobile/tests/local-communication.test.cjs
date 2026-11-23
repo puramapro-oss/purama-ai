@@ -23,7 +23,7 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
   const cache = new Map();
   const env = {
     segments, screen: null, fontError: null, fontsLoaded: true,
-    factoryCalls: [], sessions: [], subscriptions: [], profileReads: [],
+    factoryCalls: [], sessions: [], subscriptions: [], profileReads: [], refreshCalls: [], refreshRunning: false,
     networkCalls: [], persistentCalls: [], navigation: [], focus: [], keyboard: [],
     focusCleanups: new Set(), backListeners: new Set(), appStateListeners: new Set(), loaded: new Set(),
   };
@@ -37,6 +37,8 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
   };
   const client = {
     auth: {
+      async startAutoRefresh() { env.refreshCalls.push('start'); env.refreshRunning = true; },
+      async stopAutoRefresh() { env.refreshCalls.push('stop'); env.refreshRunning = false; },
       onAuthStateChange(callback) {
         const entry = { callback, unsubscribed: 0 };
         env.subscriptions.push(entry);
@@ -101,6 +103,7 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
   };
   const modules = {
     react: React, 'react/jsx-runtime': require('react/jsx-runtime'),
+    '@react-navigation/native': { useNavigation: () => ({ dispatch: unexpectedNetwork }), usePreventRemove: () => {} },
     'react-native': native,
     'react-native-webview': { WebView: 'WebView' },
     'expo-modules-core': { requireOptionalNativeModule(name) {
@@ -131,6 +134,7 @@ function environment({ configured = false, platform = 'ios', segments = ['commun
   function load(relative) {
     let file = path.resolve(project, relative);
     if (file.endsWith('.css')) return {};
+    if (file.endsWith('.json')) return JSON.parse(fs.readFileSync(file, 'utf8'));
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index');
     if (!fs.existsSync(file)) file = ['.ts', '.tsx', '.js'].map(extension => file + extension).find(candidate => fs.existsSync(candidate));
     assert.ok(file, `Module not found: ${relative}`);
@@ -185,13 +189,14 @@ const session = id => ({ user: { id }, access_token: 'synthetic', refresh_token:
 
 test('only exact public route segments keep account initialization inactive', () => {
   const { isLocalCommunicationRoute, boundCommunicationText, COMMUNICATION_TEXT_LIMIT } = environment().load('lib/local-communication.ts');
-  for (const segments of [[], ['index'], ['communication'], ['accessible-one'], ['accessibility-watch']]) {
+  for (const segments of [[], ['index'], ['communication'], ['accessible-one'], ['accessibility-watch'], ['agent', 'purama'], ['iao-qualification']]) {
     assert.equal(isLocalCommunicationRoute(segments), true);
   }
   for (const segments of [['(tabs)'], ['(tabs)', 'index'], ['(auth)', 'login'], ['account'], ['auth', 'callback'],
     ['communication', 'index'], ['communication-extra'], ['agent', '[slug]'],
     ['accessible-one', 'index'], ['accessibility-watch', 'index'], ['accessible-one-extra'], ['accessibility-watch-extra'],
-    ['(auth)', 'accessible-one'], ['(tabs)', 'accessibility-watch'], ['Accessible-one']]) {
+    ['(auth)', 'accessible-one'], ['(tabs)', 'accessibility-watch'], ['Accessible-one'], ['agent', 'purama-extra'],
+    ['agent', 'purama', 'index'], ['iao-qualification', 'index']]) {
     assert.equal(isLocalCommunicationRoute(segments), false);
   }
   assert.equal(boundCommunicationText('Bonjour\nمرحبا 👋'), 'Bonjour\nمرحبا 👋');
@@ -218,7 +223,7 @@ test('lazy client caches one instance, preserves method receiver and stable meth
   assert.equal(attempts, 2);
 });
 
-test('missing account configuration is harmless until explicit first access; original options are preserved', () => {
+test('missing account configuration stays lazy; native refresh is explicit and web retains SDK visibility refresh', () => {
   const offline = environment();
   const client = offline.load('lib/supabase.ts').supabase;
   assert.equal(offline.factoryCalls.length, 0);
@@ -231,9 +236,13 @@ test('missing account configuration is harmless until explicit first access; ori
   assert.equal(configured.factoryCalls.length, 1);
   const [url, key, options] = configured.factoryCalls[0];
   assert.equal(url, 'https://example.invalid'); assert.equal(key, 'synthetic-test-key');
-  assert.equal(options.auth.autoRefreshToken, true); assert.equal(options.auth.persistSession, true);
+  assert.equal(options.auth.autoRefreshToken, false); assert.equal(options.auth.persistSession, true);
   assert.equal(options.auth.detectSessionInUrl, false); assert.equal(options.db.schema, 'purama_ai');
   assert.deepEqual(Object.keys(options.auth.storage), ['getItem', 'setItem', 'removeItem']);
+  const web = environment({ configured: true, platform: 'web' });
+  assert.equal(web.load('lib/supabase.ts').supabase.auth, web.client.auth);
+  assert.equal(web.factoryCalls[0][2].auth.autoRefreshToken, true);
+  assert.equal(web.factoryCalls[0][2].auth.detectSessionInUrl, true);
   assert.equal(offline.persistentCalls.length + configured.persistentCalls.length, 0);
 });
 
@@ -281,11 +290,12 @@ for (const platform of ['ios', 'android']) test(`${platform}: local entry/deep l
   }
   assert.equal(mounts, 1);
   assert.equal(env.sessions.length, 0); assert.equal(env.subscriptions.length, 0);
+  assert.deepEqual(env.refreshCalls, []);
   assert.equal(env.factoryCalls.length, 0); assert.equal(env.networkCalls.length, 0); assert.equal(env.persistentCalls.length, 0);
   await unmount(renderer);
 });
 
-for (const publicRoute of ['communication', 'accessible-one', 'accessibility-watch']) test(`account → ${publicRoute} → account hides stale identity, ignores late work and reuses one client`, async () => {
+for (const publicRoute of ['communication', 'accessible-one', 'accessibility-watch', 'agent/purama']) test(`account → ${publicRoute} → account hides stale identity, ignores late work and reuses one client`, async () => {
   const env = environment({ configured: true, segments: ['account'] });
   const Root = env.load('app/_layout.tsx').default;
   const { useAuth } = env.load('hooks/useAuth.tsx');
@@ -294,14 +304,16 @@ for (const publicRoute of ['communication', 'accessible-one', 'accessibility-wat
   env.screen = function Probe() { state = useAuth(); React.useEffect(() => { mounts += 1; }, []); return null; };
   const renderer = await mount(env, Root);
   assert.equal(state.loading, true); assert.equal(state.user, null);
+  assert.equal(env.refreshRunning, true); assert.deepEqual(env.refreshCalls, ['start']);
   await act(async () => env.sessions[0].resolve({ data: { session: session('first') }, error: null }));
   assert.equal(state.user.id, 'first'); assert.equal(state.loading, false);
   assert.equal(env.profileReads.length, 1);
-  env.segments = [publicRoute];
+  env.segments = publicRoute.split('/');
   await act(async () => renderer.update(React.createElement(Root)));
   assert.equal(state.user, null); assert.equal(state.session, null); assert.equal(state.profile, null);
   assert.equal(state.loading, true, 'retained protected screens must not redirect while local mode is active');
   assert.equal(env.subscriptions[0].unsubscribed, 1);
+  assert.equal(env.refreshRunning, false); assert.equal(env.refreshCalls.at(-1), 'stop');
   await act(async () => {
     env.subscriptions[0].callback('SIGNED_IN', session('late'));
     env.profileReads[0].pending.resolve({ data: { id: 'first', email: 'synthetic@example.invalid' }, error: null });
@@ -311,11 +323,13 @@ for (const publicRoute of ['communication', 'accessible-one', 'accessibility-wat
   await act(async () => renderer.update(React.createElement(Root)));
   assert.equal(state.user, null); assert.equal(state.loading, true);
   assert.equal(env.factoryCalls.length, 1); assert.equal(env.sessions.length, 2); assert.equal(mounts, 1);
+  assert.equal(env.refreshRunning, true); assert.equal(env.refreshCalls.at(-1), 'start');
   await act(async () => env.sessions[1].resolve({ data: { session: session('second') }, error: null }));
   assert.equal(state.user.id, 'second'); assert.equal(state.loading, false);
   await act(async () => env.subscriptions[0].callback('SIGNED_IN', session('old-callback')));
   assert.equal(state.user.id, 'second');
   await unmount(renderer);
+  assert.equal(env.refreshRunning, false); assert.equal(env.refreshCalls.at(-1), 'stop');
 });
 
 test('a pending old startup session cannot win after public mode and a new account activation', async () => {
@@ -509,6 +523,7 @@ for (const platform of ['ios', 'android']) test(`${platform}: public menu reache
   assert.deepEqual(renderer.root.findAllByType(Button).map(node => ({
     id: node.props.testID, title: node.props.title, variant: node.props.variant ?? 'primary',
   })), [
+    { id: 'entry-purama', title: 'Parler à PURAMA', variant: 'primary' },
     { id: 'entry-communication', title: 'Communiquer par écrit', variant: 'primary' },
     { id: 'entry-accessible-one', title: 'Accessible pour moi', variant: 'secondary' },
     { id: 'entry-account', title: 'Ouvrir mon espace compte', variant: 'secondary' },

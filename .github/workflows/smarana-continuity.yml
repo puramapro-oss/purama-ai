@@ -1,0 +1,82 @@
+name: SMARANA account continuity
+
+on:
+  pull_request:
+    paths:
+      - 'shared/smarana.ts'
+      - 'mobile/lib/smarana-*.ts'
+      - 'supabase/migrations/*smarana*'
+      - 'tests/smarana/**'
+      - '.github/workflows/smarana-continuity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smarana-continuity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smarana:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        shell: bash
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: local-smarana-fixture-only
+          PGDATA: /var/lib/postgresql/purama-smarana-data
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PURAMA_TRIAL_TEST_PG_HOST: 127.0.0.1
+      PURAMA_TRIAL_TEST_PG_PORT: 5432
+      PURAMA_TRIAL_TEST_PG_USER: postgres
+      PURAMA_TRIAL_TEST_PG_PASSWORD: local-smarana-fixture-only
+      PURAMA_TRIAL_TEST_PG_DATA: /var/lib/postgresql/purama-smarana-data
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.22.1
+          cache: npm
+          cache-dependency-path: karta/package-lock.json
+      - name: Install the existing server test lock
+        run: npm ci --prefix karta --ignore-scripts --no-audit --no-fund
+      - name: Prepare only the disposable service roles
+        env:
+          PGPASSWORD: local-smarana-fixture-only
+        run: >-
+          psql --host=127.0.0.1 --username=postgres --dbname=postgres --set=ON_ERROR_STOP=1
+          --command='CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;'
+      - name: Verify protocol, RLS, atomic mutations, conflicts and lost acknowledgements
+        run: |
+          mkdir -p test-results/smarana
+          node --test --test-concurrency=1 tests/smarana/protocol.test.mjs tests/smarana/server.test.mjs tests/smarana/replica-roundtrip.test.cjs 2>&1 | tee test-results/smarana/protocol-postgres-wasm.log
+      - name: Verify commit ordering and concurrent deliveries on PostgreSQL 18
+        run: node --test tests/smarana/server.postgres.mjs 2>&1 | tee test-results/smarana/postgres-concurrency.log
+      - name: Bind results to the tested source
+        if: always()
+        run: |
+          mkdir -p test-results/smarana
+          git rev-parse HEAD HEAD^{tree} > test-results/smarana/checkout.txt
+          sha256sum shared/smarana.ts supabase/migrations/*smarana* > test-results/smarana/source-sha256.txt
+      - name: Preserve account continuity evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: smarana-account-continuity-${{ github.sha }}
+          path: test-results/smarana/
+          if-no-files-found: error
+          retention-days: 14

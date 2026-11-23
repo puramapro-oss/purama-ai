@@ -70,7 +70,7 @@ test('authorized fallback passes only with an actual clean audit result structur
   assert.equal(result.mode, 'fresh_registry_audit');
   assert.equal(result.queriedRegistry, true);
   assert.equal(result.reportSha256, sha(f.reportBytes));
-  assert.equal(result.registryPackageInstances, 876);
+  assert.equal(result.registryPackageInstances, 886);
   assert.equal(fs.existsSync(path.join(f.root, 'qa-results')), false);
 });
 

@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'mobile/**'
+      - 'shared/smarana.ts'
       - '.github/workflows/mobile-native-watch.yml'
   workflow_dispatch:
 
@@ -17,7 +18,7 @@ concurrency:
 jobs:
   android:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: mobile
@@ -170,6 +171,42 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
+      - name: Bundle the offline qualification APK for the disposable x86_64 emulator
+        env:
+          EXPO_PUBLIC_PURAMA_OFFLINE_QUALIFICATION: '1'
+        run: |
+          cd android
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2 --stacktrace 2>&1 | tee ../qa/watch-native/offline-qualification-build.log
+          test -f app/build/outputs/apk/release/app-release.apk
+      - name: Enable the hosted runner emulator accelerator
+        run: |
+          test -c /dev/kvm
+          sudo chmod a+rw /dev/kvm
+      - name: Qualify real local inference and encrypted memory after an offline process restart
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          ram-size: 4096M
+          disk-size: 6G
+          heap-size: 512M
+          cores: 2
+          emulator-boot-timeout: 300
+          disable-animations: true
+          disable-spellchecker: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          working-directory: mobile
+          script: |
+            adb install -r android/app/build/outputs/apk/release/app-release.apk
+            bash scripts/qualify-offline-android.sh
+      - name: Preserve native offline inference, SQLCipher and restart evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: purama-offline-native-${{ github.sha }}
+          path: mobile/qa/offline-native/
+          retention-days: 14
       - name: Preserve qualification receipts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -37,7 +37,10 @@ export const supabase = createLazyClient(() => {
   return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       storage: ExpoSecureStoreAdapter,
-      autoRefreshToken: true,
+      // Native refresh belongs to the active account route. SDK initialization
+      // must not restart a background ticker after that route has been closed.
+      // getSession still refreshes an expired token explicitly on demand.
+      autoRefreshToken: Platform.OS === "web",
       persistSession: true,
       detectSessionInUrl: Platform.OS === "web",
     },

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-11-12T04:27:51.943Z",
+  "capturedAt": "2026-11-23T17:51:23.601Z",
   "maximumAgeHours": 24,
-  "reportSha256": "d654f8c8205622003585badcd4be0c4139733ea49c8683d88a15ed404874b3d8",
-  "registryMultisetSha256": "4c83bda269f82010462b557a69557787828b33477bed05a33a3adc90074ee157",
-  "registryPackageInstances": 876,
+  "reportSha256": "12ff7e0c6d3af84a7f80984fd4a5e7b39192dd6f7e9d377f74b4ee81461bce1c",
+  "registryMultisetSha256": "cdbdcaa29aacc77842c0a2789ea89a60b65714a22dd1af56f538a141c22c86c5",
+  "registryPackageInstances": 886,
   "source": {
     "command": [
       "npm",
@@ -12,14 +12,13 @@
       "--audit-level=high",
       "--json"
     ],
-    "receiptSha256": "18ed483a0ad0be1a01d09113efcf6816f3e5cf5472ae78795c8e52ab6349299c",
+    "receiptSha256": "104d6946b4e7cffab728f1e667187d864f79c23587a38ef4fcab55022e66c52b",
     "exitCode": 0
   },
-  "status": "Fresh registry audit captured for this dependency graph. The CI gate checks exact local binding and freshness without making another registry request.",
+  "status": "Fresh registry audit captured for this dependency graph. The CI gate checks exact binding and freshness; an expired valid snapshot requires a new real registry audit.",
   "remainingAdvisories": [
     "GHSA-3g3m-2fjr-6pw4",
-    "GHSA-g3hv-75wg-m249",
-    "GHSA-gcqx-w48m-w2h4"
+    "GHSA-g3hv-75wg-m249"
   ],
   "scopeLimit": "Registry package versions, URLs and integrity values only. Local adapter code is reviewed separately. Native execution, signing and store admission are not qualified."
 }
