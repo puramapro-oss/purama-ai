@@ -1,0 +1,62 @@
+[
+  {
+    "symbol": "catalog",
+    "initial": {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "c5f30d",
+        "wall_time_seconds": 1.000874406,
+        "session_id": 93561,
+        "original_token_count": 8,
+        "output": "\n  GitNexus Context (1.6.12)\n"
+      }
+    },
+    "completion": {
+      "chunk_id": "d3a7bf",
+      "wall_time_seconds": 0.000026616,
+      "exit_code": 0,
+      "original_token_count": 296,
+      "output": "{\"level\":40,\"time\":1795467221860,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n{\n  \"status\": \"ambiguous\",\n  \"message\": \"Found 3 symbols matching 'catalog'. Use uid, file_path, or kind to disambiguate.\",\n  \"totalCandidates\": 3,\n  \"candidates\": [\n    {\n      \"uid\": \"Function:src/lib/consultation-client.ts:catalog\",\n      \"name\": \"catalog\",\n      \"kind\": \"Function\",\n      \"filePath\": \"src/lib/consultation-client.ts\",\n      \"line\": 63,\n      \"score\": 0.96\n    },\n    {\n      \"uid\": \"Method:src/lib/consultation-client.ts:ConsultationClient.catalog#1\",\n      \"name\": \"catalog\",\n      \"kind\": \"Method\",\n      \"filePath\": \"src/lib/consultation-client.ts\",\n      \"line\": 158,\n      \"score\": 0.94\n    },\n    {\n      \"uid\": \"Method:src/lib/consultation-client.ts:createConsultationClient.catalog@244:4#1\",\n      \"name\": \"catalog\",\n      \"kind\": \"Method\",\n      \"filePath\": \"src/lib/consultation-client.ts\",\n      \"line\": 245,\n      \"score\": 0.94\n    }\n  ]\n}\n"
+    }
+  },
+  {
+    "symbol": "input",
+    "initial": {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "8136c0",
+        "wall_time_seconds": 1.001379937,
+        "session_id": 80025,
+        "original_token_count": 8,
+        "output": "\n  GitNexus Context (1.6.12)\n"
+      }
+    },
+    "completion": {
+      "chunk_id": "4b9c4a",
+      "wall_time_seconds": 0.000026733,
+      "exit_code": 0,
+      "original_token_count": 1601,
+      "output": "{\"level\":40,\"time\":1795467221881,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n{\n  \"status\": \"found\",\n  \"symbol\": {\n    \"uid\": \"Function:src/lib/consultation-client.ts:input\",\n    \"name\": \"input\",\n    \"kind\": \"Function\",\n    \"filePath\": \"src/lib/consultation-client.ts\",\n    \"startLine\": 141,\n    \"endLine\": 155\n  },\n  \"epistemic\": \"exact\",\n  \"incoming\": {\n    \"calls\": [\n      {\n        \"uid\": \"Method:src/lib/consultation-client.ts:createConsultationClient.consult@245:4#2\",\n        \"name\": \"consult\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ]\n  },\n  \"outgoing\": {\n    \"calls\": [\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:consultationSourceUrl\",\n        \"name\": \"consultationSourceUrl\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:id\",\n        \"name\": \"id\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:id\",\n        \"name\": \"id\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:invalid\",\n        \"name\": \"invalid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:keys\",\n        \"name\": \"keys\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:record\",\n        \"name\": \"record\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:text\",\n        \"name\": \"text\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:text\",\n        \"name\": \"text\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      },\n      {\n        \"uid\": \"Function:src/lib/consultation-client.ts:uuid\",\n        \"name\": \"uuid\",\n        \"filePath\": \"src/lib/consultation-client.ts\"\n      }\n    ],\n    \"accesses\": [\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.operationId\",\n        \"name\": \"operationId\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.operationId\",\n        \"name\": \"operationId\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.preferences\",\n        \"name\": \"preferences\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.question\",\n        \"name\": \"question\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.question\",\n        \"name\": \"question\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.question\",\n        \"name\": \"question\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.research\",\n        \"name\": \"research\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      },\n      {\n        \"uid\": \"Property:karta/src/api/consultation-contract.ts:ConsultationInput.reviewerModels\",\n        \"name\": \"reviewerModels\",\n        \"filePath\": \"karta/src/api/consultation-contract.ts\"\n      }\n    ]\n  },\n  \"processes\": []\n}\n"
+    }
+  },
+  {
+    "symbol": "plan",
+    "initial": {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "cb259f",
+        "wall_time_seconds": 1.002065496,
+        "session_id": 68613,
+        "original_token_count": 8,
+        "output": "\n  GitNexus Context (1.6.12)\n"
+      }
+    },
+    "completion": {
+      "chunk_id": "021c3e",
+      "wall_time_seconds": 0.000027016,
+      "exit_code": 0,
+      "original_token_count": 227,
+      "output": "{\"level\":40,\"time\":1795467221899,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n{\n  \"status\": \"ambiguous\",\n  \"message\": \"Found 2 symbols matching 'plan'. Use uid, file_path, or kind to disambiguate.\",\n  \"totalCandidates\": 2,\n  \"candidates\": [\n    {\n      \"uid\": \"Function:src/lib/consultation-client.ts:plan\",\n      \"name\": \"plan\",\n      \"kind\": \"Function\",\n      \"filePath\": \"src/lib/consultation-client.ts\",\n      \"line\": 53,\n      \"score\": 0.96\n    },\n    {\n      \"uid\": \"Property:src/lib/consultation-client.ts:result.plan@127:4\",\n      \"name\": \"plan\",\n      \"kind\": \"\",\n      \"filePath\": \"src/lib/consultation-client.ts\",\n      \"line\": 128,\n      \"score\": 0.9\n    }\n  ]\n}\n"
+    }
+  }
+]

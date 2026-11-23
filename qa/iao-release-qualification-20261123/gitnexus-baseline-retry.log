@@ -1,0 +1,266 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+[2KReclaiming stale index lock from dead analyze (pid 34, invocation 9e495b90-37c1-42e1-927c-d7512ee71cd0).
+[2K  Skipped 4 large files (>512KB, likely generated/vendored)
+[2K  - qa/iao-http-lifecycle-20261123/impact/detect-compare.json
+[2K  - qa/iao-http-lifecycle-20261123/reconciliation-pr96/detect-compare.json
+[2K  - qa/iao-runtime-finalization-20261110/verification.json
+[2K  - qa/ots-stamp-atomicity-20261110/native-final.json
+[2K  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+[gitnexus-heap] parse-chunk-25 used_mb=73 rss_mb=212 nodes=3912 parsedFiles=0
+[gitnexus-heap] parse-chunk-50 used_mb=74 rss_mb=212 nodes=3912 parsedFiles=0
+[gitnexus-heap] parse-chunk-75 used_mb=76 rss_mb=212 nodes=3912 parsedFiles=0
+[gitnexus-heap] parse-chunk-100 used_mb=77 rss_mb=212 nodes=3912 parsedFiles=0
+{"level":30,"time":1795466850442,"name":"gitnexus","msg":"🚚 round: 106 chunk(s) 1-106/229, 193 files in one dispatch"}
+[parse-worker bootstrap] thread=2 imports + grammars loaded (+0ms)
+[parse-worker bootstrap] thread=2 ready sent (+1ms)
+[parse-worker bootstrap] thread=1 imports + grammars loaded (+0ms)
+[parse-worker bootstrap] thread=1 ready sent (+1ms)
+[parse-worker bootstrap] thread=2 first task received (+14ms)
+[parse-worker bootstrap] thread=1 first task received (+5ms)
+[gitnexus-heap] parse-chunk-125 used_mb=92 rss_mb=1087 nodes=3912 parsedFiles=0
+{"level":30,"time":1795466870067,"name":"gitnexus","msg":"🚚 round: 39 chunk(s) 107-145/229, 283 files in one dispatch"}
+{"level":30,"time":1795466870074,"name":"gitnexus","msg":"📊 chunk 1/229: 1 files in 19676ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870076,"name":"gitnexus","msg":"📊 chunk 2/229: 3 files in 19677ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870077,"name":"gitnexus","msg":"📊 chunk 3/229: 1 files in 19677ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870079,"name":"gitnexus","msg":"📊 chunk 4/229: 1 files in 19679ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870082,"name":"gitnexus","msg":"📊 chunk 5/229: 2 files in 19682ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870087,"name":"gitnexus","msg":"📊 chunk 6/229: 3 files in 19686ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870087,"name":"gitnexus","msg":"📊 chunk 7/229: 1 files in 19686ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870091,"name":"gitnexus","msg":"📊 chunk 8/229: 1 files in 19690ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870094,"name":"gitnexus","msg":"📊 chunk 9/229: 2 files in 19692ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870097,"name":"gitnexus","msg":"📊 chunk 10/229: 5 files in 19695ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870100,"name":"gitnexus","msg":"📊 chunk 11/229: 3 files in 19698ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870106,"name":"gitnexus","msg":"📊 chunk 12/229: 2 files in 19703ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870107,"name":"gitnexus","msg":"📊 chunk 13/229: 1 files in 19704ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870107,"name":"gitnexus","msg":"📊 chunk 14/229: 1 files in 19704ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870108,"name":"gitnexus","msg":"📊 chunk 15/229: 1 files in 19705ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870110,"name":"gitnexus","msg":"📊 chunk 16/229: 1 files in 19707ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870110,"name":"gitnexus","msg":"📊 chunk 17/229: 1 files in 19706ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870111,"name":"gitnexus","msg":"📊 chunk 18/229: 1 files in 19707ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870112,"name":"gitnexus","msg":"📊 chunk 19/229: 1 files in 19708ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870112,"name":"gitnexus","msg":"📊 chunk 20/229: 1 files in 19708ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870113,"name":"gitnexus","msg":"📊 chunk 21/229: 2 files in 19708ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870114,"name":"gitnexus","msg":"📊 chunk 22/229: 1 files in 19709ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870116,"name":"gitnexus","msg":"📊 chunk 23/229: 2 files in 19711ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870117,"name":"gitnexus","msg":"📊 chunk 24/229: 1 files in 19712ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870117,"name":"gitnexus","msg":"📊 chunk 25/229: 2 files in 19712ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870118,"name":"gitnexus","msg":"📊 chunk 26/229: 2 files in 19712ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870120,"name":"gitnexus","msg":"📊 chunk 27/229: 2 files in 19714ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870121,"name":"gitnexus","msg":"📊 chunk 28/229: 2 files in 19715ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870122,"name":"gitnexus","msg":"📊 chunk 29/229: 2 files in 19715ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870122,"name":"gitnexus","msg":"📊 chunk 30/229: 2 files in 19714ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870125,"name":"gitnexus","msg":"📊 chunk 31/229: 3 files in 19717ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870129,"name":"gitnexus","msg":"📊 chunk 32/229: 2 files in 19721ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870129,"name":"gitnexus","msg":"📊 chunk 33/229: 1 files in 19721ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870130,"name":"gitnexus","msg":"📊 chunk 34/229: 1 files in 19721ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870130,"name":"gitnexus","msg":"📊 chunk 35/229: 1 files in 19721ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870131,"name":"gitnexus","msg":"📊 chunk 36/229: 1 files in 19722ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870134,"name":"gitnexus","msg":"📊 chunk 37/229: 3 files in 19725ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870136,"name":"gitnexus","msg":"📊 chunk 38/229: 1 files in 19726ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870147,"name":"gitnexus","msg":"📊 chunk 39/229: 2 files in 19737ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870152,"name":"gitnexus","msg":"📊 chunk 40/229: 1 files in 19741ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870153,"name":"gitnexus","msg":"📊 chunk 41/229: 1 files in 19742ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870154,"name":"gitnexus","msg":"📊 chunk 42/229: 1 files in 19742ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870155,"name":"gitnexus","msg":"📊 chunk 43/229: 1 files in 19744ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870162,"name":"gitnexus","msg":"📊 chunk 44/229: 1 files in 19750ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870164,"name":"gitnexus","msg":"📊 chunk 45/229: 2 files in 19752ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870166,"name":"gitnexus","msg":"📊 chunk 46/229: 1 files in 19754ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870168,"name":"gitnexus","msg":"📊 chunk 47/229: 2 files in 19756ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870168,"name":"gitnexus","msg":"📊 chunk 48/229: 1 files in 19755ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870169,"name":"gitnexus","msg":"📊 chunk 49/229: 1 files in 19756ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870170,"name":"gitnexus","msg":"📊 chunk 50/229: 1 files in 19757ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870171,"name":"gitnexus","msg":"📊 chunk 51/229: 1 files in 19757ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870172,"name":"gitnexus","msg":"📊 chunk 52/229: 3 files in 19758ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870172,"name":"gitnexus","msg":"📊 chunk 53/229: 1 files in 19758ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870174,"name":"gitnexus","msg":"📊 chunk 54/229: 3 files in 19759ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870176,"name":"gitnexus","msg":"📊 chunk 55/229: 1 files in 19761ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870177,"name":"gitnexus","msg":"📊 chunk 56/229: 1 files in 19762ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870178,"name":"gitnexus","msg":"📊 chunk 57/229: 3 files in 19762ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870179,"name":"gitnexus","msg":"📊 chunk 58/229: 1 files in 19763ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870180,"name":"gitnexus","msg":"📊 chunk 59/229: 1 files in 19764ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870180,"name":"gitnexus","msg":"📊 chunk 60/229: 1 files in 19764ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870183,"name":"gitnexus","msg":"📊 chunk 61/229: 4 files in 19766ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870185,"name":"gitnexus","msg":"📊 chunk 62/229: 3 files in 19768ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870186,"name":"gitnexus","msg":"📊 chunk 63/229: 1 files in 19769ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870187,"name":"gitnexus","msg":"📊 chunk 64/229: 1 files in 19770ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870188,"name":"gitnexus","msg":"📊 chunk 65/229: 1 files in 19771ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870197,"name":"gitnexus","msg":"📊 chunk 66/229: 2 files in 19780ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870197,"name":"gitnexus","msg":"📊 chunk 67/229: 1 files in 19779ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870200,"name":"gitnexus","msg":"📊 chunk 68/229: 1 files in 19782ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870202,"name":"gitnexus","msg":"📊 chunk 69/229: 3 files in 19784ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870205,"name":"gitnexus","msg":"📊 chunk 70/229: 3 files in 19787ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870206,"name":"gitnexus","msg":"📊 chunk 71/229: 2 files in 19787ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870207,"name":"gitnexus","msg":"📊 chunk 72/229: 1 files in 19788ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870209,"name":"gitnexus","msg":"📊 chunk 73/229: 3 files in 19790ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870210,"name":"gitnexus","msg":"📊 chunk 74/229: 2 files in 19790ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870211,"name":"gitnexus","msg":"📊 chunk 75/229: 1 files in 19791ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870211,"name":"gitnexus","msg":"📊 chunk 76/229: 2 files in 19791ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870212,"name":"gitnexus","msg":"📊 chunk 77/229: 1 files in 19791ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870213,"name":"gitnexus","msg":"📊 chunk 78/229: 1 files in 19792ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870214,"name":"gitnexus","msg":"📊 chunk 79/229: 1 files in 19793ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870215,"name":"gitnexus","msg":"📊 chunk 80/229: 2 files in 19794ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870217,"name":"gitnexus","msg":"📊 chunk 81/229: 1 files in 19795ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870217,"name":"gitnexus","msg":"📊 chunk 82/229: 1 files in 19795ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870221,"name":"gitnexus","msg":"📊 chunk 83/229: 1 files in 19799ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870222,"name":"gitnexus","msg":"📊 chunk 84/229: 1 files in 19800ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870225,"name":"gitnexus","msg":"📊 chunk 85/229: 1 files in 19802ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870227,"name":"gitnexus","msg":"📊 chunk 86/229: 1 files in 19804ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870228,"name":"gitnexus","msg":"📊 chunk 87/229: 1 files in 19805ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870229,"name":"gitnexus","msg":"📊 chunk 88/229: 1 files in 19806ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870231,"name":"gitnexus","msg":"📊 chunk 89/229: 1 files in 19808ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870232,"name":"gitnexus","msg":"📊 chunk 90/229: 1 files in 19808ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870233,"name":"gitnexus","msg":"📊 chunk 91/229: 1 files in 19809ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870234,"name":"gitnexus","msg":"📊 chunk 92/229: 1 files in 19810ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870235,"name":"gitnexus","msg":"📊 chunk 93/229: 1 files in 19811ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870238,"name":"gitnexus","msg":"📊 chunk 94/229: 1 files in 19813ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870241,"name":"gitnexus","msg":"📊 chunk 95/229: 1 files in 19816ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870241,"name":"gitnexus","msg":"📊 chunk 96/229: 1 files in 19816ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870241,"name":"gitnexus","msg":"📊 chunk 97/229: 1 files in 19816ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870243,"name":"gitnexus","msg":"📊 chunk 98/229: 1 files in 19818ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870245,"name":"gitnexus","msg":"📊 chunk 99/229: 1 files in 19819ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870247,"name":"gitnexus","msg":"📊 chunk 100/229: 1 files in 19821ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870248,"name":"gitnexus","msg":"📊 chunk 101/229: 1 files in 19822ms (0.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870252,"name":"gitnexus","msg":"📊 chunk 102/229: 7 files in 19826ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870255,"name":"gitnexus","msg":"📊 chunk 103/229: 8 files in 19828ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870262,"name":"gitnexus","msg":"📊 chunk 104/229: 11 files in 19835ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870264,"name":"gitnexus","msg":"📊 chunk 105/229: 5 files in 19835ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466870268,"name":"gitnexus","msg":"📊 chunk 106/229: 10 files in 19839ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+[gitnexus-heap] parse-chunk-150 used_mb=147 rss_mb=1272 nodes=14684 parsedFiles=0
+[gitnexus-heap] parse-chunk-175 used_mb=152 rss_mb=1277 nodes=14684 parsedFiles=0
+{"level":30,"time":1795466880023,"name":"gitnexus","msg":"🚚 round: 40 chunk(s) 146-185/229, 304 files in one dispatch"}
+{"level":30,"time":1795466880033,"name":"gitnexus","msg":"📊 chunk 107/229: 11 files in 9992ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880034,"name":"gitnexus","msg":"📊 chunk 108/229: 7 files in 9993ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880038,"name":"gitnexus","msg":"📊 chunk 109/229: 5 files in 9996ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880043,"name":"gitnexus","msg":"📊 chunk 110/229: 6 files in 10000ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880047,"name":"gitnexus","msg":"📊 chunk 111/229: 10 files in 10004ms (1.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880051,"name":"gitnexus","msg":"📊 chunk 112/229: 3 files in 10007ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880056,"name":"gitnexus","msg":"📊 chunk 113/229: 7 files in 10012ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880062,"name":"gitnexus","msg":"📊 chunk 114/229: 6 files in 10017ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880084,"name":"gitnexus","msg":"📊 chunk 115/229: 9 files in 10039ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880091,"name":"gitnexus","msg":"📊 chunk 116/229: 8 files in 10045ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880095,"name":"gitnexus","msg":"📊 chunk 117/229: 5 files in 10048ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880097,"name":"gitnexus","msg":"📊 chunk 118/229: 6 files in 10049ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880100,"name":"gitnexus","msg":"📊 chunk 119/229: 5 files in 10052ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880108,"name":"gitnexus","msg":"📊 chunk 120/229: 9 files in 10059ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880116,"name":"gitnexus","msg":"📊 chunk 121/229: 13 files in 10066ms (1.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880120,"name":"gitnexus","msg":"📊 chunk 122/229: 4 files in 10070ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880121,"name":"gitnexus","msg":"📊 chunk 123/229: 5 files in 10070ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880128,"name":"gitnexus","msg":"📊 chunk 124/229: 7 files in 10077ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880133,"name":"gitnexus","msg":"📊 chunk 125/229: 9 files in 10081ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880142,"name":"gitnexus","msg":"📊 chunk 126/229: 7 files in 10089ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880145,"name":"gitnexus","msg":"📊 chunk 127/229: 7 files in 10091ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880154,"name":"gitnexus","msg":"📊 chunk 128/229: 11 files in 10100ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880158,"name":"gitnexus","msg":"📊 chunk 129/229: 7 files in 10103ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880164,"name":"gitnexus","msg":"📊 chunk 130/229: 11 files in 10108ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880170,"name":"gitnexus","msg":"📊 chunk 131/229: 6 files in 10113ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880177,"name":"gitnexus","msg":"📊 chunk 132/229: 5 files in 10120ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880183,"name":"gitnexus","msg":"📊 chunk 133/229: 5 files in 10125ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880191,"name":"gitnexus","msg":"📊 chunk 134/229: 8 files in 10133ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880198,"name":"gitnexus","msg":"📊 chunk 135/229: 9 files in 10139ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880201,"name":"gitnexus","msg":"📊 chunk 136/229: 4 files in 10142ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880212,"name":"gitnexus","msg":"📊 chunk 137/229: 11 files in 10152ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880214,"name":"gitnexus","msg":"📊 chunk 138/229: 4 files in 10153ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880226,"name":"gitnexus","msg":"📊 chunk 139/229: 7 files in 10165ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880229,"name":"gitnexus","msg":"📊 chunk 140/229: 7 files in 10167ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880241,"name":"gitnexus","msg":"📊 chunk 141/229: 7 files in 10179ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880255,"name":"gitnexus","msg":"📊 chunk 142/229: 14 files in 10192ms (1.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880260,"name":"gitnexus","msg":"📊 chunk 143/229: 3 files in 10196ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880272,"name":"gitnexus","msg":"📊 chunk 144/229: 11 files in 10208ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466880277,"name":"gitnexus","msg":"📊 chunk 145/229: 4 files in 10212ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+[gitnexus-heap] parse-chunk-200 used_mb=137 rss_mb=1465 nodes=23872 parsedFiles=0
+{"level":30,"time":1795466890572,"name":"gitnexus","msg":"🚚 round: 40 chunk(s) 186-225/229, 277 files in one dispatch"}
+{"level":30,"time":1795466890581,"name":"gitnexus","msg":"📊 chunk 146/229: 9 files in 10625ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890584,"name":"gitnexus","msg":"📊 chunk 147/229: 3 files in 10627ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890589,"name":"gitnexus","msg":"📊 chunk 148/229: 15 files in 10632ms (1.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890595,"name":"gitnexus","msg":"📊 chunk 149/229: 13 files in 10635ms (1.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890601,"name":"gitnexus","msg":"📊 chunk 150/229: 8 files in 10640ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890609,"name":"gitnexus","msg":"📊 chunk 151/229: 3 files in 10647ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890615,"name":"gitnexus","msg":"📊 chunk 152/229: 8 files in 10652ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890618,"name":"gitnexus","msg":"📊 chunk 153/229: 13 files in 10654ms (1.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890622,"name":"gitnexus","msg":"📊 chunk 154/229: 8 files in 10656ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890628,"name":"gitnexus","msg":"📊 chunk 155/229: 7 files in 10661ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890635,"name":"gitnexus","msg":"📊 chunk 156/229: 13 files in 10667ms (1.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890641,"name":"gitnexus","msg":"📊 chunk 157/229: 7 files in 10672ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890647,"name":"gitnexus","msg":"📊 chunk 158/229: 4 files in 10677ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890650,"name":"gitnexus","msg":"📊 chunk 159/229: 7 files in 10679ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890657,"name":"gitnexus","msg":"📊 chunk 160/229: 9 files in 10684ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890659,"name":"gitnexus","msg":"📊 chunk 161/229: 4 files in 10685ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890663,"name":"gitnexus","msg":"📊 chunk 162/229: 9 files in 10688ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890666,"name":"gitnexus","msg":"📊 chunk 163/229: 5 files in 10689ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890689,"name":"gitnexus","msg":"📊 chunk 164/229: 5 files in 10711ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890704,"name":"gitnexus","msg":"📊 chunk 165/229: 14 files in 10719ms (1.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890708,"name":"gitnexus","msg":"📊 chunk 166/229: 4 files in 10722ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890712,"name":"gitnexus","msg":"📊 chunk 167/229: 6 files in 10721ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890717,"name":"gitnexus","msg":"📊 chunk 168/229: 10 files in 10725ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890718,"name":"gitnexus","msg":"📊 chunk 169/229: 7 files in 10724ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890720,"name":"gitnexus","msg":"📊 chunk 170/229: 6 files in 10725ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890721,"name":"gitnexus","msg":"📊 chunk 171/229: 4 files in 10725ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890727,"name":"gitnexus","msg":"📊 chunk 172/229: 10 files in 10730ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890732,"name":"gitnexus","msg":"📊 chunk 173/229: 8 files in 10733ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890736,"name":"gitnexus","msg":"📊 chunk 174/229: 6 files in 10736ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890741,"name":"gitnexus","msg":"📊 chunk 175/229: 4 files in 10739ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890746,"name":"gitnexus","msg":"📊 chunk 176/229: 7 files in 10744ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890749,"name":"gitnexus","msg":"📊 chunk 177/229: 7 files in 10740ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890753,"name":"gitnexus","msg":"📊 chunk 178/229: 6 files in 10744ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890758,"name":"gitnexus","msg":"📊 chunk 179/229: 10 files in 10747ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890805,"name":"gitnexus","msg":"📊 chunk 180/229: 8 files in 10793ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890808,"name":"gitnexus","msg":"📊 chunk 181/229: 5 files in 10795ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890811,"name":"gitnexus","msg":"📊 chunk 182/229: 4 files in 10798ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890815,"name":"gitnexus","msg":"📊 chunk 183/229: 5 files in 10800ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890821,"name":"gitnexus","msg":"📊 chunk 184/229: 9 files in 10806ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466890827,"name":"gitnexus","msg":"📊 chunk 185/229: 14 files in 10809ms (1.3 files/s) pool: 2/2 active, 0 quarantined"}
+[gitnexus-heap] parse-chunk-225 used_mb=159 rss_mb=1673 nodes=33755 parsedFiles=0
+{"level":30,"time":1795466900192,"name":"gitnexus","msg":"🚚 round: 4 chunk(s) 226-229/229, 42 files in one dispatch"}
+{"level":30,"time":1795466900201,"name":"gitnexus","msg":"📊 chunk 186/229: 6 files in 9658ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900204,"name":"gitnexus","msg":"📊 chunk 187/229: 4 files in 9661ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900212,"name":"gitnexus","msg":"📊 chunk 188/229: 7 files in 9668ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900217,"name":"gitnexus","msg":"📊 chunk 189/229: 10 files in 9672ms (1.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900220,"name":"gitnexus","msg":"📊 chunk 190/229: 5 files in 9673ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900221,"name":"gitnexus","msg":"📊 chunk 191/229: 5 files in 9674ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900223,"name":"gitnexus","msg":"📊 chunk 192/229: 7 files in 9676ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900226,"name":"gitnexus","msg":"📊 chunk 193/229: 10 files in 9678ms (1.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900229,"name":"gitnexus","msg":"📊 chunk 194/229: 4 files in 9681ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900230,"name":"gitnexus","msg":"📊 chunk 195/229: 6 files in 9681ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900232,"name":"gitnexus","msg":"📊 chunk 196/229: 7 files in 9683ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900235,"name":"gitnexus","msg":"📊 chunk 197/229: 5 files in 9685ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900236,"name":"gitnexus","msg":"📊 chunk 198/229: 4 files in 9685ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900239,"name":"gitnexus","msg":"📊 chunk 199/229: 10 files in 9687ms (1.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900242,"name":"gitnexus","msg":"📊 chunk 200/229: 5 files in 9690ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900246,"name":"gitnexus","msg":"📊 chunk 201/229: 9 files in 9693ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900250,"name":"gitnexus","msg":"📊 chunk 202/229: 8 files in 9696ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900251,"name":"gitnexus","msg":"📊 chunk 203/229: 2 files in 9697ms (0.2 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900254,"name":"gitnexus","msg":"📊 chunk 204/229: 5 files in 9699ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900261,"name":"gitnexus","msg":"📊 chunk 205/229: 8 files in 9706ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900263,"name":"gitnexus","msg":"📊 chunk 206/229: 5 files in 9707ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900266,"name":"gitnexus","msg":"📊 chunk 207/229: 10 files in 9710ms (1.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900272,"name":"gitnexus","msg":"📊 chunk 208/229: 11 files in 9713ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900274,"name":"gitnexus","msg":"📊 chunk 209/229: 8 files in 9715ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900278,"name":"gitnexus","msg":"📊 chunk 210/229: 3 files in 9718ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900281,"name":"gitnexus","msg":"📊 chunk 211/229: 11 files in 9721ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900285,"name":"gitnexus","msg":"📊 chunk 212/229: 9 files in 9724ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900288,"name":"gitnexus","msg":"📊 chunk 213/229: 11 files in 9726ms (1.1 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900290,"name":"gitnexus","msg":"📊 chunk 214/229: 5 files in 9727ms (0.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900294,"name":"gitnexus","msg":"📊 chunk 215/229: 9 files in 9731ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900298,"name":"gitnexus","msg":"📊 chunk 216/229: 9 files in 9734ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900299,"name":"gitnexus","msg":"📊 chunk 217/229: 6 files in 9734ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900301,"name":"gitnexus","msg":"📊 chunk 218/229: 6 files in 9736ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900303,"name":"gitnexus","msg":"📊 chunk 219/229: 6 files in 9737ms (0.6 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900305,"name":"gitnexus","msg":"📊 chunk 220/229: 4 files in 9739ms (0.4 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900312,"name":"gitnexus","msg":"📊 chunk 221/229: 9 files in 9745ms (0.9 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900316,"name":"gitnexus","msg":"📊 chunk 222/229: 10 files in 9748ms (1.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900318,"name":"gitnexus","msg":"📊 chunk 223/229: 7 files in 9750ms (0.7 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900319,"name":"gitnexus","msg":"📊 chunk 224/229: 3 files in 9750ms (0.3 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466900322,"name":"gitnexus","msg":"📊 chunk 225/229: 8 files in 9753ms (0.8 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466902179,"name":"gitnexus","msg":"📊 chunk 226/229: 5 files in 1992ms (2.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466902195,"name":"gitnexus","msg":"📊 chunk 227/229: 11 files in 2006ms (5.5 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466902204,"name":"gitnexus","msg":"📊 chunk 228/229: 12 files in 2015ms (6.0 files/s) pool: 2/2 active, 0 quarantined"}
+{"level":30,"time":1795466902219,"name":"gitnexus","msg":"📊 chunk 229/229: 14 files in 2026ms (6.9 files/s) pool: 2/2 active, 0 quarantined"}
+[gitnexus-heap] post-parse-chunks used_mb=184 rss_mb=1705 routes=0 nodes=45017 parsedFiles=0
+{"level":30,"time":1795466902220,"name":"gitnexus","msg":"[deferred-profile] deferred band start: routes=0"}
+[gitnexus-heap] parse-impl-return used_mb=186 rss_mb=1633 exportedTypeMap=293 parsedFiles=0 nodes=45017
+[gitnexus-heap] scopeResolution-enter used_mb=215 rss_mb=1635
+[gitnexus-heap] scope-setup-nodeLookup-start used_mb=216 rss_mb=1635 langs=6 files=1099

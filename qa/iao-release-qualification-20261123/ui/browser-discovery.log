@@ -1,0 +1,50 @@
+Listing tests:
+  consultation.spec.ts:76:3 › founder consultation preserves auto/standard through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves auto/fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves auto/ultra_fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves standard/standard through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves standard/fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves standard/ultra_fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves deep/standard through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves deep/fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves deep/ultra_fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves maximum/standard through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves maximum/fast through browser controls and response
+  consultation.spec.ts:76:3 › founder consultation preserves maximum/ultra_fast through browser controls and response
+  consultation.spec.ts:101:3 › member uses the automatic public profile without exposing technical engine controls
+  consultation.spec.ts:101:3 › unverified uses the automatic public profile without exposing technical engine controls
+  consultation.spec.ts:116:1 › visitor and anonymous session cannot open private consultation or send its request
+  consultation.spec.ts:124:1 › two consultation submissions in the same browser task admit one operation
+  consultation.spec.ts:138:1 › explicit public research and a chosen reviewer are transmitted without adding private text
+  consultation.spec.ts:154:1 › selected reviewers survive a restrictive profile change and block submission until explicitly removed
+  consultation.spec.ts:173:1 › combined UTF-8 overflow is visible before any consultation leaves the browser
+  consultation.spec.ts:185:1 › closing and reopening a pending consultation recovers status without resending the question
+  consultation.spec.ts:205:1 › browser reload preserves only the pending UUID after a malformed upstream error and recovers through status
+  consultation.spec.ts:229:1 › cancellation keeps its operation identity and ignores a late completed response
+  consultation.spec.ts:243:1 › account change discards a late answer and does not recover the previous account operation
+  consultation.spec.ts:260:1 › a large partial answer remains literal, readable and bounded on a narrow viewport
+  lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+  lifecycle.spec.ts:54:1 › an assistant acknowledgement is reconciled without generating another answer
+  lifecycle.spec.ts:74:1 › a late save reconciliation cannot run the old account request
+  lifecycle.spec.ts:92:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  lifecycle.spec.ts:104:1 › two submits in the same browser task admit one request
+  lifecycle.spec.ts:115:1 › stop aborts the stream, removes partial output and restores the editable request
+  lifecycle.spec.ts:126:1 › stop while saving a completed answer keeps the answer and does not resend
+  lifecycle.spec.ts:140:1 › logout clears private content and subsequent guest requests never persist it
+  lifecycle.spec.ts:155:1 › a stale response cannot populate a new conversation or unlock a newer request
+  lifecycle.spec.ts:168:1 › account change during conversation creation prevents a subsequent model call
+  lifecycle.spec.ts:182:1 › failure to save the user message stops before model inference
+  lifecycle.spec.ts:190:1 › failure to save the answer preserves it without another model request
+  lifecycle.spec.ts:198:1 › retrying a failed model request reuses the confirmed user turn
+  lifecycle.spec.ts:218:1 › editing a failed request creates a distinct saved turn
+  lifecycle.spec.ts:233:1 › an intentional identical request after success creates a new turn
+  lifecycle.spec.ts:247:1 › retrying a stopped saved turn excludes its partial answer
+  lifecycle.spec.ts:264:3 › a failed turn is not reused after changing conversation
+  lifecycle.spec.ts:264:3 › a failed turn is not reused after changing account
+  lifecycle.spec.ts:279:1 › retrying a guest turn avoids duplicate context without storing history
+  lifecycle.spec.ts:290:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  lifecycle.spec.ts:300:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  lifecycle.spec.ts:318:1 › closing the widget aborts its pending response
+  lifecycle.spec.ts:325:1 › loading a conversation and submitting in the same task cannot overlap
+  lifecycle.spec.ts:344:1 › mobile controls remain visible and the demo can be stopped
+Total: 48 tests in 2 files

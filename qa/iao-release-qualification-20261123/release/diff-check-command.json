@@ -1,0 +1,22 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--check",
+    "--",
+    "karta/scripts/qualify-lmstudio.ts",
+    "karta/test/lmStudioQualification.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "stdout": "",
+  "untracked_whitespace_check": {
+    "method": "Python splitlines: line.rstrip() == line for every line in the three owned deliverables",
+    "findings": []
+  },
+  "files_sha256": {
+    "karta/scripts/qualify-lmstudio.ts": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+    "karta/test/lmStudioQualification.test.ts": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6",
+    "qa/iao-release-qualification-20261123/release/qualification-matrix.md": "01d52ca3c357a80942522351925401b72762ee7015a8bd1b0e1d8f818648d6a6"
+  }
+}

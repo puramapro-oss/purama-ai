@@ -1,0 +1,50 @@
+{
+  "project": "IAO / purama-ai",
+  "date": "2026-11-23",
+  "state": "PRET_A_CODER",
+  "baseline": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "baseline_tree": "446f942e32a0409cf0c06cdeb9df5127910e377b",
+  "authorization": "Validation collective du 21 novembre des fonctionnalités IAO existantes ; demande actuelle de tests réels étendus et de correction avant déploiement.",
+  "objective": "Qualifier les parcours existants par profils, réflexions, dimensions de tâches et états de compte ; corriger les défauts reproduits sans diminuer les capacités.",
+  "assignments": [
+    {
+      "owner": "qual_profiles",
+      "scope": "Profils et consultation serveur ; nouvelle matrice dans karta/test, preuves profiles. Aucun changement produit sans impact et coordination.",
+      "acceptance": "Combinaisons compatibles réellement exercées ; incompatibilités explicites ; tailles limites, isolation et fin de tâche vérifiées."
+    },
+    {
+      "owner": "qual_ui",
+      "scope": "ConsultationPanel et parcours navigateur des profils ; tests ciblés UI, preuves ui. Aucun changement serveur.",
+      "acceptance": "Actions utilisateur réelles et résultats visibles sur les modes, profils, annulation/reprise, grands contenus et états de compte disponibles."
+    },
+    {
+      "owner": "qual_release",
+      "scope": "Contrôles existants de qualification/déploiement, readiness, scripts de qualification et preuves release. Aucun changement aux migrations ni au runtime des autres agents.",
+      "acceptance": "Préconditions réelles distinguées des simulations ; échec explicite lorsque modèles, secrets, comptes ou services nécessaires sont absents ; aucune fausse aptitude à la production."
+    },
+    {
+      "owner": "root",
+      "scope": "Runtime réel/Mac, coordination, graphes, intégration et CI ; suivi canonique existant.",
+      "acceptance": "Relier version, environnement, commandes et résultats ; mesurer réellement ce qui est disponible ; ne pas assimiler un backend simulé à une réponse de modèle réel."
+    }
+  ],
+  "gates": [
+    "Inventaire actuel et contraintes d’autorisation",
+    "Matrice finie extraite des capacités existantes",
+    "Cas manquants reproductibles et assertions de résultat",
+    "Appels fournisseurs réels uniquement sur configuration existante autorisée et bornée",
+    "Qualification profils/utilisateurs et réponses aux pannes",
+    "Revue indépendante des corrections",
+    "Validation exacte du commit avant intégration",
+    "État de déploiement explicite et critères encore manquants"
+  ],
+  "limits": [
+    "Les tests de toutes les demandes imaginables ne forment pas un ensemble fini. La couverture sera explicitée sans pourcentage universel inventé.",
+    "Aucun déploiement global ni changement de compte fournisseur n’est déduit de la seule réussite des tests.",
+    "Les sources historiques ne prouvent pas l’état live actuel."
+  ],
+  "status": "IN_PROGRESS",
+  "current_status": "CODE_QUALIFIED_CI_PENDING",
+  "receipt": "preintegration-receipt.json",
+  "native_failures_preserved": true
+}

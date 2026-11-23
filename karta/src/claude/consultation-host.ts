@@ -11,6 +11,10 @@ import { createConsultationStore, type ConsultationEstimates, type ConsultationO
 import type { ClaudeClient } from "./types.js";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Native consultation identifiers must survive the HTTP/Edge projections and
+// usage.ts / model_consultation_valid_usage without losing their identity.
+// Generic transports such as LM Studio may support a wider model grammar.
+const NATIVE_CONSULTATION_MODEL = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$(?![\s\S])/;
 const OVERHEAD = 16_384;
 interface ModelPolicy { model: string; maxInputTokens: number; maxOutputTokens: number; maxCostMicros: number }
 interface ConsultationPolicy {
@@ -147,7 +151,7 @@ export function createConsultationHost(options: {
         current.throwIfAborted();
         const qualified = found.length ? normalizeModelCatalog(found) : [];
         if (qualified.some(m => !policy.models.some(p => p.model === m.model && p.maxOutputTokens >= m.maxOutputTokens))) throw failure("IAO_UNAVAILABLE");
-        return qualified;
+        return qualified.filter(model => NATIVE_CONSULTATION_MODEL.test(model.model));
       }, 5000, controller.signal).then(qualified => {
         controller.signal.throwIfAborted();
         if (!valid()) throw failure("IAO_UNAVAILABLE");

@@ -1,0 +1,25 @@
+{
+  "stage": "model-revision-green",
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--run",
+    "test/consultationProfileMatrix.test.ts",
+    "test/consultationHost.test.ts",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile=../qa/iao-release-qualification-20261123/profiles/model-revision-green.json"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 0,
+  "started_at": "2026-11-23T21:05:54.763888+00:00",
+  "elapsed_seconds": 7.17,
+  "source_sha256": {
+    "karta/test/consultationProfileMatrix.test.ts": "f92748dd14afac058466db1391f109d3dcd7a0021cb2e3db98fd052a47d21597",
+    "karta/src/claude/consultation-host.ts": "51c2ae0bc5b6a1432541fe9bd2f69c4f2669e8a195d331d6d81d580f316f26b4"
+  },
+  "sources_unchanged_during_run": true,
+  "log": "model-revision-green.log",
+  "production_filter_applied": true
+}

@@ -11,8 +11,9 @@ async function main(): Promise<void> {
   // Ignore .env files and ambient cloud settings in this child process only.
   process.env.DOTENV_CONFIG_PATH = "/dev/null";
   process.env.KARTA_MODEL_TIMEOUT_MS = "60000";
+  process.env.KARTA_ANTHROPIC_PROMPT_CACHE = "off";
   const { createRealClaudeClient } = await import("../src/claude/real.js");
-  const client = createRealClaudeClient({ lmStudio: {
+  const client = createRealClaudeClient({ modelCatalog: [{ model, reasoning: "none", maxOutputTokens: 1024 }], lmStudio: {
     model, baseURL: process.env.PURAMA_LMSTUDIO_URL,
     apiKey: process.env.PURAMA_LMSTUDIO_TOKEN,
   } });

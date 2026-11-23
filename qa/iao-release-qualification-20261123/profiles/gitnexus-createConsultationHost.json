@@ -1,0 +1,83 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost",
+    "name": "createConsultationHost",
+    "kind": "Function",
+    "filePath": "karta/src/claude/consultation-host.ts",
+    "startLine": 102,
+    "endLine": 287
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationHost.test.ts:fixture",
+        "name": "fixture",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationIntegration.test.ts:host",
+        "name": "host",
+        "filePath": "karta/test/consultationIntegration.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationProfileMatrix.test.ts:makeHost",
+        "name": "makeHost",
+        "filePath": "karta/test/consultationProfileMatrix.test.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:parsePolicy",
+        "name": "parsePolicy",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-store.ts:createConsultationStore",
+        "name": "createConsultationStore",
+        "filePath": "karta/src/claude/consultation-store.ts"
+      },
+      {
+        "uid": "Function:karta/src/engine/killswitch.ts:isGlobalKillSwitchActive",
+        "name": "isGlobalKillSwitchActive",
+        "filePath": "karta/src/engine/killswitch.ts"
+      },
+      {
+        "uid": "Function:karta/src/knowledge/connected-research.ts:createConnectedResearchClient",
+        "name": "createConnectedResearchClient",
+        "filePath": "karta/src/knowledge/connected-research.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ConsultationPolicy.research",
+        "name": "research",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ConsultationPolicy.research",
+        "name": "research",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/config.ts:config.anthropicApiKey",
+        "name": "anthropicApiKey",
+        "filePath": "karta/src/config.ts"
+      },
+      {
+        "uid": "Property:karta/src/config.ts:config.mockClaude",
+        "name": "mockClaude",
+        "filePath": "karta/src/config.ts"
+      }
+    ]
+  },
+  "processes": []
+}

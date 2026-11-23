@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-23T20:59:29.390049+00:00",
+  "scope": "diagnostic provider component, not IAO E2E",
+  "diagnostic": {
+    "status": 501,
+    "body": "{\"error\":\"structured output is unavailable\"}"
+  },
+  "fabric_socket_exists": true,
+  "fabric_socket_connect": "ConnectionRefusedError"
+}

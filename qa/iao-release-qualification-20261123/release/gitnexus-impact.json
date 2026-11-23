@@ -1,0 +1,81 @@
+{
+  "repo": "iao-quality-20261123",
+  "target": "main",
+  "file_path": "karta/scripts/qualify-lmstudio.ts",
+  "context": {
+    "status": "found",
+    "symbol": {
+      "uid": "Function:karta/scripts/qualify-lmstudio.ts:main",
+      "name": "main",
+      "kind": "Function",
+      "filePath": "karta/scripts/qualify-lmstudio.ts",
+      "startLine": 5,
+      "endLine": 49
+    },
+    "epistemic": "exact",
+    "incoming": {
+      "calls": [
+        {
+          "uid": "File:karta/scripts/qualify-lmstudio.ts",
+          "name": "qualify-lmstudio.ts",
+          "filePath": "karta/scripts/qualify-lmstudio.ts"
+        }
+      ]
+    },
+    "outgoing": {
+      "calls": [
+        {
+          "uid": "Function:karta/test/consultationHost.test.ts:fixture.decide@37:2",
+          "name": "decide",
+          "filePath": "karta/test/consultationHost.test.ts"
+        },
+        {
+          "uid": "Function:karta/test/consultationTransport.test.ts:harness.decide@38:2",
+          "name": "decide",
+          "filePath": "karta/test/consultationTransport.test.ts"
+        }
+      ]
+    },
+    "processes": []
+  },
+  "impact": {
+    "target": {
+      "id": "Function:karta/scripts/qualify-lmstudio.ts:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "karta/scripts/qualify-lmstudio.ts"
+    },
+    "direction": "upstream",
+    "impactedCount": 1,
+    "risk": "LOW",
+    "riskSharedAxes": "LOW",
+    "riskScale": {
+      "comparableAcrossKinds": true,
+      "unusedAxes": []
+    },
+    "epistemic": "exact",
+    "summary": {
+      "direct": 1,
+      "processes_affected": 0,
+      "modules_affected": 0
+    },
+    "byDepthCounts": {
+      "1": 1
+    },
+    "affected_processes": [],
+    "affected_modules": [],
+    "byDepth": {
+      "1": [
+        {
+          "depth": 1,
+          "id": "File:karta/scripts/qualify-lmstudio.ts",
+          "name": "qualify-lmstudio.ts",
+          "filePath": "karta/scripts/qualify-lmstudio.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        }
+      ]
+    }
+  }
+}

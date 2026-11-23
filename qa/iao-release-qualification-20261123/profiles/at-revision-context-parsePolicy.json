@@ -1,0 +1,125 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/claude/consultation-host.ts:parsePolicy",
+    "name": "parsePolicy",
+    "kind": "Function",
+    "filePath": "karta/src/claude/consultation-host.ts",
+    "startLine": 25,
+    "endLine": 52
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost",
+        "name": "createConsultationHost",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "uses": [
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:2",
+        "name": "models",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      }
+    ],
+    "calls": [
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:integer",
+        "name": "integer",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:integer",
+        "name": "integer",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:integer",
+        "name": "integer",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:integer",
+        "name": "integer",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:object",
+        "name": "object",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:object",
+        "name": "object",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:object",
+        "name": "object",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:normalizeModelCatalog",
+        "name": "normalizeModelCatalog",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxCostMicros",
+        "name": "maxCostMicros",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxCostMicros",
+        "name": "maxCostMicros",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxInputTokens",
+        "name": "maxInputTokens",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxInputTokens",
+        "name": "maxInputTokens",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxOutputTokens",
+        "name": "maxOutputTokens",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxOutputTokens",
+        "name": "maxOutputTokens",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.maxOutputTokens",
+        "name": "maxOutputTokens",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.model",
+        "name": "model",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.model",
+        "name": "model",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Property:karta/src/claude/consultation-host.ts:ModelPolicy.model",
+        "name": "model",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      }
+    ]
+  },
+  "processes": []
+}

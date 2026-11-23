@@ -1,0 +1,25 @@
+{
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "test/runtimeApiReadiness.test.ts",
+    "test/runtimeUsageReadiness.test.ts",
+    "test/runtimeProbe.test.ts",
+    "test/lmStudioTransport.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 0,
+  "elapsed_seconds": 1.554,
+  "scope": "Existing readiness and local-transport gates. HTTP server real where specified, dependencies/model synthetic; no production or real inference claim.",
+  "log": "existing-readiness.log",
+  "log_sha256": "7fee07b0528cb13b55d7c7e084ec5e60e378f0cd28e838f2db7a236ac1e61a76",
+  "files_sha256": {
+    "karta/test/runtimeApiReadiness.test.ts": "869bd3335c73d4044c33268d48ca448f91207d90047ba1576c233be84192ce52",
+    "karta/test/runtimeUsageReadiness.test.ts": "0f0df089a3d8de50b8b66ddd382eb2aa17f7529a27fee1b34df92208d5e346ea",
+    "karta/test/runtimeProbe.test.ts": "131713410b7fc50f2df4cd1ee8d19c671c25b8fa26d9f8b365c5f86957c60367",
+    "karta/test/lmStudioTransport.test.ts": "746e01d85f308a0a5156f7bc91c84667704895cbc44586870869fbefd8bc0fd3",
+    "karta/src/runtime/probe.ts": "a4965446978528e794fd9d5de31ddebaed74ed284ad26196cd5c0985ca41bdd2",
+    "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "karta/src/claude/real.ts": "d48318fa1e388e83ae0ea135b4e588a717520f32797faeed8f4f8224ba607cef"
+  }
+}

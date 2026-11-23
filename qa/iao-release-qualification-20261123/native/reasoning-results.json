@@ -1,0 +1,155 @@
+{
+  "scope": "real_provider_only_not_IAO_E2E",
+  "process": {
+    "pid": 70148,
+    "exit_code": 0,
+    "device": "mac.home"
+  },
+  "command": "python3 - --batch reasoning (probe-ollama.py via quoted stdin)",
+  "cases": [
+    {
+      "case": "openai_compat_42_1024",
+      "at": "2026-11-23T20:57:03.932075+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/v1/chat/completions",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Calcule 6 × 7. Réponds uniquement par le nombre entier."
+          }
+        ],
+        "temperature": 0,
+        "max_tokens": 1024,
+        "stream": false
+      },
+      "oracle_kind": "text",
+      "expected": "42",
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "http_status": 200,
+      "request_sha256": "7d1dd2ecd574c6865e0e8012f7608e0c1e8f929a03836704243204468b75d43f",
+      "response_model": "qwen3.5:4b",
+      "answer": "42",
+      "tool_calls": [],
+      "finish_reason": "stop",
+      "thinking_present": true,
+      "usage": {
+        "prompt_tokens": 27,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens": 211,
+        "total_tokens": 238
+      },
+      "prompt_eval_count": null,
+      "eval_count": null,
+      "total_duration_ns": null,
+      "load_duration_ns": null,
+      "complete": true,
+      "thinking_field_matches": true,
+      "actual": "42",
+      "pass": true,
+      "elapsed_ms": 3615.3
+    },
+    {
+      "case": "native_thinking_enabled_42",
+      "at": "2026-11-23T20:57:07.547639+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/api/chat",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Calcule 6 × 7. Réponds uniquement par le nombre entier."
+          }
+        ],
+        "think": true,
+        "stream": false,
+        "options": {
+          "temperature": 0,
+          "num_predict": 1024
+        }
+      },
+      "oracle_kind": "text",
+      "expected": "42",
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "http_status": 200,
+      "request_sha256": "58d2c5d525b7f41f4f86d838c38317662b1bc17d0a85fcc045dd88932b23621a",
+      "response_model": "qwen3.5:4b",
+      "answer": "42",
+      "tool_calls": [],
+      "finish_reason": "stop",
+      "thinking_present": true,
+      "usage": null,
+      "prompt_eval_count": 27,
+      "eval_count": 211,
+      "total_duration_ns": 1931251583,
+      "load_duration_ns": 1401416,
+      "complete": true,
+      "thinking_field_matches": true,
+      "actual": "42",
+      "pass": true,
+      "elapsed_ms": 1962.9
+    },
+    {
+      "case": "native_thinking_disabled_42",
+      "at": "2026-11-23T20:57:09.510599+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/api/chat",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Calcule 6 × 7. Réponds uniquement par le nombre entier."
+          }
+        ],
+        "think": false,
+        "stream": false,
+        "options": {
+          "temperature": 0,
+          "num_predict": 1024
+        }
+      },
+      "oracle_kind": "text",
+      "expected": "42",
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "http_status": 200,
+      "request_sha256": "d0c3186b52900a3c1869fd83007b92a10159e6c7889293ab0fd8d7b5a8a8c6cb",
+      "response_model": "qwen3.5:4b",
+      "answer": "42",
+      "tool_calls": [],
+      "finish_reason": "stop",
+      "thinking_present": false,
+      "usage": null,
+      "prompt_eval_count": 29,
+      "eval_count": 2,
+      "total_duration_ns": 291084375,
+      "load_duration_ns": 644125,
+      "complete": true,
+      "thinking_field_matches": true,
+      "actual": "42",
+      "pass": true,
+      "elapsed_ms": 320
+    }
+  ],
+  "pass": true,
+  "provider_requests": 3
+}

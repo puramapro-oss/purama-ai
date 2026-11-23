@@ -1,0 +1,12 @@
+{
+  "command": [
+    "./node_modules/.bin/eslint",
+    "src/lib/consultation-client.ts",
+    "src/lib/consultation-client.test.ts",
+    "tests/chat/consultation.spec.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "seconds": 1.649,
+  "log": "lint.log"
+}

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "--force",
+    "--no-parse-cache",
+    "--index-only",
+    "--skip-fts",
+    "--name",
+    "iao-quality-20261123"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "index": "/dev/shm/iao-quality-index-20261123",
+  "exit_code": 1,
+  "seconds": 20.42,
+  "scope": "index-only, no embeddings, FTS skipped"
+}

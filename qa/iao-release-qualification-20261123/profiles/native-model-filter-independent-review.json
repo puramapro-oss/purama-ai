@@ -1,0 +1,112 @@
+{
+  "reviewer": "qual_release",
+  "reviewed_at": "2026-11-23T21:08:06.406221+00:00",
+  "base": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "mode": "Independent read-only review; no tests repeated",
+  "status": "PASS",
+  "scope": "Native consultation models() admission filter and its two new integration regressions",
+  "source_sha256": {
+    "karta/src/claude/consultation-host.ts": "51c2ae0bc5b6a1432541fe9bd2f69c4f2669e8a195d331d6d81d580f316f26b4",
+    "karta/test/consultationProfileMatrix.test.ts": "f92748dd14afac058466db1391f109d3dcd7a0021cb2e3db98fd052a47d21597"
+  },
+  "source_matches_green_and_typecheck": true,
+  "proofs": {
+    "red": {
+      "receipt": "model-revision-red-receipt.json",
+      "exit_code": 1,
+      "failed": 2,
+      "skipped": 63,
+      "observation": "Both fresh regressions observed catalogue HTTP 502 instead of 200 before filtering."
+    },
+    "green": {
+      "receipt": "model-revision-green-receipt.json",
+      "exit_code": 0,
+      "passed": 94,
+      "failed": 0,
+      "skipped": 0,
+      "composition": "65 profile/composition cases and 29 existing host cases"
+    },
+    "typecheck": {
+      "receipt": "model-revision-typecheck-receipt.json",
+      "exit_code": 0
+    }
+  },
+  "checks": [
+    {
+      "criterion": "Off-policy and excessive capability entries remain rejected",
+      "verification": "Source inspection: normalizeModelCatalog and qualified.some(policy membership/maxOutputTokens) are unchanged and execute before the new filter. An incompatible ID cannot mask a failing policy check.",
+      "test_limit": "No new dedicated off-policy-loader regression executed; the preservation claim is by exact control-flow comparison."
+    },
+    {
+      "criterion": "No new identifiers enabled",
+      "verification": "The native regular expression is a strict subset of the execution-profile grammar. It matches HTTP/Edge and usage/SQL receipt identifier restrictions. Only incompatible identifiers are removed."
+    },
+    {
+      "criterion": "Filter precedes cache/public catalogue/resolve/begin",
+      "verification": "The bounded loader returns the filtered array before then() writes cache; downstream catalogue and consult consume that same array. No original unfiltered array is cached."
+    },
+    {
+      "criterion": "No fallback or silent preference substitution",
+      "verification": "The exact selected main/reviewer model is resolved against the filtered catalogue; invalid resolution maps to IAO_INVALID. The new tests observe rejection and zero allocations/provider calls. The valid mixed-catalogue model executes only after an explicit valid selection."
+    },
+    {
+      "criterion": "All incompatible versus mixed catalogue",
+      "verification": "Real internal HTTP plus production host/SDK/PGlite tests assert all-incompatible catalogue returns HTTP 200 with available=false/model_unavailable; mixed catalogue preserves the valid model and completes its explicitly selected request."
+    },
+    {
+      "criterion": "Budgets/reflection/speed/cost bounds unchanged",
+      "verification": "No policy, estimate, resolver, grant, single-flight, expiry, cancellation or begin logic changed. Existing 29 host tests and 65 matrix cases pass in the reviewed receipt."
+    },
+    {
+      "criterion": "Privacy and protected boundaries unchanged",
+      "verification": "Hash comparison against baseline confirms HTTP, Edge, usage, SQL migration, LM Studio transport and execution-profile resolver unchanged."
+    }
+  ],
+  "protected_sources": {
+    "karta/src/api/consultation.ts": {
+      "sha256": "2b19ae82022be85c7efd865d5d2e1704b774f98a680b83bb6f0684fe90c42c96",
+      "matches_baseline": true
+    },
+    "supabase/functions/iao-consultation/handler.ts": {
+      "sha256": "234194eb708caec290529258fcc9898f4228a09c664b4ad7d7f2a2033004c90f",
+      "matches_baseline": true
+    },
+    "karta/src/claude/usage.ts": {
+      "sha256": "fc804147e190d1cdcffd875fd147850fdce9f4825bb2f1a3f8e8afb2499bafe0",
+      "matches_baseline": true
+    },
+    "karta/migrations/032_model_consultation.sql": {
+      "sha256": "28992c117e5e5fc7d92af4088d896ec1d52636f1cb5feff71ba86219bdcc0802",
+      "matches_baseline": true
+    },
+    "karta/src/claude/lmstudio.ts": {
+      "sha256": "11c99a7fcd5af25249ec1fc805151aefeed98f010b74df12bb04662f142aabe4",
+      "matches_baseline": true
+    },
+    "karta/src/claude/execution-profile.ts": {
+      "sha256": "c49a8a216bef3ff059f75562044b46716c54a70481e75bb1e0737920d5d46ce5",
+      "matches_baseline": true
+    }
+  },
+  "impact_context": "models() HIGH was reported to the user by root before authorized edits; critical catalogue projection itself is unchanged. This review is not deployment approval.",
+  "findings": [],
+  "limitations": [
+    "This resolves false native capability admission by early exclusion, not by enabling @ models end-to-end.",
+    "The provider catalogue and completions in the integration tests are synthetic. Native account model availability, intelligence and billing remain separate qualifications.",
+    "The fix does not migrate or repair historical operations previously persisted via a direct host call with an incompatible model; existing resume-first behavior is unchanged and does not repeat inference.",
+    "Global LM Studio model grammar remains wider, as before; its independently qualified transport is not reconfigured by this native host filter."
+  ],
+  "evidence_sha256": {
+    "model-revision-red-receipt.json": "05800aa253937897ad11e4fec817f1761f79bc2090c3c2786f2570476857bcf4",
+    "model-revision-red.json": "172583b582a61acf65085730ec7ba6cd2a3bbdfae44a573db837cd687f6493c5",
+    "model-revision-red.log": "227b979c73b4d038280ed82a38f20841b75f89c1a3ed2fe3c628a16b75cf86bf",
+    "model-revision-green-receipt.json": "85c51eb58a1d85ae383ebe8a12e0148c1834c106899dcbdc640019296fc06f3f",
+    "model-revision-green.json": "1f1aab2f6762a08f288f58d7d6dcdb2cec5db6d06241904aa884f59546d885dc",
+    "model-revision-green.log": "3651db6ca7932dd0a08e83c1f5e171775e144e71c377ca75bdf218f96a895397",
+    "model-revision-typecheck-receipt.json": "20046a6d50cdf784249dfc73ce922940d000d9f31135e4eefccfa8fca9f66d34",
+    "model-revision-typecheck.log": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+    "at-revision-impact-models.json": "dfc38b6fccfca454be562f5e73e21c82c2700e979f6a1f9765a2aa527e3c4749"
+  },
+  "tests_rerun": false,
+  "product_modified_by_reviewer": false
+}

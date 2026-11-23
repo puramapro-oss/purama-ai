@@ -1,0 +1,24 @@
+  it("exposes the @revision contract mismatch at HTTP and preserves a direct-host accounting failure without replay", async () => {
+    const model = "publisher/model@revision";
+    catalogueFamilies = [{ ...families[1], id: model }]; host = makeHost(); await provision();
+    const preferences = { model, reflection: "standard" as const, speed: "standard" as const };
+    // The public HTTP contract rejects this identifier before any paid call.
+    expect((await host.catalog(owner, new AbortController().signal)).models[0].model).toBe(model);
+    expect((await api({ action: "catalog" })).response.status).toBe(502);
+    expect((await api(input({ preferences }))).response.status).toBe(400);
+    await assertNoAllocation();
+
+    // Diagnostic below deliberately calls the real host directly, not through
+    // HTTP: it measures the downstream mismatch without weakening that guard.
+    const direct = { operationId, question: "Question de qualification du transport", preferences };
+    const result = await host.consult(owner, direct, new AbortController().signal);
+    expect(result).toMatchObject({ status: "reconciliation_required", result: { status: "failed", reason: "accounting_unavailable", answer: null } });
+    expect(observed).toHaveLength(1); expect(observed[0].body.model).toBe(model);
+    const call = (await query("SELECT c.state,c.receipt,c.call_spec->>'model' AS model,o.result->'receipts'->0->'usage'->0 AS retained_usage FROM purama_ai.model_consultation_calls c JOIN purama_ai.model_consultations o ON o.id=c.operation_pk")).rows[0];
+    expect(call).toMatchObject({ state: "reserved", receipt: null, model, retained_usage: { requestedModel: null, responseModel: null, inputTokens: 10, outputTokens: 5 } });
+    const usage = (await query("SELECT actual_input_tokens,actual_output_tokens,actual_cost_micros FROM purama_ai.chef_budget_reservations")).rows[0];
+    expect(usage).toEqual({ actual_input_tokens: null, actual_output_tokens: null, actual_cost_micros: null });
+    host = makeHost(); expect(await host.consult(owner, direct, new AbortController().signal)).toEqual(result);
+    expect(observed).toHaveLength(1); expect((await api({ action: "status", operationId })).response.status).toBe(502);
+  });
+
