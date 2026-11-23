@@ -1,0 +1,28 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> vite_react_shadcn_ts@0.0.0 test:chat
+> playwright test --config tests/chat/playwright.config.ts --list
+
+Listing tests:
+  lifecycle.spec.ts:23:1 › guest chat uses one model request, no history database calls and no welcome in model context
+  lifecycle.spec.ts:35:1 › two submits in the same browser task admit one request
+  lifecycle.spec.ts:46:1 › stop aborts the stream, removes partial output and restores the editable request
+  lifecycle.spec.ts:57:1 › stop while saving a completed answer keeps the answer and does not resend
+  lifecycle.spec.ts:71:1 › logout clears private content and subsequent guest requests never persist it
+  lifecycle.spec.ts:86:1 › a stale response cannot populate a new conversation or unlock a newer request
+  lifecycle.spec.ts:99:1 › account change during conversation creation prevents a subsequent model call
+  lifecycle.spec.ts:113:1 › failure to save the user message stops before model inference
+  lifecycle.spec.ts:121:1 › failure to save the answer preserves it without another model request
+  lifecycle.spec.ts:129:1 › retrying a failed model request reuses the confirmed user turn
+  lifecycle.spec.ts:149:1 › editing a failed request creates a distinct saved turn
+  lifecycle.spec.ts:164:1 › an intentional identical request after success creates a new turn
+  lifecycle.spec.ts:178:1 › retrying a stopped saved turn excludes its partial answer
+  lifecycle.spec.ts:195:3 › a failed turn is not reused after changing conversation
+  lifecycle.spec.ts:195:3 › a failed turn is not reused after changing account
+  lifecycle.spec.ts:210:1 › retrying a guest turn avoids duplicate context without storing history
+  lifecycle.spec.ts:221:1 › errors stay out of model context and real answers starting with Bienvenue stay in
+  lifecycle.spec.ts:231:1 › history uses a single bounded query and stale history messages cannot replace a new chat
+  lifecycle.spec.ts:249:1 › closing the widget aborts its pending response
+  lifecycle.spec.ts:256:1 › loading a conversation and submitting in the same task cannot overlap
+  lifecycle.spec.ts:275:1 › mobile controls remain visible and the demo can be stopped
+Total: 21 tests in 1 file

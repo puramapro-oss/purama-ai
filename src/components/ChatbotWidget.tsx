@@ -75,6 +75,10 @@ export function ChatbotWidget() {
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   const activeReply = useRef<{ prompt: string; assistantId?: string; completed?: boolean } | null>(null);
+  // Only a confirmed user write (or a guest turn) may skip persistence on retry.
+  const retryableTurn = useRef<{
+    messageId: string; prompt: string; conversationId: string | null; ownerId: string | null;
+  } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
@@ -83,6 +87,7 @@ export function ChatbotWidget() {
   useLayoutEffect(() => {
     requests.invalidate();
     activeReply.current = null;
+    retryableTurn.current = null;
     setMessages([]);
     setConversations([]);
     setConversationId(null);
@@ -196,8 +201,13 @@ export function ChatbotWidget() {
     // History loading and reply generation share the same synchronous slot.
     const lease = requests.begin('interaction');
     if (!lease) return;
-    const prepared = prepareChatMessages([...messages.filter(m => m.kind !== 'notice')
-      .map(m => ({ role: m.role, content: m.content })), { role: 'user', content: userMessage }]);
+    const history = messages.filter(m => m.kind !== 'notice');
+    const priorTurn = retryableTurn.current;
+    const resumedTurn = priorTurn && priorTurn.prompt === userMessage
+      && priorTurn.conversationId === conversationId && priorTurn.ownerId === (user?.id ?? null)
+      && history[history.length - 1]?.id === priorTurn.messageId ? priorTurn : null;
+    const context = history.map(m => ({ role: m.role, content: m.content }));
+    const prepared = prepareChatMessages(resumedTurn ? context : [...context, { role: 'user', content: userMessage }]);
     if (prepared.ok === false) {
       lease.finish();
       addNotice(prepared.error);
@@ -206,15 +216,21 @@ export function ChatbotWidget() {
     setBusyKind('reply');
     setInputValue('');
     activeReply.current = { prompt: userMessage };
-    setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'user', content: userMessage, createdAt: new Date() }]);
+    const userMessageId = resumedTurn?.messageId ?? crypto.randomUUID();
+    if (!resumedTurn) {
+      retryableTurn.current = null;
+      setMessages(prev => [...prev, { id: userMessageId, role: 'user', content: userMessage, createdAt: new Date() }]);
+    }
     let assistantId: string | undefined;
     let responseComplete = false;
     try {
       const convId = await createOrGetConversation(lease);
       if (!lease.current()) return;
       setConversationId(convId);
-      await saveMessage(convId, 'user', userMessage, lease);
+      if (!resumedTurn) await saveMessage(convId, 'user', userMessage, lease);
       if (!lease.current()) return;
+      retryableTurn.current = { messageId: userMessageId, prompt: userMessage,
+        conversationId: convId, ownerId: user?.id ?? null };
       const response = await fetch(CHATBOT_FUNCTION_URL, {
         method: 'POST', signal: lease.signal,
         headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -231,6 +247,8 @@ export function ChatbotWidget() {
       });
       if (!lease.current()) return;
       if (!content.trim()) throw new Error('EMPTY_RESPONSE');
+      // A received answer ends this turn even if its later storage fails.
+      retryableTurn.current = null;
       responseComplete = true;
       activeReply.current = { prompt: userMessage, assistantId, completed: true };
       await saveMessage(convId, 'assistant', content, lease);
@@ -278,6 +296,7 @@ export function ChatbotWidget() {
   const startNewConversation = () => {
     requests.invalidate();
     activeReply.current = null;
+    retryableTurn.current = null;
     setBusyKind(null);
     setIsEscalating(false);
     setConversationId(null);
@@ -291,6 +310,7 @@ export function ChatbotWidget() {
     if (!user || authLoading) return;
     requests.invalidate();
     activeReply.current = null;
+    retryableTurn.current = null;
     const lease = requests.begin('interaction');
     if (!lease) return;
     setBusyKind('history');
