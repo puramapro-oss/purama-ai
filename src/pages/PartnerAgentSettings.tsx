@@ -67,13 +67,28 @@ export default function PartnerAgentSettings() {
 
   const handleSave = async () => {
     if (!user) return;
+    let outreachTimezone: string;
+    try {
+      const requestedTimezone = config.outreach_timezone?.trim();
+      // Intl also accepts numeric offsets in recent runtimes; SQL deliberately
+      // admits named timezones so DST rules remain explicit and consistent.
+      if (!requestedTimezone || requestedTimezone.length > 100 || !/^[A-Za-z][A-Za-z0-9_+/-]*$/.test(requestedTimezone)) throw new Error();
+      outreachTimezone = new Intl.DateTimeFormat('fr-FR', { timeZone: requestedTimezone }).resolvedOptions().timeZone;
+    } catch {
+      toast.error('Fuseau horaire invalide', { description: 'Utilisez un nom comme Europe/Paris, America/Montreal ou UTC.' });
+      return;
+    }
     setSaving(true);
     try {
-      const { id, user_id, created_at, updated_at, total_prospects_found, total_emails_sent, total_replies, total_active_partners, total_revenue_generated, ...patch } = config;
+      const { id, user_id, created_at, updated_at, total_prospects_found, total_emails_sent, total_replies, total_active_partners, total_revenue_generated, auto_send_contract, require_approval_contract, ...patch } = config;
       void id; void user_id; void created_at; void updated_at;
       void total_prospects_found; void total_emails_sent; void total_replies;
       void total_active_partners; void total_revenue_generated;
-      await updatePartnerConfig(user.id, patch);
+      // Legacy contract flags remain historical data; this UI no longer offers
+      // an automatic send that could bypass the exact-document review.
+      void auto_send_contract; void require_approval_contract;
+      await updatePartnerConfig(user.id, { ...patch, outreach_timezone: outreachTimezone });
+      setConfig({ ...config, outreach_timezone: outreachTimezone });
       toast.success('✅ Paramètres enregistrés');
     } catch (e) {
       toast.error('Erreur de sauvegarde', { description: e instanceof Error ? e.message : String(e) });
@@ -231,6 +246,20 @@ export default function PartnerAgentSettings() {
           <h2 className="font-semibold text-foreground flex items-center gap-2">
             <Clock className="w-4 h-4 text-yellow-400" /> Plages d'envoi
           </h2>
+          <div>
+            <Label htmlFor="partner-outreach-timezone" className="text-xs">Fuseau horaire</Label>
+            <Input id="partner-outreach-timezone" list="partner-timezones"
+              value={config.outreach_timezone ?? 'UTC'}
+              onChange={e => update({ outreach_timezone: e.target.value.trim() })}
+              placeholder="Europe/Paris" className="mt-1.5" aria-describedby="partner-schedule-help" />
+            <datalist id="partner-timezones">
+              {['UTC', 'Europe/Paris', 'America/Montreal', 'America/New_York', 'America/Los_Angeles', 'Africa/Abidjan', 'Africa/Dakar', 'Indian/Reunion', 'Asia/Tokyo', 'Pacific/Auckland'].map(zone => <option key={zone} value={zone} />)}
+            </datalist>
+            <p id="partner-schedule-help" className="mt-2 text-xs text-muted-foreground">
+              Les horaires et la limite quotidienne suivent ce fuseau, y compris les changements d’heure.
+              Une plage qui traverse minuit commence le jour sélectionné. Aucun jour ou des heures identiques suspendent les envois.
+            </p>
+          </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label className="text-xs">Limite/jour</Label>
@@ -336,8 +365,11 @@ export default function PartnerAgentSettings() {
           <h2 className="font-semibold text-foreground">Validations</h2>
           <ToggleRow label="Valider chaque nouveau prospect avant envoi" sub="Recommandé au début" checked={config.require_approval_new_prospect} onChange={v => update({ require_approval_new_prospect: v })} />
           <ToggleRow label="Valider chaque email avant envoi" sub="Sinon l'IA envoie directement" checked={config.require_approval_outreach} onChange={v => update({ require_approval_outreach: v })} />
-          <ToggleRow label="Valider chaque contrat avant envoi" sub="Très recommandé" checked={config.require_approval_contract} onChange={v => update({ require_approval_contract: v })} />
-          <ToggleRow label="Auto-envoyer le contrat dès qu'un prospect est intéressé" checked={config.auto_send_contract} onChange={v => update({ auto_send_contract: v })} />
+          <p className="text-sm text-muted-foreground">
+            Chaque contrat est préparé puis approuvé dans{' '}
+            <Link to="/dashboard/partner-agent/prospects" className="text-accent-cyan underline underline-offset-2">Prospects</Link>{' '}
+            avant envoi. Vous vérifiez le PDF exact et son destinataire.
+          </p>
         </CardContent>
       </Card>
     </div>

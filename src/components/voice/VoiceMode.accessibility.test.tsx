@@ -2,7 +2,7 @@ import { act, type HTMLAttributes, type PropsWithChildren } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import type { UseVoice } from '@/hooks/useVoice';
-import { sendAgentChatMessage } from '@/lib/agent-chat';
+import { listAgentChatMessages, sendAgentChatMessage } from '@/lib/agent-chat';
 import { AgentChatTab } from './AgentChatTab';
 import { VoiceMode } from './VoiceMode';
 
@@ -222,6 +222,34 @@ describe('VoiceMode: semantics and keyboard integration', () => {
 });
 
 describe('AgentChatTab: named text controls and reduced motion', () => {
+  it('scopes partner conversations and rejects a late reply after changing dossier', async () => {
+    const firstProspect = '00000000-0000-4000-8000-000000000003';
+    const secondProspect = '00000000-0000-4000-8000-000000000004';
+    let resolve!: (value: { reply: string; tokens: number }) => void;
+    const pending = new Promise<{ reply: string; tokens: number }>(accept => { resolve = accept; });
+    vi.mocked(sendAgentChatMessage).mockClear();
+    vi.mocked(sendAgentChatMessage).mockReturnValueOnce(pending);
+    vi.mocked(listAgentChatMessages).mockClear();
+    const render = (id: string) => act(async () => root.render(<AgentChatTab agentType="partner" prospectId={id}
+      agentName="Partner IA" agentEmoji="🤝" agentColor="#8B5CF6" />));
+    await render(firstProspect);
+    const input = host.querySelector('textarea')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(input, 'First dossier question');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await act(async () => button('Envoyer le message').click());
+    expect(vi.mocked(sendAgentChatMessage).mock.calls[0][4]).toBe(firstProspect);
+    const firstSignal = vi.mocked(sendAgentChatMessage).mock.calls[0][3]!;
+    await render(secondProspect);
+    expect(firstSignal.aborted).toBe(true);
+    expect(host.textContent).not.toContain('First dossier question');
+    expect(vi.mocked(listAgentChatMessages).mock.calls.at(-1)?.[3]).toBe(secondProspect);
+    await act(async () => resolve({ reply: 'Late private first dossier answer', tokens: 1 }));
+    expect(host.textContent).not.toContain('Late private first dossier answer');
+    expect(fixture.voice.speak).not.toHaveBeenCalled();
+  });
+
   it.each([
     { name: 'native IME composition', init: { isComposing: true, keyCode: 13, shiftKey: false } },
     { name: 'legacy IME key code 229', init: { isComposing: false, keyCode: 229, shiftKey: false } },

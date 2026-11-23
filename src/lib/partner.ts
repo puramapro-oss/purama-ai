@@ -2,6 +2,9 @@
 // All tables live in the `purama_ai` schema (default of the supabase client).
 import { supabase } from '@/integrations/supabase/client';
 import { parseOutreachResult, type OutreachResult, type OutreachStep } from './partner-outreach-result';
+import { parsePartnerContractResult, type PartnerContractResult } from './partner-contract-result';
+export { contractFeedback } from './partner-contract-result';
+export type { PartnerContractResult, PartnerContractApproval } from './partner-contract-result';
 export { outreachFeedback, outreachStepForStatus } from './partner-outreach-result';
 export type { OutreachResult, OutreachApproval, OutreachStep } from './partner-outreach-result';
 
@@ -42,6 +45,7 @@ export interface PartnerConfig {
   outreach_hours_start: string;
   outreach_hours_end: string;
   outreach_days: string[];
+  outreach_timezone: string;
   relance_1_delay_days: number;
   relance_2_delay_days: number;
   relance_3_delay_days: number;
@@ -245,6 +249,7 @@ const DEFAULT_CONFIG: Omit<PartnerConfig, 'user_id'> = {
   outreach_hours_start: '09:00',
   outreach_hours_end: '18:00',
   outreach_days: ['MO', 'TU', 'WE', 'TH', 'FR'],
+  outreach_timezone: 'UTC',
   relance_1_delay_days: 3,
   relance_2_delay_days: 7,
   relance_3_delay_days: 14,
@@ -394,16 +399,37 @@ export async function approveOutreach(emailId: string, approvalVersion: string):
 }
 
 // =============================================================
-// Generate + send partnership contract via DocuSeal
+// Prepare, inspect and explicitly approve one immutable partnership contract.
 // =============================================================
+// An older partner-generate-contract deployment ignores action and sends at once.
+// A distinct entry point makes a partial rollout fail closed with HTTP 404.
+const CONTRACT_FUNCTION = 'partner-contract-action';
+
 export async function generateContract(
   prospectId: string,
-): Promise<{ pdf_url: string; signing_url: string | null }> {
-  const { data, error } = await supabase.functions.invoke('partner-generate-contract', {
-    body: { prospect_id: prospectId },
+): Promise<PartnerContractResult> {
+  const { data, error } = await supabase.functions.invoke(CONTRACT_FUNCTION, {
+    body: { action: 'prepare', prospect_id: prospectId },
   });
   if (error) throw error;
-  return data as { pdf_url: string; signing_url: string | null };
+  return parsePartnerContractResult(data);
+}
+
+/** Refreshes the link to the stored PDF; never regenerates or sends a contract. */
+export async function previewContract(prospectId: string): Promise<PartnerContractResult> {
+  const { data, error } = await supabase.functions.invoke(CONTRACT_FUNCTION, {
+    body: { action: 'preview', prospect_id: prospectId },
+  });
+  if (error) throw error;
+  return parsePartnerContractResult(data);
+}
+
+export async function approveContract(prospectId: string, approvalVersion: string, pdfSha256: string): Promise<PartnerContractResult> {
+  const { data, error } = await supabase.functions.invoke(CONTRACT_FUNCTION, {
+    body: { action: 'approve', prospect_id: prospectId, approval_version: approvalVersion, pdf_sha256: pdfSha256 },
+  });
+  if (error) throw error;
+  return parsePartnerContractResult(data);
 }
 
 // =============================================================

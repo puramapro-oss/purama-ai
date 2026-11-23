@@ -120,6 +120,17 @@ function database(failHistory?: string) {
   // failure may settle its durable claim; it must never dispatch an email.
   const rpc = vi.fn(async (name: string, args: Row): Promise<DbResult> => {
     rpcCalls.push({ name, args: { ...args } });
+    if (name === 'partner_contract_reserve') {
+      return { data: {
+        contract_id: outreachActionId, status: 'preparing', claimed: true, approval_version: outreachClaimToken,
+        snapshot: { recipient_name: 'Test Prospect', recipient_email: 'prospect@example.invalid',
+          company_name: 'Fiction', sender_name: 'Test Sender', sender_email: 'sender@example.invalid',
+          commission_first_payment: 10, commission_recurring: 5 },
+      }, error: null };
+    }
+    if (name === 'partner_contract_finish') {
+      return { data: { contract_id: outreachActionId, status: args.p_outcome }, error: null };
+    }
     if (name === 'partner_outreach_reserve') {
       return { data: {
         action_id: outreachActionId, status: 'preparing', claimed: true,
@@ -207,7 +218,7 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
       } } },
       fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
-      ReadableStream, TextEncoder, TextDecoder, setTimeout, clearTimeout, performance,
+      ReadableStream, TextEncoder, TextDecoder, Uint8Array, ArrayBuffer, setTimeout, clearTimeout, performance,
       console: { error: vi.fn(), warn: vi.fn(), log: vi.fn() },
     }, { filename: path });
     return module.exports;
@@ -443,10 +454,22 @@ const taskCases: { name: string; body: unknown; search?: boolean }[] = [
   { name: 'legal-build-case', body: { title: 'Dossier fictif', type: 'autre', facts: 'Uniquement des faits fictifs pour ce test.' } },
   { name: 'legal-generate-document', body: { type: 'custom', brief: 'Projet fictif à vérifier.' } },
   { name: 'partner-find-prospects', body: { query: 'Fictitious professional entity' }, search: true },
-  { name: 'partner-generate-contract', body: { prospect_id: prospectId } },
+  { name: 'partner-generate-contract', body: { action: 'prepare', prospect_id: prospectId } },
+  { name: 'partner-contract-action', body: { action: 'prepare', prospect_id: prospectId } },
   { name: 'partner-send-outreach', body: { prospect_id: prospectId } },
 ];
 describe('task endpoints', () => {
+  it('the versioned contract route refuses the legacy command before any provider or storage effect', async () => {
+    const h = edge('partner-contract-action');
+    const response = await h.handler(request({ prospect_id: prospectId }));
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ reason: 'approval_required' });
+    expect(h.modelBodies).toEqual([]);
+    expect(h.transport).not.toHaveBeenCalled();
+    expect(h.db.rpcCalls).toEqual([]);
+    expect(h.db.writes).toEqual([]);
+    expect(h.unexpected).toEqual([]);
+  });
   it.each(taskCases)('$name sends its actual task prompt and stops at simulated provider failure', async item => {
     const h = edge(item.name, { allowTavily: item.search,
       provider: async () => new Response('simulated provider unavailable', { status: 503 }) });

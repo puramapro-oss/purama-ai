@@ -5,51 +5,81 @@
       "parameters": {
         "rule": {
           "interval": [
-            { "field": "cronExpression", "expression": "*/30 9-18 * * 1-5" }
+            {
+              "field": "cronExpression",
+              "expression": "*/5 * * * *"
+            }
           ]
         }
       },
       "id": "cron",
-      "name": "Every 30min biz hours",
+      "name": "Every 5 minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
-      "position": [240, 320]
+      "position": [
+        240,
+        320
+      ]
     },
     {
       "parameters": {
-        "url": "https://auth.purama.dev/rest/v1/partner_agent_config?is_active=eq.true&select=*",
+        "url": "https://auth.purama.dev/rest/v1/rpc/partner_outreach_due",
+        "method": "POST",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Accept-Profile", "value": "purama_ai" }
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Profile",
+              "value": "purama_ai"
+            },
+            {
+              "name": "Accept-Profile",
+              "value": "purama_ai"
+            }
           ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"p_kind\": \"outreach\", \"p_limit\": 100}",
+        "options": {
+          "timeout": 30000
         }
       },
-      "id": "users",
-      "name": "Active users",
+      "id": "due",
+      "name": "Fetch admitted candidates",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [460, 320]
-    },
-    {
-      "parameters": { "batchSize": 1, "options": {} },
-      "id": "split",
-      "name": "Split users",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [680, 320]
+      "position": [
+        460,
+        320
+      ],
+      "retryOnFail": false
     },
     {
       "parameters": {
-        "jsCode": "// Check daily quota\nconst cfg = $json;\nconst today = new Date().toISOString().slice(0, 10);\nconst countRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/partner_emails?user_id=eq.${cfg.user_id}&type=in.(outreach,relance_1,relance_2,relance_3)&sent_at=gte.${today}T00:00:00&select=id`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n    Prefer: 'count=exact',\n  },\n  json: true,\n  returnFullResponse: true,\n});\nconst sentToday = (countRes.headers['content-range'] || '0/0').split('/')[1];\nconst remaining = Math.max(0, cfg.daily_outreach_limit - parseInt(sentToday, 10));\nif (remaining === 0) return [{ json: { ...cfg, _skip: true, _sent_today: sentToday } }];\n// Fetch ready prospects\nconst prosRes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `https://auth.purama.dev/rest/v1/partner_prospects?user_id=eq.${cfg.user_id}&status=eq.ready_to_contact&email=not.is.null&order=ai_score.desc.nullslast&limit=${Math.min(remaining, 5)}`,\n  headers: {\n    apikey: $env.SUPABASE_SERVICE_ROLE_KEY,\n    Authorization: `Bearer ${$env.SUPABASE_SERVICE_ROLE_KEY}`,\n    'Accept-Profile': 'purama_ai',\n  },\n  json: true,\n});\nif (!prosRes.length) return [{ json: { ...cfg, _skip: true } }];\nreturn prosRes.map((p) => ({ json: { ...cfg, _prospect: p } }));"
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Empty or malformed results emit no item, so no send node runs.\nconst uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nconst steps = new Set([\"outreach\"]);\nconst rows = $input.all().flatMap(item => Array.isArray(item.json) ? item.json : [item.json]);\nreturn rows.filter(row => row && typeof row.user_id === 'string' && uuid.test(row.user_id)\n  && typeof row.prospect_id === 'string' && uuid.test(row.prospect_id) && steps.has(row.step))\n  .map(row => ({ json: { user_id: row.user_id, prospect_id: row.prospect_id, type: row.step } }));"
       },
-      "id": "fetch-ready",
-      "name": "Fetch ready prospects",
+      "id": "normalize",
+      "name": "Valid candidates only",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 320]
+      "position": [
+        680,
+        320
+      ]
     },
     {
       "parameters": {
@@ -58,26 +88,75 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}" },
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "X-Impersonate-User-Id", "value": "={{ $json.user_id }}" }
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Impersonate-User-Id",
+              "value": "={{ $json.user_id }}"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prospect_id\": \"{{ $json._prospect.id }}\",\n  \"type\": \"outreach\"\n}"
+        "jsonBody": "={{ JSON.stringify({ prospect_id: $json.prospect_id, type: $json.type }) }}",
+        "options": {
+          "timeout": 65000
+        }
       },
       "id": "send",
       "name": "Trigger outreach",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1120, 320]
+      "position": [
+        900,
+        320
+      ],
+      "retryOnFail": false
     }
   ],
   "connections": {
-    "Every 30min biz hours": { "main": [[{ "node": "Active users", "type": "main", "index": 0 }]] },
-    "Active users": { "main": [[{ "node": "Split users", "type": "main", "index": 0 }]] },
-    "Split users": { "main": [[{ "node": "Fetch ready prospects", "type": "main", "index": 0 }]] },
-    "Fetch ready prospects": { "main": [[{ "node": "Trigger outreach", "type": "main", "index": 0 }]] }
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch admitted candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch admitted candidates": {
+      "main": [
+        [
+          {
+            "node": "Valid candidates only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid candidates only": {
+      "main": [
+        [
+          {
+            "node": "Trigger outreach",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
   }
 }

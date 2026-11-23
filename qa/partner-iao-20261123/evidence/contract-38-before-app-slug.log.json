@@ -1,0 +1,6 @@
+{
+  "original_filename": "contract-38-before-app-slug.log",
+  "raw_sha256": "84b6486175239776e6127588b345e13d9f823ee071a270d217673fe5a63052a6",
+  "raw_bytes": 458,
+  "stdout": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> karta-engine@1.0.0 test\n> vitest run --pool=threads --maxWorkers=1 --no-isolate test/partnerContract.test.ts\n\n\n RUN  v5.0.3 /tmp/purama-iao-affiliate-fix-20261123/karta\n\n\n Test Files  1 passed (1)\n      Tests  38 passed (38)\n   Start at  01:44:06\n   Duration  4.62s (tests 86%, import 11%, transform 3%)\n\n"
+}

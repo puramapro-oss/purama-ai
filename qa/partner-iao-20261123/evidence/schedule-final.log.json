@@ -1,0 +1,6 @@
+{
+  "original_filename": "schedule-final.log",
+  "raw_sha256": "b918b27ee5bddbb402fc272f1b61fec1caf285afec4bf4de73489ca436b263d4",
+  "raw_bytes": 194,
+  "stdout": "\n RUN  v5.0.3 /tmp/purama-iao-affiliate-fix-20261123/karta\n\n\n Test Files  2 passed (2)\n      Tests  96 passed (96)\n   Start at  01:46:59\n   Duration  8.38s (tests 98%, transform 2%, import 1%)\n\n"
+}

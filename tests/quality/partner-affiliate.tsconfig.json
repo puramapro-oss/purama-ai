@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.app.json",
+  "include": [
+    "../../src/vite-env.d.ts",
+    "../../src/lib/partner.ts",
+    "../../src/lib/partner-contract-result.ts",
+    "../../src/lib/partner-contract-result.test.ts",
+    "../../src/lib/partner-outreach-result.ts",
+    "../../src/lib/agent-chat.ts",
+    "../../src/pages/PartnerAgent.tsx",
+    "../../src/pages/PartnerAgentProspects.tsx",
+    "../../src/pages/PartnerAgentProspects.contract.test.tsx",
+    "../../src/pages/PartnerAgentSettings.tsx",
+    "../../src/pages/PartnerAgentSettings.schedule.test.tsx",
+    "../../src/components/partner/PartnerAgentChat.tsx",
+    "../../src/components/partner/PartnerAgentChat.test.tsx",
+    "../../src/components/voice/AgentChatTab.tsx"
+  ]
+}

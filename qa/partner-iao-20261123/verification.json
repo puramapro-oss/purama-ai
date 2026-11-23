@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "date_paris": "2026-11-23",
+  "repository": "puramapro-oss/purama-ai",
+  "base": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "target_branch": "audit/reliability-oauth-20261110",
+  "default_branch_compared": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "checks": [
+    {
+      "id": "outreach_schedule_workflows",
+      "status": "PASS",
+      "tests_passed": 96,
+      "exit_code": 0,
+      "command": "node --wasm-num-compilation-tasks=1 --v8-pool-size=1 --max-old-space-size=192 --max-semi-space-size=2 node_modules/vitest/vitest.mjs run --pool=threads --maxWorkers=1 --no-isolate test/partnerOutreach.test.ts test/partnerSchedulerWorkflow.test.ts",
+      "cwd": "karta",
+      "evidence": "evidence/schedule-final.log.json",
+      "scope": "88 actual-handler/SQL tests and 8 actual-workflow-Code-node tests; latest SQL delta included"
+    },
+    {
+      "id": "contract_ui_and_parser",
+      "status": "PASS",
+      "tests_passed_in_run": 45,
+      "effective_final_cases": 42,
+      "exit_code": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=384 ./node_modules/.bin/vitest run src/lib/partner-contract-result.test.ts src/pages/PartnerAgentProspects.contract.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx --pool=threads --maxWorkers=1",
+      "cwd": ".",
+      "evidence": "evidence/ui-final.log.json",
+      "scope": "30 parser +12 actual-component/client contract cases; 3 old settings cases superseded by settings_final, not counted twice"
+    },
+    {
+      "id": "settings_final",
+      "status": "PASS",
+      "tests_passed": 5,
+      "exit_code": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=384 ./node_modules/.bin/vitest run src/pages/PartnerAgentSettings.schedule.test.tsx --pool=threads --maxWorkers=1",
+      "cwd": ".",
+      "evidence": "evidence/settings-final.log.json"
+    },
+    {
+      "id": "assistant_policy_and_entrypoints",
+      "status": "PASS",
+      "tests_passed": 57,
+      "exit_code": 0,
+      "command": "node --wasm-num-compilation-tasks=1 --v8-pool-size=1 --max-old-space-size=256 --max-semi-space-size=2 node_modules/vitest/vitest.mjs run --pool=threads --maxWorkers=1 --no-isolate test/assistantPolicy.test.ts",
+      "cwd": "karta",
+      "evidence": "evidence/assistant-policy-final.log.json",
+      "scope": "Actual task handlers including the new entrypoint and its legacy rejection"
+    },
+    {
+      "id": "webhook",
+      "status": "PASS",
+      "tests_passed": 46,
+      "skipped": 0,
+      "exit_code": 0,
+      "command": "node --experimental-vm-modules --experimental-strip-types --test --test-name-pattern='webhook partner|webhook persistence' tests/contracts-ots-authorization.test.mjs",
+      "cwd": ".",
+      "evidence": "evidence/webhook-final.log.json"
+    },
+    {
+      "id": "partner_chat",
+      "status": "PASS",
+      "tests_passed": 35,
+      "exit_code": 0,
+      "evidence": "evidence/chat-evidence.json",
+      "scope": "13 actual-handler/SQL tests and 22 DOM tests; individual commands and final matching source hashes in receipt"
+    },
+    {
+      "id": "contracts_before_final_identity_literal",
+      "status": "PASS",
+      "tests_passed": 38,
+      "exit_code": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=256 npm test -- --pool=threads --maxWorkers=1 --no-isolate test/partnerContract.test.ts",
+      "cwd": "karta",
+      "evidence": "evidence/contract-38-before-app-slug.log.json",
+      "scope": "Actual handler, actual PDF renderer, real SQL migrations on PGlite. Before the sole subsequent app_slug literal correction and its assertion; no later handler/PDF change."
+    },
+    {
+      "id": "canonical_application_identity_delta",
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": "evidence/contract-identity-check.json",
+      "scope": "Direct Node/PGlite execution of actual final migrations and partner_contract_reserve: canonical purama_ai/draft/null submission"
+    },
+    {
+      "id": "contract_consolidated_rerun",
+      "status": "PARTIEL",
+      "exit_code": 137,
+      "evidence": "evidence/contract-final-attempt-interrupted.log.json",
+      "scope": "Latest complete rerun killed before assertions; not counted as PASS. The prior 38 tests and separately verified final identity delta are retained."
+    },
+    {
+      "id": "pdf_geometry",
+      "status": "PASS",
+      "evidence": "evidence/contract-geometry-check.json",
+      "scope": "Real PDF parsed with PyMuPDF; does not qualify live DocuSeal rendering"
+    },
+    {
+      "id": "frontend_types",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=640 ./node_modules/.bin/tsc --noEmit -p tests/quality/partner-affiliate.tsconfig.json",
+      "cwd": ".",
+      "scope": "Latest frontend and test sources, after timezone normalization; not a global application typecheck"
+    },
+    {
+      "id": "contract_handler_types",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=256 ./node_modules/.bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --lib ES2023,DOM --skipLibCheck supabase/functions/partner-generate-contract/handler.ts",
+      "cwd": "."
+    },
+    {
+      "id": "outreach_handler_types",
+      "status": "PASS",
+      "exit_code": 0,
+      "scope": "Strict targeted typecheck reported by schedule implementation agent; no later TypeScript change except validated parser rejection."
+    },
+    {
+      "id": "lint",
+      "status": "PASS",
+      "exit_code": 0,
+      "scope": "Changed contract client/UI/settings/handlers/new entrypoint and their relevant UI tests. Separate IAF01 lint receipt in chat evidence."
+    },
+    {
+      "id": "diff_review",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "git diff --check",
+      "scope": "38 code/config/test paths plus evidence; AGENTS unchanged; comparison scoped to base; independent UI/auth/SQL review and root contract/backend review"
+    }
+  ],
+  "independent_review": "PASS for source boundaries described in README; findings corrected before publication",
+  "production_deployed": false,
+  "real_outreach_sent": false,
+  "limits": [
+    "Full application typecheck interrupted with exit137; targeted typechecks passed.",
+    "PostgreSQL native concurrent transactions not tested.",
+    "Live Supabase migrations, n8n workflows, provider delivery and signature not tested.",
+    "Browser install returned HTTP403; JSDOM is not a real-browser visual or assistive-technology test.",
+    "Free-form chat multichannel execution, financial rewards and ONE gifts are outside this implementation.",
+    "GitNexus was not executed; scoped alternative described in README; instructions left unchanged."
+  ],
+  "evidence": {
+    "assistant-policy-final.log.json": {
+      "sha256": "27dfb93a87f6d2d5cdb8cf19cf1c508177df9b4a4c7121e165384b2d107e16ff",
+      "bytes": 380
+    },
+    "chat-evidence.json": {
+      "sha256": "c5b4b0f3752de7f89dc24f4c3a7adfb54c67f2e46298acee6a9c72417100d710",
+      "bytes": 2919
+    },
+    "contract-38-before-app-slug.log.json": {
+      "sha256": "25c43c934694c3ae46e4c6a2760557b9b5ef6e7120b2a140f11b68d8dcebf69e",
+      "bytes": 655
+    },
+    "contract-final-attempt-interrupted.log.json": {
+      "sha256": "d447400cc88eae63f0e562324b300aab7ee68038f7c45d0ed346e36a343224b7",
+      "bytes": 250
+    },
+    "contract-geometry-check.json": {
+      "sha256": "cb5d6c15e74a922c36ab2c2642b7042997e0c11404217b914cf28710e5b55a07",
+      "bytes": 425
+    },
+    "contract-identity-check.json": {
+      "sha256": "2f4f779b24b047e776c22ce4261c1c85c0b09da7583ac84cd45cb343bc74345d",
+      "bytes": 263
+    },
+    "schedule-final.log.json": {
+      "sha256": "ee010d5d3600a7ab471bfc209dae6b279714edb81156e1096d13993dd40f5a7e",
+      "bytes": 371
+    },
+    "settings-final.log.json": {
+      "sha256": "b96d55f8d8882e080b17c3b3b3509839a74fb1b9966262a66a5c2821e43c6edf",
+      "bytes": 402
+    },
+    "ui-final.log.json": {
+      "sha256": "41716832d80cc9dd3c84561abcc9ddb7a73393c0f904b7141e087b03a257e977",
+      "bytes": 398
+    },
+    "webhook-final.log.json": {
+      "sha256": "90669a4a491b9cb5c2d3696defc78fd7db3f8116f47786cd3cd8c47ce2ab2795",
+      "bytes": 4892
+    }
+  },
+  "log_storage": "Raw stdout is preserved exactly as a JSON string with its original byte count and SHA-256."
+}

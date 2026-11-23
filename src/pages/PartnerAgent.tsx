@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,25 +13,34 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestScope, useScopedState } from '@/hooks/useRequestScope';
 import {
   getPartnerConfig, updatePartnerConfig, listProspects,
   listActivePartners, partnerStats, formatEUR,
   PIPELINE_COLUMNS, STATUS_META,
   type PartnerConfig, type PartnerProspect, type PartnerActive,
 } from '@/lib/partner';
-import { AgentChatTab } from '@/components/voice/AgentChatTab';
+import { PartnerAgentChat } from '@/components/partner/PartnerAgentChat';
 
 export default function PartnerAgent() {
   const { user } = useAuth();
-  const [config, setConfig] = useState<PartnerConfig | null>(null);
-  const [prospects, setProspects] = useState<PartnerProspect[]>([]);
-  const [partners, setPartners] = useState<PartnerActive[]>([]);
-  const [stats, setStats] = useState<Awaited<ReturnType<typeof partnerStats>> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [savingToggle, setSavingToggle] = useState(false);
+  const ownerKey = user?.id ?? '';
+  const captureOwner = useRequestScope(ownerKey);
+  const [config, setConfig] = useScopedState<PartnerConfig | null>(ownerKey, null);
+  const [prospects, setProspects] = useScopedState<PartnerProspect[]>(ownerKey, []);
+  const [partners, setPartners] = useScopedState<PartnerActive[]>(ownerKey, []);
+  const [stats, setStats] = useScopedState<Awaited<ReturnType<typeof partnerStats>> | null>(ownerKey, null);
+  const [loading, setLoading] = useScopedState(ownerKey, true);
+  const [savingToggle, setSavingToggle] = useScopedState(ownerKey, false);
+
+  useLayoutEffect(() => {
+    setConfig(null); setProspects([]); setPartners([]); setStats(null);
+    setLoading(true); setSavingToggle(false);
+  }, [ownerKey, setConfig, setProspects, setPartners, setStats, setLoading, setSavingToggle]);
 
   const refresh = async () => {
     if (!user) return;
+    const isCurrent = captureOwner();
     try {
       const [cfg, pros, parts, s] = await Promise.all([
         getPartnerConfig(user.id),
@@ -39,16 +48,18 @@ export default function PartnerAgent() {
         listActivePartners(user.id),
         partnerStats(user.id),
       ]);
+      if (!isCurrent()) return;
       setConfig(cfg);
       setProspects(pros);
       setPartners(parts);
       setStats(s);
     } catch (e) {
+      if (!isCurrent()) return;
       toast.error('Erreur de chargement', {
         description: e instanceof Error ? e.message : String(e),
       });
     } finally {
-      setLoading(false);
+      if (isCurrent()) setLoading(false);
     }
   };
 
@@ -59,6 +70,7 @@ export default function PartnerAgent() {
 
   const handleToggle = async (next: boolean) => {
     if (!user || !config) return;
+    const isCurrent = captureOwner();
     if (next && (!config.sender_name || !config.sender_email)) {
       toast.error('Renseigne ton identité expéditeur dans les paramètres');
       return;
@@ -66,11 +78,13 @@ export default function PartnerAgent() {
     setSavingToggle(true);
     try {
       const updated = await updatePartnerConfig(user.id, { is_active: next });
+      if (!isCurrent()) return;
       setConfig(updated);
       toast.success(next ? '🤖 Agent partenariat activé' : 'Agent en pause');
     } catch (e) {
+      if (!isCurrent()) return;
       toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setSavingToggle(false); }
+    } finally { if (isCurrent()) setSavingToggle(false); }
   };
 
   if (loading || !config) {
@@ -95,10 +109,10 @@ export default function PartnerAgent() {
     : 0;
 
   const tutorialSteps: TutorialStep[] = [
-    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Trouve, contacte, signe et accompagne tes partenaires en continu. L\'IA fait tout : recherche Tavily, rédaction Claude, envoi Resend, contrats DocuSeal.' },
+    { selector: null, title: 'Bienvenue dans l\'Agent Partenariat 🤝', body: 'Recherche des prospects, prépare des propositions et suis tes partenaires. Les actions utilisent les réglages du compte et les validations prévues.' },
     { selector: null, title: 'Configure ton identité', body: 'Avant tout : ton nom d\'envoi, ton email, ton ton de communication, tes niches cibles.' },
     { selector: null, title: 'Trouve des prospects via IA', body: 'Décris en français le type de partenaire que tu veux. L\'IA cherche, analyse et score 0-100.' },
-    { selector: null, title: 'Active l\'outreach automatique', body: 'L\'agent envoie 20 emails/jour personnalisés par défaut, dans tes plages horaires.' },
+    { selector: null, title: 'Configure la prospection', body: 'Définis tes horaires, ton quota et tes validations. Chaque envoi passe par les contrôles de la prospection.' },
     { selector: null, title: 'Suis le pipeline visuel', body: 'Identifié → Contacté → Intéressé → Contrat → Actif. Tu vois tout en un coup d\'œil.' },
   ];
 
@@ -299,18 +313,7 @@ export default function PartnerAgent() {
       )}
 
       {/* Chat with the Partner Agent */}
-      <AgentChatTab
-        agentType="partner"
-        agentName="Agent Partenariats"
-        agentEmoji="🤝"
-        agentColor="#A855F7"
-        suggestions={[
-          'Écris-moi un cold email pour un partenaire SaaS B2B',
-          'Quels KPI suivre pour mon programme d\'affiliation ?',
-          'Comment qualifier un lead en MEDDIC ?',
-          'Propose une grille de commission pour des partenaires premium',
-        ]}
-      />
+      <PartnerAgentChat prospects={prospects} />
     </div>
   );
 }

@@ -517,6 +517,37 @@ test('HTTP admission: the real webhook deadline resolves a stalled request witho
   noStampEffects(h.calls);
 });
 
+for (const envelope of ['form', 'submission']) {
+  test(`webhook partner: a callback before receipt persistence requests retry (${envelope})`, async () => {
+    const h = await harness({ noContract: true }, 'contracts-webhook');
+    const external_id = `purama-partner-contract:${contractId}:00000000-0000-4000-8000-000000000099`;
+    const data = envelope === 'form' ? { id: 17, submission_id: 42, external_id }
+      : { id: 42, submitters: [{ id: 17, submission_id: 42, external_id }] };
+    const response = await h.handler(new Request('https://edge.example.invalid/webhook', {
+      method: 'POST', headers: { Authorization: `Bearer ${webhookSecret}` },
+      body: JSON.stringify({ event_type: envelope === 'form' ? 'form.completed' : 'submission.created', data }),
+    }));
+    assert.equal(response.status, 409);
+    assert.equal(h.calls.events.length + h.calls.updates.length + h.calls.internal.length, 0);
+  });
+}
+test('webhook partner: unrelated unknown contracts retain the existing skip behavior', async () => {
+  const h = await harness({ noContract: true }, 'contracts-webhook');
+  const response = await h.handler(lifecycleRequest());
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).skip, 'contract not found');
+});
+test('webhook partner: a forged external identifier cannot bypass provider authentication', async () => {
+  const h = await harness({ noContract: true }, 'contracts-webhook');
+  const response = await h.handler(new Request('https://edge.example.invalid/webhook', {
+    method: 'POST', headers: { Authorization: 'Bearer not-the-provider' },
+    body: JSON.stringify({ event_type: 'form.completed', data: { id: 17, submission_id: 42,
+      external_id: `purama-partner-contract:${contractId}:00000000-0000-4000-8000-000000000099` } }),
+  }));
+  assert.equal(response.status, 401);
+  assert.equal(h.calls.clients.length, 0);
+});
+
 test('webhook persistence: a failed lookup is never acknowledged as a missing contract', async () => {
   const h = await harness({ loadError: true }, 'contracts-webhook');
   const response = await h.handler(lifecycleRequest('submission.created'));

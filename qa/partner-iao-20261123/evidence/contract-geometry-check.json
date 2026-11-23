@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "pages": 8,
+  "api_area": {
+    "x": 317.5,
+    "y": 301,
+    "w": 180,
+    "h": 70,
+    "page": 8
+  },
+  "actual_signature_rect": [
+    [
+      317.5,
+      301.0,
+      497.5,
+      371.0
+    ]
+  ],
+  "pdf_sha256": "0d658f96a7126e0515b266d586f34db7b0b9d22b929627ccaaa91861f6e7476f",
+  "parser": "PyMuPDF 1.26.6",
+  "scope": "Actual production renderer; geometric PDF parse; no DocuSeal transport"
+}

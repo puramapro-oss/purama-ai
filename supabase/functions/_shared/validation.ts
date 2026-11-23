@@ -12,6 +12,13 @@ export const ChatMessageSchema = z.object({
   })).max(20).optional(),
 });
 
+export const AgentChatMessageSchema = ChatMessageSchema.extend({
+  agent_type: ChatMessageSchema.shape.agent_type.default("email"),
+  partner_prospect_id: z.string().uuid().toLowerCase().optional(),
+}).refine(body => body.partner_prospect_id === undefined || body.agent_type === "partner", {
+  message: "Un dossier partenaire ne peut être utilisé que par le chat partenaire.",
+});
+
 // Custom-agent chat always needs an agent identifier; universal chat may use agent_type.
 export const CreatorChatMessageSchema = ChatMessageSchema.required({ agent_id: true }).extend({
   tool_result_ids: z.array(z.string().uuid().toLowerCase()).max(3)

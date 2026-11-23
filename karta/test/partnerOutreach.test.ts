@@ -4,11 +4,14 @@ import { PGlite } from "@electric-sql/pglite";
 
 // Import the actual cross-runtime modules, not copied/extracted function bodies.
 const handlerUrl = new URL("../../supabase/functions/partner-send-outreach/handler.ts", import.meta.url).href;
+const securityUrl = new URL("../../supabase/functions/_shared/webhook-security.ts", import.meta.url).href;
+const { verifyBearerSecret } = await import(/* @vite-ignore */ securityUrl);
 const feedbackUrl = new URL("../../src/lib/partner-outreach-result.ts", import.meta.url).href;
 const { createPartnerOutreachHandler } = await import(/* @vite-ignore */ handlerUrl);
 const { parseOutreachResult, outreachFeedback, outreachStepForStatus } = await import(/* @vite-ignore */ feedbackUrl);
 const historical = readFileSync(new URL("../../supabase/migrations/20260406230000_partner_agent.sql", import.meta.url), "utf8");
 const migration = readFileSync(new URL("../../supabase/migrations/20261110030000_partner_outreach_reservations.sql", import.meta.url), "utf8");
+const scheduleMigration = readFileSync(new URL("../../supabase/migrations/20261123020000_partner_outreach_schedule.sql", import.meta.url), "utf8");
 const user = "00000000-0000-4000-8000-000000000001";
 const other = "00000000-0000-4000-8000-000000000002";
 const prospect = "00000000-0000-4000-8000-000000000011";
@@ -31,6 +34,7 @@ beforeAll(async () => {
   `);
   await db.exec(historical);
   await db.exec(migration);
+  await db.exec(scheduleMigration);
 });
 
 beforeEach(async () => {
@@ -39,6 +43,9 @@ beforeEach(async () => {
     (user_id,is_active,sender_name,sender_email,require_approval_new_prospect,require_approval_outreach)
     VALUES ($1,true,'Test Sender','sender@example.invalid',false,false),
       ($2,true,'Other Sender','other@example.invalid',false,false)`, [user, other]);
+  // Keep non-schedule regressions independent of wall-clock execution time.
+  // The time-zone/window cases below use explicit SQL timestamps instead.
+  await db.exec("UPDATE purama_ai.partner_agent_config SET outreach_timezone='UTC',outreach_hours_start='00:00',outreach_hours_end='24:00',outreach_days=ARRAY['MO','TU','WE','TH','FR','SA','SU']");
   await db.query(`INSERT INTO purama_ai.partner_prospects(id,user_id,name,email,status)
     VALUES ($1,$2,'Test prospect','recipient@example.invalid','ready_to_contact'),
       ($3,$4,'Other prospect','other-recipient@example.invalid','ready_to_contact')`,
@@ -69,8 +76,8 @@ async function mustRpc(name: string, args: Row): Promise<Row> {
   if (result.error || !result.data) throw new Error(result.error?.message ?? "Missing RPC data");
   return result.data;
 }
-const request = (body: Row = { prospect_id: prospect }, authorization = "Bearer valid-user") => new Request("https://example.invalid/outreach", {
-  method: "POST", headers: { Authorization: authorization, "Content-Type":"application/json" }, body: JSON.stringify(body),
+const request = (body: Row = { prospect_id: prospect }, authorization = "Bearer valid-user", delegatedUserId?: string) => new Request("https://example.invalid/outreach", {
+  method: "POST", headers: { Authorization: authorization, "Content-Type":"application/json", ...(delegatedUserId !== undefined ? {"X-Impersonate-User-Id":delegatedUserId} : {}) }, body: JSON.stringify(body),
 });
 async function prepare(id = prospect, claim = token): Promise<Row> {
   const reserved = await mustRpc("partner_outreach_reserve", { p_user_id:user,p_prospect_id:id,p_step:"outreach",p_claim_token:claim });
@@ -92,6 +99,7 @@ function harness(options: HarnessOptions = {}) {
   const calls: { url:string; headers:Headers; body:Row }[] = [];
   const handler = createPartnerOutreachHandler({
     authenticate: async (authToken: string) => authToken === "valid-user" ? (options.authenticated === undefined ? user : options.authenticated) : null,
+    authenticateScheduled: (authToken: string) => verifyBearerSecret(`Bearer ${authToken}`, "server-scheduler-secret"),
     rpc: async (name: string,args: Row) => {
       if (name === "partner_outreach_finish" && args.p_outcome === "sent" && options.failCompletion) {
         if (options.failCompletion === "after_commit") await mustRpc(name,args);
@@ -475,6 +483,7 @@ it("reapplies the migration without losing evidence or reopening client permissi
   const h=harness(); await h.handler(request());
   const before=(await db.query("SELECT * FROM purama_ai.partner_outreach_dispatches")).rows;
   await db.exec(migration);
+  await db.exec(scheduleMigration);
   expect((await db.query("SELECT * FROM purama_ai.partner_outreach_dispatches")).rows).toEqual(before);
   expect((await db.query("SELECT has_function_privilege('authenticated','purama_ai.partner_outreach_finish(uuid,uuid,uuid,text,text)','EXECUTE') AS allowed")).rows).toEqual([{allowed:false}]);
 });
@@ -482,7 +491,203 @@ it("reapplies the migration without losing evidence or reopening client permissi
 it("the presentation layer rejects unproved sent statuses and unknown schemas",()=>{
   expect(()=>parseOutreachResult({status:"sent"})).toThrow(/Confirmation/);
   expect(()=>parseOutreachResult({ok:true})).toThrow(/Statut/);
+  expect(()=>parseOutreachResult({status:['sent'],message_id:'untrusted'})).toThrow(/Statut/);
   expect(()=>parseOutreachResult({status:"pending_approval",email_id:prospect})).toThrow(/Aperçu/);
   expect(outreachFeedback(parseOutreachResult({status:"unknown"})).kind).toBe("warning");
   expect(outreachFeedback(parseOutreachResult({status:"sent",message_id:"proof",reused:true})).title).toBe("Email déjà transmis");
+});
+
+// New cases exercise the same server handler and deployed SQL, not scheduler
+// copies of the rules. Fixed timestamps cover timezone and DST semantics.
+describe('account outreach schedules', () => {
+  const reason = async (zone: string | null, start: string | null, end: string | null,
+    days: (string | null)[] | null, at: string) => (await db.query<{ reason: string | null }>(
+      'SELECT purama_ai.partner_outreach_schedule_reason($1,$2::time,$3::time,$4::text[],$5::timestamptz) AS reason',
+      [zone,start,end,days,at],
+    )).rows[0].reason;
+
+  it.each([
+    ['Europe/Paris','09:00','18:00',['MO'],'2026-11-23T08:00:00Z',null],
+    ['Europe/Paris','09:00','18:00',['MO'],'2026-11-23T07:59:59Z','outside_outreach_hours'],
+    ['Europe/Paris','09:00','18:00',['MO'],'2026-11-23T17:00:00Z','outside_outreach_hours'],
+    ['America/New_York','09:00','18:00',['MO'],'2026-11-23T10:00:00Z','outside_outreach_hours'],
+    ['America/New_York','09:00','18:00',['MO'],'2026-11-23T14:00:00Z',null],
+    ['Asia/Kathmandu','09:00','10:00',['MO'],'2026-11-23T03:15:00Z',null],
+    ['Pacific/Auckland','09:00','18:00',['TU'],'2026-11-23T20:00:00Z',null],
+    ['UTC','09:00','18:00',['SA'],'2026-11-23T10:00:00Z','outside_outreach_hours'],
+    ['UTC','22:00','02:00',['MO'],'2026-11-23T22:00:00Z',null],
+    ['UTC','22:00','02:00',['MO'],'2026-11-24T01:59:59Z',null],
+    ['UTC','22:00','02:00',['MO'],'2026-11-24T02:00:00Z','outside_outreach_hours'],
+    ['UTC','22:00','02:00',['SU'],'2026-11-23T01:00:00Z',null],
+    ['UTC','09:00','09:00',['MO'],'2026-11-23T10:00:00Z','outside_outreach_hours'],
+    ['UTC','00:00','24:00',[],'2026-11-23T10:00:00Z','outside_outreach_hours'],
+    ['Mars/Unknown','09:00','18:00',['MO'],'2026-11-23T10:00:00Z','invalid_outreach_schedule'],
+    [null,'09:00','18:00',['MO'],'2026-11-23T10:00:00Z','invalid_outreach_schedule'],
+    ['UTC',null,'18:00',['MO'],'2026-11-23T10:00:00Z','invalid_outreach_schedule'],
+    ['UTC','09:00','18:00',['XX'],'2026-11-23T10:00:00Z','invalid_outreach_schedule'],
+    ['UTC','09:00','18:00',[null],'2026-11-23T10:00:00Z','invalid_outreach_schedule'],
+    ['UTC','09:00','18:00',null,'2026-11-23T10:00:00Z','invalid_outreach_schedule'],
+    // Spring-forward: the missing local 02:30 never becomes an admitted time.
+    ['Europe/Paris','02:00','03:00',['SU'],'2026-03-29T00:59:59Z','outside_outreach_hours'],
+    ['Europe/Paris','02:00','03:00',['SU'],'2026-03-29T01:00:00Z','outside_outreach_hours'],
+    // Fall-back: both instants map into the same wall-clock window, with one
+    // durable prospect/step identity preventing another send on the second pass.
+    ['Europe/Paris','02:00','03:00',['SU'],'2026-10-25T00:30:00Z',null],
+    ['Europe/Paris','02:00','03:00',['SU'],'2026-10-25T01:30:00Z',null],
+  ] as const)('checks %s %s-%s %j at %s', async (zone,start,end,days,at,expected) => {
+    expect(await reason(zone,start,end,days ? [...days] : null,at)).toBe(expected);
+  });
+
+  it('refuses paid preparation outside an admitted window', async () => {
+    await db.query("UPDATE purama_ai.partner_agent_config SET outreach_days='{}' WHERE user_id=$1",[user]);
+    const h=harness();
+    expect(await (await h.handler(request())).json()).toMatchObject({status:'blocked',reason:'outside_outreach_hours'});
+    expect(h.calls).toHaveLength(0);
+  });
+
+  it('rechecks a closed window at dispatch and later resumes the same frozen draft', async () => {
+    const h=harness({onReady:async()=>{
+      await db.query("UPDATE purama_ai.partner_agent_config SET outreach_days='{}' WHERE user_id=$1",[user]);
+    }});
+    expect(await (await h.handler(request())).json()).toMatchObject({status:'blocked',reason:'outside_outreach_hours'});
+    expect(h.sends()).toHaveLength(0);
+    const saved=(await db.query<{id:string;status:string;payload:Row}>('SELECT id,status,payload FROM purama_ai.partner_outreach_dispatches')).rows;
+    expect(saved).toMatchObject([{status:'ready'}]);
+    await db.query("UPDATE purama_ai.partner_agent_config SET outreach_days=ARRAY['MO','TU','WE','TH','FR','SA','SU'] WHERE user_id=$1",[user]);
+    expect(await (await h.handler(request())).json()).toMatchObject({status:'sent'});
+    expect(h.drafts()).toHaveLength(1);
+    expect(h.sends()).toHaveLength(1);
+    expect((await db.query('SELECT id,payload FROM purama_ai.partner_outreach_dispatches')).rows)
+      .toEqual(saved.map(({id,payload})=>({id,payload})));
+  });
+
+  it('preserves exact approval when its send waits for the next allowed window', async () => {
+    await requireApproval();
+    // Manual preparation is allowed for this account's identified prospect.
+    // Merely discovering it must not enroll it in automatic first contact.
+    await db.query("UPDATE purama_ai.partner_prospects SET status='identified' WHERE id=$1",[prospect]);
+    expect((await db.query("SELECT * FROM purama_ai.partner_outreach_due('outreach',100)")).rows)
+      .not.toContainEqual({prospect_id:prospect,user_id:user,step:'outreach'});
+    const h=harness();
+    const pending=await (await h.handler(request())).json();
+    await db.query("UPDATE purama_ai.partner_agent_config SET outreach_days='{}' WHERE user_id=$1",[user]);
+    expect(await (await h.handler(approvalRequest(pending))).json())
+      .toMatchObject({status:'blocked',reason:'outside_outreach_hours'});
+    expect((await db.query('SELECT status,approved_at IS NOT NULL AS approved FROM purama_ai.partner_outreach_dispatches')).rows)
+      .toEqual([{status:'ready',approved:true}]);
+    expect(h.sends()).toHaveLength(0);
+    await db.query("UPDATE purama_ai.partner_agent_config SET outreach_days=ARRAY['MO','TU','WE','TH','FR','SA','SU'] WHERE user_id=$1",[user]);
+    expect((await db.query("SELECT * FROM purama_ai.partner_outreach_due('outreach',100)")).rows)
+      .toContainEqual({prospect_id:prospect,user_id:user,step:'outreach'});
+    expect(await (await h.handler(request())).json()).toMatchObject({status:'sent'});
+    expect(h.drafts()).toHaveLength(1);
+    expect(h.sends()).toHaveLength(1);
+  });
+
+  it('counts the selected calendar day and legacy sends across local midnight', async () => {
+    await db.query(`INSERT INTO purama_ai.partner_emails(user_id,prospect_id,type,subject,body_html,status,sent_at)
+      VALUES ($1,$2,'outreach','Fictitious','Fictitious','sent','2026-11-23T14:50:00Z')`,[user,otherProspect]);
+    const counts=(await db.query(`SELECT
+      purama_ai.partner_outreach_daily_count($1,'UTC','2026-11-23T16:00:00Z')::integer AS utc,
+      purama_ai.partner_outreach_daily_count($1,'Asia/Tokyo','2026-11-23T16:00:00Z')::integer AS tokyo`,[user])).rows;
+    expect(counts).toEqual([{utc:1,tokyo:0}]);
+  });
+
+  it('selects all eligible accounts and no unscheduled, exhausted or already reserved candidate', async () => {
+    const due=()=>db.query('SELECT * FROM purama_ai.partner_outreach_due($1,$2)',['outreach',100]);
+    expect((await due()).rows).toHaveLength(2);
+    await db.query("UPDATE purama_ai.partner_agent_config SET outreach_timezone='Invalid/Zone' WHERE user_id=$1",[other]);
+    expect((await due()).rows).toEqual([{prospect_id:prospect,user_id:user,step:'outreach'}]);
+    await requireApproval(); const h=harness(); await h.handler(request());
+    expect((await due()).rows).toEqual([]);
+    await expect(db.query("SELECT * FROM purama_ai.partner_outreach_due('outreach',101)")).rejects.toThrow(/Invalid scheduler query/);
+  });
+
+  it('selects only due follow-ups and rechecks opposition when their queued call reaches the server', async () => {
+    await db.query("UPDATE purama_ai.partner_prospects SET status='contacted',first_contact_at=now()-interval '5 days',next_action_at=now()-interval '1 day',relance_count=0 WHERE id=$1",[prospect]);
+    expect((await db.query("SELECT * FROM purama_ai.partner_outreach_due('followup',100)")).rows)
+      .toEqual([{prospect_id:prospect,user_id:user,step:'relance_1'}]);
+    await db.query("UPDATE purama_ai.partner_prospects SET status='rejected',has_replied=true WHERE id=$1",[prospect]);
+    const h=harness();
+    expect(await (await h.handler(request({prospect_id:prospect,type:'relance_1'},'Bearer server-scheduler-secret',user))).json())
+      .toMatchObject({status:'blocked',reason:'contact_suppressed'});
+    expect(h.calls).toHaveLength(0);
+  });
+
+  it.each(['anon','authenticated'])('does not expose scheduler discovery or private quota helpers to %s',async role=>{
+    await db.exec(`SET ROLE ${role}`);
+    try {
+      await expect(db.query("SELECT * FROM purama_ai.partner_outreach_due('outreach',100)")).rejects.toThrow(/permission denied/);
+      await expect(db.query("SELECT purama_ai.partner_outreach_daily_count($1,'UTC',now())",[user])).rejects.toThrow(/permission denied/);
+    } finally { await db.exec('RESET ROLE'); }
+  });
+});
+
+describe('bounded scheduler delegation', () => {
+  it('accepts a real server delegation and preserves account ownership and the existing send gate', async () => {
+    const h=harness();
+    expect(await (await h.handler(request({prospect_id:otherProspect},'Bearer server-scheduler-secret',user))).json())
+      .toMatchObject({status:'blocked',reason:'prospect_not_found'});
+    expect(h.calls).toHaveLength(0);
+    expect(await (await h.handler(request({prospect_id:prospect,user_id:other},'Bearer server-scheduler-secret',user))).json())
+      .toMatchObject({status:'sent'});
+    expect(h.sends()).toHaveLength(1);
+    expect(h.sends()[0].body.to).toBe('recipient@example.invalid');
+  });
+  it.each([
+    ['Bearer valid-user',user], ['Bearer wrong-service-secret',user],
+    ['Bearer server-scheduler-secret',''], ['Bearer server-scheduler-secret','not-a-uuid'],
+  ])('rejects an unauthenticated delegation (%s) before providers',async (authorization,delegated)=>{
+    const h=harness();
+    expect((await h.handler(request({prospect_id:prospect},authorization,delegated))).status).toBe(401);
+    expect(h.calls).toHaveLength(0);
+  });
+  it('requires the user to approve, even when the scheduler has the valid service secret', async () => {
+    await requireApproval();
+    const h=harness();
+    const pending=await (await h.handler(request({prospect_id:prospect},'Bearer server-scheduler-secret',user))).json();
+    expect(pending.status).toBe('pending_approval');
+    expect((await h.handler(request({action:'approve',email_id:pending.email_id,approval_version:pending.approval.version},
+      'Bearer server-scheduler-secret',user))).status).toBe(403);
+    expect(h.sends()).toHaveLength(0);
+    expect((await db.query('SELECT approved_at FROM purama_ai.partner_outreach_dispatches')).rows).toEqual([{approved_at:null}]);
+  });
+});
+
+it('uses admission wall time after the transaction started for its counted dispatch', async () => {
+  await db.exec('BEGIN');
+  try {
+    const ready=await prepare();
+    const clock=(await db.query<{at:string}>('SELECT clock_timestamp()::text AS at')).rows[0].at;
+    expect(await mustRpc('partner_outreach_begin_send',{p_user_id:user,p_action_id:ready.action_id,p_claim_token:token}))
+      .toMatchObject({status:'sending'});
+    const actual=(await db.query<{current:boolean}>(
+      'SELECT dispatch_started_at >= $1::timestamptz AS current FROM purama_ai.partner_outreach_dispatches',[clock],
+    )).rows;
+    expect(actual).toEqual([{current:true}]);
+  } finally { await db.exec('ROLLBACK'); }
+});
+
+it('bounds discovery per account by remaining quota and five candidate drafts per run', async () => {
+  for(let i=0;i<9;i++) {
+    await db.query(`INSERT INTO purama_ai.partner_prospects(user_id,name,email,status)
+      VALUES ($1,'Additional fictitious recipient',$2,'ready_to_contact')`,[user,`candidate${i}@example.invalid`]);
+  }
+  const due=()=>db.query<{user_id:string}>("SELECT * FROM purama_ai.partner_outreach_due('outreach',100)");
+  expect((await due()).rows.filter(r=>r.user_id===user)).toHaveLength(5);
+  await db.query('UPDATE purama_ai.partner_agent_config SET daily_outreach_limit=2 WHERE user_id=$1',[user]);
+  expect((await due()).rows.filter(r=>r.user_id===user)).toHaveLength(2);
+  await db.query('UPDATE purama_ai.partner_agent_config SET daily_outreach_limit=0 WHERE user_id=$1',[user]);
+  const h=harness();
+  expect(await (await h.handler(request())).json()).toMatchObject({status:'blocked',reason:'daily_limit'});
+  expect(h.drafts()).toHaveLength(0);
+  expect((await due()).rows).toEqual([{prospect_id:otherProspect,user_id:other,step:'outreach'}]);
+});
+
+it('isolates malformed multidimensional day arrays to their account during candidate discovery', async () => {
+  await db.query("UPDATE purama_ai.partner_agent_config SET outreach_days=ARRAY[['MO','TU']]::text[] WHERE user_id=$1",[other]);
+  expect((await db.query("SELECT purama_ai.partner_outreach_schedule_reason('UTC','00:00','24:00',ARRAY[['MO','TU']]::text[],now()) AS reason")).rows)
+    .toEqual([{reason:'invalid_outreach_schedule'}]);
+  expect((await db.query("SELECT * FROM purama_ai.partner_outreach_due('outreach',100)")).rows)
+    .toEqual([{prospect_id:prospect,user_id:user,step:'outreach'}]);
 });

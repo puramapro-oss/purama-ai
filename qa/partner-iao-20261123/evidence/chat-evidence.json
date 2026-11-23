@@ -1,0 +1,53 @@
+{
+  "scope": "IAF01 bounded partner context and explicit contract preparation",
+  "base": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "recorded_at": "2026-11-23T00:38:02.425525+00:00",
+  "checks": [
+    {
+      "command": "npm test -- --run test/partnerChat.test.ts",
+      "cwd": "karta",
+      "exit_code": 0,
+      "tests_passed": 13,
+      "files_passed": 1,
+      "runtime": "vitest 5.0.3",
+      "scope": "actual handler, actual Zod, provider/database transports simulated; real PGlite migration and RLS"
+    },
+    {
+      "command": "npx vitest run src/components/partner/PartnerAgentChat.test.tsx src/components/voice/VoiceMode.accessibility.test.tsx",
+      "cwd": ".",
+      "exit_code": 0,
+      "tests_passed": 22,
+      "files_passed": 2,
+      "runtime": "vitest 4.1.12 jsdom",
+      "scope": "actual wrapper+feedback and actual AgentChatTab lifecycle; provider methods mocked, no real outbound"
+    },
+    {
+      "command": "git diff --check [IAF01 tracked files] && npx eslint [IAF01 source and wrapper tests]",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exit_code": 137,
+      "status": "NON TESTE: process killed before diagnostics; final sequential typecheck delegated to root"
+    }
+  ],
+  "files": {
+    "src/components/partner/PartnerAgentChat.tsx": "56c675deb1f24560f3bba228b8e1bd9eef45d98edc2e62eb1b4120009d31545e",
+    "src/components/partner/PartnerAgentChat.test.tsx": "af57c2335711796c2118fe50d4f6b7ed47148395ace293862a87d424679e66e5",
+    "src/components/voice/AgentChatTab.tsx": "95c708be83eaa200d1c074ab83e049c4966a20b2445f6b6188d90785b67298b8",
+    "src/components/voice/VoiceMode.accessibility.test.tsx": "69da28e83fb6741cc1911486dd0d04bf05ea220cb0d58a99ab3f78382f1ac6c8",
+    "src/lib/agent-chat.ts": "5204b6a9fa81a79f3623f5a0b231bc22195e47170e89519556a9a99d84a24575",
+    "src/pages/PartnerAgent.tsx": "c447f44c4fdfd4e0b47fb04c6e781799f5da728b90780f67153253274d904aa6",
+    "supabase/functions/_shared/partner-chat-context.ts": "eb782ebb25be1e1f1e55487f28bd0d0ef0ca057b2d4bf922e8fba988c052feb8",
+    "supabase/functions/_shared/validation.ts": "e796b7853b6dd2bb9fcc6b6b3234014744b8b604739033464cd797d203ab41fe",
+    "supabase/functions/agent-chat/index.ts": "2075e9c4f0e20dda51d58d295c7ee01bc95f898d9fdd53debc994658093f24ac",
+    "supabase/migrations/20261123030000_partner_chat_scope.sql": "588e1652eff2a26ca79a7c3a68f695a49f79f435078a4c41d4322801b106e80d",
+    "karta/test/partnerChat.test.ts": "055043db1af0be1a9306461458beb1688fe517eba3492f35e4f02a0e6993e06e"
+  },
+  "limitations": [
+    "No production deployment, real provider send, user data or external outreach.",
+    "Explicit contract prepare button reuses existing API; free-form text does not trigger external actions.",
+    "Full multichannel KARTA execution remains outside this bounded connection.",
+    "Browser layout and real assistive technology not tested in jsdom."
+  ]
+}
