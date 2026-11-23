@@ -1,17 +1,17 @@
 // Purama AI — Service Worker
 // Handles: install/activate, offline fallback, web push, notification clicks
-const CACHE_NAME = 'purama-offline-v8';
+const CACHE_NAME = 'purama-offline-v10';
 const OFFLINE_URL = '/offline.html';
 // BEGIN OFFLINE ASSET MANIFEST
-// OFFLINE ASSET CACHE VERSION: purama-offline-v8
+// OFFLINE ASSET CACHE VERSION: purama-offline-v10
 const OFFLINE_ASSETS = [
   {
     "path": "/offline.html",
     "types": [
       "text/html"
     ],
-    "bytes": 17795,
-    "sha256": "985933b735663e75c8174041a2ae75ec1de88f759279133293435fdcf14a35ca"
+    "bytes": 18231,
+    "sha256": "80cccefad60a47fe927ed5c2273ebda961ce412a528a0081f29ba6850a003b10"
   },
   {
     "path": "/offline-workspace.js",
@@ -21,8 +21,8 @@ const OFFLINE_ASSETS = [
       "application/ecmascript",
       "text/ecmascript"
     ],
-    "bytes": 46034,
-    "sha256": "db52a8b8fa63b520bf1b16b415fd23208ba66899f1236897bb31f8a3c7b2dfbb"
+    "bytes": 51313,
+    "sha256": "b3b55ec634f9ea78e88fb8b8d5480a33d6c1c7d6fccff1a8f074eec8e78801d0"
   },
   {
     "path": "/offline-library-backup.js",

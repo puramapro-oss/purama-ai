@@ -23,6 +23,16 @@ interface StoredText {
   revision: number;
 }
 
+type StorageTestWindow = typeof window & {
+  __failedTextWrite: { failed: boolean; refreshed: boolean };
+  __heldTextWrite: {
+    putSucceeded: boolean;
+    completed: number;
+    aborted: number;
+    finish: 'commit' | 'abort' | null;
+  };
+};
+
 const test = base.extend<{ networkAudit: (context: BrowserContext) => void }>({
   networkAudit: [async ({ context }, use, testInfo) => {
     const forbiddenRequests: string[] = [];
@@ -141,7 +151,7 @@ async function prepareOffline(page: Page) {
   await expect(page.locator('#preparation-status')).toHaveAttribute('data-state', 'ready', { timeout: 15_000 });
   await page.waitForFunction(() => navigator.serviceWorker.controller?.state === 'activated');
   const cachedAssets = await page.evaluate(async () => {
-    const cache = await caches.open('purama-offline-v8');
+    const cache = await caches.open('purama-offline-v10');
     return Promise.all(['/offline.html', '/offline-workspace.js', '/offline-library-backup.js', '/manifest.json'].map(async (path) => Boolean(await cache.match(path))));
   });
   expect(cachedAssets).toEqual([true, true, true, true]);
@@ -178,18 +188,177 @@ async function openRecord(page: Page, id: string) {
   await page.locator(`#document-list button[data-record-id="${id}"]`).click();
 }
 
+async function fillUncommittedDraft(page: Page, draft: { title?: string; body: string }) {
+  await page.evaluate(() => {
+    const originalPut = IDBObjectStore.prototype.put;
+    const originalGetAll = IDBObjectStore.prototype.getAll;
+    const audit = { failed: false, refreshed: false };
+    (window as StorageTestWindow).__failedTextWrite = audit;
+    IDBObjectStore.prototype.put = function (...args: Parameters<IDBObjectStore['put']>) {
+      if (this.name !== 'texts' || this.transaction.db.name !== 'purama-offline-workspace') {
+        return originalPut.apply(this, args);
+      }
+      // A real attempted autosave fails once; the product must retain its dirty
+      // editor and pause retries. Later archive writes use the original API.
+      IDBObjectStore.prototype.put = originalPut;
+      audit.failed = true;
+      throw new DOMException('One text write exceeds quota for this test', 'QuotaExceededError');
+    };
+    IDBObjectStore.prototype.getAll = function (...args: Parameters<IDBObjectStore['getAll']>) {
+      const request = originalGetAll.apply(this, args);
+      if (audit.failed && this.name === 'texts' && this.transaction.db.name === 'purama-offline-workspace') {
+        IDBObjectStore.prototype.getAll = originalGetAll;
+        this.transaction.addEventListener('complete', () => { audit.refreshed = true; }, { once: true });
+      }
+      return request;
+    };
+  });
+  if (draft.title !== undefined) await page.locator('#document-title').fill(draft.title);
+  await page.locator('#document-body').fill(draft.body);
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
+  // Drain the actual failure-triggered refresh before another tab changes storage.
+  // Otherwise its deferred read could pre-empt a test of a specific stale action.
+  await expect.poll(() => page.evaluate(() => (window as StorageTestWindow).__failedTextWrite))
+    .toEqual({ failed: true, refreshed: true });
+}
+
+async function holdNextTextWrite(page: Page) {
+  await page.evaluate(() => {
+    const originalPut = IDBObjectStore.prototype.put;
+    const audit: StorageTestWindow['__heldTextWrite'] = {
+      putSucceeded: false, completed: 0, aborted: 0, finish: null,
+    };
+    (window as StorageTestWindow).__heldTextWrite = audit;
+    IDBObjectStore.prototype.put = function (...args: Parameters<IDBObjectStore['put']>) {
+      if (this.name !== 'texts' || this.transaction.db.name !== 'purama-offline-workspace') {
+        return originalPut.apply(this, args);
+      }
+      IDBObjectStore.prototype.put = originalPut;
+      const transaction = this.transaction;
+      transaction.addEventListener('complete', () => { audit.completed += 1; });
+      transaction.addEventListener('abort', () => { audit.aborted += 1; });
+      const request = originalPut.apply(this, args);
+      request.addEventListener('success', () => {
+        audit.putSucceeded = true;
+        // Keep the real IndexedDB transaction open with real reads. A successful
+        // put request is deliberately separated from its durable commit.
+        const keepPending = () => {
+          if (audit.finish === 'abort') { transaction.abort(); return; }
+          if (audit.finish === 'commit') return;
+          this.get((args[0] as StoredText).id).addEventListener('success', keepPending);
+        };
+        keepPending();
+      });
+      return request;
+    };
+  });
+}
+
+test('autosave: retains offline typing and reopens the committed document without a save click', async ({ page, context }) => {
+  await openWorkspace(page);
+  await prepareOffline(page);
+  await context.setOffline(true);
+  dropNetwork = true;
+  await page.locator('#document-title').fill('Création en mode avion');
+  await page.locator('#document-body').fill('Mon texte et sa mémoire locale restent disponibles.');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saved');
+  const [original] = await storedTexts(page);
+  expect(original.body).toBe('Mon texte et sa mémoire locale restent disponibles.');
+  await page.locator('#document-body').fill('Mon texte corrigé après la première sauvegarde.');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saved');
+  const rows = await storedTexts(page);
+  expect(rows).toHaveLength(1);
+  expect(rows[0].id).toBe(original.id);
+  expect(rows[0].body).toBe('Mon texte corrigé après la première sauvegarde.');
+  expect(rows[0].revision).toBe(original.revision + 1);
+  await page.close();
+  const reopened = await context.newPage();
+  await reopened.goto(`${origin}/offline.html`);
+  await expect(reopened.locator('#document-title')).toHaveValue('Création en mode avion');
+  await expect(reopened.locator('#document-body')).toHaveValue('Mon texte corrigé après la première sauvegarde.');
+  expect(await storedTexts(reopened)).toEqual(rows);
+
+  dropNetwork = false;
+  await context.setOffline(false);
+  await reopened.reload();
+  await expect(reopened.locator('#document-body')).toHaveValue(rows[0].body);
+  expect(await storedTexts(reopened), 'Reconnection must keep the same local record without duplication').toEqual(rows);
+  await reopened.locator('#document-body').fill('Suite du même texte après le retour de la connexion.');
+  await expect(reopened.locator('#save-status')).toHaveAttribute('data-state', 'saved');
+  expect(await storedTexts(reopened)).toEqual([
+    expect.objectContaining({ id: original.id, body: 'Suite du même texte après le retour de la connexion.', revision: rows[0].revision + 1 }),
+  ]);
+});
+
+test('autosave: keeps typing and the caret intact while a real write waits for commit', async ({ page }) => {
+  await openWorkspace(page);
+  await saveDraft(page, 'Texte en cours', 'Dernière version durable.');
+  const [original] = await storedTexts(page);
+  await holdNextTextWrite(page);
+  await page.locator('#document-body').fill('Première version dans la transaction retenue.');
+  await expect.poll(() => page.evaluate(() => (window as StorageTestWindow).__heldTextWrite.putSucceeded)).toBe(true);
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saving');
+  await expect(page.locator('#document-title')).toBeEnabled();
+  await expect(page.locator('#document-body')).toBeEnabled();
+  await expect(page.locator('#save-document')).toBeDisabled();
+  await expect(page.locator('#new-draft')).toBeDisabled();
+  const latest = 'Texte saisi pendant la transaction, sans perte de caractères. 🧭';
+  await page.locator('#document-body').fill(latest);
+  await page.locator('#document-body').evaluate((field: HTMLTextAreaElement) => field.setSelectionRange(12, 12));
+  await expect(page.locator('#save-status')).not.toHaveAttribute('data-state', 'saved');
+  expect(await page.evaluate(() => (window as StorageTestWindow).__heldTextWrite))
+    .toEqual({ putSucceeded: true, completed: 0, aborted: 0, finish: null });
+  await page.evaluate(() => { (window as StorageTestWindow).__heldTextWrite.finish = 'commit'; });
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saved');
+  await expect(page.locator('#document-body')).toHaveValue(latest);
+  expect(await page.locator('#document-body').evaluate((field: HTMLTextAreaElement) => [field.selectionStart, field.selectionEnd]))
+    .toEqual([12, 12]);
+  // Two distinct snapshots really commit: the held write, then the queued edit.
+  expect(await storedTexts(page)).toEqual([
+    expect.objectContaining({ id: original.id, title: original.title, body: latest, revision: original.revision + 2 }),
+  ]);
+  expect(await page.evaluate(() => (window as StorageTestWindow).__heldTextWrite))
+    .toEqual({ putSucceeded: true, completed: 1, aborted: 0, finish: 'commit' });
+});
+
+test('autosave: an aborted successful put retains the last commit and retries only on explicit save', async ({ page }) => {
+  await openWorkspace(page);
+  await saveDraft(page, 'Version fiable', 'Texte réellement committé.');
+  const before = await storedTexts(page);
+  await holdNextTextWrite(page);
+  await page.locator('#document-body').fill('Texte dont la requête réussit avant annulation.');
+  await expect.poll(() => page.evaluate(() => (window as StorageTestWindow).__heldTextWrite.putSucceeded)).toBe(true);
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saving');
+  await page.evaluate(() => { (window as StorageTestWindow).__heldTextWrite.finish = 'abort'; });
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
+  expect(await storedTexts(page)).toEqual(before);
+  expect(await page.evaluate(() => (window as StorageTestWindow).__heldTextWrite))
+    .toEqual({ putSucceeded: true, completed: 0, aborted: 1, finish: 'abort' });
+  const latest = 'Nouvelle saisie conservée après l’échec, avant réessai explicite.';
+  await page.locator('#document-body').fill(latest);
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
+  expect(await storedTexts(page), 'Typing after the failure must not silently retry a paused autosave').toEqual(before);
+  await page.locator('#save-document').click();
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saved');
+  expect(await storedTexts(page)).toEqual([
+    expect.objectContaining({ id: before[0].id, body: latest, revision: before[0].revision + 1 }),
+  ]);
+});
+
 test('prepares the real service worker, then reloads and persists an edited draft offline', async ({ page, context }, testInfo) => {
   await openWorkspace(page);
   await prepareOffline(page);
   // A still-active SW is insufficient if the browser has evicted its cached assets.
-  await page.evaluate(() => caches.delete('purama-offline-v8'));
+  await page.evaluate(() => caches.delete('purama-offline-v10'));
   await page.reload();
   await expect(page.locator('#storage-status')).toHaveAttribute('data-state', 'ready');
   await expect(page.locator('#preparation-status')).toHaveAttribute('data-state', 'missing');
   await prepareOffline(page);
   await saveDraft(page, 'Carnet de terrain', 'Premier brouillon enregistré dans IndexedDB.');
   const [original] = await storedTexts(page);
-  expect(original).toMatchObject({ kind: 'draft', title: 'Carnet de terrain', revision: 1 });
+  expect(original).toMatchObject({ kind: 'draft', title: 'Carnet de terrain' });
+  expect(original.revision).toBeGreaterThanOrEqual(1);
+  expect(original.revision).toBeLessThanOrEqual(2);
 
   await context.setOffline(true);
   // Close actual transport too: some Chromium versions keep SW fetches online
@@ -209,7 +378,7 @@ test('prepares the real service worker, then reloads and persists an edited draf
   await openRecord(page, original.id);
   await expect(page.locator('#document-body')).toHaveValue('Modification réellement sauvegardée sans Internet.');
   expect(await storedTexts(page)).toEqual([
-    expect.objectContaining({ id: original.id, body: 'Modification réellement sauvegardée sans Internet.', revision: 2 }),
+    expect.objectContaining({ id: original.id, body: 'Modification réellement sauvegardée sans Internet.', revision: original.revision + 1 }),
   ]);
   await expect(page.getByRole('button', { name: /générer|demander.*IA|envoyer.*IA/i })).toHaveCount(0);
   await testInfo.attach('offline-transport-proof.json', {
@@ -278,8 +447,8 @@ test('preserves both conflicting versions across two tabs and never resurrects a
   await openWorkspace(other);
   await openRecord(other, original.id);
 
+  await fillUncommittedDraft(other, { body: 'Version du second onglet à conserver' });
   await page.locator('#document-body').fill('Version du premier onglet');
-  await other.locator('#document-body').fill('Version du second onglet à conserver');
   await page.locator('#save-document').click();
   await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'saved');
   // A DOM click does not move focus and therefore does not trigger a refresh first.
@@ -300,7 +469,7 @@ test('preserves both conflicting versions across two tabs and never resurrects a
 
   await other.locator('#refresh-library').click();
   await openRecord(other, original.id);
-  await other.locator('#document-body').fill('Édition devenue périmée après suppression');
+  await fillUncommittedDraft(other, { body: 'Édition devenue périmée après suppression' });
   page.once('dialog', (dialog) => void dialog.accept());
   await page.locator('#delete-document').click();
   await expect.poll(async () => (await storedTexts(page)).map((item) => item.id)).toEqual([copy.id]);
@@ -385,7 +554,7 @@ test('does not announce offline readiness when a required service-worker asset i
 
 async function cacheSnapshot(page: Page) {
   return page.evaluate(async () => {
-    const cache = await caches.open('purama-offline-v8');
+    const cache = await caches.open('purama-offline-v10');
     return Promise.all(['/offline.html', '/offline-workspace.js', '/offline-library-backup.js', '/manifest.json'].map(async (path) => {
       const response = await cache.match(path);
       return response ? {
@@ -446,7 +615,7 @@ test('rejects a bad HTTP 200 repair without replacing the last usable offline wo
   const result = await requestRepreparation(page);
   expect(result).toMatchObject({
     type: 'PURAMA_OFFLINE_STATUS',
-    version: 'purama-offline-v8',
+    version: 'purama-offline-v10',
     ready: true,
     refreshed: false,
   });
@@ -483,9 +652,8 @@ test('exports unsaved text as a real download and restores it offline in a separ
   await saveDraft(page, 'Journal enregistré', 'Dernière version enregistrée avant les modifications.');
   const [saved] = await storedTexts(page);
   const unsavedText = 'Texte modifié sans enregistrement.\n\nGenève → Frasne : été, forêt, français. 🧭\n<script>reste du texte brut</script>\nTabulation\tconservée.\n';
-  await page.locator('#document-title').fill('Voyage : Genève / Frasne ?');
-  await page.locator('#document-body').fill(unsavedText);
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await fillUncommittedDraft(page, { title: 'Voyage : Genève / Frasne ?', body: unsavedText });
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
 
   const downloaded = page.waitForEvent('download');
   await page.locator('#export-document').click();
@@ -498,7 +666,7 @@ test('exports unsaved text as a real download and restores it offline in a separ
   expect(download.suggestedFilename()).toMatch(/\.txt$/);
   expect(download.suggestedFilename()).not.toMatch(/[<>:"/\\|?*]/);
   expect([...download.suggestedFilename()].every((character) => character.charCodeAt(0) >= 32)).toBe(true);
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
   expect((await storedTexts(page)).find((record) => record.id === saved.id)?.body).toBe(saved.body);
 
   const restoredContext = await browser.newContext();
@@ -537,7 +705,7 @@ test('keeps the editor and committed record intact when UTF-8 or NUL-containing 
   await saveDraft(page, 'Texte précédent', 'Version déjà enregistrée.');
   const before = await storedTexts(page);
   const unsavedText = 'Modifications ouvertes à conserver même si le nouvel import échoue.';
-  await page.locator('#document-body').fill(unsavedText);
+  await fillUncommittedDraft(page, { body: unsavedText });
   const invalidFiles = [
     { name: 'utf8-invalide.txt', buffer: Buffer.from([0xc3, 0x28]) },
     { name: 'contient-nul.md', buffer: Buffer.from('Texte avant\0Texte après', 'utf8') },
@@ -550,7 +718,7 @@ test('keeps the editor and committed record intact when UTF-8 or NUL-containing 
     await expect(page.locator('#import-file')).toBeEnabled();
     await expect(page.locator('#document-title')).toHaveValue('Texte précédent');
     await expect(page.locator('#document-body')).toHaveValue(unsavedText);
-    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
     expect(await storedTexts(page)).toEqual(before);
   }
 });
@@ -637,9 +805,8 @@ test('backs up every saved text and restores the library offline in a fresh prof
   const before = await storedTexts(page);
   const selected = before.find((record) => record.title === 'Carnet repère-bleu')!;
   await openRecord(page, selected.id);
-  await page.locator('#document-title').fill('Titre ouvert non enregistré');
   const dirtyBody = 'Modifications ouvertes qui ne font pas partie de la sauvegarde des textes enregistrés.';
-  await page.locator('#document-body').fill(dirtyBody);
+  await fillUncommittedDraft(page, { title: 'Titre ouvert non enregistré', body: dirtyBody });
   await page.locator('#search-input').fill('repère-bleu');
   await expect(page.locator('#document-list button[data-record-id]')).toHaveCount(1);
 
@@ -653,7 +820,7 @@ test('backs up every saved text and restores the library offline in a fresh prof
   expect(exported.archive.records.some((record) => record.kind === 'document' && record.sourceName === 'notes-terrain.md')).toBe(true);
   await expect(page.locator('#document-title')).toHaveValue('Titre ouvert non enregistré');
   await expect(page.locator('#document-body')).toHaveValue(dirtyBody);
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
   expect(await storedTexts(page)).toEqual(before);
 
   const restoredContext = await browser.newContext();
@@ -669,8 +836,10 @@ test('backs up every saved text and restores the library offline in a fresh prof
     const response = await restored.reload();
     expect(response?.fromServiceWorker()).toBe(true);
     await expect(restored.locator('#storage-status')).toHaveAttribute('data-state', 'ready');
-    await restored.locator('#document-title').fill('Brouillon ouvert dans le nouveau profil');
-    await restored.locator('#document-body').fill('Ne pas remplacer cet éditeur pendant la restauration.');
+    await fillUncommittedDraft(restored, {
+      title: 'Brouillon ouvert dans le nouveau profil',
+      body: 'Ne pas remplacer cet éditeur pendant la restauration.',
+    });
     await previewLibrary(restored, exported.bytes);
     expect(await storedTexts(restored), 'Preview must not commit a single record').toEqual([]);
     await expect(restored.locator('#document-body')).toHaveValue('Ne pas remplacer cet éditeur pendant la restauration.');
@@ -680,7 +849,7 @@ test('backs up every saved text and restores the library offline in a fresh prof
       .toEqual(before.map(portableText).sort((a, b) => a.id.localeCompare(b.id)));
     await expect(restored.locator('#document-title')).toHaveValue('Brouillon ouvert dans le nouveau profil');
     await expect(restored.locator('#document-body')).toHaveValue('Ne pas remplacer cet éditeur pendant la restauration.');
-    await expect(restored.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+    await expect(restored.locator('#save-status')).toHaveAttribute('data-state', 'error');
     await testInfo.attach('offline-library-restoration.json', {
       body: Buffer.from(JSON.stringify({
         exportedRecords: exported.archive.records.length,
@@ -724,7 +893,10 @@ test('restores distinct IDs idempotently after editing and accepts a clock rollb
   await openRecord(page, first.id);
   await saveDraft(page, 'Premier exemplaire modifié', 'Version modifiée après la première restauration.');
   const afterEdit = await storedTexts(page);
-  expect(afterEdit.find((record) => record.id === first.id)).toMatchObject({ revision: 8, body: 'Version modifiée après la première restauration.' });
+  const editedFirst = afterEdit.find((record) => record.id === first.id)!;
+  expect(editedFirst).toMatchObject({ title: 'Premier exemplaire modifié', body: 'Version modifiée après la première restauration.' });
+  expect(editedFirst.revision).toBeGreaterThan(first.revision);
+  expect(editedFirst.revision).toBeLessThanOrEqual(first.revision + 2);
   await previewLibrary(page, bytes);
   await confirmLibrary(page);
   expect(await storedTexts(page)).toEqual(afterEdit);
@@ -752,7 +924,7 @@ test('preserves both versions on an ID conflict and never recreates an edited im
     body: 'Version différente conservée dans la sauvegarde.', revision: 12,
   };
   const bytes = libraryBytes([conflicting]);
-  await page.locator('#document-body').fill('Édition locale non enregistrée pendant la restauration.');
+  await fillUncommittedDraft(page, { body: 'Édition locale non enregistrée pendant la restauration.' });
   await previewLibrary(page, bytes);
   expect(await storedTexts(page)).toEqual([original]);
   await confirmLibrary(page);
@@ -765,7 +937,7 @@ test('preserves both versions on an ID conflict and never recreates an edited im
   expect(copy.title).toMatch(/ — restauré$/);
   expect(copy.title.length).toBeLessThanOrEqual(160);
   await expect(page.locator('#document-body')).toHaveValue('Édition locale non enregistrée pendant la restauration.');
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
   page.once('dialog', (dialog) => void dialog.accept());
   await openRecord(page, copy.id);
   await saveDraft(page, 'Copie restaurée puis éditée', 'La copie a maintenant ses propres modifications.');
@@ -780,8 +952,9 @@ test('cancels a validated library preview without writing or changing a dirty ed
   await openWorkspace(page);
   await saveDraft(page, 'Texte déjà présent', 'Version durable avant prévisualisation.');
   const before = await storedTexts(page);
-  await page.locator('#document-title').fill('Titre encore non enregistré');
-  await page.locator('#document-body').fill('Brouillon sale à conserver après annulation.');
+  await fillUncommittedDraft(page, {
+    title: 'Titre encore non enregistré', body: 'Brouillon sale à conserver après annulation.',
+  });
   await previewLibrary(page, libraryBytes([
     archiveRecord('c30b0496-b7e5-4fab-94ea-333333333333'),
   ]));
@@ -792,7 +965,7 @@ test('cancels a validated library preview without writing or changing a dirty ed
   expect(await storedTexts(page)).toEqual(before);
   await expect(page.locator('#document-title')).toHaveValue('Titre encore non enregistré');
   await expect(page.locator('#document-body')).toHaveValue('Brouillon sale à conserver après annulation.');
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
 });
 
 
@@ -800,8 +973,7 @@ test('rejects malformed libraries entirely without any write or dirty-editor rep
   await openWorkspace(page);
   await saveDraft(page, 'Base locale', 'Contenu déjà validé dans ce navigateur.');
   const before = await storedTexts(page);
-  await page.locator('#document-title').fill('Titre ouvert à garder');
-  await page.locator('#document-body').fill('Modifications non enregistrées à garder.');
+  await fillUncommittedDraft(page, { title: 'Titre ouvert à garder', body: 'Modifications non enregistrées à garder.' });
   const valid = archiveRecord('d40b0496-b7e5-4fab-94ea-444444444444');
   const validEnvelope = JSON.parse(libraryBytes([valid]).toString('utf8')) as LibraryArchive;
   const malformedParts = libraryBytes([{ ...valid, body: 'BAD_UTF8' }]).toString('utf8').split('BAD_UTF8');
@@ -842,7 +1014,7 @@ test('rejects malformed libraries entirely without any write or dirty-editor rep
     await expect(page.locator('#restore-preview')).toBeHidden();
     await expect(page.locator('#document-title')).toHaveValue('Titre ouvert à garder');
     await expect(page.locator('#document-body')).toHaveValue('Modifications non enregistrées à garder.');
-    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
     expect(await storedTexts(page), file.name).toEqual(before);
   }
   expect(await page.evaluate(() => (window as unknown as Record<string, unknown>).__invalidLibraryAudit))
@@ -854,8 +1026,9 @@ for (const failure of ['quota-on-second-add', 'abort-after-second-add-success'] 
     await openWorkspace(page);
     await saveDraft(page, 'Dernier état durable', 'Le lot échoué ne doit pas toucher cette version.');
     const before = await storedTexts(page);
-    await page.locator('#document-title').fill('Titre non enregistré avant incident');
-    await page.locator('#document-body').fill('Brouillon conservé pendant et après incident.');
+    await fillUncommittedDraft(page, {
+      title: 'Titre non enregistré avant incident', body: 'Brouillon conservé pendant et après incident.',
+    });
     const bytes = libraryBytes([
       archiveRecord('e50b0496-b7e5-4fab-94ea-555555555555', { title: 'Premier ajout du lot' }),
       archiveRecord('f60b0496-b7e5-4fab-94ea-666666666666', { title: 'Deuxième ajout du lot' }),
@@ -924,7 +1097,7 @@ for (const failure of ['quota-on-second-add', 'abort-after-second-add-success'] 
     if (failure === 'abort-after-second-add-success') expect(audit).toMatchObject({ addSuccesses: 2 });
     await expect(page.locator('#document-title')).toHaveValue('Titre non enregistré avant incident');
     await expect(page.locator('#document-body')).toHaveValue('Brouillon conservé pendant et après incident.');
-    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
 
     // Recovery must be possible without a reload or losing the dirty editor.
     await page.evaluate(() => {
@@ -934,7 +1107,7 @@ for (const failure of ['quota-on-second-add', 'abort-after-second-add-success'] 
     await confirmLibrary(page);
     expect(await storedTexts(page)).toHaveLength(before.length + 2);
     await expect(page.locator('#document-body')).toHaveValue('Brouillon conservé pendant et après incident.');
-    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+    await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
   });
 }
 
@@ -1190,7 +1363,7 @@ test('local speech: explicitly selects an installed French local voice for an un
   await openWorkspace(page);
   expect(await page.evaluate(() => window.__puramaLocalSpeechTest.calls)).toEqual([]);
   const body = '  Brouillon non enregistré : bonjour, Matiss.\n';
-  await page.locator('#document-body').fill(body);
+  await fillUncommittedDraft(page, { body });
   await prepareOffline(page);
   dropNetwork = true;
   await context.setOffline(true);
@@ -1201,7 +1374,7 @@ test('local speech: explicitly selects an installed French local voice for an un
   expect(await storedTexts(page)).toEqual([]);
   await page.evaluate(() => window.__puramaLocalSpeechTest.emit(0, 'end'));
   await expect(page.locator('#speech-status')).toHaveAttribute('data-state', 'complete');
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
 });
 
 test('local speech: reacts to late voices and stops when the selected local voice disappears', async ({ page }) => {
@@ -1473,7 +1646,7 @@ test('text integrity: a conflict copy preserves a complete Unicode title and bot
   const other = await context.newPage();
   await openWorkspace(other);
   await openRecord(other, original.id);
-  await page.locator('#document-body').fill('Mon brouillon à préserver.');
+  await fillUncommittedDraft(page, { body: 'Mon brouillon à préserver.' });
   await other.locator('#document-body').fill('Version concurrente à conserver.');
   await other.locator('#save-document').click();
   await expect(other.locator('#save-status')).toHaveAttribute('data-state', 'saved');
@@ -1492,8 +1665,7 @@ test('text integrity: exporting a Unicode filename preserves the unsaved title a
   await openWorkspace(page);
   const title = 'a'.repeat(79) + '😀';
   const body = 'Texte non enregistré.\nÉté, famille 👨‍👩‍👧‍👦, e\u0301.\n';
-  await page.locator('#document-title').fill(title);
-  await page.locator('#document-body').fill(body);
+  await fillUncommittedDraft(page, { title, body });
   const pending = page.waitForEvent('download');
   await page.locator('#export-document').click();
   const download = await pending;
@@ -1504,7 +1676,7 @@ test('text integrity: exporting a Unicode filename preserves the unsaved title a
   expect(await readFile(path)).toEqual(Buffer.from(body, 'utf8'));
   await expect(page.locator('#document-title')).toHaveValue(title);
   await expect(page.locator('#document-body')).toHaveValue(body);
-  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+  await expect(page.locator('#save-status')).toHaveAttribute('data-state', 'error');
   expect(await storedTexts(page)).toEqual([]);
 });
 
@@ -1520,7 +1692,7 @@ for (const action of ['save', 'delete', 'refresh'] as const) {
       await openWorkspace(stale);
       await openRecord(stale, original.id);
       const draft = 'Brouillon ouvert à ne jamais perdre.';
-      await stale.locator('#document-body').fill(draft);
+      await fillUncommittedDraft(stale, { body: draft });
       page.once('dialog', (dialog) => void dialog.accept());
       await page.locator('#delete-document').click();
       await expect.poll(async () => (await storedTexts(page)).length).toBe(0);
@@ -1532,7 +1704,7 @@ for (const action of ['save', 'delete', 'refresh'] as const) {
       expect(restored).toMatchObject(incoming);
       expect(restored.restoreKey).toMatch(/^[a-f0-9]{64}$/);
       // Do not move focus: exercise the real handler and final IndexedDB guard first.
-      await expect(stale.locator('#save-status')).toHaveAttribute('data-state', 'unsaved');
+      await expect(stale.locator('#save-status')).toHaveAttribute('data-state', 'error');
       if (action === 'delete') stale.once('dialog', (dialog) => void dialog.accept());
       const control = action === 'save' ? '#save-document' : action === 'delete' ? '#delete-document' : '#refresh-library';
       await stale.locator(control).evaluate((button: HTMLButtonElement) => button.click());

@@ -148,7 +148,7 @@
     <section class="intro" aria-labelledby="page-title">
       <span class="eyebrow">Votre espace local</span>
       <h1 id="page-title">Gardez le fil, même sans Internet.</h1>
-      <p>Écrivez un brouillon, retrouvez vos textes et ouvrez vos documents .txt ou .md sur cet appareil. Préparez d’abord cet espace pour pouvoir le rouvrir sans connexion et sans Mac.</p>
+      <p>Écrivez un brouillon, retrouvez vos textes et ouvrez vos documents .txt ou .md sur cet appareil. Vos modifications s’enregistrent automatiquement dans ce navigateur. Préparez d’abord cet espace pour pouvoir le rouvrir sans connexion et sans Mac.</p>
       <p class="hint"><strong>La génération IA n’est pas disponible dans cet espace.</strong> La rédaction, la recherche et l’export utilisent des fonctions locales.</p>
     </section>
 
@@ -200,7 +200,7 @@
           <label for="document-body">Texte</label>
           <textarea id="document-body" data-testid="document-body" rows="15" placeholder="Vos idées, vos notes, votre prochain projet…" aria-describedby="editor-hint character-count" dir="auto" spellcheck="true"></textarea>
           <div class="editor-meta">
-            <p id="editor-hint" class="hint">Enregistrement manuel · 1 Mio maximum par texte</p>
+            <p id="editor-hint" class="hint">Enregistrement automatique sur cet appareil · 1 Mio maximum par texte</p>
             <p id="character-count" class="hint">0 caractère · texte brut</p>
           </div>
         </div>
@@ -211,6 +211,7 @@
           <button id="reload-document" data-testid="reload-document" type="button" hidden>Recharger la version enregistrée</button>
         </div>
         <p id="save-status" data-testid="save-status" data-state="unsaved" role="status" aria-live="polite" aria-atomic="true">Nouveau brouillon — pas encore enregistré.</p>
+        <p class="hint">Attendez la confirmation d’enregistrement avant de fermer. En cas de stockage plein ou de conflit, votre saisie reste dans l’éditeur : enregistrez une copie ou exportez-la. Vos textes enregistrés restent disponibles au prochain démarrage.</p>
         <section class="local-speech" aria-labelledby="speech-heading">
           <h2 id="speech-heading">Écouter mon texte</h2>
           <p id="speech-hint" class="hint">Lecture du texte ouvert, même non enregistré, avec une voix française déclarée locale par le navigateur. Aucune voix distante en repli. La lecture s’arrête si vous modifiez le texte ou changez de document.</p>
@@ -228,7 +229,7 @@
 
     <section class="panel backup" aria-labelledby="backup-heading">
       <h2 id="backup-heading">Sauvegarder et retrouver mes textes</h2>
-      <p id="backup-hint" class="hint">La sauvegarde contient tous les textes enregistrés dans ce navigateur, même ceux masqués par une recherche. Enregistrez ou exportez séparément les modifications encore ouvertes dans l’éditeur.</p>
+      <p id="backup-hint" class="hint">La sauvegarde contient tous les textes dont l’enregistrement a été confirmé dans ce navigateur, même ceux masqués par une recherche. Si une erreur empêche l’enregistrement automatique, exportez séparément les modifications encore ouvertes dans l’éditeur.</p>
       <div class="backup-actions">
         <button id="backup-library" data-testid="backup-library" type="button" aria-describedby="backup-hint" disabled>Télécharger la sauvegarde</button>
         <div class="import-field">

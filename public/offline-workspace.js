@@ -7,7 +7,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   const DB_NAME = 'purama-offline-workspace';
   const DB_VERSION = 1;
   const STORE_NAME = 'texts';
-  const CACHE_NAME = 'purama-offline-v8';
+  const CACHE_NAME = 'purama-offline-v10';
   const MAX_TEXT_BYTES = 1024 * 1024;
   const REQUIRED_ASSETS = ['/offline.html', '/offline-workspace.js', '/offline-library-backup.js', '/manifest.json'];
   const byId = (id) => document.getElementById(id);
@@ -26,7 +26,9 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   const state = {
     db: null, current: null, snapshot: { title: '', body: '' },
     dirty: false, busy: false, conflict: null, records: [], pendingRestore: null,
-    listRequest: 0, refreshPending: false, opening: null, preparing: false, preparationCheck: 0,
+    listRequest: 0, latestReadRequest: 0, refreshPending: false, opening: null, preparing: false, preparationCheck: 0,
+    saving: false, autosaveQueued: false, autosavePaused: false,
+    interacted: false, resumeChecked: false, listRenderTimer: null, externalRefreshTimer: null,
   };
   const encoder = new TextEncoder();
   let channel = null;
@@ -72,26 +74,27 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
 
   function updateControls() {
     const editable = !state.busy;
+    const movable = editable && !state.saving;
     ui['document-title'].disabled = !editable;
     ui['document-body'].disabled = !editable;
-    ui['new-draft'].disabled = !editable;
-    ui['import-file'].disabled = !editable;
-    ui['save-document'].disabled = !editable || !state.db || Boolean(state.conflict);
+    ui['new-draft'].disabled = !movable;
+    ui['import-file'].disabled = !movable;
+    ui['save-document'].disabled = !movable || !state.db || Boolean(state.conflict);
     ui['save-copy'].hidden = !state.conflict;
-    ui['save-copy'].disabled = !editable || !state.db;
+    ui['save-copy'].disabled = !movable || !state.db;
     ui['reload-document'].hidden = !state.conflict;
-    ui['reload-document'].disabled = !editable || !state.db;
-    ui['delete-document'].disabled = !editable || !state.db || !state.current;
+    ui['reload-document'].disabled = !movable || !state.db;
+    ui['delete-document'].disabled = !movable || !state.db || !state.current;
     ui['export-document'].disabled = !editable;
-    ui['refresh-library'].disabled = !editable;
-    ui['backup-library'].disabled = !editable || !state.db;
-    ui['restore-file'].disabled = !editable;
-    ui['confirm-restore'].disabled = !editable || !state.db || !state.pendingRestore;
-    ui['cancel-restore'].disabled = !editable;
+    ui['refresh-library'].disabled = !movable;
+    ui['backup-library'].disabled = !movable || !state.db;
+    ui['restore-file'].disabled = !movable;
+    ui['confirm-restore'].disabled = !movable || !state.db || !state.pendingRestore;
+    ui['cancel-restore'].disabled = !movable;
     ui['speak-text'].disabled = !editable || !speech.voice || Boolean(speech.run) || speech.stopUnconfirmed || !ui['document-body'].value.length;
     ui['stop-speech'].disabled = !speech.run && !speech.stopUnconfirmed;
     ui['stop-speech'].textContent = speech.stopUnconfirmed ? 'Réessayer l’arrêt' : 'Arrêter la lecture';
-    for (const button of ui['document-list'].querySelectorAll('button')) button.disabled = !editable;
+    for (const button of ui['document-list'].querySelectorAll('button')) button.disabled = !movable;
     ui['character-count'].textContent = `${ui['document-body'].value.length.toLocaleString('fr-FR')} caractères · texte brut`;
   }
 
@@ -99,21 +102,59 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
     state.busy = busy;
     updateControls();
     if (!busy && state.refreshPending) {
-      state.refreshPending = false;
-      void refreshLibrary();
+      queueLibraryRefresh();
     }
+    if (!busy) scheduleAutosave();
   }
 
   function updateDirty() {
+    state.interacted = true;
     stopLocalSpeech('Lecture arrêtée : le texte ouvert a été modifié.');
     state.dirty = ui['document-title'].value !== state.snapshot.title
       || ui['document-body'].value !== state.snapshot.body;
-    if (!state.conflict) {
-      status('save-status', state.dirty ? 'unsaved' : (state.current ? 'saved' : 'unsaved'),
-        state.dirty ? 'Modifications non enregistrées.'
+    if (!state.conflict && !state.autosavePaused) {
+      status('save-status', state.saving ? 'saving' : state.dirty ? 'unsaved' : (state.current ? 'saved' : 'unsaved'),
+        state.saving ? 'Enregistrement en cours…'
+          : state.dirty ? 'Modifications en attente de l’enregistrement automatique.'
           : (state.current ? 'Version enregistrée dans ce navigateur.' : 'Nouveau brouillon — pas encore enregistré.'));
     }
     updateControls();
+    scheduleAutosave();
+  }
+
+  // Coalesce input events in this task only, without a timer that could leave a
+  // quiet draft unsaved. Writes are serial; further typing stays editable and is
+  // captured by the next transaction. A failed write needs an explicit retry.
+  function scheduleAutosave() {
+    if (state.autosaveQueued || state.saving || state.busy || !state.db
+      || !state.dirty || state.conflict || state.autosavePaused) return;
+    state.autosaveQueued = true;
+    queueMicrotask(() => {
+      state.autosaveQueued = false;
+      void saveCurrent(false, true);
+    });
+  }
+
+  // Persistence is immediate; only list painting and cross-tab reads are
+  // coalesced. Typing must not reread every saved document on every keystroke.
+  function scheduleLibraryRender() {
+    if (state.listRenderTimer !== null) return;
+    state.listRenderTimer = setTimeout(() => {
+      state.listRenderTimer = null;
+      state.records.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.id.localeCompare(b.id));
+      renderLibrary();
+    }, 100);
+  }
+
+  function queueLibraryRefresh() {
+    state.refreshPending = true;
+    if (state.externalRefreshTimer !== null) return;
+    state.externalRefreshTimer = setTimeout(() => {
+      state.externalRefreshTimer = null;
+      if (state.busy || state.saving) return;
+      state.refreshPending = false;
+      void refreshLibrary();
+    }, 100);
   }
 
   function discardAllowed() {
@@ -138,6 +179,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
     stopLocalSpeech('Lecture arrêtée : le contenu de l’éditeur a changé.');
     state.current = record;
     state.conflict = null;
+    state.autosavePaused = false;
     ui['document-title'].value = record ? record.title : '';
     ui['document-body'].value = record ? record.body : '';
     state.snapshot = { title: ui['document-title'].value, body: ui['document-body'].value };
@@ -216,6 +258,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
         status('storage-status', 'ready', 'Enregistrement local disponible dans ce navigateur.');
         updateControls();
         await refreshLibrary();
+        scheduleAutosave();
         return true;
       } catch (error) {
         status('storage-status', 'error', describeStorageError(error));
@@ -268,16 +311,32 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
 
   async function refreshLibrary() {
     if (!state.db) { renderLibrary(); return; }
+    if (state.saving) { queueLibraryRefresh(); return; }
     const requestNumber = ++state.listRequest;
+    state.latestReadRequest = requestNumber;
     try {
       const rows = await transaction('readonly', (store, done) => {
         const request = store.getAll();
         request.onsuccess = () => done(request.result);
       });
-      if (requestNumber !== state.listRequest) return;
+      if (requestNumber !== state.listRequest) {
+        // A newer read already owns recovery. Only a write invalidation without
+        // a replacement read needs another refresh; slow reads must not form a
+        // self-sustaining chain that invalidates each other every 100 ms.
+        if (state.latestReadRequest === requestNumber) queueLibraryRefresh();
+        return;
+      }
       state.records = rows.filter(validRecord).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.id.localeCompare(b.id));
+      if (!state.resumeChecked) {
+        state.resumeChecked = true;
+        // Only an accepted read may complete initial recovery. Never overwrite
+        // typing, including input deliberately erased while storage opens.
+        if (!state.interacted && !state.current && !state.dirty && state.records.length) {
+          loadIntoEditor(state.records[0]);
+        }
+      }
       if (rows.length !== state.records.length) showError('Certains éléments du stockage sont illisibles et ne sont pas affichés. Aucun élément n’a été supprimé.');
-      if (state.current && !state.busy) {
+      if (state.current && !state.busy && !state.saving) {
         const current = state.records.find((record) => record.id === state.current.id);
         if (!sameStoredVersion(current, state.current)) {
           state.conflict = new ConflictError(!current);
@@ -291,7 +350,8 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   }
 
   async function openRecord(id, allowMissing = false) {
-    if (state.busy || !discardAllowed()) return;
+    if (state.busy || state.saving || !discardAllowed()) return;
+    state.interacted = true;
     clearError();
     setBusy(true);
     try {
@@ -320,18 +380,36 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
     try { if (channel) channel.postMessage({ type: 'changed' }); } catch (_) { /* Other tabs also refresh on focus. */ }
   }
 
-  async function saveCurrent(asCopy = false) {
-    if (state.busy || !state.db) return;
-    clearError();
+  async function saveCurrent(asCopy = false, automatic = false) {
+    if (state.busy || state.saving || !state.db) return;
+    if (automatic && (!state.dirty || state.conflict || state.autosavePaused)) return;
+    if (!asCopy && state.conflict) return;
+    if (!asCopy && !state.dirty && state.current) {
+      if (!automatic && state.autosavePaused) {
+        state.autosavePaused = false;
+        clearError();
+        await refreshLibrary();
+        if (state.current && !state.dirty && !state.conflict && !state.saving) {
+          status('save-status', 'saved', 'Version enregistrée dans ce navigateur.');
+        }
+      }
+      return;
+    }
+    const titleInput = ui['document-title'].value;
     const body = ui['document-body'].value;
+    // Opening or clearing a fresh editor is not a new document.
+    if (!state.current && !titleInput.trim() && !body) return;
+    if (!automatic) state.autosavePaused = false;
+    clearError();
     if (encoder.encode(body).byteLength > MAX_TEXT_BYTES) {
+      state.autosavePaused = true;
       showError('Ce texte dépasse la limite de 1 Mio. Exportez-le, puis répartissez-le en plusieurs textes pour l’enregistrer ici.');
       status('save-status', 'error', 'Texte trop volumineux — non enregistré.');
       return;
     }
     const previous = asCopy ? null : state.current;
     const now = new Date().toISOString();
-    let title = truncateText(ui['document-title'].value.trim(), 160) || 'Sans titre';
+    let title = truncateText(titleInput.trim(), 160) || 'Sans titre';
     if (asCopy) title = `${truncateText(title, 150)} — copie`;
     let record;
     try {
@@ -346,9 +424,19 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
       // Editing an imported version must not make the same backup duplicate it.
       if (previous && /^[a-f0-9]{64}$/.test(previous.restoreKey || '')) record.restoreKey = previous.restoreKey;
       if (!Number.isSafeInteger(record.revision)) throw new Error('Revision limit reached');
-    } catch (error) { showError(describeStorageError(error)); return; }
-    setBusy(true);
+    } catch (error) {
+      state.autosavePaused = true;
+      status('save-status', 'error', 'Enregistrement non confirmé. Réessayez avec « Enregistrer » ou exportez votre texte.');
+      showError(describeStorageError(error)); return;
+    }
+    state.saving = true;
+    // Invalidate list reads started before this write. Their old snapshot must
+    // not be mistaken for a conflicting update after our transaction commits.
+    state.listRequest += 1;
+    if (!automatic) setBusy(true);
+    else updateControls();
     status('save-status', 'saving', 'Enregistrement en cours…');
+    let committed = false;
     try {
       await transaction('readwrite', (store, done, abort) => {
         const request = store.get(record.id);
@@ -364,22 +452,45 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
           } catch (error) { abort(error); }
         };
       });
-      loadIntoEditor(record);
-      status('save-status', 'saved', 'Enregistré dans ce navigateur. Exportez une copie pour votre sauvegarde.');
+      if (automatic) {
+        // A completed put request is insufficient: transaction() only resolves
+        // after commit. Never replace the live fields or their caret here.
+        state.current = record;
+        state.snapshot = { title: titleInput, body };
+        state.dirty = ui['document-title'].value !== titleInput || ui['document-body'].value !== body;
+        state.records = state.records.filter((entry) => entry.id !== record.id);
+        state.records.push(record);
+        scheduleLibraryRender();
+        status('save-status', state.dirty ? 'unsaved' : 'saved', state.dirty
+          ? 'Dernière version enregistrée. Enregistrement des nouvelles modifications en cours…'
+          : 'Enregistré automatiquement dans ce navigateur.');
+      } else {
+        loadIntoEditor(record);
+        status('save-status', 'saved', 'Enregistré dans ce navigateur. Exportez une copie pour votre sauvegarde.');
+      }
+      committed = true;
       broadcastChange();
     } catch (error) {
+      state.autosavePaused = true;
       if (error.name === 'ConflictError') {
         state.conflict = error;
         status('save-status', 'conflict', error.message);
       } else {
-        status('save-status', 'error', 'Enregistrement non confirmé. Votre texte reste dans l’éditeur.');
+        status('save-status', 'error', 'Enregistrement non confirmé. Votre texte reste dans l’éditeur. Réessayez avec « Enregistrer » ou exportez-le.');
         showError(describeStorageError(error));
       }
-    } finally { setBusy(false); await refreshLibrary(); }
+    } finally {
+      state.saving = false;
+      if (!automatic) setBusy(false);
+      else updateControls();
+      scheduleAutosave();
+      if (!automatic) await refreshLibrary();
+      else if (!committed || state.refreshPending) queueLibraryRefresh();
+    }
   }
 
   async function deleteCurrent() {
-    if (state.busy || !state.db || !state.current) return;
+    if (state.busy || state.saving || !state.db || !state.current) return;
     const previous = state.current;
     if (!window.confirm(`Supprimer « ${previous.title} » de ce navigateur ? Les modifications ouvertes seront abandonnées. Exportez une copie avant de supprimer si vous souhaitez la conserver.`)) return;
     clearError();
@@ -412,7 +523,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   }
 
   async function importText(file) {
-    if (!file || state.busy || !discardAllowed()) return;
+    if (!file || state.busy || state.saving || !discardAllowed()) return;
     clearError();
     if (!/\.(txt|md)$/i.test(file.name)) { showError('Choisissez un fichier .txt ou .md encodé en UTF-8.'); return; }
     if (file.size > MAX_TEXT_BYTES) { showError('Ce fichier dépasse la limite de 1 Mio. Aucun document n’a été importé.'); return; }
@@ -472,7 +583,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   }
 
   async function backupLibrary() {
-    if (state.busy || !state.db) return;
+    if (state.busy || state.saving || !state.db) return;
     clearError();
     setBusy(true);
     status('backup-status', 'preparing', 'Préparation de la sauvegarde des textes enregistrés…');
@@ -517,7 +628,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   }
 
   async function selectBackup(file) {
-    if (!file || state.busy) return;
+    if (!file || state.busy || state.saving) return;
     clearError();
     clearRestorePreview();
     setBusy(true);
@@ -541,7 +652,7 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   }
 
   async function restoreLibrary() {
-    if (state.busy || !state.db || !state.pendingRestore) return;
+    if (state.busy || state.saving || !state.db || !state.pendingRestore) return;
     const preparedRecords = state.pendingRestore;
     clearError();
     setBusy(true);
@@ -876,7 +987,10 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
 
   ui['speak-text'].addEventListener('click', startLocalSpeech);
   ui['stop-speech'].addEventListener('click', () => stopLocalSpeech());
-  window.addEventListener('pagehide', () => stopLocalSpeech());
+  window.addEventListener('pagehide', () => {
+    stopLocalSpeech();
+    void saveCurrent(false, true);
+  });
   ui['document-title'].addEventListener('input', updateDirty);
   ui['document-body'].addEventListener('input', updateDirty);
   ui['save-document'].addEventListener('click', () => { void saveCurrent(); });
@@ -899,7 +1013,8 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
   });
   ui['prepare-offline'].addEventListener('click', () => { void prepareOffline(); });
   ui['new-draft'].addEventListener('click', () => {
-    if (!discardAllowed()) return;
+    if (state.busy || state.saving || !discardAllowed()) return;
+    state.interacted = true;
     clearError();
     loadIntoEditor();
     ui['document-kind'].dataset.kind = 'draft';
@@ -918,16 +1033,18 @@ import { MAX_BACKUP_BYTES, MAX_BACKUP_RECORDS, serializeBackup, parseBackup, pre
     if (await initialiseStorage()) await refreshLibrary();
   });
   window.addEventListener('beforeunload', (event) => {
-    if (!state.dirty && !state.busy) return;
+    if (!state.dirty && !state.busy && !state.saving) return;
     event.preventDefault();
     event.returnValue = '';
   });
   const externalRefresh = () => {
-    if (state.busy) state.refreshPending = true;
-    else void refreshLibrary();
+    queueLibraryRefresh();
   };
   window.addEventListener('focus', externalRefresh);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) externalRefresh(); });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) externalRefresh();
+    else void saveCurrent(false, true);
+  });
   try {
     if ('BroadcastChannel' in window) {
       channel = new BroadcastChannel('purama-offline-workspace-updates');
