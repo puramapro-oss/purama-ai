@@ -1,0 +1,70 @@
+{
+  "status": "ambiguous",
+  "message": "Found 2 symbols matching 'executionBudgetMs'. Blast radius differs per candidate (max 2 impacted at risk UNKNOWN; LOW among the candidates that resolved, and at least one could not be walked). Disambiguate with target_uid (or file_path/kind) for a single authoritative result.",
+  "target": {
+    "name": "executionBudgetMs"
+  },
+  "direction": "upstream",
+  "totalCandidates": 2,
+  "impactedCount": null,
+  "risk": "UNKNOWN",
+  "maxImpactedCount": 2,
+  "maxRisk": "UNKNOWN",
+  "knownMaxRisk": "LOW",
+  "candidates": [
+    {
+      "uid": "Method:karta/src/iao/iaoFacade.ts:KartaIaoPort.executionBudgetMs#1",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/src/iao/iaoFacade.ts",
+      "line": 55,
+      "score": 0.94,
+      "impactedCount": 2,
+      "risk": "LOW",
+      "riskSharedAxes": "LOW",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 2
+    },
+    {
+      "uid": "Method:karta/src/iao/iaoFacade.ts:IaoFacade.executionBudgetMs#1",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/src/iao/iaoFacade.ts",
+      "line": 116,
+      "score": 0.94,
+      "impactedCount": 0,
+      "risk": "UNKNOWN",
+      "riskSharedAxes": "UNKNOWN",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 0,
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    }
+  ]
+}
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795446772826,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

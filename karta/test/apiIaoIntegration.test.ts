@@ -118,3 +118,212 @@ it.each(["IAO", "approval"])("drains an admitted %s after its client disconnects
   expect(await stopped).toBe(true);
   expect(closeQueue).toHaveBeenCalledOnce();
 });
+
+it.each(["lookup", "cancel"] as const)("preserves authenticated IAO %s after dependency readiness is lost", async operation => {
+  let available = true;
+  let entered!: () => void;
+  let settle!: (result: KartaIaoResult) => void;
+  let workSignal: AbortSignal | undefined;
+  const admitted = new Promise<void>(resolve => { entered = resolve; });
+  const prepare = vi.fn((_request, signal?: AbortSignal) => {
+    workSignal = signal;
+    entered();
+    return new Promise<KartaIaoResult>(resolve => { settle = resolve; });
+  });
+  const facade = new IaoFacade({ prepare });
+  const authenticate = vi.fn(async () => identity());
+  const probe = vi.fn(async (): Promise<RuntimeReadiness> => ({ ready: available, phase: "ready" }));
+  const server = await listen({ authenticator: { authenticate }, facade }, probe);
+  const submitted = call(server, "/iao/requests", "POST", body);
+  await admitted;
+  available = false;
+  probe.mockClear();
+  try {
+    const result = operation === "lookup"
+      ? await call(server, "/iao/requests/" + id)
+      : await call(server, "/iao/requests/" + id + "/cancel", "POST");
+    expect(result).toMatchObject({ status: 200, cache: "no-store", body: { status: operation === "lookup" ? "draft" : "cancelled" } });
+    expect(probe).not.toHaveBeenCalled();
+    expect(authenticate).toHaveBeenCalledTimes(2);
+    expect(prepare).toHaveBeenCalledOnce();
+    expect(workSignal?.aborted).toBe(operation === "cancel");
+  } finally {
+    settle({ kind: "accepted", preview: "settled" });
+    await submitted;
+  }
+  available = true;
+  expect(await call(server, "/iao/requests", "POST", body)).toMatchObject({
+    status: 202, body: { status: operation === "lookup" ? "partial" : "cancelled" },
+  });
+  expect(prepare).toHaveBeenCalledOnce();
+});
+
+it.each(["unavailable", "rejecting"] as const)("refuses new IAO work while readiness is %s and admits it after recovery", async mode => {
+  let recovered = false;
+  const authenticate = vi.fn(async () => identity());
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "ready" }));
+  const facade = new IaoFacade({ prepare });
+  const probe = async (): Promise<RuntimeReadiness> => {
+    if (!recovered && mode === "rejecting") throw new Error("PRIVATE_READINESS_FAILURE");
+    return { ready: recovered, phase: "ready" };
+  };
+  const server = await listen({ authenticator: { authenticate }, facade }, probe);
+  for (const path of ["/iao/requests", "/pura/requests"]) {
+    expect(await call(server, path, "POST", body)).toEqual({ status: 503, cache: "no-store", body: { error: "IAO runtime unavailable" } });
+  }
+  expect(authenticate).not.toHaveBeenCalled();
+  expect(prepare).not.toHaveBeenCalled();
+  recovered = true;
+  expect(await call(server, "/iao/requests", "POST", body)).toMatchObject({ status: 202, body: { preview: "ready" } });
+  expect(authenticate).toHaveBeenCalledOnce();
+  expect(prepare).toHaveBeenCalledOnce();
+});
+
+it.each(["/iao/requests", "/pura/requests"])("rechecks readiness after authentication before admitting %s", async path => {
+  let available = true;
+  let entered!: () => void;
+  let release!: (value: IaoServerIdentity) => void;
+  const authenticating = new Promise<void>(resolve => { entered = resolve; });
+  const authenticate = vi.fn(() => {
+    entered();
+    return new Promise<IaoServerIdentity>(resolve => { release = resolve; });
+  });
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not run" }));
+  const facade = new IaoFacade({ prepare });
+  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: available, phase: "ready" }));
+  const pending = call(server, path, "POST", body);
+  await authenticating;
+  available = false;
+  release(identity());
+  expect(await pending).toMatchObject({ status: 503, cache: "no-store", body: { error: "IAO runtime unavailable" } });
+  expect(prepare).not.toHaveBeenCalled();
+});
+
+it("refuses admission when the final readiness check rejects without exposing its error", async () => {
+  const probe = vi.fn<() => Promise<RuntimeReadiness>>()
+    .mockResolvedValueOnce({ ready: true, phase: "ready" })
+    .mockRejectedValue(new Error("PRIVATE_FINAL_READINESS_FAILURE"));
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not run" }));
+  const facade = new IaoFacade({ prepare });
+  const server = await listen({ authenticator: { authenticate: async () => identity() }, facade }, probe);
+  const result = await call(server, "/iao/requests", "POST", body);
+  expect(result).toEqual({ status: 503, cache: "no-store", body: { error: "IAO runtime unavailable" } });
+  expect(probe).toHaveBeenCalledTimes(2);
+  expect(prepare).not.toHaveBeenCalled();
+});
+
+it.each(["readiness", "lifetime"] as const)("rechecks %s after a partially received IAO body", async changed => {
+  let available = true;
+  let entered!: () => void;
+  const authenticated = new Promise<void>(resolve => { entered = resolve; });
+  const lifetime = new AbortController();
+  const authenticate = async () => { entered(); return identity(); };
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not run" }));
+  const facade = new IaoFacade({ prepare });
+  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: available, phase: "ready" }), lifetime.signal);
+  const encoded = JSON.stringify(body);
+  const split = Math.floor(encoded.length / 2);
+  let client!: ReturnType<typeof request>;
+  const response = new Promise<{ status: number; body: unknown }>((resolve, reject) => {
+    client = request({ host: "127.0.0.1", port: port(server), method: "POST", path: "/iao/requests",
+      headers: { "content-type": "application/json", "content-length": Buffer.byteLength(encoded) },
+    }, res => {
+      let raw = "";
+      res.setEncoding("utf8").on("data", (part: string) => { raw += part; });
+      res.once("end", () => resolve({ status: res.statusCode!, body: JSON.parse(raw) }));
+    });
+    client.once("error", reject);
+  });
+  client.write(encoded.slice(0, split));
+  await authenticated;
+  await new Promise(resolve => setImmediate(resolve));
+  if (changed === "readiness") available = false;
+  else lifetime.abort();
+  client.end(encoded.slice(split));
+  expect(await response).toEqual({ status: 503, body: { error: "IAO runtime unavailable" } });
+  expect(prepare).not.toHaveBeenCalled();
+});
+
+it.each(["lookup", "cancel", "submit"] as const)("rechecks shutdown after IAO %s authentication before accessing the facade", async operation => {
+  const lifetime = new AbortController();
+  const facade = new IaoFacade({ prepare: async () => ({ kind: "accepted", preview: "retained" }) });
+  const claims = identity();
+  await facade.submit({ ...body, type: "conversation", tenantId: claims.tenantId, actorId: claims.actorId, identity: claims });
+  const observed = vi.spyOn(facade, operation === "lookup" ? "get" : operation);
+  let entered!: () => void;
+  let release!: (value: IaoServerIdentity) => void;
+  const authenticating = new Promise<void>(resolve => { entered = resolve; });
+  const authenticate = () => { entered(); return new Promise<IaoServerIdentity>(resolve => { release = resolve; }); };
+  const server = await listen({ authenticator: { authenticate }, facade }, ready, lifetime.signal);
+  const path = operation === "submit" ? "/iao/requests" : "/iao/requests/" + id + (operation === "cancel" ? "/cancel" : "");
+  const pending = call(server, path, operation === "lookup" ? "GET" : "POST", operation === "submit" ? body : undefined);
+  await authenticating;
+  lifetime.abort();
+  release(identity());
+  expect(await pending).toMatchObject({ status: 503, cache: "no-store", body: { error: "IAO runtime unavailable" } });
+  expect(observed).not.toHaveBeenCalled();
+});
+
+it("keeps IAO reads and cancellation isolated and authenticated during a dependency outage", async () => {
+  const claims = identity();
+  const facade = new IaoFacade({ prepare: async () => ({ kind: "accepted", preview: "private" }) });
+  await facade.submit({ ...body, type: "conversation", tenantId: claims.tenantId, actorId: claims.actorId, identity: claims });
+  let current = claims;
+  const authenticate = vi.fn(async () => current);
+  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: false, phase: "ready" }));
+  const cases = [
+    { claims: { ...claims, actorId: "other", session: { ...claims.session, userId: "other" } }, status: 404 },
+    { claims: { ...claims, tenantId: "other", session: { ...claims.session, tenantId: "other" } }, status: 404 },
+    { claims: { ...claims, session: { ...claims.session, expiresAt: Date.now() - 1 } }, status: 401 },
+  ];
+  for (const testCase of cases) {
+    current = testCase.claims;
+    for (const operation of ["lookup", "cancel"]) {
+      const path = "/iao/requests/" + id + (operation === "cancel" ? "/cancel" : "");
+      const result = await call(server, path, operation === "lookup" ? "GET" : "POST");
+      expect(result.status).toBe(testCase.status);
+      expect(result.cache).toBe("no-store");
+      expect(JSON.stringify(result.body)).not.toContain("private");
+    }
+  }
+  expect(authenticate).toHaveBeenCalledTimes(6);
+  expect(facade.get(claims.tenantId, claims.actorId, id).status).toBe("partial");
+});
+
+it("keeps every IAO operation closed when the lifecycle readiness provider is absent", async () => {
+  const authenticate = vi.fn(async () => identity());
+  const facade = new IaoFacade({ prepare: async () => ({ kind: "accepted", preview: "unused" }) });
+  const server = startApiServer(undefined, { consultationHost: null, iaoRuntime: { facade, authenticator: { authenticate } } });
+  await once(server, "listening");
+  cleanup.push(() => new Promise<void>(resolve => server.close(() => resolve())));
+  for (const [path, method, data] of [
+    ["/iao/requests", "POST", body], ["/pura/requests", "POST", body],
+    ["/iao/requests/" + id, "GET", undefined], ["/iao/requests/" + id + "/cancel", "POST", undefined],
+  ] as const) {
+    expect(await call(server, path, method, data)).toMatchObject({ status: 503, cache: "no-store" });
+  }
+  expect(authenticate).not.toHaveBeenCalled();
+});
+
+it("never admits new IAO work after its client disconnects during the final readiness probe", async () => {
+  let release!: (value: RuntimeReadiness) => void;
+  let entered!: () => void;
+  const checking = new Promise<void>(resolve => { entered = resolve; });
+  const probe = vi.fn<() => Promise<RuntimeReadiness>>()
+    .mockResolvedValueOnce({ ready: true, phase: "ready" })
+    .mockImplementation(() => { entered(); return new Promise(resolve => { release = resolve; }); });
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not execute" }));
+  const facade = new IaoFacade({ prepare });
+  const server = await listen({ facade, authenticator: { authenticate: async () => identity() } }, probe);
+  const closed = new Promise<void>(resolve => { server.once("request", (_req, res) => res.once("close", resolve)); });
+  const client = request({ host: "127.0.0.1", port: port(server), path: "/iao/requests", method: "POST" });
+  client.on("error", () => {});
+  client.end(JSON.stringify(body));
+  await checking;
+  client.destroy();
+  await closed;
+  release({ ready: true, phase: "ready" });
+  await server.drainRequests();
+  expect(prepare).not.toHaveBeenCalled();
+  expect(() => facade.get("tenant", "actor", id)).toThrow("IAO request not found");
+});

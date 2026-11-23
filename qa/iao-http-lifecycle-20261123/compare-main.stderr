@@ -1,0 +1,6 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795447146967,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+fatal: ambiguous argument 'main': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
