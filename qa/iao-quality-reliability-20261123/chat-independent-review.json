@@ -1,0 +1,72 @@
+{
+  "reviewer": "/root/recherche_apprentissage_iao_20261123",
+  "recorded_at": "2026-11-23T18:46:09.055000+00:00",
+  "worktree": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "canonical_base": "5df79859548d8732317bc89f9ca837435beaccf2",
+  "mode": "Independent source, SQL contract, test and existing log review; no tests executed by reviewer; no product edits.",
+  "verdict": "PASS",
+  "verdict_scope": "No remaining concrete P1/P2 finding in the bounded message identity and save reconciliation diff at the listed hashes. This is not a production or whole-system certification.",
+  "files_sha256": {
+    "src/components/ChatbotWidget.tsx": "9559c55565b88393e933975d4215becc04e25a8afa57b035e4512e21cca7c888",
+    "src/components/ChatbotWidget.consultation.test.tsx": "87744028d240d6cd46094414203bc4d0ff879bd65630e617779181c8bceeda84",
+    "tests/chat/lifecycle.spec.ts": "8b968c46f8ddba69b99c22bbeea08b67ceee596761cc3a00a2702bca4f8eed2f"
+  },
+  "findings": [],
+  "checks": [
+    {
+      "status": "PASS_SOURCE_REVIEW",
+      "criterion": "The same message UUID is retained before the uncertain INSERT and reused for a retry of the same local user turn."
+    },
+    {
+      "status": "PASS_SOURCE_REVIEW",
+      "criterion": "Only a successful INSERT or an exact row matching id, conversation_id, role, content and owner can mark the turn confirmed."
+    },
+    {
+      "status": "PASS_SOURCE_REVIEW",
+      "criterion": "401, 403 and 42501 definitive refusals are not reconciled, whether returned or thrown; duplicate 23505 and bounded classes of ambiguous transport errors may be read back."
+    },
+    {
+      "status": "PASS_SOURCE_REVIEW",
+      "criterion": "Signal checks after INSERT and SELECT plus lease.current before fetch prevent late reconciliation from admitting an old request after cancellation or account/conversation change."
+    },
+    {
+      "status": "PASS_SOURCE_REVIEW",
+      "criterion": "Assistant message persistence uses its existing UI UUID, and a received answer is retained without automatic regeneration on unknown persistence."
+    },
+    {
+      "status": "PASS_SOURCE_REVIEW",
+      "criterion": "Existing SQL primary key and owner-only SELECT/INSERT RLS support this read-back strategy without an UPDATE, upsert, or policy change."
+    }
+  ],
+  "sql_contracts_read": [
+    "supabase/migrations/20260123005730_0e85ec11-21c9-4170-9768-b446b0c34c27.sql",
+    "supabase/migrations/20261102001000_chat_history_owner_only.sql"
+  ],
+  "existing_test_evidence_read": {
+    "react": {
+      "status": "PASS",
+      "log": "chat-green-final.log",
+      "passed": 29,
+      "new_cases_included": 18,
+      "rerun_by_reviewer": false
+    },
+    "browser_local_attempt": {
+      "status": "BLOQUE",
+      "log": "chat-browser-native.log",
+      "new_cases_scheduled": 3,
+      "cases_reaching_product_assertions": 0,
+      "reason": "Playwright Chromium executable missing; all three fail during browser launch.",
+      "rerun_by_reviewer": false
+    }
+  },
+  "limitations": [
+    "The React database fixture models commit, lost acknowledgement and primary-key conflict; it is not a live PostgreSQL/PostgREST or RLS execution proof.",
+    "Browser scenarios were reviewed but not qualified locally because browser launch was blocked; CI outcome remains separate.",
+    "The preserved retry identity lives in the mounted widget; page reload recovery and conversation-creation idempotency are outside this change.",
+    "No production migration state, actual model calls, deployment or account isolation in a remote database was verified by this review."
+  ],
+  "logs_sha256": {
+    "chat-green-final.log": "2aae4641e3d19ecd94ec636387aa203dadc687c04a68575100d3ed3937f14d68",
+    "chat-browser-native.log": "0cedec8fb83e186628c88de2edca4caccc8adb37463df1bbb2c4ec6f90cd0c3b"
+  }
+}

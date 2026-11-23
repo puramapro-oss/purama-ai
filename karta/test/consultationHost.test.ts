@@ -49,6 +49,44 @@ function fixture() {
   return { store, admission, decide, loadCatalog, stopped, createClient, options, host: createConsultationHost(options) };
 }
 describe("real consultation host composition", () => {
+  it.each([true, false])("loads the native catalogue from a full policy while keeping the owner grant separate: funded=%s", async funded => {
+    const f = fixture();
+    f.store.availability.mockResolvedValue(funded);
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+      expect(String(url)).toBe("https://api.anthropic.com/v1/models?limit=1000");
+      expect(init?.method).toBe("GET");
+      expect(init?.redirect).toBe("error");
+      expect(init?.body).toBeUndefined();
+      expect(Object.fromEntries(new Headers(init?.headers))).toEqual({
+        "anthropic-version": "2023-06-01", "x-api-key": "test-only",
+      });
+      return Response.json({ data: [
+        { id: "main", lifecycle: "active", max_tokens: 32_768, capabilities: { thinking: null } },
+        { id: "peer", lifecycle: "active", max_tokens: 8192, capabilities: { thinking: null } },
+      ], has_more: false });
+    });
+    try {
+      // Exercise the production loader instead of the injected catalogue used
+      // by the other host fixtures. The policy also contains cost/input limits.
+      const host = createConsultationHost({ ...f.options, loadCatalog: undefined });
+      const signal = new AbortController().signal;
+      const result = await host.catalog(user, signal);
+      expect(result.available).toBe(funded);
+      expect(result.reason).toBe(funded ? "ready" : "budget_unavailable");
+      expect(result.models.map(({ model, maxOutputTokens }) => ({ model, maxOutputTokens }))).toEqual([
+        { model: "main", maxOutputTokens: 16_384 },
+        { model: "peer", maxOutputTokens: 8192 },
+      ]);
+      expect(transport).toHaveBeenCalledOnce();
+      expect(f.loadCatalog).not.toHaveBeenCalled();
+      expect(f.store.availability).toHaveBeenCalledExactlyOnceWith(user, signal);
+      expect(f.store.begin).not.toHaveBeenCalled();
+      expect(f.createClient).not.toHaveBeenCalled();
+      expect(f.decide).not.toHaveBeenCalled();
+      expect(JSON.stringify(result)).not.toContain("maxCostMicros");
+      expect(JSON.stringify(result)).not.toContain("maxInputTokens");
+    } finally { transport.mockRestore(); }
+  });
   it("publishes effective profiles and checks the existing owner resource grant", async () => {
     const f = fixture();
     const result = await f.host.catalog(user, new AbortController().signal);

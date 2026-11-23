@@ -75,9 +75,10 @@ export function ChatbotWidget() {
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([]);
   const activeReply = useRef<{ prompt: string; assistantId?: string; completed?: boolean } | null>(null);
-  // Only a confirmed user write (or a guest turn) may skip persistence on retry.
+  // Keep the turn's identity through an uncertain write; only confirmed writes may be skipped.
   const retryableTurn = useRef<{
     messageId: string; prompt: string; conversationId: string | null; ownerId: string | null;
+    confirmed: boolean;
   } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -168,13 +169,37 @@ export function ChatbotWidget() {
     return data.id;
   };
 
-  const saveMessage = async (convId: string | null, role: 'user' | 'assistant', content: string,
+  const saveMessage = async (convId: string | null, messageId: string, role: 'user' | 'assistant', content: string,
     lease: RequestLease) => {
     if (!convId) return;
-    const { error } = await supabase.from('chat_messages')
-      .insert({ conversation_id: convId, role, content }).abortSignal(lease.signal);
-    if (error) throw error;
+    const ownerId = user?.id;
+    if (!ownerId) throw new Error('MESSAGE_OWNER_REQUIRED');
+    let writeError: unknown;
+    let writeStatus: number | undefined;
+    try {
+      const { error, status } = await supabase.from('chat_messages')
+        .insert({ id: messageId, conversation_id: convId, role, content }).abortSignal(lease.signal);
+      if (!error) { lease.signal.throwIfAborted(); return; }
+      writeError = error;
+      writeStatus = status;
+    } catch (error) { writeError = error; }
     lease.signal.throwIfAborted();
+    const failure = typeof writeError === 'object' && writeError !== null
+      ? writeError as { code?: unknown; status?: unknown } : null;
+    const status = writeStatus ?? failure?.status;
+    // Definitive refusals stay failures, whether returned by the SDK or thrown.
+    const canReconcile = failure?.code !== '42501' && status !== 401 && status !== 403
+      && (failure?.code === '23505' || status === 0 || (typeof status === 'number' && status >= 500)
+        || (status === undefined && failure?.code === undefined && writeError instanceof TypeError));
+    if (!canReconcile) throw writeError;
+    // A lost acknowledgement or duplicate key is resolved only by the exact owned row.
+    const { data, error } = await supabase.from('chat_messages')
+      .select('id, conversation_id, role, content, chat_conversations!inner(user_id)')
+      .eq('id', messageId).eq('conversation_id', convId).eq('chat_conversations.user_id', ownerId)
+      .abortSignal(lease.signal).maybeSingle();
+    lease.signal.throwIfAborted();
+    if (error || !data || data.id !== messageId || data.conversation_id !== convId
+      || data.role !== role || data.content !== content || data.chat_conversations?.user_id !== ownerId) throw writeError;
   };
 
   const addNotice = (content: string) => setMessages(prev => [...prev, {
@@ -227,10 +252,12 @@ export function ChatbotWidget() {
       const convId = await createOrGetConversation(lease);
       if (!lease.current()) return;
       setConversationId(convId);
-      if (!resumedTurn) await saveMessage(convId, 'user', userMessage, lease);
+      const turn = { messageId: userMessageId, prompt: userMessage, conversationId: convId,
+        ownerId: user?.id ?? null, confirmed: resumedTurn?.confirmed ?? false };
+      retryableTurn.current = turn;
+      if (!turn.confirmed) await saveMessage(convId, userMessageId, 'user', userMessage, lease);
       if (!lease.current()) return;
-      retryableTurn.current = { messageId: userMessageId, prompt: userMessage,
-        conversationId: convId, ownerId: user?.id ?? null };
+      retryableTurn.current = { ...turn, confirmed: true };
       const response = await fetch(CHATBOT_FUNCTION_URL, {
         method: 'POST', signal: lease.signal,
         headers: { 'Content-Type': 'application/json', apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -251,7 +278,7 @@ export function ChatbotWidget() {
       retryableTurn.current = null;
       responseComplete = true;
       activeReply.current = { prompt: userMessage, assistantId, completed: true };
-      await saveMessage(convId, 'assistant', content, lease);
+      await saveMessage(convId, assistantId, 'assistant', content, lease);
       if (lease.current()) setDynamicSuggestions([]);
     } catch (error) {
       if (!lease.current()) return;

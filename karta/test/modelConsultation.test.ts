@@ -343,6 +343,36 @@ describe("host permissions, exact model qualification and accounting", () => {
 });
 
 describe("untrusted model output and cancellation", () => {
+  it.each([
+    { field: "disagreements", item: "", label: "empty" },
+    { field: "disagreements", item: " \t\r\n\u00a0", label: "blank" },
+    { field: "uncertainties", item: "", label: "empty" },
+    { field: "uncertainties", item: " \t\r\n\u00a0", label: "blank" },
+  ])("rejects $label conclusion list items in $field before declaring completion", async ({ field, item }) => {
+    const h = harness();
+    h.state.conclusion = () => JSON.stringify({ answer: "Réponse utile", citedSourceIds: [], disagreements: [], uncertainties: [], [field]: [item] });
+    const result = await runModelConsultation(request(), h.deps);
+    expect(result).toMatchObject({ status: "failed", reason: "synthesis_unavailable", answer: null,
+      citedSourceIds: [], disagreements: [], uncertainties: [] });
+    expect(h.modelCalls).toHaveLength(1);
+    expect(h.reservations).toHaveLength(1);
+    expect(h.settlements).toHaveLength(1);
+    expect(h.settlements[0]).toMatchObject({ status: "uncertain", call: { kind: "synthesis", model: MODEL_NAMES[0] },
+      usage: [{ responseId: "response-1", inputTokens: 20, outputTokens: 10 }] });
+    expect(result.receipts).toEqual(h.settlements);
+  });
+
+  it.each([{ items: [] }, { items: [" \tLimite documentée\n"] }])("preserves valid conclusion lists (%#)", async ({ items }) => {
+    const h = harness();
+    h.state.conclusion = () => JSON.stringify({ answer: "Réponse utile", citedSourceIds: [], disagreements: items, uncertainties: items });
+    const result = await runModelConsultation(request(), h.deps);
+    expect(result).toMatchObject({ status: "complete", reason: "completed", answer: "Réponse utile",
+      citedSourceIds: [], disagreements: items, uncertainties: items });
+    expect(h.modelCalls).toHaveLength(1);
+    expect(h.settlements).toHaveLength(1);
+    expect(h.settlements[0]).toMatchObject({ status: "completed", usage: [{ inputTokens: 20, outputTokens: 10 }] });
+  });
+
   it("never retries a failed inference and retains its usage as uncertain", async () => {
     const h = harness();
     h.state.decide = async () => { throw new Error("private provider error"); };

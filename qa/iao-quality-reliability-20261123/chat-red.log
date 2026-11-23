@@ -1,0 +1,64 @@
+
+ RUN  v4.1.12 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123
+
+ × src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after lost-ack before running the model 129ms
+   → expected 'PURAVotre assistantConversationAnalys…' to contain 'Réponse du chat habituel.'
+ × src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after thrown-lost-ack before running the model 44ms
+   → expected 'PURAVotre assistantConversationAnalys…' to contain 'Réponse du chat habituel.'
+ × src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries an unknown user write with the same identity when the first reconciliation is unavailable 58ms
+   → expected [ { …(5) }, { …(5) } ] to have a length of 1 but got 2
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reuses a confirmed user turn when retrying after a model failure 24ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps an edited request as a distinct turn after failure 47ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > accepts an intentional identical new turn after a completed answer 52ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a stopped confirmed turn without retaining its partial answer 23ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reuse a failed turn after changing conversation 27ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reuse a failed turn after changing account 26ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a guest turn without persistence or duplicate context 20ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > mounts the real consultation client without forwarding the existing chat history and restores the chat 49ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > shows technical controls only for the verified founder and removes them on loss of verification 23ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps public chat usable without exposing private consultation to visitors or anonymous sessions 17ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > aborts and clears the old private panel when the account changes, keeping old results out of the new account 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after lost-ack before running the model
+ FAIL  src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after thrown-lost-ack before running the model
+AssertionError: expected 'PURAVotre assistantConversationAnalys…' to contain 'Réponse du chat habituel.'
+
+Expected: "Réponse du chat habituel."
+Received: "PURAVotre assistantConversationAnalyse approfondie[data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}Bonjour, je suis PURA. Décrivez ce que vous souhaitez faire.Écriture confirmée par relectureLa réponse n'a pas abouti. Votre demande est conservée et peut être modifiée."
+
+ ❯ src/components/ChatbotWidget.consultation.test.tsx:151:30
+    149|     await render(); await click("Ouvrir l'assistant PURA");
+    150|     await fill('Votre message', 'Écriture confirmée par relecture'); a…
+    151|     expect(host.textContent).toContain('Réponse du chat habituel.');
+       |                              ^
+    152|     expect(legacyFetch).toHaveBeenCalledTimes(1);
+    153|     expect(db.read).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries an unknown user write with the same identity when the first reconciliation is unavailable
+AssertionError: expected [ { …(5) }, { …(5) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/components/ChatbotWidget.consultation.test.tsx:170:70
+    168|     expect([...db.rows.values()].filter(row => row.role === 'user')).t…
+    169|     await click('Envoyer le message');
+    170|     expect([...db.rows.values()].filter(row => row.role === 'user')).t…
+       |                                                                      ^
+    171|     expect(db.writes.filter(row => row.role === 'user').map(row => row…
+    172|     expect(db.writes[0].id).toEqual(expect.any(String));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 11 passed (14)
+   Start at  19:40:04
+   Duration  2.04s (transform 341ms, setup 0ms, import 593ms, tests 564ms, environment 605ms)

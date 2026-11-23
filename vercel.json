@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-quality-reliability-20261123": false,
       "fix/chat-retry-identity-20261123": false,
       "fix/iao-http-lifecycle-20261123": false,
       "fix/iao-http-qualified-20261123": false,

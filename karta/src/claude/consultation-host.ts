@@ -137,7 +137,7 @@ export function createConsultationHost(options: {
     if (cache && cache.until > now()) return cache.models.length ? normalizeModelCatalog(cache.models) : [];
     const found = await (options.loadCatalog
       ? options.loadCatalog(policy.models, signal)
-      : loadAnthropicModelCatalog({ apiKey, allowed: policy.models }, signal));
+      : loadAnthropicModelCatalog({ apiKey, allowed: policy.models.map(({ model, maxOutputTokens }) => ({ model, maxOutputTokens })) }, signal));
     signal.throwIfAborted();
     const qualified = found.length ? normalizeModelCatalog(found) : [];
     if (qualified.some(m => !policy.models.some(p => p.model === m.model && p.maxOutputTokens >= m.maxOutputTokens))) throw failure("IAO_UNAVAILABLE");

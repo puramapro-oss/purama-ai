@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/modelConsultation.test.ts",
+    "test/consultationTransport.test.ts",
+    "--testNamePattern=conclusion list",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "started_at": "2026-11-23T18:36:08.977658+00:00",
+  "completed_at": "2026-11-23T18:36:10.855290+00:00",
+  "exit_code": 1,
+  "source_sha256": "b84fee90c588679c587599b5596cdf1d1fe9c2c6758c09dc5e1b93661f251d75",
+  "log": "/workspace/scratch/ccfbf7e5800b/iao-quality-evidence-20261123/conclusion-red.log",
+  "log_sha256": "102f27b4564fdedb0598f0e9f317b9e6e107ce848eb57faa26bcbf225289078f"
+}

@@ -1,0 +1,37 @@
+
+ RUN  v4.1.12 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123
+
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after lost-ack before running the model 113ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after thrown-lost-ack before running the model 38ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries an unknown user write with the same identity when the first reconciliation is unavailable 39ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a genuinely failed write without duplicating its visible turn or model context 24ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps an explicit RLS write refusal as a refusal without reconciliation or inference 30ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reconcile a definitive thrown '401' refusal 28ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reconcile a definitive thrown '403' refusal 36ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reconcile a definitive thrown '42501' refusal 15ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > rejects a reconciled row with a different id 15ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > rejects a reconciled row with a different conversation_id 16ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > rejects a reconciled row with a different role 13ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > rejects a reconciled row with a different content 13ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > rejects a reconciled row with a different owner 12ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > ignores a late reconciliation after stop 36ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > ignores a late reconciliation after account 28ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > ignores a late reconciliation after conversation 18ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > confirms an assistant save with a lost acknowledgement without generating the answer again 14ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps an answer visible and reports its unconfirmed save without rerunning inference 12ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reuses a confirmed user turn when retrying after a model failure 16ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps an edited request as a distinct turn after failure 17ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > accepts an intentional identical new turn after a completed answer 35ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a stopped confirmed turn without retaining its partial answer 35ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reuse a failed turn after changing conversation 42ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reuse a failed turn after changing account 45ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a guest turn without persistence or duplicate context 30ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > mounts the real consultation client without forwarding the existing chat history and restores the chat 49ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > shows technical controls only for the verified founder and removes them on loss of verification 67ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps public chat usable without exposing private consultation to visitors or anonymous sessions 25ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > aborts and clears the old private panel when the account changes, keeping old results out of the new account 48ms
+
+ Test Files  1 passed (1)
+      Tests  29 passed (29)
+   Start at  19:44:11
+   Duration  2.05s (transform 309ms, setup 0ms, import 540ms, tests 914ms, environment 368ms)

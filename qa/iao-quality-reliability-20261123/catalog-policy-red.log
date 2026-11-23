@@ -1,0 +1,50 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ❯ test/consultationHost.test.ts (16 tests | 2 failed | 14 skipped) 16ms
+   ❯ real consultation host composition (16)
+     × loads the native catalogue from a full policy while keeping the owner grant separate: funded=true 12ms
+     × loads the native catalogue from a full policy while keeping the owner grant separate: funded=false 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/consultationHost.test.ts > real consultation host composition > loads the native catalogue from a full policy while keeping the owner grant separate: funded=true
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/consultationHost.test.ts:74:32
+     72|       const signal = new AbortController().signal;
+     73|       const result = await host.catalog(user, signal);
+     74|       expect(result.available).toBe(funded);
+       |                                ^
+     75|       expect(result.reason).toBe(funded ? "ready" : "budget_unavailabl…
+     76|       expect(result.models.map(({ model, maxOutputTokens }) => ({ mode…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/consultationHost.test.ts > real consultation host composition > loads the native catalogue from a full policy while keeping the owner grant separate: funded=false
+AssertionError: expected 'account_unavailable' to be 'budget_unavailable' // Object.is equality
+
+Expected: "budget_unavailable"
+Received: "account_unavailable"
+
+ ❯ test/consultationHost.test.ts:75:29
+     73|       const result = await host.catalog(user, signal);
+     74|       expect(result.available).toBe(funded);
+     75|       expect(result.reason).toBe(funded ? "ready" : "budget_unavailabl…
+       |                             ^
+     76|       expect(result.models.map(({ model, maxOutputTokens }) => ({ mode…
+     77|         { model: "main", maxOutputTokens: 16_384 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 14 skipped (16)
+   Start at  19:36:13
+   Duration  444ms (transform 61%, import 26%, setup 7%, tests 5%, worker 2%)

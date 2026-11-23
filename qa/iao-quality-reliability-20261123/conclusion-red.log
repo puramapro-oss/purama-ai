@@ -1,0 +1,276 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > enforces the host's encoded context ceiling before dispatching a model
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 0 before admission
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 8191 before admission
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 262145 before admission
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 9000.5 before admission
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling NaN before admission
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > refuses URLs that expand beyond the link ceiling during canonicalization
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > uses only the exact primary for synthesis and reserves/reconciles every individual operation
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for standard / standard
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for deep / fast
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for maximum / standard
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for maximum / ultra_fast
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > keeps separate immutable usage counters for each model call
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > deduplicates exact requested queries and URLs before spending
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > sends only explicit public query/URL to research providers, not the full question
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > does not add omitted reviewers or research requests
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > never runs more simultaneous models than the selected plan permits
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > does not forward undeclared source metadata to the models or final result
+ ↓ test/modelConsultation.test.ts > multi-model consultation composition > keeps individual source IDs and bounds text supplied to all consulted models
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > does not invoke providers when reservations are denied
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > a duplicated operation cannot trigger a second reserve or provider call
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects a simulated client or absent admission before provider work
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > stops further calls when settlement fails and never claims a complete result
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > a stalled settlement cannot certify a complete consultation or launch subsequent calls
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > a late reservation after cancellation settles without sending an inference
+ ↓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > records a missing retrieval as partial and still synthesizes with explicit missing calls
+ × test/modelConsultation.test.ts > untrusted model output and cancellation > rejects empty conclusion list items in disagreements before declaring completion 18ms
+   → expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+ × test/modelConsultation.test.ts > untrusted model output and cancellation > rejects blank conclusion list items in disagreements before declaring completion 2ms
+   → expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+ × test/modelConsultation.test.ts > untrusted model output and cancellation > rejects empty conclusion list items in uncertainties before declaring completion 2ms
+   → expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+ × test/modelConsultation.test.ts > untrusted model output and cancellation > rejects blank conclusion list items in uncertainties before declaring completion 1ms
+   → expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > preserves valid conclusion lists (0) 2ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > preserves valid conclusion lists (1) 1ms
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > never retries a failed inference and retains its usage as uncertain
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects invented citation S999
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects invented citation fabricated-source
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > refuses tool calls from a consulted model and never exposes executable tools
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects malformed source data and reports retrieval as partial instead of treating it as verified
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > cancels before claiming and never contacts providers
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > cancellation during reservation prevents the paid call
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > late uncooperative retrieval cannot launch inference or mutate an already returned result
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > a late model response after cancellation cannot launch another panel or change returned receipts
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > refuses accessors in request data without running them
+ ↓ test/modelConsultation.test.ts > untrusted model output and cancellation > snapshots request data before asynchronous host admission
+stdout | test/consultationTransport.test.ts
+[api] KARTA écoute sur :0
+
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > authenticates the user JWT then traverses the real HTTP server and runtime
+ × test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a readable failed operation for blank conclusion list disagreements without repeating inference 44ms
+   → expected 503 to be 200 // Object.is equality
+ × test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a readable failed operation for blank conclusion list uncertainties without repeating inference 8ms
+   → expected 503 to be 200 // Object.is equality
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a catalog without launching a model or research call
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication null
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication Basic bad
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication Bearer
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication Bearer a b
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses missing, anonymous or invalid accounts (0)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses missing, anonymous or invalid accounts (1)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses missing, anonymous or invalid accounts (2)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects a wrong administrative token before inspecting the consultation
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field userId at both boundaries
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field budget at both boundaries
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field apiKey at both boundaries
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field provider at both boundaries
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field endpoint at both boundaries
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (0)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (1)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (2)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (3)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (4)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (5)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (6)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (7)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > reuses a completed idempotency key, exposes status privately, and refuses a conflicting request
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > keeps catalog, status and cancellation available during a queue outage but admits no new work
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > cancels a running operation explicitly without launching a later synthesis
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > propagates disconnect through Edge and HTTP without treating the completed request body as cancellation
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds auth waiting even when the auth transport ignores cancellation
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds upstream waiting and disposes a late body without replaying the request
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > does not report a complete operation without its validated result
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > cancels oversized provider response bodies (declared=true)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > cancels oversized provider response bodies (declared=false)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects a non-JSON upstream body and releases it
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > preserves Unicode through the actual HTTP runtime and bounded proxy response
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds UTF-8 response bytes, not JavaScript string length (70000 Unicode pairs)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds UTF-8 response bytes, not JavaScript string length (140000 Unicode pairs)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses a projected API result whose Unicode envelope exceeds the private response bound
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses auth errors even when a stale user object is returned
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > uses separate read and cancel throttles derived from the verified account
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > overrides the short server socket timeout only for the bounded consultation
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > does not forward a request cancelled before auth
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects oversized input before forwarding
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds an oversized chunked API body without relying on Content-Length
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > handles a disconnect during the body without a late unhandled stream error
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > projects fields instead of exposing host extras or receipts
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when SUPABASE_URL is absent
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when SUPABASE_ANON_KEY is absent
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when KARTA_INTERNAL_URL is absent
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when KARTA_ADMIN_TOKEN is absent
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > sanitizes upstream provider and database errors
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed upstream JSON or private response identity (0)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed upstream JSON or private response identity (1)
+ ↓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed upstream JSON or private response identity (2)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a readable failed operation for blank conclusion list disagreements without repeating inference
+ FAIL  test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a readable failed operation for blank conclusion list uncertainties without repeating inference
+AssertionError: expected 503 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 503
+
+ ❯ test/consultationTransport.test.ts:162:31
+    160|       const e = edge();
+    161|       const response = await e.handle(browser(input()));
+    162|       expect(response.status).toBe(200);
+       |                               ^
+    163|       const body = await response.json() as OperationResponse;
+    164|       expect(body.operation).toMatchObject({ operationId, status: "fai…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  test/modelConsultation.test.ts > untrusted model output and cancellation > rejects empty conclusion list items in disagreements before declaring completion
+AssertionError: expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "answer": null,
++   "answer": "Réponse utile",
+    "citedSourceIds": [],
+-   "disagreements": [],
+-   "reason": "synthesis_unavailable",
+-   "status": "failed",
++   "disagreements": [
++     "",
++   ],
++   "reason": "completed",
++   "status": "complete",
+    "uncertainties": [],
+  }
+
+ ❯ test/modelConsultation.test.ts:355:20
+    353|     h.state.conclusion = () => JSON.stringify({ answer: "Réponse utile…
+    354|     const result = await runModelConsultation(request(), h.deps);
+    355|     expect(result).toMatchObject({ status: "failed", reason: "synthesi…
+       |                    ^
+    356|       citedSourceIds: [], disagreements: [], uncertainties: [] });
+    357|     expect(h.modelCalls).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  test/modelConsultation.test.ts > untrusted model output and cancellation > rejects blank conclusion list items in disagreements before declaring completion
+AssertionError: expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "answer": null,
++   "answer": "Réponse utile",
+    "citedSourceIds": [],
+-   "disagreements": [],
+-   "reason": "synthesis_unavailable",
+-   "status": "failed",
++   "disagreements": [
++     "
++  ",
++   ],
++   "reason": "completed",
++   "status": "complete",
+    "uncertainties": [],
+  }
+
+ ❯ test/modelConsultation.test.ts:355:20
+    353|     h.state.conclusion = () => JSON.stringify({ answer: "Réponse utile…
+    354|     const result = await runModelConsultation(request(), h.deps);
+    355|     expect(result).toMatchObject({ status: "failed", reason: "synthesi…
+       |                    ^
+    356|       citedSourceIds: [], disagreements: [], uncertainties: [] });
+    357|     expect(h.modelCalls).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  test/modelConsultation.test.ts > untrusted model output and cancellation > rejects empty conclusion list items in uncertainties before declaring completion
+AssertionError: expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "answer": null,
++   "answer": "Réponse utile",
+    "citedSourceIds": [],
+    "disagreements": [],
+-   "reason": "synthesis_unavailable",
+-   "status": "failed",
+-   "uncertainties": [],
++   "reason": "completed",
++   "status": "complete",
++   "uncertainties": [
++     "",
++   ],
+  }
+
+ ❯ test/modelConsultation.test.ts:355:20
+    353|     h.state.conclusion = () => JSON.stringify({ answer: "Réponse utile…
+    354|     const result = await runModelConsultation(request(), h.deps);
+    355|     expect(result).toMatchObject({ status: "failed", reason: "synthesi…
+       |                    ^
+    356|       citedSourceIds: [], disagreements: [], uncertainties: [] });
+    357|     expect(h.modelCalls).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  test/modelConsultation.test.ts > untrusted model output and cancellation > rejects blank conclusion list items in uncertainties before declaring completion
+AssertionError: expected { status: 'complete', …(9) } to match object { status: 'failed', …(5) }
+(11 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "answer": null,
++   "answer": "Réponse utile",
+    "citedSourceIds": [],
+    "disagreements": [],
+-   "reason": "synthesis_unavailable",
+-   "status": "failed",
+-   "uncertainties": [],
++   "reason": "completed",
++   "status": "complete",
++   "uncertainties": [
++     "
++  ",
++   ],
+  }
+
+ ❯ test/modelConsultation.test.ts:355:20
+    353|     h.state.conclusion = () => JSON.stringify({ answer: "Réponse utile…
+    354|     const result = await runModelConsultation(request(), h.deps);
+    355|     expect(result).toMatchObject({ status: "failed", reason: "synthesi…
+       |                    ^
+    356|       citedSourceIds: [], disagreements: [], uncertainties: [] });
+    357|     expect(h.modelCalls).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 2 passed | 94 skipped (102)
+   Start at  19:36:09
+   Duration  1.35s (transform 50%, import 42%, tests 6%, setup 1%, worker 1%)

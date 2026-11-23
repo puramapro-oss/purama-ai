@@ -1,0 +1,40 @@
+[
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--repo",
+      "iao-quality-20261123",
+      "--limit",
+      "40",
+      "--scope",
+      "staged"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "exit_code": 0,
+    "duration_seconds": 1.31,
+    "log": "detect-staged.json"
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=768",
+      "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--repo",
+      "iao-quality-20261123",
+      "--limit",
+      "40",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "main"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "exit_code": 0,
+    "duration_seconds": 3.18,
+    "log": "detect-compare.json"
+  }
+]
