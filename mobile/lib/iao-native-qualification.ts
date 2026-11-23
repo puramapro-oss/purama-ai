@@ -13,6 +13,7 @@ export type IaoNativeQualificationReceipt = Readonly<Record<string, unknown> & {
 }>;
 
 const MARKER = "PURAMA_OFFLINE_QUALIFICATION:";
+const PROGRESS_MARKER = "PURAMA_OFFLINE_QUALIFICATION_PROGRESS:";
 const CHECKPOINT = "purama-native-qualification.json";
 const OWNER_A = "11111111-1111-4111-8111-111111111111";
 const OWNER_B = "22222222-2222-4222-8222-222222222222";
@@ -59,11 +60,27 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
   requireCheck(qualificationEnabled(), "qualification-disabled");
   let phase: "prepared" | "complete" = "prepared";
   let runId: string | undefined;
+  const startedAt = performance.now();
+  let stageStartedAt = startedAt;
+  let stage = "initializing";
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   let restoreNetwork: (() => void) | undefined;
   let engine: import("./iao-local-engine").IaoLocalEngine | undefined;
   let closeStore: (() => Promise<void>) | undefined;
+  let unsubscribePack: (() => void) | undefined;
+  const progress = (pack?: { status: string; phase?: string; progressPercent: number }) => {
+    // Only fixed stage names and bounded numeric metadata. No prompts, tokens,
+    // storage keys or native exception text enter the diagnostic channel.
+    console.log(`${PROGRESS_MARKER}${JSON.stringify({ schema: 1, phase, stage, runId,
+      elapsedMs: Math.round(performance.now() - startedAt), ...(pack ? { pack } : {}) })}`);
+  };
+  const beginStage = (next: string, status: string) => {
+    stage = next;
+    stageStartedAt = performance.now();
+    onStatus?.(status);
+    progress();
+  };
   try {
     const [{ File, Paths }, crypto, device, { Platform }, { isSmaranaUuid }] = await Promise.all([
       import("expo-file-system"), import("expo-crypto"), import("expo-device"), import("react-native"), import("../../shared/smarana"),
@@ -81,13 +98,19 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
       phase = "complete";
       runId = checkpoint.runId;
     } else runId = crypto.randomUUID();
-    timer = setTimeout(() => controller.abort(), checkpoint ? 240_000 : 600_000);
-    const active = () => requireCheck(!controller.signal.aborted, "qualification-timeout");
+    // Includes import/bootstrap time. The complete phase is refined from the
+    // engine's finite verification/inference budgets once the module is loaded.
+    let phaseDeadline = startedAt + (checkpoint ? 900_000 : 600_000);
+    timer = setTimeout(() => controller.abort(), Math.max(0, phaseDeadline - performance.now()));
+    const active = () => {
+      if (performance.now() >= phaseDeadline) controller.abort();
+      requireCheck(!controller.signal.aborted, "qualification-timeout");
+    };
     const fixtureMarker = `PURAMA_QA_PERSISTED_${runId}`;
     const userPrompt = "Réponds en français avec un seul mot : Bonjour.";
     let unexpectedNetworkCalls = 0;
     if (checkpoint) {
-      onStatus?.("Qualification après redémarrage : réseau JavaScript interdit.");
+      beginStage("network-guard", "Qualification après redémarrage : réseau JavaScript interdit.");
       const denied = () => { unexpectedNetworkCalls += 1; throw new QualificationError("unexpected-js-network"); };
       const originals = ["fetch", "XMLHttpRequest", "WebSocket"].map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const);
       Object.defineProperty(globalThis, "fetch", { configurable: true, writable: true, value: denied });
@@ -105,6 +128,20 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
     const [local, smarana] = await Promise.all([import("./iao-local-engine"), import("./smarana-native")]);
     engine = local.getIaoLocalEngine();
     closeStore = smarana.closeSmaranaStore;
+    clearTimeout(timer);
+    const phaseBudget = checkpoint
+      ? local.IAO_LOCAL_ENGINE_BUDGETS.verificationMs + local.IAO_LOCAL_ENGINE_BUDGETS.inferenceMs + 60_000
+      : 600_000;
+    phaseDeadline = startedAt + phaseBudget;
+    timer = setTimeout(() => controller.abort(), Math.max(0, phaseDeadline - performance.now()));
+    let lastPackProgress = "";
+    unsubscribePack = engine.subscribe(state => {
+      const progressPercent = Math.max(0, Math.min(100, Math.floor(state.progress * 100)));
+      const bucket = `${stage}:${state.status}:${state.phase}:${Math.floor(progressPercent / 10)}`;
+      if (bucket === lastPackProgress) return;
+      lastPackProgress = bucket;
+      progress({ status: state.status, phase: state.phase, progressPercent });
+    });
     const common = {
       runId,
       fixtureAccountsOnly: true,
@@ -121,7 +158,7 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
     };
 
     if (!checkpoint) {
-      onStatus?.("Préparation du pack officiel puis essai du moteur natif.");
+      beginStage("pack-preparation", "Préparation du pack officiel puis essai du moteur natif.");
       let lastProgress = "";
       await engine.prepare(controller.signal, state => {
         const progress = `${state.status}:${state.phase}:${Math.floor(state.progress * 100)}`;
@@ -130,8 +167,10 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
         onStatus?.(`Préparation native : ${state.phase ?? state.status} ${Math.floor(state.progress * 100)} %`);
       });
       active();
+      beginStage("native-completion", "Première génération réelle sur le moteur natif.");
       const answer = await engine.complete([{ role: "user", content: userPrompt }], { signal: controller.signal });
       checkNative(answer);
+      beginStage("fixture-storage", "Enregistrement des données synthétiques chiffrées.");
       const store = await smarana.openSmaranaStore(OWNER_A);
       active();
       const now = new Date().toISOString();
@@ -159,6 +198,7 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
       active();
       onStatus?.("Phase préparée. Le script doit maintenant fermer l’application et couper le réseau.");
       return emit({ schema: 1, phase: "prepared", status: "PASS", ...common,
+        elapsedMs: Math.round(performance.now() - startedAt),
         backend: answer.native.backend, gpu: answer.native.gpu,
         nativeOutput: answer.text.slice(0, 256), tokensGenerated: answer.tokensGenerated,
         resourceId: saved.resourceId,
@@ -168,6 +208,7 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
     }
 
     active();
+    beginStage("store-recovery", "Restauration des données chiffrées après redémarrage.");
     const storeA = await smarana.openSmaranaStore(OWNER_A);
     const recovered = await storeA.read(checkpoint.resourceId);
     const restored = recovered?.payload;
@@ -179,11 +220,13 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
       "first-native-answer-not-restored");
     requireCheck(recovered.syncState === "pending", "pending-sync-status-lost");
     active();
-    onStatus?.("Reprise du moteur et génération réelle hors connexion.");
+    beginStage("pack-inspection", "Vérification locale du pack après redémarrage.");
     requireCheck((await engine.inspect(controller.signal)).status === "ready", "pack-not-ready-after-restart");
+    beginStage("native-completion", "Génération réelle hors connexion.");
     const answer = await engine.complete([{ role: "user", content: userPrompt }], { signal: controller.signal });
     checkNative(answer);
     active();
+    beginStage("offline-storage", "Enregistrement durable de la réponse hors connexion.");
     const offlineAnswerId = crypto.randomUUID();
     const now = new Date().toISOString();
     const updated = await storeA.update(recovered.resourceId, recovered.localVersion, { ...restored,
@@ -195,6 +238,7 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
 
     // The adapter fences A before opening B; QA fixtures do not grant access to
     // any authenticated user's account and never invoke a remote service.
+    beginStage("account-isolation", "Vérification de l’isolation des comptes synthétiques.");
     const storeB = await smarana.openSmaranaStore(OWNER_B);
     let previousOwnerFenced = false;
     try { await storeA.read(checkpoint.resourceId); }
@@ -210,19 +254,22 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
     await smarana.closeSmaranaStore();
     active();
 
-    onStatus?.("Vérification du chiffrement et du refus d’une mauvaise clé.");
+    beginStage("encryption-inspection", "Vérification des fichiers chiffrés.");
     const encryption = await inspectEncryptedFixture(OWNER_A, fixtureMarker, controller.signal);
+    beginStage("key-verification", "Vérification du refus d’une mauvaise clé.");
     const wrongKey = await verifyWrongKeyRejected(OWNER_A);
     requireCheck(wrongKey.rejected, "wrong-key-not-rejected");
     const afterWrongKey = await smarana.openSmaranaStore(OWNER_A);
     requireCheck((await afterWrongKey.read(checkpoint.resourceId))?.payload?.draft === restored.draft, "wrong-key-modified-data");
     await smarana.closeSmaranaStore();
+    beginStage("cleanup", "Libération du moteur après les contrôles natifs.");
     await engine.release();
     active();
     requireCheck(unexpectedNetworkCalls === 0, "unexpected-js-network");
     checkpointFile.write(JSON.stringify({ schema: 1, phase: "complete", runId }));
     onStatus?.("Qualification native hors connexion réussie sur cet émulateur.");
     return emit({ schema: 1, phase: "complete", status: "PASS", ...common,
+      elapsedMs: Math.round(performance.now() - startedAt),
       backend: answer.native.backend, gpu: answer.native.gpu,
       nativeOutput: answer.text.slice(0, 256), tokensGenerated: answer.tokensGenerated,
       checks: { draftRestoredAfterProcessRestart: true, firstNativeAnswerRestored: true,
@@ -242,9 +289,14 @@ async function runPhase(onStatus?: (status: string) => void): Promise<IaoNativeQ
     const candidate = (error as { code?: unknown } | null)?.code;
     const code = typeof candidate === "string" && /^[a-z0-9_-]{1,80}$/.test(candidate) ? candidate : "native-qualification-failed";
     onStatus?.(`Qualification interrompue : ${code}`);
-    return emit({ schema: 1, phase: "failed", status: "FAIL", attemptedPhase: phase, runId, code, fixtureAccountsOnly: true });
+    const state = engine?.getState();
+    return emit({ schema: 1, phase: "failed", status: "FAIL", attemptedPhase: phase, runId, code,
+      stage, elapsedMs: Math.round(performance.now() - startedAt), stageElapsedMs: Math.round(performance.now() - stageStartedAt),
+      ...(state ? { pack: { status: state.status, phase: state.phase,
+        progressPercent: Math.max(0, Math.min(100, Math.floor(state.progress * 100))) } } : {}), fixtureAccountsOnly: true });
   } finally {
     if (timer) clearTimeout(timer);
+    unsubscribePack?.();
     await closeStore?.().catch(() => {});
     await engine?.release().catch(() => {});
     restoreNetwork?.();

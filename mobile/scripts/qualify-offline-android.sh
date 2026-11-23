@@ -6,7 +6,9 @@ set -Eeuo pipefail
 
 if [[ "${PURAMA_QA_BOUNDED:-}" != "1" ]]; then
   export PURAMA_QA_BOUNDED=1
-  exec timeout --signal=TERM --kill-after=15s 900s bash "$0" "$@"
+  # Preparation (600 s), cold offline verification/inference (at most 840 s),
+  # and bounded ADB/cleanup overhead fit inside one finite scenario deadline.
+  exec timeout --signal=TERM --kill-after=15s 1600s bash "$0" "$@"
 fi
 
 PURAMA_QA_PACKAGE="${PURAMA_OFFLINE_QA_PACKAGE:-dev.purama.purama_ai}"
@@ -141,7 +143,7 @@ qa_adb shell dumpsys connectivity >"$PURAMA_QA_ARTIFACTS/connectivity-offline.tx
 [[ "$(tr -d '\r\n' <"$PURAMA_QA_ARTIFACTS/mobile-data.txt")" == "0" ]] || { echo "Mobile data not disabled" >&2; exit 23; }
 
 qa_adb shell am start -W -a android.intent.action.VIEW -d "$PURAMA_QA_URI" "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/launch-offline.txt"
-qa_wait_phase complete 240
+qa_wait_phase complete 900
 qa_adb exec-out screencap -p >"$PURAMA_QA_ARTIFACTS/offline.png"
 qa_adb shell pidof "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/offline-pid.txt"
 

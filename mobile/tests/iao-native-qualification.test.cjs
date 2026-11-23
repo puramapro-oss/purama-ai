@@ -42,3 +42,59 @@ test('the normal-build QA route mounts without importing the qualification modul
   assert.deepEqual(loaded.imports.sort(), ['react', 'react-native', 'react/jsx-runtime'].sort());
   await Renderer.act(async () => renderer.unmount());
 });
+
+test('a failed cold restart identifies the active verification stage and restores global networking', async () => {
+  const runId = '33333333-3333-4333-8333-333333333333';
+  const resourceId = '44444444-4444-4444-8444-444444444444';
+  const pendingId = '55555555-5555-4555-8555-555555555555';
+  const firstAnswerHash = 'f'.repeat(64);
+  const marker = `PURAMA_QA_PERSISTED_${runId}`;
+  const checkpoint = { schema: 1, phase: 'prepared', runId, resourceId, pendingId, firstAnswerHash };
+  let observer; let unsubscribed = false; let closed = 0; let released = 0;
+  const packState = { status: 'verifying', phase: 'integrity', progress: 0.63,
+    completedBytes: 402851413, totalBytes: 639458232 };
+  const engine = {
+    subscribe(callback) { observer = callback; return () => { unsubscribed = true; }; },
+    getState: () => packState,
+    async inspect() { observer?.(packState); throw Object.assign(new Error('synthetic storage wait'), { code: 'timeout' }); },
+    async release() { released += 1; },
+  };
+  const originals = ['fetch', 'XMLHttpRequest', 'WebSocket'].map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]);
+  const logs = []; const realLog = console.log;
+  const loaded = load('lib/iao-native-qualification.ts', '1', {
+    'expo-file-system': { Paths: { document: 'file:///fixtures' }, File: class {
+      exists = true; size = 1024; textSync() { return JSON.stringify(checkpoint); }
+    } },
+    'expo-crypto': { CryptoDigestAlgorithm: { SHA256: 'sha256' }, digestStringAsync: async () => firstAnswerHash },
+    'expo-device': { totalMemory: 4 * 1024 ** 3 },
+    'react-native': { Platform: { OS: 'android' } },
+    '../../shared/smarana': { isSmaranaUuid: value => /^[0-9a-f-]{36}$/.test(value) },
+    './iao-local-engine': {
+      getIaoLocalEngine: () => engine,
+      IAO_LOCAL_ENGINE_BUDGETS: { verificationMs: 600_000, inferenceMs: 180_000, preparationMs: 1_800_000 },
+      IAO_LOCAL_PACK_MANIFEST: { minimumMemoryBytes: 3 * 1024 ** 3,
+        repository: 'synthetic/model', revision: 'a'.repeat(40), model: { bytes: 639446688, sha256: 'b'.repeat(64) } },
+    },
+    './smarana-native': {
+      closeSmaranaStore: async () => { closed += 1; },
+      openSmaranaStore: async () => ({ read: async () => ({ resourceId, syncState: 'pending', payload: {
+        draft: `${marker}\nBrouillon exact : éàç, مرحبا, 👋`, messages: [
+          { id: pendingId, role: 'assistant', state: 'interrupted', content: `${marker}:réponse-partielle` },
+          { id: 'first', role: 'assistant', state: 'complete', content: 'Bonjour' },
+        ],
+      } }) }),
+    },
+  });
+  console.log = line => { logs.push(line); };
+  let receipt;
+  try { receipt = await loaded.api.runIaoNativeQualification(); }
+  finally { console.log = realLog; }
+  assert.equal(receipt.status, 'FAIL'); assert.equal(receipt.code, 'timeout');
+  assert.equal(receipt.attemptedPhase, 'complete'); assert.equal(receipt.stage, 'pack-inspection');
+  assert.deepEqual(receipt.pack, { status: 'verifying', phase: 'integrity', progressPercent: 63 });
+  assert.ok(Number.isFinite(receipt.elapsedMs)); assert.ok(Number.isFinite(receipt.stageElapsedMs));
+  assert.ok(logs.some(line => line.startsWith('PURAMA_OFFLINE_QUALIFICATION_PROGRESS:') && line.includes('integrity')));
+  assert.equal(unsubscribed, true); assert.equal(closed, 1); assert.equal(released, 1);
+  for (const [name, descriptor] of originals) assert.deepEqual(Object.getOwnPropertyDescriptor(globalThis, name), descriptor);
+  assert.ok(logs.every(line => !line.includes(marker) && !line.includes(firstAnswerHash)), 'progress receipts contain no message or digest fixture payload');
+});

@@ -52,8 +52,13 @@ const MAX_MESSAGE_CHARS = 32_000;
 const MAX_INPUT_CHARS = 256_000;
 const MAX_OUTPUT_CHARS = 65_536;
 const CONTEXT_RESERVE = 32;
-const INFERENCE_BUDGET_MS = 180_000;
-const PREPARATION_BUDGET_MS = 30 * 60_000;
+export const IAO_LOCAL_ENGINE_BUDGETS = Object.freeze({
+  // A cold process must rehash the pinned 639 MB pack and run its native smoke
+  // before admitting a prompt. That work has its own finite local-only budget.
+  verificationMs: 10 * 60_000,
+  inferenceMs: 180_000,
+  preparationMs: 30 * 60_000,
+});
 
 // A module-wide lease covers all controller instances, including preparation
 // smoke tests. The lease is retained until the actual native cleanup settles,
@@ -251,7 +256,7 @@ export function createIaoLocalEngine(dependencies: IaoLocalEngineDependencies = 
   };
   const pack = dependencies.packFactory?.(smokeTest) ?? createIaoLocalPack({ smokeTest });
 
-  function runExclusive<T>(work: (signal: AbortSignal) => Promise<T>, external: AbortSignal | undefined,
+  function runExclusive<T>(work: (signal: AbortSignal, beginInference: () => void) => Promise<T>, external: AbortSignal | undefined,
     budgetMs: number): Promise<T> {
     if (external?.aborted) return Promise.reject(new IaoLocalError("aborted"));
     if (processRequiresRestart) return Promise.reject(new IaoLocalError("restart-required"));
@@ -263,7 +268,26 @@ export function createIaoLocalEngine(dependencies: IaoLocalEngineDependencies = 
     const forward = () => controller.abort();
     external?.addEventListener("abort", forward, { once: true });
     if (external?.aborted) controller.abort();
-    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, budgetMs);
+    const expire = () => { timedOut = true; controller.abort(); };
+    let deadline = performance.now() + budgetMs;
+    let timer = setTimeout(expire, budgetMs);
+    const assertDeadline = () => {
+      // A busy JS thread can deliver timers late. Settling a native/file task
+      // must not erase an already elapsed deadline before its callback runs.
+      if (!controller.signal.aborted && performance.now() >= deadline) expire();
+      assertIaoLocalActive(controller.signal);
+    };
+    let inferenceStarted = false;
+    const beginInference = () => {
+      // Only one transition is allowed. A late verification must never revive
+      // a cancelled/expired operation or repeatedly extend its deadline.
+      assertDeadline();
+      if (inferenceStarted) throw new IaoLocalError("native");
+      inferenceStarted = true;
+      clearTimeout(timer);
+      deadline = performance.now() + IAO_LOCAL_ENGINE_BUDGETS.inferenceMs;
+      timer = setTimeout(expire, IAO_LOCAL_ENGINE_BUDGETS.inferenceMs);
+    };
     let rejectCancellation: (error: IaoLocalError) => void = () => {};
     const cancelled = new Promise<never>((_, reject) => { rejectCancellation = reject; });
     const onAbort = () => rejectCancellation(new IaoLocalError(timedOut ? "timeout" : "aborted"));
@@ -273,8 +297,10 @@ export function createIaoLocalEngine(dependencies: IaoLocalEngineDependencies = 
     active = record;
     const job = (async () => {
       try {
-        assertIaoLocalActive(controller.signal);
-        return await work(controller.signal);
+        assertDeadline();
+        const result = await work(controller.signal, beginInference);
+        assertDeadline();
+        return result;
       } catch (error) {
         if (timedOut) throw new IaoLocalError("timeout");
         if (controller.signal.aborted) throw new IaoLocalError("aborted");
@@ -301,7 +327,7 @@ export function createIaoLocalEngine(dependencies: IaoLocalEngineDependencies = 
         // Inspecting an absent pack does not initialize llama or download it.
         await qualifyHardware(current);
         return pack.inspect(current);
-      }, signal, INFERENCE_BUDGET_MS);
+      }, signal, IAO_LOCAL_ENGINE_BUDGETS.verificationMs);
     },
     prepare(signal, observer) {
       return runExclusive(async current => {
@@ -309,20 +335,21 @@ export function createIaoLocalEngine(dependencies: IaoLocalEngineDependencies = 
         await native(); // Reject Expo Go/missing native runtime before a large download.
         assertIaoLocalActive(current);
         return pack.prepare(current, observer);
-      }, signal, PREPARATION_BUDGET_MS);
+      }, signal, IAO_LOCAL_ENGINE_BUDGETS.preparationMs);
     },
     complete(messages, options = {}) {
       let bounded: IaoLocalMessage[];
       try { bounded = validateMessages(messages); }
       catch (error) { return Promise.reject(error); }
-      return runExclusive(async current => {
+      return runExclusive(async (current, beginInference) => {
         await qualifyHardware(current);
         const prepared = await pack.requireReady(current); // Local verification only, never prepare().
+        beginInference();
         const response = await withContext(prepared.modelUri, current, context => generate(context, bounded,
           IAO_LOCAL_PACK_MANIFEST.maximumOutputTokens, current, options.onToken));
         return { ...response, modelVersion: prepared.modelVersion,
           native: { backend: "llama.rn", gpu: false, modelSha256: IAO_LOCAL_PACK_MANIFEST.model.sha256 } };
-      }, options.signal, INFERENCE_BUDGET_MS);
+      }, options.signal, IAO_LOCAL_ENGINE_BUDGETS.verificationMs);
     },
     cancel() { active?.controller.abort(); },
     async release() {

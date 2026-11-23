@@ -83,15 +83,16 @@ function fixture(options = {}) {
       env.smoke = smokeTest;
       return {
         getState: () => env.state, subscribe: () => () => {},
-        async inspect() { env.inspections += 1; return env.state; },
+        async inspect(signal) { env.inspections += 1; await options.inspect?.(signal, env); return env.state; },
         async prepare(signal) {
           env.prepares += 1; env.state = { ...env.state, status: 'verifying' };
           await smokeTest('file:///private/purama.partial/model.gguf', signal);
           env.state = { ...env.state, status: 'ready', progress: 1 };
           return ready;
         },
-        async requireReady() {
+        async requireReady(signal) {
           env.requires += 1;
+          await options.requireReady?.(signal, env);
           if (env.state.status === 'absent') throw new api.IaoLocalError('pack-absent');
           return ready;
         },
@@ -279,4 +280,110 @@ test('CPU qualification refuses an unexpected native GPU backend and still relea
   const env = fixture(); env.context.gpu = true;
   await assert.rejects(env.engine.complete(messages()), { code: 'native' });
   assert.equal(env.completions.length, 0); assert.equal(env.releases, 1);
+});
+
+// Only the clock and native/file boundaries are synthetic. These assertions
+// exercise the real controller deadlines, cancellation and process lease.
+const flush = () => new Promise(resolve => setImmediate(resolve));
+
+test('cold inspection can finish a verified pack after the generation deadline without downloading', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const pending = deferred(); let verificationSignal; let settled = false;
+  const env = fixture({ inspect: async signal => { verificationSignal = signal; await pending.promise; } });
+  const operation = env.engine.inspect().finally(() => { settled = true; });
+  operation.catch(() => {});
+  try {
+    await flush(); t.mock.timers.tick(180_001); await flush();
+    assert.equal(settled, false, 'cold verification must not spend the generation-only deadline');
+    assert.equal(verificationSignal.aborted, false);
+    t.mock.timers.tick(119_999); pending.resolve();
+    assert.equal((await operation).status, 'ready');
+    assert.equal(env.prepares, 0); assert.equal(env.completions.length, 0);
+  } finally { pending.resolve(); await env.engine.release(); }
+});
+
+test('direct completion gives cold verification its own budget and preserves the full bounded inference deadline', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const verified = deferred(); const generated = deferred(); let settled = false;
+  const env = fixture({ requireReady: async () => verified.promise,
+    complete: async (_parameters, _callback, current) => { await generated.promise; return current.result(); } });
+  const operation = env.engine.complete(messages()).finally(() => { settled = true; });
+  operation.catch(() => {});
+  try {
+    await flush(); t.mock.timers.tick(300_000); await flush();
+    assert.equal(settled, false); assert.equal(env.init.length, 0);
+    verified.resolve(); await flush();
+    assert.equal(env.completions.length, 1);
+    // Cross the original verification deadline after the phase transition: the
+    // inference is still bounded by exactly 180 seconds from its own admission.
+    t.mock.timers.tick(179_999); await flush(); assert.equal(settled, false);
+    t.mock.timers.tick(1); await assert.rejects(operation, { code: 'timeout' });
+    await assert.rejects(env.create().complete(messages()), { code: 'busy' });
+    assert.equal(env.stops, 1); assert.equal(env.prepares, 0);
+    generated.resolve(); await env.engine.release();
+    assert.equal(env.releases, 1);
+    await env.engine.complete(messages()); assert.equal(env.releases, 2);
+  } finally { verified.resolve(); generated.resolve(); await env.engine.release(); }
+});
+
+test('cold inspection remains bounded and retains its lease until verification has actually stopped', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const pending = deferred(); let verificationSignal;
+  const env = fixture({ inspect: async signal => { verificationSignal = signal; await pending.promise; } });
+  const operation = env.engine.inspect(); operation.catch(() => {});
+  try {
+    await flush(); t.mock.timers.tick(600_000);
+    await assert.rejects(operation, { code: 'timeout' });
+    assert.equal(verificationSignal.aborted, true);
+    await assert.rejects(env.create().complete(messages()), { code: 'busy' });
+    pending.resolve(); await env.engine.release();
+    await env.engine.complete(messages()); assert.equal(env.completions.length, 1);
+  } finally { pending.resolve(); await env.engine.release(); }
+});
+
+test('cancelling revalidation returns promptly, fences other callers, and permits retry after cleanup', async () => {
+  const pending = deferred(); let verificationSignal;
+  const env = fixture({ requireReady: async signal => { verificationSignal = signal; await pending.promise; } });
+  const operation = env.engine.complete(messages()); operation.catch(() => {});
+  await flush(); env.engine.cancel();
+  await assert.rejects(operation, { code: 'aborted' });
+  assert.equal(verificationSignal.aborted, true); assert.equal(env.init.length, 0);
+  await assert.rejects(env.create().complete(messages()), { code: 'busy' });
+  pending.resolve(); await env.engine.release();
+  assert.equal(env.init.length, 0, 'a late verification cannot revive an aborted completion');
+  await env.engine.complete(messages()); assert.equal(env.completions.length, 1);
+});
+
+test('an expired revalidation cannot revive generation when its file operation settles late', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const pending = deferred();
+  const env = fixture({ requireReady: async () => pending.promise });
+  const operation = env.engine.complete(messages()); operation.catch(() => {});
+  await flush(); t.mock.timers.tick(600_000);
+  await assert.rejects(operation, { code: 'timeout' });
+  pending.resolve(); await env.engine.release();
+  assert.equal(env.init.length, 0); assert.equal(env.prepares, 0);
+  await env.engine.complete(messages()); assert.equal(env.completions.length, 1);
+});
+
+test('verification integrity failure never resets the deadline into native inference or repairs online', async () => {
+  const env = fixture({ requireReady: async (_signal, current) => { throw new current.api.IaoLocalError('integrity'); } });
+  await assert.rejects(env.engine.complete(messages()), { code: 'integrity' });
+  assert.equal(env.init.length, 0); assert.equal(env.prepares, 0);
+  assert.equal((await env.engine.inspect()).status, 'ready', 'the failed operation released its process lease');
+});
+
+test('late timer delivery cannot revive verification that has exceeded its monotonic deadline', async t => {
+  let clock = performance.now();
+  t.mock.method(performance, 'now', () => clock);
+  const pending = deferred();
+  const env = fixture({ requireReady: async () => pending.promise });
+  const operation = env.engine.complete(messages()); operation.catch(() => {});
+  await flush();
+  // Simulate a delayed event loop/native resolution without delivering the
+  // timer callback: the phase transition itself must check the absolute time.
+  clock += 600_001; pending.resolve();
+  await assert.rejects(operation, { code: 'timeout' });
+  await env.engine.release();
+  assert.equal(env.init.length, 0); assert.equal(env.prepares, 0);
 });
