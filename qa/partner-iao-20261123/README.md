@@ -50,7 +50,15 @@ La [première exécution CI](https://github.com/puramapro-oss/purama-ai/actions/
 
 La correction ajoute uniquement `outreach_timezone: 'UTC'` au fixture partenaire. Les scénarios d’isolation et la validation produit restent intacts. Le job site exécute désormais `tsc --noEmit -p tests/ui-state/tsconfig.json` tôt dans sa séquence ; ce contrôle a réussi localement et détecte ce type d’écart de schéma avant les longues suites navigateur. Le manifeste inclut ces deux fichiers complémentaires.
 
-Les [extraits de logs CI](./evidence/ci-first-run.json) distinguent les réussites, les deux échecs et la provenance. **La nouvelle exécution CI doit confirmer les cas navigateur après ce correctif ; son résultat est suivi dans la PR #93.** Le code applicatif reste identique à la tête déjà reçue par les 4 401 tests.
+Les [extraits de logs CI](./evidence/ci-first-run.json) distinguent les réussites, les deux échecs et la provenance. La deuxième CI confirme **26/26 cas ui-state réussis** à la révision testée ; le détail de l’autre échec et de son complément de correction figure ci-dessous. Le code applicatif reste identique à la tête déjà reçue par les 4 401 tests.
+
+### Suivi du transport de test asynchrone
+
+La [deuxième CI](https://github.com/puramapro-oss/purama-ai/actions/runs/45094643856), sur `00586c2ffae7619198b989b5f9df78a3cb1cea4c`, confirme de nouveau **4 401/4 401 tests KARTA** et **26/26 tests ui-state**. Elle relève **16/17 cas async-ui réussis** : le faux `Query` ne possède pas `is`, appelé par le vrai client pour filtrer l’historique partenaire sans dossier avec `partner_prospect_id IS NULL`. La requête n’est donc jamais enregistrée par le simulateur.
+
+La reproduction avant modification a confirmé ce `TypeError` avec le vrai client et le transport simulé ; le contrôle email fonctionne. Le transport de test est complété avec la méthode manquante et la conservation explicite du filtre `null`. Dans ce complément, les assertions d’isolation, le code produit et les contrôles de permissions restent inchangés. L’intégration part de `cbff901591d92f3760a657b1d35654db76d477a0` et conserve les corrections parallèles des paramètres partenaires et du calcul local ; la CI doit qualifier cette composition. Les [extraits du deuxième run](./evidence/ci-second-run.json) conservent les résultats et leur provenance.
+
+L’environnement local est devenu indisponible après cette reproduction. La reprise utilise les sources de la révision publiée et la même branche GitHub ; aucun contrôle local après ce correctif n’est présenté comme exécuté. Les suites existantes `ui-state`, `async-ui` et `mobile-auth`, avec leur préparation de navigateur, passent désormais plus tôt dans le job site. Chaque commande reste présente une fois. **Le résultat de la CI suivante est suivi dans la PR #93.** L’authentification mobile, sautée après l’échec précédent, reste à recevoir.
 
 ## Revue indépendante et procédure suivie
 

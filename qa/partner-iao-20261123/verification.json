@@ -151,6 +151,28 @@
       "exit_code": 0,
       "command": "NODE_OPTIONS='--max-old-space-size=640' ./node_modules/.bin/tsc --noEmit -p tests/ui-state/tsconfig.json",
       "scope": "Corrected fixture supplies required UTC, matching migration and product default. Same check added early in site CI."
+    },
+    {
+      "id": "ci_ui_state_corrected",
+      "status": "PASS",
+      "tests_passed": 26,
+      "evidence": "evidence/ci-second-run.json",
+      "scope": "Browser suite on 00586c2; the missing UTC fixture is corrected."
+    },
+    {
+      "id": "ci_async_second_run",
+      "status": "PARTIEL",
+      "tests_passed": 16,
+      "tests_failed": 1,
+      "evidence": "evidence/ci-second-run.json",
+      "scope": "Fake Query omitted is(); current follow-up preserves null and existing assertions. Next CI run pending."
+    },
+    {
+      "id": "async_transport_pre_fix_reproduction",
+      "status": "PASS",
+      "exit_code": 0,
+      "evidence": "evidence/ci-second-run.json",
+      "scope": "Implementation agent observed real client plus existing test transport rejecting partner before pending query; email control succeeds. No post-fix local execution is claimed."
     }
   ],
   "independent_review": "PASS for source boundaries described in README; findings corrected before publication",
@@ -162,7 +184,8 @@
     "Live Supabase migrations, n8n workflows, provider delivery and signature not tested.",
     "Local browser installation returned HTTP403. Existing CI browser suites ran; the first UI-state run had two incomplete-fixture failures. Corrective CI and the new full contract review browser journey remain separate gates.",
     "Free-form chat multichannel execution, financial rewards and ONE gifts are outside this implementation.",
-    "GitNexus was not executed; scoped alternative described in README; instructions left unchanged."
+    "GitNexus was not executed; scoped alternative described in README; instructions left unchanged.",
+    "Local execution became unavailable during the async fake follow-up. The retained ui-state26/26 result is on 00586c2; async-ui and the concurrent settings/compute composition require the next CI run."
   ],
   "evidence": {
     "assistant-policy-final.log.json": {
@@ -209,6 +232,11 @@
       "sha256": "ec2706696b55d915825e410df02d7b1d31f34ca95ac92074a1a70e55cabbafdc",
       "bytes": 5298,
       "kind": "Selected CI log lines, not full raw stdout"
+    },
+    "ci-second-run.json": {
+      "sha256": "1abda9890bc9f910cbcf0896eed7d71525f72bb6a8f854e72c391beefa553b2b",
+      "bytes": 12619,
+      "kind": "Selected CI log lines plus explicitly attributed reproduction and follow-up scope"
     }
   },
   "log_storage": "Raw stdout is preserved exactly as a JSON string with its original byte count and SHA-256.",
@@ -337,5 +365,11 @@
       }
     },
     "counting_note": "The 5 existing schedule tests are included in the 18 final cases. Historical KARTA counts are separate, never added."
+  },
+  "async_test_followup_context": {
+    "parent": "cbff901591d92f3760a657b1d35654db76d477a0",
+    "scope": "Missing null-filter method in test double plus earlier ordering of unchanged browser commands; concurrent product and evidence changes retained.",
+    "local_post_fix_tests": "NON TESTÉ — executor unavailable",
+    "repository_instruction_files": "unchanged"
   }
 }

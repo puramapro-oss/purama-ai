@@ -122,6 +122,11 @@ jobs:
       - run: npm run lint
       - name: Typecheck state-isolation test fixtures
         run: npx tsc --noEmit -p tests/ui-state/tsconfig.json
+      - name: Prepare the locked Playwright image without Ubuntu downloads
+        run: bash scripts/ci/run-site-browser.sh --prepare
+      - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
+      - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
+      - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
       - run: npm run test:distribution:unit
       - run: npm run test:distribution:sql
       - name: Saved agent execution preferences and ownership
@@ -174,8 +179,6 @@ jobs:
       - run: npm run test:founder:types
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
-      - name: Prepare the locked Playwright image without Ubuntu downloads
-        run: bash scripts/ci/run-site-browser.sh --prepare
       - name: Workshop account isolation and mission lifecycle
         env:
           PLAYWRIGHT_EXECUTABLE_PATH: /opt/google/chrome/chrome
@@ -210,9 +213,6 @@ jobs:
       - run: bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser
       - run: bash scripts/ci/run-site-browser.sh npm run test:wellbeing
       - run: bash scripts/ci/run-site-browser.sh npm run test:voice-consent
-      - run: bash scripts/ci/run-site-browser.sh npm run test:ui-state
-      - run: bash scripts/ci/run-site-browser.sh npm run test:async-ui
-      - run: bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
       - name: Archive voice consent and accessibility browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
