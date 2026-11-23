@@ -56,6 +56,63 @@ function recordChatWrites() {
   } }));
   return writes;
 }
+
+type StoredChatMessage = {
+  id: string; conversation_id: string; role: string; content: string;
+  chat_conversations: { user_id: string };
+};
+type ChatReadResult = { data: StoredChatMessage | null; error: { code: string; message: string } | null };
+
+// Model the existing primary key and commit separately from receipt of its acknowledgement.
+function simulateChatDatabase() {
+  const rows = new Map<string, StoredChatMessage>();
+  const owners = new Map<string, string>();
+  const writes: Record<string, unknown>[] = [];
+  const writePlans: ('ok' | 'lost-ack' | 'thrown-lost-ack' | 'not-written' | 'denied')[] = [];
+  const transportError = { code: '', message: 'Failed to fetch' };
+  const read = vi.fn(async (filters: Record<string, string>, _signal: AbortSignal): Promise<ChatReadResult> => {
+    const row = rows.get(filters.id);
+    if (!row || row.conversation_id !== filters.conversation_id
+      || row.chat_conversations.user_id !== filters['chat_conversations.user_id']
+      || row.chat_conversations.user_id !== auth.user?.id) return { data: null, error: null };
+    return { data: { ...row, chat_conversations: { ...row.chat_conversations } }, error: null };
+  });
+  from.mockImplementation((table: string) => {
+    if (table === 'chat_conversations') return { insert: (row: { user_id: string }) => ({
+      select: () => ({ abortSignal: () => ({ single: async () => {
+        const id = crypto.randomUUID(); owners.set(id, row.user_id);
+        return { data: { id }, error: null };
+      } }) }),
+    }) };
+    if (table !== 'chat_messages') throw new Error(`Unexpected table: ${table}`);
+    return {
+      insert: (row: Record<string, unknown>) => ({ abortSignal: async () => {
+        writes.push({ ...row });
+        const plan = writePlans.shift() ?? 'ok';
+        if (plan === 'denied') return { error: { code: '42501', message: 'row-level security policy' }, status: 403 };
+        if (plan === 'not-written') return { error: transportError, status: 0 };
+        const id = typeof row.id === 'string' ? row.id : crypto.randomUUID();
+        if (rows.has(id)) return { error: { code: '23505', message: 'duplicate key' }, status: 409 };
+        rows.set(id, { id, conversation_id: String(row.conversation_id), role: String(row.role), content: String(row.content),
+          chat_conversations: { user_id: owners.get(String(row.conversation_id))! } });
+        if (plan === 'thrown-lost-ack') throw new TypeError('Failed to fetch');
+        return { error: plan === 'lost-ack' ? transportError : null, status: plan === 'lost-ack' ? 0 : 201 };
+      } }),
+      select: () => {
+        const filters: Record<string, string> = {};
+        let signal: AbortSignal;
+        const query = {
+          eq: (name: string, value: string) => { filters[name] = value; return query; },
+          abortSignal: (value: AbortSignal) => { signal = value; return query; },
+          maybeSingle: () => read({ ...filters }, signal),
+        };
+        return query;
+      },
+    };
+  });
+  return { rows, writes, writePlans, read };
+}
+
 beforeEach(() => {
   vi.resetAllMocks(); sessionStorage.clear();
   auth.user = { id: OWNER }; auth.session = { access_token: 'first-token' }; auth.loading = false;
@@ -87,6 +144,152 @@ afterEach(async () => {
 });
 
 describe('ChatbotWidget — connected private consultation mode', () => {
+  it.each(['lost-ack', 'thrown-lost-ack'] as const)('reconciles a committed user message after %s before running the model', async failure => {
+    const db = simulateChatDatabase(); db.writePlans.push(failure);
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Écriture confirmée par relecture'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Réponse du chat habituel.');
+    expect(legacyFetch).toHaveBeenCalledTimes(1);
+    expect(db.read).toHaveBeenCalledTimes(1);
+    expect(db.read.mock.calls[0][0]).toEqual({ id: db.writes[0].id, conversation_id: db.writes[0].conversation_id,
+      'chat_conversations.user_id': OWNER });
+    expect([...db.rows.values()].filter(row => row.role === 'user')).toHaveLength(1);
+    expect(db.writes[0].id).toEqual(expect.any(String));
+  });
+
+  it('retries an unknown user write with the same identity when the first reconciliation is unavailable', async () => {
+    const db = simulateChatDatabase(); db.writePlans.push('lost-ack');
+    db.read.mockResolvedValueOnce({ data: null, error: { code: '', message: 'Read unavailable' } });
+    const prompt = 'Conserver ce tour malgré la confirmation perdue';
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', prompt); await click('Envoyer le message');
+    expect(host.textContent).toContain('Votre demande est conservée');
+    expect(legacyFetch).not.toHaveBeenCalled();
+    expect([...db.rows.values()].filter(row => row.role === 'user')).toHaveLength(1);
+    await click('Envoyer le message');
+    expect([...db.rows.values()].filter(row => row.role === 'user')).toHaveLength(1);
+    expect(db.writes.filter(row => row.role === 'user').map(row => row.id)).toEqual([db.writes[0].id, db.writes[0].id]);
+    expect(db.writes[0].id).toEqual(expect.any(String));
+    expect(db.read).toHaveBeenCalledTimes(2);
+    expect(legacyFetch).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(legacyFetch.mock.calls[0][1].body).messages).toEqual([{ role: 'user', content: prompt }]);
+    expect(host.textContent?.split(prompt)).toHaveLength(2);
+  });
+
+  it('retries a genuinely failed write without duplicating its visible turn or model context', async () => {
+    const db = simulateChatDatabase(); db.writePlans.push('not-written');
+    const prompt = 'Écriture à refaire sans créer un autre tour';
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', prompt); await click('Envoyer le message');
+    expect(db.rows.size).toBe(0);
+    expect(legacyFetch).not.toHaveBeenCalled();
+    expect(host.textContent).toContain('Votre demande est conservée');
+    await click('Envoyer le message');
+    expect(db.writes.filter(row => row.role === 'user').map(row => row.id)).toEqual([db.writes[0].id, db.writes[0].id]);
+    expect([...db.rows.values()].filter(row => row.role === 'user')).toHaveLength(1);
+    expect(legacyFetch).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(legacyFetch.mock.calls[0][1].body).messages).toEqual([{ role: 'user', content: prompt }]);
+    expect(host.textContent?.split(prompt)).toHaveLength(2);
+  });
+
+  it('keeps an explicit RLS write refusal as a refusal without reconciliation or inference', async () => {
+    const db = simulateChatDatabase(); db.writePlans.push('denied');
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Ne pas contourner ce refus'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Votre demande est conservée');
+    expect(db.rows.size).toBe(0);
+    expect(db.read).not.toHaveBeenCalled();
+    expect(legacyFetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { label: '401', rejection: { status: 401, message: 'Authentication required' } },
+    { label: '403', rejection: { status: 403, message: 'Forbidden' } },
+    { label: '42501', rejection: { code: '42501', message: 'row-level security policy' } },
+  ])('does not reconcile a definitive thrown $label refusal', async ({ rejection }) => {
+    const db = simulateChatDatabase();
+    const databaseFrom = from.getMockImplementation()!;
+    from.mockImplementation((table: string) => {
+      const builder = databaseFrom(table);
+      return table === 'chat_messages' ? { ...builder, insert: () => ({ abortSignal: async () => { throw rejection; } }) } : builder;
+    });
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Refus explicite du transport'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Votre demande est conservée');
+    expect(db.read).not.toHaveBeenCalled();
+    expect(legacyFetch).not.toHaveBeenCalled();
+  });
+
+  it.each(['id', 'conversation_id', 'role', 'content', 'owner'] as const)('rejects a reconciled row with a different %s', async field => {
+    const db = simulateChatDatabase(); db.writePlans.push('lost-ack');
+    db.read.mockImplementationOnce(async () => {
+      const stored = [...db.rows.values()][0];
+      const data = { ...stored, chat_conversations: { ...stored.chat_conversations } };
+      if (field === 'owner') data.chat_conversations.user_id = OTHER_OWNER;
+      else data[field] = field === 'role' ? 'assistant' : 'different-value';
+      return { data, error: null };
+    });
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Vérifier exactement la ligne'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Votre demande est conservée');
+    expect(legacyFetch).not.toHaveBeenCalled();
+    expect(db.writes).toHaveLength(1);
+    expect(db.rows.size).toBe(1);
+    expect(db.read).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['stop', 'account', 'conversation'] as const)('ignores a late reconciliation after %s', async boundary => {
+    const db = simulateChatDatabase(); db.writePlans.push('lost-ack');
+    const pending = deferred<ChatReadResult>(); db.read.mockReturnValueOnce(pending.promise);
+    const prompt = 'Réconciliation encore en attente';
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', prompt); await click('Envoyer le message');
+    expect(db.read).toHaveBeenCalledTimes(1); expect(legacyFetch).not.toHaveBeenCalled();
+    const signal = db.read.mock.calls[0][1];
+    const oldRow = [...db.rows.values()][0];
+    if (boundary === 'stop') await click('Arrêter la réponse');
+    else if (boundary === 'conversation') await click('Nouvelle conversation');
+    else { auth.user = { id: OTHER_OWNER }; auth.session = { access_token: 'second-token' }; await render(); }
+    expect(signal.aborted).toBe(true);
+    await act(async () => { pending.resolve({ data: oldRow, error: null }); });
+    expect(legacyFetch).not.toHaveBeenCalled();
+    if (boundary !== 'stop') expect(host.textContent).not.toContain(prompt);
+    await fill('Votre message', prompt); await click('Envoyer le message');
+    expect(legacyFetch).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(legacyFetch.mock.calls[0][1].body).messages).toEqual([{ role: 'user', content: prompt }]);
+    const userWrites = db.writes.filter(row => row.role === 'user');
+    expect(userWrites).toHaveLength(2);
+    if (boundary === 'stop') expect(userWrites[1].id).toBe(userWrites[0].id);
+    else expect(userWrites[1].id).not.toBe(userWrites[0].id);
+    if (boundary === 'account') expect(legacyFetch.mock.calls[0][1].headers.Authorization).toBe('Bearer second-token');
+  });
+
+  it('confirms an assistant save with a lost acknowledgement without generating the answer again', async () => {
+    const db = simulateChatDatabase(); db.writePlans.push('ok', 'lost-ack');
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Conserver la réponse reçue'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Réponse du chat habituel.');
+    expect(host.textContent).not.toContain('son enregistrement a échoué');
+    expect(legacyFetch).toHaveBeenCalledTimes(1);
+    expect([...db.rows.values()].filter(row => row.role === 'assistant')).toHaveLength(1);
+    expect(db.read).toHaveBeenCalledTimes(1);
+    expect(db.read.mock.calls[0][0]).toEqual({ id: db.writes[1].id, conversation_id: db.writes[1].conversation_id,
+      'chat_conversations.user_id': OWNER });
+    expect(db.writes[1].id).toEqual(expect.any(String));
+  });
+
+  it('keeps an answer visible and reports its unconfirmed save without rerunning inference', async () => {
+    const db = simulateChatDatabase(); db.writePlans.push('ok', 'lost-ack');
+    db.read.mockResolvedValueOnce({ data: null, error: { code: '', message: 'Read unavailable' } });
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Réponse conservée dans la page'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Réponse du chat habituel.');
+    expect(host.textContent).toContain('son enregistrement a échoué');
+    expect(host.querySelector<HTMLInputElement>('[aria-label="Votre message"]')?.value).toBe('');
+    expect(legacyFetch).toHaveBeenCalledTimes(1);
+    expect(db.writes).toHaveLength(2);
+  });
+
   it('reuses a confirmed user turn when retrying after a model failure', async () => {
     const prompt = 'Reprendre ma demande enregistrée';
     const writes = recordChatWrites();

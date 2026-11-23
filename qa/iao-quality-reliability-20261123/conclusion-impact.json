@@ -1,0 +1,26 @@
+{
+  "command": [
+    "node",
+    "/workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "--repo",
+    "iao-quality-20261123",
+    "--uid",
+    "Function:karta/src/claude/consultation.ts:conclusion",
+    "--direction",
+    "upstream",
+    "--include-tests",
+    "--depth",
+    "4"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "environment_override": {
+    "GITNEXUS_STORAGE_PATH": "/dev/shm/iao-quality-index-20261123"
+  },
+  "observed_exit_code": 0,
+  "risk": "LOW",
+  "impacted_symbols": 7,
+  "direct_callers": 1,
+  "log": "/workspace/scratch/ccfbf7e5800b/iao-quality-evidence-20261123/conclusion-impact.log",
+  "log_sha256": "d45446afcdbb4856b5dd98db367f995208facd2819eb7fd12222021ba88a34d8"
+}

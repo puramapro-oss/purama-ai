@@ -20,6 +20,75 @@ async function identify(page: Page, id: string | null) {
   await expect(dialog(page)).toContainText('Décrivez ce que vous souhaitez faire.');
 }
 
+test('an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'write', [{ hold: true }, { status: 409, json: { code: '23505', message: 'duplicate key' } }]);
+  await plans(page, 'messages', [{ status: 503, json: { code: '', message: 'Read unavailable' } }, { hold: true }]);
+  const prompt = 'Conserver le même tour après la confirmation perdue';
+  await send(page, prompt);
+  await expect.poll(async () => (await calls(page, 'write')).length).toBe(1);
+  const stored: Record<string, unknown> = { ...(await calls(page, 'write'))[0].body, chat_conversations: { user_id: 'owner' } };
+  expect(stored.id).toEqual(expect.any(String));
+  await page.evaluate(() => window.__chatHarness.pending.find(p => p.key === 'write')!.respond({
+    status: 503, json: { code: '', message: 'Acknowledgement unavailable' },
+  }));
+  await expect(dialog(page)).toContainText('Votre demande est conservée');
+  expect(await calls(page, 'chatbot')).toHaveLength(0);
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect.poll(async () => (await calls(page, 'messages')).length).toBe(2);
+  const userWrites = (await calls(page, 'write')).filter(call => call.body.role === 'user');
+  expect(userWrites.map(call => call.body.id)).toEqual([stored.id, stored.id]);
+  const query = new URL((await calls(page, 'messages'))[1].url);
+  expect(query.searchParams.get('id')).toBe(`eq.${stored.id}`);
+  expect(query.searchParams.get('conversation_id')).toBe(`eq.${stored.conversation_id}`);
+  expect(query.searchParams.get('chat_conversations.user_id')).toBe('eq.owner');
+  expect(await calls(page, 'chatbot')).toHaveLength(0);
+  await page.evaluate(row => window.__chatHarness.pending.find(p => p.key === 'messages')!.respond({ json: [row] }), stored);
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  await expect(dialog(page).getByText(prompt, { exact: true })).toHaveCount(1);
+  expect(await calls(page, 'chatbot')).toHaveLength(1);
+  expect((await calls(page, 'chatbot'))[0].body.messages).toEqual([{ role: 'user', content: prompt }]);
+});
+
+test('an assistant acknowledgement is reconciled without generating another answer', async ({ page }) => {
+  await identify(page, 'owner'); await plans(page, 'write', [{ json: [] }, { hold: true }]);
+  await plans(page, 'messages', [{ hold: true }]);
+  await send(page, 'Conserver la réponse reçue');
+  await expect.poll(async () => (await calls(page, 'write')).length).toBe(2);
+  const stored: Record<string, unknown> = { ...(await calls(page, 'write'))[1].body, chat_conversations: { user_id: 'owner' } };
+  expect(stored.id).toEqual(expect.any(String)); expect(stored.role).toBe('assistant');
+  await page.evaluate(() => window.__chatHarness.pending.find(p => p.key === 'write')!.respond({
+    status: 503, json: { code: '', message: 'Acknowledgement unavailable' },
+  }));
+  await expect.poll(async () => (await calls(page, 'messages')).length).toBe(1);
+  expect(await calls(page, 'chatbot')).toHaveLength(1);
+  await page.evaluate(row => window.__chatHarness.pending.find(p => p.key === 'messages')!.respond({ json: [row] }), stored);
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  await expect(dialog(page)).not.toContainText('son enregistrement a échoué');
+  expect(await calls(page, 'chatbot')).toHaveLength(1);
+  expect(await calls(page, 'write')).toHaveLength(2);
+});
+
+test('a late save reconciliation cannot run the old account request', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'write', [{ status: 503, json: { code: '', message: 'Acknowledgement unavailable' } }]);
+  await plans(page, 'messages', [{ hold: true }]);
+  await send(page, 'Demande du compte précédent');
+  await expect.poll(async () => (await calls(page, 'messages')).length).toBe(1);
+  const stored: Record<string, unknown> = { ...(await calls(page, 'write'))[0].body, chat_conversations: { user_id: 'owner' } };
+  await identify(page, 'other-owner');
+  expect((await calls(page, 'messages'))[0].aborted).toBe(true);
+  await page.evaluate(row => window.__chatHarness.pending.find(p => p.key === 'messages')!.respond({ json: [row] }), stored);
+  await expect(dialog(page)).not.toContainText('Demande du compte précédent');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  expect(await calls(page, 'chatbot')).toHaveLength(0);
+  await send(page, 'Demande du nouveau compte');
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  expect((await calls(page, 'chatbot'))[0].body.messages).toEqual([{ role: 'user', content: 'Demande du nouveau compte' }]);
+});
+
 test('guest chat uses one model request, no history database calls and no welcome in model context', async ({ page }, testInfo) => {
   await send(page);
   await expect(dialog(page)).toContainText('Réponse vérifiée dans la simulation.');

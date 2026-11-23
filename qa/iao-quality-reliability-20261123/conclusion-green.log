@@ -1,0 +1,113 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > enforces the host's encoded context ceiling before dispatching a model 9ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 0 before admission 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 8191 before admission 1ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 262145 before admission 1ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling 9000.5 before admission 1ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > rejects an invalid host context ceiling NaN before admission 0ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > refuses URLs that expand beyond the link ceiling during canonicalization 4ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > uses only the exact primary for synthesis and reserves/reconciles every individual operation 6ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for standard / standard 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for deep / fast 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for maximum / standard 4ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > bounds work for maximum / ultra_fast 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > keeps separate immutable usage counters for each model call 3ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > deduplicates exact requested queries and URLs before spending 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > sends only explicit public query/URL to research providers, not the full question 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > does not add omitted reviewers or research requests 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > never runs more simultaneous models than the selected plan permits 4ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > does not forward undeclared source metadata to the models or final result 2ms
+ ✓ test/modelConsultation.test.ts > multi-model consultation composition > keeps individual source IDs and bounds text supplied to all consulted models 4ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > does not invoke providers when reservations are denied 3ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > a duplicated operation cannot trigger a second reserve or provider call 2ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution 1ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution 1ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution 1ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects unavailable, duplicate or out-of-profile peers without substitution 1ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > rejects a simulated client or absent admission before provider work 2ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > stops further calls when settlement fails and never claims a complete result 2ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > a stalled settlement cannot certify a complete consultation or launch subsequent calls 8ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > a late reservation after cancellation settles without sending an inference 2ms
+ ✓ test/modelConsultation.test.ts > host permissions, exact model qualification and accounting > records a missing retrieval as partial and still synthesizes with explicit missing calls 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects empty conclusion list items in disagreements before declaring completion 2ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects blank conclusion list items in disagreements before declaring completion 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects empty conclusion list items in uncertainties before declaring completion 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects blank conclusion list items in uncertainties before declaring completion 2ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > preserves valid conclusion lists (0) 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > preserves valid conclusion lists (1) 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > never retries a failed inference and retains its usage as uncertain 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects invented citation S999 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects invented citation fabricated-source 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > refuses tool calls from a consulted model and never exposes executable tools 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > rejects malformed source data and reports retrieval as partial instead of treating it as verified 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > cancels before claiming and never contacts providers 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > cancellation during reservation prevents the paid call 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > late uncooperative retrieval cannot launch inference or mutate an already returned result 5ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > a late model response after cancellation cannot launch another panel or change returned receipts 1ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > refuses accessors in request data without running them 0ms
+ ✓ test/modelConsultation.test.ts > untrusted model output and cancellation > snapshots request data before asynchronous host admission 1ms
+stdout | test/consultationTransport.test.ts
+[api] KARTA écoute sur :0
+
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > authenticates the user JWT then traverses the real HTTP server and runtime 49ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a readable failed operation for blank conclusion list disagreements without repeating inference 15ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a readable failed operation for blank conclusion list uncertainties without repeating inference 10ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > returns a catalog without launching a model or research call 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication null 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication Basic bad 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication Bearer  1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses malformed browser authentication Bearer a b 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses missing, anonymous or invalid accounts (0) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses missing, anonymous or invalid accounts (1) 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses missing, anonymous or invalid accounts (2) 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects a wrong administrative token before inspecting the consultation 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field userId at both boundaries 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field budget at both boundaries 3ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field apiKey at both boundaries 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field provider at both boundaries 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects client authority field endpoint at both boundaries 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (0) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (1) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (2) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (3) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (4) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (5) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (6) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed consultation data (7) 3ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > reuses a completed idempotency key, exposes status privately, and refuses a conflicting request 19ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > keeps catalog, status and cancellation available during a queue outage but admits no new work 10ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > cancels a running operation explicitly without launching a later synthesis 64ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > propagates disconnect through Edge and HTTP without treating the completed request body as cancellation 113ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds auth waiting even when the auth transport ignores cancellation 5ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds upstream waiting and disposes a late body without replaying the request 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > does not report a complete operation without its validated result 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > cancels oversized provider response bodies (declared=true) 3ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > cancels oversized provider response bodies (declared=false) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects a non-JSON upstream body and releases it 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > preserves Unicode through the actual HTTP runtime and bounded proxy response 7ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds UTF-8 response bytes, not JavaScript string length (70000 Unicode pairs) 7ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds UTF-8 response bytes, not JavaScript string length (140000 Unicode pairs) 8ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses a projected API result whose Unicode envelope exceeds the private response bound 14ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > refuses auth errors even when a stale user object is returned 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > uses separate read and cancel throttles derived from the verified account 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > overrides the short server socket timeout only for the bounded consultation 55ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > does not forward a request cancelled before auth 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects oversized input before forwarding 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > bounds an oversized chunked API body without relying on Content-Length 3ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > handles a disconnect during the body without a late unhandled stream error 4ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > projects fields instead of exposing host extras or receipts 7ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when SUPABASE_URL is absent 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when SUPABASE_ANON_KEY is absent 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when KARTA_INTERNAL_URL is absent 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > fails closed when KARTA_ADMIN_TOKEN is absent 1ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > sanitizes upstream provider and database errors 3ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed upstream JSON or private response identity (0) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed upstream JSON or private response identity (1) 2ms
+ ✓ test/consultationTransport.test.ts > private consultation HTTP and Edge route > rejects malformed upstream JSON or private response identity (2) 2ms
+
+ Test Files  2 passed (2)
+      Tests  102 passed (102)
+   Start at  19:36:44
+   Duration  1.80s (transform 46%, tests 28%, import 25%, setup 1%)

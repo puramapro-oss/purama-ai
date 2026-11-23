@@ -1,0 +1,131 @@
+{
+  "transformation": "Remove trailing spaces/tabs/carriage returns per line and blank lines at end of readable logs only. Original UTF-8 contents, including whitespace in diagnostics, are preserved exactly in raw-terminal-output.json. Source and test files are untouched.",
+  "files": [
+    {
+      "file": "catalog-policy-green.log",
+      "original_sha256": "a0ecf9bc09bcc0055016308e5293e5f17f65539efe621af97b8be9c620d2cb03",
+      "published_sha256": "d25a48dd9e04fa86d154833502f4b0213db8aca8d7a15d33afdc106426321b5b",
+      "changed": true
+    },
+    {
+      "file": "catalog-policy-impacts.log",
+      "original_sha256": "f1e3d300c55896f40feb48daa2f8f2e711f0ab3e0401b402b9c8dcf8fe714786",
+      "published_sha256": "195977d9a909a62df706ef82df624cd6302020a5c6c05dd3cf1b2bea70f64ea4",
+      "changed": true
+    },
+    {
+      "file": "catalog-policy-native-red.log",
+      "original_sha256": "e5d3e2c9f9426d5b6a07021aa5302dcbd72e0c3083c9a4cb13ffb76b6015db2b",
+      "published_sha256": "a30218991980c731d70b45fdb50f9ebb2eb9ffc3a0862207dc8ca468423f30f0",
+      "changed": true
+    },
+    {
+      "file": "catalog-policy-red.log",
+      "original_sha256": "eed887683bdc526a28c5f8866cb4bd1d7ea48664a911c8063121f2d89ca2d7de",
+      "published_sha256": "524e2fb74db2ee5160941b9521c6629bbd17cda5613f690abcdb1b32ac06e5a8",
+      "changed": true
+    },
+    {
+      "file": "catalog-policy-typecheck.log",
+      "original_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "published_sha256": "1ec69788b3cdadf508e02dfbc57a867f46cb26ef267d4d55cee0799fb6ce3ce8",
+      "changed": true
+    },
+    {
+      "file": "chat-browser-collection.log",
+      "original_sha256": "da900b043892b500de3d9c3759d293ccae9d3e934cbafd5ae8872c1042cd0258",
+      "published_sha256": "da900b043892b500de3d9c3759d293ccae9d3e934cbafd5ae8872c1042cd0258",
+      "changed": false
+    },
+    {
+      "file": "chat-browser-native.log",
+      "original_sha256": "0cedec8fb83e186628c88de2edca4caccc8adb37463df1bbb2c4ec6f90cd0c3b",
+      "published_sha256": "ec87ae7df86e90aee90497e1fe46f8b6ed8fce11330feb0aafb11e01f115d09b",
+      "changed": true
+    },
+    {
+      "file": "chat-browser-types-green.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed": false
+    },
+    {
+      "file": "chat-browser-types.log",
+      "original_sha256": "b50263b70cd6c53e846ecbfd8799290d33291e3e2b864fd0a2e13d44b8220083",
+      "published_sha256": "b50263b70cd6c53e846ecbfd8799290d33291e3e2b864fd0a2e13d44b8220083",
+      "changed": false
+    },
+    {
+      "file": "chat-definitive-throw-red.log",
+      "original_sha256": "e993079d4eb85991aa38f3f5eea0dacb5c15f5b4d55e6a074438a26981ff7999",
+      "published_sha256": "e9272e85f77133a2968328bdfe7e2f378774658b204199623cf4cdda998dafa7",
+      "changed": true
+    },
+    {
+      "file": "chat-green-final.log",
+      "original_sha256": "2aae4641e3d19ecd94ec636387aa203dadc687c04a68575100d3ed3937f14d68",
+      "published_sha256": "c3ad02b6ffffd078ae845258eb138e053825bc7ecf134902ec83aead7d957398",
+      "changed": true
+    },
+    {
+      "file": "chat-green-initial.log",
+      "original_sha256": "96a7a60b06c622b8ea718f6b71ee6451e1ee7937bae720a4640ceca7aa05126d",
+      "published_sha256": "0551091b8ab07795191e6693f2db5b4da394ff44c6461ada0ba8c45b7f4581e0",
+      "changed": true
+    },
+    {
+      "file": "chat-green.log",
+      "original_sha256": "398a1bc884d713439120f62db2a23d79fe509f7e88797fa7f030fbd96b9bc7b8",
+      "published_sha256": "8ee6380d071cf306bbf87decf153cd3e385674d7e45417ba429849d0912a89b3",
+      "changed": true
+    },
+    {
+      "file": "chat-red.log",
+      "original_sha256": "45a17241da365282bb091c1cd3f63562b9f84f9779523940fab08ba4be2d6280",
+      "published_sha256": "909008734b301ac30e030ba33d2dd575e70e7e84a00e585fb5eacd28e0b62ec9",
+      "changed": true
+    },
+    {
+      "file": "conclusion-diff-check.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed": false
+    },
+    {
+      "file": "conclusion-green.log",
+      "original_sha256": "03981887d190f03b5dd2b56de90e410d7b7c8f97cad800882b0dff0f0930728f",
+      "published_sha256": "4c81cb3a48a71cb81a66c0220d0eb97c6e11412508bd022e8738e483533f121c",
+      "changed": true
+    },
+    {
+      "file": "conclusion-impact.log",
+      "original_sha256": "d45446afcdbb4856b5dd98db367f995208facd2819eb7fd12222021ba88a34d8",
+      "published_sha256": "d45446afcdbb4856b5dd98db367f995208facd2819eb7fd12222021ba88a34d8",
+      "changed": false
+    },
+    {
+      "file": "conclusion-red.log",
+      "original_sha256": "102f27b4564fdedb0598f0e9f317b9e6e107ce848eb57faa26bcbf225289078f",
+      "published_sha256": "41cfc7f455524d50965af0cf2794d58cd33572a5dde1d00701f0ec7cc3dd70e9",
+      "changed": true
+    },
+    {
+      "file": "karta-build.log",
+      "original_sha256": "4399baf40ce9645cc71a14ef94974c86dac04a03ec0e86929b20d4638b36d2fd",
+      "published_sha256": "ecaad19a343171d9e69651f326a3b4070eca47d096898c49d235aef45e64ac05",
+      "changed": true
+    },
+    {
+      "file": "site-lint.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed": false
+    },
+    {
+      "file": "site-typecheck.log",
+      "original_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f",
+      "published_sha256": "c513767613fcb91a791f33763c943a7559174c3f440e4bb1f488608c75f2cbae",
+      "changed": true
+    }
+  ]
+}

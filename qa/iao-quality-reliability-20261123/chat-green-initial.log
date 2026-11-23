@@ -1,0 +1,22 @@
+
+ RUN  v4.1.12 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123
+
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after lost-ack before running the model 121ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reconciles a committed user message after thrown-lost-ack before running the model 42ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries an unknown user write with the same identity when the first reconciliation is unavailable 45ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reuses a confirmed user turn when retrying after a model failure 25ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps an edited request as a distinct turn after failure 44ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > accepts an intentional identical new turn after a completed answer 52ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a stopped confirmed turn without retaining its partial answer 44ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reuse a failed turn after changing conversation 32ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > does not reuse a failed turn after changing account 27ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > retries a guest turn without persistence or duplicate context 19ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > mounts the real consultation client without forwarding the existing chat history and restores the chat 72ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > shows technical controls only for the verified founder and removes them on loss of verification 23ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > keeps public chat usable without exposing private consultation to visitors or anonymous sessions 19ms
+ ✓ src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > aborts and clears the old private panel when the account changes, keeping old results out of the new account 26ms
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  19:40:40
+   Duration  1.83s (transform 293ms, setup 0ms, import 529ms, tests 591ms, environment 448ms)

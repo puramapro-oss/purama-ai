@@ -1,0 +1,62 @@
+[WebServer] (node:18) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:39) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/chat/lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference (4ms)
+(node:52) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/chat/lifecycle.spec.ts:54:1 › an assistant acknowledgement is reconciled without generating another answer (3ms)
+(node:64) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/chat/lifecycle.spec.ts:74:1 › a late save reconciliation cannot run the old account request (4ms)
+
+
+  1) tests/chat/lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../iao-quality-evidence-20261123/chat-browser-results/lifecycle-an-unconfirmed-m-37f76-stored-row-before-inference/error-context.md
+
+  2) tests/chat/lifecycle.spec.ts:54:1 › an assistant acknowledgement is reconciled without generating another answer
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../iao-quality-evidence-20261123/chat-browser-results/lifecycle-an-assistant-ack-b7d4d-t-generating-another-answer/error-context.md
+
+  3) tests/chat/lifecycle.spec.ts:74:1 › a late save reconciliation cannot run the old account request
+
+    Error: browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../iao-quality-evidence-20261123/chat-browser-results/lifecycle-a-late-save-reco-52ad2-run-the-old-account-request/error-context.md
+
+  3 failed
+    tests/chat/lifecycle.spec.ts:23:1 › an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference
+    tests/chat/lifecycle.spec.ts:54:1 › an assistant acknowledgement is reconciled without generating another answer
+    tests/chat/lifecycle.spec.ts:74:1 › a late save reconciliation cannot run the old account request

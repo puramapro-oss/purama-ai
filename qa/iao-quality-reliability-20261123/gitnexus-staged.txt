@@ -1,0 +1,24 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795459751676,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 19 files, 17 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Function createConsultationHost → karta/src/claude/consultation-host.ts
+  Function models → karta/src/claude/consultation-host.ts
+  Function conclusion → karta/src/claude/consultation.ts
+  Function insert → src/components/ChatbotWidget.consultation.test.tsx
+  Function abortSignal → src/components/ChatbotWidget.consultation.test.tsx
+  Function single → src/components/ChatbotWidget.consultation.test.tsx
+  Function select → src/components/ChatbotWidget.consultation.test.tsx
+  Function abortSignal → src/components/ChatbotWidget.consultation.test.tsx
+  Method disconnect → src/components/ChatbotWidget.consultation.test.tsx
+  Method observe → src/components/ChatbotWidget.consultation.test.tsx
+  Method unobserve → src/components/ChatbotWidget.consultation.test.tsx
+  Function ChatbotWidget → src/components/ChatbotWidget.tsx
+  Function saveMessage → src/components/ChatbotWidget.tsx
+  Function addNotice → src/components/ChatbotWidget.tsx
+  Function stopActiveRequest → src/components/ChatbotWidget.tsx
+... and 2 more

@@ -153,6 +153,25 @@ describe("private consultation HTTP and Edge route", () => {
     expect(body.operation.result).not.toHaveProperty("receipts"); expect(body.operation.result?.plan).not.toHaveProperty("providerOptions");
   });
 
+  it.each([{ field: "disagreements", item: "" }, { field: "uncertainties", item: " \t\n" }])(
+    "returns a readable failed operation for blank conclusion list $field without repeating inference", async ({ field, item }) => {
+      h.state.decide = async () => ({ summary: JSON.stringify({ answer: "Réponse utile", citedSourceIds: [], disagreements: [], uncertainties: [], [field]: [item] }),
+        toolCalls: [], requiresApproval: false, mock: false });
+      const e = edge();
+      const response = await e.handle(browser(input()));
+      expect(response.status).toBe(200);
+      const body = await response.json() as OperationResponse;
+      expect(body.operation).toMatchObject({ operationId, status: "failed", result: {
+        status: "failed", reason: "synthesis_unavailable", answer: null, citedSourceIds: [], disagreements: [], uncertainties: [],
+      } });
+      const status = await e.handle(browser({ action: "status", operationId }));
+      expect(status.status).toBe(200); expect(await status.json()).toEqual(body);
+      const repeated = await e.handle(browser(input()));
+      expect(repeated.status).toBe(200); expect(await repeated.json()).toEqual(body);
+      expect(h.decide).toHaveBeenCalledOnce(); expect(h.reserve).toHaveBeenCalledOnce(); expect(h.settle).toHaveBeenCalledOnce();
+      expect(body.operation.result).not.toHaveProperty("receipts");
+    });
+
   it("returns a catalog without launching a model or research call", async () => {
     const e = edge(); const response = await e.handle(browser({ action: "catalog" }));
     expect(response.status).toBe(200); expect(await response.json()).toEqual({ ok: true, catalog: modelCatalog });

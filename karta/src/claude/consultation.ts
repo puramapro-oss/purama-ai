@@ -153,7 +153,7 @@ function conclusion(text: string, ids: string[]) {
   if (Object.keys(row).length !== 4 || typeof row.answer !== "string" || !row.answer.trim() || row.answer.length > 32_000) return invalid();
   for (const key of ["citedSourceIds", "disagreements", "uncertainties"]) {
     const list = row[key];
-    if (!Array.isArray(list) || list.length > 32 || list.some(item => typeof item !== "string" || item.length > 2000)) return invalid();
+    if (!Array.isArray(list) || list.length > 32 || list.some(item => typeof item !== "string" || !item.trim() || item.length > 2000)) return invalid();
   }
   const citedSourceIds = row.citedSourceIds as string[];
   if (new Set(citedSourceIds).size !== citedSourceIds.length || citedSourceIds.some(id => !ids.includes(id))) return invalid();
