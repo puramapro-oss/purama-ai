@@ -31,6 +31,7 @@ OGAM a été examiné au commit `f7789fee644e16123a723e51433057d75ded2b53` (vers
 | Régression initiale, saisie sans clic sur Enregistrer | RED : la source d’origine ne conserve pas automatiquement le texte |
 | Contrats des vrais modules dans JSDOM 29.1.1 et fake-indexeddb 6.2.4 | PASS — 16 scénarios, aucun ignoré ; DOM et stockage sont des doubles de test |
 | `npm run test:offline` | PASS — 69 tests, aucun ignoré |
+| `npm run test:distribution:worker` | PASS — 25 tests, aucun ignoré, après alignement de la fixture sur le cache v10 |
 | `npm run check:offline-assets` | PASS — cache `purama-offline-v10`, quatre tailles et SHA-256 conformes |
 | Vitest ciblé ConsultationPanel, ChatbotWidget et consultation-client | PASS — 54 tests |
 | `npm run typecheck` | PASS — sortie 0 |
@@ -39,7 +40,7 @@ OGAM a été examiné au commit `f7789fee644e16123a723e51433057d75ded2b53` (vers
 | Contre-revue indépendante du produit modifié | PASS — observations sur les courses, l’état enregistré et les relectures corrigées |
 | Navigateur Chromium dans le conteneur de travail | BLOQUÉ — création de socket refusée ; qualification reportée au workflow PR existant |
 
-Les seize scénarios temporaires VM ont accéléré la correction ; ils ne remplacent pas les scénarios Playwright conservés dans le dépôt. La preuve navigateur du correctif reste à obtenir en CI. Les tests sur appareils physiques, l’inférence locale et la synchronisation de compte sont NON TESTÉS par ce lot.
+Les seize scénarios temporaires VM ont accéléré la correction ; ils ne remplacent pas les scénarios Playwright conservés dans le dépôt. Les exécutions navigateur réelles et leurs conclusions sont attachées à la [PR 97](https://github.com/puramapro-oss/purama-ai/pull/97). La première CI a révélé une fixture de distribution encore fixée sur le cache v8, corrigée vers v10 avant la nouvelle exécution ; aucune ressource produit n’a été modifiée pour contourner cet échec. Les tests sur appareils physiques, l’inférence locale et la synchronisation de compte sont NON TESTÉS par ce lot.
 
 ## Historique de qualification du 10 novembre 2026
 

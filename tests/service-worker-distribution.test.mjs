@@ -6,7 +6,7 @@ import { runInNewContext } from 'node:vm';
 
 const source = readFileSync(new URL('../public/sw.js', import.meta.url), 'utf8');
 const ORIGIN = 'https://purama.example';
-const CURRENT_CACHE = 'purama-offline-v8';
+const CURRENT_CACHE = 'purama-offline-v10';
 const ASSETS = ['/offline.html', '/offline-workspace.js', '/offline-library-backup.js', '/manifest.json'];
 const ASSET_BYTES = new Map(ASSETS.map((path) => [path, readFileSync(new URL('../public' + path, import.meta.url))]));
 const CONTENT_TYPES = new Map([
