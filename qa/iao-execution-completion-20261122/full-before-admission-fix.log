@@ -1,0 +1,544 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/localComputeFabricProvider.test.ts (13 tests | 10 failed) 20ms
+   ❯ local compute fabric provider (13)
+     × accepts the strict local response contract 6ms
+     × fails closed when the daemon does not attest local-only execution and accepted caps 4ms
+     × rejects malformed or over-disclosing responses 1ms
+     × rejects malformed or over-disclosing responses 0ms
+     × rejects malformed or over-disclosing responses 0ms
+     × rejects malformed or over-disclosing responses 0ms
+     × rejects malformed or over-disclosing responses 0ms
+     × rejects malformed or over-disclosing responses 1ms
+     × enforces one absolute deadline even while the provider streams 1ms
+     × bounds the accumulated response 0ms
+ ❯ test/localComputeFabricCancellation.test.ts (16 tests | 14 failed) 44ms
+   ❯ IAO cancellation through the real local Unix transport (16)
+     × closes an in-flight socket on cancellation (streaming=false) 20ms
+     × closes an in-flight socket on cancellation (streaming=true) 1ms
+     × stops a cancellable fixture-daemon computation after the client disconnects 1ms
+     × closes the transport when the shorter KARTA deadline expires 1ms
+     × cancels the full IAO path, fences late output and replays without resending 1ms
+     × retains scoped identity and fixed local budgets when the caller reconstructs KARTA 1ms
+     × does not redirect, retry or fall back on HTTP 302 1ms
+     × does not redirect, retry or fall back on HTTP 429 1ms
+     × does not redirect, retry or fall back on HTTP 500 1ms
+     × releases cancellation listeners after success and ignores a later abort 1ms
+     × closes a truncated response without accepting partial output or retrying 2ms
+     × handles an abort immediately after dispatch starts without sending a request 1ms
+     × isolates cancellation between concurrent requests on one provider 1ms
+     × keeps the absolute fabric deadline and releases signal listeners on timeout 1ms
+ ❯ test/loopModelAdmission.test.ts (33 tests | 10 failed) 25ms
+   ❯ model admission for brief agents (4)
+     × does not send context to the model after a global stop during context construction 4ms
+     × does not send context to the model after a disabled stop during context construction 1ms
+     × does not send context to the model after a individual stop during context construction 0ms
+     × does not send context to the model after a simulation stop during context construction 0ms
+   ❯ unverifiable admission and privacy for brief agents (2)
+     × fails closed without exposing a stateRead transport diagnostic 0ms
+     × fails closed without exposing a global transport diagnostic 0ms
+   ❯ valid paths, simulation and immutable cancellation (12)
+     × keeps a stable brief request functional with exactly one model call 1ms
+     × reconciles the same cancellation after one lost closing acknowledgement 1ms
+     × never turns unconfirmed cancellation into success or permission to retry effects 1ms
+     × preserves a confirmed cancellation when secondary bookkeeping fails 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 34 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=false)
+Error: listen EPERM: operation not permitted /tmp/iao-c-vY88rq/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:96:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes an in-flight socket on cancellation (streaming=true)
+Error: listen EPERM: operation not permitted /tmp/iao-c-oeo6PX/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:96:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > stops a cancellable fixture-daemon computation after the client disconnects
+Error: listen EPERM: operation not permitted /tmp/iao-c-oH8hyo/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:118:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes the transport when the shorter KARTA deadline expires
+Error: listen EPERM: operation not permitted /tmp/iao-c-jmh4gZ/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:144:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > cancels the full IAO path, fences late output and replays without resending
+Error: listen EPERM: operation not permitted /tmp/iao-c-KrMogA/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:163:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > retains scoped identity and fixed local budgets when the caller reconstructs KARTA
+Error: listen EPERM: operation not permitted /tmp/iao-c-WwVwhK/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:199:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > does not redirect, retry or fall back on HTTP 302
+Error: listen EPERM: operation not permitted /tmp/iao-c-PrRSvo/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:233:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > does not redirect, retry or fall back on HTTP 429
+Error: listen EPERM: operation not permitted /tmp/iao-c-EDcGen/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:233:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > does not redirect, retry or fall back on HTTP 500
+Error: listen EPERM: operation not permitted /tmp/iao-c-74BeaR/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:233:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > releases cancellation listeners after success and ignores a later abort
+Error: listen EPERM: operation not permitted /tmp/iao-c-bODCTd/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:247:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > closes a truncated response without accepting partial output or retrying
+Error: listen EPERM: operation not permitted /tmp/iao-c-g0d93N/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:259:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > handles an abort immediately after dispatch starts without sending a request
+Error: listen EPERM: operation not permitted /tmp/iao-c-PTCRnu/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:274:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > isolates cancellation between concurrent requests on one provider
+Error: listen EPERM: operation not permitted /tmp/iao-c-TvmmWz/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:289:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/34]⎯
+
+ FAIL  test/localComputeFabricCancellation.test.ts > IAO cancellation through the real local Unix transport > keeps the absolute fabric deadline and releases signal listeners on timeout
+Error: listen EPERM: operation not permitted /tmp/iao-c-LIITN8/fabric.sock
+ ❯ test/localComputeFabricCancellation.test.ts:36:12
+     34|   await new Promise<void>((resolve, reject) => {
+     35|     server.once("error", reject);
+     36|     server.listen(socketPath, resolve);
+       |            ^
+     37|   });
+     38|   return socketPath;
+ ❯ socketServer test/localComputeFabricCancellation.test.ts:34:9
+ ❯ test/localComputeFabricCancellation.test.ts:311:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > accepts the strict local response contract
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-GKnHlF/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:56:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > fails closed when the daemon does not attest local-only execution and accepted caps
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-tzMcrv/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:74:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-vd9KWb/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-VHyJ6c/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-aEemCo/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-LCdZni/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-VCY1eG/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > rejects malformed or over-disclosing responses
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-xQMTlu/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:90:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > enforces one absolute deadline even while the provider streams
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-mikdMN/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:97:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/34]⎯
+
+ FAIL  test/localComputeFabricProvider.test.ts > local compute fabric provider > bounds the accumulated response
+Error: listen EPERM: operation not permitted /tmp/iao-fabric-PWG0Ok/fabric.sock
+ ❯ test/localComputeFabricProvider.test.ts:17:12
+     15|   await new Promise<void>((resolve, reject) => {
+     16|     server.once("error", reject);
+     17|     server.listen(socketPath, resolve);
+       |            ^
+     18|   });
+     19|   cleanups.push(async () => {
+ ❯ socketServer test/localComputeFabricProvider.test.ts:15:9
+ ❯ test/localComputeFabricProvider.test.ts:109:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/34]⎯
+
+ FAIL  test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a global stop during context construction
+ FAIL  test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a disabled stop during context construction
+ FAIL  test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a individual stop during context construction
+ FAIL  test/loopModelAdmission.test.ts > model admission for brief agents > does not send context to the model after a simulation stop during context construction
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ expectNoInference test/loopModelAdmission.test.ts:82:24
+     80|
+     81| function expectNoInference(result: AgentRunResult, status: "cancelled"…
+     82|   expect(h.client).not.toHaveBeenCalled();
+       |                        ^
+     83|   expect(h.decide).not.toHaveBeenCalled();
+     84|   expect(result).toMatchObject({ status, toolsUsed: [], mock: false, r…
+ ❯ test/loopModelAdmission.test.ts:129:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/34]⎯
+
+ FAIL  test/loopModelAdmission.test.ts > unverifiable admission and privacy for brief agents > fails closed without exposing a stateRead transport diagnostic
+ FAIL  test/loopModelAdmission.test.ts > unverifiable admission and privacy for brief agents > fails closed without exposing a global transport diagnostic
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ expectNoInference test/loopModelAdmission.test.ts:82:24
+     80|
+     81| function expectNoInference(result: AgentRunResult, status: "cancelled"…
+     82|   expect(h.client).not.toHaveBeenCalled();
+       |                        ^
+     83|   expect(h.decide).not.toHaveBeenCalled();
+     84|   expect(result).toMatchObject({ status, toolsUsed: [], mock: false, r…
+ ❯ test/loopModelAdmission.test.ts:188:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/34]⎯
+
+ FAIL  test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > keeps a stable brief request functional with exactly one model call
+AssertionError: expected "vi.fn()" to be called once, but got 2 times
+ ❯ test/loopModelAdmission.test.ts:208:22
+    206|     const result = await cycle(definition(kind));
+    207|     expect(result).toMatchObject({ status: "success", retryable: false…
+    208|     expect(h.client).toHaveBeenCalledOnce();
+       |                      ^
+    209|     expect(h.decide).toHaveBeenCalledOnce();
+    210|     expect(h.execute).toHaveBeenCalledOnce();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/34]⎯
+
+ FAIL  test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > reconciles the same cancellation after one lost closing acknowledgement
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ expectNoInference test/loopModelAdmission.test.ts:82:24
+     80|
+     81| function expectNoInference(result: AgentRunResult, status: "cancelled"…
+     82|   expect(h.client).not.toHaveBeenCalled();
+       |                        ^
+     83|   expect(h.decide).not.toHaveBeenCalled();
+     84|   expect(result).toMatchObject({ status, toolsUsed: [], mock: false, r…
+ ❯ test/loopModelAdmission.test.ts:240:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/34]⎯
+
+ FAIL  test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > never turns unconfirmed cancellation into success or permission to retry effects
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ expectNoInference test/loopModelAdmission.test.ts:82:24
+     80|
+     81| function expectNoInference(result: AgentRunResult, status: "cancelled"…
+     82|   expect(h.client).not.toHaveBeenCalled();
+       |                        ^
+     83|   expect(h.decide).not.toHaveBeenCalled();
+     84|   expect(result).toMatchObject({ status, toolsUsed: [], mock: false, r…
+ ❯ test/loopModelAdmission.test.ts:249:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/34]⎯
+
+ FAIL  test/loopModelAdmission.test.ts > valid paths, simulation and immutable cancellation > preserves a confirmed cancellation when secondary bookkeeping fails
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ expectNoInference test/loopModelAdmission.test.ts:82:24
+     80|
+     81| function expectNoInference(result: AgentRunResult, status: "cancelled"…
+     82|   expect(h.client).not.toHaveBeenCalled();
+       |                        ^
+     83|   expect(h.decide).not.toHaveBeenCalled();
+     84|   expect(result).toMatchObject({ status, toolsUsed: [], mock: false, r…
+ ❯ test/loopModelAdmission.test.ts:258:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/34]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/ccfbf7e5800b/purama-ai/karta/test/chatHistoryIsolation.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  3 failed | 185 passed (189)
+      Tests  34 failed | 4226 passed (4299)
+     Errors  1 error
+   Start at  23:34:04
+   Duration  188.51s (tests 89%, import 7%, transform 3%, setup 1%, worker 1%)
+
+    Isolate  189 workers spawned · ~130ms startup each (spawn + environment, per file)
+             at least ~24.49s faster with isolate: false — reuses workers across files instead of one per file

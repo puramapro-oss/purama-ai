@@ -1,0 +1,55 @@
+{
+  "reviewer": "/root/iao_23_audit_runtime",
+  "kind": "independent_static_review",
+  "status": "PASS",
+  "recorded_at_utc": "2026-11-22T23:41:29.129847+00:00",
+  "head": "370ba539c3bc1bcb58f1e67cf7a17985f6ce59a1",
+  "files": {
+    "supabase/functions/_shared/social-connection-core.ts": {
+      "before_sha256": "4be6b3050c0f4ba63d6ca0ecbe63759bef15d07ae30c1597de0bfa6ea4175335",
+      "after_sha256": "28fe4521d53e1d85b7d3c9b41e137246138cb83fd6634b590b222beda078508b"
+    },
+    "tests/social-connection/connection.test.ts": {
+      "sha256": "80694971b6fc4ddf3522d9e4370fd214c7c74652be5585a1d6ed93806bad4426",
+      "pre_existing_tests_byte_prefix_preserved": true
+    }
+  },
+  "scope_verified": {
+    "entire_core_identical_after_reversing_only_reviewed_import_and_body_read_delta": true,
+    "origin_method_authentication_gates_unchanged_and_before_body_read": true,
+    "provider_binding_store_callback_and_identity_delegation_unchanged": true,
+    "privileged_dependencies_still_created_only_after_body_and_platform_validation": true,
+    "shared_helpers_and_provider": {
+      "supabase/functions/_shared/request-body.ts": {
+        "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+        "identical_to_HEAD": true
+      },
+      "supabase/functions/_shared/request-deadline.ts": {
+        "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+        "identical_to_HEAD": true
+      },
+      "supabase/functions/_shared/social-connection-provider.ts": {
+        "sha256": "0013d58cdfe918592db122d17ac3f02e37d181ea8a43788202cca1748eb11667",
+        "identical_to_HEAD": true
+      }
+    },
+    "utf16_limit_4096_preserved_after_single_bom_normalization": true,
+    "transport_ceiling_bytes": 16384,
+    "body_timeout_ms": 5000,
+    "error_mapping": {
+      "400": "invalid_request",
+      "408": "request_timeout",
+      "413": "request_too_large"
+    },
+    "existing_json_syntax_error_mapping_preserved": "invalid_json/400",
+    "public_error_messages_remain_generic": true
+  },
+  "behavior_qualifications": [
+    "Single leading BOM normalization is an inter-runtime consistency improvement; it was not historical native Deno admission at the 4096-unit boundary.",
+    "Malformed UTF-8 and inconsistent Content-Length are now rejected before dependencies; this is deliberate input hardening.",
+    "The five-second budget covers body reading, not authentication, the full OAuth transaction or provider operations.",
+    "No new optional tests or test executions performed during this static review; root reported the 14 new tests passing separately."
+  ],
+  "findings": [],
+  "conclusion": "The exact delta resolves the reproduced unbounded inbound-read gap through the existing helper, preserves the authorization and provider boundaries, and introduces no additional dependency or new public option."
+}

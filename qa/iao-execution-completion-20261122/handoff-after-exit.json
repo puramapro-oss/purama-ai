@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "node",
+    "--import",
+    "tsx",
+    "/tmp/iao-runtime-evidence-ccfbf7e5800b/handoff-probe.mjs"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 0
+}

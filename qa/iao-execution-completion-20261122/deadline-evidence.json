@@ -1,0 +1,202 @@
+{
+  "schema_version": 2,
+  "prepared_at": "2026-11-22T22:35:27.908238+00:00",
+  "status": "PARTIEL",
+  "base_commit": "5a01da79e810c8f4a900ebc95ae544006b9333d6",
+  "scope": [
+    "karta/src/iao/kartaRuntimePort.ts",
+    "karta/test/kartaRuntimeDeadline.test.ts"
+  ],
+  "impact": {
+    "reported_by": "parent /root",
+    "bounded": "LOW",
+    "prepare": "LOW; direct IaoFacade.#prepare; seven unresolved dynamic calls",
+    "control": "UNKNOWN in graph, direct prepare caller verified by reading; edits explicitly authorized"
+  },
+  "files": [
+    {
+      "path": "karta/src/iao/kartaRuntimePort.ts",
+      "sha256": "9d6e1f3c29d7fe0a597a1f6a2226849b1f69f0b4e52036b8f7f4a2bfae01d949"
+    },
+    {
+      "path": "karta/test/kartaRuntimeDeadline.test.ts",
+      "sha256": "0b8a6d7c1b60061e480c709717be10480991720e7ce2299a8268da01d8359ecc"
+    }
+  ],
+  "historical_revision_1": "deadline-evidence-r1.json",
+  "runs": [
+    {
+      "argv": [
+        "npm",
+        "test",
+        "--",
+        "test/kartaRuntimeDeadline.test.ts",
+        "--maxWorkers=1"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exit_code": 1,
+      "name": "red_before_consumer_fix",
+      "log": "deadline-handoff-red.log",
+      "tests": {
+        "total": 55,
+        "passed": 32,
+        "failed": 23
+      },
+      "log_sha256": "17c0b1989c5fdf24ae155bf990f142d7dcce8fbebf5f1cdfe4eb717cb617ace8",
+      "raw_log_sha256": "127f5359eb15857c46323cab6fe6606a942ddc6437214c6851faee3092201ed2"
+    },
+    {
+      "argv": [
+        "npm",
+        "test",
+        "--",
+        "test/kartaRuntimeDeadline.test.ts",
+        "--maxWorkers=1"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exit_code": 0,
+      "name": "green_after_consumer_fix",
+      "log": "deadline-handoff-green.log",
+      "tests": {
+        "total": 55,
+        "passed": 55,
+        "failed": 0
+      },
+      "log_sha256": "297a80f45e9ec87142f754f78e03a78058ab9ba45e6a519a462bafa148bd2225",
+      "raw_log_sha256": "297a80f45e9ec87142f754f78e03a78058ab9ba45e6a519a462bafa148bd2225"
+    },
+    {
+      "argv": [
+        "npm",
+        "test",
+        "--",
+        "test/iao-facade.test.ts",
+        "test/localComputeFabricCancellation.test.ts",
+        "test/iaoIdentityBoundary.test.ts",
+        "test/iaoPendingRetention.test.ts",
+        "test/apiIaoIntegration.test.ts",
+        "--maxWorkers=1"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exit_code": 1,
+      "name": "existing_regressions_after_consumer_fix",
+      "log": "deadline-handoff-regressions.log",
+      "tests": {
+        "total": 192,
+        "passed": 178,
+        "failed": 14
+      },
+      "log_sha256": "16a312422781fbfb607fa16a559b493e2292f4d201412c9b768a87bd389df07b",
+      "raw_log_sha256": "5a8ee38505afc8b350ad0b72c2723b31b8ab469758664ecccc0a0a64ca385574"
+    },
+    {
+      "argv": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exit_code": 0,
+      "name": "typecheck_after_consumer_fix",
+      "log": "deadline-handoff-typecheck.log",
+      "log_sha256": "e01586116b47a82ff45cc01bbe27d1eed26e67a4fae1cdde923d45280d30f84e",
+      "raw_log_sha256": "e01586116b47a82ff45cc01bbe27d1eed26e67a4fae1cdde923d45280d30f84e"
+    },
+    {
+      "argv": [
+        "node",
+        "--import",
+        "tsx",
+        "/tmp/iao-runtime-evidence-ccfbf7e5800b/handoff-probe.mjs"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exit_code": 0,
+      "name": "handoff_probe_before_consumer_fix",
+      "log": "handoff-before.log",
+      "log_sha256": "4dc721ededdd32280834c53c1d1c4935b7c57223718bfecde7a7865f678d5c85",
+      "raw_log_sha256": "4dc721ededdd32280834c53c1d1c4935b7c57223718bfecde7a7865f678d5c85"
+    },
+    {
+      "argv": [
+        "node",
+        "--import",
+        "tsx",
+        "/tmp/iao-runtime-evidence-ccfbf7e5800b/handoff-probe.mjs"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+      "exit_code": 0,
+      "name": "handoff_probe_after_consumer_fix",
+      "log": "handoff-after.log",
+      "log_sha256": "00c99570aa0720964af1a914b93f5f963b6404f5941f1c487fd9a33f860b5bfb",
+      "raw_log_sha256": "00c99570aa0720964af1a914b93f5f963b6404f5941f1c487fd9a33f860b5bfb"
+    },
+    {
+      "name": "final_diff_check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "karta/src/iao/kartaRuntimePort.ts"
+      ],
+      "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai",
+      "exit_code": 0,
+      "log": "deadline-handoff-diff-check.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "current_after_fix_vitest_totals": {
+    "total": 247,
+    "passed": 233,
+    "environment_blocked": 14
+  },
+  "interruption_probe": {
+    "cases": 8,
+    "passed": 8,
+    "before": "handoff-before.log",
+    "after": "handoff-after.log",
+    "external_calls": 0
+  },
+  "independent_review": {
+    "reviewer": "/root/iao_social_raccordement",
+    "passed": 18,
+    "total": 18,
+    "read_by_this_agent": true,
+    "log": "/tmp/iao-social-evidence-ccfbf7e5800b/runtime-independent-review-green.log",
+    "log_sha256": "a62e6bc921878a3edc1766e8d3e60492b3e10b386f6005e036e5736bddbbcc76",
+    "commands": [
+      "bash /tmp/iao-social-evidence-ccfbf7e5800b/runtime-independent-handoffs.sh",
+      "bash /tmp/iao-social-evidence-ccfbf7e5800b/runtime-independent-validation.sh"
+    ],
+    "exit_codes": [
+      0,
+      0
+    ],
+    "external_calls": 0
+  },
+  "verified_behaviors": [
+    "monotonic per-stage deadline checked before dispatch, after resolution and after rejection",
+    "post-dispatch completion and memory control retain effect uncertain on interruption",
+    "pre-dispatch interruption retains effect none",
+    "late context cannot dispatch completion",
+    "shared AbortController remains live after successful context",
+    "timeout cause recorded before synchronous abort listeners",
+    "timers and abort listeners cleaned even when dependency never settles",
+    "generic dependency error projection preserved",
+    "one absolute stage budget survives bounded-to-consumer and control-to-public-prepare handoffs",
+    "budget checked before consumption and after complete validation/result construction",
+    "validation that expires or cancels then throws retains interruption effect knowledge",
+    "context extraction stays inside its context stage",
+    "completion and control already accepted before a later interruption remain accepted",
+    "context and completion fields are consumed once before constructing accepted output"
+  ],
+  "limits": [
+    "14 Unix transport scenarios remain unqualified locally because Unix listen is refused with EPERM; reproduce on existing CI with socket support.",
+    "A monotonic deadline rejects late outcomes but cannot preempt synchronous JavaScript or cancel an uncooperative external side effect; post-dispatch uncertainty is preserved.",
+    "Timeout remains per stage, not a new global request budget.",
+    "No production SMARANA adapter, ONE/VAJRA authenticator or Compute Fabric v2 service was invented or connected in this lot."
+  ],
+  "publication_by_this_agent": false,
+  "log_normalization": "Only trailing horizontal whitespace and trailing empty lines removed in saved evidence; raw SHA retained."
+}

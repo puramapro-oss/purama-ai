@@ -1,0 +1,15 @@
+{
+  "kind": "independent_read_only_review",
+  "reviewer": "iao_runtime_reprise",
+  "finding": "pre-context model client initialization violated final admission and called getter twice",
+  "correction": "read server config.mockClaude without initializing client; getClaudeClient remains solely after fresh authorization",
+  "mutation_search": "No config.mockClaude assignment found in karta/src",
+  "existing_gate": "loopModelAdmission.test.ts unchanged",
+  "focused_run": {
+    "files": 6,
+    "passed": 126,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "production_services_tested": false
+}

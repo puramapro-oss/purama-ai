@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "prepared_at_utc": "2026-11-22T23:37:45.195606+00:00",
+  "reviewer": "iao_23_audit_social",
+  "head": "370ba539c3bc1bcb58f1e67cf7a17985f6ce59a1",
+  "scope": "Read-only review of PR91 social metadata reader, context builder, real cycle wiring and SQL compatibility; independent temporary SDK boundary probes.",
+  "product_writes": false,
+  "git_index_writes": false,
+  "dependencies_installed": false,
+  "external_provider_calls": 0,
+  "status": "PASS for scoped review and probes; no new confirmed defect in social_status or buildSocialBriefContext",
+  "source_files": [
+    {
+      "path": "karta/src/tools/social-status.ts",
+      "sha256": "f39434523edc5a3324c470bb7bb0b833e3b62a6af51f296b9339281170aaa164"
+    },
+    {
+      "path": "karta/src/agents/social-status-context.ts",
+      "sha256": "80d28d47b13b307c908ab7d34b14a8b101c53e4bc4b26078d4e8014d3c0617aa"
+    },
+    {
+      "path": "karta/src/engine/loop.ts",
+      "sha256": "70f2992401422d5af0ccf2bbc998c7966ed76b9117bfc56ca98a88cfaa4202f2"
+    },
+    {
+      "path": "karta/src/agents/actionAgents.ts",
+      "sha256": "9335cb3a78879867840ca591a03ba99b18294906e066b1771baa411cd1163955"
+    },
+    {
+      "path": "karta/src/tools/provider-http.ts",
+      "sha256": "fae5afd93adc7b1d9fb6f3ba34635a7ee5d9794ad8a61e2cd67a377f134f7eb6"
+    },
+    {
+      "path": "karta/test/socialStatusTool.test.ts",
+      "sha256": "9131d3966fdec94c7b42ac04fe1efc79b3ec349f731c5ebbe8b593f515f49fc4"
+    },
+    {
+      "path": "karta/test/socialStatusSdk.test.ts",
+      "sha256": "7ae1d0474bf046183cfbb94980e689ea2db9edd67eb5d82b051f3918f6ce6af5"
+    },
+    {
+      "path": "karta/test/socialStatusCycle.test.ts",
+      "sha256": "da5dd3938d37c794fc7e075d0ebd48b6fdd9be330778ca603956205598965fe0"
+    },
+    {
+      "path": "supabase/migrations/20260406120000_social_autopilot.sql",
+      "sha256": "66e17261816d10ec02e686e64500559379fe4ebf539fe14809fa04b45affe251"
+    },
+    {
+      "path": "supabase/migrations/20261110000300_social_publish_idempotency.sql",
+      "sha256": "f1a37f2d64faa2c3664ce8f9b5b34befcec94e63ca5905528b6c885f5d9b70c6"
+    },
+    {
+      "path": "supabase/migrations/20261110000400_social_account_binding.sql",
+      "sha256": "a187b72f547a7e41fc92583290a90123157f19205f37d04c818bcb057656b9e7"
+    },
+    {
+      "path": "karta/src/engine/private-tool-results.ts",
+      "sha256": "ff775903e8eadea4b8d2aa411c8cd1a7cf7f2b289a702013c271f6d668d7a834"
+    },
+    {
+      "path": "karta/src/knowledge/private-result-view.ts",
+      "sha256": "2246757457ca8bef4d5b1f32385d58f06517e9f6d6606511c089617138ce60ab"
+    },
+    {
+      "path": "karta/src/knowledge/connected-research.ts",
+      "sha256": "8cd79acea6a4c6478b9418745816c84053df111bd3131c8fc53b47762bef1e87"
+    },
+    {
+      "path": "karta/src/claude/consultation.ts",
+      "sha256": "b84fee90c588679c587599b5596cdf1d1fe9c2c6758c09dc5e1b93661f251d75"
+    },
+    {
+      "path": "karta/src/claude/consultation-host.ts",
+      "sha256": "5c03ff8a52bab0d9c4910cb0e098cf9b6d6f81f2a8c0baeb0c438d2777e50582"
+    },
+    {
+      "path": "supabase/functions/creator-agent-chat/index.ts",
+      "sha256": "76eee907420b761589c8d80abdb7df53107f80d99168675e01587543095b7cc5"
+    },
+    {
+      "path": "supabase/functions/_shared/private-tool-results.ts",
+      "sha256": "cabe8a4230b9486e34eba6af9e9a77ceacf8d7fd6b16050422ab832709ecb9ac"
+    },
+    {
+      "path": "tests/creator-chat-authorization.test.mjs",
+      "sha256": "b8e4b7c874f465a6e75ad0d61a3047eca03855add22581f8fb7b1fe871e256ad"
+    }
+  ],
+  "verified_by_inspection": [
+    "Owner comes from server context, fixed SQL projection and equality filter, row owner validation includes sentinel.",
+    "UUID cursor ordering, excessive row count, duplicate row IDs and duplicate account platforms rejected; account platform uniqueness matches current SQL UNIQUE(user_id, platform).",
+    "Migration003 revokes client writes to social accounts/posts; migration004 preserves server-owned binding evidence.",
+    "Context is prepared before inference, preserves unavailable and partial resources; simulation/mock/unknown modes do not enable the preload.",
+    "Brief-dependent privateTrace remains enabled and the latest model admission occurs after context preparation.",
+    "Only UUIDs, enumerated values, booleans, validated dates and constrained provider receipt identifiers enter this metadata projection; no free account/content/raw error fields."
+  ],
+  "probe_execution": {
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+    "command": "node --max-old-space-size=256 node_modules/vitest/vitest.mjs run --config /tmp/iao-23-audit-social-ccfbf7e5800b/vitest.config.mjs --maxWorkers=1",
+    "exit_code": 0,
+    "test_files": 1,
+    "passed": 6,
+    "failed": 0,
+    "vitest": "5.0.3",
+    "runtime": "v24.22.3",
+    "supabase_sdk": "2.110.8",
+    "test": "/tmp/iao-23-audit-social-ccfbf7e5800b/sdkBoundaries.test.ts",
+    "log": "/tmp/iao-23-audit-social-ccfbf7e5800b/sdk-boundaries-six.log",
+    "cases": [
+      "Positive control: valid SDK response produces read metadata",
+      "Noncooperative fetch never returns headers: reader settles and aborts signal",
+      "Valid headers plus incomplete JSON body: reader settles and aborts signal",
+      "Headers returned after timeout do not cause late accepted metadata",
+      "Malformed UTF-8 in receipt field is rejected after SDK decoding",
+      "Foreign sentinel via SDK does not produce items or pagination evidence"
+    ],
+    "overlap_note": "Positive control and foreign sentinel are deliberate controls and overlap prior cases; the four transport/decoder probes add real SDK boundary coverage. Do not add this count to the full suite as a single global run.",
+    "initial_harness_error": "First attempt imported mocks API by an absolute path, so Vitest collected zero tests; temporary config switched to globals. Initial log retained as sdk-boundaries.log; subsequent five-case run passed, then final six-case run included the positive control."
+  },
+  "graph": {
+    "storage": "/dev/shm/iao-index-20261123-ccfbf7e5800b",
+    "repo": "purama-iao-qualification-20261123",
+    "query": "No process result because FTS disabled; not used as proof of no callers.",
+    "context": "buildSocialBriefContext found exactly; dynamic execute references include imprecise candidates. Direct source/test reads used for caller validation.",
+    "mutations_by_reviewer": false,
+    "additional_contexts": [
+      "persistPrivateToolResult",
+      "parsePrivateToolResult",
+      "createConnectedResearchClient"
+    ],
+    "additional_result": "Existing durable private-results path and consultation-host composition located; read-only exact source inspection confirmed consumption rather than treating registration as an implementation."
+  },
+  "remaining_limitations": [
+    {
+      "kind": "preexisting_architectural_limit",
+      "severity": "medium_functional",
+      "summary": "The advertising prompt asks for web_search then PDF, but a single model decision precedes the complete tool loop. Search results from that cycle cannot inform already-decided PDF parameters.",
+      "evidence": [
+        "karta/src/agents/actionAgents.ts:151-153",
+        "karta/src/engine/loop.ts:159-166",
+        "karta/src/engine/loop.ts:190-305"
+      ],
+      "introduced_by_pr91": false,
+      "reproduction_kind": "Direct control/data flow inspection; no provider/model call"
+    },
+    {
+      "kind": "defense_in_depth_unqualified",
+      "summary": "The real Supabase transport has no explicit streamed response-byte cap in this reader. SQL row limit and fixed projections bound ordinary data; validations happen after SDK JSON decoding. No practical exploit or production oversized response was established."
+    },
+    {
+      "kind": "not_tested",
+      "summary": "No live database, real account, model behavior against prompt injection, provider health or production effect was exercised. Stream cancellation fixtures deliberately ignore transport abort; the reader can bound its waiting but cannot force remote cancellation."
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "sdkBoundaries.test.ts",
+      "sha256": "58555e68c2ac5193605664ed3914e5788033f227ca4e34311892e345167e9243",
+      "bytes": 5357
+    },
+    {
+      "file": "vitest.config.mjs",
+      "sha256": "e4851d63c654fe0ec36fcafa57c5f5b3c2cc37a352e64af5ffe231e276a59cbe",
+      "bytes": 295
+    },
+    {
+      "file": "sdk-boundaries.log",
+      "sha256": "afd436a377d59b9b1fb793480522c6f875369b3e1d2905b7f3a9e804a215295d",
+      "bytes": 1217
+    },
+    {
+      "file": "sdk-boundaries-final.log",
+      "sha256": "ab2b8503106155e442baf81da28112f4bc8bb7165f23b5cbff919f2928550e0a",
+      "bytes": 208
+    },
+    {
+      "file": "sdk-boundaries-six.log",
+      "sha256": "0e09b300a82ae80d67d39ce01e75acb6854435456b3dd930559c1268af7bb18c",
+      "bytes": 208
+    }
+  ],
+  "research_consumption_found": [
+    {
+      "path": "karta/src/claude/consultation.ts",
+      "flow": "runModelConsultation retrieves explicitly requested public queries/URLs, collects sources, builds a bounded modelSources projection, then sends that projection to proposal/critique/synthesis model calls.",
+      "evidence": [
+        "consultation.ts:253-265 retrieval",
+        "consultation.ts:267-274 model source projection",
+        "consultation.ts:301-313 context consumed by model calls"
+      ],
+      "composition": "karta/src/claude/consultation-host.ts wires createConnectedResearchClient into runModelConsultation under the existing durable admission/budget store.",
+      "activation_limit": "Host requires configured accounts, valid policy, account resources and non-simulated model. No such account or provider was activated or exercised by this audit. This is a separate explicit consultation path, not the static advertising tool loop."
+    },
+    {
+      "path": "supabase/functions/creator-agent-chat/index.ts",
+      "flow": "knowledge_search results for custom agents can be projected and persisted by persistPrivateToolResult, then up to three server-owned result IDs selected by the owner are loaded and inserted into a later chat model request.",
+      "evidence": [
+        "karta/src/engine/private-tool-results.ts:275-305",
+        "creator-agent-chat/index.ts:68-82 load selected results",
+        "creator-agent-chat/index.ts:110-146 model message/system construction",
+        "tests/creator-chat-authorization.test.mjs:428 selected server results reach exactly one model call"
+      ],
+      "activation_limit": "Explicit later-message selection, not automatic chaining in the original run. knowledge_search and quantum_simulate only; web_search is not a persisted private-tool result in this path."
+    }
+  ]
+}

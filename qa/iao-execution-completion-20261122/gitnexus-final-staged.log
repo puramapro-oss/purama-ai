@@ -1,0 +1,30 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795387798002,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 81 files, 369 symbols
+Affected processes: 4
+Risk level: medium
+
+Changed symbols:
+  Const maitreDesPublicites → karta/src/agents/actionAgents.ts
+  Property systemPrompt → karta/src/agents/actionAgents.ts
+  Property buildContext → karta/src/agents/actionAgents.ts
+  Const reader → karta/src/agents/social-status-context.ts
+  Const LIMITS → karta/src/agents/social-status-context.ts
+  TypeAlias Resource → karta/src/agents/social-status-context.ts
+  TypeAlias Page → karta/src/agents/social-status-context.ts
+  Function page → karta/src/agents/social-status-context.ts
+  Function buildSocialBriefContext → karta/src/agents/social-status-context.ts
+  Property agentType → karta/src/agents/social-status-context.ts
+  Property mode → karta/src/agents/social-status-context.ts
+  Property userId → karta/src/agents/social-status-context.ts
+  Property socialStatus → karta/src/agents/social-status-context.ts
+  Function runAgentCycle → karta/src/engine/loop.ts
+  Interface AgentContextInput → karta/src/engine/types.ts
+... and 354 more
+
+Affected execution flows:
+  • ReadOnlyFetch → Provider (3 steps) — changed: provider
+  • ConfirmAccountAbsent → SocialProviderError (3 steps) — changed: createZernioConnectionProvider
+  • Execute → Uuid (3 steps) — changed: execute, owner, uuid
+  • VerifyAccount → SocialProviderError (3 steps) — changed: createZernioConnectionProvider

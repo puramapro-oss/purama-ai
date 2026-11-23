@@ -1,0 +1,563 @@
+
+> karta-engine@1.0.0 test
+> vitest run test/kartaRuntimeDeadline.test.ts --maxWorkers=1
+
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/kartaRuntimeDeadline.test.ts (55 tests | 23 failed) 84ms
+   ❯ KARTA IAO monotonic stage deadlines (55)
+     × checks parent-abort between bounded and consumption of context 8ms
+     × checks deadline between bounded and consumption of context 6ms
+     × checks parent-abort between bounded and consumption of completion 2ms
+     × checks deadline between bounded and consumption of completion 2ms
+     × checks parent-abort between bounded and consumption of control 2ms
+     × checks deadline between bounded and consumption of control 2ms
+     × checks parent-abort between normalized control and public prepare acceptance 2ms
+     × checks deadline between normalized control and public prepare acceptance 1ms
+     × keeps context interrupted by parent-abort during validation (throws=true) 1ms
+     × keeps context interrupted by deadline during validation (throws=false) 2ms
+     × keeps context interrupted by deadline during validation (throws=true) 2ms
+     × keeps completion interrupted by parent-abort during validation (throws=false) 2ms
+     × keeps completion interrupted by parent-abort during validation (throws=true) 2ms
+     × keeps completion interrupted by deadline during validation (throws=false) 1ms
+     × keeps completion interrupted by deadline during validation (throws=true) 1ms
+     × keeps control interrupted by parent-abort during validation (throws=false) 1ms
+     × keeps control interrupted by parent-abort during validation (throws=true) 1ms
+     × keeps control interrupted by deadline during validation (throws=false) 1ms
+     × keeps control interrupted by deadline during validation (throws=true) 2ms
+     × includes context extraction in its own budget on parent-abort 1ms
+     × includes context extraction in its own budget on deadline 1ms
+     × retains effect none when parent-abort occurs before completion dispatch 2ms
+     × retains effect none when deadline occurs before completion dispatch 1ms
+
+ Test Files  1 failed (1)
+      Tests  23 failed | 32 passed (55)
+   Start at  23:31:07
+   Duration  530ms (tests 42%, transform 41%, import 10%, setup 4%, worker 3%)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 23 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of context
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ test/kartaRuntimeDeadline.test.ts:161:28
+    159|       });
+    160|       await expect(deps.port.prepare(request(stage), controller.signal…
+    161|       expect(consumed).not.toHaveBeenCalled();
+       |                            ^
+    162|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+    163|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of context
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "none",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.270Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "preview": "Synthetic answer",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:160:73
+    158|         }));
+    159|       });
+    160|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    161|       expect(consumed).not.toHaveBeenCalled();
+    162|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of completion
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.276Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "preview": "Synthetic answer",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:160:73
+    158|         }));
+    159|       });
+    160|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    161|       expect(consumed).not.toHaveBeenCalled();
+    162|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of completion
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.278Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "preview": "Synthetic answer",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:160:73
+    158|         }));
+    159|       });
+    160|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    161|       expect(consumed).not.toHaveBeenCalled();
+    162|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of control
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.281Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "memoryControl": {
++     "action": "update",
++     "operationId": "22222222-2222-4222-8222-222222222222",
++     "replayed": false,
++   },
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:160:73
+    158|         }));
+    159|       });
+    160|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    161|       expect(consumed).not.toHaveBeenCalled();
+    162|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of control
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.282Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "memoryControl": {
++     "action": "update",
++     "operationId": "22222222-2222-4222-8222-222222222222",
++     "replayed": false,
++   },
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:160:73
+    158|         }));
+    159|       });
+    160|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    161|       expect(consumed).not.toHaveBeenCalled();
+    162|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between normalized control and public prepare acceptance
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.284Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "memoryControl": {
++     "action": "update",
++     "operationId": "22222222-2222-4222-8222-222222222222",
++     "replayed": false,
++   },
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:174:75
+    172|       return Promise.resolve(interceptField(value, "action", original …
+    173|     });
+    174|     await expect(deps.port.prepare(request("control"), controller.sign…
+       |                                                                           ^
+    175|     expect(normalized).toHaveBeenCalled();
+    176|     expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between normalized control and public prepare acceptance
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.286Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "memoryControl": {
++     "action": "update",
++     "operationId": "22222222-2222-4222-8222-222222222222",
++     "replayed": false,
++   },
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:174:75
+    172|       return Promise.resolve(interceptField(value, "action", original …
+    173|     });
+    174|     await expect(deps.port.prepare(request("control"), controller.sign…
+       |                                                                           ^
+    175|     expect(normalized).toHaveBeenCalled();
+    176|     expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by parent-abort during validation (throws=true)
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by deadline during validation (throws=true)
+AssertionError: expected { kind: 'blocked', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "none",
++   "dependency": "memory-denied:karta-runtime",
+    "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "reason": "KARTA request denied",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by deadline during validation (throws=false)
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "none",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.290Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "preview": "Synthetic answer",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by parent-abort during validation (throws=false)
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.293Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "preview": "Synthetic answer",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by parent-abort during validation (throws=true)
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by deadline during validation (throws=true)
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by parent-abort during validation (throws=true)
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by deadline during validation (throws=true)
+AssertionError: expected { kind: 'blocked', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
++   "dependency": "memory-denied:karta-runtime",
+    "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "reason": "KARTA request denied",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by deadline during validation (throws=false)
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.297Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "preview": "Synthetic answer",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by parent-abort during validation (throws=false)
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.299Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "memoryControl": {
++     "action": "update",
++     "operationId": "22222222-2222-4222-8222-222222222222",
++     "replayed": false,
++   },
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by deadline during validation (throws=false)
+AssertionError: expected { kind: 'accepted', …(2) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+-   "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "uncertain",
+-   "kind": "blocked",
+-   "reason": "KARTA is unavailable",
++   "evidence": {
++     "completedAt": "2026-11-22T22:31:08.302Z",
++     "proofId": "22222222-2222-4222-8222-222222222222",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "source": "karta",
++   },
++   "kind": "accepted",
++   "memoryControl": {
++     "action": "update",
++     "operationId": "22222222-2222-4222-8222-222222222222",
++     "replayed": false,
++   },
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:190:73
+    188|         },
+    189|       )));
+    190|       await expect(deps.port.prepare(request(stage), controller.signal…
+       |                                                                         ^
+    191|       expect(deps.signals.every(signal => signal.aborted)).toBe(true);
+    192|       if (stage === "context") expect(deps.complete).not.toHaveBeenCal…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > includes context extraction in its own budget on parent-abort
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > includes context extraction in its own budget on deadline
+AssertionError: expected { kind: 'blocked', …(3) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+    "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "none",
++   "effect": "uncertain",
+    "kind": "blocked",
+    "reason": "KARTA is unavailable",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:203:75
+    201|       return original;
+    202|     })));
+    203|     await expect(deps.port.prepare(request("context"), controller.sign…
+       |                                                                           ^
+    204|     expect(deps.complete).not.toHaveBeenCalled();
+    205|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/23]⎯
+
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > retains effect none when parent-abort occurs before completion dispatch
+ FAIL  test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > retains effect none when deadline occurs before completion dispatch
+AssertionError: expected { kind: 'blocked', …(3) } to deeply equal { kind: 'blocked', …(3) }
+
+- Expected
++ Received
+
+  {
+    "dependency": "memory-unavailable:karta-runtime",
+-   "effect": "none",
++   "effect": "uncertain",
+    "kind": "blocked",
+    "reason": "KARTA is unavailable",
+  }
+
+ ❯ test/kartaRuntimeDeadline.test.ts:214:75
+    212|       return original;
+    213|     })));
+    214|     await expect(deps.port.prepare(request("context"), controller.sign…
+       |                                                                           ^
+    215|     expect(deps.complete).not.toHaveBeenCalled();
+    216|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/23]⎯

@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-runtime-deadline-20261122": false,
       "fix/social-publish-reliability-20261123": false,
       "fix/iao-provider-completion-20261122": false,
       "fix/custom-scheduler-drain-20261122-dcfb": false,

@@ -4,6 +4,9 @@ export { calendarCreateEventTool } from "./calendar.js";
 export { stripeListUnpaidInvoicesTool } from "./stripe-tool.js";
 export { docusealCreateSubmissionTool } from "./docuseal.js";
 export { zernioPublishTool } from "./zernio.js";
+// Read component used before inference. Exporting it does not add a post-decision
+// tool to the single-decision engine or grant an agent a provider permission.
+export { socialStatusTool } from "./social-status.js";
 export { apolloSearchPeopleTool } from "./apollo.js";
 export { generatePdfTool } from "./pdf.js";
 export { webSearchTool } from "./websearch.js";

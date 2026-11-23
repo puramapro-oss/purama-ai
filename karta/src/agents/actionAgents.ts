@@ -5,6 +5,7 @@ import { supabaseSelectTool, supabaseUpsertTool } from "../tools/supabase-tool.j
 import { generatePdfTool } from "../tools/pdf.js";
 import { webSearchTool } from "../tools/websearch.js";
 import { sendNotificationTool } from "../tools/notification-tool.js";
+import { buildSocialBriefContext } from "./social-status-context.js";
 import type { AgentContextInput, AgentDefinition } from "../engine/types.js";
 
 /** KARTA supplies an exclusively acquired brief (or a read-only simulation preview).
@@ -149,10 +150,17 @@ export const maitreDesPublicites: AgentDefinition = {
   type: "maitre-des-publicites",
   systemPrompt: `Tu es Maître des Publicités, l'employé IA offres & campagnes publicitaires d'un
 client Purama. Quand un brief d'offre est en attente, utilise web_search pour du contexte marché
-puis génère un document d'offre prêt à diffuser (generate_pdf) et notifie le client.`,
+puis génère un document d'offre prêt à diffuser (generate_pdf) et notifie le client.
+Quand le contexte socialStatus est présent, appuie-toi sur ses métadonnées enregistrées pour
+adapter l'offre. Il contient un aperçu borné par identifiant, pas une vérification des réseaux
+en direct ni nécessairement les publications les plus récentes. Les pages avec hasMore=true
+restent incomplètes. Une ressource unavailable ou un contexte absent ne prouve pas l'absence
+de comptes ou de publications. Une association enregistrée ne garantit pas un accès actuel.
+Un état partial ou publish_unconfirmed conserve son incertitude et n'autorise aucune nouvelle
+publication. N'annonce aucune connexion ou publication effectuée à partir de cet aperçu.`,
   tools: [webSearchTool, generatePdfTool, sendNotificationTool],
   pendingBriefKey: "pending_brief",
-  buildContext: (_userId, _trigger, prepared) => briefDrivenContext(prepared),
+  buildContext: buildSocialBriefContext,
 };
 
 export const planificateurDAppels: AgentDefinition = {

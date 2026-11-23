@@ -21,7 +21,7 @@ vi.mock("../src/engine/brief.js", () => ({
   claimPendingBrief: h.claim, peekPendingBrief: h.peek, armPendingBrief: h.arm,
 }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: { from: h.legacyMemory } }));
-vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ decide: h.decide }) }));
+vi.mock("../src/claude/index.js", () => ({ getClaudeClient: () => ({ isMock: false, decide: h.decide }) }));
 vi.mock("../src/engine/killswitch.js", () => ({ isGlobalKillSwitchActive: async () => h.stopped }));
 vi.mock("../src/engine/autonomy.js", async original => ({
   ...await original<typeof import("../src/engine/autonomy.js")>(),
@@ -91,7 +91,7 @@ describe("durable brief preparation through the real agent cycle", () => {
     expect(result).toMatchObject({ status: "success", retryable: false });
     expect(h.events).toEqual(["claim", "context", "decide", "arm", "execute", "finish"]);
     expect(h.claim).toHaveBeenCalledWith({ userId, agentType: "newsletter-genie", runId, key: "pending_brief" });
-    expect(h.buildContext).toHaveBeenCalledWith(userId, trigger, { pendingBrief: PRIVATE_BRIEF });
+    expect(h.buildContext).toHaveBeenCalledWith(userId, trigger, { pendingBrief: PRIVATE_BRIEF, executionMode: "simulation" });
     expect(h.arm).toHaveBeenCalledWith({ userId, agentType: "newsletter-genie", runId });
     expect(h.decide.mock.calls[0][0].context).toEqual({ items: [{ brief: PRIVATE_BRIEF }] });
     expect(h.execute.mock.calls[0][0]).toBe(h.decision.toolCalls[0].params);

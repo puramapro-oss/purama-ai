@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 0
+}

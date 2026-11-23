@@ -288,3 +288,408 @@ Deno.test("OAuth URL uses documented camelCase profileId and redirect_url; insec
   assert((await p.getConnectUrl({ platform: "google_business", profileId, callbackUrl: callbackBaseUrl })).startsWith("https://"));
   await assert.rejects(() => providerWith(() => json({ authUrl: "javascript:alert(1)" })).getConnectUrl({ platform: "youtube", profileId, callbackUrl: callbackBaseUrl }));
 });
+
+type ProviderObservation<T> =
+  | { status: "fulfilled"; value: T }
+  | { status: "rejected"; error: unknown }
+  | { status: "watchdog" };
+
+// A failing regression must release its held fixture rather than hang the suite.
+async function observeProvider<T>(operation: Promise<T>, timeoutMs = 200): Promise<ProviderObservation<T>> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      operation.then(value => ({ status: "fulfilled" as const, value }),
+        error => ({ status: "rejected" as const, error })),
+      new Promise<{ status: "watchdog" }>(resolve => {
+        timer = setTimeout(() => resolve({ status: "watchdog" }), timeoutMs);
+      }),
+    ]);
+  } finally { if (timer !== undefined) clearTimeout(timer); }
+}
+
+function assertUncertainProviderFailure(result: ProviderObservation<unknown>): void {
+  assert.equal(result.status, "rejected", "the adapter must terminate before the watchdog");
+  if (result.status !== "rejected") return;
+  assert(result.error instanceof SocialProviderError);
+  assert.equal(result.error.uncertain, true);
+}
+
+Deno.test("provider deadline: non-cooperative fetch rejects once and discards a late response", async () => {
+  let deliver!: (response: Response) => void;
+  let signal: AbortSignal | undefined;
+  let calls = 0, cancelled = 0;
+  const provider = createZernioConnectionProvider({
+    apiKey: "fixture-only-key", timeoutMs: 15,
+    fetchImpl: (_url, init) => {
+      calls++; signal = init?.signal ?? undefined;
+      return new Promise<Response>(resolve => { deliver = resolve; });
+    },
+  });
+  const operation = provider.listAccounts(profileId);
+  const observed = await observeProvider(operation);
+  let lateBody!: ReadableStreamDefaultController<Uint8Array>;
+  deliver(new Response(new ReadableStream<Uint8Array>({
+    start(controller) { lateBody = controller; controller.enqueue(new TextEncoder().encode(JSON.stringify(accountList([])))); },
+    cancel() { cancelled++; },
+  })));
+  // A late fetch may need a microtask turn before its abandoned body is cleaned.
+  await new Promise(resolve => setTimeout(resolve, 0));
+  const wasCancelled = cancelled;
+  if (!cancelled) lateBody.close();
+  await observeProvider(operation);
+  assertUncertainProviderFailure(observed);
+  assert.equal(signal?.aborted, true);
+  assert.equal(calls, 1);
+  assert.equal(wasCancelled, 1);
+});
+
+Deno.test("provider deadline: a body without EOF is cancelled without confirming an account", async () => {
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  let cancelled = false;
+  const body = new ReadableStream<Uint8Array>({
+    start(value) {
+      controller = value;
+      value.enqueue(new TextEncoder().encode(JSON.stringify(accountList([externalAccount()]))));
+    },
+    cancel() { cancelled = true; },
+  });
+  const provider = createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs: 15,
+    fetchImpl: async () => new Response(body) });
+  const operation = provider.verifyAccount({ profileId, accountId, platform: "youtube" });
+  const observed = await observeProvider(operation);
+  const wasCancelled = cancelled;
+  if (!cancelled) controller.close();
+  await observeProvider(operation);
+  assertUncertainProviderFailure(observed);
+  assert.equal(wasCancelled, true);
+});
+
+Deno.test("provider byte cap: over-limit stream is rejected before EOF despite hanging cancellation", async () => {
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  let cancelled = false;
+  const body = new ReadableStream<Uint8Array>({
+    start(value) { controller = value; value.enqueue(new Uint8Array(1_048_577).fill(32)); },
+    cancel() { cancelled = true; return new Promise<void>(() => {}); },
+  });
+  const provider = createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs: 1_000,
+    fetchImpl: async () => new Response(body) });
+  const operation = provider.listAccounts(profileId);
+  const observed = await observeProvider(operation);
+  const wasCancelled = cancelled;
+  if (!cancelled) controller.close();
+  await observeProvider(operation);
+  assertUncertainProviderFailure(observed);
+  assert.equal(wasCancelled, true);
+});
+
+Deno.test("provider byte cap: multibyte UTF-8 cannot bypass the one-MiB limit", async () => {
+  const payload = JSON.stringify({ profiles: [], padding: "é".repeat(600_000) });
+  assert(payload.length < 1_048_576);
+  assert(new TextEncoder().encode(payload).byteLength > 1_048_576);
+  const provider = providerWith(() => new Response(payload));
+  await assert.rejects(() => provider.findProfiles({ externalId: "fixture", name: "fixture" }),
+    error => error instanceof SocialProviderError && error.code === "provider_response_invalid" && error.uncertain);
+});
+
+Deno.test("provider byte cap: a valid response exactly at the byte limit remains accepted", async () => {
+  const empty = JSON.stringify({ profiles: [], padding: "" });
+  const payload = JSON.stringify({ profiles: [], padding: " ".repeat(1_048_576 - empty.length) });
+  assert.equal(new TextEncoder().encode(payload).byteLength, 1_048_576);
+  assert.deepEqual(await providerWith(() => new Response(payload))
+    .findProfiles({ externalId: "fixture", name: "fixture" }), []);
+});
+
+Deno.test("provider deadline: headers and body share one budget", async () => {
+  const provider = createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs: 60,
+    fetchImpl: async () => {
+      await new Promise(resolve => setTimeout(resolve, 35));
+      return new Response(new ReadableStream<Uint8Array>({
+        async start(controller) {
+          await new Promise(resolve => setTimeout(resolve, 45));
+          try { controller.enqueue(new TextEncoder().encode(JSON.stringify(accountList([])))); controller.close(); }
+          catch { /* The receiver can cancel before this late producer completes. */ }
+        },
+      }));
+    },
+  });
+  const observed = await observeProvider(provider.listAccounts(profileId));
+  // Drain the fixture's finite producer before Deno checks pending timers.
+  await new Promise(resolve => setTimeout(resolve, 90));
+  assertUncertainProviderFailure(observed);
+});
+
+Deno.test("provider deadline: invalid timeout configuration is rejected before any transport", () => {
+  let calls = 0;
+  for (const timeoutMs of [NaN, Infinity, -1, 0, 1.5, 30_001]) {
+    assert.throws(() => createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs,
+      fetchImpl: async () => { calls++; return json(accountList([])); } }),
+    error => error instanceof SocialProviderError && error.code === "social_provider_not_configured");
+  }
+  assert.equal(calls, 0);
+});
+
+Deno.test("provider HTTP refusal cleans its unread body and preserves public error classification", async () => {
+  for (const status of [402, 409, 500]) {
+    let cancelled = false;
+    const body = new ReadableStream<Uint8Array>({
+      cancel() { cancelled = true; return new Promise<void>(() => {}); },
+    });
+    const provider = providerWith(() => new Response(body, { status }));
+    const observed = await observeProvider(provider.listAccounts(profileId));
+    const wasCancelled = cancelled;
+    if (!cancelled) void body.cancel();
+    assert.equal(observed.status, "rejected");
+    if (observed.status !== "rejected") continue;
+    assert(observed.error instanceof SocialProviderError);
+    assert.equal(observed.error.code, status === 402 ? "provider_billing_required" : "provider_request_rejected");
+    assert.equal(observed.error.uncertain, status >= 500 || status === 409);
+    assert.equal(wasCancelled, true);
+  }
+});
+
+Deno.test("provider deadline: timed-out profile creation stays uncertain and cannot issue another POST", async () => {
+  const f = fixture();
+  let deliver!: (response: Response) => void;
+  let posts = 0;
+  f.deps.provider = createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs: 15,
+    fetchImpl: (input, init) => {
+      const url = new URL(String(input));
+      if (init?.method === "POST") { posts++; return new Promise<Response>(resolve => { deliver = resolve; }); }
+      if (url.pathname === "/api/v1/profiles") return Promise.resolve(json({ profiles: [] }));
+      return Promise.resolve(json({ authUrl: "https://provider.example/authorize" }));
+    },
+  });
+  const operation = f.begin();
+  const observed = await observeProvider(operation);
+  deliver(json({ profile: { _id: profileId, name: f.binding.profileName, externalId: f.binding.externalId } }, 201));
+  await observeProvider(operation);
+  assertUncertainProviderFailure(observed);
+  assert.equal(f.binding.creationStatus, "uncertain");
+  assert.equal(f.binding.profileId, null);
+  await assert.rejects(f.begin, /reconciliation_required/);
+  assert.equal(posts, 1);
+});
+
+Deno.test("provider deadline: a late account verification never completes the OAuth binding", async () => {
+  const f = fixture(); await f.begin();
+  let deliver!: (response: Response) => void;
+  f.deps.provider = createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs: 15,
+    fetchImpl: () => new Promise<Response>(resolve => { deliver = resolve; }) });
+  const operation = finishSocialConnection(f.callback(), f.deps);
+  const observed = await observeProvider(operation);
+  deliver(json(accountList([externalAccount()])));
+  await observeProvider(operation);
+  assertUncertainProviderFailure(observed);
+  assert.equal(f.calls.finish, 0);
+  assert.equal([...f.intents.values()][0].status, "pending");
+});
+
+for (const phase of ["transport", "parsing"] as const) {
+  Deno.test(`provider deadline: ${phase} respects the reader's earlier absolute boundary`, async () => {
+    let now = 1, clockReads = 0;
+    const response = json(accountList([]), phase === "transport" ? 402 : 200);
+    const getHeader = response.headers.get.bind(response.headers);
+    Object.defineProperty(response.headers, "get", { value: (name: string) => {
+      if (name === "X-Result-Truncated") now = 100;
+      return getHeader(name);
+    } });
+    const provider = createZernioConnectionProvider({ apiKey: "fixture-only-key", timeoutMs: 100,
+      fetchImpl: async () => { if (phase === "transport") now = 100; return response; } });
+    const previousNow = Object.getOwnPropertyDescriptor(performance, "now");
+    Object.defineProperty(performance, "now", {
+      configurable: true, value: () => ++clockReads === 1 ? 0 : now,
+    });
+    try {
+      // The reader expires at 100; the helper created one tick later expires at 101.
+      await assert.rejects(() => provider.listAccounts(profileId), error =>
+        error instanceof SocialProviderError && error.uncertain &&
+        error.code === (phase === "transport" ? "provider_request_uncertain" : "provider_response_invalid"));
+    } finally {
+      if (previousNow) Object.defineProperty(performance, "now", previousNow);
+      else Reflect.deleteProperty(performance, "now");
+    }
+  });
+}
+
+function socialInputRequest(body: BodyInit, extra: RequestInit = {}): Request {
+  return new Request("https://database.example/connect", {
+    method: "POST", headers: { Authorization: "Bearer valid", Origin: "https://app.example" },
+    body, duplex: "half", ...extra,
+  } as RequestInit);
+}
+
+Deno.test("connect body: excessive bytes without EOF stop before non-cooperative cleanup", async () => {
+  const f = fixture();
+  let source!: ReadableStreamDefaultController<Uint8Array>;
+  let cancelled = 0;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) { source = controller; controller.enqueue(new Uint8Array(16_385).fill(32)); },
+    cancel() { cancelled++; return new Promise<void>(() => {}); },
+  });
+  const request = socialInputRequest(body);
+  const pending = createSocialConnectHandler(f.http)(request);
+  const observed = await observeProvider(pending);
+  if (observed.status === "watchdog") source.error(new Error("synthetic oversized-body cleanup"));
+  await pending;
+  assert.equal(observed.status, "fulfilled", "oversized input must finish without waiting for EOF");
+  if (observed.status !== "fulfilled") return;
+  assert.equal(observed.value.status, 413);
+  assert.equal((await observed.value.json()).code, "request_too_large");
+  assert.equal(cancelled, 1);
+  assert.equal(request.body?.locked, false);
+  assert.equal(f.calls.dependencies, 0);
+});
+
+for (const timing of ["before", "during"] as const) {
+  Deno.test(`connect body: cancellation ${timing} a stalled read refuses before dependencies`, async () => {
+    const f = fixture();
+    const parent = new AbortController();
+    let source!: ReadableStreamDefaultController<Uint8Array>;
+    let cancelled = 0;
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) { source = controller; },
+      pull() {
+        if (timing === "during") queueMicrotask(() => parent.abort());
+        return new Promise<void>(() => {});
+      },
+      cancel() { cancelled++; return new Promise<void>(() => {}); },
+    }, { highWaterMark: 0 });
+    const request = socialInputRequest(body, { signal: parent.signal });
+    if (timing === "before") parent.abort();
+    const pending = createSocialConnectHandler(f.http)(request);
+    const observed = await observeProvider(pending);
+    if (observed.status === "watchdog") source.error(new Error("synthetic cancelled-body cleanup"));
+    await pending;
+    assert.equal(observed.status, "fulfilled", "cancelled input must not wait for its producer");
+    if (observed.status !== "fulfilled") return;
+    assert.equal(observed.value.status, 408);
+    assert.equal((await observed.value.json()).code, "request_timeout");
+    assert.equal(cancelled, 1);
+    assert.equal(request.body?.locked, false);
+    assert.equal(f.calls.dependencies, 0);
+  });
+}
+
+for (const elapsed of [4_999, 5_000]) {
+  Deno.test(`connect body: the five-second absolute boundary is respected at ${elapsed} ms`, async () => {
+    const f = fixture();
+    let now = 0;
+    let pulled = false;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled = true; now = elapsed;
+        controller.enqueue(new TextEncoder().encode(JSON.stringify({ platform: "youtube" })));
+        controller.close();
+      },
+    }, { highWaterMark: 0 });
+    const request = socialInputRequest(body);
+    const previousNow = Object.getOwnPropertyDescriptor(performance, "now");
+    Object.defineProperty(performance, "now", { configurable: true, value: () => now });
+    try {
+      const response = await createSocialConnectHandler(f.http)(request);
+      assert.equal(response.status, elapsed < 5_000 ? 200 : 408);
+      if (elapsed >= 5_000) assert.equal((await response.json()).code, "request_timeout");
+      assert.equal(f.calls.dependencies, elapsed < 5_000 ? 1 : 0);
+      assert.equal(pulled, true);
+      assert.equal(request.body?.locked, false);
+    } finally {
+      if (previousNow) Object.defineProperty(performance, "now", previousNow);
+      else Reflect.deleteProperty(performance, "now");
+    }
+  });
+}
+
+for (const bom of [false, true]) {
+  Deno.test(`connect body: normalized 4096-unit Unicode input accepts leading BOM=${bom}`, async () => {
+    const f = fixture();
+    const empty = JSON.stringify({ platform: "youtube", padding: "" });
+    const text = JSON.stringify({ platform: "youtube", padding: "界".repeat(4_096 - empty.length) });
+    assert.equal(text.length, 4_096);
+    const body = (bom ? "\uFEFF" : "") + text;
+    assert(new TextEncoder().encode(body).length > 4_096);
+    const response = await createSocialConnectHandler(f.http)(socialInputRequest(body));
+    assert.equal(response.status, 200);
+    assert.equal(f.calls.dependencies, 1);
+    assert.equal((await response.json()).url, "https://provider.example/authorize");
+  });
+}
+
+Deno.test("connect body: 4097 Unicode units retain the existing character refusal", async () => {
+  const f = fixture();
+  const empty = JSON.stringify({ platform: "youtube", padding: "" });
+  const body = JSON.stringify({ platform: "youtube", padding: "界".repeat(4_097 - empty.length) });
+  assert.equal(body.length, 4_097);
+  assert(new TextEncoder().encode(body).length < 16_384);
+  const response = await createSocialConnectHandler(f.http)(socialInputRequest(body));
+  assert.equal(response.status, 413);
+  assert.equal((await response.json()).code, "request_too_large");
+  assert.equal(f.calls.dependencies, 0);
+});
+
+Deno.test("connect body: malformed UTF-8 is rejected instead of replaced inside valid JSON", async () => {
+  const f = fixture();
+  const encoder = new TextEncoder();
+  const prefix = encoder.encode('{"platform":"youtube","padding":"');
+  const suffix = encoder.encode('"}');
+  const bytes = new Uint8Array(prefix.length + suffix.length + 1);
+  bytes.set(prefix); bytes[prefix.length] = 0xff; bytes.set(suffix, prefix.length + 1);
+  const response = await createSocialConnectHandler(f.http)(socialInputRequest(bytes));
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).code, "invalid_request");
+  assert.equal(f.calls.dependencies, 0);
+});
+
+for (const length of ["invalid", "1", "999"]) {
+  Deno.test(`connect body: inconsistent Content-Length ${length} is refused`, async () => {
+    const f = fixture();
+    const request = socialInputRequest(JSON.stringify({ platform: "youtube" }), {
+      headers: { Authorization: "Bearer valid", Origin: "https://app.example", "Content-Length": length },
+    });
+    const response = await createSocialConnectHandler(f.http)(request);
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).code, "invalid_request");
+    assert.equal(f.calls.dependencies, 0);
+  });
+}
+
+Deno.test("connect body: a producer failure is a sanitized client error before dependencies", async () => {
+  const f = fixture();
+  const body = new ReadableStream<Uint8Array>({
+    pull(controller) { controller.error(new Error("synthetic-private-producer-detail")); },
+  }, { highWaterMark: 0 });
+  const request = socialInputRequest(body);
+  const response = await createSocialConnectHandler(f.http)(request);
+  assert.equal(response.status, 400);
+  const payload = await response.json();
+  assert.equal(payload.code, "invalid_request");
+  assert(!JSON.stringify(payload).includes("synthetic-private-producer-detail"));
+  assert.equal(request.body?.locked, false);
+  assert.equal(f.calls.dependencies, 0);
+});
+
+Deno.test("connect body: an excessive declared length refuses before reading the producer", async () => {
+  const f = fixture();
+  let source!: ReadableStreamDefaultController<Uint8Array>;
+  let pulls = 0, cancelled = 0;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) { source = controller; },
+    pull() { pulls++; return new Promise<void>(() => {}); },
+    cancel() { cancelled++; },
+  }, { highWaterMark: 0 });
+  const request = socialInputRequest(body, {
+    headers: { Authorization: "Bearer valid", Origin: "https://app.example", "Content-Length": "16385" },
+  });
+  const pending = createSocialConnectHandler(f.http)(request);
+  const observed = await observeProvider(pending);
+  if (observed.status === "watchdog") source.error(new Error("synthetic declared-body cleanup"));
+  await pending;
+  assert.equal(observed.status, "fulfilled");
+  if (observed.status !== "fulfilled") return;
+  assert.equal(observed.value.status, 413);
+  assert.equal((await observed.value.json()).code, "request_too_large");
+  assert.equal(pulls, 0);
+  assert.equal(cancelled, 1);
+  assert.equal(request.body?.locked, false);
+  assert.equal(f.calls.dependencies, 0);
+});
