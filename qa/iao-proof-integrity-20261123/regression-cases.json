@@ -1,0 +1,89 @@
+{
+  "fixture": "qa/iao-release-qualification-20261123/root-typecheck.log",
+  "fixture_blob": "19d6618bdd08c543b5a101755910791a584b5885",
+  "fixture_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f",
+  "total": 10,
+  "passed": 10,
+  "cases": [
+    {
+      "name": "unchanged clean tree",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "pass": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "first exact archived blob",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "pass": true,
+      "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 1 byte-identical archived QA blobs.\n",
+      "stderr": ""
+    },
+    {
+      "name": "modified archive stays strict",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:6: trailing whitespace.\n+modified evidence \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:6: trailing whitespace.\n+modified evidence \n",
+      "stderr": ""
+    },
+    {
+      "name": "renamed archive stays strict",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "qa/renamed-proof.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/renamed-proof.log:5: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "name": "unlisted new QA stays strict",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "qa/unlisted-proof.log:1: trailing whitespace.\n+new unlisted proof \nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/unlisted-proof.log:1: trailing whitespace.\n+new unlisted proof \n",
+      "stderr": ""
+    },
+    {
+      "name": "application source stays strict",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "src/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 0 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+      "stderr": ""
+    },
+    {
+      "name": "one exemption cannot hide a bad source",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \nRechecking all changes except 1 byte-identical archived QA blobs.\nsrc/gate-fixture.ts:1: trailing whitespace.\n+export const guard = 1; \n",
+      "stderr": ""
+    },
+    {
+      "name": "preexisting path stays strict",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "name": "executable archived file stays strict",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "pass": true,
+      "stdout": "qa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\nRechecking all changes except 0 byte-identical archived QA blobs.\nqa/iao-release-qualification-20261123/root-typecheck.log:5: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "name": "invalid revision is not accepted",
+      "expected_exit": 128,
+      "actual_exit": 128,
+      "pass": true,
+      "stdout": "",
+      "stderr": "fatal: ambiguous argument 'missing-iao-test-revision': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n"
+    }
+  ]
+}

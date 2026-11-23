@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-proof-integrity-20261123": false,
       "fix/iao-release-qualification-20261123": false,
       "fix/iao-audit-depth-20261123": false,
       "fix/iao-quality-reliability-20261123": false,
