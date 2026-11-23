@@ -27,18 +27,19 @@ interface Props {
   agentEmoji: string;
   agentColor: string;
   suggestions?: string[];
+  prospectId?: string;
 }
 
-export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [] }: Props) {
+export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, suggestions = [], prospectId }: Props) {
   const { user } = useAuth();
   const userId = user?.id ?? null;
   const [requests] = useState(createRequestScope);
   const voice = useVoice();
   const reducedMotion = useReducedMotion();
   const { cancelRecording, stopSpeaking } = voice;
-  const resourceKey = JSON.stringify([userId, agentType]);
+  const resourceKey = JSON.stringify([userId, agentType, prospectId ?? null]);
   const [sessionId, setSessionId] = useScopedState<string>(resourceKey, '');
-  const conversationKey = JSON.stringify([userId, agentType, sessionId]);
+  const conversationKey = JSON.stringify([userId, agentType, prospectId ?? null, sessionId]);
   const captureConversation = useRequestScope(conversationKey);
   const [messages, setMessages] = useScopedState<AgentChatMessage[]>(conversationKey, []);
   const [input, setInput] = useScopedState(conversationKey, '');
@@ -61,12 +62,12 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     if (!userId || !sessionId) return;
     const request = requests.begin('messages');
     if (!request) return;
-    listAgentChatMessages(userId, agentType, sessionId)
+    listAgentChatMessages(userId, agentType, sessionId, prospectId)
       .then(next => { if (request.current()) setMessages(next); })
       .catch(() => {})
       .finally(() => request.finish());
     return () => requests.invalidate();
-  }, [userId, agentType, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
+  }, [userId, agentType, prospectId, sessionId, requests, cancelRecording, stopSpeaking, setMessages, setInput, setSending, setVoiceModeOpen]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: reducedMotion ? 'auto' : 'smooth' });
@@ -104,6 +105,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
       user_id: userId,
       agent_type: agentType,
       session_id: sessionId,
+      ...(agentType === 'partner' ? { partner_prospect_id: prospectId ?? null } : {}),
       role: 'user',
       content: text.trim(),
       tokens: null,
@@ -111,7 +113,7 @@ export function AgentChatTab({ agentType, agentName, agentEmoji, agentColor, sug
     };
     setMessages(prev => [...prev, tempUser]);
     try {
-      const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), request.signal);
+      const res = await sendAgentChatMessage(agentType, sessionId, text.trim(), request.signal, prospectId);
       if (!request.current()) return null;
       const replyId = 'tmp-asst-' + Date.now();
       // VoiceMode owns playback for its turn, even if the modal closes before effects run.

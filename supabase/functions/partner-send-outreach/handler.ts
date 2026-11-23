@@ -9,6 +9,9 @@ export const partnerCorsHeaders = {
 interface RpcResponse { data: unknown; error: { message?: string } | null; }
 export interface PartnerOutreachDependencies {
   authenticate: (token: string) => Promise<string | null>;
+  // Available only in the server adapter. A delegated account is never trusted
+  // merely because a caller supplied its UUID in a header or request body.
+  authenticateScheduled?: (token: string, userId: string) => Promise<boolean> | boolean;
   rpc: (name: string, args: Record<string, unknown>) => Promise<RpcResponse>;
   fetch: typeof fetch;
   anthropicApiKey: string;
@@ -102,10 +105,16 @@ export function createPartnerOutreachHandler(deps: PartnerOutreachDependencies) 
     if (req.method === "OPTIONS") return new Response(null, { headers: partnerCorsHeaders });
     if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
     let userId: string;
+    const delegatedUserId = req.headers.get("X-Impersonate-User-Id");
+    const scheduled = delegatedUserId !== null;
     try {
       const auth = req.headers.get("Authorization")?.match(/^Bearer\s+(\S+)$/i);
       if (!auth) return json({ error: "Unauthorized" }, 401);
-      const authenticated = await deps.authenticate(auth[1]);
+      if (scheduled && (!UUID.test(delegatedUserId!)
+        || !await deps.authenticateScheduled?.(auth[1], delegatedUserId!))) {
+        return json({ error: "Unauthorized delegation" }, 401);
+      }
+      const authenticated = scheduled ? delegatedUserId : await deps.authenticate(auth[1]);
       if (!authenticated) return json({ error: "Unauthorized" }, 401);
       userId = authenticated;
     } catch { return json({ error: "Unauthorized" }, 401); }
@@ -115,6 +124,9 @@ export function createPartnerOutreachHandler(deps: PartnerOutreachDependencies) 
     const prospectId = body?.prospect_id;
     const step = body?.type ?? "outreach";
     const approving = body?.action === "approve";
+    // The scheduler may execute admitted campaigns, never provide a person's
+    // approval of a frozen preview on their behalf.
+    if (scheduled && approving) return json({ error: "User approval required" }, 403);
     const emailId = body?.email_id;
     const approvalVersion = body?.approval_version;
     if (body?.action !== undefined && !approving) return json({ error: "Invalid action" }, 400);

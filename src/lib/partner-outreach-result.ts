@@ -30,7 +30,7 @@ export interface OutreachResult {
 export function parseOutreachResult(value: unknown): OutreachResult {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Réponse d’envoi invalide');
   const row = value as Record<string, unknown>;
-  if (!['sent', 'pending_approval', 'in_progress', 'unknown', 'blocked', 'failed'].includes(String(row.status))) {
+  if (typeof row.status !== 'string' || !['sent', 'pending_approval', 'in_progress', 'unknown', 'blocked', 'failed'].includes(row.status)) {
     throw new Error('Statut d’envoi inconnu');
   }
   if (row.status === 'sent' && (typeof row.message_id !== 'string' || !row.message_id.trim())) {
@@ -75,6 +75,8 @@ export function outreachFeedback(result: OutreachResult): {
         contact_has_replied: 'Ce contact a déjà répondu. Traitez sa réponse avant toute nouvelle sollicitation.',
         agent_inactive: 'L’agent partenariat est désactivé.',
         daily_limit: 'La limite quotidienne d’envoi est atteinte.',
+        outside_outreach_hours: 'L’envoi attend les jours et horaires autorisés dans votre fuseau. Les brouillons déjà préparés et leurs validations sont conservés.',
+        invalid_outreach_schedule: 'Vérifiez le fuseau horaire, les jours et les heures dans les paramètres partenariat.',
         already_contacted: 'Le premier contact a déjà été effectué.',
         followup_not_due: 'Cette relance n’est pas prévue ou n’est pas encore due.',
         prospect_approval_required: 'Ce prospect doit être validé avant la préparation de l’email.',

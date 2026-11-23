@@ -1,0 +1,196 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 13,
+  "numPassedTests": 13,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795397650613,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime does not restore an old account or announce its late save after switching accounts",
+          "status": "passed",
+          "title": "does not restore an old account or announce its late save after switching accounts",
+          "duration": 164.95983100000012,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime A-B-A starts a new save and rejects the first lifetime receipt without releasing the current save",
+          "status": "passed",
+          "title": "A-B-A starts a new save and rejects the first lifetime receipt without releasing the current save",
+          "duration": 129.89633200000003,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime suppresses a rejected save from a previous account lifetime",
+          "status": "passed",
+          "title": "suppresses a rejected save from a previous account lifetime",
+          "duration": 47.78151100000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime preserves form edits made while the current save is pending",
+          "status": "passed",
+          "title": "preserves form edits made while the current save is pending",
+          "duration": 47.29417999999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime does not attach an old account signature to a new account or show a false success",
+          "status": "passed",
+          "title": "does not attach an old account signature to a new account or show a false success",
+          "duration": 44.9890919999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime keeps newer form edits when an upload for the current account completes",
+          "status": "passed",
+          "title": "keeps newer form edits when an upload for the current account completes",
+          "duration": 38.38816399999996,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime suppresses upload errors after logout",
+          "status": "passed",
+          "title": "suppresses upload errors after logout",
+          "duration": 50.65618900000027,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime does not announce a successful save after unmount",
+          "status": "passed",
+          "title": "does not announce a successful save after unmount",
+          "duration": 45.82731199999989,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime admits at most one save before a React render can disable the button",
+          "status": "passed",
+          "title": "admits at most one save before a React render can disable the button",
+          "duration": 25.179971000000023,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime serializes a pending signature upload before any settings snapshot can overwrite it",
+          "status": "passed",
+          "title": "serializes a pending signature upload before any settings snapshot can overwrite it",
+          "duration": 29.833078999999998,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime serializes a pending settings save before starting a signature write",
+          "status": "passed",
+          "title": "serializes a pending settings save before starting a signature write",
+          "duration": 30.87084300000015,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime rejects a loaded configuration belonging to a different account",
+          "status": "passed",
+          "title": "rejects a loaded configuration belonging to a different account",
+          "duration": 2.9337970000001405,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime preserves the current load and write lease through StrictMode effect replay",
+          "status": "passed",
+          "title": "preserves the current load and write lease through StrictMode effect replay",
+          "duration": 26.096795999999813,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795397651919,
+      "endTime": 1795397652604.0967,
+      "status": "passed",
+      "message": "",
+      "name": "/tmp/iao-partner-3525/src/pages/PartnerAgentSettings.lifecycle.test.tsx"
+    }
+  ]
+}

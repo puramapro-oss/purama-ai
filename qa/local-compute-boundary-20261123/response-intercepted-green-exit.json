@@ -1,0 +1,17 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=64",
+    "--experimental-strip-types",
+    "--test",
+    "/tmp/iao-response-boundary-harness-3525.mjs"
+  ],
+  "cwd": "/tmp/iao-review-3525/karta",
+  "started_at_utc": "2026-11-23T01:30:51.569786+00:00",
+  "ended_at_utc": "2026-11-23T01:30:51.841483+00:00",
+  "exit_code": 0,
+  "kind": "new_regression_after_product_change",
+  "transport": "intercepted http.request; no sockets or provider calls",
+  "source_sha256": "1418ea6283a1b2a3578c10a91cb315b7863b38503a7f970ea96f32f451744f73",
+  "harness_sha256": "f61a584502935204bae5efb1aaf4243dc7882cefa9a83c9d99d25f27efad5677"
+}

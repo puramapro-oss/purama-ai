@@ -1,0 +1,189 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 13,
+  "numPassedTests": 0,
+  "numFailedTests": 2,
+  "numPendingTests": 11,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795397598755,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime does not restore an old account or announce its late save after switching accounts",
+          "status": "skipped",
+          "title": "does not restore an old account or announce its late save after switching accounts",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime A-B-A starts a new save and rejects the first lifetime receipt without releasing the current save",
+          "status": "skipped",
+          "title": "A-B-A starts a new save and rejects the first lifetime receipt without releasing the current save",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime suppresses a rejected save from a previous account lifetime",
+          "status": "skipped",
+          "title": "suppresses a rejected save from a previous account lifetime",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime preserves form edits made while the current save is pending",
+          "status": "skipped",
+          "title": "preserves form edits made while the current save is pending",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime does not attach an old account signature to a new account or show a false success",
+          "status": "skipped",
+          "title": "does not attach an old account signature to a new account or show a false success",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime keeps newer form edits when an upload for the current account completes",
+          "status": "skipped",
+          "title": "keeps newer form edits when an upload for the current account completes",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime suppresses upload errors after logout",
+          "status": "skipped",
+          "title": "suppresses upload errors after logout",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime does not announce a successful save after unmount",
+          "status": "skipped",
+          "title": "does not announce a successful save after unmount",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime admits at most one save before a React render can disable the button",
+          "status": "skipped",
+          "title": "admits at most one save before a React render can disable the button",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime serializes a pending signature upload before any settings snapshot can overwrite it",
+          "status": "failed",
+          "title": "serializes a pending signature upload before any settings snapshot can overwrite it",
+          "duration": 128.25475499999993,
+          "failureMessages": [
+            "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times\n\nReceived:\n\n  1st vi.fn() call:\n\n    Array [\n      \"account-a\",\n      Object {\n        \"commission_first_payment\": 3,\n        \"commission_recurring\": 2,\n        \"company_name\": \"Fictive\",\n        \"custom_tone_prompt\": null,\n        \"daily_outreach_limit\": 2,\n        \"max_relances\": 3,\n        \"outreach_days\": Array [\n          \"MO\",\n        ],\n        \"outreach_hours_end\": \"18:00\",\n        \"outreach_hours_start\": \"09:00\",\n        \"outreach_timezone\": \"UTC\",\n        \"outreach_tone\": \"fixture\",\n        \"relance_1_delay_days\": 3,\n        \"relance_2_delay_days\": 7,\n        \"relance_3_delay_days\": 14,\n        \"require_approval_new_prospect\": true,\n        \"require_approval_outreach\": true,\n        \"sender_email\": \"fixture@example.invalid\",\n        \"sender_name\": \"profile-account-a\",\n        \"sender_title\": \"Test\",\n        \"signature_image_url\": null,\n        \"signature_name\": null,\n        \"signature_title\": null,\n        \"target_min_followers\": 0,\n        \"target_niches\": Array [],\n      },\n    ]\n\n\nNumber of calls: 1\n\n    at Proxy.<anonymous> (file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/@vitest/expect/dist/index.js:1467:10)\n    at Proxy.<anonymous> (file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/@vitest/expect/dist/index.js:1156:15)\n    at Proxy.methodWrapper (file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/chai/index.js:1737:25)\n    at /tmp/iao-partner-3525/src/pages/PartnerAgentSettings.lifecycle.test.tsx:162:73\n    at file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime serializes a pending settings save before starting a signature write",
+          "status": "failed",
+          "title": "serializes a pending settings save before starting a signature write",
+          "duration": 67.42290899999989,
+          "failureMessages": [
+            "AssertionError: expected \"vi.fn()\" to not be called at all, but actually been called 1 times\n\nReceived:\n\n  1st vi.fn() call:\n\n    Array [\n      \"account-a\",\n      File {},\n    ]\n\n\nNumber of calls: 1\n\n    at Proxy.<anonymous> (file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/@vitest/expect/dist/index.js:1467:10)\n    at Proxy.<anonymous> (file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/@vitest/expect/dist/index.js:1156:15)\n    at Proxy.methodWrapper (file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/chai/index.js:1737:25)\n    at /tmp/iao-partner-3525/src/pages/PartnerAgentSettings.lifecycle.test.tsx:176:73\n    at file:///tmp/purama-iao-affiliate-fix-20261123/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+          ],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime rejects a loaded configuration belonging to a different account",
+          "status": "skipped",
+          "title": "rejects a loaded configuration belonging to a different account",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner settings request lifetime"
+          ],
+          "fullName": "partner settings request lifetime preserves the current load and write lease through StrictMode effect replay",
+          "status": "skipped",
+          "title": "preserves the current load and write lease through StrictMode effect replay",
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795397599694,
+      "endTime": 1795397599889.4229,
+      "status": "failed",
+      "message": "",
+      "name": "/tmp/iao-partner-3525/src/pages/PartnerAgentSettings.lifecycle.test.tsx"
+    }
+  ]
+}

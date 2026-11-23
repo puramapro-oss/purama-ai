@@ -1,0 +1,6 @@
+{
+  "exit_code": 134,
+  "stdout": "\n<--- Last few GCs --->\n\n[5:0x33e85000]     2881 ms: Mark-Compact (reduce) 253.3 (258.9) -> 252.7 (255.9) MB, pooled: 0 MB, 73.10 / 0.00 ms  (+ 0.0 ms in 12 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 86 ms) (average mu = 0.314, current mu =[5:0x33e85000]     2962 ms: Mark-Compact 254.0 (256.1) -> 253.6 (260.1) MB, pooled: 0 MB, 74.08 / 0.00 ms  (average mu = 0.217, current mu = 0.091) allocation failure; scavenge might not succeed\n\nFATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory\n----- Native stack trace -----\n\n 1: 0x91df90  [node]\n 2: 0x75bb9f node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]\n 3: 0xc77280  [node]\n 4: 0xc7737f  [node]\n 5: 0xf272b5  [node]\n 6: 0xf39d2c  [node]\n 7: 0xf0c52b  [node]\n 8: 0xee1a24  [node]\n 9: 0x1409fdd  [node]\n10: 0x1b5c9b6  [node]\n",
+  "raw_bytes": 859,
+  "raw_sha256": "551878537458ca9165b5fce992f150a2de54cdaa349fbe6943cfd795a663c7e7"
+}

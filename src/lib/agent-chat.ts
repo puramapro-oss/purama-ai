@@ -9,6 +9,7 @@ export interface AgentChatMessage {
   user_id: string;
   agent_type: AgentChatType;
   session_id: string;
+  partner_prospect_id?: string | null;
   role: 'user' | 'assistant' | 'system';
   content: string;
   tokens: number | null;
@@ -26,14 +27,17 @@ export async function listAgentChatMessages(
   userId: string,
   agentType: AgentChatType,
   sessionId: string,
+  prospectId?: string,
 ): Promise<AgentChatMessage[]> {
-  const { data, error } = await sb()
+  let query = sb()
     .from('agent_chat_history')
     .select('*')
     .eq('user_id', userId)
     .eq('agent_type', agentType)
-    .eq('session_id', sessionId)
-    .order('created_at', { ascending: true });
+    .eq('session_id', sessionId);
+  if (agentType === 'partner') query = prospectId
+    ? query.eq('partner_prospect_id', prospectId) : query.is('partner_prospect_id', null);
+  const { data, error } = await query.order('created_at', { ascending: true });
   if (error) throw error;
   return (data ?? []) as AgentChatMessage[];
 }
@@ -41,14 +45,17 @@ export async function listAgentChatMessages(
 export async function listAgentChatSessions(
   userId: string,
   agentType: AgentChatType,
+  prospectId?: string,
 ): Promise<Array<{ session_id: string; title: string; created_at: string }>> {
-  const { data, error } = await sb()
+  let query = sb()
     .from('agent_chat_history')
     .select('session_id, content, created_at')
     .eq('user_id', userId)
     .eq('agent_type', agentType)
-    .eq('role', 'user')
-    .order('created_at', { ascending: false })
+    .eq('role', 'user');
+  if (agentType === 'partner') query = prospectId
+    ? query.eq('partner_prospect_id', prospectId) : query.is('partner_prospect_id', null);
+  const { data, error } = await query.order('created_at', { ascending: false })
     .limit(50);
   if (error) throw error;
   const map = new Map<string, { session_id: string; title: string; created_at: string }>();
@@ -69,10 +76,12 @@ export async function sendAgentChatMessage(
   sessionId: string,
   message: string,
   signal?: AbortSignal,
+  prospectId?: string,
 ): Promise<{ reply: string; tokens: number | null }> {
   signal?.throwIfAborted();
   const { data, error } = await supabase.functions.invoke('agent-chat', {
-    body: { agent_type: agentType, session_id: sessionId, message },
+    body: { agent_type: agentType, session_id: sessionId, message,
+      ...(agentType === 'partner' && prospectId ? { partner_prospect_id: prospectId } : {}) },
     signal,
   });
   signal?.throwIfAborted();

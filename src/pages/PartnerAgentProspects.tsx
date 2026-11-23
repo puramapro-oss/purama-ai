@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Plus, Trash2, Send, Search, Filter, Pencil,
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -21,9 +22,10 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
   listProspects, createProspect, updateProspect, deleteProspect,
-  findProspects, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus, generateContract,
+  findProspects, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus,
+  generateContract, previewContract, approveContract, contractFeedback,
   STATUS_META, PROSPECT_TYPES, NICHES,
-  type PartnerProspect, type ProspectStatus, type ProspectType, type OutreachApproval,
+  type PartnerProspect, type ProspectStatus, type ProspectType, type OutreachApproval, type PartnerContractResult,
 } from '@/lib/partner';
 
 const newProspect = (): Partial<PartnerProspect> => ({
@@ -40,6 +42,15 @@ const newProspect = (): Partial<PartnerProspect> => ({
 
 export default function PartnerAgentProspects() {
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentUser = useRef(user?.id);
+  const accountEpoch = useRef(0);
+  if (currentUser.current !== user?.id) accountEpoch.current += 1;
+  currentUser.current = user?.id;
+  const mounted = useRef(true);
+  const refreshSequence = useRef(0);
+  const contractRequests = useRef(new Set<string>());
+  const openedContractLink = useRef<string | null>(null);
   const [prospects, setProspects] = useState<PartnerProspect[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -51,23 +62,52 @@ export default function PartnerAgentProspects() {
   const [findNiche, setFindNiche] = useState('');
   const [findType, setFindType] = useState<ProspectType>('influencer');
   const [finding, setFinding] = useState(false);
-  const [pendingApproval, setPendingApproval] = useState<{ emailId: string; preview: OutreachApproval } | null>(null);
+  const [pendingApproval, setPendingApproval] = useState<{ ownerId: string; emailId: string; preview: OutreachApproval } | null>(null);
   const [approving, setApproving] = useState(false);
+  const [contractReview, setContractReview] = useState<{ ownerId: string; prospectId: string; result: PartnerContractResult } | null>(null);
+  const [contractBusy, setContractBusy] = useState<string | null>(null);
+  const [contractRead, setContractRead] = useState<string | null>(null);
+  const contractReviewKey = contractReview?.result.status === 'pending_approval'
+    ? `${contractReview.ownerId}:${contractReview.prospectId}:${contractReview.result.approval.version}:${contractReview.result.approval.pdf_sha256}`
+    : null;
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; refreshSequence.current += 1; };
+  }, []);
 
   const refresh = async () => {
     if (!user) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const sequence = ++refreshSequence.current;
     setLoading(true);
     try {
-      setProspects(await listProspects(user.id));
+      const result = await listProspects(ownerId);
+      if (mounted.current && currentUser.current === ownerId && epoch === accountEpoch.current && sequence === refreshSequence.current) setProspects(result);
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      if (mounted.current && currentUser.current === ownerId && epoch === accountEpoch.current && sequence === refreshSequence.current) {
+        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      }
     } finally {
-      setLoading(false);
+      if (mounted.current && currentUser.current === ownerId && epoch === accountEpoch.current && sequence === refreshSequence.current) setLoading(false);
     }
   };
-  useEffect(() => { refresh(); /* eslint-disable-line */ }, [user?.id]);
+  useEffect(() => {
+    setProspects([]);
+    setEditing(null);
+    setPendingApproval(null);
+    setApproving(false);
+    setContractReview(null);
+    setContractRead(null);
+    setContractBusy(null);
+    openedContractLink.current = null;
+    refresh(); // Every result is checked against the account and the latest request.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const filtered = prospects.filter(p => {
+    if (p.user_id !== user?.id) return false;
     if (statusFilter !== 'all' && p.status !== statusFilter) return false;
     if (!search) return true;
     const q = search.toLowerCase();
@@ -102,25 +142,87 @@ export default function PartnerAgentProspects() {
     catch (e) { toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) }); }
   };
 
-  const handleContract = async (p: PartnerProspect) => {
+  const handleContract = async (p: PartnerProspect, previewOnly = false) => {
+    if (!user || p.user_id !== user.id) return;
     if (!p.email) {
       toast.error('Pas d\'email pour ce prospect');
       return;
     }
-    if (!confirm(`Générer et envoyer un contrat de partenariat à ${p.name} via DocuSeal ?`)) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const requestKey = `${ownerId}:${epoch}`;
+    if (contractRequests.current.has(requestKey)) return;
+    contractRequests.current.add(requestKey);
+    setContractBusy(p.id);
+    setContractRead(null);
     try {
-      const r = await generateContract(p.id);
-      toast.success('✅ Contrat envoyé via DocuSeal', {
-        description: 'Le partenaire reçoit le contrat à signer par email',
-        action: r.pdf_url ? { label: 'PDF', onClick: () => window.open(r.pdf_url!, '_blank') } : undefined,
-      });
-      refresh();
+      const result = await (previewOnly ? previewContract(p.id) : generateContract(p.id));
+      if (!mounted.current || currentUser.current !== ownerId || epoch !== accountEpoch.current) return;
+      setContractReview({ ownerId, prospectId: p.id, result });
+      const feedback = contractFeedback(result);
+      toast[feedback.kind](feedback.title, { description: feedback.description });
     } catch (e) {
-      toast.error('Erreur DocuSeal', { description: e instanceof Error ? e.message : String(e) });
+      if (mounted.current && currentUser.current === ownerId && epoch === accountEpoch.current) {
+        toast.error('Aperçu du contrat indisponible', { description: e instanceof Error ? e.message : String(e) });
+      }
+    } finally {
+      contractRequests.current.delete(requestKey);
+      if (mounted.current && currentUser.current === ownerId && epoch === accountEpoch.current) setContractBusy(null);
     }
   };
 
+  const handleApproveContract = async () => {
+    const review = contractReview;
+    const epoch = accountEpoch.current;
+    if (!review || review.result.status !== 'pending_approval' || !contractReviewKey
+      || contractRead !== contractReviewKey || review.ownerId !== user?.id) return;
+    const requestKey = `${review.ownerId}:${epoch}`;
+    if (contractRequests.current.has(requestKey)) return;
+    contractRequests.current.add(requestKey);
+    setContractBusy(review.prospectId);
+    setContractRead(null);
+    try {
+      const { version, pdf_sha256 } = review.result.approval;
+      const result = await approveContract(review.prospectId, version, pdf_sha256);
+      if (!mounted.current || currentUser.current !== review.ownerId || epoch !== accountEpoch.current) return;
+      setContractReview({ ...review, result });
+      const feedback = contractFeedback(result);
+      toast[feedback.kind](feedback.title, { description: feedback.description });
+      void refresh();
+    } catch {
+      if (!mounted.current || currentUser.current !== review.ownerId || epoch !== accountEpoch.current) return;
+      // A lost response can follow provider acceptance. Offer only a status read.
+      setContractReview({ ...review, result: { status: 'unknown', contract_id: review.result.contract_id,
+        reused: true, reason: 'response_unconfirmed' } });
+      toast.warning('Envoi du contrat à vérifier', {
+        description: 'La réponse n’a pas pu être confirmée. Vérifiez l’état du contrat avant toute autre action.',
+      });
+    } finally {
+      contractRequests.current.delete(requestKey);
+      if (mounted.current && currentUser.current === review.ownerId && epoch === accountEpoch.current) setContractBusy(null);
+    }
+  };
+
+  const linkedProspect = searchParams.get('contractProspect');
+  useEffect(() => {
+    if (!user || loading || !linkedProspect) return;
+    const key = `${user.id}:${linkedProspect}`;
+    if (openedContractLink.current === key) return;
+    const prospect = prospects.find(p => p.id === linkedProspect && p.user_id === user.id);
+    if (!prospect) return;
+    openedContractLink.current = key;
+    const next = new URLSearchParams(searchParams);
+    next.delete('contractProspect');
+    setSearchParams(next, { replace: true });
+    void handleContract(prospect, true);
+    // Opening a link only reads the existing contract. It cannot prepare or send it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, loading, linkedProspect, prospects]);
+
   const handleSend = async (p: PartnerProspect) => {
+    if (!user || p.user_id !== user.id) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
     const step = outreachStepForStatus(p.status);
     if (!step) return;
     if (!p.email) {
@@ -131,33 +233,43 @@ export default function PartnerAgentProspects() {
     if (!confirm(`Envoyer ${label} à ${p.name} (${p.email}) ?`)) return;
     try {
       const result = await sendOutreach(p.id, step);
+      if (!mounted.current || currentUser.current !== ownerId || accountEpoch.current !== epoch) return;
       const feedback = outreachFeedback(result);
       toast[feedback.kind](feedback.title, { description: feedback.description });
       if (result.status === 'pending_approval' && result.email_id && result.approval) {
-        setPendingApproval({ emailId: result.email_id, preview: result.approval });
+        setPendingApproval({ ownerId, emailId: result.email_id, preview: result.approval });
       }
       refresh();
     } catch (e) {
-      toast.error('Erreur d\'envoi', { description: e instanceof Error ? e.message : String(e) });
+      if (mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch) {
+        toast.error('Erreur d\'envoi', { description: e instanceof Error ? e.message : String(e) });
+      }
     }
   };
 
   const handleApprove = async () => {
-    if (!pendingApproval || approving) return;
+    if (!pendingApproval || approving || pendingApproval.ownerId !== user?.id) return;
+    const ownerId = pendingApproval.ownerId;
+    const epoch = accountEpoch.current;
     setApproving(true);
     try {
       const result = await approveOutreach(pendingApproval.emailId, pendingApproval.preview.version);
+      if (!mounted.current || currentUser.current !== ownerId || accountEpoch.current !== epoch) return;
       const feedback = outreachFeedback(result);
       toast[feedback.kind](feedback.title, { description: feedback.description });
       if (result.status === 'pending_approval' && result.email_id && result.approval) {
-        setPendingApproval({ emailId: result.email_id, preview: result.approval });
+        setPendingApproval({ ownerId, emailId: result.email_id, preview: result.approval });
       } else {
         setPendingApproval(null);
       }
       refresh();
     } catch (e) {
-      toast.error('Validation non confirmée', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setApproving(false); }
+      if (mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch) {
+        toast.error('Validation non confirmée', { description: e instanceof Error ? e.message : String(e) });
+      }
+    } finally {
+      if (mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch) setApproving(false);
+    }
   };
 
   const handleFind = async () => {
@@ -264,8 +376,10 @@ export default function PartnerAgentProspects() {
                       </Button>
                     )}
                     {p.email && (p.status === 'interested' || p.status === 'contract_sent') && (
-                      <Button variant="ghost" size="icon" onClick={() => handleContract(p)} title="Générer contrat DocuSeal">
-                        <FileSignature className="w-4 h-4 text-emerald-400" />
+                      <Button variant="ghost" size="icon" disabled={!!contractBusy}
+                        onClick={() => handleContract(p, p.status === 'contract_sent')}
+                        title={p.status === 'contract_sent' ? 'Vérifier le contrat' : 'Préparer le contrat'}>
+                        {contractBusy === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSignature className="w-4 h-4 text-emerald-400" />}
                       </Button>
                     )}
                     {p.website && (
@@ -282,6 +396,66 @@ export default function PartnerAgentProspects() {
           })}
         </div>
       )}
+
+      <Dialog open={!!contractReview && contractReview.ownerId === user?.id}
+        onOpenChange={open => { if (!open && !contractBusy) { setContractReview(null); setContractRead(null); } }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="contract-review-description">
+          <DialogHeader><DialogTitle>Vérifier le contrat de partenariat</DialogTitle></DialogHeader>
+          {contractReview && (
+            <>
+              <p id="contract-review-description" className="text-sm text-muted-foreground">
+                {contractFeedback(contractReview.result).description}
+              </p>
+              {contractReview.result.status === 'pending_approval' && (
+                <div className="space-y-4 text-sm">
+                  <dl className="space-y-2">
+                    <div><dt className="font-medium">Partenaire destinataire</dt><dd>{contractReview.result.approval.recipient_name} · {contractReview.result.approval.recipient_email}</dd></div>
+                    <div><dt className="font-medium">Émetteur</dt><dd>{contractReview.result.approval.company_name} · {contractReview.result.approval.sender_name} · {contractReview.result.approval.sender_email}</dd></div>
+                    <div><dt className="font-medium">Conditions figurant dans ce projet</dt>
+                      <dd>{contractReview.result.approval.commission_first_payment.toLocaleString('fr-FR')} % au premier paiement · {contractReview.result.approval.commission_recurring.toLocaleString('fr-FR')} % récurrent</dd></div>
+                  </dl>
+                  <Button variant="outline" asChild>
+                    <a href={contractReview.result.approval.pdf_url} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-4 h-4 mr-2" /> Ouvrir le PDF à approuver
+                    </a>
+                  </Button>
+                  <p className="text-xs text-muted-foreground">Le document complet doit être relu. La génération du projet ne vaut pas validation juridique.</p>
+                  <details className="text-xs text-muted-foreground">
+                    <summary>Identifier cette version du document</summary>
+                    <p className="break-all mt-2">Version : {contractReview.result.approval.version}</p>
+                    <p className="break-all">SHA-256 : {contractReview.result.approval.pdf_sha256}</p>
+                  </details>
+                  <div className="flex items-start gap-3 rounded-md border p-3">
+                    <Checkbox id="contract-read" checked={contractRead !== null && contractRead === contractReviewKey} disabled={!!contractBusy}
+                      onCheckedChange={checked => setContractRead(checked === true ? contractReviewKey : null)} />
+                    <Label htmlFor="contract-read" className="text-sm leading-relaxed cursor-pointer">
+                      J’ai relu ce PDF, vérifié les parties et les conditions, et j’autorise l’envoi de cette version à ce destinataire.
+                    </Label>
+                  </div>
+                </div>
+              )}
+              {contractReview.result.status === 'sent' && (
+                <div className="space-y-2 text-sm">
+                  <p>Référence DocuSeal : {contractReview.result.docuseal_submission_id}</p>
+                  {contractReview.result.pdf_url && <a className="underline" href={contractReview.result.pdf_url} target="_blank" rel="noopener noreferrer">Ouvrir le PDF du contrat</a>}
+                </div>
+              )}
+              <DialogFooter className="gap-2">
+                <Button variant="outline" disabled={!!contractBusy} onClick={() => { setContractReview(null); setContractRead(null); }}>Fermer</Button>
+                <Button variant="outline" disabled={!!contractBusy} onClick={() => {
+                  const p = prospects.find(value => value.id === contractReview.prospectId && value.user_id === user?.id);
+                  if (p) void handleContract(p, true);
+                }}>Vérifier l’état et l’aperçu</Button>
+                {contractReview.result.status === 'pending_approval' && (
+                  <Button disabled={contractRead === null || contractRead !== contractReviewKey || !!contractBusy} onClick={handleApproveContract}>
+                    {contractBusy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Approuver ce PDF et envoyer
+                  </Button>
+                )}
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Editor */}
       <Dialog open={!!editing} onOpenChange={o => !o && setEditing(null)}>
@@ -350,7 +524,7 @@ export default function PartnerAgentProspects() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!pendingApproval} onOpenChange={open => { if (!open && !approving) setPendingApproval(null); }}>
+      <Dialog open={!!pendingApproval && pendingApproval.ownerId === user?.id} onOpenChange={open => { if (!open && !approving) setPendingApproval(null); }}>
         <DialogContent className="max-w-2xl" aria-describedby="outreach-approval-description">
           <DialogHeader><DialogTitle>Valider l’email</DialogTitle></DialogHeader>
           <p id="outreach-approval-description" className="text-sm text-muted-foreground">

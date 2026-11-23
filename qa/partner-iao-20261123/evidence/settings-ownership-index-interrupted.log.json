@@ -1,0 +1,6 @@
+{
+  "exit_code": 137,
+  "stdout": "\n  GitNexus Analyzer (1.6.12)\n\u001b[2K\rIndex lock: OS socket lock unavailable here — using the file lock.\n",
+  "raw_bytes": 104,
+  "raw_sha256": "715c02e5b69d5087b812689bfba3f4867138ddf13d01ce33fbffdfcc2bb3fc23"
+}

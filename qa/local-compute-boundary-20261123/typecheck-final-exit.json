@@ -1,0 +1,17 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=192",
+    "karta/node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--project",
+    "qa/local-compute-boundary-20261123/tsconfig.json"
+  ],
+  "cwd": "/tmp/iao-review-3525",
+  "started_at_utc": "2026-11-23T01:33:13.067239+00:00",
+  "ended_at_utc": "2026-11-23T01:33:14.438755+00:00",
+  "exit_code": 0,
+  "scope": "Changed provider and native test with transitive imports; KARTA strict compiler options and actual installed KARTA @types directory",
+  "not_a_full_karta_typecheck": true,
+  "initial_setup": "QA config location initially missed KARTA default ambient type lookup; typeRoots now explicitly points at the same real node_modules/@types; no compiler strictness disabled"
+}

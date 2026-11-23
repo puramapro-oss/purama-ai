@@ -1,0 +1,12 @@
+{
+  "extends": "../../karta/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "typeRoots": ["../../karta/node_modules/@types"]
+  },
+  "include": [
+    "../../karta/src/integrations/localComputeFabricProvider.ts",
+    "../../karta/test/localComputeFabricResponseBoundary.test.ts"
+  ]
+}

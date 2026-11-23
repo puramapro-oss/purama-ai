@@ -1,0 +1,171 @@
+{
+  "status": "PARTIEL",
+  "recorded_at_utc": "2026-11-23T01:41:00.791291+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "published_base_commit": "6145767eb4cd901ee49a4ba12b1bb02480ee1b23",
+  "base_tree_verified": "02ba797a7aeeeb768db54c6eba781d3042550f0f",
+  "prior_base": "d633b769f8ed8f03df64088c7267c18d85b76d17",
+  "concurrent_work_preserved": [
+    ".github/workflows/purama-chef-hardening.yml",
+    "qa/partner-iao-20261123/README.md",
+    "qa/partner-iao-20261123/evidence/ci-first-run.json",
+    "qa/partner-iao-20261123/source-manifest.json",
+    "qa/partner-iao-20261123/verification.json",
+    "tests/ui-state/fixtures.ts"
+  ],
+  "checks": [
+    {
+      "id": "lifecycle_reproduction",
+      "exit_code": 1,
+      "total_declared": 9,
+      "passed": 0,
+      "failed": 9,
+      "pending": 0,
+      "scope": "9 actual React lifecycle cases before product correction; all 9 fail as expected",
+      "evidence": "evidence/lifecycle-red-isolated.json"
+    },
+    {
+      "id": "signature_write_race_reproduction",
+      "exit_code": 1,
+      "total_declared": 13,
+      "passed": 0,
+      "failed": 2,
+      "pending": 11,
+      "scope": "2 actual React race cases fail; 11 deliberately unselected cases are not counted",
+      "evidence": "evidence/signature-race-red.json"
+    },
+    {
+      "id": "lifecycle_final",
+      "exit_code": 0,
+      "total_declared": 13,
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "scope": "Historical 13-case pre-reconciliation receipt; not added to the final composed count.",
+      "evidence": "evidence/lifecycle-green-final.json"
+    },
+    {
+      "id": "schedule_regression_final",
+      "exit_code": 0,
+      "total_declared": 5,
+      "passed": 5,
+      "failed": 0,
+      "pending": 0,
+      "scope": "5 existing timezone and immutable-contract-flag cases; separate process to isolate mocks",
+      "evidence": "evidence/schedule-green-final.json"
+    },
+    {
+      "id": "ownership_concurrent_reproduction",
+      "exit_code": 1,
+      "total_declared": 18,
+      "selected": 4,
+      "passed": 1,
+      "failed": 3,
+      "pending": 14,
+      "scope": "Exact product 6145767: two write races and foreign-owner recovery fail; StrictMode passes. The other 14 cases were deliberately unselected.",
+      "evidence": "evidence/composition-6145767-receipt.json"
+    },
+    {
+      "id": "ownership_composed_final",
+      "exit_code": 0,
+      "total_declared": 18,
+      "passed": 18,
+      "failed": 0,
+      "pending": 0,
+      "scope": "18 unique React cases after composition; five separate existing schedule cases pass on identical final product. Final scoped total 23.",
+      "evidence": "evidence/composition-6145767-receipt.json"
+    }
+  ],
+  "targeted_types": {
+    "status": "PASS",
+    "exit_code": 0,
+    "command": "node --max-old-space-size=384 --max-semi-space-size=2 node_modules/typescript/bin/tsc --noEmit -p qa/partner-settings-lifecycle-20261123/tsconfig.json",
+    "evidence": "evidence/settings-targeted-typecheck-final.log",
+    "scope": "Historical PASS before ownership-test consolidation. Product source is byte-identical; final composed test typing is not claimed locally."
+  },
+  "lint": {
+    "status": "PASS",
+    "exit_code": 0,
+    "command": "node --max-old-space-size=192 node_modules/eslint/bin/eslint.js src/pages/PartnerAgentSettings.tsx src/pages/PartnerAgentSettings.ownership.test.tsx tests/ui-state/partner-lifecycle.spec.ts",
+    "evidence": "evidence/composition-6145767-receipt.json"
+  },
+  "browser": {
+    "status": "NON TESTE localement",
+    "new_scenarios": 5,
+    "registered_by": "tests/ui-state/playwright.config.ts (*.spec.ts), npm run test:ui-state in existing CI",
+    "reason": "Chromium Unix socket denied in this executor; no protection changed"
+  },
+  "independent_review": {
+    "status": "PASS",
+    "reviewer": "inventory_audits",
+    "final_product_sha256": "efacc7b0bcfc2272fc63210bf8998a7f73f314b49fa048b0b5d2571ae8b41565",
+    "identified_issue_closed": "save and signature upload both persist signature_image_url; one synchronous settings-write lease now serializes them"
+  },
+  "gitnexus": {
+    "impact_executed": true,
+    "scope": "Prior indexed graph plus current full-text references; the settings page is mounted from App and test harnesses. update impact LOW; graph has unresolved edges and is not a fresh whole-project proof.",
+    "fresh_index": "BLOCKED: analysis attempts terminate exit137, including bounded-memory attempts",
+    "detect_changes": {
+      "status": "BLOCKED",
+      "exit_code": 1,
+      "reason": "No indexed repositories found for exact modified copy",
+      "evidence": "evidence/gitnexus-detect-final.log"
+    },
+    "fallback_review": "Exact base tree reconciliation, scoped git diff, TypeScript, ESLint, behavioral regression tests and independent review; no AGENTS instructions changed"
+  },
+  "non_qualifying_attempts": [
+    {
+      "scope": "Initial lifecycle run with mock queues not reset after failures",
+      "result": "superseded by lifecycle-red-isolated.json"
+    },
+    {
+      "scope": "Combined two-file Vitest --no-isolate",
+      "result": "4 schedule failures due shared mocks; replaced by separate-process final runs"
+    },
+    {
+      "scope": "Combined isolated Vitest and broad ui-state TypeScript",
+      "result": "exit137; not PASS"
+    },
+    {
+      "scope": "Targeted TypeScript with 192 MiB heap",
+      "result": "exit134 with explicit V8 heap exhaustion; same scope passes at384 MiB"
+    }
+  ],
+  "manifest": {
+    "src/pages/PartnerAgentSettings.tsx": {
+      "sha256": "efacc7b0bcfc2272fc63210bf8998a7f73f314b49fa048b0b5d2571ae8b41565",
+      "bytes": 20694
+    },
+    "tests/ui-state/partner-lifecycle.spec.ts": {
+      "sha256": "5920849f7e2d4fbd2e600d10227b8827059bb2010950e79ed7aab9b2e24784ee",
+      "bytes": 5455
+    },
+    "src/pages/PartnerAgentSettings.ownership.test.tsx": {
+      "sha256": "0bef68df7b947562240bca1cc5c6dfa22c42b27f05459f4d249a9b611324746a",
+      "scope": "Reconstructed after executor reset; exact SHA256 matches source used in 18/18 run."
+    }
+  },
+  "limits": [
+    "Client guards reject stale state and notifications; they do not retract a remote write already accepted.",
+    "The shared lease serializes writes in this component instance; distributed multi-device concurrency is not claimed.",
+    "No live Supabase, signature storage, outreach, financial operation, migration or deployment.",
+    "Do not sum browser scenarios with DOM cases as unique product behaviors."
+  ],
+  "concurrent_6145767_reconciliation": {
+    "preserved": "All upstream QA, typecheck registration, existing ownership test identity and business behavior.",
+    "deduplication": "13 upstream cases retained; ABA case strengthened, upload-error case extended to logout; four distinct cases added. One canonical ownership file with 18 cases. Unpublished lifecycle file omitted.",
+    "independent_review": "inventory_audits compared exact 6145767 and candidate; UI/business behavior preserved. Shared settings-write lease closes both save/signature races and foreign-owner data returns a recoverable error."
+  },
+  "composed_targeted_types": {
+    "status": "BLOCKED",
+    "exit_code": 137,
+    "command": "node --max-old-space-size=384 --max-semi-space-size=2 node_modules/typescript/bin/tsc --noEmit -p qa/partner-settings-lifecycle-20261123/tsconfig.json",
+    "reason": "Process killed without TypeScript diagnostic. Final composed typing requires CI."
+  },
+  "executor_reset": {
+    "temporary_directory_lost": true,
+    "product_and_tests_recovered_exactly": true,
+    "raw_18_case_json_available": false,
+    "scope": "Executor became unavailable after successful 18/18 and lint runs; temporary files vanished after restart. The counts/exit codes were observed before reset and are preserved in the compact receipt. Earlier raw receipts survived in the orchestration snapshot. Exact source hashes verified after reconstruction; CI remains required."
+  }
+}
