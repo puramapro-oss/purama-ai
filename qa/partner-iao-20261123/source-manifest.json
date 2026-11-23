@@ -94,8 +94,8 @@
       "bytes": 5307
     },
     "src/pages/PartnerAgentSettings.tsx": {
-      "sha256": "228093abc3affb44c1644938764a338a05da636e59bddbb57eac2271088a6acc",
-      "bytes": 18837
+      "sha256": "1189fa322a7b6a27dcb966e8677b55e9dae7aa8bec632f999bd2758bb5f68227",
+      "bytes": 21132
     },
     "supabase/functions/_shared/partner-chat-context.ts": {
       "sha256": "eb782ebb25be1e1f1e55487f28bd0d0ef0ca057b2d4bf922e8fba988c052feb8",
@@ -154,12 +154,16 @@
       "bytes": 43825
     },
     "tests/quality/partner-affiliate.tsconfig.json": {
-      "sha256": "a5e55ce9970528e2f78eef2bdd90940ee7d2b4bd4aa2ecadd891359c77147906",
-      "bytes": 741
+      "sha256": "ba7244fd84decd25f5ab27cea92e5e8f0000e15b2b3ff6405160eb8ed4a58e34",
+      "bytes": 804
     },
     "tests/ui-state/fixtures.ts": {
       "sha256": "0db91753819ad3ec6ba73d1b810582f5e3492d715c5ac80b04a37ad7417f8a67",
       "bytes": 3567
+    },
+    "src/pages/PartnerAgentSettings.ownership.test.tsx": {
+      "sha256": "459c95b0962225a4fe3d57e3418acc4aee76ac60f62f16ed135e2d811bc1f459",
+      "bytes": 9762
     }
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Loader2, User, Sparkles, Clock, DollarSign, Image as ImageIcon, X } from 'lucide-react';
@@ -28,6 +28,13 @@ const DAYS = [
 export default function PartnerAgentSettings() {
   const { user } = useAuth();
   const userId = user?.id;
+  const currentUser = useRef(userId);
+  const accountEpoch = useRef(0);
+  const mounted = useRef(true);
+  const saveRequest = useRef<symbol | null>(null);
+  const uploadRequest = useRef<symbol | null>(null);
+  if (currentUser.current !== userId) accountEpoch.current += 1;
+  currentUser.current = userId;
   const [config, setConfig] = useState<PartnerConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -36,9 +43,23 @@ export default function PartnerAgentSettings() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      accountEpoch.current += 1;
+      saveRequest.current = null;
+      uploadRequest.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
     setLoading(Boolean(userId));
     setLoadError(false);
     setConfig(null);
+    saveRequest.current = null;
+    uploadRequest.current = null;
+    setSaving(false);
+    setUploading(false);
     if (!userId) return;
     let active = true;
     (async () => {
@@ -52,7 +73,7 @@ export default function PartnerAgentSettings() {
     return () => { active = false; };
   }, [userId, loadVersion]);
 
-  if (loading) {
+  if (loading || (config && config.user_id !== userId)) {
     return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>;
   }
   if (loadError || !config) {
@@ -63,10 +84,15 @@ export default function PartnerAgentSettings() {
   }
 
 
-  const update = (patch: Partial<PartnerConfig>) => setConfig({ ...config, ...patch });
+  const update = (patch: Partial<PartnerConfig>) => setConfig(current =>
+    current?.user_id === userId ? { ...current, ...patch } : current);
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user || config.user_id !== user.id || saveRequest.current) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const request = Symbol('partner-settings-save');
+    const isCurrent = () => mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch;
     let outreachTimezone: string;
     try {
       const requestedTimezone = config.outreach_timezone?.trim();
@@ -78,6 +104,7 @@ export default function PartnerAgentSettings() {
       toast.error('Fuseau horaire invalide', { description: 'Utilisez un nom comme Europe/Paris, America/Montreal ou UTC.' });
       return;
     }
+    saveRequest.current = request;
     setSaving(true);
     try {
       const { id, user_id, created_at, updated_at, total_prospects_found, total_emails_sent, total_replies, total_active_partners, total_revenue_generated, auto_send_contract, require_approval_contract, ...patch } = config;
@@ -87,24 +114,48 @@ export default function PartnerAgentSettings() {
       // Legacy contract flags remain historical data; this UI no longer offers
       // an automatic send that could bypass the exact-document review.
       void auto_send_contract; void require_approval_contract;
-      await updatePartnerConfig(user.id, { ...patch, outreach_timezone: outreachTimezone });
-      setConfig({ ...config, outreach_timezone: outreachTimezone });
+      await updatePartnerConfig(ownerId, { ...patch, outreach_timezone: outreachTimezone });
+      if (!isCurrent() || saveRequest.current !== request) return;
+      // A receipt confirms the submitted snapshot. It must not replace edits
+      // made while that snapshot was being saved, including a newer timezone.
+      setConfig(current => current?.user_id === ownerId && current.outreach_timezone === config.outreach_timezone
+        ? { ...current, outreach_timezone: outreachTimezone } : current);
       toast.success('✅ Paramètres enregistrés');
     } catch (e) {
-      toast.error('Erreur de sauvegarde', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setSaving(false); }
+      if (isCurrent() && saveRequest.current === request) {
+        toast.error('Erreur de sauvegarde', { description: e instanceof Error ? e.message : String(e) });
+      }
+    } finally {
+      if (saveRequest.current === request) {
+        saveRequest.current = null;
+        if (isCurrent()) setSaving(false);
+      }
+    }
   };
 
   const handleUpload = async (file: File) => {
-    if (!user) return;
+    if (!user || config.user_id !== user.id || uploadRequest.current) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const request = Symbol('partner-signature-upload');
+    const isCurrent = () => mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch;
+    uploadRequest.current = request;
     setUploading(true);
     try {
-      const url = await uploadSignature(user.id, file);
-      update({ signature_image_url: url });
+      const url = await uploadSignature(ownerId, file);
+      if (!isCurrent() || uploadRequest.current !== request) return;
+      setConfig(current => current?.user_id === ownerId ? { ...current, signature_image_url: url } : current);
       toast.success('✅ Signature chargée');
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setUploading(false); }
+      if (isCurrent() && uploadRequest.current === request) {
+        toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+      }
+    } finally {
+      if (uploadRequest.current === request) {
+        uploadRequest.current = null;
+        if (isCurrent()) setUploading(false);
+      }
+    }
   };
 
   const toggleNiche = (n: string) => {
@@ -181,6 +232,7 @@ export default function PartnerAgentSettings() {
               <input
                 type="file"
                 accept="image/png,image/jpeg"
+                disabled={uploading}
                 className="hidden"
                 onChange={e => e.target.files?.[0] && handleUpload(e.target.files[0])}
               />

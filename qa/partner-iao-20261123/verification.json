@@ -211,5 +211,131 @@
       "kind": "Selected CI log lines, not full raw stdout"
     }
   },
-  "log_storage": "Raw stdout is preserved exactly as a JSON string with its original byte count and SHA-256."
+  "log_storage": "Raw stdout is preserved exactly as a JSON string with its original byte count and SHA-256.",
+  "settings_ownership_followup": {
+    "captured_at_utc": "2026-11-23T01:41:39.796543+00:00",
+    "base": "00586c2ffae7619198b989b5f9df78a3cb1cea4c",
+    "reproduced_original": "d633b769f8ed8f03df64088c7267c18d85b76d17",
+    "product_identical_between_those_bases": true,
+    "owner": "/root/iao_audit",
+    "independent_reviewer": "/root",
+    "scope": [
+      "src/pages/PartnerAgentSettings.tsx",
+      "src/pages/PartnerAgentSettings.ownership.test.tsx",
+      "tests/quality/partner-affiliate.tsconfig.json"
+    ],
+    "design_status": "PRET_A_CODER",
+    "reproduction": {
+      "passed": 1,
+      "failed": 12,
+      "total": 13,
+      "exit_code": 1,
+      "evidence": "evidence/settings-ownership-before.log.json"
+    },
+    "final_tests": {
+      "passed": 18,
+      "failed": 0,
+      "files": 2,
+      "exit_code": 0,
+      "evidence": "evidence/settings-ownership-final.log.json",
+      "command": "node --max-old-space-size=192 --max-semi-space-size=4 node_modules/vitest/vitest.mjs run src/pages/PartnerAgentSettings.ownership.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx --maxWorkers=1 --pool=threads --reporter=verbose",
+      "cwd": "repository root"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "node --max-old-space-size=320 --max-semi-space-size=4 node_modules/typescript/bin/tsc --noEmit -p tests/quality/partner-affiliate.tsconfig.json",
+      "evidence": "evidence/settings-ownership-typecheck.log.json"
+    },
+    "lint": {
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "node --max-old-space-size=192 --max-semi-space-size=4 node_modules/eslint/bin/eslint.js src/pages/PartnerAgentSettings.tsx src/pages/PartnerAgentSettings.ownership.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx",
+      "evidence": "evidence/settings-ownership-lint.log.json"
+    },
+    "gitnexus": {
+      "status": "PARTIEL",
+      "risk": "UNKNOWN",
+      "reference_index": "c4228f5084c72fbd4046d471b2a3f033e0b58c15",
+      "impacts": [
+        "PartnerAgentSettings",
+        "handleSave",
+        "handleUpload"
+      ],
+      "fresh_index_exit_code": 137,
+      "final_detection_exit_code": 1,
+      "final_detection_command": "gitnexus detect-changes --scope staged --repo /tmp/iao-settings-scope-9beaa4bea5fa",
+      "manual_dependency_review": [
+        "src/App.tsx",
+        "/dashboard/partner-agent/settings",
+        "tests/ui-state/harness.tsx"
+      ],
+      "limitations": "Old graph, unresolved React references; exact frontend and scoped rebuilds interrupted. No fresh graph success or absence of impact is claimed."
+    },
+    "global_typecheck": {
+      "status": "PARTIEL",
+      "attempt_exit_codes": [
+        137,
+        134
+      ],
+      "required_gate": "CI on the published followup head"
+    },
+    "real_browser": {
+      "status": "NON TESTE locally",
+      "required_gate": "existing PR93 browser CI on the published followup head"
+    },
+    "review": {
+      "status": "PASS",
+      "scope": "Root independently read the product diff and all 13 new tests; accepted account cycles, drafts, operation locks and signature UI boundary, subject to types/lint and CI."
+    },
+    "provider_calls": false,
+    "production_deployment": false,
+    "receipts": {
+      "settings-ownership-before.log.json": {
+        "sha256": "3885abba741e3480d0cf76f4df4f239c0ea97cfba6af90da802f116a7faefffe",
+        "bytes": 13719
+      },
+      "settings-ownership-final.log.json": {
+        "sha256": "9424a94bd8300f9d0458d67fc9e4a1f6bb59e568e278b701617f62349ba71d68",
+        "bytes": 3383
+      },
+      "settings-ownership-typecheck.log.json": {
+        "sha256": "b1f2b87a0eeb3d686ffc5e162014b9f60ef4e105d5791e14f8566cb2bb63d61c",
+        "bytes": 139
+      },
+      "settings-ownership-lint.log.json": {
+        "sha256": "b1f2b87a0eeb3d686ffc5e162014b9f60ef4e105d5791e14f8566cb2bb63d61c",
+        "bytes": 139
+      },
+      "settings-ownership-global-typecheck-interrupted.log.json": {
+        "sha256": "8d3c0280bf38a1e09a65c1f2a494321936c7ca195a15708b1632475b32968883",
+        "bytes": 141
+      },
+      "settings-ownership-global-typecheck-heap.log.json": {
+        "sha256": "6db473d9e0b8dbcf11d04e1d808f09871f3cc4428141a840dcb3e0db57c91a34",
+        "bytes": 1020
+      },
+      "settings-ownership-impact-component.log.json": {
+        "sha256": "58242b3c05afefad65d05243fc090150610724d4e7b79760374e86efd26f486b",
+        "bytes": 1695
+      },
+      "settings-ownership-impact-save.log.json": {
+        "sha256": "18c09f72b887e10a2dab7d85b0642ee1f718a9ddbd32853cc1f09a971be2adb4",
+        "bytes": 1701
+      },
+      "settings-ownership-impact-upload.log.json": {
+        "sha256": "1ca1c9d5c8c294b456cce025367a505243d64f7d569ba4ab3364488041cef265",
+        "bytes": 3395
+      },
+      "settings-ownership-index-interrupted.log.json": {
+        "sha256": "9f907743465573a90e9272836ccf3152f0bbb1d37a634b5bf75d6f314be6f388",
+        "bytes": 256
+      },
+      "settings-ownership-detection.log.json": {
+        "sha256": "92fe87b36e087720d7274657328775cd7d55924f23f32f3e46a8d2c43263865d",
+        "bytes": 1157
+      }
+    },
+    "counting_note": "The 5 existing schedule tests are included in the 18 final cases. Historical KARTA counts are separate, never added."
+  }
 }

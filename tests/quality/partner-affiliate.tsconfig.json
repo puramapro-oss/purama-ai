@@ -12,6 +12,7 @@
     "../../src/pages/PartnerAgentProspects.contract.test.tsx",
     "../../src/pages/PartnerAgentSettings.tsx",
     "../../src/pages/PartnerAgentSettings.schedule.test.tsx",
+    "../../src/pages/PartnerAgentSettings.ownership.test.tsx",
     "../../src/components/partner/PartnerAgentChat.tsx",
     "../../src/components/partner/PartnerAgentChat.test.tsx",
     "../../src/components/voice/AgentChatTab.tsx"

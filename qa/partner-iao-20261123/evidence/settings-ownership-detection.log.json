@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "stdout": "\n  GitNexus Detect Changes (1.6.12)\nfile:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435\n            throw new Error(`Repository \"${repoParam}\" not found. Available: ${labels.join(', ')}`);\n                  ^\n\nError: Repository \"/tmp/iao-settings-scope-9beaa4bea5fa\" not found. Available: purama-iao-lint-reprise-20261123, purama-iao-qualification-20261123\n    at LocalBackend.selectToolRepository (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/mcp/local/local-backend.js:1435:19)\n    at async LocalBackend.callTool (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/mcp/local/local-backend.js:2075:22)\n    at async detectChangesCommand (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/tool.js:293:20)\n    at async Command.<anonymous> (file:///workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/lazy-action.js:33:9)\n\nNode.js v24.22.3\n",
+  "raw_bytes": 999,
+  "raw_sha256": "44dc5a34f700b338dea28f9f1942e9606cbf8ccee8bbf3c15e2a51708df85db1"
+}

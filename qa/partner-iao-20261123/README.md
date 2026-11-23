@@ -60,6 +60,33 @@ La procédure de contrôle ciblée proposée précédemment a été suivie à la
 
 Les défauts trouvés en revue ont été corrigés : validation conservée pour un autre PDF en cas de concurrence, ancien aperçu après changement de compte, statuts JSON malformés, état d’approbation restant occupé, horloge capturée avant attente d’un verrou, jours multidimensionnels faisant échouer la découverte, reprise d’un brouillon approuvé hors horaires, et compatibilité dangereuse avec l’ancien endpoint.
 
+## Reprise : isoler les sauvegardes et signatures tardives
+
+**PASS local sur les comportements ciblés ; réception de la nouvelle tête en CI requise.** Ce complément appartient à la même PR93, sur la base `00586c2ffae7619198b989b5f9df78a3cb1cea4c`. La correction concurrente du fixture et son contrôle TypeScript sont conservés par avance rapide. Le composant produit de cette base est identique à celui de `d633b769`, sur lequel la régression a été reproduite.
+
+- Identité et validation : `puramapro-oss/purama-ai`, paramètres partenaires existants, `PRET_A_CODER` ; validation collective du 21 novembre puis demande actuelle d’auditer et corriger le code.
+- Responsable du correctif : `/root/iao_audit` ; contre-revue du diff et des nouveaux tests par `/root`.
+- Périmètre : `PartnerAgentSettings.tsx`, son nouveau fichier de régression et une ligne dans le contrôle TypeScript partenaire existant. Les contrats, migrations, workflows, autorisations et transports fournisseurs sont conservés.
+- Critères : aucune restitution de A dans B, invalidation après A→B→A ou démontage, brouillons plus récents conservés, opérations de B indépendantes d’une attente de A, et une seule requête par action simultanée dans un cycle de compte.
+
+La nouvelle normalisation du fuseau remplaçait toute la configuration après la sauvegarde. Une réponse de A pouvait donc remettre ses réglages dans l’écran de B ; elle pouvait aussi écraser les saisies effectuées pendant l’attente. Le téléchargement de signature avait le même problème de copie périmée et ses notifications tardives n’étaient pas isolées.
+
+Les deux opérations capturent maintenant le compte, son cycle et une réservation locale de requête. Changement de compte, démontage ou remplacement de réservation rendent leur restitution inerte. Les opérations de B repartent avec leur propre état d’attente. Les mises à jour fonctionnelles conservent les nouvelles saisies ; la normalisation du fuseau ne s’applique que si ce champ correspond toujours à la valeur envoyée. Les doubles clics et sélections de fichier ne créent plus deux requêtes avant le rendu React suivant.
+
+| Vérification de ce complément | Résultat |
+| --- | --- |
+| Reproduction sur le composant original | 12 échecs attendus et 1 réussite sur 13 nouveaux cas, commande complète avec code 1. |
+| Régression finale après composition avec la correction du fixture | **18/18 tests réussis** : 13 nouveaux cas et les 5 contrôles de fuseau existants, code 0. |
+| TypeScript ciblé existant, nouveau fichier de tests inclus | **PASS**, code 0. |
+| Lint du composant et des deux fichiers de tests | **PASS**, code 0. |
+| Revue indépendante | Diff et cas de concurrence relus par l’agent principal ; aucun défaut supplémentaire identifié dans ce périmètre. |
+| TypeScript global local | Deux tentatives non reçues : interruption 137 puis limite de heap 134 ; le contrôle global reste à recevoir en CI sur la nouvelle tête. |
+| GitNexus du complément | Impacts obtenus sur un index précédent, risque `UNKNOWN` ; reconstructions exactes interrompues 137. La détection finale a été appelée et a échoué faute d’index enregistré : contrôle de graphe **PARTIEL**, jamais déclaré réussi. |
+
+Les reçus exacts sont dans `evidence/settings-ownership-*.log.json` et la section `settings_ownership_followup` de `verification.json`. Les tentatives interrompues restent distinctes des commandes complètes. Les nouvelles assertions exécutent le véritable composant React dans JSDOM avec des réponses différées et des données fictives ; elles ne contactent aucun fournisseur et ne sont pas des résultats de navigateur réel.
+
+La cartographie manuelle identifie l’import différé dans `src/App.tsx`, la route `/dashboard/partner-agent/settings` et le harness `tests/ui-state/harness.tsx`. Le graphe ancien ne résout pas tous les callbacks React ; `UNKNOWN` ne signifie pas absence de risque. Les succès des 4 401 tests KARTA cités plus haut appartiennent à leur tête historique et ne sont pas ajoutés aux 18 cas de ce complément.
+
 ## Mise en service restant à qualifier
 
 1. Appliquer en recette les trois migrations `20261123003000`, `20261123020000` et `20261123030000`, après leurs dépendances existantes. Le fuseau ajouté aux configurations historiques vaut explicitement UTC et doit être choisi dans les réglages du compte.
