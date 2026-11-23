@@ -1,0 +1,37 @@
+{
+  "recorded_at_utc": "2026-11-23T16:06:25.872443+00:00",
+  "scope": "production dependencies in lockfiles only; no fix or dependency mutation",
+  "base": "a898622f52891975134ae297f8cd0786a9ab20df",
+  "lockfiles_sha256": {
+    "package-lock.json": "30f79a02c277a5f5e2a03c5bc48ed1b62e4ad5c1cfab087a557c8c0c4324eee9",
+    "karta/package-lock.json": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564"
+  },
+  "locks_unchanged_from_base": true,
+  "karta_report_sha256": "63342afb4d84d2f3090f0bfa5329ae9f53372be0a04b4d69982e7751015cf9af",
+  "site_report_sha256": "8756a61c0bbdf51ae78f42c6bd948abe7be0a77fb960d7bdc3f3682a55667bc6",
+  "karta_counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "site_counts": {
+    "info": 0,
+    "low": 3,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 3
+  },
+  "site_advisory": "GHSA-848j-6mx2-7j84",
+  "site_affected_dependency_nodes": [
+    "opentimestamps",
+    "bitcore-lib",
+    "elliptic"
+  ],
+  "upstream_patched_version_in_advisory": null,
+  "consumer_tripwire_passed_in_initial_ci_job": 137805665549,
+  "consumer_tripwire_name": "GHSA-848j-6mx2-7j84: contract proof paths do not invoke Elliptic ECDSA signing"
+}

@@ -1,0 +1,114 @@
+{
+  "recorded_at_utc": "2026-11-23T16:14:28.025887+00:00",
+  "status": "LOCAL_QUALIFIED_PENDING_COMBINED_CI",
+  "parents": [
+    "889921991f68d9dcb744ea5af3ca0d40ad82f549",
+    "a898622f52891975134ae297f8cd0786a9ab20df"
+  ],
+  "base": "a898622f52891975134ae297f8cd0786a9ab20df",
+  "branch": "integrate/iao-http-lifecycle-20261123",
+  "published_branch": "fix/iao-http-lifecycle-20261123",
+  "files_sha256": {
+    "karta/src/api/iaoRoutes.ts": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b",
+    "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "karta/src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+    "karta/src/iao/kartaRuntimePort.ts": "dd84affa7f347db703a38f743f44af2ee0d8a803b229fb905172b46995e836e2",
+    "karta/test/apiIaoIntegration.test.ts": "7e92c2e0db234cc76c8f924ae5f4f333cce01960c8973ee69369b446eb9d41e6",
+    "karta/test/apiIaoTransportBudget.test.ts": "a63468f5411020fbe658abddfa31adbc09489e7a11c8d7ebc58828a2bc81bc73",
+    "karta/test/iaoExecutionBudget.test.ts": "026a0da8790f97ec11fabee90ffb024abe39a4d7f3a5debc5dbc1135bdbdb719",
+    "karta/test/iaoAdmissionDeadline.test.ts": "51dfb973ee0e0dde6b8c9e42d429914375873c21a4febfc55e9ad221c9109a99",
+    "vercel.json": "343ae180670466179ffc75888fd04d164ac2dd36d584bb27dd16201619c97940"
+  },
+  "removed_file": "karta/test/apiIaoResponseBudget.test.ts",
+  "local_tests": {
+    "regression": 209,
+    "regression_files": 6,
+    "targeted": 42,
+    "targeted_files": 3,
+    "overlap": 0,
+    "unique": 251,
+    "files": 9
+  },
+  "typecheck_exit": 0,
+  "native_pipeline": "PASS",
+  "real_providers": "NOT_TESTED",
+  "production_deployment": false,
+  "transcript_normalization": [
+    {
+      "path": "index-before.log",
+      "raw_sha256": "be8abba436c1e15507ece6d4b22c426242b5a0365152c7b94e20561b1410bcb8",
+      "change": "Trailing empty lines only removed from copied transcript"
+    },
+    {
+      "path": "index-final.log",
+      "raw_sha256": "617df9c5f86ad0d978a07c095629877ff385c8127e7c39efab6ba090f3135c6b",
+      "change": "Trailing empty lines only removed from copied transcript"
+    },
+    {
+      "path": "regression/regression.log",
+      "raw_sha256": "0fcf7cf23053e6a5f38d76256d44cd9d3c6e208e8994c140539b7f4ab71c5705",
+      "change": "Trailing empty lines only removed from copied transcript"
+    },
+    {
+      "path": "tests/targeted-tests.log",
+      "raw_sha256": "4916da3d3874ca7db2a36176f8c85034eb7a33cfc488fc7eabf8b6e0fa8a338d",
+      "change": "Trailing empty lines only removed from copied transcript"
+    }
+  ],
+  "gitnexus": {
+    "detect-staged": {
+      "changed_count": 11,
+      "affected_count": 547,
+      "changed_files": 33,
+      "risk_level": "critical"
+    },
+    "detect-compare": {
+      "changed_count": 2536,
+      "affected_count": 558,
+      "changed_files": 2254,
+      "risk_level": "critical"
+    }
+  },
+  "evidence_files_sha256": {
+    "README.md": "2895491c2adf7daaf242f3acdf74453bee2ebc1f5edd56103e81a0703a18c0f2",
+    "detect-compare.json": "b0c560397fe0d0dfb2b9f1e880402858a91e231373942a1a1e758fb9e9740fb8",
+    "detect-staged.json": "e8eeb77e6dd46e59cca74b69b6c1f262f72c37e27bf4148b065a1b184498aa6a",
+    "index-before.log": "5049a2b34e8b4d22e0ef34d4f2b59824c38667b924578f6f57bea0f45ef12bbf",
+    "index-final.log": "8ae534a4e84ea62191165a42a32c39fb72b6fc75fc514652c01fcadb4fdf6471",
+    "pipeline/pipeline-admission-probe.cjs": "205f55f182c7ead3b4c71b82f2e35fbffc8de4db9bc5b42713581de5319f3f86",
+    "pipeline/pipeline-admission-reconciliation.json": "ed05a0e6bca89827673eb5abeaaab42e8f94c22eedaf8f56682cd75f8ede7b3e",
+    "pipeline/pipeline-admission-reconciliation.log": "baa77a4c7531bc3117a732093778b634fd79a4807f3213cb2a7d25da6ac03b77",
+    "regression/regression.json": "6c291b50030a4afd32d6063c15e1985176d020efee20a947cd0cbaae301dbfbe",
+    "regression/regression.log": "7a20bd28d8faee4bdf7c5ab472ae60bac8f7ad7b93eebab3bb6e312a43037441",
+    "route-impact-before.json": "165ef7f34eefea00bc79cd807349bcfb7d46466a227f7fbe9898b797850c5922",
+    "security/karta-command.json": "29f4536fd0f709d85df460a2df261431f3ac8611bc39049c582502033f94c013",
+    "security/karta.json": "63342afb4d84d2f3090f0bfa5329ae9f53372be0a04b4d69982e7751015cf9af",
+    "security/karta.stderr": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829",
+    "security/receipt.json": "e7006ecc7c89341b48694ada7a0d537c086775dd90aac6899aa2ed2a1867c636",
+    "security/site-command.json": "211cffd4a171249ee09fdfe68ad475b0bc27a50f2eefc6bda5b063ceb0d1a641",
+    "security/site.json": "8756a61c0bbdf51ae78f42c6bd948abe7be0a77fb960d7bdc3f3682a55667bc6",
+    "security/site.stderr": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829",
+    "tests/context-listen.json": "666ff53e3b237bb9638f29607816d9511e8882098c85438e4a4db510862ec135",
+    "tests/context-listen.stderr": "625386e512390b591aec7bc188f28919c4e8cb99d2274cbd58e09020d236ae04",
+    "tests/diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/helper-uids.stderr": "5de5f44855f38be3f45840ae6ff76242e7d117a2b0002c7c9d40b556922a40e6",
+    "tests/helper-uids.txt": "4b16e93b64d352ec90034d27cc82154ba4b7cb4cbc92a658f5c217c9f3858027",
+    "tests/impact-file-apiIaoResponseBudget.test.ts.json": "fb748bb1984df5f767bf7a18ce81ae805c4ef326f5cb225f73d4e82fb31ac4ed",
+    "tests/impact-file-apiIaoResponseBudget.test.ts.stderr": "4c73f7db0a88ef60658d714d756ecff84d8253423fe0e17f57b3a348686818bf",
+    "tests/impact-file-apiIaoTransportBudget.test.ts.json": "f95fd1c3d76dd28648eafa81282dbc9129694aa96b11c55567ee758bc2e9b87d",
+    "tests/impact-file-apiIaoTransportBudget.test.ts.stderr": "b80849424649da6f357f88c8cc5322b64fcbef1edc43a1a070e45bbe6cd1d392",
+    "tests/impact-file-iaoExecutionBudget.test.ts.json": "268802949b7bf6d3d8d3344e6f5f551d984cee7c71677940db2282892e9209f9",
+    "tests/impact-file-iaoExecutionBudget.test.ts.stderr": "bd2091dddc95b1869fe1812cae2d281674a8e0947a316f5b5547946a6e166a04",
+    "tests/impact-helper-callers.stderr": "f79fb871494510a5bc38edc6e0380d37f66e002c93de9b58f60cb594bf814de2",
+    "tests/impact-helper-callers.txt": "759f63c1b803474c697de76454b73444eb708a49ea7b4659c482f50514cebcf1",
+    "tests/impact-named-helper-callers.stderr": "097b1189cde90dc47d1f5c47d62bb80aaf43cf4651663430a6253ba520a5f5c2",
+    "tests/impact-named-helper-callers.txt": "bcc430ab7f53963b44324bfeb322622c452fe32429d4b64a207563ba11b2b123",
+    "tests/impact-transport-listen-resolved.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/impact-transport-listen-resolved.stderr": "a6b466f5346af86bf8b8dfdd9701436ace5575c8d71da9459976209023a79823",
+    "tests/impact-transport-listen.json": "566a35c643c6e13236380ccba09a95c3ab99add8f3cf9bb204280d99326b8a68",
+    "tests/impact-transport-listen.stderr": "c7e216731c16be90a01f14dad52bae0d066c6e5923708b0c66c9b7751d881f91",
+    "tests/manifest.json": "3ee2ff9bab6e538aadac2f4e4b31050e33eb0729e8d4ab13caac539e9c4a2b49",
+    "tests/targeted-tests.log": "7d5e87cc98014b8a2314f58e18a3b01ba06631d406554540f34cdbb9a5eb5424",
+    "tests/typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

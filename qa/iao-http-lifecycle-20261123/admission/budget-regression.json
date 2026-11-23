@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/iaoAdmissionDeadline.test.ts",
+    "test/apiIaoResponseBudget.test.ts",
+    "test/iaoExecutionBudget.test.ts",
+    "--maxWorkers",
+    "1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exit_code": 0,
+  "duration_seconds": 32.963
+}

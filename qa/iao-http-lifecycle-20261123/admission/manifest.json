@@ -1,0 +1,41 @@
+{
+  "recorded_at_utc": "2026-11-23T15:25:49.871463+00:00",
+  "base": "aa3220fca64ba786fb4fcb18daf379ce0d17e7c5",
+  "branch": "fix/iao-http-lifecycle-20261123",
+  "files_sha256": {
+    "karta/src/api/iaoRoutes.ts": "331ff0011b119037d9b12434dc5a04fd6adc507fc4eb11d708e42c22c210575a",
+    "karta/test/iaoAdmissionDeadline.test.ts": "51dfb973ee0e0dde6b8c9e42d429914375873c21a4febfc55e9ad221c9109a99",
+    "karta/test/apiIaoResponseBudget.test.ts": "e099c5789f29b23bc2781ee89c1c8e86ff8a6ebc302b88717b5301c80864f702"
+  },
+  "diff_check_exit_code": 0,
+  "red": {
+    "tests": 9,
+    "failed": 8,
+    "passed": 1
+  },
+  "green": {
+    "tests": 9,
+    "passed": 9
+  },
+  "regression": {
+    "files": 8,
+    "tests": 234,
+    "passed": 234
+  },
+  "budget_regression": {
+    "files": 3,
+    "tests": 36,
+    "passed": 36,
+    "shared_with_regression": 26
+  },
+  "unique_regression_tests": 244,
+  "unique_regression_files": 9,
+  "final_typecheck_exit_code": 0,
+  "native_pipeline_evidence": "/workspace/scratch/ccfbf7e5800b/iao-pipeline-independent-20261123/pipeline-admission-green.json",
+  "scope": "Per-request IAO monotonic 15000 ms deadline before admission; no race around admitted facade.submit",
+  "limits": [
+    "No commit, push or deployment by this agent",
+    "Non-cancellable auth/probe/body promises may continue after timeout; late route dispatch is prevented",
+    "No real SMARANA, provider or host qualification"
+  ]
+}

@@ -1,0 +1,21 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+stdout | test/apiIaoResponseBudget.test.ts > delivers a verified HTTP response after a real 16-second IAO completion
+[api] KARTA écoute sur :0
+
+ ↓ test/apiIaoResponseBudget.test.ts > extends only after authentication, complete body and final readiness, without changing ingress limits
+ ↓ test/apiIaoResponseBudget.test.ts > preserves the default socket deadline for absent execution metadata
+ ↓ test/apiIaoResponseBudget.test.ts > preserves the default socket deadline for invalid execution metadata
+ ↓ test/apiIaoResponseBudget.test.ts > preserves the default socket deadline for throws execution metadata
+ ↓ test/apiIaoResponseBudget.test.ts > preserves the default socket deadline for short execution metadata
+ ↓ test/apiIaoResponseBudget.test.ts > rejects admission when budget metadata aborts runtime lifetime then returns
+ ↓ test/apiIaoResponseBudget.test.ts > rejects admission when budget metadata aborts runtime lifetime then throws
+ ✓ test/apiIaoResponseBudget.test.ts > delivers a verified HTTP response after a real 16-second IAO completion 16029ms
+ ↓ test/apiIaoResponseBudget.test.ts > restores the 15-second timeout for slow authentication on the same keep-alive connection
+ ↓ test/apiIaoResponseBudget.test.ts > keeps an admitted task tracked after its client disconnects with an extended response budget
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 9 skipped (10)
+   Start at  16:15:24
+   Duration  16.62s (tests 98%, transform 2%)

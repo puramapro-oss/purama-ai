@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/apiIaoIntegration.test.ts",
+    "test/iaoIdentityBoundary.test.ts",
+    "test/iao-facade.test.ts",
+    "test/iaoPendingRetention.test.ts",
+    "test/runtimeApiReadiness.test.ts",
+    "test/runtimeLifecycle.test.ts",
+    "--maxWorkers",
+    "1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "purama-ai/karta",
+  "exit_code": 0,
+  "duration_seconds": 6.478,
+  "route_sha256": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b"
+}
