@@ -1,0 +1,37 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> vite_react_shadcn_ts@0.0.0 test:distribution:unit
+> vitest run src/components/ChatbotWidget.consultation.test.tsx -t reuses a confirmed user turn
+
+
+ RUN  v4.1.12 /workspace/scratch/ccfbf7e5800b/purama-chat-retry-20261123
+
+ ❯ src/components/ChatbotWidget.consultation.test.tsx (5 tests | 1 failed | 4 skipped) 150ms
+     × reuses a confirmed user turn when retrying after a model failure 148ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/ChatbotWidget.consultation.test.tsx > ChatbotWidget — connected private consultation mode > reuses a confirmed user turn when retrying after a model failure
+AssertionError: expected [ { …(3) }, { …(3) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/components/ChatbotWidget.consultation.test.tsx:96:55
+     94|     await click('Envoyer le message');
+     95|     expect(host.textContent).toContain('Réponse du chat habituel.');
+     96|     expect(writes.filter(row => row.role === 'user')).toHaveLength(1);
+       |                                                       ^
+     97|     expect(writes.filter(row => row.role === 'assistant')).toHaveLengt…
+     98|     expect(from.mock.calls.filter(([table]) => table === 'chat_convers…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  18:03:30
+   Duration  1.48s (transform 217ms, setup 0ms, import 380ms, tests 150ms, environment 433ms)

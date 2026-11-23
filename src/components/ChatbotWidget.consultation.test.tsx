@@ -45,6 +45,17 @@ async function fill(name: string, value: string) {
     input.dispatchEvent(new Event('input', { bubbles: true }));
   });
 }
+function recordChatWrites() {
+  const writes: Record<string, unknown>[] = [];
+  from.mockImplementation((table: string) => ({ insert: (row: Record<string, unknown>) => {
+    if (table === 'chat_messages') writes.push(row);
+    return {
+      select: () => ({ abortSignal: () => ({ single: async () => ({ data: { id: 'retry-conversation' }, error: null }) }) }),
+      abortSignal: async () => ({ error: null }),
+    };
+  } }));
+  return writes;
+}
 beforeEach(() => {
   vi.resetAllMocks(); sessionStorage.clear();
   auth.user = { id: OWNER }; auth.session = { access_token: 'first-token' }; auth.loading = false;
@@ -76,6 +87,97 @@ afterEach(async () => {
 });
 
 describe('ChatbotWidget — connected private consultation mode', () => {
+  it('reuses a confirmed user turn when retrying after a model failure', async () => {
+    const prompt = 'Reprendre ma demande enregistrée';
+    const writes = recordChatWrites();
+    legacyFetch.mockResolvedValueOnce(new Response('{}', { status: 503 }));
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', prompt); await click('Envoyer le message');
+    expect(host.textContent).toContain('Votre demande est conservée');
+    expect(host.querySelector<HTMLInputElement>('[aria-label="Votre message"]')?.value).toBe(prompt);
+    await click('Envoyer le message');
+    expect(host.textContent).toContain('Réponse du chat habituel.');
+    expect(writes.filter(row => row.role === 'user')).toHaveLength(1);
+    expect(writes.filter(row => row.role === 'assistant')).toHaveLength(1);
+    expect(from.mock.calls.filter(([table]) => table === 'chat_conversations')).toHaveLength(1);
+    expect(legacyFetch).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(legacyFetch.mock.calls[1][1].body).messages).toEqual([{ role: 'user', content: prompt }]);
+    expect(host.textContent?.split(prompt)).toHaveLength(2);
+  });
+
+  it('keeps an edited request as a distinct turn after failure', async () => {
+    const writes = recordChatWrites();
+    legacyFetch.mockResolvedValueOnce(new Response('{}', { status: 429 }));
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Demande initiale'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Limite temporaire');
+    await fill('Votre message', 'Demande modifiée'); await click('Envoyer le message');
+    expect(writes.filter(row => row.role === 'user').map(row => row.content)).toEqual(['Demande initiale', 'Demande modifiée']);
+    expect(JSON.parse(legacyFetch.mock.calls[1][1].body).messages).toEqual([
+      { role: 'user', content: 'Demande initiale' }, { role: 'user', content: 'Demande modifiée' },
+    ]);
+  });
+
+  it('accepts an intentional identical new turn after a completed answer', async () => {
+    const writes = recordChatWrites();
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Même question'); await click('Envoyer le message');
+    await fill('Votre message', 'Même question'); await click('Envoyer le message');
+    expect(writes.filter(row => row.role === 'user')).toHaveLength(2);
+    expect(writes.filter(row => row.role === 'assistant')).toHaveLength(2);
+    expect(JSON.parse(legacyFetch.mock.calls[1][1].body).messages).toEqual([
+      { role: 'user', content: 'Même question' }, { role: 'assistant', content: 'Réponse du chat habituel.' },
+      { role: 'user', content: 'Même question' },
+    ]);
+  });
+
+  it('retries a stopped confirmed turn without retaining its partial answer', async () => {
+    const writes = recordChatWrites();
+    legacyFetch.mockImplementationOnce(async (_url, init: RequestInit) => new Response(new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('data: {"choices":[{"delta":{"content":"Fragment provisoire"}}]}\n\n'));
+        init.signal?.addEventListener('abort', () => controller.error(new DOMException('Aborted', 'AbortError')), { once: true });
+      },
+    })));
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Demande interrompue'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Fragment provisoire');
+    await click('Arrêter la réponse');
+    expect(host.textContent).not.toContain('Fragment provisoire');
+    await click('Envoyer le message');
+    expect(writes.filter(row => row.role === 'user')).toHaveLength(1);
+    expect(writes.filter(row => row.role === 'assistant')).toHaveLength(1);
+    expect(legacyFetch).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(legacyFetch.mock.calls[1][1].body).messages).toEqual([{ role: 'user', content: 'Demande interrompue' }]);
+  });
+
+  it.each(['conversation', 'account'])('does not reuse a failed turn after changing %s', async boundary => {
+    const writes = recordChatWrites();
+    legacyFetch.mockResolvedValueOnce(new Response('{}', { status: 503 }));
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Même texte autre contexte'); await click('Envoyer le message');
+    expect(host.textContent).toContain('Votre demande est conservée');
+    if (boundary === 'conversation') await click('Nouvelle conversation');
+    else { auth.user = { id: OTHER_OWNER }; auth.session = { access_token: 'second-token' }; await render(); }
+    await fill('Votre message', 'Même texte autre contexte'); await click('Envoyer le message');
+    expect(writes.filter(row => row.role === 'user')).toHaveLength(2);
+    expect(from.mock.calls.filter(([table]) => table === 'chat_conversations')).toHaveLength(2);
+    expect(JSON.parse(legacyFetch.mock.calls[1][1].body).messages).toEqual([{ role: 'user', content: 'Même texte autre contexte' }]);
+    if (boundary === 'account') expect(legacyFetch.mock.calls[1][1].headers.Authorization).toBe('Bearer second-token');
+  });
+
+  it('retries a guest turn without persistence or duplicate context', async () => {
+    auth.user = null; auth.session = null;
+    legacyFetch.mockResolvedValueOnce(new Response('{}', { status: 503 }));
+    await render(); await click("Ouvrir l'assistant PURA");
+    await fill('Votre message', 'Demande visiteur'); await click('Envoyer le message');
+    await click('Envoyer le message');
+    expect(from).not.toHaveBeenCalled();
+    expect(legacyFetch).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(legacyFetch.mock.calls[1][1].body).messages).toEqual([{ role: 'user', content: 'Demande visiteur' }]);
+    expect(host.textContent?.split('Demande visiteur')).toHaveLength(2);
+  });
+
   it('mounts the real consultation client without forwarding the existing chat history and restores the chat', async () => {
     await render(); await click("Ouvrir l'assistant PURA");
     await fill('Votre message', 'Ancienne discussion privée'); await click('Envoyer le message');

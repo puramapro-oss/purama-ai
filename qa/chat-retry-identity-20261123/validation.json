@@ -1,0 +1,35 @@
+{
+  "recorded_at": "2026-11-23",
+  "base_commit": "164dfad98c820e54758a35ba388035fcc008cb6f",
+  "product_blob": "dccc78937fded913c2b9152781240f2de6e66ea3",
+  "react_tests": {
+    "status": "PASS",
+    "passed": 11,
+    "new": 7,
+    "existing": 4,
+    "skipped": 0
+  },
+  "browser_local": {
+    "status": "NON_TESTE",
+    "collected": 21,
+    "reason": "Chromium ProcessSingleton socket EPERM before product assertions"
+  },
+  "typecheck": "PASS",
+  "targeted_lint": "PASS",
+  "independent_static_review": "PASS",
+  "evidence": [
+    {
+      "file": "red-react.log",
+      "sha256": "ec323649fb010f836b4978f8ecfdd67d62adec9505ad6767f0daaefa5d969f47"
+    },
+    {
+      "file": "green-react-full.log",
+      "sha256": "553bb32910ce79f72954dc6276bf4c5bea4cb6095cd93a34ccb76980110f0515"
+    },
+    {
+      "file": "browser-collection.log",
+      "sha256": "94abb813ae5585814a7daa61e5a513a874002bb9f17580427e99b5cf3faedbd4"
+    }
+  ],
+  "log_normalization": "Trailing blank lines removed; test result content unchanged."
+}

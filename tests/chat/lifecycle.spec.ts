@@ -126,6 +126,98 @@ test('failure to save the answer preserves it without another model request', as
   expect(await calls(page, 'chatbot')).toHaveLength(1);
 });
 
+test('retrying a failed model request reuses the confirmed user turn', async ({ page }) => {
+  const prompt = 'Reprendre ma demande enregistrée';
+  await identify(page, 'owner');
+  await plans(page, 'chatbot', [{ status: 503 }, { text: 'Réponse après relance.' }]);
+  await send(page, prompt);
+  await expect(dialog(page)).toContainText('Votre demande est conservée');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toHaveValue(prompt);
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect(dialog(page)).toContainText('Réponse après relance.');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  const writes = await calls(page, 'write');
+  expect(writes.filter(call => call.body.role === 'user')).toHaveLength(1);
+  expect(writes.filter(call => call.body.role === 'assistant')).toHaveLength(1);
+  expect(await calls(page, 'create')).toHaveLength(1);
+  const requests = await calls(page, 'chatbot');
+  expect(requests).toHaveLength(2);
+  expect(requests[1].body.messages).toEqual([{ role: 'user', content: prompt }]);
+  await expect(dialog(page).getByText(prompt, { exact: true })).toHaveCount(1);
+});
+
+test('editing a failed request creates a distinct saved turn', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'chatbot', [{ status: 429 }, { text: 'Réponse à la demande modifiée.' }]);
+  await send(page, 'Demande initiale');
+  await expect(dialog(page)).toContainText('Limite temporaire');
+  await send(page, 'Demande modifiée');
+  await expect(dialog(page)).toContainText('Réponse à la demande modifiée.');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  expect((await calls(page, 'write')).filter(call => call.body.role === 'user').map(call => call.body.content))
+    .toEqual(['Demande initiale', 'Demande modifiée']);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([
+    { role: 'user', content: 'Demande initiale' }, { role: 'user', content: 'Demande modifiée' },
+  ]);
+});
+
+test('an intentional identical request after success creates a new turn', async ({ page }) => {
+  await identify(page, 'owner'); await send(page, 'Même question');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  await send(page, 'Même question');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  const writes = await calls(page, 'write');
+  expect(writes.filter(call => call.body.role === 'user')).toHaveLength(2);
+  expect(writes.filter(call => call.body.role === 'assistant')).toHaveLength(2);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([
+    { role: 'user', content: 'Même question' }, { role: 'assistant', content: 'Réponse vérifiée dans la simulation.' },
+    { role: 'user', content: 'Même question' },
+  ]);
+});
+
+test('retrying a stopped saved turn excludes its partial answer', async ({ page }) => {
+  await identify(page, 'owner');
+  await plans(page, 'chatbot', [{ stream: true, text: 'Fragment provisoire' }, { text: 'Réponse après arrêt.' }]);
+  await send(page, 'Demande interrompue');
+  await expect(dialog(page)).toContainText('Fragment provisoire');
+  await page.getByRole('button', { name: 'Arrêter la réponse' }).click();
+  await expect(dialog(page)).not.toContainText('Fragment provisoire');
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect(dialog(page)).toContainText('Réponse après arrêt.');
+  await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+  const writes = await calls(page, 'write');
+  expect(writes.filter(call => call.body.role === 'user')).toHaveLength(1);
+  expect(writes.filter(call => call.body.role === 'assistant')).toHaveLength(1);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([{ role: 'user', content: 'Demande interrompue' }]);
+});
+
+for (const boundary of ['conversation', 'account']) {
+  test(`a failed turn is not reused after changing ${boundary}`, async ({ page }) => {
+    await identify(page, 'owner'); await plans(page, 'chatbot', [{ status: 503 }]);
+    await send(page, 'Même texte autre contexte');
+    await expect(dialog(page)).toContainText('Votre demande est conservée');
+    if (boundary === 'conversation') await page.getByRole('button', { name: 'Nouvelle conversation' }).click();
+    else await identify(page, 'other-owner');
+    await send(page, 'Même texte autre contexte');
+    await expect(dialog(page)).toContainText('Réponse vérifiée');
+    await expect(page.getByRole('textbox', { name: 'Votre message' })).toBeEnabled();
+    expect((await calls(page, 'write')).filter(call => call.body.role === 'user')).toHaveLength(2);
+    expect(await calls(page, 'create')).toHaveLength(2);
+    expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([{ role: 'user', content: 'Même texte autre contexte' }]);
+  });
+}
+
+test('retrying a guest turn avoids duplicate context without storing history', async ({ page }) => {
+  await plans(page, 'chatbot', [{ status: 503 }]);
+  await send(page, 'Demande visiteur');
+  await expect(dialog(page)).toContainText('Votre demande est conservée');
+  await page.getByRole('button', { name: 'Envoyer le message' }).click();
+  await expect(dialog(page)).toContainText('Réponse vérifiée');
+  expect(await calls(page, 'create')).toHaveLength(0); expect(await calls(page, 'write')).toHaveLength(0);
+  expect((await calls(page, 'chatbot'))[1].body.messages).toEqual([{ role: 'user', content: 'Demande visiteur' }]);
+  await expect(dialog(page).getByText('Demande visiteur', { exact: true })).toHaveCount(1);
+});
+
 test('errors stay out of model context and real answers starting with Bienvenue stay in', async ({ page }) => {
   await plans(page, 'chatbot', [{ status: 429 }, { text: 'Bienvenue, voici une réponse réelle.' }, { text: 'Suite' }]);
   await send(page, 'Première question'); await expect(dialog(page)).toContainText('Limite temporaire');
