@@ -1,5 +1,51 @@
 # IAO — Réintégration et vérification du socle de textes hors connexion
 
+## Conversation native et continuité du compte — tranche du 23 novembre 2026
+
+Base réconciliée : `5df79859548d8732317bc89f9ca837435beaccf2`, après les PR 97 et 96 et la reprise des tours utilisateur, sur la branche `feat/iao-offline-runtime-20261123`. La conception des sections 1–14 de la spécification canonique couvre déjà l'autonomie par appareil, le moteur interne, la mémoire privée et sa reprise. Cette tranche réalise ce socle ; les extensions nouvelles du chapitre 16 restent en conception. Les choix de bibliothèques sont réversibles et ne constituent pas une qualification acquise.
+
+Périmètre `PRET_A_CODER` : une entrée publique PURAMA dans le chat natif, un seul pack textuel interne, une réplique SQLite chiffrée de SMARANA par compte et un protocole de réception/lecture dans le schéma existant `purama_ai`. Les conversations conservent leurs identifiants entre les appareils. La communication écrite d'accessibilité reste éphémère. Les historiques métier/PURA et la file d'approbation KARTA ne deviennent pas un stockage générique.
+
+Répartition : `native_runtime_reuse` pour le pack et l'inférence ; `account_memory_reuse` pour le contrat portable, les RPC PostgreSQL et leurs tests ; `offline_contract_review` pour la réplique SQLite et sa clé native ; intégrateur racine pour l'identité locale bornée, l'orchestration, l'interface, les dépendances, la qualification et la livraison. Aucun chantier parallèle existant n'est repris implicitement.
+
+Critères de réception :
+
+- Le pack provient d'une révision et d'une empreinte connues ; téléchargement explicite, fichier partiel non activable, vérification avant chargement, aucune réponse simulée ni repli cloud caché.
+- Une écriture utilisateur et sa mutation de réplication sont atomiques. La réponse en cours est conservée par points de reprise ; après arrêt, elle reste interrompue. Le statut enregistré suit le commit réel.
+- La clé reste dans SecureStore et SQLite refuse de fonctionner sans SQLCipher ; absence de clé ou mauvais propriétaire n'effacent pas une base existante.
+- Une autorisation locale issue d'un compte vérifié est bornée à sept jours et révoquée lors d'une déconnexion/changement de compte. Elle n'autorise aucun achat, publication ou action externe hors ligne.
+- Les RPC vérifient `auth.uid()`, l'identifiant attendu et chaque mutation. Une répétition reçoit le même résultat ; les révisions concurrentes restent en conflit ; une suppression ne ressuscite pas. Les accusés concernent la mutation exacte.
+- La reconnexion transporte des données seulement. Le même lecteur réintègre les changements distants, y compris les tombstones. Une permission de synchronisation désactivée empêche ce transport.
+- Les tests des protocoles, des transactions et des parcours sont distingués des builds et de l'inférence native réelle. Aucune exécution sur téléphone physique n'est déduite d'un test JS.
+
+Choix à qualifier : Expo 54 / React Native 0.81.5 existants, `llama.rn` 0.12.9 stable, SQLite 16.0.10 avec SQLCipher et pack officiel Qwen3-0.6B Q8_0. Ce premier pack compact vise une conversation textuelle réelle, sans promesse de performances universelles ni d'équivalence avec les grands modèles distants. L'accès au Mac reste bloqué par le quota mensuel du connecteur ; les validations physiques dépendantes restent BLOQUÉES, sans tentative de contournement.
+
+### État du candidat avant la qualification CI
+
+Implémentation présente : route native unique `/agent/purama`, préparation explicite du pack, réponse locale diffusée progressivement, historique paginé par métadonnées, brouillons enregistrés, arrêt de réponse, suppression logique et résolution explicite des conflits. Les conversations conservent tout leur historique ; seul le contexte transmis au moteur est borné. Le protocole SMARANA transporte des données, sans rejouer d'actions externes. Les composants et leurs licences restent consultables localement, sans catalogue public de modèles.
+
+Les essais ont notamment reproduit puis corrigé les erreurs de fermeture qui masquaient une sauvegarde échouée, l'événement UI provenant d'un ancien compte, la libération tardive d'un moteur, la mutation d'une file lors d'une simple lecture de statut et le redémarrage différé du minuteur d'authentification. L'autorisation locale expire après sept jours sans nouvelle vérification de compte ; les reculs d'horloge observés sont mémorisés, sans prétendre disposer d'une horloge matérielle de confiance. Le renouvellement automatique natif appartient aux routes de compte actives, et non à l'initialisation paresseuse du SDK.
+
+| Contrôle local du candidat | Résultat observé |
+| --- | --- |
+| Moteur, pack, contrôleur, mémoire, compte, synchronisation, hook et écran | PASS — 156 tests, aucun ignoré |
+| Routes passives et communication accessible | PASS — 23 tests |
+| Consommateurs réels des dépendances | PASS — 19 tests |
+| Protocoles de montre et cycle de vie ONE | PASS — 55 tests |
+| Contrat portable, RPC PostgreSQL/WASM et aller-retour de deux répliques SQLite | PASS — 31 tests, exécution séquentielle |
+| Audit du registre npm après ajout des bibliothèques | PASS pour le seuil existant : 0 élevée, 0 critique, 4 modérées ; rapport et empreintes dans `mobile/qa/dependency-audit/` |
+| Lint racine | PASS — aucune erreur, 22 avertissements préexistants |
+| Prébuild Expo, vérification des projets compagnon, exports Metro Android et iOS | PASS local ; la CI reconstruit le candidat exact |
+| GitNexus | Index actualisé ; FTS indisponible et parcours bornés, complétés par revue directe et tests |
+| Compilation native, inférence et SQLCipher sur émulateur | NON TESTÉ à l'enregistrement de ce candidat ; gate CI dédié requis |
+| Migration du service Supabase réel, appareils physiques, signature et distribution | NON TESTÉ par cette tranche locale |
+
+Le premier lancement simultané des deux suites PostgreSQL/WASM a terminé un processus sans diagnostic exploitable ; leur exécution séquentielle passe. Le workflow fixe `--test-concurrency=1` et `shell: bash` pour limiter la mémoire et conserver l'échec des commandes traversant `tee`. Aucune assertion n'est ignorée.
+
+Les workflows `Mobile SDK quality`, `Native accessibility watch verification` et `SMARANA account continuity` produisent les preuves du commit effectivement testé. La recette native utilise un APK de qualification avec JavaScript embarqué, force l'arrêt du processus, coupe les interfaces réseau de l'émulateur, redémarre puis exige une nouvelle inférence, la conservation des textes et le refus d'une mauvaise clé SQLCipher. Son drapeau est absent des versions ordinaires. Cette recette ne qualifie ni un appareil physique ni tout le trafic système. Le serveur PostgreSQL 18 jetable vérifie séparément les livraisons concurrentes et l'ordre des commits.
+
+Statut global : PARTIEL tant que les gates natifs et serveur réels ne sont pas qualifiés et que le raccordement de production n'est pas appliqué. Les résultats historiques ci-dessous restent attachés à leurs propres versions.
+
 ## Continuité du 23 novembre 2026
 
 Périmètre autorisé par Matiss le 23 novembre 2026 : une seule expérience PURAMA/IAO, sauvegarde automatique des créations locales et reprise après coupure, sans interface ni mémoire concurrente. Le nouveau lien OGAM fait l’objet d’une évaluation séparée ; aucune capacité native ou synchronisation distante n’est supposée disponible du seul fait de cette évaluation.

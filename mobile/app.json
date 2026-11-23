@@ -51,6 +51,15 @@
       "expo-router",
       "expo-secure-store",
       "expo-font",
+      [
+        "expo-sqlite",
+        { "useSQLCipher": true }
+      ],
+      "expo-build-properties",
+      [
+        "llama.rn",
+        { "forceCxx20": true, "enableEntitlements": false, "enableOpenCLAndHexagon": false }
+      ],
       "./modules/purama-accessibility-watch/app.plugin.cjs",
       [
         "expo-splash-screen",
@@ -80,7 +89,8 @@
       }
     },
     "updates": {
-      "url": "https://u.expo.dev/purama-ai"
+      "url": "https://u.expo.dev/purama-ai",
+      "checkAutomatically": "NEVER"
     },
     "runtimeVersion": {
       "policy": "appVersion"

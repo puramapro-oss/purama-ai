@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - 'mobile/**'
+      - 'shared/smarana.ts'
       - '.github/workflows/mobile-quality.yml'
   push:
     branches: [main]
     paths:
       - 'mobile/**'
+      - 'shared/smarana.ts'
       - '.github/workflows/mobile-quality.yml'
   workflow_dispatch:
 
@@ -62,6 +64,8 @@ jobs:
         run: npm run test:local-communication 2>&1 | tee qa-results/local-communication.log
       - name: Verify watch protocol and ONE document lifecycle
         run: npm run test:watch-native 2>&1 | tee qa-results/watch-native-tests.log
+      - name: Verify native conversation, encrypted replica boundaries and synchronization
+        run: npm run test:offline 2>&1 | tee qa-results/offline-continuity-tests.log
       - name: Test the offline audit binding and refusal cases
         run: npm run test:audit-snapshot 2>&1 | tee qa-results/audit-snapshot-tests.log
       - name: Test authorized registry renewal security guards (offline fixtures)

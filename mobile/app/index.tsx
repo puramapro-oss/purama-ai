@@ -11,6 +11,18 @@ export default function Index() {
         <Text accessibilityRole="header" style={{ color: COLORS.text, fontSize: 32, fontWeight: "700" }}>
           Bienvenue sur Purama
         </Text>
+        <View style={{ gap: 12 }}>
+          <Button
+            testID="entry-purama"
+            title="Parler à PURAMA"
+            onPress={() => router.push("/agent/purama")}
+            style={{ minHeight: 60 }}
+            textStyle={{ fontSize: 22, textAlign: "center" }}
+          />
+          <Text style={{ color: COLORS.textSecondary, fontSize: 16, lineHeight: 24 }}>
+            Préparez l’assistant sur cet appareil pour converser sans Internet. Retrouvez vos conversations dans le même compte.
+          </Text>
+        </View>
         <View style={{ gap: 16 }}>
           <Text style={{ color: COLORS.text, fontSize: 22, lineHeight: 32 }}>
             Écrivez un message et montrez-le en grand à la personne avec vous.

@@ -22,7 +22,7 @@ export default function AgentsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-        <Text className="text-white text-2xl font-bold mt-2 mb-4">Agents IA</Text>
+        <Text className="text-white text-2xl font-bold mt-2 mb-4">PURAMA et ses outils</Text>
 
         {/* Search */}
         <View className="flex-row items-center bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 mb-6">
@@ -30,7 +30,7 @@ export default function AgentsScreen() {
           <TextInput
             testID="agent-search"
             className="flex-1 ml-3 text-white text-base"
-            placeholder="Chercher un agent..."
+            placeholder="Chercher une aide..."
             placeholderTextColor="rgba(255,255,255,0.3)"
             value={search}
             onChangeText={setSearch}

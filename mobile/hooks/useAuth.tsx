@@ -4,6 +4,8 @@ import { supabase } from "@/lib/supabase";
 import { Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import { offlineAccount } from "@/lib/offline-account";
+import { authRefresh } from "@/lib/auth-refresh";
 
 interface AuthContextType {
   user: User | null;
@@ -66,6 +68,11 @@ export function AuthProvider({ children, enabled = true }: { children: ReactNode
   const applySession = useCallback((nextSession: Session | null) => {
     if (!mounted.current || activeGeneration.current !== activation.generation) return;
     const nextUserId = nextSession?.user.id ?? null;
+    if (Platform.OS !== "web" && nextUserId !== activeUserId.current) {
+      // Fence the native reader before publishing the new account. This does not
+      // create a local permission: only a successful live verification can do so.
+      void offlineAccount.selectOwner(nextUserId).catch(() => {});
+    }
     sessionEstablished.current = true;
     sessionRevision.current += 1;
     profileRequest.current += 1;
@@ -103,6 +110,7 @@ export function AuthProvider({ children, enabled = true }: { children: ReactNode
   useEffect(() => {
     if (!enabled) {
       mounted.current = false;
+      if (Platform.OS !== "web") void authRefresh.pause();
       return;
     }
     let active = true;
@@ -119,14 +127,19 @@ export function AuthProvider({ children, enabled = true }: { children: ReactNode
     };
 
     try {
-      subscription = supabase.auth.onAuthStateChange(
+      const auth = supabase.auth;
+      subscription = auth.onAuthStateChange(
         (_event, nextSession) => {
           // Supabase invokes this inside its auth lock. Only publish state here.
+          if (active && _event === "SIGNED_OUT" && Platform.OS !== "web") {
+            void offlineAccount.clear().catch(() => {});
+          }
           if (active) applySession(nextSession);
         }
       ).data.subscription;
+      if (Platform.OS !== "web") void authRefresh.activate(auth);
 
-      void supabase.auth.getSession().then(({ data, error }) => {
+      void auth.getSession().then(({ data, error }) => {
         // An auth event or explicit sign-out supersedes this startup snapshot.
         if (active && !sessionEstablished.current) {
           if (error) failInitialization();
@@ -143,6 +156,8 @@ export function AuthProvider({ children, enabled = true }: { children: ReactNode
       sessionRevision.current += 1;
       profileRequest.current += 1;
       subscription?.unsubscribe();
+      // The provider stays mounted on local routes; its background refresh must stop.
+      if (Platform.OS !== "web") void authRefresh.pause();
     };
   }, [enabled, activation.generation, applySession]);
 
@@ -214,8 +229,9 @@ export function AuthProvider({ children, enabled = true }: { children: ReactNode
 
   const signOut = async () => {
     // Invalidate reads immediately; a late completion must not erase a new sign-in.
+    const closeOfflineAccount = Platform.OS === "web" ? Promise.resolve() : offlineAccount.clear();
     applySession(null);
-    await supabase.auth.signOut();
+    await Promise.all([closeOfflineAccount, supabase.auth.signOut()]);
   };
 
   const refreshProfile = useCallback(async () => {

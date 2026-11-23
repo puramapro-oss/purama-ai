@@ -1,8 +1,10 @@
 /** Only these exact file-system routes can keep account services inactive. */
 export function isLocalCommunicationRoute(segments: readonly string[]): boolean {
   return segments.length === 0
+    || (segments.length === 2 && segments[0] === "agent" && segments[1] === "purama")
     || (segments.length === 1 && (segments[0] === "index" || segments[0] === "communication"
-      || segments[0] === "accessible-one" || segments[0] === "accessibility-watch"));
+      || segments[0] === "accessible-one" || segments[0] === "accessibility-watch"
+      || segments[0] === "iao-qualification"));
 }
 
 export const COMMUNICATION_TEXT_LIMIT = 2_000;
