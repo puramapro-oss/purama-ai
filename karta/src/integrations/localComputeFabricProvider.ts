@@ -130,7 +130,6 @@ async function requestFabric(socketPath: string, payload: FabricRequest, expires
   assertFabricCurrent(expiresAt, signal);
   return new Promise((resolve, reject) => {
     let settled = false;
-    let deadline: ReturnType<typeof setTimeout> | undefined;
     const finishError = () => {
       if (settled) return;
       settled = true;
@@ -168,7 +167,7 @@ async function requestFabric(socketPath: string, payload: FabricRequest, expires
         } catch { finishError(); }
       });
     });
-    deadline = setTimeout(() => request.destroy(new Error("deadline")), Math.max(0, Math.ceil(expiresAt - performance.now())));
+    const deadline = setTimeout(() => request.destroy(new Error("deadline")), Math.max(0, Math.ceil(expiresAt - performance.now())));
     request.on("timeout", () => request.destroy(new Error("timeout")));
     request.on("error", finishError);
     try { assertFabricCurrent(expiresAt, signal); request.end(body); }
