@@ -1,0 +1,67 @@
+{
+  "target": {
+    "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings.handleUpload@82:2",
+    "name": "handleUpload",
+    "type": "Function",
+    "filePath": "src/pages/PartnerAgentSettings.tsx"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "UNKNOWN",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": false,
+    "unusedAxes": [
+      {
+        "axis": "processes",
+        "reason": "enrichment-query-failed"
+      },
+      {
+        "axis": "modules",
+        "reason": "enrichment-query-failed"
+      }
+    ]
+  },
+  "riskNote": "Risk is unresolved because process/module enrichment failed. Observed counts are lower bounds; retry impact before treating the change as safe.",
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "The callable-value-reference probe could not be run against this index, so whether this symbol is registered somewhere as a value is unknown. Treat the caller list as incomplete until it can be re-checked."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 0,
+    "dispatchBoundary": 0,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "partial": true,
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentSettings.tsx:PartnerAgentSettings",
+        "name": "PartnerAgentSettings",
+        "filePath": "src/pages/PartnerAgentSettings.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": []
+      }
+    ]
+  },
+  "staleness": {
+    "status": "behind",
+    "commitsBehind": 3,
+    "hint": "⚠️ Index is 3 commits behind HEAD. Run analyze tool to update."
+  }
+}

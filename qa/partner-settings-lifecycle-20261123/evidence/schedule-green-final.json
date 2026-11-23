@@ -1,0 +1,100 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 2,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 5,
+  "numPassedTests": 5,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795397692396,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "partner schedule settings"
+          ],
+          "fullName": "partner schedule settings shows the explicit timezone and exact contract review instead of false automatic-send controls",
+          "status": "passed",
+          "title": "shows the explicit timezone and exact contract review instead of false automatic-send controls",
+          "duration": 102.12302699999987,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner schedule settings"
+          ],
+          "fullName": "partner schedule settings saves a chosen IANA timezone without rewriting historical contract flags",
+          "status": "passed",
+          "title": "saves a chosen IANA timezone without rewriting historical contract flags",
+          "duration": 73.14254600000004,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner schedule settings"
+          ],
+          "fullName": "partner schedule settings keeps invalid timezone data out of saved settings and explains the correction",
+          "status": "passed",
+          "title": "keeps invalid timezone data out of saved settings and explains the correction",
+          "duration": 31.85950600000001,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner schedule settings"
+          ],
+          "fullName": "partner schedule settings normalizes a case-insensitive browser timezone to the name accepted by SQL",
+          "status": "passed",
+          "title": "normalizes a case-insensitive browser timezone to the name accepted by SQL",
+          "duration": 35.62449400000014,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": [
+            "partner schedule settings"
+          ],
+          "fullName": "partner schedule settings rejects numeric offsets instead of accepting an Intl value absent from the named SQL zones",
+          "status": "passed",
+          "title": "rejects numeric offsets instead of accepting an Intl value absent from the named SQL zones",
+          "duration": 33.60632499999997,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1795397693390,
+      "endTime": 1795397693666.6064,
+      "status": "passed",
+      "message": "",
+      "name": "/tmp/iao-partner-3525/src/pages/PartnerAgentSettings.schedule.test.tsx"
+    }
+  ]
+}

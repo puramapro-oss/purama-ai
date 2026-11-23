@@ -1,0 +1,77 @@
+karta/src/iao/iaoFacade.ts(1,28): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+karta/src/iao/iaoFacade.ts(53,41): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/iao/iaoFacade.ts(84,10): error TS2304: Cannot find name 'AbortController'.
+karta/src/iao/iaoFacade.ts(129,76): error TS2304: Cannot find name 'AbortController'.
+karta/src/iao/iaoFacade.ts(320,34): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/src/iao/iaoFacade.ts(361,104): error TS2304: Cannot find name 'structuredClone'.
+karta/src/iao/iaoFacade.ts(379,41): error TS2304: Cannot find name 'structuredClone'.
+karta/src/iao/kartaRuntimePort.ts(1,28): error TS2307: Cannot find module 'node:crypto' or its corresponding type declarations.
+karta/src/iao/kartaRuntimePort.ts(17,14): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/iao/kartaRuntimePort.ts(21,14): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/iao/kartaRuntimePort.ts(28,14): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/iao/kartaRuntimePort.ts(44,47): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/iao/kartaRuntimePort.ts(45,28): error TS2304: Cannot find name 'AbortController'.
+karta/src/iao/kartaRuntimePort.ts(102,51): error TS2304: Cannot find name 'AbortController'.
+karta/src/iao/kartaRuntimePort.ts(164,23): error TS2304: Cannot find name 'performance'.
+karta/src/iao/kartaRuntimePort.ts(172,61): error TS2304: Cannot find name 'AbortController'.
+karta/src/iao/kartaRuntimePort.ts(174,46): error TS2304: Cannot find name 'performance'.
+karta/src/iao/kartaRuntimePort.ts(183,89): error TS2304: Cannot find name 'AbortController'.
+karta/src/iao/kartaRuntimePort.ts(185,32): error TS2304: Cannot find name 'setTimeout'.
+karta/src/iao/kartaRuntimePort.ts(192,15): error TS2304: Cannot find name 'setTimeout'.
+karta/src/iao/kartaRuntimePort.ts(196,53): error TS2304: Cannot find name 'performance'.
+karta/src/iao/kartaRuntimePort.ts(209,5): error TS2304: Cannot find name 'clearTimeout'.
+karta/src/integrations/localComputeFabricProvider.ts(1,18): error TS2307: Cannot find module 'node:http' or its corresponding type declarations.
+karta/src/integrations/localComputeFabricProvider.ts(2,25): error TS2307: Cannot find module 'node:os' or its corresponding type declarations.
+karta/src/integrations/localComputeFabricProvider.ts(3,22): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+karta/src/integrations/localComputeFabricProvider.ts(4,36): error TS2307: Cannot find module 'node:util' or its corresponding type declarations.
+karta/src/integrations/localComputeFabricProvider.ts(25,23): error TS2304: Cannot find name 'performance'.
+karta/src/integrations/localComputeFabricProvider.ts(127,102): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/integrations/localComputeFabricProvider.ts(129,16): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/src/integrations/localComputeFabricProvider.ts(133,37): error TS2304: Cannot find name 'setTimeout'.
+karta/src/integrations/localComputeFabricProvider.ts(137,7): error TS2304: Cannot find name 'clearTimeout'.
+karta/src/integrations/localComputeFabricProvider.ts(145,51): error TS2304: Cannot find name 'performance'.
+karta/src/integrations/localComputeFabricProvider.ts(145,83): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/src/integrations/localComputeFabricProvider.ts(149,21): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/src/integrations/localComputeFabricProvider.ts(151,35): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/src/integrations/localComputeFabricProvider.ts(164,111): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/src/integrations/localComputeFabricProvider.ts(167,27): error TS2304: Cannot find name 'clearTimeout'.
+karta/src/integrations/localComputeFabricProvider.ts(171,16): error TS2304: Cannot find name 'setTimeout'.
+karta/src/integrations/localComputeFabricProvider.ts(171,107): error TS2304: Cannot find name 'performance'.
+karta/src/integrations/localComputeFabricProvider.ts(179,58): error TS2304: Cannot find name 'AbortSignal'.
+karta/src/integrations/localComputeFabricProvider.ts(181,7): error TS2304: Cannot find name 'performance'.
+karta/test/localComputeFabricResponseBoundary.test.ts(1,18): error TS2307: Cannot find module 'node:http' or its corresponding type declarations.
+karta/test/localComputeFabricResponseBoundary.test.ts(2,29): error TS2307: Cannot find module 'node:fs/promises' or its corresponding type declarations.
+karta/test/localComputeFabricResponseBoundary.test.ts(3,24): error TS2307: Cannot find module 'node:os' or its corresponding type declarations.
+karta/test/localComputeFabricResponseBoundary.test.ts(4,22): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+karta/test/localComputeFabricResponseBoundary.test.ts(18,25): error TS2304: Cannot find name 'AbortSignal'.
+karta/test/localComputeFabricResponseBoundary.test.ts(43,37): error TS7006: Parameter 'request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(43,46): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(67,23): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(68,7): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(68,49): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(68,76): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(70,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(70,54): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(77,19): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(78,33): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(79,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(79,54): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(81,7): error TS2304: Cannot find name 'setImmediate'.
+karta/test/localComputeFabricResponseBoundary.test.ts(88,22): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(90,21): error TS2580: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+karta/test/localComputeFabricResponseBoundary.test.ts(92,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(92,54): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(99,28): error TS2304: Cannot find name 'performance'.
+karta/test/localComputeFabricResponseBoundary.test.ts(100,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(100,54): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(110,28): error TS2304: Cannot find name 'performance'.
+karta/test/localComputeFabricResponseBoundary.test.ts(118,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(118,54): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(124,28): error TS2304: Cannot find name 'performance'.
+karta/test/localComputeFabricResponseBoundary.test.ts(129,29): error TS2304: Cannot find name 'queueMicrotask'.
+karta/test/localComputeFabricResponseBoundary.test.ts(132,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(132,54): error TS7006: Parameter 'response' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(138,28): error TS2304: Cannot find name 'AbortController'.
+karta/test/localComputeFabricResponseBoundary.test.ts(143,29): error TS2304: Cannot find name 'queueMicrotask'.
+karta/test/localComputeFabricResponseBoundary.test.ts(146,44): error TS7006: Parameter '_request' implicitly has an 'any' type.
+karta/test/localComputeFabricResponseBoundary.test.ts(146,54): error TS7006: Parameter 'response' implicitly has an 'any' type.

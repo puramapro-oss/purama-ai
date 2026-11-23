@@ -1,0 +1,126 @@
+✖ rejects isolated continuation UTF-8 instead of silently replacing it (4.865291ms)
+✖ rejects truncated sequence UTF-8 instead of silently replacing it (0.840913ms)
+✖ rejects overlong sequence UTF-8 instead of silently replacing it (0.62221ms)
+✔ accepts valid Unicode split inside a multibyte sequence (1.279231ms)
+✔ preserves exact byte cap at maximum + 0 (11.236677ms)
+✔ preserves exact byte cap at maximum + 1 (10.824619ms)
+✔ absolute receipt boundary at 99 milliseconds (0.655799ms)
+✖ absolute receipt boundary at 100 milliseconds (0.753904ms)
+✖ expiry during JSON validation never confirms the receipt (0.677491ms)
+✖ expiry across parsed-response promise handoff never confirms the receipt (0.749928ms)
+✖ cancellation across parsed-response promise handoff remains private and terminal (0.612184ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 4
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 165.780154
+
+✖ failing tests:
+
+test at ../../iao-response-boundary-harness-3525.mjs:59:3
+✖ rejects isolated continuation UTF-8 instead of silently replacing it (4.865291ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:66:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:compute-fabric' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at ../../iao-response-boundary-harness-3525.mjs:59:3
+✖ rejects truncated sequence UTF-8 instead of silently replacing it (0.840913ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:66:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:compute-fabric' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at ../../iao-response-boundary-harness-3525.mjs:59:3
+✖ rejects overlong sequence UTF-8 instead of silently replacing it (0.62221ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:66:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:compute-fabric' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at ../../iao-response-boundary-harness-3525.mjs:95:3
+✖ absolute receipt boundary at 100 milliseconds (0.753904ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:99:29)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:compute-fabric' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at ../../iao-response-boundary-harness-3525.mjs:104:1
+✖ expiry during JSON validation never confirms the receipt (0.677491ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:115:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:compute-fabric' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at ../../iao-response-boundary-harness-3525.mjs:118:1
+✖ expiry across parsed-response promise handoff never confirms the receipt (0.749928ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:129:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:compute-fabric' },
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at ../../iao-response-boundary-harness-3525.mjs:132:1
+✖ cancellation across parsed-response promise handoff remains private and terminal (0.612184ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///tmp/iao-response-boundary-harness-3525.mjs:142:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { message: 'memory-unavailable:cancelled' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=128",
+    "/workspace/scratch/e2ed1eeef5d4/iao-tools/node_modules/gitnexus/dist/cli/index.js",
+    "detect_changes",
+    "--scope",
+    "all",
+    "--repo",
+    "/tmp/iao-review-3525",
+    "--limit",
+    "100"
+  ],
+  "cwd": "/tmp/iao-review-3525",
+  "exit_code": 1,
+  "started_at_utc": "2026-11-23T01:35:29.417571+00:00",
+  "ended_at_utc": "2026-11-23T01:35:29.956775+00:00",
+  "scope": "Exact isolated changed repository, not the unchanged donor",
+  "limits": "Full isolated index unavailable after resource/storage failures; parent will receive exact patch and verify its integration scope separately"
+}

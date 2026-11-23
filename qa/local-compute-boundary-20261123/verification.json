@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-23",
+  "timezone": "Europe/Paris",
+  "repository": "puramapro-oss/purama-ai",
+  "base_commit": "6ed27aef751fbe5b8f0d81b05c1b6c17c080c02e",
+  "base_tree": "1605b25333860acc2974b019cb8ef46845ede5ea",
+  "branch": "fix/iao-audit-20261123-3525",
+  "design_status": "PRET_A_CODER",
+  "authorization": "Current user request to audit, correct and complete existing projects; bounded maintenance within the existing local IAO provider.",
+  "status": "PARTIEL: focused behavior and types verified; native transport and composed CI pending",
+  "tests": {
+    "intercepted_before": {
+      "passed": 4,
+      "failed": 7,
+      "total": 11,
+      "exit_code": 1
+    },
+    "intercepted_after": {
+      "passed": 11,
+      "failed": 0,
+      "total": 11,
+      "exit_code": 0
+    },
+    "native_initial": {
+      "total": 11,
+      "blocked": 11,
+      "reason": "listen EPERM",
+      "product_assertions_qualified": 0
+    },
+    "native_final": "NOT RUN after watchdog-only test adjustment; native execution remains blocked",
+    "strict_targeted_typecheck_exit": 0
+  },
+  "counting_note": "Native and intercepted scenarios are overlapping coverage; do not add totals. No full KARTA suite rerun.",
+  "gitnexus": {
+    "requestFabric": {
+      "exit_code": 0,
+      "risk": "HIGH",
+      "riskSharedAxes": "LOW",
+      "upstream_symbols": 3
+    },
+    "complete": {
+      "exit_code": 0,
+      "risk": "LOW",
+      "upstream_symbols": 2
+    },
+    "index_commit": "c4228f5084c72fbd4046d471b2a3f033e0b58c15",
+    "karta_source_identical_to_base": true,
+    "local_detect_changes_exit": 1,
+    "local_detect_changes_status": "BLOCKED: exact isolated repository not indexed after resource failures"
+  },
+  "review": {
+    "reviewer": "/root/inventory_audits",
+    "product_findings": [],
+    "native_watchdog_margin_adjusted": true
+  },
+  "source_sha256": {
+    "karta/src/integrations/localComputeFabricProvider.ts": "1418ea6283a1b2a3578c10a91cb315b7863b38503a7f970ea96f32f451744f73",
+    "karta/test/localComputeFabricResponseBoundary.test.ts": "f1eebf9dd2982979386938f286f5f3a7a1d331a5e4af1866b63da02d65bf149f"
+  },
+  "mutations": {
+    "product_files": 1,
+    "existing_tests_removed_or_weakened": false,
+    "package_or_lock_changes": false,
+    "protocol_changes": false,
+    "production_calls": 0,
+    "deployed": false,
+    "commit_created": false,
+    "pushed": false
+  },
+  "remaining": [
+    "Parent integration onto current canonical revision and review of composed diff",
+    "Fresh CI covering native local compute suites, KARTA typecheck and build",
+    "Physical target and real local daemon qualification before claiming deployment or operation"
+  ]
+}

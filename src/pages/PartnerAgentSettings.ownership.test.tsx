@@ -1,4 +1,4 @@
-import { act, type HTMLAttributes } from 'react';
+import { act, StrictMode, type HTMLAttributes } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -117,13 +117,20 @@ describe('partner settings operation ownership', () => {
     expect(saveButton().disabled).toBe(false);
     expect(toast.success).toHaveBeenCalledTimes(1);
   });
-  it('does not accept an old A save after an A to B to A transition', async () => {
-    const pending = deferred<unknown>(); api.update.mockReturnValueOnce(pending.promise);
+  it('does not accept an old A save or release a newer save after an A to B to A transition', async () => {
+    const obsolete = deferred<unknown>(); const current = deferred<unknown>();
+    api.update.mockReturnValueOnce(obsolete.promise).mockReturnValueOnce(current.promise);
     await render(); await save(); await render(B);
     api.get.mockResolvedValueOnce(settings(A, 'NEW-A-SESSION'));
-    await render(A); await act(async () => pending.resolve({}));
+    await render(A); await save();
+    expect(api.update).toHaveBeenCalledTimes(2);
+    await act(async () => obsolete.resolve({}));
     expect(sender().value).toBe('NEW-A-SESSION');
+    expect(saveButton().disabled).toBe(true);
     expect(toast.success).not.toHaveBeenCalled();
+    await act(async () => current.resolve({}));
+    expect(saveButton().disabled).toBe(false);
+    expect(toast.success).toHaveBeenCalledTimes(1);
   });
   it('suppresses a failed A save after the active account changes', async () => {
     const pending = deferred<unknown>(); api.update.mockReturnValueOnce(pending.promise);
@@ -169,16 +176,65 @@ describe('partner settings operation ownership', () => {
     expect(sender().value).toBe('EDIT-DURING-UPLOAD');
     expect(host.querySelector('img[alt="Signature"]')?.getAttribute('src')).toBe('https://example.invalid/accepted-signature.png');
   });
-  it('does not show an upload failure from A inside B', async () => {
+  it.each([B, undefined])('does not show an upload failure from A after identity becomes %s', async nextIdentity => {
     const pending = deferred<string>(); api.upload.mockReturnValueOnce(pending.promise);
-    await render(); await upload(); await render(B);
+    await render(); await upload(); auth.id = nextIdentity; await render();
     await act(async () => pending.reject(new Error('PRIVATE-A-UPLOAD')));
     expect(toast.error).not.toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
   });
   it('deduplicates concurrent signature selections within one account cycle', async () => {
     const pending = deferred<string>(); api.upload.mockReturnValue(pending.promise);
     await render(); await upload(); await upload();
     expect(api.upload).toHaveBeenCalledTimes(1);
     await act(async () => pending.resolve('https://example.invalid/signature.png'));
+  });
+
+  it('serializes a pending signature upload before any settings snapshot can overwrite it', async () => {
+    const pending = deferred<string>(); api.upload.mockReturnValueOnce(pending.promise);
+    await render();
+    const input = host.querySelector<HTMLInputElement>('input[type="file"]')!;
+    Object.defineProperty(input, 'files', { configurable: true, value: [new File(['fixture'], 'signature.png', { type: 'image/png' })] });
+    const saveControl = saveButton();
+    await act(async () => { input.dispatchEvent(new Event('change', { bubbles: true })); saveControl.click(); });
+    expect(api.upload).toHaveBeenCalledTimes(1); expect(api.update).not.toHaveBeenCalled();
+    expect(saveButton().disabled).toBe(true);
+    await act(async () => pending.resolve('https://fixture.invalid/current-signature.png'));
+    await save();
+    expect(api.update).toHaveBeenCalledExactlyOnceWith('account-a', expect.objectContaining({ signature_image_url: 'https://fixture.invalid/current-signature.png' }));
+  });
+
+  it('serializes a pending settings save before starting a signature write', async () => {
+    const pending = deferred<unknown>(); api.update.mockReturnValueOnce(pending.promise);
+    await render();
+    const input = host.querySelector<HTMLInputElement>('input[type="file"]')!;
+    Object.defineProperty(input, 'files', { configurable: true, value: [new File(['fixture'], 'signature.png', { type: 'image/png' })] });
+    const saveControl = saveButton();
+    await act(async () => { saveControl.click(); input.dispatchEvent(new Event('change', { bubbles: true })); });
+    expect(api.update).toHaveBeenCalledTimes(1); expect(api.upload).not.toHaveBeenCalled();
+    expect(input.disabled).toBe(true);
+    await act(async () => pending.resolve({})); await upload();
+    expect(api.upload).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects a loaded configuration belonging to a different account', async () => {
+    api.get.mockResolvedValueOnce({ ...settings(B, 'FOREIGN-PRIVATE') });
+    await render();
+    expect(host.textContent).toContain('Impossible de charger les paramètres');
+    expect(host.textContent).not.toContain('FOREIGN-PRIVATE');
+    expect(host.querySelector('input[placeholder="Tissma Dornier"]')).toBeNull();
+    expect(api.update).not.toHaveBeenCalled();
+  });
+
+  it('preserves the current load and write lease through StrictMode effect replay', async () => {
+    const obsolete = deferred<unknown>(); const current = deferred<unknown>();
+    api.get.mockReturnValueOnce(obsolete.promise).mockReturnValueOnce(current.promise);
+    await act(async () => { root.render(<StrictMode><MemoryRouter><PartnerAgentSettings /></MemoryRouter></StrictMode>); });
+    expect(api.get).toHaveBeenCalledTimes(2);
+    await act(async () => current.resolve({ ...settings(A, 'CURRENT') }));
+    await act(async () => obsolete.resolve({ ...settings(A, 'OBSOLETE') }));
+    expect(sender().value).toBe('CURRENT');
+    await save(); expect(api.update).toHaveBeenCalledTimes(1);
+    expect(toast.success).toHaveBeenCalledTimes(1); expect(saveButton().disabled).toBe(false);
   });
 });

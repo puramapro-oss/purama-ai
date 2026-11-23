@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/localComputeFabricResponseBoundary.test.ts",
+    "--maxWorkers=1"
+  ],
+  "cwd": "/tmp/iao-review-3525/karta",
+  "started_at_utc": "2026-11-23T01:23:56.105422+00:00",
+  "ended_at_utc": "2026-11-23T01:23:56.989168+00:00",
+  "exit_code": 1,
+  "base_commit": "6ed27aef751fbe5b8f0d81b05c1b6c17c080c02e",
+  "kind": "new_regression_before_product_change"
+}

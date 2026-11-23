@@ -1,0 +1,11 @@
+{
+  "operation": "Only surplus trailing LF bytes removed for git diff --check; no diagnostics, assertions, status or failure lines changed",
+  "files": [
+    {
+      "file": "response-red.log",
+      "original_sha256": "ce0abf1c689cbcf19ad6fe721b815e78f78563b5087a9dfb233293716ee599fd",
+      "stored_sha256": "959ac7ddbd8ac1913909eb1552a67d5d61314d1fb09bb311787d264034a58890",
+      "removed_bytes": 1
+    }
+  ]
+}

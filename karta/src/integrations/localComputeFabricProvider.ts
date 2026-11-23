@@ -1,7 +1,7 @@
 import http from "node:http";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { types } from "node:util";
+import { TextDecoder, types } from "node:util";
 import type { IaoCompletionPort, IaoContextPack, IaoContextSource } from "../iao/kartaRuntimePort.js";
 
 export type LocalComputeFabricProviderOptions = Readonly<{ socketPath?: string; timeoutMs?: number; maxContextChars?: number }>;
@@ -22,6 +22,7 @@ export class LocalComputeFabricProvider implements IaoCompletionPort {
     this.#maxContextChars = bounded(options.maxContextChars, 64_000, 1_000, 256_000);
   }
   async complete(input: Parameters<IaoCompletionPort["complete"]>[0]) {
+    const expiresAt = performance.now() + this.#timeoutMs;
     if (!/^iao:[0-9a-f]{64}$/.test(input.idempotencyKey)) throw new Error("memory-denied:compute-fabric-input");
     if (!/^[0-9a-f]{64}$/.test(input.payloadDigest)) throw new Error("memory-denied:compute-fabric-input");
     const payload: FabricRequest = {
@@ -32,8 +33,11 @@ export class LocalComputeFabricProvider implements IaoCompletionPort {
       kind: "memory", difficulty: 4, concurrency: MAX_CONCURRENCY, max_tokens: MAX_TOKENS,
       execution_policy: { locality: "local_only", paid_fallback: "forbidden" },
     };
-    const result = await requestFabric(this.#socketPath, payload, this.#timeoutMs, input.signal);
-    return { text: result.text, modelVersion: `${safeLabel(result.engine, "local")}/${safeLabel(result.model, "unknown")}` };
+    const result = await requestFabric(this.#socketPath, payload, expiresAt, input.signal);
+    assertFabricCurrent(expiresAt, input.signal);
+    const completion = { text: result.text, modelVersion: `${safeLabel(result.engine, "local")}/${safeLabel(result.model, "unknown")}` };
+    assertFabricCurrent(expiresAt, input.signal);
+    return completion;
   }
 }
 
@@ -120,11 +124,13 @@ type FabricResponse = {
     accepted_concurrency: typeof MAX_CONCURRENCY;
   };
 };
-function requestFabric(socketPath: string, payload: FabricRequest, timeoutMs: number, signal?: AbortSignal): Promise<FabricResponse> {
-  if (signal?.aborted) return Promise.reject(new Error("memory-unavailable:cancelled"));
+async function requestFabric(socketPath: string, payload: FabricRequest, expiresAt: number, signal?: AbortSignal): Promise<FabricResponse> {
+  assertFabricCurrent(expiresAt, signal);
   const body = Buffer.from(JSON.stringify(payload));
+  assertFabricCurrent(expiresAt, signal);
   return new Promise((resolve, reject) => {
     let settled = false;
+    let deadline: ReturnType<typeof setTimeout> | undefined;
     const finishError = () => {
       if (settled) return;
       settled = true;
@@ -136,29 +142,43 @@ function requestFabric(socketPath: string, payload: FabricRequest, timeoutMs: nu
     // A disconnected socket does not prove the daemon stopped computing: KARTA owns effect knowledge.
     const request = http.request({ socketPath, path: "/v1/complete", method: "POST", headers: {
       "content-type": "application/json", "content-length": String(body.length),
-    }, timeout: timeoutMs, signal }, (response) => {
+    }, timeout: Math.max(1, Math.ceil(expiresAt - performance.now())), signal }, (response) => {
+      response.on("error", finishError);
+      try { assertFabricCurrent(expiresAt, signal); }
+      catch { response.destroy(); finishError(); return; }
       const chunks: Buffer[] = [];
       let size = 0;
       response.on("data", (chunk: Buffer) => {
+        if (settled) return;
+        try { assertFabricCurrent(expiresAt, signal); }
+        catch { response.destroy(); finishError(); return; }
         size += chunk.length;
         if (size > MAX_RESPONSE_BYTES) response.destroy(new Error("response-too-large"));
         else chunks.push(chunk);
       });
-      response.on("error", finishError);
       response.on("end", () => {
         if (settled || response.statusCode !== 200) return finishError();
         try {
-          const value: unknown = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+          assertFabricCurrent(expiresAt, signal);
+          // Preserve the previous BOM refusal; malformed UTF-8 must never become replacement characters in a receipt.
+          const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(Buffer.concat(chunks)));
           if (!isResponse(value, payload)) throw new Error("invalid");
+          assertFabricCurrent(expiresAt, signal);
           settled = true; clearTimeout(deadline); resolve(value);
         } catch { finishError(); }
       });
     });
-    const deadline = setTimeout(() => request.destroy(new Error("deadline")), timeoutMs);
+    deadline = setTimeout(() => request.destroy(new Error("deadline")), Math.max(0, Math.ceil(expiresAt - performance.now())));
     request.on("timeout", () => request.destroy(new Error("timeout")));
     request.on("error", finishError);
-    request.end(body);
+    try { assertFabricCurrent(expiresAt, signal); request.end(body); }
+    catch { request.destroy(); finishError(); }
   });
+}
+/** One monotonic budget covers preparation, transport, validation and the final Promise handoff. */
+function assertFabricCurrent(expiresAt: number, signal?: AbortSignal): void {
+  if (signal?.aborted) throw new Error("memory-unavailable:cancelled");
+  if (performance.now() >= expiresAt) throw new Error("memory-unavailable:compute-fabric");
 }
 function isResponse(value: unknown, request: FabricRequest): value is FabricResponse {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
