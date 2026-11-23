@@ -1,0 +1,12 @@
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795449833136,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+file:///workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/mcp/local/local-backend.js:549
+    if (symName.length === 0)
+                ^
+
+TypeError: Cannot read properties of undefined (reading 'length')
+    at unresolvedReceiverBoundaries (file:///workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/mcp/local/local-backend.js:549:17)
+    at LocalBackend.computeEpistemicBoundary (file:///workspace/scratch/ccfbf7e5800b/iao-devtools/node_modules/gitnexus/dist/mcp/local/local-backend.js:5903:31)
+
+Node.js v24.22.3

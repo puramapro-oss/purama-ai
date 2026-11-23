@@ -56,6 +56,9 @@ export async function handleIaoRoute(
     }
   };
   const isActive = (): boolean => {
+    // A disconnected client cannot admit new work after a pending readiness,
+    // authentication or body read. Already admitted work is still drained.
+    if (req.aborted || res.destroyed || res.writableEnded) return false;
     try { return lifecycle ? lifecycle.isActive() === true : true; }
     catch { return false; }
   };
@@ -63,7 +66,10 @@ export async function handleIaoRoute(
     try { return isActive() && (!lifecycle || await lifecycle.canAdmit() === true) && isActive(); }
     catch { return false; }
   };
-  const unavailable = (): true => { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; };
+  const unavailable = (): true => {
+    if (!res.destroyed && !res.writableEnded) sendJson(res, 503, { error: "IAO runtime unavailable" });
+    return true;
+  };
   if (!runtime || !isActive()) return unavailable();
   try {
     if (req.method === "POST" && SUBMIT_PATHS.has(url.pathname)) {

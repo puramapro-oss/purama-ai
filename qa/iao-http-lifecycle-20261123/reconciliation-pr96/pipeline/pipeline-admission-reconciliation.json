@@ -1,0 +1,156 @@
+{
+  "schema": "purama.iao.independent-http-pipeline-probe.v1",
+  "observedAt": "2026-11-23T16:00:38.731Z",
+  "node": "v24.22.3",
+  "repositoryDirectory": "/workspace/scratch/ccfbf7e5800b/purama-ai",
+  "sourceHashes": {
+    "src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+    "src/iao/kartaRuntimePort.ts": "dd84affa7f347db703a38f743f44af2ee0d8a803b229fb905172b46995e836e2",
+    "src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "src/api/iaoRoutes.ts": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b"
+  },
+  "method": "Actual TypeScript modules transpiled in memory; native node:http and one node:net loopback socket; unrelated dependencies replaced by fixtures.",
+  "productWrites": 0,
+  "physicalInference": false,
+  "fixtureAuthority": true,
+  "checks": {
+    "independentAdmissionDeadline": "PASS",
+    "lateAuthenticationCannotAccessFacade": "PASS",
+    "firstAdmittedTaskContinuesAndVerifies": "PASS",
+    "wireResponsesAre202Then503": "PASS",
+    "activeDrainWaitsForAdmittedCompletion": "PASS"
+  },
+  "timeline": [
+    {
+      "event": "first_completion_entered",
+      "elapsedMs": 174.764
+    },
+    {
+      "event": "second_authentication_entered",
+      "elapsedMs": 175.25
+    },
+    {
+      "event": "response_end_called",
+      "elapsedMs": 15195.763,
+      "index": 1,
+      "status": 503
+    },
+    {
+      "event": "late_authentication_released",
+      "elapsedMs": 15204.752
+    },
+    {
+      "event": "response_end_called",
+      "elapsedMs": 15206.472,
+      "index": 0,
+      "status": 202
+    },
+    {
+      "event": "response_received_on_wire",
+      "elapsedMs": 15210.807,
+      "index": 0,
+      "status": 202
+    },
+    {
+      "event": "response_received_on_wire",
+      "elapsedMs": 15210.951,
+      "index": 1,
+      "status": 503
+    },
+    {
+      "event": "probe_pass",
+      "elapsedMs": 15211.329
+    }
+  ],
+  "firstSocketTimeoutMs": 241000,
+  "serverTimeoutMs": 15000,
+  "sameConnection": true,
+  "secondSocketTimeoutMs": 241000,
+  "atSecondExpiry": {
+    "firstStatus": "draft",
+    "firstSignalAborted": false,
+    "secondResponseStatus": 503,
+    "secondResponseEnded": true,
+    "calls": {
+      "submit": 1,
+      "get": 0,
+      "cancel": 0,
+      "buildContext": 1,
+      "complete": 1,
+      "control": 0,
+      "authenticate": 2
+    },
+    "wireResponseCount": 0
+  },
+  "callsAfterLateAuthentication": {
+    "submit": 1,
+    "get": 0,
+    "cancel": 0,
+    "buildContext": 1,
+    "complete": 1,
+    "control": 0,
+    "authenticate": 2
+  },
+  "drainPendingBeforeCompletion": true,
+  "wireResponses": [
+    {
+      "status": 202,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json",
+        "date": "Mon, 23 Nov 2026 16:00:53 GMT",
+        "connection": "keep-alive",
+        "keep-alive": "timeout=5",
+        "transfer-encoding": "chunked"
+      },
+      "body": {
+        "identity": "iao",
+        "requestId": "11111111-1111-4111-8111-111111111111",
+        "tenantId": "review-tenant",
+        "conversationId": "review",
+        "status": "verified",
+        "updatedAt": "2026-11-23T16:00:53.938Z",
+        "stale": false,
+        "preview": "independent pipeline fixture completed",
+        "proof": {
+          "source": "karta",
+          "requestId": "11111111-1111-4111-8111-111111111111",
+          "proofId": "33333333-3333-4333-8333-333333333333",
+          "completedAt": "2026-11-23T16:00:53.937Z"
+        }
+      }
+    },
+    {
+      "status": 503,
+      "headers": {
+        "cache-control": "no-store",
+        "content-type": "application/json",
+        "date": "Mon, 23 Nov 2026 16:00:53 GMT",
+        "connection": "keep-alive",
+        "keep-alive": "timeout=5",
+        "transfer-encoding": "chunked"
+      },
+      "body": {
+        "error": "IAO runtime unavailable"
+      }
+    }
+  ],
+  "finalCalls": {
+    "submit": 1,
+    "get": 0,
+    "cancel": 0,
+    "buildContext": 1,
+    "complete": 1,
+    "control": 0,
+    "authenticate": 2
+  },
+  "verdict": "PASS",
+  "durationMs": 15212.602,
+  "sourceHashesAfter": {
+    "src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+    "src/iao/kartaRuntimePort.ts": "dd84affa7f347db703a38f743f44af2ee0d8a803b229fb905172b46995e836e2",
+    "src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "src/api/iaoRoutes.ts": "880130b834cd1b64147265f7362f632cb6cc3c27298ec0a9daf56eaaf7fcda8b"
+  },
+  "sourcesStableDuringProbe": true
+}

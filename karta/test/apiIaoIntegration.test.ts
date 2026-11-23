@@ -304,3 +304,26 @@ it("keeps every IAO operation closed when the lifecycle readiness provider is ab
   }
   expect(authenticate).not.toHaveBeenCalled();
 });
+
+it("never admits new IAO work after its client disconnects during the final readiness probe", async () => {
+  let release!: (value: RuntimeReadiness) => void;
+  let entered!: () => void;
+  const checking = new Promise<void>(resolve => { entered = resolve; });
+  const probe = vi.fn<() => Promise<RuntimeReadiness>>()
+    .mockResolvedValueOnce({ ready: true, phase: "ready" })
+    .mockImplementation(() => { entered(); return new Promise(resolve => { release = resolve; }); });
+  const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not execute" }));
+  const facade = new IaoFacade({ prepare });
+  const server = await listen({ facade, authenticator: { authenticate: async () => identity() } }, probe);
+  const closed = new Promise<void>(resolve => { server.once("request", (_req, res) => res.once("close", resolve)); });
+  const client = request({ host: "127.0.0.1", port: port(server), path: "/iao/requests", method: "POST" });
+  client.on("error", () => {});
+  client.end(JSON.stringify(body));
+  await checking;
+  client.destroy();
+  await closed;
+  release({ ready: true, phase: "ready" });
+  await server.drainRequests();
+  expect(prepare).not.toHaveBeenCalled();
+  expect(() => facade.get("tenant", "actor", id)).toThrow("IAO request not found");
+});

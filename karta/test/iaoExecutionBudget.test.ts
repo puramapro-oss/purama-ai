@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { IaoFacade, type IaoRequest } from "../src/iao/iaoFacade.js";
+import { IaoFacade, type IaoRequest, type KartaIaoPort } from "../src/iao/iaoFacade.js";
 import { KartaRuntimeIaoPort } from "../src/iao/kartaRuntimePort.js";
 
 function request(): IaoRequest {
@@ -44,7 +44,7 @@ describe("IAO execution budget metadata", () => {
     expect(prepare).toHaveBeenCalledOnce();
   });
 
-  it.each([0, -1, NaN, Infinity, -Infinity, 1_200_001, Number.MAX_VALUE, 1.5, undefined, null, "240000"])(
+  it.each([0, -1, NaN, Infinity, -Infinity, 1_200_001, Number.MAX_VALUE, 1.5, undefined, null, false, "240000"])(
     "ignores invalid metadata %s without preventing submission", async value => {
       const prepare = vi.fn(async () => ({ kind: "accepted" as const, preview: "prepared" }));
       const facade = new IaoFacade({ prepare, executionBudgetMs: () => value as number });
@@ -55,11 +55,18 @@ describe("IAO execution budget metadata", () => {
     },
   );
 
-  it("ignores throwing metadata without preventing submission", async () => {
+  it.each(["method", "getter"] as const)("keeps a throwing metadata %s harmless and private", async mode => {
     const prepare = vi.fn(async () => ({ kind: "accepted" as const, preview: "prepared" }));
-    const facade = new IaoFacade({ prepare, executionBudgetMs() { throw new Error("unavailable metadata"); } });
+    const port: KartaIaoPort = { prepare };
+    const fail = () => { throw new Error("PRIVATE_BUDGET_DETAILS"); };
+    if (mode === "method") port.executionBudgetMs = fail;
+    else Object.defineProperty(port, "executionBudgetMs", { get: fail });
+    const facade = new IaoFacade(port);
     expect(facade.executionBudgetMs("conversation")).toBeUndefined();
-    expect(await facade.submit(request())).toMatchObject({ status: "partial", preview: "prepared" });
+    expect(facade.executionBudgetMs("memory-control")).toBeUndefined();
+    const result = await facade.submit(request());
+    expect(result).toMatchObject({ status: "partial", preview: "prepared" });
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_BUDGET_DETAILS");
     expect(prepare).toHaveBeenCalledOnce();
   });
 });

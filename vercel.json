@@ -9,6 +9,7 @@
   "git": {
     "deploymentEnabled": {
       "fix/iao-http-lifecycle-20261123": false,
+      "fix/iao-http-qualified-20261123": false,
       "fix/iao-provider-boundaries-20261123": false,
       "fix/iao-runtime-deadline-20261122": false,
       "fix/social-publish-reliability-20261123": false,

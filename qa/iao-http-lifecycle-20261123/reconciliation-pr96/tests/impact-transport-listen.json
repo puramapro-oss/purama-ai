@@ -1,0 +1,9 @@
+{
+  "error": "Target 'listen' not found",
+  "target": {
+    "name": "listen"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

@@ -1,0 +1,10 @@
+[api] KARTA écoute sur :0
+{"event":"first_completion_entered","elapsedMs":174.764}
+{"event":"second_authentication_entered","elapsedMs":175.25}
+{"event":"response_end_called","elapsedMs":15195.763,"index":1,"status":503}
+{"event":"late_authentication_released","elapsedMs":15204.752}
+{"event":"response_end_called","elapsedMs":15206.472,"index":0,"status":202}
+{"event":"response_received_on_wire","elapsedMs":15210.807,"index":0,"status":202}
+{"event":"response_received_on_wire","elapsedMs":15210.951,"index":1,"status":503}
+{"event":"probe_pass","elapsedMs":15211.329}
+{"verdict":"PASS","output":"/tmp/iao-http-reconciliation-pipeline-20261123/pipeline-admission-reconciliation.json","sourcesStableDuringProbe":true}
