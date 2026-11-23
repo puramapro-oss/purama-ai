@@ -1,0 +1,64 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ✓ test/providerCompletion.test.ts > real provider tools through the agent loop > rejects an invalid DocuSeal receipt before the next effect and disables replay 30ms
+ ✓ test/providerCompletion.test.ts > real provider tools through the agent loop > DocuSeal: timeout stops the cycle and a late receipt cannot start another effect 17ms
+ ✓ test/providerCompletion.test.ts > real provider tools through the agent loop > Gmail: timeout stops the cycle and a late receipt cannot start another effect 21ms
+ ✓ test/providerCompletion.test.ts > real provider tools through the agent loop > continues after a valid DocuSeal receipt, proving that the fixture permits completion 12ms
+ ✓ test/providerCompletion.test.ts > real provider tools through durable PostgreSQL approvals > persists DocuSeal's explicit failure and rejects a second approval without another POST 30ms
+ ✓ test/providerCompletion.test.ts > real provider tools through durable PostgreSQL approvals > DocuSeal: expired POST remains failed and non-replayable after a late receipt 29ms
+ ✓ test/providerCompletion.test.ts > real provider tools through durable PostgreSQL approvals > Gmail: expired POST remains failed and non-replayable after a late receipt 26ms
+ ✓ test/providerCompletion.test.ts > real provider tools through durable PostgreSQL approvals > commits one successful DocuSeal receipt and one continuation, without replaying its POST 27ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > preserves the existing endpoint and projects only the allowed business fields 10ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > normalizes unavailable optional fields to null without inventing contact data 1ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > accepts an explicit empty people list 1ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > enforces the requested result limit even when the provider ignores it 1ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > does not contact the provider without its configured credential 1ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects null input before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects missing keywords before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects blank keywords before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects oversized keywords before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects non-string keywords before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects zero limit before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects oversized limit before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects fractional limit before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects null limit before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > rejects unknown field before a provider request 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > does not invoke a parameter getter before refusing the input 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses missing people without exposing provider data 1ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses non-array people without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses null person without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses missing name without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses blank name without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses invalid optional email without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses invalid optional organization without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses oversized name without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo request and result contract > refuses contradictory success without exposing provider data 0ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > does not read or echo an HTTP error body 1ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > does not propagate transport diagnostics 0ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses invalid JSON without another request 0ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses invalid UTF-8 without another request 0ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses redirect response without another request 1ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > accepts a valid body at exactly 1 MiB and releases the deadline 5ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > refuses an oversized body even when Content-Length claims a smaller size 2ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > bounds a fetch that ignores cancellation and cleans up its late body 2ms
+ ✓ test/apolloTool.test.ts > Apollo shared provider transport boundaries > shares one 30-second budget across headers and a stalled body 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > returns JSON without redirecting or replacing the owner signal 11ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > keeps one budget across body chunks 2ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > settles even when a stalled reader's cancellation never settles 3ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > cleans up an uncooperative late fetch without waiting for cancellation 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > enforces received bytes even if Content-Length lies 2ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > does not echo malformed JSON in an error 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > does not echo invalid UTF-8 in an error 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > does not read an HTTP error body 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > refuses an unexpected redirected response 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > does not expose transport diagnostics 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > bounds a stream of empty chunks 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > bounds pathological fragmentation independently of the byte limit 23ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > rejects before I/O when monotone time has elapsed without a dispatched timer 1ms
+ ✓ test/providerHttp.test.ts > provider HTTP total deadline and bounded response > rejects a response crossing the monotone deadline before the timer callback 8ms
+
+ Test Files  3 passed (3)
+      Tests  56 passed (56)
+   Start at  02:58:03
+   Duration  4.08s (tests 91%, transform 6%, import 2%)

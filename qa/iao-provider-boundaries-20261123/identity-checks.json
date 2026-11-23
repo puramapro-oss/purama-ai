@@ -1,0 +1,16 @@
+{
+  "verifiedAt": "2026-11-23T03:26:37.258172+01:00",
+  "targetedLint": {
+    "command": "node --max-old-space-size=512 node_modules/eslint/bin/eslint.js supabase/functions/voice-tts/index.ts tests/voice-tts-boundaries.test.mjs",
+    "exitCode": 0,
+    "stdoutAndStderr": ""
+  },
+  "stagedImpact": {
+    "exitCode": 0,
+    "receipt": "gitnexus-identity-staged.txt",
+    "interpretation": "Eight staged files touched, no indexed symbol overlaps. This is not a clean tree or proof of no impact; the HTTP handler remains outside useful inferred callers. The previous full-change critical report and manual/independent reviews remain applicable."
+  },
+  "sourceHashes": "All eight recorded source/test/workflow hashes match verification.json",
+  "tests": "tts-identity-green.txt: 82 passed, 0 failed, 0 skipped",
+  "scope": "Local identity followup after first PR head; final updated head still requires CI"
+}

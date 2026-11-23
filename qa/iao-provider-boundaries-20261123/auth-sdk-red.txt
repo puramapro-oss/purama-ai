@@ -1,0 +1,32 @@
+(node:12) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ TTS SDK: actual getUser authenticates through the bounded adapter before generation (144.757853ms)
+✖ TTS SDK: authentication transport errors cannot leak through SDK console.error (6.958205ms)
+✔ TTS SDK: authentication timeout aborts transport and cancels a non-cooperative late response (6.881442ms)
+✔ TTS SDK: caller cancellation during authentication discards a late transport response (6.150932ms)
+✔ TTS SDK: authentication response body shares the overall deadline (7.003922ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 730.300212
+
+✖ failing tests:
+
+test at tests/voice-tts-boundaries.test.mjs:459:1
+✖ TTS SDK: authentication transport errors cannot leak through SDK console.error (6.958205ms)
+  AssertionError [ERR_ASSERTION]: private content must not reach logs
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:129:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:462:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Error: PRIVATE_TTS_USER_TEXT_api_key_fixture@example.invalid',
+    expected: /PRIVATE_TTS_USER_TEXT_api_key_fixture@example.invalid/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

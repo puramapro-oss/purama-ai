@@ -1,10 +1,12 @@
 import { act, type HTMLAttributes, type PropsWithChildren } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { toast } from 'sonner';
 import type { UseVoice } from '@/hooks/useVoice';
 import { listAgentChatMessages, sendAgentChatMessage } from '@/lib/agent-chat';
 import { AgentChatTab } from './AgentChatTab';
 import { VoiceMode } from './VoiceMode';
+import { VoiceSettingsCard } from './VoiceSettingsCard';
 
 const fixture = vi.hoisted(() => ({
   reducedMotion: false,
@@ -14,6 +16,8 @@ const fixture = vi.hoisted(() => ({
 
 vi.mock('@/hooks/useAuth', () => ({ useAuth: () => ({ user: fixture.user }) }));
 vi.mock('@/hooks/useVoice', () => ({ useVoice: () => fixture.voice }));
+vi.mock('@/integrations/supabase/client', () => ({ supabase: {} }));
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock('@/lib/agent-chat', () => ({
   newAgentSessionId: () => '00000000-0000-4000-8000-000000000002',
   listAgentChatMessages: vi.fn(async () => []),
@@ -300,5 +304,115 @@ describe('AgentChatTab: named text controls and reduced motion', () => {
     await act(async () => root.render(<AgentChatTab agentType="email" agentName="Email IA" agentEmoji="🤖" agentColor="#8B5CF6" />));
     expect(scrollTo).toHaveBeenCalled();
     expect(scrollTo.mock.calls.every(([options]) => options.behavior === 'auto')).toBe(true);
+  });
+});
+
+describe('VoiceSettingsCard: provider-compatible settings', () => {
+  const scrollIntoViewDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollIntoView');
+
+  beforeEach(() => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: vi.fn() });
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
+    vi.mocked(fixture.voice.updateSettings).mockImplementation(async (patch) => {
+      fixture.voice.settings = { ...fixture.voice.settings, ...patch };
+    });
+  });
+
+  afterEach(() => {
+    if (scrollIntoViewDescriptor) Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', scrollIntoViewDescriptor);
+    else Reflect.deleteProperty(HTMLElement.prototype, 'scrollIntoView');
+  });
+
+  async function selectProvider(label: string) {
+    const trigger = host.querySelector<HTMLButtonElement>('[role="combobox"]')!;
+    await press(trigger, 'ArrowDown');
+    const option = [...document.querySelectorAll<HTMLElement>('[role="option"]')]
+      .find(node => node.textContent === label);
+    expect(option).toBeDefined();
+    await press(option!, 'Enter');
+    // The real hook publishes saved settings with setSettings; this fixture needs a render.
+    await act(async () => root.render(<VoiceSettingsCard />));
+  }
+
+  function previewButton() {
+    return [...host.querySelectorAll('button')].find(node => node.textContent?.trim() === 'Tester la voix')!;
+  }
+
+  it.each([
+    { speed: 0.5, expected: 0.7 },
+    { speed: 1.05, expected: 1.05 },
+    { speed: 2, expected: 1.2 },
+  ])('switches to ElevenLabs with one coherent save and bounds speed $speed', async ({ speed, expected }) => {
+    fixture.voice.settings.speed = speed;
+    await act(async () => root.render(<VoiceSettingsCard />));
+    await selectProvider('ElevenLabs (qualité studio)');
+    expect(fixture.voice.updateSettings).toHaveBeenCalledTimes(1);
+    expect(fixture.voice.updateSettings).toHaveBeenCalledWith({
+      provider: 'elevenlabs', voice_id: '21m00Tcm4TlvDq8ikWAM', speed: expected,
+    });
+    expect(host.querySelectorAll('[role="combobox"]')[1]?.textContent).toContain('Rachel');
+    expect(host.querySelector<HTMLInputElement>('input[type="range"]')?.value).toBe(String(expected));
+    expect(fixture.voice.speak).not.toHaveBeenCalled();
+  });
+
+  it('switches back to the OpenAI default voice without changing a compatible speed', async () => {
+    fixture.voice.settings = { ...fixture.voice.settings, provider: 'elevenlabs', voice_id: 'EXAVITQu4vr4xnSDxMaL', speed: 0.85 };
+    await act(async () => root.render(<VoiceSettingsCard />));
+    await selectProvider('OpenAI TTS (rapide, économique)');
+    expect(fixture.voice.updateSettings).toHaveBeenCalledTimes(1);
+    expect(fixture.voice.updateSettings).toHaveBeenCalledWith({ provider: 'openai', voice_id: 'nova', speed: 0.85 });
+    expect(host.querySelectorAll('[role="combobox"]')[1]?.textContent).toContain('Nova');
+  });
+
+  it.each([
+    { provider: 'openai' as const, voice_id: 'nova', min: '0.5', max: '2' },
+    { provider: 'elevenlabs' as const, voice_id: '21m00Tcm4TlvDq8ikWAM', min: '0.7', max: '1.2' },
+  ])('exposes compatible speed bounds for $provider and saves the selected speed', async ({ provider, voice_id, min, max }) => {
+    fixture.voice.settings = { ...fixture.voice.settings, provider, voice_id };
+    await act(async () => root.render(<VoiceSettingsCard />));
+    const slider = host.querySelector<HTMLInputElement>('input[type="range"]')!;
+    expect(slider.min).toBe(min);
+    expect(slider.max).toBe(max);
+    expect(slider.step).toBe('0.05');
+    const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+    await act(async () => {
+      setValue.call(slider, '1.1');
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    expect(fixture.voice.updateSettings).toHaveBeenCalledTimes(1);
+    expect(fixture.voice.updateSettings).toHaveBeenCalledWith({ speed: 1.1 });
+  });
+
+  it.each(['success', 'failure'])('prevents preview with stale settings during a pending save: %s', async (outcome) => {
+    let finishSave: () => void = () => {};
+    vi.mocked(fixture.voice.updateSettings).mockImplementation(patch => new Promise<void>((resolve, reject) => {
+      finishSave = () => {
+        if (outcome === 'failure') reject(new Error('Enregistrement indisponible'));
+        else {
+          fixture.voice.settings = { ...fixture.voice.settings, ...patch };
+          resolve();
+        }
+      };
+    }));
+    await act(async () => root.render(<VoiceSettingsCard />));
+    await selectProvider('ElevenLabs (qualité studio)');
+    expect(previewButton().disabled).toBe(true);
+    expect([...host.querySelectorAll<HTMLButtonElement>('[role="combobox"], [role="switch"]')]
+      .every(control => control.disabled)).toBe(true);
+    expect(host.querySelector<HTMLInputElement>('input[type="range"]')?.disabled).toBe(true);
+    await act(async () => previewButton().click());
+    expect(fixture.voice.speak).not.toHaveBeenCalled();
+    await act(async () => finishSave());
+    expect(previewButton().disabled).toBe(false);
+    if (outcome === 'failure') {
+      expect(fixture.voice.settings.provider).toBe('openai');
+      expect(toast.error).toHaveBeenCalledWith('Erreur', { description: 'Enregistrement indisponible' });
+      expect(toast.success).not.toHaveBeenCalled();
+    } else {
+      expect(fixture.voice.settings.provider).toBe('elevenlabs');
+      expect(toast.success).toHaveBeenCalledTimes(1);
+      expect(toast.error).not.toHaveBeenCalled();
+    }
   });
 });

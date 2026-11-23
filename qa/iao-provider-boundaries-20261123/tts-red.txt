@@ -1,0 +1,1090 @@
+RED against unchanged voice-tts handler; provider-specific voice contract updated
+HEAD: d150c87ff9e3c7530765c4abaf5412c637b74366
+Handler SHA256: 8b38809beb6b64e299578e83ddefe8ec5785775ed3c54c881b3342f0d4304f0c
+Command: node --experimental-vm-modules --test --test-concurrency=1 --test-timeout=15000 tests/voice-tts-boundaries.test.mjs
+Exit: 1
+
+(node:13) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ TTS: default request trims text and sends OpenAI nova/1 with response_format mp3 (61.57244ms)
+✖ TTS: ElevenLabs uses the chosen voice, explicit MP3 output and voice_settings.speed (2.357072ms)
+▶ TTS: finite speed is clamped to each provider contract
+  ✔ openai: -1 -> 0.25 (1.971062ms)
+  ✔ openai: 99 -> 4 (1.530752ms)
+  ✖ elevenlabs: -1 -> 0.7 (1.721604ms)
+  ✖ elevenlabs: 99 -> 1.2 (1.359849ms)
+✖ TTS: finite speed is clamped to each provider contract (7.510397ms)
+▶ TTS: invalid JSON shapes and field types fail before provider generation
+  ✖ null body (3.002006ms)
+  ✔ array body (2.367978ms)
+  ✖ malformed JSON (2.458372ms)
+  ✔ missing text (1.840899ms)
+  ✔ empty text (1.943091ms)
+  ✔ whitespace text (1.889632ms)
+  ✖ non-string text (1.851145ms)
+  ✔ null text (1.68511ms)
+  ✖ text over 4000 (1.834971ms)
+  ✖ unknown provider (1.850774ms)
+  ✖ null provider (1.861691ms)
+  ✖ non-string provider (1.708294ms)
+  ✖ OpenAI refuses an ElevenLabs voice ID (1.652972ms)
+  ✖ voice traversal (4.152094ms)
+  ✖ voice query (2.122155ms)
+  ✖ voice slash (2.50407ms)
+  ✖ voice percent escape (2.512372ms)
+  ✖ voice empty (2.377643ms)
+  ✖ voice null (2.546592ms)
+  ✖ voice over 100 (2.726429ms)
+  ✖ voice non-string (2.272147ms)
+  ✖ speed string (2.636986ms)
+  ✖ speed null (2.262522ms)
+  ✖ speed object (1.95569ms)
+  ✖ speed array (1.980066ms)
+  ✖ speed overflow (1.555098ms)
+  ✖ negative speed overflow (1.262726ms)
+✖ TTS: invalid JSON shapes and field types fail before provider generation (62.198145ms)
+✔ TTS: ElevenLabs accepts text 4000 and a 100-character safe voice ID (1.262986ms)
+▶ TTS: the inbound byte cap accepts 32768 and rejects 32769 without truncation
+  ✔ 32768 bytes (1.239151ms)
+  ✖ 32769 bytes (1.209677ms)
+✖ TTS: the inbound byte cap accepts 32768 and rejects 32769 without truncation (2.716324ms)
+✖ TTS: inbound limits count UTF-8 bytes rather than JavaScript characters (1.638861ms)
+✖ TTS: malformed UTF-8 is rejected instead of synthesising replacement characters (1.401511ms)
+▶ TTS: missing selected provider key returns 503 with no fallback to the other provider
+  ✖ openai (1.303405ms)
+  ✖ elevenlabs (1.234865ms)
+✖ TTS: missing selected provider key returns 503 with no fallback to the other provider (2.833156ms)
+▶ TTS: absent or invalid identity never starts provider generation
+  ✔ missing token (1.18476ms)
+  ✔ rejected token (1.052184ms)
+✔ TTS: absent or invalid identity never starts provider generation (2.643686ms)
+▶ TTS: audio/mpeg, audio/mp3 and octet-stream are accepted and returned as MP3
+  ✔ audio/mpeg (2.061235ms)
+  ✔ audio/mp3 (1.926326ms)
+  ✔ application/octet-stream (1.145693ms)
+✔ TTS: audio/mpeg, audio/mp3 and octet-stream are accepted and returned as MP3 (5.458375ms)
+✔ TTS: exact 8 MiB audio is accepted (162.629117ms)
+▶ TTS: declared and streamed audio oversize are refused with non-blocking cancellation
+  ✖ declared oversize (152.356626ms)
+  ✖ streamed oversize (169.155169ms)
+✖ TTS: declared and streamed audio oversize are refused with non-blocking cancellation (322.615795ms)
+▶ TTS: empty audio, JSON, HTML and followed redirects are refused
+  ✖ empty audio (2.588585ms)
+  ✖ JSON (1.869673ms)
+  ✖ HTML (2.745927ms)
+  ✖ redirected response (1.848561ms)
+✖ TTS: empty audio, JSON, HTML and followed redirects are refused (9.648497ms)
+✖ TTS: HTTP failure does not read a stalled private error body or retry (153.224302ms)
+▶ TTS: upstream failure details and transport exceptions stay out of client and logs
+  ✖ HTTP error (3.836198ms)
+  ✖ transport exception (2.123087ms)
+✖ TTS: upstream failure details and transport exceptions stay out of client and logs (6.724064ms)
+✖ TTS: the 30-second deadline bounds non-cooperative authentication (152.150299ms)
+✖ TTS: the 30-second deadline bounds stalled inbound text and cancellation (154.427737ms)
+✖ TTS: expired provider fetch settles even if abort is ignored; a late response is cancelled (153.157514ms)
+✖ TTS: audio read and non-cooperative cleanup remain inside the same deadline (152.788382ms)
+✖ TTS: inbound/auth/provider/audio share one 30-second budget without phase resets (155.196206ms)
+✖ TTS: late provider completion is rejected even before the timer callback runs (153.890929ms)
+✖ TTS: an already-aborted request performs no authentication or generation (3.508216ms)
+✖ TTS: caller cancellation during authentication prevents late generation (152.846683ms)
+✖ TTS: caller cancellation interrupts a non-cooperative provider fetch (153.792067ms)
+✖ TTS: caller cancellation interrupts streamed audio without waiting for cleanup (154.350389ms)
+ℹ tests 74
+ℹ suites 0
+ℹ pass 17
+ℹ fail 57
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2555.582504
+
+✖ failing tests:
+
+test at tests/voice-tts-boundaries.test.mjs:134:1
+✖ TTS: default request trims text and sends OpenAI nova/1 with response_format mp3 (61.57244ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  undefined !== 'mp3'
+
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:143:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'mp3',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:152:1
+✖ TTS: ElevenLabs uses the chosen voice, explicit MP3 output and voice_settings.speed (2.357072ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + null
+  - 'mp3_44100_128'
+
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:158:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'mp3_44100_128',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:167:14
+✖ elevenlabs: -1 -> 0.7 (1.721604ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  undefined !== 0.7
+
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:171:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:167:6)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 0.7,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:167:14
+✖ elevenlabs: 99 -> 1.2 (1.359849ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  undefined !== 1.2
+
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:171:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:167:6)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 1.2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ null body (3.002006ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  500 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ malformed JSON (2.458372ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  500 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ non-string text (1.851145ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  500 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ text over 4000 (1.834971ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ unknown provider (1.850774ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ null provider (1.861691ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ non-string provider (1.708294ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ OpenAI refuses an ElevenLabs voice ID (1.652972ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice traversal (4.152094ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice query (2.122155ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice slash (2.50407ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice percent escape (2.512372ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice empty (2.377643ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice null (2.546592ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice over 100 (2.726429ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ voice non-string (2.272147ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ speed string (2.636986ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ speed null (2.262522ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ speed object (1.95569ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ speed array (1.980066ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ speed overflow (1.555098ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:192:46
+✖ negative speed overflow (1.262726ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:194:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:192:38)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:207:39
+✖ 32769 bytes (1.209677ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 413
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:213:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:207:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 413,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:217:1
+✖ TTS: inbound limits count UTF-8 bytes rather than JavaScript characters (1.638861ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 413
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:221:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 413,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:225:1
+✖ TTS: malformed UTF-8 is rejected instead of synthesising replacement characters (1.401511ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 400
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:228:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:234:13
+✖ openai (1.303405ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  500 !== 503
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:236:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:234:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:234:13
+✖ elevenlabs (1.234865ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 503
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:236:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:234:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:271:49
+✖ declared oversize (152.356626ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:274:22)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:271:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:271:49
+✖ streamed oversize (169.155169ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:274:22)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:271:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:287:50
+✖ empty audio (2.588585ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 502
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:289:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:287:42)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:287:50
+✖ JSON (1.869673ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 502
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:289:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:287:42)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:287:50
+✖ HTML (2.745927ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 502
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:289:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:287:42)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:287:50
+✖ redirected response (1.848561ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 502
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:289:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:287:42)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:294:1
+✖ TTS: HTTP failure does not read a stalled private error body or retry (153.224302ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:297:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:303:47
+✖ HTTP error (3.836198ms)
+  AssertionError [ERR_ASSERTION]: private content must not reach the client
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:125:10)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:308:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:303:39)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '{"error":"TTS failed","details":"PRIVATE_TTS_USER_TEXT_api_key_fixture@example.invalid"}',
+    expected: /PRIVATE_TTS_USER_TEXT_api_key_fixture@example.invalid/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:303:47
+✖ transport exception (2.123087ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  500 !== 502
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:308:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:303:39)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:313:1
+✖ TTS: the 30-second deadline bounds non-cooperative authentication (152.150299ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:320:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:324:1
+✖ TTS: the 30-second deadline bounds stalled inbound text and cancellation (154.427737ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:329:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:334:1
+✖ TTS: expired provider fetch settles even if abort is ignored; a late response is cancelled (153.157514ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:340:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:347:1
+✖ TTS: audio read and non-cooperative cleanup remain inside the same deadline (152.788382ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:352:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:357:1
+✖ TTS: inbound/auth/provider/audio share one 30-second budget without phase resets (155.196206ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:370:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:374:1
+✖ TTS: late provider completion is rejected even before the timer callback runs (153.890929ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:378:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:382:1
+✖ TTS: an already-aborted request performs no authentication or generation (3.508216ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  200 !== 408
+
+      at failure (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:122:10)
+      at TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:385:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 408,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:390:1
+✖ TTS: caller cancellation during authentication prevents late generation (152.846683ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:395:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:400:1
+✖ TTS: caller cancellation interrupts a non-cooperative provider fetch (153.792067ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:405:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/voice-tts-boundaries.test.mjs:412:1
+✖ TTS: caller cancellation interrupts streamed audio without waiting for cleanup (154.350389ms)
+  AssertionError [ERR_ASSERTION]: handler must settle without cooperation from auth/fetch/read/cancel
+  + actual - expected
+
+  + true
+  - undefined
+
+      at settled (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:116:12)
+      at async TestContext.<anonymous> (file:///workspace/scratch/ccfbf7e5800b/purama-ai/tests/voice-tts-boundaries.test.mjs:417:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

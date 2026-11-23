@@ -1,0 +1,4 @@
+
+  GitNexus Impact (1.6.12)
+GitNexus: No indexed repositories found. Run: gitnexus analyze
+{"level":50,"time":1795398584394,"name":"gitnexus","msg":"GitNexus: No indexed repositories found. Run: gitnexus analyze"}

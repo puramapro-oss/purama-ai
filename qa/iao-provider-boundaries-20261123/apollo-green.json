@@ -1,0 +1,24 @@
+{
+  "phase": "GREEN",
+  "command": "node --max-old-space-size=512 node_modules/vitest/vitest.mjs run test/apolloTool.test.ts test/providerHttp.test.ts test/providerCompletion.test.ts --maxWorkers 1 --no-file-parallelism --reporter=verbose",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "baselineCommit": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "exitCode": 0,
+  "sourceSha256": "4013a210675d6768a3d27270a8c5cb46cb192f6cc1c298efa46eadcd3b30c219",
+  "testSha256": "b2eabc34295541ff35c384e3029a290677cef3963d2de26983bd47923fd5ade4",
+  "logSha256": "3bf87cf2c38fe3cde84529a46d5d89a9c7e78704ef3aeb906ff85b09a3d08eb7",
+  "scope": "Real Apollo tool and shared provider transport; companion provider completion tests use local PGlite. Simulated provider fetches and synthetic credentials only; no external provider calls.",
+  "testReview": "Same 34 Apollo scenarios as RED, with stricter exact-error assertions and no HTTP error body reader invocation.",
+  "tests": {
+    "total": 56,
+    "passed": 56,
+    "failed": 0,
+    "byFile": {
+      "test/providerCompletion.test.ts": 8,
+      "test/apolloTool.test.ts": 34,
+      "test/providerHttp.test.ts": 14
+    }
+  },
+  "rawCaptureLogSha256": "767512651166fa985111688a78414ef91ba1eb4e22797d230d5128390d7e6d20",
+  "logFormatting": "See log-formatting.json"
+}

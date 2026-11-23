@@ -9,7 +9,12 @@ import {
 import { Mic2, Volume2, Loader2, Headphones, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { useVoice } from '@/hooks/useVoice';
-import { OPENAI_VOICES, ELEVENLABS_VOICES } from '@/lib/voice';
+import { DEFAULT_VOICE_SETTINGS, OPENAI_VOICES, ELEVENLABS_VOICES } from '@/lib/voice';
+
+const SPEED_LIMITS = {
+  openai: { min: 0.5, max: 2 },
+  elevenlabs: { min: 0.7, max: 1.2 },
+};
 
 export function VoiceSettingsCard() {
   const voice = useVoice();
@@ -17,6 +22,7 @@ export function VoiceSettingsCard() {
   const [testing, setTesting] = useState(false);
 
   const voices = voice.settings.provider === 'elevenlabs' ? ELEVENLABS_VOICES : OPENAI_VOICES;
+  const speedLimits = SPEED_LIMITS[voice.settings.provider];
 
   const update = async (patch: Parameters<typeof voice.updateSettings>[0]) => {
     setSaving(true);
@@ -93,7 +99,15 @@ export function VoiceSettingsCard() {
                 <Label className="text-xs">Fournisseur</Label>
                 <Select
                   value={voice.settings.provider}
-                  onValueChange={(v: 'openai' | 'elevenlabs') => update({ provider: v })}
+                  onValueChange={(provider: 'openai' | 'elevenlabs') => {
+                    const { min, max } = SPEED_LIMITS[provider];
+                    // Save compatible settings together; voice IDs belong to one provider.
+                    update({
+                      provider,
+                      voice_id: provider === 'elevenlabs' ? ELEVENLABS_VOICES[0].id : DEFAULT_VOICE_SETTINGS.voice_id,
+                      speed: Math.min(max, Math.max(min, voice.settings.speed)),
+                    });
+                  }}
                   disabled={saving}
                 >
                   <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
@@ -124,8 +138,8 @@ export function VoiceSettingsCard() {
               <Label className="text-xs">Vitesse · {voice.settings.speed.toFixed(2)}×</Label>
               <input
                 type="range"
-                min={0.5}
-                max={2}
+                min={speedLimits.min}
+                max={speedLimits.max}
                 step={0.05}
                 value={voice.settings.speed}
                 onChange={(e) => update({ speed: parseFloat(e.target.value) })}
@@ -138,7 +152,7 @@ export function VoiceSettingsCard() {
               type="button"
               variant="outline"
               onClick={testVoice}
-              disabled={testing || voice.isSpeaking}
+              disabled={saving || testing || voice.isSpeaking}
               className="w-full border-accent-purple/40 text-accent-purple hover:bg-accent-purple/10"
             >
               {voice.isSpeaking || testing ? (

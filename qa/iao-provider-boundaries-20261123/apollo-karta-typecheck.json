@@ -1,0 +1,8 @@
+{
+  "command": "node --max-old-space-size=1024 node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-ai/karta",
+  "exitCode": 0,
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scope": "KARTA TypeScript compile check only; no emit and no provider calls.",
+  "priorAttempt": "512 MiB Node heap exhausted; preserved in apollo-karta-typecheck-512m.*. Retried once at 1024 MiB after checking available memory."
+}
