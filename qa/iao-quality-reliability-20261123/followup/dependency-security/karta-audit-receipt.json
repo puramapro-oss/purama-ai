@@ -1,0 +1,43 @@
+{
+  "command": [
+    "npm",
+    "audit",
+    "--json",
+    "--package-lock-only",
+    "--audit-level=high",
+    "--ignore-scripts",
+    "--registry=https://registry.npmjs.org",
+    "--fetch-retries=0",
+    "--fetch-timeout=15000"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 0,
+  "duration_seconds": 6.995,
+  "lockfile_sha256_before": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
+  "lockfile_sha256_after": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
+  "lock_unchanged": true,
+  "summary": {
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 115,
+        "dev": 110,
+        "optional": 62,
+        "peer": 0,
+        "peerOptional": 0,
+        "total": 232
+      }
+    },
+    "error": null,
+    "vulnerabilities": {}
+  },
+  "recorded_at": "2026-11-23T19:39:10.269077+00:00",
+  "base_commit": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3"
+}

@@ -1,0 +1,15 @@
+{
+  "graph_result": "UNKNOWN: unresolved indirect receiver dispatch, not absence of impact",
+  "verified_source_call_chain": [
+    "consultation-host.ts consult injects admission.reserve wrapper into runModelConsultation",
+    "consultation.ts call() awaits deps.admission.reserve then checks activeSignal before bounded action",
+    "consultation.ts finally always calls deps.admission.settle, even when reserve throws",
+    "consultation-store.ts reserve validates returned RPC boolean; policy expiresAt is private to host, not passed in ConsultationEstimates"
+  ],
+  "reproduction": "reservation-expiry-red.log demonstrates actual invocation through this wrapper with a deferred admitted reservation",
+  "intended_receipt_after_patch": {
+    "status": "blocked",
+    "usage": []
+  },
+  "cost_claim": "No provider invocation; no invented actual cost value or usage."
+}

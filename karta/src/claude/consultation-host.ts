@@ -125,24 +125,53 @@ export function createConsultationHost(options: {
   const scrape = (options.scrapeConfigured ?? !!process.env.FIRECRAWL_API_KEY) && !!policy?.research?.scrapeMaxCostMicros;
   const active = new Map<string, AbortController>();
   let cache: { until: number; models: ModelExecutionCapability[] } | undefined;
+  let loading: { controller: AbortController; waiters: number; promise: Promise<ModelExecutionCapability[]> } | undefined;
   const valid = () => !!policy && Date.parse(policy.expiresAt) > now();
   const authorize = async (signal: AbortSignal) => {
     signal.throwIfAborted();
     if (!valid() || simulation || !apiKey) throw failure("IAO_UNAVAILABLE");
     if (await bounded(() => stopped(), 5000, signal) !== false) throw failure("IAO_UNAVAILABLE");
     signal.throwIfAborted();
+    if (!valid()) throw failure("IAO_UNAVAILABLE");
   };
   const models = async (signal: AbortSignal) => {
+    signal.throwIfAborted();
     if (!policy || !valid()) throw failure("IAO_UNAVAILABLE");
     if (cache && cache.until > now()) return cache.models.length ? normalizeModelCatalog(cache.models) : [];
-    const found = await (options.loadCatalog
-      ? options.loadCatalog(policy.models, signal)
-      : loadAnthropicModelCatalog({ apiKey, allowed: policy.models.map(({ model, maxOutputTokens }) => ({ model, maxOutputTokens })) }, signal));
-    signal.throwIfAborted();
-    const qualified = found.length ? normalizeModelCatalog(found) : [];
-    if (qualified.some(m => !policy.models.some(p => p.model === m.model && p.maxOutputTokens >= m.maxOutputTokens))) throw failure("IAO_UNAVAILABLE");
-    cache = { until: now() + 60_000, models: qualified };
-    return qualified;
+    if (!loading) {
+      const controller = new AbortController();
+      const pending = { controller, waiters: 0, promise: bounded(async current => {
+        const found = await (options.loadCatalog
+          ? options.loadCatalog(policy.models, current)
+          : loadAnthropicModelCatalog({ apiKey, allowed: policy.models.map(({ model, maxOutputTokens }) => ({ model, maxOutputTokens })) }, current));
+        current.throwIfAborted();
+        const qualified = found.length ? normalizeModelCatalog(found) : [];
+        if (qualified.some(m => !policy.models.some(p => p.model === m.model && p.maxOutputTokens >= m.maxOutputTokens))) throw failure("IAO_UNAVAILABLE");
+        return qualified;
+      }, 5000, controller.signal).then(qualified => {
+        controller.signal.throwIfAborted();
+        if (!valid()) throw failure("IAO_UNAVAILABLE");
+        cache = { until: now() + 60_000, models: qualified };
+        return qualified;
+      }) };
+      loading = pending;
+      const settled = () => { if (loading === pending) loading = undefined; };
+      void pending.promise.then(settled, settled);
+    }
+    const pending = loading;
+    pending.waiters++;
+    try {
+      // Share only account capabilities. Each caller keeps its own cancellation
+      // and the owner grant is still checked separately by catalog()/begin().
+      const qualified = await bounded(() => pending.promise, 5000, signal);
+      if (!valid()) throw failure("IAO_UNAVAILABLE");
+      return qualified.length ? normalizeModelCatalog(qualified) : [];
+    } finally {
+      if (--pending.waiters === 0) {
+        if (loading === pending) loading = undefined;
+        pending.controller.abort();
+      }
+    }
   };
   const validateIdentity = (userId: string, operationId?: string) => {
     if (!UUID.test(userId) || (operationId !== undefined && !UUID.test(operationId))) throw failure("IAO_INVALID");
@@ -161,7 +190,8 @@ export function createConsultationHost(options: {
       try { found = await models(signal); } catch { return empty("account_unavailable"); }
       if (!found.length) return empty("model_unavailable");
       let funded: boolean;
-      try { funded = await store.availability(userId, signal); } catch { return empty("service_unavailable"); }
+      try { funded = await store.availability(userId, signal); signal.throwIfAborted(); } catch { return empty("service_unavailable"); }
+      if (!valid()) return empty("not_configured");
       return { available: funded, reason: funded ? "ready" : "budget_unavailable", research: { search, scrape },
         models: found.map(model => {
           const profiles: ConsultationCatalog["models"][number]["profiles"] = [];
@@ -230,7 +260,10 @@ export function createConsultationHost(options: {
           catalog, models: selected.map(model => ({ model, provider: "anthropic", client })), research,
           admission: { ...begun.admission, reserve: async (call, current) => {
             await authorize(current);
-            return begun.admission.reserve(call, current);
+            const accepted = await begun.admission.reserve(call, current);
+            current.throwIfAborted();
+            if (!valid()) throw failure("IAO_UNAVAILABLE");
+            return accepted;
           } },
         }, controller.signal);
         return publicOperation(await begun.finalize(persistableConsultationResult(result)));

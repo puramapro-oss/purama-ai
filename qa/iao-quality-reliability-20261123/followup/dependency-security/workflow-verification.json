@@ -1,0 +1,40 @@
+{
+  "observed_at": "2026-11-23T19:44:02.202Z",
+  "command": "node (js-yaml parse, pull_request eligibility, unchanged configuration assertions)",
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 0,
+  "yaml_valid": true,
+  "only_two_audit_steps_changed": true,
+  "permissions_unchanged": true,
+  "workflow_sha256": "71dc6bf11c8a7866dc3b3bf0999b5c4ab4023fae36440333c4006d45b81af634",
+  "steps": [
+    {
+      "job": "karta",
+      "index": 20,
+      "before": {
+        "if": "${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}",
+        "run": "npm audit --audit-level=high --omit=dev"
+      },
+      "after": {
+        "name": "Audit complete KARTA dependency lock",
+        "run": "npm audit --package-lock-only --audit-level=high --ignore-scripts"
+      },
+      "pull_request_eligible": true,
+      "actual_ci_execution": "NOT_OBSERVED_YET"
+    },
+    {
+      "job": "site",
+      "index": 59,
+      "before": {
+        "if": "${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}",
+        "run": "npm audit --audit-level=high --omit=dev"
+      },
+      "after": {
+        "name": "Audit complete site dependency lock",
+        "run": "npm audit --package-lock-only --audit-level=high --ignore-scripts"
+      },
+      "pull_request_eligible": true,
+      "actual_ci_execution": "NOT_OBSERVED_YET"
+    }
+  ]
+}

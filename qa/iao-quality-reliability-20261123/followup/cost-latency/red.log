@@ -1,0 +1,105 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ❯ test/consultationHost.test.ts (23 tests | 6 failed) 477ms
+   ❯ catalogue request reuse and cancellation isolation (7)
+     × shares one native GET across a burst while checking every user's grant independently 97ms
+     × cancels one requester without cancelling the other requester's shared native GET 53ms
+     × aborts an abandoned load, admits a fresh load and excludes its late predecessor from the cache 104ms
+     × does not cache a failed shared load and can recover without retaining a failed promise 53ms
+     × shares and caches an empty result until expiry, then discovers the available models 55ms
+     × rejects a catalogue arriving after the policy expires before checking a spending grant 56ms
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 17 passed (23)
+   Start at  20:43:38
+   Duration  939ms (tests 61%, transform 23%, import 14%, setup 1%, worker 1%)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > shares one native GET across a burst while checking every user's grant independently
+AssertionError: expected "Mock" to be called 1 times, but got 32 times
+ ❯ test/consultationHost.test.ts:80:25
+     78|       release.resolve();
+     79|       const catalogs = await Promise.all(results);
+     80|       expect(transport).toHaveBeenCalledTimes(1);
+       |                         ^
+     81|       expect(availability).toHaveBeenCalledTimes(owners.length);
+     82|       expect(availability.mock.calls.map(([owner]) => owner).sort()).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > cancels one requester without cancelling the other requester's shared native GET
+AssertionError: expected "Mock" to be called 1 times, but got 2 times
+ ❯ test/consultationHost.test.ts:112:25
+    110|       expect(survivingResult.reason).toBe("ready");
+    111|       expect(activeSignals).toBe(1);
+    112|       expect(transport).toHaveBeenCalledTimes(1);
+       |                         ^
+    113|       expect(f.store.availability).toHaveBeenCalledExactlyOnceWith(use…
+    114|     } finally { first.abort(); second.abort(); release.resolve(); tran…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > aborts an abandoned load, admits a fresh load and excludes its late predecessor from the cache
+AssertionError: expected "Mock" to be called 2 times, but got 3 times
+ ❯ test/consultationHost.test.ts:143:25
+    141|       await Promise.resolve(); await Promise.resolve();
+    142|       expect((await host.catalog(user, new AbortController().signal)).…
+    143|       expect(transport).toHaveBeenCalledTimes(2);
+       |                         ^
+    144|     } finally { first.abort(); second.abort(); old.resolve(); fresh.re…
+    145|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > does not cache a failed shared load and can recover without retaining a failed promise
+AssertionError: expected "vi.fn()" to be called 2 times, but got 5 times
+ ❯ test/consultationHost.test.ts:158:25
+    156|     recovery = true;
+    157|     expect((await host.catalog(user, new AbortController().signal)).re…
+    158|     expect(loadCatalog).toHaveBeenCalledTimes(2);
+       |                         ^
+    159|     expect(f.store.availability).toHaveBeenCalledTimes(1);
+    160|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > shares and caches an empty result until expiry, then discovers the available models
+AssertionError: expected 4 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 4
+
+ ❯ test/consultationHost.test.ts:176:31
+    174|     refresh = true; clock += 1;
+    175|     expect((await host.catalog(user, new AbortController().signal)).re…
+    176|     expect(callsBeforeExpiry).toBe(1);
+       |                               ^
+    177|     expect(loadCatalog).toHaveBeenCalledTimes(2);
+    178|     expect(f.store.availability).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  test/consultationHost.test.ts > catalogue request reuse and cancellation isolation > rejects a catalogue arriving after the policy expires before checking a spending grant
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/consultationHost.test.ts:189:39
+    187|     await vi.waitFor(() => expect(loadCatalog).toHaveBeenCalled());
+    188|     clock += 1; release.resolve(catalog);
+    189|     expect((await request).available).toBe(false);
+       |                                       ^
+    190|     expect(f.store.availability).not.toHaveBeenCalled();
+    191|     expect(f.store.begin).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯

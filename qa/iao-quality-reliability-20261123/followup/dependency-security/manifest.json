@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-23",
+  "base": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+  "owner": "audit_dependency_security",
+  "status": "PASS_WITH_OPEN_LOW_ADVISORY",
+  "dependency_audits": {
+    "karta": {
+      "exit": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "site": {
+      "exit": 0,
+      "low_package_entries": 3,
+      "independent_advisories": 1,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    }
+  },
+  "open_advisory": {
+    "id": "GHSA-848j-6mx2-7j84",
+    "cve": "CVE-2025-14505",
+    "primary_source": "https://github.com/advisories/GHSA-848j-6mx2-7j84",
+    "severity": "low",
+    "affected": "elliptic <=6.6.1",
+    "patched_version": null,
+    "production_graph": true,
+    "verified_path_ecdsa_sign_calls": 0,
+    "automatic_breaking_downgrade_applied": false
+  },
+  "targeted_tests": {
+    "dependency_compatibility": 5,
+    "elliptic_path": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "workflow": {
+    "changed_steps": 2,
+    "yaml_valid": true,
+    "pull_request_eligible": true,
+    "permissions_unchanged": true,
+    "live_ci": "NOT_OBSERVED_YET"
+  },
+  "source_secret_patterns": {
+    "files": 169,
+    "patterns": 6,
+    "matches": 0,
+    "exhaustive": false
+  },
+  "product_changed": false,
+  "dependencies_changed": false,
+  "deployed": false,
+  "proofs": {
+    "README.md": "a5f956fd37aaf0fdf2a1e26564e233a53b28ce816098d58f05d351139cf51d81",
+    "compatibility.log": "26e4df1d1677513ec85611212e54e57f2f4531fdeb5431eff86dcfdf456c1472",
+    "elliptic-path.log": "660e98f700a637924c0bcc5ed96d055c8fbc90c896430cae5a22d6d5a0b45eb0",
+    "karta-audit-full.json": "63342afb4d84d2f3090f0bfa5329ae9f53372be0a04b4d69982e7751015cf9af",
+    "karta-audit-receipt.json": "92074c2b3f8e7c183bb98619025335703ab416876e85d9193b23d2d83eb7a2cc",
+    "karta-audit-stderr.log": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829",
+    "site-audit-full.json": "8756a61c0bbdf51ae78f42c6bd948abe7be0a77fb960d7bdc3f3682a55667bc6",
+    "site-audit-receipt.json": "9f83b77d2dbe8d036e4a1f45a35792c17185ec0c3979589dda811b15c6df075e",
+    "site-audit-stderr.log": "9aac3da9a7039a99c345545c32f286aa65c358d571bfce7e00d94625d095c829",
+    "source-secret-patterns.json": "b958830a315aed9983c4095225bf110f25a3482dd3afe3d6647ed6410bdf582d",
+    "source-secret-scope.json": "c8934e240f70bca334fac7faec88c9833ac10e7628127c3dc22d3cbb8243af41",
+    "targeted-verification.json": "8b020662af1c13f676130ba6d7172783f566f8c79228ee230155198fe43a991d",
+    "workflow-verification.json": "b99715647ef942768b44037dfdd42c49e23ead890cac6ea18c589ab48632c193"
+  }
+}

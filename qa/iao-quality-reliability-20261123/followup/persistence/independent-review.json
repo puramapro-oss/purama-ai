@@ -1,0 +1,69 @@
+{
+  "reviewer": "audit_dependency_security",
+  "observed_at": "2026-11-23T19:49:38.897547+00:00",
+  "verdict": "PASS",
+  "p1_p2_findings": [],
+  "reviewed_test_sha256": "2581fa4886ba0a72efe3b049e7eb72d923102e2db005e87164389a36314f4464",
+  "manifest_sha_matches_reviewed_test": true,
+  "existing_source_paths_unchanged_from_baseline": true,
+  "tests_rerun_by_reviewer": false,
+  "execution_evidence_read": {
+    "log": "recovery-test.log",
+    "passed": 6,
+    "failed": 0,
+    "command_receipt": "recovery-execution.json"
+  },
+  "checks": [
+    {
+      "name": "commit_then_acknowledgement_loss",
+      "result": "PASS",
+      "evidence": "createConsultationSqlFixture executes await db.query against production SQL migrations. lostAcknowledgement awaits that successful response, checks error===null, then throws exactly once for the targeted RPC. Independent queries and reconstructed store reads observe persisted changes."
+    },
+    {
+      "name": "create_start_reserve",
+      "result": "PASS",
+      "evidence": "Create retains one operation/task/reservation. A lost start acknowledgement cannot claim or reserve again. Lost reserve acknowledgement keeps one reserved call and rejects both same and additional call IDs."
+    },
+    {
+      "name": "ownership_and_conflict",
+      "result": "PASS_SCOPED",
+      "evidence": "Two auth.users are inserted. Recovery reads for the other account return null; altered question conflicts. Duplicate begin supplies no admission. These are logical store/RPC scope checks, not a new native RLS/JWT qualification."
+    },
+    {
+      "name": "receipt_finalization_accounting",
+      "result": "PASS",
+      "evidence": "Repeated identical settlement/finalization does not duplicate observed tokens or usage events. Conflicting receipt is refused. Finalized answer is recovered unchanged; actual_cost_micros remains null, the cost reservation stays 50 and resourceState requires reconciliation."
+    },
+    {
+      "name": "early_cancellation",
+      "result": "PASS",
+      "evidence": "Cancellation persists before create, repeated cancellation is stable, other-account read is null, delayed create yields no admission or operation/task/reservation allocation."
+    },
+    {
+      "name": "claim_scope",
+      "result": "PASS",
+      "evidence": "Manifest explicitly limits recovery to a new store adapter on the same PGlite backend. It does not claim process/database restart, native multi-connection locking, real PostgREST or real provider billing."
+    }
+  ],
+  "formatting_gate": {
+    "status": "PASS",
+    "command": [
+      "git",
+      "diff",
+      "--no-index",
+      "--check",
+      "/dev/null",
+      "karta/test/consultationPersistenceRecovery.test.ts"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "exit_code": 1,
+    "output": "",
+    "interpretation": "Exit1 indicates a newly added file; no whitespace diagnostic.",
+    "resolved_finding": "Author removed exactly one trailing LF; reconstructing that byte reproduces the previously reviewed/executed SHA256.",
+    "functional_rerun_required": false
+  },
+  "files_modified_by_reviewer": [
+    "qa/iao-quality-reliability-20261123/followup/persistence/independent-review.json"
+  ],
+  "original_executed_test_sha256": "f6788d46ec1ba0ebb1e3bb2860825496a2d14742c1d07c07d13c11865ba2e364"
+}

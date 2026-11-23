@@ -1,0 +1,37 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ❯ test/consultationHost.test.ts (28 tests | 1 failed | 27 skipped) 67ms
+   ❯ real consultation host composition (17)
+     × does not reserve or infer when the policy expires during the per-call stop check 65ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 skipped (28)
+   Start at  20:53:18
+   Duration  445ms (transform 51%, import 24%, tests 22%, setup 2%, worker 1%)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/consultationHost.test.ts > real consultation host composition > does not reserve or infer when the policy expires during the per-call stop check
+AssertionError: expected { reservations: 1, modelCalls: 1 } to deeply equal { reservations: +0, modelCalls: +0 }
+
+- Expected
++ Received
+
+  {
+-   "modelCalls": 0,
+-   "reservations": 0,
++   "modelCalls": 1,
++   "reservations": 1,
+  }
+
+ ❯ test/consultationHost.test.ts:404:109
+    402|     stopCheck.resolve(false);
+    403|     const result = await pending;
+    404|     expect({ reservations: f.admission.reserve.mock.calls.length, mode…
+       |                                                                                                             ^
+    405|       reservations: 0, modelCalls: 0,
+    406|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
