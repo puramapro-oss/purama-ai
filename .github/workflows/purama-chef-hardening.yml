@@ -120,6 +120,8 @@ jobs:
           node --test --test-concurrency=1 --test-timeout=30000
           tests/entraide/frontend.test.mjs tests/entraide/ui-account-scope.test.mjs
       - run: npm run lint
+      - name: Typecheck state-isolation test fixtures
+        run: npx tsc --noEmit -p tests/ui-state/tsconfig.json
       - run: npm run test:distribution:unit
       - run: npm run test:distribution:sql
       - name: Saved agent execution preferences and ownership

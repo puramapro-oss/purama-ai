@@ -86,7 +86,7 @@
       "status": "PARTIEL",
       "exit_code": 137,
       "evidence": "evidence/contract-final-attempt-interrupted.log.json",
-      "scope": "Latest complete rerun killed before assertions; not counted as PASS. The prior 38 tests and separately verified final identity delta are retained."
+      "scope": "Historical local rerun killed before assertions. Its missing final coverage is now provided by ci_karta_final; this interrupted run itself remains PARTIEL."
     },
     {
       "id": "pdf_geometry",
@@ -126,17 +126,41 @@
       "status": "PASS",
       "exit_code": 0,
       "command": "git diff --check",
-      "scope": "38 code/config/test paths plus evidence; AGENTS unchanged; comparison scoped to base; independent UI/auth/SQL review and root contract/backend review"
+      "scope": "40 code/config/test paths plus evidence; AGENTS unchanged; scoped review includes the UI-state fixture and its early CI typecheck."
+    },
+    {
+      "id": "ci_karta_final",
+      "status": "PASS",
+      "tests_passed": 4401,
+      "test_files_passed": 192,
+      "command": "npm test; npm run typecheck; npm run build",
+      "cwd": "karta",
+      "evidence": "evidence/ci-first-run.json",
+      "tested_head": "d633b769f8ed8f03df64088c7267c18d85b76d17",
+      "scope": "Includes 38 final contract cases, 88 outreach, 8 scheduler, 57 policy and 13 chat cases. Do not sum those subsets again. CI merge tree verified identical to published tree."
+    },
+    {
+      "id": "ci_site_first_run",
+      "status": "PARTIEL",
+      "evidence": "evidence/ci-first-run.json",
+      "scope": "Global frontend typecheck, build, lint and preceding browser suites PASS. UI-state: 24 passed, 2 partner settings fixture failures; subsequent dependent steps skipped. Corrective CI remains pending."
+    },
+    {
+      "id": "ui_state_fixture_types",
+      "status": "PASS",
+      "exit_code": 0,
+      "command": "NODE_OPTIONS='--max-old-space-size=640' ./node_modules/.bin/tsc --noEmit -p tests/ui-state/tsconfig.json",
+      "scope": "Corrected fixture supplies required UTC, matching migration and product default. Same check added early in site CI."
     }
   ],
   "independent_review": "PASS for source boundaries described in README; findings corrected before publication",
   "production_deployed": false,
   "real_outreach_sent": false,
   "limits": [
-    "Full application typecheck interrupted with exit137; targeted typechecks passed.",
-    "PostgreSQL native concurrent transactions not tested.",
+    "Historical local global typecheck was interrupted; global application typecheck and build subsequently passed on GitHub.",
+    "Native PostgreSQL concurrent transactions for the new partner contract/outreach reservations have not been qualified.",
     "Live Supabase migrations, n8n workflows, provider delivery and signature not tested.",
-    "Browser install returned HTTP403; JSDOM is not a real-browser visual or assistive-technology test.",
+    "Local browser installation returned HTTP403. Existing CI browser suites ran; the first UI-state run had two incomplete-fixture failures. Corrective CI and the new full contract review browser journey remain separate gates.",
     "Free-form chat multichannel execution, financial rewards and ONE gifts are outside this implementation.",
     "GitNexus was not executed; scoped alternative described in README; instructions left unchanged."
   ],
@@ -180,6 +204,11 @@
     "webhook-final.log.json": {
       "sha256": "90669a4a491b9cb5c2d3696defc78fd7db3f8116f47786cd3cd8c47ce2ab2795",
       "bytes": 4892
+    },
+    "ci-first-run.json": {
+      "sha256": "ec2706696b55d915825e410df02d7b1d31f34ca95ac92074a1a70e55cabbafdc",
+      "bytes": 5298,
+      "kind": "Selected CI log lines, not full raw stdout"
     }
   },
   "log_storage": "Raw stdout is preserved exactly as a JSON string with its original byte count and SHA-256."

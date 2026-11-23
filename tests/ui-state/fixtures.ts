@@ -12,6 +12,7 @@ const partner_agent_config: Omit<PartnerConfig, 'user_id'> =  {
   outreach_hours_start: '09:00',
   outreach_hours_end: '18:00',
   outreach_days: ['MO', 'TU', 'WE', 'TH', 'FR'],
+  outreach_timezone: 'UTC',
   relance_1_delay_days: 3,
   relance_2_delay_days: 7,
   relance_3_delay_days: 14,

@@ -32,13 +32,25 @@ Le fichier [verification.json](./verification.json) donne les commandes, résult
 | Politique des assistants et nouveaux points d’entrée | 57 tests réussis, dont préparation via la nouvelle entrée et refus de commande historique avant effet. |
 | Webhook et persistance | 46 tests réussis, sans test ignoré. |
 | Chat partenaire et isolation | 13 tests serveur/PGlite et 22 tests de composants réussis. Les empreintes du reçu sont rapprochées du code final. |
-| Contrats, PDF réel et réservations SQL | 38 tests réussis avant le seul changement final du littéral `app_slug`; ce dernier changement est vérifié séparément sur les vraies migrations et le vrai RPC. |
+| Contrats, PDF réel et réservations SQL | 38 tests réussis sur les sources finales dans GitHub Actions, inclus dans les 4 401 tests KARTA. Les résultats locaux antérieurs et le delta d’identité restent conservés séparément. |
 | PDF multipage | Rectangle de signature retrouvé sur la page 8 par PyMuPDF, avec les mêmes coordonnées que la requête API. |
 | Types et revue | TypeScript ciblé frontend et handlers, lint ciblé, revue indépendante et vérification du diff. |
 
-**Limite de la réception consolidée des 38 cas contrats :** des relances sur le dernier instantané ont été arrêtées avec code 137 avant résultat. Elles ne sont pas comptées comme réussies. La preuve conserve le passage 38/38, l’identité canonique vérifiée séparément, et les 57 cas des points d’entrée. Les contrôles du scheduler ont ensuite réussi dans une exécution séquentielle avec ressources bornées. Le typecheck global de l’application a également été interrompu ; les contrôles TypeScript ciblés sont distincts de cette tentative.
+**Historique de la réception locale des 38 cas contrats :** des relances sur le dernier instantané ont été arrêtées avec code 137 avant résultat. Elles ne sont pas comptées comme réussies. La preuve conserve le passage 38/38, l’identité canonique vérifiée séparément, et les 57 cas des points d’entrée. Les contrôles du scheduler ont ensuite réussi dans une exécution séquentielle avec ressources bornées. Le typecheck global local a également été interrompu ; les contrôles ciblés et les réussites ultérieures de CI décrites ci-dessous sont distincts de cette tentative.
 
-PGlite exécute les vraies fonctions SQL, mais ses requêtes concurrentes ne qualifient pas la contention entre transactions PostgreSQL natives. Les tests JSDOM qualifient les interactions et le cycle des comptes, pas un rendu dans un navigateur réel. Le téléchargement du navigateur Playwright a échoué avec HTTP 403 ; aucun résultat navigateur n’est revendiqué.
+PGlite exécute les vraies fonctions SQL, mais ses requêtes concurrentes ne qualifient pas la contention entre transactions PostgreSQL natives. Les tests JSDOM qualifient les interactions et le cycle des comptes, pas un rendu dans un navigateur réel. Le téléchargement local de Playwright a échoué avec HTTP 403. Les suites navigateur existantes ont ensuite été exécutées sur GitHub ; cette exécution ne qualifie pas encore le nouveau parcours complet d’approbation de contrat.
+
+## Réception GitHub et correction d’une fixture
+
+La [première exécution CI](https://github.com/puramapro-oss/purama-ai/actions/runs/45092414496) porte sur la tête `d633b769f8ed8f03df64088c7267c18d85b76d17`, fusionnée à sa base sous `5fe12ae67a0ad382f37d88704c0b98258b299d74`. Les deux arbres ont été récupérés et vérifiés identiques : `b4d65fb82d0e8e3d2482605b5b3fa5ae4caf6af6`.
+
+**KARTA : PASS, 4 401 tests dans 192 fichiers**, dont les 38 cas contrats finaux, puis typecheck et build. La réserve locale des 38 cas est levée par cette exécution indépendante. Le job site a aussi réussi son lint, son build, le typecheck global et les suites navigateur précédant `ui-state`.
+
+**CI site initiale : PARTIEL, 24/26 cas ui-state réussis.** Les deux cas de sauvegarde partenaire n’enregistraient rien : leur fixture de configuration existante omettait le nouveau champ obligatoire `outreach_timezone`. Le transport fournissait ce fixture sans complément ; la vraie validation refusait cette configuration avant toute écriture. La migration et le défaut produit contiennent déjà `UTC`.
+
+La correction ajoute uniquement `outreach_timezone: 'UTC'` au fixture partenaire. Les scénarios d’isolation et la validation produit restent intacts. Le job site exécute désormais `tsc --noEmit -p tests/ui-state/tsconfig.json` tôt dans sa séquence ; ce contrôle a réussi localement et détecte ce type d’écart de schéma avant les longues suites navigateur. Le manifeste inclut ces deux fichiers complémentaires.
+
+Les [extraits de logs CI](./evidence/ci-first-run.json) distinguent les réussites, les deux échecs et la provenance. **La nouvelle exécution CI doit confirmer les cas navigateur après ce correctif ; son résultat est suivi dans la PR #93.** Le code applicatif reste identique à la tête déjà reçue par les 4 401 tests.
 
 ## Revue indépendante et procédure suivie
 

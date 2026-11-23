@@ -1,6 +1,10 @@
 {
   "base": "d150c87ff9e3c7530765c4abaf5412c637b74366",
   "files": {
+    ".github/workflows/purama-chef-hardening.yml": {
+      "sha256": "311710a207646586be2e689fc594c69d837432edff8b3a02c591870516133821",
+      "bytes": 12693
+    },
     "karta/package-lock.json": {
       "sha256": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564",
       "bytes": 116410
@@ -152,6 +156,10 @@
     "tests/quality/partner-affiliate.tsconfig.json": {
       "sha256": "a5e55ce9970528e2f78eef2bdd90940ee7d2b4bd4aa2ecadd891359c77147906",
       "bytes": 741
+    },
+    "tests/ui-state/fixtures.ts": {
+      "sha256": "0db91753819ad3ec6ba73d1b810582f5e3492d715c5ac80b04a37ad7417f8a67",
+      "bytes": 3567
     }
   }
 }
