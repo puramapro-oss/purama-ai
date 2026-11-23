@@ -1,0 +1,571 @@
+{
+  "status": "PASS_LOCAL_SCOPE",
+  "observed_utc": "2026-11-23T22:53:31.969196+00:00",
+  "repository": "puramapro-oss/purama-ai",
+  "base_revision": "1170ac3a91e2c828b893a7374f4271a06827d0d2",
+  "source_and_tests_tree_before_receipts": "9525638d726cc2e9154ba7b5e69ddaf7061cc09a",
+  "target_pull_request": 40,
+  "publication_state_at_verification": "local only; integration into the current consolidation is performed separately",
+  "reason": "Default Creator Agent identifiers lagged behind the default KARTA execution catalogue. Manual creation, helper defaults and generated suggestions used claude-sonnet-4-20250514 while default KARTA admits claude-sonnet-4-6 and claude-haiku-4-5-20251001.",
+  "donor": {
+    "pull_request": 70,
+    "head": "347ed23154cf40e70adab2142c5a91997e883c15",
+    "migration_blob": "cfc1da916285edd25196a940712a14b6cec1b71e",
+    "migration_sql_semantically_identical": true,
+    "adaptations": [
+      "Historical model remains in the read type for migration rollout compatibility.",
+      "Generated agent choices stay in the fixed UI list; the generation request may use the server-configured model.",
+      "Selector description is factual, without an absolute ranking or unsupported percentage.",
+      "Migration comment corrects the seed count from eight to nine; SQL is unchanged."
+    ]
+  },
+  "files": [
+    {
+      "path": "src/lib/creator-agent.ts",
+      "sha256": "574af3cd0c85beb7b940f538446d8362bec58c7a408bdc9fe18e4f7b6d29e393",
+      "bytes": 16572,
+      "git_blob": "12775a3a1b167ac4db04a02d0cf899bb4e7684b1"
+    },
+    {
+      "path": "src/pages/CreatorAgentNew.tsx",
+      "sha256": "5f685d533aaa3fc71590a5f0a3ceb425273d58c5cbe8e52f2dc442c06bd8df1e",
+      "bytes": 10964,
+      "git_blob": "078ecb274ebf1ffcc9e6dbfb11987c61c46d7ae2"
+    },
+    {
+      "path": "supabase/functions/creator-agent-generate/index.ts",
+      "sha256": "207f87408aa48794b63d9a77b5ae65582c8724df2cd3b87bde181dae5b8f983d",
+      "bytes": 9290,
+      "git_blob": "e044bb5dd811c0a592dd6f437ed03fdbfac01da6"
+    },
+    {
+      "path": "supabase/migrations/20261009000000_creator_agent_model_default_fix.sql",
+      "sha256": "3d22157ce7ec0ae24479af4143befa7dd1c96c8ef0685440afeddfc415457319",
+      "bytes": 719,
+      "git_blob": "76ee49ebf5cf593ccd3bf767913f548e3b3a0c87"
+    },
+    {
+      "path": "src/lib/creator-agent-model.test.ts",
+      "sha256": "245b09be09e731160f4852d471dbb53dafc515ef3d5afb7b5186a70437165cce",
+      "bytes": 1746,
+      "git_blob": "a159fef2651ef6f12e0cbd39f3f4e7fe5c998202"
+    },
+    {
+      "path": "src/pages/CreatorAgentNew.model.test.tsx",
+      "sha256": "d9592bfa5e5499a86428d5997c2e5637b764030b3e0f7620f769e0b227b980c0",
+      "bytes": 4458,
+      "git_blob": "d0776f3d3163a8a9002a1a59ce7822c4c92a1a96"
+    },
+    {
+      "path": "karta/test/assistantPolicy.test.ts",
+      "sha256": "1f9680c180ab4099f0421e027f0e0d5fc31b3d8297b714d5d1a41836a94a1f25",
+      "bytes": 32093,
+      "git_blob": "6fd8757508fd45d6cebc8d484740dc140ed63211"
+    },
+    {
+      "path": "karta/test/creatorAgentModelMigration.test.ts",
+      "sha256": "f45567d8f59d9e2958bff6d0d424f6e7006f067f24800dda87f605b27be01da7",
+      "bytes": 3794,
+      "git_blob": "03f7e123c073ee8a5834a5382d681b8ad192fbe8"
+    }
+  ],
+  "independent_review": {
+    "path": "docs/quality/creator-agent-model-20261123-review.json",
+    "sha256": "8200d115e44a3f65291539a8c656ef1b1e1a153d9cd9d839a9fcb4a16e70529c",
+    "status": "PASS"
+  },
+  "regression_before_correction": [
+    {
+      "report": "regression-ui-before.json",
+      "sha256": "670d77b40a07aca016d493f8b32aa614c7aea6e8be22bd5372538fc329324afa",
+      "failed": 3,
+      "failed_cases": [
+        "Creator Agent — model creation contract persists the current default when the caller omits the model",
+        "Creator Agent — model creation contract offers the two supported choices without reintroducing the retired default",
+        "CreatorAgentNew — submitted model saves a manual draft with the current default without requiring a model change"
+      ]
+    },
+    {
+      "report": "regression-edge-before.json",
+      "sha256": "1069eac179268857f351d6aa6aafbe7c6ae6aefbafb65acbf560e7d2151395c1",
+      "failed": 5,
+      "failed_cases": [
+        "Creator Agent generation model contract uses the server generation model when unset, without exposing it as an unsupported agent choice",
+        "Creator Agent generation model contract uses the server generation model when configured, without exposing it as an unsupported agent choice",
+        "Creator Agent generation model contract returns an admitted agent model for suggestion \"claude-sonnet-4-6\"",
+        "Creator Agent generation model contract returns an admitted agent model for suggestion \"claude-sonnet-4-20250514\"",
+        "Creator Agent generation model contract returns an admitted agent model for suggestion undefined"
+      ]
+    }
+  ],
+  "checks": {
+    "frontend_typecheck": {
+      "label": "typecheck-root-after",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 15.893,
+      "log_sha256": "534c968ce862137b9871cd92057f70b073fc4010752569d8a199dd5916c0204f"
+    },
+    "karta_typecheck": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 7.934,
+      "log_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6"
+    },
+    "lint": {
+      "command": [
+        "node_modules/.bin/eslint",
+        "src/lib/creator-agent.ts",
+        "src/lib/creator-agent-model.test.ts",
+        "src/pages/CreatorAgentNew.tsx",
+        "src/pages/CreatorAgentNew.model.test.tsx",
+        "supabase/functions/creator-agent-generate/index.ts",
+        "karta/test/assistantPolicy.test.ts",
+        "karta/test/creatorAgentModelMigration.test.ts"
+      ],
+      "exit_code": 0,
+      "started_at_unix": 1795474024.0595944,
+      "duration_seconds": 2.566,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lint_after_review": {
+      "command": [
+        "node_modules/.bin/eslint",
+        "src/lib/creator-agent.ts",
+        "karta/test/assistantPolicy.test.ts"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 1.023,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_suite": {
+      "command": [
+        "node_modules/.bin/vitest",
+        "run",
+        "src/lib/creator-agent-distribution.test.ts",
+        "src/lib/creator-agent-model.test.ts",
+        "src/lib/creator-agent-results.test.ts",
+        "src/pages/CreatorAgentDetail.execution.test.tsx",
+        "src/pages/CreatorAgentDetail.results.test.tsx",
+        "src/pages/CreatorAgentNew.model.test.tsx",
+        "--reporter=json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.416,
+      "log_sha256": "122aa22383dd7a6b56a6cf9c73aad935feb752be40a3c367f1caecddd2916068"
+    },
+    "karta_suite": {
+      "label": "karta-final",
+      "command": [
+        "node_modules/.bin/vitest",
+        "run",
+        "test/assistantPolicy.test.ts",
+        "test/creatorAgentModelMigration.test.ts",
+        "test/customAgentModelSelection.test.ts",
+        "test/modelCatalog.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 5.575,
+      "log_sha256": "dca1eda5808f3206e3542fbba2fed5eed89c51fb54fcf63f7ff70027e2f14e88"
+    },
+    "edge_after_review": {
+      "command": [
+        "node_modules/.bin/vitest",
+        "run",
+        "test/assistantPolicy.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 3.59,
+      "log_sha256": "fd2a56495361f15af3a043bf2921d27d05878847a74be65600e95690317c2573"
+    },
+    "sql_migration": {
+      "command": [
+        "node_modules/.bin/vitest",
+        "run",
+        "test/creatorAgentModelMigration.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "--reporter=json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.749,
+      "log_sha256": "be6aa9210d622927c8c3b0fdbaa2b1b0818ec73921406091c1a43ad839b6726d"
+    }
+  },
+  "passed_test_suites": {
+    "frontend": {
+      "report": "regression-ui-all-final.json",
+      "sha256": "b03fc69653249d6cd31cf07bafce626d8067ef73452ab4a87c2518adcddda338",
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "file": "src/lib/creator-agent-distribution.test.ts",
+          "names": [
+            "adaptateur RPC de distribution n’appelle pas le serveur avec un identifiant invalide",
+            "adaptateur RPC de distribution charge la projection publique par identifiant et propage le signal d’annulation",
+            "adaptateur RPC de distribution distingue un retrait du modèle d’une erreur de chargement",
+            "adaptateur RPC de distribution refuse un résultat qui ne correspond pas au lien demandé : 'plusieurs lignes'",
+            "adaptateur RPC de distribution refuse un résultat qui ne correspond pas au lien demandé : 'un autre identifiant'",
+            "adaptateur RPC de distribution refuse un résultat qui ne correspond pas au lien demandé : 'un modèle privé'",
+            "adaptateur RPC de distribution refuse un résultat qui ne correspond pas au lien demandé : 'un résultat nul'",
+            "adaptateur RPC de distribution réutilise le catalogue public pour les deux écrans existants",
+            "adaptateur RPC de distribution ne laisse pas un titre blanc casser le catalogue entier",
+            "adaptateur RPC de distribution lie la demande au compte attendu et réutilise le même identifiant lors d’une nouvelle tentative",
+            "adaptateur RPC de distribution ne confirme jamais la copie d’un autre utilisateur ou d’une autre demande ({\"id\":\"83000000-0000-4000-8000-000000000001\",\"user_id\":\"83000000-0000-4000-8000-000000000001\",\"cloned_from\":\"81000000-0000-4000-8000-000000000001\"})",
+            "adaptateur RPC de distribution ne confirme jamais la copie d’un autre utilisateur ou d’une autre demande ({\"id\":\"81000000-0000-4000-8000-000000000001\",\"user_id\":\"82000000-0000-4000-8000-000000000001\",\"cloned_from\":\"81000000-0000-4000-8000-000000000001\"})",
+            "adaptateur RPC de distribution ne confirme jamais la copie d’un autre utilisateur ou d’une autre demande ({\"id\":\"83000000-0000-4000-8000-000000000001\",\"user_id\":\"82000000-0000-4000-8000-000000000001\",\"cloned_from\":\"83000000-0000-4000-8000-000000000001\"})",
+            "adaptateur RPC de distribution ne confirme jamais la copie d’un autre utilisateur ou d’une autre demande (null)",
+            "adaptateur RPC de distribution propage le retrait intervenu entre la présentation et la copie",
+            "adaptateur RPC de distribution ne confirme pas une demande refusée après un changement de compte"
+          ]
+        },
+        {
+          "file": "src/lib/creator-agent-model.test.ts",
+          "names": [
+            "Creator Agent — model creation contract persists the current default when the caller omits the model",
+            "Creator Agent — model creation contract keeps an explicit Haiku choice instead of replacing it with the default",
+            "Creator Agent — model creation contract offers the two supported choices without reintroducing the retired default"
+          ]
+        },
+        {
+          "file": "src/lib/creator-agent-results.test.ts",
+          "names": [
+            "références privées jointes au chat existant conserve exactement le corps historique quand aucune référence n’est choisie",
+            "références privées jointes au chat existant transmet uniquement une copie des identifiants choisis, sans contenu ni appel supplémentaire",
+            "références privées jointes au chat existant refuse les sélections invalides avant un appel réseau (0)",
+            "références privées jointes au chat existant refuse les sélections invalides avant un appel réseau (1)",
+            "références privées jointes au chat existant refuse les sélections invalides avant un appel réseau (2)",
+            "références privées jointes au chat existant refuse les sélections invalides avant un appel réseau (3)",
+            "références privées jointes au chat existant ignore une réponse de chat qui arrive après annulation",
+            "références privées jointes au chat existant propage l’échec serveur sans relancer de synthèse"
+          ]
+        },
+        {
+          "file": "src/pages/CreatorAgentDetail.execution.test.tsx",
+          "names": [
+            "CreatorAgentDetail — real task preference controls loads, edits, saves and reloads both choices without changing model or chat settings",
+            "CreatorAgentDetail — real task preference controls shows legacy defaults without adding preferences to an unrelated save",
+            "CreatorAgentDetail — real task preference controls keeps foreign or template settings read-only",
+            "CreatorAgentDetail — real task preference controls does not display an old save response on another agent"
+          ]
+        },
+        {
+          "file": "src/pages/CreatorAgentDetail.results.test.tsx",
+          "names": [
+            "CreatorAgentDetail — résultat privé vers question ouvre le composeur au clavier et joint uniquement les IDs à un seul envoi explicite",
+            "CreatorAgentDetail — résultat privé vers question garde la sélection après un échec et la retire après la réussite de la nouvelle tentative",
+            "CreatorAgentDetail — résultat privé vers question ne laisse pas une réponse ancienne supprimer la sélection du compte revenu après A → B → A",
+            "CreatorAgentDetail — résultat privé vers question oublie la sélection lors d’un changement d’agent et conserve le contrat du chat sans pièce jointe",
+            "CreatorAgentDetail — résultat privé vers question retire de la sélection le résultat dont le propriétaire confirme la suppression",
+            "CreatorAgentDetail — résultat privé vers question ne charge pas de résultats privés pour un modèle consulté en lecture seule"
+          ]
+        },
+        {
+          "file": "src/pages/CreatorAgentNew.model.test.tsx",
+          "names": [
+            "CreatorAgentNew — submitted model saves a manual draft with the current default without requiring a model change",
+            "CreatorAgentNew — submitted model keeps the generated Haiku choice when saving the preview"
+          ]
+        }
+      ]
+    },
+    "karta": {
+      "report": "regression-karta-final.json",
+      "sha256": "c56af4dc38903d08f84d3b8cab594d963c4d62ba171e8d358aa5fe07bdf5b5ca",
+      "passed": 97,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "file": "karta/test/assistantPolicy.test.ts",
+          "names": [
+            "Creator Agent generation model contract uses the server generation model when unset, without exposing it as an unsupported agent choice",
+            "Creator Agent generation model contract uses the server generation model when configured, without exposing it as an unsupported agent choice",
+            "Creator Agent generation model contract returns an admitted agent model for suggestion \"claude-sonnet-4-6\"",
+            "Creator Agent generation model contract returns an admitted agent model for suggestion \"claude-haiku-4-5-20251001\"",
+            "Creator Agent generation model contract returns an admitted agent model for suggestion \"claude-sonnet-4-20250514\"",
+            "Creator Agent generation model contract returns an admitted agent model for suggestion undefined",
+            "canonical policy assembly resolves the actual Deno re-export to the one canonical Node source",
+            "canonical policy assembly encodes role/context delimiters while preserving multilingual data exactly",
+            "canonical policy assembly rejects an absent or non-string role: \"\"",
+            "canonical policy assembly rejects an absent or non-string role: \"  \"",
+            "canonical policy assembly rejects an absent or non-string role: null",
+            "canonical policy assembly rejects an absent or non-string role: 12",
+            "canonical policy assembly rejects an invalid policy kind and keeps task instructions free of the conversation layer",
+            "real provider request construction adds the core and conversation policy once in the actual streaming transport",
+            "real provider request construction adds the task policy once through createRealClaudeClient with a simulated SDK transport",
+            "agent-chat server model selection uses the server main model when configuration is configured",
+            "agent-chat server model selection uses the server main model when configuration is unset",
+            "agent-chat server model selection does not let a client model override the server configuration",
+            "chat server model selection uses the server main model when configuration is configured",
+            "chat server model selection uses the server main model when configuration is unset",
+            "chat server model selection does not let a client model override the server configuration",
+            "agent-chat real handler sends the most recent 20 own messages in chronological order and preserves the latest refusal",
+            "agent-chat real handler fails closed on a history outage before inference or a chat write",
+            "agent-chat real handler runs the real Zod schema and rejects a malformed session before model work",
+            "agent-chat real handler rejects truncated answer before saving any assistant answer",
+            "agent-chat real handler rejects paused answer before saving any assistant answer",
+            "agent-chat real handler rejects empty answer before saving any assistant answer",
+            "agent-chat real handler rejects tool instruction before saving any assistant answer",
+            "agent-chat real handler propagates request cancellation to the provider and stores no assistant response",
+            "agent-chat real handler does not persist a late response even when provider JSON finishes after cancellation",
+            "creator-agent-chat real handler sends the most recent 20 own messages in chronological order and preserves the latest refusal",
+            "creator-agent-chat real handler fails closed on a history outage before inference or a chat write",
+            "creator-agent-chat real handler runs the real Zod schema and rejects a malformed session before model work",
+            "creator-agent-chat real handler rejects truncated answer before saving any assistant answer",
+            "creator-agent-chat real handler rejects paused answer before saving any assistant answer",
+            "creator-agent-chat real handler rejects empty answer before saving any assistant answer",
+            "creator-agent-chat real handler rejects tool instruction before saving any assistant answer",
+            "creator-agent-chat real handler propagates request cancellation to the provider and stores no assistant response",
+            "creator-agent-chat real handler does not persist a late response even when provider JSON finishes after cancellation",
+            "legal-chat real handler sends the most recent 20 own messages in chronological order and preserves the latest refusal",
+            "legal-chat real handler fails closed on a history outage before inference or a chat write",
+            "legal-chat real handler runs the real Zod schema and rejects a malformed session before model work",
+            "legal-chat real handler rejects truncated answer before saving any assistant answer",
+            "legal-chat real handler rejects paused answer before saving any assistant answer",
+            "legal-chat real handler rejects empty answer before saving any assistant answer",
+            "legal-chat real handler rejects tool instruction before saving any assistant answer",
+            "legal-chat real handler propagates request cancellation to the provider and stores no assistant response",
+            "legal-chat real handler does not persist a late response even when provider JSON finishes after cancellation",
+            "authenticated chat contract rejects a client system role before the actual provider is invoked",
+            "authenticated chat contract preserves the existing 50 by 4,000 character server contract without trimming",
+            "authenticated chat contract does not let client input increase the server limits",
+            "authenticated chat contract does not let client input increase the server limits",
+            "task endpoints the versioned contract route refuses the legacy command before any provider or storage effect",
+            "task endpoints creator-agent-generate sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints creator-agent-run sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints legal-build-case sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints legal-generate-document sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-find-prospects sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-generate-contract sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-contract-action sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-send-outreach sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints social publication rejects caption generation before storage, model or publication effects",
+            "task endpoints forces the saved legal success probability to null even when the model returns 99"
+          ]
+        },
+        {
+          "file": "karta/test/creatorAgentModelMigration.test.ts",
+          "names": [
+            "migrates only the retired model, preserves current distribution policies and is idempotent"
+          ]
+        },
+        {
+          "file": "karta/test/customAgentModelSelection.test.ts",
+          "names": [
+            "saved task-execution preferences selects and uses the freshest saved reflection and speed at model admission",
+            "saved task-execution preferences refuses malformed stored preferences (null) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (present undefined) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (array) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (empty) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (missing field) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (null enum) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (invalid enum) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (extra field) without invoking a model",
+            "saved task-execution preferences refuses malformed stored preferences (accessor) without invoking a model",
+            "saved task-execution preferences rejects saved preferences without an explicit stored model",
+            "saved task-execution preferences takes a snapshot of valid persisted values",
+            "custom-agent model choice reaches the existing execution path selects the existing model column and forwards its value after a fresh ownership check",
+            "custom-agent model choice reaches the existing execution path uses a model changed while context was being prepared",
+            "custom-agent model choice reaches the existing execution path does not send stale preferences when a legacy refreshed row has no model",
+            "custom-agent model choice reaches the existing execution path preserves the legacy no-preference shape when the stored field is absent",
+            "custom-agent model choice reaches the existing execution path does not treat an invalid explicit choice as permission to silently use the default",
+            "custom-agent model choice reaches the existing execution path ignores model settings injected in ordinary business context",
+            "custom-agent model choice reaches the existing execution path does not invoke a provider if ownership changes during context preparation",
+            "custom-agent model choice reaches the existing execution path does not invoke a provider if the custom agent is removed during context preparation",
+            "custom-agent model choice reaches the existing execution path preserves explicit static-agent settings without reading a custom account"
+          ]
+        },
+        {
+          "file": "karta/test/modelCatalog.test.ts",
+          "names": [
+            "current account model discovery uses the official origin once and intersects host ceilings with provider capabilities",
+            "current account model discovery does not offer a retired model as newly available",
+            "current account model discovery does not offer a deprecated model as newly available",
+            "current account model discovery does not invent thinking support from a name or incomplete metadata",
+            "current account model discovery handles manual reasoning without adaptive effort",
+            "current account model discovery keeps provider error 401 and credentials out of errors without retry",
+            "current account model discovery keeps provider error 429 and credentials out of errors without retry",
+            "current account model discovery keeps provider error 500 and credentials out of errors without retry",
+            "current account model discovery fails closed on pagination rather than presenting a complete catalogue",
+            "current account model discovery rejects duplicate IDs, invalid UTF-8 and oversized bodies",
+            "current account model discovery prevents network activity for an already cancelled request or malformed key",
+            "current account model discovery bounds body consumption and rejects a late response"
+          ]
+        }
+      ]
+    },
+    "edge_after_review": {
+      "report": "regression-edge-review-final.json",
+      "sha256": "c87ad5a0ca225e3a62c03e9e738fa647ec47efe2cf5fb227a83f5e67962889e7",
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        {
+          "file": "karta/test/assistantPolicy.test.ts",
+          "names": [
+            "Creator Agent generation model contract uses the unset server generation model while keeping agent suggestions in the UI list",
+            "Creator Agent generation model contract uses the configured server generation model while keeping agent suggestions in the UI list",
+            "Creator Agent generation model contract returns a model admitted by the default KARTA catalogue for suggestion \"claude-sonnet-4-6\"",
+            "Creator Agent generation model contract returns a model admitted by the default KARTA catalogue for suggestion \"claude-haiku-4-5-20251001\"",
+            "Creator Agent generation model contract returns a model admitted by the default KARTA catalogue for suggestion \"claude-sonnet-4-20250514\"",
+            "Creator Agent generation model contract returns a model admitted by the default KARTA catalogue for suggestion undefined",
+            "canonical policy assembly resolves the actual Deno re-export to the one canonical Node source",
+            "canonical policy assembly encodes role/context delimiters while preserving multilingual data exactly",
+            "canonical policy assembly rejects an absent or non-string role: \"\"",
+            "canonical policy assembly rejects an absent or non-string role: \"  \"",
+            "canonical policy assembly rejects an absent or non-string role: null",
+            "canonical policy assembly rejects an absent or non-string role: 12",
+            "canonical policy assembly rejects an invalid policy kind and keeps task instructions free of the conversation layer",
+            "real provider request construction adds the core and conversation policy once in the actual streaming transport",
+            "real provider request construction adds the task policy once through createRealClaudeClient with a simulated SDK transport",
+            "agent-chat server model selection uses the server main model when configuration is configured",
+            "agent-chat server model selection uses the server main model when configuration is unset",
+            "agent-chat server model selection does not let a client model override the server configuration",
+            "chat server model selection uses the server main model when configuration is configured",
+            "chat server model selection uses the server main model when configuration is unset",
+            "chat server model selection does not let a client model override the server configuration",
+            "agent-chat real handler sends the most recent 20 own messages in chronological order and preserves the latest refusal",
+            "agent-chat real handler fails closed on a history outage before inference or a chat write",
+            "agent-chat real handler runs the real Zod schema and rejects a malformed session before model work",
+            "agent-chat real handler rejects truncated answer before saving any assistant answer",
+            "agent-chat real handler rejects paused answer before saving any assistant answer",
+            "agent-chat real handler rejects empty answer before saving any assistant answer",
+            "agent-chat real handler rejects tool instruction before saving any assistant answer",
+            "agent-chat real handler propagates request cancellation to the provider and stores no assistant response",
+            "agent-chat real handler does not persist a late response even when provider JSON finishes after cancellation",
+            "creator-agent-chat real handler sends the most recent 20 own messages in chronological order and preserves the latest refusal",
+            "creator-agent-chat real handler fails closed on a history outage before inference or a chat write",
+            "creator-agent-chat real handler runs the real Zod schema and rejects a malformed session before model work",
+            "creator-agent-chat real handler rejects truncated answer before saving any assistant answer",
+            "creator-agent-chat real handler rejects paused answer before saving any assistant answer",
+            "creator-agent-chat real handler rejects empty answer before saving any assistant answer",
+            "creator-agent-chat real handler rejects tool instruction before saving any assistant answer",
+            "creator-agent-chat real handler propagates request cancellation to the provider and stores no assistant response",
+            "creator-agent-chat real handler does not persist a late response even when provider JSON finishes after cancellation",
+            "legal-chat real handler sends the most recent 20 own messages in chronological order and preserves the latest refusal",
+            "legal-chat real handler fails closed on a history outage before inference or a chat write",
+            "legal-chat real handler runs the real Zod schema and rejects a malformed session before model work",
+            "legal-chat real handler rejects truncated answer before saving any assistant answer",
+            "legal-chat real handler rejects paused answer before saving any assistant answer",
+            "legal-chat real handler rejects empty answer before saving any assistant answer",
+            "legal-chat real handler rejects tool instruction before saving any assistant answer",
+            "legal-chat real handler propagates request cancellation to the provider and stores no assistant response",
+            "legal-chat real handler does not persist a late response even when provider JSON finishes after cancellation",
+            "authenticated chat contract rejects a client system role before the actual provider is invoked",
+            "authenticated chat contract preserves the existing 50 by 4,000 character server contract without trimming",
+            "authenticated chat contract does not let client input increase the server limits",
+            "authenticated chat contract does not let client input increase the server limits",
+            "task endpoints the versioned contract route refuses the legacy command before any provider or storage effect",
+            "task endpoints creator-agent-generate sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints creator-agent-run sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints legal-build-case sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints legal-generate-document sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-find-prospects sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-generate-contract sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-contract-action sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints partner-send-outreach sends its actual task prompt and stops at simulated provider failure",
+            "task endpoints social publication rejects caption generation before storage, model or publication effects",
+            "task endpoints forces the saved legal success probability to null even when the model returns 99"
+          ]
+        }
+      ]
+    }
+  },
+  "unique_passed_tests": 136,
+  "test_count_note": "39 frontend plus 97 KARTA tests. The later 63-test Edge run is a subset of KARTA, repeated after the review clarified custom-catalogue assertions; it is not counted twice.",
+  "sql_contract": {
+    "engine": "PGlite 0.5.8, single disposable PostgreSQL/WASM connection",
+    "real_migrations": [
+      "20260407000000_creator_agent.sql",
+      "20261110001000_creator_public_distribution.sql",
+      "20261009000000_creator_agent_model_default_fix.sql"
+    ],
+    "assertions": [
+      "All nine legacy templates and the owned legacy row change to the current default.",
+      "Explicit Haiku, current Sonnet, custom identifiers and NULL remain byte-for-byte equivalent in returned rows.",
+      "Unrelated columns, RLS flags, policies and table ACL remain unchanged.",
+      "Reapplying the migration does not modify rows or timestamps.",
+      "A new insert omitting model receives the corrected SQL DEFAULT."
+    ]
+  },
+  "gitnexus": {
+    "whole_repository_index": "PARTIAL: full indexing exited 1 without a final diagnostic. Fresh independent indexes of all src and all supabase/functions succeeded before and after source edits.",
+    "pre_edit_type_impact": "HIGH: AgentModel impacts eight indexed items; warning issued before product edits.",
+    "delta": {
+      "ui": {
+        "changed_count": 17,
+        "affected_count": 2,
+        "changed_files": 4,
+        "risk_level": "medium"
+      },
+      "edge": {
+        "changed_count": 1,
+        "affected_count": 0,
+        "changed_files": 1,
+        "risk_level": "low"
+      }
+    },
+    "compare_to_main": {
+      "revision": "ae84415be0b9516422805910be999a2c1e6350c0",
+      "verified_url": "https://api.github.com/repos/puramapro-oss/purama-ai/git/ref/heads/main",
+      "results": {
+        "ui": {
+          "changed_count": 2375,
+          "affected_count": 94,
+          "changed_files": 179,
+          "risk_level": "critical"
+        },
+        "edge": {
+          "changed_count": 1662,
+          "affected_count": 216,
+          "changed_files": 106,
+          "risk_level": "critical"
+        }
+      },
+      "note": "Critical results cover the whole historical consolidation versus main, not only this delta."
+    },
+    "limitations": [
+      "SQL, KARTA test code and cross-runtime HTTP calls are not covered by the two focused indexes.",
+      "Anonymous Deno callback has no function node; file/property impact is supplemented by source review and transport tests.",
+      "FTS disabled; empty search results were not treated as proof of absence."
+    ]
+  },
+  "environment": {
+    "node": "24.22.3",
+    "frontend_typescript": "5.8.3",
+    "frontend_vitest": "4.1.12",
+    "karta_typescript": "5.9.3",
+    "karta_vitest": "5.0.3",
+    "karta_pglite": "0.5.8",
+    "dependencies": "Existing local dependencies reused; no installation performed."
+  },
+  "interrupted_initial_attempts": [
+    "Concurrent frontend typecheck exited 137; the final sequential typecheck passed.",
+    "An initial concurrent KARTA test run exited 1 with the SQL test pending; the final single-worker run passed all 97 tests. These initial runs are not counted as successful qualification."
+  ],
+  "limits": [
+    "No provider/model call, deployment, production database migration or paid CI rerun.",
+    "React form assertions use JSDOM; no full native browser or external production integration is claimed.",
+    "The default KARTA catalogue is qualified. A custom host catalogue excluding the fixed UI choices remains a separate configuration to qualify; admission is not automatically widened.",
+    "Generated definitions with malformed content beyond the existing model-normalization contract are outside this targeted residue.",
+    "This receipt qualifies the eight listed source/test files on the stated base, not every historical PR70 change or the whole consolidation."
+  ]
+}

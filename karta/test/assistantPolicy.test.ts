@@ -7,6 +7,7 @@ import * as utilTypes from 'node:util/types';
 import ts from 'typescript';
 import * as zod from 'zod';
 import * as nodePolicy from '../src/claude/assistant-policy.js';
+import { configuredModelCatalog, resolveModelExecutionPlan } from '../src/claude/execution-profile.js';
 
 // These tests execute production modules with real Zod schemas. Only the runtime,
 // database and provider transports are simulated; no network or user data is used.
@@ -249,6 +250,53 @@ function deferred<T>() {
   const promise = new Promise<T>(accept => { resolve = accept; });
   return { promise, resolve };
 }
+
+describe('Creator Agent generation model contract', () => {
+  const main = 'claude-sonnet-4-6';
+  const fast = 'claude-haiku-4-5-20251001';
+  const catalog = configuredModelCatalog(main, fast);
+
+  it.each([
+    { label: 'unset', configured: undefined, requested: main },
+    { label: 'configured', configured: 'server-configured-model', requested: 'server-configured-model' },
+  ])('uses the $label server generation model while keeping agent suggestions in the UI list', async item => {
+    const h = edge('creator-agent-generate', { env: { ANTHROPIC_MODEL_MAIN: item.configured },
+      provider: async () => providerResult(JSON.stringify({ name: 'Test agent', suggested_model: 'unqualified-model' })) });
+    const response = await h.handler(request({ description: 'An assistant for a fictitious task.', model: 'client-override' }));
+    expect(response.status).toBe(200);
+    expect(h.modelBodies).toHaveLength(1);
+    expect(h.modelBodies[0]!.model).toBe(item.requested);
+    policyIs(h.modelBodies[0]!.system, 'task');
+    expect(h.modelBodies[0]!.system).toContain(main);
+    expect(h.modelBodies[0]!.system).not.toContain('claude-sonnet-4-20250514');
+    const result = await response.json() as { suggested_model: string };
+    expect(result.suggested_model).toBe(main);
+    if (item.configured === undefined) {
+      expect(resolveModelExecutionPlan({ model: result.suggested_model }, catalog).model).toBe(main);
+    } else {
+      // Generation transport configuration does not grant execution admission.
+      // The static UI choices still require explicit host qualification when
+      // KARTA uses a custom catalogue that excludes the default Sonnet ID.
+      const customCatalog = configuredModelCatalog(item.configured, fast);
+      expect(() => resolveModelExecutionPlan({ model: result.suggested_model }, customCatalog)).toThrow(/non qualifié/);
+      expect(customCatalog.some(capability => capability.model === result.suggested_model)).toBe(false);
+    }
+    expect(h.unexpected).toEqual([]);
+    expect(h.db.writes).toEqual([]);
+  });
+
+  it.each([main, fast, 'claude-sonnet-4-20250514', undefined])('returns a model admitted by the default KARTA catalogue for suggestion %j', async suggestion => {
+    const h = edge('creator-agent-generate', { env: { ANTHROPIC_MODEL_MAIN: undefined },
+      provider: async () => providerResult(JSON.stringify({ suggested_model: suggestion })) });
+    const response = await h.handler(request({ description: 'A fictitious task.' }));
+    expect(response.status).toBe(200);
+    const result = await response.json() as { suggested_model: string };
+    const expected = suggestion === fast ? fast : main;
+    expect(result.suggested_model).toBe(expected);
+    expect(resolveModelExecutionPlan({ model: result.suggested_model }, catalog).model).toBe(expected);
+    expect(h.unexpected).toEqual([]);
+  });
+});
 
 describe('canonical policy assembly', () => {
   it('resolves the actual Deno re-export to the one canonical Node source', () => {
