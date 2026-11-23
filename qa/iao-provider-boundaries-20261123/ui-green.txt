@@ -1,0 +1,33 @@
+UI VOCALE — REÇU GREEN
+Date : 2026-11-23
+Auteur : /root/iao_offline_mobile_sources_20261123
+Provenance : transcription des résultats déjà obtenus dans la session ; pas de nouvelle exécution lors de la sauvegarde de ce reçu.
+Sortie outil de référence : chunk a8a6c7.
+
+Répertoire : /workspace/scratch/ccfbf7e5800b/purama-ai
+Commande : node node_modules/vitest/vitest.mjs run src/components/voice/VoiceMode.accessibility.test.tsx --maxWorkers=1 --no-file-parallelism
+Version : Vitest 4.1.12
+Début affiché : 02:55:11
+Durée affichée : 2.36s (transform 199ms, setup 0ms, import 469ms, tests 1.17s, environment 386ms)
+Code de sortie : 0
+
+Test Files : 1 passed (1)
+Tests : 21 passed (21)
+
+Périmètre : 13 tests précédents et 8 cas ajoutés. Les nouveaux cas vérifient la
+sauvegarde atomique du fournisseur, de sa voix par défaut et de la vitesse,
+le bornage des vitesses, les limites du curseur, son action de sauvegarde,
+ainsi que le blocage de l'aperçu pendant une sauvegarde suivie d'un succès ou d'une erreur.
+
+Le banc de test republie explicitement la fixture useVoice après sélection,
+comme le hook réel le fait avec setSettings. Les assertions portent sur la
+sauvegarde et sur les libellés/valeurs réellement rendus par React et Radix.
+
+Contrôles complémentaires déjà exécutés :
+- node node_modules/eslint/bin/eslint.js src/components/voice/VoiceSettingsCard.tsx src/components/voice/VoiceMode.accessibility.test.tsx
+  Code de sortie : 0 ; aucune sortie ; référence outil 9aa33b.
+- git diff --check -- src/components/voice/VoiceSettingsCard.tsx src/components/voice/VoiceMode.accessibility.test.tsx
+  Code de sortie : 0 ; aucune sortie ; référence outil 962c74.
+
+Non couvert par ce reçu : fournisseur distant, lecture audio réelle, navigateur physique,
+migration des réglages enregistrés avant le correctif, compilation globale.

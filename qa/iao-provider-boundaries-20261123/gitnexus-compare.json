@@ -1,0 +1,14 @@
+{
+  "summary": {
+    "changed_count": 20349,
+    "affected_count": 525,
+    "changed_files": 2077,
+    "risk_level": "critical"
+  },
+  "truncated": true,
+  "listedSymbols": 1000,
+  "reportedProcesses": 525,
+  "base_ref": "main",
+  "base_sha": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "scopeNote": "Full counts from GitNexus; its symbol listing is capped at 1000. Lists omitted from this compact receipt. This comparison includes prior consolidation work."
+}

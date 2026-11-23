@@ -1,0 +1,539 @@
+{
+  "summary": {
+    "changed_count": 29,
+    "affected_count": 27,
+    "changed_files": 45,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Const:karta/src/tools/apollo.ts:apolloSearchPeopleTool",
+      "name": "apolloSearchPeopleTool",
+      "type": "Const",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/tools/apollo.ts:apolloSearchPeopleTool.name",
+      "name": "name",
+      "type": "Property",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/tools/apollo.ts:apolloSearchPeopleTool.description",
+      "name": "description",
+      "type": "Property",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/tools/apollo.ts:apolloSearchPeopleTool.sensitive",
+      "name": "sensitive",
+      "type": "Property",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/tools/apollo.ts:apolloSearchPeopleTool.inputSchema",
+      "name": "inputSchema",
+      "type": "Property",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/tools/apollo.ts:apolloSearchPeopleTool.execute#1",
+      "name": "execute",
+      "type": "Method",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/tools/apollo.ts:apolloSearchPeopleTool.execute.people@35:6",
+      "name": "people",
+      "type": "Property",
+      "filePath": "karta/src/tools/apollo.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:h",
+      "name": "h",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:send",
+      "name": "send",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:endpoint",
+      "name": "endpoint",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:failure",
+      "name": "failure",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:invalidInput",
+      "name": "invalidInput",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:marker",
+      "name": "marker",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:maximumBytes",
+      "name": "maximumBytes",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/apolloTool.test.ts:context",
+      "name": "context",
+      "type": "Const",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:person",
+      "name": "person",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:execute",
+      "name": "execute",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:fn@33:47.fn@90:69.getter@91:4",
+      "name": "getter",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:fn@115:56.response@132:29",
+      "name": "response",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:fn@115:56.response@133:30",
+      "name": "response",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:fn@115:56.response@134:34",
+      "name": "response",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:fn@115:56.fn@159:77.cancel@168:4",
+      "name": "cancel",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/apolloTool.test.ts:fn@115:56.fn@176:70.cancel@178:4",
+      "name": "cancel",
+      "type": "Function",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/test/apolloTool.test.ts:fn@115:56.fn@176:70.fn@179:28.fn@179:56.fn@180:17.start@181:8#1",
+      "name": "start",
+      "type": "Method",
+      "filePath": "karta/test/apolloTool.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/voice/VoiceMode.accessibility.test.tsx:fixture",
+      "name": "fixture",
+      "type": "Function",
+      "filePath": "src/components/voice/VoiceMode.accessibility.test.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/voice/VoiceSettingsCard.tsx:VoiceSettingsCard",
+      "name": "VoiceSettingsCard",
+      "type": "Function",
+      "filePath": "src/components/voice/VoiceSettingsCard.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/voice/VoiceSettingsCard.tsx:VoiceSettingsCard.update@20:2",
+      "name": "update",
+      "type": "Function",
+      "filePath": "src/components/voice/VoiceSettingsCard.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:supabase/functions/voice-tts/index.ts:corsHeaders",
+      "name": "corsHeaders",
+      "type": "Const",
+      "filePath": "supabase/functions/voice-tts/index.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:supabase/functions/voice-tts/index.ts:json",
+      "name": "json",
+      "type": "Function",
+      "filePath": "supabase/functions/voice-tts/index.ts",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_36_handlecallback",
+      "name": "HandleCallback → Getter",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_39_providerjson",
+      "name": "ProviderJson → Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_40_providerjson",
+      "name": "ProviderJson → Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_159_prepareaccess",
+      "name": "PrepareAccess → Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_162_readonlyfetch",
+      "name": "ReadOnlyFetch → Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_163_readonlyfetch",
+      "name": "ReadOnlyFetch → Cancel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_201_readresponse",
+      "name": "ReadResponse → Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_204_handlecallback",
+      "name": "HandleCallback → Cancel",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_205_handlecallback",
+      "name": "HandleCallback → Cancel",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_231_providerjson",
+      "name": "ProviderJson → Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_234_rundemo",
+      "name": "RunDemo → Cancel",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_235_rundemo",
+      "name": "RunDemo → Cancel",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_255_handleoauthgoogle",
+      "name": "HandleOAuthGoogle → Getter",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_258_readotsresponse",
+      "name": "ReadOtsResponse → Cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_259_readotsresponse",
+      "name": "ReadOtsResponse → Cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_276_rundailyreport",
+      "name": "RunDailyReport → Getter",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_279_readresponse",
+      "name": "ReadResponse → Cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_280_readresponse",
+      "name": "ReadResponse → Cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_296_dashboardagents",
+      "name": "DashboardAgents → Getter",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_299_createdraftreconcile",
+      "name": "CreateDraftReconciler → Cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_300_createdraftreconcile",
+      "name": "CreateDraftReconciler → Cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "cancel",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_315_dashboardanalytics",
+      "name": "DashboardAnalytics → Getter",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_330_login",
+      "name": "Login → Getter",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_344_signup",
+      "name": "Signup → Getter",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_356_withbillingrequest",
+      "name": "WithBillingRequest → Getter",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_366_handlesocialaccounts",
+      "name": "HandleSocialAccountsRequest → Getter",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_376_handlesocialconfigre",
+      "name": "HandleSocialConfigRequest → Getter",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "getter",
+          "step": 3
+        }
+      ]
+    }
+  ]
+}

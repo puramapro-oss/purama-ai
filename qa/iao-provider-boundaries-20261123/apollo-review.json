@@ -1,0 +1,62 @@
+{
+  "scope": [
+    "karta/src/tools/apollo.ts",
+    "karta/test/apolloTool.test.ts"
+  ],
+  "baseline": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "impact": {
+    "receipt": "impact-apollo-execute-current.txt",
+    "risk": "UNKNOWN",
+    "directGraphCallers": 0,
+    "unresolvedExecuteCallsites": 72,
+    "textReferences": [
+      "karta/src/agents/partnerAgent.ts",
+      "karta/src/tools/registry.ts"
+    ],
+    "note": "Graph zero is not evidence of no impact. Existing partner tool list and public export still reference Apollo."
+  },
+  "changes": [
+    "Reuse existing provider-http without modifying the helper.",
+    "One 30000ms budget, including headers/body/parse and final projection check.",
+    "Bound response to 1048576 actual received bytes, reject redirects, omit credentials, release or cancel bodies best effort.",
+    "Snapshot and validate own plain data parameters before network; no getters.",
+    "Reject malformed responses and explicit provider failure flags rather than reporting an invented empty success.",
+    "Return at most requested limit and only name/email/organization; unavailable optional strings normalized to null.",
+    "Return fixed provider error message without body, diagnostics or provider extras."
+  ],
+  "preserved": {
+    "endpoint": "https://api.apollo.io/api/v1/mixed_people/search",
+    "method": "POST",
+    "body": [
+      "q_keywords",
+      "per_page"
+    ],
+    "defaultLimit": 10,
+    "maximumLimit": 100,
+    "emptyList": "Explicit people:[] succeeds.",
+    "inputSchema": "Existing required string keywords 1–500 and optional integer limit 1–100 unchanged."
+  },
+  "invalidBehaviorNowRejected": [
+    "limit:null formerly silently became10; it is not an integer allowed by the published inputSchema.",
+    "people absent/null formerly silently became[]; these shapes now fail closed."
+  ],
+  "evidence": {
+    "red": "apollo-red.json (34 cases,32 failed,2 passed before product change)",
+    "green": "apollo-green.json (56 passed:34 Apollo,14 providerHttp,8 providerCompletion)",
+    "typecheck": "apollo-karta-typecheck.json (exit0 at1024MiB heap)",
+    "typecheckFirstAttempt": "apollo-karta-typecheck-512m.json (heap exhausted at512MiB; not a TypeScript diagnostic)",
+    "diffCheck": "git diff --check -- karta/src/tools/apollo.ts exited0"
+  },
+  "officialCompatibility": {
+    "currentDocs": "https://docs.apollo.io/reference/people-api-search",
+    "documentedEndpoint": "/api/v1/mixed_people/api_search",
+    "difference": "Current documented search omits emails/phone numbers and uses a different result shape. No migration or enrichment was added.",
+    "legacyDocs": "https://docs.apollo.io/reference/people-search returned404 during documentation research; this does not prove the legacy API endpoint is unavailable.",
+    "realProviderStatus": "NON TESTÉ: no credentials, registration or actual provider request used."
+  },
+  "limits": [
+    "Tests simulate provider fetches and deadlines. They do not measure real provider latency or certify current Apollo account compatibility.",
+    "Independent review assigned separately by the parent; reviewer conclusion pending when this receipt was written.",
+    "No commit, push, deployment or shared-helper changes by this agent."
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-23T03:04:07.434526+01:00",
+  "baseCommit": "d150c87ff9e3c7530765c4abaf5412c637b74366",
+  "scope": "Local source qualification, no provider calls or deployment",
+  "files": {
+    "karta/src/tools/apollo.ts": "4013a210675d6768a3d27270a8c5cb46cb192f6cc1c298efa46eadcd3b30c219",
+    "karta/test/apolloTool.test.ts": "b2eabc34295541ff35c384e3029a290677cef3963d2de26983bd47923fd5ade4",
+    "supabase/functions/voice-tts/index.ts": "1ad08e282ceb40c859aeadbec246d4ff18b0745fd95087cea8d860d077c1e63c",
+    "tests/voice-tts-boundaries.test.mjs": "453a6c61d45d649972da3423a29785c34cf3dc7a82f3a324e5557b66f51af0f5",
+    "src/components/voice/VoiceSettingsCard.tsx": "f86c3faed4a6a6dd588321f6ad2badd452e39b19d756fc97fa238e75464d30c1",
+    "src/components/voice/VoiceMode.accessibility.test.tsx": "ab1c8f9b48620dfa9ac17d067dbf6b5a0b0f6347a6f22c11e5a795289579e290",
+    ".github/workflows/purama-chef-hardening.yml": "c77970888a218bdc64ac1f7219e0cdb33611500af1481af2af58bd394c7622d4",
+    "vercel.json": "5be798e42ca2c302a7f212b0fcd6abec56b1abb23d9da1fe7fffbd31bef31dfc"
+  },
+  "checks": {
+    "apolloAndSharedTransport": {
+      "status": "PASS",
+      "tests": 56
+    },
+    "ttsIncludingRealAuthSdk": {
+      "status": "PASS",
+      "testsAndSubtests": 79
+    },
+    "voiceUi": {
+      "status": "PASS",
+      "tests": 21
+    },
+    "frontendTypes": "PASS",
+    "kartaTypes": "PASS",
+    "lint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 22
+    },
+    "frontendBuild": "PASS",
+    "denoLocal": {
+      "status": "BLOQUE",
+      "reason": "Deno binary absent; check added to CI"
+    },
+    "realProviders": "NON_TESTE",
+    "deployment": "NON_TESTE"
+  },
+  "automaticDeploymentForBranch": false
+}
