@@ -1,0 +1,13 @@
+{
+  "stage": "RED",
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "src/lib/consultation-client.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+  "exit_code": 1,
+  "elapsed_seconds": 1.976,
+  "source_sha256": "2aaf0e6a05b941e5fa649273935c77221c1b3d0cbcd284b43a0b26e8f8284083",
+  "log": "client-revision-red.log"
+}

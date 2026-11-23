@@ -1,0 +1,32 @@
+{
+  "scope": "Actual CLI and SDK over loopback HTTP; synthetic provider, no model inference",
+  "cases": [
+    {
+      "case": "clean",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "requests": 4,
+      "elapsed_ms": 604,
+      "stdout": "{\"case\":\"exact_format\",\"status\":\"PASS\",\"elapsedMs\":69,\"receipt\":{\"version\":1,\"apiFormat\":\"anthropic_messages\",\"routeKind\":\"compatible\",\"requestedModel\":\"qualification-fixture\",\"responseModel\":\"qualification-fixture\",\"responseId\":\"msg_qualification_fixture\",\"inputTokens\":12,\"outputTokens\":2,\"cacheReadInputTokens\":null,\"cacheCreationInputTokens\":null,\"cacheCreation5mInputTokens\":null,\"cacheCreation1hInputTokens\":null}}\n{\"case\":\"structured_tool\",\"status\":\"PASS\",\"elapsedMs\":6,\"receipt\":{\"version\":1,\"apiFormat\":\"anthropic_messages\",\"routeKind\":\"compatible\",\"requestedModel\":\"qualification-fixture\",\"responseModel\":\"qualification-fixture\",\"responseId\":\"msg_qualification_fixture\",\"inputTokens\":12,\"outputTokens\":2,\"cacheReadInputTokens\":null,\"cacheCreationInputTokens\":null,\"cacheCreation5mInputTokens\":null,\"cacheCreation1hInputTokens\":null}}\n",
+      "stderr": ""
+    },
+    {
+      "case": "unrelated_cloud_profiles",
+      "expected_exit": 0,
+      "actual_exit": 1,
+      "requests": 0,
+      "elapsed_ms": 181,
+      "stdout": "",
+      "stderr": "BLOQUÉ : vérifier la sélection explicite, le modèle chargé et le serveur LM Studio local.\n"
+    },
+    {
+      "case": "unrelated_cloud_cache",
+      "expected_exit": 0,
+      "actual_exit": 1,
+      "requests": 0,
+      "elapsed_ms": 169,
+      "stdout": "",
+      "stderr": "BLOQUÉ : vérifier la sélection explicite, le modèle chargé et le serveur LM Studio local.\n"
+    }
+  ]
+}

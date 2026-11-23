@@ -1,0 +1,266 @@
+{
+  "scope": "real_provider_component_not_IAO_E2E",
+  "process": {
+    "pid": 70776,
+    "exit_code": 1,
+    "device": "mac.home"
+  },
+  "command": "python3 - --batch structured (probe-ollama.py via quoted stdin)",
+  "cases": [
+    {
+      "case": "native_multilingual_schema",
+      "at": "2026-11-23T20:58:07.603413+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/api/chat",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Extrais exactement en JSON, sans ajouter de champ : titre = Création 東京 🌱 ; quantité = 7 ; monnaie = EUR. Les clés sont title, quantity et currency."
+          }
+        ],
+        "think": false,
+        "stream": false,
+        "options": {
+          "temperature": 0,
+          "num_predict": 1024
+        },
+        "format": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "currency": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "quantity",
+            "currency"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "oracle_kind": "json",
+      "expected": {
+        "title": "Création 東京 🌱",
+        "quantity": 7,
+        "currency": "EUR"
+      },
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "pass": false,
+      "error_type": "HTTPError",
+      "http_status": 501,
+      "elapsed_ms": 27.2
+    },
+    {
+      "case": "native_structured_tool_no_execution",
+      "at": "2026-11-23T20:58:07.630905+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/api/chat",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Appelle prepare_fixture une seule fois avec title exactement égal à Création à Frasne. Ne traduis pas le titre."
+          }
+        ],
+        "think": false,
+        "stream": false,
+        "options": {
+          "temperature": 0,
+          "num_predict": 1024
+        },
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "prepare_fixture",
+              "description": "Prépare une donnée synthétique sans effet réel.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      },
+      "oracle_kind": "tool",
+      "expected": {
+        "title": "Création à Frasne"
+      },
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "http_status": 200,
+      "request_sha256": "6775bedde29cf7c558250e8a43c41373e9e148d615d7a97a44268c1bbbaa1b7d",
+      "response_model": "qwen3.5:4b",
+      "answer": "",
+      "tool_calls": [
+        {
+          "id": "call_lpm48h42",
+          "function": {
+            "index": 0,
+            "name": "prepare_fixture",
+            "arguments": {
+              "title": "Création à Frasne"
+            }
+          }
+        }
+      ],
+      "finish_reason": "stop",
+      "thinking_present": false,
+      "usage": null,
+      "prompt_eval_count": 297,
+      "eval_count": 30,
+      "total_duration_ns": 504705958,
+      "load_duration_ns": 2197875,
+      "complete": true,
+      "thinking_field_matches": true,
+      "actual": {
+        "title": "Création à Frasne"
+      },
+      "pass": true,
+      "elapsed_ms": 529
+    },
+    {
+      "case": "native_context_recall",
+      "at": "2026-11-23T20:58:08.160014+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/api/chat",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Pour cette tâche synthétique uniquement : le projet porte la référence AZUR-7391."
+          },
+          {
+            "role": "assistant",
+            "content": "La référence est enregistrée dans le contexte de cette conversation."
+          },
+          {
+            "role": "user",
+            "content": "Quelle est la référence ? Réponds uniquement par cette référence."
+          }
+        ],
+        "think": false,
+        "stream": false,
+        "options": {
+          "temperature": 0,
+          "num_predict": 1024
+        }
+      },
+      "oracle_kind": "text",
+      "expected": "AZUR-7391",
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "http_status": 200,
+      "request_sha256": "7cc74c0a3374dd58299f07dccffaf5e627ff0293b9a711658d2d296fbc47f0b6",
+      "response_model": "qwen3.5:4b",
+      "answer": "AZUR-7391",
+      "tool_calls": [],
+      "finish_reason": "stop",
+      "thinking_present": false,
+      "usage": null,
+      "prompt_eval_count": 67,
+      "eval_count": 7,
+      "total_duration_ns": 147301792,
+      "load_duration_ns": 338000,
+      "complete": true,
+      "thinking_field_matches": true,
+      "actual": "AZUR-7391",
+      "pass": true,
+      "elapsed_ms": 160.9
+    },
+    {
+      "case": "native_dependency_plan",
+      "at": "2026-11-23T20:58:08.321047+00:00",
+      "scope": "real_local_provider_component_only",
+      "provider": "Ollama",
+      "model": "qwen3.5:4b",
+      "path": "/api/chat",
+      "request": {
+        "model": "qwen3.5:4b",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Planifie ces opérations synthétiques, exécutées par une seule personne sans parallélisme : A dure 12 minutes ; B dure 7 minutes et attend A ; C dure 5 minutes et attend B ; D dure 9 minutes et attend C. Réponds en JSON avec order (identifiants dans l'ordre d'exécution) et total_minutes (somme exacte)."
+          }
+        ],
+        "think": false,
+        "stream": false,
+        "options": {
+          "temperature": 0,
+          "num_predict": 1024
+        },
+        "format": {
+          "type": "object",
+          "properties": {
+            "order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "total_minutes": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "order",
+            "total_minutes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "oracle_kind": "json",
+      "expected": {
+        "order": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "total_minutes": 33
+      },
+      "tool_execution": false,
+      "max_response_bytes": 1048576,
+      "wall_deadline_seconds": 50,
+      "provider_metrics_are_declarative": true,
+      "pass": false,
+      "error_type": "HTTPError",
+      "http_status": 501,
+      "elapsed_ms": 15
+    }
+  ],
+  "passed": 2,
+  "failed": 2
+}

@@ -1,0 +1,269 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4#2",
+    "name": "catalog",
+    "kind": "Method",
+    "filePath": "karta/src/claude/consultation-host.ts",
+    "startLine": 180,
+    "endLine": 207
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "6 call sites invoking `catalog` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 6,
+    "dispatchBoundary": 0,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationHost.test.ts",
+        "name": "consultationHost.test.ts",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationIntegration.test.ts",
+        "name": "consultationIntegration.test.ts",
+        "filePath": "karta/test/consultationIntegration.test.ts"
+      },
+      {
+        "uid": "File:karta/test/consultationIntegration.test.ts",
+        "name": "consultationIntegration.test.ts",
+        "filePath": "karta/test/consultationIntegration.test.ts"
+      },
+      {
+        "uid": "File:src/lib/consultation-client.test.ts",
+        "name": "consultation-client.test.ts",
+        "filePath": "src/lib/consultation-client.test.ts"
+      },
+      {
+        "uid": "File:src/lib/consultation-client.test.ts",
+        "name": "consultation-client.test.ts",
+        "filePath": "src/lib/consultation-client.test.ts"
+      },
+      {
+        "uid": "File:src/lib/consultation-client.test.ts",
+        "name": "consultation-client.test.ts",
+        "filePath": "src/lib/consultation-client.test.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4.empty@181:6",
+        "name": "empty",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:2",
+        "name": "models",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.valid@128:2",
+        "name": "valid",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.valid@128:2",
+        "name": "valid",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.validateIdentity@175:2",
+        "name": "validateIdentity",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:resolveModelExecutionPlan",
+        "name": "resolveModelExecutionPlan",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Function:karta/src/runtime/lifecycle.ts:bounded",
+        "name": "bounded",
+        "filePath": "karta/src/runtime/lifecycle.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@194:119.availability@197:4",
+        "name": "availability",
+        "filePath": "karta/test/consultationHost.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@64:93.availability@67:4",
+        "name": "availability",
+        "filePath": "karta/test/consultationHost.test.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Property:karta/src/claude/execution-profile.ts:ModelExecutionPlan.research",
+        "name": "research",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      }
+    ]
+  },
+  "processes": []
+}

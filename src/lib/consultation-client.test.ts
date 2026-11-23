@@ -43,6 +43,46 @@ describe('consultation client boundary', () => {
     expect(wireBody(0)).toEqual({ action: 'catalog' });
   });
 
+  it('accepts a qualified model revision containing @ in the catalogue', async () => {
+    const catalog = catalogFixture();
+    catalog.models[0].model = 'studio/primary@revision-2';
+    network.mockResolvedValueOnce(respond({ ok: true, catalog }));
+    expect(await createConsultationClient('token').catalog()).toEqual(catalog);
+    expect(network).toHaveBeenCalledTimes(1);
+  });
+
+  it('preserves qualified revision identifiers for the chosen model and reviewers', async () => {
+    const value = request();
+    value.preferences.model = 'studio/primary@revision-2';
+    value.reviewerModels = ['studio/reviewer@revision-3'];
+    network.mockResolvedValueOnce(respond({ ok: true, operation: operationFixture() }));
+    await createConsultationClient('token').consult(value);
+    expect(wireBody(0)).toEqual({ action: 'consult', ...value });
+    expect(network).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads an existing result produced by a model with a revision identifier', async () => {
+    const output = operationFixture();
+    output.result!.plan.model = 'studio/primary@revision-2';
+    network.mockResolvedValueOnce(respond({ ok: true, operation: output }));
+    expect(await createConsultationClient('token').status(OPERATION)).toEqual(output);
+    expect(wireBody(0)).toEqual({ action: 'status', operationId: OPERATION });
+  });
+
+  it('keeps malformed model identifiers and revision-like source identities outside the contract', async () => {
+    const client = createConsultationClient('token');
+    for (const model of ['@revision', 'model name', 'model\n', 'model?revision=2', 'a'.repeat(201)]) {
+      const value = request(); value.preferences.model = model;
+      await expect(client.consult(value)).rejects.toMatchObject({ code: 'invalid' });
+    }
+    expect(network).not.toHaveBeenCalled();
+    const output = operationFixture();
+    output.result!.sources[0].id = 'source@revision';
+    output.result!.citedSourceIds = ['source@revision'];
+    network.mockResolvedValueOnce(respond({ ok: true, operation: output }));
+    await expect(client.status(OPERATION)).rejects.toMatchObject({ code: 'invalid' });
+  });
+
   it.each(['simulation_enabled', 'budget_unavailable', 'account_unavailable', 'model_unavailable', 'not_configured', 'paused', 'service_unavailable'] as const)(
     'preserves the exact unavailable catalogue reason %s', async reason => {
       const catalog = { ...catalogFixture(), available: false, reason, models: [] };

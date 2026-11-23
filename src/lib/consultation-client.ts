@@ -15,6 +15,9 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const uuid = (value: unknown): value is string => typeof value === 'string' && value.length === 36 && UUID.test(value);
 const id = (value: unknown, maximum = 200): value is string => typeof value === 'string' && value.length > 0
   && value.length <= maximum && /^[A-Za-z0-9]/.test(value) && !/[^A-Za-z0-9._:/-]/.test(value);
+// Model revisions use the same contract as the server execution profile.
+const modelId = (value: unknown): value is string => typeof value === 'string'
+  && /^[A-Za-z0-9][A-Za-z0-9._:/@-]{0,199}$(?![\s\S])/.test(value);
 const text = (value: unknown, max: number): value is string => typeof value === 'string' && value.length <= max;
 const integer = (value: unknown, min: number, max: number): value is number => Number.isSafeInteger(value)
   && Number(value) >= min && Number(value) <= max;
@@ -52,7 +55,7 @@ function limits(value: unknown): ConsultationPublicPlan['research'] {
 
 function plan(value: unknown): ConsultationPublicPlan {
   if (!record(value) || !keys(value, ['model', 'reflection', 'speed', 'maxOutputTokens', 'timeoutMs', 'research'])
-    || !id(value.model) || typeof value.reflection !== 'string' || !['standard', 'deep', 'maximum'].includes(value.reflection)
+    || !modelId(value.model) || typeof value.reflection !== 'string' || !['standard', 'deep', 'maximum'].includes(value.reflection)
     || !speeds.includes(value.speed as ConsultationSpeed) || !integer(value.maxOutputTokens, 1024, 65536)
     || !integer(value.timeoutMs, 1, 120000)) return invalid();
   return { model: value.model, reflection: value.reflection as ConsultationPublicPlan['reflection'],
@@ -67,7 +70,7 @@ function catalog(value: unknown): ConsultationCatalog {
     || !keys(value.research, ['search', 'scrape']) || typeof value.research.search !== 'boolean' || typeof value.research.scrape !== 'boolean') return invalid();
   const models = value.models.map(row => {
     if (!record(row) || !keys(row, ['model', 'provider', 'reflections', 'speeds', 'maxOutputTokens', 'profiles'])
-      || !id(row.model) || !id(row.provider) || !values(row.reflections, reflections) || row.reflections.length === 0
+      || !modelId(row.model) || !id(row.provider) || !values(row.reflections, reflections) || row.reflections.length === 0
       || !values(row.speeds, speeds) || row.speeds.length === 0 || !integer(row.maxOutputTokens, 1024, 65536)
       || !Array.isArray(row.profiles) || row.profiles.length === 0 || row.profiles.length > 12) return invalid();
     const supportedReflections = row.reflections;
@@ -141,12 +144,12 @@ function operation(value: unknown, expectedId: string): ConsultationOperation | 
 function input(value: ConsultationInput): ConsultationInput {
   if (!record(value) || !keys(value, ['operationId', 'question', 'preferences', 'reviewerModels', 'research'])
     || !uuid(value.operationId) || !text(value.question, 8000) || !value.question.trim()
-    || !record(value.preferences) || !keys(value.preferences, ['model', 'reflection', 'speed']) || !id(value.preferences.model)
+    || !record(value.preferences) || !keys(value.preferences, ['model', 'reflection', 'speed']) || !modelId(value.preferences.model)
     || (value.preferences.reflection !== undefined && !reflections.includes(value.preferences.reflection))
     || (value.preferences.speed !== undefined && !speeds.includes(value.preferences.speed))) return invalid();
   const reviewerModels = value.reviewerModels ?? [];
   const research = value.research ?? { queries: [], urls: [] };
-  if (!Array.isArray(reviewerModels) || reviewerModels.length > 3 || reviewerModels.some(model => !id(model) || model === value.preferences.model)
+  if (!Array.isArray(reviewerModels) || reviewerModels.length > 3 || reviewerModels.some(model => !modelId(model) || model === value.preferences.model)
     || new Set(reviewerModels).size !== reviewerModels.length || !record(research) || !keys(research, ['queries', 'urls'])
     || !Array.isArray(research.queries) || research.queries.length > 3 || research.queries.some(query => !text(query, 2000) || !query.trim())
     || !Array.isArray(research.urls) || research.urls.length > 6 || research.urls.some(url => !consultationSourceUrl(url))) return invalid();

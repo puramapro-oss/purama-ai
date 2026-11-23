@@ -1,0 +1,8 @@
+{
+  "path": "qa/iao-release-qualification-20261123/gitnexus-detect-main.json.gz",
+  "uncompressed_sha256": "e184ba68edead921be29be0bc422d07fbdbaa2064b5754292bec78275d27d152",
+  "compressed_sha256": "025c61915a986fa262f80f911520f3323729faed60efb90b266d07d6f547af73",
+  "uncompressed_bytes": 491043,
+  "compressed_bytes": 29897,
+  "lossless_roundtrip": true
+}

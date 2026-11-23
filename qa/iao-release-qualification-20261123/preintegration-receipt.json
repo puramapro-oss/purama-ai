@@ -1,0 +1,50 @@
+{
+  "base_commit": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+  "status": "CODE_QUALIFIED_CI_PENDING",
+  "new_automated_cases": {
+    "server_matrix": 65,
+    "qualification_cli": 9,
+    "browser_client_units": 4,
+    "browser_scenarios_pending": 24,
+    "total": 102
+  },
+  "native_provider": {
+    "case_count": 7,
+    "pass": 5,
+    "fail": 2,
+    "full_iao_path": "BLOQUÉ"
+  },
+  "new_browser_run": "NON TESTÉ locally; actual Chromium launch blocked before page; GitHub Actions pending",
+  "source_sha256": {
+    "karta/scripts/qualify-lmstudio.ts": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+    "karta/src/claude/consultation-host.ts": "51c2ae0bc5b6a1432541fe9bd2f69c4f2669e8a195d331d6d81d580f316f26b4",
+    "src/lib/consultation-client.ts": "eb2401c65fc7d370afb45aeb72c1fe9a187295f1d8c98c165be9c753e43018fe",
+    "src/lib/consultation-client.test.ts": "bf6ed93f03f6706e785966a505e4155427b51f4902954687281196258dddf82d",
+    "karta/test/consultationProfileMatrix.test.ts": "f92748dd14afac058466db1391f109d3dcd7a0021cb2e3db98fd052a47d21597",
+    "karta/test/lmStudioQualification.test.ts": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6",
+    "tests/chat/consultation.spec.ts": "02fa254969a5c9e79471a747edb08f5d96cdacf8db6b03aa64750692f70bfc43"
+  },
+  "index": {
+    "lastCommit": "970ff2255e2037625a62745ecac3e6cd9c04b702",
+    "indexedAt": "2026-11-23T21:08:10.320Z",
+    "exact_source_hashes_match": {
+      "karta/scripts/qualify-lmstudio.ts": true,
+      "karta/src/claude/consultation-host.ts": true,
+      "src/lib/consultation-client.ts": true,
+      "src/lib/consultation-client.test.ts": true,
+      "karta/test/consultationProfileMatrix.test.ts": true,
+      "karta/test/lmStudioQualification.test.ts": true,
+      "tests/chat/consultation.spec.ts": true
+    },
+    "fts": "disabled",
+    "delta_risk": "low reported by detect_changes; pre-edit host impact HIGH remains material",
+    "main_compare": "critical, truncated; historical consolidation differs from main, not a complete review of 2501 files"
+  },
+  "reviews": [
+    "profiles/native-model-filter-independent-review.json",
+    "ui/independent-review.json",
+    "release/qualification.json"
+  ],
+  "global_deployment": "BLOQUÉ until native integration, live accounts, public modes and production gates qualify",
+  "raw_logs": "Unmodified evidence; whitespace gate applied to source/config/docs, not raw process logs"
+}

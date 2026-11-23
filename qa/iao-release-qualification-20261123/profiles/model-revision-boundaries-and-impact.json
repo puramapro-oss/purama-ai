@@ -1,0 +1,186 @@
+{
+  "decision": "Qualification précoce du host natif Anthropic ; aucune prise en charge E2E de @ ajoutée.",
+  "status": "PASS",
+  "frontiers": [
+    {
+      "component": "Résolveur générique de modèles",
+      "path": "karta/src/claude/execution-profile.ts",
+      "at_allowed": true,
+      "changed": false
+    },
+    {
+      "component": "Transport LM Studio",
+      "path": "karta/src/claude/lmstudio.ts",
+      "at_allowed": true,
+      "changed": false
+    },
+    {
+      "component": "Client générique de consultation",
+      "path": "src/lib/consultation-client.ts",
+      "at_allowed": true,
+      "changed_by_this_fix": false
+    },
+    {
+      "component": "API interne : entrée, catalogue, plan",
+      "path": "karta/src/api/consultation.ts",
+      "at_allowed": false,
+      "changed": false
+    },
+    {
+      "component": "Edge : entrée, catalogue, résultat",
+      "path": "supabase/functions/iao-consultation/handler.ts",
+      "at_allowed": false,
+      "changed": false
+    },
+    {
+      "component": "Minimisation requestedModel / responseModel / responseId",
+      "path": "karta/src/claude/usage.ts",
+      "at_allowed": false,
+      "changed": false
+    },
+    {
+      "component": "SQL validation du reçu puis égalité au modèle réservé",
+      "path": "karta/migrations/032_model_consultation.sql",
+      "at_allowed": false,
+      "changed": false
+    },
+    {
+      "component": "Qualification commune du host natif avant cache et allocation",
+      "path": "karta/src/claude/consultation-host.ts",
+      "at_allowed_after_fix": false,
+      "changed": true
+    }
+  ],
+  "filter_order": [
+    "Normaliser le catalogue générique et valider sa structure.",
+    "Refuser tout modèle absent de la politique ou excédant son plafond de sortie.",
+    "Exclure les modèles non représentables par les contrats HTTP/Edge et les reçus SQL.",
+    "Mettre en cache uniquement les capacités restantes.",
+    "Résoudre le choix exact avant store.begin ; aucun repli vers un autre modèle."
+  ],
+  "unchanged_boundaries": [
+    "parsePolicy",
+    "catalog",
+    "consult",
+    "createConsultationStore.begin",
+    "normalizeModelUsage",
+    "API HTTP",
+    "Edge",
+    "SQL",
+    "LM Studio"
+  ],
+  "impact": {
+    "models": {
+      "risk": "HIGH",
+      "impacted_count": 8,
+      "summary": {
+        "direct": 3,
+        "processes_affected": 3,
+        "modules_affected": 4
+      },
+      "epistemic": "lower-bound",
+      "boundaries": [
+        "1 symbol references this callable as a VALUE rather than calling it (a registration table, a callback argument, a stored function pointer). The reference is recorded, but the call made THROUGH that value is not: it is dispatched later from wherever the value is stored. Callers reached that way are absent from this result — actual impact may be higher."
+      ]
+    },
+    "catalog": {
+      "risk": "CRITICAL",
+      "impacted_count": 7,
+      "summary": {
+        "direct": 3,
+        "processes_affected": 4,
+        "modules_affected": 5
+      },
+      "epistemic": "lower-bound",
+      "boundaries": [
+        "6 call sites invoking `catalog` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+      ]
+    },
+    "parsePolicy": {
+      "risk": "LOW",
+      "impacted_count": 1,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "epistemic": "exact",
+      "boundaries": []
+    },
+    "begin": {
+      "risk": "UNKNOWN",
+      "impacted_count": 0,
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "epistemic": "lower-bound",
+      "boundaries": [
+        "6 call sites invoking `begin` were dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+      ]
+    },
+    "createConsultationHost": {
+      "risk": "UNKNOWN",
+      "impacted_count": 0,
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "epistemic": "exact",
+      "boundaries": []
+    },
+    "normalizeModelUsage": {
+      "risk": "LOW",
+      "impacted_count": 1,
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "epistemic": "exact",
+      "boundaries": []
+    },
+    "http-identifier": {
+      "risk": "LOW",
+      "impacted_count": 7,
+      "summary": {
+        "direct": 4,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "epistemic": "exact",
+      "boundaries": []
+    },
+    "edge-id": {
+      "risk": "LOW",
+      "impacted_count": 8,
+      "summary": {
+        "direct": 4,
+        "processes_affected": 0,
+        "modules_affected": 2
+      },
+      "epistemic": "lower-bound",
+      "boundaries": [
+        "1 call site invoking `id` was dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result — actual impact may be higher."
+      ]
+    }
+  },
+  "impact_interpretation": "models() a été modifié après impact HIGH et avertissement transmis par root. catalog() CRITICAL n’a pas été modifié. begin UNKNOWN signifie que le graphe ne résout pas ses récepteurs, pas absence de dépendance : host.consult appelle explicitement store.begin. Le filtre précède cet appel.",
+  "alternative_full_at_support": {
+    "implemented": false,
+    "scope": [
+      "Option de qualification explicite des modèles dans normalizeModelUsage, sans élargir la minimisation générique ni responseId.",
+      "Validateurs de modèle distincts des identifiants de fournisseur/source dans API interne et Edge.",
+      "Nouvelle migration SQL pour validation différenciée des identités de modèle puis règlement exact.",
+      "Qualification du compte/transport et tests de confidentialité, facturation et reprise sur ces frontières."
+    ],
+    "risk": "Plus large et transversal, notamment registre financier et confidentialité ; ne peut pas être réduit au seul changement de regex usage.ts.",
+    "existing_graph_bounds": {
+      "normalizeModelUsage": "LOW, 1 caller décideur SDK connu ; tous les consommateurs du client générique ne sont pas mesurés par cette seule arête.",
+      "http_identifier": "7 symboles, 4 dépendants directs",
+      "edge_id": "8 symboles, 4 dépendants directs, borne inférieure"
+    }
+  }
+}

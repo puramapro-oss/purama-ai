@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123
+
+
+ Test Files  2 passed (2)
+      Tests  48 passed (48)
+   Start at  21:52:23
+   Duration  3.26s (transform 361ms, setup 0ms, import 632ms, tests 1.12s, environment 870ms)
+

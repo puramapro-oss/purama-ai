@@ -1,0 +1,198 @@
+{
+  "base_url": "http://127.0.0.1:11434",
+  "mode": "read_only",
+  "/api/version": {
+    "ok": true,
+    "elapsed_ms": 77.5,
+    "response": {
+      "version": "0.40.11"
+    }
+  },
+  "/api/tags": {
+    "ok": true,
+    "elapsed_ms": 55.5,
+    "response": {
+      "models": [
+        {
+          "name": "qwen3.5:4b",
+          "model": "qwen3.5:4b",
+          "size": 3973305013,
+          "digest": "7f3251fa6878a78a606bcb3c074283306e5ad2ea411a7774a9dd98a4bc7f2d13",
+          "details": {
+            "parent_model": "",
+            "format": "safetensors",
+            "family": "",
+            "families": null,
+            "parameter_size": "",
+            "quantization_level": "nvfp4",
+            "runner": "mlx"
+          }
+        },
+        {
+          "name": "bge-m3:567m",
+          "model": "bge-m3:567m",
+          "size": 1157672605,
+          "digest": "7907646426070047a77226ac3e684fbbe8410524f7b4a74d02837e43f2146bab",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "bert",
+            "families": [
+              "bert"
+            ],
+            "parameter_size": "566.70M",
+            "quantization_level": "F16",
+            "context_length": 8192,
+            "embedding_length": 1024,
+            "runner": "ggml"
+          }
+        },
+        {
+          "name": "devstral:24b",
+          "model": "devstral:24b",
+          "size": 14333928046,
+          "digest": "9bd74193e93935e9d8564d88607b220a9d341c4a36b748cffcbd9ad4f47a9ca9",
+          "details": {
+            "parent_model": "devstral:latest",
+            "format": "gguf",
+            "family": "llama",
+            "families": [
+              "llama"
+            ],
+            "parameter_size": "23.6B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 131072,
+            "embedding_length": 5120,
+            "runner": "ggml"
+          }
+        },
+        {
+          "name": "qwen3-coder:30b",
+          "model": "qwen3-coder:30b",
+          "size": 18556700761,
+          "digest": "06c1097efce0431c2045fe7b2e5108366e43bee1b4603a7aded8f21689e90bca",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3moe",
+            "families": [
+              "qwen3moe"
+            ],
+            "parameter_size": "30.5B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2048,
+            "runner": "ggml"
+          }
+        },
+        {
+          "name": "purama-night:30b",
+          "model": "purama-night:30b",
+          "size": 18556700438,
+          "digest": "6fb767c6f0965dfec548681b5a5231961a9f14287f76e3cca26bb2d37899bf53",
+          "details": {
+            "parent_model": "qwen3-coder:30b",
+            "format": "gguf",
+            "family": "qwen3moe",
+            "families": [
+              "qwen3moe"
+            ],
+            "parameter_size": "30.5B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2048,
+            "runner": "ggml"
+          }
+        },
+        {
+          "name": "purama-agent:30b",
+          "model": "purama-agent:30b",
+          "size": 18556700406,
+          "digest": "3b6f0debd13ce57a8bbcd6f657a76666f5dc2a41b470ae83ef7aca67847415ce",
+          "details": {
+            "parent_model": "qwen3-coder:30b",
+            "format": "gguf",
+            "family": "qwen3moe",
+            "families": [
+              "qwen3moe"
+            ],
+            "parameter_size": "30.5B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2048,
+            "runner": "ggml"
+          }
+        },
+        {
+          "name": "purama-coder:30b",
+          "model": "purama-coder:30b",
+          "size": 18556700406,
+          "digest": "3f4f5e0f53f3c071d25f713f664f6b8a4f1a8879e429f7a2bda561d28d2fa4d6",
+          "details": {
+            "parent_model": "qwen3-coder:30b",
+            "format": "gguf",
+            "family": "qwen3moe",
+            "families": [
+              "qwen3moe"
+            ],
+            "parameter_size": "30.5B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2048,
+            "runner": "ggml"
+          }
+        }
+      ]
+    }
+  },
+  "/api/ps": {
+    "ok": true,
+    "elapsed_ms": 1.3,
+    "response": {
+      "models": []
+    }
+  },
+  "/v1/models": {
+    "ok": true,
+    "elapsed_ms": 10,
+    "response": {
+      "models": [
+        {
+          "id": "qwen3.5:4b",
+          "object": "model",
+          "owned_by": "library"
+        },
+        {
+          "id": "bge-m3:567m",
+          "object": "model",
+          "owned_by": "library"
+        },
+        {
+          "id": "devstral:24b",
+          "object": "model",
+          "owned_by": "library"
+        },
+        {
+          "id": "qwen3-coder:30b",
+          "object": "model",
+          "owned_by": "library"
+        },
+        {
+          "id": "purama-night:30b",
+          "object": "model",
+          "owned_by": "library"
+        },
+        {
+          "id": "purama-agent:30b",
+          "object": "model",
+          "owned_by": "library"
+        },
+        {
+          "id": "purama-coder:30b",
+          "object": "model",
+          "owned_by": "library"
+        }
+      ]
+    }
+  }
+}

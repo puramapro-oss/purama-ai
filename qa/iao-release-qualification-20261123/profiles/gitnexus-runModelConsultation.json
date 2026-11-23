@@ -1,0 +1,188 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation",
+    "name": "runModelConsultation",
+    "kind": "Function",
+    "filePath": "karta/src/claude/consultation.ts",
+    "startLine": 165,
+    "endLine": 328
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:karta/test/modelConsultation.test.ts",
+        "name": "modelConsultation.test.ts",
+        "filePath": "karta/test/modelConsultation.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationTransport.test.ts:harness",
+        "name": "harness",
+        "filePath": "karta/test/consultationTransport.test.ts"
+      },
+      {
+        "uid": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.consult@207:4#3",
+        "name": "consult",
+        "filePath": "karta/src/claude/consultation-host.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:hash",
+        "name": "hash",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:invalid",
+        "name": "invalid",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:invalid",
+        "name": "invalid",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:invalid",
+        "name": "invalid",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:invalid",
+        "name": "invalid",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:requestSnapshot",
+        "name": "requestSnapshot",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.call@197:6",
+        "name": "call",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.call@197:6",
+        "name": "call",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.collect@231:6",
+        "name": "collect",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.collect@231:6",
+        "name": "collect",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.modelCall@275:6",
+        "name": "modelCall",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.panel@295:8",
+        "name": "panel",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.panel@295:8",
+        "name": "panel",
+        "filePath": "karta/src/claude/consultation.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:normalizeModelCatalog",
+        "name": "normalizeModelCatalog",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Function:karta/src/claude/execution-profile.ts:resolveModelExecutionPlan",
+        "name": "resolveModelExecutionPlan",
+        "filePath": "karta/src/claude/execution-profile.ts"
+      },
+      {
+        "uid": "Function:karta/src/runtime/lifecycle.ts:bounded",
+        "name": "bounded",
+        "filePath": "karta/src/runtime/lifecycle.ts"
+      },
+      {
+        "uid": "Function:karta/test/apolloTool.test.ts:fn@33:47.fn@90:69.getter@91:4",
+        "name": "getter",
+        "filePath": "karta/test/apolloTool.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/approvalParams.test.ts:fn@3:49.fn@82:65.getter@83:4",
+        "name": "getter",
+        "filePath": "karta/test/approvalParams.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/approvalTracePrivacy.test.ts:fn@81:67.fn@251:84.getter@252:4",
+        "name": "getter",
+        "filePath": "karta/test/approvalTracePrivacy.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/connectedResearch.test.ts:fn@68:66.fn@94:72.getter@98:4",
+        "name": "getter",
+        "filePath": "karta/test/connectedResearch.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/consultationTransport.test.ts:harness.search@46:2",
+        "name": "search",
+        "filePath": "karta/test/consultationTransport.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/executionOrigin.test.ts:fn@12:50.fn@50:86.getter@51:4",
+        "name": "getter",
+        "filePath": "karta/test/executionOrigin.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/executionProfile.test.ts:fn@10:46.fn@54:43.getter@55:4",
+        "name": "getter",
+        "filePath": "karta/test/executionProfile.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/iaoExecutionBudget.test.ts:fn@16:42.fn@57:94.fail@60:4",
+        "name": "fail",
+        "filePath": "karta/test/iaoExecutionBudget.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/knowledgeSearch.test.ts:fn@106:53.fn@121:63.getter@122:4",
+        "name": "getter",
+        "filePath": "karta/test/knowledgeSearch.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/localComputeFabricMemoryBoundary.test.ts:fn@10:54.fn@40:113.getter@41:4",
+        "name": "getter",
+        "filePath": "karta/test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/localComputeFabricMemoryBoundary.test.ts:fn@10:54.fn@48:66.getter@49:4",
+        "name": "getter",
+        "filePath": "karta/test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/localComputeFabricMemoryBoundary.test.ts:fn@10:54.fn@71:86.trap@72:4",
+        "name": "trap",
+        "filePath": "karta/test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Function:karta/test/loopTracePrivacy.test.ts:fn@72:61.fn@228:121.getter@229:4",
+        "name": "getter",
+        "filePath": "karta/test/loopTracePrivacy.test.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Function:karta/src/claude/consultation.ts:runModelConsultation.fn@193:30.call@197:6",
+        "name": "call",
+        "filePath": "karta/src/claude/consultation.ts"
+      }
+    ]
+  },
+  "processes": []
+}

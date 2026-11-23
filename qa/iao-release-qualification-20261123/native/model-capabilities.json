@@ -1,0 +1,32 @@
+{
+  "scope": "actual_local_inventory_not_behavioral_proof",
+  "path": "/api/show",
+  "model": "qwen3.5:4b",
+  "at": "2026-11-23T20:54:14.166068+00:00",
+  "http_status": 200,
+  "capabilities": [
+    "completion",
+    "vision",
+    "thinking",
+    "tools"
+  ],
+  "thinking": {
+    "values": [
+      false,
+      true
+    ],
+    "default": true
+  },
+  "details": {
+    "parent_model": "",
+    "format": "safetensors",
+    "family": "qwen3_5",
+    "families": null,
+    "parameter_size": "4.5B",
+    "quantization_level": "nvfp4",
+    "runner": "mlx"
+  },
+  "context_keys": {
+    "qwen3_5.context_length": 262144
+  }
+}

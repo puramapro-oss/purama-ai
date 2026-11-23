@@ -1,0 +1,1201 @@
+{
+  "summary": {
+    "changed_count": 170,
+    "affected_count": 0,
+    "changed_files": 101,
+    "risk_level": "low"
+  },
+  "changed_symbols": [
+    {
+      "id": "Function:karta/scripts/qualify-lmstudio.ts:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "karta/scripts/qualify-lmstudio.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/src/claude/consultation-host.ts:NATIVE_CONSULTATION_MODEL",
+      "name": "NATIVE_CONSULTATION_MODEL",
+      "type": "Const",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost",
+      "name": "createConsultationHost",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@140:2",
+      "name": "models",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/claude/consultation-host.ts:createConsultationHost.models@140:17.promise@146:48",
+      "name": "promise",
+      "type": "Property",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:owner",
+      "name": "owner",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:stranger",
+      "name": "stranger",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:operationId",
+      "name": "operationId",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:secondId",
+      "name": "secondId",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:key",
+      "name": "key",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:speeds",
+      "name": "speeds",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:reflections",
+      "name": "reflections",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:Family.cap",
+      "name": "cap",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:Family.id",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:Family.reasoning",
+      "name": "reasoning",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:Family.reflections",
+      "name": "reflections",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:karta/test/consultationProfileMatrix.test.ts:Family",
+      "name": "Family",
+      "type": "TypeAlias",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:families",
+      "name": "families",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:profiles",
+      "name": "profiles",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:karta/test/consultationProfileMatrix.test.ts:NativeCall",
+      "name": "NativeCall",
+      "type": "TypeAlias",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.max_tokens",
+      "name": "max_tokens",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.model",
+      "name": "model",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.system",
+      "name": "system",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.tools",
+      "name": "tools",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.output_config",
+      "name": "output_config",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.thinking",
+      "name": "thinking",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:NativeCall.messages",
+      "name": "messages",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ReceivedCall.body",
+      "name": "body",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ReceivedCall.context",
+      "name": "context",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ReceivedCall.kind",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:karta/test/consultationProfileMatrix.test.ts:ReceivedCall",
+      "name": "ReceivedCall",
+      "type": "TypeAlias",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ResponseBody.catalog",
+      "name": "catalog",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ResponseBody.error",
+      "name": "error",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ResponseBody.ok",
+      "name": "ok",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:ResponseBody.operation",
+      "name": "operation",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:karta/test/consultationProfileMatrix.test.ts:ResponseBody",
+      "name": "ResponseBody",
+      "type": "TypeAlias",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:fixture",
+      "name": "fixture",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:apiServer",
+      "name": "apiServer",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:providerServer",
+      "name": "providerServer",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:apiPort",
+      "name": "apiPort",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:providerPort",
+      "name": "providerPort",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:host",
+      "name": "host",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:catalogueFamilies",
+      "name": "catalogueFamilies",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:observed",
+      "name": "observed",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:catalogueRequests",
+      "name": "catalogueRequests",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:providerGate",
+      "name": "providerGate",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:providerEntered",
+      "name": "providerEntered",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:providerFailure",
+      "name": "providerFailure",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationProfileMatrix.test.ts:providerStatus",
+      "name": "providerStatus",
+      "type": "Const",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:localHttp",
+      "name": "localHttp",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:localHttp.fn@58:21.req@59:4",
+      "name": "req",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:query",
+      "name": "query",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:api",
+      "name": "api",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:api.body@72:21",
+      "name": "body",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:api.response@72:11",
+      "name": "response",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:input",
+      "name": "input",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:input.action@75:11",
+      "name": "action",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:input.operationId@75:30",
+      "name": "operationId",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:input.preferences@75:95",
+      "name": "preferences",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:input.question@75:43",
+      "name": "question",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:provision",
+      "name": "provision",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:makeHost",
+      "name": "makeHost",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:makeHost.stopped@81:66",
+      "name": "stopped",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue",
+      "name": "nativeCatalogue",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.created_at@88:66",
+      "name": "created_at",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.display_name@88:41",
+      "name": "display_name",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.id@88:11",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.lifecycle@88:102",
+      "name": "lifecycle",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.max_tokens@88:123",
+      "name": "max_tokens",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.type@88:26",
+      "name": "type",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:nativeCatalogue.capabilities@89:4",
+      "name": "capabilities",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:providerReply",
+      "name": "providerReply",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.id@95:11",
+      "name": "id",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.model@95:88",
+      "name": "model",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.role@95:69",
+      "name": "role",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.type@95:52",
+      "name": "type",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.content@96:73",
+      "name": "content",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.stop_reason@96:4",
+      "name": "stop_reason",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:providerReply.usage@97:4",
+      "name": "usage",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:assertSingleLedger",
+      "name": "assertSingleLedger",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:assertNoAllocation",
+      "name": "assertNoAllocation",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@113:10.fn@115:32.fn@116:10.body@130:35",
+      "name": "body",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@113:10.fn@115:32.fn@116:10.context@130:41",
+      "name": "context",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@113:10.fn@115:32.fn@116:10.kind@130:50",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:fn@113:10.cancel@139:137",
+      "name": "cancel",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:fn@113:10.catalog@139:4",
+      "name": "catalog",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:fn@113:10.consult@139:49",
+      "name": "consult",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationProfileMatrix.test.ts:fn@113:10.status@139:94",
+      "name": "status",
+      "type": "Function",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@163:84.fn@172:121.model@173:45",
+      "name": "model",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@163:84.fn@172:121.reflection@173:63",
+      "name": "reflection",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@163:84.fn@172:121.speed@173:75",
+      "name": "speed",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@223:56.fn@224:120.model@227:26",
+      "name": "model",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@223:56.fn@224:120.reflection@227:33",
+      "name": "reflection",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@223:56.fn@224:120.speed@227:66",
+      "name": "speed",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@223:56.fn@224:120.operationId@235:21",
+      "name": "operationId",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@223:56.fn@224:120.preferences@235:86",
+      "name": "preferences",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationProfileMatrix.test.ts:fn@223:56.fn@224:120.question@235:34",
+      "name": "question",
+      "type": "Property",
+      "filePath": "karta/test/consultationProfileMatrix.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/lmStudioQualification.test.ts:cwd",
+      "name": "cwd",
+      "type": "Const",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/lmStudioQualification.test.ts:model",
+      "name": "model",
+      "type": "Const",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/lmStudioQualification.test.ts:requests",
+      "name": "requests",
+      "type": "Const",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/lmStudioQualification.test.ts:origin",
+      "name": "origin",
+      "type": "Const",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/lmStudioQualification.test.ts:inventory",
+      "name": "inventory",
+      "type": "Const",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/lmStudioQualification.test.ts:answer",
+      "name": "answer",
+      "type": "Const",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/lmStudioQualification.test.ts:server",
+      "name": "server",
+      "type": "Function",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/lmStudioQualification.test.ts:Run.code",
+      "name": "code",
+      "type": "Property",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/lmStudioQualification.test.ts:Run.signal",
+      "name": "signal",
+      "type": "Property",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/lmStudioQualification.test.ts:Run.stderr",
+      "name": "stderr",
+      "type": "Property",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/lmStudioQualification.test.ts:Run.stdout",
+      "name": "stdout",
+      "type": "Property",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "TypeAlias:karta/test/lmStudioQualification.test.ts:Run",
+      "name": "Run",
+      "type": "TypeAlias",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/lmStudioQualification.test.ts:runSmoke",
+      "name": "runSmoke",
+      "type": "Function",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/lmStudioQualification.test.ts:runSmoke.fn@65:32.timer@66:4",
+      "name": "timer",
+      "type": "Function",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/lmStudioQualification.test.ts:records",
+      "name": "records",
+      "type": "Function",
+      "filePath": "karta/test/lmStudioQualification.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/README.md:L1:IAO — qualification des profils, des parcours et du moteur local",
+      "name": "IAO — qualification des profils, des parcours et du moteur local",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/README.md:L7:Corrections du lot",
+      "name": "Corrections du lot",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/README.md:L13:Ce qui est réellement exercé",
+      "name": "Ce qui est réellement exercé",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/README.md:L29:Résultats réels du composant Ollama",
+      "name": "Résultats réels du composant Ollama",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/README.md:L48:Conditions restant nécessaires pour le déploiement",
+      "name": "Conditions restant nécessaires pour le déploiement",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/README.md:L63:Preuves et reproduction",
+      "name": "Preuves et reproduction",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:ORIGIN",
+      "name": "ORIGIN",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:MODEL",
+      "name": "MODEL",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:MAX_BYTES",
+      "name": "MAX_BYTES",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:TIMEOUT",
+      "name": "TIMEOUT",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:qa/iao-release-qualification-20261123/native/probe-ollama.py:request",
+      "name": "request",
+      "type": "Function",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:qa/iao-release-qualification-20261123/native/probe-ollama.py:NoRedirect",
+      "name": "NoRedirect",
+      "type": "Class",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:qa/iao-release-qualification-20261123/native/probe-ollama.py:NoRedirect.redirect_request#6",
+      "name": "redirect_request",
+      "type": "Method",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:qa/iao-release-qualification-20261123/native/probe-ollama.py:native",
+      "name": "native",
+      "type": "Function",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:CALCULATE",
+      "name": "CALCULATE",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:TOOL",
+      "name": "TOOL",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:EXTRACT",
+      "name": "EXTRACT",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:EXTRACT_SCHEMA",
+      "name": "EXTRACT_SCHEMA",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:PLAN_SCHEMA",
+      "name": "PLAN_SCHEMA",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:qa/iao-release-qualification-20261123/native/probe-ollama.py:CASES",
+      "name": "CASES",
+      "type": "Variable",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:qa/iao-release-qualification-20261123/native/probe-ollama.py:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:qa/iao-release-qualification-20261123/native/probe-ollama.py:main.deadline_reached@84:4",
+      "name": "deadline_reached",
+      "type": "Function",
+      "filePath": "qa/iao-release-qualification-20261123/native/probe-ollama.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/release/qualification-matrix.md:L1:IAO — qualification du banc local et critères de sortie",
+      "name": "IAO — qualification du banc local et critères de sortie",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/release/qualification-matrix.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/release/qualification-matrix.md:L5:Conclusion du périmètre",
+      "name": "Conclusion du périmètre",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/release/qualification-matrix.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/release/qualification-matrix.md:L11:Ce qui est réellement exécuté",
+      "name": "Ce qui est réellement exécuté",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/release/qualification-matrix.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/release/qualification-matrix.md:L32:Régression nouvelle : matrice finie de neuf cas",
+      "name": "Régression nouvelle : matrice finie de neuf cas",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/release/qualification-matrix.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/release/qualification-matrix.md:L48:Reçus et limites de preuve",
+      "name": "Reçus et limites de preuve",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/release/qualification-matrix.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/ui/inventory.md:L1:Qualification UI IAO — inventaire et limites",
+      "name": "Qualification UI IAO — inventaire et limites",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/ui/inventory.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/ui/inventory.md:L6:Contrôles effectivement présents",
+      "name": "Contrôles effectivement présents",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/ui/inventory.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/ui/inventory.md:L19:Manques à distinguer des défauts",
+      "name": "Manques à distinguer des défauts",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/ui/inventory.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/ui/inventory.md:L26:Couverture existante et ajout ciblé",
+      "name": "Couverture existante et ajout ciblé",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/ui/inventory.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/ui/inventory.md:L47:Défaut reproduit avant correction",
+      "name": "Défaut reproduit avant correction",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/ui/inventory.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-release-qualification-20261123/ui/inventory.md:L59:État de remise à l’intégration",
+      "name": "État de remise à l’intégration",
+      "type": "Section",
+      "filePath": "qa/iao-release-qualification-20261123/ui/inventory.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/lib/consultation-client.ts:modelId",
+      "name": "modelId",
+      "type": "Function",
+      "filePath": "src/lib/consultation-client.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/lib/consultation-client.ts:plan",
+      "name": "plan",
+      "type": "Function",
+      "filePath": "src/lib/consultation-client.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/lib/consultation-client.ts:catalog",
+      "name": "catalog",
+      "type": "Function",
+      "filePath": "src/lib/consultation-client.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/lib/consultation-client.ts:input",
+      "name": "input",
+      "type": "Function",
+      "filePath": "src/lib/consultation-client.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:tests/chat/README.md:L1:Recette isolée du chat PURA",
+      "name": "Recette isolée du chat PURA",
+      "type": "Section",
+      "filePath": "tests/chat/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:tests/chat/consultation.spec.ts:endpoint",
+      "name": "endpoint",
+      "type": "Const",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:tests/chat/consultation.spec.ts:main",
+      "name": "main",
+      "type": "Const",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:tests/chat/consultation.spec.ts:peer",
+      "name": "peer",
+      "type": "Const",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:tests/chat/consultation.spec.ts:reflections",
+      "name": "reflections",
+      "type": "Const",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:tests/chat/consultation.spec.ts:speeds",
+      "name": "speeds",
+      "type": "Const",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:completeCatalog",
+      "name": "completeCatalog",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:queue",
+      "name": "queue",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:catalogue",
+      "name": "catalogue",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:identity",
+      "name": "identity",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:tests/chat/consultation.spec.ts:identity.fn@32:22.email@33:23",
+      "name": "email",
+      "type": "Property",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:tests/chat/consultation.spec.ts:identity.fn@32:22.id@33:19",
+      "name": "id",
+      "type": "Property",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:openAnalysis",
+      "name": "openAnalysis",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:panel",
+      "name": "panel",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:calls",
+      "name": "calls",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:running",
+      "name": "running",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/chat/consultation.spec.ts:respond",
+      "name": "respond",
+      "type": "Function",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:tests/chat/consultation.spec.ts:fn@75:102.auto@83:22",
+      "name": "auto",
+      "type": "Property",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:tests/chat/consultation.spec.ts:fn@75:102.deep@83:48",
+      "name": "deep",
+      "type": "Property",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:tests/chat/consultation.spec.ts:fn@75:102.maximum@83:60",
+      "name": "maximum",
+      "type": "Property",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:tests/chat/consultation.spec.ts:fn@75:102.standard@83:32",
+      "name": "standard",
+      "type": "Property",
+      "filePath": "tests/chat/consultation.spec.ts",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": []
+}

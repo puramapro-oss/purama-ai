@@ -1,0 +1,25 @@
+{
+  "stage": "RED expected before native-host filter",
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--run",
+    "test/consultationProfileMatrix.test.ts",
+    "-t",
+    "excludes @revision",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile=../qa/iao-release-qualification-20261123/profiles/model-revision-red.json"
+  ],
+  "exit_code": 1,
+  "started_at": "2026-11-23T21:05:32.425485+00:00",
+  "elapsed_seconds": 5.241,
+  "source_sha256": {
+    "karta/test/consultationProfileMatrix.test.ts": "f92748dd14afac058466db1391f109d3dcd7a0021cb2e3db98fd052a47d21597",
+    "karta/src/claude/consultation-host.ts": "459ab9ab83cea82408630f46b01882bc9a284fc244f66696d87d43177c3bdc0a"
+  },
+  "log": "model-revision-red.log",
+  "report": "model-revision-red.json",
+  "production_filter_applied": false
+}

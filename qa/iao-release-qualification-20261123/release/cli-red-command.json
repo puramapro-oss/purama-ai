@@ -1,0 +1,14 @@
+{
+  "stage": "RED, product script unchanged",
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "test/lmStudioQualification.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 1,
+  "elapsed_seconds": 2.822,
+  "log": "cli-red.log",
+  "script_sha256": "652e3678a38806827dd81c026b654846efea5f683a7817cd0bfcf37314728804",
+  "test_sha256": "d4da866fbb98ae4e5ea6bbd431e73a2a8ff85b05717adb28a9c8886ab60b7f53"
+}

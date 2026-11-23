@@ -1,0 +1,77 @@
+{
+  "id": "model-identifier-at-revision-contract-mismatch",
+  "status": "REPRODUIT",
+  "product_status": "PARTIEL",
+  "fixed": true,
+  "scope": "Un catalogue fournisseur synthétique et une politique opérateur qualifient publisher/model@revision. Existence réelle de ce modèle sur un compte Anthropic : NON TESTÉ.",
+  "http_stage": {
+    "host_catalogue": "Identifiant annoncé comme disponible",
+    "http_catalogue_status": 502,
+    "http_consult_status": 400,
+    "model_calls": 0,
+    "operations": 0,
+    "reservations": 0
+  },
+  "additional_direct_host_stage": {
+    "boundary": "Appel direct au host de production pour le diagnostic ; ne traverse pas HTTP et ne modifie aucun garde HTTP.",
+    "model_calls": 1,
+    "dispatched_model": "publisher/model@revision",
+    "operation_status": "reconciliation_required",
+    "result_status": "failed",
+    "result_reason": "accounting_unavailable",
+    "answer": null,
+    "normalized_usage": {
+      "requestedModel": null,
+      "responseModel": null,
+      "inputTokens": 10,
+      "outputTokens": 5
+    },
+    "sql_call_state": "reserved",
+    "sql_call_receipt": null,
+    "sql_aggregate_input_tokens": null,
+    "sql_aggregate_output_tokens": null,
+    "sql_aggregate_cost_micros": null,
+    "replay_additional_calls": 0,
+    "http_status_read_after_direct_host": 502
+  },
+  "cause_chain": [
+    "Host et résolveur acceptent @ dans les modèles qualifiés.",
+    "Le contrat HTTP utilise une grammaire plus restrictive et refuse @ en entrée/projection.",
+    "Le SDK conserve le modèle demandé exact dans le dispatch.",
+    "normalizeModelUsage minimise les identifiants contenant @ en null, conformément à son test model@account existant.",
+    "model_consultation_settle exige que requestedModel du reçu corresponde au modèle réservé ; null ne correspond pas, le règlement échoue.",
+    "La consultation persiste failed/accounting_unavailable, garde le coût et les agrégats inconnus et ne relance aucune inférence."
+  ],
+  "interpretation": "Défaut de cohérence des capacités acceptées par cette composition, pas seulement un reçu volontairement opaque. La frontière HTTP empêche une nouvelle dépense depuis ce parcours public. Les 63 cas précédents avec identifiants compatibles ne sont pas invalidés par cette reproduction.",
+  "proposed_bounded_fix": "Décision racine requise : refuser ou filtrer les identifiants incompatibles dès la qualification du host natif, avant annonce et allocation. Ne pas élargir globalement usage.ts, ne pas modifier la minimisation des reçus ni le transport LM Studio dans ce diagnostic.",
+  "production_changes": [],
+  "test_file": "karta/test/consultationProfileMatrix.test.ts",
+  "test_sha256": "699d03b4653500ac45f85dec63b3a963a8d5e0074b49fee65639720032f15451",
+  "test_execution": {
+    "passed": 1,
+    "skipped": 63,
+    "total_discovered": 64,
+    "command_exit_code": 0,
+    "receipt": "model-revision-diagnostic-receipt.json"
+  },
+  "generated_at": "2026-11-23T21:00:53.718825+00:00",
+  "observations_phase": "before_native_filter",
+  "current_status": "CORRIGÉ",
+  "fix": {
+    "kind": "Qualification précoce du host natif",
+    "path": "karta/src/claude/consultation-host.ts",
+    "details": [
+      "Normaliser le catalogue générique et valider sa structure.",
+      "Refuser tout modèle absent de la politique ou excédant son plafond de sortie.",
+      "Exclure les modèles non représentables par les contrats HTTP/Edge et les reçus SQL.",
+      "Mettre en cache uniquement les capacités restantes.",
+      "Résoudre le choix exact avant store.begin ; aucun repli vers un autre modèle."
+    ],
+    "no_general_at_support": true,
+    "no_historical_operation_rewrite": true,
+    "red_receipt": "model-revision-red-receipt.json",
+    "green_receipt": "model-revision-green-receipt.json",
+    "typecheck_receipt": "model-revision-typecheck-receipt.json"
+  },
+  "independent_review": "native-model-filter-independent-review.json"
+}

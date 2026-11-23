@@ -265,3 +265,13 @@ au lieu d'un nouveau système parallèle. Réutilise aussi `karta_agent_state`/`
 - [ ] Un agent créé par un vrai utilisateur, activé en `karta_enabled=true` avec de vrais outils (ex: Gmail connecté) : jamais exécuté avec un vrai appel Claude — le mock a seulement prouvé que le pipeline (déclenchement → décision → outils → log) fonctionne structurellement
 - [x] ~~Scheduler des agents créés...~~ Résolu 2026-07-27 (cf section "Clôture des phases restantes" en tête de fichier) — ne dépendait pas du crédit Anthropic, juste du temps réel d'attente
 - [x] ~~Page "Mes employés IA" test humain...~~ Résolu 2026-07-27 (Playwright réel, cf section "Clôture des phases restantes") — ne dépendait pas du crédit Anthropic
+
+
+## Qualification élargie IAO — 23 novembre 2026 après PR 101
+
+État : `PRET_A_CODER` pour les fonctionnalités IAO existantes, validation du 21 novembre réutilisée. Base `970ff2255e2037625a62745ecac3e6cd9c04b702`. Demande : profils, niveaux de réflexion, tailles de tâches, utilisateurs et préparation au déploiement, avec preuves distinguant modèles réels et simulations.
+
+Registre : `qa/iao-release-qualification-20261123/audit-ledger.json`. Responsables : `qual_profiles` (serveur et matrice), `qual_ui` (interface et navigateur), `qual_release` (qualification et readiness), `root` (runtime réel, coordination, revue, intégration). Les produits nouveaux encore en conception et les travaux mobiles de PR 99 restent hors de ce lot.
+
+- Qualification élargie : 65 nouveaux cas serveur, 9 CLI, 4 client et 24 scénarios navigateur ; trois corrections bornées avec preuves avant/après. CI du candidat à exécuter avant intégration.
+- Composant local réel : 5/7 oracles passent ; JSON contraint HTTP501 et socket Compute Fabric refusé conservés comme blocages. Aucun déploiement natif ni cloud payant.

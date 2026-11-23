@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 0,
+  "elapsed_seconds": 9.059,
+  "log": "typecheck-after.log",
+  "log_sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+  "script_sha256": "a0ed88a358c5f368a7991b9fce891c87c2bf7070d77d3d4fb885b90c259b9308",
+  "test_sha256": "fd3c176abdc0aae934c4940eb7700c11aaf1923aba078006fec95713dd54abf6"
+}
