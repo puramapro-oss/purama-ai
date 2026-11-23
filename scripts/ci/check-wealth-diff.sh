@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Keep the unfiltered diagnostic in the caller's log. Exempt only the first
 # appearance of these byte-identical, already archived QA records. Changed
-# records, previously present paths, new files and application code stay strict.
+# records, previously present paths, unlisted files and application code stay strict.
+# Entries cover archived evidence from 57d3d6b and the IAO qualification b4a18ef.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 base=$1
@@ -45,6 +46,20 @@ f1f9f72c59f380b2ad13dd9d7b8bb7e1efbbe309 qa/reliability-audit-20261110/mac/quali
 3d11194edd12339564c9b8e50b7eaa6c37a1ccaa tests/oauth-google/evidence/gmail-legacy-before-history/run.txt
 247b36b8519feffcb9b63837e8f15dac8e0ba7b8 tests/oauth-google/evidence/handler-before.txt
 2335090dcf3e859bfac2671e3dab350576d0344d tests/oauth-google/evidence/scope-before.txt
+ad8d62f7ed5df3c1ec512f7b417fdeba91621483 qa/iao-release-qualification-20261123/gitnexus-baseline-cached.log
+f704d737230abf3205ec196c735132820f7bbe48 qa/iao-release-qualification-20261123/gitnexus-final-index.log
+637a399bab76a2d5b25fef99794ad24448df0ffd qa/iao-release-qualification-20261123/profiles/model-revision-before-test.txt
+55246ae3da84de95a7333206ae1d9ade56c0be8f qa/iao-release-qualification-20261123/profiles/model-revision-typecheck.log
+6dbf23e38bb494e4e4acab045e8e0a081f226a08 qa/iao-release-qualification-20261123/release/cli-green.log
+78e9a90ee0be06942c5471ca9a6d3271524f7604 qa/iao-release-qualification-20261123/release/cli-red.log
+37d345c6d8063bf8214ec241f07689de18ec299e qa/iao-release-qualification-20261123/release/existing-readiness.log
+55246ae3da84de95a7333206ae1d9ade56c0be8f qa/iao-release-qualification-20261123/release/typecheck-after.log
+55246ae3da84de95a7333206ae1d9ade56c0be8f qa/iao-release-qualification-20261123/release/typecheck-before.log
+19d6618bdd08c543b5a101755910791a584b5885 qa/iao-release-qualification-20261123/root-typecheck.log
+ca0f3efc7e91c3ab988d911a3d248452edf9d325 qa/iao-release-qualification-20261123/ui/browser-revision-red.log
+0609db8e46deebfe0e9d4ca2f3680fafa6360284 qa/iao-release-qualification-20261123/ui/client-and-components-green.log
+3af933dccbb08156e6687b5e7678732a67208a7b qa/iao-release-qualification-20261123/ui/client-revision-red.log
+b41156179fab3cc576894403cfb2a045cf6e3648 qa/iao-release-qualification-20261123/ui/component-baseline.log
 ARCHIVED_QA
-printf 'Rechecking all changes except %d original archived QA blobs (57d3d6b).\n' "$((${#paths[@]} - 1))"
+printf 'Rechecking all changes except %d byte-identical archived QA blobs.\n' "$((${#paths[@]} - 1))"
 git diff --check "$base" "$head" -- "${paths[@]}"

@@ -6,6 +6,8 @@ on:
       - '.claude/skills/wealth-engine/SKILL.md'
       - '.github/workflows/wealth-engine-continuity.yml'
       - 'scripts/ci/check-wealth-diff.sh'
+      - 'scripts/ci/test-wealth-diff.py'
+      - 'qa/iao-release-qualification-20261123/root-typecheck.log'
 
 permissions:
   contents: read
@@ -47,6 +49,13 @@ jobs:
         with:
           node-version: '24.22.1'
 
+      - name: Verify strict archived-evidence exceptions
+        id: guard
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR"
+          python3 scripts/ci/test-wealth-diff.py | tee "$EVIDENCE_DIR/test-wealth-diff.json"
+
       - name: Record the exact PR comparison
         id: candidate
         run: |
@@ -61,7 +70,7 @@ jobs:
           git diff --no-ext-diff --binary "$PR_BASE_SHA" "$PR_HEAD_SHA" > "$EVIDENCE_DIR/candidate.patch"
           python3 - <<'PY'
           import hashlib, json, os, pathlib, subprocess
-          paths = [".claude/skills/wealth-engine/SKILL.md", ".github/workflows/wealth-engine-continuity.yml", "vercel.json"]
+          paths = [".claude/skills/wealth-engine/SKILL.md", ".github/workflows/wealth-engine-continuity.yml", "scripts/ci/check-wealth-diff.sh", "scripts/ci/test-wealth-diff.py", "vercel.json"]
           base, head = os.environ["PR_BASE_SHA"], os.environ["PR_HEAD_SHA"]
           files = []
           for path in paths:
@@ -117,6 +126,7 @@ jobs:
       - name: Preserve outcomes, dependency manifests and index metadata
         if: always()
         env:
+          GUARD_OUTCOME: ${{ steps.guard.outcome }}
           CANDIDATE_OUTCOME: ${{ steps.candidate.outcome }}
           INSTALL_OUTCOME: ${{ steps.install.outcome }}
           ANALYZE_OUTCOME: ${{ steps.analyze.outcome }}
@@ -137,7 +147,7 @@ jobs:
           for name, source in sources.items():
               if source.is_file():
                   shutil.copyfile(source, evidence / name)
-          outcomes = {name: os.environ[name.upper() + "_OUTCOME"] for name in ["candidate", "install", "analyze", "detect"]}
+          outcomes = {name: os.environ[name.upper() + "_OUTCOME"] for name in ["guard", "candidate", "install", "analyze", "detect"]}
           (evidence / "outcomes.json").write_text(json.dumps(outcomes, indent=2) + "\n")
           hashes = [f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}" for p in sorted(evidence.iterdir()) if p.is_file() and p.name != "SHA256SUMS"]
           (evidence / "SHA256SUMS").write_text("\n".join(hashes) + "\n")
