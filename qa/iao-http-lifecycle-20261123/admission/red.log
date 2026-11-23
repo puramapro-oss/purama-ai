@@ -1,0 +1,122 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-ai/karta
+
+ ❯ test/iaoAdmissionDeadline.test.ts (9 tests | 8 failed) 35ms
+   × expires readiness before admission and ignores its late result 15ms
+   × expires authentication before admission and ignores its late result 5ms
+   × expires body before admission and ignores its late result 1ms
+   × expires final-readiness before admission and ignores its late result 1ms
+   × expires lookup authentication without late facade access 2ms
+   × expires cancel authentication without late facade access 1ms
+   × shares the 15-second admission deadline across successive waits 2ms
+   × checks the monotonic deadline after synchronous port metadata before dispatch 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/iaoAdmissionDeadline.test.ts > expires readiness before admission and ignores its late result
+ FAIL  test/iaoAdmissionDeadline.test.ts > expires authentication before admission and ignores its late result
+ FAIL  test/iaoAdmissionDeadline.test.ts > expires body before admission and ignores its late result
+ FAIL  test/iaoAdmissionDeadline.test.ts > expires final-readiness before admission and ignores its late result
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/iaoAdmissionDeadline.test.ts:58:23
+     56|       expect(prepare).not.toHaveBeenCalled();
+     57|       await vi.advanceTimersByTimeAsync(1);
+     58|       expect(settled).toBe(true);
+       |                       ^
+     59|       expect(sendJson).toHaveBeenCalledExactlyOnceWith(res, 503, { err…
+     60|       expect(res.setHeader).toHaveBeenCalledWith("Cache-Control", "no-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  test/iaoAdmissionDeadline.test.ts > expires lookup authentication without late facade access
+ FAIL  test/iaoAdmissionDeadline.test.ts > expires cancel authentication without late facade access
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/iaoAdmissionDeadline.test.ts:87:21
+     85|   try {
+     86|     await vi.advanceTimersByTimeAsync(15_000);
+     87|     expect(settled).toBe(true);
+       |                     ^
+     88|     expect(sendJson).toHaveBeenCalledExactlyOnceWith(res, 503, { error…
+     89|     blocked.resolve(identity());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  test/iaoAdmissionDeadline.test.ts > shares the 15-second admission deadline across successive waits
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/iaoAdmissionDeadline.test.ts:113:21
+    111|   try {
+    112|     await vi.advanceTimersByTimeAsync(15_000);
+    113|     expect(settled).toBe(true);
+       |                     ^
+    114|     expect(sendJson).toHaveBeenCalledExactlyOnceWith(res, 503, { error…
+    115|     await vi.advanceTimersByTimeAsync(3_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  test/iaoAdmissionDeadline.test.ts > checks the monotonic deadline after synchronous port metadata before dispatch
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 503, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   503,
++   202,
+    {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "must not run",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant",
++     "updatedAt": "2026-11-23T15:19:52.013Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionDeadline.test.ts:131:20
+    129|   await handleIaoRoute({ method: "POST", url: "/iao/requests" } as Inc…
+    130|     res, { facade, authenticator: { authenticate: async () => identity…
+    131|   expect(sendJson).toHaveBeenCalledExactlyOnceWith(res, 503, { error: …
+       |                    ^
+    132|   expect(prepare).not.toHaveBeenCalled();
+    133| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 1 passed (9)
+   Start at  16:19:51
+   Duration  398ms (transform 57%, tests 23%, import 11%, setup 6%, worker 4%)

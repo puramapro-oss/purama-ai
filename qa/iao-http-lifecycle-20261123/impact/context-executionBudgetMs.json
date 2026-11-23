@@ -1,0 +1,71 @@
+{
+  "status": "ambiguous",
+  "message": "Found 8 symbols matching 'executionBudgetMs'. Use uid, file_path, or kind to disambiguate.",
+  "totalCandidates": 8,
+  "candidates": [
+    {
+      "uid": "Function:karta/test/iaoExecutionBudget.test.ts:fn@16:42.fn@47:65.executionBudgetMs@49:46",
+      "name": "executionBudgetMs",
+      "kind": "Function",
+      "filePath": "karta/test/iaoExecutionBudget.test.ts",
+      "line": 50,
+      "score": 0.56
+    },
+    {
+      "uid": "Function:karta/test/iaoAdmissionDeadline.test.ts:fn@123:84.executionBudgetMs@125:42",
+      "name": "executionBudgetMs",
+      "kind": "Function",
+      "filePath": "karta/test/iaoAdmissionDeadline.test.ts",
+      "line": 126,
+      "score": 0.56
+    },
+    {
+      "uid": "Function:karta/test/iaoAdmissionDeadline.test.ts:fn@134:70.executionBudgetMs@137:42",
+      "name": "executionBudgetMs",
+      "kind": "Function",
+      "filePath": "karta/test/iaoAdmissionDeadline.test.ts",
+      "line": 138,
+      "score": 0.56
+    },
+    {
+      "uid": "Method:karta/src/iao/iaoFacade.ts:IaoFacade.executionBudgetMs#1",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/src/iao/iaoFacade.ts",
+      "line": 116,
+      "score": 0.54
+    },
+    {
+      "uid": "Method:karta/src/iao/iaoFacade.ts:KartaIaoPort.executionBudgetMs#1",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/src/iao/iaoFacade.ts",
+      "line": 55,
+      "score": 0.54
+    },
+    {
+      "uid": "Method:karta/src/iao/kartaRuntimePort.ts:KartaRuntimeIaoPort.executionBudgetMs#1",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/src/iao/kartaRuntimePort.ts",
+      "line": 44,
+      "score": 0.54
+    },
+    {
+      "uid": "Method:karta/test/iaoExecutionBudget.test.ts:fn@16:42.fn@57:64.executionBudgetMs@59:44#0",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/test/iaoExecutionBudget.test.ts",
+      "line": 60,
+      "score": 0.54
+    },
+    {
+      "uid": "Method:karta/test/apiIaoResponseBudget.test.ts:fn@136:114.executionBudgetMs@139:42#0",
+      "name": "executionBudgetMs",
+      "kind": "Method",
+      "filePath": "karta/test/apiIaoResponseBudget.test.ts",
+      "line": 140,
+      "score": 0.54
+    }
+  ]
+}

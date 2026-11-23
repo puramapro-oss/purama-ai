@@ -1,0 +1,33 @@
+{
+  "recorded_at_utc": "2026-11-23T15:10:38.795946+00:00",
+  "base": "aa3220fca64ba786fb4fcb18daf379ce0d17e7c5",
+  "branch": "fix/iao-http-lifecycle-20261123",
+  "owned_files_sha256": {
+    "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "karta/src/api/iaoRoutes.ts": "f12f9ef0e36e8ada27f6ee6c57fa7874bb9e1b38d4f06f2b8019497a9fb31fe5",
+    "karta/test/apiIaoIntegration.test.ts": "0b049a047f3a2f48cd9a276e15bba1426f552a59ffebe7a5449a63cc0614be1b"
+  },
+  "related_other_owner_files_sha256": {
+    "karta/src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+    "karta/src/iao/kartaRuntimePort.ts": "dd84affa7f347db703a38f743f44af2ee0d8a803b229fb905172b46995e836e2"
+  },
+  "diff_check_exit_code": 0,
+  "patch_sha256": "1fe67926f04868a0129b4a314e1250df80166639bbb039497cb9636eef2eb914",
+  "red": {
+    "tests": 19,
+    "failed": 11,
+    "passed": 8,
+    "product_was_unmodified": true
+  },
+  "final_regression": {
+    "files": 6,
+    "tests": 208,
+    "passed": 208
+  },
+  "final_typecheck_exit_code": 0,
+  "limits": [
+    "No commit, push or deployment by this agent",
+    "No real SMARANA, provider or host qualification",
+    "Socket and keep-alive tests owned by performances_locales_iao_20261123"
+  ]
+}

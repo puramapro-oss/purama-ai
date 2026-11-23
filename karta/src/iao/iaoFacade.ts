@@ -51,6 +51,8 @@ export type KartaIaoResult =
 
 export interface KartaIaoPort {
   prepare(request: IaoRequest, signal?: AbortSignal): Promise<KartaIaoResult>;
+  /** Finite execution budget enforced by the port, excluding HTTP delivery. */
+  executionBudgetMs?(type: IaoRequest["type"]): number;
 }
 
 export type IaoResponse = {
@@ -91,6 +93,7 @@ export class IaoRequestNotFoundError extends Error {}
 
 const DEFAULT_RETENTION_MS = 15 * 60_000;
 const DEFAULT_MAX_REQUESTS = 10_000;
+const MAX_EXECUTION_BUDGET_MS = 1_200_000;
 
 /** Request-scoped IAO identity. KARTA remains the only execution boundary. */
 export class IaoFacade {
@@ -107,6 +110,15 @@ export class IaoFacade {
       !Number.isInteger(this.#maxRequests) || this.#maxRequests < 1 || this.#maxRequests > 1_000_000) {
       throw new Error("Invalid IAO facade options");
     }
+  }
+
+  /** Optional transport metadata; missing or invalid budgets never change execution. */
+  executionBudgetMs(type: IaoRequest["type"]): number | undefined {
+    try {
+      const budget = this.karta.executionBudgetMs?.(type);
+      return typeof budget === "number" && Number.isInteger(budget) && budget > 0 && budget <= MAX_EXECUTION_BUDGET_MS
+        ? budget : undefined;
+    } catch { return undefined; }
   }
 
   async submit(request: IaoRequest): Promise<IaoResponse> {

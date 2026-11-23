@@ -1,0 +1,40 @@
+{
+  "observedAt": "2026-11-23T15:03:58.998Z",
+  "node": "v24.22.3",
+  "httpSettings": {
+    "timeout": 15000,
+    "requestTimeout": 15000,
+    "headersTimeout": 10000
+  },
+  "admissionMs": 13.183084000000008,
+  "serverTimeoutMs": 15017.806342,
+  "disconnected": {
+    "code": "ECONNRESET",
+    "elapsedMs": 15019.051285000001
+  },
+  "atDisconnect": {
+    "status": "draft",
+    "aborted": false,
+    "completionCalls": 1,
+    "completionReturned": false
+  },
+  "drainWaitsForTask": true,
+  "afterSettlement": {
+    "status": "verified",
+    "preview": "synthetic completion after disconnected socket",
+    "proof": {
+      "source": "karta",
+      "requestId": "11111111-1111-4111-8111-111111111111",
+      "proofId": "33333333-3333-4333-8333-333333333333",
+      "completedAt": "2026-11-23T15:03:58.997Z"
+    },
+    "completionReturned": true,
+    "aborted": false
+  },
+  "sourcesSha256": {
+    "api/server.ts": "4a57767d6adf2109188f93f35ca0e050910a8dd4bc1f06052679bfa123d78ae0",
+    "api/iaoRoutes.ts": "f01910337f6abb16c03aa7ac48590c9522af69db18961040611ecfacc27028be",
+    "iao/iaoFacade.ts": "586d15e5aedaad70a398c44bdc7d1b8e187151bcf78ce8106e1fd527a72a9744",
+    "iao/kartaRuntimePort.ts": "f8525fa8863b0f48847ba65e1bb6a7ae99b2ebb3103bdce959e8e9f2876d9102"
+  }
+}

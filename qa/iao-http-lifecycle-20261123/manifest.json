@@ -1,0 +1,154 @@
+{
+  "recorded_at_utc": "2026-11-23T15:30:11.702033+00:00",
+  "base_commit": "aa3220fca64ba786fb4fcb18daf379ce0d17e7c5",
+  "branch": "fix/iao-http-lifecycle-20261123",
+  "node": "v24.22.3",
+  "status": "LOCAL_QUALIFIED_PENDING_CI",
+  "files_sha256": {
+    "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "karta/src/api/iaoRoutes.ts": "331ff0011b119037d9b12434dc5a04fd6adc507fc4eb11d708e42c22c210575a",
+    "karta/src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+    "karta/src/iao/kartaRuntimePort.ts": "dd84affa7f347db703a38f743f44af2ee0d8a803b229fb905172b46995e836e2",
+    "karta/test/apiIaoIntegration.test.ts": "0b049a047f3a2f48cd9a276e15bba1426f552a59ffebe7a5449a63cc0614be1b",
+    "karta/test/apiIaoResponseBudget.test.ts": "e099c5789f29b23bc2781ee89c1c8e86ff8a6ebc302b88717b5301c80864f702",
+    "karta/test/iaoAdmissionDeadline.test.ts": "51dfb973ee0e0dde6b8c9e42d429914375873c21a4febfc55e9ad221c9109a99",
+    "karta/test/iaoExecutionBudget.test.ts": "9870e13f287c926a00729f5f0a68511c96c9954b817c6fff09608fad59845c09",
+    "vercel.json": "f236287dbcc18d0c05e7192251ae18c28414f536cf30b21a55b7498954d45962"
+  },
+  "unique_local_tests": 244,
+  "unique_local_test_files": 9,
+  "full_ci_current_delta": "NOT_RUN_AT_RECORDING",
+  "production_deployment": false,
+  "real_provider_calls": false,
+  "real_smarana_or_mac_inference": false,
+  "evidence_files_sha256": {
+    "README.md": "d09c296021c9e14faa7a58e2eecc3882ef4ebe870e4d6b5498ad164ea7f59d0a",
+    "admission/budget-regression.json": "cb1e280ae23591cd5538101258b9947c9dd0e195c6884cb2613f766c1a5bda56",
+    "admission/budget-regression.log": "0ddb1f5330f3298eef0617412bdfbda5faa8df07f51c93824e0bf18968ec0ac5",
+    "admission/diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "admission/final-typecheck.json": "cde29e93c8cbcd295d80d3b7f1bb53632eb056598fdc0f30dfe00d0275737a96",
+    "admission/final-typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "admission/green.json": "c4eb8355bdc956dad2857bd053c55a712ddb920c6fe3770dd53f8f712810ca48",
+    "admission/green.log": "045ad0e0a17ccabc2d0f6d1a709717744fe1d40013227ab28db366485db036de",
+    "admission/manifest.json": "4c2500fa529fb875d07b9dbd6e0fa9dccb18b6c75c264716708e4ecd11c0ca34",
+    "admission/red-before-sha256.json": "4c0927db9bd4336c6d86c80644e243445ee9fc9ec11777390370d14cea0f612f",
+    "admission/red.json": "d02d00757c522df56904f4153d7877881cf3529c35e98d344d86c6eb2df0ac39",
+    "admission/red.log": "0c75d6622ad9707565f5a9885a9b531b289d296a51f0379241b8e4677fa5181d",
+    "admission/regression.json": "f29aafe0ea2d2b70ee7c47bace186c35f30a560252737e39fda64ee1d9efc3e7",
+    "admission/regression.log": "1114b3da03f03251992aabb2cfc67c7b2c5b58b41ea4554eaca1f79f612d0deb",
+    "admission/typecheck.json": "58e959b62bcb46406eb237c680c3a3969f8de5a4f8f863ede82d91443078cb5f",
+    "admission/typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "impact/REVIEW.md": "55aac4c4c5e878d0084ecb24c0f0455fd7cb00a587ff32f7e0bd62a6f666005b",
+    "impact/context-MAX_EXECUTION_BUDGET_MS.json": "c82dace4ad1a09c7eab98d489eb29fe13da86dfc8f7e0d643008ad0b9603a67c",
+    "impact/context-executionBudgetMs.json": "5aede548856230fdbae74ca71c63779bf907ecbee33e7cbfce3b74ca827a16ec",
+    "impact/context-handleIaoRoute.json": "b91557603b940aa7c783b4bdd53a98739770fafd568f9e2efe45af5b7ec21037",
+    "impact/detect-all-initial.stderr": "f3cf1ed0b7f62940fb03c5e65083e9414b8b801e12180ea04717666015a2b530",
+    "impact/detect-all-initial.txt": "c23b94e8d80dbd53c34198e88ad8ef29c0a04952ace9c8cc890e36971aa49b8f",
+    "impact/detect-compare.json": "2c73b1c9c3379e72458f66909de44c3e82fb74ac0c5dd87321e36e6b172502c9",
+    "impact/detect-staged.json": "6631ace5d276ac03dde41d75d804c8a9156fd63b80990829d12779e07d6add1e",
+    "impact/index-final.log": "67f11da6d48b2edfd0226d0c45e1b48dbbc812a80e2a63e44d20d2376e400e9e",
+    "pipeline/pipeline-admission-green.json": "b9316847a29a2b727a892b174b1cc42c6fff48a07f4c35371c0798e1ac8b7ab9",
+    "pipeline/pipeline-admission-green.log": "b50c15880af2b1114e2980971acd22ff7d58f116235d838f9f0b1daa6ed76a9c",
+    "pipeline/pipeline-admission-probe.cjs": "205f55f182c7ead3b4c71b82f2e35fbffc8de4db9bc5b42713581de5319f3f86",
+    "readiness/final-regression.json": "406c5b654beba56f592b5058b5ea8384c93e5379eed84e8f843d271626e5e23b",
+    "readiness/final-regression.log": "1d9dcfd290f354b52592e449ce2f07971cc4f2702b3863b18cdf78e0412e87d2",
+    "readiness/final-typecheck.json": "69302fe774b44be1993dc36ee1f508e692a46b40a39841fd37f1a5eeca40f26e",
+    "readiness/final-typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "readiness/green.json": "b9f6ed909cb0e0c268f31594b8784345482291582dc53bd4477945aa3dc64e71",
+    "readiness/green.log": "6973a1780579a8794969f7d0daa574ec5ed73d99b8123410dd29082d67a5190a",
+    "readiness/manifest.json": "5c4e06dc315542fd71c323e4f63d214e1512717a469a23178a32ea666bb524d4",
+    "readiness/red.json": "978a4a6b29d0d2a548bd1d5f92bbe0ad902af3db82fd0086dc22e884ceb73508",
+    "readiness/red.log": "adeda6b0d9efe74b3ff51035deb4805b947b727300294e5ceb0961cc0ef2460b",
+    "socket-after/budget-tests.log": "97899b5697cf60bf594437cd595fc142c7f58da60aea0df5ab9f98ad706e53fa",
+    "socket-after/durable-long-test.log": "3537586a1fc72d37f8c4985d0b837f803a2dca03fc9cb21e50ab24109923d03a",
+    "socket-after/owned-files-final.sha256": "b36c270c32d394fb0771a9713b1f797157eee9c980c0a2cc9d78807a93928639",
+    "socket-after/result.json": "568bf1ff5d2138ec23a1134d70cfbdc7a7976624d60f4b69f242f59d5df5f0c7",
+    "socket-after/run.log": "0c32e10cfe91f1447aa9df153f95523b061218df65692a8fb2db785f209c22a8",
+    "socket-after/socket-green.test.ts": "f7573152685a0b8fc4317019e3183539e997e639895da0a03a27acce48a985fa",
+    "socket-after/typecheck-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "socket-after/typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "socket-after/vitest.config.mjs": "21483ae90bfd67c51c29c010572942a4a2666d7d9f72303f1cef8801432fc03e",
+    "socket-before/result.json": "deb676f6356d305911b16934e1d15ea8379f8bc5ba34b2d7d3510784bff8f116",
+    "socket-before/run.log": "9ade664a2eb3f531c48c298778d8650b7d7afc33e31f053b541ac311521909b5",
+    "socket-before/socket-15s.test.ts": "5b55ff65be3025c47a4e183297b394171c703f6eb1a4b847db9465b7a89e6a4d",
+    "socket-before/vitest.config.mjs": "7b60d227dc83ee7ae31ef7aad98d54fc7f8b39532865b481e07b25bb3cbf85ab"
+  },
+  "transcript_normalization": [
+    {
+      "path": "impact/index-final.log",
+      "raw_sha256": "0afbf993d3122be4c67d0719b43f8118ade70f21531c0126c3ae4a0b39be76fa",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "admission/budget-regression.log",
+      "raw_sha256": "aa637befdc3da980c5e02c3acb84bf45becdc56ce96a9c0fcdbb6caddc85bbca",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "admission/green.log",
+      "raw_sha256": "b891b31e2e8ea8481dc5e347e02b0ed5232dee955644e72092caead056fc4086",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "admission/regression.log",
+      "raw_sha256": "6a0036e3346cdd3a54fe50d588398345599137d21ce8aa06dfabd91def2cf4e4",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "admission/red.log",
+      "raw_sha256": "4ab0c0531b3c8867a4772f4101cd1d8625efc411a5e9c8aabc8c955e313e9a72",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "socket-before/run.log",
+      "raw_sha256": "56e49dcd034f5ba9b86627f8371405a1b4606b1d9868f9fbd6f2d1c579d57216",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "socket-after/durable-long-test.log",
+      "raw_sha256": "66fe4fd1e40c6d356ad7993369fd9c11f53b905674d040b4936a171734a1ebee",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "socket-after/run.log",
+      "raw_sha256": "56bdc10280067cf0a8b9116d1c32b08ed52ea45fd5b291d7ca357b146729645d",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "socket-after/budget-tests.log",
+      "raw_sha256": "4bd59626cabdfa4da86dd1c8c44c966dfee87d57064f8ccf229cbf88291dfe29",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "readiness/green.log",
+      "raw_sha256": "bab88ffdab28347298d8e9e2b277d404cb9efd4fdab1ec4044172407b8f68cfc",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "readiness/final-regression.log",
+      "raw_sha256": "5b9809d983e777323ed6407bcb486b3ce3d02c0588a9d5d945c1d54502c45034",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    },
+    {
+      "path": "readiness/red.log",
+      "raw_sha256": "c49624f8f483ed623c821a6b10ac7a1b0c1d9998b9ae4cc19cb35c5f91b796a9",
+      "change": "Trailing empty lines only removed from copied transcript; source log preserved in scratch"
+    }
+  ],
+  "gitnexus": {
+    "staged": {
+      "changed_count": 110,
+      "affected_count": 485,
+      "changed_files": 54,
+      "risk_level": "critical"
+    },
+    "compare_main": {
+      "changed_count": 9283,
+      "affected_count": 557,
+      "changed_files": 2221,
+      "risk_level": "critical"
+    },
+    "compare_truncated": true,
+    "main_sha": "ae84415be0b9516422805910be999a2c1e6350c0"
+  }
+}

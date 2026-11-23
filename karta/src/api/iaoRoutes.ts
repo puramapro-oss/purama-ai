@@ -25,36 +25,91 @@ export async function handleIaoRoute(
   runtime: IaoRouteRuntime | undefined,
   readBody: (req: IncomingMessage) => Promise<Json>,
   sendJson: (res: ServerResponse, status: number, body: unknown) => void,
+  lifecycle?: Readonly<{ isActive: () => boolean; canAdmit: () => Promise<boolean> }>,
 ): Promise<boolean> {
+  const admissionDeadline = performance.now() + 15_000;
   const url = new URL(req.url ?? "/", "http://localhost");
   if (!isIaoPath(req.method, url.pathname)) return false;
   // Authenticated previews, receipts and refusals must not survive in HTTP caches.
   res.setHeader("Cache-Control", "no-store");
-  if (req.method === "POST" && SUBMIT_PATHS.has(url.pathname)) {
-    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
+  const admissionExpired = Symbol("IAO admission expired");
+  const assertAdmissionOpen = (): void => {
+    if (performance.now() >= admissionDeadline) throw admissionExpired;
+  };
+  // HTTP/1 pipelined responses share a socket timeout. Admission therefore has
+  // its own monotonic deadline, shared by all waits and released before submit.
+  const beforeAdmission = async <T>(operation: () => Promise<T>): Promise<T> => {
+    const remaining = admissionDeadline - performance.now();
+    if (remaining <= 0) throw admissionExpired;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      const identity = await authenticateIdentity(runtime.authenticator, req);
-      const response = await runtime.facade.submit(parseRequest(await readBody(req), identity));
+      const expired = new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(admissionExpired), remaining);
+      });
+      // A non-cancellable operation may settle later; its result cannot resume
+      // route dispatch after this race has timed out.
+      const value = await Promise.race([operation(), expired]);
+      assertAdmissionOpen();
+      return value;
+    } finally {
+      if (timer !== undefined) clearTimeout(timer);
+    }
+  };
+  const isActive = (): boolean => {
+    try { return lifecycle ? lifecycle.isActive() === true : true; }
+    catch { return false; }
+  };
+  const canAdmit = async (): Promise<boolean> => {
+    try { return isActive() && (!lifecycle || await lifecycle.canAdmit() === true) && isActive(); }
+    catch { return false; }
+  };
+  const unavailable = (): true => { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; };
+  if (!runtime || !isActive()) return unavailable();
+  try {
+    if (req.method === "POST" && SUBMIT_PATHS.has(url.pathname)) {
+      if (!await beforeAdmission(canAdmit) || !isActive()) return unavailable();
+      const identity = await beforeAdmission(() => authenticateIdentity(runtime.authenticator, req));
+      if (!isActive()) return unavailable();
+      const body = await beforeAdmission(() => readBody(req));
+      if (!isActive()) return unavailable();
+      const request = parseRequest(body, identity);
+      // Authentication and body reads can outlive readiness. Admit only after
+      // a final dependency probe, then recheck shutdown without another await.
+      if (!await beforeAdmission(canAdmit) || !isActive()) return unavailable();
+      const executionBudgetMs = runtime.facade.executionBudgetMs(request.type);
+      if (executionBudgetMs !== undefined) {
+        const currentTimeout = res.socket?.timeout;
+        const initialTimeout = currentTimeout !== undefined && Number.isFinite(currentTimeout) && currentTimeout > 0
+          ? currentTimeout : 15_000;
+        res.setTimeout(Math.max(initialTimeout, executionBudgetMs + 1_000));
+      }
+      // Port metadata is synchronous code too; shutdown still wins at dispatch.
+      if (!isActive()) return unavailable();
+      assertAdmissionOpen();
+      const response = await runtime.facade.submit(request);
       sendJson(res, response.status === "blocked" ? 503 : 202, response);
-    } catch (error) { sendError(res, error, sendJson); }
-    return true;
-  }
-  const match = url.pathname.match(LOOKUP_PATH);
-  if (req.method === "GET" && match) {
-    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
-    try {
-      const identity = await authenticateIdentity(runtime.authenticator, req);
+      return true;
+    }
+    const match = url.pathname.match(LOOKUP_PATH);
+    if (req.method === "GET" && match) {
+      // Retained work remains readable/cancellable during dependency outages.
+      const identity = await beforeAdmission(() => authenticateIdentity(runtime.authenticator, req));
+      if (!isActive()) return unavailable();
+      assertAdmissionOpen();
       sendJson(res, 200, runtime.facade.get(identity.tenantId, identity.actorId, decodeURIComponent(match[1] ?? "")));
-    } catch (error) { sendError(res, error, sendJson); }
-    return true;
-  }
-  const cancel = url.pathname.match(CANCEL_PATH);
-  if (req.method === "POST" && cancel) {
-    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
-    try {
-      const identity = await authenticateIdentity(runtime.authenticator, req);
+      return true;
+    }
+    const cancel = url.pathname.match(CANCEL_PATH);
+    if (req.method === "POST" && cancel) {
+      const identity = await beforeAdmission(() => authenticateIdentity(runtime.authenticator, req));
+      if (!isActive()) return unavailable();
+      assertAdmissionOpen();
       sendJson(res, 200, runtime.facade.cancel(identity.tenantId, identity.actorId, decodeURIComponent(cancel[1] ?? "")));
-    } catch (error) { sendError(res, error, sendJson); }
+      return true;
+    }
+  } catch (error) {
+    if (error === admissionExpired) return unavailable();
+    sendError(res, error, sendJson);
     return true;
   }
   return false;

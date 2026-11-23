@@ -41,6 +41,10 @@ export class KartaRuntimeIaoPort implements KartaIaoPort {
     if (!Number.isInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 600_000) throw new Error("Invalid IAO timeout");
   }
 
+  executionBudgetMs(type: IaoRequest["type"]): number {
+    return this.timeoutMs * (type === "conversation" ? 2 : 1);
+  }
+
   async prepare(request: IaoRequest, signal?: AbortSignal): Promise<KartaIaoResult> {
     const controller = new AbortController();
     const forward = () => controller.abort();

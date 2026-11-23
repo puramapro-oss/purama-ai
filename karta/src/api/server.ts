@@ -123,8 +123,11 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
   const readyForWork = async () => !readiness || (await readiness().catch(() => ({ ready: false }))).ready;
 
   if (isIaoPath(req.method, url.pathname)) {
-    const host = iaoRuntime && readiness && await readyForWork() && !lifetime?.aborted ? iaoRuntime : undefined;
-    await handleIaoRoute(req, res, host, readBody, json);
+    const host = iaoRuntime && readiness && !lifetime?.aborted ? iaoRuntime : undefined;
+    await handleIaoRoute(req, res, host, readBody, json, {
+      isActive: () => !lifetime?.aborted,
+      canAdmit: readyForWork,
+    });
     return;
   }
 

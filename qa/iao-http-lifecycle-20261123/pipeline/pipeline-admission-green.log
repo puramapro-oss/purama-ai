@@ -1,0 +1,10 @@
+[api] KARTA écoute sur :0
+{"event":"first_completion_entered","elapsedMs":189.54}
+{"event":"second_authentication_entered","elapsedMs":189.995}
+{"event":"response_end_called","elapsedMs":15223.034,"index":1,"status":503}
+{"event":"late_authentication_released","elapsedMs":15239.233}
+{"event":"response_end_called","elapsedMs":15241.922,"index":0,"status":202}
+{"event":"response_received_on_wire","elapsedMs":15246.862,"index":0,"status":202}
+{"event":"response_received_on_wire","elapsedMs":15247.02,"index":1,"status":503}
+{"event":"probe_pass","elapsedMs":15247.388}
+{"verdict":"PASS","output":"/workspace/scratch/ccfbf7e5800b/iao-pipeline-independent-20261123/pipeline-admission-green.json","sourcesStableDuringProbe":true}

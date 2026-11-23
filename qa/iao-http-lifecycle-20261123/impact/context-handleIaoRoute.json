@@ -1,0 +1,211 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute",
+    "name": "handleIaoRoute",
+    "kind": "Function",
+    "filePath": "karta/src/api/iaoRoutes.ts",
+    "startLine": 22,
+    "endLine": 116
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "File:karta/test/iao-facade.test.ts",
+        "name": "iao-facade.test.ts",
+        "filePath": "karta/test/iao-facade.test.ts"
+      },
+      {
+        "uid": "File:karta/test/iaoAdmissionDeadline.test.ts",
+        "name": "iaoAdmissionDeadline.test.ts",
+        "filePath": "karta/test/iaoAdmissionDeadline.test.ts"
+      },
+      {
+        "uid": "File:karta/test/iaoIdentityBoundary.test.ts",
+        "name": "iaoIdentityBoundary.test.ts",
+        "filePath": "karta/test/iaoIdentityBoundary.test.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/server.ts:handleRequest",
+        "name": "handleRequest",
+        "filePath": "karta/src/api/server.ts"
+      },
+      {
+        "uid": "Function:karta/test/iaoIdentityBoundary.test.ts:call",
+        "name": "call",
+        "filePath": "karta/test/iaoIdentityBoundary.test.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "name": "cancel"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "cancel"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "getter"
+      },
+      {
+        "name": "cancel"
+      },
+      {
+        "name": "cancel"
+      },
+      {
+        "name": "cancel"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:authenticateIdentity",
+        "name": "authenticateIdentity",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.assertAdmissionOpen@35:2",
+        "name": "assertAdmissionOpen",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.assertAdmissionOpen@35:2",
+        "name": "assertAdmissionOpen",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.assertAdmissionOpen@35:2",
+        "name": "assertAdmissionOpen",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.beforeAdmission@40:2",
+        "name": "beforeAdmission",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.beforeAdmission@40:2",
+        "name": "beforeAdmission",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.beforeAdmission@40:2",
+        "name": "beforeAdmission",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.beforeAdmission@40:2",
+        "name": "beforeAdmission",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.beforeAdmission@40:2",
+        "name": "beforeAdmission",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.beforeAdmission@40:2",
+        "name": "beforeAdmission",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.isActive@57:2",
+        "name": "isActive",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.isActive@57:2",
+        "name": "isActive",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Function:karta/src/api/iaoRoutes.ts:handleIaoRoute.isActive@57:2",
+        "name": "isActive",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Const:karta/src/api/iaoRoutes.ts:CANCEL_PATH",
+        "name": "CANCEL_PATH",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      },
+      {
+        "uid": "Const:karta/src/api/iaoRoutes.ts:LOOKUP_PATH",
+        "name": "LOOKUP_PATH",
+        "filePath": "karta/src/api/iaoRoutes.ts"
+      }
+    ]
+  },
+  "processes": [
+    {
+      "id": "proc_19_handlerequest",
+      "name": "HandleRequest → Identity",
+      "step_index": 2,
+      "step_count": 5
+    },
+    {
+      "id": "proc_46_handlerequest",
+      "name": "HandleRequest → IaoAuthenticationError",
+      "step_index": 2,
+      "step_count": 4
+    },
+    {
+      "id": "proc_47_handlerequest",
+      "name": "HandleRequest → IsJson",
+      "step_index": 2,
+      "step_count": 4
+    },
+    {
+      "id": "proc_48_handlerequest",
+      "name": "HandleRequest → Authenticate",
+      "step_index": 2,
+      "step_count": 4
+    },
+    {
+      "id": "proc_49_handlerequest",
+      "name": "HandleRequest → IaoValidationError",
+      "step_index": 2,
+      "step_count": 4
+    },
+    {
+      "id": "proc_50_handlerequest",
+      "name": "HandleRequest → Json",
+      "step_index": 2,
+      "step_count": 4
+    },
+    {
+      "id": "proc_74_handlerequest",
+      "name": "HandleRequest → IsIaoPath",
+      "step_index": 2,
+      "step_count": 3
+    }
+  ]
+}
