@@ -30,6 +30,8 @@ Les réponses audio vides, trop grandes, redirigées ou de type incompatible son
 
 La revue indépendante a trouvé une fuite supplémentaire dans le SDK Supabase : il journalise les exceptions de son adaptateur HTTP. Une erreur fixe est maintenant produite à cette frontière, sans conserver sa cause. Une régression avec le SDK 2.91.0 réel reproduit l'échec avant correction puis valide sa neutralisation. Le SDK est épinglé à cette version déjà utilisée dans le dépôt.
 
+Une vérification complémentaire avec le même SDK a reproduit trois réponses d'authentification HTTP 200 malformées : `{}`, `{id:null}` et `{id:""}` produisaient un objet `user` truthy et autorisaient la génération. Le handler exige désormais un identifiant de type chaîne, non vide après `trim()`. Les trois réponses sont refusées avec 401 et zéro appel de génération. Ce correctif suit le premier candidat `b74bc95722151346a6c88738640afc3eebf15f9a` ; ses preuves sont `auth-identity-red.txt` et `tts-identity-green.txt`.
+
 Les statuts sont 400 pour une entrée invalide, 413 pour l'entrée trop grande, 408 pour une annulation, 504 pour le délai global, 502 pour un résultat fournisseur invalide et 503 pour une configuration absente. Les réponses JSON et audio utilisent `Cache-Control: no-store`.
 
 ### Réglages vocaux
@@ -47,7 +49,7 @@ Ce changement empêche de nouvelles combinaisons incohérentes. Il ne migre pas 
 | Transport commun et finalisation | 22/22 réussis ; helper non modifié. |
 | Serveur vocal avant correction | 74 tests et sous-tests : 57 échecs attendus, 17 réussites. |
 | Authentification avec SDK réel, avant neutralisation | 5 tests : 1 fuite reproduite, 4 réussites. |
-| Serveur vocal final, SDK inclus | 79/79 tests et sous-tests réussis. |
+| Serveur vocal final, SDK et identités malformées inclus | 82/82 tests et sous-tests réussis. |
 | Interface vocale | 21/21 tests réussis, dont 8 nouveaux ; 13 tests antérieurs conservés. |
 | TypeScript frontend | PASS. |
 | TypeScript KARTA complet | PASS, après remplacement du plafond mémoire insuffisant de 512 Mio par 1 024 Mio. |

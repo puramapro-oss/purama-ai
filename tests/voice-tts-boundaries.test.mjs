@@ -510,3 +510,23 @@ test('TTS SDK: authentication response body shares the overall deadline', async 
   assert.equal(stream.state.cancels, 1);
   assert.equal(h.calls.fetch.length, 1, 'incomplete authentication cannot start generation');
 });
+
+for (const [label, user] of [
+  ['an empty object', {}],
+  ['a null user id', { id: null }],
+  ['an empty user id', { id: '' }],
+]) test(`TTS SDK identity: rejects ${label} before generation`, async t => {
+  const h = await harness({ realAuthSdk: true, provider: async input => {
+    if (new URL(input).hostname === 'supabase.fixture.invalid') {
+      return new Response(JSON.stringify(user), { headers: { 'content-type': 'application/json' } });
+    }
+    return audioResponse();
+  } });
+  isolateSdk(t, h);
+  const result = await h.handler(request());
+  const generations = h.calls.fetch.filter(call => new URL(call.url).hostname !== 'supabase.fixture.invalid').length;
+  t.diagnostic(`HTTP status=${result.status}; generation requests=${generations}`);
+  await failure(h, result, 401);
+  assert.equal(generations, 0, 'an identity without a valid user id cannot authorize generation');
+  assert.equal(h.calls.fetch.length, 1, 'only identity verification is allowed');
+});

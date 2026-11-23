@@ -1,12 +1,12 @@
 {
-  "date": "2026-11-23T03:04:07.434526+01:00",
+  "date": "2026-11-23T03:20:24.336181+01:00",
   "baseCommit": "d150c87ff9e3c7530765c4abaf5412c637b74366",
   "scope": "Local source qualification, no provider calls or deployment",
   "files": {
     "karta/src/tools/apollo.ts": "4013a210675d6768a3d27270a8c5cb46cb192f6cc1c298efa46eadcd3b30c219",
     "karta/test/apolloTool.test.ts": "b2eabc34295541ff35c384e3029a290677cef3963d2de26983bd47923fd5ade4",
-    "supabase/functions/voice-tts/index.ts": "1ad08e282ceb40c859aeadbec246d4ff18b0745fd95087cea8d860d077c1e63c",
-    "tests/voice-tts-boundaries.test.mjs": "453a6c61d45d649972da3423a29785c34cf3dc7a82f3a324e5557b66f51af0f5",
+    "supabase/functions/voice-tts/index.ts": "0e1faf1a81adf4cf58813d6a462d60fc7de8c0521319d0593ec4fa5a2b55f021",
+    "tests/voice-tts-boundaries.test.mjs": "1c007f4e6e2500e690b9f8a6bec055a7b1b5a714319f3ac5591ae753f005e0ec",
     "src/components/voice/VoiceSettingsCard.tsx": "f86c3faed4a6a6dd588321f6ad2badd452e39b19d756fc97fa238e75464d30c1",
     "src/components/voice/VoiceMode.accessibility.test.tsx": "ab1c8f9b48620dfa9ac17d067dbf6b5a0b0f6347a6f22c11e5a795289579e290",
     ".github/workflows/purama-chef-hardening.yml": "c77970888a218bdc64ac1f7219e0cdb33611500af1481af2af58bd394c7622d4",
@@ -19,7 +19,7 @@
     },
     "ttsIncludingRealAuthSdk": {
       "status": "PASS",
-      "testsAndSubtests": 79
+      "testsAndSubtests": 82
     },
     "voiceUi": {
       "status": "PASS",
@@ -40,5 +40,11 @@
     "realProviders": "NON_TESTE",
     "deployment": "NON_TESTE"
   },
-  "automaticDeploymentForBranch": false
+  "automaticDeploymentForBranch": false,
+  "identityFollowup": {
+    "before": "b74bc95722151346a6c88738640afc3eebf15f9a",
+    "red": "3 malformed HTTP-200 identities triggered synthesis",
+    "green": "82 tests passed; all three malformed identities now return 401 without synthesis",
+    "remainingGate": "CI must confirm the final updated head"
+  }
 }

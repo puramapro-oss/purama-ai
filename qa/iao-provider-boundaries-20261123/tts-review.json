@@ -17,24 +17,38 @@
     "red_evidence": "auth-sdk-red.txt",
     "red_result": { "tests": 5, "passed": 4, "failed": 1, "exit_code": 1 }
   },
+  "identity_finding": {
+    "id": "TTS-AUTH-IDENTITY-02",
+    "status": "CORRIGE",
+    "description": "Le contrôle de présence de user acceptait les objets truthy fournis par le SDK pour une réponse HTTP 200 sans identifiant valide.",
+    "cases": [{}, { "id": null }, { "id": "" }],
+    "reproduction": "Avec le vrai SDK 2.91.0 et un transport simulé, chacun des trois cas produisait une réponse TTS HTTP 200 et une requête de génération.",
+    "red_evidence": "auth-identity-red.txt",
+    "red_result": { "tests": 3, "passed": 0, "failed": 3, "exit_code": 1 },
+    "fix_reviewed": "Avant lecture de l'entrée et génération, le handler exige un id de type string et non vide après trim ; sinon il renvoie 401.",
+    "green_cases_result": "Les trois cas renvoient maintenant HTTP 401 avec zéro requête de génération.",
+    "green_evidence": "tts-identity-green.txt"
+  },
   "verified": [
     "Budget partagé de 30 secondes entre authentification, entrée, transport et lecture audio.",
     "Annulation client et expiration pendant l'authentification réelle ; réponse HTTP tardive annulée sans génération.",
     "Contrat GET getUser réel, headers attendus et réponse reconstruite compatible avec le SDK.",
+    "Identité vide ou malformée refusée avant génération, même si le SDK retourne un objet user truthy.",
     "OpenAI response_format=mp3 ; ElevenLabs output_format explicite et voice_settings.speed ; voix et types validés ; aucun repli fournisseur implicite.",
     "Entrée bornée à 32768 octets, audio décodé borné à 8 Mio, refus des corps vides et des types inattendus, nettoyage non bloquant.",
     "Diagnostics neutres, no-store sur réponses audio/JSON, absence de retry implicite du fournisseur TTS."
   ],
   "green_evidence": {
-    "file": "tts-green.txt",
+    "file": "tts-identity-green.txt",
+    "previous_file": "tts-green.txt",
     "executed_by": "/root",
     "reviewer_read_result": true,
-    "tests": 79,
-    "passed": 79,
+    "tests": 82,
+    "passed": 82,
     "failed": 0,
     "cancelled": 0,
     "skipped": 0,
-    "duration_ms": 1169.155556
+    "duration_ms": 723.901852
   },
   "limitations": [
     "Aucun appel réel à Supabase, OpenAI ou ElevenLabs ; tous les transports des tests sont simulés.",

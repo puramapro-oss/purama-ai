@@ -22,5 +22,11 @@
     "formattingOnly": "Trailing spaces/tabs and surplus blank EOF lines removed; outcomes and diagnostics unchanged.",
     "beforeSha256": "a67632d587eb4093f79d4e802761ca5c83b59794b4e3c09f35b70627aa506bf8",
     "afterSha256": "f9e449fe686ee9373d3b6b6cb7e93cf3ee1369a76a0945645c5f9fe94d1c972b"
+  },
+  {
+    "file": "qa/iao-provider-boundaries-20261123/auth-identity-red.txt",
+    "formattingOnly": "Trailing spaces/tabs or extra final blank lines only; outcomes unchanged.",
+    "beforeSha256": "bf044ae8ae437138522f51427be5c4ca66faea06ba24b944ac99282efc5e20d2",
+    "afterSha256": "a1b18d81e70b26923dbcc278c4cf74bfa336f64b7a8b8fda7b55773ff9be7f9c"
   }
 ]

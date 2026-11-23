@@ -74,7 +74,9 @@ Deno.serve(async (req) => {
       },
     });
     const { data: userData, error: userErr } = await deadline.wait(() => userClient.auth.getUser(token));
-    if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
+    if (userErr || typeof userData?.user?.id !== "string" || !userData.user.id.trim()) {
+      return json({ error: "Unauthorized" }, 401);
+    }
 
     phase = "input";
     const bytes = await deadline.wait(() => readBoundedBytes({
