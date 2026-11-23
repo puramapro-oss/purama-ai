@@ -1,0 +1,618 @@
+{
+  "summary": {
+    "changed_count": 78,
+    "affected_count": 5,
+    "changed_files": 75,
+    "risk_level": "medium"
+  },
+  "changed_symbols": [
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost",
+      "name": "createConsultationHost",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.authorize@129:2",
+      "name": "authorize",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:2",
+      "name": "models",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:17.controller@142:24",
+      "name": "controller",
+      "type": "Property",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:17.promise@142:48",
+      "name": "promise",
+      "type": "Property",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:17.waiters@142:36",
+      "name": "waiters",
+      "type": "Property",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@136:17.settled@157:6",
+      "name": "settled",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.catalog@179:4#2",
+      "name": "catalog",
+      "type": "Method",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.consult@207:4#3",
+      "name": "consult",
+      "type": "Method",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/src/claude/consultation-host.ts:createConsultationHost.consult@207:4.reserve@260:43",
+      "name": "reserve",
+      "type": "Function",
+      "filePath": "karta/src/claude/consultation-host.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:deferred",
+      "name": "deferred",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationHost.test.ts:deferred.promise@54:11",
+      "name": "promise",
+      "type": "Property",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationHost.test.ts:deferred.reject@54:29",
+      "name": "reject",
+      "type": "Property",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationHost.test.ts:deferred.resolve@54:20",
+      "name": "resolve",
+      "type": "Property",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:nativeCatalogue",
+      "name": "nativeCatalogue",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@64:93.availability@67:4",
+      "name": "availability",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@64:93.transport@68:4",
+      "name": "transport",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@64:93.owners@74:6",
+      "name": "owners",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@89:89.transport@93:4",
+      "name": "transport",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@116:103.transport@121:4",
+      "name": "transport",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@146:95.loadCatalog@149:4",
+      "name": "loadCatalog",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@146:95.requests@151:4",
+      "name": "requests",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@161:92.loadCatalog@164:4",
+      "name": "loadCatalog",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@161:92.now@165:69",
+      "name": "now",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@161:92.requests@166:4",
+      "name": "requests",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@180:95.loadCatalog@183:4",
+      "name": "loadCatalog",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@180:95.now@184:69",
+      "name": "now",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@194:119.availability@197:4",
+      "name": "availability",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@194:119.now@198:56",
+      "name": "now",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@211:106.loadCatalog@215:4",
+      "name": "loadCatalog",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@63:63.fn@249:88.transport@251:4",
+      "name": "transport",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@270:47.fn@392:89.stopped@395:4",
+      "name": "stopped",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@270:47.fn@392:89.now@396:56",
+      "name": "now",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationHost.test.ts:fn@270:47.fn@408:92.now@412:56",
+      "name": "now",
+      "type": "Function",
+      "filePath": "karta/test/consultationHost.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:owner",
+      "name": "owner",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:other",
+      "name": "other",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:request",
+      "name": "request",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:requestHash",
+      "name": "requestHash",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:plan",
+      "name": "plan",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:estimates",
+      "name": "estimates",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:estimates.calls",
+      "name": "calls",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:estimates.policyVersion",
+      "name": "policyVersion",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:call",
+      "name": "call",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.callId",
+      "name": "callId",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.operationId",
+      "name": "operationId",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.userId",
+      "name": "userId",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.kind",
+      "name": "kind",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.model",
+      "name": "model",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.provider",
+      "name": "provider",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.inputHash",
+      "name": "inputHash",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:call.maxOutputTokens",
+      "name": "maxOutputTokens",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:usage",
+      "name": "usage",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:receipt",
+      "name": "receipt",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:receipt.call",
+      "name": "call",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:receipt.status",
+      "name": "status",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:receipt.usage",
+      "name": "usage",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:result",
+      "name": "result",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:signal",
+      "name": "signal",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Const:karta/test/consultationPersistenceRecovery.test.ts:fixture",
+      "name": "fixture",
+      "type": "Const",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:query",
+      "name": "query",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:restored",
+      "name": "restored",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:lostAcknowledgement",
+      "name": "lostAcknowledgement",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/test/consultationPersistenceRecovery.test.ts:lostAcknowledgement.rpc@47:4#2",
+      "name": "rpc",
+      "type": "Method",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:karta/test/consultationPersistenceRecovery.test.ts:lostAcknowledgement.rpc@47:4.abortSignal@50:8#1",
+      "name": "abortSignal",
+      "type": "Method",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:lostAcknowledgement.losses@61:55",
+      "name": "losses",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:karta/test/consultationPersistenceRecovery.test.ts:lostAcknowledgement.store@61:11",
+      "name": "store",
+      "type": "Property",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:provision",
+      "name": "provision",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:begin",
+      "name": "begin",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:claim",
+      "name": "claim",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:allocationCounts",
+      "name": "allocationCounts",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:budget",
+      "name": "budget",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:karta/test/consultationPersistenceRecovery.test.ts:assertPrivateReadOnlyRecovery",
+      "name": "assertPrivateReadOnlyRecovery",
+      "type": "Function",
+      "filePath": "karta/test/consultationPersistenceRecovery.test.ts",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-quality-reliability-20261123/followup/dependency-security/README.md:L1:Audit complémentaire des dépendances et du contrôle CI",
+      "name": "Audit complémentaire des dépendances et du contrôle CI",
+      "type": "Section",
+      "filePath": "qa/iao-quality-reliability-20261123/followup/dependency-security/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-quality-reliability-20261123/followup/dependency-security/README.md:L5:Résultat",
+      "name": "Résultat",
+      "type": "Section",
+      "filePath": "qa/iao-quality-reliability-20261123/followup/dependency-security/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-quality-reliability-20261123/followup/dependency-security/README.md:L18:Qualification du chemin utilisé",
+      "name": "Qualification du chemin utilisé",
+      "type": "Section",
+      "filePath": "qa/iao-quality-reliability-20261123/followup/dependency-security/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-quality-reliability-20261123/followup/dependency-security/README.md:L27:Contrôle CI réparé",
+      "name": "Contrôle CI réparé",
+      "type": "Section",
+      "filePath": "qa/iao-quality-reliability-20261123/followup/dependency-security/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-quality-reliability-20261123/followup/dependency-security/README.md:L40:Vérification limitée des secrets et de la configuration",
+      "name": "Vérification limitée des secrets et de la configuration",
+      "type": "Section",
+      "filePath": "qa/iao-quality-reliability-20261123/followup/dependency-security/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:qa/iao-quality-reliability-20261123/followup/dependency-security/README.md:L48:Preuves",
+      "name": "Preuves",
+      "type": "Section",
+      "filePath": "qa/iao-quality-reliability-20261123/followup/dependency-security/README.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_22_consult",
+      "name": "Consult → OwnKeys",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "consult",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_44_consult",
+      "name": "Consult → Invalid",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "consult",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_72_consult",
+      "name": "Consult → Invalid",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "consult",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_146_consult",
+      "name": "Consult → Trap",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "consult",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_147_consult",
+      "name": "Consult → Trap",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "consult",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}

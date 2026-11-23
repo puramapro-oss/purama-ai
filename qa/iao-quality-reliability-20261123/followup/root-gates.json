@@ -1,0 +1,62 @@
+[
+  {
+    "name": "composed",
+    "command": [
+      "./node_modules/.bin/vitest",
+      "run",
+      "test/consultationTransport.test.ts",
+      "test/modelConsultation.test.ts",
+      "test/consultationPersistenceRecovery.test.ts"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+    "exit_code": 0,
+    "elapsed_seconds": 5.251,
+    "log": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/qa/iao-quality-reliability-20261123/followup/composed.log",
+    "stage": "before_final_authorization_boundary_fix",
+    "host_sha256": "2a958be677cfa45b6fd2ff1359cf4af1a04daef49c3e66f82663a426bc93a7ba"
+  },
+  {
+    "name": "build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+    "exit_code": 0,
+    "elapsed_seconds": 4.249,
+    "log": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/qa/iao-quality-reliability-20261123/followup/build.log",
+    "stage": "before_final_authorization_boundary_fix",
+    "host_sha256": "2a958be677cfa45b6fd2ff1359cf4af1a04daef49c3e66f82663a426bc93a7ba"
+  },
+  {
+    "name": "composed-final",
+    "stage": "final",
+    "host_sha256": "459ab9ab83cea82408630f46b01882bc9a284fc244f66696d87d43177c3bdc0a",
+    "command": [
+      "./node_modules/.bin/vitest",
+      "run",
+      "test/consultationTransport.test.ts",
+      "test/modelConsultation.test.ts",
+      "test/consultationPersistenceRecovery.test.ts"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+    "exit_code": 0,
+    "elapsed_seconds": 5.343,
+    "log": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/qa/iao-quality-reliability-20261123/followup/composed-final.log"
+  },
+  {
+    "name": "build-final",
+    "stage": "final",
+    "host_sha256": "459ab9ab83cea82408630f46b01882bc9a284fc244f66696d87d43177c3bdc0a",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+    "exit_code": 0,
+    "elapsed_seconds": 4.244,
+    "log": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/qa/iao-quality-reliability-20261123/followup/build-final.log"
+  }
+]

@@ -98,8 +98,8 @@ jobs:
           node --test --test-concurrency=1 --test-timeout=30000
           tests/social-publish/migration-sql.test.mjs
           tests/social-connection/binding-sql.test.mjs
-      - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
-        run: npm audit --audit-level=high --omit=dev
+      - name: Audit complete KARTA dependency lock
+        run: npm audit --package-lock-only --audit-level=high --ignore-scripts
 
   site:
     runs-on: ubuntu-24.04
@@ -224,8 +224,8 @@ jobs:
           name: iao-voice-accessibility-${{ github.sha }}
           path: test-results/voice-consent
           retention-days: 14
-      - if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
-        run: npm audit --audit-level=high --omit=dev
+      - name: Audit complete site dependency lock
+        run: npm audit --package-lock-only --audit-level=high --ignore-scripts
 
   subscription-concurrency:
     runs-on: ubuntu-latest

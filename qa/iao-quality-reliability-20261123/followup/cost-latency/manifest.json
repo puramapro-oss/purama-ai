@@ -1,0 +1,162 @@
+{
+  "status": "PASS_LOCAL_FROZEN",
+  "baseline": "26eb27298976a8dd0cf1397f7bbaff00ea4360a3",
+  "branch": "fix/iao-audit-depth-20261123",
+  "recorded_at": "2026-11-23T19:56:16.687354+00:00",
+  "scope": [
+    "karta/src/claude/consultation-host.ts",
+    "karta/test/consultationHost.test.ts"
+  ],
+  "sha256": {
+    "karta/src/claude/consultation-host.ts": "459ab9ab83cea82408630f46b01882bc9a284fc244f66696d87d43177c3bdc0a",
+    "karta/test/consultationHost.test.ts": "b75ea7e0371c8902ff497a33cb8bfe7081a6f410736d724797af881722cdff28"
+  },
+  "reproductions": [
+    {
+      "log": "red.log",
+      "command_receipt": "red-command.json",
+      "tests_total": 23,
+      "failed": 6,
+      "passed": 17,
+      "new_cases": 7
+    },
+    {
+      "log": "grant-handoff-red.log",
+      "command_receipt": "grant-handoff-red-command.json",
+      "selected": 2,
+      "failed": 2,
+      "unselected": 25
+    },
+    {
+      "log": "authorize-red.log",
+      "command_receipt": "authorize-red-command.json",
+      "selected": 1,
+      "failed": 1,
+      "unselected": 27,
+      "observed": {
+        "reservations_after_policy_expiry": 1,
+        "model_dispatches_after_policy_expiry": 1
+      }
+    },
+    {
+      "log": "reservation-expiry-red.log",
+      "command_receipt": "reservation-expiry-red-command.json",
+      "selected": 1,
+      "failed": 1,
+      "unselected": 28,
+      "observed": {
+        "model_dispatches_after_policy_expiry": 1
+      }
+    }
+  ],
+  "verification": {
+    "tests": {
+      "status": "PASS",
+      "count": 87,
+      "files": 5,
+      "new_cases": 13,
+      "log": "green-qualified.log",
+      "receipt": "green-qualified-command.json"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "log": "typecheck-qualified.log",
+      "receipt": "typecheck-qualified-command.json"
+    },
+    "diff_check": {
+      "status": "PASS",
+      "receipt": "diff-check-qualified-command.json"
+    }
+  },
+  "observed_fixture_comparison": {
+    "simultaneous_catalog_requests": 32,
+    "native_catalogue_gets_before": 32,
+    "native_catalogue_gets_after": 1,
+    "independent_owner_grant_checks_after": 32,
+    "models_before_and_after": [
+      "main",
+      "peer"
+    ],
+    "max_output_tokens_before_and_after": 16384,
+    "generation_requests_real": 0,
+    "paid_calls_real": 0,
+    "percentage_fewer_catalogue_gets_in_this_fixture": 96.875
+  },
+  "gitnexus": {
+    "models": {
+      "risk": "HIGH",
+      "impacted": 15,
+      "direct": 3,
+      "process_groups": 3,
+      "modules": 4,
+      "log": "models-impact-refreshed.log"
+    },
+    "catalog": {
+      "risk": "CRITICAL",
+      "impacted": 15,
+      "direct": 7,
+      "process_groups": 4,
+      "modules": 5,
+      "log": "catalog-impact.log"
+    },
+    "limits": [
+      "Lower-bound graphs: callable-value references are not fully resolved.",
+      "FTS unavailable.",
+      "Root refreshed index before exact impact; failed stale lookup retained separately."
+    ],
+    "warnings_before_product_edits": true,
+    "authorize": {
+      "risk": "LOW",
+      "impacted": 2,
+      "direct": 2,
+      "process_groups": 1,
+      "modules": 2,
+      "log": "authorize-impact.log",
+      "epistemic": "lower-bound"
+    },
+    "reservation_wrapper": {
+      "risk": "UNKNOWN",
+      "log": "reservation-impact.log",
+      "fallback": "reservation-callsite-review.json",
+      "note": "Indirect dispatch is unresolved in the graph. The source call chain and the failing real-host consultation test establish that the wrapper is used."
+    }
+  },
+  "preserved": [
+    "Same policy, model choices, max tokens, price envelopes and profiles.",
+    "Owner grants remain separate and uncached.",
+    "Cache is private to the host instance and its provider credentials/policy.",
+    "No inference results or private user conversation data are cached by this change.",
+    "Empty valid catalogue retains its existing60-second TTL.",
+    "No automatic paid inference retry added.",
+    "Policy validity is rechecked after the asynchronous stop check and after each sub-call reservation, before an admitted result is returned.",
+    "An admitted reservation rejected after policy expiry is still settled as blocked with no usage; no inference is dispatched and no actual cost is invented."
+  ],
+  "limits": [
+    "HTTP fetch is simulated; native loader, parsing, host and budget call boundaries run as production code.",
+    "The32-to1 comparison counts catalogue GETs under a controlled simultaneous burst; it is not a claim about invoice reduction or production latency.",
+    "Shared catalogue load and each caller are bounded to5000ms. The injected loader in the timeout case deliberately ignores abort.",
+    "No distributed cache or cross-process request coalescing is introduced.",
+    "No deployment, production account test, commit or push by this agent.",
+    "Composed gates, final GitNexus index/detect_changes and publication belong to root.",
+    "The expiry tests use a deterministic policy clock and mocked reservation/model ports with the real host and consultation runner. They are not live provider billing tests."
+  ],
+  "previous_local_qualification": {
+    "tests": {
+      "status": "PASS",
+      "count": 85,
+      "files": 5,
+      "new_cases": 11,
+      "log": "green-final.log",
+      "receipt": "green-final-command.json"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "log": "typecheck-final.log",
+      "receipt": "typecheck-final-command.json"
+    },
+    "diff_check": {
+      "status": "PASS",
+      "receipt": "diff-check-command.json"
+    }
+  }
+}

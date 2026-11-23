@@ -1,0 +1,10 @@
+{
+  "error": "Target 'Function:karta/src/claude/consultation-host.ts:createConsultationHost.models@134:2' not found",
+  "target": {},
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795462742569,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

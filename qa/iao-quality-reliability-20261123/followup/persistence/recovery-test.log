@@ -1,0 +1,14 @@
+
+ RUN  v5.0.3 /workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta
+
+ ✓ test/consultationPersistenceRecovery.test.ts > consultation recovery after a real SQL commit with a lost transport acknowledgement > recovers a committed create privately without creating another operation or admission 72ms
+ ✓ test/consultationPersistenceRecovery.test.ts > consultation recovery after a real SQL commit with a lost transport acknowledgement > does not turn a committed start with an unknown acknowledgement into a new provider admission 73ms
+ ✓ test/consultationPersistenceRecovery.test.ts > consultation recovery after a real SQL commit with a lost transport acknowledgement > does not grant a second dispatch after the call reservation committed without its acknowledgement 55ms
+ ✓ test/consultationPersistenceRecovery.test.ts > consultation recovery after a real SQL commit with a lost transport acknowledgement > reconciles the same committed receipt once and rejects a conflicting replacement 61ms
+ ✓ test/consultationPersistenceRecovery.test.ts > consultation recovery after a real SQL commit with a lost transport acknowledgement > recovers the exact committed final result without duplicating usage or fabricating a price 49ms
+ ✓ test/consultationPersistenceRecovery.test.ts > consultation recovery after a real SQL commit with a lost transport acknowledgement > preserves a committed early cancellation after its acknowledgement is lost 35ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  20:44:16
+   Duration  5.67s (tests 95%, transform 3%, import 1%)

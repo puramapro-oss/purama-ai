@@ -1,0 +1,13 @@
+{
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "test/consultationHost.test.ts",
+    "test/modelCatalog.test.ts",
+    "test/consultationIntegration.test.ts",
+    "test/executionProfile.test.ts",
+    "test/claudeExecutionProfileTransport.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 0
+}

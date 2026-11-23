@@ -1,0 +1,28 @@
+[
+  {
+    "name": "compatibility",
+    "command": [
+      "npm",
+      "run",
+      "test:dependencies"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "exit_code": 0,
+    "duration_seconds": 0.713,
+    "log": "compatibility.log"
+  },
+  {
+    "name": "elliptic-path",
+    "command": [
+      "node",
+      "--experimental-vm-modules",
+      "--test",
+      "--test-name-pattern=GHSA-848j-6mx2-7j84",
+      "tests/opentimestamps-content.mjs"
+    ],
+    "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123",
+    "exit_code": 0,
+    "duration_seconds": 0.602,
+    "log": "elliptic-path.log"
+  }
+]

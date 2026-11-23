@@ -48,6 +48,226 @@ function fixture() {
     store, loadCatalog, stopped, createClient };
   return { store, admission, decide, loadCatalog, stopped, createClient, options, host: createConsultationHost(options) };
 }
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((done, failed) => { resolve = done; reject = failed; });
+  return { promise, resolve, reject };
+}
+function nativeCatalogue(maxOutputTokens = 16_384) {
+  return Response.json({ data: [
+    { id: "main", lifecycle: "active", max_tokens: maxOutputTokens, capabilities: { thinking: null } },
+    { id: "peer", lifecycle: "active", max_tokens: maxOutputTokens, capabilities: { thinking: null } },
+  ], has_more: false });
+}
+
+describe("catalogue request reuse and cancellation isolation", () => {
+  it("shares one native GET across a burst while checking every user's grant independently", async () => {
+    const f = fixture(); const release = deferred<void>();
+    const other = "33333333-3333-4333-8333-333333333333";
+    const availability = vi.fn(async (owner: string) => owner === user);
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
+      await release.promise;
+      return nativeCatalogue();
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, loadCatalog: undefined, store: { ...f.store, availability } });
+      const owners = Array.from({ length: 32 }, (_, i) => i % 2 ? other : user);
+      const results = owners.map(owner => host.catalog(owner, new AbortController().signal));
+      await vi.waitFor(() => expect(transport).toHaveBeenCalled());
+      release.resolve();
+      const catalogs = await Promise.all(results);
+      expect(transport).toHaveBeenCalledTimes(1);
+      expect(availability).toHaveBeenCalledTimes(owners.length);
+      expect(availability.mock.calls.map(([owner]) => owner).sort()).toEqual([...owners].sort());
+      expect(catalogs.map(result => result.reason)).toEqual(owners.map(owner => owner === user ? "ready" : "budget_unavailable"));
+      expect(catalogs.every(result => result.models.length === 2 && result.models.every(model => model.maxOutputTokens === 16_384))).toBe(true);
+      expect(f.decide).not.toHaveBeenCalled();
+      expect(f.store.begin).not.toHaveBeenCalled();
+    } finally { release.resolve(); transport.mockRestore(); }
+  });
+
+  it("cancels one requester without cancelling the other requester's shared native GET", async () => {
+    const f = fixture(); const release = deferred<void>();
+    const first = new AbortController(); const second = new AbortController();
+    const transportSignals: AbortSignal[] = [];
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+      transportSignals.push(init!.signal!);
+      await release.promise;
+      return nativeCatalogue();
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, loadCatalog: undefined });
+      const abandoned = host.catalog(user, first.signal);
+      const surviving = host.catalog(user, second.signal);
+      await vi.waitFor(() => expect(transport).toHaveBeenCalled());
+      first.abort();
+      const abandonedResult = await abandoned;
+      const activeSignals = transportSignals.filter(signal => !signal.aborted).length;
+      release.resolve();
+      const survivingResult = await surviving;
+      expect(abandonedResult.available).toBe(false);
+      expect(survivingResult.reason).toBe("ready");
+      expect(activeSignals).toBe(1);
+      expect(transport).toHaveBeenCalledTimes(1);
+      expect(f.store.availability).toHaveBeenCalledExactlyOnceWith(user, second.signal);
+    } finally { first.abort(); second.abort(); release.resolve(); transport.mockRestore(); }
+  });
+
+  it("aborts an abandoned load, admits a fresh load and excludes its late predecessor from the cache", async () => {
+    const f = fixture(); const old = deferred<void>(); const fresh = deferred<void>();
+    const first = new AbortController(); const second = new AbortController();
+    let phase: "old" | "fresh" = "old";
+    const oldSignals: AbortSignal[] = [];
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+      const current = phase;
+      if (current === "old") { oldSignals.push(init!.signal!); await old.promise; }
+      else await fresh.promise;
+      return nativeCatalogue(current === "old" ? 1024 : 8192);
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, loadCatalog: undefined });
+      const requests = [host.catalog(user, first.signal), host.catalog(user, second.signal)];
+      await vi.waitFor(() => expect(transport).toHaveBeenCalled());
+      first.abort(); second.abort();
+      expect((await Promise.all(requests)).every(result => !result.available)).toBe(true);
+      expect(oldSignals.every(signal => signal.aborted)).toBe(true);
+      phase = "fresh";
+      const next = host.catalog(user, new AbortController().signal);
+      await vi.waitFor(() => expect(transport.mock.calls.length).toBeGreaterThan(oldSignals.length));
+      fresh.resolve();
+      expect((await next).models[0].maxOutputTokens).toBe(8192);
+      old.resolve();
+      await Promise.resolve(); await Promise.resolve();
+      expect((await host.catalog(user, new AbortController().signal)).models[0].maxOutputTokens).toBe(8192);
+      expect(transport).toHaveBeenCalledTimes(2);
+    } finally { first.abort(); second.abort(); old.resolve(); fresh.resolve(); transport.mockRestore(); }
+  });
+
+  it("does not cache a failed shared load and can recover without retaining a failed promise", async () => {
+    const f = fixture(); const failed = deferred<ModelExecutionCapability[]>();
+    let recovery = false;
+    const loadCatalog = vi.fn(async () => recovery ? catalog : failed.promise);
+    const host = createConsultationHost({ ...f.options, loadCatalog });
+    const requests = Array.from({ length: 4 }, () => host.catalog(user, new AbortController().signal));
+    await vi.waitFor(() => expect(loadCatalog).toHaveBeenCalled());
+    failed.reject(new Error("temporary provider failure"));
+    expect((await Promise.all(requests)).every(result => result.reason === "account_unavailable")).toBe(true);
+    recovery = true;
+    expect((await host.catalog(user, new AbortController().signal)).reason).toBe("ready");
+    expect(loadCatalog).toHaveBeenCalledTimes(2);
+    expect(f.store.availability).toHaveBeenCalledTimes(1);
+  });
+
+  it("shares and caches an empty result until expiry, then discovers the available models", async () => {
+    const f = fixture(); const release = deferred<ModelExecutionCapability[]>();
+    let clock = Date.parse("2026-11-23T00:00:00Z"); let refresh = false;
+    const loadCatalog = vi.fn(async () => refresh ? catalog : release.promise);
+    const host = createConsultationHost({ ...f.options, loadCatalog, now: () => clock });
+    const requests = Array.from({ length: 4 }, () => host.catalog(user, new AbortController().signal));
+    await vi.waitFor(() => expect(loadCatalog).toHaveBeenCalled());
+    release.resolve([]);
+    expect((await Promise.all(requests)).every(result => result.reason === "model_unavailable")).toBe(true);
+    clock += 59_999;
+    expect((await host.catalog(user, new AbortController().signal)).reason).toBe("model_unavailable");
+    const callsBeforeExpiry = loadCatalog.mock.calls.length;
+    refresh = true; clock += 1;
+    expect((await host.catalog(user, new AbortController().signal)).reason).toBe("ready");
+    expect(callsBeforeExpiry).toBe(1);
+    expect(loadCatalog).toHaveBeenCalledTimes(2);
+    expect(f.store.availability).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a catalogue arriving after the policy expires before checking a spending grant", async () => {
+    const f = fixture(); const release = deferred<ModelExecutionCapability[]>();
+    let clock = Date.parse(policy.expiresAt) - 1;
+    const loadCatalog = vi.fn(async () => release.promise);
+    const host = createConsultationHost({ ...f.options, loadCatalog, now: () => clock });
+    const request = host.catalog(user, new AbortController().signal);
+    await vi.waitFor(() => expect(loadCatalog).toHaveBeenCalled());
+    clock += 1; release.resolve(catalog);
+    expect((await request).available).toBe(false);
+    expect(f.store.availability).not.toHaveBeenCalled();
+    expect(f.store.begin).not.toHaveBeenCalled();
+    expect(f.decide).not.toHaveBeenCalled();
+  });
+
+  it.each(["expired", "cancelled"])("does not publish ready when the request becomes %s during the owner grant check", async condition => {
+    const f = fixture(); const grant = deferred<boolean>(); const controller = new AbortController();
+    let clock = Date.parse(policy.expiresAt) - 1;
+    const availability = vi.fn(async () => grant.promise);
+    const host = createConsultationHost({ ...f.options, now: () => clock, store: { ...f.store, availability } });
+    const request = host.catalog(user, controller.signal);
+    await vi.waitFor(() => expect(availability).toHaveBeenCalled());
+    if (condition === "expired") clock += 1;
+    else controller.abort();
+    grant.resolve(true);
+    const result = await request;
+    expect(result.available).toBe(false);
+    expect(result.reason).toBe(condition === "expired" ? "not_configured" : "service_unavailable");
+    expect(result.models).toEqual([]);
+    expect(f.decide).not.toHaveBeenCalled();
+  });
+
+  it("releases a timed-out load even when its transport ignores cancellation and excludes a late result", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date", "performance"] });
+    const f = fixture(); const late = deferred<ModelExecutionCapability[]>();
+    const signals: AbortSignal[] = []; let recovery = false;
+    const loadCatalog = vi.fn(async (_limits: unknown, signal: AbortSignal) => {
+      signals.push(signal);
+      return recovery ? catalog : late.promise;
+    });
+    try {
+      const host = createConsultationHost({ ...f.options, loadCatalog });
+      const requests = [host.catalog(user, new AbortController().signal), host.catalog(user, new AbortController().signal)];
+      await vi.advanceTimersByTimeAsync(5001);
+      expect((await Promise.all(requests)).every(result => result.reason === "account_unavailable")).toBe(true);
+      expect(signals.every(signal => signal.aborted)).toBe(true);
+      recovery = true;
+      expect((await host.catalog(user, new AbortController().signal)).models[0].maxOutputTokens).toBe(16_384);
+      late.resolve(catalog.map(model => ({ ...model, maxOutputTokens: 1024 })));
+      await Promise.resolve(); await Promise.resolve();
+      expect((await host.catalog(user, new AbortController().signal)).models[0].maxOutputTokens).toBe(16_384);
+      expect(loadCatalog).toHaveBeenCalledTimes(2);
+      expect(f.store.availability).toHaveBeenCalledTimes(2);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally { late.resolve(catalog); vi.useRealTimers(); }
+  });
+
+  it("returns independent mutable public views without mutating the cached capabilities", async () => {
+    const f = fixture();
+    const first = await f.host.catalog(user, new AbortController().signal);
+    const expected = structuredClone(first);
+    first.models[0].model = "tampered";
+    first.models[0].maxOutputTokens = 1024;
+    first.models[0].profiles[0].research.maxSearches = 999;
+    first.models[0].reflections.length = 0;
+    expect(await f.host.catalog(user, new AbortController().signal)).toEqual(expected);
+    expect(f.loadCatalog).toHaveBeenCalledTimes(1);
+    expect(f.store.availability).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps provider credentials, policies and caches separate between host instances", async () => {
+    const f = fixture(); const keys: string[] = [];
+    const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+      const key = new Headers(init?.headers).get("x-api-key")!;
+      keys.push(key);
+      return nativeCatalogue(key === "test-first" ? 4096 : 8192);
+    });
+    try {
+      const first = createConsultationHost({ ...f.options, loadCatalog: undefined, apiKey: "test-first" });
+      const second = createConsultationHost({ ...f.options, loadCatalog: undefined, apiKey: "test-second" });
+      for (let repeat = 0; repeat < 2; repeat++) {
+        const [a, b] = await Promise.all([first.catalog(user, new AbortController().signal), second.catalog(user, new AbortController().signal)]);
+        expect(a.models[0].maxOutputTokens).toBe(4096);
+        expect(b.models[0].maxOutputTokens).toBe(8192);
+      }
+      expect(keys.sort()).toEqual(["test-first", "test-second"]);
+      expect(f.store.availability).toHaveBeenCalledTimes(4);
+      expect(f.decide).not.toHaveBeenCalled();
+    } finally { transport.mockRestore(); }
+  });
+});
 describe("real consultation host composition", () => {
   it.each([true, false])("loads the native catalogue from a full policy while keeping the owner grant separate: funded=%s", async funded => {
     const f = fixture();
@@ -169,6 +389,36 @@ describe("real consultation host composition", () => {
     await f.host.consult(user, input, new AbortController().signal);
     expect(f.decide).not.toHaveBeenCalled();
     expect(f.admission.settle).toHaveBeenCalled();
+  });
+  it("does not reserve or infer when the policy expires during the per-call stop check", async () => {
+    const f = fixture(); const stopCheck = deferred<boolean>();
+    let clock = Date.parse(policy.expiresAt) - 1;
+    const stopped = vi.fn(async () => false).mockResolvedValueOnce(false).mockImplementationOnce(() => stopCheck.promise);
+    const host = createConsultationHost({ ...f.options, now: () => clock, stopped });
+    const pending = host.consult(user, input, new AbortController().signal);
+    await vi.waitFor(() => expect(stopped).toHaveBeenCalledTimes(2));
+    expect(f.store.begin).toHaveBeenCalledOnce();
+    clock += 1;
+    stopCheck.resolve(false);
+    const result = await pending;
+    expect({ reservations: f.admission.reserve.mock.calls.length, modelCalls: f.decide.mock.calls.length }).toEqual({
+      reservations: 0, modelCalls: 0,
+    });
+    expect(result.result?.status).toBe("failed");
+  });
+  it("settles a late reservation as blocked without inference when its policy has expired", async () => {
+    const f = fixture(); const reservation = deferred<boolean>();
+    let clock = Date.parse(policy.expiresAt) - 1;
+    f.admission.reserve.mockImplementationOnce(() => reservation.promise);
+    const host = createConsultationHost({ ...f.options, now: () => clock });
+    const pending = host.consult(user, input, new AbortController().signal);
+    await vi.waitFor(() => expect(f.admission.reserve).toHaveBeenCalledOnce());
+    clock += 1;
+    reservation.resolve(true);
+    const result = await pending;
+    expect(f.decide).not.toHaveBeenCalled();
+    expect(result.result?.status).toBe("failed");
+    expect(f.admission.settle).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ status: "blocked", usage: [] }));
   });
   it("keeps a complete empty catalogue empty during its cache period", async () => {
     const f = fixture(); f.loadCatalog.mockResolvedValue([]);

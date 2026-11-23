@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/consultationPersistenceRecovery.test.ts",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exitCode": 0,
+  "durationSeconds": 6.115,
+  "log": "recovery-test.log",
+  "scope": "6 new tests; real production store and PostgreSQL/WASM migrations, simulated transport error only after successful SQL commit"
+}

@@ -1,0 +1,9 @@
+{
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "test/consultationHost.test.ts"
+  ],
+  "cwd": "/workspace/scratch/ccfbf7e5800b/purama-quality-20261123/karta",
+  "exit_code": 1
+}
