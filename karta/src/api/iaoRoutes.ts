@@ -25,34 +25,67 @@ export async function handleIaoRoute(
   runtime: IaoRouteRuntime | undefined,
   readBody: (req: IncomingMessage) => Promise<Json>,
   sendJson: (res: ServerResponse, status: number, body: unknown) => void,
+  lifecycle?: Readonly<{ isActive: () => boolean; canAdmit: () => Promise<boolean> }>,
 ): Promise<boolean> {
   const url = new URL(req.url ?? "/", "http://localhost");
   if (!isIaoPath(req.method, url.pathname)) return false;
   // Authenticated previews, receipts and refusals must not survive in HTTP caches.
   res.setHeader("Cache-Control", "no-store");
+  const isActive = (): boolean => {
+    // A disconnected client cannot admit new work after a pending readiness,
+    // authentication or body read. Already admitted work is still drained.
+    if (req.aborted || res.destroyed || res.writableEnded) return false;
+    try { return lifecycle ? lifecycle.isActive() === true : true; }
+    catch { return false; }
+  };
+  const canAdmit = async (): Promise<boolean> => {
+    try { return isActive() && (!lifecycle || await lifecycle.canAdmit() === true) && isActive(); }
+    catch { return false; }
+  };
+  const unavailable = (): true => {
+    if (!res.destroyed && !res.writableEnded) sendJson(res, 503, { error: "IAO runtime unavailable" });
+    return true;
+  };
   if (req.method === "POST" && SUBMIT_PATHS.has(url.pathname)) {
-    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
+    if (!runtime || !await canAdmit() || !isActive()) return unavailable();
     try {
       const identity = await authenticateIdentity(runtime.authenticator, req);
-      const response = await runtime.facade.submit(parseRequest(await readBody(req), identity));
+      if (!isActive()) return unavailable();
+      const body = await readBody(req);
+      if (!isActive()) return unavailable();
+      const request = parseRequest(body, identity);
+      // Authentication and body reads can outlive readiness. Admit only after
+      // a final dependency probe, then recheck shutdown without another await.
+      if (!await canAdmit() || !isActive()) return unavailable();
+      const executionBudgetMs = runtime.facade.executionBudgetMs(request.type);
+      if (executionBudgetMs !== undefined) {
+        const currentTimeout = res.socket?.timeout;
+        const initialTimeout = currentTimeout !== undefined && Number.isFinite(currentTimeout) && currentTimeout > 0
+          ? currentTimeout : 15_000;
+        res.setTimeout(Math.max(initialTimeout, executionBudgetMs + 1_000));
+      }
+      const response = await runtime.facade.submit(request);
       sendJson(res, response.status === "blocked" ? 503 : 202, response);
     } catch (error) { sendError(res, error, sendJson); }
     return true;
   }
   const match = url.pathname.match(LOOKUP_PATH);
   if (req.method === "GET" && match) {
-    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
+    // Retained work remains readable/cancellable during dependency outages.
+    if (!runtime || !isActive()) return unavailable();
     try {
       const identity = await authenticateIdentity(runtime.authenticator, req);
+      if (!isActive()) return unavailable();
       sendJson(res, 200, runtime.facade.get(identity.tenantId, identity.actorId, decodeURIComponent(match[1] ?? "")));
     } catch (error) { sendError(res, error, sendJson); }
     return true;
   }
   const cancel = url.pathname.match(CANCEL_PATH);
   if (req.method === "POST" && cancel) {
-    if (!runtime) { sendJson(res, 503, { error: "IAO runtime unavailable" }); return true; }
+    if (!runtime || !isActive()) return unavailable();
     try {
       const identity = await authenticateIdentity(runtime.authenticator, req);
+      if (!isActive()) return unavailable();
       sendJson(res, 200, runtime.facade.cancel(identity.tenantId, identity.actorId, decodeURIComponent(cancel[1] ?? "")));
     } catch (error) { sendError(res, error, sendJson); }
     return true;

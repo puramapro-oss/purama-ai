@@ -1,0 +1,131 @@
+{
+  "date": "2026-11-23",
+  "repository": "puramapro-oss/purama-ai",
+  "base": "aa3220fca64ba786fb4fcb18daf379ce0d17e7c5",
+  "branch": "fix/iao-http-qualified-20261123",
+  "source_sha256": {
+    "karta/src/api/iaoRoutes.ts": "0c06f07f338dbef301ed8e1660bab5d555f20d581053415aa4d90a5547ea966b",
+    "karta/src/api/server.ts": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+    "karta/src/iao/iaoFacade.ts": "15e2f7ef76d04a3b9017ba524254fb17f04e2ce46e3a3c53cb9f1c24363751e5",
+    "karta/src/iao/kartaRuntimePort.ts": "dd84affa7f347db703a38f743f44af2ee0d8a803b229fb905172b46995e836e2",
+    "karta/test/apiIaoIntegration.test.ts": "7e92c2e0db234cc76c8f924ae5f4f333cce01960c8973ee69369b446eb9d41e6",
+    "karta/test/apiIaoTransportBudget.test.ts": "1bc5b223e00bf58ab691514c3f82484be46f8a4fd63d214797e2c85e91e0da44",
+    "vercel.json": "343ae180670466179ffc75888fd04d164ac2dd36d584bb27dd16201619c97940"
+  },
+  "commands": [
+    {
+      "cwd": "karta",
+      "command": "node node_modules/vitest/vitest.mjs run --reporter=json --outputFile=../qa/iao-http-lifecycle-20261123/karta-tests.json",
+      "exit_code": 1,
+      "status": "PARTIEL",
+      "tests": 4485,
+      "passed": 4450,
+      "environment_blocked": 35,
+      "files": 195,
+      "blocked_files": [
+        "localComputeFabricCancellation.test.ts",
+        "localComputeFabricProvider.test.ts",
+        "localComputeFabricResponseBoundary.test.ts"
+      ],
+      "reason": "Unix-domain server listen is denied by the executor: EPERM. No tests skipped or modified to hide it.",
+      "evidence": "karta-tests.json.gz"
+    },
+    {
+      "cwd": "karta",
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": "typecheck-final.log.gz"
+    },
+    {
+      "cwd": "karta",
+      "command": "node node_modules/typescript/bin/tsc -p tsconfig.build.json",
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": "build-final.log.gz"
+    },
+    {
+      "cwd": ".",
+      "command": "eslint --config ../iao-lint.config.mjs karta/src/api/iaoRoutes.ts karta/src/api/server.ts karta/src/iao/iaoFacade.ts karta/src/iao/kartaRuntimePort.ts karta/test/apiIaoIntegration.test.ts karta/test/apiIaoTransportBudget.test.ts",
+      "exit_code": 0,
+      "status": "PASS",
+      "scope": "TypeScript and Hooks rules from repository; React Fast Refresh plugin not loaded, inapplicable to these Node .ts files.",
+      "evidence": "eslint-targeted.log.gz"
+    },
+    {
+      "cwd": "karta (clean baseline aa3220f)",
+      "command": "vitest run test/apiIaoTransportBudget.test.ts test/apiIaoIntegration.test.ts -t \"delivers an admitted response beyond the server|preserves authenticated IAO lookup after dependency|rechecks readiness after authentication\" --reporter=verbose",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "status": "PASS",
+      "reproduced_regressions": 4,
+      "skipped_by_target_filter": 40,
+      "evidence": "baseline-reproductions.log.gz"
+    },
+    {
+      "cwd": "karta (historical worktree patch before new fix)",
+      "command": "vitest run test/apiIaoIntegration.test.ts -t \"never admits new IAO work after its client disconnects\" --reporter=verbose",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "status": "PASS",
+      "reproduced_regressions": 1,
+      "evidence": "disconnected-admission-before.log.gz"
+    },
+    {
+      "cwd": "karta",
+      "command": "vitest run test/apiIaoIntegration.test.ts -t \"never admits new IAO work after its client disconnects|drains an admitted\" --reporter=verbose",
+      "exit_code": 0,
+      "status": "PASS",
+      "tests": 3,
+      "evidence": "disconnected-admission-after.log.gz"
+    },
+    {
+      "cwd": ".",
+      "command": "gitnexus detect-changes --scope staged --repo <worktree>",
+      "exit_code": 0,
+      "status": "PASS",
+      "risk": "HIGH",
+      "files": 18,
+      "symbols": 54,
+      "processes": 8,
+      "evidence": "detect-changes-final.txt"
+    },
+    {
+      "cwd": ".",
+      "command": "gitnexus detect-changes --scope compare --base-ref main --repo <worktree>",
+      "exit_code": 1,
+      "status": "BLOQUE",
+      "reason": "No local main reference; origin/main exists.",
+      "evidence": "compare-main.txt.gz"
+    },
+    {
+      "cwd": ".",
+      "command": "gitnexus detect-changes --scope compare --base-ref origin/main --repo <worktree>",
+      "exit_code": 0,
+      "status": "PASS",
+      "scope": "Includes historical consolidation changes; not a new audit of every historical change.",
+      "evidence": "compare-origin-main.txt"
+    },
+    {
+      "cwd": ".",
+      "command": "git diff --cached --check",
+      "exit_code": 0,
+      "status": "PASS",
+      "reason": "Source and evidence whitespace validated after lossless gzip packaging of raw logs."
+    }
+  ],
+  "limitations": [
+    "No production deployment, real provider calls, or physical Mac validation.",
+    "Default karta/src/index.ts does not inject an iaoRuntime; this patch does not claim an assembled runtime.",
+    "35 native Unix socket tests require a capable authorized executor/CI.",
+    "GitNexus FTS unavailable and dynamic calls remain partially resolved."
+  ],
+  "gitnexus_comparison": {
+    "base": "origin/main",
+    "risk": "CRITICAL",
+    "files": 2185,
+    "symbols": 9275,
+    "processes": 557,
+    "scope": "Entire historical consolidation relative to main; not new changes from this HTTP lot."
+  }
+}
