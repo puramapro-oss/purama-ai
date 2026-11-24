@@ -23,6 +23,7 @@ function rpc(name: string, params: Record<string, unknown>) {
     karta_claim_pending_action_bounded: ["p_id", "p_decision"],
     karta_finalize_pending_action: ["p_id", "p_status", "p_summary"],
     karta_reserve_daily_counter: ["p_user_id", "p_counter_key", "p_day", "p_limit"],
+    partner_direct_send_guard: ["p_user_id", "p_recipient", "p_parent_gmail_id", "p_gmail_thread_id"],
   };
   const keys = signatures[name];
   if (!keys) throw new Error(`Unexpected test RPC: ${name}`);
@@ -211,6 +212,17 @@ beforeAll(async () => {
   }
   // Cached OAuth fixture only: no refresh or external credentials are used.
   await database().exec("CREATE TABLE purama_ai.email_agent_config (id uuid PRIMARY KEY, user_id uuid UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE, gmail_email text, updated_at text, gmail_refresh_token text, gmail_access_token text, gmail_token_expiry text)");
+  // Scope this provider-completion fixture to empty partner history, while
+  // executing the real classifier rather than mocking an authorization result.
+  await database().exec(`
+    CREATE TABLE purama_ai.partner_prospects(id uuid,user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,email text,outreach_profile text,status text,email_permission jsonb);
+    CREATE TABLE purama_ai.partner_active(user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,prospect_id uuid,partner_email text);
+    CREATE TABLE purama_ai.partner_outreach_dispatches(id uuid,user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,prospect_id uuid,recipient text,policy_snapshot jsonb);
+    CREATE TABLE purama_ai.partner_outreach_suppressions(user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,email_normalized text);
+    CREATE TABLE purama_ai.partner_reply_receipts(user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,action_id uuid,prospect_id uuid,gmail_message_id text,gmail_thread_id text,kind text);
+    CREATE TABLE purama_ai.partner_reply_drafts(user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,gmail_message_id text,payload jsonb,policy_snapshot jsonb);
+  `);
+  await database().exec(await readFile(new URL("../../supabase/migrations/20261124050600_partner_direct_send_guard.sql", import.meta.url), "utf8"));
 });
 
 beforeEach(async () => {

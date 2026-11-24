@@ -1,0 +1,115 @@
+{
+  "target": {
+    "id": "Function:src/lib/partner.ts:partnerStats",
+    "name": "partnerStats",
+    "type": "Function",
+    "filePath": "src/lib/partner.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 2,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1
+  },
+  "affected_processes": [
+    {
+      "name": "refresh",
+      "type": "Function",
+      "filePath": "src/pages/PartnerAgent.tsx",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "PartnerAgent",
+      "type": "Function",
+      "filePath": "src/pages/PartnerAgent.tsx",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Pages",
+      "hits": 2,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent.refresh@40:2",
+        "name": "refresh",
+        "filePath": "src/pages/PartnerAgent.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_332_refresh",
+            "label": "Refresh → Sb",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_379_refresh",
+            "label": "Refresh → Insert",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_423_refresh",
+            "label": "Refresh → Limit",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent",
+        "name": "PartnerAgent",
+        "filePath": "src/pages/PartnerAgent.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.8,
+        "processes": [
+          {
+            "id": "proc_294_partneragent",
+            "label": "PartnerAgent → Close",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_431_partneragent",
+            "label": "PartnerAgent → Cn",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  },
+  "staleness": {
+    "status": "behind",
+    "commitsBehind": 9,
+    "hint": "⚠️ Index is 9 commits behind HEAD. Run analyze tool to update."
+  }
+}
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795557582106,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

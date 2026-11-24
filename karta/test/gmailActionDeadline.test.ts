@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ lookup: vi.fn(), quota: vi.fn(), credentialSignals: [] as AbortSignal[] }));
+const h = vi.hoisted(() => ({ lookup: vi.fn(), quota: vi.fn(), guard: vi.fn(), credentialSignals: [] as AbortSignal[] }));
 vi.mock("../src/lib/gmail-token-crypto.js", () => ({
   decryptGmailToken: (value: string) => value, encryptGmailToken: (value: string) => value,
 }));
 vi.mock("../src/config.js", () => ({ config: {} }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: {
   rpc: (...args: unknown[]) => {
-    const request = h.quota(...args) as Promise<unknown>;
+    const request = (args[0] === "partner_direct_send_guard" ? h.guard(...args) : h.quota(...args)) as Promise<unknown>;
     return Object.assign(request, { abortSignal: () => request });
   },
   from: () => ({
@@ -49,6 +49,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   h.lookup.mockReset().mockImplementation(async () => credential());
   h.quota.mockReset().mockResolvedValue({ data: 1, error: null });
+  h.guard.mockReset().mockResolvedValue({ data: { status: "allowed", reason: null }, error: null });
   h.credentialSignals.length = 0;
   fetchMock = vi.fn(async (url: string) => json(url.includes("/messages/parent-1?") ? parent() : { id: "receipt-1" }));
   vi.stubGlobal("fetch", fetchMock);

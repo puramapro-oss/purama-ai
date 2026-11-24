@@ -1,0 +1,36 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 3042 files, 7592 symbols
+Affected processes: 436
+Risk level: critical
+
+Changed symbols:
+  Section ERRORS.md — Purama AI → ERRORS.md
+  Section IAO : preuves de fiabilité et protocole d'évaluation → IAO-EVALUATION-PROTOCOL.md
+  Section Ce qui rendrait IAO utile et distinctive → IAO-EVALUATION-PROTOCOL.md
+  Section Résultats effectivement exécutés → IAO-EVALUATION-PROTOCOL.md
+  Section Ce que montrent les références actuelles → IAO-EVALUATION-PROTOCOL.md
+  Section Comparaisons à préparer, encore non exécutées → IAO-EVALUATION-PROTOCOL.md
+  Section Protocole commun proposé → IAO-EVALUATION-PROTOCOL.md
+  Section Conditions avant une généralisation → IAO-EVALUATION-PROTOCOL.md
+  Section Complément du 9 novembre 2026 — Jev et sélection de moteurs → IAO-EVALUATION-PROTOCOL.md
+  Section Ajout logiciel Jev → IAO-EVALUATION-PROTOCOL.md
+  Section Catalogue court à comparer → IAO-EVALUATION-PROTOCOL.md
+  Section Techniques à mesurer dans les composants existants → IAO-EVALUATION-PROTOCOL.md
+  Section Révision du 9 novembre 2026 — traces privées et clôture fiable → IAO-EVALUATION-PROTOCOL.md
+  Section Consolidation KARTA du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+  Section Rapprochement Jev du 10 novembre 2026 → IAO-EVALUATION-PROTOCOL.md
+... and 7577 more
+
+Affected execution flows:
+  • ProjectLoop → Stop (10 steps) — changed: append, requestStop, checkStopped, fail, runChefProcess, captureWorkshopHead, git, projectLoop, assertCleanWorkshop, stop
+  • ProjectLoop → Stop (10 steps) — changed: append, requestStop, checkStopped, fail, runChefProcess, captureWorkshopHead, git, projectLoop, assertCleanWorkshop, stop
+  • Run → DestroyTask (10 steps) — changed: append, requestStop, checkStopped, fail, runChefProcess, run, captureWorkshopHead, git, stop, destroyTask
+  • ProjectLoop → GroupState (9 steps) — changed: append, requestStop, checkStopped, groupState, runChefProcess, captureWorkshopHead, git, projectLoop, assertCleanWorkshop
+  • ProjectLoop → ChefProcessStopUnconfirmedError (8 steps) — changed: append, requestStop, runChefProcess, ChefProcessStopUnconfirmedError, captureWorkshopHead, git, projectLoop, assertCleanWorkshop
+  • ProjectLoop → SignalGroup (8 steps) — changed: append, requestStop, signalGroup, runChefProcess, captureWorkshopHead, git, projectLoop, assertCleanWorkshop
+  • HandleConsultationRequest → Cleanup (5 steps) — changed: handleConsultationRequest, abort, fail, cleanup, readBody
+  • ProjectConsultationCatalog → WireError (5 steps) — changed: projectResearch, projectConsultationCatalog, integer, upstream, WireError
+  • ProjectLoop → ResolveTrustedGit (5 steps) — changed: resolveTrustedGit, captureWorkshopHead, git, projectLoop, assertCleanWorkshop
+  • Run → ExactKeys (5 steps) — changed: resolveChefCapabilities, normalizeChefCapabilitySelection, exactKeys, prepareChefCapabilities, run
+... and 426 more

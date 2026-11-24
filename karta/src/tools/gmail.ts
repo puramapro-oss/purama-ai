@@ -426,7 +426,7 @@ async function gmailReplyHeaders(
 
 export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: string } & GmailReplyInput, { messageId: string }> = {
   name: "gmail_send",
-  description: "Envoie réellement un email — action sensible. Pour une réponse, fournir threadId et replyToMessageId du parent, en conservant son sujet et son destinataire.",
+  description: "Envoie réellement un email ordinaire — action sensible. Pour une réponse, fournir threadId et replyToMessageId du parent, en conservant son sujet et son destinataire. Les échanges avec les partenaires médias et éditoriaux nécessitent le brouillon lié et approuvé du parcours Partenariats puis Emails ; les exclusions de contact restent applicables à tous.",
   sensitive: true,
   inputSchema: {
     type: "object",
@@ -449,11 +449,15 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
       const accessToken = await getGmailAccessToken(ctx.userId, deadline);
       if (!accessToken) throw new Error("Gmail OAuth non complété pour cet utilisateur");
       const reply = await gmailReplyHeaders(params, accessToken, deadline);
+      await assertDirectGmailSendAllowed(ctx.userId, params, deadline);
       // Keep a possibly consumed reservation after an uncertain result. Refunding
       // or retrying cannot prove that the provider did not accept the message.
       await assertUnderDailySendLimit(ctx.userId, deadline);
       const raw = buildRawEmail(params.to, params.subject, params.body, reply);
       const body = JSON.stringify({ raw, ...(params.threadId ? { threadId: params.threadId } : {}) });
+      // Classification may change while reserving the quota. A general KARTA
+      // approval cannot authorize a newly discovered partner conversation.
+      await assertDirectGmailSendAllowed(ctx.userId, params, deadline);
       deadline.check();
       postStarted = true;
       const sent = await requestProviderJson("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
@@ -471,6 +475,29 @@ export const gmailSendTool: ToolDefinition<{ to: string; subject: string; body: 
     } finally { deadline.close(); }
   },
 };
+
+async function assertDirectGmailSendAllowed(
+  userId: string, params: { to: string } & GmailReplyInput, deadline: ProviderDeadline,
+): Promise<void> {
+  const { data, error } = await deadline.wait(() => supabase.rpc("partner_direct_send_guard", {
+    p_user_id: userId,
+    p_recipient: params.to,
+    p_parent_gmail_id: params.replyToMessageId ?? null,
+    p_gmail_thread_id: params.threadId ?? null,
+  }).abortSignal(deadline.signal));
+  if (error || !data || typeof data !== "object" || Array.isArray(data)) {
+    throw new Error("Vérification du parcours partenaire indisponible : aucun envoi Gmail autorisé");
+  }
+  if (data.status === "blocked" && data.reason === "partner_reply_preparation_required") {
+    throw new Error("Échange partenaire : préparer la réponse depuis Partenariats, puis vérifier et approuver son aperçu exact dans Emails");
+  }
+  if (data.status === "blocked" && data.reason === "contact_suppressed") {
+    throw new Error("Contact exclu ou permission retirée : aucun envoi Gmail autorisé");
+  }
+  if (data.status !== "allowed" || data.reason !== null) {
+    throw new Error("Vérification du parcours partenaire refusée : aucun envoi Gmail autorisé");
+  }
+}
 
 /** Réservation atomique : deux workers concurrents ne peuvent plus dépasser le plafond. */
 async function assertUnderDailySendLimit(userId: string, deadline: ProviderDeadline): Promise<void> {

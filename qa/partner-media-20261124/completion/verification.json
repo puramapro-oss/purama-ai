@@ -1,0 +1,116 @@
+{
+  "scope": "PURAMA media completion, preparation and admission only",
+  "base": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+  "branch": "fix/partner-completion-20261124",
+  "recorded_at_utc": "2026-11-24T22:35:54.594348+00:00",
+  "local": {
+    "frontend_targeted": {
+      "status": "PASS",
+      "tests": 137,
+      "files": 6,
+      "command": "node node_modules/vitest/vitest.mjs run src/lib/partner-completion.test.ts src/lib/partner-contract-result.test.ts src/components/partner/PartnerReplyAction.test.tsx src/components/partner/PartnerAffiliationAdmissions.test.tsx src/pages/EmailAgentLogs.partner-link.test.tsx src/pages/PartnerAgent.readiness.test.tsx --reporter=dot",
+      "exit_code": 0,
+      "duration_seconds": 4.79
+    },
+    "readiness_ui": {
+      "status": "PASS",
+      "tests": 26,
+      "source": "readiness_review execution receipt",
+      "included_in": "frontend_targeted (26 of 137; do not count twice)"
+    },
+    "reply_handler_and_parsing": {
+      "status": "PASS",
+      "tests": 65,
+      "source": "conversation_completion execution receipt"
+    },
+    "gmail_tools": {
+      "status": "PASS",
+      "tests": 86,
+      "source": "readiness_review execution receipt",
+      "files": 4,
+      "exit_code": 0,
+      "duration_seconds": 1.17,
+      "new_guard_tests": 18
+    },
+    "frontend_typecheck": {
+      "status": "PASS before final candidate-list delta; final full check deferred to CI",
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.app.json",
+      "node_heap_mb": 768,
+      "exit_code": 0,
+      "final_exit_code": -9
+    },
+    "targeted_lint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 0,
+      "exit_code": 0
+    },
+    "sql": {
+      "status": "NON TESTE localement",
+      "reason": "Prior PGlite minimal runtime terminated137; no unsupported retry"
+    },
+    "browser": {
+      "status": "NON TESTE localement",
+      "reason": "Prior Chromium runtime refused socket before assertions; CI owns browser reception"
+    }
+  },
+  "preserved_failures": [
+    {
+      "check": "GitNexus refresh",
+      "attempts": 2,
+      "exit_code": 137,
+      "scope": "No fresh complete graph claimed"
+    },
+    {
+      "check": "frontend_typecheck384",
+      "exit_code": 134,
+      "reason": "Explicit Node heap too small"
+    },
+    {
+      "check": "frontend_typecheck768_first",
+      "exit_code": 2,
+      "reason": "Union narrowing corrected before final PASS"
+    },
+    {
+      "check": "frontend_typecheck768_final_candidate_delta",
+      "exit_code": -9,
+      "reason": "Process killed without diagnostics; no final local typecheck claimed"
+    },
+    {
+      "check": "GitNexus composed staged and compare-main",
+      "exit_code": 1,
+      "reason": "Previously used CLI cache path disappeared; original staged and compare-main receipts remain valid for local completion symbols; composed diff manually checked"
+    }
+  ],
+  "integration": {
+    "status": "PENDING_CI",
+    "target": "audit/reliability-oauth-20261110",
+    "parallel_pr_112": "48869219a22fef71edeb069a2f2b50d966edc363",
+    "parallel_pr_113": "afaffbe26d7976f132d053b4600eb4fba300437b",
+    "publication_parent": "afaffbe26d7976f132d053b4600eb4fba300437b",
+    "composition": "Clean three-way merge; PR112 discovery and PR113 Wealth evidence preserved"
+  },
+  "external_actions": {
+    "prospect_emails": false,
+    "contracts_submitted": false,
+    "payments": false,
+    "deployment": false
+  },
+  "logs": [
+    {
+      "name": "frontend-tests-final.log",
+      "bytes": 525,
+      "sha256": "09abd29287bda125fe777a17e55e15e685472e3405fff0bc079fd92baa02e560"
+    },
+    {
+      "name": "frontend-typecheck-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "frontend-lint-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
