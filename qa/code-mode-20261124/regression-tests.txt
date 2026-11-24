@@ -1,0 +1,37 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/customRegistry.test.ts test/claudeTransportCost.test.ts test/modelQualityRouting.test.ts test/claudePromptCacheTransport.test.ts test/claudeExecutionProfileTransport.test.ts test/claudeDecisionCompleteness.test.ts test/customAgentModelSelection.test.ts test/knowledgeQuantumIntegration.test.ts test/lmStudioTransport.test.ts test/customAuthorization.test.ts test/consultationTransport.test.ts test/consultationHost.test.ts test/approval.test.ts test/runtimeLifecycle.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/200bdf486cef/purama-ai/karta
+
+
+ Test Files  13 passed (14)
+      Tests  346 passed (362)
+     Errors  1 error
+   Start at  20:12:13
+   Duration  12.46s (tests 66%, import 21%, transform 11%, setup 1%, worker 1%)
+
+    Isolate  14 workers spawned · ~132ms startup each (spawn + environment, per file)
+             at least ~1.72s faster with isolate: false — reuses workers across files instead of one per file
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError node_modules/vitest/dist/chunks/index.DpLw24bj.js:11532:21
+ ❯ EventEmitter.emit node:events:514:28
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11007:22
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+Caused by: Error: Worker exited unexpectedly with signal SIGKILL during started state while running test file /workspace/scratch/200bdf486cef/purama-ai/karta/test/approval.test.ts
+ ❯ ChildProcess.emitUnexpectedExit node_modules/vitest/dist/chunks/index.DpLw24bj.js:11005:33
+ ❯ ChildProcess.emit node:events:514:28
+ ❯ ChildProcess._handle.onexit node:internal/child_process:324:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯

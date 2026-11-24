@@ -110,6 +110,91 @@ afterEach(() => {
 });
 
 describe("real Claude SDK transport cost boundaries", () => {
+  it("deduplicates identical definitions after model selection without changing any other request value", async () => {
+    const tools = [tool, tool, tool];
+    Object.freeze(tools);
+    const value = input({ tools });
+    await createRealClaudeClient().decide(value);
+    const body = capturedRequest().body;
+    expect(body).toStrictEqual({
+      // Three entries selected the main model before this optimization.
+      model: "fixture-main-model",
+      max_tokens: 1024,
+      system: buildAssistantSystemPrompt(value.systemPrompt, "task"),
+      messages: [{ role: "user", content: `Contexte actuel:\n${JSON.stringify(value.context)}\n\nDécide quelle(s) action(s) prendre.` }],
+      tools: [{ name: tool.name, description: tool.description, input_schema: tool.inputSchema, strict: true }],
+    });
+    expect(value.tools).toBe(tools);
+    expect(tools).toHaveLength(3);
+    expect(tools.every(candidate => candidate === tool)).toBe(true);
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("preserves distinct tools, schemas and first-occurrence order", async () => {
+    const second: AnyToolDefinition = {
+      ...tool, name: "review", description: "Vérifier un résultat.", sensitive: true,
+      requiresExplicitApproval: true, tracePolicy: "metadata_only",
+      inputSchema: { type: "object", properties: { count: { type: "integer" } }, required: ["count"], additionalProperties: false },
+    };
+    await createRealClaudeClient().decide(input({ tools: [tool, second, tool, second] }));
+    expect(capturedRequest().body.tools).toStrictEqual([tool, second].map(candidate => ({
+      name: candidate.name, description: candidate.description,
+      input_schema: candidate.inputSchema, strict: true,
+    })));
+    expect(second.sensitive).toBe(true);
+    expect(second.requiresExplicitApproval).toBe(true);
+    expect(second.tracePolicy).toBe("metadata_only");
+  });
+
+  it("preserves the explicit model and deep reasoning profile with repeated definitions", async () => {
+    const client = createRealClaudeClient({ modelCatalog: [
+      { model: "fixture-response-model", reasoning: "budget", maxOutputTokens: 16_384 },
+    ] });
+    await client.decide(input({ tools: [tool, tool, tool], preferences: { model: "fixture-response-model", reflection: "deep" } }));
+    expect(capturedRequest().body).toMatchObject({
+      model: "fixture-response-model", max_tokens: 8192, thinking: { type: "enabled", budget_tokens: 7168 },
+    });
+    expect(capturedRequest().body.tools).toHaveLength(1);
+  });
+
+  it.each([
+    { label: "equivalent-looking clone", change: {} },
+    { label: "description", change: { description: "Other contract" } },
+    { label: "schema", change: { inputSchema: { type: "object", properties: {}, additionalProperties: false } } },
+    { label: "sensitivity", change: { sensitive: true } },
+    { label: "approval", change: { requiresExplicitApproval: true } },
+    { label: "trace policy", change: { tracePolicy: "metadata_only" } },
+    { label: "handler", change: { execute: vi.fn() } },
+  ] as Array<{ label: string; change: Partial<AnyToolDefinition> }>)
+  ("rejects a same-name distinct definition before the network: $label", async ({ change }) => {
+    const collision: AnyToolDefinition = { ...tool, ...change };
+    await expect(createRealClaudeClient().decide(input({ tools: [tool, collision] }))).rejects.toThrow();
+    expect(transport).not.toHaveBeenCalled();
+    expect(execute).not.toHaveBeenCalled();
+    if (change.execute) expect(change.execute).not.toHaveBeenCalled();
+  });
+
+  it("rejects ambiguous definitions before even the local model-discovery GET", async () => {
+    const client = createRealClaudeClient({ lmStudio: { model: "qwen-fixture" } });
+    await expect(client.decide(input({ tools: [tool, { ...tool }] }))).rejects.toThrow();
+    expect(transport).not.toHaveBeenCalled();
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("preserves separate valid actions even when they use the same deduplicated tool", async () => {
+    transport.mockImplementation(async () => providerResponse("tool_use", [
+      { type: "tool_use", id: "toolu_first", name: "prepare", input: { label: "premier" } },
+      { type: "tool_use", id: "toolu_second", name: "prepare", input: { label: "second" } },
+    ]));
+    await expect(createRealClaudeClient().decide(input({ tools: [tool, tool] }))).resolves.toMatchObject({
+      toolCalls: [{ tool: "prepare", params: { label: "premier" } }, { tool: "prepare", params: { label: "second" } }],
+      requiresApproval: false, mock: false,
+    });
+    expect(capturedRequest().body.tools).toHaveLength(1);
+    expect(execute).not.toHaveBeenCalled();
+  });
+
   it.each([408, 409, 429, 500])("makes one HTTP attempt when the provider returns %i", async status => {
     transport.mockImplementation(async () => errorResponse(status));
     await expect(createRealClaudeClient().decide(input())).rejects.toThrow();

@@ -1,0 +1,397 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/customRegistry.test.ts test/claudeTransportCost.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/200bdf486cef/purama-ai/karta
+
+ ❯ test/claudeTransportCost.test.ts (25 tests | 12 failed) 80ms
+   ❯ real Claude SDK transport cost boundaries (25)
+     × deduplicates identical definitions after model selection without changing any other request value 20ms
+     × preserves distinct tools, schemas and first-occurrence order 4ms
+     × preserves the explicit model and deep reasoning profile with repeated definitions 5ms
+     × rejects a same-name distinct definition before the network: equivalent-looking clone 3ms
+     × rejects a same-name distinct definition before the network: description 2ms
+     × rejects a same-name distinct definition before the network: schema 2ms
+     × rejects a same-name distinct definition before the network: sensitivity 2ms
+     × rejects a same-name distinct definition before the network: approval 2ms
+     × rejects a same-name distinct definition before the network: trace policy 2ms
+     × rejects a same-name distinct definition before the network: handler 2ms
+     × rejects ambiguous definitions before even the local model-discovery GET 9ms
+     × preserves separate valid actions even when they use the same deduplicated tool 3ms
+ ❯ test/customRegistry.test.ts (7 tests | 3 failed) 16ms
+   ❯ customRegistry — liste blanche des outils pour les agents créés par les users (7)
+     × résout chaque capacité une seule fois dans l'ordre initial, sans modifier l'entrée 5ms
+     × conserve toutes les définitions et leurs contrôles, même lorsque le catalogue est répété 2ms
+     × n'élargit pas la liste autorisée avec des noms hérités ou répétés 4ms
+
+ Test Files  2 failed (2)
+      Tests  15 failed | 17 passed (32)
+   Start at  20:11:16
+   Duration  1.22s (import 50%, transform 35%, tests 13%, setup 1%, worker 1%)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > deduplicates identical definitions after model selection without changing any other request value
+AssertionError: expected { model: 'fixture-main-model', …(4) } to strictly equal { model: 'fixture-main-model', …(4) }
+
+- Expected
++ Received
+
+@@ -50,7 +50,43 @@
+          "type": "object",
+        },
+        "name": "prepare",
+        "strict": true,
+      },
++     {
++       "description": "Préparer un résultat de test.",
++       "input_schema": {
++         "additionalProperties": false,
++         "properties": {
++           "label": {
++             "minLength": 1,
++             "type": "string",
++           },
++         },
++         "required": [
++           "label",
++         ],
++         "type": "object",
++       },
++       "name": "prepare",
++       "strict": true,
++     },
++     {
++       "description": "Préparer un résultat de test.",
++       "input_schema": {
++         "additionalProperties": false,
++         "properties": {
++           "label": {
++             "minLength": 1,
++             "type": "string",
++           },
++         },
++         "required": [
++           "label",
++         ],
++         "type": "object",
++       },
++       "name": "prepare",
++       "strict": true,
++     },
+    ],
+  }
+
+ ❯ test/claudeTransportCost.test.ts:119:18
+    117|     await createRealClaudeClient().decide(value);
+    118|     const body = capturedRequest().body;
+    119|     expect(body).toStrictEqual({
+       |                  ^
+    120|       // Three entries selected the main model before this optimizatio…
+    121|       model: "fixture-main-model",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves distinct tools, schemas and first-occurrence order
+AssertionError: expected [ { name: 'prepare', …(3) }, …(3) ] to strictly equal [ { name: 'prepare', …(3) }, …(1) ]
+
+- Expected
++ Received
+
+@@ -32,6 +32,41 @@
+        "type": "object",
+      },
+      "name": "review",
+      "strict": true,
+    },
++   {
++     "description": "Préparer un résultat de test.",
++     "input_schema": {
++       "additionalProperties": false,
++       "properties": {
++         "label": {
++           "minLength": 1,
++           "type": "string",
++         },
++       },
++       "required": [
++         "label",
++       ],
++       "type": "object",
++     },
++     "name": "prepare",
++     "strict": true,
++   },
++   {
++     "description": "Vérifier un résultat.",
++     "input_schema": {
++       "additionalProperties": false,
++       "properties": {
++         "count": {
++           "type": "integer",
++         },
++       },
++       "required": [
++         "count",
++       ],
++       "type": "object",
++     },
++     "name": "review",
++     "strict": true,
++   },
+  ]
+
+ ❯ test/claudeTransportCost.test.ts:141:42
+    139|     };
+    140|     await createRealClaudeClient().decide(input({ tools: [tool, second…
+    141|     expect(capturedRequest().body.tools).toStrictEqual([tool, second].…
+       |                                          ^
+    142|       name: candidate.name, description: candidate.description,
+    143|       input_schema: candidate.inputSchema, strict: true,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves the explicit model and deep reasoning profile with repeated definitions
+AssertionError: expected [ { name: 'prepare', …(3) }, …(2) ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ test/claudeTransportCost.test.ts:158:42
+    156|       model: "fixture-response-model", max_tokens: 8192, thinking: { t…
+    157|     });
+    158|     expect(capturedRequest().body.tools).toHaveLength(1);
+       |                                          ^
+    159|   });
+    160|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: equivalent-looking clone
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: description
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: schema
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: sensitivity
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: approval
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: trace policy
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects a same-name distinct definition before the network: handler
+AssertionError: promise resolved "{ summary: 'Résultat complet.', …(3) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "mock": false,
++   "requiresApproval": false,
++   "summary": "Résultat complet.",
++   "toolCalls": [],
+  }
+
+ ❯ test/claudeTransportCost.test.ts:172:87
+    170|   ("rejects a same-name distinct definition before the network: $label…
+    171|     const collision: AnyToolDefinition = { ...tool, ...change };
+    172|     await expect(createRealClaudeClient().decide(input({ tools: [tool,…
+       |                                                                                       ^
+    173|     expect(transport).not.toHaveBeenCalled();
+    174|     expect(execute).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > rejects ambiguous definitions before even the local model-discovery GET
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      "http://127.0.0.1:1234/api/v1/models",
+      Object {
+        "cache": "no-store",
+        "credentials": "omit",
+        "headers": Object {},
+        "method": "GET",
+        "redirect": "error",
+        "signal": AbortSignal {
+          Symbol(kEvents): undefined,
+          Symbol(events.maxEventTargetListeners): 0,
+          Symbol(events.maxEventTargetListenersWarned): false,
+          Symbol(kHandlers): undefined,
+          Symbol(kAborted): true,
+          Symbol(kReason): [AbortError: This operation was aborted],
+          Symbol(kComposite): false,
+        },
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ test/claudeTransportCost.test.ts:181:27
+    179|     const client = createRealClaudeClient({ lmStudio: { model: "qwen-f…
+    180|     await expect(client.decide(input({ tools: [tool, { ...tool }] })))…
+    181|     expect(transport).not.toHaveBeenCalled();
+       |                           ^
+    182|     expect(execute).not.toHaveBeenCalled();
+    183|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  test/claudeTransportCost.test.ts > real Claude SDK transport cost boundaries > preserves separate valid actions even when they use the same deduplicated tool
+AssertionError: expected [ { name: 'prepare', …(3) }, …(1) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ test/claudeTransportCost.test.ts:194:42
+    192|       requiresApproval: false, mock: false,
+    193|     });
+    194|     expect(capturedRequest().body.tools).toHaveLength(1);
+       |                                          ^
+    195|     expect(execute).not.toHaveBeenCalled();
+    196|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  test/customRegistry.test.ts > customRegistry — liste blanche des outils pour les agents créés par les users > résout chaque capacité une seule fois dans l'ordre initial, sans modifier l'entrée
+AssertionError: expected [ 'web_search', 'gmail_send', …(3) ] to deeply equal [ 'web_search', 'gmail_send', …(1) ]
+
+- Expected
++ Received
+
+  [
+    "web_search",
+    "gmail_send",
++   "web_search",
++   "gmail_send",
+    "knowledge_search",
+  ]
+
+ ❯ test/customRegistry.test.ts:25:42
+     23|     Object.freeze(names);
+     24|     const tools = resolveCustomAgentTools(names);
+     25|     expect(tools.map(tool => tool.name)).toEqual(["web_search", "gmail…
+       |                                          ^
+     26|     expect(tools[0]).toBe(CUSTOM_AGENT_TOOLS.web_search);
+     27|     expect(tools[1]).toBe(CUSTOM_AGENT_TOOLS.gmail_send);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  test/customRegistry.test.ts > customRegistry — liste blanche des outils pour les agents créés par les users > conserve toutes les définitions et leurs contrôles, même lorsque le catalogue est répété
+AssertionError: expected [ …(20) ] to have a length of 10 but got 20
+
+- Expected
++ Received
+
+- 10
++ 20
+
+ ❯ test/customRegistry.test.ts:34:19
+     32|   it("conserve toutes les définitions et leurs contrôles, même lorsque…
+     33|     const tools = resolveCustomAgentTools([...CUSTOM_AGENT_TOOL_NAMES,…
+     34|     expect(tools).toHaveLength(CUSTOM_AGENT_TOOL_NAMES.length);
+       |                   ^
+     35|     for (const [index, name] of CUSTOM_AGENT_TOOL_NAMES.entries()) {
+     36|       // Reference identity preserves schemas, handlers and security m…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  test/customRegistry.test.ts > customRegistry — liste blanche des outils pour les agents créés par les users > n'élargit pas la liste autorisée avec des noms hérités ou répétés
+AssertionError: expected [ { name: 'web_search', …(5) }, …(1) ] to deeply equal [ { name: 'web_search', …(5) } ]
+
+- Expected
++ Received
+
+@@ -63,6 +63,72 @@
+      },
+      "name": "web_search",
+      "sensitive": false,
+      "tracePolicy": "metadata_only",
+    },
++   {
++     "description": "Recherche web via Tavily. Langue, fraîcheur et domaines sont des préférences explicites. response_format=evidence fournit des extraits sourçables, non vérifiés ; aucune page lue par KARTA. Envoyer seulement la requête publique nécessaire, jamais le profil privé complet.",
++     "execute": [Function execute],
++     "inputSchema": {
++       "additionalProperties": false,
++       "properties": {
++         "exclude_domains": {
++           "items": {
++             "type": "string",
++           },
++           "maxItems": 10,
++           "minItems": 1,
++           "type": "array",
++         },
++         "include_domains": {
++           "items": {
++             "type": "string",
++           },
++           "maxItems": 10,
++           "minItems": 1,
++           "type": "array",
++         },
++         "language": {
++           "description": "Langue souhaitée, ex. fr, en, zh-cn ; préférence de classement.",
++           "maxLength": 5,
++           "minLength": 2,
++           "type": "string",
++         },
++         "max_age_hours": {
++           "description": "Âge maximal demandé de la copie fournisseur, distinct de la date de publication. 0 demande une récupération récente.",
++           "maximum": 720,
++           "minimum": 0,
++           "type": "integer",
++         },
++         "query": {
++           "maxLength": 2000,
++           "minLength": 1,
++           "type": "string",
++         },
++         "response_format": {
++           "enum": [
++             "legacy",
++             "evidence",
++           ],
++           "type": "string",
++         },
++         "time_range": {
++           "description": "Fenêtre de publication demandée au fournisseur ; les dates inconnues peuvent subsister.",
++           "enum": [
++             "day",
++             "week",
++             "month",
++             "year",
++           ],
++           "type": "string",
++         },
++       },
++       "required": [
++         "query",
++       ],
++       "type": "object",
++     },
++     "name": "web_search",
++     "sensitive": false,
++     "tracePolicy": "metadata_only",
++   },
+  ]
+
+ ❯ test/customRegistry.test.ts:43:8
+     41|   it("n'élargit pas la liste autorisée avec des noms hérités ou répété…
+     42|     expect(resolveCustomAgentTools(["constructor", "__proto__", "toStr…
+     43|       .toEqual([CUSTOM_AGENT_TOOLS.web_search]);
+       |        ^
+     44|   });
+     45|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯

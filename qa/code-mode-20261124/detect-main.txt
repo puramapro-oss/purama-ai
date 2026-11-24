@@ -1,0 +1,36 @@
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 2749 files, 3216 symbols
+Affected processes: 310
+Risk level: critical
+
+Changed symbols:
+  Section CHEF — preuves ciblées, réussite explicite et reprise sûre → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Contrat → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Mise en service contrôlée → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Vérifications et portée des résultats → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Limites et suites nécessaires au fonctionnement continu → karta/CHEF_EVIDENCE_SCOPE.md
+  Section IAO — accès aux services et aux sites → karta/WEB_CAPABILITIES.md
+  Section Périmètre de cette proposition → karta/WEB_CAPABILITIES.md
+  Section Existant réutilisé → karta/WEB_CAPABILITIES.md
+  Section Contrat de confiance → karta/WEB_CAPABILITIES.md
+  Section Routes à raccorder → karta/WEB_CAPABILITIES.md
+  Section Choix techniques étudiés → karta/WEB_CAPABILITIES.md
+  Section Adaptation et consommation → karta/WEB_CAPABILITIES.md
+  Section Connexions et secrets → karta/WEB_CAPABILITIES.md
+  Section Validation de ce lot → karta/WEB_CAPABILITIES.md
+  Section Conditions de livraison du mode complet → karta/WEB_CAPABILITIES.md
+... and 3201 more
+
+Affected execution flows:
+  • BuildWorkshopArtifact → Stop (10 steps) — changed: buildWorkshopArtifact, readGit, append, requestStop, checkStopped, fail, runChefProcess, stop, destroyTask, stop
+  • ProjectLoop → Stop (10 steps) — changed: captureWorkshopHead, git, append, requestStop, checkStopped, fail, runChefProcess, projectLoop, assertCleanWorkshop, stop
+  • Run → DestroyTask (10 steps) — changed: run, captureWorkshopHead, git, append, requestStop, checkStopped, fail, runChefProcess, stop, destroyTask
+  • ProjectLoop → GroupState (9 steps) — changed: captureWorkshopHead, git, append, requestStop, checkStopped, groupState, runChefProcess, projectLoop, assertCleanWorkshop
+  • ProjectLoop → ChefProcessStopUnconfirmedError (8 steps) — changed: ChefProcessStopUnconfirmedError, captureWorkshopHead, git, append, requestStop, runChefProcess, projectLoop, assertCleanWorkshop
+  • ProjectLoop → SignalGroup (8 steps) — changed: captureWorkshopHead, git, append, requestStop, signalGroup, runChefProcess, projectLoop, assertCleanWorkshop
+  • ProjectConsultationOperation → WireError (6 steps) — changed: WireError, projectConsultationOperation, projectResult, identifier, string, upstream
+  • CreateChefMission → Record (6 steps) — changed: normalizeChefCapabilitySelection, record, hashChefBrief, normalizeChefBrief, validateChefBrief, createChefMission
+  • Main → Text (6 steps) — changed: main, parseWorkshopProjects, strings, text, checkWorkshopRuntime, catalogue
+  • HandleConsultationRequest → Cleanup (5 steps) — changed: handleConsultationRequest, abort, fail, cleanup, readBody
+... and 300 more
