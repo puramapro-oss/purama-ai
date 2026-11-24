@@ -102,8 +102,8 @@ test('scoped glob guards retain local identities and unchanged registry aliases'
   const input = inputs();
   assert.equal(verifyAuditSnapshot(input).status, 'PASS');
   for (const [local, name, alias, upstream, version] of [
-    ['compat/glob', '@purama/expo-glob-compat', 'glob-upstream', 'glob', '13.0.7'],
-    ['compat/glob-minimatch', '@purama/glob-minimatch-guard', 'minimatch-upstream', 'minimatch', '10.2.6'],
+    ['compat/glob', '@purama/expo-glob-compat', 'glob-upstream', 'glob', '14.0.6'],
+    ['compat/glob-minimatch', '@purama/glob-minimatch-guard', 'minimatch-upstream', 'minimatch', '11.0.9'],
   ]) {
     const entry = input.lock.packages[local];
     assert.equal(entry.name, name);

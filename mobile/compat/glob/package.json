@@ -13,5 +13,5 @@
   },
   "files": ["index.cjs", "index.mjs", "index.d.ts"],
   "engines": { "node": ">=20.19.4" },
-  "dependencies": { "glob-upstream": "npm:glob@13.0.7" }
+  "dependencies": { "glob-upstream": "npm:glob@14.0.6" }
 }

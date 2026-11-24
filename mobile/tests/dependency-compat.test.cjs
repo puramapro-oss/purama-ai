@@ -270,11 +270,25 @@ test('Expo glob resolves both scoped guards while legacy glob remains unchanged'
   const fromGlob = createRequire(require.resolve('glob-upstream/package.json'));
   assert.equal(fs.realpathSync(fromGlob.resolve('minimatch')),
     path.join(project, 'compat/glob-minimatch/index.cjs'));
-  assert.equal(require('glob-upstream/package.json').version, '13.0.7');
-  assert.equal(require('minimatch-upstream/package.json').version, '10.2.6');
-  const codegen = createRequire(require.resolve('@react-native/codegen/package.json'));
-  assert.equal(codegen('glob/package.json').version, '7.2.3');
-  assert.equal(typeof codegen('glob'), 'function');
+  assert.equal(require('glob-upstream/package.json').version, '14.0.6');
+  assert.equal(require('minimatch-upstream/package.json').version, '11.0.9');
+  const cliRequire = createRequire(path.join(cliRoot, 'package.json'));
+  assert.equal(cliRequire('minimatch/package.json').version, '11.0.9');
+  assert.equal(cliRequire('minimatch').minimatch('app/example.ts', '**/*.ts'), true);
+  const amplified = Array.from({ length: 6 }, (_, i) => `**/../part${i}`).join('/') + '/file.js';
+  assert.throws(() => new (cliRequire('minimatch').Minimatch)(amplified,
+    { optimizationLevel: 2, braceExpandMax: 16 }), RangeError);
+  for (const consumer of ['@react-native/codegen', 'react-native', 'rimraf', 'test-exclude']) {
+    const legacy = createRequire(require.resolve(`${consumer}/package.json`));
+    assert.equal(legacy('glob/package.json').version, '7.2.3');
+    assert.equal(typeof legacy('glob'), 'function');
+    const legacyGlobRequire = createRequire(legacy.resolve('glob'));
+    const legacyMatcher = legacyGlobRequire('minimatch');
+    assert.equal(legacyGlobRequire('minimatch/package.json').version, '3.1.5');
+    assert.equal(typeof legacyMatcher, 'function');
+    assert.equal(legacyMatcher('example.js', '*.js'), true);
+    assert.ok(legacyMatcher.makeRe('*.js') instanceof RegExp);
+  }
 });
 
 test('glob and matcher retain named ESM, CJS, raw and nested function aliases', async () => {
@@ -304,8 +318,12 @@ test('GHSA-g3hv-75wg-m249: the real Expo glob APIs reject amplified patterns', a
   const utility = require(path.join(cliRoot, 'build/src/utils/glob.js'));
   const pattern = Array.from({ length: 6 }, (_, i) => `**/../part${i}`).join('/') + '/file.js';
   const options = { cwd: project, braceExpandMax: 16, maxDepth: 0 };
-  // The retained bundled upstream is a positive control, not silently labelled fixed.
-  assert.ok(new (require('glob-upstream').Glob)(pattern, options).patterns.length > 16);
+  // The former vulnerable upstream witness is preserved in the baseline CI.
+  // The upgraded upstream must now reject the same pattern, independently of
+  // the local constructor guard. A benign pattern remains a positive control.
+  const UpstreamGlob = require('glob-upstream').Glob;
+  assert.ok(new UpstreamGlob('app/**/*.tsx', options).patterns.length > 0);
+  assert.throws(() => new UpstreamGlob(pattern, options), RangeError);
   await assert.rejects(utility.everyMatchAsync(pattern, options), RangeError);
   await assert.rejects(utility.anyMatchAsync(pattern, options), RangeError);
   const glob = require('glob');

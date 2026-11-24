@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-11-23T17:51:23.601Z",
+  "capturedAt": "2026-11-23T23:46:28.691Z",
   "maximumAgeHours": 24,
-  "reportSha256": "12ff7e0c6d3af84a7f80984fd4a5e7b39192dd6f7e9d377f74b4ee81461bce1c",
-  "registryMultisetSha256": "cdbdcaa29aacc77842c0a2789ea89a60b65714a22dd1af56f538a141c22c86c5",
-  "registryPackageInstances": 886,
+  "reportSha256": "4d0bac41e0a63520bbf55fca7aaa52e88e305183e32775b139ee2312bbc7d919",
+  "registryMultisetSha256": "ef84dc12007e30407846c8a10e10d5cfdf4efe82221e2e5074b549633e930e83",
+  "registryPackageInstances": 885,
   "source": {
     "command": [
-      "npm",
+      "node",
+      "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
       "audit",
       "--audit-level=high",
-      "--json"
+      "--json",
+      "--fetch-retries=0",
+      "--fetch-timeout=30000"
     ],
-    "receiptSha256": "104d6946b4e7cffab728f1e667187d864f79c23587a38ef4fcab55022e66c52b",
+    "receiptSha256": "3c1afbd40ecf7a267fbde64c7b1cc9de702e23a361e1935fbb7cdaa976ae7dd3",
     "exitCode": 0
   },
-  "status": "Fresh registry audit captured for this dependency graph. The CI gate checks exact binding and freshness; an expired valid snapshot requires a new real registry audit.",
-  "remainingAdvisories": [
-    "GHSA-3g3m-2fjr-6pw4",
-    "GHSA-g3hv-75wg-m249"
-  ],
-  "scopeLimit": "Registry package versions, URLs and integrity values only. Local adapter code is reviewed separately. Native execution, signing and store admission are not qualified."
+  "status": "Fresh real registry audit for this exact candidate graph. The unchanged gate binds identities and enforces24-hour expiry; it does not imply absence of undisclosed vulnerabilities.",
+  "remainingAdvisories": [],
+  "scopeLimit": "Registry package versions, URLs and integrity values only. Local adapter code and real consumers have separate regression checks. Native execution, signing and store admission require their own qualification."
 }

@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS",
+  "scope": "Qualification locale du correctif des dépendances mobiles sur un clone isolé ; aucune publication, fusion ou production effectuée par cette qualification.",
+  "receivedAtUtc": "2026-11-23T23:55:43.732835+00:00",
+  "receivedAtEuropeParis": "2026-11-24T00:55:43.732835+01:00",
+  "baseCommit": "0032a0ffeec82a476e8a6de45fea3a063a79c6a9",
+  "baseTree": "8e6d6460edafecdfdf757904a4247bc69f161626",
+  "runtime": {
+    "node": "v24.22.3",
+    "npmResolver": "11.9.0",
+    "precedingCiNode": "v24.22.1",
+    "globalNpmUnchanged": true
+  },
+  "versions": {
+    "globUpstream": "14.0.6",
+    "minimatchUpstream": "11.0.9",
+    "expoCliMinimatch": "11.0.9",
+    "legacyGlob": "7.2.3",
+    "legacyMinimatch": "3.1.5",
+    "expo": "54.0.38",
+    "reactNative": "0.81.5",
+    "react": "19.1.0"
+  },
+  "registryAudit": {
+    "schemaVersion": 1,
+    "startedAt": "2026-11-23T23:46:23.760025+00:00",
+    "observedCompletedAt": "2026-11-23T23:46:28.691030+00:00",
+    "command": [
+      "node",
+      "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+      "audit",
+      "--audit-level=high",
+      "--json",
+      "--fetch-retries=0",
+      "--fetch-timeout=30000"
+    ],
+    "cwd": "/workspace/scratch/6a7443471e02/iao-mobile-deps-candidate/mobile",
+    "exitCode": 0,
+    "seconds": 4.93,
+    "node": "v24.22.3",
+    "npm": "11.9.0",
+    "reportSha256": "4d0bac41e0a63520bbf55fca7aaa52e88e305183e32775b139ee2312bbc7d919",
+    "lockSha256": "26bd59c2ad7bc02bc34a019ef69f624bb737a0a2ba21de2190773a58e90e7b2a",
+    "lockUnchangedDuringAudit": true,
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "scope": "Actual registry audit of the isolated candidate dependency graph; not a snapshot-date rewrite."
+  },
+  "snapshot": {
+    "status": "PASS",
+    "gate": "audit snapshot binding — no registry request",
+    "auditAsOf": "2026-11-23T23:46:28.691Z",
+    "expiresAt": "2026-11-24T23:46:28.691Z",
+    "reportSha256": "4d0bac41e0a63520bbf55fca7aaa52e88e305183e32775b139ee2312bbc7d919",
+    "registryMultisetSha256": "ef84dc12007e30407846c8a10e10d5cfdf4efe82221e2e5074b549633e930e83",
+    "registryPackageInstances": 885,
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "limitation": "Reuses the dated report. This is not a new registry audit or a native/store qualification."
+  },
+  "checks": [
+    {
+      "name": "Installation verrouillée",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 25.242,
+      "log": "npm-ci-final.log",
+      "logSha256": "e9d6953952e002cbfd7b2793e71cc0c36f8e7044e8d0664b3afb91ac51025894"
+    },
+    {
+      "name": "Résolution complète npm ls",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "ls",
+        "--all",
+        "--json"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.993,
+      "log": "npm-tree-final.log",
+      "logSha256": "b53b2a2cf0e109377a6cf66346e119c7a919f77a70a7ec0258d936fbd15192f6",
+      "qualification": "Code 0 ; aucune entrée invalid. Deux entrées optionnelles extraneous signalées, déjà présentes et inchangées dans le lock de base, incluses dans le graphe audité.",
+      "optionalExtraneous": [
+        {
+          "name": "@emnapi/runtime",
+          "version": "1.11.3"
+        },
+        {
+          "name": "@img/sharp-wasm32",
+          "version": "0.35.5"
+        }
+      ]
+    },
+    {
+      "name": "Consommateurs et contre-épreuves dépendances",
+      "status": "PASS",
+      "testCount": 19,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "test:dependencies"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 1.668,
+      "log": "dependency-tests-final.log",
+      "logSha256": "f7b54dfa72f31d7871b72632949d8072c4a49b9dddac934ab4d4d8bca409d63e"
+    },
+    {
+      "name": "Typage TypeScript",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 3.836,
+      "log": "typecheck.log",
+      "logSha256": "d94db54dd8db312b18596afdd660e7093188c0180d0dc6f5b2a6c0027b1d56d7"
+    },
+    {
+      "name": "Alignement SDK Expo",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "check:dependencies"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 11.99,
+      "log": "sdk-alignment.log",
+      "logSha256": "0e551d88dca4f0cf9cb9d0dc106bd8a2e03c2c96ab300bcd4b1bd33ac2c26323"
+    },
+    {
+      "name": "Expo Doctor",
+      "status": "PASS",
+      "testCount": 18,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "exec",
+        "--yes",
+        "--package=expo-doctor@1.21.6",
+        "--",
+        "expo-doctor"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 14.004,
+      "log": "expo-doctor.log",
+      "logSha256": "1a244a8d3a125fecbe674bfacbd499c70a9e147e8f7194ff4939c3046293d76e"
+    },
+    {
+      "name": "Export Metro Android",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "export:android"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 29.779,
+      "log": "export-android.log",
+      "logSha256": "d36edda9ec9a2ca87df30a8073684baa610e483c96259be0ae478c757d3cbb83"
+    },
+    {
+      "name": "Export Metro iOS",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "export:ios"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 28.67,
+      "log": "export-ios.log",
+      "logSha256": "4d11039cc866cc66319185a524e9995ef824729888595d0746d997f199d80b36"
+    },
+    {
+      "name": "Liaison du snapshot",
+      "status": "PASS",
+      "testCount": 11,
+      "command": [
+        "node",
+        "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "test:audit-snapshot"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.5,
+      "log": "audit-snapshot-tests-final.log",
+      "logSha256": "fb7adddb1ebe8c1ca393b62936918903345e5bd4798bdc3a93e210ad483ac798"
+    },
+    {
+      "name": "Renouvellement et refus de sécurité",
+      "status": "PASS",
+      "testCount": 12,
+      "command": [
+        "node",
+        "--test",
+        "tests/audit-ci-live.test.cjs"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.447,
+      "log": "audit-renewal-tests-final.log",
+      "logSha256": "a8e644fee442a4c9d877fc3073edb3cb558825c5a2f659dd4539a19f5dc890e1"
+    },
+    {
+      "name": "Qualification du snapshot frais",
+      "status": "PASS",
+      "testCount": null,
+      "command": [
+        "node",
+        "scripts/qualify-audit-ci.cjs"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.165,
+      "log": "audit-binding.log",
+      "logSha256": "abfe7ce1abc5aa03981f8cb275dbc144054808985f5c3cf8261f80efb34fec86"
+    }
+  ],
+  "exports": {
+    "androidModules": 1648,
+    "iosModules": 1651,
+    "qualification": "JavaScript et assets uniquement ; aucun build natif, appareil, signature ou soumission store par cette campagne."
+  },
+  "compatibility": {
+    "installedImporterFilesReviewed": 13,
+    "removedModernExports": [
+      "AST",
+      "makeRe"
+    ],
+    "referencesToRemovedExportsInReviewedImporters": 0,
+    "modernNamespaceParity": "Egalité stricte ESM/CJS/amont conservée ; pas de faux export undefined.",
+    "legacyConsumers": [
+      "@react-native/codegen",
+      "react-native",
+      "rimraf",
+      "test-exclude"
+    ],
+    "legacyContract": "Les quatre chemins réels gardent Glob 7 / Minimatch 3, fonction CommonJS et makeRe produisant une RegExp.",
+    "securityOracles": "19 tests conservés ; le même motif doit désormais être rejeté par l’amont corrigé, avec témoin bénin. Gardes locaux, limites mémoire/temps, annulation et consommateurs Expo conservés.",
+    "sourceReviewReceiptSha256": "41464c8be821209f8fe20dabae30f7a42188c2fab545630a562bcaa6ee5648bd"
+  },
+  "unchangedSecurityCode": [
+    {
+      "path": "mobile/compat/glob-minimatch/index.cjs",
+      "unchangedFromBase": true,
+      "sha256": "1a9925e6ad64b765a899823fa3f38111f78c35bc3ad3ca07330d8e6e1819a338"
+    },
+    {
+      "path": "mobile/compat/glob/index.cjs",
+      "unchangedFromBase": true,
+      "sha256": "bccf9a7ddc26522de94fbad799ed054ea0f0044bd0b32a0eb1fa07ae5cb8be9d"
+    },
+    {
+      "path": "mobile/scripts/verify-audit-snapshot.cjs",
+      "unchangedFromBase": true,
+      "sha256": "7c2a6d33614705f428de99a471ccc6a44ff1cbc24b5cf0d0430a98811f881b04"
+    },
+    {
+      "path": "mobile/scripts/qualify-audit-ci.cjs",
+      "unchangedFromBase": true,
+      "sha256": "18982f1dc70adffdc2510f4b873a42e28723f0a78034a9378a6e2ea1d9b68420"
+    }
+  ],
+  "initialFailuresPreserved": {
+    "resolution": "Deux stratégies de liens locaux ont donné des liens npm imbriqués invalides ; le CLI utilise finalement la version registre corrigée. npm ls final termine avec le code 0, sans entrée invalid, avec deux entrées optionnelles extraneous déjà présentes dans le lock de base (voir le contrôle détaillé).",
+    "namespace": "Minimatch 11 retire AST/makeRe modernes ; exports adaptés après revue des consommateurs, compatibilité legacy explicitement testée.",
+    "upstreamCounterproof": "L’ancien oracle attendait l’amplification de l’amont ; il exige maintenant son rejet sur le même motif, avec contrôle bénin.",
+    "snapshot": "L’ancien snapshot refuse le nouveau graphe comme attendu. Un vrai audit a précédé le renouvellement.",
+    "testFixtures": "Les attentes de version et le compte de 886 instances ont été mis à jour vers les pins qualifiés et 885 instances ; tous les refus d’audit sont inchangés."
+  },
+  "limits": [
+    "Aucune affirmation de sécurité universelle : zéro alerte décrit uniquement la réponse du registre à la date reçue.",
+    "Le snapshot expire le 2026-11-24 à 23:46:28.691 UTC ; les règles de refus et de renouvellement restent actives.",
+    "Les contrats de consommateurs futurs, les plugins arbitraires et les appels dynamiques non observés ne sont pas qualifiés.",
+    "La CI hébergée sur le nouveau commit, les builds natifs, les appareils physiques, le cloud, l’authentification de production et la signature ne sont pas qualifiés ici.",
+    "Les preuves natives de 0032 restent attachées à ce commit antérieur et ne sont pas transformées en tests natifs de ce candidat."
+  ],
+  "references": [
+    "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+    "https://github.com/advisories/GHSA-g3hv-75wg-m249"
+  ]
+}

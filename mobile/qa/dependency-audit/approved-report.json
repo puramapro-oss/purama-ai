@@ -1,130 +1,22 @@
 {
   "auditReportVersion": 2,
-  "vulnerabilities": {
-    "@expo/cli": {
-      "name": "@expo/cli",
-      "severity": "moderate",
-      "isDirect": false,
-      "via": [
-        "minimatch"
-      ],
-      "effects": [
-        "expo"
-      ],
-      "range": "0.23.0-canary-20241211-61c49bd - 55.0.10 || 56.0.0-canary-20260128-67ce8d5 - 56.0.0-canary-20260506-964f25d",
-      "nodes": [
-        "node_modules/expo/node_modules/@expo/cli"
-      ],
-      "fixAvailable": {
-        "name": "expo",
-        "version": "58.0.26",
-        "isSemVerMajor": true
-      }
-    },
-    "expo": {
-      "name": "expo",
-      "severity": "moderate",
-      "isDirect": true,
-      "via": [
-        "@expo/cli"
-      ],
-      "effects": [],
-      "range": "52.0.0-canary-20240625-2333e70 - 52.0.0-canary-20241018-f71b3e0 || 53.0.0-canary-20241211-61c49bd - 55.0.0-preview.12 || 56.0.0-canary-20260212-4f61309 - 56.0.0-preview.13",
-      "nodes": [
-        "node_modules/expo"
-      ],
-      "fixAvailable": {
-        "name": "expo",
-        "version": "58.0.26",
-        "isSemVerMajor": true
-      }
-    },
-    "glob": {
-      "name": "glob",
-      "severity": "moderate",
-      "isDirect": true,
-      "via": [
-        {
-          "source": 1244013,
-          "name": "glob",
-          "dependency": "glob",
-          "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
-          "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
-          "severity": "moderate",
-          "cwe": [
-            "CWE-400"
-          ],
-          "cvss": {
-            "score": 0,
-            "vectorString": null
-          },
-          "range": ">=9.0.0 <=14.0.1"
-        }
-      ],
-      "effects": [],
-      "range": "9.0.0 - 14.0.1",
-      "nodes": [
-        "node_modules/glob-upstream"
-      ],
-      "fixAvailable": {
-        "name": "glob",
-        "version": "14.0.6",
-        "isSemVerMajor": true
-      }
-    },
-    "minimatch": {
-      "name": "minimatch",
-      "severity": "moderate",
-      "isDirect": true,
-      "via": [
-        {
-          "source": 1244623,
-          "name": "minimatch",
-          "dependency": "minimatch",
-          "title": "minimatch has potential denial of service via globparts amplification",
-          "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
-          "severity": "moderate",
-          "cwe": [
-            "CWE-405"
-          ],
-          "cvss": {
-            "score": 0,
-            "vectorString": null
-          },
-          "range": ">=7.0.0 <11.0.1"
-        }
-      ],
-      "effects": [
-        "@expo/cli"
-      ],
-      "range": "7.0.0 - 11.0.0",
-      "nodes": [
-        "node_modules/expo/node_modules/minimatch",
-        "node_modules/minimatch-upstream"
-      ],
-      "fixAvailable": {
-        "name": "minimatch",
-        "version": "11.0.9",
-        "isSemVerMajor": true
-      }
-    }
-  },
+  "vulnerabilities": {},
   "metadata": {
     "vulnerabilities": {
       "info": 0,
       "low": 0,
-      "moderate": 4,
+      "moderate": 0,
       "high": 0,
       "critical": 0,
-      "total": 4
+      "total": 0
     },
     "dependencies": {
-      "prod": 843,
+      "prod": 842,
       "dev": 32,
       "optional": 49,
       "peer": 0,
       "peerOptional": 0,
-      "total": 896
+      "total": 895
     }
   }
 }

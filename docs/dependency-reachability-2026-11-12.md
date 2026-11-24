@@ -1,5 +1,12 @@
 # Dependency consumer qualification — 2026-11-12
 
+> Historical evidence. The mobile Glob/Minimatch versions and audit snapshot
+> below describe this dated baseline. Their 2026-11-24 replacement and new
+> qualification are recorded in
+> [the mobile dependency receipt](quality/mobile-dependency-upgrade-20261124.json)
+> and [the compatibility guide](../mobile/compat/README.md). The separate
+> site/Elliptic findings below are not superseded by that mobile repair.
+
 Baseline: `b170fcb647f8f70851ee918bff795de3a45b0328` (common PR45 branch).
 This document records bounded consumer evidence. It is not a new npm audit,
 an advisory suppression list, or a claim that every installed package is safe.

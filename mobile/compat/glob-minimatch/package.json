@@ -2,7 +2,7 @@
   "name": "@purama/glob-minimatch-guard",
   "version": "1.0.0",
   "private": true,
-  "description": "Bound the Minimatch constructor used by the raw glob 13 consumer",
+  "description": "Bound the Minimatch constructor used by the raw glob consumer",
   "type": "commonjs",
   "main": "index.cjs",
   "types": "index.d.ts",
@@ -19,6 +19,6 @@
     "node": ">=20.19.4"
   },
   "dependencies": {
-    "minimatch-upstream": "npm:minimatch@10.2.6"
+    "minimatch-upstream": "npm:minimatch@11.0.9"
   }
 }

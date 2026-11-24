@@ -11,6 +11,7 @@ local Purama adapters; they do not claim to be upstream releases.
 | `query-string` 7, through Expo Router 6 | `require('decode-uri-component')` returns a function | `decode-uri-component` 0.5.1, imported through an explicit npm alias |
 | Metro 0.83 `src/Assets.js` | synchronous function accepting a Buffer or file path | `image-size` 2.0.3, imported through an explicit npm alias |
 | `@expo/config` 12.0.14 config mutation | callable CommonJS merge function and `.all` | local input guard delegating to unchanged `deepmerge` 4.3.1 through an explicit npm alias |
+| Expo config, Metro and glob consumers | modern Glob API and bounded Minimatch constructor | guarded `glob/raw` 14.0.6 and `minimatch` 11.0.9 aliases; legacy Glob 7 / Minimatch 3 consumers remain separate |
 
 The decoder adapter only returns the upstream default export. It contains no
 decoder implementation and does not catch or replace upstream errors. A direct
@@ -50,13 +51,16 @@ the first real Metro export.
 
 ## Verification and maintenance
 
-Run from `mobile` with Node 24.22.1:
+Run from `mobile` with Node 24 and the lockfile resolver npm 11.9.0. The
+2026-11-24 local qualification used Node 24.22.3; the preceding CI used
+24.22.1. No global npm installation was changed.
 
 ```sh
 npm ci --no-audit --no-fund
 npm ls --all
 npm run test:dependencies
 npm run test:audit-snapshot
+node --test tests/audit-ci-live.test.cjs
 npm run check:dependencies
 npm run typecheck
 npm run export:android
@@ -73,35 +77,38 @@ The mobile CI executes these gates independently of the web application.
 
 ### Audit snapshot binding
 
-The automated gate is named **audit snapshot binding — no registry request**.
-It reads the previously received report in `qa/dependency-audit`, verifies its
+The fresh-snapshot path is named **audit snapshot binding — no registry request**.
+It reads the received report in `qa/dependency-audit`, verifies its
 exact SHA-256, and compares the full multiset of registry package names,
 versions, tarball URLs and integrity values. Duplicate instances are retained;
 npm aliases use their real upstream names. A change of installation position,
 such as hoisting the same Babel preset, does not change this identity. Unknown
-non-registry dependencies are refused; the three explicit local adapters are
+non-registry dependencies are refused; the five explicit local adapters are
 reviewed separately.
 
-The config guard adds a local package and moves the same `deepmerge` tarball
-to an alias. The registry multiset remains exactly 875 instances with SHA-256
-`757ff86c012d4603f22dcfa5ada4c890db6b1b5020ed29d24d755cd17b974177`.
+The renewed registry multiset contains exactly 885 instances with SHA-256
+`ef84dc12007e30407846c8a10e10d5cfdf4efe82221e2e5074b549633e930e83`.
 This comparison does not cover dependency topology or local adapter code. The
 adapter resolution, rejected attack, benign Expo/plugin mutations and upstream
 identity have separate regression tests. Admitting the reviewed local package
-is not an advisory exemption; `deepmerge` remains present in the report.
+is not an advisory exemption; its upstream alias remains visible to npm audit.
 
 The gate requires zero high and critical entries in that report and refuses
 invalid, future or expired dates. Its validity is strictly less than 24 hours.
-It is a local reuse of dated evidence, not a new audit. The received report
-still contains three unique advisories concerning deepmerge, glob and
-minimatch, represented by sixteen affected package entries. Their risk is not
-declared absent. No automatic major update outside the SDK ranges is applied.
+It is a local reuse of dated evidence, not a new audit. The actual registry
+audit completed at **2026-11-23 23:46:28.691 UTC** and reported zero entries
+in every severity category. The report SHA-256 is
+`4d0bac41e0a63520bbf55fca7aaa52e88e305183e32775b139ee2312bbc7d919`.
+That result describes this response and dependency graph at that time; it is
+not a claim that all installed code is free of vulnerabilities.
 
-An automatic approval review blocked a subsequent registry audit request.
-The workflow therefore makes no `npm audit` request and has no ignored audit
-failure. A changed or expired snapshot fails the job and requires an authorized
-renewal. The standard command remains available for an explicitly authorized
-registry audit:
+The CI qualifier can perform a fresh registry audit only when explicitly
+enabled and when an authentic recorded report for the same graph has expired.
+A changed graph, altered report, unsafe report or failed registry request is
+refused. A fresh valid snapshot makes no registry request. This repair changes
+the graph, so its renewal used a separately authorized real audit and recorded
+the actual report, completion time and graph identity. The old snapshot was
+also checked against the new graph and correctly refused it.
 
 ```sh
 npm audit --audit-level=high --json
@@ -110,10 +117,14 @@ npm audit --audit-level=high --json
 Renewal must record the actual new report, timestamp and dependency identity;
 changing only the timestamp would not establish a new audit.
 
-The received report was captured at **2026-11-12 03:59:42.234 UTC** and expires at
-**2026-11-13 03:59:42.234 UTC**. This change does not renew either timestamp.
-See the [consumer qualification](../../docs/dependency-reachability-2026-11-12.md)
-for the remaining minimatch and Elliptic limits.
+The new snapshot expires at **2026-11-24 23:46:28.691 UTC**. The resolver,
+lockfile/report hashes and actual audit completion are recorded in
+`qa/dependency-audit/capture.json`. See the
+[current dependency qualification](../../docs/quality/mobile-dependency-upgrade-20261124.json)
+and [scoped glob explanation](glob/README.md). The
+[2026-11-12 consumer qualification](../../docs/dependency-reachability-2026-11-12.md)
+remains historical evidence and includes a separate site/Elliptic scope that
+this mobile repair does not requalify.
 
 During an SDK upgrade, re-check all consumers before removing or changing the
 adapters. Prefer native upstream support when it preserves the required
@@ -138,4 +149,6 @@ by this qualification.
 - [PostCSS source-map advisory](https://github.com/advisories/GHSA-r28c-9q8g-f849)
 - [Sharp advisory](https://github.com/advisories/GHSA-wq5f-xc86-pv6w)
 - [Deepmerge returned-object prototype advisory](https://github.com/advisories/GHSA-gcqx-w48m-w2h4)
+- [Glob AbortSignal cancellation advisory](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4)
+- [Minimatch amplification advisory](https://github.com/advisories/GHSA-g3hv-75wg-m249)
 - [npm overrides and local dependencies](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/)

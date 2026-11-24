@@ -1,16 +1,20 @@
 {
   "schemaVersion": 1,
-  "observedCompletedAt": "2026-11-23T17:51:23.601Z",
+  "observedCompletedAt": "2026-11-23T23:46:28.691Z",
   "command": [
-    "npm",
+    "node",
+    "/home/agent/.npm/_npx/5ed1df33febb5bb0/node_modules/npm/bin/npm-cli.js",
     "audit",
     "--audit-level=high",
-    "--json"
+    "--json",
+    "--fetch-retries=0",
+    "--fetch-timeout=30000"
   ],
   "cwd": "mobile",
   "exitCode": 0,
   "node": "v24.22.3",
-  "reportSha256": "12ff7e0c6d3af84a7f80984fd4a5e7b39192dd6f7e9d377f74b4ee81461bce1c",
-  "lockSha256": "51a846bb5b42f548aa2809a5c916b3bb61c42b71d8dd9ec893299ad027f13b80",
-  "scope": "Actual registry audit after adding the offline native dependencies; tool process completion observed with exit 0."
+  "npm": "11.9.0",
+  "reportSha256": "4d0bac41e0a63520bbf55fca7aaa52e88e305183e32775b139ee2312bbc7d919",
+  "lockSha256": "26bd59c2ad7bc02bc34a019ef69f624bb737a0a2ba21de2190773a58e90e7b2a",
+  "scope": "Actual registry audit after upgrading the reviewed Glob/Minimatch aliases and the Expo CLI matcher; completion observed with exit0. No SDK upgrade, production action or registry suppression."
 }
