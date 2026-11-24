@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHash, webcrypto } from 'node:crypto';
 import {
-  consumeWorkshopDraft, isMissionRunning, isMissionTerminal, parseWorkshopDetail, parseWorkshopList,
+  buildWorkshopConversationBrief, consumeWorkshopDraft, consumeWorkshopHandoff, isMissionRunning, isMissionTerminal, parseWorkshopDetail, parseWorkshopList,
   requestWorkshop, safePreviewUrl, saveWorkshopDraft, parseWorkshopArtifact, requestWorkshopArtifact, workshopPreviewDocument,
   WORKSHOP_ARCHIVE_LIMIT, WORKSHOP_PREVIEW_LIMIT,
 } from './workshop';
@@ -30,6 +30,105 @@ const artifact = () => ({
   preview: { fileName: 'index.html', mediaType: 'text/html', content: '<h1>Création réelle</h1>', bytes: Buffer.byteLength('<h1>Création réelle</h1>'), sha256: hash('<h1>Création réelle</h1>') },
 });
 const artifactIdentity = { missionId: mission.id, commitSha: task.outputSha };
+
+describe('conversation workshop handoff', () => {
+  it('does not resurrect the stale slot after a total storage outage recovers', () => {
+    saveWorkshopDraft('Ancienne demande à ne pas reprendre.', 'alice', 1000);
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('unavailable'); });
+    const read = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('unavailable'); });
+    const remove = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => { throw new Error('unavailable'); });
+    const fresh = saveWorkshopDraft('Nouvelle demande conservée par la route.', 'alice', 1001);
+    expect(fresh.stored).toBe(false);
+    expect(consumeWorkshopHandoff('alice', fresh.draft, 1002)?.prompt).toBe('Nouvelle demande conservée par la route.');
+    write.mockRestore(); read.mockRestore(); remove.mockRestore();
+    expect(consumeWorkshopHandoff('alice', undefined, 1003)).toBeNull();
+    expect(sessionStorage.getItem('purama.workshop.draft.v1')).toBeNull();
+    const next = saveWorkshopDraft('Une nouvelle sauvegarde fonctionne de nouveau.', 'alice', 1004);
+    expect(consumeWorkshopHandoff('alice', undefined, 1005)?.id).toBe(next.draft?.id);
+  });
+  it('does not import a received route again when its stored copy could not be removed', () => {
+    const receipt = saveWorkshopDraft('Un transfert ne doit être reçu qu’une fois.', 'alice', 1000);
+    const remove = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => { throw new Error('unavailable'); });
+    expect(consumeWorkshopHandoff('alice', receipt.draft, 1001)?.id).toBe(receipt.draft?.id);
+    remove.mockRestore();
+    expect(consumeWorkshopHandoff('alice', undefined, 1002)).toBeNull();
+  });
+  it('prefers the fresh bound route when storage cannot be overwritten or read', () => {
+    saveWorkshopDraft('Une demande précédente pour le site.', 'alice', 1000);
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('unavailable'); });
+    const receipt = saveWorkshopDraft('La nouvelle demande pour le restaurant.', 'alice', 1001);
+    write.mockRestore();
+    expect(receipt.stored).toBe(false);
+    const read = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('unavailable'); });
+    expect(consumeWorkshopHandoff('alice', receipt.draft, 1002)?.prompt).toBe('La nouvelle demande pour le restaurant.');
+    read.mockRestore();
+    // Finish the outage lifecycle: module-local invalidation must not leak into the next fixture.
+    expect(consumeWorkshopHandoff('alice', undefined, 1003)).toBeNull();
+    expect(sessionStorage.getItem('purama.workshop.draft.v1')).toBeNull();
+  });
+  it('rejects an unbound, wrong-account, expired, future or malformed route instead of an older draft', () => {
+    const original = saveWorkshopDraft('Demande confidentielle de cette conversation.', 'alice', 1000).draft!;
+    for (const draft of [
+      { ...original, ownerId: 'bob' }, { ...original, ownerId: null }, { ...original, id: 'bad-id' },
+      { ...original, createdAt: -20 * 60_000 }, { ...original, createdAt: 2000 },
+      { ...original, createdAt: NaN }, { ...original, prompt: 'bad\0text' }, original.prompt,
+    ]) {
+      saveWorkshopDraft('Un ancien brouillon ne doit pas réapparaître.', 'alice', 999);
+      expect(consumeWorkshopHandoff('alice', draft, 1001)).toBeNull();
+      expect(consumeWorkshopDraft('alice', 1001)).toBe('');
+    }
+  });
+  it('migrates a pre-authentication storage draft only once without accepting it as an ownerless route', () => {
+    sessionStorage.setItem('purama.workshop.draft.v1', JSON.stringify({ prompt: 'Une idée rédigée avant la connexion.', ownerId: null, createdAt: 1000 }));
+    const received = consumeWorkshopHandoff('alice', undefined, 1001);
+    expect(received).toMatchObject({ prompt: 'Une idée rédigée avant la connexion.', ownerId: null });
+    expect(received?.id).toMatch(/^[a-f0-9-]{36}$/);
+    expect(consumeWorkshopHandoff('alice', undefined, 1001)).toBeNull();
+    expect(consumeWorkshopHandoff('bob', received, 1001)).toBeNull();
+  });
+  it('prepares only actual turns, keeps the latest goal and leaves the source unchanged', () => {
+    const messages = [
+      { role: 'assistant' as const, content: 'Accueil synthétique', kind: 'notice' as const },
+      { role: 'user' as const, content: 'Créer un site avec réservation pour mon restaurant.' },
+      { role: 'assistant' as const, content: 'Prévoir les horaires et le menu.' },
+      { role: 'assistant' as const, content: 'Échec de sauvegarde', kind: 'notice' as const },
+    ];
+    const before = structuredClone(messages);
+    const brief = buildWorkshopConversationBrief(messages)!;
+    expect(brief.abbreviated).toBe(false);
+    expect(brief.prompt).toContain('Objectif à réaliser :\nCréer un site');
+    expect(brief.prompt).toContain('PURA : Prévoir les horaires et le menu.');
+    expect(brief.prompt).not.toMatch(/Accueil synthétique|Échec de sauvegarde/);
+    expect(brief.prompt.match(/Créer un site/g)).toHaveLength(1);
+    expect(messages).toEqual(before);
+    expect(transport.invoke).not.toHaveBeenCalled();
+  });
+  it('accepts an editable unsent goal without duplicating the last user turn', () => {
+    const messages = [{ role: 'user' as const, content: 'Créer un site accessible pour mon restaurant.' }];
+    expect(buildWorkshopConversationBrief(messages, messages[0].content)?.prompt.match(/Créer un site/g)).toHaveLength(1);
+    const brief = buildWorkshopConversationBrief(messages, 'Ajouter aussi la réservation de groupes.')!;
+    expect(brief.prompt).toContain('Objectif à réaliser :\nAjouter aussi');
+    expect(brief.prompt).toContain('Vous : Créer un site');
+    expect(buildWorkshopConversationBrief([{ role: 'assistant', content: 'Bonjour', kind: 'notice' }])).toBeNull();
+    expect(buildWorkshopConversationBrief([], 'interdit\0ici')).toBeNull();
+  });
+  it('announces omitted context, keeps the recent goal, and never cuts an emoji in half', () => {
+    const brief = buildWorkshopConversationBrief([
+      { role: 'user', content: 'Contexte ancien '.repeat(1000) },
+      { role: 'assistant', content: 'Réponse longue 🌍'.repeat(1000) },
+      { role: 'user', content: 'Ma priorité actuelle : un site accessible.' },
+    ])!;
+    expect(brief.abbreviated).toBe(true);
+    expect(brief.prompt).toContain('Ma priorité actuelle : un site accessible.');
+    expect(brief.prompt).toContain('[Contexte abrégé');
+    expect(brief.prompt.length).toBeLessThanOrEqual(6000);
+    expect(brief.prompt).not.toMatch(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u);
+    const longGoal = buildWorkshopConversationBrief([], '🌍'.repeat(6000))!;
+    expect(longGoal.abbreviated).toBe(true);
+    expect(longGoal.prompt.length).toBeLessThanOrEqual(6000);
+    expect(longGoal.prompt).not.toMatch(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u);
+  });
+});
 
 describe('verified workshop artifacts', () => {
   beforeEach(() => { vi.stubGlobal('crypto', webcrypto); });

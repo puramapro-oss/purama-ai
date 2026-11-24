@@ -1,0 +1,413 @@
+{
+  "networkAttachments": 59,
+  "externalRequestsForwarded": 0,
+  "blockedUnexpected": 0,
+  "browserVersions": [
+    "156.0.8078.4"
+  ],
+  "runtimeReceipts": [
+    {
+      "test": "real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors",
+      "data": {
+        "platform": "darwin",
+        "browser": "chromium",
+        "version": "156.0.8078.4",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "authTransport": "synthetic responses only; no real account or auth server",
+        "externalAuthRequestsForwarded": 0,
+        "simulatedVisibility": true,
+        "pageErrors": [],
+        "calls": [],
+        "unexpectedAuth": [],
+        "probe": {
+          "boot": "ready",
+          "bootError": null,
+          "reads": [
+            [
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              }
+            ],
+            [
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              }
+            ],
+            [
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              }
+            ]
+          ],
+          "events": [
+            {
+              "event": "INITIAL_SESSION",
+              "userId": null
+            }
+          ],
+          "visibility": [
+            "hidden",
+            "visible"
+          ],
+          "refresh": {
+            "state": "idle",
+            "userId": null,
+            "error": null
+          }
+        }
+      }
+    },
+    {
+      "test": "real auth client recovers a persisted session and clears it on sign-out without a stale identity",
+      "data": {
+        "platform": "darwin",
+        "browser": "chromium",
+        "version": "156.0.8078.4",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "authTransport": "synthetic responses only; no real account or auth server",
+        "externalAuthRequestsForwarded": 0,
+        "simulatedVisibility": true,
+        "pageErrors": [],
+        "calls": [
+          {
+            "method": "POST",
+            "path": "/auth/v1/logout",
+            "grant": null,
+            "scope": "global",
+            "fixtureAuthorization": true
+          }
+        ],
+        "unexpectedAuth": [],
+        "probe": {
+          "boot": "ready",
+          "bootError": null,
+          "reads": [
+            [
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              }
+            ],
+            [
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              }
+            ],
+            [
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              }
+            ],
+            [
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              }
+            ]
+          ],
+          "events": [
+            {
+              "event": "SIGNED_IN",
+              "userId": "00000000-0000-4000-8000-000000000061"
+            },
+            {
+              "event": "INITIAL_SESSION",
+              "userId": "00000000-0000-4000-8000-000000000061"
+            },
+            {
+              "event": "SIGNED_OUT",
+              "userId": null
+            }
+          ],
+          "visibility": [
+            "hidden",
+            "visible"
+          ],
+          "refresh": {
+            "state": "idle",
+            "userId": null,
+            "error": null
+          }
+        }
+      }
+    },
+    {
+      "test": "real auth client does not restore a signed-out session when an older refresh completes late",
+      "data": {
+        "platform": "darwin",
+        "browser": "chromium",
+        "version": "156.0.8078.4",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "authTransport": "synthetic responses only; no real account or auth server",
+        "externalAuthRequestsForwarded": 0,
+        "simulatedVisibility": false,
+        "pageErrors": [],
+        "calls": [
+          {
+            "method": "POST",
+            "path": "/auth/v1/token",
+            "grant": "refresh_token",
+            "scope": null,
+            "fixtureAuthorization": false,
+            "fixtureRefreshToken": true
+          },
+          {
+            "method": "POST",
+            "path": "/auth/v1/logout",
+            "grant": null,
+            "scope": "global",
+            "fixtureAuthorization": true
+          }
+        ],
+        "unexpectedAuth": [],
+        "probe": {
+          "boot": "ready",
+          "bootError": null,
+          "reads": [
+            [
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              },
+              {
+                "userId": "00000000-0000-4000-8000-000000000061",
+                "error": null
+              }
+            ],
+            [
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              },
+              {
+                "userId": null,
+                "error": null
+              }
+            ]
+          ],
+          "events": [
+            {
+              "event": "SIGNED_IN",
+              "userId": "00000000-0000-4000-8000-000000000061"
+            },
+            {
+              "event": "INITIAL_SESSION",
+              "userId": "00000000-0000-4000-8000-000000000061"
+            },
+            {
+              "event": "SIGNED_OUT",
+              "userId": null
+            }
+          ],
+          "visibility": [],
+          "refresh": {
+            "state": "settled",
+            "userId": null,
+            "error": "AuthRefreshDiscardedError"
+          }
+        }
+      }
+    },
+    {
+      "test": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+      "data": {
+        "platform": "darwin",
+        "browser": "chromium",
+        "version": "156.0.8078.4",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chatbot",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "start",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "status",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "test": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+      "data": {
+        "platform": "darwin",
+        "browser": "chromium",
+        "version": "156.0.8078.4",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "simulatedCalls": [
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "test": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+      "data": {
+        "platform": "darwin",
+        "browser": "chromium",
+        "version": "156.0.8078.4",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": true
+          },
+          {
+            "key": "write",
+            "aborted": true
+          },
+          {
+            "key": "chatbot",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    }
+  ]
+}

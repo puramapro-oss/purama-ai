@@ -1,0 +1,744 @@
+{
+  "base": "e81129a56e07535129827c95211d82815df8dc5a",
+  "sourceFiles": 449,
+  "sourceDigestBefore": "fd5640bb3ccb577084602bcb2878b6be8a18e985b3b050ed36d21277b28c6814",
+  "candidateSha256": "0e1ff667f75833503a3adb803461ccebdb871d9af3a076efb59e6814fef9527d",
+  "candidateFiles": [
+    {
+      "path": "src/components/ChatbotWidget.tsx",
+      "sha256": "e860469984b5f0030006b2ed23651dbc3ac7643f93260d34556d104c6a7dbc61"
+    },
+    {
+      "path": "src/components/ChatbotWidget.workshop.test.tsx",
+      "sha256": "5dd29d4397b0a27d6aa4d34904f45ba777ed2c75a8b95042fb3cc45d26c65776"
+    },
+    {
+      "path": "src/components/OriginForgeDemo.tsx",
+      "sha256": "d22383c97c971f305bfff5fb5a796479fbeb778001fe1b741020a1c0bd181a3b"
+    },
+    {
+      "path": "src/lib/workshop.test.ts",
+      "sha256": "92421f02fb53d207ee296abb6d9e54e078ee3a799b1f683274060b229234fe32"
+    },
+    {
+      "path": "src/lib/workshop.ts",
+      "sha256": "92ab805c8e88b36c502f880d91085b775a7863c23fdc05f4a185c3bf0ad1c0f4"
+    },
+    {
+      "path": "src/pages/Workshop.test.tsx",
+      "sha256": "e21e4f28e0bafafb1ed6a92e6f12d241a1473c261bf9400e833f42fea60b07b7"
+    },
+    {
+      "path": "src/pages/Workshop.tsx",
+      "sha256": "0c61a375d45e77ffbb7dfef1ab096e5b2ed29e4e703762c9f58dd2082ad6fc03"
+    },
+    {
+      "path": "tests/chat/harness.tsx",
+      "sha256": "465aaad11cf6825c70ec096c8b5e64830c06160c52f349c319b4233521476479"
+    },
+    {
+      "path": "tests/chat/workshop.spec.ts",
+      "sha256": "8ddcebe5aea1971529daf903e31cab52ac590a98350ad973e7e4bdf8ebe24881"
+    },
+    {
+      "path": "tests/workshop-state/fixtures.ts",
+      "sha256": "1e2b1be7df795a6f3fda84dc3927cc52d0e14806283adc8074fd9c37fe54d9d6"
+    },
+    {
+      "path": "tests/workshop-state/playwright.config.ts",
+      "sha256": "75aeae95606ba4f8016ba3aefae8c7906c02cd362580c6340fb2a19ee5fe52f4"
+    },
+    {
+      "path": "tests/workshop-state/vite.config.ts",
+      "sha256": "e9ae9933b0239217ebeda27a28ede34c78283366370a3aad5db8657afe2cfade"
+    },
+    {
+      "path": "tests/workshop-state/workshop.spec.ts",
+      "sha256": "4b0a5b70cf959ce0d2f82a3ad2f440aee336bb55797645698d1f5efe9b6c7903"
+    }
+  ],
+  "platform": "macOS-26.7-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "node": "v26.0.0",
+  "versions": {
+    "@playwright/test": "1.64.1",
+    "vite": "6.4.6",
+    "react": "18.3.1",
+    "i18next": "26.0.4",
+    "react-router-dom": "7.18.5"
+  },
+  "browserExecutable": "/Users/matissdornier/purama-patches/iao-startup-integration-20261121-1a14/playwright-browsers/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+  "environment": "OS allowlist only; fixture transports, no model or production writes; existing dependencies reused read-only",
+  "runs": [
+    {
+      "suite": "workshop-state",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+        "/Users/matissdornier/purama-patches/iao-startup-integration-20261121-1a14/repo/node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "/Users/matissdornier/purama-patches/iao-continuity-20261124-native/native-workshop-state.config.mts"
+      ],
+      "exitCode": 0,
+      "seconds": 19.708,
+      "retryPolicy": 0,
+      "stats": {
+        "startTime": "2026-11-24T16:00:56.644Z",
+        "duration": 18117.42,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop: start, true status progression, verification and resume after reload",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile: fully accessible controls and no horizontal overflow",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "an unavailable backend never produces a false result",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "verified artifact: opaque interactive preview, blocked fetch and byte-identical source download",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a mismatched artifact never exposes its content or download",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "suite": "chat",
+      "command": [
+        "/opt/homebrew/Cellar/node/26.0.0/bin/node",
+        "/Users/matissdornier/purama-patches/iao-startup-integration-20261121-1a14/repo/node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "/Users/matissdornier/purama-patches/iao-continuity-20261124-native/native-chat.config.mts"
+      ],
+      "exitCode": 0,
+      "seconds": 107.269,
+      "retryPolicy": 0,
+      "stats": {
+        "startTime": "2026-11-24T16:01:16.386Z",
+        "duration": 105669.45800000001,
+        "expected": 51,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "founder consultation preserves auto/standard through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves auto/fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves auto/ultra_fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves standard/standard through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves standard/fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves standard/ultra_fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves deep/standard through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves deep/fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves deep/ultra_fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves maximum/standard through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves maximum/fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "founder consultation preserves maximum/ultra_fast through browser controls and response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "member uses the automatic public profile without exposing technical engine controls",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "unverified uses the automatic public profile without exposing technical engine controls",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "visitor and anonymous session cannot open private consultation or send its request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "two consultation submissions in the same browser task admit one operation",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "explicit public research and a chosen reviewer are transmitted without adding private text",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "selected reviewers survive a restrictive profile change and block submission until explicitly removed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "combined UTF-8 overflow is visible before any consultation leaves the browser",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "closing and reopening a pending consultation recovers status without resending the question",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "browser reload preserves only the pending UUID after a malformed upstream error and recovers through status",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "cancellation keeps its operation identity and ignores a late completed response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "account change discards a late answer and does not recover the previous account operation",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a large partial answer remains literal, readable and bounded on a narrow viewport",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "an assistant acknowledgement is reconciled without generating another answer",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a late save reconciliation cannot run the old account request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "guest chat uses one model request, no history database calls and no welcome in model context",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "two submits in the same browser task admit one request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "stop aborts the stream, removes partial output and restores the editable request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "stop while saving a completed answer keeps the answer and does not resend",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "logout clears private content and subsequent guest requests never persist it",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a stale response cannot populate a new conversation or unlock a newer request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "account change during conversation creation prevents a subsequent model call",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "failure to save the user message stops before model inference",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "failure to save the answer preserves it without another model request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "retrying a failed model request reuses the confirmed user turn",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "editing a failed request creates a distinct saved turn",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "an intentional identical request after success creates a new turn",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "retrying a stopped saved turn excludes its partial answer",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a failed turn is not reused after changing conversation",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "a failed turn is not reused after changing account",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "retrying a guest turn avoids duplicate context without storing history",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "errors stay out of model context and real answers starting with Bienvenue stay in",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "history uses a single bounded query and stale history messages cannot replace a new chat",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "closing the widget aborts its pending response",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "loading a conversation and submitting in the same task cannot overlap",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile controls remain visible and the demo can be stopped",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sourceDigestAfter": "fd5640bb3ccb577084602bcb2878b6be8a18e985b3b050ed36d21277b28c6814",
+  "sourceUnchanged": true,
+  "status": "PASS",
+  "limits": [
+    "Native macOS headless Chromium, not physical phone/headset or camera/AR",
+    "Existing node_modules differ from the exact committed lock; final CI still required",
+    "Only browser page traffic is locally fixture-isolated, not an OS-wide network certification"
+  ]
+}

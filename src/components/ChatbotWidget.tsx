@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   MessageCircle, 
   X, 
@@ -24,6 +24,7 @@ import { createRequestScope, type RequestLease } from '@/lib/request-scope';
 import { prepareChatMessages, CHAT_MAX_MESSAGE_LENGTH } from '../../supabase/functions/_shared/chat-input';
 import { ConsultationPanel } from '@/components/ConsultationPanel';
 import { isSuperAdmin } from '@/lib/constants';
+import { buildWorkshopConversationBrief, saveWorkshopDraft } from '@/lib/workshop';
 
 interface Message {
   id: string;
@@ -83,6 +84,7 @@ export function ChatbotWidget() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // A change of account invalidates every pending operation before the next paint.
   useLayoutEffect(() => {
@@ -361,6 +363,21 @@ export function ChatbotWidget() {
     } finally { if (lease.finish()) setBusyKind(null); }
   };
 
+  const prepareWorkshop = () => {
+    if (!user || user.is_anonymous || authLoading || isLoading || activeReply.current) return;
+    // The synchronous request slot also closes the gap before a busy state has rendered.
+    const lease = requests.begin('interaction');
+    if (!lease) return;
+    try {
+      const brief = buildWorkshopConversationBrief(messages, inputValue);
+      if (!brief) { addNotice('Précisez votre projet dans un message avant de le préparer dans l’atelier.'); return; }
+      const receipt = saveWorkshopDraft(brief.prompt, user.id);
+      if (!receipt.draft) { addNotice('La demande n’a pas pu être préparée. Votre conversation reste disponible ici.'); return; }
+      navigate('/dashboard/atelier', { state: { workshopDraft: receipt.draft } });
+      setIsOpen(false);
+    } finally { lease.finish(); }
+  };
+
   return (
     <>
       {/* Floating Button */}
@@ -568,6 +585,16 @@ export function ChatbotWidget() {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {user && !user.is_anonymous && (inputValue.trim() || messages.some(item => item.role === 'user' && item.kind !== 'notice')) && (
+              <div className="px-4 pb-3">
+                <button type="button" onClick={prepareWorkshop} disabled={isLoading || authLoading}
+                  className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-primary/30 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+                  <Sparkles className="h-4 w-4 shrink-0" aria-hidden="true" /> Préparer dans l’atelier
+                </button>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Relisez et adaptez la demande avant de lancer la création. La conversation reste disponible.</p>
               </div>
             )}
 

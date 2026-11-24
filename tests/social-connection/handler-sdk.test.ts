@@ -10,7 +10,7 @@ const assert = Object.assign((value: unknown) => {
   },
 });
 
-// The import map loads the genuine installed Supabase 2.91.0 package. Only HTTP
+// The import map loads the genuine installed Supabase 2.119.2 package. Only HTTP
 // transport and the serve listener are injected; no API/database is contacted.
 await import("../../supabase/functions/social-connect/index.ts");
 const connect = handler();
@@ -35,19 +35,22 @@ function json(value: unknown, status = 200) {
 
 async function fixture(work: (f: {
   calls: string[]; intents: Map<string, Record<string, unknown>>;
-  writes: Record<string, unknown>[]; begin(): Promise<Response>; callbackUrl(): URL;
-  failBinding(): void; raceCancellation(): void;
+  writes: Record<string, unknown>[]; cancellationRowCounts: number[];
+  begin(): Promise<Response>; callbackUrl(): URL;
+  failBinding(): void; raceCancellation(): void; duplicateCancellationRows(): void;
 }) => Promise<void>) {
   const savedEnv = Object.fromEntries(Object.keys(env).map((key) => [key, Deno.env.get(key)]));
   for (const [key, value] of Object.entries(env)) Deno.env.set(key, value);
   const originalFetch = globalThis.fetch;
   const calls: string[] = [], writes: Record<string, unknown>[] = [];
+  const cancellationRowCounts: number[] = [];
   const intents = new Map<string, Record<string, unknown>>();
   const row: Record<string, unknown> = {
     id: bindingId, user_id: user, external_id: "purama-ai:" + bindingId,
     profile_name: "PURAMA " + bindingId, creation_status: "pending", zernio_profile_id: null,
   };
   let providerProfile = false, redirect = "", failBinding = false, raceCancellation = false;
+  let duplicateCancellationRows = false;
   globalThis.fetch = async (input, init) => {
     const request = new Request(input, init), url = new URL(request.url);
     const body = request.method === "GET" ? null : await request.json();
@@ -89,11 +92,17 @@ async function fixture(work: (f: {
         if (request.method === "PATCH") {
           assert.equal(url.searchParams.get("status"), "eq.pending");
           assert.equal(url.searchParams.get("select"), "state_hash");
-          assert.equal(request.headers.get("Accept"), "application/vnd.pgrst.object+json");
+          // maybeSingle now receives a list and enforces cardinality in the SDK.
+          assert.equal(request.headers.get("Accept"), null);
+          assert.equal(request.headers.get("Prefer"), "return=representation");
+          assert.equal(request.headers.get("X-Retry-Count"), null);
           if (raceCancellation && intent) { intent.status = "bound"; intent.zernio_account_id = account; }
-          if (intent?.status !== "pending") return json({ code: "PGRST116", details: "The result contains 0 rows",
-            message: "Cannot coerce the result to a single JSON object", hint: null }, 406);
-          Object.assign(intent, body); return json({ state_hash: hash });
+          if (intent?.status !== "pending") { cancellationRowCounts.push(0); return json([]); }
+          Object.assign(intent, body);
+          const rows = [{ state_hash: hash }];
+          if (duplicateCancellationRows) rows.push({ state_hash: "e".repeat(64) });
+          cancellationRowCounts.push(rows.length);
+          return json(rows);
         }
       }
     }
@@ -121,7 +130,7 @@ async function fixture(work: (f: {
     throw new Error(`Unexpected injected request ${request.method} ${url.origin}${url.pathname}`);
   };
   try {
-    await work({ calls, intents, writes,
+    await work({ calls, intents, writes, cancellationRowCounts,
       begin: () => Promise.resolve(connect(new Request("https://database.example/functions/v1/social-connect", {
         method: "POST", headers: { Origin: "https://app.example", Authorization: "Bearer valid-user-token" },
         body: JSON.stringify({ platform: "youtube", userId: "forged-client-value", profileId: "forged-profile" }),
@@ -132,6 +141,7 @@ async function fixture(work: (f: {
         return url;
       },
       failBinding: () => { failBinding = true; }, raceCancellation: () => { raceCancellation = true; },
+      duplicateCancellationRows: () => { duplicateCancellationRows = true; },
     });
   } finally {
     globalThis.fetch = originalFetch;
@@ -179,6 +189,22 @@ Deno.test("actual cancellation checks UPDATE RETURNING and does not hide a racin
       assert.equal(redirect.searchParams.get("status"), "cancelled"); assert.equal([...f.intents.values()][0].status, "cancelled");
     }
     assert.equal(f.writes.length, 0);
+    assert.equal(f.calls.filter((call) => call === "PATCH https://database.example/rest/v1/social_connection_intents").length, 1);
+    assert.equal(f.cancellationRowCounts.length, 1);
+    assert.equal(f.cancellationRowCounts[0], race ? 0 : 1);
+  });
+});
+
+Deno.test("actual cancellation rejects multiple returned rows without reporting success or replaying PATCH", async () => {
+  await fixture(async (f) => {
+    assert.equal((await f.begin()).status, 200); f.duplicateCancellationRows();
+    const url = f.callbackUrl(); url.searchParams.set("error", "access_denied");
+    const response = await callback(new Request(url)); const redirect = new URL(response.headers.get("Location")!);
+    assert.equal(redirect.searchParams.get("status"), null);
+    assert.equal(redirect.searchParams.get("error"), "social_storage_unavailable");
+    assert.equal(f.writes.length, 0);
+    assert.equal(f.calls.filter((call) => call === "PATCH https://database.example/rest/v1/social_connection_intents").length, 1);
+    assert.equal(f.cancellationRowCounts.length, 1); assert.equal(f.cancellationRowCounts[0], 2);
   });
 });
 

@@ -1,0 +1,166 @@
+{
+  "recorded_at_utc": "2026-11-24T17:48:15.081105+00:00",
+  "base_head": "732f77445a24172c11a5be77fa9564d2779e6700",
+  "status": "PASS local Deno before/after reproduction and targeted review",
+  "changed_sources": [
+    {
+      "path": "tests/social-connection/handler-sdk.test.ts",
+      "before_sha256": "ae0bc6bcf3371aba1f125d9a9a8e886ca5731b259de89050367ddf8f73c294fc",
+      "after_sha256": "db36c07da241dc7e35ac78775d43c50054deba780e8c765af2a9e23edb49f950"
+    },
+    {
+      "path": "tests/social-management/handler-sdk.test.ts",
+      "before_sha256": "12fdd95730a4ac7620b5ee91413f3a7c699446fba70dadc509d5d961c007a511",
+      "after_sha256": "301946aaa8add30efdc4cd7b0be581c22c48d5ee5a3444ffb4a1b5cadd3799e7"
+    }
+  ],
+  "runtime": {
+    "deno": "2.9.6",
+    "target": "x86_64-unknown-linux-gnu",
+    "v8": "15.0.245.2-rusty",
+    "typescript": "6.0.3",
+    "supabase_js": "2.119.2",
+    "postgrest_js": "2.119.2"
+  },
+  "diagnosis": {
+    "change": "maybeSingle no longer overrides Accept; the installed SDK requests a list and applies cardinality client-side for all HTTP methods.",
+    "old_fixture_mismatch": "Both PATCH fixtures required the old singular Accept header and simulated a zero-row singular response as HTTP406/PGRST116. The first assertion threw inside fetch, which the SDK converted into an error; the product therefore returned its existing unavailable response.",
+    "actual_protocol": "Absent Accept with Prefer:return=representation; HTTP200 array [] becomes null with no error, [row] becomes row, and multiple rows become PGRST116/406 with null data.",
+    "single_unchanged": "single still sets application/vnd.pgrst.object+json; no single fixture or product code was changed.",
+    "primary_installed_sources": [
+      "node_modules/@supabase/postgrest-js/src/PostgrestTransformBuilder.ts",
+      "node_modules/@supabase/postgrest-js/src/PostgrestBuilder.ts"
+    ]
+  },
+  "correction": {
+    "scope": "Only the two real-SDK HTTP fixtures and their scenario assertions.",
+    "wire_assertions": [
+      "Accept absent",
+      "Prefer exactly return=representation",
+      "X-Retry-Count absent",
+      "Exactly one PATCH per tested mutation"
+    ],
+    "cardinality_cases": [
+      "Cancellation accepts one returned row, preserves the racing bound state with zero rows, and refuses multiple rows.",
+      "Configuration CAS returns 409 for zero rows, 200 and the saved server row for one row, 503 for multiple rows."
+    ],
+    "false_positive_guard": "Recorded row-count assertions prove the fixture actually delivered its list; swallowed fixture assertions cannot satisfy the multiple-row rejection cases.",
+    "preserved": "Original scenario assertions, ownership filters, payload checks, real SDK, production handlers, timeout behavior, network and process denial, dependency manifests and product sources."
+  },
+  "original_assertions": [
+    {
+      "file": "tests/social-connection/handler-sdk.test.ts",
+      "original_scenarios_preserved": 4,
+      "current_scenarios": 5,
+      "original_assertion_expressions_preserved": 27
+    },
+    {
+      "file": "tests/social-management/handler-sdk.test.ts",
+      "original_scenarios_preserved": 5,
+      "current_scenarios": 6,
+      "original_assertion_expressions_preserved": 44
+    }
+  ],
+  "before": {
+    "argv": [
+      "/workspace/scratch/6431e6d17379/iao-deno-tool-20261124/node_modules/@deno/linux-x64-glibc/deno",
+      "test",
+      "--no-lock",
+      "--no-prompt",
+      "--cached-only",
+      "--deny-net",
+      "--deny-run",
+      "--allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET",
+      "--config",
+      "tests/social-connection/deno.json",
+      "tests/social-connection/handler-sdk.test.ts",
+      "tests/social-management/handler-sdk.test.ts",
+      "tests/social-publish/runtime.test.ts"
+    ],
+    "exit_code": 1,
+    "seconds": 2.989,
+    "log": "social-sdk-before.log",
+    "tests": 14,
+    "passed": 11,
+    "failed": 3,
+    "raw_archive": "social-sdk-raw.zip"
+  },
+  "after": {
+    "argv": [
+      "/workspace/scratch/6431e6d17379/iao-deno-tool-20261124/node_modules/@deno/linux-x64-glibc/deno",
+      "test",
+      "--no-lock",
+      "--no-prompt",
+      "--cached-only",
+      "--deny-net",
+      "--deny-run",
+      "--allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET",
+      "--config",
+      "tests/social-connection/deno.json",
+      "tests/social-connection/handler-sdk.test.ts",
+      "tests/social-management/handler-sdk.test.ts",
+      "tests/social-publish/runtime.test.ts"
+    ],
+    "exit_code": 0,
+    "seconds": 2.408,
+    "log": "social-sdk-after.log",
+    "tests": 16,
+    "passed": 16,
+    "failed": 0,
+    "ignored": 0,
+    "raw_archive": "social-sdk-raw.zip"
+  },
+  "pre_edit_impacts": {
+    "artifact": "social-sdk-pre-edit-impacts.json",
+    "risk": "UNKNOWN",
+    "reason": "Both test files were absent from the existing limited index; each upstream command returned exit1/not found. This is not proof of zero callers.",
+    "manual_scope": "Only fixture response negotiation, exact row representation and existing/new test assertions; no product symbol modified.",
+    "raw_archive": "social-sdk-raw.zip"
+  },
+  "other_fixtures_read_only_review": [
+    {
+      "path": "tests/voice-settings-concurrency.mjs",
+      "finding": "Responds as object only when singular Accept is actually present; otherwise returns arrays. Existing single behavior preserved."
+    },
+    {
+      "path": "tests/social-publish/fake-db.ts",
+      "finding": "Query-builder test double already treats maybeSingle zero rows as null and multiple rows as error; not an HTTP Accept fixture."
+    },
+    {
+      "path": "tests/billing/fixture.mjs",
+      "finding": "Injects query-builder results; no strict singular HTTP-header assumption."
+    },
+    {
+      "path": "tests/founder-dashboard/browser/supabase-mock.js",
+      "finding": "Simulates Edge function invoke responses; no PostgREST HTTP cardinality negotiation."
+    },
+    {
+      "path": "tests/founder-dashboard/server.test.mjs",
+      "finding": "Tests injected reader/auth ports; no strict singular HTTP-header assumption identified."
+    },
+    {
+      "path": "tests/social-browser/supabase-fixture.js",
+      "finding": "Simulates function invocation/query results, including maybeSingle null; no HTTP Accept negotiation."
+    }
+  ],
+  "independent_review": {
+    "agent": "iao_ar_continuity_audit",
+    "reported_status": "PASS",
+    "scope": "Read-only review of frozen source hashes and local 16/16 receipt; independent real-SDK synthetic transport probe across 9 GET/PATCH/POST × 0/1/2 combinations.",
+    "qualification_limit": "Independent reviewer did not separately rerun the full Deno suite."
+  },
+  "git_diff_check_exit": 0,
+  "qualification_limits": [
+    "These are real-SDK and real-handler tests with synthetic HTTP responses; no hosted PostgREST/Auth or external social provider is qualified.",
+    "Final CI rerun is owned by root and is not asserted complete by this receipt."
+  ],
+  "raw_archive": {
+    "path": "social-sdk-raw.zip",
+    "sha256": "1ea8f99f876859a5175f64f3f512e0fb4a6fe680dca461995efed28a733df736",
+    "members_sha256": {
+      "social-sdk-before.log": "423bc9040d4e490c8279485f9d38050100386d6b2d9b0990a8a54a7d947e93e3",
+      "social-sdk-after.log": "b759fad79c8c72ce28e76ec6916ac45c60ba329ec14794a9793f6a70fb6d7dab",
+      "social-sdk-pre-edit-impacts.json": "0e7e1de02b093d516a89f2bb7223808b454ec2e4bb2d50fa75b49ebcbc02babb"
+    }
+  }
+}

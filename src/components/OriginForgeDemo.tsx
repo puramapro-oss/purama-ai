@@ -13,14 +13,20 @@ const examples = [
 
 export function OriginForgeDemo() {
   const [prompt, setPrompt] = useState('');
+  const [handoffError, setHandoffError] = useState('');
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const handleForge = () => {
     const goal = prompt.trim();
-    if (!goal) return;
-    saveWorkshopDraft(goal, user?.id ?? null);
-    navigate('/dashboard/atelier', { state: user ? { workshopPrompt: goal } : null });
+    if (!goal || loading) return;
+    const receipt = saveWorkshopDraft(goal, user?.id ?? null);
+    if (!receipt.draft || (!user && !receipt.stored)) {
+      setHandoffError('La demande n’a pas pu être conservée pour la connexion. Votre texte reste ici : réessayez ou copiez-le avant de vous connecter.');
+      return;
+    }
+    setHandoffError('');
+    navigate('/dashboard/atelier', { state: user ? { workshopDraft: receipt.draft } : null });
   };
 
   return (
@@ -34,15 +40,16 @@ export function OriginForgeDemo() {
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="futuristic-card p-6">
           <label htmlFor="origin-workshop-prompt" className="mb-3 block text-sm font-medium">Votre projet</label>
-          <textarea id="origin-workshop-prompt" value={prompt} onChange={event => setPrompt(event.target.value)} maxLength={6000}
+          <textarea id="origin-workshop-prompt" value={prompt} onChange={event => { setPrompt(event.target.value); setHandoffError(''); }} maxLength={6000}
             placeholder="Un site pour mon restaurant, avec le menu et les réservations…" rows={4}
             className="w-full resize-y rounded-xl border border-accent-cyan/20 bg-secondary/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent-cyan/50" />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs leading-relaxed text-muted-foreground">Consultez les projets disponibles, lancez une mission et suivez ses vérifications.</p>
-            <button onClick={handleForge} disabled={!prompt.trim()} className="btn-primary flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-3 disabled:opacity-50">
+            <button onClick={handleForge} disabled={!prompt.trim() || loading} className="btn-primary flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-3 disabled:opacity-50">
               <Wand2 className="h-4 w-4" aria-hidden="true" /> Ouvrir l’atelier <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
+          {handoffError && <p role="alert" className="mt-3 text-sm text-amber-700 dark:text-amber-300">{handoffError}</p>}
           <div className="mt-5 flex flex-wrap gap-2" aria-label="Exemples de projets">{examples.map(example =>
             <button key={example.label} type="button" onClick={() => setPrompt(example.prompt)} className="rounded-full border border-border px-3 py-2 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground">
               <span aria-hidden="true">{example.emoji}</span> {example.label}

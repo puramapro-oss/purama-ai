@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Check, CheckCircle2, Code2, Copy, Download, Eye, Layers3, Loader2, RefreshCw, Square, Wand2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  consumeWorkshopDraft, isMissionRunning, isMissionTerminal, requestWorkshop, requestWorkshopArtifact, workshopPreviewDocument,
-  type MissionState, type TaskState, type WorkshopArtifact, type WorkshopDetail, type WorkshopMission, type WorkshopProject,
+  consumeWorkshopHandoff, isMissionRunning, isMissionTerminal, requestWorkshop, requestWorkshopArtifact, workshopPreviewDocument,
+  type MissionState, type TaskState, type WorkshopArtifact, type WorkshopDetail, type WorkshopDraft, type WorkshopMission, type WorkshopProject,
 } from '@/lib/workshop';
 
 const missionLabels: Record<MissionState, string> = {
@@ -126,6 +126,8 @@ function WorkshopSession({ userId }: { userId: string }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
+  const promptRef = useRef('');
+  const [incomingDrafts, setIncomingDrafts] = useState<WorkshopDraft[]>([]);
   const [projectId, setProjectId] = useState('');
   const [projects, setProjects] = useState<WorkshopProject[]>([]);
   const [missions, setMissions] = useState<WorkshopMission[]>([]);
@@ -140,7 +142,8 @@ function WorkshopSession({ userId }: { userId: string }) {
   const [listRevision, setListRevision] = useState(0);
   const [statusRevision, setStatusRevision] = useState(0);
   const mounted = useRef(false);
-  const draftRead = useRef(false);
+  const storedDraftRead = useRef(false);
+  const receivedDrafts = useRef(new Set<string>());
   const controllers = useRef(new Set<AbortController>());
   const statusController = useRef<AbortController | null>(null);
   const operation = useRef(false);
@@ -162,13 +165,27 @@ function WorkshopSession({ userId }: { userId: string }) {
     };
   }, []);
   useEffect(() => {
-    if (draftRead.current) return;
-    draftRead.current = true;
-    const draft = consumeWorkshopDraft(userId);
-    const routed = typeof location.state?.workshopPrompt === 'string' ? location.state.workshopPrompt.slice(0, 6000) : '';
-    setPrompt(draft || routed);
-    if (routed) navigate(location.pathname, { replace: true, state: null });
-  }, [userId, location.pathname, location.state, navigate]);
+    const routeState = location.state && typeof location.state === 'object' && !Array.isArray(location.state)
+      ? location.state as { workshopDraft?: unknown; workshopPrompt?: unknown } : null;
+    const hasRoute = !!routeState && ('workshopDraft' in routeState || 'workshopPrompt' in routeState);
+    if (!hasRoute && storedDraftRead.current) return;
+    storedDraftRead.current = true;
+    // Raw legacy route text has no account binding and must never be imported.
+    const draft = consumeWorkshopHandoff(userId, hasRoute ? routeState?.workshopDraft ?? null : undefined);
+    if (draft && !receivedDrafts.current.has(draft.id)) {
+      receivedDrafts.current.add(draft.id);
+      if (promptRef.current.trim() || operation.current) setIncomingDrafts(previous => [...previous, draft]);
+      else { promptRef.current = draft.prompt; setPrompt(draft.prompt); }
+    }
+    if (hasRoute) {
+      const remaining = { ...routeState };
+      delete remaining.workshopDraft;
+      delete remaining.workshopPrompt;
+      navigate({ pathname: location.pathname, search: location.search, hash: location.hash }, {
+        replace: true, state: Object.keys(remaining).length ? remaining : null,
+      });
+    }
+  }, [userId, location.pathname, location.search, location.hash, location.state, navigate]);
 
   useEffect(() => {
     const controller = newController();
@@ -317,6 +334,20 @@ function WorkshopSession({ userId }: { userId: string }) {
       <div className="space-y-5">
         <form onSubmit={start} className="space-y-5 rounded-2xl border border-border bg-card p-5 sm:p-6">
           <div className="flex items-center gap-3"><span className="rounded-xl bg-accent-cyan/10 p-2.5 text-accent-cyan"><Wand2 className="h-5 w-5" aria-hidden="true" /></span><h2 className="text-lg font-semibold">Nouvelle création</h2></div>
+          {incomingDrafts[0] && <section aria-label="Demande reçue de la conversation" className="space-y-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
+            <p role="status" className="text-sm font-medium">Une nouvelle demande est prête. Votre saisie actuelle est conservée.</p>
+            <p className="max-h-48 overflow-y-auto whitespace-pre-wrap break-words text-sm text-muted-foreground">{incomingDrafts[0].prompt}</p>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" disabled={!!pending} onClick={() => {
+                promptRef.current = incomingDrafts[0].prompt;
+                setPrompt(incomingDrafts[0].prompt);
+                setIncomingDrafts(previous => previous.slice(1));
+              }} className="min-h-11 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">Utiliser cette demande</button>
+              <button type="button" onClick={() => setIncomingDrafts(previous => previous.slice(1))}
+                className="min-h-11 rounded-lg border border-border px-3 py-2 text-sm hover:bg-secondary">Garder ma demande actuelle</button>
+            </div>
+            {incomingDrafts.length > 1 && <p className="text-xs text-muted-foreground">{incomingDrafts.length - 1} autre(s) demande(s) à examiner.</p>}
+          </section>}
           <div>
             <label htmlFor="workshop-project" className="mb-2 block text-sm font-medium">Projet</label>
             <select id="workshop-project" value={projectId} onChange={event => { setProjectId(event.target.value); setMutationError(''); }} disabled={!!pending || listLoading || !projects.length}
@@ -330,7 +361,7 @@ function WorkshopSession({ userId }: { userId: string }) {
           </div>
           <div>
             <label htmlFor="workshop-goal" className="mb-2 block text-sm font-medium">Que voulez-vous créer ou améliorer ?</label>
-            <textarea id="workshop-goal" value={prompt} onChange={event => setPrompt(event.target.value)} minLength={20} maxLength={6000} rows={7} disabled={!!pending}
+            <textarea id="workshop-goal" value={prompt} onChange={event => { promptRef.current = event.target.value; setPrompt(event.target.value); }} minLength={20} maxLength={6000} rows={7} disabled={!!pending}
               aria-describedby="workshop-goal-help" placeholder="Un site pour mon restaurant, avec le menu, une réservation et une expérience soignée sur mobile…"
               className="w-full resize-y rounded-xl border border-border bg-background px-4 py-3 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60" />
             <p id="workshop-goal-help" className="mt-2 flex justify-between gap-3 text-xs text-muted-foreground"><span>Précisez les fonctions et le résultat attendu. 20 caractères minimum.</span><span className="shrink-0">{prompt.length}/6 000</span></p>

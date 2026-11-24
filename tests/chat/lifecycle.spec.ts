@@ -23,7 +23,12 @@ async function identify(page: Page, id: string | null) {
 test('an unconfirmed message keeps its identity across a retry and requires the exact stored row before inference', async ({ page }) => {
   await identify(page, 'owner');
   await plans(page, 'write', [{ hold: true }, { status: 409, json: { code: '23505', message: 'duplicate key' } }]);
-  await plans(page, 'messages', [{ status: 503, json: { code: '', message: 'Read unavailable' } }, { hold: true }]);
+  // The web client leaves retries to the application: one failed reconciliation,
+  // followed by a held read only after the user's explicit retry.
+  await plans(page, 'messages', [
+    { status: 503, json: { code: '', message: 'Read unavailable' } },
+    { hold: true },
+  ]);
   const prompt = 'Conserver le même tour après la confirmation perdue';
   await send(page, prompt);
   await expect.poll(async () => (await calls(page, 'write')).length).toBe(1);
@@ -33,12 +38,22 @@ test('an unconfirmed message keeps its identity across a retry and requires the 
     status: 503, json: { code: '', message: 'Acknowledgement unavailable' },
   }));
   await expect(dialog(page)).toContainText('Votre demande est conservée');
+  const unavailableReads = await calls(page, 'messages');
+  expect(unavailableReads.map(call => ({ method: call.method, retryCount: call.retryCount }))).toEqual([
+    { method: 'GET', retryCount: 0 },
+  ]);
+  expect(await calls(page, 'write')).toHaveLength(1);
   expect(await calls(page, 'chatbot')).toHaveLength(0);
   await page.getByRole('button', { name: 'Envoyer le message' }).click();
   await expect.poll(async () => (await calls(page, 'messages')).length).toBe(2);
   const userWrites = (await calls(page, 'write')).filter(call => call.body.role === 'user');
   expect(userWrites.map(call => call.body.id)).toEqual([stored.id, stored.id]);
-  const query = new URL((await calls(page, 'messages'))[1].url);
+  expect(userWrites.map(call => ({ method: call.method, retryCount: call.retryCount }))).toEqual([
+    { method: 'POST', retryCount: 0 }, { method: 'POST', retryCount: 0 },
+  ]);
+  const resumedRead = (await calls(page, 'messages'))[1];
+  expect(resumedRead.retryCount).toBe(0);
+  const query = new URL(resumedRead.url);
   expect(query.searchParams.get('id')).toBe(`eq.${stored.id}`);
   expect(query.searchParams.get('conversation_id')).toBe(`eq.${stored.conversation_id}`);
   expect(query.searchParams.get('chat_conversations.user_id')).toBe('eq.owner');

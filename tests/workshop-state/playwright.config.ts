@@ -10,7 +10,7 @@ export default defineConfig({
     launchOptions: process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH } : {},
   },
   webServer: {
-    command: 'node node_modules/vite/bin/vite.js --config tests/workshop-state/vite.config.ts --mode test',
+    command: 'node node_modules/vite/bin/vite.js --config tests/workshop-state/vite.config.ts --configLoader runner --mode test',
     cwd: fileURLToPath(new URL('../..', import.meta.url)),
     url: 'http://127.0.0.1:4198/tests/workshop-state/index.html', reuseExistingServer: false,
   },

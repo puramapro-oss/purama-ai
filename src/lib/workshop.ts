@@ -215,20 +215,103 @@ export function workshopPreviewDocument(content: string): string {
 
 const DRAFT_KEY = 'purama.workshop.draft.v1';
 const DRAFT_TTL = 20 * 60_000;
-/** A tab-scoped, short-lived handoff across authentication; never placed in the URL. */
-export function saveWorkshopDraft(prompt: string, ownerId: string | null, now = Date.now()): void {
-  const trimmed = prompt.trim().slice(0, 6000);
-  if (!trimmed) return;
-  try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ prompt: trimmed, ownerId, createdAt: now })); } catch { /* Router state still works while signed in. */ }
+const PROMPT_LIMIT = 6000;
+// No private content: remember that this slot is obsolete until it can be cleaned.
+// This guard lasts for this module instance; denied storage cannot attest durable deletion.
+let discardStoredDraft = false;
+export interface WorkshopDraft { id: string; prompt: string; ownerId: string | null; createdAt: number }
+
+/** Keep a complete Unicode code point at a UTF-16 limit (the API uses the same limit). */
+function boundedText(value: string, limit: number): string {
+  const end = Math.max(0, limit);
+  const result = value.slice(0, end);
+  return /[\uD800-\uDBFF]$/.test(result) ? result.slice(0, -1) : result;
 }
-export function consumeWorkshopDraft(userId: string, now = Date.now()): string {
+
+function readDraft(value: unknown, userId: string, now: number, fromRoute: boolean): WorkshopDraft | null {
+  try {
+    const draft = object(value);
+    if ((draft.ownerId !== userId && (fromRoute || draft.ownerId !== null))
+      || typeof draft.createdAt !== 'number' || !Number.isFinite(draft.createdAt)
+      || draft.createdAt > now || now - draft.createdAt > DRAFT_TTL
+      || typeof draft.prompt !== 'string' || !draft.prompt.trim() || draft.prompt.length > PROMPT_LIMIT
+      || draft.prompt.includes('\0')) return null;
+    // Older session drafts had no identity; only this one-time storage path may migrate them.
+    const id = draft.id === undefined && !fromRoute ? crypto.randomUUID() : uuid(draft.id);
+    return { id, prompt: draft.prompt, ownerId: draft.ownerId as string | null, createdAt: draft.createdAt };
+  } catch { return null; }
+}
+
+/** A tab-scoped, short-lived handoff across authentication; never placed in the URL. */
+export function saveWorkshopDraft(prompt: string, ownerId: string | null, now = Date.now()): { draft: WorkshopDraft | null; stored: boolean } {
+  const trimmed = boundedText(prompt.trim(), PROMPT_LIMIT);
+  if (!trimmed || trimmed.includes('\0') || !Number.isFinite(now)) return { draft: null, stored: false };
+  const draft: WorkshopDraft = { id: crypto.randomUUID(), prompt: trimmed, ownerId, createdAt: now };
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    discardStoredDraft = false;
+    return { draft, stored: true };
+  } catch {
+    discardStoredDraft = true;
+    // A failed overwrite must not resurrect an older draft on a subsequent visit.
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* A bound route can still carry the fresh draft. */ }
+    return { draft, stored: false };
+  }
+}
+
+/** Route identity is authoritative; a stale storage copy never replaces a new handoff. */
+export function consumeWorkshopHandoff(userId: string, routed?: unknown, now = Date.now()): WorkshopDraft | null {
+  let stored: unknown;
+  const ignoreStored = discardStoredDraft || routed !== undefined;
   try {
     const raw = sessionStorage.getItem(DRAFT_KEY);
     sessionStorage.removeItem(DRAFT_KEY);
-    if (!raw) return '';
-    const draft = object(JSON.parse(raw));
-    if ((draft.ownerId !== null && draft.ownerId !== userId) || typeof draft.createdAt !== 'number'
-      || draft.createdAt > now || now - draft.createdAt > DRAFT_TTL) return '';
-    return text(draft.prompt).slice(0, 6000);
-  } catch { return ''; }
+    discardStoredDraft = false;
+    if (raw && !ignoreStored) stored = JSON.parse(raw);
+  } catch {
+    // A consumed route must not reappear through a copy that could not be removed.
+    if (routed !== undefined) discardStoredDraft = true;
+  }
+  if (!userId || !Number.isFinite(now)) return null;
+  return routed !== undefined ? readDraft(routed, userId, now, true) : readDraft(stored, userId, now, false);
+}
+
+export function consumeWorkshopDraft(userId: string, now = Date.now()): string {
+  return consumeWorkshopHandoff(userId, undefined, now)?.prompt ?? '';
+}
+
+interface ConversationBriefMessage { role: 'user' | 'assistant'; content: string; kind?: 'notice' }
+/** Local preparation only: the latest goal is prioritised, and omitted context is disclosed. */
+export function buildWorkshopConversationBrief(messages: readonly ConversationBriefMessage[], input = ''): { prompt: string; abbreviated: boolean } | null {
+  const turns = messages.filter(item => item.kind !== 'notice' && item.content.trim());
+  const inputGoal = input.trim();
+  let latestUserIndex = turns.length - 1;
+  while (latestUserIndex >= 0 && turns[latestUserIndex].role !== 'user') latestUserIndex--;
+  const latestUser = turns[latestUserIndex];
+  const goal = inputGoal || latestUser?.content.trim();
+  if (!goal || goal.includes('\0')) return null;
+  const previous = turns.filter((_, index) => !(index === latestUserIndex && (!inputGoal || inputGoal === latestUser?.content.trim())));
+  const notice = '\n\n[Contexte abrégé pour respecter la limite de 6 000 caractères. Relisez et complétez cette demande ; la conversation source est conservée.]';
+  const heading = 'Objectif à réaliser :\n';
+  const contextHeading = '\n\nContexte de la conversation à vérifier :\n';
+  const fullContext = previous.map(item => `${item.role === 'user' ? 'Vous' : 'PURA'} : ${item.content.trim()}`).join('\n\n');
+  const fullPrompt = heading + goal + (fullContext ? contextHeading + fullContext : '');
+  if (fullPrompt.length <= PROMPT_LIMIT && !fullPrompt.includes('\0')) return { prompt: fullPrompt, abbreviated: false };
+
+  // Reserve the disclosure first, then keep the recent turns without cutting a surrogate pair.
+  const budget = PROMPT_LIMIT - heading.length - notice.length;
+  const boundedGoal = boundedText(goal, previous.length ? Math.min(4000, budget) : budget);
+  let remaining = budget - boundedGoal.length - contextHeading.length;
+  const context: string[] = [];
+  for (let index = previous.length - 1; index >= 0 && remaining > 0; index--) {
+    const item = previous[index];
+    if (item.content.includes('\0')) continue;
+    const label = `${item.role === 'user' ? 'Vous' : 'PURA'} : `;
+    const separator = context.length ? 2 : 0;
+    if (remaining <= label.length + separator) break;
+    const excerpt = boundedText(item.content.trim(), remaining - label.length - separator);
+    context.unshift(label + excerpt);
+    remaining -= label.length + excerpt.length + separator;
+  }
+  return { prompt: heading + boundedGoal + (context.length ? contextHeading + context.join('\n\n') : '') + notice, abbreviated: true };
 }

@@ -1,0 +1,15 @@
+{
+  "status": "PASS static review; final native and exact-head CI pending",
+  "reviewer": "iao_ar_continuity_audit",
+  "files": {
+    "tests/chat/lifecycle.spec.ts": "4589757719119753598c17e1c43a2ccc49f320acf3766973b1fb5f7c913ce568",
+    "tests/chat/transport.ts": "be85689a93422d78089019ac4d35e48351c4f000c3c8e6e04c460d396a49bfd3"
+  },
+  "verified": [
+    "Actual SDK implements initial GET plus three retries and honors Retry-After:0",
+    "Four reads with retryCount0/1/2/3, one POST and no inference before user retry",
+    "User retry preserves message identity; second POST is not a SDK retry",
+    "Held reconciliation requires exact message/conversation/owner before inference",
+    "No timeout extended; no assertion removed; no product retry or auth policy changed"
+  ]
+}

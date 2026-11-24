@@ -1,0 +1,12 @@
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-capabilities-20261124/karta
+
+
+ Test Files  3 passed (3)
+      Tests  234 passed (234)
+   Start at  18:02:31
+   Duration  2.92s (import 51%, tests 31%, transform 17%, setup 1%)
+
+    Isolate  3 workers spawned · ~127ms startup each (spawn + environment, per file)
+             at least ~253ms faster with isolate: false — reuses workers across files instead of one per file
+

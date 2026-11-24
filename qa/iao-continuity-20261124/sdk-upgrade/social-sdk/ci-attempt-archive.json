@@ -1,0 +1,10 @@
+{
+  "head": "732f77445a24172c11a5be77fa9564d2779e6700",
+  "archive": "ci-social-sdk-attempt.zip",
+  "sha256": "6f586aaa9c88c29d75e0aa3fccac8b93aa60196af3fb697def560fdeaac507f5",
+  "bytes": 71250,
+  "members": 22,
+  "ciManifestSHA256": "6d940cac54a0fac0f86427b7f560338e0a3ff81eea556e4a819202b7e4ddd82a",
+  "privateExactReceiptSHA256": "7ba92c79b8f97db0effba3528bc0f61d03cada2ed87f6dd5c4c14cc9b08cabd0",
+  "purpose": "Preserve the failed social SDK fixture run, all successful gates, and the independently matched exact-head private receipt; not a claim of final CI success."
+}

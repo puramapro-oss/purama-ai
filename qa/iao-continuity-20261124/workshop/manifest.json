@@ -1,0 +1,134 @@
+{
+  "baseCommit": "e81129a56e07535129827c95211d82815df8dc5a",
+  "sourceFileCount": 13,
+  "sourceFiles": [
+    {
+      "path": "src/components/ChatbotWidget.tsx",
+      "bytes": 31238,
+      "sha256": "e860469984b5f0030006b2ed23651dbc3ac7643f93260d34556d104c6a7dbc61"
+    },
+    {
+      "path": "src/components/ChatbotWidget.workshop.test.tsx",
+      "bytes": 9814,
+      "sha256": "5dd29d4397b0a27d6aa4d34904f45ba777ed2c75a8b95042fb3cc45d26c65776"
+    },
+    {
+      "path": "src/components/OriginForgeDemo.tsx",
+      "bytes": 4507,
+      "sha256": "d22383c97c971f305bfff5fb5a796479fbeb778001fe1b741020a1c0bd181a3b"
+    },
+    {
+      "path": "src/lib/workshop.test.ts",
+      "bytes": 17585,
+      "sha256": "006e444f12fd3e2a4c206fec8dcf5a7cd88a2a01c0851644d225d87da910cd31"
+    },
+    {
+      "path": "src/lib/workshop.ts",
+      "bytes": 19263,
+      "sha256": "92ab805c8e88b36c502f880d91085b775a7863c23fdc05f4a185c3bf0ad1c0f4"
+    },
+    {
+      "path": "src/pages/Workshop.test.tsx",
+      "bytes": 18939,
+      "sha256": "e21e4f28e0bafafb1ed6a92e6f12d241a1473c261bf9400e833f42fea60b07b7"
+    },
+    {
+      "path": "src/pages/Workshop.tsx",
+      "bytes": 30883,
+      "sha256": "0c61a375d45e77ffbb7dfef1ab096e5b2ed29e4e703762c9f58dd2082ad6fc03"
+    },
+    {
+      "path": "tests/chat/harness.tsx",
+      "bytes": 713,
+      "sha256": "465aaad11cf6825c70ec096c8b5e64830c06160c52f349c319b4233521476479"
+    },
+    {
+      "path": "tests/chat/workshop.spec.ts",
+      "bytes": 8691,
+      "sha256": "8ddcebe5aea1971529daf903e31cab52ac590a98350ad973e7e4bdf8ebe24881"
+    },
+    {
+      "path": "tests/workshop-state/fixtures.ts",
+      "bytes": 2513,
+      "sha256": "1e2b1be7df795a6f3fda84dc3927cc52d0e14806283adc8074fd9c37fe54d9d6"
+    },
+    {
+      "path": "tests/workshop-state/playwright.config.ts",
+      "bytes": 927,
+      "sha256": "75aeae95606ba4f8016ba3aefae8c7906c02cd362580c6340fb2a19ee5fe52f4"
+    },
+    {
+      "path": "tests/workshop-state/vite.config.ts",
+      "bytes": 737,
+      "sha256": "e9ae9933b0239217ebeda27a28ede34c78283366370a3aad5db8657afe2cfade"
+    },
+    {
+      "path": "tests/workshop-state/workshop.spec.ts",
+      "bytes": 9298,
+      "sha256": "4b0a5b70cf959ce0d2f82a3ad2f440aee336bb55797645698d1f5efe9b6c7903"
+    }
+  ],
+  "proofFiles": [
+    {
+      "path": "qa/iao-continuity-20261124/workshop/RECEIPT.md",
+      "bytes": 8760,
+      "sha256": "cb3781c3fc8bcee0b992daf04578ad6d6127b37212d418033fee1a9d0ba6ad53"
+    },
+    {
+      "path": "qa/iao-continuity-20261124/workshop/handoff-red.json",
+      "bytes": 6675,
+      "sha256": "d50bf3991f0fcbc7a16f49f0ce68625e241a00a3e013256ae8c2c63cb7288233"
+    },
+    {
+      "path": "qa/iao-continuity-20261124/workshop/storage-outage-red.json",
+      "bytes": 11727,
+      "sha256": "592902aa5d16815446959205650089373fda46d3e830e34054bdd64e1172e7aa"
+    },
+    {
+      "path": "qa/iao-continuity-20261124/workshop/unit-filter-green.json",
+      "bytes": 14814,
+      "sha256": "8e75e8f3756cfe2898469da4f53ec84ec9ec47e9bba62ea73196047483e68833"
+    },
+    {
+      "path": "qa/iao-continuity-20261124/workshop/unit-green.json",
+      "bytes": 30109,
+      "sha256": "b0efea443b91567ae57eb7bcf320166b8b6705b34f9ece1221c70d3f37ee5957"
+    }
+  ],
+  "testSummary": {
+    "handoff-red.json": {
+      "numTotalTests": 15,
+      "numPassedTests": 12,
+      "numFailedTests": 3,
+      "numPendingTests": 0
+    },
+    "storage-outage-red.json": {
+      "numTotalTests": 27,
+      "numPassedTests": 25,
+      "numFailedTests": 2,
+      "numPendingTests": 0
+    },
+    "unit-filter-green.json": {
+      "numTotalTests": 46,
+      "numPassedTests": 7,
+      "numFailedTests": 0,
+      "numPendingTests": 39
+    },
+    "unit-green.json": {
+      "numTotalTests": 82,
+      "numPassedTests": 82,
+      "numFailedTests": 0,
+      "numPendingTests": 0
+    }
+  },
+  "postNativeFreezeTestOnlyChange": {
+    "path": "src/lib/workshop.test.ts",
+    "beforeSha256": "92421f02fb53d207ee296abb6d9e54e078ee3a799b1f683274060b229234fe32",
+    "afterSha256": "006e444f12fd3e2a4c206fec8dcf5a7cd88a2a01c0851644d225d87da910cd31"
+  },
+  "localRuntime": {
+    "node": "v24.22.3",
+    "platform": "linux"
+  },
+  "browserExecution": "Performed separately by root; collection alone is not execution."
+}

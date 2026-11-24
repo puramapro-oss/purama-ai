@@ -1,0 +1,39 @@
+{
+  "status": "PASS qualified",
+  "reviewer": "/root/iao_runtime_gap_audit",
+  "UI": {
+    "focusedRuns": [
+      {
+        "passed": 7,
+        "exitCode": 0
+      },
+      {
+        "passed": 4,
+        "exitCode": 0
+      }
+    ],
+    "findings": [
+      "Stale storage resurrected after total outage: fixed within module lifetime",
+      "Order-dependent storage outage test fixture: recovery verified without product test hook"
+    ],
+    "scope": [
+      "account and transfer identity",
+      "fresh route priority",
+      "same-page repeated handoff",
+      "preserve current input",
+      "bounded local preparation without model/mission call"
+    ],
+    "limits": [
+      "Filtered runs are not complete-suite execution",
+      "Durable deletion cannot be proved if storage remains inaccessible when page is destroyed"
+    ]
+  },
+  "matrix": {
+    "status": "static wiring PASS",
+    "existingExecutions": 30,
+    "addedExecutions": 15,
+    "profiles": 5,
+    "workflow": "purama-chef-hardening.yml device-compatibility",
+    "archived": "iao-device-compatibility-${github.sha}"
+  }
+}

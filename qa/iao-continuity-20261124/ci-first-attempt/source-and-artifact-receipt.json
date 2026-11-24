@@ -1,0 +1,40 @@
+{
+  "observed_at_utc": "2026-11-24 16:19:45 UTC",
+  "source": {
+    "repository": "puramapro-oss/purama-ai",
+    "pull_request": 108,
+    "head_sha": "2dc63a47c189e8b18cf8d05db551ef95f3057f64",
+    "base_sha": "e81129a56e07535129827c95211d82815df8dc5a",
+    "tree_sha": "b1e429d6a50c00c695dc77ac68c5c949c4ac7f94",
+    "chef_merge_sha": "91b3a680e33aa5096bbcdced33cfbf5b2aab1736"
+  },
+  "local_commit_tree_verified": true,
+  "artifact": {
+    "id": 14941090739,
+    "name": "iao-device-compatibility-91b3a680e33aa5096bbcdced33cfbf5b2aab1736",
+    "size_in_bytes": 10898184,
+    "url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/artifacts/14941090739",
+    "archive_download_url": "https://api.github.com/repos/puramapro-oss/purama-ai/actions/artifacts/14941090739/zip",
+    "expired": false,
+    "created_at": "2026-11-24T16:14:52Z",
+    "expires_at": "2026-12-08T16:14:49Z",
+    "updated_at": "2026-11-24T16:14:52Z",
+    "digest": "sha256:5383794e8a4442d10395c9ea8e713fe53770767532c3c32c369db4e5ffb74a6b",
+    "workflow_run": {
+      "id": 45433919473,
+      "repository_id": 1210671519,
+      "head_repository_id": 1210671519,
+      "head_branch": "feat/iao-continuity-completion-20261124",
+      "head_sha": "2dc63a47c189e8b18cf8d05db551ef95f3057f64"
+    }
+  },
+  "download_validation": {
+    "bytes": 10898184,
+    "sha256": "5383794e8a4442d10395c9ea8e713fe53770767532c3c32c369db4e5ffb74a6b",
+    "zip_crc": "PASS",
+    "member_count": 44,
+    "report_member": "chat-report.json",
+    "report_sha256": "084fe7a6eb2b410ae085b1e55f1e0f8d825f30b5aa0c022264cc8de0c90069cb"
+  },
+  "archive_storage": "Original retained by GitHub Actions; ZIP not duplicated in this repository."
+}

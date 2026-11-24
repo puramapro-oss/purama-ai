@@ -1,0 +1,116 @@
+{
+  "status": "PASS scoped local and native qualification; exact-lock CI and exact-head private replay pending",
+  "parentHead": "02bbf30348b9c7f12d6f35ce59eacaedc4a648a7",
+  "createdAt": "2026-11-24T18:51:57.558102+00:00",
+  "productChange": "Disable only nested PostgREST SDK retry in shared web client; retain application retries and all existing auth options.",
+  "inputManifest": "source-manifest.json",
+  "sourceFiles": 6,
+  "local": {
+    "node": "24.22.3",
+    "sdk": "2.119.2",
+    "unit": {
+      "files": 33,
+      "passed": 646,
+      "failed": 0,
+      "pending": 0
+    },
+    "checks": [
+      {
+        "check": "unit",
+        "exit": 0,
+        "seconds": 29.152585695002927
+      },
+      {
+        "check": "typecheck",
+        "exit": 0,
+        "seconds": 14.133365165995201
+      }
+    ],
+    "archive": "local-unit-typecheck.zip",
+    "sha256": "c651b5f1844eaf35af43983f26dc6fbcd86085cd09d51b722f0b17821c9a1873"
+  },
+  "native": {
+    "main": {
+      "quality": 156,
+      "chat": 55,
+      "workshop": 5
+    },
+    "other": {
+      "oauth": 22,
+      "founder": 16,
+      "accountIsolation": 25,
+      "ots": 7,
+      "wellbeing": 28,
+      "voice": 29
+    },
+    "failures": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "mainInputHashesVerifiedUnchanged": 903,
+    "finalVoiceInputHashesVerifiedUnchanged": 922,
+    "report": "native-summary.json"
+  },
+  "retryProbe": {
+    "sdk": "2.119.2",
+    "queryCore": "5.83.0",
+    "realTimers": true,
+    "syntheticHTTP": true,
+    "externalRequests": 0,
+    "before": {
+      "queryAttempts": 4,
+      "httpRequests": 16,
+      "milliseconds": 35112
+    },
+    "after": {
+      "queryAttempts": 4,
+      "httpRequests": 4,
+      "milliseconds": 7011
+    },
+    "report": "independent-query-retry.json",
+    "scope": "Persistent synthetic 503 outage; not production latency, model speed or overall cost."
+  },
+  "regressionEvidence": {
+    "originalFiveFailuresPreserved": true,
+    "sameFiveTestsPassAfter": true,
+    "qualityTestSourcesUnchanged": true,
+    "voiceChange": "One platform-specific keyboard shortcut line; all assertions preserved.",
+    "nativeSetupFailuresAndInterruptedRunPreserved": true,
+    "newRealClientTest": "Default and public schemas, authenticated scoped GETs, one transport attempt per explicit read, raw retry header absent, no external forwarding."
+  },
+  "impact": {
+    "manualRisk": "HIGH",
+    "sharedWebClientImporters": 69,
+    "graphCoverage": "partial and stale; FTS unavailable; missing edges do not prove missing callers",
+    "stagedReport": "staged.txt",
+    "compareMainReport": "compare-main.txt",
+    "compareMainScope": "Entire consolidation history, not only this correction."
+  },
+  "pendingGates": [
+    "Four workflows on next exact commit, including all downstream site stages",
+    "Private Entraide four-route Deno and eight SDK tests on exact published commit",
+    "Guarded merge only into audit/reliability-oauth-20261110; no main or production deployment"
+  ],
+  "limits": [
+    "Synthetic HTTP browser tests do not qualify real providers or production authentication",
+    "Emulated viewports and native Chromium do not qualify physical devices, camera or AR",
+    "Native dependency overlay differs from lockfile; CI remains required",
+    "Private package reception remains manual and private implementation is not published"
+  ],
+  "archives": [
+    {
+      "file": "ci-quality-attempt.zip",
+      "sha256": "c806b016641aa4f298bf2b3d403f4951732f4672ae03f798f9830b1f96428962",
+      "bytes": 197596
+    },
+    {
+      "file": "native-retry-reception.zip",
+      "sha256": "f0a0edaf9ea27d4e62484e86e3677642961c25bad256b7a488ca1215e67613ae",
+      "bytes": 1127742
+    },
+    {
+      "file": "local-unit-typecheck.zip",
+      "sha256": "c651b5f1844eaf35af43983f26dc6fbcd86085cd09d51b722f0b17821c9a1873",
+      "bytes": 26993
+    }
+  ]
+}

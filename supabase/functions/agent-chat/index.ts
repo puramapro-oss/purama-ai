@@ -3,7 +3,7 @@ import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // Universal Agent Chat — Email / Compta / Partner conversational interface
 // POST { agent_type, session_id, message }
 // Returns: { reply, tokens? }
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import { AgentChatMessageSchema, validateBody } from "../_shared/validation.ts";
 import { partnerChatContext } from "../_shared/partner-chat-context.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";
