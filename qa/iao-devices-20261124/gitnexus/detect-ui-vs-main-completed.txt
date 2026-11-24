@@ -1,0 +1,33 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795491414630,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 2740 files, 147 symbols
+Affected processes: 7
+Risk level: high
+
+Changed symbols:
+  TypeAlias HeroMotionSample → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property elapsed → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property frames → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property sinceLastFrame → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property visibility → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property rect → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property ancestors → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  TypeAlias HeroMotionData → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property environment → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property frames → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property intervals → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property firstFrameDelay → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property maxFrameGap → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property maxIntervalGap → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+  Property backdropSurfaces → qa/iao-devices-20261124/browser/hero-motion.spec.ts
+... and 132 more
+
+Affected execution flows:
+  • HandleSend → CreateOrGetConversation (3 steps) — changed: handleSend, sendMessage, createOrGetConversation
+  • HandleSend → SaveMessage (3 steps) — changed: handleSend, sendMessage, saveMessage
+  • ChatbotWidget → AddNotice (3 steps) — changed: stopActiveRequest, addNotice, ChatbotWidget
+  • HandleSuggestionClick → CreateOrGetConversation (3 steps) — changed: handleSuggestionClick, sendMessage, createOrGetConversation
+  • HandleSuggestionClick → SaveMessage (3 steps) — changed: handleSuggestionClick, sendMessage, saveMessage
+  • HandleSend → AddNotice (3 steps) — changed: handleSend, sendMessage, addNotice
+  • HandleSuggestionClick → AddNotice (3 steps) — changed: handleSuggestionClick, sendMessage, addNotice

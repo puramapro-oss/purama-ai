@@ -16,6 +16,8 @@ Réception locale du lot appareils : i18next 26.3.4 installé et verrouillé, 12
 
 Première réception CI de la PR106 : KARTA 4 653/4 653, identité, concurrence et site PASS ; matrice appareils 109/113 PASS, 4 échecs conservés. Le défaut de saisie masquée après rotation est corrigé dans le rendu du widget, sans changement des callbacks ; 29 tests consultation et typage PASS. Le couple Playwright/image passe à la stable1.65.1 pour qualifier la piste de régression WebKit ; assertions initiales conservées et 3 diagnostics ajoutés. La réception finale dépend de la nouvelle CI. DreamForge est reçu en version11 de la même livraison (295 tests studio, 360 empreintes et archive vérifiés).
 
+Réconciliation PR106 : la consolidation a reçu `38d888c` (i18next 26.3.4 exact) pendant la première CI. Les deux conflits de manifeste sont résolus en conservant ce pin et nos autres changements, sans réécrire l'historique. La tête `7bfc3c1` n'a eu aucun run CI ; seule la nouvelle tête de fusion peut être reçue. La comparaison GitNexus contre main a finalement abouti (risque HIGH pour l'écart global, index ciblé) ; la fusion reste limitée à la consolidation.
+
 ## Intégration IAO — validation du 24 novembre 2026
 
 État de conception : `PRET_A_CODER` pour le référentiel de 168 capacités présenté à Matiss dans la conversation puis explicitement accepté par son message « Go intègre tout ». Cette validation autorise l'intégration dans les composants existants ; elle ne constitue pas une preuve de fonctionnement, ni une activation de production.
