@@ -1,0 +1,60 @@
+{
+  "started_utc": "2026-11-24T20:03:56.842240+00:00",
+  "ended_utc": "2026-11-24T20:04:00.458497+00:00",
+  "duration_seconds": 3.6161407079780474,
+  "exit_code": 0,
+  "timed_out": false,
+  "source_files_unchanged": true,
+  "command": [
+    "/opt/homebrew/bin/deno",
+    "check",
+    "--no-config",
+    "--no-lock",
+    "--node-modules-dir=none",
+    "supabase/functions/partner-find-prospects/index.ts"
+  ],
+  "input_manifest": {
+    "files": [
+      {
+        "path": "supabase/functions/partner-find-prospects/index.ts",
+        "bytes": 20795,
+        "sha256": "71a13184bcfd9a53297835103b72384d31eeb76f0927d8e1dd18159cc675ac02"
+      },
+      {
+        "path": "supabase/functions/_shared/assistant-policy.ts",
+        "bytes": 342,
+        "sha256": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb"
+      },
+      {
+        "path": "supabase/functions/_shared/assistant-response.ts",
+        "bytes": 1336,
+        "sha256": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714"
+      },
+      {
+        "path": "supabase/functions/_shared/request-body.ts",
+        "bytes": 7567,
+        "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+      },
+      {
+        "path": "supabase/functions/_shared/request-deadline.ts",
+        "bytes": 3571,
+        "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+      },
+      {
+        "path": "karta/src/claude/assistant-policy.ts",
+        "bytes": 7890,
+        "sha256": "556316344ee9d8920117fead638db4b2e46d6829d92d3b3d81c96431d3bf10a3"
+      }
+    ],
+    "remote_imports": [
+      "https://esm.sh/@supabase/supabase-js@2"
+    ],
+    "archive_sha256": "bf80bbe6df0613dd70b1d4dc9360e566ea8d9e2160f7bee1e4e41b571a458d46",
+    "archive_bytes": 14393
+  },
+  "log_sha256": "09a4fdada896923cb5b9bb63b837b7f75a2c26b573cc70c01d2fa8b4535776f6",
+  "runtime": "deno 2.9.7; TypeScript 6.0.3; aarch64-apple-darwin",
+  "scope": "Native typecheck only. Public dependency downloads allowed; no entry execution, server, provider business call or environment secret.",
+  "dependency_resolution_observed": "https://esm.sh/@supabase/supabase-js@2 -> 2.119.2",
+  "limit": "Typecheck of the exact local source graph; no execution of the HTTP entry, provider API or database. This does not certify Supabase deployment/bundling or production."
+}

@@ -1,0 +1,23 @@
+{
+  "started_utc": "2026-11-24T20:27:32.808758+00:00",
+  "command": [
+    "node",
+    "--max-old-space-size=640",
+    "--max-semi-space-size=4",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exit_code": 2,
+  "duration_seconds": 16.563,
+  "source_sha256": {
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/lib/partner-discovery-result.ts": "1af1dec99b05f9dc4fc18305109d6eace1ebca225f81ec779fa3d1fec0d31e24",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "src/lib/partner-discovery-result.test.ts": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0"
+  },
+  "source_files_unchanged": true,
+  "scope": "Global frontend TypeScript project, exact final client/UI source. No provider, database or production call."
+}

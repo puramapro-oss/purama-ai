@@ -1,0 +1,99 @@
+{
+  "captured_at_utc": "2026-11-24T20:29:32.548804+00:00",
+  "files": {
+    "supabase/functions/partner-find-prospects/index.ts": {
+      "sha256": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9",
+      "bytes": 20990
+    },
+    "karta/test/partnerDiscovery.test.ts": {
+      "sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
+      "bytes": 32056
+    },
+    "karta/test/assistantPolicy.test.ts": {
+      "sha256": "0692018a9580ce4e5321383788047cf3f160349b3bcd2671bdedf752e3d0b301",
+      "bytes": 32222
+    }
+  },
+  "source_change": "Preserve ANTHROPIC_MODEL_MAIN; use the project default claude-sonnet-4-6 when unset; reject explicit blank before providers; retain max_tokens2500. Audience counts reject numeric suffixes/signs.",
+  "official_source": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+  "verified_model_fact": "claude-sonnet-4-20250514 retired2026-06-15; claude-sonnet-4-6 active at lookup2026-11-24",
+  "red": {
+    "file": "model-audience-red.log",
+    "exit_code": 1,
+    "passed": 84,
+    "failed": 5,
+    "total": 89,
+    "sha256": "05ea6e10e327cd9a677eda80576c4454905932009acf053c56e798cbe6bfb9b4",
+    "bytes": 4814
+  },
+  "green_log": {
+    "file": "green-model-audience-final.log",
+    "sha256": "1337e5b71e819d4cf70c195e373f5676bfddc5684b6557eb8631f8b383ad7585",
+    "bytes": 200
+  },
+  "status": "PASS",
+  "tested_base": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "green": {
+    "exit_code": 0,
+    "discovery_tests": 89,
+    "policy_tests": 63,
+    "total_distinct": 152,
+    "failed": 0,
+    "duration_s": 6.59,
+    "command": "node --max-old-space-size=256 --max-semi-space-size=4 --v8-pool-size=1 node_modules/vitest/vitest.mjs run test/partnerDiscovery.test.ts test/assistantPolicy.test.ts --maxWorkers=1 --no-file-parallelism",
+    "cwd": "karta"
+  },
+  "evidence": {
+    "red-final.log": {
+      "raw_sha256": "72f346a71f70cfebd0c595cdb348157176db884312b05a06024bf0d2ecd7164f",
+      "raw_bytes": 37177,
+      "archive": "red-final.log.gz",
+      "gzip_sha256": "0ccc3e84cc9f59cc51789d098a6d98dc5e561c05411fd0da9d7d20c2752e9144"
+    },
+    "unicode-red.log": {
+      "raw_sha256": "b9c2dabcd1cc57d296d487d6560609e15cc782b2277cec80b3aedd83c64edb89",
+      "raw_bytes": 2194,
+      "archive": "unicode-red.log.gz",
+      "gzip_sha256": "8cac7a6ed1955221692423de8fac3b9a8d23accb1594e4cb8a445af3aa7280e3"
+    },
+    "review-red-final.log": {
+      "raw_sha256": "6f70c4667ffca354a92cae4c06cff447c341c47bb553ee2008f751a8a35c6de7",
+      "raw_bytes": 7126,
+      "archive": "review-red-final.log.gz",
+      "gzip_sha256": "e5aab0100a08c7f4c53e1155e2fcf023d70576cf8a5b39b1fc82d31bbea53a39"
+    },
+    "assistant-policy-attempt-1.log": {
+      "raw_sha256": "ba37a4395fc9db6615084679978300468f34e3c0f76d11c85ee001f381604d10",
+      "raw_bytes": 1157,
+      "archive": "assistant-policy-attempt-1.log.gz",
+      "gzip_sha256": "d43b11093d8aa78f7ff0e5ac97feb52d5de4f210bd5ef2ce877028b8f5efd50e"
+    },
+    "green-final.log": {
+      "raw_sha256": "6fb45f4f72588f16d401c83c24a67d5710c396f7879605255507c5875d61200e",
+      "raw_bytes": 200,
+      "archive": "green-final.log.gz",
+      "gzip_sha256": "b7e666085e62658ddda80612c72021d51f5ade33744748bf09993fff723adab7"
+    },
+    "model-audience-red.log": {
+      "raw_sha256": "05ea6e10e327cd9a677eda80576c4454905932009acf053c56e798cbe6bfb9b4",
+      "raw_bytes": 4814,
+      "archive": "model-audience-red.log.gz",
+      "gzip_sha256": "3ff720946381d91014160bea2ead225e3b494e21699e994e210004a187672660"
+    },
+    "green-model-audience-final.log": {
+      "raw_sha256": "1337e5b71e819d4cf70c195e373f5676bfddc5684b6557eb8631f8b383ad7585",
+      "raw_bytes": 200,
+      "archive": "green-model-audience-final.log.gz",
+      "gzip_sha256": "d8a1ea081e728287014c73d7db859b64da3338f8921dda51cdcfc520d3b73963"
+    }
+  },
+  "limitations": [
+    "Provider/auth/database transports simulated; actual Edge entry and local helpers executed.",
+    "Native PostgreSQL contention and live providers not received.",
+    "No deployed campaign, contact, contract, payment, migration or new supplier account.",
+    "Public source provenance is not consent.",
+    "In-flight writes can finish after cancellation; only confirmed insertions are counted and ambiguous outcome is explicit.",
+    "Historical test counts are separate runs; do not sum them.",
+    "The model fallback now matches the existing project default. An explicit server model remains authoritative; a blank setting fails before paid work."
+  ]
+}

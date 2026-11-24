@@ -1,0 +1,112 @@
+{
+  "recorded_at_utc": "2026-11-24T20:43:51.815468+00:00",
+  "status": "PARTIEL",
+  "repository": "puramapro-oss/purama-ai",
+  "branch": "fix/partner-discovery-evidence-20261124",
+  "reproduction_base": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "integration_base": "04ff79cf8c5d1061e04cf631efac21601978433e",
+  "composition_note": "Base advanced with PR110. Its39paths do not overlap these8paths or the tested source graph. Existing histories retained.",
+  "sources": {
+    "karta/test/assistantPolicy.test.ts": {
+      "sha256": "0692018a9580ce4e5321383788047cf3f160349b3bcd2671bdedf752e3d0b301",
+      "bytes": 32222
+    },
+    "karta/test/partnerDiscovery.test.ts": {
+      "sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
+      "bytes": 32056
+    },
+    "src/lib/partner.ts": {
+      "sha256": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+      "bytes": 21774
+    },
+    "src/lib/partner-discovery-result.ts": {
+      "sha256": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+      "bytes": 6226
+    },
+    "src/lib/partner-discovery-result.test.ts": {
+      "sha256": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+      "bytes": 10015
+    },
+    "src/pages/PartnerAgentProspects.tsx": {
+      "sha256": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+      "bytes": 34420
+    },
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": {
+      "sha256": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0",
+      "bytes": 19829
+    },
+    "supabase/functions/partner-find-prospects/index.ts": {
+      "sha256": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9",
+      "bytes": 20990
+    }
+  },
+  "gates": {
+    "targeted_tests": {
+      "status": "PASS",
+      "distinct_total": 235,
+      "backend_discovery": 89,
+      "assistant_policy": 63,
+      "client_boundaries": 27,
+      "discovery_dom": 21,
+      "adjacent_ui": 35,
+      "proofs": [
+        "backend-evidence/receipt.json",
+        "ui-client-receipt.json"
+      ],
+      "method": "Real entry/helpers/SDK/React controls with controlled transport; historical executions not summed."
+    },
+    "targeted_lint": {
+      "status": "PASS",
+      "warnings": 0,
+      "proof": "ui-client-receipt.json"
+    },
+    "global_frontend_types": {
+      "status": "PASS",
+      "proof": "typecheck-final-receipt.json"
+    },
+    "native_edge_types": {
+      "status": "PASS",
+      "proof": "native-typecheck-final-linux.json"
+    },
+    "independent_review": {
+      "status": "PASS",
+      "proof": "independent-review.json"
+    },
+    "build": {
+      "status": "PARTIEL",
+      "exit_code": 137,
+      "offline_assets_verified": 4,
+      "source_unchanged": true,
+      "proof": "build-final-receipt.json"
+    },
+    "graph": {
+      "status": "PARTIEL",
+      "explicit_files": 79,
+      "scope": "Bounded graph plus manual caller review; React/network edges and FTS limits explicit",
+      "index_proof": "gitnexus-final-index-receipt.json",
+      "change_reports": "gitnexus-final-changes-receipt.json",
+      "observed_aggregate_risk": "critical",
+      "staged_observation": {
+        "files": 107,
+        "symbols": 210,
+        "affected_processes": 32
+      },
+      "compare_main_observation": {
+        "files": 2999,
+        "symbols": 576,
+        "affected_processes": 78
+      },
+      "interpretation": "Static aggregate impact is retained, not silently downgraded. Staged count includes proof files and test fixtures. Main comparison includes the existing consolidation history, not only this lot. Exact changed product paths, async boundaries and regression tests received independent review; final build remains incomplete."
+    }
+  },
+  "operational_scope": {
+    "production_deployment": "NON TESTÉ",
+    "live_provider_or_database": "NON TESTÉ",
+    "campaign_contact_contract_payment_executed": false
+  },
+  "remaining": [
+    "Receive an unchanged full production build in an adequately resourced environment",
+    "Qualify actual providers/database on the approved infrastructure and complete the real user flow",
+    "Receive deployment and commercial activation separately"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=640",
+    "--max-semi-space-size=4",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 17.999,
+  "execution": "sequential with bounded memory; prior interrupted attempt preserved"
+}

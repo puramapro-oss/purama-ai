@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
   listProspects, createProspect, updateProspect, deleteProspect,
-  findProspects, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus,
+  findProspects, partnerDiscoveryFeedback, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus,
   generateContract, previewContract, approveContract, contractFeedback,
   STATUS_META, PROSPECT_TYPES, NICHES,
   type PartnerProspect, type ProspectStatus, type ProspectType, type OutreachApproval, type PartnerContractResult,
@@ -50,6 +50,8 @@ export default function PartnerAgentProspects() {
   const mounted = useRef(true);
   const refreshSequence = useRef(0);
   const contractRequests = useRef(new Set<string>());
+  const findRequests = useRef(new Set<string>());
+  const findRevision = useRef(0);
   const openedContractLink = useRef<string | null>(null);
   const [prospects, setProspects] = useState<PartnerProspect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,10 +60,13 @@ export default function PartnerAgentProspects() {
   const [editing, setEditing] = useState<Partial<PartnerProspect> | null>(null);
   const [busy, setBusy] = useState(false);
   const [findOpen, setFindOpen] = useState(false);
+  const [findOwner, setFindOwner] = useState<{ ownerId: string | null; epoch: number } | null>(null);
   const [findQuery, setFindQuery] = useState('');
   const [findNiche, setFindNiche] = useState('');
   const [findType, setFindType] = useState<ProspectType>('influencer');
   const [finding, setFinding] = useState(false);
+  const ownsFindForm = findOwner !== null && findOwner.ownerId === (user?.id ?? null)
+    && findOwner.epoch === accountEpoch.current;
   const [pendingApproval, setPendingApproval] = useState<{ ownerId: string; emailId: string; preview: OutreachApproval } | null>(null);
   const [approving, setApproving] = useState(false);
   const [contractReview, setContractReview] = useState<{ ownerId: string; prospectId: string; result: PartnerContractResult } | null>(null);
@@ -101,6 +106,13 @@ export default function PartnerAgentProspects() {
     setContractReview(null);
     setContractRead(null);
     setContractBusy(null);
+    findRevision.current += 1;
+    setFindOpen(false);
+    setFindOwner(null);
+    setFindQuery('');
+    setFindNiche('');
+    setFindType('influencer');
+    setFinding(false);
     openedContractLink.current = null;
     refresh(); // Every result is checked against the account and the latest request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -272,18 +284,52 @@ export default function PartnerAgentProspects() {
     }
   };
 
+  const handleFindOpenChange = (open: boolean) => {
+    if (open) {
+      const ownerId = user?.id ?? null;
+      const epoch = accountEpoch.current;
+      if (findOwner?.ownerId !== ownerId || findOwner.epoch !== epoch) {
+        setFindQuery('');
+        setFindNiche('');
+        setFindType('influencer');
+      }
+      setFindOwner({ ownerId, epoch });
+      setFinding(findRequests.current.has(`${ownerId}:${epoch}`));
+    }
+    findRevision.current += 1;
+    setFindOpen(open);
+  };
+
   const handleFind = async () => {
-    if (!findQuery.trim()) return;
+    if (!user || currentUser.current !== user.id || !mounted.current || !ownsFindForm || !findOpen || !findQuery.trim()) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const requestKey = `${ownerId}:${epoch}`;
+    if (findRequests.current.has(requestKey)) return;
+    findRequests.current.add(requestKey);
+    const revision = findRevision.current;
+    const ownsAccount = () => mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch;
+    const ownsDraft = () => ownsAccount() && findRevision.current === revision;
     setFinding(true);
     try {
       const result = await findProspects(findQuery, findNiche || undefined, findType);
+      if (!ownsDraft()) return;
       toast.success(`✨ ${result.inserted} prospects ajoutés`);
       setFindOpen(false);
       setFindQuery('');
       refresh();
     } catch (e) {
-      toast.error('Erreur recherche', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setFinding(false); }
+      if (ownsDraft()) {
+        const feedback = partnerDiscoveryFeedback(e);
+        toast[feedback.kind](feedback.title, { description: feedback.description });
+        if (feedback.refreshList) void refresh();
+      }
+    } finally {
+      // Closing or editing the dialog does not undo a request already accepted by the server.
+      // Keep its admission until it settles; an old account cycle cannot unlock a new search.
+      findRequests.current.delete(requestKey);
+      if (ownsAccount()) setFinding(false);
+    }
   };
 
   return (
@@ -298,7 +344,7 @@ export default function PartnerAgentProspects() {
           </h1>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setFindOpen(true)}>
+          <Button variant="outline" onClick={() => handleFindOpenChange(true)}>
             <Sparkles className="w-4 h-4 mr-2" /> Trouver via IA
           </Button>
           <Button onClick={() => setEditing(newProspect())}>
@@ -554,8 +600,8 @@ export default function PartnerAgentProspects() {
       </Dialog>
 
       {/* AI Find */}
-      <Dialog open={findOpen} onOpenChange={setFindOpen}>
-        <DialogContent className="max-w-md">
+      <Dialog open={findOpen && ownsFindForm} onOpenChange={handleFindOpenChange}>
+        {ownsFindForm && <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-accent-purple" /> Recherche IA de prospects
@@ -566,7 +612,7 @@ export default function PartnerAgentProspects() {
               <Label className="text-xs">Requête</Label>
               <Input
                 value={findQuery}
-                onChange={e => setFindQuery(e.target.value)}
+                onChange={e => { findRevision.current += 1; setFindQuery(e.target.value); }}
                 placeholder="ex : meilleurs influenceurs finance personnelle France"
                 className="mt-1.5"
               />
@@ -574,7 +620,7 @@ export default function PartnerAgentProspects() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Type</Label>
-                <Select value={findType} onValueChange={(v: ProspectType) => setFindType(v)}>
+                <Select value={findType} onValueChange={(v: ProspectType) => { findRevision.current += 1; setFindType(v); }}>
                   <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {PROSPECT_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.emoji} {t.label}</SelectItem>)}
@@ -583,26 +629,26 @@ export default function PartnerAgentProspects() {
               </div>
               <div>
                 <Label className="text-xs">Niche</Label>
-                <Select value={findNiche} onValueChange={setFindNiche}>
+                <Select value={findNiche || 'all'} onValueChange={value => { findRevision.current += 1; setFindNiche(value === 'all' ? '' : value); }}>
                   <SelectTrigger className="mt-1.5"><SelectValue placeholder="Toutes" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes</SelectItem>
+                    <SelectItem value="all">Toutes</SelectItem>
                     {NICHES.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              L'IA combine Tavily Search + Claude pour identifier des prospects qualifiés et les scorer 0-100.
-            </p>
+            <DialogDescription className="text-[11px] text-muted-foreground">
+              L’IA propose des prospects à vérifier, avec un score indicatif de 0 à 100. Vérifiez les sources et les coordonnées avant tout contact.
+            </DialogDescription>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setFindOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => handleFindOpenChange(false)}>Annuler</Button>
             <Button onClick={handleFind} disabled={finding || !findQuery.trim()}>
               {finding && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Lancer la recherche
             </Button>
           </DialogFooter>
-        </DialogContent>
+        </DialogContent>}
       </Dialog>
     </div>
   );

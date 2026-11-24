@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "staged",
+    "command": [
+      "node",
+      "--max-old-space-size=384",
+      "--max-semi-space-size=4",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--scope",
+      "staged",
+      "-r",
+      "purama-ai-partner-53633327"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 1.16,
+    "log": "gitnexus-final-staged.log.gz",
+    "files": 107,
+    "symbols": 210,
+    "affected_processes": 32,
+    "risk": "critical"
+  },
+  {
+    "scope": "compare-main",
+    "command": [
+      "node",
+      "--max-old-space-size=384",
+      "--max-semi-space-size=4",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "detect-changes",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "origin/main",
+      "-r",
+      "purama-ai-partner-53633327"
+    ],
+    "exit_code": 0,
+    "duration_seconds": 1.779,
+    "log": "gitnexus-final-compare-main.log.gz"
+  }
+]

@@ -217,7 +217,9 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
         if (options.env && Object.hasOwn(options.env, name)) return options.env[name];
         return name.endsWith('_URL') ? 'https://example.invalid' : 'test-only-not-a-secret';
       } } },
-      fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
+      fetch: (input: string | URL | Request, init?: RequestInit) =>
+        transport(input instanceof Request ? input.url : String(input), init),
+      Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
       ReadableStream, TextEncoder, TextDecoder, Uint8Array, ArrayBuffer, setTimeout, clearTimeout, performance,
       console: { error: vi.fn(), warn: vi.fn(), log: vi.fn() },

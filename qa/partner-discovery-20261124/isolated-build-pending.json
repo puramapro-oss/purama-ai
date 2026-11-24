@@ -1,0 +1,17 @@
+{
+  "status": "BLOQUE",
+  "remote_build_executed": false,
+  "remote_clone_executed": false,
+  "remote_container_started": false,
+  "remote_install_executed": false,
+  "preflight_operation": "Read-only runtime and task-directory inventory",
+  "remote_result": "Timeout - no response from device",
+  "remote_result_state": "failed",
+  "observed_at_utc": "2026-11-24T20:27:44.206848+00:00",
+  "script": "isolated-build.py",
+  "script_sha256": "b931fca00064762e6fa13a7703297855bae06b13f827d1aeca119fccd1e162db",
+  "script_verification": "Python compile() PASS; no remote execution or Docker execution performed",
+  "final_overlay_required": true,
+  "base_commit_must_match_final_consolidation": true,
+  "note": "No private hostname, address, account, device id, environment value or credential is included in this receipt."
+}

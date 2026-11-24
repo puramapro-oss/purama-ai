@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-11-24T20:32:01.479344+00:00",
+  "baseCommit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "runtimeNode": "v24.22.3",
+  "status": "PASS_TARGETED_NOT_DEPLOYED",
+  "sourceFrozen": true,
+  "scope": [
+    "src/lib/partner.ts",
+    "src/lib/partner-discovery-result.ts",
+    "src/lib/partner-discovery-result.test.ts",
+    "src/pages/PartnerAgentProspects.tsx",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx"
+  ],
+  "sourceSha256": {
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/lib/partner-discovery-result.ts": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+    "src/lib/partner-discovery-result.test.ts": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0"
+  },
+  "continuity": "Extends the existing ui-discovery-receipt.json; earlier 51-pass evidence retains its original source scope and is not added to this total.",
+  "impact": {
+    "evidence": "gitnexus-review-impact-client.json",
+    "target": "findProspects",
+    "risk": "LOW",
+    "directCallers": 1,
+    "modules": 1,
+    "caller": "handleFind",
+    "affectedProcessHits": 3
+  },
+  "runs": [
+    {
+      "phase": "before correction",
+      "exitCode": 1,
+      "passed": 18,
+      "failed": 29,
+      "total": 47,
+      "durationSeconds": 4.27,
+      "proof": "ui-client-before.log.gz"
+    },
+    {
+      "phase": "first implementation, original fixtures",
+      "exitCode": 1,
+      "passed": 75,
+      "failed": 7,
+      "total": 82,
+      "durationSeconds": 6.98,
+      "proof": "ui-client-after.log.gz"
+    },
+    {
+      "phase": "fixture realm diagnostic",
+      "exitCode": 1,
+      "proof": "ui-client-realm-diagnostic.log.gz",
+      "finding": "Node Response(string) emitted Uint8Array from a different realm than JSDOM. Explicit conversion to the active Uint8Array realm matched.",
+      "correction": "Fixtures retain real SDK errors, Response and ReadableStream, supplying byte views from the active realm. No production reader, limits, or assertions relaxed."
+    },
+    {
+      "phase": "82-case reception before strict status-type counterexample",
+      "exitCode": 0,
+      "passed": 82,
+      "failed": 0,
+      "files": 5,
+      "durationSeconds": 7.51,
+      "included": {
+        "clientBoundaries": 26,
+        "discoveryDOM": 21,
+        "contracts": 12,
+        "settingsOwnership": 18,
+        "settingsSchedule": 5
+      },
+      "proof": "ui-client-final.log.gz",
+      "note": "Counts are inclusive. Repeated/earlier runs are not added."
+    },
+    {
+      "phase": "ESLint final five paths",
+      "exitCode": 0,
+      "warnings": 0,
+      "proof": "ui-client-lint.log.gz"
+    },
+    {
+      "phase": "strict status-type regression before correction",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 26,
+      "durationSeconds": 0.736,
+      "proof": "ui-client-status-before.log.gz",
+      "finding": "JSON status [\"unknown\"] was coerced to text and improperly preserved a confirmed count; the unchanged invalid-receipt oracle reproduced it."
+    },
+    {
+      "phase": "frozen final targeted composition",
+      "exitCode": 0,
+      "passed": 83,
+      "failed": 0,
+      "files": 5,
+      "durationSeconds": 7.27,
+      "included": {
+        "clientBoundaries": 27,
+        "discoveryDOM": 21,
+        "contracts": 12,
+        "settingsOwnership": 18,
+        "settingsSchedule": 5
+      },
+      "proof": "ui-client-frozen.log.gz",
+      "note": "83 is the complete targeted total. Earlier/repeated runs are not added."
+    },
+    {
+      "phase": "frozen final ESLint five paths",
+      "exitCode": 0,
+      "warnings": 0,
+      "proof": "ui-client-frozen-lint.log.gz"
+    },
+    {
+      "phase": "after global TypeScript gate findings: ES2020 own-property call and explicit legacy row type conversion",
+      "exitCode": 0,
+      "passed": 83,
+      "failed": 0,
+      "files": 5,
+      "durationSeconds": 8.02,
+      "included": {
+        "clientBoundaries": 27,
+        "discoveryDOM": 21,
+        "contracts": 12,
+        "settingsOwnership": 18,
+        "settingsSchedule": 5
+      },
+      "proof": "ui-client-typed.log.gz",
+      "note": "Same 83 cases; no extra test added. Global TypeScript reception remains parent-owned."
+    },
+    {
+      "phase": "ESLint after TypeScript compatibility corrections",
+      "exitCode": 0,
+      "warnings": 0,
+      "proof": "ui-client-typed-lint.log.gz"
+    }
+  ],
+  "testCommand": "timeout 90s env NODE_OPTIONS='--max-old-space-size=512 --max-semi-space-size=8' node node_modules/vitest/vitest.mjs run src/lib/partner-discovery-result.test.ts src/pages/PartnerAgentProspects.discovery.test.tsx src/pages/PartnerAgentProspects.contract.test.tsx src/pages/PartnerAgentSettings.ownership.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx --maxWorkers=1 --pool=threads --reporter=verbose",
+  "lintCommand": "timeout 60s env NODE_OPTIONS='--max-old-space-size=512 --max-semi-space-size=8' node node_modules/eslint/bin/eslint.js src/lib/partner.ts src/lib/partner-discovery-result.ts src/lib/partner-discovery-result.test.ts src/pages/PartnerAgentProspects.tsx src/pages/PartnerAgentProspects.discovery.test.tsx --max-warnings=0",
+  "behavior": [
+    "Consumes the original FunctionsHttpError.context Response once, without clone/tee or unbounded json().",
+    "Reuses readBoundedBytes with a 16384-byte cap and a 1000-ms monotonic stream deadline; cancellation is best effort and never awaited indefinitely.",
+    "Validates failed/partial/unknown, confirmed_inserted, legacy inserted agreement and row count. Malformed receipts remain unknown with no fabricated count.",
+    "Provider error strings and raw diagnostics are ignored; only locally defined French messages and validated numeric counts enter notifications.",
+    "Malformed successful-HTTP result envelopes are not announced as successful discovery.",
+    "Partial/unknown keep the draft and advise checking the list before retry; a current account/draft may refresh its list, without automatic discovery retry.",
+    "All account/epoch, draft revision, modal lifetime and synchronous admission protections remain in place.",
+    "Failure status must be an actual string; arrays and other coerced values stay unknown with no invented count.",
+    "ES2020 compatibility uses Object.prototype.hasOwnProperty.call. The legacy prospect-row return type is retained explicitly; full row fields are not certified by envelope validation."
+  ],
+  "limits": [
+    "The 16 KiB/1 second cap covers decoding the SDK non-2xx error context body. Existing SDK invocation and successful-response transport are unchanged.",
+    "Tests use the real FunctionsClient/FunctionsHttpError, Response streams and actual React/Radix controls with controlled transports; no real provider, credential, network or database operation is certified.",
+    "No native browser, deployment, merge, migration, contact, campaign, commission or payment was executed in this subtask.",
+    "Global typecheck/build, independent final review, detect_changes and publication are coordinated by the parent.",
+    "Existing contract-dialog description warnings remain in the adjacent suite; discovery warnings are not suppressed."
+  ],
+  "proofFiles": {
+    "before": {
+      "file": "ui-client-before.log.gz",
+      "sha256": "668d65150692f1b4010b24cf194b262615375bc533944d9fc39e9d5d999a279a",
+      "decodedSha256": "4c81f41a74e76b2ff4bf773fabba3994de751e91199694df876f10be637a9033",
+      "decodedBytes": 41846
+    },
+    "after": {
+      "file": "ui-client-after.log.gz",
+      "sha256": "9b51cce5085a32f6d98752b8d324d970fb202897396a825564a3e01a43f9be69",
+      "decodedSha256": "e1f859e4e2567670e9210bfc0799ff082280601ef0512c8ea7c637391958dbcd",
+      "decodedBytes": 27573
+    },
+    "realm-diagnostic": {
+      "file": "ui-client-realm-diagnostic.log.gz",
+      "sha256": "4bdbdc7089cb1f6dc56d24cbf751851d8a7b8a12e59e37a4efd5f0ec1656ece7",
+      "decodedSha256": "f5b88871ceb25c0256c939364796dd09f2fbe0e3d704e51b3820c9ec559aabe8",
+      "decodedBytes": 6534
+    },
+    "final": {
+      "file": "ui-client-final.log.gz",
+      "sha256": "117f99a385c22bfdd16ccdc46d93e8a5858eaf637ef9b85525e7a924104c9c8b",
+      "decodedSha256": "c290925dc3f6813b7ddb388d0627b57d07c7ee3beefdfc254369d634ec9cf687",
+      "decodedBytes": 18632
+    },
+    "lint": {
+      "file": "ui-client-lint.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decodedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decodedBytes": 0
+    },
+    "status-before": {
+      "file": "ui-client-status-before.log.gz",
+      "sha256": "e9ba10358612f0f0a74de4844d3c7c0e0cf1e41ee8c99740c9ce5c320a79e826",
+      "decodedSha256": "478de871a486af5f889c6b9fd9c72fa83426e7e87181d6f9f1dc7af91d57daa9",
+      "decodedBytes": 6298
+    },
+    "frozen": {
+      "file": "ui-client-frozen.log.gz",
+      "sha256": "44cf63bb4836ee2edbacbd5a4740f992ab21a8b7e6485988f738ab55b8dbb5ea",
+      "decodedSha256": "a66af7f2c6f18efb691f4f87798c8745513c0f8e64397bbd0ef5a0460120ea04",
+      "decodedBytes": 18805
+    },
+    "frozen-lint": {
+      "file": "ui-client-frozen-lint.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decodedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decodedBytes": 0
+    },
+    "typed": {
+      "file": "ui-client-typed.log.gz",
+      "sha256": "20c0276dc95fb3f5ecc03ad3c70ddd3492cd28e3db011584366d94b17f2dcce8",
+      "decodedSha256": "c729e68157f565e0ee4a6a5aacae397083a22fc0f93a5f2cee635820891fe986",
+      "decodedBytes": 18809
+    },
+    "typed-lint": {
+      "file": "ui-client-typed-lint.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "decodedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decodedBytes": 0
+    }
+  },
+  "initial82SourceSha256": {
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/lib/partner-discovery-result.ts": "2137bb9e26fee9a8bc8777029361d5ef12c8e5cf1fd3fde2d7486b3f1c99fbbe",
+    "src/lib/partner-discovery-result.test.ts": "d39ca3d84cf734e2edbb3255b22d0660fc749705241c5e00f6892220b03f7149",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0"
+  },
+  "initial82RecordedAtUTC": "2026-11-24T20:23:45.748087+00:00",
+  "backendSchema": {
+    "confirmedByBackendAgent": true,
+    "countField": "confirmed_inserted",
+    "legacyCount": "inserted",
+    "errorStatuses": [
+      "failed",
+      "partial",
+      "unknown"
+    ]
+  },
+  "preES2020SourceSha256": {
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/lib/partner-discovery-result.ts": "1af1dec99b05f9dc4fc18305109d6eace1ebca225f81ec779fa3d1fec0d31e24",
+    "src/lib/partner-discovery-result.test.ts": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0"
+  }
+}
