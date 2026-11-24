@@ -63,7 +63,7 @@ export default function PartnerAgentPartners() {
       {partners.length === 0 ? (
         <Card className="bg-card border-border">
           <CardContent className="p-10 text-center text-sm text-muted-foreground">
-            Aucun partenaire actif. Dès qu'un prospect signe un contrat, il apparaîtra ici avec son code de parrainage.
+            Aucun partenaire actif. Les contrats signés restent suivis dans Prospects ; l’activation des partenaires et l’attribution des ventes sont encore à finaliser.
           </CardContent>
         </Card>
       ) : (

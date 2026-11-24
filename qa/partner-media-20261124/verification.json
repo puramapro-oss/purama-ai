@@ -1,0 +1,107 @@
+{
+  "recorded_at": "2026-11-24T20:20:52.936534+00:00",
+  "base_commit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "branch": "fix/partner-media-readiness-20261124",
+  "local_tests_passed": 183,
+  "checks": [
+    {
+      "log": "discovery-unit.log",
+      "sha256": "f3922cf82d7a40a72d7b917ba2320957f0f036045f60325bedecc486de9e5252",
+      "status": "PASS",
+      "passed_tests": 23
+    },
+    {
+      "log": "media-draft-unit.log",
+      "sha256": "02e8fb26abab4067947aff7aab2027e7be18632878af025b1b3ab51b8abdb54f",
+      "status": "PASS",
+      "passed_tests": 25
+    },
+    {
+      "log": "media-contract-unit-final.log",
+      "sha256": "68f37fe74f9eb7097b66042f1880417a2bfb2e9f3b3c445e406122e543eaef60",
+      "status": "PASS",
+      "passed_tests": 31
+    },
+    {
+      "log": "reply-parsing-tests-final.log",
+      "sha256": "556d5545e425ee2af30f7fd98bee7b642276acb60ed8885a7289a28dccb84343",
+      "status": "PASS",
+      "passed_tests": 31
+    },
+    {
+      "log": "settings-unit.log",
+      "sha256": "baf7d4d3a5b8133c3da3ee53b4776012aa81300792c5669eaf985370d90d474b",
+      "status": "PASS",
+      "passed_tests": 33
+    },
+    {
+      "log": "contract-feedback-unit.log",
+      "sha256": "686bdd6bee009f951e47fbb96859fb602f382a4df35c3fb7cd8e57d6a4790597",
+      "status": "PASS",
+      "passed_tests": 40
+    },
+    {
+      "log": "site-typecheck-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "log": "karta-typecheck-final-2.log",
+      "sha256": "2e2af910ae7f82189a8ccb6d61289ebcab4fdf4f7095fc393ec487389c679ee6",
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "log": "reply-handler-types-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "sql_local": {
+    "status": "BLOQUE",
+    "evidence": "PGlite minimal process exited 137; no SQL assertions received"
+  },
+  "browser_local": {
+    "status": "BLOQUE",
+    "evidence": "Six cases stopped before assertions by Chromium socket EPERM"
+  },
+  "ci": {
+    "status": "NON_TESTE",
+    "note": "Result must be received from the published PR"
+  },
+  "production": {
+    "status": "NON_TESTE",
+    "deployed": false,
+    "prospects_contacted": 0,
+    "signature_requests_sent": 0,
+    "payments_made": 0
+  },
+  "commissions": {
+    "contract_rate_first": 30,
+    "contract_rate_recurring": 30,
+    "automated_settlement_connected": false,
+    "audit": "commission-bridge-audit.md"
+  },
+  "impact": {
+    "scope": "staged",
+    "files": 60,
+    "symbols": 76,
+    "processes": 14,
+    "risk": "HIGH",
+    "coverage": "PARTIAL",
+    "manual_review": "Expected partner UI, outreach, contract and reply flows; SQL/new callbacks not resolved",
+    "log_sha256": "c057f495380c1dd4bc78eb7f804af4d0f4877ce38244db83525b4135b87a27ab"
+  },
+  "default_branch_comparison": {
+    "base_ref": "main",
+    "files": 2914,
+    "symbols": 7580,
+    "processes": 435,
+    "risk": "CRITICAL",
+    "includes_prior_consolidation": true,
+    "publication_target": "audit/reliability-oauth-20261110 only",
+    "log_sha256": "876854012ad4138d41a0e6c8b56fcfcf14b1c7544cf52f5149fd13288e147d07"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "suite": "karta/test/partnerMediaContract.test.ts",
+  "command": "NODE_OPTIONS='--max-old-space-size=384 --max-semi-space-size=8' ./node_modules/.bin/vitest run test/partnerMediaContract.test.ts --maxWorkers=1",
+  "working_directory": "karta",
+  "observed_result": {
+    "exit_code": 0,
+    "vitest_version": "5.0.3",
+    "passed_test_files": 1,
+    "passed_tests": 31,
+    "failed_tests": 0,
+    "runner_duration_ms": 787
+  },
+  "evidence_scope": [
+    "Actual contract handler and deterministic media text helper",
+    "Actual PDF renderer with the locked local pdf-lib 1.17.1 dependency",
+    "Frozen PDF approval and SHA256; no automatic signature dispatch",
+    "Media 30/30, exact supplied annex, invalid inputs rejected",
+    "Legacy model path and historical rates preserved"
+  ],
+  "providers": "Intercepted test fixtures only; no real provider request",
+  "sql_execution": "Not included in this suite",
+  "note": "Observed execution receipt transcribed from the successful local tool result; this is not a CI or deployed-environment result."
+}

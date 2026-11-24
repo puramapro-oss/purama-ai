@@ -1,0 +1,9 @@
+{
+  "error": "Target 'partner_contract_context' not found",
+  "target": {
+    "name": "partner_contract_context"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
