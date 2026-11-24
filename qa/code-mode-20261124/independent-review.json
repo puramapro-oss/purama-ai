@@ -5,7 +5,8 @@
   "source_sha256": {
     "karta/src/claude/real.ts": "26de7b63b7cd059c5b17e36ba359e07ffee2d52bb53c208321dda90ec60e016e",
     "karta/src/tools/customRegistry.ts": "1e2bdd4e6a75c18d5469ca4b42ef3344670acb3331fccbe6377e3140a934bca7",
-    "karta/test/claudeTransportCost.test.ts": "48f192a1c25832997c4ef1de00f8f2a065b2d04225dbf86c112b61a82864dbdb",
+    "karta/test/claudeTransportCost.test.ts": "36625d5122e59f2cee488e74f59730e5fbf248df843cea81b0b981167fa50805",
     "karta/test/customRegistry.test.ts": "51839a9c5379b3e44ce500799b5964a3c775f21ed67a0a9b9ff4ff2d78cb54c8"
-  }
+  },
+  "followup": "Format-only it.each call correction reviewed; test cases and callbacks unchanged. Branch deployment configuration compared with upstream: only this branch is added with false."
 }

@@ -54,7 +54,7 @@ function harness() {
   const error = vi.fn();
   let handler: Handler | undefined;
   const require = (name: string) => {
-    if (name === "npm:@supabase/supabase-js@2.91.0") return { createClient };
+    if (name === "npm:@supabase/supabase-js@2.119.2") return { createClient };
     if (name === "../_shared/rate-limit.ts") return { rateLimit };
     if (name === "../_shared/validation.ts") return validation;
     throw new Error(`Unexpected endpoint import: ${name}`);

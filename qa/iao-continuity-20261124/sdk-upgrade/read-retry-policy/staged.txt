@@ -1,0 +1,18 @@
+Changes: 22 files, 10 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Const supabase → src/integrations/supabase/client.ts
+  Const authProbe → tests/chat/sdk-init.ts
+  Property afterPendingTasks → tests/chat/sdk-init.ts
+  Property readConcurrently → tests/chat/sdk-init.ts
+  Property signOut → tests/chat/sdk-init.ts
+  Property simulateVisibilityReturn → tests/chat/sdk-init.ts
+  Property startRefresh → tests/chat/sdk-init.ts
+  Property state → tests/chat/sdk-init.ts
+  Interface Window → tests/chat/sdk-init.ts
+  Property __sdkAuthProbe → tests/chat/sdk-init.ts
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795546005208,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

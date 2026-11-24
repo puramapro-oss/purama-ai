@@ -1,0 +1,101 @@
+{
+  "recorded_at_utc": "2026-11-24T17:03:27.213959+00:00",
+  "base_head": "6ebe773d77961feeb6a1145c7e2f8ddb010a00c2",
+  "status": "PASS targeted Node/KARTA and mechanical scope; Deno reception owned separately by root",
+  "cause": "Active Edge npm specifiers still requested exact Supabase 2.91.0 after npm ci installed exact root 2.119.2; the manual Deno resolver cannot satisfy that version mismatch.",
+  "scope": {
+    "production_edge_files": 21,
+    "active_harness_and_config_files": 13,
+    "changed_files": 34,
+    "changed_occurrences": 35,
+    "change": "Exact npm specifier replacement only, 2.91.0 to 2.119.2",
+    "mechanical_equality_check": "PASS against base_head for every path",
+    "active_old_npm_occurrences": 0
+  },
+  "preserved": {
+    "historical_evidence_and_unrelated_lockfiles": [
+      "docs/qa/iao-quality-20261109.md",
+      "qa/reliability-audit-20261110/oauth-native/baseline/oauth-state.ts",
+      "qa/ots-stamp-atomicity-20261110/merge-conflicts.json",
+      "karta/package.json",
+      "karta/package-lock.json",
+      "tests/connect-sdk/deno.lock"
+    ],
+    "auth_options_and_function_bodies": "unchanged",
+    "https_esm_specifier_text": "unchanged",
+    "nodeModulesDir": "manual where already declared; no automatic dependency resolution introduced",
+    "test_assertions_network_guards_timeouts": "unchanged"
+  },
+  "pre_edit_impacts": {
+    "source": "/workspace/scratch/6431e6d17379/iao-edge-sdk-impact-20261124",
+    "commands_succeeded": 4,
+    "projection_files": 12,
+    "manual_overall_risk": "HIGH across 21 Edge files",
+    "caveat": "Partial graph does not prove absence of further callers. Parent notified the user before edits."
+  },
+  "validation": [
+    {
+      "name": "mechanical diff and preserved files",
+      "status": "PASS",
+      "files": 34,
+      "git_diff_check_exit": 0
+    },
+    {
+      "name": "targeted Node Edge harnesses",
+      "status": "PASS",
+      "passed": 378,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "exit_code": 0,
+      "duration_seconds": 36.727,
+      "memory_limit_mb": 512,
+      "cwd": ".",
+      "argv": [
+        "node",
+        "--experimental-vm-modules",
+        "--test",
+        "--test-concurrency=1",
+        "--test-timeout=30000",
+        "tests/contracts-ots-auth.mjs",
+        "tests/contracts-ots-integrity.mjs",
+        "tests/contracts-ots-authorization.test.mjs",
+        "tests/billing/billing.test.mjs",
+        "tests/voice-tts-boundaries.test.mjs"
+      ]
+    },
+    {
+      "name": "targeted KARTA Edge harnesses",
+      "status": "PASS",
+      "passed": 234,
+      "files_passed": 3,
+      "exit_code": 0,
+      "duration_seconds": 3.396,
+      "memory_limit_mb": 512,
+      "cwd": "karta",
+      "argv": [
+        "node",
+        "--max-old-space-size=512",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/chefWorkshopEdge.test.ts",
+        "test/kartaTriggerEdge.test.ts",
+        "test/consultationTransport.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ]
+    }
+  ],
+  "qualification_limits": [
+    "Native Deno manual resolution/check is being received separately by root; this receipt does not assert its outcome.",
+    "No production provider or database contacted by the targeted test harnesses.",
+    "The native PostgreSQL verification-atomicity harness was not rerun here; it requires an explicitly qualified private runtime.",
+    "This patch changes the SDK dependency executed by the affected Edge imports; unchanged function bodies do not imply identical SDK runtime behavior."
+  ],
+  "artifact_sha256": {
+    "edge-npm-alignment-manifest.json": "6a81e6a22e0cbdea8755aacd63e6f382cdd210a4e0203d193f8b13b81f43cb95",
+    "edge-npm-alignment-node.log": "928b13c47352ccb12e87ea466885d1bdba131600fa917e9434a94dd621d9ca07",
+    "edge-npm-alignment-karta.log": "d44ce114799fe915fc5339aea889fcafcfe51e008e279731f009d73a72ffcda2"
+  }
+}

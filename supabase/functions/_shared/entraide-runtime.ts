@@ -1,4 +1,4 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.91.0';
+import { createClient } from 'npm:@supabase/supabase-js@2.119.2';
 import { createSupabaseEntraidePorts, type EntraideDatabase } from './entraide-supabase.ts';
 
 function configuration() {

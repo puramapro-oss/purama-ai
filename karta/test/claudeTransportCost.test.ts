@@ -166,8 +166,7 @@ describe("real Claude SDK transport cost boundaries", () => {
     { label: "approval", change: { requiresExplicitApproval: true } },
     { label: "trace policy", change: { tracePolicy: "metadata_only" } },
     { label: "handler", change: { execute: vi.fn() } },
-  ] as Array<{ label: string; change: Partial<AnyToolDefinition> }>)
-  ("rejects a same-name distinct definition before the network: $label", async ({ change }) => {
+  ] as Array<{ label: string; change: Partial<AnyToolDefinition> }>)("rejects a same-name distinct definition before the network: $label", async ({ change }) => {
     const collision: AnyToolDefinition = { ...tool, ...change };
     await expect(createRealClaudeClient().decide(input({ tools: [tool, collision] }))).rejects.toThrow();
     expect(transport).not.toHaveBeenCalled();

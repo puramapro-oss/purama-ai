@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import { rateLimit } from "../_shared/rate-limit.ts";
 import { createFounderDashboardHandler } from "./handler.ts";
 import { createDashboardReader, type FounderDatabase } from "./reader.ts";

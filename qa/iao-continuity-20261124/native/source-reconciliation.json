@@ -1,0 +1,16 @@
+{
+  "status": "PASS for product and browser sources",
+  "sourceDigestEqual": true,
+  "nativeTests": 56,
+  "retries": 0,
+  "skipped": 0,
+  "flaky": 0,
+  "sourceDifferencesAfterReception": [
+    {
+      "path": "src/lib/workshop.test.ts",
+      "nativeSha256": "92421f02fb53d207ee296abb6d9e54e078ee3a799b1f683274060b229234fe32",
+      "currentSha256": "006e444f12fd3e2a4c206fec8dcf5a7cd88a2a01c0851644d225d87da910cd31"
+    }
+  ],
+  "explanation": "The sole subsequent change isolates the Vitest storage-outage fixture; that file is not executed by the native Playwright suites. Product files and browser assertions remain byte-identical. CI will test the final tree with the lockfile."
+}

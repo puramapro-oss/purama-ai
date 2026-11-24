@@ -1,0 +1,123 @@
+{
+  "kind": "postgrest-retry-fixture-correction",
+  "sdk": "2.119.2",
+  "finding": "The 503 POST acknowledgement is not retried. The first reconciliation GET 503 now retries and consumes the held response formerly intended for the second manual attempt. Increasing the UI assertion timeout cannot release that held response.",
+  "readOnlyNodeReproduction": {
+    "externalNetworkCalls": 0,
+    "writeStatus": 503,
+    "calls": [
+      {
+        "method": "POST",
+        "retry": null,
+        "elapsedMs": 2
+      },
+      {
+        "method": "GET",
+        "retry": null,
+        "elapsedMs": 5
+      },
+      {
+        "method": "GET",
+        "retry": "1",
+        "elapsedMs": 1007
+      }
+    ],
+    "readStatusAfterExplicitAbort": 0,
+    "readErrorAfterExplicitAbort": "AbortError: Aborted",
+    "scope": "Installed PostgrestClient with a synthetic fetch. This is a transport reproduction, not a browser or live-server qualification."
+  },
+  "confirmedSdkPolicy": {
+    "retryableMethods": [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ],
+    "retryableHttpStatuses": [
+      503,
+      520
+    ],
+    "maxRetries": 3,
+    "defaultBackoffMs": [
+      1000,
+      2000,
+      4000
+    ],
+    "retryHeader": "X-Retry-Count",
+    "honoursRetryAfter": true,
+    "postReplay": false
+  },
+  "correction": "Keep the initial read unavailable for the initial GET and all three automatic retries (four 503 responses). Retry-After: 0 uses the actual SDK retry policy without prolonging the test. Hold only the subsequent read after the explicit user retry.",
+  "transportScope": "Optional response headers, request method and numerical retryCount only. No policy or timeout override, no real network and no product code change.",
+  "assertions": [
+    "Four initial GETs with retryCount 0/1/2/3",
+    "One POST before the explicit user retry",
+    "Zero model calls before reconciliation",
+    "Two POSTs with the same message ID and retryCount 0 after the manual retry",
+    "Fifth GET starts at retryCount 0 and remains held until the exact owned row is returned",
+    "Existing exact-row filters and single resulting model request remain asserted"
+  ],
+  "preEditImpact": [
+    {
+      "target": "makeResponse",
+      "includeTests": true,
+      "risk": "LOW",
+      "direct": 2,
+      "impacted": 6
+    },
+    {
+      "target": "File:tests/chat/transport.ts",
+      "includeTests": true,
+      "risk": "LOW",
+      "directImports": 4
+    },
+    {
+      "target": "Function:tests/chat/lifecycle.spec.ts:plans",
+      "includeTests": true,
+      "risk": "LOW",
+      "direct": 1
+    },
+    {
+      "target": "window.fetch callback",
+      "risk": "UNKNOWN",
+      "note": "Not indexed as a standalone function. File impact and text references checked instead."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "tests/chat/transport.ts",
+      "previousSha256": "e4b06fca067b8d309c194ece97919a6e6b898458c06d40c9499776720d8262bf",
+      "sha256": "be85689a93422d78089019ac4d35e48351c4f000c3c8e6e04c460d396a49bfd3"
+    },
+    {
+      "path": "tests/chat/lifecycle.spec.ts",
+      "previousSha256": "86f63975f628913fe3e435c006c75c397a3aca375008e1d38215cc9bf804f824",
+      "sha256": "4589757719119753598c17e1c43a2ccc49f320acf3766973b1fb5f7c913ce568"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Strict targeted TypeScript",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": "node --max-old-space-size=512 node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node,vite/client --skipLibCheck tests/chat/transport.ts tests/chat/lifecycle.spec.ts tests/chat/fixtures.ts"
+    },
+    {
+      "name": "Targeted Playwright collection",
+      "status": "PASS",
+      "exitCode": 0,
+      "collected": 1
+    },
+    {
+      "name": "Whitespace check",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "Independent read-only review",
+      "status": "PASS",
+      "reviewer": "iao_ar_continuity_audit"
+    }
+  ],
+  "browserExecution": "Root conducts the native replay and multi-engine CI; this receipt does not substitute collection for execution.",
+  "productionImplication": "Temporary reconciliation read failures may now cause up to three additional safe reads. Mutating writes and model POSTs are not automatically replayed by this policy. Existing identity, cancellation and exact-row checks remain authoritative."
+}

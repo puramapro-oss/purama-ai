@@ -3,7 +3,7 @@ import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 import { formatPrivateToolResultContext, loadSelectedPrivateToolResults, PRIVATE_RESULT_CONTEXT_GUIDANCE } from "../_shared/private-tool-results.ts";
 // Creator Agent — Chat with a custom user agent
 // POST { agent_id, session_id, message, tool_result_ids? }
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import { CreatorChatMessageSchema, validateBody } from "../_shared/validation.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";
 import { json } from "../_shared/response.ts";

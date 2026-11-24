@@ -18,6 +18,35 @@ Install test-only database dependencies separately:
 npm ci --ignore-scripts --no-audit --prefix tests/entraide
 ```
 
+## Private Edge and SDK reception
+
+The public CI checkout does not contain the private matching package. Receive the
+two private Edge helpers through the four real routes in an authorized isolated
+checkout, after the canonical preparation above:
+
+```sh
+node scripts/build-entraide-matching.mjs
+deno check --no-config --no-lock --cached-only --node-modules-dir=manual \
+  supabase/functions/entraide-contact/index.ts \
+  supabase/functions/entraide-matches/index.ts \
+  supabase/functions/entraide-missions/index.ts \
+  supabase/functions/entraide-profil/index.ts
+node --max-old-space-size=512 --test --test-reporter=tap --test-concurrency=1 \
+  tests/entraide/supabase-adapter.test.mjs
+```
+
+For the SDK 2.119.2 reception, use Deno 2.9.6, record the checked commit, source
+digests, resolved SDK version, generated bundle digest, and the result of all
+eight SDK tests. Keep the canonical package and generated implementation private.
+The public Deno check covers the other Edge sources; it must not substitute a
+permissive module for the private matching implementation. The PostgreSQL job
+does not replace this Edge and SDK reception.
+
+A matching private receipt and passing public checks are required before
+integrating changes to these inputs. The public workflow does not automatically
+validate a private receipt: its reviewer must verify that the recorded source
+digests still match the final commit. Missing private input remains unqualified.
+
 ## Local PostgreSQL WASM, HTTP and SDK checks
 
 With the application's existing dependencies installed and matching prepared:

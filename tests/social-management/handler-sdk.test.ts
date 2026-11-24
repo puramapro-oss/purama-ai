@@ -29,16 +29,17 @@ const env = {
   ZERNIO_BASE_URL: "https://zernio.com/api/v1",
 };
 interface Call { method: string; url: URL; body: Record<string, unknown> | null }
-interface Options { pending?: boolean; ready?: boolean; providerKey?: boolean; configConflict?: boolean }
+interface Options { pending?: boolean; ready?: boolean; providerKey?: boolean; configConflict?: boolean; configMultipleRows?: boolean }
 
 async function fixture(options: Options, work: (f: {
-  calls: Call[]; account: Record<string, unknown>; config: Record<string, unknown>;
+  calls: Call[]; account: Record<string, unknown>; config: Record<string, unknown>; configRowCounts: number[];
 }) => Promise<void>) {
   const savedEnv = Object.fromEntries(Object.keys(env).map((key) => [key, Deno.env.get(key)]));
   for (const [key, value] of Object.entries(env)) Deno.env.set(key, value);
   if (!options.providerKey) Deno.env.delete("ZERNIO_API_KEY");
   const originalFetch = globalThis.fetch;
   const calls: Call[] = [];
+  const configRowCounts: number[] = [];
   const account: Record<string, unknown> = {
     id: accountRowId, user_id: userId, platform: "youtube",
     zernio_account_id: providerAccount, zernio_profile_id: providerProfile,
@@ -92,12 +93,17 @@ async function fixture(options: Options, work: (f: {
         if (request.method === "GET") return json([config]);
         if (request.method === "PATCH") {
           equal(url.searchParams.get("updated_at"), "eq." + previousTime);
-          equal(request.headers.get("Accept"), "application/vnd.pgrst.object+json");
+          // maybeSingle now receives a list and enforces cardinality in the SDK.
+          equal(request.headers.get("Accept"), null);
+          equal(request.headers.get("Prefer"), "return=representation");
+          equal(request.headers.get("X-Retry-Count"), null);
           equal(body.user_id, userId); equal(body.auto_caption, false); equal(body.auto_hashtags, false);
-          if (options.configConflict) return json({ code: "PGRST116", details: "The result contains 0 rows",
-            message: "Cannot coerce the result to a single JSON object", hint: null }, 406);
+          if (options.configConflict) { configRowCounts.push(0); return json([]); }
           Object.assign(config, body, { updated_at: savedTime });
-          return json(config);
+          const rows = [config];
+          if (options.configMultipleRows) rows.push({ ...config, user_id: otherUser });
+          configRowCounts.push(rows.length);
+          return json(rows);
         }
       }
     }
@@ -112,7 +118,7 @@ async function fixture(options: Options, work: (f: {
     }
     throw new Error(`Unexpected injected request ${request.method} ${url.origin}${url.pathname}`);
   };
-  try { await work({ calls, account, config }); }
+  try { await work({ calls, account, config, configRowCounts }); }
   finally {
     globalThis.fetch = originalFetch;
     for (const [key, value] of Object.entries(savedEnv)) {
@@ -177,6 +183,7 @@ Deno.test("actual configuration CAS filters owner and observed timestamp; zero-r
     equal(patches(f.calls).length, 1); equal(f.config.timezone, "Europe/Paris");
     equal(f.calls.filter((call) => call.method === "POST").length, 0);
     equal(providerCalls(f.calls).length, 0);
+    equal(f.configRowCounts.length, 1); equal(f.configRowCounts[0], 0);
   });
 });
 
@@ -187,5 +194,18 @@ Deno.test("actual configuration CAS returns the saved server row after a conditi
     equal(value.user_id, userId); equal(value.timezone, "UTC"); equal(value.updated_at, savedTime);
     equal(value.auto_caption, false); equal(value.auto_hashtags, false);
     equal(patches(f.calls).length, 1); equal(providerCalls(f.calls).length, 0);
+    equal(f.configRowCounts.length, 1); equal(f.configRowCounts[0], 1);
+  });
+});
+
+Deno.test("actual configuration CAS rejects multiple returned rows without replaying PATCH", async () => {
+  await fixture({ configMultipleRows: true }, async (f) => {
+    const response = await configHandler(request("social-autopilot-config", "PUT", { timezone: "UTC" }));
+    equal(response.status, 503); const value = await response.json();
+    check(typeof value.error === "string", "An ambiguous write must return an error");
+    equal(value.user_id, undefined); equal(value.timezone, undefined);
+    equal(patches(f.calls).length, 1); equal(providerCalls(f.calls).length, 0);
+    equal(f.calls.filter((call) => call.method === "POST").length, 0);
+    equal(f.configRowCounts.length, 1); equal(f.configRowCounts[0], 2);
   });
 });

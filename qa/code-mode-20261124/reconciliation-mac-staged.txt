@@ -1,0 +1,18 @@
+Changes: 6 files, 5 symbols
+Affected processes: 6
+Risk level: high
+
+Changed symbols:
+  Function createRealClaudeClient → karta/src/claude/real.ts
+  Method decide → karta/src/claude/real.ts
+  Function send → karta/src/claude/real.ts
+  Function toAnthropicTools → karta/src/claude/real.ts
+  Function resolveCustomAgentTools → karta/src/tools/customRegistry.ts
+
+Affected execution flows:
+  • Run → EncodeData (4 steps) — changed: send
+  • StartAgentCycleWorker → ResolveCustomAgentTools (4 steps) — changed: resolveCustomAgentTools
+  • Run → ApplyPublicPromptCache (3 steps) — changed: send
+  • Decide → Invalid (4 steps) — changed: decide
+  • Decide → Plain (4 steps) — changed: decide
+  • Decide → AssertCurrent (3 steps) — changed: decide

@@ -1,0 +1,2046 @@
+{
+  "config": {
+    "argv": [
+      "/opt/purama-node/bin/node",
+      "/work/node_modules/playwright/cli.js",
+      "test",
+      "--config",
+      "qa/iao-devices-20261124/browser/chat.playwright.config.ts"
+    ],
+    "configFile": "/work/qa/iao-devices-20261124/browser/chat.playwright.config.ts",
+    "rootDir": "/work/tests/chat",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium-small-touch-320x568",
+        "name": "chromium-small-touch-320x568",
+        "testDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000
+      },
+      {
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox-desktop-1280x800",
+        "name": "firefox-desktop-1280x800",
+        "testDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000
+      },
+      {
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-desktop-1280x800",
+        "name": "webkit-desktop-1280x800",
+        "testDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000
+      },
+      {
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-mobile-touch-390x844",
+        "name": "webkit-mobile-touch-390x844",
+        "testDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000
+      },
+      {
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-tablet-touch-768x1024",
+        "name": "webkit-tablet-touch-768x1024",
+        "testDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": [
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}
+        ],
+        "grepInvert": null,
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium-small-touch-320x568",
+        "testDir": "/work/tests/chat",
+        "snapshotDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 320,
+            "height": 568
+          },
+          "screen": {
+            "width": 320,
+            "height": 568
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": true,
+          "hasTouch": true,
+          "defaultBrowserType": "chromium",
+          "serviceWorkers": "block",
+          "launchOptions": {
+            "args": [
+              "--no-sandbox",
+              "--disable-dev-shm-usage",
+              "--no-zygote",
+              "--disable-gpu",
+              "--no-proxy-server",
+              "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1, EXCLUDE localhost"
+            ]
+          },
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium-small-touch-320x568"
+      },
+      {
+        "grep": [
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}
+        ],
+        "grepInvert": null,
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "firefox-desktop-1280x800",
+        "testDir": "/work/tests/chat",
+        "snapshotDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "screen": {
+            "width": 1280,
+            "height": 800
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "serviceWorkers": "block",
+          "launchOptions": {},
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "firefox"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "firefox-desktop-1280x800"
+      },
+      {
+        "grep": [
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}
+        ],
+        "grepInvert": null,
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "webkit-desktop-1280x800",
+        "testDir": "/work/tests/chat",
+        "snapshotDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          },
+          "screen": {
+            "width": 1280,
+            "height": 800
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "serviceWorkers": "block",
+          "launchOptions": {},
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "webkit-desktop-1280x800"
+      },
+      {
+        "grep": [
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}
+        ],
+        "grepInvert": null,
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "webkit-mobile-touch-390x844",
+        "testDir": "/work/tests/chat",
+        "snapshotDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "screen": {
+            "width": 390,
+            "height": 844
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": true,
+          "hasTouch": true,
+          "defaultBrowserType": "chromium",
+          "serviceWorkers": "block",
+          "launchOptions": {},
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "webkit-mobile-touch-390x844"
+      },
+      {
+        "grep": [
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}
+        ],
+        "grepInvert": null,
+        "outputDir": "/work/qa/iao-devices-20261124/browser/results/chat",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "webkit-tablet-touch-768x1024",
+        "testDir": "/work/tests/chat",
+        "snapshotDir": "/work/tests/chat",
+        "testIgnore": [],
+        "testMatch": [
+          "lifecycle.spec.ts",
+          "workshop.spec.ts"
+        ],
+        "timeout": 20000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4175",
+          "viewport": {
+            "width": 768,
+            "height": 1024
+          },
+          "screen": {
+            "width": 768,
+            "height": 1024
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": true,
+          "hasTouch": true,
+          "defaultBrowserType": "chromium",
+          "serviceWorkers": "block",
+          "launchOptions": {},
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "browserName": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "webkit-tablet-touch-768x1024"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/work/qa/iao-devices-20261124/browser/results/chat-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/vite/bin/vite.js --config tests/chat/vite.config.ts --configLoader runner --mode test",
+      "cwd": "/work/",
+      "url": "http://127.0.0.1:4175/tests/chat/index.html",
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "lifecycle.spec.ts",
+      "file": "lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "guest chat uses one model request, no history database calls and no welcome in model context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3385,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:10:53.744Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2044,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:09.037Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3895,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:27.130Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1826,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:44.454Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1610,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:58.541Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1f1785dee40219527314-f8e3e39f61abf6b95aaf",
+          "file": "lifecycle.spec.ts",
+          "line": 92,
+          "column": 1
+        },
+        {
+          "title": "two submits in the same browser task admit one request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 860,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:10:57.821Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1041,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:11.368Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 892,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:32.234Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 988,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:46.348Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1014,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:00.216Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1f1785dee40219527314-885d8a91b1d965bb42bc",
+          "file": "lifecycle.spec.ts",
+          "line": 104,
+          "column": 1
+        },
+        {
+          "title": "stop aborts the stream, removes partial output and restores the editable request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1138,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:10:58.688Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1268,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:12.419Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1234,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:33.134Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1154,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:47.344Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1214,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:01.241Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1f1785dee40219527314-ee25ede0286362cede2f",
+          "file": "lifecycle.spec.ts",
+          "line": 115,
+          "column": 1
+        },
+        {
+          "title": "a stale response cannot populate a new conversation or unlock a newer request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1162,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:10:59.833Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1384,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:13.695Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1309,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:34.376Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1391,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:48.509Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1473,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:02.466Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1f1785dee40219527314-01eb454d1cbf310710bd",
+          "file": "lifecycle.spec.ts",
+          "line": 155,
+          "column": 1
+        },
+        {
+          "title": "account change during conversation creation prevents a subsequent model call",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1207,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:01.002Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1520,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:15.087Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1483,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:35.693Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1361,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:49.908Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1491,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:03.948Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1f1785dee40219527314-e6eef9f0e7c430bc1c0c",
+          "file": "lifecycle.spec.ts",
+          "line": 168,
+          "column": 1
+        },
+        {
+          "title": "retrying a failed model request reuses the confirmed user turn",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1191,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:02.218Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1392,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:16.616Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1415,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:37.185Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1282,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:51.277Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1390,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:05.446Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1f1785dee40219527314-a4d2b9b8987188f5bbda",
+          "file": "lifecycle.spec.ts",
+          "line": 198,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "workshop.spec.ts",
+      "file": "workshop.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2761,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:03.423Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAiY2hyb21pdW0iLAogICJ2ZXJzaW9uIjogIjE1OS4wLjgxNTQuNiIsCiAgInZpZXdwb3J0IjogewogICAgIndpZHRoIjogMzIwLAogICAgImhlaWdodCI6IDU2OAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNyZWF0ZSIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAid3JpdGUiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoYXRib3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogIndyaXRlIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJzdGFydCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAic3RhdHVzIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfQogIF0sCiAgInBhZ2VFcnJvcnMiOiBbXQp9"
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2977,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /work/tests/chat/workshop.spec.ts:33:18",
+                    "location": {
+                      "file": "/work/tests/chat/workshop.spec.ts",
+                      "column": 18,
+                      "line": 33
+                    },
+                    "snippet": "  31 |       pageErrors: errors }, null, 2)), contentType: 'application/json',\n  32 |   });\n> 33 |   expect(errors).toEqual([]);\n     |                  ^\n  34 | });\n  35 |\n  36 | test('conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request', async ({ page }, testInfo) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/work/tests/chat/workshop.spec.ts",
+                        "column": 18,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  31 |       pageErrors: errors }, null, 2)), contentType: 'application/json',\n  32 |   });\n> 33 |   expect(errors).toEqual([]);\n     |                  ^\n  34 | });\n  35 |\n  36 | test('conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request', async ({ page }, testInfo) => {\n    at /work/tests/chat/workshop.spec.ts:33:18"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:18.023Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAiZmlyZWZveCIsCiAgInZlcnNpb24iOiAiMTU5LjAiLAogICJ2aWV3cG9ydCI6IHsKICAgICJ3aWR0aCI6IDEyODAsCiAgICAiaGVpZ2h0IjogODAwCiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY3JlYXRlIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJ3cml0ZSIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hhdGJvdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAid3JpdGUiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogInN0YXJ0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJzdGF0dXMiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9CiAgXSwKICAicGFnZUVycm9ycyI6IFsKICAgICJBY3F1aXJpbmcgYW4gZXhjbHVzaXZlIE5hdmlnYXRvciBMb2NrTWFuYWdlciBsb2NrIFwibG9jazpzYi1zdXBhYmFzZS1hdXRoLXRva2VuXCIgaW1tZWRpYXRlbHkgZmFpbGVkIgogIF0KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-conversation-to-w-edd7d-rts-only-the-edited-request-firefox-desktop-1280x800/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-conversation-to-w-edd7d-rts-only-the-edited-request-firefox-desktop-1280x800/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-conversation-to-w-edd7d-rts-only-the-edited-request-firefox-desktop-1280x800/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/work/tests/chat/workshop.spec.ts",
+                    "column": 18,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2870,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:38.613Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiAxMjgwLAogICAgImhlaWdodCI6IDgwMAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNyZWF0ZSIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAid3JpdGUiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoYXRib3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogIndyaXRlIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJzdGFydCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAic3RhdHVzIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfQogIF0sCiAgInBhZ2VFcnJvcnMiOiBbXQp9"
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2952,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:52.572Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiAzOTAsCiAgICAiaGVpZ2h0IjogODQ0CiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY3JlYXRlIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJ3cml0ZSIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hhdGJvdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAid3JpdGUiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogInN0YXJ0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJzdGF0dXMiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9CiAgXSwKICAicGFnZUVycm9ycyI6IFtdCn0="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2879,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:06.848Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiA3NjgsCiAgICAiaGVpZ2h0IjogMTAyNAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNyZWF0ZSIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAid3JpdGUiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoYXRib3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogIndyaXRlIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJzdGFydCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAic3RhdHVzIiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfQogIF0sCiAgInBhZ2VFcnJvcnMiOiBbXQp9"
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "65c53a506c6fc773dade-9f8e5a86c30115266f93",
+          "file": "workshop.spec.ts",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1147,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:06.194Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAiY2hyb21pdW0iLAogICJ2ZXJzaW9uIjogIjE1OS4wLjgxNTQuNiIsCiAgInZpZXdwb3J0IjogewogICAgIndpZHRoIjogMzIwLAogICAgImhlaWdodCI6IDU2OAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0KICBdLAogICJwYWdlRXJyb3JzIjogW10KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1781,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /work/tests/chat/workshop.spec.ts:33:18",
+                    "location": {
+                      "file": "/work/tests/chat/workshop.spec.ts",
+                      "column": 18,
+                      "line": 33
+                    },
+                    "snippet": "  31 |       pageErrors: errors }, null, 2)), contentType: 'application/json',\n  32 |   });\n> 33 |   expect(errors).toEqual([]);\n     |                  ^\n  34 | });\n  35 |\n  36 | test('conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request', async ({ page }, testInfo) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/work/tests/chat/workshop.spec.ts",
+                        "column": 18,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  31 |       pageErrors: errors }, null, 2)), contentType: 'application/json',\n  32 |   });\n> 33 |   expect(errors).toEqual([]);\n     |                  ^\n  34 | });\n  35 |\n  36 | test('conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request', async ({ page }, testInfo) => {\n    at /work/tests/chat/workshop.spec.ts:33:18"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:21.634Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAiZmlyZWZveCIsCiAgInZlcnNpb24iOiAiMTU5LjAiLAogICJ2aWV3cG9ydCI6IHsKICAgICJ3aWR0aCI6IDEyODAsCiAgICAiaGVpZ2h0IjogODAwCiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogdHJ1ZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfQogIF0sCiAgInBhZ2VFcnJvcnMiOiBbCiAgICAiQWNxdWlyaW5nIGFuIGV4Y2x1c2l2ZSBOYXZpZ2F0b3IgTG9ja01hbmFnZXIgbG9jayBcImxvY2s6c2Itc3VwYWJhc2UtYXV0aC10b2tlblwiIGltbWVkaWF0ZWx5IGZhaWxlZCIKICBdCn0="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-storage-failure-u-dde8a-nt-clears-its-private-draft-firefox-desktop-1280x800/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-storage-failure-u-dde8a-nt-clears-its-private-draft-firefox-desktop-1280x800/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-storage-failure-u-dde8a-nt-clears-its-private-draft-firefox-desktop-1280x800/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/work/tests/chat/workshop.spec.ts",
+                    "column": 18,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1248,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:41.491Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiAxMjgwLAogICAgImhlaWdodCI6IDgwMAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0KICBdLAogICJwYWdlRXJyb3JzIjogW10KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1237,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:55.533Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiAzOTAsCiAgICAiaGVpZ2h0IjogODQ0CiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogdHJ1ZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfQogIF0sCiAgInBhZ2VFcnJvcnMiOiBbXQp9"
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1313,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:09.735Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiA3NjgsCiAgICAiaGVpZ2h0IjogMTAyNAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0KICBdLAogICJwYWdlRXJyb3JzIjogW10KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "65c53a506c6fc773dade-7bbc97d64a0c4df548b4",
+          "file": "workshop.spec.ts",
+          "line": 80,
+          "column": 1
+        },
+        {
+          "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-small-touch-320x568",
+              "projectName": "chromium-small-touch-320x568",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1346,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:07.348Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAiY2hyb21pdW0iLAogICJ2ZXJzaW9uIjogIjE1OS4wLjgxNTQuNiIsCiAgInZpZXdwb3J0IjogewogICAgIndpZHRoIjogODQ0LAogICAgImhlaWdodCI6IDM5MAogIH0sCiAgInNpbXVsYXRlZENhbGxzIjogWwogICAgewogICAgICAia2V5IjogImNyZWF0ZSIsCiAgICAgICJhYm9ydGVkIjogdHJ1ZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJ3cml0ZSIsCiAgICAgICJhYm9ydGVkIjogdHJ1ZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGF0Ym90IiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoZWYtd29ya3Nob3AiLAogICAgICAiYWN0aW9uIjogImxpc3QiLAogICAgICAiYWJvcnRlZCI6IGZhbHNlCiAgICB9CiAgXSwKICAicGFnZUVycm9ycyI6IFtdCn0="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-desktop-1280x800",
+              "projectName": "firefox-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1994,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /work/tests/chat/workshop.spec.ts:33:18",
+                    "location": {
+                      "file": "/work/tests/chat/workshop.spec.ts",
+                      "column": 18,
+                      "line": 33
+                    },
+                    "snippet": "  31 |       pageErrors: errors }, null, 2)), contentType: 'application/json',\n  32 |   });\n> 33 |   expect(errors).toEqual([]);\n     |                  ^\n  34 | });\n  35 |\n  36 | test('conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request', async ({ page }, testInfo) => {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/work/tests/chat/workshop.spec.ts",
+                        "column": 18,
+                        "line": 33
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Acquiring an exclusive Navigator LockManager lock \\\"lock:sb-supabase-auth-token\\\" immediately failed\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  31 |       pageErrors: errors }, null, 2)), contentType: 'application/json',\n  32 |   });\n> 33 |   expect(errors).toEqual([]);\n     |                  ^\n  34 | });\n  35 |\n  36 | test('conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request', async ({ page }, testInfo) => {\n    at /work/tests/chat/workshop.spec.ts:33:18"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:24.277Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAiZmlyZWZveCIsCiAgInZlcnNpb24iOiAiMTU5LjAiLAogICJ2aWV3cG9ydCI6IHsKICAgICJ3aWR0aCI6IDg0NCwKICAgICJoZWlnaHQiOiAzOTAKICB9LAogICJzaW11bGF0ZWRDYWxscyI6IFsKICAgIHsKICAgICAgImtleSI6ICJjcmVhdGUiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAid3JpdGUiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hhdGJvdCIsCiAgICAgICJhYm9ydGVkIjogdHJ1ZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImtleSI6ICJjaGVmLXdvcmtzaG9wIiwKICAgICAgImFjdGlvbiI6ICJsaXN0IiwKICAgICAgImFib3J0ZWQiOiBmYWxzZQogICAgfQogIF0sCiAgInBhZ2VFcnJvcnMiOiBbCiAgICAiQWNxdWlyaW5nIGFuIGV4Y2x1c2l2ZSBOYXZpZ2F0b3IgTG9ja01hbmFnZXIgbG9jayBcImxvY2s6c2Itc3VwYWJhc2UtYXV0aC10b2tlblwiIGltbWVkaWF0ZWx5IGZhaWxlZCIKICBdCn0="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-landscape-keeps-p-2f6cb--stopped-provisional-output-firefox-desktop-1280x800/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-landscape-keeps-p-2f6cb--stopped-provisional-output-firefox-desktop-1280x800/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/work/qa/iao-devices-20261124/browser/results/chat/workshop-landscape-keeps-p-2f6cb--stopped-provisional-output-firefox-desktop-1280x800/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/work/tests/chat/workshop.spec.ts",
+                    "column": 18,
+                    "line": 33
+                  }
+                }
+              ],
+              "status": "unexpected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-desktop-1280x800",
+              "projectName": "webkit-desktop-1280x800",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1363,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:42.745Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiA4NDQsCiAgICAiaGVpZ2h0IjogMzkwCiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY3JlYXRlIiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogIndyaXRlIiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoYXRib3QiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0KICBdLAogICJwYWdlRXJyb3JzIjogW10KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-mobile-touch-390x844",
+              "projectName": "webkit-mobile-touch-390x844",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1417,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:11:56.778Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiA4NDQsCiAgICAiaGVpZ2h0IjogMzkwCiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY3JlYXRlIiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogIndyaXRlIiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoYXRib3QiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0KICBdLAogICJwYWdlRXJyb3JzIjogW10KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            },
+            {
+              "timeout": 20000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-tablet-touch-768x1024",
+              "projectName": "webkit-tablet-touch-768x1024",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1434,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-24T16:12:11.055Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "workshop-handoff-runtime",
+                      "contentType": "application/json",
+                      "body": "ewogICJwbGF0Zm9ybSI6ICJsaW51eCIsCiAgImJyb3dzZXIiOiAid2Via2l0IiwKICAidmVyc2lvbiI6ICIyNy4yIiwKICAidmlld3BvcnQiOiB7CiAgICAid2lkdGgiOiA4NDQsCiAgICAiaGVpZ2h0IjogMzkwCiAgfSwKICAic2ltdWxhdGVkQ2FsbHMiOiBbCiAgICB7CiAgICAgICJrZXkiOiAiY3JlYXRlIiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogIndyaXRlIiwKICAgICAgImFib3J0ZWQiOiB0cnVlCiAgICB9LAogICAgewogICAgICAia2V5IjogImNoYXRib3QiLAogICAgICAiYWJvcnRlZCI6IHRydWUKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJrZXkiOiAiY2hlZi13b3Jrc2hvcCIsCiAgICAgICJhY3Rpb24iOiAibGlzdCIsCiAgICAgICJhYm9ydGVkIjogZmFsc2UKICAgIH0KICBdLAogICJwYWdlRXJyb3JzIjogW10KfQ=="
+                    },
+                    {
+                      "name": "chat-network",
+                      "contentType": "application/json",
+                      "body": "ewogICJleHRlcm5hbFJlcXVlc3RzRm9yd2FyZGVkIjogMCwKICAiZXZlbnRzIjogWwogICAgewogICAgICAibWV0aG9kIjogIldlYlNvY2tldCIsCiAgICAgICJvcmlnaW4iOiAid3M6Ly8xMjcuMC4wLjE6NDE3NSIsCiAgICAgICJwYXRoIjogIi8iLAogICAgICAiZGVjaXNpb24iOiAibG9jYWwtdml0ZS1obXIiCiAgICB9CiAgXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "65c53a506c6fc773dade-45a3ae1acbac976bc6e5",
+          "file": "workshop.spec.ts",
+          "line": 104,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-24T16:10:52.619Z",
+    "duration": 79952.44499999999,
+    "expected": 42,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

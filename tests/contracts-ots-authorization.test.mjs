@@ -197,7 +197,7 @@ async function harness(options = {}, entry = 'contracts-ots-stamp') {
     },
   });
   const external = {
-    'npm:@supabase/supabase-js@2.91.0': { createClient },
+    'npm:@supabase/supabase-js@2.119.2': { createClient },
   };
   const cache = new Map();
   function localModule(file) {

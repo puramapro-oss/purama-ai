@@ -1,0 +1,29 @@
+{
+  "status": "Reviewed with limitations",
+  "index": {
+    "nodes": 971,
+    "edges": 2420,
+    "clusters": 59,
+    "flows": 36,
+    "scope": "targeted; see index-scope.txt",
+    "fts": false,
+    "processesTruncated": true
+  },
+  "staged": {
+    "risk": "HIGH",
+    "files": 48,
+    "symbols": 123,
+    "affectedProcesses": 9,
+    "report": "staged.txt"
+  },
+  "compareMain": {
+    "risk": "CRITICAL",
+    "base": "ae84415be0b9516422805910be999a2c1e6350c0",
+    "files": 2779,
+    "symbols": 767,
+    "affectedProcesses": 36,
+    "report": "compare-main.txt",
+    "scope": "entire consolidation divergence, not only this feature lot"
+  },
+  "decision": "Warnings communicated before final publication. Independent UI and AR reviews and before/after regressions received. Exact-head CI required before merge solely into audit/reliability-oauth-20261110; no merge or deployment to main. Unreported flows cannot be treated as absent."
+}

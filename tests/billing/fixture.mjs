@@ -120,7 +120,7 @@ export async function harness(options = {}, entry = 'create-checkout') {
     await module.link(async (specifier, parent) => {
       if (specifier === 'https://deno.land/std@0.190.0/http/server.ts') return virtual(specifier, { serve: value => { handler = value; } });
       if (specifier === 'https://esm.sh/stripe@18.5.0') return virtual(specifier, { default: Stripe });
-      if (specifier === 'npm:@supabase/supabase-js@2.91.0') return virtual(specifier, { createClient });
+      if (specifier === 'npm:@supabase/supabase-js@2.119.2') return virtual(specifier, { createClient });
       assert.ok(specifier.startsWith('.'), `External import forbidden: ${specifier}`);
       return load(fileURLToPath(new URL(specifier, pathToFileURL(parent.identifier))));
     });

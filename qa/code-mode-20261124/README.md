@@ -10,7 +10,7 @@ Ce lot réalise une correction préalable du catalogue et documente l'intégrati
 - Base de consolidation : `audit/reliability-oauth-20261110`, commit `e81129a56e07535129827c95211d82815df8dc5a`.
 - Branche isolée : `feat/iao-tool-context-efficiency-20261124`.
 - `main` n'est pas la base de développement actuelle ; elle présente déjà 2 748 fichiers différents du commit de consolidation avant ce lot.
-- La PR de continuité mémoire existante n'a pas été réimplémentée. Les checkouts et agents du Mac ont été préservés ; seule une entrée de coordination a été ajoutée au registre de travail.
+- La PR de continuité mémoire existante n'a pas été réimplémentée. Les checkouts et agents du Mac ont été préservés. Le registre de coordination a été complété et une copie temporaire isolée a servi à la vérification finale.
 
 ## Correction réalisée
 
@@ -29,7 +29,8 @@ Le complément de recherche est intégré au document existant `docs/api-cost-re
 | Régression avant correction | PASS pour la démonstration du défaut | 15 nouveaux tests échouent et les 17 anciens passent, code produit encore inchangé |
 | Deux suites ciblées après correction | PASS | 32 tests réussis, vrai SDK avec réseau intercepté |
 | Matrice élargie | PARTIEL | 346 tests réussis dans 13 fichiers ; ces 346 incluent les 32 ciblés |
-| Suite SQL `approval.test.ts` | BLOQUÉ | 16 tests non validés : worker interrompu par SIGKILL ; le statut ne devient pas vert après les tentatives isolées |
+| Suite SQL locale `approval.test.ts` | BLOQUÉ localement | Worker interrompu par SIGKILL ; les 16 assertions ont ensuite réussi en CI |
+| KARTA complet en CI sur la première proposition | PASS | 4 704 tests / 206 fichiers, dont les 16 assertions SQL ; reçu `ci-initial-karta.json` |
 | TypeScript complet | PASS | `npm run typecheck`, heap 768 MiB et semi-space 8 MiB ; les tentatives 512/1024 avaient respectivement épuisé le heap et été interrompues |
 | Build KARTA | PASS | `npm run build`, aucune dépendance produit ajoutée |
 | Revue indépendante | PASS dans le périmètre décrit | `/root/iao_repo_inventory`, empreintes dans `independent-review.json` |
@@ -50,10 +51,26 @@ Les tentatives d'indexation interrompues sont récapitulées dans `index-attempt
 
 ## Conditions de suite
 
-1. Rejouer la suite SQL dans un environnement où PGlite initialise son worker et obtenir les 16 assertions ; responsable : intégration/CI IAO.
+1. Confirmer la CI sur la dernière tête du brouillon après le raccordement et la correction de style ; les 16 assertions SQL ont déjà réussi dans le job KARTA initial.
 2. Revoir et intégrer le correctif dans la branche de consolidation ; ne pas assimiler une proposition à une fusion ou un déploiement.
 3. Étendre le protocole existant pour les continuations, résultats intermédiaires, budgets, interruptions et reçus d'usage ; conserver les parcours directs autorisés.
 4. Qualifier une route sandbox/fournisseur avec isolation, permissions par opération, approbation/reprise, absence de double effet et compte autorisé ; commencer par les lectures composées.
 5. Mesurer coût total par tâche réussie, qualité, preuves complètes, latences médiane/p95 et échecs sur les usages PURAMA avant d'activer progressivement.
 
 Le moteur reste une seule architecture IAO/KARTA/CHEF : ce lot n'ajoute pas de deuxième catalogue, routeur, ordonnanceur ou interface utilisateur.
+
+## Raccordement à la continuité intégrée pendant ce travail
+
+La branche de consolidation a avancé à `18c40d0eb59b48636dd8d8fb54c0516b700ed746` pendant la réception (fusion de la PR 108). Aucun des cinq fichiers de correction/recherche ne chevauche ce lot. Le brouillon reçoit cette évolution sans conflit ; les sources du correctif conservent les empreintes de la revue indépendante. La déduplication exacte de mémoire ajoutée par la PR 108 est réutilisée, sans seconde implémentation.
+
+La branche de ce lot est aussi ajoutée à `git.deploymentEnabled: false` dans `vercel.json`, selon la protection déjà utilisée par les autres branches de qualification. Cette entrée ne modifie aucune autre règle de déploiement.
+
+Le raccordement local valide 295 tests de six suites, puis le typecheck complet et le build. La CI initiale a aussi trouvé une erreur de style dans un appel chaîné de test ; le retour à la ligne a été corrigé, les 32 tests ciblés relancés avec succès, et le delta de format revu indépendamment. Les avertissements de style antérieurs hors périmètre ne sont pas modifiés.
+
+## Réception finale du graphe après raccordement
+
+La reconstruction locale de l'index a échoué à plusieurs reprises ; les résultats et les limites sont conservés dans `reconciliation-index-attempts.json`. Aucun de ces essais n'est une preuve verte. La vérification a donc utilisé GitNexus 1.6.12 déjà installé sur le Mac, dans une copie temporaire isolée du commit de consolidation, avec les six fichiers exacts du lot appliqués et staged. Aucune source des projets ouverts n'a été modifiée.
+
+L'indexation de tout le runtime et des scripts KARTA a réussi. Les six fichiers du lot et tous les fichiers TypeScript du runtime ont des empreintes identiques à la proposition locale, sans changement pendant l'analyse (`reconciliation-mac-match.json`). Les tests et documents restent hors graphe. Le contrôle staged réussit : **5 symboles, tous dans les deux fichiers produit attendus, 6 flux, risque HIGH**. La comparaison `main` réussit aussi : **2 869 fichiers, 3 214 symboles, 309 flux, risque CRITICAL**, avec liste de symboles plafonnée ; elle inclut toute la consolidation antérieure. Ces résultats ne remplacent pas les limites d'extraction signalées par l'outil.
+
+Les reçus Mac et les sorties exactes de l'analyse sont conservés à côté des contrôles initiaux. La CI de la nouvelle tête doit être reçue après publication ; son résultat final sera attaché à la description de la PR pour éviter de modifier à nouveau les sources seulement pour y enregistrer ce résultat.

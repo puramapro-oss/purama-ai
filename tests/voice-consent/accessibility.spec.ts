@@ -195,7 +195,7 @@ for (const layout of [
     expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     expect(await transcript.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
     await transcript.focus();
-    await page.keyboard.press('Control+End');
+    await page.keyboard.press(process.platform === 'darwin' ? 'Meta+ArrowDown' : 'Control+End');
     await expect.poll(() => transcript.evaluate(element => element.scrollTop + element.clientHeight >= element.scrollHeight - 2)).toBe(true);
     geometry.push(await expectPinnedControls(page, dialog, 'long-answer-end'));
     expect(await transcript.evaluate(element => {
