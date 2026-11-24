@@ -1,0 +1,153 @@
+{
+  "scope": "Exact immutable QA archives accepted by the existing whitespace gate; no executable logic or product change.",
+  "source": {
+    "repository": "puramapro-oss/purama-ai",
+    "head": "385b03490114fc78ddb3fa06b5fa67981adcd8c8",
+    "tree": "19091b486f141bd2d3813107058a06cfb21ae5df",
+    "pr40_base": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+    "main": "ae84415be0b9516422805910be999a2c1e6350c0"
+  },
+  "archives": [
+    {
+      "path": "qa/iao-integration-20261124/assembly/immutability-before-final.log",
+      "git_blob_sha1": "89117259c0fc80f48e4c26f0755648f3a1f6c2d0"
+    },
+    {
+      "path": "qa/iao-integration-20261124/assembly/immutability-before.log",
+      "git_blob_sha1": "983820afc7ffd5f12a14afaad806f6a1d00d1bd0"
+    },
+    {
+      "path": "qa/iao-integration-20261124/assembly/karta-build-serial.log",
+      "git_blob_sha1": "4cad8edb2807d0fc5a1eaf52c51f413e2b85d5c8"
+    },
+    {
+      "path": "qa/iao-integration-20261124/assembly/karta-typecheck-1024.log",
+      "git_blob_sha1": "55246ae3da84de95a7333206ae1d9ade56c0be8f"
+    },
+    {
+      "path": "qa/iao-integration-20261124/assembly/karta-typecheck-serial.log",
+      "git_blob_sha1": "7243009a33be03841809d2a193c6d1998625049e"
+    },
+    {
+      "path": "qa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log",
+      "git_blob_sha1": "7c6b1d14cbfc1f95e23ca17dca62517f1f02a143"
+    },
+    {
+      "path": "qa/iao-integration-20261124/gitnexus/root-index.log",
+      "git_blob_sha1": "7ed99bd6a156ae2c847d3f9b954d389905f9714a"
+    },
+    {
+      "path": "qa/iao-integration-20261124/memory/projection-after.log",
+      "git_blob_sha1": "55bac429e3e8a4f8895ea51356a9d81564a75e35"
+    },
+    {
+      "path": "qa/iao-integration-20261124/memory/projection-before-in-process.log",
+      "git_blob_sha1": "efefff155c561b23c7fa6516bbaf9a850eff2722"
+    },
+    {
+      "path": "qa/iao-integration-20261124/memory/projection-before.log",
+      "git_blob_sha1": "4d3821f0761b459ddc174b103c2db082a2dbf4b8"
+    },
+    {
+      "path": "qa/iao-integration-20261124/runtime/after.log",
+      "git_blob_sha1": "304319bd3089749a486db6e7ca55a7a845d81110"
+    },
+    {
+      "path": "qa/iao-integration-20261124/runtime/before-complete.log",
+      "git_blob_sha1": "7c182bfb4c057e8d71549b4a5c9dd385793caa25"
+    },
+    {
+      "path": "qa/iao-integration-20261124/runtime/before.log",
+      "git_blob_sha1": "e6f6e8c304e81997c5f5e90feca41e0fa40d90d6"
+    },
+    {
+      "path": "qa/iao-integration-20261124/runtime/regressions-final.log",
+      "git_blob_sha1": "8fbe2c1f4ae25d775d717eea28642e47fdcf668f"
+    },
+    {
+      "path": "qa/iao-integration-20261124/runtime/regressions.log",
+      "git_blob_sha1": "61bad687fa432d2244e692dca302b693373e61fa"
+    }
+  ],
+  "script": {
+    "path": "scripts/ci/check-wealth-diff.sh",
+    "before_sha256": "aec651df8395cae31087a963bad5e2f470a0bd9bace1586214037f3c95421872",
+    "after_sha256": "de2a23e3f2d22be0471109eeaf3847e8f5ea65170fa7b1670c8f345c90382b67"
+  },
+  "gate": {
+    "before_exit_code": 2,
+    "after_exit_code": 0,
+    "comparison": "source.pr40_base -> source.head; patched script executed from working tree"
+  },
+  "tests": {
+    "existing": {
+      "passed": 10,
+      "total": 10
+    },
+    "targeted": {
+      "passed": 32,
+      "total": 32,
+      "cases": {
+        "individual_original_archives": 15,
+        "one_non_whitespace_byte_changed": 15,
+        "all_original_archives": 1,
+        "all_original_archives_with_faulty_product_source": 1
+      }
+    }
+  },
+  "preservation": {
+    "original_archive_bytes_unchanged": true,
+    "existing_guard_logic_unchanged": true,
+    "existing_tests_unchanged": true,
+    "previous_vercel_settings_unchanged": true
+  },
+  "deployment": {
+    "branch": "fix/iao-archive-receipts-20261124",
+    "enabled": false
+  },
+  "gitnexus": {
+    "status": "PARTIEL",
+    "cli_version": "1.6.12",
+    "full_index_attempt": {
+      "exit_code": -9,
+      "signal": "SIGKILL",
+      "cause": "Not established; configured timeout and storage cap were not reached."
+    },
+    "isolated_index": {
+      "exit_code": 0,
+      "head": "385b03490114fc78ddb3fa06b5fa67981adcd8c8",
+      "scope": "CI scripts and the two changed JSON files; five indexed files, not the application graph.",
+      "files": 5,
+      "nodes": 22,
+      "edges": 33,
+      "processes": 2
+    },
+    "delta": {
+      "scope": "all",
+      "exit_code": 0,
+      "changed_files": 3,
+      "overlapping_indexed_symbols": 0,
+      "interpretation": "Changed data/configuration hunks are unmapped; this is not a clean-tree result."
+    },
+    "main_comparison": {
+      "base": "ae84415be0b9516422805910be999a2c1e6350c0",
+      "exit_code": 0,
+      "changed_files": 2678,
+      "indexed_symbols": 9,
+      "affected_processes": 2,
+      "reported_risk": "medium",
+      "scope": "Existing consolidation plus this delta, interpreted only through the CI index."
+    },
+    "limitations": [
+      "Bash and JSON are not parsed symbol languages in GitNexus 1.6.12.",
+      "No application function, class or method is edited.",
+      "FTS is disabled; the query returned no results with an explicit FTS warning.",
+      "The CI-only index cannot certify application-wide impact or safety."
+    ]
+  },
+  "limitations": [
+    "This guard checks whitespace; it does not forbid all clean modifications to an archive.",
+    "CI after integration and production deployment are not claimed.",
+    "Raw test and GitNexus logs are kept outside this repository."
+  ]
+}
