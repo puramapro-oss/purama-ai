@@ -1,0 +1,16 @@
+{
+  "command": [
+    "npm",
+    "install",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund",
+    "i18next@26.3.4"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-devices-20261124",
+  "startedAt": "2026-11-24T03:06:02.888719+00:00",
+  "durationSeconds": 6.612,
+  "exitCode": 0,
+  "stdout": "install-targeted.stdout.txt",
+  "stderr": "install-targeted.stderr.txt"
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "static dependency-source reading; no runtime or browser execution",
+  "versions": {
+    "@playwright/test": "1.64.1",
+    "playwright": "1.64.1",
+    "playwright-core": "1.64.1"
+  },
+  "fixtureResolution": {
+    "path": "node_modules/playwright/lib/index.js",
+    "defaultBrowserType": "chromium",
+    "browserName": "defaults to defaultBrowserType unless browserName explicitly overridden"
+  },
+  "deviceDescriptors": {
+    "Desktop Chrome": "chromium",
+    "iPad Pro 11": "webkit",
+    "iPhone 14": "webkit"
+  },
+  "sourceSha256": {
+    "node_modules/playwright/lib/index.js": "90336f507074874af66f1d681d4fd7727f5946d1f37a3621d748caa3a8ae0485",
+    "node_modules/playwright-core/lib/coreBundle.js": "829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d"
+  }
+}

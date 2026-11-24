@@ -227,6 +227,54 @@ jobs:
       - name: Audit complete site dependency lock
         run: npm audit --package-lock-only --audit-level=high --ignore-scripts
 
+  device-compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit
+      - name: Typecheck the device qualification harness
+        run: npx tsc --noEmit -p qa/iao-devices-20261124/browser/tsconfig.json
+      - name: Prepare the existing locked browser image
+        id: device_browser_image
+        run: bash scripts/ci/run-site-browser.sh --prepare
+      - name: Chat lifecycle across five engine and viewport profiles
+        if: ${{ !cancelled() && steps.device_browser_image.outcome == 'success' }}
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          node node_modules/playwright/cli.js test
+          --config qa/iao-devices-20261124/browser/chat.playwright.config.ts
+      - name: Public navigation and responsive layout across five profiles
+        if: ${{ !cancelled() && steps.device_browser_image.outcome == 'success' }}
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          node node_modules/playwright/cli.js test
+          --config qa/iao-devices-20261124/browser/public.playwright.config.ts
+      - name: Offline persistence and recovery across five profiles
+        if: ${{ !cancelled() && steps.device_browser_image.outcome == 'success' }}
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          node node_modules/playwright/cli.js test
+          --config qa/iao-devices-20261124/browser/offline.playwright.config.ts
+      - name: Touch controls and draft retention through viewport rotation
+        if: ${{ !cancelled() && steps.device_browser_image.outcome == 'success' }}
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          node node_modules/playwright/cli.js test
+          --config qa/iao-devices-20261124/browser/touch.playwright.config.ts
+      - name: Preserve device compatibility reports and failure traces
+        if: ${{ always() && steps.device_browser_image.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-device-compatibility-${{ github.sha }}
+          path: qa/iao-devices-20261124/browser/results
+          if-no-files-found: error
+          retention-days: 14
+
   subscription-concurrency:
     runs-on: ubuntu-latest
     timeout-minutes: 10

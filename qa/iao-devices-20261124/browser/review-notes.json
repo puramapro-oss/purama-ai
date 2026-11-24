@@ -1,0 +1,50 @@
+{
+  "reviewScope": "New QA configuration and touch test; product source read only; no browser execution",
+  "reusedConfigurations": [
+    "tests/chat/playwright.config.ts",
+    "playwright.config.ts",
+    "playwright.offline.config.ts"
+  ],
+  "reusedProtectionFixtures": [
+    "tests/chat/fixtures.ts",
+    "tests/public/fixtures.ts",
+    "test/browser/offline-workspace.spec.ts networkAudit and real loopback server"
+  ],
+  "touchAssertions": [
+    "Tap opens the real widget.",
+    "Dialog remains entirely visible in portrait and landscape viewports.",
+    "Editable request remains visible in landscape and retains its exact Unicode text.",
+    "Tap submits one synthetic provider response.",
+    "Tap stops the response, removes partial output and restores the original editable request.",
+    "Exactly one chatbot request exists and its AbortSignal fired.",
+    "Returning to portrait retains the same editable request.",
+    "Tap closes the widget."
+  ],
+  "sourceContractsReviewed": [
+    "src/components/ChatbotWidget.tsx: ChatbotWidget, stopActiveRequest, dialog viewport constraints and input form",
+    "tests/chat/transport.ts: existing synthetic streaming response and aborted-request evidence"
+  ],
+  "timingEstimate": {
+    "status": "UNMEASURED estimate",
+    "minutesAfterRunnerPreparation": [
+      5,
+      15
+    ],
+    "workers": 1,
+    "retries": 0,
+    "timeoutsSeconds": {
+      "chat": 20,
+      "touch": 20,
+      "public": 30,
+      "offline": 45
+    }
+  },
+  "qualificationLimits": [
+    "Linux Playwright engines, not branded production browser binaries or manufacturer hardware.",
+    "Viewport rotation emulates width and height changes; it does not test physical orientation, sensor delivery, browser chrome or virtual keyboard.",
+    "Synthetic provider transport validates interface lifecycle, not real provider quality or latency.",
+    "The canonical offline import scenario explicitly resets the viewport to390x844.",
+    "The canonical offline restoration scenario opens a fresh secondary browser context without inheriting mobile emulation.",
+    "No local execution succeeded or failed because no local browser was started."
+  ]
+}

@@ -1,0 +1,26 @@
+
+> vite_react_shadcn_ts@0.0.0 test:dependencies
+> node --test tests/dependency-compat.cjs tests/i18next-compat.test.mjs
+
+(node:26) [DEP0128] DeprecationWarning: Invalid 'main' field in '/workspace/scratch/6431e6d17379/iao-devices-20261124/node_modules/opentimestamps/package.json' of 'open-timestamps.js'. Please either fix that or report it to the module author
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✔ OpenTimestamps can load with its HTTP dependencies (468.635642ms)
+✔ calendar whitelist accepts known hosts and rejects lookalikes (2.026128ms)
+✔ pending proof round-trips without losing its digest or calendar (2.574674ms)
+✔ Bitcore retains exact integer arithmetic and byte conversion (0.573813ms)
+✔ HTTP fork preserves promise, binary body, cookies and rejection contracts (43.328804ms)
+✔ bundled French and English resources support repeated language changes (4.563575ms)
+✔ every additional bundled locale can be loaded and selected without losing its text (4.018195ms)
+✔ missing translations and regional locale tags retain the French fallback (1.486306ms)
+✔ ordinary interpolation preserves values and supports explicit escaping (0.901957ms)
+✔ plural selection supports English and all Arabic plural categories (1.500017ms)
+✔ ordinary deep resource updates preserve siblings and replace intended values (0.422496ms)
+✔ react-i18next renders the active language through its provider and hook (4.854033ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 670.805748

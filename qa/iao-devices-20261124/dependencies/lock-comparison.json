@@ -1,0 +1,84 @@
+{
+  "capturedAt": "2026-11-24T03:06:44.657933+00:00",
+  "base": "3a8d39c9927c461a7300712b719ef0aa6cc1f173",
+  "addedPackages": [],
+  "removedPackages": [],
+  "changedPackages": [
+    "",
+    "node_modules/i18next"
+  ],
+  "changedPackageRecords": {
+    "node_modules/i18next": {
+      "before": {
+        "version": "26.0.4",
+        "resolved": "https://registry.npmjs.org/i18next/-/i18next-26.0.4.tgz",
+        "integrity": "sha512-gXF7U9bfioXPLv7mw8Qt2nfO7vij5MyINvPgVv99pX3fL1Y01pw2mKBFrlYpRxRCl2wz3ISenj6VsMJT2isfuA==",
+        "funding": [
+          {
+            "type": "individual",
+            "url": "https://www.locize.com/i18next"
+          },
+          {
+            "type": "individual",
+            "url": "https://www.i18next.com/how-to/faq#i18next-is-awesome.-how-can-i-support-the-project"
+          },
+          {
+            "type": "individual",
+            "url": "https://www.locize.com"
+          }
+        ],
+        "license": "MIT",
+        "dependencies": {
+          "@babel/runtime": "^7.29.2"
+        },
+        "peerDependencies": {
+          "typescript": "^5 || ^6"
+        },
+        "peerDependenciesMeta": {
+          "typescript": {
+            "optional": true
+          }
+        }
+      },
+      "after": {
+        "version": "26.3.4",
+        "resolved": "https://registry.npmjs.org/i18next/-/i18next-26.3.4.tgz",
+        "integrity": "sha512-pa7m0d7pBDqGHZxljT+WPFeyFgQ7P7SciPPo1tTqYuO0z4sqADYhwnBESmmGp/wEof1inwdls/k8ZgTg8rxFHA==",
+        "funding": [
+          {
+            "type": "individual",
+            "url": "https://www.locize.com/i18next"
+          },
+          {
+            "type": "individual",
+            "url": "https://www.i18next.com/how-to/faq#i18next-is-awesome.-how-can-i-support-the-project"
+          },
+          {
+            "type": "individual",
+            "url": "https://www.locize.com"
+          }
+        ],
+        "license": "MIT",
+        "peerDependencies": {
+          "typescript": "^5 || ^6"
+        },
+        "peerDependenciesMeta": {
+          "typescript": {
+            "optional": true
+          }
+        }
+      }
+    }
+  },
+  "lockSha256": "fafcf64aae08475707031a0cd46b9528c4f85db846539732bdd7d5b3b49b894a",
+  "checks": {
+    "onlyExpectedNodesChanged": true,
+    "noPackagesAddedOrRemoved": true,
+    "rootOnlyUpdatesI18next": true,
+    "lockMetadataPreserved": true,
+    "manifestOnlyUpdatesTargetAndTestCommand": true,
+    "targetVersionExact": true,
+    "existingCompatibilityTestsUnchanged": true,
+    "manifestTextOnlyChangesTwoIntendedFields": true
+  }
+}

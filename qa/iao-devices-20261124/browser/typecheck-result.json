@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "qa/iao-devices-20261124/browser/tsconfig.json"
+  ],
+  "exitCode": 0,
+  "status": "PASS",
+  "browserExecuted": false
+}

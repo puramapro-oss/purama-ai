@@ -1,0 +1,15 @@
+/*
+!/src/
+/src/*
+!/src/i18n/
+!/src/i18n/**
+!/tests/
+/tests/*
+!/tests/dependency-compat.cjs
+!/tests/i18next-compat.test.mjs
+!/qa/
+/qa/*
+!/qa/iao-devices-20261124/
+/qa/iao-devices-20261124/*
+!/qa/iao-devices-20261124/browser/
+!/qa/iao-devices-20261124/browser/*.ts

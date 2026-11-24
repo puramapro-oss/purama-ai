@@ -1,0 +1,40 @@
+{
+  "chat": {
+    "selectedTitles": 6,
+    "allTitlesExistLiterally": true
+  },
+  "offline": {
+    "selectedTitles": 6,
+    "allTitlesExistLiterally": true
+  },
+  "public": {
+    "responsiveCases": 8,
+    "navigationCases": 2,
+    "filters": [
+      "pas d'overflow horizontal",
+      "Landing page — hero visible",
+      "Login — formulaire bien dimensionné",
+      "Landing page — le CTA principal ouvre le formulaire d’inscription",
+      "Navigation — redirect non-auth vers login"
+    ]
+  },
+  "touch": {
+    "newCases": 1,
+    "profiles": 3,
+    "tapActions": 4
+  },
+  "runtimeExecution": false,
+  "configuredProfiles": [
+    "chromium-small-touch-320x568",
+    "firefox-desktop-1280x800",
+    "webkit-desktop-1280x800",
+    "webkit-mobile-touch-390x844",
+    "webkit-tablet-touch-768x1024"
+  ],
+  "canonicalFileSha256": {
+    "tests/chat/lifecycle.spec.ts": "86f63975f628913fe3e435c006c75c397a3aca375008e1d38215cc9bf804f824",
+    "test/browser/offline-workspace.spec.ts": "97741c4f2feba3c820c72f648c6fe004eba24e0d57bc6f5b0453794e206cf852",
+    "tests/responsive.spec.ts": "cfdd4e28d75b76f6b4b5bfa02141369aefcdc42cc4a6c3b55b9ac7aa607f2988",
+    "tests/navigation.spec.ts": "29bcd69c675f0b8860f8597acfae93836d2cc93829071e988e7c24b34674f402"
+  }
+}

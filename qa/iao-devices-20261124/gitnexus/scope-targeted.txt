@@ -1,0 +1,11 @@
+/*
+!/src/
+/src/*
+!/src/i18n/
+!/src/i18n/**
+!/tests/
+/tests/*
+!/tests/dependency-compat.cjs
+!/tests/i18n-compat.test.mjs
+!/tests/device-compat/
+!/tests/device-compat/**

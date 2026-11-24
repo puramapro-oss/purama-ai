@@ -1,0 +1,81 @@
+{
+  "archive": "local-logs.zip",
+  "sha256": "39054a9819f590a79c351052b4a8c7f409d2eb9a19a89f2ba56e2c9e15406b1a",
+  "files": [
+    {
+      "path": "browser/chat-list.log",
+      "bytes": 4161,
+      "sha256": "db5975985e6c2cf7ef2d4297c4a79fe2d3d4e2cb79795feaee43bccb7d33d932"
+    },
+    {
+      "path": "browser/offline-list.log",
+      "bytes": 4666,
+      "sha256": "cf0e66b3604ec45a0a2e965f0024e90aaabc7272f2b9e6480ba1ad48c9e66728"
+    },
+    {
+      "path": "browser/public-list.log",
+      "bytes": 7457,
+      "sha256": "d82e976adc8674f5b32cac70d48cc84ac5bec5819bfc766652e9ae097d58899d"
+    },
+    {
+      "path": "browser/touch-list.log",
+      "bytes": 471,
+      "sha256": "c4ff41a07b059bea426efce377fcab796a4f6538d159eea2bc749b97d8796bfd"
+    },
+    {
+      "path": "browser/typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "gitnexus/analyze-before.log",
+      "bytes": 1850,
+      "sha256": "daa0d85f33f50047d20aff9eccca7f1f280a754d115197f0a5d98a7f10c71094"
+    },
+    {
+      "path": "gitnexus/analyze-bounded-before.log",
+      "bytes": 2078,
+      "sha256": "c2e430d0054f9aa8903d011361c05ac5e8f4ad159c4214f46968582235217f17"
+    },
+    {
+      "path": "gitnexus/analyze-final-fresh.log",
+      "bytes": 514,
+      "sha256": "a216eeee42446408d1edcd29f2d6573cdbc3154242778f63c4bb2990d114ca8d"
+    },
+    {
+      "path": "gitnexus/analyze-final.log",
+      "bytes": 204,
+      "sha256": "84803b4abd6fb8e78dc3b49ea02d4f5e814b6bc83cd771301d52b73d5ca6796e"
+    },
+    {
+      "path": "gitnexus/analyze-targeted-before.log",
+      "bytes": 514,
+      "sha256": "8f31420d0ed10db7461150e14866d8a5dafc0028cd66ebabc027bef0775434b0"
+    },
+    {
+      "path": "npm-ci-baseline-bounded.log",
+      "bytes": 972,
+      "sha256": "481499a7a2fe83352e249674f6f2d8e2afc968d751670848ca9e8d8857aaba2b"
+    },
+    {
+      "path": "npm-ci-baseline.log",
+      "bytes": 457,
+      "sha256": "a385d0ad54b399c122a55c950dfb8a9bcbc7f997fe4b46834903cda3ceffb240"
+    },
+    {
+      "path": "playwright-install.log",
+      "bytes": 4617,
+      "sha256": "d06bf1e42a592efb3ed0529f18d35d3fc7bb469d3e7c0cc01ce51df4e0a68d71"
+    },
+    {
+      "path": "site-build.log",
+      "bytes": 637,
+      "sha256": "8fad6b0e4c0c510e562e0cc682af2551ee0209cb885ddec4071c46249875016f"
+    },
+    {
+      "path": "site-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
