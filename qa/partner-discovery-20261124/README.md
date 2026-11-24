@@ -1,5 +1,13 @@
 # Découverte de partenaires — réception du 24 novembre 2026
 
+## Réception courante — rapprochement avec PR111
+
+**La réception courante est le [dossier de rapprochement](reconciliation/README.md).** Il compose le canon médias `3c6d6c3` et PR112 `849402e` en conservant un handler et une seule RPC transactionnelle. Ses résultats locaux sont **281 cas ciblés PASS**, lint ciblé PASS, Deno natif PASS et TypeScript global frontend PASS. La compilation complète, les neuf cas SQL et les six parcours navigateur médias attendent leur réception CI sur le candidat publié.
+
+Les sections suivantes conservent les étapes antérieures à PR111. Leurs empreintes, nombres et descriptions d’écriture partielle ne qualifient pas le nouvel import atomique : celui-ci rapporte un état non confirmé en cas de réception ambiguë, jamais un préfixe de lignes supposé écrit. Les plafonds canoniques sont 25 candidats et 4 000 tokens de sortie. La qualification, les contrats médias et le traitement des réponses de PR111 restent préservés.
+
+## Historique antérieur au rapprochement
+
 Ce lot fiabilise la fonction existante `partner-find-prospects`, son client et le dialogue de recherche de `PartnerAgentProspects`. Il conserve les contrats, barèmes, réglages et fournisseurs existants. Aucun second moteur de prospection n’est créé.
 
 **Base des reproductions et des premières réceptions :** `18c40d0eb59b48636dd8d8fb54c0516b700ed746`.

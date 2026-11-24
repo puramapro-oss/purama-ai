@@ -1,0 +1,19 @@
+{
+  "command": [
+    "rg",
+    "-n",
+    "resolveCustomAgentTools|toAnthropicTools|createRealClaudeClient|claude/real|tools/customRegistry",
+    "--glob",
+    "!karta/**",
+    "--glob",
+    "!qa/**",
+    "--glob",
+    "!docs/**",
+    "--glob",
+    "!*.md",
+    "."
+  ],
+  "exit_code": 0,
+  "matches": "./supabase/functions/creator-agent-generate/index.ts:18:// utilisateur (cf karta/src/tools/customRegistry.ts \u2014 1 seule source de v\u00e9rit\u00e9, dupliqu\u00e9e ici\n./src/lib/creator-agent.ts:146:/** Outils r\u00e9ellement ex\u00e9cutables par KARTA Engine pour un agent cr\u00e9\u00e9 (cf karta/src/tools/customRegistry.ts\n",
+  "stderr": ""
+}

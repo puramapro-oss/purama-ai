@@ -1,0 +1,20 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "test/customRegistry.test.ts",
+    "test/claudeTransportCost.test.ts",
+    "test/localComputeFabricMemoryProjection.test.ts",
+    "test/consultationTransport.test.ts",
+    "test/chefWorkshopEdge.test.ts",
+    "test/kartaTriggerEdge.test.ts"
+  ],
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=768 --max-semi-space-size=8"
+  },
+  "upstream_commit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "exit_code": 0,
+  "elapsed_seconds": 4.88
+}

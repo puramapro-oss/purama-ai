@@ -1,0 +1,30 @@
+{
+  "recorded_at_utc": "2026-11-24T21:49:39.564324+00:00",
+  "canonical_commit": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+  "graph": "index-composed.json",
+  "records": [
+    {
+      "scope": "staged",
+      "exit_code": 0,
+      "seconds": 0.971,
+      "files": 182,
+      "symbols": 142,
+      "processes": 15,
+      "risk": "high",
+      "log": "changes-latest-staged.log.gz",
+      "uncompressed_sha256": "28e724f321d2283b7b168a8e2d2ea3e2661d8c970170a5b83a731dfc6811c141"
+    },
+    {
+      "scope": "compare-main",
+      "exit_code": 0,
+      "seconds": 1.574,
+      "files": 3194,
+      "symbols": 242,
+      "processes": 28,
+      "risk": "critical",
+      "log": "changes-latest-compare-main.log.gz",
+      "uncompressed_sha256": "8902be2b27af7920a79dd4d08b4c3cdbd7c98f3c4da69b5939782a8e457ecc64"
+    }
+  ],
+  "limits": "13 source graph only, unchanged hashes. Staged includes canonical PR111/109 and evidence; compare-main includes historical consolidation. High/critical aggregate impacts retained; no claim of global completeness."
+}

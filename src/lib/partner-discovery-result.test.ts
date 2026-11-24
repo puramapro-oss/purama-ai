@@ -65,10 +65,36 @@ describe('partner discovery HTTP receipts and bounded public failures', () => {
     expect(error.message).not.toContain('PRIVATE-PROVIDER');
   });
 
+  it('explains a canonical targeting failure with a local actionable message', async () => {
+    rejectWith(httpFailure(failureBody('failed', 0, 'discovery_targeting_required'), 409));
+    const error = await rejected();
+    expect(error).toMatchObject({ status: 'failed', confirmedInserted: 0 });
+    expect(error.message).toBe('Enregistrez les paramètres de pays et de langues avant de rechercher des prospects.');
+    expect(error.message).not.toMatch(/PRIVATE-PROVIDER|api_key/u);
+  });
+
+  it('explains an unconfirmed canonical import without promising rollback', async () => {
+    rejectWith(httpFailure(failureBody('unknown', 0, 'discovery_storage_unconfirmed'), 500));
+    const error = await rejected();
+    expect(error).toMatchObject({ status: 'unknown', confirmedInserted: 0 });
+    expect(error.message).toContain('Le résultat de l’enregistrement des prospects n’a pas pu être confirmé.');
+    expect(error.message).toContain('Vérifiez la liste des prospects avant de relancer.');
+    expect(error.message).not.toMatch(/annulés|aucun prospect|PRIVATE-PROVIDER|api_key/u);
+  });
+
+  it('keeps an unknown structured code local and never displays its arbitrary diagnostic', async () => {
+    rejectWith(httpFailure(failureBody('unknown', 0, 'discovery_private_provider_debug_SECRET'), 503));
+    const error = await rejected();
+    expect(error).toMatchObject({ status: 'unknown', confirmedInserted: 0 });
+    expect(error.message).toContain('Le résultat de la recherche n’a pas pu être confirmé.');
+    expect(error.message).toContain('Vérifiez la liste des prospects avant de relancer.');
+    expect(error.message).not.toMatch(/SECRET|PRIVATE-PROVIDER|api_key|discovery_private/u);
+  });
+
   it.each([
     { ...failureBody(), confirmed_inserted: -1 },
     { ...failureBody(), confirmed_inserted: 1.5 },
-    { ...failureBody(), confirmed_inserted: 17 },
+    failureBody('unknown', 26),
     { ...failureBody(), confirmed_inserted: '1' },
     { ...failureBody(), inserted: 2 },
     { ...failureBody('failed', 1) },
@@ -157,12 +183,30 @@ describe('partner discovery HTTP receipts and bounded public failures', () => {
     expect(await rejected()).toMatchObject({ status: 'partial', confirmedInserted: 2 });
   });
 
-  it.each([null, { inserted: '2', prospects: [] }, { inserted: -1, prospects: [] }, { inserted: 2, prospects: [] }])(
+  it.each([
+    null, { inserted: '2', prospects: [] }, { inserted: -1, prospects: [] }, { inserted: 2, prospects: [] },
+    { inserted: 26, prospects: Array.from({ length: 26 }, (_, index) => ({ id: `over-limit-${index}` })) },
+    { inserted: 1, skipped: -1, prospects: [{ id: 'confirmed' }] },
+    { inserted: 1, skipped: '0', prospects: [{ id: 'confirmed' }] },
+    { inserted: 1, skipped: 25, prospects: [{ id: 'confirmed' }] },
+  ])(
     'does not announce success from an invalid successful-HTTP receipt %#', async data => {
       api.invoke.mockResolvedValueOnce({ data, error: null });
       expect(await rejected()).toMatchObject({ status: 'unknown', confirmedInserted: null });
     },
   );
+
+  it('accepts canonical batches through 25 candidates and preserves the skipped count', async () => {
+    for (const [inserted, skipped] of [[24, 1], [25, 0]]) {
+      const data = { inserted, skipped,
+        prospects: Array.from({ length: inserted }, (_, index) => ({ id: `confirmed-${index}` })),
+      };
+      api.invoke.mockResolvedValueOnce({ data, error: null });
+      await expect(findProspects('Médias spécialisés')).resolves.toEqual(data);
+    }
+    rejectWith(httpFailure(failureBody('unknown', 25)));
+    expect(await rejected()).toMatchObject({ status: 'unknown', confirmedInserted: 25 });
+  });
 
   it('retains the existing successful result and request contract', async () => {
     const data = { inserted: 1, prospects: [{ id: 'confirmed-prospect' }] };

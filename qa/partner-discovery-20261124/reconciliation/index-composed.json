@@ -1,0 +1,32 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "--index-only",
+    "--name",
+    "purama-ai-partner-composed-53633327",
+    "--workers",
+    "1"
+  ],
+  "exit_code": 0,
+  "seconds": 11.965,
+  "scope": "Exact composed13file product graph, not full repository; React/network/FTS limitations retained",
+  "inputs": {
+    "src/App.tsx": "3d02997080df6a9e97da87babbc41a46d0944d703b4116ab1ca877e81eec0c55",
+    "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+    "src/pages/PartnerAgentSettings.tsx": "586e8bbb31dac10704ac131f59457baa7a6a93aa43779815b63f1117886d0f86",
+    "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+    "src/lib/partner-discovery-result.ts": "a74828e029d78d49976dd2910bf34c220983c5cc02e01baec38436ed2efc7bee",
+    "src/lib/request-deadline.ts": "608884d254e95ecf3cfc7b2844356634037aaed9daaa84f93be77f9aa64be524",
+    "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+    "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+    "supabase/functions/_shared/assistant-policy.ts": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb",
+    "supabase/functions/_shared/assistant-response.ts": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+    "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "karta/src/claude/assistant-policy.ts": "556316344ee9d8920117fead638db4b2e46d6829d92d3b3d81c96431d3bf10a3"
+  }
+}

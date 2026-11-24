@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/partnerDiscovery.test.ts",
+    "test/assistantPolicy.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 0,
+  "seconds": 7.335
+}

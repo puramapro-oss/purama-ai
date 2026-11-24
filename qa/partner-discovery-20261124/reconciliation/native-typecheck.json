@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "started_at_utc": "2026-11-24T21:42:04.583177+00:00",
+  "ended_at_utc": "2026-11-24T21:42:05.904674+00:00",
+  "elapsed_seconds": 1.3214746880112216,
+  "exit_code": 0,
+  "timed_out": false,
+  "canonical_media_commit": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+  "prior_discovery_head": "849402e",
+  "runtime": {
+    "source_url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-unknown-linux-gnu.zip",
+    "checksum_url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-unknown-linux-gnu.zip.sha256sum",
+    "archive_sha256": "c6527f24f4b16031d3ae4fa9f658d5f11534c8d84ce7dc8502420280919c3490",
+    "archive_bytes": 41596794,
+    "binary_sha256": "ce6a052beb97c2b92de67077e3f3924ba7c9661ede0d8dc2f66a116a3c841f21",
+    "version": "deno 2.9.7 (stable, release, x86_64-unknown-linux-gnu)\nv8 15.0.245.2-rusty\ntypescript 6.0.3"
+  },
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "deno",
+    "check",
+    "--no-config",
+    "--no-lock",
+    "--node-modules-dir=none",
+    "supabase/functions/partner-find-prospects/index.ts"
+  ],
+  "inputs": [
+    {
+      "path": "supabase/functions/partner-find-prospects/index.ts",
+      "bytes": 2173,
+      "sha256": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85"
+    },
+    {
+      "path": "supabase/functions/partner-find-prospects/handler.ts",
+      "bytes": 19822,
+      "sha256": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6"
+    },
+    {
+      "path": "supabase/functions/_shared/assistant-policy.ts",
+      "bytes": 342,
+      "sha256": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb"
+    },
+    {
+      "path": "supabase/functions/_shared/assistant-response.ts",
+      "bytes": 1336,
+      "sha256": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714"
+    },
+    {
+      "path": "supabase/functions/_shared/request-body.ts",
+      "bytes": 7567,
+      "sha256": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c"
+    },
+    {
+      "path": "supabase/functions/_shared/request-deadline.ts",
+      "bytes": 3571,
+      "sha256": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6"
+    },
+    {
+      "path": "karta/src/claude/assistant-policy.ts",
+      "bytes": 7890,
+      "sha256": "556316344ee9d8920117fead638db4b2e46d6829d92d3b3d81c96431d3bf10a3"
+    }
+  ],
+  "inputs_unchanged_after": true,
+  "repository_inputs_match": true,
+  "dependency_cache": "Dedicated public-import cache reused from the prior independent Deno2.9.7 check; actual esm.sh Supabase2.119.2 graph.",
+  "log_file": "native-typecheck.log",
+  "log_sha256": "501a9d10c80e8ec94020d4c277d252e013327869411c6f0c8358446914d52c71",
+  "log_redactions": [
+    "Absolute isolated source directory replaced by <isolated-source>."
+  ],
+  "scope": "Native TypeScript validation of the complete composed entry, canonical injectable handler and actual local/remote imports. Seven local files, no stubs, no no-check flags, no server or provider/database/business calls, no deployment. Original repository configuration and dependencies unchanged."
+}

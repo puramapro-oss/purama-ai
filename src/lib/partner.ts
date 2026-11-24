@@ -25,6 +25,20 @@ export type ProspectStatus =
 export type ProspectType =
   | 'influencer' | 'website' | 'association' | 'media' | 'commerce' | 'other';
 
+export type PartnerContactRole = 'unknown' | 'editorial' | 'commercial' | 'creator' | 'venue';
+export type PartnerOutreachProfile = 'legacy' | 'media_affiliate' | 'editorial';
+
+export interface PartnerQualification {
+  profile: PartnerOutreachProfile;
+  role: Exclude<PartnerContactRole, 'unknown'>;
+  source_url: string;
+  country: string;
+  language: string;
+  consent_reference: string;
+  consent_at: string;
+  offer?: { name: string; url: string; summary: string };
+}
+
 export type EmailType =
   | 'outreach' | 'relance_1' | 'relance_2' | 'relance_3'
   | 'contract' | 'welcome' | 'custom' | 'reply';
@@ -63,6 +77,8 @@ export interface PartnerConfig {
   target_languages: string[];
   outreach_tone: string;
   custom_tone_prompt: string | null;
+  outreach_identity_mode?: 'assistant' | 'human_reviewed';
+  media_contract_terms?: Record<string, string>;
   require_approval_new_prospect: boolean;
   require_approval_outreach: boolean;
   require_approval_contract: boolean;
@@ -96,6 +112,10 @@ export interface PartnerProspect {
   has_replied: boolean;
   reply_sentiment: string | null;
   reply_summary: string | null;
+  reply_received_at?: string | null;
+  reply_gmail_message_id?: string | null;
+  reply_gmail_thread_id?: string | null;
+  reply_kind?: 'human' | 'refusal' | 'automatic' | null;
   contract_sent_at: string | null;
   contract_signed_at: string | null;
   contract_url: string | null;
@@ -105,6 +125,17 @@ export interface PartnerProspect {
   tags: string[];
   source: string | null;
   found_by_ai: boolean;
+  contact_role?: PartnerContactRole;
+  contact_evidence?: Record<string, unknown>;
+  outreach_profile?: PartnerOutreachProfile;
+  contact_qualification?: {
+    email?: string; source_url?: string; country?: string; language?: string;
+    verified_at?: string; qualified_by?: string;
+  } | null;
+  email_permission?: {
+    status?: string; email?: string; reference?: string; consented_at?: string; recorded_at?: string;
+  } | null;
+  outreach_offer?: { name?: string; url?: string; summary?: string } | null;
   created_at: string;
   updated_at: string;
 }
@@ -368,11 +399,39 @@ export async function deleteProspect(id: string): Promise<void> {
 // =============================================================
 // PROSPECT FINDER (delegated to edge function — Tavily + Claude)
 // =============================================================
+export type PartnerQualificationResult =
+  | { status: 'qualified'; prospect: PartnerProspect }
+  | { status: 'permission_withdrawn'; prospect?: PartnerProspect }
+  | { status: 'blocked'; reason?: string };
+
+/** Qualification is server-owned and bound to auth.uid(), never a table patch. */
+export async function qualifyProspect(
+  prospectId: string,
+  qualification: PartnerQualification | { withdraw_permission: true },
+): Promise<PartnerQualificationResult> {
+  const client = supabase as unknown as {
+    rpc: (name: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: Error | null }>;
+  };
+  const { data, error } = await client.rpc('partner_prospect_qualify', {
+    p_prospect_id: prospectId, p_qualification: qualification,
+  });
+  if (error) throw error;
+  if (!data || typeof data !== 'object' || !('status' in data) ||
+    !['qualified', 'permission_withdrawn', 'blocked'].includes(String(data.status))) {
+    throw new Error('La qualification du contact n’a pas été confirmée.');
+  }
+  if (data.status === 'qualified' && (!('prospect' in data) || !data.prospect ||
+    typeof data.prospect !== 'object' || !('id' in data.prospect) || data.prospect.id !== prospectId)) {
+    throw new Error('Le contact qualifié n’a pas été confirmé.');
+  }
+  return data as PartnerQualificationResult;
+}
+
 export async function findProspects(
   query: string,
   niche?: string,
   type?: ProspectType,
-): Promise<{ inserted: number; prospects: PartnerProspect[] }> {
+): Promise<{ inserted: number; skipped?: number; prospects: PartnerProspect[] }> {
   try {
     const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
       body: { query, niche, type },

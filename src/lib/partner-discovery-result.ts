@@ -4,6 +4,7 @@ import { cancelResponseQuietly } from './request-deadline';
 import type { PartnerProspect } from './partner';
 
 type FailureStatus = 'failed' | 'partial' | 'unknown';
+const DISCOVERY_BATCH_LIMIT = 25;
 const messages = {
   unauthorized: 'Reconnectez-vous avant de lancer une recherche de prospects.',
   invalid_request: 'Vérifiez le texte et les critères de la recherche.',
@@ -20,12 +21,29 @@ const messages = {
   discovery_timeout: 'Le délai de recherche est dépassé.',
   request_interrupted: 'La recherche a été interrompue.',
   discovery_unavailable: 'La recherche est temporairement indisponible.',
+  discovery_method_not_allowed: 'La demande de recherche n’est pas prise en charge par le service.',
+  discovery_unauthorized: 'Reconnectez-vous avant de lancer une recherche de prospects.',
+  discovery_configuration_invalid: 'Vérifiez la configuration du service de recherche avant de réessayer.',
+  discovery_configuration_unavailable: 'Les réglages de recherche sont temporairement indisponibles.',
+  discovery_targeting_required: 'Enregistrez les paramètres de pays et de langues avant de rechercher des prospects.',
+  discovery_targeting_invalid: 'Corrigez les pays ou les langues dans les paramètres de recherche.',
+  discovery_targeting_changed: 'Les pays ou les langues ont changé pendant la recherche. Vérifiez les paramètres avant de relancer.',
+  discovery_provider_not_configured: 'La connexion au service de recherche n’est pas configurée.',
+  discovery_provider_failed: 'Le service de recherche est temporairement indisponible.',
+  discovery_provider_invalid: 'La réponse du service de recherche n’a pas pu être validée.',
+  discovery_request_invalid: 'Vérifiez le texte, le type et la niche de la recherche.',
+  discovery_search_invalid: 'Les résultats de recherche reçus n’ont pas pu être validés.',
+  discovery_extraction_invalid: 'Les prospects proposés n’ont pas pu être validés.',
+  discovery_storage_unavailable: 'L’enregistrement des prospects n’a pas pu être confirmé.',
+  discovery_storage_unconfirmed: 'Le résultat de l’enregistrement des prospects n’a pas pu être confirmé.',
+  discovery_deadline_exceeded: 'Le délai de recherche est dépassé.',
+  discovery_cancelled: 'La recherche a été interrompue.',
 } as const;
 type KnownCode = keyof typeof messages;
 const record = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 const count = (value: unknown): value is number => typeof value === 'number'
-  && Number.isSafeInteger(value) && value >= 0 && value <= 16 && !Object.is(value, -0);
+  && Number.isSafeInteger(value) && value >= 0 && value <= DISCOVERY_BATCH_LIMIT && !Object.is(value, -0);
 
 /** Only local messages and validated receipt metadata escape the transport boundary. */
 export class PartnerDiscoveryError extends Error {
@@ -84,11 +102,15 @@ export async function readPartnerDiscoveryError(error: unknown): Promise<Partner
 }
 
 /** The refreshed list remains authoritative for prospect details. */
-export function parsePartnerDiscoveryResult(value: unknown): { inserted: number; prospects: PartnerProspect[] } {
+export function parsePartnerDiscoveryResult(value: unknown): { inserted: number; skipped?: number; prospects: PartnerProspect[] } {
   if (!record(value) || !count(value.inserted) || !Array.isArray(value.prospects)
     || value.prospects.length !== value.inserted || !value.prospects.every(record)
+    || (value.skipped !== undefined && (!count(value.skipped) || value.inserted + value.skipped > DISCOVERY_BATCH_LIMIT))
     || value.status !== undefined || value.error !== undefined) throw new PartnerDiscoveryError();
-  return { inserted: value.inserted, prospects: value.prospects as unknown as PartnerProspect[] };
+  return { inserted: value.inserted,
+    ...(typeof value.skipped === 'number' ? { skipped: value.skipped } : {}),
+    prospects: value.prospects as unknown as PartnerProspect[],
+  };
 }
 
 export function partnerDiscoveryFeedback(error: unknown): {

@@ -1,0 +1,155 @@
+{
+  "target": {
+    "id": "Function:src/lib/partner-contract-result.ts:contractFeedback",
+    "name": "contractFeedback",
+    "type": "Function",
+    "filePath": "src/lib/partner-contract-result.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 5,
+  "risk": "HIGH",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 4,
+    "processes_affected": 3,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 4,
+    "2": 1
+  },
+  "affected_processes": [
+    {
+      "name": "handleApproveContract",
+      "type": "Function",
+      "filePath": "src/pages/PartnerAgentProspects.tsx",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "PartnerAgent",
+      "type": "Function",
+      "filePath": "src/pages/PartnerAgent.tsx",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "PartnerAgentProspects",
+      "type": "Function",
+      "filePath": "src/pages/PartnerAgentProspects.tsx",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Pages",
+      "hits": 5,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Function:src/components/partner/PartnerAgentChat.tsx:PartnerAgentChat",
+        "name": "PartnerAgentChat",
+        "filePath": "src/components/partner/PartnerAgentChat.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentProspects.tsx:PartnerAgentProspects",
+        "name": "PartnerAgentProspects",
+        "filePath": "src/pages/PartnerAgentProspects.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_485_partneragentprospect",
+            "label": "PartnerAgentProspects → Cn",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentProspects.tsx:PartnerAgentProspects.handleApproveContract@173:2",
+        "name": "handleApproveContract",
+        "filePath": "src/pages/PartnerAgentProspects.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_215_handleapprovecontrac",
+            "label": "HandleApproveContract → Sb",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_86_handleapprovecontrac",
+            "label": "HandleApproveContract → Record",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_344_handleapprovecontrac",
+            "label": "HandleApproveContract → Limit",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_46_handleapprovecontrac",
+            "label": "HandleApproveContract → Text",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 1,
+        "id": "Function:src/pages/PartnerAgentProspects.tsx:PartnerAgentProspects.handleContract@144:2",
+        "name": "handleContract",
+        "filePath": "src/pages/PartnerAgentProspects.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Function:src/pages/PartnerAgent.tsx:PartnerAgent",
+        "name": "PartnerAgent",
+        "filePath": "src/pages/PartnerAgent.tsx",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_431_partneragent",
+            "label": "PartnerAgent → Cn",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_294_partneragent",
+            "label": "PartnerAgent → Close",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}

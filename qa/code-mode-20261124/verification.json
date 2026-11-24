@@ -1,0 +1,246 @@
+{
+  "status": "PARTIEL",
+  "base_commit": "e81129a56e07535129827c95211d82815df8dc5a",
+  "branch": "feat/iao-tool-context-efficiency-20261124",
+  "source_sha256": {
+    "docs/api-cost-research-20261112.md": "2da5022f15e624d567edfd1c3e5008ed5de626c6f2ddc9dfbedadc8a31f88892",
+    "karta/src/claude/real.ts": "26de7b63b7cd059c5b17e36ba359e07ffee2d52bb53c208321dda90ec60e016e",
+    "karta/src/tools/customRegistry.ts": "1e2bdd4e6a75c18d5469ca4b42ef3344670acb3331fccbe6377e3140a934bca7",
+    "karta/test/claudeTransportCost.test.ts": "48f192a1c25832997c4ef1de00f8f2a065b2d04225dbf86c112b61a82864dbdb",
+    "karta/test/customRegistry.test.ts": "51839a9c5379b3e44ce500799b5964a3c775f21ed67a0a9b9ff4ff2d78cb54c8"
+  },
+  "tests": {
+    "targeted_passed": 32,
+    "broader_passed_including_targeted": 346,
+    "broader_files_passed": 13,
+    "broader_files_planned": 14,
+    "local_sql_not_completed": 16
+  },
+  "checks": {
+    "red-tests": {
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "test/customRegistry.test.ts",
+        "test/claudeTransportCost.test.ts"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 2.01,
+      "phase": "New regression cases against unchanged production code"
+    },
+    "green-tests": {
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "test/customRegistry.test.ts",
+        "test/claudeTransportCost.test.ts"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.78
+    },
+    "regression-tests": {
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "test/customRegistry.test.ts",
+        "test/claudeTransportCost.test.ts",
+        "test/modelQualityRouting.test.ts",
+        "test/claudePromptCacheTransport.test.ts",
+        "test/claudeExecutionProfileTransport.test.ts",
+        "test/claudeDecisionCompleteness.test.ts",
+        "test/customAgentModelSelection.test.ts",
+        "test/knowledgeQuantumIntegration.test.ts",
+        "test/lmStudioTransport.test.ts",
+        "test/customAuthorization.test.ts",
+        "test/consultationTransport.test.ts",
+        "test/consultationHost.test.ts",
+        "test/approval.test.ts",
+        "test/runtimeLifecycle.test.ts"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 13.13
+    },
+    "approval-isolated": {
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "test/approval.test.ts"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=512"
+      },
+      "exit_code": 1,
+      "elapsed_seconds": 3.73
+    },
+    "approval-wasm-lazy": {
+      "command": [
+        "node",
+        "--max-old-space-size=512",
+        "--wasm-lazy-compilation",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=1",
+        "test/approval.test.ts"
+      ],
+      "purpose": "Keep the same SQL assertions; defer compilation of unused WebAssembly functions to reduce peak startup resources. No lazy validation or test changes.",
+      "exit_code": 1,
+      "elapsed_seconds": 3.74
+    },
+    "approval-worker-bounded": {
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=1",
+        "--execArgv=--max-old-space-size=512",
+        "--execArgv=--wasm-lazy-compilation",
+        "--execArgv=--wasm-num-compilation-tasks=1",
+        "test/approval.test.ts"
+      ],
+      "purpose": "Explicitly forward resource options to the Vitest worker, preserve all SQL assertions and validation; one WebAssembly compilation task.",
+      "exit_code": 1,
+      "elapsed_seconds": 3.63
+    },
+    "typecheck": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=512"
+      },
+      "exit_code": 134,
+      "elapsed_seconds": 10.76
+    },
+    "typecheck-1024": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=1024"
+      },
+      "exit_code": 137,
+      "elapsed_seconds": 8.62
+    },
+    "typecheck-768": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=768 --max-semi-space-size=8"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 10.47
+    },
+    "build": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=512"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 4.41
+    }
+  },
+  "live_provider_calls": false,
+  "new_cloud_services_activated": false,
+  "ptc_implemented": false,
+  "deployed": false,
+  "previous_research_preserved": true,
+  "gitnexus_detection": {
+    "staged": {
+      "exit_code": 0,
+      "files_before_adding_detection_receipts": 35,
+      "mapped_runtime_symbols": 7,
+      "affected_processes": 7,
+      "risk": "HIGH",
+      "symbol_files": [
+        "karta/src/claude/real.ts",
+        "karta/src/tools/customRegistry.ts"
+      ]
+    },
+    "main_compare": {
+      "exit_code": 0,
+      "risk": "CRITICAL",
+      "includes_existing_consolidation": true,
+      "baseline_files_differing_from_main_before_this_lot": 2748
+    },
+    "limitations": "Runtime graph only. Added tests/docs/QA remain outside graph and were inspected independently. decide receiver unresolved; no claim of complete graph coverage."
+  },
+  "ci_initial": {
+    "commit": "c4297e91e30530931614878da275cb459b8bdb4b",
+    "run_id": 45469636440,
+    "job_id": 138713767745,
+    "job_name": "karta",
+    "job_conclusion": "success",
+    "test_files_passed": 206,
+    "tests_passed": 4704,
+    "approval_sql_tests_passed": 16,
+    "scope": "CI of the initial PR head, using GitHub's PR test merge. Later format-only correction and consolidation reconciliation are separately recorded.",
+    "evidence": [
+      "2026-11-24T19:23:16.7060279Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +66b7c939e5bf6abcdafc21e8d7746d7757c4d59d:refs/remotes/pull/109/merge",
+      "2026-11-24T19:23:18.3035488Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/109/merge",
+      "2026-11-24T19:23:18.5059627Z Note: switching to 'refs/remotes/pull/109/merge'.",
+      "2026-11-24T19:23:18.5063989Z HEAD is now at 66b7c93 Merge c4297e91e30530931614878da275cb459b8bdb4b into 18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+      "2026-11-24T19:23:18.5112394Z [command]/usr/bin/git log -1 --format=%H",
+      "2026-11-24T19:25:02.1481454Z  \u2713 test/approval.test.ts (16 tests) 2460ms",
+      "2026-11-24T19:25:28.1473373Z  Test Files  206 passed (206)",
+      "2026-11-24T19:25:28.1501782Z       Tests  4704 passed (4704)"
+    ],
+    "log_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45469636440/job/138713767745"
+  },
+  "reconciliation": {
+    "upstream_commit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+    "conflicts": false,
+    "overlap_with_original_five_files": [],
+    "tests_passed": 295,
+    "test_files_passed": 6,
+    "typecheck_passed": true,
+    "build_passed": true,
+    "branch_deployment_disabled": true,
+    "post_lint_tests_passed": 32,
+    "source_sha256": {
+      "docs/api-cost-research-20261112.md": "2da5022f15e624d567edfd1c3e5008ed5de626c6f2ddc9dfbedadc8a31f88892",
+      "karta/src/claude/real.ts": "26de7b63b7cd059c5b17e36ba359e07ffee2d52bb53c208321dda90ec60e016e",
+      "karta/src/tools/customRegistry.ts": "1e2bdd4e6a75c18d5469ca4b42ef3344670acb3331fccbe6377e3140a934bca7",
+      "karta/test/claudeTransportCost.test.ts": "36625d5122e59f2cee488e74f59730e5fbf248df843cea81b0b981167fa50805",
+      "karta/test/customRegistry.test.ts": "51839a9c5379b3e44ce500799b5964a3c775f21ed67a0a9b9ff4ff2d78cb54c8"
+    },
+    "gitnexus": {
+      "status": "PASS on isolated Mac verification",
+      "runtime_hashes_match": true,
+      "staged_files": 6,
+      "mapped_runtime_symbols": 5,
+      "affected_processes": 6,
+      "risk": "HIGH",
+      "main_comparison": {
+        "files": 2869,
+        "symbols": 3214,
+        "processes": 309,
+        "risk": "CRITICAL",
+        "listing_capped": true,
+        "includes_existing_consolidation": true
+      },
+      "local_refresh_status": "BLOQUE",
+      "receipt": "reconciliation-mac-receipt.json",
+      "match_receipt": "reconciliation-mac-match.json"
+    },
+    "independent_review": "PASS; no unexpected overlap with PR108, product hashes unchanged, test delta format-only, Vercel own-branch guard only"
+  }
+}

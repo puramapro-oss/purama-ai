@@ -1,0 +1,26 @@
+
+  GitNexus Analyzer (1.6.12)
+[2K
+Index lock: OS socket lock unavailable here — using the file lock.
+[2K
+Reclaiming stale index lock from dead analyze (pid 6, invocation 4ca681d9-d7bb-43db-b3a9-b764853738d6).
+[2K
+Cleared 1 orphaned index-staging file(s) from a prior interrupted analyze.
+[2K
+content retention changed (index built with full (legacy), this run uses none); forcing a full rebuild so stored text and FTS indexes are recreated.
+[2K
+index schema changed (built by an unidentified GitNexus build, this build is 60fc01e4e4ed); forcing a full re-analyze so the database is recreated from the current schema.
+[2K
+analysis capabilities changed (missing:graph.class-framework-annotations); forcing a full rebuild so persisted feature evidence is complete.
+[2K
+analyzer runner identity changed (stamped schema missing, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.
+{"level":40,"time":1795547375767,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":243,"entryPointsUnexplored":61,"walksCutByBudget":21,"tracesDepthCapped":4,"calleesDropped":1105,"processesDropped":0},"msg":"[processes] 310 flows reported, but whole flows are MISSING: 243 of 443 candidate entry point(s) never ranked in, 61 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 4 trace(s) cut at maxTraceDepth, 1105 callee(s) skipped at maxBranching, 21 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2K
+FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+
+  Repository indexed successfully (19.4s)
+
+  4,226 nodes | 10,277 edges | 114 clusters | 310 flows
+  /workspace/scratch/200bdf486cef/purama-ai
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.

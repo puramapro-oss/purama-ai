@@ -23,10 +23,45 @@ import { useAuth } from '@/hooks/useAuth';
 import {
   listProspects, createProspect, updateProspect, deleteProspect,
   findProspects, partnerDiscoveryFeedback, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus,
+  qualifyProspect,
   generateContract, previewContract, approveContract, contractFeedback,
   STATUS_META, PROSPECT_TYPES, NICHES,
   type PartnerProspect, type ProspectStatus, type ProspectType, type OutreachApproval, type PartnerContractResult,
+  type PartnerQualification, type PartnerOutreachProfile, type PartnerContactRole,
 } from '@/lib/partner';
+
+type QualificationDraft = {
+  ownerId: string; prospectId: string; profile: PartnerOutreachProfile;
+  role: Exclude<PartnerContactRole, 'unknown'>; sourceUrl: string; country: string; language: string;
+  consentReference: string; consentDate: string; confirmed: boolean;
+  offerName: string; offerUrl: string; offerSummary: string;
+};
+const ROLE_LABELS: Record<PartnerContactRole, string> = {
+  unknown: 'Rôle à confirmer', editorial: 'Rédaction', commercial: 'Régie / service commercial', creator: 'Créateur', venue: 'Responsable de lieu',
+};
+const PROFILE_LABELS: Record<PartnerOutreachProfile, string> = {
+  legacy: 'Partenariat existant', media_affiliate: 'Affiliation médias / lieux · 30 %', editorial: 'Sujet rédactionnel indépendant',
+};
+const QUALIFICATION_ERRORS: Record<string, string> = {
+  authentication_required: 'Reconnectez-vous pour qualifier ce contact.',
+  prospect_not_found: 'Ce contact n’est plus accessible sur ce compte.',
+  contact_suppressed: 'Ce destinataire a fait opposition. Aucun nouvel envoi ne sera préparé.',
+  qualification_invalid: 'Vérifiez les informations de qualification.',
+  source_required: 'Renseignez la page source exacte des coordonnées.',
+  contact_role_required: 'Confirmez la fonction du destinataire.',
+  campaign_role_mismatch: 'Le type de proposition doit correspondre au rôle du destinataire.',
+  provider_opt_in_required: 'L’accord explicite du destinataire est nécessaire pour ce service d’envoi.',
+  consent_evidence_required: 'Ajoutez la référence précise de l’accord du destinataire.',
+  invalid_consent_date: 'Vérifiez la date de l’accord du destinataire.',
+  offer_required: 'Complétez le produit, sa page et sa présentation.',
+};
+function safePartnerWebLink(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password ? url.href : null;
+  } catch { return null; }
+}
 
 const newProspect = (): Partial<PartnerProspect> => ({
   name: '',
@@ -67,6 +102,10 @@ export default function PartnerAgentProspects() {
   const [finding, setFinding] = useState(false);
   const ownsFindForm = findOwner !== null && findOwner.ownerId === (user?.id ?? null)
     && findOwner.epoch === accountEpoch.current;
+  const saveRequests = useRef(new Set<string>());
+  const qualificationRequests = useRef(new Set<string>());
+  const [qualification, setQualification] = useState<QualificationDraft | null>(null);
+  const [qualifying, setQualifying] = useState(false);
   const [pendingApproval, setPendingApproval] = useState<{ ownerId: string; emailId: string; preview: OutreachApproval } | null>(null);
   const [approving, setApproving] = useState(false);
   const [contractReview, setContractReview] = useState<{ ownerId: string; prospectId: string; result: PartnerContractResult } | null>(null);
@@ -113,6 +152,9 @@ export default function PartnerAgentProspects() {
     setFindNiche('');
     setFindType('influencer');
     setFinding(false);
+    setQualification(null);
+    setQualifying(false);
+    setBusy(false);
     openedContractLink.current = null;
     refresh(); // Every result is checked against the account and the latest request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,22 +172,34 @@ export default function PartnerAgentProspects() {
   });
 
   const handleSave = async () => {
-    if (!user || !editing || !editing.name?.trim()) return;
+    if (!user || !editing || editing.user_id !== user.id || !editing.name?.trim()) return;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const key = `${ownerId}:${epoch}`;
+    if (saveRequests.current.has(key)) return;
+    saveRequests.current.add(key);
+    const current = () => mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch;
     setBusy(true);
     try {
+      // Protected qualification/permission fields have their dedicated RPC.
+      const patch = { name: editing.name.trim(), email: editing.email, website: editing.website,
+        type: editing.type, niche: editing.niche, followers_count: editing.followers_count,
+        status: editing.status, notes: editing.notes };
       if (editing.id) {
-        const { id, user_id, created_at, updated_at, ...patch } = editing as PartnerProspect;
-        void user_id; void created_at; void updated_at;
-        await updateProspect(id, patch);
+        await updateProspect(editing.id, patch);
       } else {
-        await createProspect(user.id, editing);
+        await createProspect(ownerId, patch);
       }
+      if (!current()) return;
       toast.success('✅ Enregistré');
       setEditing(null);
       refresh();
     } catch (e) {
-      toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
-    } finally { setBusy(false); }
+      if (current()) toast.error('Erreur', { description: e instanceof Error ? e.message : String(e) });
+    } finally {
+      saveRequests.current.delete(key);
+      if (current()) setBusy(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -314,7 +368,7 @@ export default function PartnerAgentProspects() {
     try {
       const result = await findProspects(findQuery, findNiche || undefined, findType);
       if (!ownsDraft()) return;
-      toast.success(`✨ ${result.inserted} prospects ajoutés`);
+      toast.success(`${result.inserted} prospects ajoutés à qualifier`);
       setFindOpen(false);
       setFindQuery('');
       refresh();
@@ -329,6 +383,74 @@ export default function PartnerAgentProspects() {
       // Keep its admission until it settles; an old account cycle cannot unlock a new search.
       findRequests.current.delete(requestKey);
       if (ownsAccount()) setFinding(false);
+    }
+  };
+
+  const openQualification = (p: PartnerProspect) => {
+    if (!user || p.user_id !== user.id) return;
+    const sameEmail = p.email?.trim().toLowerCase() === p.contact_qualification?.email?.trim().toLowerCase();
+    const permission = p.email_permission?.email?.trim().toLowerCase() === p.email?.trim().toLowerCase() ? p.email_permission : null;
+    const consent = new Date(permission?.consented_at ?? '');
+    const localDate = Number.isFinite(consent.getTime()) ? new Date(consent.getTime() - consent.getTimezoneOffset() * 60_000).toISOString().slice(0,16) : '';
+    const role = p.contact_role && p.contact_role !== 'unknown' ? p.contact_role : 'commercial';
+    setQualification({ ownerId: user.id, prospectId: p.id,
+      profile: p.outreach_profile ?? (role === 'editorial' ? 'editorial' : p.type === 'media' || role === 'venue' ? 'media_affiliate' : 'legacy'),
+      role, sourceUrl: (sameEmail ? p.contact_qualification?.source_url : null) ?? safePartnerWebLink(p.contact_evidence?.source_url) ?? '',
+      country: sameEmail ? p.contact_qualification?.country ?? '' : '', language: sameEmail ? p.contact_qualification?.language ?? '' : '',
+      consentReference: permission?.reference ?? '', consentDate: localDate, confirmed: false,
+      offerName: p.outreach_offer?.name ?? '', offerUrl: p.outreach_offer?.url ?? '', offerSummary: p.outreach_offer?.summary ?? '',
+    });
+  };
+
+  const handleQualification = async (withdraw = false) => {
+    if (!user || !qualification || qualification.ownerId !== user.id || qualifying) return;
+    const draft = qualification;
+    const ownerId = user.id;
+    const epoch = accountEpoch.current;
+    const key = `${ownerId}:${epoch}:${draft.prospectId}`;
+    if (qualificationRequests.current.has(key)) return;
+    let payload: PartnerQualification | { withdraw_permission: true };
+    if (withdraw) payload = { withdraw_permission: true };
+    else {
+      const sourceUrl = safePartnerWebLink(draft.sourceUrl);
+      const consentDate = new Date(draft.consentDate);
+      const hasOffer = [draft.offerName,draft.offerUrl,draft.offerSummary].some(value => value.trim());
+      const offerUrl = safePartnerWebLink(draft.offerUrl);
+      if (!draft.confirmed || !sourceUrl || !/^[A-Z]{2}$/.test(draft.country.trim().toUpperCase()) ||
+        !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(draft.language.trim()) ||
+        draft.consentReference.trim().length < 10 || !Number.isFinite(consentDate.getTime()) || consentDate.getTime() > Date.now()) {
+        toast.error('Qualification incomplète', { description: 'Vérifiez les coordonnées, le pays, la langue, la preuve d’accord et l’offre.' });
+        return;
+      }
+      if ((draft.profile !== 'legacy' || hasOffer) && (!draft.offerName.trim() || !offerUrl?.startsWith('https://') ||
+        offerUrl.length > 2048 || draft.offerSummary.trim().length < 10 || draft.offerSummary.trim().length > 1500)) {
+        toast.error('Offre incomplète', { description: 'Renseignez le nom, une page HTTPS et une présentation de 10 à 1 500 caractères.' });
+        return;
+      }
+      payload = { profile: draft.profile, role: draft.role, source_url: sourceUrl,
+        country: draft.country.trim().toUpperCase(), language: draft.language.trim(),
+        consent_reference: draft.consentReference.trim(), consent_at: consentDate.toISOString(),
+        ...(hasOffer ? { offer: { name: draft.offerName.trim(), url: offerUrl!, summary: draft.offerSummary.trim() } } : {}),
+      };
+    }
+    qualificationRequests.current.add(key);
+    const current = () => mounted.current && currentUser.current === ownerId && accountEpoch.current === epoch;
+    setQualifying(true);
+    try {
+      const result = await qualifyProspect(draft.prospectId,payload);
+      if (!current()) return;
+      if (result.status === 'blocked') {
+        toast.error('Qualification non confirmée', { description: QUALIFICATION_ERRORS[result.reason ?? ''] ?? 'Le contact ne peut pas encore être admis à l’envoi. Vérifiez sa fiche et les conditions de campagne.' });
+      } else {
+        toast.success(result.status === 'permission_withdrawn' ? 'Autorisation d’envoi retirée' : 'Contact qualifié');
+        setQualification(null);
+        refresh();
+      }
+    } catch (error) {
+      if (current()) toast.error('Qualification non confirmée', { description: error instanceof Error ? error.message : String(error) });
+    } finally {
+      qualificationRequests.current.delete(key);
+      if (current()) setQualifying(false);
     }
   };
 
@@ -347,7 +469,7 @@ export default function PartnerAgentProspects() {
           <Button variant="outline" onClick={() => handleFindOpenChange(true)}>
             <Sparkles className="w-4 h-4 mr-2" /> Trouver via IA
           </Button>
-          <Button onClick={() => setEditing(newProspect())}>
+          <Button onClick={() => setEditing({ ...newProspect(), user_id: user?.id })}>
             <Plus className="w-4 h-4 mr-2" /> Ajouter
           </Button>
         </div>
@@ -383,13 +505,19 @@ export default function PartnerAgentProspects() {
           {filtered.map(p => {
             const meta = STATUS_META[p.status];
             const nextStep = outreachStepForStatus(p.status);
+            const website = safePartnerWebLink(p.website);
+            const qualified = Boolean(p.contact_qualification?.verified_at && p.email &&
+              p.contact_qualification.email?.trim().toLowerCase() === p.email.trim().toLowerCase());
+            const sourceLink = safePartnerWebLink(qualified ? p.contact_qualification?.source_url : p.contact_evidence?.source_url);
+            const permitted = p.email_permission?.status === 'explicit_opt_in' && Boolean(p.email) &&
+              p.email_permission.email?.trim().toLowerCase() === p.email?.trim().toLowerCase();
             return (
               <Card key={p.id} className="bg-card border-border">
-                <CardContent className="p-4 flex items-start gap-3">
+                <CardContent className="p-4 flex flex-wrap items-start gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-purple to-accent-cyan flex items-center justify-center text-sm font-bold text-foreground flex-shrink-0">
                     {p.name[0]?.toUpperCase()}
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-[160px]">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="font-semibold text-foreground truncate">{p.name}</p>
                       <Badge variant="outline" className={`text-[10px] ${meta.color}`}>
@@ -400,12 +528,27 @@ export default function PartnerAgentProspects() {
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-0.5">
                       {p.email && <span>{p.email}</span>}
-                      {p.website && <span> · <a href={p.website} target="_blank" rel="noreferrer" className="hover:text-accent-cyan">{p.website.replace(/^https?:\/\//, '')}</a></span>}
+                      {website && <span> · <a href={website} target="_blank" rel="noopener noreferrer" className="hover:text-accent-cyan">{website.replace(/^https?:\/\//, '')}</a></span>}
                       {p.followers_count && <span> · {p.followers_count.toLocaleString('fr-FR')} followers</span>}
                     </p>
                     {p.ai_reasoning && (
                       <p className="text-[10px] italic text-accent-purple/80 mt-1 truncate">💭 {p.ai_reasoning}</p>
                     )}
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      <span>{ROLE_LABELS[p.contact_role ?? 'unknown'] ?? ROLE_LABELS.unknown}</span>
+                      <span>{PROFILE_LABELS[p.outreach_profile ?? 'legacy'] ?? PROFILE_LABELS.legacy}</span>
+                      <span>{qualified ? 'Coordonnées vérifiées' : 'À qualifier'}</span>
+                      <span>{permitted ? 'Accord d’envoi enregistré' : 'Accord d’envoi à renseigner'}</span>
+                    </div>
+                    {sourceLink && <p className="mt-1 text-xs text-muted-foreground">
+                      <a href={sourceLink} target="_blank" rel="noopener noreferrer" className="underline">{qualified ? 'Source des coordonnées vérifiées' : 'Source observée'}</a>
+                      {!qualified && ' · à vérifier avant qualification'}
+                    </p>}
+                    {p.outreach_offer?.name && <p className="mt-1 text-xs">Offre : {p.outreach_offer.name}</p>}
+                    {p.reply_summary && <p className="mt-2 text-xs text-muted-foreground">
+                      <strong>{p.reply_kind === 'refusal' ? 'Refus' : p.reply_kind === 'automatic' ? 'Réponse automatique' : 'Réponse'} :</strong> {p.reply_summary}
+                      {p.reply_received_at && Number.isFinite(Date.parse(p.reply_received_at)) && <span> · {new Date(p.reply_received_at).toLocaleString('fr-FR')}</span>}
+                    </p>}
                     {p.ai_score !== null && (
                       <div className="mt-1.5 flex items-center gap-2">
                         <div className="h-1 w-24 bg-secondary rounded-full overflow-hidden">
@@ -415,7 +558,9 @@ export default function PartnerAgentProspects() {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-1 flex-shrink-0">
+                  <div className="flex flex-wrap gap-1 flex-shrink-0">
+                    <Button variant="outline" size="sm" onClick={() => openQualification(p)} disabled={!p.email}
+                      title={!p.email ? 'Renseignez une adresse avant de qualifier le contact' : 'Vérifier les coordonnées et les conditions de contact'}>Qualifier</Button>
                     {p.email && nextStep && (
                       <Button variant="ghost" size="icon" onClick={() => handleSend(p)} title={nextStep === 'outreach' ? 'Premier email de partenariat' : `Relance ${nextStep.slice(-1)}`}>
                         <Send className="w-4 h-4 text-accent-purple" />
@@ -428,8 +573,8 @@ export default function PartnerAgentProspects() {
                         {contractBusy === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSignature className="w-4 h-4 text-emerald-400" />}
                       </Button>
                     )}
-                    {p.website && (
-                      <a href={p.website} target="_blank" rel="noreferrer">
+                    {website && (
+                      <a href={website} target="_blank" rel="noopener noreferrer">
                         <Button variant="ghost" size="icon" title="Ouvrir le site"><ExternalLink className="w-4 h-4" /></Button>
                       </a>
                     )}
@@ -442,6 +587,82 @@ export default function PartnerAgentProspects() {
           })}
         </div>
       )}
+
+      <Dialog open={!!qualification && qualification.ownerId === user?.id}
+        onOpenChange={open => { if (!open && !qualifying) setQualification(null); }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="qualification-description">
+          <DialogHeader><DialogTitle>Qualifier le contact</DialogTitle></DialogHeader>
+          <p id="qualification-description" className="text-sm text-muted-foreground">
+            Vérifiez le rôle, la source des coordonnées et l’accord du destinataire. Une adresse publique ou un résultat de recherche ne constitue pas un accord pour recevoir nos propositions.
+          </p>
+          {qualification && <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div><Label htmlFor="qualification-profile">Proposition</Label>
+                <Select value={qualification.profile} disabled={qualifying} onValueChange={(profile: PartnerOutreachProfile) => setQualification({ ...qualification, profile,
+                  role: profile === 'editorial' ? 'editorial' : qualification.role === 'editorial' ? 'commercial' : qualification.role })}>
+                  <SelectTrigger id="qualification-profile"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Object.entries(PROFILE_LABELS).map(([value,label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label htmlFor="qualification-role">Fonction du destinataire</Label>
+                <Select value={qualification.role} disabled={qualifying} onValueChange={(role: Exclude<PartnerContactRole,'unknown'>) => setQualification({ ...qualification, role })}>
+                  <SelectTrigger id="qualification-role"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Object.entries(ROLE_LABELS).filter(([value]) => value !== 'unknown').map(([value,label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div><Label htmlFor="qualification-source">Page source exacte des coordonnées</Label>
+              <Input id="qualification-source" type="url" maxLength={2000} value={qualification.sourceUrl} disabled={qualifying}
+                onChange={e => setQualification({ ...qualification, sourceUrl: e.target.value })} placeholder="https://exemple.fr/contact" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label htmlFor="qualification-country">Pays du destinataire</Label>
+                <Input id="qualification-country" value={qualification.country} maxLength={2} disabled={qualifying} placeholder="FR, CH…"
+                  onChange={e => setQualification({ ...qualification, country: e.target.value.toUpperCase() })} />
+              </div>
+              <div><Label htmlFor="qualification-language">Langue de l’échange</Label>
+                <Input id="qualification-language" value={qualification.language} maxLength={35} disabled={qualifying} placeholder="fr, de, en…"
+                  onChange={e => setQualification({ ...qualification, language: e.target.value })} />
+              </div>
+            </div>
+            <div className="rounded-md border p-3 space-y-3">
+              <p className="text-sm font-medium">Accord pour recevoir nos propositions par email</p>
+              <div><Label htmlFor="qualification-consent-reference">Référence vérifiable de l’accord</Label>
+                <Textarea id="qualification-consent-reference" rows={2} maxLength={2000} disabled={qualifying} value={qualification.consentReference}
+                  onChange={e => setQualification({ ...qualification, consentReference: e.target.value })} placeholder="Référence du message, formulaire ou document précisant l’accord…" />
+              </div>
+              <div><Label htmlFor="qualification-consent-date">Date et heure de l’accord</Label>
+                <Input id="qualification-consent-date" type="datetime-local" disabled={qualifying} value={qualification.consentDate}
+                  onChange={e => setQualification({ ...qualification, consentDate: e.target.value })} />
+              </div>
+              <p className="text-xs text-muted-foreground">Le service d’envoi actuel exige un accord explicite. Ce formulaire sert à enregistrer une preuve existante.</p>
+            </div>
+            <div className="rounded-md border p-3 space-y-3">
+              <p className="text-sm font-medium">Produit ou sujet proposé{qualification.profile === 'legacy' ? ' · facultatif' : ''}</p>
+              <div><Label htmlFor="qualification-offer-name">Nom</Label><Input id="qualification-offer-name" maxLength={200} disabled={qualifying}
+                value={qualification.offerName} onChange={e => setQualification({ ...qualification, offerName: e.target.value })} /></div>
+              <div><Label htmlFor="qualification-offer-url">Page de présentation</Label><Input id="qualification-offer-url" type="url" maxLength={2000} disabled={qualifying}
+                aria-describedby="qualification-offer-help" value={qualification.offerUrl} onChange={e => setQualification({ ...qualification, offerUrl: e.target.value })} /></div>
+              <div><Label htmlFor="qualification-offer-summary">Présentation vérifiée</Label><Textarea id="qualification-offer-summary" rows={3} minLength={10} maxLength={1500} disabled={qualifying}
+                aria-describedby="qualification-offer-help" value={qualification.offerSummary} onChange={e => setQualification({ ...qualification, offerSummary: e.target.value })} /></div>
+              <p id="qualification-offer-help" className="text-xs text-muted-foreground">Une page HTTPS et une présentation de 10 à 1 500 caractères sont nécessaires pour l’offre.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Checkbox id="qualification-confirmed" checked={qualification.confirmed} disabled={qualifying}
+                onCheckedChange={checked => setQualification({ ...qualification, confirmed: checked === true })} />
+              <Label htmlFor="qualification-confirmed" className="text-sm leading-relaxed">J’ai vérifié ces coordonnées, la fonction et la preuve de l’accord pour ce destinataire.</Label>
+            </div>
+          </div>}
+          <DialogFooter className="gap-2 flex-wrap">
+            {qualification && prospects.find(p => p.id === qualification.prospectId && p.user_id === user?.id)?.email_permission?.status === 'explicit_opt_in' &&
+              <Button variant="outline" disabled={qualifying} onClick={() => handleQualification(true)}>Retirer l’autorisation d’envoi</Button>}
+            <Button variant="outline" disabled={qualifying} onClick={() => setQualification(null)}>Fermer</Button>
+            <Button disabled={qualifying || !qualification?.confirmed} onClick={() => handleQualification()}>
+              {qualifying && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Enregistrer la qualification
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!contractReview && contractReview.ownerId === user?.id}
         onOpenChange={open => { if (!open && !contractBusy) { setContractReview(null); setContractRead(null); } }}>
@@ -504,7 +725,7 @@ export default function PartnerAgentProspects() {
       </Dialog>
 
       {/* Editor */}
-      <Dialog open={!!editing} onOpenChange={o => !o && setEditing(null)}>
+      <Dialog open={!!editing && editing.user_id === user?.id} onOpenChange={o => !o && setEditing(null)}>
         <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing?.id ? 'Modifier le prospect' : 'Nouveau prospect'}</DialogTitle>
@@ -609,11 +830,12 @@ export default function PartnerAgentProspects() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">Requête</Label>
+              <Label htmlFor="partner-find-query" className="text-xs">Requête</Label>
               <Input
+                id="partner-find-query"
                 value={findQuery}
                 onChange={e => { findRevision.current += 1; setFindQuery(e.target.value); }}
-                placeholder="ex : meilleurs influenceurs finance personnelle France"
+                placeholder="ex : médias locaux, créateurs spécialisés…"
                 className="mt-1.5"
               />
             </div>
@@ -639,7 +861,7 @@ export default function PartnerAgentProspects() {
               </div>
             </div>
             <DialogDescription className="text-[11px] text-muted-foreground">
-              L’IA propose des prospects à vérifier, avec un score indicatif de 0 à 100. Vérifiez les sources et les coordonnées avant tout contact.
+              La recherche utilise les pays et langues de vos paramètres. L’IA propose des prospects à vérifier et à qualifier, avec un score indicatif de 0 à 100. Une adresse observée ne vaut pas autorisation de contact.
             </DialogDescription>
           </div>
           <DialogFooter>

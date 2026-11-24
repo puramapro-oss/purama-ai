@@ -1,0 +1,15 @@
+{
+  "command": [
+    "rg",
+    "-n",
+    "buildCustomAgentDefinition|resolveAgentDefinition",
+    "karta/src/agents/customAgent.ts",
+    "karta/src/engine/resolveDefinition.ts",
+    "karta/src/engine/loop.ts",
+    "karta/src/engine/approval.ts",
+    "karta/src/queue/worker.ts"
+  ],
+  "exit_code": 0,
+  "matches": "karta/src/queue/worker.ts:4:import { CustomAgentAuthorizationError, resolveAgentDefinition } from \"../engine/resolveDefinition.js\";\nkarta/src/queue/worker.ts:16:        definition = await resolveAgentDefinition(job.data.agentType, job.data.userId);\nkarta/src/engine/approval.ts:3:import { resolveAgentDefinition } from \"./resolveDefinition.js\";\nkarta/src/engine/approval.ts:71:        const definition = await resolveAgentDefinition(pending.agent_type as AgentType, pending.user_id);\nkarta/src/engine/loop.ts:15:import { CustomAgentAuthorizationError, resolveAgentDefinition } from \"./resolveDefinition.js\";\nkarta/src/engine/loop.ts:125:        const currentDefinition = await resolveAgentDefinition(definition.type, userId);\nkarta/src/engine/loop.ts:198:          const current = await resolveAgentDefinition(definition.type, userId);\nkarta/src/engine/resolveDefinition.ts:2:import { loadCustomAgent, buildCustomAgentDefinition, type CustomAgentRow } from \"../agents/customAgent.js\";\nkarta/src/engine/resolveDefinition.ts:18:export async function resolveAgentDefinition(agentType: AgentType, userId: string): Promise<AgentDefinition> {\nkarta/src/engine/resolveDefinition.ts:33:    return buildCustomAgentDefinition(row);\nkarta/src/agents/customAgent.ts:56:export function buildCustomAgentDefinition(row: CustomAgentRow): AgentDefinition {\n",
+  "stderr": ""
+}

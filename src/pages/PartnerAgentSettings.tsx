@@ -26,6 +26,26 @@ const DAYS = [
   { v: 'MO', l: 'L' }, { v: 'TU', l: 'M' }, { v: 'WE', l: 'M' },
   { v: 'TH', l: 'J' }, { v: 'FR', l: 'V' }, { v: 'SA', l: 'S' }, { v: 'SU', l: 'D' },
 ];
+const MEDIA_TERMS = [
+  ['parties_identity', 'Identité et capacité des parties'],
+  ['products_and_countries', 'Produits et territoires admissibles'],
+  ['attribution', 'Attribution des ventes'],
+  ['recurrence', 'Échéances récurrentes admissibles'],
+  ['payment', 'Relevés, facturation, devise et règlement'],
+  ['refunds', 'Retours, annulations et remboursements'],
+  ['duration_termination', 'Durée et résiliation'],
+  ['content_rights', 'Contenus et droits d’utilisation'],
+  ['costs', 'Répartition des coûts'],
+  ['disputes', 'Réclamations et règlement des différends'],
+] as const;
+
+function hasInvalidClauseControl(value: string): boolean {
+  for (let index = 0; index < value.length; index++) {
+    const code = value.charCodeAt(index);
+    if (code === 127 || (code < 32 && code !== 9 && code !== 10 && code !== 13)) return true;
+  }
+  return false;
+}
 
 export default function PartnerAgentSettings() {
   const { user } = useAuth();
@@ -93,6 +113,34 @@ export default function PartnerAgentSettings() {
       toast.error('Fuseau horaire invalide', { description: 'Utilisez un nom comme Europe/Paris, America/Montreal ou UTC.' });
       return;
     }
+    let targetCountries: string[];
+    let targetLanguages: string[];
+    try {
+      if (!Array.isArray(config.target_countries) || !Array.isArray(config.target_languages)
+        || config.target_countries.some(value => typeof value !== 'string')
+        || config.target_languages.some(value => typeof value !== 'string')) throw new Error();
+      targetCountries = [...new Set(config.target_countries.map(value => value.trim().toUpperCase()).filter(Boolean))];
+      targetLanguages = Intl.getCanonicalLocales(config.target_languages.map(value => value.trim()).filter(Boolean));
+      if (targetCountries.length > 20 || targetLanguages.length > 20
+        || targetCountries.some(value => !/^[A-Z]{2}$/.test(value))
+        || targetLanguages.some(value => !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(value))) throw new Error();
+    } catch {
+      toast.error('Ciblage invalide', { description: 'Utilisez au plus 20 codes pays (FR, CH…) et 20 codes langues (fr, en, fr-CH…), séparés par des virgules.' });
+      return;
+    }
+    const identityMode = config.outreach_identity_mode ?? 'assistant';
+    if (!['assistant', 'human_reviewed'].includes(identityMode)) {
+      toast.error('Identité des échanges invalide');
+      return;
+    }
+    const mediaTerms = config.media_contract_terms ?? {};
+    const knownTerms = new Set<string>(MEDIA_TERMS.map(([key]) => key));
+    if (typeof mediaTerms !== 'object' || Array.isArray(mediaTerms)
+      || Object.entries(mediaTerms).some(([key, value]) => !knownTerms.has(key) || typeof value !== 'string'
+        || value.length > 2000 || hasInvalidClauseControl(value))) {
+      toast.error('Conditions médias invalides', { description: 'Chaque rubrique accepte jusqu’à 2 000 caractères de texte. Vérifiez les conditions enregistrées.' });
+      return;
+    }
     // Upload also persists signature_image_url. Serialize both writes so an
     // older full settings snapshot cannot overwrite a just-uploaded signature.
     const request = requests.begin('settings-write');
@@ -107,14 +155,27 @@ export default function PartnerAgentSettings() {
       // Legacy contract flags remain historical data; this UI no longer offers
       // an automatic send that could bypass the exact-document review.
       void auto_send_contract; void require_approval_contract;
-      await updatePartnerConfig(user.id, { ...patch, outreach_timezone: outreachTimezone });
+      await updatePartnerConfig(user.id, { ...patch, outreach_timezone: outreachTimezone,
+        target_countries: targetCountries, target_languages: targetLanguages,
+        outreach_identity_mode: identityMode, media_contract_terms: mediaTerms,
+        require_approval_outreach: identityMode === 'human_reviewed' ? true : config.require_approval_outreach,
+      });
       if (!current() || !request.current()) return;
       // A receipt confirms the submitted snapshot, not edits made afterwards.
-      // Normalize only the timezone that still matches that submitted snapshot.
+      // Normalize only values that still match the submitted snapshot.
       setConfig(latest => latest?.user_id === user.id ? {
         ...latest,
         outreach_timezone: latest.outreach_timezone === config.outreach_timezone
           ? outreachTimezone : latest.outreach_timezone,
+        target_countries: latest.target_countries === config.target_countries
+          ? targetCountries : latest.target_countries,
+        target_languages: latest.target_languages === config.target_languages
+          ? targetLanguages : latest.target_languages,
+        outreach_identity_mode: latest.outreach_identity_mode === config.outreach_identity_mode
+          ? identityMode : latest.outreach_identity_mode,
+        require_approval_outreach: latest.outreach_identity_mode === config.outreach_identity_mode
+          && latest.require_approval_outreach === config.require_approval_outreach
+          && identityMode === 'human_reviewed' ? true : latest.require_approval_outreach,
       } : latest);
       toast.success('✅ Paramètres enregistrés');
     } catch (e) {
@@ -196,6 +257,23 @@ export default function PartnerAgentSettings() {
               <Label className="text-xs">Société</Label>
               <Input value={config.company_name} onChange={e => update({ company_name: e.target.value })} className="mt-1.5" />
             </div>
+          </div>
+          <div>
+            <Label htmlFor="partner-outreach-identity" className="text-xs">Identité des échanges</Label>
+            <Select value={config.outreach_identity_mode ?? 'assistant'} onValueChange={value => {
+              if (value === 'assistant' || value === 'human_reviewed') update({ outreach_identity_mode: value,
+                ...(value === 'human_reviewed' ? { require_approval_outreach: true } : {}),
+              });
+            }}>
+              <SelectTrigger id="partner-outreach-identity" className="mt-1.5" aria-describedby="partner-identity-help"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="assistant">IAO, assistant IA de l’entreprise</SelectItem>
+                <SelectItem value="human_reviewed">Expéditeur humain, après sa relecture</SelectItem>
+              </SelectContent>
+            </Select>
+            <p id="partner-identity-help" className="mt-2 text-xs text-muted-foreground">
+              IAO se présente lorsqu’il échange lui-même. Le mode humain exige la relecture effective et la validation de chaque message par l’expéditeur.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -354,6 +432,11 @@ export default function PartnerAgentSettings() {
           <h2 className="font-semibold text-foreground flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-emerald-400" /> Commissions
           </h2>
+          <p className="text-xs text-muted-foreground">
+            Le circuit médias définit un taux contractuel de 30 % sur les ventes et échéances admissibles de l’offre qualifiée.
+            Le calcul et le versement automatiques des commissions ne sont pas encore raccordés.
+            Les valeurs ci-dessous restent celles des autres partenariats ; elles ne modifient pas les contrats déjà préparés ou signés.
+          </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs">1er paiement (%)</Label>
@@ -367,10 +450,60 @@ export default function PartnerAgentSettings() {
         </CardContent>
       </Card>
 
+      <Card className="bg-card border-border">
+        <CardContent className="p-5 space-y-4">
+          <h2 className="font-semibold text-foreground">Conditions des contrats médias</h2>
+          <p className="text-xs text-muted-foreground">
+            Renseignez les conditions réellement retenues par l’entreprise. Vous pouvez enregistrer un brouillon ;
+            les dix rubriques doivent être complètes avant de préparer un contrat média.
+            Le PDF reprend ces conditions pour votre approbation, avec le taux de 30 %.
+          </p>
+          <details className="rounded-lg border border-border p-3">
+            <summary className="cursor-pointer text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-cyan">
+              Renseigner les conditions ({MEDIA_TERMS.filter(([key]) => {
+                const value = config.media_contract_terms?.[key];
+                return typeof value === 'string' && value.trim().length >= 10 && value.length <= 2000;
+              }).length}/10)
+            </summary>
+            <div className="space-y-4 pt-4">
+              {MEDIA_TERMS.map(([key, label]) => <div key={key}>
+                <Label htmlFor={`partner-media-${key}`} className="text-xs">{label}</Label>
+                <Textarea id={`partner-media-${key}`} rows={3} maxLength={2000}
+                  value={config.media_contract_terms?.[key] ?? ''}
+                  onChange={event => {
+                    const value = event.target.value;
+                    setConfig(latest => latest?.user_id === userId ? { ...latest,
+                      media_contract_terms: { ...latest.media_contract_terms, [key]: value },
+                    } : latest);
+                  }} className="mt-1.5" />
+              </div>)}
+            </div>
+          </details>
+        </CardContent>
+      </Card>
+
       {/* Targeting */}
       <Card className="bg-card border-border">
         <CardContent className="p-5 space-y-4">
           <h2 className="font-semibold text-foreground">Ciblage</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="partner-target-countries" className="text-xs">Pays ciblés</Label>
+              <Input id="partner-target-countries" value={(config.target_countries ?? []).join(', ')}
+                onChange={event => update({ target_countries: event.target.value.split(',').map(value => value.trim()) })}
+                placeholder="FR, CH" className="mt-1.5" aria-describedby="partner-targeting-help" />
+            </div>
+            <div>
+              <Label htmlFor="partner-target-languages" className="text-xs">Langues ciblées</Label>
+              <Input id="partner-target-languages" value={(config.target_languages ?? []).join(', ')}
+                onChange={event => update({ target_languages: event.target.value.split(',').map(value => value.trim()) })}
+                placeholder="fr, en, de" className="mt-1.5" aria-describedby="partner-targeting-help" />
+            </div>
+          </div>
+          <p id="partner-targeting-help" className="text-xs text-muted-foreground">
+            Utilisez des codes séparés par des virgules, jusqu’à 20 par champ. Un champ vide ne limite pas ce critère.
+            Le ciblage guide la recherche ; chaque contact doit ensuite être qualifié pour son pays et sa fonction.
+          </p>
           <div>
             <Label className="text-xs">Niches recherchées</Label>
             <div className="flex flex-wrap gap-1.5 mt-2">
@@ -402,7 +535,9 @@ export default function PartnerAgentSettings() {
         <CardContent className="p-5 space-y-4">
           <h2 className="font-semibold text-foreground">Validations</h2>
           <ToggleRow label="Valider chaque nouveau prospect avant envoi" sub="Recommandé au début" checked={config.require_approval_new_prospect} onChange={v => update({ require_approval_new_prospect: v })} />
-          <ToggleRow label="Valider chaque email avant envoi" sub="Sinon l'IA envoie directement" checked={config.require_approval_outreach} onChange={v => update({ require_approval_outreach: v })} />
+          {(config.outreach_identity_mode ?? 'assistant') === 'human_reviewed' ?
+            <p className="text-sm text-muted-foreground">Chaque email doit être relu et validé pour utiliser l’identité de l’expéditeur humain.</p> :
+            <ToggleRow label="Valider chaque email avant envoi" sub="Sinon l’agent peut envoyer dans le cadre des conditions autorisées" checked={config.require_approval_outreach} onChange={v => update({ require_approval_outreach: v })} />}
           <p className="text-sm text-muted-foreground">
             Chaque contrat est préparé puis approuvé dans{' '}
             <Link to="/dashboard/partner-agent/prospects" className="text-accent-cyan underline underline-offset-2">Prospects</Link>{' '}

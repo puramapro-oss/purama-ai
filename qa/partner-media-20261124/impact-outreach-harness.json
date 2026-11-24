@@ -1,0 +1,9 @@
+{
+  "error": "Target 'harness' not found",
+  "target": {
+    "name": "harness"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

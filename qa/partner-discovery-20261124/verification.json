@@ -129,5 +129,17 @@
     "proof": "ci-followup/receipt.json",
     "global_lint_initial": "ci-site-lint-initial.json",
     "remaining": "Receive global CI on the published follow-up. Local build limits retained."
+  },
+  "historical_scope": "This receipt documents the pre-PR111 composition only. Its prior sources and test counts are preserved, not reassigned to the current composition.",
+  "current_composition": {
+    "canonical_commit": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+    "prior_discovery_head": "849402e342ea3dc757b2e009ff7c08c1532b1d97",
+    "status": "PARTIEL",
+    "receipt": "reconciliation/README.md",
+    "independent_review": "reconciliation/independent-review.json",
+    "targeted_tests": 281,
+    "native_deno": "PASS",
+    "frontend_global_types": "PASS",
+    "remaining": "Receive SQL, full build and browser in existing CI; production and ONE commission bridge are not activated."
   }
 }

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "scope": "Dernier alignement du catalogue local FR sur les codes du handler canonique composé ; aucun autre changement produit après le gel précédent.",
+  "prior_composition_receipt": "frontend-reconciliation-receipt.json",
+  "prior_composition_receipt_sha256": "722e6bc013299a0bcaf76632997f03849971cb9fd48db13ca8a6bfed7ac2650e",
+  "source_sha256": {
+    "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+    "src/lib/partner-discovery-result.ts": "a74828e029d78d49976dd2910bf34c220983c5cc02e01baec38436ed2efc7bee",
+    "src/lib/partner-discovery-result.test.ts": "fbfef4f9d60cf4c62cd93bdf2fd72dcd41aa66d574ab8744cff2d78ee3eac7a6",
+    "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "1b41020d5be81bb091ea5c72510dda4dead987247e21e7e32a04ea8c4dbe158b",
+    "tests/quality/partner-media.spec.ts": "e1e427670babfdd1fc6d816173639b6ea59bfe4203de4d594aef65295b4e4d40"
+  },
+  "canonical_handler": {
+    "path": "supabase/functions/partner-find-prospects/handler.ts",
+    "sha256": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+    "codes": [
+      "discovery_cancelled",
+      "discovery_configuration_invalid",
+      "discovery_configuration_unavailable",
+      "discovery_deadline_exceeded",
+      "discovery_extraction_invalid",
+      "discovery_method_not_allowed",
+      "discovery_provider_failed",
+      "discovery_provider_invalid",
+      "discovery_provider_not_configured",
+      "discovery_request_invalid",
+      "discovery_search_invalid",
+      "discovery_storage_unavailable",
+      "discovery_storage_unconfirmed",
+      "discovery_targeting_changed",
+      "discovery_targeting_invalid",
+      "discovery_targeting_required",
+      "discovery_unauthorized",
+      "discovery_unavailable"
+    ]
+  },
+  "catalogue": {
+    "added_codes": [
+      "discovery_cancelled",
+      "discovery_configuration_invalid",
+      "discovery_configuration_unavailable",
+      "discovery_deadline_exceeded",
+      "discovery_extraction_invalid",
+      "discovery_method_not_allowed",
+      "discovery_provider_failed",
+      "discovery_provider_invalid",
+      "discovery_provider_not_configured",
+      "discovery_request_invalid",
+      "discovery_search_invalid",
+      "discovery_storage_unavailable",
+      "discovery_storage_unconfirmed",
+      "discovery_targeting_changed",
+      "discovery_targeting_invalid",
+      "discovery_targeting_required",
+      "discovery_unauthorized"
+    ],
+    "canonical_code_count": 18,
+    "added_code_count": 17,
+    "legacy_messages_unchanged": true,
+    "all_added_codes_are_emitted_by_final_handler": true,
+    "only_catalogue_lines_changed_since_prior_helper": true,
+    "unknown_codes": "Message local conservateur ; aucun code arbitraire ni texte fournisseur affiché."
+  },
+  "impact": "Même périmètre de décodage déjà analysé dans impact-receipts.json ; ajout de constantes de message uniquement.",
+  "validation": {
+    "before_catalogue": {
+      "exit_code": 1,
+      "total": 35,
+      "passed": 33,
+      "failed": 2,
+      "log": {
+        "path": "qa/partner-discovery-20261124/reconciliation/ui-client-feedback-before.log.gz",
+        "decoded_bytes": 9044,
+        "decoded_sha256": "242e377ad5b47b49e05306306ffadb33ab3ad8d60cdb92b47c70f07653f2da9b",
+        "gzip_sha256": "cec9b93235bd9c557667202edda6274ccc661eeb6fdf4927336407b194e43e0a"
+      },
+      "observed": "Les témoins ciblage et import inconnu reproduisent le message trop générique ; le témoin code inconnu reste sûr."
+    },
+    "final_composition": {
+      "exit_code": 0,
+      "total": 101,
+      "passed": 101,
+      "failed": 0,
+      "seconds": 9.33,
+      "breakdown": {
+        "http_client": 35,
+        "discovery_dom": 21,
+        "contract_dom": 12,
+        "settings_ownership": 18,
+        "settings_media": 10,
+        "settings_schedule": 5
+      },
+      "command": "timeout 90s env NODE_OPTIONS='--max-old-space-size=512 --max-semi-space-size=8' node node_modules/vitest/vitest.mjs run src/lib/partner-discovery-result.test.ts src/pages/PartnerAgentProspects.discovery.test.tsx src/pages/PartnerAgentProspects.contract.test.tsx src/pages/PartnerAgentSettings.ownership.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx src/pages/PartnerAgentSettings.media.test.tsx --maxWorkers=1 --pool=threads --reporter=verbose",
+      "log": {
+        "path": "qa/partner-discovery-20261124/reconciliation/ui-canon-feedback-final.log.gz",
+        "decoded_bytes": 21854,
+        "decoded_sha256": "9fda42e365cf98f91836c3ed31f391e1627c35a7fb42eb388df826dd619371be",
+        "gzip_sha256": "6aae0e2fae59993f1c3ed133a4bf091f00943bbd577cd0ba78fa59a8d6e20af4"
+      }
+    },
+    "targeted_lint": {
+      "exit_code": 0,
+      "warnings": 0,
+      "max_warnings": 0,
+      "paths": [
+        "src/lib/partner.ts",
+        "src/lib/partner-discovery-result.ts",
+        "src/lib/partner-discovery-result.test.ts",
+        "src/pages/PartnerAgentProspects.tsx",
+        "src/pages/PartnerAgentProspects.discovery.test.tsx",
+        "tests/quality/partner-media.spec.ts"
+      ],
+      "log": {
+        "path": "qa/partner-discovery-20261124/reconciliation/ui-canon-feedback-lint.log.gz",
+        "decoded_bytes": 0,
+        "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      }
+    },
+    "counting": "101 est le nombre inclusif de la dernière exécution ; les étapes 98 PASS, 83 PASS et les 235 cas historiques ne doivent pas être additionnées à ce résultat."
+  },
+  "remaining": {
+    "backend_and_sql_receipts": "PENDING_ROOT",
+    "native_deno": "PENDING_ROOT",
+    "final_application_typecheck": "PENDING_ROOT",
+    "browser_and_global_ci_build": "PENDING_ROOT"
+  },
+  "production_claim": false
+}

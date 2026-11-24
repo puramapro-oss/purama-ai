@@ -1,0 +1,269 @@
+{
+  "attempts": [
+    {
+      "file": "gitnexus-baseline-bounded.json",
+      "command": [
+        "node",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=1024",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "268435456",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1"
+      },
+      "exit_code": -9,
+      "elapsed_seconds": 97.56
+    },
+    {
+      "file": "gitnexus-baseline-diagnostic.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=512",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_LBUG_MAX_DB_SIZE": "1073741824",
+        "GITNEXUS_SERIAL_LBUG_LOAD": "1",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "none",
+        "GITNEXUS_STORAGE_PATH": "/dev/shm/iao-code-mode-200b-runtime",
+        "IAO_GITNEXUS_PACKAGE_JSON": "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/package.json",
+        "IAO_GITNEXUS_DIAGNOSTIC": "1"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 21.54,
+      "scope": "All KARTA production sources and scripts at actual git root. Tests excluded from graph and reviewed by textual caller search and regression suite. Structural graph retained without body snippets, FTS skipped. Native connection resource bound to one thread.",
+      "native_resource_adapter_sha256": "75fdc038e78dd4fdcbaf78db6faf861a0c0b7d44619818e0ad33f57e1095f7cc",
+      "max_rss_kb": 846156
+    },
+    {
+      "file": "gitnexus-baseline-karta.json",
+      "command": [
+        "node",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "symbol",
+        "GITNEXUS_STORAGE_PATH": "/workspace/scratch/200bdf486cef/gitnexus-karta-index"
+      },
+      "exit_code": -9,
+      "elapsed_seconds": 38.94,
+      "scope": "All KARTA src and tests at actual git root. Outside-KARTA dependencies require separate review. FTS skipped, structural impact retained."
+    },
+    {
+      "file": "gitnexus-baseline-native-proxy.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_LBUG_MAX_DB_SIZE": "1073741824",
+        "GITNEXUS_SERIAL_LBUG_LOAD": "1",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "symbol",
+        "GITNEXUS_STORAGE_PATH": "/dev/shm/iao-code-mode-200b-karta",
+        "IAO_GITNEXUS_PACKAGE_JSON": "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/package.json"
+      },
+      "exit_code": -9,
+      "elapsed_seconds": 37.29,
+      "scope": "All KARTA src and tests at actual git root. FTS skipped. Native Connection limited to one query execution thread; all structural graph logic unchanged. Outside-KARTA consumers reviewed separately.",
+      "native_resource_adapter_sha256": "c8c6a44cb87decf6e4a43c82f1e21655f049169f67650210174905e548a7e767"
+    },
+    {
+      "file": "gitnexus-baseline-native-storage.json",
+      "command": [
+        "node",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_LBUG_MAX_DB_SIZE": "1073741824",
+        "GITNEXUS_SERIAL_LBUG_LOAD": "1",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "symbol",
+        "GITNEXUS_STORAGE_PATH": "/dev/shm/iao-code-mode-200b-karta"
+      },
+      "exit_code": -9,
+      "elapsed_seconds": 40.24,
+      "scope": "All KARTA src and tests at actual git root. Outside-KARTA dependencies reviewed separately. FTS skipped. Native storage, structural graph unchanged."
+    },
+    {
+      "file": "gitnexus-baseline-native.json",
+      "command": [
+        "node",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-20261124"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 20.03
+    },
+    {
+      "file": "gitnexus-baseline-one-native-thread.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_LBUG_MAX_DB_SIZE": "1073741824",
+        "GITNEXUS_SERIAL_LBUG_LOAD": "1",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "symbol",
+        "GITNEXUS_STORAGE_PATH": "/dev/shm/iao-code-mode-200b-karta",
+        "IAO_GITNEXUS_PACKAGE_JSON": "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/package.json"
+      },
+      "exit_code": 1,
+      "elapsed_seconds": 42.0,
+      "scope": "All KARTA src and tests at actual git root. FTS skipped. Native Connection limited to one query execution thread; all structural graph logic unchanged. Outside-KARTA consumers reviewed separately.",
+      "native_resource_adapter_sha256": "1c6dd5439fcede11f540557cdd21803174a2521e03658c30af2f38c2b20ffc1a"
+    },
+    {
+      "file": "gitnexus-baseline-runtime.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=512",
+        "GITNEXUS_MEMORY": "off",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_LBUG_MAX_DB_SIZE": "1073741824",
+        "GITNEXUS_SERIAL_LBUG_LOAD": "1",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "none",
+        "GITNEXUS_STORAGE_PATH": "/dev/shm/iao-code-mode-200b-runtime",
+        "IAO_GITNEXUS_PACKAGE_JSON": "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/package.json"
+      },
+      "exit_code": -9,
+      "elapsed_seconds": 11.72,
+      "scope": "All KARTA production sources and scripts at actual git root. Tests excluded from graph and reviewed by textual caller search and regression suite. Structural graph retained without body snippets, FTS skipped. Native connection resource bound to one thread.",
+      "native_resource_adapter_sha256": "c8c6a44cb87decf6e4a43c82f1e21655f049169f67650210174905e548a7e767"
+    },
+    {
+      "file": "gitnexus-baseline-worker-bounded.json",
+      "command": [
+        "node",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-20261124"
+      ],
+      "environment": {
+        "NODE_OPTIONS": "--max-old-space-size=768",
+        "GITNEXUS_WORKER_HEAP_MB": "384",
+        "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+        "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "134217728",
+        "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+        "GITNEXUS_CONTENT_RETENTION": "symbol"
+      },
+      "exit_code": 1,
+      "elapsed_seconds": 31.84
+    },
+    {
+      "file": "gitnexus-baseline.json",
+      "command": [
+        "node",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-20261124"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 7.0
+    }
+  ],
+  "conclusion": "Only the final diagnostic runtime index completed. Earlier interrupted runs were not used as valid graph evidence; causes of SIGKILL are not conclusively established."
+}

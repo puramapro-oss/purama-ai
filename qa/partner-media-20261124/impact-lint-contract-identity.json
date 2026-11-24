@@ -1,0 +1,9 @@
+{
+  "error": "Target 'identity' not found",
+  "target": {
+    "name": "identity"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

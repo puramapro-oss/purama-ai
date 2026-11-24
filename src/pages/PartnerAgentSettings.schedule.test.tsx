@@ -24,7 +24,7 @@ const fixture={user_id:'fixture-user',sender_name:'Test',sender_email:'test@exam
   signature_image_url:null,signature_name:null,signature_title:null,
   daily_outreach_limit:2,outreach_hours_start:'09:00',outreach_hours_end:'18:00',outreach_days:['MO'],outreach_timezone:'UTC',
   relance_1_delay_days:3,relance_2_delay_days:7,relance_3_delay_days:14,max_relances:3,
-  commission_first_payment:3,commission_recurring:2,target_niches:[],target_min_followers:0,
+  commission_first_payment:3,commission_recurring:2,target_niches:[],target_min_followers:0,target_countries:['FR'],target_languages:['fr'],
   outreach_tone:'fixture',custom_tone_prompt:null,require_approval_new_prospect:true,require_approval_outreach:true,
   // Deliberately preserve old flags; they must not appear as controls or be
   // written again when editing the new schedule.

@@ -1,0 +1,12 @@
+
+  GitNexus Analyzer (1.6.12)
+{"level":40,"time":1795549354620,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":243,"entryPointsUnexplored":61,"walksCutByBudget":21,"tracesDepthCapped":4,"calleesDropped":1106,"processesDropped":0},"msg":"[processes] 309 flows reported, but whole flows are MISSING: 243 of 443 candidate entry point(s) never ranked in, 61 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 4 trace(s) cut at maxTraceDepth, 1106 callee(s) skipped at maxBranching, 21 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2K
+FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+
+  Repository indexed successfully (94.8s)
+
+  4,227 nodes | 10,273 edges | 116 clusters | 309 flows
+  /private/tmp/iao-code-mode-200b-qa
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.

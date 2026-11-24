@@ -62,7 +62,7 @@ function button(name: string): HTMLButtonElement {
   return value;
 }
 function queryInput(): HTMLInputElement {
-  const input = document.querySelector<HTMLInputElement>('input[placeholder="ex : meilleurs influenceurs finance personnelle France"]');
+  const input = document.querySelector<HTMLInputElement>('#partner-find-query');
   if (!input) throw new Error('Missing prospect discovery query');
   return input;
 }
@@ -129,7 +129,7 @@ describe('partner discovery operation ownership with real UI and client helper',
     expect(button('Lancer la recherche').disabled).toBe(true); noNotifications();
     expect(api.list).toHaveBeenCalledTimes(1);
     await act(async () => pending.resolve(response(3)));
-    expect(toast.success).toHaveBeenCalledExactlyOnceWith('✨ 3 prospects ajoutés');
+    expect(toast.success).toHaveBeenCalledExactlyOnceWith('3 prospects ajoutés à qualifier');
     expect(dialog()).toBeNull();
     expect(api.list).toHaveBeenCalledTimes(2); expect(api.list).toHaveBeenLastCalledWith(A);
     await open(); expect(queryInput().value).toBe('');
@@ -214,7 +214,7 @@ describe('partner discovery operation ownership with real UI and client helper',
     await render(A);
     expect(queryInput().value).toBe('UNCHANGED-A'); expect(button('Lancer la recherche').disabled).toBe(true);
     await act(async () => pending.resolve(response()));
-    expect(toast.success).toHaveBeenCalledExactlyOnceWith('✨ 2 prospects ajoutés');
+    expect(toast.success).toHaveBeenCalledExactlyOnceWith('2 prospects ajoutés à qualifier');
     expect(dialog()).toBeNull(); expect(api.list).toHaveBeenCalledTimes(2);
   });
 
@@ -231,7 +231,7 @@ describe('partner discovery operation ownership with real UI and client helper',
     expect(button('Lancer la recherche').disabled).toBe(true);
     expect(api.list).toHaveBeenCalledTimes(2);
     await act(async () => current.resolve(response(4)));
-    expect(toast.success).toHaveBeenCalledExactlyOnceWith('✨ 4 prospects ajoutés');
+    expect(toast.success).toHaveBeenCalledExactlyOnceWith('4 prospects ajoutés à qualifier');
     expect(api.list).toHaveBeenLastCalledWith(B);
   });
 
@@ -242,7 +242,7 @@ describe('partner discovery operation ownership with real UI and client helper',
       useLayoutEffect(() => {
         if (owner !== B) return;
         draftDuringCommit = document.querySelector<HTMLInputElement>(
-          'input[placeholder="ex : meilleurs influenceurs finance personnelle France"]',
+          '#partner-find-query',
         )?.value ?? null;
         const launch = [...document.querySelectorAll<HTMLButtonElement>('button')]
           .find(item => item.textContent?.trim() === 'Lancer la recherche');
@@ -271,7 +271,7 @@ describe('partner discovery operation ownership with real UI and client helper',
     expect(button('Lancer la recherche').disabled).toBe(true);
     expect(api.list).toHaveBeenCalledTimes(3);
     await act(async () => current.resolve(response(1)));
-    expect(toast.success).toHaveBeenCalledExactlyOnceWith('✨ 1 prospects ajoutés');
+    expect(toast.success).toHaveBeenCalledExactlyOnceWith('1 prospects ajoutés à qualifier');
     expect(dialog()).toBeNull();
   });
 

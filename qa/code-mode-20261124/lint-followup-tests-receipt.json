@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "test/customRegistry.test.ts",
+    "test/claudeTransportCost.test.ts"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 1.59,
+  "change": "Move the chained it.each call opening parenthesis onto the same line; no test body or product change."
+}
