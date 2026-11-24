@@ -23,7 +23,7 @@ La recherche pouvait accepter des données insuffisamment vérifiées, perdre la
 | Composition des 83 cas | 27 frontières client, 21 cas DOM de découverte, 12 contrats, 18 cas de propriété des réglages, 5 horaires | Même reçu ; ces sous-ensembles sont inclus dans le total |
 | Lint ciblé | **PASS**, cinq chemins, zéro avertissement | Même reçu |
 | Reproductions antérieures | Défauts initiaux, ouverture Radix, réponses obsolètes et contre-épreuve du commit avant effets passifs conservés | [Base](baseline.json) · [Réception UI antérieure](ui-discovery-receipt.json) |
-| Backend final | **PASS : 152/152** = 89 découverte + 63 politique assistant ; empreintes finales vérifiées | [Reçu backend et journaux](backend-evidence/receipt.json) |
+| Backend final | **PASS : 152/152** = 89 découverte + 63 politique assistant ; empreintes finales vérifiées | [Réception après CI](ci-followup/receipt.json) ; [historique backend](backend-evidence/receipt.json) |
 | TypeScript global | **PASS**, exit 0 en 16,743 s sur la composition `04ff79c` et les sources finales | [Reçu final](typecheck-final-receipt.json) ; échec initial conservé sous `typecheck-client-initial*` |
 | Typage Deno natif | **PASS**, Deno officiel 2.9.7 / TypeScript 6.0.3, six sources identiques, exit 0 en 6,655 s ; dépendances publiques authentiques | [Reçu Linux final](native-typecheck-final-linux.json) ; ancien [reçu Mac](native-typecheck.json) historique |
 | Build final | **PARTIEL**, quatre ressources hors ligne validées ; processus interrompu au rendu des chunks, exit 137. Bundle final non qualifié | [Dernière tentative](build-final-receipt.json), essais antérieurs conservés |
@@ -52,3 +52,13 @@ Les journaux `.log` sont conservés sous leur forme compressée `.log.gz` ; les 
 ## Reprise de la compilation
 
 Le [scénario de compilation isolée](isolated-build.md) et son [script](isolated-build.py) sont préparés pour un environnement suffisamment doté. Leur exécution distante est **NON TESTÉE** ; seule la syntaxe du script a été vérifiée. Ils ne remplacent pas un reçu de compilation. Le [reçu de préparation](isolated-build-pending.json) conserve cette limite.
+
+## Complément après la première CI de PR112
+
+La première CI a exécuté les gates et relevé quatre erreurs TypeScript et une erreur `prefer-const`, toutes dans le nouveau test `partnerDiscovery.test.ts`. Le [reçu du lint global](ci-site-lint-initial.json) attribue séparément les 22 avertissements préexistants. La correction conserve les assertions, dont la vraie longueur de `prospects` après vérification de la structure ; les matchers acceptant une clé aplatie ont été écartés. Les sept autres chemins source/test sont inchangés.
+
+**PASS** : typage ciblé avec les options KARTA officielles, 152 cas serveur/politique rejoués et lint ciblé. Les 83 cas frontend restent reçus sur les mêmes sources, soit 235 cas distincts. Le typecheck KARTA global local a rencontré les limites de ressources documentées ; sa réception globale est reportée à la CI. [Reçu détaillé et historiques](ci-followup/receipt.json).
+
+Les [résultats GitHub de la même PR112](https://github.com/puramapro-oss/purama-ai/pull/112/checks) complètent ces reçus locaux après publication du correctif. Aucun résultat encore en attente n’est présumé réussi dans ce document.
+
+Le rafraîchissement incrémental du graphe pour ce seul delta de test a été interrompu (exit −9). Le détecteur staged signale des fichiers modifiés sans symbole indexé recouvrant ces lignes, explicitement sans conclure à un arbre propre. Le [reçu des tentatives](gitnexus-ci-changes-receipt.json), la dernière analyse produit et la contre-revue du test restent distincts ; cet outil demeure **PARTIEL**.

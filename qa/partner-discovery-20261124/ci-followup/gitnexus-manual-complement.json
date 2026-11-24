@@ -1,0 +1,14 @@
+{
+  "indexed_commit": "04ff79cf8c5d1061e04cf631efac21601978433e",
+  "current_head": "4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b",
+  "indexed_test_sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
+  "pre_edit_test_sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
+  "indexed_bytes_match_pre_edit": true,
+  "impact": "UNKNOWN: no callback/importer edges resolved; not evidence of absence",
+  "manual_callers": [
+    "karta/vitest.config.ts includes test/**/*.test.ts",
+    "karta/tsconfig.json includes test/**/*.ts",
+    "root ESLint discovers the TypeScript test"
+  ],
+  "scope": "Assertions inside four existing test callbacks only; no exported symbol, production source or test gate changed."
+}

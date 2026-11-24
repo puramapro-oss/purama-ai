@@ -479,7 +479,7 @@ describe('partner discovery persistence and interruption', () => {
     expect(response.status).toBe(503);
     const body = await response.json();
     expect(body).toMatchObject({ inserted: 0, prospects: [] });
-    expect(body.error).toEqual(expect.any(String));
+    expect(body).toHaveProperty('error', expect.any(String));
     assertNoPrivateDetail(h, body);
   });
   it('preserves the count of earlier successful writes when a later insertion fails', async () => {
@@ -491,7 +491,10 @@ describe('partner discovery persistence and interruption', () => {
     const response = await h.handler(request());
     expect(response.status).toBe(503);
     const body = await response.json();
-    expect(body.inserted).toBe(1);
+    expect(body).toHaveProperty('inserted', 1);
+    if (typeof body !== 'object' || body === null || !('prospects' in body)) {
+      throw new Error('Expected a discovery response containing prospects');
+    }
     expect(body.prospects).toHaveLength(1);
     expect(h.writes).toHaveLength(1);
     assertNoPrivateDetail(h, body);
@@ -508,7 +511,7 @@ describe('partner discovery persistence and interruption', () => {
     const h = runtime({ extracted: { prospects: [candidate(), candidate({ email: email.toUpperCase() })] } });
     const response = await h.handler(request());
     expect(response.status).toBe(200);
-    expect((await response.json()).inserted).toBe(1);
+    expect(await response.json()).toMatchObject({ inserted: 1 });
     expect(h.writes).toHaveLength(1);
   });
   it('does not deduplicate a different account into this account', async () => {
@@ -548,13 +551,12 @@ describe('partner discovery persistence and interruption', () => {
     expect(h.writes).toEqual([]);
   });
   it('enforces the total monotonic deadline before persisting a late result', async () => {
-    let advance!: (milliseconds: number) => void;
     const h = runtime({ provider: async stage => {
       if (stage === 'search') return Response.json({ results: [searchResult()] });
       advance(10 * 60_000);
       return modelResponse({ prospects: [candidate()] });
     } });
-    advance = h.advance;
+    const advance: (milliseconds: number) => void = h.advance;
     const response = await h.handler(request());
     expect(response.status).toBe(504);
     expect(h.writes).toEqual([]);

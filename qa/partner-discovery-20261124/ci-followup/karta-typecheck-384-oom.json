@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=384",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false",
+    "--pretty",
+    "false",
+    "-p",
+    "tsconfig.json"
+  ],
+  "working_directory": "karta",
+  "equivalent_ci_command": "npx tsc --noEmit --incremental false --pretty false -p tsconfig.json",
+  "exit_code": -6,
+  "elapsed_seconds": 29.794
+}

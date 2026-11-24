@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "purpose": "Diagnostic du premier échec du lint global sur PR112 ; aucun résultat après correction n’est revendiqué par ce reçu.",
+  "repository": "puramapro-oss/purama-ai",
+  "pull_request": 112,
+  "source": {
+    "workflow_run_id": 45484899212,
+    "job_id": 138767552852,
+    "job_url": "https://github.com/puramapro-oss/purama-ai/actions/runs/45484899212/job/138767552852",
+    "tool": "github_fetch_workflow_job_logs",
+    "pr_head": "4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b",
+    "integration_base": "04ff79cf8c5d1061e04cf631efac21601978433e",
+    "actual_checkout_merge": "6dbde82b302d990a2d1d9d99275c81e0a1d1d78a",
+    "checkout_evidence": "Merge 4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b into 04ff79cf8c5d1061e04cf631efac21601978433e",
+    "command": "npm run lint",
+    "script": "eslint .",
+    "exit_code": 1,
+    "diagnostic_summary": {
+      "total": 23,
+      "errors": 1,
+      "warnings": 22
+    },
+    "no_global_build_result": "Les logs de ce job n’atteignent pas l’étape de compilation après l’échec du lint."
+  },
+  "attribution": {
+    "reviewed_lot_paths": [
+      "src/lib/partner.ts",
+      "src/lib/partner-discovery-result.ts",
+      "src/lib/partner-discovery-result.test.ts",
+      "src/pages/PartnerAgentProspects.tsx",
+      "src/pages/PartnerAgentProspects.discovery.test.tsx",
+      "supabase/functions/partner-find-prospects/index.ts",
+      "karta/test/partnerDiscovery.test.ts",
+      "karta/test/assistantPolicy.test.ts"
+    ],
+    "blocking_error_in_lot": "karta/test/partnerDiscovery.test.ts:551:9 — prefer-const sur advance",
+    "errors_outside_lot": 0,
+    "warnings_in_lot": 0,
+    "warnings_outside_lot": 22,
+    "warning_files_outside_lot": 18,
+    "baseline_comparison": "Les 18 fichiers porteurs d’avertissements ont des objets Git identiques à la base d’intégration ; eslint.config.js, package.json et package-lock.json sont également inchangés (git diff --exit-code : 0).",
+    "unchanged_warning_files": [
+      {
+        "path": "mobile/app/accessibility-watch.tsx",
+        "base_blob": "6f18aa40778cfefd290acc90a512fa43080bd09a",
+        "pr_head_blob": "6f18aa40778cfefd290acc90a512fa43080bd09a",
+        "unchanged": true
+      },
+      {
+        "path": "mobile/hooks/useAuth.tsx",
+        "base_blob": "526dbd34d8836aac15f68422677c8c446b0a8412",
+        "pr_head_blob": "526dbd34d8836aac15f68422677c8c446b0a8412",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/CookieConsent.tsx",
+        "base_blob": "cf25238dce4ae7b9403a5ee7b0e42b17245f02a9",
+        "pr_head_blob": "cf25238dce4ae7b9403a5ee7b0e42b17245f02a9",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/badge.tsx",
+        "base_blob": "0853c441dffc3ca2251118d2cca041423023f1a6",
+        "pr_head_blob": "0853c441dffc3ca2251118d2cca041423023f1a6",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/button.tsx",
+        "base_blob": "cdedd4f43da30732ce09e289a3c373a34c932078",
+        "pr_head_blob": "cdedd4f43da30732ce09e289a3c373a34c932078",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/form.tsx",
+        "base_blob": "439029fcffd79c94249c92772ff47ee3ad65eff9",
+        "pr_head_blob": "439029fcffd79c94249c92772ff47ee3ad65eff9",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/navigation-menu.tsx",
+        "base_blob": "c9fcd7adf74d76a34ff619c536217ee4cc27aa2b",
+        "pr_head_blob": "c9fcd7adf74d76a34ff619c536217ee4cc27aa2b",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/sidebar.tsx",
+        "base_blob": "beb1a591fc0375c035cf89966fd7ccab3a1baabd",
+        "pr_head_blob": "beb1a591fc0375c035cf89966fd7ccab3a1baabd",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/sonner.tsx",
+        "base_blob": "b7f198b5928a228fb55ef595e26d9d74ac0241f2",
+        "pr_head_blob": "b7f198b5928a228fb55ef595e26d9d74ac0241f2",
+        "unchanged": true
+      },
+      {
+        "path": "src/components/ui/toggle.tsx",
+        "base_blob": "de5dfc5ad8cca9ad540eead9303b3f09c6f2963e",
+        "pr_head_blob": "de5dfc5ad8cca9ad540eead9303b3f09c6f2963e",
+        "unchanged": true
+      },
+      {
+        "path": "tests/chat/auth.tsx",
+        "base_blob": "ec145d8508bb8af2209e48a9edc9635fbb6c381b",
+        "pr_head_blob": "ec145d8508bb8af2209e48a9edc9635fbb6c381b",
+        "unchanged": true
+      },
+      {
+        "path": "tests/oauth-google/browser/entry.tsx",
+        "base_blob": "0534b40e3e68f3d456e360925d8f749a95201dcd",
+        "pr_head_blob": "0534b40e3e68f3d456e360925d8f749a95201dcd",
+        "unchanged": true
+      },
+      {
+        "path": "tests/quality/billing-dashboard-scope-harness.tsx",
+        "base_blob": "9a3d93482b1eb02f8163903338622de96cd2f042",
+        "pr_head_blob": "9a3d93482b1eb02f8163903338622de96cd2f042",
+        "unchanged": true
+      },
+      {
+        "path": "tests/quality/billing-scope-harness.tsx",
+        "base_blob": "411d2c0fd0e2ac4c521dbe22e25db70dd2c5e6c1",
+        "pr_head_blob": "411d2c0fd0e2ac4c521dbe22e25db70dd2c5e6c1",
+        "unchanged": true
+      },
+      {
+        "path": "tests/voice-consent/auth.tsx",
+        "base_blob": "a52297e548b2fa92fc3fe56b8aed09f731bc44b6",
+        "pr_head_blob": "a52297e548b2fa92fc3fe56b8aed09f731bc44b6",
+        "unchanged": true
+      },
+      {
+        "path": "tests/voice-consent/harness.tsx",
+        "base_blob": "3a48b9ce0b6d22e929146da3b9e91899a5bddb95",
+        "pr_head_blob": "3a48b9ce0b6d22e929146da3b9e91899a5bddb95",
+        "unchanged": true
+      },
+      {
+        "path": "tests/wellbeing/auth.tsx",
+        "base_blob": "1c76d8fa79a33eb5e5f91cbf3aa2fe80e6e0ab52",
+        "pr_head_blob": "1c76d8fa79a33eb5e5f91cbf3aa2fe80e6e0ab52",
+        "unchanged": true
+      },
+      {
+        "path": "tests/wellbeing/harness.tsx",
+        "base_blob": "24de84c39282e88e3026b096677349163fb438fb",
+        "pr_head_blob": "24de84c39282e88e3026b096677349163fb438fb",
+        "unchanged": true
+      }
+    ]
+  },
+  "diagnostics": [
+    {
+      "path": "karta/test/partnerDiscovery.test.ts",
+      "line": 551,
+      "column": 9,
+      "severity": "error",
+      "message": "'advance' is never reassigned. Use 'const' instead",
+      "rule": "prefer-const"
+    },
+    {
+      "path": "mobile/app/accessibility-watch.tsx",
+      "line": 31,
+      "column": 56,
+      "severity": "warning",
+      "message": "The ref value 'revision.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'revision.current' to a variable inside the effect, and use that variable in the cleanup function",
+      "rule": "react-hooks/exhaustive-deps"
+    },
+    {
+      "path": "mobile/hooks/useAuth.tsx",
+      "line": 251,
+      "column": 17,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/CookieConsent.tsx",
+      "line": 120,
+      "column": 17,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/badge.tsx",
+      "line": 29,
+      "column": 17,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/button.tsx",
+      "line": 47,
+      "column": 18,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/form.tsx",
+      "line": 129,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/navigation-menu.tsx",
+      "line": 111,
+      "column": 3,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/sidebar.tsx",
+      "line": 636,
+      "column": 3,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/sonner.tsx",
+      "line": 27,
+      "column": 19,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "src/components/ui/toggle.tsx",
+      "line": 37,
+      "column": 18,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/chat/auth.tsx",
+      "line": 10,
+      "column": 17,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/oauth-google/browser/entry.tsx",
+      "line": 15,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/oauth-google/browser/entry.tsx",
+      "line": 20,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/oauth-google/browser/entry.tsx",
+      "line": 30,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/quality/billing-dashboard-scope-harness.tsx",
+      "line": 31,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/quality/billing-scope-harness.tsx",
+      "line": 16,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/voice-consent/auth.tsx",
+      "line": 10,
+      "column": 17,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/voice-consent/harness.tsx",
+      "line": 22,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/voice-consent/harness.tsx",
+      "line": 38,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/wellbeing/auth.tsx",
+      "line": 17,
+      "column": 17,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/wellbeing/harness.tsx",
+      "line": 44,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    },
+    {
+      "path": "tests/wellbeing/harness.tsx",
+      "line": 53,
+      "column": 10,
+      "severity": "warning",
+      "message": "Fast refresh only works when a file has exports. Move your component(s) to a separate file",
+      "rule": "react-refresh/only-export-components"
+    }
+  ],
+  "correction_ownership": {
+    "agent": "iao_partenaires_audit",
+    "target": "karta/test/partnerDiscovery.test.ts",
+    "agreed_minimal_fix": "Déclarer const advance = h.advance après la construction du runtime et avant l’invocation du handler, en préservant la fermeture du fournisseur.",
+    "coordination": "Le même agent corrige les quatre diagnostics TypeScript CI constatés dans ce test ; leur preuve et leur validation sont conservées dans son reçu.",
+    "result_in_this_receipt": "NON TESTÉ après correction ; ce reçu conserve uniquement le diagnostic initial."
+  },
+  "boundaries": {
+    "source_edits_by_this_diagnostic": false,
+    "workflow_or_gate_changes": false,
+    "warning_suppression": false,
+    "deployment_claim": false,
+    "raw_job_log_published": false,
+    "exported_content": "Diagnostics du lint uniquement, chemins normalisés relatifs au dépôt, objets Git publics et identifiants du run."
+  }
+}

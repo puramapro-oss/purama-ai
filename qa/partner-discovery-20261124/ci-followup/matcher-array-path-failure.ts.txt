@@ -1,0 +1,19 @@
+import { expect, it } from 'vitest';
+it('keeps the original nested prospects oracle', () => {
+  const accepts: Record<string, unknown>[] = [
+    { prospects: [{}] }, { prospects: { length: 1 } }, { prospects: 'x' },
+  ];
+  const rejects: Record<string, unknown>[] = [
+    { inserted: 1, 'prospects.length': 1 }, {}, { prospects: null },
+    { prospects: [] }, { prospects: [{}, {}] }, { prospects: {} },
+  ];
+  for (const body of accepts) {
+    expect(() => expect(body.prospects).toHaveLength(1)).not.toThrow();
+    expect(() => expect(body).toHaveProperty(['prospects', 'length'], 1)).not.toThrow();
+  }
+  for (const body of rejects) {
+    expect(() => expect(body.prospects).toHaveLength(1)).toThrow();
+    expect(() => expect(body).toHaveProperty(['prospects', 'length'], 1)).toThrow();
+  }
+  expect(() => expect({ inserted: 1, 'prospects.length': 1 }).toHaveProperty('prospects.length', 1)).not.toThrow();
+});

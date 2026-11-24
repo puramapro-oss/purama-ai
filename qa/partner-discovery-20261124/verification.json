@@ -12,8 +12,8 @@
       "bytes": 32222
     },
     "karta/test/partnerDiscovery.test.ts": {
-      "sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
-      "bytes": 32056
+      "sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff",
+      "bytes": 32241
     },
     "src/lib/partner.ts": {
       "sha256": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
@@ -50,7 +50,7 @@
       "discovery_dom": 21,
       "adjacent_ui": 35,
       "proofs": [
-        "backend-evidence/receipt.json",
+        "ci-followup/receipt.json",
         "ui-client-receipt.json"
       ],
       "method": "Real entry/helpers/SDK/React controls with controlled transport; historical executions not summed."
@@ -96,7 +96,20 @@
         "symbols": 576,
         "affected_processes": 78
       },
-      "interpretation": "Static aggregate impact is retained, not silently downgraded. Staged count includes proof files and test fixtures. Main comparison includes the existing consolidation history, not only this lot. Exact changed product paths, async boundaries and regression tests received independent review; final build remains incomplete."
+      "interpretation": "Static aggregate impact is retained, not silently downgraded. Staged count includes proof files and test fixtures. Main comparison includes the existing consolidation history, not only this lot. Exact changed product paths, async boundaries and regression tests received independent review; final build remains incomplete.",
+      "ci_index_proof": "gitnexus-ci-index-receipt.json",
+      "ci_followup": {
+        "index_refresh_exit_code": -9,
+        "status": "PARTIEL",
+        "change_report": "gitnexus-ci-changes-receipt.json",
+        "interpretation": "Interrupted incremental index refresh; staged detector reports changed files without overlapping indexed symbols, explicitly not a clean tree. Last reliable product graph retained, test delta manually reviewed and type/runtime/lint qualified. No claim of no impact."
+      }
+    },
+    "karta_tests_types": {
+      "status": "PASS_SCOPED",
+      "proof": "ci-followup/karta-typecheck-targeted.json",
+      "global_local": "BLOQUE:384MiB V8 OOM and512MiB SIGKILL",
+      "global_ci": "Must be received after follow-up publication"
     }
   },
   "operational_scope": {
@@ -108,5 +121,13 @@
     "Receive an unchanged full production build in an adequately resourced environment",
     "Qualify actual providers/database on the approved infrastructure and complete the real user flow",
     "Receive deployment and commercial activation separately"
-  ]
+  ],
+  "ci_followup": {
+    "pr": "https://github.com/puramapro-oss/purama-ai/pull/112",
+    "initial_head": "4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b",
+    "correction": "Five validation errors in the new test only; original nested length assertion retained; no production source or gate changed.",
+    "proof": "ci-followup/receipt.json",
+    "global_lint_initial": "ci-site-lint-initial.json",
+    "remaining": "Receive global CI on the published follow-up. Local build limits retained."
+  }
 }

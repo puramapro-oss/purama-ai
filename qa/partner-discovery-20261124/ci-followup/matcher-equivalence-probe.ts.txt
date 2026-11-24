@@ -1,0 +1,25 @@
+import { expect, it } from 'vitest';
+it('keeps the original nested prospects oracle', () => {
+  const checked = (body: unknown) => {
+    if (typeof body !== 'object' || body === null || !('prospects' in body)) {
+      throw new Error('Expected a discovery response containing prospects');
+    }
+    expect(body.prospects).toHaveLength(1);
+  };
+  const accepts: Record<string, unknown>[] = [
+    { prospects: [{}] }, { prospects: { length: 1 } }, { prospects: 'x' },
+  ];
+  const rejects: Record<string, unknown>[] = [
+    { inserted: 1, 'prospects.length': 1 }, {}, { prospects: null },
+    { prospects: [] }, { prospects: [{}, {}] }, { prospects: {} },
+  ];
+  for (const body of accepts) {
+    expect(() => expect(body.prospects).toHaveLength(1)).not.toThrow();
+    expect(() => checked(body)).not.toThrow();
+  }
+  for (const body of rejects) {
+    expect(() => expect(body.prospects).toHaveLength(1)).toThrow();
+    expect(() => checked(body)).toThrow();
+  }
+  expect(() => expect({ inserted: 1, 'prospects.length': 1 }).toHaveProperty('prospects.length', 1)).not.toThrow();
+});
