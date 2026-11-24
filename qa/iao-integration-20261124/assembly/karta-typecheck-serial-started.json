@@ -1,0 +1,13 @@
+{
+  "stage": "karta-typecheck-serial",
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "pid": 4271,
+  "ownedProcessGroup": 4271,
+  "startedEpochSeconds": 1795484631.0830653,
+  "NODE_OPTIONS": "--max-old-space-size=512"
+}

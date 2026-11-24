@@ -79,8 +79,8 @@ export async function handleIaoRoute(
       const body = await beforeAdmission(() => readBody(req));
       if (!isActive()) return unavailable();
       const request = parseRequest(body, identity);
-      // Authentication and body reads can outlive readiness. Admit only after
-      // a final dependency probe, then recheck shutdown without another await.
+      // Authentication and body reads can outlive readiness. Require a final
+      // dependency probe, then keep checking shutdown before dispatch.
       if (!await beforeAdmission(canAdmit) || !isActive()) return unavailable();
       const executionBudgetMs = runtime.facade.executionBudgetMs(request.type);
       if (executionBudgetMs !== undefined) {
@@ -91,6 +91,15 @@ export async function handleIaoRoute(
       }
       // Port metadata is synchronous code too; shutdown still wins at dispatch.
       if (!isActive()) return unavailable();
+      // Body parsing and readiness can outlive an authority's revocation.
+      // Recheck immediately before dispatch, under the same admission budget,
+      // and keep the tenant, actor and session to which this body was bound.
+      const currentIdentity = await beforeAdmission(() => authenticateIdentity(runtime.authenticator, req));
+      if (!isActive()) return unavailable();
+      if (currentIdentity.tenantId !== identity.tenantId || currentIdentity.actorId !== identity.actorId ||
+        currentIdentity.session.sessionId !== identity.session.sessionId || identity.session.expiresAt <= Date.now()) {
+        throw new IaoAuthenticationError();
+      }
       assertAdmissionOpen();
       const response = await runtime.facade.submit(request);
       sendJson(res, response.status === "blocked" ? 503 : 202, response);

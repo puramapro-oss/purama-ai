@@ -1,0 +1,21 @@
+{
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "test/iao-facade.test.ts",
+    "test/iaoIdentityBoundary.test.ts",
+    "test/iaoAdmissionDeadline.test.ts",
+    "test/iaoPendingRetention.test.ts",
+    "test/iaoExecutionBudget.test.ts",
+    "test/apiIaoIntegration.test.ts",
+    "test/apiIaoTransportBudget.test.ts",
+    "test/runtimeApiReadiness.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "at": "2026-11-24T01:23:28.866635+00:00",
+  "exitCode": 1,
+  "phase": "existing runtime regressions",
+  "logSha256": "9ae221b53503897156fd62fcef8ce57401b8cdb8a09eed517f1b2421d82f324b"
+}

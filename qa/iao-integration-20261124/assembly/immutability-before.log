@@ -1,0 +1,239 @@
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-integration-20261124/karta
+
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not renew the original lease when the same final receipt is repeated 15ms
+   → expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(7) }
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > ignores a later preview instead of replacing an already completed stale result 3ms
+   → expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(7) }
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not replace completed work with a later blocked result 3ms
+   → expected { identity: 'iao', …(9) } to deeply equal { identity: 'iao', …(7) }
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > returns completed stale work unchanged on cancel without signalling an uncertain effect 2ms
+   → expected { identity: 'iao', …(8) } to deeply equal { identity: 'iao', …(7) }
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > also treats a stale proof-only result as internally completed 5ms
+   → expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(6) }
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not redeliver a completed stale export through a repeated final callback 2ms
+   → expected { identity: 'iao', …(8) } to deeply equal { identity: 'iao', …(8) }
+ × test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > protects a draining port without renewing the completed lease when it finally returns 1ms
+   → expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(7) }
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > still cancels genuinely pending work and refines its effect when a valid receipt arrives 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > keeps a preview without a final proof open to its later completion 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not renew the original lease when the same final receipt is repeated
+AssertionError: expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(7) }
+
+- Expected
++ Received
+
+@@ -4,7 +4,7 @@
+    "preview": "completed result",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+    "status": "partial",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:00.900Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:57:75
+     55|     const { facade, first, receipt } = await staleWork();
+     56|     vi.setSystemTime(START + 900);
+     57|     expect(facade.recordKartaResult("tenant-a", "actor-a", OLD, receip…
+       |                                                                           ^
+     58|     vi.setSystemTime(START + 1_001);
+     59|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > ignores a later preview instead of replacing an already completed stale result
+AssertionError: expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(7) }
+
+- Expected
++ Received
+
+  {
+    "conversationId": "shared-conversation",
+    "identity": "iao",
+-   "preview": "completed result",
++   "preview": "unverified replacement",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+    "status": "partial",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:00.900Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:66:8
+     64|     vi.setSystemTime(START + 900);
+     65|     expect(facade.recordKartaResult("tenant-a", "actor-a", OLD, { kind…
+     66|       .toEqual(first);
+       |        ^
+     67|     vi.setSystemTime(START + 1_001);
+     68|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not replace completed work with a later blocked result
+AssertionError: expected { identity: 'iao', …(9) } to deeply equal { identity: 'iao', …(7) }
+
+- Expected
++ Received
+
+  {
++   "blocked": {
++     "dependency": "karta-runtime",
++     "reason": "KARTA is unavailable",
++   },
+    "conversationId": "shared-conversation",
++   "effect": "none",
+    "identity": "iao",
+    "preview": "completed result",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+-   "status": "partial",
++   "status": "blocked",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:00.900Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:75:8
+     73|     vi.setSystemTime(START + 900);
+     74|     expect(facade.recordKartaResult("tenant-a", "actor-a", OLD, { kind…
+     75|       .toEqual(first);
+       |        ^
+     76|     vi.setSystemTime(START + 1_001);
+     77|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > returns completed stale work unchanged on cancel without signalling an uncertain effect
+AssertionError: expected { identity: 'iao', …(8) } to deeply equal { identity: 'iao', …(7) }
+
+- Expected
++ Received
+
+  {
+    "conversationId": "shared-conversation",
++   "effect": "uncertain",
+    "identity": "iao",
+    "preview": "completed result",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+-   "status": "partial",
++   "status": "cancelled",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:00.900Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:83:55
+     81|     const { facade, first, signal } = await staleWork();
+     82|     vi.setSystemTime(START + 900);
+     83|     expect(facade.cancel("tenant-a", "actor-a", OLD)).toEqual(first);
+       |                                                       ^
+     84|     expect(signal?.aborted).toBe(false);
+     85|     vi.setSystemTime(START + 1_001);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > also treats a stale proof-only result as internally completed
+AssertionError: expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(6) }
+
+- Expected
++ Received
+
+  {
+    "conversationId": "shared-conversation",
+    "identity": "iao",
++   "preview": "late preview",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+    "status": "partial",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:00.900Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:95:8
+     93|     vi.setSystemTime(START + 900);
+     94|     expect(facade.recordKartaResult("tenant-a", "actor-a", OLD, { kind…
+     95|       .toEqual(first);
+       |        ^
+     96|     expect(facade.cancel("tenant-a", "actor-a", OLD)).toEqual(first);
+     97|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not redeliver a completed stale export through a repeated final callback
+AssertionError: expected { identity: 'iao', …(8) } to deeply equal { identity: 'iao', …(8) }
+
+- Expected
++ Received
+
+  {
+    "conversationId": "shared-conversation",
+    "identity": "iao",
+    "memoryControl": {
+      "action": "export",
++     "exported": [
++       {
++         "private": "one delivery only",
++       },
++     ],
+      "operationId": "33333333-3333-4333-8333-333333333333",
+      "replayed": false,
+    },
+    "preview": "completed result",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+    "status": "partial",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:00.900Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:107:75
+    105|     const stored = facade.get("tenant-a", "actor-a", OLD);
+    106|     vi.setSystemTime(START + 900);
+    107|     expect(facade.recordKartaResult("tenant-a", "actor-a", OLD, receip…
+       |                                                                           ^
+    108|     expect(facade.cancel("tenant-a", "actor-a", OLD)).toEqual(stored);
+    109|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > protects a draining port without renewing the completed lease when it finally returns
+AssertionError: expected { identity: 'iao', …(7) } to deeply equal { identity: 'iao', …(7) }
+
+- Expected
++ Received
+
+@@ -4,7 +4,7 @@
+    "preview": "completed result",
+    "requestId": "11111111-1111-4111-8111-111111111111",
+    "stale": true,
+    "status": "partial",
+    "tenantId": "tenant-a",
+-   "updatedAt": "2026-11-24T01:00:00.000Z",
++   "updatedAt": "2026-11-24T01:00:02.000Z",
+  }
+
+ ❯ test/iaoCompletedImmutability.test.ts:122:24
+    120|     expect(facade.get("tenant-a", "actor-a", OLD)).toEqual(first);
+    121|     old.resolve(receipt);
+    122|     expect(await work).toEqual(first);
+       |                        ^
+    123|     // Leave the documented lazy-sweep interval after the preceding lo…
+    124|     vi.setSystemTime(START + 2_251);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 2 passed (9)
+   Start at  02:32:41
+   Duration  298ms (transform 51%, tests 29%, import 10%, setup 6%, worker 4%)
+

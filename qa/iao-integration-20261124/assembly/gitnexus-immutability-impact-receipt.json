@@ -1,0 +1,89 @@
+{
+  "scope": "karta call graph; affected target method bodies unchanged since indexing. Exact current source reviewed separately.",
+  "impacts": [
+    {
+      "symbol": "cancel",
+      "uid": "Method:src/iao/iaoFacade.ts:IaoFacade.cancel#3",
+      "command": [
+        "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+        "impact",
+        "cancel",
+        "--uid",
+        "Method:src/iao/iaoFacade.ts:IaoFacade.cancel#3",
+        "--direction",
+        "upstream",
+        "--repo",
+        "iao-integration-karta-20261124",
+        "--include-tests",
+        "--limit",
+        "100"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.596,
+      "risk": "LOW",
+      "impactedCount": 3,
+      "summary": {
+        "direct": 3,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        {
+          "depth": 1,
+          "id": "File:test/iao-facade.test.ts",
+          "name": "iao-facade.test.ts",
+          "filePath": "test/iao-facade.test.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "File:test/iaoPendingRetention.test.ts",
+          "name": "iaoPendingRetention.test.ts",
+          "filePath": "test/iaoPendingRetention.test.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "File:test/localComputeFabricCancellation.test.ts",
+          "name": "localComputeFabricCancellation.test.ts",
+          "filePath": "test/localComputeFabricCancellation.test.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        }
+      ]
+    },
+    {
+      "symbol": "#settleResult",
+      "uid": "Method:src/iao/iaoFacade.ts:IaoFacade.#settleResult#2",
+      "command": [
+        "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+        "impact",
+        "#settleResult",
+        "--uid",
+        "Method:src/iao/iaoFacade.ts:IaoFacade.#settleResult#2",
+        "--direction",
+        "upstream",
+        "--repo",
+        "iao-integration-karta-20261124",
+        "--include-tests",
+        "--limit",
+        "100"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.582,
+      "risk": "UNKNOWN",
+      "impactedCount": 0,
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": []
+    }
+  ]
+}

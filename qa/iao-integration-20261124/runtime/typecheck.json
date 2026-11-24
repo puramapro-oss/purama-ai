@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "at": "2026-11-24T01:22:49.377540+00:00",
+  "exitCode": 0,
+  "phase": "typecheck",
+  "logSha256": "e01586116b47a82ff45cc01bbe27d1eed26e67a4fae1cdde923d45280d30f84e"
+}

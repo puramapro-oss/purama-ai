@@ -1,0 +1,3 @@
+# Temporary scope for the IAO integration review. Only KARTA is indexed.
+/*
+!/karta/

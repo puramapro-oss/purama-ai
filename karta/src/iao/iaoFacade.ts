@@ -153,12 +153,12 @@ export class IaoFacade {
     return clone(this.#lookup(tenantId, actorId, requestId).response);
   }
 
-  /** Idempotent: a terminal request is returned unchanged; a pending one becomes `cancelled` with an uncertain effect. */
+  /** Idempotent: completed work is unchanged; unfinished work becomes `cancelled` with an uncertain effect. */
   cancel(tenantId: string, actorId: string, requestId: string): IaoResponse {
     this.#sweep();
     const stored = this.#lookup(tenantId, actorId, requestId);
     const response = stored.response;
-    if (isTerminal(response)) return clone(response);
+    if (isTerminal(response) || stored.terminalAt !== undefined) return clone(response);
     response.status = "cancelled";
     response.effect = "uncertain";
     this.#settle(stored);
@@ -190,7 +190,9 @@ export class IaoFacade {
 
   #settleResult(stored: StoredRequest, result: KartaIaoResult): IaoResponse {
     const response = stored.response;
-    if (isTerminal(response)) return this.#late(stored, result);
+    // A final stale receipt keeps its public partial status, while its existing
+    // completion timestamp prevents a callback from replacing it or renewing its lease.
+    if (isTerminal(response) || stored.terminalAt !== undefined) return this.#late(stored, result);
     response.stale = this.#latestByConversation.get(
       conversationKey(response.tenantId, stored.actorId, stored.conversationId),
     ) !== response.requestId;
@@ -226,9 +228,14 @@ export class IaoFacade {
       response.proof = result.evidence;
       response.status = "verified";
       this.#settle(stored);
-    } else if (result.preview !== undefined || result.memoryControl) {
+    } else if (result.preview !== undefined || result.memoryControl || result.evidence) {
       response.status = "partial";
-      touch(response);
+      // A valid final receipt still completes the work when a newer request
+      // made its answer stale. Preserve the public partial status and withhold
+      // its proof, but start its retention lease; pending ports remain protected
+      // by #sweep until they drain. A preview without a receipt is still open.
+      if (result.evidence) this.#settle(stored);
+      else touch(response);
     }
     return deliver(response, receipt);
   }

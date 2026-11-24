@@ -1,0 +1,55 @@
+{
+  "method": "Exact final nine tests and identical config/setup/dependencies in one isolated copy; only facade module replaced between runs. Working product untouched.",
+  "baselineVerifiedAgainstRecordedSha256": "d3ca5ae8ea61c1500a563fbf8e78ca74d14eba86c18f6824ee19eea86b148a26",
+  "sameTestSha256": "637afd380c26c0302a9262a278af3d07bfa3aef51310ae284c562d69abc84050",
+  "configSha256": {
+    "vitest.config.ts": "a03448591aef343cc771bddaf6ce90f8248347a5255082de22f78a5b8eab8158",
+    "package.json": "5ee2b3342406e3348d554f222c3e2cd706e9187f01c1856b3e4b8b0eff63f7ca",
+    "tsconfig.json": "dd13f7cc0c1c6c52c7f0a43c6b77068952e50be38d4d83178f18381cb98badf5",
+    "test/setup.ts": "14a55e06dd6bed6f9543681edb19853b53a23a4b73ac1b7ed31939a011038dac"
+  },
+  "results": [
+    {
+      "phase": "before",
+      "command": [
+        "node",
+        "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta/node_modules/vitest/vitest.mjs",
+        "run",
+        "test/iaoCompletedImmutability.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/immutability-exact-before-report.json"
+      ],
+      "cwd": "/workspace/scratch/6431e6d17379/iao-runtime-before-ncpt9psu",
+      "exitCode": 1,
+      "durationSeconds": 0.808,
+      "productSha256": "d3ca5ae8ea61c1500a563fbf8e78ca74d14eba86c18f6824ee19eea86b148a26",
+      "testSha256": "637afd380c26c0302a9262a278af3d07bfa3aef51310ae284c562d69abc84050",
+      "passed": 2,
+      "failed": 7,
+      "total": 9
+    },
+    {
+      "phase": "after",
+      "command": [
+        "node",
+        "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta/node_modules/vitest/vitest.mjs",
+        "run",
+        "test/iaoCompletedImmutability.test.ts",
+        "--maxWorkers=1",
+        "--reporter=verbose",
+        "--reporter=json",
+        "--outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/immutability-exact-after-report.json"
+      ],
+      "cwd": "/workspace/scratch/6431e6d17379/iao-runtime-before-ncpt9psu",
+      "exitCode": 0,
+      "durationSeconds": 0.643,
+      "productSha256": "5fdde33ec6e3119c059d3e4c7b17ca2985a1ea6b575fb09ad2793b70b7cdb5ab",
+      "testSha256": "637afd380c26c0302a9262a278af3d07bfa3aef51310ae284c562d69abc84050",
+      "passed": 9,
+      "failed": 0,
+      "total": 9
+    }
+  ]
+}

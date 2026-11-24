@@ -1,0 +1,39 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795485097140,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 2674 files, 8939 symbols
+Affected processes: 484
+Risk level: critical
+
+Changed symbols:
+  Section CHEF — preuves ciblées, réussite explicite et reprise sûre → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Contrat → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Mise en service contrôlée → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Vérifications et portée des résultats → karta/CHEF_EVIDENCE_SCOPE.md
+  Section Limites et suites nécessaires au fonctionnement continu → karta/CHEF_EVIDENCE_SCOPE.md
+  Section IAO — accès aux services et aux sites → karta/WEB_CAPABILITIES.md
+  Section Périmètre de cette proposition → karta/WEB_CAPABILITIES.md
+  Section Existant réutilisé → karta/WEB_CAPABILITIES.md
+  Section Contrat de confiance → karta/WEB_CAPABILITIES.md
+  Section Routes à raccorder → karta/WEB_CAPABILITIES.md
+  Section Choix techniques étudiés → karta/WEB_CAPABILITIES.md
+  Section Adaptation et consommation → karta/WEB_CAPABILITIES.md
+  Section Connexions et secrets → karta/WEB_CAPABILITIES.md
+  Section Validation de ce lot → karta/WEB_CAPABILITIES.md
+  Section Conditions de livraison du mode complet → karta/WEB_CAPABILITIES.md
+... and 8924 more
+
+Affected execution flows:
+  • PreflightWorkshopProject → Stop (10 steps) — changed: append, requestStop, checkStopped, fail, runChefProcess, preflightWorkshopProject, command, stop, destroyTask, stop
+  • ProjectLoop → Stop (10 steps) — changed: captureWorkshopHead, git, append, requestStop, checkStopped, fail, runChefProcess, projectLoop, assertCleanWorkshop, stop
+  • Run → DestroyTask (10 steps) — changed: run, captureWorkshopHead, git, append, requestStop, checkStopped, fail, runChefProcess, stop, destroyTask
+  • ProjectLoop → GroupState (9 steps) — changed: captureWorkshopHead, git, append, requestStop, checkStopped, groupState, runChefProcess, projectLoop, assertCleanWorkshop
+  • ProjectLoop → ChefProcessStopUnconfirmedError (8 steps) — changed: ChefProcessStopUnconfirmedError, captureWorkshopHead, git, append, requestStop, runChefProcess, projectLoop, assertCleanWorkshop
+  • ProjectLoop → SignalGroup (8 steps) — changed: captureWorkshopHead, git, append, requestStop, signalGroup, runChefProcess, projectLoop, assertCleanWorkshop
+  • StartCustomAgentScheduler → Bind (8 steps) — changed: listKartaEnabledCustomAgents, refreshSafely, startCustomAgentScheduler, refreshSchedules, refreshCustomAgentSchedules, bind, execute, from
+  • StartCustomAgentScheduler → Identifier (8 steps) — changed: listKartaEnabledCustomAgents, refreshSafely, startCustomAgentScheduler, refreshSchedules, refreshCustomAgentSchedules, execute, from, identifier
+  • Main → Text (6 steps) — changed: main, parseWorkshopProjects, strings, text, checkWorkshopRuntime, catalogue
+  • StartCustomAgentScheduler → Query (6 steps) — changed: listKartaEnabledCustomAgents, refreshSafely, startCustomAgentScheduler, refreshSchedules, refreshCustomAgentSchedules, query
+... and 474 more

@@ -1,0 +1,316 @@
+{
+  "target": {
+    "id": "Function:src/integrations/localComputeFabricProvider.ts:buildMemoryPrompt",
+    "name": "buildMemoryPrompt",
+    "type": "Function",
+    "filePath": "src/integrations/localComputeFabricProvider.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 11,
+  "risk": "HIGH",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 5,
+    "processes_affected": 2,
+    "modules_affected": 3
+  },
+  "byDepthCounts": {
+    "1": 5,
+    "2": 3,
+    "3": 3
+  },
+  "affected_processes": [
+    {
+      "name": "#prepare",
+      "type": "Function",
+      "filePath": "src/iao/iaoFacade.ts",
+      "affected_process_count": 8,
+      "total_hits": 22,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "prepare",
+      "type": "Function",
+      "filePath": "src/iao/kartaRuntimePort.ts",
+      "affected_process_count": 1,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Integrations",
+      "hits": 2,
+      "impact": "direct"
+    },
+    {
+      "name": "Iao",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Test",
+      "hits": 1,
+      "impact": "indirect"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:test/localComputeFabricMemoryBoundary.test.ts",
+        "name": "localComputeFabricMemoryBoundary.test.ts",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/localComputeFabricMemoryProjection.test.ts",
+        "name": "localComputeFabricMemoryProjection.test.ts",
+        "filePath": "test/localComputeFabricMemoryProjection.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:test/localComputeFabricProvider.test.ts",
+        "name": "localComputeFabricProvider.test.ts",
+        "filePath": "test/localComputeFabricProvider.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:test/localComputeFabricMemoryBoundary.test.ts:prompt",
+        "name": "prompt",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:src/integrations/localComputeFabricProvider.ts:LocalComputeFabricProvider.complete#1",
+        "name": "complete",
+        "filePath": "src/integrations/localComputeFabricProvider.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_189__prepare",
+            "label": "#prepare → Identifier",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_46__prepare",
+            "label": "#prepare → AssertFabricCurrent",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_194__prepare",
+            "label": "#prepare → Trap",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_234_prepare",
+            "label": "Prepare → Bind",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_195__prepare",
+            "label": "#prepare → Trap",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_198__prepare",
+            "label": "#prepare → From",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_197__prepare",
+            "label": "#prepare → Query",
+            "processType": "cross_community",
+            "step": 3
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:test/localComputeFabricCancellation.test.ts",
+        "name": "localComputeFabricCancellation.test.ts",
+        "filePath": "test/localComputeFabricCancellation.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:test/localComputeFabricResponseBoundary.test.ts",
+        "name": "localComputeFabricResponseBoundary.test.ts",
+        "filePath": "test/localComputeFabricResponseBoundary.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:src/iao/kartaRuntimePort.ts:KartaRuntimeIaoPort.prepare#2",
+        "name": "prepare",
+        "filePath": "src/iao/kartaRuntimePort.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_108__prepare",
+            "label": "#prepare → BuildContext",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_189__prepare",
+            "label": "#prepare → Identifier",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_107__prepare",
+            "label": "#prepare → Complete",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_197__prepare",
+            "label": "#prepare → Query",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_234_prepare",
+            "label": "Prepare → Bind",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_195__prepare",
+            "label": "#prepare → Trap",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_198__prepare",
+            "label": "#prepare → From",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_46__prepare",
+            "label": "#prepare → AssertFabricCurrent",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_194__prepare",
+            "label": "#prepare → Trap",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "File:test/iao-facade.test.ts",
+        "name": "iao-facade.test.ts",
+        "filePath": "test/iao-facade.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:test/kartaRuntimeDeadline.test.ts",
+        "name": "kartaRuntimeDeadline.test.ts",
+        "filePath": "test/kartaRuntimeDeadline.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:src/iao/iaoFacade.ts:IaoFacade.#prepare#2",
+        "name": "#prepare",
+        "filePath": "src/iao/iaoFacade.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_46__prepare",
+            "label": "#prepare → AssertFabricCurrent",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_108__prepare",
+            "label": "#prepare → BuildContext",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_194__prepare",
+            "label": "#prepare → Trap",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_189__prepare",
+            "label": "#prepare → Identifier",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_107__prepare",
+            "label": "#prepare → Complete",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_197__prepare",
+            "label": "#prepare → Query",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_195__prepare",
+            "label": "#prepare → Trap",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_198__prepare",
+            "label": "#prepare → From",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}

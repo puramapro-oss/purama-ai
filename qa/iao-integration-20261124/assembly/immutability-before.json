@@ -1,0 +1,17 @@
+{
+  "phase": "before-immutability-correction",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/iaoCompletedImmutability.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 1,
+  "durationSeconds": 0.734,
+  "productSha256": "d3ca5ae8ea61c1500a563fbf8e78ca74d14eba86c18f6824ee19eea86b148a26",
+  "testSha256": "9b31f9bcf29d4395764ba790eaf73b001260073910095930a4cb0b28ebf0c189",
+  "log": "immutability-before.log"
+}

@@ -1,0 +1,18 @@
+{
+  "phase": "before-product-correction",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/localComputeFabricMemoryProjection.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 1,
+  "durationSeconds": 0.622,
+  "productSha256": "46ad324197ea8d1456767571904f916e7f92970e1b9511ada74a5c9948ab53b1",
+  "testSha256": "32532a435df7b14293963aa9a6547f8b726f3e4dbd97718c6af038541e2d1ade",
+  "log": "projection-before.log",
+  "scope": "Local fixture tests; no live model, account, database or production."
+}

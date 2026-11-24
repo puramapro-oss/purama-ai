@@ -1,0 +1,21 @@
+{
+  "phase": "after-product-correction",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "test/localComputeFabricMemoryProjection.test.ts",
+    "test/localComputeFabricMemoryBoundary.test.ts",
+    "test/iao-facade.test.ts",
+    "test/kartaRuntimeDeadline.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 0,
+  "durationSeconds": 1.598,
+  "productSha256": "6106e335c105bb2b3f912c01a781289baf50bda60f8441501a5ef0a3d6a3556f",
+  "testSha256": "dc5d7f94da82f97f93c66ecd5b6d013a51e253b53e961559862d30f3d1cac2ea",
+  "log": "projection-after.log",
+  "scope": "Projection, defensive memory boundary, IAO facade and runtime deadlines with fixtures; no native socket or live model qualification."
+}

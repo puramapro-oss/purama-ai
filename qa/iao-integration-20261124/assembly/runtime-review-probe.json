@@ -1,0 +1,74 @@
+{
+  "findings": [
+    {
+      "scenario": "same authenticator object mutated during body read",
+      "change": "tenant",
+      "status": "PASS",
+      "authenticationCalls": 2,
+      "dispatches": 0,
+      "responseStatus": 401
+    },
+    {
+      "scenario": "same authenticator object mutated during body read",
+      "change": "actor",
+      "status": "PASS",
+      "authenticationCalls": 2,
+      "dispatches": 0,
+      "responseStatus": 401
+    },
+    {
+      "scenario": "same authenticator object mutated during body read",
+      "change": "session",
+      "status": "PASS",
+      "authenticationCalls": 2,
+      "dispatches": 0,
+      "responseStatus": 401
+    },
+    {
+      "scenario": "same authenticator object mutated during body read",
+      "change": "expired-original",
+      "status": "PASS",
+      "authenticationCalls": 2,
+      "dispatches": 0,
+      "responseStatus": 401
+    },
+    {
+      "scenario": "same authenticator object mutated during body read",
+      "change": "unchanged",
+      "status": "PASS",
+      "authenticationCalls": 2,
+      "dispatches": 1,
+      "responseStatus": 202
+    },
+    {
+      "scenario": "capacity pressure with completion order different from insertion order",
+      "status": "OBSERVED",
+      "insertionOrder": [
+        "11111111-1111-4111-8111-111111111111",
+        "22222222-2222-4222-8222-222222222222",
+        "33333333-3333-4333-8333-333333333333"
+      ],
+      "completionOrder": [
+        "22222222-2222-4222-8222-222222222222",
+        "33333333-3333-4333-8333-333333333333",
+        "11111111-1111-4111-8111-111111111111"
+      ],
+      "maxRequests": 2,
+      "retained": [
+        {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "status": "evicted"
+        },
+        {
+          "id": "22222222-2222-4222-8222-222222222222",
+          "status": "verified"
+        },
+        {
+          "id": "33333333-3333-4333-8333-333333333333",
+          "status": "verified"
+        }
+      ],
+      "conclusion": "The oldest inserted request that is terminal is evicted; eviction does not order by completion timestamp. No policy change made."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/runtime-review-probe.mjs"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 0,
+  "durationSeconds": 0.276
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "./node_modules/.bin/vitest",
+    "run",
+    "test/iaoCompletedRetention.test.ts",
+    "test/iaoAdmissionRevalidation.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "at": "2026-11-24T01:22:16.803904+00:00",
+  "exitCode": 1,
+  "phase": "before product correction, complete 17-case corpus",
+  "logSha256": "cca253a97a0cfdb631040c5adc5938ff0a2eea604d1cd4d0e7d714a0dde0502d"
+}

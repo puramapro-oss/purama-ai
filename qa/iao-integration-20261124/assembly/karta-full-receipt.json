@@ -1,0 +1,18 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/karta-full-report.json"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 137,
+  "durationSeconds": 15.923,
+  "log": "karta-full.log",
+  "jsonReport": "karta-full-report.json",
+  "sourceSnapshot": "karta-sources-before.json",
+  "sourceFilesChangedDuringRun": [],
+  "scope": "Full package.json KARTA suite with its existing config; no tests excluded or retried."
+}

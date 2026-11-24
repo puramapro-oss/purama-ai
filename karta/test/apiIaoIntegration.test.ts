@@ -64,10 +64,11 @@ it("authenticates IAO separately from administrative routes for submit, read and
   const facade = new IaoFacade({ prepare: async () => ({ kind: "accepted", preview: "preview" }) });
   const server = await listen({ authenticator: { authenticate }, facade });
   expect(await call(server, "/pura/requests", "POST", body)).toMatchObject({ status: 202, cache: "no-store" });
+  expect(authenticate).toHaveBeenCalledTimes(2);
   expect(await call(server, "/iao/requests/" + id)).toMatchObject({ status: 200, cache: "no-store" });
   expect(await call(server, "/iao/requests/" + id + "/cancel", "POST")).toMatchObject({ status: 200, cache: "no-store" });
   expect(await call(server, "/kill-switch/global", "POST", { active: true })).toMatchObject({ status: 401 });
-  expect(authenticate).toHaveBeenCalledTimes(3);
+  expect(authenticate).toHaveBeenCalledTimes(4);
 });
 
 it("rechecks shutdown after an awaited readiness probe for health and IAO admission", async () => {
@@ -144,7 +145,7 @@ it.each(["lookup", "cancel"] as const)("preserves authenticated IAO %s after dep
       : await call(server, "/iao/requests/" + id + "/cancel", "POST");
     expect(result).toMatchObject({ status: 200, cache: "no-store", body: { status: operation === "lookup" ? "draft" : "cancelled" } });
     expect(probe).not.toHaveBeenCalled();
-    expect(authenticate).toHaveBeenCalledTimes(2);
+    expect(authenticate).toHaveBeenCalledTimes(3);
     expect(prepare).toHaveBeenCalledOnce();
     expect(workSignal?.aborted).toBe(operation === "cancel");
   } finally {
@@ -175,7 +176,7 @@ it.each(["unavailable", "rejecting"] as const)("refuses new IAO work while readi
   expect(prepare).not.toHaveBeenCalled();
   recovered = true;
   expect(await call(server, "/iao/requests", "POST", body)).toMatchObject({ status: 202, body: { preview: "ready" } });
-  expect(authenticate).toHaveBeenCalledOnce();
+  expect(authenticate).toHaveBeenCalledTimes(2);
   expect(prepare).toHaveBeenCalledOnce();
 });
 

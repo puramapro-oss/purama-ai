@@ -1,0 +1,29 @@
+{
+  "stage": "runtime-targeted-final",
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "test/iaoCompletedImmutability.test.ts",
+    "test/iaoCompletedRetention.test.ts",
+    "test/iaoPendingRetention.test.ts",
+    "test/iao-facade.test.ts",
+    "test/iaoAdmissionRevalidation.test.ts",
+    "test/iaoIdentityBoundary.test.ts",
+    "test/iaoAdmissionDeadline.test.ts",
+    "test/kartaRuntimeDeadline.test.ts",
+    "--maxWorkers=1",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/runtime-targeted-final-report.json"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "pid": 17,
+  "ownedProcessGroup": 17,
+  "startedEpochSeconds": 1795484385.3293386,
+  "NODE_OPTIONS": "--max-old-space-size=512",
+  "exitCode": 0,
+  "durationSeconds": 1.912,
+  "log": "runtime-targeted-final.log",
+  "ownedProcessCleanup": []
+}
