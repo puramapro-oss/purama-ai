@@ -1,0 +1,772 @@
+{
+  "observed_at_utc": "2026-11-24 16:19:45 UTC",
+  "stats": {
+    "startTime": "2026-11-24T16:10:52.619Z",
+    "duration": 79952.44499999999,
+    "expected": 42,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  },
+  "total_cases": 45,
+  "new_workshop_cases": [
+    {
+      "file": "workshop.spec.ts",
+      "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+      "project": "chromium-small-touch-320x568",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "chromium",
+        "version": "159.0.8154.6",
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chatbot",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "start",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "status",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+      "project": "firefox-desktop-1280x800",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "firefox",
+        "version": "159.0",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chatbot",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "start",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "status",
+            "aborted": false
+          }
+        ],
+        "pageErrors": [
+          "Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed"
+        ]
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+      "project": "webkit-desktop-1280x800",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chatbot",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "start",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "status",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+      "project": "webkit-mobile-touch-390x844",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chatbot",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "start",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "status",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+      "project": "webkit-tablet-touch-768x1024",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chatbot",
+            "aborted": false
+          },
+          {
+            "key": "write",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "start",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "status",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+      "project": "chromium-small-touch-320x568",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "chromium",
+        "version": "159.0.8154.6",
+        "viewport": {
+          "width": 320,
+          "height": 568
+        },
+        "simulatedCalls": [
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+      "project": "firefox-desktop-1280x800",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "firefox",
+        "version": "159.0",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "simulatedCalls": [
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": [
+          "Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed"
+        ]
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+      "project": "webkit-desktop-1280x800",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "simulatedCalls": [
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+      "project": "webkit-mobile-touch-390x844",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "simulatedCalls": [
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "storage failure uses the fresh account-bound route and changing account clears its private draft",
+      "project": "webkit-tablet-touch-768x1024",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "simulatedCalls": [
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+      "project": "chromium-small-touch-320x568",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "chromium",
+        "version": "159.0.8154.6",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": true
+          },
+          {
+            "key": "write",
+            "aborted": true
+          },
+          {
+            "key": "chatbot",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+      "project": "firefox-desktop-1280x800",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "firefox",
+        "version": "159.0",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": true
+          },
+          {
+            "key": "write",
+            "aborted": true
+          },
+          {
+            "key": "chatbot",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": [
+          "Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed"
+        ]
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+      "project": "webkit-desktop-1280x800",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": true
+          },
+          {
+            "key": "write",
+            "aborted": true
+          },
+          {
+            "key": "chatbot",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+      "project": "webkit-mobile-touch-390x844",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": true
+          },
+          {
+            "key": "write",
+            "aborted": true
+          },
+          {
+            "key": "chatbot",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "file": "workshop.spec.ts",
+      "title": "landscape keeps preparation and the composer reachable and excludes stopped provisional output",
+      "project": "webkit-tablet-touch-768x1024",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0
+        }
+      ],
+      "runtime": {
+        "platform": "linux",
+        "browser": "webkit",
+        "version": "27.2",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "simulatedCalls": [
+          {
+            "key": "create",
+            "aborted": true
+          },
+          {
+            "key": "write",
+            "aborted": true
+          },
+          {
+            "key": "chatbot",
+            "aborted": true
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          },
+          {
+            "key": "chef-workshop",
+            "action": "list",
+            "aborted": false
+          }
+        ],
+        "pageErrors": []
+      }
+    }
+  ],
+  "old_case_count": 30,
+  "scope": "Linux Playwright browser engines and emulated viewports; no physical-device or production-provider qualification."
+}

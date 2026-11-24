@@ -1,0 +1,457 @@
+{
+  "observed_at_utc": "2026-11-24 16:19:45 UTC",
+  "source_artifact_id": 14941090739,
+  "source_artifact_sha256": "5383794e8a4442d10395c9ea8e713fe53770767532c3c32c369db4e5ffb74a6b",
+  "traces": [
+    {
+      "archive_member": "chat/workshop-conversation-to-w-edd7d-rts-only-the-edited-request-firefox-desktop-1280x800/trace.zip",
+      "context_options": [
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "testRunner",
+          "browserName": "",
+          "playwrightVersion": "1.65.1",
+          "options": {},
+          "platform": "linux",
+          "wallTime": 1795536678023,
+          "monotonicTime": 25856.404,
+          "sdkLanguage": "javascript",
+          "testTimeout": 20000,
+          "annotations": []
+        },
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "library",
+          "browserName": "firefox",
+          "playwrightVersion": "1.65.1",
+          "options": {
+            "baseURL": "http://127.0.0.1:4175",
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            },
+            "deviceScaleFactor": 1,
+            "isMobile": false
+          },
+          "platform": "linux",
+          "wallTime": 1795536678048,
+          "monotonicTime": 25881.476,
+          "sdkLanguage": "javascript",
+          "testIdAttributeName": "data-testid",
+          "title": "workshop.spec.ts:36 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request"
+        },
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "library",
+          "browserName": "",
+          "playwrightVersion": "1.65.1",
+          "options": {},
+          "platform": "linux",
+          "wallTime": 1795536678050,
+          "monotonicTime": 25883.917,
+          "sdkLanguage": "javascript",
+          "title": "workshop.spec.ts:36 › conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request"
+        }
+      ],
+      "timing": [
+        {
+          "page_error_time_ms": 26280.842,
+          "goto_start_ms": 26025.872,
+          "first_click_start_ms": 26313.04,
+          "after_goto_ms": 254.97000000000116,
+          "before_first_click": true
+        }
+      ],
+      "page_error_events": [
+        {
+          "type": "event",
+          "time": 26280.842,
+          "class": "BrowserContext",
+          "method": "pageError",
+          "params": {
+            "error": {
+              "error": {
+                "message": "Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed",
+                "stack": "Error: Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed\n    at navigatorLock/</< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8038:15)\n    at LockGrantedCallback*navigatorLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:72)\n    at promise callback*navigatorLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:34)\n    at _acquireLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9848:25)\n    at _autoRefreshTokenTick (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10816:18)\n    at _startAutoRefresh/timeout< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10746:18)\n    at async*_startAutoRefresh (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10744:31)\n    at async*_onVisibilityChanged (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10876:14)\n    at _handleVisibilityChange (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10863:18)\n    at _initialize (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9110:18)\n    at async*initialize/this.initializePromise< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9052:27)\n    at _acquireLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9852:26)\n    at navigatorLock/</< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8027:22)\n    at LockGrantedCallback*navigatorLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:72)\n    at promise callback*navigatorLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:34)\n    at _acquireLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9848:25)\n    at initialize/this.initializePromise< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9051:25)\n    at initialize (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9054:7)\n    at _GoTrueClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9013:10)\n    at SupabaseAuthClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11499:5)\n    at _initSupabaseAuthClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11667:12)\n    at SupabaseClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11546:24)\n    at createClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11704:10)\n    at  (http://127.0.0.1:4175/src/integrations/supabase/client.ts:8:37)",
+                "name": "Error"
+              }
+            },
+            "location": {
+              "url": "http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89",
+              "line": 7993,
+              "column": 4
+            }
+          },
+          "pageId": "page@fd1444fcd0ed2e0aca0c212a9717c902"
+        }
+      ],
+      "first_actions": [
+        {
+          "callId": "khwe@1458",
+          "startTime": 26025.872,
+          "class": "Frame",
+          "method": "goto",
+          "params": {
+            "url": "/tests/chat/index.html",
+            "waitUntil": "load"
+          }
+        },
+        {
+          "callId": "khwe@1574",
+          "startTime": 26313.04,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Ouvrir l'assistant PURA\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "khwe@1576",
+          "startTime": 26665.626,
+          "class": "Frame",
+          "method": "fill",
+          "params": {
+            "selector": "internal:role=textbox[name=\"Votre message\"i]",
+            "strict": true,
+            "value": "Créer un site pour mon restaurant avec menu et réservations."
+          }
+        },
+        {
+          "callId": "khwe@1578",
+          "startTime": 26697.617,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Envoyer le message\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "khwe@1584",
+          "startTime": 26948.925,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Préparer dans l’atelier\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "khwe@1600",
+          "startTime": 27108.387,
+          "class": "Frame",
+          "method": "fill",
+          "params": {
+            "selector": "internal:label=\"Que voulez-vous créer ou améliorer ?\"i",
+            "strict": true,
+            "value": "Mon brouillon déjà commencé reste ici tant que je ne le remplace pas."
+          }
+        },
+        {
+          "callId": "khwe@1602",
+          "startTime": 27132.079,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Ouvrir l'assistant PURA\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "khwe@1608",
+          "startTime": 27432.904,
+          "class": "Frame",
+          "method": "fill",
+          "params": {
+            "selector": "internal:role=textbox[name=\"Votre message\"i]",
+            "strict": true,
+            "value": "Ajouter les réservations pour les grands groupes et une version accessible."
+          }
+        }
+      ]
+    },
+    {
+      "archive_member": "chat/workshop-landscape-keeps-p-2f6cb--stopped-provisional-output-firefox-desktop-1280x800/trace.zip",
+      "context_options": [
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "testRunner",
+          "browserName": "",
+          "playwrightVersion": "1.65.1",
+          "options": {},
+          "platform": "linux",
+          "wallTime": 1795536684277,
+          "monotonicTime": 32110.83,
+          "sdkLanguage": "javascript",
+          "testTimeout": 20000,
+          "annotations": []
+        },
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "library",
+          "browserName": "firefox",
+          "playwrightVersion": "1.65.1",
+          "options": {
+            "baseURL": "http://127.0.0.1:4175",
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            },
+            "deviceScaleFactor": 1,
+            "isMobile": false
+          },
+          "platform": "linux",
+          "wallTime": 1795536684589,
+          "monotonicTime": 32422.155,
+          "sdkLanguage": "javascript",
+          "testIdAttributeName": "data-testid",
+          "title": "workshop.spec.ts:104 › landscape keeps preparation and the composer reachable and excludes stopped provisional output"
+        },
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "library",
+          "browserName": "",
+          "playwrightVersion": "1.65.1",
+          "options": {},
+          "platform": "linux",
+          "wallTime": 1795536684600,
+          "monotonicTime": 32433.628,
+          "sdkLanguage": "javascript",
+          "title": "workshop.spec.ts:104 › landscape keeps preparation and the composer reachable and excludes stopped provisional output"
+        }
+      ],
+      "timing": [
+        {
+          "page_error_time_ms": 33346.16,
+          "goto_start_ms": 32887.079,
+          "first_click_start_ms": 33558.445,
+          "after_goto_ms": 459.0810000000056,
+          "before_first_click": true
+        }
+      ],
+      "page_error_events": [
+        {
+          "type": "event",
+          "time": 33346.16,
+          "class": "BrowserContext",
+          "method": "pageError",
+          "params": {
+            "error": {
+              "error": {
+                "message": "Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed",
+                "stack": "Error: Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed\n    at navigatorLock/</< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8038:15)\n    at LockGrantedCallback*navigatorLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:72)\n    at promise callback*navigatorLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:34)\n    at _acquireLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9848:25)\n    at _autoRefreshTokenTick (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10816:18)\n    at _startAutoRefresh/timeout< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10746:18)\n    at async*_startAutoRefresh (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10744:31)\n    at async*_onVisibilityChanged (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10876:14)\n    at _handleVisibilityChange (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10863:18)\n    at _initialize (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9110:18)\n    at async*initialize/this.initializePromise< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9052:27)\n    at _acquireLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9852:26)\n    at navigatorLock/</< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8027:22)\n    at LockGrantedCallback*navigatorLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:72)\n    at promise callback*navigatorLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:34)\n    at _acquireLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9848:25)\n    at initialize/this.initializePromise< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9051:25)\n    at initialize (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9054:7)\n    at _GoTrueClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9013:10)\n    at SupabaseAuthClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11499:5)\n    at _initSupabaseAuthClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11667:12)\n    at SupabaseClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11546:24)\n    at createClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11704:10)\n    at  (http://127.0.0.1:4175/src/integrations/supabase/client.ts:8:37)",
+                "name": "Error"
+              }
+            },
+            "location": {
+              "url": "http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89",
+              "line": 7993,
+              "column": 4
+            }
+          },
+          "pageId": "page@a102a733adcc17f50f3bf8ec1502590f"
+        }
+      ],
+      "first_actions": [
+        {
+          "callId": "qrce@51",
+          "startTime": 32887.079,
+          "class": "Frame",
+          "method": "goto",
+          "params": {
+            "url": "/tests/chat/index.html",
+            "waitUntil": "load"
+          }
+        },
+        {
+          "callId": "qrce@167",
+          "startTime": 33558.445,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Ouvrir l'assistant PURA\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "qrce@173",
+          "startTime": 33737.443,
+          "class": "Frame",
+          "method": "fill",
+          "params": {
+            "selector": "internal:role=textbox[name=\"Votre message\"i]",
+            "strict": true,
+            "value": "Préparer un restaurant accessible et réservable depuis le téléphone."
+          }
+        },
+        {
+          "callId": "qrce@175",
+          "startTime": 33767.033,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Envoyer le message\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "qrce@181",
+          "startTime": 33950.393,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Arrêter la réponse\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "qrce@200",
+          "startTime": 34166.549,
+          "class": "Frame",
+          "method": "press",
+          "params": {
+            "selector": "internal:role=button[name=\"Préparer dans l’atelier\"i]",
+            "strict": true,
+            "key": "Enter"
+          }
+        }
+      ]
+    },
+    {
+      "archive_member": "chat/workshop-storage-failure-u-dde8a-nt-clears-its-private-draft-firefox-desktop-1280x800/trace.zip",
+      "context_options": [
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "testRunner",
+          "browserName": "",
+          "playwrightVersion": "1.65.1",
+          "options": {},
+          "platform": "linux",
+          "wallTime": 1795536681634,
+          "monotonicTime": 29467.753,
+          "sdkLanguage": "javascript",
+          "testTimeout": 20000,
+          "annotations": []
+        },
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "library",
+          "browserName": "firefox",
+          "playwrightVersion": "1.65.1",
+          "options": {
+            "baseURL": "http://127.0.0.1:4175",
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            },
+            "deviceScaleFactor": 1,
+            "isMobile": false
+          },
+          "platform": "linux",
+          "wallTime": 1795536681952,
+          "monotonicTime": 29785.823,
+          "sdkLanguage": "javascript",
+          "testIdAttributeName": "data-testid",
+          "title": "workshop.spec.ts:80 › storage failure uses the fresh account-bound route and changing account clears its private draft"
+        },
+        {
+          "version": 10,
+          "type": "context-options",
+          "origin": "library",
+          "browserName": "",
+          "playwrightVersion": "1.65.1",
+          "options": {},
+          "platform": "linux",
+          "wallTime": 1795536681965,
+          "monotonicTime": 29798.266,
+          "sdkLanguage": "javascript",
+          "title": "workshop.spec.ts:80 › storage failure uses the fresh account-bound route and changing account clears its private draft"
+        }
+      ],
+      "timing": [
+        {
+          "page_error_time_ms": 30703.166,
+          "goto_start_ms": 30252.681,
+          "first_click_start_ms": 30756.597,
+          "after_goto_ms": 450.4850000000006,
+          "before_first_click": true
+        }
+      ],
+      "page_error_events": [
+        {
+          "type": "event",
+          "time": 30703.166,
+          "class": "BrowserContext",
+          "method": "pageError",
+          "params": {
+            "error": {
+              "error": {
+                "message": "Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed",
+                "stack": "Error: Acquiring an exclusive Navigator LockManager lock \"lock:sb-supabase-auth-token\" immediately failed\n    at navigatorLock/</< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8038:15)\n    at LockGrantedCallback*navigatorLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:72)\n    at promise callback*navigatorLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:34)\n    at _acquireLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9848:25)\n    at _autoRefreshTokenTick (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10816:18)\n    at _startAutoRefresh/timeout< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10746:18)\n    at async*_startAutoRefresh (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10744:31)\n    at async*_onVisibilityChanged (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10876:14)\n    at _handleVisibilityChange (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:10863:18)\n    at _initialize (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9110:18)\n    at async*initialize/this.initializePromise< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9052:27)\n    at _acquireLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9852:26)\n    at navigatorLock/</< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8027:22)\n    at LockGrantedCallback*navigatorLock/< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:72)\n    at promise callback*navigatorLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:8015:34)\n    at _acquireLock (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9848:25)\n    at initialize/this.initializePromise< (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9051:25)\n    at initialize (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9054:7)\n    at _GoTrueClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:9013:10)\n    at SupabaseAuthClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11499:5)\n    at _initSupabaseAuthClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11667:12)\n    at SupabaseClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11546:24)\n    at createClient (http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89:11704:10)\n    at  (http://127.0.0.1:4175/src/integrations/supabase/client.ts:8:37)",
+                "name": "Error"
+              }
+            },
+            "location": {
+              "url": "http://127.0.0.1:4175/tests/chat/.cache/vite/deps/@supabase_supabase-js.js?v=7512bd89",
+              "line": 7993,
+              "column": 4
+            }
+          },
+          "pageId": "page@20b84133a4c9ecea669874bad15bf75c"
+        }
+      ],
+      "first_actions": [
+        {
+          "callId": "bcqe@51",
+          "startTime": 30252.681,
+          "class": "Frame",
+          "method": "goto",
+          "params": {
+            "url": "/tests/chat/index.html",
+            "waitUntil": "load"
+          }
+        },
+        {
+          "callId": "bcqe@167",
+          "startTime": 30756.597,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Ouvrir l'assistant PURA\"i]",
+            "strict": true
+          }
+        },
+        {
+          "callId": "bcqe@171",
+          "startTime": 31076.162,
+          "class": "Frame",
+          "method": "fill",
+          "params": {
+            "selector": "internal:role=textbox[name=\"Votre message\"i]",
+            "strict": true,
+            "value": "Nouvelle création confidentielle pour le restaurant de Alice."
+          }
+        },
+        {
+          "callId": "bcqe@173",
+          "startTime": 31104.888,
+          "class": "Frame",
+          "method": "click",
+          "params": {
+            "selector": "internal:role=button[name=\"Préparer dans l’atelier\"i]",
+            "strict": true
+          }
+        }
+      ]
+    }
+  ]
+}

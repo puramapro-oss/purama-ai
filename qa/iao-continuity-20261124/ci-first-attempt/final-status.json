@@ -1,0 +1,52 @@
+{
+  "observed_at_utc": "2026-11-24 16:25:35 UTC",
+  "source_head": "2dc63a47c189e8b18cf8d05db551ef95f3057f64",
+  "status": "BLOQUE: three Firefox page errors; all runs finished",
+  "workflow_conclusions": {
+    "45433919473": "failure",
+    "45433919434": "success"
+  },
+  "chef_job_conclusions": {
+    "138586437119": {
+      "name": "device-compatibility",
+      "conclusion": "failure"
+    },
+    "138586437240": {
+      "name": "karta",
+      "conclusion": "success"
+    },
+    "138586437323": {
+      "name": "site",
+      "conclusion": "success"
+    },
+    "138586437768": {
+      "name": "subscription-concurrency",
+      "conclusion": "success"
+    }
+  },
+  "device_matrix": {
+    "chat": {
+      "pass": 42,
+      "fail": 3,
+      "skipped": 0,
+      "flaky": 0,
+      "new_cases_pass": 12,
+      "new_cases_fail": 3,
+      "old_cases_pass": 30
+    },
+    "public_pass": 50,
+    "webkit_diagnostics_pass": 3,
+    "offline_pass": 30,
+    "touch_rotation_pass": 3,
+    "total_pass": 128,
+    "total_fail": 3
+  },
+  "site": {
+    "conclusion": "success",
+    "vitest_files_passed": 33,
+    "vitest_tests_passed": 646,
+    "workshop_browser_passed": 5,
+    "standard_chat_browser_passed": 51
+  },
+  "receipt_actions": "Read-only GitHub reception; only this QA evidence directory was written. No rerun, product/test/workflow mutation, publication or merge."
+}

@@ -1,0 +1,24 @@
+{
+  "staged": {
+    "files": 42,
+    "symbols": 86,
+    "processes": 1,
+    "risk": "MEDIUM",
+    "report": "staged.txt"
+  },
+  "manualSdkRisk": "HIGH: 69 product importers; dependency internals are outside the targeted graph",
+  "compareMain": {
+    "files": 2818,
+    "symbols": 847,
+    "processes": 39,
+    "risk": "CRITICAL",
+    "scope": "entire consolidation divergence, not this follow-up only",
+    "base": "ae84415be0b9516422805910be999a2c1e6350c0",
+    "report": "compare-main.txt"
+  },
+  "publicationGate": "Exact-head CI before merge only to audit/reliability-oauth-20261110; no main merge or production deployment",
+  "limits": [
+    "Targeted graph only; FTS unavailable; process traversal truncated",
+    "These report files are added after the measured staged snapshot; code/test source snapshot is unchanged"
+  ]
+}

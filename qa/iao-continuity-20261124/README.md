@@ -12,7 +12,9 @@ La reprise du brouillon invité OriginForge est conservée. Le bouton de transfe
 
 Ce transfert fournit un brief textuel éditable. La liaison durable conversation–mission–fichiers–scène AR reste une intégration distincte ; elle n'est pas déclarée terminée par ces ajouts.
 
-La réception native a exécuté les 5 scénarios Atelier et les 51 scénarios chat : 56/56 réussis, aucune nouvelle tentative, aucun cas ignoré ou instable. Les trois nouveaux parcours sont également sélectionnés dans la matrice existante sur ses cinq profils, soit 15 exécutions CI supplémentaires. Leur collecte locale ne vaut pas exécution multi-moteurs ; les résultats exacts sont ceux du job CI reçu.
+La première réception native a exécuté les 5 scénarios Atelier et les 51 scénarios chat : 56/56 réussis, aucune nouvelle tentative, aucun cas ignoré ou instable. Les trois nouveaux parcours sont également sélectionnés dans la matrice existante sur ses cinq profils, soit 15 exécutions CI supplémentaires. Leur collecte locale ne vaut pas exécution multi-moteurs ; les résultats exacts sont ceux du job CI reçu.
+
+La première CI de la PR108 a détecté trois erreurs d'initialisation du SDK Supabase2.91.0 sur Firefox. Les preuves d'échec sont préservées dans `ci-first-attempt/`. Le complément `sdk-upgrade/` fixe la dépendance web à2.119.2, conserve les assertions d'absence d'erreur navigateur et ajoute trois scénarios du client d'authentification réel. La matrice reprend également le scénario de message dont l'enregistrement doit être confirmé avant l'inférence : 13 scénarios sur cinq profils sont sélectionnés. Leur réception finale est enregistrée sur le commit exact de la PR108, sans qualifier des appareils physiques ou un serveur d'authentification de production.
 
 ## Preuves et portée
 

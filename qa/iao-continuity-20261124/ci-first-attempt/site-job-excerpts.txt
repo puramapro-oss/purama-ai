@@ -1,0 +1,180 @@
+2026-11-24T16:10:04.9920346Z ##[group]Runner Image Provisioner
+2026-11-24T16:10:04.9927528Z ##[group]Runner Image
+2026-11-24T16:10:08.3684443Z ##[group]Run actions/checkout@v4
+2026-11-24T16:10:13.7612699Z HEAD is now at 91b3a68 Merge 2dc63a47c189e8b18cf8d05db551ef95f3057f64 into e81129a56e07535129827c95211d82815df8dc5a
+2026-11-24T16:10:13.7939862Z ##[group]Run actions/setup-node@v4
+2026-11-24T16:10:19.7602741Z ##[group]Run denoland/setup-deno@v2
+2026-11-24T16:10:21.3456044Z ##[group]Run npm ci --no-audit
+2026-11-24T16:10:29.0522740Z ##[group]Run npm run test:dependencies
+2026-11-24T16:10:29.3934721Z # tests 12
+2026-11-24T16:10:29.3935152Z # pass 12
+2026-11-24T16:10:29.3935330Z # fail 0
+2026-11-24T16:10:29.3935524Z # cancelled 0
+2026-11-24T16:10:29.3947059Z # skipped 0
+2026-11-24T16:10:29.4028366Z ##[group]Run node --test --test-concurrency=1 --test-timeout=30000 tests/entraide/frontend.test.mjs tests/entraide/ui-account-scope.test.mjs
+2026-11-24T16:10:31.2358818Z # tests 22
+2026-11-24T16:10:31.2359137Z # pass 22
+2026-11-24T16:10:31.2359272Z # fail 0
+2026-11-24T16:10:31.2359417Z # cancelled 0
+2026-11-24T16:10:31.2359580Z # skipped 0
+2026-11-24T16:10:31.2421053Z ##[group]Run npm run lint
+2026-11-24T16:10:42.5900587Z ##[group]Run npx tsc --noEmit -p tests/ui-state/tsconfig.json
+2026-11-24T16:10:46.0180293Z ##[group]Run bash scripts/ci/run-site-browser.sh --prepare
+2026-11-24T16:11:02.4368779Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:ui-state
+2026-11-24T16:11:32.6852069Z   31 passed (22.8s)
+2026-11-24T16:11:32.7362858Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:async-ui
+2026-11-24T16:11:43.3349417Z   17 passed (10.0s)
+2026-11-24T16:11:43.3779817Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:mobile-auth
+2026-11-24T16:11:48.2779479Z   20 passed (4.3s)
+2026-11-24T16:11:48.3190950Z ##[group]Run npm run test:distribution:unit
+2026-11-24T16:12:08.5752666Z  Test Files  33 passed (33)
+2026-11-24T16:12:08.5754556Z       Tests  646 passed (646)
+2026-11-24T16:12:08.6355477Z ##[group]Run npm run test:distribution:sql
+2026-11-24T16:12:10.3838828Z # tests 32
+2026-11-24T16:12:10.3839248Z # pass 32
+2026-11-24T16:12:10.3839439Z # fail 0
+2026-11-24T16:12:10.3839624Z # cancelled 0
+2026-11-24T16:12:10.3839863Z # skipped 0
+2026-11-24T16:12:10.3933915Z ##[group]Run node --test tests/creator-execution-preferences.test.mjs
+2026-11-24T16:12:11.9626913Z # tests 7
+2026-11-24T16:12:11.9627857Z # pass 7
+2026-11-24T16:12:11.9628044Z # fail 0
+2026-11-24T16:12:11.9628242Z # cancelled 0
+2026-11-24T16:12:11.9628470Z # skipped 0
+2026-11-24T16:12:11.9684597Z ##[group]Run npm run test:distribution:worker
+2026-11-24T16:12:12.1863316Z # tests 25
+2026-11-24T16:12:12.1863923Z # pass 25
+2026-11-24T16:12:12.1864265Z # fail 0
+2026-11-24T16:12:12.1864581Z # cancelled 0
+2026-11-24T16:12:12.1864883Z # skipped 0
+2026-11-24T16:12:12.1971550Z ##[group]Run npm run test:distribution:chat
+2026-11-24T16:12:12.8770995Z # tests 46
+2026-11-24T16:12:12.8771610Z # pass 46
+2026-11-24T16:12:12.8771916Z # fail 0
+2026-11-24T16:12:12.8772519Z # cancelled 0
+2026-11-24T16:12:12.8772839Z # skipped 0
+2026-11-24T16:12:12.8884533Z ##[group]Run npm run test:contracts-auth
+2026-11-24T16:12:19.8693191Z # tests 143
+2026-11-24T16:12:19.8693596Z # pass 143
+2026-11-24T16:12:19.8693784Z # fail 0
+2026-11-24T16:12:19.8693980Z # cancelled 0
+2026-11-24T16:12:19.8694206Z # skipped 0
+2026-11-24T16:12:19.8793936Z ##[group]Run npm run test:cross-app-jwt
+2026-11-24T16:12:20.5177489Z # tests 98
+2026-11-24T16:12:20.5178069Z # pass 98
+2026-11-24T16:12:20.5178217Z # fail 0
+2026-11-24T16:12:20.5178362Z # cancelled 0
+2026-11-24T16:12:20.5178514Z # skipped 0
+2026-11-24T16:12:20.5277080Z ##[group]Run npm run test:cross-app-jwt:deno
+2026-11-24T16:12:21.3117691Z ok | 49 passed | 0 failed (15ms)
+2026-11-24T16:12:21.3278038Z ##[group]Run npm run test:voice-settings
+2026-11-24T16:12:21.8824594Z # tests 11
+2026-11-24T16:12:21.8825053Z # pass 11
+2026-11-24T16:12:21.8825260Z # fail 0
+2026-11-24T16:12:21.8833861Z # cancelled 0
+2026-11-24T16:12:21.8834101Z # skipped 0
+2026-11-24T16:12:21.8919711Z ##[group]Run node --experimental-vm-modules --test --test-concurrency=1 --test-timeout=15000 tests/voice-tts-boundaries.test.mjs
+2026-11-24T16:12:22.6047693Z # tests 82
+2026-11-24T16:12:22.6048100Z # pass 82
+2026-11-24T16:12:22.6048304Z # fail 0
+2026-11-24T16:12:22.6048526Z # cancelled 0
+2026-11-24T16:12:22.6048746Z # skipped 0
+2026-11-24T16:12:22.6107899Z ##[group]Run deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/voice-tts/index.ts
+2026-11-24T16:12:23.6450529Z ##[group]Run npm run test:offline
+2026-11-24T16:12:28.3488620Z # tests 69
+2026-11-24T16:12:28.3488897Z # pass 69
+2026-11-24T16:12:28.3489030Z # fail 0
+2026-11-24T16:12:28.3489169Z # cancelled 0
+2026-11-24T16:12:28.3489321Z # skipped 0
+2026-11-24T16:12:28.3566603Z ##[group]Run npm run test:contracts-security
+2026-11-24T16:12:55.5411629Z # tests 254
+2026-11-24T16:12:55.5411977Z # pass 254
+2026-11-24T16:12:55.5412150Z # fail 0
+2026-11-24T16:12:55.5412466Z # cancelled 0
+2026-11-24T16:12:55.5412656Z # skipped 0
+2026-11-24T16:12:55.5510083Z ##[group]Run npm run test:contracts-ots
+2026-11-24T16:12:56.7525941Z ok | 43 passed | 0 failed (201ms)
+2026-11-24T16:12:57.1725467Z # tests 24
+2026-11-24T16:12:57.1725890Z # pass 24
+2026-11-24T16:12:57.1726094Z # fail 0
+2026-11-24T16:12:57.1726309Z # cancelled 0
+2026-11-24T16:12:57.1726522Z # skipped 0
+2026-11-24T16:12:58.0173107Z ok | 3 passed | 0 failed (23ms)
+2026-11-24T16:12:58.0370520Z ##[group]Run npm run test:contracts-native
+2026-11-24T16:12:59.7210215Z ok | 54 passed | 0 failed (620ms)
+2026-11-24T16:12:59.7372140Z ##[group]Run npm run test:oauth
+2026-11-24T16:13:02.9536911Z # tests 69
+2026-11-24T16:13:02.9537250Z # pass 69
+2026-11-24T16:13:02.9537400Z # fail 0
+2026-11-24T16:13:02.9537545Z # cancelled 0
+2026-11-24T16:13:02.9537700Z # skipped 0
+2026-11-24T16:13:02.9643519Z ##[group]Run node --test tests/oauth-gmail/draft-approval-client.test.mjs
+2026-11-24T16:13:03.7127553Z # tests 10
+2026-11-24T16:13:03.7127961Z # pass 10
+2026-11-24T16:13:03.7128190Z # fail 0
+2026-11-24T16:13:03.7128396Z # cancelled 0
+2026-11-24T16:13:03.7128622Z # skipped 0
+2026-11-24T16:13:03.7204653Z ##[group]Run deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/email-agent-send-draft/index.ts supabase/functions/email-agent-reconcile-draft/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/chef-workshop/index.ts
+2026-11-24T16:13:07.0209516Z ##[group]Run npm run test:commerce:plans
+2026-11-24T16:13:07.1995393Z # tests 17
+2026-11-24T16:13:07.1995827Z # pass 17
+2026-11-24T16:13:07.1996042Z # fail 0
+2026-11-24T16:13:07.1996240Z # cancelled 0
+2026-11-24T16:13:07.1996458Z # skipped 0
+2026-11-24T16:13:07.2089427Z ##[group]Run deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/iao-consultation/index.ts
+2026-11-24T16:13:07.8831973Z ##[group]Run npm run test:commerce:handlers
+2026-11-24T16:13:09.4209652Z ok | 131 passed | 0 failed (453ms)
+2026-11-24T16:13:09.4378565Z ##[group]Run deno test --no-config --no-lock --no-prompt --deny-net --deny-run tests/social-publish/client-intent.test.ts tests/social-publish/provider.test.ts tests/social-publish/publish.test.ts tests/social-publish/scheduled.test.ts tests/social-connection/connection.test.ts tests/social-management/handlers.test.ts
+2026-11-24T16:13:11.6369029Z ok | 150 passed | 0 failed (1s)
+2026-11-24T16:13:11.6507857Z ##[group]Run node --test --test-concurrency=1 --test-timeout=30000 tests/social-agent-execution.test.mjs
+2026-11-24T16:13:12.3594788Z # tests 11
+2026-11-24T16:13:12.3595151Z # pass 11
+2026-11-24T16:13:12.3595318Z # fail 0
+2026-11-24T16:13:12.3595502Z # cancelled 0
+2026-11-24T16:13:12.3595692Z # skipped 0
+2026-11-24T16:13:12.3649217Z ##[group]Run deno test --no-lock --no-prompt --deny-net --deny-run --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,SOCIAL_DB_SCHEMA,SOCIAL_STATE_SECRET,APP_URL,CORS_ALLOWED_ORIGIN,ZERNIO_API_KEY,ZERNIO_BASE_URL,CRON_SECRET --config tests/social-connection/deno.json tests/social-connection/handler-sdk.test.ts tests/social-management/handler-sdk.test.ts tests/social-publish/runtime.test.ts
+2026-11-24T16:13:13.7326841Z ok | 14 passed | 0 failed (310ms)
+2026-11-24T16:13:13.7469362Z ##[group]Run npm run test:billing
+2026-11-24T16:13:18.4216510Z # tests 184
+2026-11-24T16:13:18.4216809Z # pass 184
+2026-11-24T16:13:18.4216944Z # fail 0
+2026-11-24T16:13:18.4217085Z # cancelled 0
+2026-11-24T16:13:18.4217236Z # skipped 0
+2026-11-24T16:13:18.4321989Z ##[group]Run deno test --no-lock --no-prompt --deny-net --deny-run --node-modules-dir=none --allow-env=STRIPE_SECRET_KEY,STRIPE_WEBHOOK_SECRET,SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,SUPABASE_ANON_KEY,PURAMA_BILLING_ORIGIN --config tests/revenue/deno.json tests/revenue/webhook.test.ts
+2026-11-24T16:13:20.2454137Z ok | 43 passed | 0 failed (105ms)
+2026-11-24T16:13:20.2761842Z ##[group]Run npm run test:founder
+2026-11-24T16:13:20.5157216Z # tests 47
+2026-11-24T16:13:20.5157528Z # pass 47
+2026-11-24T16:13:20.5157681Z # fail 0
+2026-11-24T16:13:20.5157842Z # cancelled 0
+2026-11-24T16:13:20.5158008Z # skipped 0
+2026-11-24T16:13:20.5274556Z ##[group]Run npm run test:founder:types
+2026-11-24T16:13:22.0648461Z ##[group]Run npm run build
+2026-11-24T16:13:31.4204946Z ##[group]Run npx tsc --noEmit -p tsconfig.app.json
+2026-11-24T16:13:43.2549487Z ##[group]Run node_modules/.bin/playwright test --config tests/workshop-state/playwright.config.ts
+2026-11-24T16:14:04.8434868Z   5 passed (21.2s)
+2026-11-24T16:14:04.8618732Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-24T16:14:06.9209997Z ##[group]Run node tests/social-browser/run.mjs
+2026-11-24T16:14:23.9502139Z ##[group]Run npx tsc --noEmit -p tests/public/tsconfig.json
+2026-11-24T16:14:25.3076674Z ##[group]Run npm run typecheck:distribution
+2026-11-24T16:14:26.3529587Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:distribution:browser
+2026-11-24T16:15:37.8900367Z   45 passed (1.2m)
+2026-11-24T16:15:37.9293577Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:public
+2026-11-24T16:18:56.6772668Z   156 passed (3.3m)
+2026-11-24T16:18:56.7185644Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:offline:browser
+2026-11-24T16:19:45.1683668Z   51 passed (47.9s)
+2026-11-24T16:19:45.2121456Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-24T16:19:47.2597590Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:chat
+2026-11-24T16:20:47.6510056Z   51 passed (59.8s)
+2026-11-24T16:20:47.6975986Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:quality
+2026-11-24T16:23:40.4049898Z   156 passed (2.9m)
+2026-11-24T16:23:40.4451112Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:oauth:browser
+2026-11-24T16:23:52.4795686Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:founder:browser
+2026-11-24T16:23:58.5378266Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:account-isolation
+2026-11-24T16:24:06.1379657Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:contracts-ots:browser
+2026-11-24T16:24:08.8813049Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:wellbeing
+2026-11-24T16:24:24.6061698Z   28 passed (15.1s)
+2026-11-24T16:24:24.6486507Z ##[group]Run bash scripts/ci/run-site-browser.sh npm run test:voice-consent
+2026-11-24T16:24:40.2991970Z   29 passed (15.1s)
+2026-11-24T16:24:40.3431491Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-24T16:24:42.4300615Z ##[group]Run npm audit --package-lock-only --audit-level=high --ignore-scripts

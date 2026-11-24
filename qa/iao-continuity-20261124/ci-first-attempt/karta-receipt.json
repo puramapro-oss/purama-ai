@@ -1,0 +1,57 @@
+{
+  "observed_at_utc": "2026-11-24 16:21:18 UTC",
+  "qualifications": [
+    {
+      "run_id": 45433919434,
+      "job_id": 138586444908,
+      "checkout": "exact PR head 2dc63a47c189e8b18cf8d05db551ef95f3057f64",
+      "conclusion": "success",
+      "vitest_files_passed": 206,
+      "vitest_tests_passed": 4689,
+      "memory_projection_tests": 29,
+      "typecheck": "success",
+      "optional_sunday_reference_steps": "skipped"
+    },
+    {
+      "run_id": 45433919473,
+      "job_id": 138586437240,
+      "checkout": "synthetic PR merge 91b3a680e33aa5096bbcdced33cfbf5b2aab1736",
+      "conclusion": "success",
+      "vitest_files_passed": 206,
+      "vitest_tests_passed": 4689,
+      "memory_projection_tests": 29,
+      "typecheck": "success",
+      "build": "success",
+      "dependency_audit": "success"
+    }
+  ],
+  "counting_note": "Two executions of the same 4689-test corpus; do not count them as 9378 distinct tests.",
+  "subscription_concurrency": {
+    "run_id": 45433919473,
+    "job_id": 138586437768,
+    "conclusion": "success",
+    "suites": [
+      {
+        "tests": 7,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "tests": 7,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    ]
+  }
+}

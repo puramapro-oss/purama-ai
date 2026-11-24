@@ -6,6 +6,8 @@
 
 Compléments retenus : reprise du contexte de conversation dans l’Atelier existant avec identité de transfert et compte ; projection mémoire sans répétition exacte d’extrait éligible ; historique DreamForge pilotable depuis la conversation et la commande locale. DreamForge conserve sa livraison propre, sans copie du produit dans ce dépôt. Les ports réels d’autorité de session, mémoire durable et Fabric RPC/2 ne sont ni inventés ni activés par simple présence de socket.
 
+Réception PR108 : le premier arbre `2dc63a47c189e8b18cf8d05db551ef95f3057f64` a réussi les jobs site, KARTA, concurrence et identité, mais la matrice a détecté trois erreurs Firefox à l'initialisation du SDK Supabase2.91.0. Les preuves restent dans `qa/iao-continuity-20261124/ci-first-attempt/`. Le complément fixe le SDK web à2.119.2, ajoute trois scénarios du client d'authentification réel avec transports simulés et qualifie les reprises GET sans rejouer les écritures ni lancer l'inférence avant confirmation. Les options du client produit restent inchangées. Le résultat final de la CI de cette correction sera reçu sur le commit exact avant intégration exclusive à la branche de consolidation ; il est consigné dans la PR et la page de continuité.
+
 ## Qualification des appareils et dépendances — reprise du 24 novembre 2026
 
 État : `PRET_A_CODER` pour les corrections et qualifications des composants existants, dans le référentiel de 168 capacités approuvé et la demande actuelle de Matiss de tester, corriger et débloquer les parcours sur différents appareils. Les nouvelles pistes scientifiques ne sont pas assimilées à une validation de produit supplémentaire.

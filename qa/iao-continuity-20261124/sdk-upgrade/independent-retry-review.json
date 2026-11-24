@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "observedAtUtc": "2026-11-24 16:42:29 UTC",
+  "reviewer": "/root/iao_runtime_gap_audit",
+  "status": "PASS qualifié : comportement ciblé des retries du SDK et cohérence du lockfile ; réception navigateur globale séparée.",
+  "workspace": "/workspace/scratch/6431e6d17379/iao-capabilities-20261124",
+  "versionsAndFingerprints": {
+    "node": "v24.22.3",
+    "versions": {
+      "supabase-js": "2.119.2",
+      "postgrest-js": "2.119.2",
+      "auth-js": "2.119.2",
+      "functions-js": "2.119.2",
+      "storage-js": "2.119.2",
+      "realtime-js": "2.119.2"
+    },
+    "sha256": {
+      "package.json": "6f0a54b63d6e4917bc055dd00fa1975d323e2c9a1887f22673582aee5e283349",
+      "package-lock.json": "07d29f490a10f6a0c0da15844e480b7e4f0e21f58004d983d1a633a46ee03da5",
+      "node_modules/@supabase/postgrest-js/src/fetchWithRetry.ts": "b4ee8a62534fc048b3a6ce26ee933e0e2ff6addf81519f69ac3fbaa8a6edfc02",
+      "node_modules/@supabase/postgrest-js/src/types/common/common.ts": "0f1edb9790c069c5fc439e50848cc8f8fdc2fca56b7322c351ce9c5e9ff536de",
+      "node_modules/@supabase/functions-js/src/FunctionsClient.ts": "0de76c12b7ab94ee6c9cac6e2e1ddaff7e1b9e0a78178387a12c235662b108b2",
+      "src/components/ChatbotWidget.tsx": "e860469984b5f0030006b2ed23651dbc3ac7643f93260d34556d104c6a7dbc61"
+    }
+  },
+  "scope": {
+    "sourceMutations": false,
+    "firstCiEvidenceModified": false,
+    "network": "fetch fourni entièrement simulé ; aucun appel HTTP externe",
+    "writtenFile": "qa/iao-continuity-20261124/sdk-upgrade/independent-retry-review.json"
+  },
+  "lockfileReview": {
+    "status": "PASS",
+    "manifestVersion": "2.119.2 (exacte)",
+    "lockfileVersion": 3,
+    "sixSupabasePackagesAligned": true,
+    "added": "@supabase/phoenix 0.4.5",
+    "removed": [
+      "@types/phoenix",
+      "@types/ws"
+    ],
+    "unchangedVersionsReclassifiedDev": [
+      "@types/node 22.16.5",
+      "undici-types 6.21.0",
+      "ws 8.21.1"
+    ],
+    "nodeRequirement": ">=22.0.0 ; CI CHEF configurée sur Node 22 ; ce probe local tourne sur Node 24.22.3",
+    "unrelatedPackageVersionChangesObserved": 0
+  },
+  "probes": [
+    {
+      "name": "POST 503, GET épuisé et ancien plan GET [503, hold]",
+      "toolChunkId": "2559c1",
+      "exitCode": 0,
+      "command": "node --input-type=module <<'JS'\nimport { PostgrestClient } from '@supabase/postgrest-js';\nimport assert from 'node:assert/strict';\nconst observations=[];\nconst client = new PostgrestClient('https://fixture.invalid/rest/v1', { fetch: async (url, init) => {\n observations.push({method:init.method,url:String(url),retry:init.headers['X-Retry-Count']??null});\n return new Response(JSON.stringify({code:'',message:'Read unavailable'}),{status:503,headers:{'Content-Type':'application/json','Retry-After':'0'}});\n} });\nawait client.from('chat_messages').insert({id:'stable-message-id',conversation_id:'same-conversation',role:'user',content:'same-body'});\nassert.equal(observations.filter(o=>o.method==='POST').length,1);\nconst result = await client.from('chat_messages').select('id,conversation_id,role,content,chat_conversations!inner(user_id)').eq('id','stable-message-id').eq('conversation_id','same-conversation').eq('chat_conversations.user_id','same-owner').maybeSingle();\nconst reads=observations.filter(o=>o.method==='GET');assert.equal(reads.length,4);assert.equal(new Set(reads.map(o=>o.url)).size,1);assert.equal(result.status,503);assert(result.error);\nlet pendingResolve, settled=false;const stages=[];\nconst heldClient = new PostgrestClient('https://fixture.invalid/rest/v1', { fetch: async (url, init) => {\n stages.push({method:init.method,retry:init.headers['X-Retry-Count']??null});\n if(stages.length===1)return new Response(JSON.stringify({code:'',message:'Read unavailable'}),{status:503,headers:{'Retry-After':'0'}});\n return new Promise(resolve=>{pendingResolve=resolve;});\n} });\nconst pending=Promise.resolve(heldClient.from('chat_messages').select('id').eq('id','stable-message-id').maybeSingle()).then(r=>{settled=true;return r;});\nawait new Promise(resolve=>setTimeout(resolve,10));\nassert.equal(stages.length,2);assert.equal(settled,false);\npendingResolve(new Response(JSON.stringify([{id:'stable-message-id'}]),{status:200,headers:{'Content-Type':'application/json'}}));\nconst completed=await pending;assert.equal(completed.data.id,'stable-message-id');\nconsole.log(JSON.stringify({post503Attempts:1,failedGet503Attempts:reads.length,queryIdentityUnchanged:true,retryHeaders:reads.map(r=>r.retry),oldPlanRepro:{calls:stages,settledBeforeHeldResponse:false,settledAfterExactResponse:settled},externalFetches:0}));\nJS",
+      "result": {
+        "post503Attempts": 1,
+        "failedGet503Attempts": 4,
+        "queryIdentityUnchanged": true,
+        "retryHeaders": [
+          null,
+          "1",
+          "2",
+          "3"
+        ],
+        "oldPlanRepro": {
+          "calls": [
+            {
+              "method": "GET",
+              "retry": null
+            },
+            {
+              "method": "GET",
+              "retry": "1"
+            }
+          ],
+          "settledBeforeHeldResponse": false,
+          "settledAfterExactResponse": true
+        },
+        "externalFetches": 0
+      },
+      "controls": [
+        "SDK installé réel, aucun remplacement de la logique de retry",
+        "Retry-After: 0 accélère seulement les réponses simulées",
+        "Une seule écriture POST malgré un 503",
+        "Quatre lectures GET maximum : essai initial + trois reprises",
+        "URL complète et filtres ID/conversation/propriétaire identiques",
+        "Le deuxième GET automatique consomme hold avant tout retry utilisateur"
+      ]
+    },
+    {
+      "name": "Annulation pendant le backoff",
+      "toolChunkId": "909a3c",
+      "exitCode": 0,
+      "command": "node --input-type=module <<'JS'\nimport { PostgrestClient } from '@supabase/postgrest-js';\nimport assert from 'node:assert/strict';\nconst controller=new AbortController();const invocations=[];let admittedFetches=0;\nconst client=new PostgrestClient('https://fixture.invalid/rest/v1',{fetch:async(url,init)=>{\n const aborted=init.signal?.aborted===true;invocations.push({method:init.method,retry:init.headers['X-Retry-Count']??null,aborted});\n if(aborted)throw init.signal.reason;\n admittedFetches++;\n return new Response(JSON.stringify({code:'',message:'Read unavailable'}),{status:503});\n}});\nconst started=performance.now();\nconst pending=Promise.resolve(client.from('chat_messages').select('id').eq('id','stable-message-id').abortSignal(controller.signal).maybeSingle());\nsetTimeout(()=>controller.abort(new DOMException('Stopped','AbortError')),10);\nconst result=await pending;\nassert.equal(admittedFetches,1);assert.equal(result.status,0);assert(result.error);assert.equal(controller.signal.aborted,true);\nconsole.log(JSON.stringify({node:process.version,aborted:true,admittedFetches,fetchInvocations:invocations,resultStatus:result.status,resultError:result.error,settledAfterMs:Math.round(performance.now()-started),externalFetches:0}));\nJS",
+      "result": {
+        "node": "v24.22.3",
+        "aborted": true,
+        "admittedFetches": 1,
+        "fetchInvocations": [
+          {
+            "method": "GET",
+            "retry": null,
+            "aborted": false
+          },
+          {
+            "method": "GET",
+            "retry": "1",
+            "aborted": true
+          }
+        ],
+        "resultStatus": 0,
+        "resultError": {
+          "message": "AbortError: Stopped",
+          "details": "AbortError: Stopped\n    at new DOMException (node:internal/per_context/domexception:76:18)\n    at Timeout._onTimeout (file:///workspace/scratch/6431e6d17379/iao-capabilities-20261124/[eval1]:12:33)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)",
+          "hint": "Request was aborted (timeout or manual cancellation)",
+          "code": ""
+        },
+        "settledAfterMs": 11,
+        "externalFetches": 0
+      },
+      "controls": [
+        "AbortController après 10 ms pendant l'attente par défaut de 1 s",
+        "Le fetch est invoqué ensuite avec un signal déjà annulé ; le transport simulé le refuse",
+        "Une seule invocation admise avant annulation, retour en erreur status 0",
+        "Ce contrôle ne prétend pas qu'aucune invocation de fetch n'a lieu après abort"
+      ]
+    }
+  ],
+  "sourceReview": {
+    "retryPolicy": "GET/HEAD/OPTIONS sur 503/520 et certaines erreurs réseau ; POST, PATCH, PUT et DELETE non repris par cette politique.",
+    "defaultWaits": "1 s, 2 s, 4 s ; le header Retry-After peut remplacer ces délais. Compte de tentatives borné, pas preuve d'une deadline globale.",
+    "oldScenarioCause": "tests/chat/lifecycle.spec.ts programme messages=[503,hold]. Avec le nouveau SDK, hold appartient à la reprise automatique de la première réconciliation ; saveMessage reste en attente, donc la notice attendue après 503 n'apparaît pas.",
+    "chatSafety": [
+      "saveMessage écrit un messageId stable et réutilisé à la reprise manuelle",
+      "L'accusé perdu ou conflit 23505 exige la ligne exacte : ID, conversation, rôle, contenu et propriétaire",
+      "sendMessage attend saveMessage puis vérifie lease.current avant le fetch modèle",
+      "Le signal d'annulation passe à la lecture ; throwIfAborted est vérifié après réception",
+      "L'appel chatbot reste un fetch direct ; FunctionsClient.invoke contient un fetch sans boucle de retry"
+    ],
+    "sdkBrowserHarnessReview": "Trois scénarios lus : vrai client seul, routes auth simulées avant goto, collecte pageerror stricte, lecture de session, retour de visibilité simulé, signOut et refresh tardif. Aucun faux PASS navigateur revendiqué par ce probe.",
+    "limitations": [
+      "Ce probe exerce le transport PostgREST ; il n'exécute pas ChatbotWidget. La barrière d'inférence et la comparaison complète de la ligne ont été vérifiées à la lecture de la source.",
+      "Les tests navigateur natifs et la future CI du follow-up restent une qualification distincte.",
+      "Aucune source, assertion, workflow ou preuve ci-first-attempt n'a été modifiée."
+    ]
+  }
+}
