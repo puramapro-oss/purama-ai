@@ -1,6 +1,6 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHash, webcrypto } from 'node:crypto';
 import Workshop from './Workshop';
@@ -243,5 +243,73 @@ describe('workshop lifecycle', () => {
     expect(createObjectURL).not.toHaveBeenCalled();
     expect(host.querySelector('iframe')).toBeNull();
     expect(button('Réessayer les fichiers')).toBeDefined();
+  });
+});
+
+type TransferFixture = { id: string; prompt: string; ownerId: string; createdAt: number };
+function transferFixture(prompt: string, ownerId = 'alice'): TransferFixture {
+  return { id: crypto.randomUUID(), prompt, ownerId, createdAt: Date.now() };
+}
+// The obsolete string deliberately accompanies the bound transfer: it must not
+// override the new transfer identity or disclose a different account's draft.
+const transferState = (draft: TransferFixture) => ({ workshopPrompt: draft.prompt, workshopDraft: draft });
+function TransferNavigation({ draft }: { draft: TransferFixture }) {
+  const navigate = useNavigate();
+  return <button onClick={() => navigate('/dashboard/atelier', { state: transferState(draft) })}>Recevoir depuis la conversation</button>;
+}
+async function renderTransfer(initial: TransferFixture | null, next?: TransferFixture) {
+  await act(async () => root.render(<MemoryRouter initialEntries={[
+    { pathname: '/dashboard/atelier', state: initial ? transferState(initial) : null },
+  ]}>
+    <Workshop />{next && <TransferNavigation draft={next} />}
+  </MemoryRouter>));
+}
+
+describe('workshop correlated handoff regressions', () => {
+  it('consumes the same transfer identity only once on the mounted route', async () => {
+    const draft = transferFixture('Créer un site avec réservations accessible au clavier.');
+    await renderTransfer(draft, draft);
+    await fill('Une modification locale que le retour ne doit pas remplacer.');
+    await act(async () => button('Recevoir depuis la conversation').click());
+    expect(host.querySelector<HTMLTextAreaElement>('#workshop-goal')?.value).toBe('Une modification locale que le retour ne doit pas remplacer.');
+    expect(host.querySelector('[aria-label="Demande reçue de la conversation"]')).toBeNull();
+    expect(startCalls()).toHaveLength(0);
+  });
+  it.each(['retour', 42, ['unrelated']])('keeps the workshop usable when route state is %j', async state => {
+    await act(async () => root.render(<MemoryRouter initialEntries={[{ pathname: '/dashboard/atelier', state }]}><Workshop /></MemoryRouter>));
+    expect(host.querySelector<HTMLTextAreaElement>('#workshop-goal')?.value).toBe('');
+    await fill('Créer un site pour mon restaurant avec réservations.');
+    expect(button('Lancer la création').disabled).toBe(false);
+    expect(startCalls()).toHaveLength(0);
+  });
+  it('prefers the fresh bound route when storing it failed and an older draft remains', async () => {
+    saveWorkshopDraft('Ancienne demande conservée dans le stockage', 'alice');
+    const incoming = transferFixture('Nouvelle demande de création reçue depuis ma conversation');
+    const unavailable = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('storage unavailable'); });
+    saveWorkshopDraft(incoming.prompt, 'alice');
+    unavailable.mockRestore();
+    await renderTransfer(incoming);
+    expect(host.querySelector<HTMLTextAreaElement>('#workshop-goal')?.value).toBe(incoming.prompt);
+    expect(startCalls()).toHaveLength(0);
+  });
+  it('does not reveal an Alice route handoff after the principal became Bob', async () => {
+    auth.user = { id: 'bob' };
+    await renderTransfer(transferFixture('Conversation privée Alice à ne jamais afficher pour Bob'));
+    expect(host.querySelector<HTMLTextAreaElement>('#workshop-goal')?.value).toBe('');
+    expect(host.textContent).not.toContain('Conversation privée Alice');
+    expect(startCalls()).toHaveLength(0);
+  });
+  it('receives a handoff on the mounted route and keeps existing input until an explicit choice', async () => {
+    const incoming = transferFixture('Nouvelle demande préparée depuis la conversation courante');
+    await renderTransfer(null, incoming);
+    const previous = 'Mon travail saisi dans l’atelier reste disponible';
+    fill(previous);
+    await act(async () => button('Recevoir depuis la conversation').click());
+    expect(host.querySelector<HTMLTextAreaElement>('#workshop-goal')?.value).toBe(previous);
+    expect(host.textContent).toContain(incoming.prompt);
+    expect(startCalls()).toHaveLength(0);
+    await act(async () => button('Utiliser cette demande').click());
+    expect(host.querySelector<HTMLTextAreaElement>('#workshop-goal')?.value).toBe(incoming.prompt);
+    expect(startCalls()).toHaveLength(0);
   });
 });

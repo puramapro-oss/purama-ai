@@ -1,0 +1,13 @@
+{
+  "networkAttachments": 56,
+  "externalRequestsForwarded": 0,
+  "blockedUnexpected": 0,
+  "browserVersions": [
+    "156.0.8078.4"
+  ],
+  "handoffTests": [
+    "conversation to workshop preserves the source, supports another handoff on the mounted route, and starts only the edited request",
+    "storage failure uses the fresh account-bound route and changing account clears its private draft",
+    "landscape keeps preparation and the composer reachable and excludes stopped provisional output"
+  ]
+}

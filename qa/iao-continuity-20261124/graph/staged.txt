@@ -1,0 +1,35 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795536410556,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 48 files, 123 symbols
+Affected processes: 9
+Risk level: high
+
+Changed symbols:
+  Function buildMemoryPrompt → karta/src/integrations/localComputeFabricProvider.ts
+  Property sources → karta/test/localComputeFabricMemoryProjection.test.ts
+  Function readAuthorization → karta/test/localComputeFabricMemoryProjection.test.ts
+  Function ChatbotWidget → src/components/ChatbotWidget.tsx
+  Function prepareWorkshop → src/components/ChatbotWidget.tsx
+  Function useAuth → src/components/ChatbotWidget.workshop.test.tsx
+  TypeAlias Props → src/components/ChatbotWidget.workshop.test.tsx
+  Function clean → src/components/ChatbotWidget.workshop.test.tsx
+  Function AnimatePresence → src/components/ChatbotWidget.workshop.test.tsx
+  Property motion → src/components/ChatbotWidget.workshop.test.tsx
+  Function span → src/components/ChatbotWidget.workshop.test.tsx
+  Const root → src/components/ChatbotWidget.workshop.test.tsx
+  Const host → src/components/ChatbotWidget.workshop.test.tsx
+  Const route → src/components/ChatbotWidget.workshop.test.tsx
+  Const scrollTo → src/components/ChatbotWidget.workshop.test.tsx
+... and 108 more
+
+Affected execution flows:
+  • Workshop → Invalid (7 steps) — changed: consumeWorkshopHandoff, readDraft, WorkshopSession
+  • Prepare → Trap (6 steps) — changed: buildMemoryPrompt
+  • ChatbotWidget → Source (5 steps) — changed: ChatbotWidget
+  • ChatbotWidget → Getter (4 steps) — changed: ChatbotWidget
+  • ChatbotWidget → AddNotice (3 steps) — changed: ChatbotWidget
+  • PrepareWorkshop → BoundedText (3 steps) — changed: buildWorkshopConversationBrief, boundedText, prepareWorkshop
+  • ChatbotWidget → Trap (4 steps) — changed: ChatbotWidget
+  • HandleForge → BoundedText (3 steps) — changed: saveWorkshopDraft, boundedText, handleForge
+  • ConsumeWorkshopDraft → Invalid (6 steps) — changed: consumeWorkshopDraft, consumeWorkshopHandoff, readDraft

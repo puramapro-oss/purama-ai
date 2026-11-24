@@ -1,5 +1,11 @@
 # PURAMA AI — Task Plan V3
 
+## Continuité conversation, mémoire utile et création — 24 novembre 2026, reprise après e81129a
+
+État : `REALISE_ET_TESTE_LOCALEMENT` pour les compléments des composants existants, sur la base du référentiel IAO approuvé et de la demande actuelle d’ajouter les capacités manquantes sans doublon. La réception finale de l’arbre publié est portée par la PR de ce lot et la page de continuité IAO ; les résultats locaux et leurs limites sont conservés dans `qa/iao-continuity-20261124/README.md`. Base : `e81129a56e07535129827c95211d82815df8dc5a`, qui conserve PR104, PR106 et PR107. Périmètre et réception : `qa/iao-continuity-20261124/scope.json`. Branche isolée `feat/iao-continuity-completion-20261124`. Les autres worktrees, travaux Mac et migration de stockage restent intacts.
+
+Compléments retenus : reprise du contexte de conversation dans l’Atelier existant avec identité de transfert et compte ; projection mémoire sans répétition exacte d’extrait éligible ; historique DreamForge pilotable depuis la conversation et la commande locale. DreamForge conserve sa livraison propre, sans copie du produit dans ce dépôt. Les ports réels d’autorité de session, mémoire durable et Fabric RPC/2 ne sont ni inventés ni activés par simple présence de socket.
+
 ## Qualification des appareils et dépendances — reprise du 24 novembre 2026
 
 État : `PRET_A_CODER` pour les corrections et qualifications des composants existants, dans le référentiel de 168 capacités approuvé et la demande actuelle de Matiss de tester, corriger et débloquer les parcours sur différents appareils. Les nouvelles pistes scientifiques ne sont pas assimilées à une validation de produit supplémentaire.

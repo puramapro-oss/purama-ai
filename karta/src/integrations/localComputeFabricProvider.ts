@@ -45,8 +45,13 @@ export function buildMemoryPrompt(context: IaoContextPack, message: string, maxC
   if (message.length > MAX_MESSAGE_CHARS) throw new Error("memory-denied:compute-fabric-input");
   let remaining = Math.max(0, maxContextChars);
   const selected: string[] = [];
+  const seen = new Set<string>();
   let partial = false;
   for (const source of memorySources(context).filter((item) => item.authorized === true && item.sensitivity === "normal").sort((a, b) => b.relevance - a.relevance)) {
+    // The full pack is validated above. Only exact eligible text repetitions
+    // share a budget entry; stored sources and distinct content stay unchanged.
+    if (seen.has(source.text)) continue;
+    seen.add(source.text);
     let text = source.text.slice(0, remaining);
     // Preserve the existing UTF-16 budget without splitting a complete code point.
     const last = text.charCodeAt(text.length - 1);

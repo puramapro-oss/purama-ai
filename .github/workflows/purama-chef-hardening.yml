@@ -184,9 +184,18 @@ jobs:
       - run: npm run build
       - run: npx tsc --noEmit -p tsconfig.app.json
       - name: Workshop account isolation and mission lifecycle
+        id: workshop_browser
         env:
           PLAYWRIGHT_EXECUTABLE_PATH: /opt/google/chrome/chrome
         run: node_modules/.bin/playwright test --config tests/workshop-state/playwright.config.ts
+      - name: Preserve workshop continuity and account-isolation evidence
+        if: ${{ always() && steps.workshop_browser.outcome != '' && steps.workshop_browser.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: iao-workshop-continuity-${{ github.sha }}
+          path: test-results/workshop-state
+          if-no-files-found: error
+          retention-days: 14
       - name: Social browser behavior
         # Packaged Chrome keeps its existing AppArmor profile and browser sandbox.
         env:

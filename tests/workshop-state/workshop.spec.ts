@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 const project = { id: 'restaurant', name: 'Maison Solène · Restaurant', ready: true, maxParallel: 3 };
@@ -43,7 +43,7 @@ async function fixture(page: Page, initial: string | null) {
   });
   return { calls, setState: (state: string) => { current = state; } };
 }
-test('desktop: start, true status progression, verification and resume after reload', async ({ page }) => {
+test('desktop: start, true status progression, verification and resume after reload', async ({ page }, testInfo) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   const control = await fixture(page, null);
@@ -53,7 +53,7 @@ test('desktop: start, true status progression, verification and resume after rel
   await expect(page.getByText('Agents au travail', { exact: true })).toBeVisible();
   await expect(page.getByTestId('workshop-result')).toHaveCount(0);
   expect(control.calls.filter(call => call.action === 'start')).toHaveLength(1);
-  await page.screenshot({ path: 'qa/workshop-20261113/workshop-desktop.png', fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('workshop-desktop.png'), fullPage: true });
   control.setState('verified_done');
   await expect(page.getByTestId('workshop-result')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Accéder aux fichiers' })).toBeVisible();
@@ -63,14 +63,14 @@ test('desktop: start, true status progression, verification and resume after rel
   expect(control.calls.filter(call => call.action === 'start')).toHaveLength(1);
   expect(errors).toEqual([]);
 });
-test('mobile: fully accessible controls and no horizontal overflow', async ({ page }) => {
+test('mobile: fully accessible controls and no horizontal overflow', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await fixture(page, 'verified_done');
   await page.goto('/tests/workshop-state/index.html');
   await expect(page.getByTestId('workshop-result')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await expect(page.getByLabel('Projet', { exact: true })).toBeVisible();
-  await page.screenshot({ path: 'qa/workshop-20261113/workshop-mobile.png', fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('workshop-mobile.png'), fullPage: true });
 });
 test('an unavailable backend never produces a false result', async ({ page }) => {
   await page.route('**/__workshop-fixture', route => route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"unavailable"}' }));
@@ -109,7 +109,7 @@ test('verified artifact: opaque interactive preview, blocked fetch and byte-iden
   await page.getByRole('button', { name: 'Mobile', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: 'qa/workshop-20261113/workshop-artifact-mobile.png', fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('workshop-artifact-mobile.png'), fullPage: true });
   await page.getByRole('button', { name: 'Fermer l’aperçu' }).click();
   await expect(page.locator('iframe')).toHaveCount(0);
 });

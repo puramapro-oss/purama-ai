@@ -1,0 +1,18 @@
+{
+  "command": [
+    "node_modules/.bin/eslint",
+    "src/lib/workshop.ts",
+    "src/pages/Workshop.tsx",
+    "src/components/ChatbotWidget.tsx",
+    "src/components/OriginForgeDemo.tsx"
+  ],
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": "",
+  "sources": {
+    "src/lib/workshop.ts": "92ab805c8e88b36c502f880d91085b775a7863c23fdc05f4a185c3bf0ad1c0f4",
+    "src/pages/Workshop.tsx": "0c61a375d45e77ffbb7dfef1ab096e5b2ed29e4e703762c9f58dd2082ad6fc03",
+    "src/components/ChatbotWidget.tsx": "e860469984b5f0030006b2ed23651dbc3ac7643f93260d34556d104c6a7dbc61",
+    "src/components/OriginForgeDemo.tsx": "d22383c97c971f305bfff5fb5a796479fbeb778001fe1b741020a1c0bd181a3b"
+  }
+}

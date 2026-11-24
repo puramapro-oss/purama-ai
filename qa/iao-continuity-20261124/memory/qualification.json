@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-24T15:47:05.627077+00:00",
+  "status": "PASS for local source-level qualification",
+  "baseCommit": "e81129a56e07535129827c95211d82815df8dc5a",
+  "owner": "/root/iao_runtime_gap_audit",
+  "change": "Exact eligible memory text is projected once, after full validation, sensitivity/authorization filtering and relevance sorting. No stored data is modified.",
+  "sourceFiles": [
+    {
+      "path": "karta/src/integrations/localComputeFabricProvider.ts",
+      "baselineSha256": "6106e335c105bb2b3f912c01a781289baf50bda60f8441501a5ef0a3d6a3556f",
+      "candidateSha256": "8e189a18242388a3da534f5e784597be9c3e03be179ceb5146435a09ec00b1c2"
+    },
+    {
+      "path": "karta/test/localComputeFabricMemoryProjection.test.ts",
+      "baselineSha256": "dc5d7f94da82f97f93c66ecd5b6d013a51e253b53e961559862d30f3d1cac2ea",
+      "candidateSha256": "d5a16f7e592276eafd6e152ea15069247d1498f98255f7ef8df6fb771cc27126",
+      "originalFilePreservedAsExactPrefix": true
+    }
+  ],
+  "productDiff": {
+    "insertions": 5,
+    "deletions": 0,
+    "function": "buildMemoryPrompt"
+  },
+  "newRegressionScenarios": 15,
+  "existingProjectionScenarios": 14,
+  "before": {
+    "total": 29,
+    "passed": 22,
+    "failed": 7,
+    "skipped": 0
+  },
+  "after": {
+    "total": 29,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0
+  },
+  "adapterRegression": {
+    "files": 5,
+    "total": 188,
+    "passed": 188,
+    "failed": 0,
+    "skipped": 0,
+    "includesProjectionScenarios": true
+  },
+  "typecheck": {
+    "scope": "KARTA full TypeScript source and test configuration, no emit",
+    "exitCode": 0
+  },
+  "diffCheck": {
+    "scope": "two owned source files",
+    "exitCode": 0
+  },
+  "impact": {
+    "product": "../impacts/buildMemoryPrompt.json",
+    "risk": "LOW",
+    "directCallers": 1,
+    "caller": "LocalComputeFabricProvider.complete",
+    "indirectCaller": "KartaRuntimeIaoPort.prepare",
+    "testFileRisk": "UNKNOWN; a File node has no process membership and unresolved callers do not establish absence of use",
+    "limits": "Targeted index with FTS disabled; root owns final index refresh and change detection."
+  },
+  "archive": {
+    "path": "evidence.zip",
+    "bytes": 17803,
+    "sha256": "da653a9f32b2c70c152889fe135113556bd3404736ea692834da5691189cbfbb",
+    "crcVerified": true,
+    "members": 13
+  },
+  "limits": [
+    "No model quality, inference latency or token-cost gain measured. The preserved budget is UTF-16 text characters, not a tokenizer bound.",
+    "No concrete SMARANA/session authority/runtime activation, provider switch, paid fallback or stored-memory mutation.",
+    "Native Unix-socket provider, cancellation and response suites remain for CI; existing local listen EPERM restriction is not counted as a pass.",
+    "Final assembly CI, GitNexus change detection and publication belong to root and are not asserted by this local receipt.",
+    "Repeated suite executions overlap; 29 projection tests are included in 188 adapter/runtime tests."
+  ]
+}
