@@ -33,6 +33,10 @@ PR104_ARCHIVES = (
     ("qa/iao-integration-20261124/runtime/regressions-final.log", "8fbe2c1f4ae25d775d717eea28642e47fdcf668f"),
     ("qa/iao-integration-20261124/runtime/regressions.log", "61bad687fa432d2244e692dca302b693373e61fa"),
 )
+PR108_ARCHIVES = (
+    ("qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log", "82ac622e1bf22f17b5160b11f21de59ab29f8401"),
+    ("qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log", "307635738311c75bbf1181d9ca648073aa7d3d64"),
+)
 
 
 def git(directory, *args):
@@ -136,6 +140,36 @@ def main():
             (modified_path, modified_bytes + b"modified evidence \n", modified_mode)])),
         ("PR104 exemptions cannot hide a bad source", dict(additions=[
             *pr104_originals,
+            ("src/gate-fixture.ts", b"export const guard = 1; \n", 0o644)])),
+    ])
+    pr108_originals = []
+    for path, expected_blob in PR108_ARCHIVES:
+        data = (REPO / path).read_bytes()
+        actual_blob = hashlib.sha1(
+            b"blob " + str(len(data)).encode() + b"\0" + data
+        ).hexdigest()
+        if actual_blob != expected_blob:
+            raise SystemExit("The immutable PR108 fixture changed: " + path)
+        fixture = (path, data, 0o644)
+        pr108_originals.append(fixture)
+        cases.extend([
+            ("first exact PR108 archived blob: " + path,
+             dict(additions=[fixture], expected=0)),
+            ("modified PR108 archive stays strict: " + path, dict(additions=[
+                (path, data + b"modified evidence \n", 0o644)])),
+            ("renamed PR108 archive stays strict: " + path, dict(additions=[
+                ("qa/renamed-" + Path(path).name, data, 0o644)])),
+            ("preexisting PR108 path stays strict: " + path, dict(
+                initial=[(path, b"previous clean evidence\n", 0o644)],
+                additions=[fixture])),
+            ("executable PR108 archive stays strict: " + path, dict(additions=[
+                (path, data, 0o755)])),
+        ])
+    cases.extend([
+        ("exact PR104 and PR108 archives compose", dict(
+            additions=[*pr104_originals, *pr108_originals], expected=0)),
+        ("PR108 exemptions cannot hide a bad source", dict(additions=[
+            *pr108_originals,
             ("src/gate-fixture.ts", b"export const guard = 1; \n", 0o644)])),
     ])
     results = [run_case(name, **settings) for name, settings in cases]
