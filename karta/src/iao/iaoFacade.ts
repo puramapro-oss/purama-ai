@@ -80,6 +80,8 @@ export type IaoFacadeOptions = Readonly<{
 type StoredRequest = {
   actorId: string;
   conversationId: string;
+  requestType: IaoRequest["type"];
+  expectedMemoryAction?: IaoMemoryAction;
   fingerprint: string;
   session: IaoSession;
   response: IaoResponse;
@@ -138,6 +140,7 @@ export class IaoFacade {
     };
     const stored: StoredRequest = {
       actorId: request.actorId, conversationId: request.conversationId,
+      requestType: request.type, expectedMemoryAction: request.memoryControl?.action,
       fingerprint, session: request.identity.session, response, abort: new AbortController(),
     };
     this.#requests.set(key, stored);
@@ -204,28 +207,30 @@ export class IaoFacade {
   /** A result landing after cancellation only refines effect knowledge; the terminal status never changes. */
   #late(stored: StoredRequest, result: KartaIaoResult): IaoResponse {
     const response = stored.response;
-    if (response.status !== "cancelled") return response;
+    // A valid receipt establishes the effect permanently. A draining port or
+    // replay must not contradict it, replace its proof or refresh updatedAt.
+    if (response.status !== "cancelled" || response.proof !== undefined) return response;
     if (result.kind === "blocked") {
       if (result.effect === "none") { response.effect = "none"; touch(response); }
       return response;
     }
     let receipt: IaoReceipt | undefined;
-    try { receipt = acceptedReceipt(result, response.requestId, stored.session); }
+    try { receipt = acceptedReceipt(result, response.requestId, stored.session, stored.requestType, stored.expectedMemoryAction); }
     catch { return response; }
     if (receipt) response.memoryControl = forStorage(receipt);
-    if (result.evidence) { response.proof = result.evidence; response.effect = "executed"; touch(response); }
+    if (result.evidence) { response.proof = { ...result.evidence }; response.effect = "executed"; touch(response); }
     return response;
   }
 
   #apply(stored: StoredRequest, result: Extract<KartaIaoResult, { kind: "accepted" }>): IaoResponse {
     const response = stored.response;
     let receipt: IaoReceipt | undefined;
-    try { receipt = acceptedReceipt(result, response.requestId, stored.session); }
+    try { receipt = acceptedReceipt(result, response.requestId, stored.session, stored.requestType, stored.expectedMemoryAction); }
     catch (error) { return this.#block(stored, safeDependency(error)); }
     if (result.preview !== undefined) response.preview = result.preview;
     if (receipt) response.memoryControl = forStorage(receipt);
     if (result.evidence && !response.stale) {
-      response.proof = result.evidence;
+      response.proof = { ...result.evidence };
       response.status = "verified";
       this.#settle(stored);
     } else if (result.preview !== undefined || result.memoryControl || result.evidence) {
@@ -295,8 +300,13 @@ function assertIdentity(request: IaoRequest): void {
 /** Normalizes the optional receipt and validates it against the evidence; throws on any inconsistency. */
 function acceptedReceipt(
   result: Extract<KartaIaoResult, { kind: "accepted" }>, requestId: string, session: IaoSession,
+  requestType: IaoRequest["type"], expectedMemoryAction?: IaoMemoryAction,
 ): IaoReceipt | undefined {
-  const receipt = result.memoryControl === undefined ? undefined : normalizeIaoReceipt(result.memoryControl);
+  const receipt = result.memoryControl === undefined ? undefined
+    : normalizeIaoReceipt(result.memoryControl, requestType === "memory-control" ? expectedMemoryAction : undefined);
+  if (requestType === "memory-control" && result.evidence && (!receipt || receipt.action !== expectedMemoryAction)) {
+    throw new Error("Invalid KARTA durable action receipt");
+  }
   assertAccepted(result, requestId, session, receipt);
   return receipt;
 }
