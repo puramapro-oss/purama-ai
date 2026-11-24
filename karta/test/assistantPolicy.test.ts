@@ -218,7 +218,9 @@ function runtime(options: { provider?: Provider; failHistory?: string; allowTavi
         if (options.env && Object.hasOwn(options.env, name)) return options.env[name];
         return name.endsWith('_URL') ? 'https://example.invalid' : 'test-only-not-a-secret';
       } } },
-      fetch: transport, Request, Response, Headers, URL, AbortController, AbortSignal,
+      fetch: (input: string | URL | Request, init?: RequestInit) =>
+        transport(input instanceof Request ? input.url : String(input), init),
+      Request, Response, Headers, URL, AbortController, AbortSignal,
       crypto: { randomUUID: () => outreachClaimToken },
       ReadableStream, TextEncoder, TextDecoder, Uint8Array, ArrayBuffer, setTimeout, clearTimeout, performance,
       console: { error: vi.fn(), warn: vi.fn(), log: vi.fn() },
@@ -532,7 +534,8 @@ describe('task endpoints', () => {
       ? ['https://api.tavily.com/search', anthropicUrl] : [anthropicUrl]);
     if (item.name === 'partner-find-prospects') {
       expect(response.status).toBe(502);
-      expect(await response.json()).toEqual({ error: 'discovery_provider_failed' });
+      expect(await response.json()).toEqual({ error: 'discovery_provider_failed', code: 'discovery_provider_failed',
+        status: 'failed', inserted: 0, confirmed_inserted: 0, prospects: [] });
       expect(h.modelBodies[0]!.model).toBe('discovery-policy-model');
       expect(JSON.parse(h.modelBodies[0]!.messages[0]!.content)).toMatchObject({
         target_countries: ['CH'], target_languages: ['de'],

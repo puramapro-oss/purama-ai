@@ -3,7 +3,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import { parseOutreachResult, type OutreachResult, type OutreachStep } from './partner-outreach-result';
 import { parsePartnerContractResult, type PartnerContractResult } from './partner-contract-result';
+import { parsePartnerDiscoveryResult, readPartnerDiscoveryError } from './partner-discovery-result';
 export { contractFeedback } from './partner-contract-result';
+export { partnerDiscoveryFeedback } from './partner-discovery-result';
 export type { PartnerContractResult, PartnerContractApproval } from './partner-contract-result';
 export { outreachFeedback, outreachStepForStatus } from './partner-outreach-result';
 export type { OutreachResult, OutreachApproval, OutreachStep } from './partner-outreach-result';
@@ -429,12 +431,16 @@ export async function findProspects(
   query: string,
   niche?: string,
   type?: ProspectType,
-): Promise<{ inserted: number; prospects: PartnerProspect[] }> {
-  const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
-    body: { query, niche, type },
-  });
-  if (error) throw error;
-  return data as { inserted: number; prospects: PartnerProspect[] };
+): Promise<{ inserted: number; skipped?: number; prospects: PartnerProspect[] }> {
+  try {
+    const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
+      body: { query, niche, type },
+    });
+    if (error) throw error;
+    return parsePartnerDiscoveryResult(data);
+  } catch (error) {
+    throw await readPartnerDiscoveryError(error);
+  }
 }
 
 // =============================================================

@@ -33,6 +33,14 @@ beforeEach(async () => {
 afterAll(async () => { await db?.close(); });
 
 describe("discovery import — actual SQL migration", () => {
+  it("rolls back an earlier valid row and its counter when a later candidate in the same batch is invalid", async () => {
+    const invalid = { ...candidate("unproven@journal.example"), contact_evidence: {} };
+    await expect(importRows([candidate(), invalid])).rejects.toThrow("discovery_email_evidence_required");
+    expect((await db.query("SELECT count(*)::integer AS count FROM purama_ai.partner_prospects")).rows)
+      .toEqual([{ count: 0 }]);
+    expect((await db.query("SELECT total_prospects_found FROM purama_ai.partner_agent_config WHERE user_id=$1", [user])).rows)
+      .toEqual([{ total_prospects_found: 0 }]);
+  });
   it("preserves historical prospects and remains idempotent on migration rerun", async () => {
     await db.query("INSERT INTO purama_ai.partner_prospects(user_id,name,email,status) VALUES ($1,'Historical',' REGIE@journal.example ','rejected')", [user]);
     await db.exec(migration);

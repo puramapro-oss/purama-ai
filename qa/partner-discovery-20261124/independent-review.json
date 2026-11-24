@@ -1,0 +1,29 @@
+{
+  "captured_at_utc": "2026-11-24T20:40:05.776082+00:00",
+  "reviewer": "Independent qualification agent",
+  "status": "PASS_TARGETED_NOT_DEPLOYED",
+  "source_sha256": {
+    "src/lib/partner-discovery-result.ts": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "supabase/functions/partner-find-prospects/index.ts": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9"
+  },
+  "reviewed": [
+    "Account and draft ownership before/after asynchronous result decoding",
+    "Original Response stream, bounded reader, strict status/count schema, safe local messages",
+    "Unknown and partial writes are not represented as rollback or zero writes",
+    "Source-evidenced complete mailboxes and conservative audience counts",
+    "Explicit model preference preserved; retired fallback replaced with existing active project model",
+    "ES2020-compatible property lookup; legacy row type does not claim full row validation"
+  ],
+  "independently_executed": "Final native Deno typecheck; see native-typecheck-final-linux.json",
+  "received_not_reexecuted_by_reviewer": {
+    "frontend": 83,
+    "backend_and_policy": 152
+  },
+  "limits": [
+    "No full browser or live provider/database test",
+    "Final production bundle not qualified",
+    "No deployment, campaign, contact or payment"
+  ]
+}

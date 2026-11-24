@@ -1,0 +1,62 @@
+[
+  {
+    "file": "karta/test/partnerDiscovery.test.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "--uid",
+      "File:karta/test/partnerDiscovery.test.ts",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 1,
+    "seconds": 0.976,
+    "log": "impact-discovery-tests.log.gz"
+  },
+  {
+    "file": "karta/test/partnerDiscoverySql.test.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "--uid",
+      "File:karta/test/partnerDiscoverySql.test.ts",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 1,
+    "seconds": 0.71,
+    "log": "impact-discovery-sql-tests.log.gz"
+  },
+  {
+    "file": "karta/test/assistantPolicy.test.ts",
+    "command": [
+      "node",
+      "--max-old-space-size=192",
+      "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+      "impact",
+      "--uid",
+      "File:karta/test/assistantPolicy.test.ts",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--summary-only",
+      "-r",
+      "purama-partner-reconcile-53633327"
+    ],
+    "exit_code": 1,
+    "seconds": 0.435,
+    "log": "impact-policy-fixture.log.gz"
+  }
+]

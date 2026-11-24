@@ -71,8 +71,9 @@ async function prepare(page: Page, options: { deferQualification?: boolean; defe
     }
     if (url.pathname === '/functions/v1/partner-find-prospects') {
       calls.push({ kind:'find',body:request.postDataJSON() as Record<string,unknown> });
+      const candidate = rowFor(owner);
       await findGate;
-      return json(route,{ inserted:1,prospects:[] });
+      return json(route,{ inserted:1,skipped:0,prospects:[candidate] });
     }
     return json(route,[]);
   });

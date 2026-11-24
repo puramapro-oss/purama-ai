@@ -1,0 +1,59 @@
+{
+  "recorded_at_utc": "2026-11-24T21:48:32.949305+00:00",
+  "scope": "Exact composed13file graph; staged whole merge includes canonical PR111 and evidence; compare-main includes historical consolidation. React/network/FTS limitations remain. Static impact is not a proof of correctness.",
+  "records": [
+    {
+      "scope": "staged",
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "detect-changes",
+        "--scope",
+        "staged",
+        "-r",
+        "purama-ai-partner-composed-53633327"
+      ],
+      "exit_code": 0,
+      "seconds": 1.168,
+      "log": "changes-staged.log.gz",
+      "uncompressed_sha256": "4053eef6cabe560f6544d33857a9eda1874c77958d4022482963b2c774c22552"
+    },
+    {
+      "scope": "compare-main",
+      "command": [
+        "node",
+        "--max-old-space-size=256",
+        "--max-semi-space-size=4",
+        "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+        "detect-changes",
+        "--scope",
+        "compare",
+        "--base-ref",
+        "origin/main",
+        "-r",
+        "purama-ai-partner-composed-53633327"
+      ],
+      "exit_code": 0,
+      "seconds": 1.774,
+      "log": "changes-compare-main.log.gz",
+      "uncompressed_sha256": "af0db268ab80c7606ce0155757098e07c75fc5469efa27671d0fd47f3df2431c"
+    }
+  ],
+  "observed_aggregate_impact": {
+    "staged": {
+      "files": 118,
+      "symbols": 142,
+      "processes": 15,
+      "risk": "high"
+    },
+    "compare_main": {
+      "files": 3138,
+      "symbols": 242,
+      "processes": 28,
+      "risk": "critical"
+    },
+    "interpretation": "Canonical media additions and proof files are included in staged scope; main spans the historical consolidation. No downgrade or global correctness claim. Exact source reviews and executable gates are separate."
+  }
+}

@@ -1,4 +1,5 @@
 import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
+import { readCompletedAssistantReply } from "../_shared/assistant-response.ts";
 import { readRequestText, readBoundedBytes, RequestBodyError } from "../_shared/request-body.ts";
 import { cancelResponseQuietly, createRequestDeadline, RequestDeadlineError } from "../_shared/request-deadline.ts";
 
@@ -11,10 +12,11 @@ export interface PartnerDiscoveryDependencies {
   tavilyApiKey: string;
   anthropicApiKey: string;
   anthropicModel?: string;
+  configured?: boolean;
   now?: () => Date;
   timeoutMs?: number;
 }
-interface SearchResult { title: string; url: string; content: string; observedEmails: string[]; }
+interface SearchResult { title: string; url: string; content: string; observedEmails: Map<string, number>; }
 const TYPES = new Set(["influencer", "website", "association", "media", "commerce", "other"]);
 const ROLES = new Set(["unknown", "editorial", "commercial", "creator", "venue"]);
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
@@ -34,6 +36,11 @@ function text(value: unknown, max: number): string | null {
 }
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
+}
+function failureResponse(error: DiscoveryError, importInFlight = false): Response {
+  return json({ error: error.code + (importInFlight ? " Une écriture reste non confirmée : vérifiez les prospects avant de relancer." : ""),
+    code: error.code, status: importInFlight ? "unknown" : "failed",
+    inserted: 0, confirmed_inserted: 0, prospects: [] }, error.status);
 }
 function webUrl(value: unknown): string | null {
   if (typeof value !== "string" || value.length > 2_000) return null;
@@ -59,12 +66,49 @@ function labelledTargets(values: string[], type: "region" | "language"): string 
   const names = new Intl.DisplayNames(["en"], { type });
   return values.map(value => `${names.of(value) ?? value} (${value})`).join(", ");
 }
-function observedAddresses(value: string): string[] {
-  // Tokenize linearly before validation; never start an unbounded email regex
-  // at every position in a long provider string. Sentence periods are not email.
-  return value.split(/[^a-z0-9.!#$%&'*+/=?^_`{|}~@-]+/i)
-    .map(token => token.replace(/\.+$/, "").toLowerCase())
-    .filter(token => token.length <= 254 && EMAIL.test(token));
+function observedAddresses(value: string): Map<string, number> {
+  // Only bounded excerpts supplied to the model reach this recognizer. An ASCII
+  // address inside a larger Unicode mailbox or identifier is not evidence.
+  const found = new Map<string, number>();
+  for (const match of value.matchAll(/[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9.-]+/gi)) {
+    const before = value.slice(Math.max(0, match.index - 2), match.index);
+    const after = value.slice(match.index + match[0].length, match.index + match[0].length + 2);
+    if (/[\p{L}\p{N}\p{M}\p{S}\p{Cf}_@]$/u.test(before)
+      || /^[\p{L}\p{N}\p{M}\p{S}\p{Cf}_@]/u.test(after)) continue;
+    const address = match[0].replace(/\.+$/, "").toLowerCase();
+    const local = address.split("@")[0];
+    if (address.length <= 254 && EMAIL.test(address) && !local.startsWith(".")
+      && !local.endsWith(".") && !local.includes("..") && !found.has(address)) found.set(address, match.index);
+  }
+  return found;
+}
+function boundedExcerpt(value: string, maximum: number): string {
+  if (value.length <= maximum) return value;
+  const prefix = value.slice(0, maximum);
+  return /\s/u.test(value[maximum]) ? prefix : prefix.replace(/\S+$/u, "");
+}
+function publishedAudience(source: SearchResult | undefined, proposed: unknown): number | null {
+  if (!source || typeof proposed !== "number" || !Number.isSafeInteger(proposed)
+    || proposed < 0 || proposed > 2_147_483_647) return null;
+  const evidence = source.title + "\n" + source.content;
+  const counts = evidence.matchAll(/(?:^|[^\p{L}\p{N}.,+\-\u2212])(\d{1,3}(?:[ \u00a0\u202f,]\d{3})+|\d+)\s+(?:followers?|subscribers?|abonn[eé]s?)(?![\p{L}\p{N}])/giu);
+  for (const count of counts) {
+    if (Number(count[1].replace(/[ \u00a0\u202f,]/g, "")) === proposed) return proposed;
+  }
+  return null;
+}
+function sourcedUrl(value: unknown, source: SearchResult | undefined, homepage: boolean): string | null {
+  const link = webUrl(value);
+  if (!link || !source) return null;
+  const url = new URL(link);
+  const original = new URL(source.url);
+  if (link === original.href || (homepage && url.origin === original.origin
+    && url.pathname === "/" && !url.search && !url.hash)) return link;
+  const tokens = (source.title + "\n" + source.content).match(/https?:\/\/[^\s<>"]+/gi) ?? [];
+  for (const token of tokens) {
+    if (webUrl(token.replace(/[),.;!?'"\]}]+$/, "")) === link) return link;
+  }
+  return null;
 }
 function candidates(raw: unknown, sources: SearchResult[], observedAt: string, countries: string[], languages: string[]): Row[] {
   const value = object(raw);
@@ -73,34 +117,35 @@ function candidates(raw: unknown, sources: SearchResult[], observedAt: string, c
   for (const entry of value.prospects) {
     const item = object(entry);
     const name = text(item?.name, 200);
-    if (!item || !name) continue;
+    if (!item || !name
+      || ["email", "website", "niche", "ai_reasoning"].some(key => item[key] != null && typeof item[key] !== "string")
+      || (item.ai_score !== undefined && (typeof item.ai_score !== "number" || !Number.isFinite(item.ai_score)))
+      || (item.social_links != null && !object(item.social_links))) {
+      throw new DiscoveryError(502, "discovery_extraction_invalid");
+    }
     const source = Number.isInteger(item.source_index) && Number(item.source_index) >= 1
       ? sources[Number(item.source_index) - 1] : undefined;
     // Only addresses literally observed in the selected received excerpt survive.
     // This is search-result evidence, never consent or proof of mailbox ownership.
     const proposed = typeof item.email === "string" && item.email.trim().length <= 254 ? item.email.trim().toLowerCase() : null;
-    const emails = new Set(source?.observedEmails ?? []);
-    const email = proposed && emails.has(proposed) ? proposed : null;
-    const position = email ? source!.content.toLowerCase().indexOf(email) : -1;
-    const excerpt = position >= 0 ? source!.content.slice(Math.max(0, position - 160), position + email!.length + 160) : null;
-    const proposedWebsite = webUrl(item.website);
-    const website = proposedWebsite && source && (
-      new URL(proposedWebsite).hostname === new URL(source.url).hostname || source.content.includes(proposedWebsite)
-    ) ? proposedWebsite : null;
+    const email = proposed && source?.observedEmails.has(proposed) ? proposed : null;
+    const evidenceText = source ? source.title + "\n" + source.content : "";
+    const position = email ? source!.observedEmails.get(email)! : -1;
+    const excerpt = position >= 0 ? evidenceText.slice(Math.max(0, position - 160), position + email!.length + 160) : null;
+    const website = sourcedUrl(item.website, source, true);
     const social: Record<string, string> = {};
     for (const key of ["instagram", "youtube", "tiktok", "twitter", "linkedin"]) {
-      const link = webUrl(object(item.social_links)?.[key]);
-      if (link && source && (link === source.url || source.content.includes(link))) social[key] = link;
+      const link = sourcedUrl(object(item.social_links)?.[key], source, false);
+      if (link) social[key] = link;
     }
     found.push({
       name, email, website, social_links: social,
-      type: TYPES.has(String(item.type)) ? String(item.type) : "other",
+      type: typeof item.type === "string" && TYPES.has(item.type) ? item.type : "other",
       niche: text(item.niche, 200),
-      followers_count: typeof item.followers_count === "number" && Number.isSafeInteger(item.followers_count)
-        && item.followers_count >= 0 && item.followers_count <= 2_147_483_647 ? item.followers_count : null,
+      followers_count: publishedAudience(source, item.followers_count),
       ai_score: typeof item.ai_score === "number" && Number.isFinite(item.ai_score) ? Math.max(0, Math.min(100, Math.round(item.ai_score))) : 0,
       ai_reasoning: text(item.ai_reasoning, 500),
-      contact_role: ROLES.has(String(item.contact_role)) ? String(item.contact_role) : "unknown",
+      contact_role: typeof item.contact_role === "string" && ROLES.has(item.contact_role) ? item.contact_role : "unknown",
       contact_evidence: source ? {
         source_url: source.url, observed_at: observedAt,
         verification: email ? "observed_in_search_result" : "unverified",
@@ -116,15 +161,16 @@ function candidates(raw: unknown, sources: SearchResult[], observedAt: string, c
 export function createPartnerDiscoveryHandler(deps: PartnerDiscoveryDependencies) {
   return async (request: Request): Promise<Response> => {
     if (request.method === "OPTIONS") return new Response(null, { headers: cors });
-    if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+    if (request.method !== "POST") return failureResponse(new DiscoveryError(405, "discovery_method_not_allowed"));
     const timeoutMs = deps.timeoutMs ?? 45_000;
-    if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 60_000) return json({ error: "discovery_configuration_invalid" }, 503);
+    if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 60_000) return failureResponse(new DiscoveryError(503, "discovery_configuration_invalid"));
     const controller = new AbortController();
     const cancel = () => controller.abort();
     request.signal.addEventListener("abort", cancel, { once: true });
     if (request.signal.aborted) cancel();
     const endsAt = performance.now() + timeoutMs;
     const deadline = createRequestDeadline(timeoutMs, controller.signal);
+    let importInFlight = false;
     async function provider(url: string, init: RequestInit): Promise<Row> {
       let received: Response | undefined;
       try {
@@ -146,11 +192,27 @@ export function createPartnerDiscoveryHandler(deps: PartnerDiscoveryDependencies
         throw new DiscoveryError(502, "discovery_provider_invalid");
       } finally { cancelResponseQuietly(received?.body); }
     }
+    async function targeting() {
+      let config: Row | null;
+      try { config = object(await deadline.wait(() => deps.loadConfig(userId))); }
+      catch {
+        deadline.check();
+        throw new DiscoveryError(503, "discovery_configuration_unavailable");
+      }
+      if (!config) throw new DiscoveryError(409, "discovery_targeting_required");
+      return { countries: targetList(config.target_countries, "country"), languages: targetList(config.target_languages, "language") };
+    }
+    let userId: string;
     try {
+      deadline.check();
+      if (deps.configured === false) throw new DiscoveryError(503, "discovery_provider_not_configured");
       const auth = request.headers.get("Authorization")?.match(/^Bearer\s+(\S+)$/i);
-      if (!auth) return json({ error: "Unauthorized" }, 401);
-      const userId = await deadline.wait(() => deps.authenticate(auth[1]));
-      if (!userId || !UUID.test(userId)) return json({ error: "Unauthorized" }, 401);
+      if (!auth) throw new DiscoveryError(401, "discovery_unauthorized");
+      let authenticated: string | null;
+      try { authenticated = await deadline.wait(() => deps.authenticate(auth[1])); }
+      catch { deadline.check(); throw new DiscoveryError(401, "discovery_unauthorized"); }
+      if (!authenticated || !UUID.test(authenticated)) throw new DiscoveryError(401, "discovery_unauthorized");
+      userId = authenticated;
       let body: Row | null;
       try { body = object(JSON.parse(await deadline.wait(() => readRequestText(request, { maxBytes: 16_384, timeoutMs: 5_000 })))); }
       catch (error) {
@@ -160,13 +222,10 @@ export function createPartnerDiscoveryHandler(deps: PartnerDiscoveryDependencies
       if (!body || Object.keys(body).some(key => !["query", "niche", "type"].includes(key)) ||
         typeof body.query !== "string" || !body.query.trim() || body.query.length > 1_000 ||
         (body.niche !== undefined && (typeof body.niche !== "string" || body.niche.length > 200)) ||
-        (body.type !== undefined && !TYPES.has(String(body.type)))) throw new DiscoveryError(400, "discovery_request_invalid");
-      const config = object(await deadline.wait(() => deps.loadConfig(userId)));
-      if (!config) throw new DiscoveryError(409, "discovery_targeting_required");
-      const countries = targetList(config.target_countries, "country");
-      const languages = targetList(config.target_languages, "language");
-      const model = deps.anthropicModel === undefined ? "claude-sonnet-4-20250514" : deps.anthropicModel.trim();
-      if (!deps.tavilyApiKey || !deps.anthropicApiKey || !model) throw new DiscoveryError(503, "discovery_provider_not_configured");
+        (body.type !== undefined && (typeof body.type !== "string" || !TYPES.has(body.type)))) throw new DiscoveryError(400, "discovery_request_invalid");
+      const { countries, languages } = await targeting();
+      const model = deps.anthropicModel === undefined ? "claude-sonnet-4-6" : deps.anthropicModel.trim();
+      if (!deps.tavilyApiKey.trim() || !deps.anthropicApiKey.trim() || !model) throw new DiscoveryError(503, "discovery_provider_not_configured");
       const geography = countries.length ? `Countries: ${labelledTargets(countries, "region")}.` : "";
       const language = languages.length ? `Languages: ${labelledTargets(languages, "language")}.` : "";
       const search = await provider("https://api.tavily.com/search", {
@@ -175,17 +234,17 @@ export function createPartnerDiscoveryHandler(deps: PartnerDiscoveryDependencies
           query: `${body.query.trim()} ${text(body.niche, 200) ?? ""} professional contact email ${geography} ${language}`.trim(),
           search_depth: "advanced", max_results: 8, include_answer: false }),
       });
-      if (!Array.isArray(search.results)) throw new DiscoveryError(502, "discovery_search_invalid");
+      if (!Array.isArray(search.results) || search.results.length > 8) throw new DiscoveryError(502, "discovery_search_invalid");
       const sources: SearchResult[] = [];
-      for (const entry of search.results.slice(0, 8)) {
+      for (const entry of search.results) {
         const item = object(entry); const url = webUrl(item?.url);
-        if (url && typeof item?.content === "string") {
-          const content = item.content.slice(0, 2_000);
-          const complete = new Set(observedAddresses(item.content));
-          // Truncating .com to .co must never fabricate an observed address.
-          const observedEmails = observedAddresses(content).filter(email => complete.has(email));
-          sources.push({ url, title: text(item.title, 200) ?? "", content, observedEmails });
+        if (!url || typeof item?.content !== "string" || (item.title !== undefined && typeof item.title !== "string")) {
+          throw new DiscoveryError(502, "discovery_search_invalid");
         }
+        const content = boundedExcerpt(item.content, 2_000);
+        const title = boundedExcerpt(typeof item.title === "string" ? item.title : "", 200);
+        const observedEmails = observedAddresses(title + "\n" + content);
+        sources.push({ url, title, content, observedEmails });
       }
       if (!sources.length) return json({ inserted: 0, skipped: 0, prospects: [] });
       const observedAt = (deps.now?.() ?? new Date()).toISOString();
@@ -198,27 +257,50 @@ export function createPartnerDiscoveryHandler(deps: PartnerDiscoveryDependencies
             results: sources.map((source, i) => ({ source_index: i + 1, title: source.title, url: source.url, content: source.content })) }) }],
         }),
       });
-      const first = Array.isArray(extraction.content) ? object(extraction.content.find(part => object(part)?.type === "text") ?? extraction.content[0]) : null;
-      if (typeof first?.text !== "string") throw new DiscoveryError(502, "discovery_extraction_invalid");
+      if (typeof extraction.stop_reason !== "string" || !["end_turn", "stop_sequence"].includes(extraction.stop_reason)
+        || !Array.isArray(extraction.content) || extraction.content.length > 10) {
+        throw new DiscoveryError(502, "discovery_extraction_invalid");
+      }
+      const completed = readCompletedAssistantReply(extraction);
+      if (!completed.ok) throw new DiscoveryError(502, "discovery_extraction_invalid");
       let extracted: unknown;
-      try { extracted = JSON.parse(first.text.trim().replace(/^```(?:json)?\s*\n([\s\S]*?)\n```$/, "$1")); }
+      try { extracted = JSON.parse(completed.text.trim().replace(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/i, "$1")); }
       catch { throw new DiscoveryError(502, "discovery_extraction_invalid"); }
       const prospects = candidates(extracted, sources, observedAt, countries, languages);
       if (!prospects.length) return json({ inserted: 0, skipped: 0, prospects: [] });
+      const current = await targeting();
+      if (current.countries.length !== countries.length || current.languages.length !== languages.length
+        || countries.some(value => !current.countries.includes(value)) || languages.some(value => !current.languages.includes(value))) {
+        throw new DiscoveryError(409, "discovery_targeting_changed");
+      }
       deadline.check();
-      const stored = object(await deadline.wait(() => deps.importCandidates(userId, prospects)));
+      importInFlight = true;
+      let stored: Row | null;
+      try { stored = object(await deadline.wait(() => deps.importCandidates(userId, prospects))); }
+      catch (error) {
+        const code = object(error)?.code;
+        // Constraint/data/syntax rejections and explicit retryable transaction
+        // aborts prove failure. Connection errors and completion-unknown do not.
+        if (typeof code === "string" && (/^(?:22|23|42)[0-9A-Z]{3}$/.test(code) || ["40001", "40P01"].includes(code))) importInFlight = false;
+        deadline.check();
+        throw new DiscoveryError(503, "discovery_storage_unavailable");
+      }
+      deadline.check();
       if (!stored || !Number.isInteger(stored.inserted) || Number(stored.inserted) < 0 || Number(stored.inserted) > prospects.length ||
+        !Number.isInteger(stored.skipped) || Number(stored.skipped) < 0 ||
+        Number(stored.inserted) + Number(stored.skipped) !== prospects.length ||
         !Array.isArray(stored.prospects) || stored.prospects.length !== stored.inserted ||
         stored.prospects.some(row => object(row)?.user_id !== userId || object(row)?.status !== "identified")) {
         throw new DiscoveryError(500, "discovery_storage_unconfirmed");
       }
+      importInFlight = false;
       return json({ inserted: stored.inserted, skipped: stored.skipped ?? 0, prospects: stored.prospects });
     } catch (error) {
-      if (error instanceof RequestDeadlineError) return json({ error: "discovery_deadline_exceeded" }, 504);
-      if (controller.signal.aborted) return json({ error: "discovery_cancelled" }, 408);
-      if (error instanceof RequestBodyError) return json({ error: "discovery_request_invalid" }, error.status);
-      if (error instanceof DiscoveryError) return json({ error: error.code }, error.status);
-      return json({ error: "discovery_unavailable" }, 500);
+      const failure = error instanceof RequestDeadlineError ? new DiscoveryError(504, "discovery_deadline_exceeded")
+        : controller.signal.aborted ? new DiscoveryError(408, "discovery_cancelled")
+        : error instanceof RequestBodyError ? new DiscoveryError(error.status, "discovery_request_invalid")
+        : error instanceof DiscoveryError ? error : new DiscoveryError(503, "discovery_unavailable");
+      return failureResponse(failure, importInFlight);
     } finally {
       deadline.close(); controller.abort(); request.signal.removeEventListener("abort", cancel);
     }

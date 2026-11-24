@@ -1,0 +1,27 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false",
+    "--pretty",
+    "false",
+    "-p",
+    "tsconfig.partner-ci-temp.json"
+  ],
+  "working_directory": "karta",
+  "temporary_config": {
+    "extends": "./tsconfig.json",
+    "include": [
+      "test/partnerDiscovery.test.ts",
+      "test/assistantPolicy.test.ts"
+    ]
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 8.843,
+  "scope": "Two affected KARTA tests with inherited unchanged KARTA compiler options and original type-resolution root. Temporary config removed. Global CI gate remains required."
+}

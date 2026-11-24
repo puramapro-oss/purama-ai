@@ -1,0 +1,11 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "exit_code": 137,
+  "duration_seconds": 15.024,
+  "node_options": "--max-old-space-size=832 --max-semi-space-size=4",
+  "initial_heap_failure_preserved": true
+}
