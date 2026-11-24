@@ -1,12 +1,26 @@
 # IAO — qualification ciblée des appareils du 24 novembre 2026
 
+## Corrections après la première exécution réelle
+
+La première CI sur `a5196d6ebf6f7eda1a5b90fef5b2f2ae7d291332` réussit les jobs KARTA, identité, concurrence et site, mais le nouveau job appareils découvre **4 échecs sur 113 exécutions** : 109 PASS, aucun test ignoré ou flaky. Chat : 30/30 ; hors-ligne : 30/30 ; public : 48/50 ; tactile : 1/3. La [tentative conservée](https://github.com/puramapro-oss/purama-ai/actions/runs/45318081850) n'est pas présentée comme une réception complète.
+
+**Correction du chat :** après rotation en paysage, le dialogue reste dans le viewport mais ses suggestions repoussent la saisie hors de sa zone visible. Le ratio visible de la saisie est 0 sur Chromium 568 × 320 et 0,7453 sur WebKit 844 × 390. Le widget conserve maintenant l'en-tête et le compositeur à taille stable, avec l'historique, les messages, suggestions et support dans une seule zone défilante. Les 51 callbacks et toute la logique précédant le rendu JSX restent identiques. Le typage et les 29 tests du mode consultation passent ; la validation tactile attend la nouvelle CI. Le test initial reste entier et ajoute le défilement des quatre suggestions sans perte d'accès à la fermeture ou à la saisie.
+
+**Qualification WebKit :** les deux échecs publics attendent une position stable du lien d'inscription sous WebKit bureau et téléphone. Le lien et sa destination sont présents. Une [régression de rendu documentée pour la révision r2370](https://github.com/microsoft/playwright/issues/43426) constitue une piste ; elle ne prouve pas seule la cause de ces échecs. La version stable [Playwright 1.65.1](https://github.com/microsoft/playwright/releases/tag/v1.65.1) et son image officielle sont qualifiées avec les mêmes assertions. Trois diagnostics supplémentaires mesurent les callbacks de rendu, timers, rectangles, animations et surfaces filtrées. Les lectures géométriques peuvent modifier le timing : le scénario public initial reste donc distinct et inchangé.
+
+Le couple courant est Playwright **1.65.1**, avec Chromium 159.0.8154.6/r1255, Firefox 159.0/r1572 et WebKit 27.2/r2388. Le registre Microsoft a fourni l'index d'image `v1.65.1-noble` avec le digest `sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579`, égal au SHA-256 du corps reçu. Les versions du paquet, du verrou et de l'image restent contrôlées par le runner existant. Seuls les trois paquets Playwright changent dans ce second ajustement ; le produit, ses animations et les capacités de réseau/autorisation du runner restent conservés.
+
+La source exacte du binaire r2388 n'a pas permis de vérifier l'inclusion de chaque correctif amont. La nouvelle recette ordinaire, et non le seul numéro de version, décidera de la qualification. Les 113 exécutions métier et les 3 diagnostics sont comptés séparément. Les preuves de la première tentative et de la correction sont conservées dans `first-ci-evidence.zip` et `followup-evidence.zip`, avec leurs manifestes.
+
+L'analyse d'impact préalable du widget rend LOW avec deux appelants directs (App et banc chat), celle de Hero LOW avec Index ; Hero reste inchangé. L'index ciblé élargi contient 295 nœuds, 771 relations et 7 flux. La détection des changements indexés rend MEDIUM et signale le flux ChatbotWidget → AddNotice, attendu puisqu'elle voit le composant entier. La comparaison AST confirme que ses callbacks ne changent pas. La seconde détection contre `origin/main` a été interrompue avec code137 : elle reste **PARTIELLE**, distincte de la première comparaison plus petite et réussie. Le contrôle des différences de fichiers et des 29 tests consultation complète cette portée limitée.
+
 ## Périmètre reçu avant la CI
 
 Base de consolidation : `3a8d39c9927c461a7300712b719ef0aa6cc1f173`.
 Branche de travail : `fix/iao-device-compatibility-20261124`.
 La PR104 et le correctif de préservation des preuves Wealth restent intégralement présents. Ce lot prolonge les composants existants sous une seule interface PURAMA.
 
-Le changement du site met à jour i18next vers la version corrigée 26.3.4 et ajoute une qualification régulière des parcours déjà présents. Aucun composant produit du site n'est réécrit. Le correctif de redimensionnement DreamForge est livré dans l'archive canonique séparée, avec son historique ; il n'est pas copié dans ce dépôt.
+Le premier changement du site met à jour i18next vers la version corrigée 26.3.4 et ajoute une qualification régulière des parcours déjà présents. La correction ciblée du rendu du chat décrite ci-dessus suit cette première recette. Le correctif de redimensionnement DreamForge est livré dans l'archive canonique séparée, avec son historique ; il n'est pas copié dans ce dépôt.
 
 | Contrôle local | Résultat observable |
 | --- | --- |
@@ -23,7 +37,7 @@ Ces résultats décrivent la préparation locale. La réception des véritables 
 
 ## Qualification ajoutée à la CI existante
 
-Le job `device-compatibility` du workflow CHEF réutilise `scripts/ci/run-site-browser.sh`, Node22 et l'image Playwright1.64.1 déjà verrouillée par digest. Le runner reste sans réseau externe et sans identifiants de fournisseur. Les protections réseau des bancs d'origine restent actives.
+Le job `device-compatibility` du workflow CHEF réutilise `scripts/ci/run-site-browser.sh` et Node22. La première tentative emploie l'image Playwright1.64.1, puis le couple client/image est mis à jour vers1.65.1 ci-dessus, toujours verrouillé par digest. Le runner reste sans réseau externe et sans identifiants de fournisseur. Les protections réseau des bancs d'origine restent actives.
 
 | Profil Linux | Chat | Navigation et mise en page | Hors-ligne | Toucher et rotation du viewport |
 | --- | ---: | ---: | ---: | ---: |

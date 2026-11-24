@@ -1,0 +1,51 @@
+{
+  "archive": "first-ci-evidence.zip",
+  "sha256": "d2c60a22b773a7157ff5733f2f1c0065e8eda5f74b5bef761f6a3384c42af1be",
+  "files": [
+    {
+      "path": "artifact-a519/chat-report.json",
+      "bytes": 57506,
+      "sha256": "81c12e2e8dfa9c3d8524f782599ea184c2e61645405c0a10a93e69d16515af81"
+    },
+    {
+      "path": "artifact-a519/offline-report.json",
+      "bytes": 62248,
+      "sha256": "f4d83a2ccf0853ae533885fc603eddd3c8af833064c860a89f1b8e4b7dc3f5b5"
+    },
+    {
+      "path": "artifact-a519/public/navigation-Navigation-\u2014-Li-69320-le-formulaire-d\u2019inscription-webkit-desktop-1280x800/error-context.md",
+      "bytes": 32508,
+      "sha256": "dd5e73822f21ea97c9d23ab514b02c471f47c435ca6c60482b6377b33517efa1"
+    },
+    {
+      "path": "artifact-a519/public/navigation-Navigation-\u2014-Li-69320-le-formulaire-d\u2019inscription-webkit-mobile-touch-390x844/error-context.md",
+      "bytes": 31556,
+      "sha256": "573a7f699c1fb6306b9df1e79a7915c5c33fa298aa5136bf2c47df18fb1a55b0"
+    },
+    {
+      "path": "artifact-a519/public-report.json",
+      "bytes": 101401,
+      "sha256": "31d6ee77fd47083a83bb7cbb3bb8888e26f82c32ad179d3d16a808e7efe071ef"
+    },
+    {
+      "path": "artifact-a519/touch/touch-touch-controls-prese-b02da--and-stop-the-same-response-chromium-small-touch-320x568/error-context.md",
+      "bytes": 4648,
+      "sha256": "85cb86d280e26f0a51fb2ac686df32ec033f7bd820357c3120da94a9f8c2c588"
+    },
+    {
+      "path": "artifact-a519/touch/touch-touch-controls-prese-b02da--and-stop-the-same-response-webkit-mobile-touch-390x844/error-context.md",
+      "bytes": 4680,
+      "sha256": "07f713ec1a03fe756dcc66fc6b9dba6ade15ffb0a49a19c83dfd4effde5b2de4"
+    },
+    {
+      "path": "artifact-a519/touch-report.json",
+      "bytes": 27378,
+      "sha256": "98f46a4e577379e73f564e9bfd9325885951a69ea6f46cbf69ec4bea4895eb84"
+    },
+    {
+      "path": "device-job-a519.log",
+      "bytes": 63519,
+      "sha256": "de5462739f802133eb7cd8d33ebf3b7560400f890724b90e09f4d092b4c6a416"
+    }
+  ]
+}

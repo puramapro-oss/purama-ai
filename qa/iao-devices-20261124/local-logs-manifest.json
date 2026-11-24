@@ -1,6 +1,6 @@
 {
   "archive": "local-logs.zip",
-  "sha256": "39054a9819f590a79c351052b4a8c7f409d2eb9a19a89f2ba56e2c9e15406b1a",
+  "sha256": "74344404ece5592997e8e4570fe49e23bfb4c0436b9698c05b9e62c3b5c84fc5",
   "files": [
     {
       "path": "browser/chat-list.log",
@@ -76,6 +76,16 @@
       "path": "site-typecheck.log",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "gitnexus/analyze-ui-before.log",
+      "bytes": 517,
+      "sha256": "f74ec6aa2569c67c7891a8668be4cd7afebc2ddca78ad680793bf49c67cd35d6"
+    },
+    {
+      "path": "gitnexus/analyze-ui-tests.log",
+      "bytes": 517,
+      "sha256": "15bdaa1a82bcf4a288b192054c61375f7903b18f2ecd41af8344c61bb6b3fa20"
     }
   ]
 }

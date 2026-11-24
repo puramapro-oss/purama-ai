@@ -399,7 +399,7 @@ export function ChatbotWidget() {
             className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100dvh-6rem)] bg-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary to-accent p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-primary to-accent p-4 flex shrink-0 items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
@@ -454,6 +454,7 @@ export function ChatbotWidget() {
                   accessToken={session.access_token} technicalDetails={technicalConsultation} />
               : <>
 
+            <ScrollArea className="flex-1 min-h-0" ref={scrollRef}>
             {/* History Panel */}
             <AnimatePresence>
               {showHistory && (
@@ -484,8 +485,7 @@ export function ChatbotWidget() {
             </AnimatePresence>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-              <div className="space-y-4" role="log" aria-live="polite" aria-relevant="additions" aria-busy={isLoading}>
+              <div className="space-y-4 p-4" role="log" aria-live="polite" aria-relevant="additions" aria-busy={isLoading}>
                 {busyKind === 'history' && <p role="status" className="text-sm text-muted-foreground">Chargement de la conversation…</p>}
                 {messages.map((message) => (
                   <motion.div
@@ -553,7 +553,6 @@ export function ChatbotWidget() {
                   </motion.div>
                 )}
               </div>
-            </ScrollArea>
 
             {/* Suggestions */}
             {!isLoading && !authLoading && (messages.length <= 2 || dynamicSuggestions.length > 0) && (
@@ -590,9 +589,10 @@ export function ChatbotWidget() {
                 Se connecter pour contacter le support
               </Link>
             )}
+            </ScrollArea>
 
             {/* Input */}
-            <div className="p-4 border-t border-border">
+            <div className="shrink-0 p-4 border-t border-border">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();

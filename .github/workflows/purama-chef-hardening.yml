@@ -254,6 +254,12 @@ jobs:
           bash scripts/ci/run-site-browser.sh
           node node_modules/playwright/cli.js test
           --config qa/iao-devices-20261124/browser/public.playwright.config.ts
+      - name: WebKit signup actionability and rendering diagnostics
+        if: ${{ !cancelled() && steps.device_browser_image.outcome == 'success' }}
+        run: >-
+          bash scripts/ci/run-site-browser.sh
+          node node_modules/playwright/cli.js test
+          --config qa/iao-devices-20261124/browser/hero-motion.playwright.config.ts
       - name: Offline persistence and recovery across five profiles
         if: ${{ !cancelled() && steps.device_browser_image.outcome == 'success' }}
         run: >-

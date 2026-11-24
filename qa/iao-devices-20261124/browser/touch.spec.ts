@@ -17,6 +17,19 @@ test('touch controls preserve a draft through viewport rotation and stop the sam
   await expect(dialog).toBeInViewport({ ratio: 1 });
   await expect(input).toBeInViewport({ ratio: 1 });
   await expect(input).toHaveValue(prompt);
+  // Scrolling auxiliary content must keep the header and composer usable.
+  for (const name of [
+    'Quels sont vos tarifs ?',
+    'Comment fonctionnent les agents ?',
+    "Programme d'affiliation",
+    'Comment connecter Gmail ?',
+  ]) {
+    const suggestion = dialog.getByRole('button', { name, exact: true });
+    await suggestion.scrollIntoViewIfNeeded();
+    await expect(suggestion).toBeInViewport({ ratio: 1 });
+    await expect(page.getByRole('button', { name: "Fermer l'assistant" })).toBeInViewport({ ratio: 1 });
+    await expect(input).toBeInViewport({ ratio: 1 });
+  }
   const responsePlan: Plan = { stream: true, text: 'Fragment tactile provisoire' };
   await page.evaluate(plan => { window.__chatHarness.plans.chatbot = [plan]; }, responsePlan);
   await page.getByRole('button', { name: 'Envoyer le message' }).tap();
