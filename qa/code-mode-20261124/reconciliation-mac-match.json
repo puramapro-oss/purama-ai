@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "source_files": 6,
+  "runtime_files": 114,
+  "mismatches": [],
+  "source_changed_during_analysis": [],
+  "base_commit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "scope": "Exact bytes matched between the isolated Mac verification and the local merge candidate. Tests/docs/config are outside the runtime graph; staged detector maps the two product files.",
+  "environment_used_on_mac": {
+    "NODE_OPTIONS": "--max-old-space-size=512 --max-semi-space-size=8",
+    "GITNEXUS_MEMORY": "off",
+    "GITNEXUS_WORKER_HEAP_MB": "384",
+    "GITNEXUS_WORKER_SUB_BATCH_MAX_BYTES": "524288",
+    "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "536870912",
+    "GITNEXUS_LBUG_MAX_DB_SIZE": "2147483648",
+    "GITNEXUS_SERIAL_LBUG_LOAD": "1",
+    "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1",
+    "GITNEXUS_CONTENT_RETENTION": "none",
+    "GITNEXUS_STORAGE_PATH": "/private/tmp/iao-code-mode-200b-index"
+  }
+}

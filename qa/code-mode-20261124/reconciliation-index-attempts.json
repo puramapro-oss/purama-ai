@@ -1,0 +1,198 @@
+{
+  "status": "BLOQUE locally after prior successful baseline analysis",
+  "attempts": [
+    {
+      "receipt": "reconciliation-index-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "exit_code": -9,
+      "elapsed_seconds": 12.07,
+      "scope": "KARTA runtime and scripts; tests/external consumers reviewed separately",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-full-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124",
+        "--force"
+      ],
+      "exit_code": -9,
+      "elapsed_seconds": 6.79,
+      "scope": "KARTA runtime and scripts at actual git root; full rebuild after interrupted incremental refresh",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-bounded-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124",
+        "--force"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 1.89,
+      "scope": "KARTA runtime and scripts; full rebuild on disk after interrupted refresh; lower heap/buffer and native thread limit retained",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-clean-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124",
+        "--force"
+      ],
+      "exit_code": -11,
+      "elapsed_seconds": 13.9,
+      "scope": "KARTA runtime and scripts; clean index on disk with lower heap/buffer limits; no copied path-bound storage metadata",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-final-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124",
+        "--force"
+      ],
+      "exit_code": -9,
+      "elapsed_seconds": 14.57,
+      "scope": "Fresh KARTA runtime and scripts index in shared-memory filesystem, reduced V8 heap/buffer; original 1GiB DB virtual-size limit retained",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-focused-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124",
+        "--force"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 6.42,
+      "scope": "Focused graph: all claude/engine/agents modules; tool registries; API consultation; CHEF supervisor. Other runtime, tests and docs excluded and covered by prior impacts/manual review/CI.",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-focused-buffer-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124",
+        "--force"
+      ],
+      "exit_code": -9,
+      "elapsed_seconds": 8.57,
+      "scope": "Focused graph: all claude/engine/agents modules; tool registries; API consultation; CHEF supervisor. Other runtime, tests and docs excluded and covered by prior impacts/manual review/CI.",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-index-fresh-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "analyze",
+        "--index-only",
+        "--skip-fts",
+        "--workers",
+        "1",
+        "--name",
+        "iao-code-mode-karta-20261124"
+      ],
+      "exit_code": -9,
+      "elapsed_seconds": 5.14,
+      "scope": "All KARTA runtime and scripts, fresh index using the exact previously successful command without --force. No existing index reused.",
+      "scope_restored": true
+    },
+    {
+      "receipt": "reconciliation-detect-staged-receipt.json",
+      "command": [
+        "node",
+        "--require",
+        "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+        "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+        "detect-changes",
+        "--scope",
+        "staged",
+        "--repo",
+        "/workspace/scratch/200bdf486cef/purama-ai",
+        "--limit",
+        "500"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.42,
+      "scope": "Staged merge, including upstream changes; not solely our two runtime files",
+      "scope_restored": null
+    }
+  ],
+  "notes": [
+    "No failed run is used as a successful index or detector receipt.",
+    "SIGKILL exact cause not established. One bounded attempt exhausted the native buffer; an on-disk attempt exited by SIGSEGV.",
+    "The failed copied cache retained path-bound metadata and was rejected as foreign; it was discarded without changing ownership checks.",
+    "Temporary source-scope files were restored; only own disposable index caches were removed.",
+    "An isolated Mac verification uses the already installed runner and exact source hashes; see its independent receipt when available."
+  ]
+}

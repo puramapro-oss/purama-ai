@@ -1,0 +1,245 @@
+{
+  "scope": "KARTA production and scripts, graph at real repository root. Tests and external consumers reviewed separately. HIGH warnings communicated before edits.",
+  "results": [
+    {
+      "symbol": "resolveCustomAgentTools",
+      "risk": "HIGH",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 3
+      },
+      "direct_callers": [
+        {
+          "depth": 1,
+          "id": "Function:karta/src/agents/customAgent.ts:buildCustomAgentDefinition",
+          "name": "buildCustomAgentDefinition",
+          "filePath": "karta/src/agents/customAgent.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_63_startagentcycleworke",
+              "label": "StartAgentCycleWorker \u2192 ResolveCustomAgentTools",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_243_startagentcycleworke",
+              "label": "StartAgentCycleWorker \u2192 Invalid",
+              "processType": "cross_community",
+              "step": 3
+            },
+            {
+              "id": "proc_244_startagentcycleworke",
+              "label": "StartAgentCycleWorker \u2192 Plain",
+              "processType": "cross_community",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "boundaries": []
+    },
+    {
+      "symbol": "toAnthropicTools",
+      "risk": "HIGH",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "direct_callers": [
+        {
+          "depth": 1,
+          "id": "Function:karta/src/claude/real.ts:createRealClaudeClient.decide@75:4.fn@90:48.send@94:8",
+          "name": "send",
+          "filePath": "karta/src/claude/real.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_52_run",
+              "label": "Run \u2192 EncodeData",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_53_run",
+              "label": "Run \u2192 SchemaForTool",
+              "processType": "intra_community",
+              "step": 2
+            },
+            {
+              "id": "proc_97_run",
+              "label": "Run \u2192 ApplyPublicPromptCache",
+              "processType": "intra_community",
+              "step": 2
+            }
+          ]
+        }
+      ],
+      "boundaries": []
+    },
+    {
+      "symbol": "createRealClaudeClient",
+      "risk": "HIGH",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 3
+      },
+      "direct_callers": [
+        {
+          "depth": 1,
+          "id": "Function:karta/src/claude/index.ts:getClaudeClient",
+          "name": "getClaudeClient",
+          "filePath": "karta/src/claude/index.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": []
+        },
+        {
+          "depth": 1,
+          "id": "Method:karta/src/claude/consultation-host.ts:createConsultationHost.consult@211:4#3",
+          "name": "consult",
+          "filePath": "karta/src/claude/consultation-host.ts",
+          "relationType": "CALLS",
+          "confidence": 0.85,
+          "processes": [
+            {
+              "id": "proc_206_consult",
+              "label": "Consult \u2192 Invalid",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_224_consult",
+              "label": "Consult \u2192 Object",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_228_consult",
+              "label": "Consult \u2192 Failure",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_261_consult",
+              "label": "Consult \u2192 Invalid",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_262_consult",
+              "label": "Consult \u2192 Plain",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        }
+      ],
+      "boundaries": []
+    },
+    {
+      "symbol": "decide",
+      "risk": "UNKNOWN",
+      "epistemic": "lower-bound",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct_callers": [],
+      "boundaries": [
+        "1 call site invoking `decide` was dropped at index time because the receiver's type could not be established (e.g. an unresolved constructor, factory or chained expression). Those callers are absent from this result \u2014 actual impact may be higher."
+      ]
+    },
+    {
+      "symbol": "send",
+      "risk": "HIGH",
+      "epistemic": "exact",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 4,
+        "modules_affected": 2
+      },
+      "direct_callers": [
+        {
+          "depth": 1,
+          "id": "Function:karta/src/claude/lmstudio.ts:createLmStudioTransport.run@108:2",
+          "name": "run",
+          "filePath": "karta/src/claude/lmstudio.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": [
+            {
+              "id": "proc_52_run",
+              "label": "Run \u2192 EncodeData",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_53_run",
+              "label": "Run \u2192 SchemaForTool",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_97_run",
+              "label": "Run \u2192 ApplyPublicPromptCache",
+              "processType": "intra_community",
+              "step": 1
+            },
+            {
+              "id": "proc_171_run",
+              "label": "Run \u2192 ReadBody",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "depth": 1,
+          "id": "Method:karta/src/claude/real.ts:createRealClaudeClient.decide@75:4#1",
+          "name": "decide",
+          "filePath": "karta/src/claude/real.ts",
+          "relationType": "CALLS",
+          "confidence": 0.8,
+          "processes": [
+            {
+              "id": "proc_295_decide",
+              "label": "Decide \u2192 Invalid",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_296_decide",
+              "label": "Decide \u2192 Plain",
+              "processType": "cross_community",
+              "step": 1
+            },
+            {
+              "id": "proc_309_decide",
+              "label": "Decide \u2192 AssertCurrent",
+              "processType": "cross_community",
+              "step": 1
+            }
+          ]
+        }
+      ],
+      "boundaries": []
+    }
+  ],
+  "manual_followup": [
+    "karta/src/engine/loop.ts invokes getClaudeClient().decide",
+    "karta/src/claude/consultation.ts invokes route.client.decide",
+    "customAgent builder copies the registry entries with metadata_only tracePolicy",
+    "Outside-KARTA matches are catalog comments in frontend and Edge sources; no additional direct callers found"
+  ],
+  "limitations": "310 extracted flows are bounded; absence of a flow is not proof of absence. decide has an unresolved receiver; retained as UNKNOWN. FTS was disabled."
+}

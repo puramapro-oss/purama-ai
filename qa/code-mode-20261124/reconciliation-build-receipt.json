@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "environment": {
+    "NODE_OPTIONS": "--max-old-space-size=768 --max-semi-space-size=8"
+  },
+  "upstream_commit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "exit_code": 0,
+  "elapsed_seconds": 4.12
+}

@@ -1,0 +1,14 @@
+
+> karta-engine@1.0.0 test
+> vitest run --maxWorkers=1 test/customRegistry.test.ts test/claudeTransportCost.test.ts
+
+
+ RUN  v5.0.3 /workspace/scratch/200bdf486cef/purama-ai/karta
+
+
+ Test Files  2 passed (2)
+      Tests  32 passed (32)
+   Start at  20:27:09
+   Duration  888ms (transform 46%, import 41%, tests 10%, setup 2%, worker 1%)
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.

@@ -92,6 +92,9 @@ export function createRealClaudeClient(options: {
         // Select after admission so pre-cancelled calls do not read context;
         // keep the same selected model for the request and its usage receipt.
         const model = plan?.model ?? local?.model ?? selectModel(input);
+        // Project only after model selection, without mutating input.tools.
+        // Reject ambiguous names before any network, including local discovery.
+        const providerTools = toAnthropicTools(input.tools);
         const send = () => client.messages.create({
           model,
           max_tokens: plan?.maxOutputTokens ?? 1024,
@@ -104,7 +107,7 @@ export function createRealClaudeClient(options: {
               content: `Contexte actuel:\n${JSON.stringify(input.context)}\n\nDécide quelle(s) action(s) prendre.`,
             },
           ],
-          tools: toAnthropicTools(input.tools),
+          tools: providerTools,
         } as Anthropic.MessageCreateParamsNonStreaming, { signal, timeout: requestTimeoutMs, maxRetries: 0 });
         const response = local ? await local.run(signal, input.tools.length > 0, send) : await send();
         return { model, response };
@@ -189,7 +192,17 @@ export function createRealClaudeClient(options: {
 }
 
 function toAnthropicTools(tools: AnyToolDefinition[]): Anthropic.Tool[] {
-  return tools.map((tool) => ({
+  const unique = new Map<string, AnyToolDefinition>();
+  for (const tool of tools) {
+    if (unique.has(tool.name)) {
+      // Equal-looking JSON does not prove equal handlers or authorization.
+      // Only repetitions of the very same definition are safe to collapse.
+      if (unique.get(tool.name) !== tool) throw new Error("Catalogue d'outils ambigu");
+    } else {
+      unique.set(tool.name, tool);
+    }
+  }
+  return [...unique.values()].map((tool) => ({
     name: tool.name,
     description: tool.description,
     input_schema: schemaForTool(tool),

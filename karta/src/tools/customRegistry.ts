@@ -31,10 +31,10 @@ export const CUSTOM_AGENT_TOOLS: Record<string, AnyToolDefinition> = {
 
 export const CUSTOM_AGENT_TOOL_NAMES = Object.keys(CUSTOM_AGENT_TOOLS);
 
-/** Filtre défensif : ne résout QUE les noms d'outils connus (liste blanche), ignore le reste
+/** Filtre défensif : ne résout qu'une fois les noms d'outils connus (liste blanche), ignore le reste
  * silencieusement — un nom invalide venant de Claude/du mock ne doit jamais planter l'agent. */
 export function resolveCustomAgentTools(names: string[] | null | undefined): AnyToolDefinition[] {
-  return (names ?? [])
+  return [...new Set(names ?? [])]
     .map((name) => Object.hasOwn(CUSTOM_AGENT_TOOLS, name) ? CUSTOM_AGENT_TOOLS[name] : undefined)
     .filter((tool): tool is AnyToolDefinition => Boolean(tool));
 }
