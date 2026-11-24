@@ -165,7 +165,7 @@ try {
       }
       const entry = local(path.join(root, ENTRY));
       await entry.link((specifier, parent) => {
-        if (specifier === 'npm:@supabase/supabase-js@2.91.0') return new vm.SyntheticModule(['createClient'], function () {
+        if (specifier === 'npm:@supabase/supabase-js@2.119.2') return new vm.SyntheticModule(['createClient'], function () {
           this.setExport('createClient', (url, key, settings) => sdkClient(url, key, { ...settings,
             global: { ...settings.global, fetch: fetchFixture } }));
         }, { context });

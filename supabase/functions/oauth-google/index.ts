@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import { cancelResponseQuietly, createRequestDeadline, RequestDeadlineError } from "../_shared/request-deadline.ts";
 import { readRequestText, readBoundedBytes, RequestBodyError } from "../_shared/request-body.ts";
 import {

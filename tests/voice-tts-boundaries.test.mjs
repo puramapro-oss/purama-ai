@@ -92,7 +92,7 @@ async function harness({ auth = identity, provider = async () => audioResponse()
   }
   const module = load(resolve(root, entry));
   await module.link((specifier, parent) => {
-    if (['https://esm.sh/@supabase/supabase-js@2', 'https://esm.sh/@supabase/supabase-js@2.91.0', 'npm:@supabase/supabase-js@2.91.0'].includes(specifier)) return authModule;
+    if (['https://esm.sh/@supabase/supabase-js@2', 'https://esm.sh/@supabase/supabase-js@2.91.0', 'npm:@supabase/supabase-js@2.119.2'].includes(specifier)) return authModule;
     assert.ok(specifier.startsWith('.'), `Unexpected external import: ${specifier}`);
     return load(resolve(dirname(parent.identifier), specifier));
   });

@@ -54,7 +54,7 @@ function harness() {
   const fetch = vi.fn(async (_url: string, _init?: RequestInit): Promise<Response> => { events.push("fetch"); return Response.json(accepted, { status: 202 }); });
   let handle: Handler | undefined;
   const require = (name: string) => {
-    if (name === "npm:@supabase/supabase-js@2.91.0") return { createClient };
+    if (name === "npm:@supabase/supabase-js@2.119.2") return { createClient };
     if (name === "../_shared/rate-limit.ts") return { rateLimit };
     throw new Error("Unexpected import: " + name);
   };

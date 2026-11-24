@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.91.0';
+import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.119.2';
 import type { EntraidePorts, Payload } from './entraide-http.ts';
 import { computeMatchScore } from './vendor/entraide-matching.js';
 

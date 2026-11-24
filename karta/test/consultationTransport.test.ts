@@ -123,7 +123,7 @@ function edge() {
   }, handlerExports);
   let handle: ((request: Request) => Promise<Response>) | undefined;
   new Function("require", "exports", "Deno", "fetch", indexCode)((name: string) => {
-    if (name === "npm:@supabase/supabase-js@2.91.0") return { createClient };
+    if (name === "npm:@supabase/supabase-js@2.119.2") return { createClient };
     if (name === "../_shared/rate-limit.ts") return { rateLimit };
     if (name === "./handler.ts") return handlerExports; throw new Error(`Unexpected import ${name}`);
   }, {}, { env: { get: (name: string) => state.env[name] }, serve: (value: typeof handle) => { handle = value; } }, fetch);

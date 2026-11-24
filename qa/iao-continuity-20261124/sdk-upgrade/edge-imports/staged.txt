@@ -1,0 +1,4 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795540017111,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Diff touched 44 file(s) but no indexed symbols overlap those hunks — not a clean tree.

@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795540017105,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 2833 files, 847 symbols
+Affected processes: 39
+Risk level: critical
+
+Changed symbols:
+  TypeAlias IaoContextSource → karta/src/iao/kartaRuntimePort.ts
+  TypeAlias IaoContextPack → karta/src/iao/kartaRuntimePort.ts
+  Interface SmaranaIaoPort → karta/src/iao/kartaRuntimePort.ts
+  Method buildContext → karta/src/iao/kartaRuntimePort.ts
+  Method control → karta/src/iao/kartaRuntimePort.ts
+  Interface IaoCompletionPort → karta/src/iao/kartaRuntimePort.ts
+  Method complete → karta/src/iao/kartaRuntimePort.ts
+  TypeAlias Stage → karta/src/iao/kartaRuntimePort.ts
+  Class KartaRuntimeIaoPort → karta/src/iao/kartaRuntimePort.ts
+  Method constructor → karta/src/iao/kartaRuntimePort.ts
+  Property smarana → karta/src/iao/kartaRuntimePort.ts
+  Property completion → karta/src/iao/kartaRuntimePort.ts
+  Property timeoutMs → karta/src/iao/kartaRuntimePort.ts
+  Method executionBudgetMs → karta/src/iao/kartaRuntimePort.ts
+  Method prepare → karta/src/iao/kartaRuntimePort.ts
+... and 832 more
+
+Affected execution flows:
+  • HandleSend → CreateOrGetConversation (3 steps) — changed: handleSend, sendMessage, createOrGetConversation
+  • HandleSend → SaveMessage (3 steps) — changed: handleSend, sendMessage, saveMessage
+  • Workshop → Invalid (7 steps) — changed: WorkshopSession, Workshop, consumeWorkshopHandoff, readDraft, uuid, text, invalid
+  • WorkshopResult → CheckAbort (6 steps) — changed: load, WorkshopResult, requestWorkshopArtifact, parseWorkshopArtifact, verifyDigest, checkAbort
+  • Prepare → Trap (6 steps) — changed: trap, memoryRecord, memorySources, buildMemoryPrompt, complete, prepare
+  • ChatbotWidget → Source (5 steps) — changed: loadConversationHistory, ChatbotWidget, getter, source, cancel
+  • #control → PreDispatchCancellation (5 steps) — changed: PreDispatchCancellation, bounded, assertCurrent, interruption, #control
+  • ChatbotWidget → Getter (4 steps) — changed: loadConversationHistory, ChatbotWidget, getter, cancel
+  • Prepare → AssertFabricCurrent (4 steps) — changed: assertFabricCurrent, requestFabric, complete, prepare
+  • Prepare → FinishError (4 steps) — changed: finishError, requestFabric, complete, prepare
+... and 29 more

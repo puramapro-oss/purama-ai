@@ -2,7 +2,7 @@
 // Receives DocuSeal webhooks on submission lifecycle events.
 // Authenticates Bearer or exact-body HMAC, updates contracts and acknowledges OTS delivery.
 
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import {
   CORS_HEADERS, corsResponse, errorResponse,
   DOCUSEAL_WEBHOOK_SECRET, docusealFetch,

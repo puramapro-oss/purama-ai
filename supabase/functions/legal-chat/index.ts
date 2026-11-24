@@ -7,7 +7,7 @@ import { buildAssistantSystemPrompt } from "../_shared/assistant-policy.ts";
 // 3. Call Claude with full context
 // 4. Persist user + assistant messages in legal_chat_history
 // 5. Return reply + sources extracted from the response
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import { z } from "npm:zod@4.6.7";
 import { validateBody } from "../_shared/validation.ts";
 import { rateLimit } from "../_shared/rate-limit.ts";

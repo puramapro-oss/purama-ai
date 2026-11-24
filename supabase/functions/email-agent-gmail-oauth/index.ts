@@ -1,6 +1,6 @@
 // Gmail provider redirects have no authority to link an account. The browser
 // completes the shared callback with its initiating session and one-use state.
-import { createClient } from "npm:@supabase/supabase-js@2.91.0";
+import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 import { encryptGmailToken } from "../_shared/gmail-token-crypto.ts";
 import { issueOAuthState, consumeOAuthState } from "../_shared/oauth-state.ts";
 import { readRequestText, readBoundedBytes } from "../_shared/request-body.ts";
