@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+    "analyze",
+    "--index-only",
+    "--skip-fts",
+    "--workers",
+    "1",
+    "--name",
+    "iao-runtime-composition-20261124"
+  ],
+  "exit": 0,
+  "files": [
+    "karta/src/api/server.ts",
+    "karta/src/api/iaoRoutes.ts",
+    "karta/src/runtime/lifecycle.ts",
+    "karta/src/runtime/probe.ts",
+    "karta/src/index.ts",
+    "karta/src/config.ts",
+    "karta/src/iao/iaoFacade.ts"
+  ],
+  "bufferPoolBytes": 134217728
+}

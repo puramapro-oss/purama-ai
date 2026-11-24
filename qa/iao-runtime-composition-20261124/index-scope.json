@@ -1,0 +1,17 @@
+{
+  "status": "partial targeted graph",
+  "base": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "allowPatterns": [
+    "karta/src/iao/**",
+    "karta/src/api/**",
+    "karta/src/runtime/**",
+    "karta/src/chef/**",
+    "karta/src/config.ts",
+    "karta/src/index.ts",
+    "karta/src/integrations/localComputeFabricProvider.ts",
+    "karta/src/integrations/computeFabric.ts",
+    "mobile/lib/smarana-store.ts",
+    "mobile/lib/smarana-sync.ts"
+  ],
+  "warning": "No resolved caller does not prove absence of caller; cross-repository dependencies require source review."
+}

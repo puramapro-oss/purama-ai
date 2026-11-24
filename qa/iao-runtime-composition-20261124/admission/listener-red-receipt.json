@@ -1,0 +1,21 @@
+{
+  "exit": 1,
+  "seconds": 6.005365536999307,
+  "args": [
+    "node",
+    "--max-old-space-size=768",
+    "/workspace/scratch/6431e6d17379/iao-capabilities-20261124/karta/node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "/workspace/scratch/6431e6d17379/iao-capabilities-20261124/karta/vitest.config.ts",
+    "--root",
+    "/workspace/scratch/6431e6d17379/iao-runtime-composition-20261124/karta",
+    "test/apiIaoGlobalStop.test.ts",
+    "--maxWorkers",
+    "1",
+    "--reporter=json",
+    "--outputFile",
+    "/workspace/scratch/6431e6d17379/iao-runtime-auth-review-20261124/listener-red.json"
+  ],
+  "sourceSHA256": "0291f363378b9454cf1f22cfd8e9c5c09d8fe97c3066b1f0548110f738673184"
+}

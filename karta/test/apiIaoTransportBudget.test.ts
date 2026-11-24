@@ -42,7 +42,7 @@ async function listen(facade: IaoFacade, options: {
   lifetime?: AbortSignal;
   socketTimeoutMs?: number;
 } = {}) {
-  const server = startApiServer(options.readiness ?? (async () => ({ ready: true, phase: "ready" })), {
+  const server = startApiServer(options.readiness ?? (async () => ({ ready: true, phase: "ready", globalKillSwitch: false })), {
     consultationHost: null, lifetime: options.lifetime,
     iaoRuntime: { facade, authenticator: { authenticate: options.authenticate ?? (async () => identity()) } },
   });
@@ -101,7 +101,7 @@ it("extends only after authentication, complete body and final readiness, withou
     authenticate: async () => { authEntered.resolve(); await authRelease.promise; return identity(); },
     readiness: async () => {
       if (++probes === 2) { finalProbe.resolve(); await probeRelease.promise; }
-      return { ready: true, phase: "ready" };
+      return { ready: true, phase: "ready", globalKillSwitch: false };
     },
   });
   cleanup.push(() => {
