@@ -39,3 +39,14 @@ L’index GitNexus disponible est partiel et en retard. Deux tentatives de rafra
 ## Exploitation
 
 Cette réception ne déploie pas les fonctions, migrations ou workflows sur un compte réel. Elle ne prouve pas un consentement, une signature, une attribution commerciale, une commission ou un paiement réel. Les données de la partie contractante, du catalogue, des conditions exécutables, des bénéficiaires et des prestataires doivent correspondre aux sources d’exploitation. Aucun e-mail prospect, engagement commercial, campagne, dépense, versement ou déploiement n’est exécuté par cette réalisation.
+
+### Ordre de qualification pour une mise en service ultérieure
+
+1. Identifier la base canonique, ses schémas et son état de référence ; conserver une sauvegarde et les écarts historiques avant toute reprise. Le choix d’un hébergeur ne désigne pas automatiquement le jeu de données.
+2. Maintenir le traitement commercial en pause pendant la réception des migrations. Vérifier les dépendances existantes de découverte, politique médias, reçus et approbation Email, puis appliquer 503 à 506 dans leur ordre. La fenêtre entre 504 et 506 bloque volontairement les contrôles Email qui ne disposent pas encore du classifieur ; elle n’autorise aucun contournement.
+3. Vérifier les signatures des RPC et leurs privilèges : préparation et liste d’admission accessibles au seul rôle authentifié avec propriétaire issu de la session ; garde d’envoi direct accessible au service ; tables de preuves non modifiables par le client. Confirmer le rechargement du schéma avant d’activer le nouveau runtime Gmail ou l’endpoint de préparation.
+4. Recevoir le runtime et l’interface ensemble avec deux comptes d’essai appartenant à l’équipe. Vérifier le refus, le retrait tardif, le rejeu du brouillon, l’aperçu exact, l’historique signé après reclassification et l’isolation des exports. Les premiers contrôles utilisent des fournisseurs d’essai ; une invitation ou un envoi réel exige son contexte et son autorisation effectifs.
+5. Raccorder les huit prérequis au moteur ONE existant. Recevoir attribution, encaissement, remboursement et règlement dans leur environnement autorisé avant d’afficher un affilié actif ou un versement disponible. Le JSON d’admission ne remplace aucun de ces contrôles.
+6. En cas d’incident, remettre le traitement en pause et conserver reçus, brouillons, contrats et admissions. Réconcilier les résultats fournisseurs incertains avant reprise ; une restauration de code ne justifie ni suppression de preuves ni répétition d’un envoi ou d’un paiement.
+
+Cette procédure est un ordre de réception, pas un reçu de déploiement. Les tests CI et leurs fournisseurs contrôlés conservent la portée décrite ci-dessus.

@@ -64,7 +64,7 @@ async function claim(prepared: Row) {
   return call('partner_contract_claim', owner, prospect, sendingToken, prepared.approval_version, prepared.pdf_sha256);
 }
 async function noInvitation() {
-  expect((await db.query('SELECT submission_started_at FROM purama_ai.partner_contract_dispatches')).rows
+  expect((await db.query<{ submission_started_at: unknown }>('SELECT submission_started_at FROM purama_ai.partner_contract_dispatches')).rows
     .every(row => row.submission_started_at === null)).toBe(true);
   expect((await db.query("SELECT id FROM purama_ai.contracts WHERE status <> 'draft'")).rows).toEqual([]);
   expect((await db.query("SELECT id FROM purama_ai.contract_events WHERE event_type='sent'")).rows).toEqual([]);

@@ -379,7 +379,8 @@ describe('shared direct-send classification preserves media evidence and legacy 
     await db.query('UPDATE purama_ai.partner_outreach_dispatches SET policy_snapshot=purama_ai.partner_outreach_policy_context($1,$2) WHERE id=$3', [user, prospect, action]);
     await db.query('DELETE FROM purama_ai.partner_prospects WHERE id=$1', [prospect]);
     expect(await directGuard('recipient@example.invalid')).toMatchObject({ status: 'blocked' });
-    expect(await directGuard('ordinary@example.invalid', 'resend-1')).toMatchObject({ status: 'blocked' });
+    // An outbound Resend ID cannot establish a Gmail parent for another recipient.
+    expect(await directGuard('ordinary@example.invalid', 'resend-1')).toEqual({ status: 'allowed', reason: null });
     expect(await directGuard('ordinary@example.invalid', 'incoming1')).toMatchObject({ status: 'blocked' });
     expect(await directGuard('ordinary@example.invalid', 'fresh-parent', 'thread1')).toMatchObject({ status: 'blocked' });
   });
