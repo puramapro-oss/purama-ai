@@ -55,3 +55,7 @@ verify_jwt = false
 # exact service secret inside the handler. No caller-selected user is trusted.
 [functions.partner-sync-replies]
 verify_jwt = false
+
+# Preparation authenticates the real account and only creates a local draft.
+[functions.partner-prepare-reply]
+verify_jwt = false

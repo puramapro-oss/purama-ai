@@ -62,7 +62,8 @@
       "codex/iao-wealth-review-20261121-0f5e": false,
       "codex/automation-reliability-20261122-529e": false,
       "codex/calendar-event-confirmation-20261122-529e": false,
-      "feat/iao-tool-context-efficiency-20261124": false
+      "feat/iao-tool-context-efficiency-20261124": false,
+      "fix/partner-completion-20261124": false
     }
   }
 }

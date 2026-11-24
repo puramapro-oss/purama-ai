@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { rpc, configUpdates, mailbox } = vi.hoisted(() => ({ rpc: vi.fn(async () => ({ data: 1, error: null })), configUpdates: [] as Array<Record<string, unknown>>, mailbox: { oauthAvailable: true } }));
+const { rpc, configUpdates, mailbox } = vi.hoisted(() => ({ rpc: vi.fn(async (name: string) => ({
+  data: name === "partner_direct_send_guard" ? { status: "allowed", reason: null } : 1, error: null,
+})), configUpdates: [] as Array<Record<string, unknown>>, mailbox: { oauthAvailable: true } }));
 vi.mock("../src/lib/gmail-token-crypto.js", () => ({ decryptGmailToken: (v: string) => v, encryptGmailToken: (v: string) => v }));
 vi.mock("../src/config.js", () => ({ config: {} }));
 vi.mock("../src/db/supabase.js", () => ({ supabase: {

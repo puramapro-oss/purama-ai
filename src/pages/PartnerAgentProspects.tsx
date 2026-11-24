@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
+import { PartnerReplyAction } from '@/components/partner/PartnerReplyAction';
 import {
   listProspects, createProspect, updateProspect, deleteProspect,
   findProspects, partnerDiscoveryFeedback, sendOutreach, approveOutreach, outreachFeedback, outreachStepForStatus,
@@ -549,6 +550,7 @@ export default function PartnerAgentProspects() {
                       <strong>{p.reply_kind === 'refusal' ? 'Refus' : p.reply_kind === 'automatic' ? 'Réponse automatique' : 'Réponse'} :</strong> {p.reply_summary}
                       {p.reply_received_at && Number.isFinite(Date.parse(p.reply_received_at)) && <span> · {new Date(p.reply_received_at).toLocaleString('fr-FR')}</span>}
                     </p>}
+                    <PartnerReplyAction prospect={p} />
                     {p.ai_score !== null && (
                       <div className="mt-1.5 flex items-center gap-2">
                         <div className="h-1 w-24 bg-secondary rounded-full overflow-hidden">

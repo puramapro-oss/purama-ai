@@ -1,0 +1,75 @@
+{
+  "status": "ambiguous",
+  "message": "Found 2 symbols matching 'EmailAgentLogs'. Blast radius differs per candidate (max 1 impacted at risk UNKNOWN; LOW among the candidates that resolved, and at least one could not be walked). Disambiguate with target_uid (or file_path/kind) for a single authoritative result.",
+  "target": {
+    "name": "EmailAgentLogs"
+  },
+  "direction": "upstream",
+  "totalCandidates": 2,
+  "impactedCount": null,
+  "risk": "UNKNOWN",
+  "maxImpactedCount": 1,
+  "maxRisk": "UNKNOWN",
+  "knownMaxRisk": "LOW",
+  "candidates": [
+    {
+      "uid": "Function:src/App.tsx:EmailAgentLogs",
+      "name": "EmailAgentLogs",
+      "kind": "Function",
+      "filePath": "src/App.tsx",
+      "line": 58,
+      "score": 0.56,
+      "impactedCount": 1,
+      "risk": "LOW",
+      "riskSharedAxes": "LOW",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 1
+    },
+    {
+      "uid": "Function:src/pages/EmailAgentLogs.tsx:EmailAgentLogs",
+      "name": "EmailAgentLogs",
+      "kind": "Function",
+      "filePath": "src/pages/EmailAgentLogs.tsx",
+      "line": 25,
+      "score": 0.56,
+      "impactedCount": 0,
+      "risk": "UNKNOWN",
+      "riskSharedAxes": "UNKNOWN",
+      "riskScale": {
+        "comparableAcrossKinds": false,
+        "unusedAxes": [
+          {
+            "axis": "processes",
+            "reason": "enrichment-skipped"
+          },
+          {
+            "axis": "modules",
+            "reason": "enrichment-skipped"
+          }
+        ]
+      },
+      "direct": 0,
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    }
+  ],
+  "staleness": {
+    "status": "behind",
+    "commitsBehind": 9,
+    "hint": "⚠️ Index is 9 commits behind HEAD. Run analyze tool to update."
+  }
+}
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795557580974,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}

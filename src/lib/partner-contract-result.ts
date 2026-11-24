@@ -103,6 +103,8 @@ export function contractFeedback(result: PartnerContractResult): {
         recipient_changed: 'Le destinataire a changé depuis la préparation. Vérifiez le dossier.',
         sender_changed: 'L’identité de l’expéditeur a changé depuis la préparation. Vérifiez le dossier.',
         contact_suppressed: 'Ce contact a refusé la prospection.',
+        contact_qualification_required: 'Les coordonnées doivent être qualifiées pour ce destinataire avant de préparer une demande de signature.',
+        provider_opt_in_required: 'L’autorisation d’envoi est absente ou a été retirée. Aucune demande de signature ne sera envoyée.',
         agent_inactive: 'L’agent partenariat est désactivé.',
         prospect_not_interested: 'Le dossier doit être qualifié comme intéressé avant de préparer un contrat.',
         already_sent: 'Une demande de signature existe déjà pour ce dossier.',

@@ -346,6 +346,19 @@ export async function updateConfig(
 // =============================================================
 // LOGS
 // =============================================================
+/** Resolve a partner deep link independently of the latest activity page. */
+export async function getEmailAgentLog(userId: string, logId: string, signal?: AbortSignal): Promise<EmailAgentLog | null> {
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuid.test(userId) || !uuid.test(logId)) throw new Error('Identifiant de brouillon invalide.');
+  let query = sb().from('email_agent_logs').select('*').eq('user_id', userId).eq('id', logId);
+  if (signal) query = query.abortSignal(signal);
+  const { data, error } = await query.maybeSingle();
+  if (error) throw new Error('Ce brouillon ne peut pas être chargé. Réessayez sa lecture.');
+  if (!data) return null;
+  if (data.user_id !== userId || data.id !== logId) throw new Error('Ce brouillon ne correspond pas à votre compte.');
+  return data as EmailAgentLog;
+}
+
 export async function listLogs(
   userId: string,
   opts: {

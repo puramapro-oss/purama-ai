@@ -51,6 +51,8 @@ describe('contract response boundary', () => {
     ['editorial_contract_not_applicable', /rédactionnelle indépendante.*Aucun contrat d’affiliation/],
     ['contract_profile_invalid', /type de proposition.*qualification/],
     ['campaign_role_mismatch', /rôle du destinataire.*proposition éditoriale/],
+    ['contact_qualification_required', /coordonnées.*qualifiées.*destinataire/],
+    ['provider_opt_in_required', /autorisation.*retirée.*Aucune demande/],
   ])('explains the media or editorial refusal %s without reporting a send', (reason, explanation) => {
     const feedback = contractFeedback(parsePartnerContractResult({ status: 'blocked', reason, reused: false }));
     expect(feedback.kind).toBe('warning');
