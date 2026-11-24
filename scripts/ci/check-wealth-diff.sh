@@ -2,7 +2,7 @@
 # Keep the unfiltered diagnostic in the caller's log. Exempt only the first
 # appearance of these byte-identical, already archived QA records. Changed
 # records, previously present paths, unlisted files and application code stay strict.
-# Entries cover archived evidence from 57d3d6b and the IAO qualification b4a18ef.
+# Entries cover 57d3d6b, IAO qualification b4a18ef and PR104 cccaadf.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 base=$1
@@ -60,6 +60,21 @@ ca0f3efc7e91c3ab988d911a3d248452edf9d325 qa/iao-release-qualification-20261123/u
 0609db8e46deebfe0e9d4ca2f3680fafa6360284 qa/iao-release-qualification-20261123/ui/client-and-components-green.log
 3af933dccbb08156e6687b5e7678732a67208a7b qa/iao-release-qualification-20261123/ui/client-revision-red.log
 b41156179fab3cc576894403cfb2a045cf6e3648 qa/iao-release-qualification-20261123/ui/component-baseline.log
+89117259c0fc80f48e4c26f0755648f3a1f6c2d0 qa/iao-integration-20261124/assembly/immutability-before-final.log
+983820afc7ffd5f12a14afaad806f6a1d00d1bd0 qa/iao-integration-20261124/assembly/immutability-before.log
+4cad8edb2807d0fc5a1eaf52c51f413e2b85d5c8 qa/iao-integration-20261124/assembly/karta-build-serial.log
+55246ae3da84de95a7333206ae1d9ade56c0be8f qa/iao-integration-20261124/assembly/karta-typecheck-1024.log
+7243009a33be03841809d2a193c6d1998625049e qa/iao-integration-20261124/assembly/karta-typecheck-serial.log
+7c6b1d14cbfc1f95e23ca17dca62517f1f02a143 qa/iao-integration-20261124/gitnexus/iao-gitnexus-karta-20261124.log
+7ed99bd6a156ae2c847d3f9b954d389905f9714a qa/iao-integration-20261124/gitnexus/root-index.log
+55bac429e3e8a4f8895ea51356a9d81564a75e35 qa/iao-integration-20261124/memory/projection-after.log
+efefff155c561b23c7fa6516bbaf9a850eff2722 qa/iao-integration-20261124/memory/projection-before-in-process.log
+4d3821f0761b459ddc174b103c2db082a2dbf4b8 qa/iao-integration-20261124/memory/projection-before.log
+304319bd3089749a486db6e7ca55a7a845d81110 qa/iao-integration-20261124/runtime/after.log
+7c182bfb4c057e8d71549b4a5c9dd385793caa25 qa/iao-integration-20261124/runtime/before-complete.log
+e6f6e8c304e81997c5f5e90feca41e0fa40d90d6 qa/iao-integration-20261124/runtime/before.log
+8fbe2c1f4ae25d775d717eea28642e47fdcf668f qa/iao-integration-20261124/runtime/regressions-final.log
+61bad687fa432d2244e692dca302b693373e61fa qa/iao-integration-20261124/runtime/regressions.log
 ARCHIVED_QA
 printf 'Rechecking all changes except %d byte-identical archived QA blobs.\n' "$((${#paths[@]} - 1))"
 git diff --check "$base" "$head" -- "${paths[@]}"
