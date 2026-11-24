@@ -1,5 +1,25 @@
 # PURAMA AI — Task Plan V3
 
+## Qualification des appareils et dépendances — reprise du 24 novembre 2026
+
+État : `PRET_A_CODER` pour les corrections et qualifications des composants existants, dans le référentiel de 168 capacités approuvé et la demande actuelle de Matiss de tester, corriger et débloquer les parcours sur différents appareils. Les nouvelles pistes scientifiques ne sont pas assimilées à une validation de produit supplémentaire.
+
+Base relue : `3a8d39c9927c461a7300712b719ef0aa6cc1f173`, consolidation `audit/reliability-oauth-20261110`, après PR104 et le correctif de garde Wealth reçu d'un autre chantier. Branche isolée : `fix/iao-device-compatibility-20261124`. La PR104 et ses 4 653 tests KARTA sont reçus ; les mêmes suites inchangées ne constituent pas de nouvelles preuves d'appareils physiques. Les deux worktrees précédents sont préservés.
+
+Critères de réception : versions et moteurs explicitement identifiés ; parcours ciblés Chromium/Firefox/WebKit quand disponibles ; petits écrans et interaction tactile ; conservation du travail hors connexion et reprise ; correctif de dépendance reproduit avant/après ; absence d'affaiblissement des gardes et des capacités existantes. Les tests par navigateur, l'émulation et le matériel physique restent des catégories de preuve distinctes. Le pont Mac renvoie encore `-32603 Internal error` au début de cette reprise.
+
+Attributions : `/root/device_browser_audit` examine les parcours web et leurs configurations, puis corrige seulement un périmètre attribué après reproduction et analyse d'impact ; `/root/device_dependencies` possède les manifestes/verrous racine, les nouveaux contrôles i18next et leurs preuves ; `/root/device_ar_audit` examine en lecture seule DreamForge v10 et ses limites de capacités avant toute éventuelle attribution de correction séparée. `/root` possède le suivi, la composition, l'outillage partagé, les workflows et la publication. Aucun agent ne publie ou ne déploie indépendamment.
+
+La livraison DreamForge conserve son identifiant et son historique ; une modification éventuelle doit être reçue dans cette livraison, sans copie produit concurrente. L'interface et le mode hors connexion restent uniques sous PURAMA. La disponibilité d'un appareil ou d'un fournisseur n'est jamais déduite du seul succès d'une simulation.
+
+Réception locale du lot appareils : i18next 26.3.4 installé et verrouillé, 12 tests de compatibilité réussis, 0 alerte modérée/élevée/critique et 3 faibles OpenTimestamps maintenues. Typage du produit et du banc QA réussi ; 113 exécutions navigateur collectées, en attente de leur exécution dans l'image CI existante. La compilation locale a été interrompue (137) et les téléchargements de navigateurs refusés (403), sans assimilation à des validations. Le correctif DreamForge sur les panneaux masqués passe 295 tests studio et le contrôle du module compilé ; sa réception dans l'archive canonique est coordonnée séparément. Détails et limites : [qualification du lot appareils](qa/iao-devices-20261124/README.md).
+
+Première réception CI de la PR106 : KARTA 4 653/4 653, identité, concurrence et site PASS ; matrice appareils 109/113 PASS, 4 échecs conservés. Le défaut de saisie masquée après rotation est corrigé dans le rendu du widget, sans changement des callbacks ; 29 tests consultation et typage PASS. Le couple Playwright/image passe à la stable1.65.1 pour qualifier la piste de régression WebKit ; assertions initiales conservées et 3 diagnostics ajoutés. La réception finale dépend de la nouvelle CI. DreamForge est reçu en version11 de la même livraison (295 tests studio, 360 empreintes et archive vérifiés).
+
+Réconciliation PR106 : la consolidation a reçu `38d888c` (i18next 26.3.4 exact) pendant la première CI. Les deux conflits de manifeste sont résolus en conservant ce pin et nos autres changements, sans réécrire l'historique. La tête `7bfc3c1` n'a eu aucun run CI ; seule la nouvelle tête de fusion peut être reçue. La comparaison GitNexus contre main a finalement abouti (risque HIGH pour l'écart global, index ciblé) ; la fusion reste limitée à la consolidation.
+
+Réception intermédiaire `189a019` : 112/113 exécutions appareils PASS et 3/3 diagnostics PASS ; un rognage partiel d'une suggestion Chromium persiste dans le scénario renforcé. Ajout local d'une marge de défilement de 4px ; assertion entière conservée, collecte de géométrie uniquement après échec. Validation finale attendue sur la nouvelle tête ; aucun ancien résultat n'est assimilé à cette nouvelle exécution.
+
 ## Intégration IAO — validation du 24 novembre 2026
 
 État de conception : `PRET_A_CODER` pour le référentiel de 168 capacités présenté à Matiss dans la conversation puis explicitement accepté par son message « Go intègre tout ». Cette validation autorise l'intégration dans les composants existants ; elle ne constitue pas une preuve de fonctionnement, ni une activation de production.

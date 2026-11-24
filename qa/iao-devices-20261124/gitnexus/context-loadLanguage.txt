@@ -1,0 +1,18 @@
+
+  GitNexus Context (1.6.12)
+{"level":40,"time":1795489534203,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Function:src/i18n/index.ts:loadLanguage",
+    "name": "loadLanguage",
+    "kind": "Function",
+    "filePath": "src/i18n/index.ts",
+    "startLine": 47,
+    "endLine": 59
+  },
+  "epistemic": "exact",
+  "incoming": {},
+  "outgoing": {},
+  "processes": []
+}

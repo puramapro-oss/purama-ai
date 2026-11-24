@@ -5,8 +5,8 @@ set -euo pipefail
 # their OS dependencies come from the matching official Playwright image.
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$repo_dir"
-playwright_version='1.64.1'
-image="mcr.microsoft.com/playwright:v${playwright_version}-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f"
+playwright_version='1.65.1'
+image="mcr.microsoft.com/playwright:v${playwright_version}-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579"
 
 node_dir="$(PURAMA_PLAYWRIGHT_VERSION="$playwright_version" node --input-type=module <<'NODE'
 import assert from 'node:assert/strict'

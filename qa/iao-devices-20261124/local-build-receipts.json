@@ -1,0 +1,34 @@
+{
+  "lockSha256": "fafcf64aae08475707031a0cd46b9528c4f85db846539732bdd7d5b3b49b894a",
+  "node": "v24.22.3",
+  "results": [
+    {
+      "gate": "site-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "cwd": "/workspace/scratch/6431e6d17379/iao-devices-20261124",
+      "startedAt": "2026-11-24T03:07:47.952632+00:00",
+      "durationSeconds": 8.245,
+      "exitCode": 137,
+      "log": "site-build.log"
+    },
+    {
+      "gate": "site-typecheck",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "tsconfig.app.json"
+      ],
+      "cwd": "/workspace/scratch/6431e6d17379/iao-devices-20261124",
+      "startedAt": "2026-11-24T03:07:56.197933+00:00",
+      "durationSeconds": 16.13,
+      "exitCode": 0,
+      "log": "site-typecheck.log"
+    }
+  ]
+}

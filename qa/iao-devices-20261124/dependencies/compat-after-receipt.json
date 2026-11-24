@@ -1,0 +1,15 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "test:dependencies"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-devices-20261124",
+  "startedAt": "2026-11-24T03:06:44.646834+00:00",
+  "durationSeconds": 0.886,
+  "exitCode": 0,
+  "lockSha256": "fafcf64aae08475707031a0cd46b9528c4f85db846539732bdd7d5b3b49b894a",
+  "installedI18next": "26.3.4",
+  "stdout": "compat-after.tap",
+  "stderr": "compat-after.stderr.txt"
+}

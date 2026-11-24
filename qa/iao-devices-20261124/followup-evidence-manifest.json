@@ -1,0 +1,141 @@
+{
+  "archive": "followup-evidence.zip",
+  "sha256": "795a9cbf5d5304e07cfec53aaa72dba077da9e45dfb611dfb3073ef7684b7965",
+  "files": [
+    {
+      "path": "audit-after-playwright.log",
+      "bytes": 2217,
+      "sha256": "3c449df0398ee78e7a05cccceff7e835bcc808d494130c5f4b838a0139f83660"
+    },
+    {
+      "path": "browser-runner-syntax.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "chat-1.65.1-list.log",
+      "bytes": 4161,
+      "sha256": "db5975985e6c2cf7ef2d4297c4a79fe2d3d4e2cb79795feaee43bccb7d33d932"
+    },
+    {
+      "path": "collection-1.65.1.json",
+      "bytes": 606,
+      "sha256": "e0f9cc6700d385474f726f7b80b2cf840bb0b63124b90dfd29e2f1faf0ed389e"
+    },
+    {
+      "path": "deps-after-playwright.log",
+      "bytes": 1737,
+      "sha256": "43c5c673a10ed4da649521a9daea4cd3945553c2883a276f55908a1534348a07"
+    },
+    {
+      "path": "hero-motion-1.65.1-list.log",
+      "bytes": 472,
+      "sha256": "c9a2ff1fd1aa5172fd099310d79d92ff2ec0c8c42af206241a04d33b032b97d0"
+    },
+    {
+      "path": "offline-1.65.1-list.log",
+      "bytes": 4666,
+      "sha256": "cf0e66b3604ec45a0a2e965f0024e90aaabc7272f2b9e6480ba1ad48c9e66728"
+    },
+    {
+      "path": "playwright-1.65.1-image-manifest.json",
+      "bytes": 705,
+      "sha256": "1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579"
+    },
+    {
+      "path": "playwright-1.65.1-image-receipt.json",
+      "bytes": 486,
+      "sha256": "6fff99317e131b525141aeb0e89f64d9f99abf31e3bbfc9f5400d9ba6b2358c2"
+    },
+    {
+      "path": "playwright-update-receipt.json",
+      "bytes": 502,
+      "sha256": "a3d5e362697a430761359c3437f744fa990e7e38305b0d8623f1650e96956292"
+    },
+    {
+      "path": "playwright-update.log",
+      "bytes": 177,
+      "sha256": "1076f31cead822a27d57d81e3d044244459c332092c82e831b68aa89d45bbc8d"
+    },
+    {
+      "path": "playwright-validation-receipts.json",
+      "bytes": 1245,
+      "sha256": "7a2bb3c7184e685cabdf0648b4842bef22ff97c05d46103db6c8f62deda5e56e"
+    },
+    {
+      "path": "public-1.65.1-list.log",
+      "bytes": 7457,
+      "sha256": "d82e976adc8674f5b32cac70d48cc84ac5bec5819bfc766652e9ae097d58899d"
+    },
+    {
+      "path": "qa-types-after-playwright.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "touch-1.65.1-list.log",
+      "bytes": 471,
+      "sha256": "c4ff41a07b059bea426efce377fcab796a4f6538d159eea2bc749b97d8796bfd"
+    },
+    {
+      "path": "touch-local-baseline/ChatbotWidget.patch",
+      "bytes": 2675,
+      "sha256": "52e43520fcfe6837d638cc4b8a86f840e2954f14777ff92c4eff06ca6ada9de4"
+    },
+    {
+      "path": "touch-local-baseline/diff-check.json",
+      "bytes": 159,
+      "sha256": "222cbe323cbcf94aa04538af433b304245bb6f046e93ec3274bdc929b9073a3a"
+    },
+    {
+      "path": "touch-local-baseline/final-diff-check.json",
+      "bytes": 459,
+      "sha256": "6f1401d92e62b58a1f7129c4247fc1b0235fb84e50a1f6464362460d79d67c3e"
+    },
+    {
+      "path": "touch-local-baseline/layout-review.json",
+      "bytes": 367,
+      "sha256": "7974c5892d221f65a329034d77a0d5779d433ec707ed6654075fc3f76d4875aa"
+    },
+    {
+      "path": "touch-local-baseline/qa-types-after-touch-receipt.json",
+      "bytes": 434,
+      "sha256": "5563063cf9ac8e9d4358152b9c9e90a93ece43668d0b3e6b5e784921485c768a"
+    },
+    {
+      "path": "touch-local-baseline/receipt.json",
+      "bytes": 789,
+      "sha256": "f285497b141d3c9c1601dc99767b4081e628c94d5861212aa9cd7f5bc8f696ed"
+    },
+    {
+      "path": "touch-local-baseline/report.json",
+      "bytes": 23213,
+      "sha256": "20104bae82e564625716a7524c518624a9c8327a6b780e47e0d823ae8d09f177"
+    },
+    {
+      "path": "touch-local-baseline/results/.last-run.json",
+      "bytes": 96,
+      "sha256": "3f9f4af357d65df7fb3083d6ace4ee8daeb8d05a061a6f0c86cbd04965d250ac"
+    },
+    {
+      "path": "touch-local-baseline/touch-test.patch",
+      "bytes": 1343,
+      "sha256": "abba783f248aca8371c5e9633993e720679b06a6e624d8dfebeb05943d3873cb"
+    },
+    {
+      "path": "touch-local-baseline/typecheck-after-1024-receipt.json",
+      "bytes": 245,
+      "sha256": "04537a19097b2d0f944ebc4d6a259e977823609fa90fe448b8f8ab4ec0907ec5"
+    },
+    {
+      "path": "touch-local-baseline/typecheck-after-receipt.json",
+      "bytes": 225,
+      "sha256": "72c81f55ea4c511066ef55ac328064104370cb2868c9d567586763427fccc979"
+    },
+    {
+      "path": "widget-consultation-after.log",
+      "bytes": 241,
+      "sha256": "f47aa363083bf4afb09d8fb445380d426741481bd1380231abd81be1f0ab5960"
+    }
+  ]
+}

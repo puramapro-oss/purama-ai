@@ -13,7 +13,7 @@
     "test:public": "playwright test --config playwright.config.ts",
     "test:chat": "playwright test --config tests/chat/playwright.config.ts",
     "test:desktop": "playwright test --project=desktop",
-    "test:dependencies": "node --test tests/dependency-compat.cjs",
+    "test:dependencies": "node --test tests/dependency-compat.cjs tests/i18next-compat.test.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test:quality": "playwright test --config tests/quality/playwright.config.ts",
     "test:wellbeing": "playwright test --config tests/wellbeing/playwright.config.ts",
@@ -118,7 +118,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@playwright/test": "1.64.1",
+    "@playwright/test": "1.65.1",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.16.5",
     "@types/react": "^18.3.23",

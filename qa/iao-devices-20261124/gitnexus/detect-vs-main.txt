@@ -1,0 +1,23 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795489926780,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 2722 files, 15 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Const matrixProjects → qa/iao-devices-20261124/browser/matrix-projects.ts
+  Const publicWebServer → qa/iao-devices-20261124/browser/public.playwright.config.ts
+  Property height → qa/iao-devices-20261124/browser/touch.spec.ts
+  Property width → qa/iao-devices-20261124/browser/touch.spec.ts
+  Property stream → qa/iao-devices-20261124/browser/touch.spec.ts
+  Property text → qa/iao-devices-20261124/browser/touch.spec.ts
+  Const assert → tests/dependency-compat.cjs
+  Const test → tests/dependency-compat.cjs
+  Function server → tests/dependency-compat.cjs
+  Const localeDirectory → tests/i18next-compat.test.mjs
+  Const localeFiles → tests/i18next-compat.test.mjs
+  Const bundledResources → tests/i18next-compat.test.mjs
+  Function createTranslator → tests/i18next-compat.test.mjs
+  Function LoadingText → tests/i18next-compat.test.mjs
+  Function render → tests/i18next-compat.test.mjs

@@ -1,0 +1,27 @@
+{
+  "verifiedAt": "2026-11-24T03:08:54.152575+00:00",
+  "checks": {
+    "i18nextAlertAbsentAfter": true,
+    "onlyExpectedAlertsRemain": true,
+    "remainingAlertsUnchanged": true,
+    "finalAuditMatchesCurrentLock": true,
+    "whitespaceClean": true,
+    "newFilesWhitespaceClean": true
+  },
+  "before": {
+    "info": 0,
+    "low": 3,
+    "moderate": 1,
+    "high": 0,
+    "critical": 0,
+    "total": 4
+  },
+  "after": {
+    "info": 0,
+    "low": 3,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 3
+  }
+}

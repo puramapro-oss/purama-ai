@@ -1,0 +1,15 @@
+/*
+!/src/
+/src/*
+!/src/components/
+/src/components/*
+!/src/components/ChatbotWidget.tsx
+!/src/components/Hero.tsx
+!/src/App.tsx
+!/src/pages/
+/src/pages/*
+!/src/pages/Index.tsx
+!/tests/
+/tests/*
+!/tests/chat/
+!/tests/chat/**
