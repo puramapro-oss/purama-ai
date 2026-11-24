@@ -8,6 +8,7 @@
   ],
   "git": {
     "deploymentEnabled": {
+      "fix/iao-wealth-evidence-20261124": false,
       "feat/iao-runtime-composition-20261124": false,
       "feat/iao-continuity-completion-20261124": false,
       "feat/iao-integration-20261124": false,

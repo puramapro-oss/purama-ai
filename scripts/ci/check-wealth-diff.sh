@@ -2,7 +2,7 @@
 # Keep the unfiltered diagnostic in the caller's log. Exempt only the first
 # appearance of these byte-identical, already archived QA records. Changed
 # records, previously present paths, unlisted files and application code stay strict.
-# Entries cover 57d3d6b, IAO qualification b4a18ef and PR104 cccaadf.
+# Entries cover 57d3d6b, IAO qualification b4a18ef, PR104 cccaadf and PR108 4c54eb0.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 base=$1
@@ -75,6 +75,8 @@ efefff155c561b23c7fa6516bbaf9a850eff2722 qa/iao-integration-20261124/memory/proj
 e6f6e8c304e81997c5f5e90feca41e0fa40d90d6 qa/iao-integration-20261124/runtime/before.log
 8fbe2c1f4ae25d775d717eea28642e47fdcf668f qa/iao-integration-20261124/runtime/regressions-final.log
 61bad687fa432d2244e692dca302b693373e61fa qa/iao-integration-20261124/runtime/regressions.log
+82ac622e1bf22f17b5160b11f21de59ab29f8401 qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log
+307635738311c75bbf1181d9ca648073aa7d3d64 qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log
 ARCHIVED_QA
 printf 'Rechecking all changes except %d byte-identical archived QA blobs.\n' "$((${#paths[@]} - 1))"
 git diff --check "$base" "$head" -- "${paths[@]}"
