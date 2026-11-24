@@ -330,3 +330,14 @@ jobs:
         run: node --test test/privateToolResults.native.mjs
       - name: Model consultation admission and cancellation concurrency
         run: node --test test/consultationStore.native.mjs
+      - name: Partner discovery atomic imports on native PostgreSQL
+        id: partner_discovery_native
+        run: node --test test/partnerDiscovery.native.mjs
+      - name: Preserve partner discovery concurrency evidence
+        if: ${{ always() && (steps.partner_discovery_native.outcome == 'success' || steps.partner_discovery_native.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: partner-discovery-native-${{ github.sha }}
+          path: qa/partner-discovery-20261124/native/runtime-report.json
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,17 @@
+{
+  "target": "partner_discovery_import",
+  "direction": "upstream",
+  "exit_code": 1,
+  "risk": "UNKNOWN",
+  "indexed_result": "Target not found in existing bounded13file graph;SQL function is not covered and FTS unavailable",
+  "affected_scope": "New native test and existing CI subscription-concurrency invocation only. No existing runtime symbol is modified by this scoped qualification.",
+  "manual_sources": [
+    "supabase/migrations/20261124050000_partner_discovery_evidence.sql",
+    "karta/test/partnerDiscoverySql.test.ts",
+    "karta/test/consultationStore.native.mjs",
+    ".github/workflows/purama-chef-hardening.yml"
+  ],
+  "contract": "root owns workflow step; discovery_native owns test; use real PG18 locking proof instead of inferring coverage from a graph miss",
+  "log": "impact-before.log.gz",
+  "uncompressed_sha256": "f7404cdd45b4914843db41472f1cd101565640404bc9978e5ad74e8f91ccc87e"
+}

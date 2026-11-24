@@ -1,0 +1,358 @@
+{
+  "status": "PASS",
+  "started_at": "2026-11-24T22:46:09.050595+00:00",
+  "elapsed_seconds": 9.463,
+  "base_commit": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "previous_index_commit": "48869219a22fef71edeb069a2f2b50d966edc363",
+  "indexed_source_hashes_preserved": true,
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "--index-only",
+    "--name",
+    "purama-ai-partner-native-53633327",
+    "--workers",
+    "1"
+  ],
+  "environment_limits": {
+    "GITNEXUS_STORAGE_PATH": "/workspace/scratch/53633327df3e/partner-native-index",
+    "GITNEXUS_LBUG_BUFFER_POOL_SIZE": "100663296",
+    "GITNEXUS_CONTENT_RETENTION": "none",
+    "GITNEXUS_WORKER_POOL_SIZE": "1",
+    "GITNEXUS_PARSE_CHUNK_CONCURRENCY": "1"
+  },
+  "working_directory": "/workspace/scratch/53633327df3e/partner-discovery-native",
+  "exit_code": 0,
+  "timed_out": false,
+  "log": "qa/partner-discovery-20261124/native/backend-index-analyze.log.gz",
+  "index_metadata": {
+    "repoPath": "/workspace/scratch/53633327df3e/partner-discovery-native",
+    "storagePath": "/workspace/scratch/53633327df3e/partner-native-index",
+    "lastCommit": "afaffbe26d7976f132d053b4600eb4fba300437b",
+    "indexedAt": "2026-11-24T22:46:17.417Z",
+    "contentRetention": "none",
+    "contentRetentionSchemaVersion": 1,
+    "ftsProfile": "name-only",
+    "runnerIdentity": {
+      "schemaVersion": 4,
+      "runtime": {
+        "executablePath": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "version": "v24.22.3",
+        "platform": "linux",
+        "architecture": "x64",
+        "modulesAbi": "137",
+        "libc": "glibc:2.41"
+      },
+      "cliVersion": "1.6.12",
+      "invokedArtifact": {
+        "path": "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/dist/cli/index.js",
+        "digest": "sha256:e2c96d62b26a1898e536457377f7b73c539b080c7e8c316869ffc6a790003eb4"
+      },
+      "build": {
+        "kind": "distribution",
+        "rootPath": "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/dist",
+        "canonicalization": "gitnexus-analyzer-build-v2",
+        "digest": "sha256:262cf80deec8ff56ec019ac08406b7098bf40ae07756aa02ef8fa42720d3583e"
+      },
+      "dependencyRuntime": {
+        "manifestPath": "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/package.json",
+        "lockfilePath": null,
+        "canonicalization": "gitnexus-analyzer-dependency-runtime-v4",
+        "packageCount": 255,
+        "artifactCount": 12658,
+        "digest": "sha256:82fbf486baab15095f9ee987d769f83726dd1d48e64856bcd9cb5c55d9a20bb5"
+      }
+    },
+    "branch": "test/partner-discovery-postgres-20261124",
+    "remoteUrl": "https://github.com/puramapro-oss/purama-ai",
+    "crossLanguageProperties": [
+      {
+        "name": "code",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "data",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "error",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "id",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "label",
+        "languages": [
+          "javascript"
+        ]
+      },
+      {
+        "name": "limit",
+        "languages": [
+          "javascript"
+        ]
+      },
+      {
+        "name": "message",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "model",
+        "languages": [
+          "javascript"
+        ]
+      },
+      {
+        "name": "ok",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "provider",
+        "languages": [
+          "javascript"
+        ]
+      },
+      {
+        "name": "queries",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "reason",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "result",
+        "languages": [
+          "javascript"
+        ]
+      },
+      {
+        "name": "rows",
+        "languages": [
+          "javascript"
+        ]
+      },
+      {
+        "name": "source",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "total_prospects_found",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "url",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "user_id",
+        "languages": [
+          "typescript"
+        ]
+      },
+      {
+        "name": "version",
+        "languages": [
+          "javascript"
+        ]
+      }
+    ],
+    "stats": {
+      "files": 18,
+      "nodes": 851,
+      "edges": 2035,
+      "communities": 33,
+      "processes": 35,
+      "embeddings": 0
+    },
+    "capabilities": {
+      "graph": {
+        "provider": "ladybugdb",
+        "status": "available"
+      },
+      "fts": {
+        "provider": "ladybugdb-fts",
+        "status": "unavailable",
+        "skipReason": "extension-unavailable"
+      },
+      "vectorSearch": {
+        "provider": "ladybugdb-vector",
+        "status": "unavailable",
+        "exactScanLimit": 10000
+      }
+    },
+    "schemaFingerprint": "60fc01e4e4ed",
+    "unresolvedReceiverMembers": {
+      "counts": {
+        "toBe": 79,
+        "toMatchObject": 35,
+        "toEqual": 30,
+        "trim": 26,
+        "toHaveLength": 20,
+        "from": 18,
+        "eq": 15,
+        "select": 15,
+        "catch": 14,
+        "toLowerCase": 12,
+        "toContain": 10,
+        "get": 9,
+        "includes": 8,
+        "invoke": 6,
+        "order": 6,
+        "map": 5,
+        "toHaveBeenCalled": 5,
+        "toISOString": 5,
+        "toUpperCase": 5,
+        "filter": 4,
+        "indexOf": 4,
+        "single": 4,
+        "some": 4,
+        "test": 4,
+        "toHaveBeenCalledTimes": 4,
+        "toHaveProperty": 4,
+        "toLocaleString": 4,
+        "toThrow": 4,
+        "update": 4,
+        "every": 3,
+        "replace": 3,
+        "then": 3,
+        "toBeNull": 3,
+        "decode": 2,
+        "digest": 2,
+        "find": 2,
+        "insert": 2,
+        "json": 2,
+        "limit": 2,
+        "maybeSingle": 2,
+        "repeat": 2,
+        "replaceAll": 2,
+        "slice": 2,
+        "split": 2,
+        "toBeGreaterThanOrEqual": 2,
+        "toBeLessThan": 2,
+        "toMatch": 2,
+        "at": 1,
+        "createSignedUrl": 1,
+        "delete": 1,
+        "end": 1,
+        "forEach": 1,
+        "format": 1,
+        "getUser": 1,
+        "has": 1,
+        "join": 1,
+        "lastIndexOf": 1,
+        "match": 1,
+        "not": 1,
+        "now": 1,
+        "pop": 1,
+        "push": 1,
+        "reduce": 1,
+        "rpc": 1,
+        "toBeGreaterThan": 1,
+        "toString": 1,
+        "upload": 1
+      },
+      "totalSites": 423,
+      "externalCounts": {
+        "has": 6,
+        "add": 5,
+        "delete": 5,
+        "map": 4,
+        "toLowerCase": 3,
+        "trim": 3,
+        "replace": 2,
+        "addEventListener": 1,
+        "call": 1,
+        "catch": 1,
+        "every": 1,
+        "fill": 1,
+        "filter": 1,
+        "get": 1,
+        "join": 1,
+        "match": 1,
+        "removeEventListener": 1,
+        "some": 1,
+        "then": 1,
+        "toString": 1
+      },
+      "externalSites": 41
+    },
+    "scopeExtractionReceipt": 1,
+    "analysisFeatures": {
+      "graph.class-framework-annotations": 1
+    },
+    "springVendorPrefixes": "[\"Win\"]",
+    "cjkSegmentation": "none",
+    "embeddingDims": 384,
+    "fileHashes": {
+      "karta/src/claude/assistant-policy.ts": "556316344ee9d8920117fead638db4b2e46d6829d92d3b3d81c96431d3bf10a3",
+      "karta/test/consultationStore.native.mjs": "a969e9126998e64d09f87a9bc621a14d878f7860ab4d1ffd6c6e80dd160cf599",
+      "karta/test/partnerDiscovery.native.mjs": "c826957b76bf934b876cde97c5171c7daf2640f59d00410ebd53b98208ee2719",
+      "karta/test/partnerDiscovery.test.ts": "043c9337c55aa1af3f67cfc0da3306d5afd32e9bd874ce50cc766d18d6ef8806",
+      "karta/test/partnerDiscoverySql.test.ts": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43",
+      "karta/test/subscriptionTrial.native.mjs": "54f13141a53c10011b5b1aaae8c042cbc91b696633d8114a2606ad874f21fd2d",
+      "src/lib/partner-discovery-result.ts": "a74828e029d78d49976dd2910bf34c220983c5cc02e01baec38436ed2efc7bee",
+      "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+      "src/lib/request-deadline.ts": "608884d254e95ecf3cfc7b2844356634037aaed9daaa84f93be77f9aa64be524",
+      "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+      "supabase/functions/_shared/assistant-policy.ts": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb",
+      "supabase/functions/_shared/assistant-response.ts": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714",
+      "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+      "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+      "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6",
+      "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+      "supabase/migrations/20260406230000_partner_agent.sql": "0ed15f03d105f3aff2caa5fb5e9901194671f6b7119fa555ed0db5c8a57db18f",
+      "supabase/migrations/20261124050000_partner_discovery_evidence.sql": "d3db17cd10d5af5a0573c9356b7a339a4f37327266484e581eee3e9b286e0388"
+    },
+    "indexCoverage": {
+      "maxFileSizeBytes": 524288,
+      "dirtyPaths": [
+        "karta/test/partnerDiscovery.native.mjs"
+      ]
+    },
+    "cacheKeys": [
+      "f88da52c9353eeda78169f8d4d84e488f7e03dbfdbfe3b2e1a551e3bc6ef88b3",
+      "d88f65890a7268160986711a5751d49bfc58ae7a77cb0126a833be57b3e22c05",
+      "13da739bebbf040831f03a1443c81d1f23c1bda7c9fe314bf6f506139221c168",
+      "8a5aa495d7ada96c3a9c97c78226786ae6f71d9ca70a7d4ad300e0398840b694",
+      "7b3b9c6fd1a200422a685b572c4ac5c330129f95fd4c77fb63b3dff2494d2289",
+      "74bd4c46c732cbc6674327006744fa13a5ff7e88cae6967dde9e93bbbe5d466a",
+      "16c887bfb0198c782a10a7b0646c44b29b730ec325f8eab541948abd74e4ccfc",
+      "75568a015d55d09a3fd9141a1349620909429f446336cf4f1a213509b4d3834b",
+      "8bc2a7d87eb2ce51962652fa1bfd43202c63dfe9f4a4fd09b213776e03dce223",
+      "dc1538e86bf1c0380901e0f704d7a4c4777639039ec28acbd54e01df04ec48d6",
+      "7f52526e78ceda7cbd8a915f8bf136b934404edd7cb4fce6ac759642bc117bf5",
+      "4b1b444ee584bd0a60b8e43ef5022ad7659aeeb4310658ae06db5031201d0049",
+      "11bd6a75691cc75fff36b511c06bbb0b7350af300403999509a616a13d741b86",
+      "c13b064bdb608ff78dbe18b0c94964c8db994915ac4b2b97338db9678661ec7b",
+      "0bd0125f769f822ed2c34186a9208706829bb8dc68986636ea77ab0eba7df5ee"
+    ]
+  },
+  "interpretation": "Bounded source graph only. Native PostgreSQL acceptance remains NON_TESTE until CI. Workflow and unsupported dynamic/SQL links require manual complement; FTS unavailable."
+}

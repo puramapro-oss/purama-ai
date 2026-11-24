@@ -1,0 +1,68 @@
+{
+  "status": "PARTIEL",
+  "recorded_at": "2026-11-24T22:39:05.605Z",
+  "owner": "/root/discovery_native",
+  "branch": "test/partner-discovery-postgres-20261124",
+  "base": "48869219a22fef71edeb069a2f2b50d966edc363",
+  "written_paths": [
+    "karta/test/partnerDiscovery.native.mjs",
+    "qa/partner-discovery-20261124/native/backend-receipt.json"
+  ],
+  "script_sha256": "c826957b76bf934b876cde97c5171c7daf2640f59d00410ebd53b98208ee2719",
+  "local_checks": [
+    {
+      "name": "node syntax",
+      "status": "PASS",
+      "exit_code": 0,
+      "output": "",
+      "workdir": "/workspace/scratch/53633327df3e/partner-discovery-native"
+    },
+    {
+      "name": "targeted ESLint recommended",
+      "status": "PASS",
+      "exit_code": 0,
+      "output": "{\"files\":1,\"errors\":0,\"warnings\":0,\"rules\":\"@eslint/js recommended; Node globals; only added MJS file\"}\n",
+      "workdir": "/workspace/scratch/53633327df3e/partner-discovery-native"
+    }
+  ],
+  "lint_contract": "@eslint/js recommended with Node globals, ecmaVersion latest, ESM; only karta/test/partnerDiscovery.native.mjs; warnings and errors fail",
+  "whitespace_check": {
+    "status": "PASS",
+    "command": "git diff --check",
+    "exit_code": 0
+  },
+  "native_reception": {
+    "status": "NON_TESTE",
+    "reason": "No local PostgreSQL fixture provisioned; parent receives execution in existing subscription-concurrency PostgreSQL 18 CI service.",
+    "command": "node --test test/partnerDiscovery.native.mjs",
+    "working_directory": "karta",
+    "runtime_report": "qa/partner-discovery-20261124/native/runtime-report.json",
+    "expected_checks": 8,
+    "fixture": "Exact consultationStore.native host/data-directory/PG18/role contract; creates and drops only its random uniquely named database; no provider calls, installation, new package, role creation or server startup/shutdown.",
+    "concurrency_evidence": "Independent backend PID + observed pg_stat_activity wait_event_type Lock and pg_blocking_pids exact first PID; advisory or transactionid event; bounded SQL and barrier waits.",
+    "cleanup_acceptance": "All tracked clients closed, zero backends before and after drop, owned database absent, zero remaining client connections and cleanup errors, source hashes unchanged."
+  },
+  "production_sources_unchanged": [
+    {
+      "path": "supabase/migrations/20260406230000_partner_agent.sql",
+      "sha256": "0ed15f03d105f3aff2caa5fb5e9901194671f6b7119fa555ed0db5c8a57db18f"
+    },
+    {
+      "path": "supabase/migrations/20261124050000_partner_discovery_evidence.sql",
+      "sha256": "d3db17cd10d5af5a0573c9356b7a339a4f37327266484e581eee3e9b286e0388"
+    },
+    {
+      "path": "karta/test/partnerDiscoverySql.test.ts",
+      "sha256": "ea1c6f8d88afc45f8377709ed46455228ca685cd6f9ef9198dacf2c110172a43"
+    }
+  ],
+  "oracle_limits": [
+    "READ COMMITTED only; no repeatable-read/serializable or production-load claim.",
+    "Exact-email collision for ordinary manual inserts; does not serialize every manual write.",
+    "Eight native runtime oracles and cleanup have not yet been executed locally.",
+    "No handler, bridge, schema, financial policy, dependency or existing fixture changes."
+  ],
+  "base_note": "Historical base for original local checks; subsequent fast-forward preserved script, migrations and test hashes.",
+  "publication_base": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "unchanged_after_fast_forward": true
+}

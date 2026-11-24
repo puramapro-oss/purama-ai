@@ -1,0 +1,35 @@
+{
+  "task": "Native PostgreSQL multi-session reception of existing discovery RPC",
+  "branch": "test/partner-discovery-postgres-20261124",
+  "base": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "owner": "root53633327 / discovery_native",
+  "conception": "PRET_A_CODER: current user request completes existing verified module; no new commercial rule or product behavior",
+  "paths": [
+    "karta/test/partnerDiscovery.native.mjs",
+    ".github/workflows/purama-chef-hardening.yml (subscription-concurrency step and artifact only)",
+    "qa/partner-discovery-20261124/native/",
+    "vercel.json (this test branch deploymentEnabled=false only)"
+  ],
+  "oracles": [
+    "same-email dedup with proven lock wait",
+    "no-email dedup",
+    "distinct-email counter increments",
+    "separate-account progress",
+    "rollback owner and waiting successor",
+    "invalid-batch rollback with successor",
+    "ordinary exact-email insert collision",
+    "service-only RPC permissions"
+  ],
+  "constraints": [
+    "Use existing PG18 test service and explicit fixture guard",
+    "Create and drop only fresh unique test database",
+    "No DATABASE_URL fallback or live credentials",
+    "No production changes, migrations/handler edits, financial policy or duplicate commission engine",
+    "Bounded waits and real server PID/blocker evidence",
+    "Preserve current PR113 and concurrent media bridge work"
+  ],
+  "local_native": "Unavailable: no PostgreSQL binary in inspected local paths; existing CI receives native proof",
+  "runtime_dependencies": "Reuse existing lock and pg; no new package",
+  "initial_impact_base": "48869219a22fef71edeb069a2f2b50d966edc363",
+  "base_update": "PR113 preserved by root fast-forward; all 18 indexed source hashes and own workflow blob unchanged."
+}

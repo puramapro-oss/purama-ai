@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "scope": "staged",
+  "started_at": "2026-11-24T22:49:07.715261+00:00",
+  "elapsed_seconds": 1.029,
+  "head": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "base_ref": null,
+  "base_ref_commit": null,
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--scope",
+    "staged",
+    "--repo",
+    "purama-ai-partner-native-53633327",
+    "--limit",
+    "100"
+  ],
+  "exit_code": 0,
+  "summary": {
+    "files": 15,
+    "symbols": 92,
+    "affected_processes": 0,
+    "risk": "low"
+  },
+  "staged_paths_at_detection": [
+    ".github/workflows/purama-chef-hardening.yml",
+    "karta/test/partnerDiscovery.native.mjs",
+    "qa/partner-discovery-20261124/native/README.md",
+    "qa/partner-discovery-20261124/native/backend-impact-fresh.json",
+    "qa/partner-discovery-20261124/native/backend-impact-fresh.log.gz",
+    "qa/partner-discovery-20261124/native/backend-index-analyze.log.gz",
+    "qa/partner-discovery-20261124/native/backend-index-initial-receipt.json",
+    "qa/partner-discovery-20261124/native/backend-index-initial.log.gz",
+    "qa/partner-discovery-20261124/native/backend-index-receipt.json",
+    "qa/partner-discovery-20261124/native/backend-index-scope.json",
+    "qa/partner-discovery-20261124/native/backend-receipt.json",
+    "qa/partner-discovery-20261124/native/impact-before.json",
+    "qa/partner-discovery-20261124/native/impact-before.log.gz",
+    "qa/partner-discovery-20261124/native/scope.json",
+    "vercel.json"
+  ],
+  "log": "qa/partner-discovery-20261124/native/backend-detect-staged.log.gz",
+  "graph_partial": true,
+  "native_runtime_status": "NON_TESTE",
+  "interpretation": "Tool execution only. Graph limited to 18 selected files, FTS unavailable, SQL RPC unresolved. Existing test helper names can associate broad flows; no product source is changed."
+}
