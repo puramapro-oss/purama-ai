@@ -6,14 +6,16 @@ set -Eeuo pipefail
 
 if [[ "${PURAMA_QA_BOUNDED:-}" != "1" ]]; then
   export PURAMA_QA_BOUNDED=1
-  # Preparation (600 s), cold offline verification/inference (at most 840 s),
-  # and bounded ADB/cleanup overhead fit inside one finite scenario deadline.
+  # All work shares this finite deadline: preparation (up to 600 s), cold
+  # verification (up to 900 s), three network observations (up to 45 s each),
+  # and ADB/cleanup. Phase ceilings do not extend the global deadline.
   exec timeout --signal=TERM --kill-after=15s 1600s bash "$0" "$@"
 fi
 
 PURAMA_QA_PACKAGE="${PURAMA_OFFLINE_QA_PACKAGE:-dev.purama.purama_ai}"
 PURAMA_QA_ARTIFACTS="${PURAMA_OFFLINE_QA_DIR:-$PWD/qa/offline-native}"
 PURAMA_QA_URI="purama-ai://iao-qualification"
+PURAMA_QA_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 [[ "$PURAMA_QA_PACKAGE" =~ ^[a-zA-Z0-9_.]+$ ]] || { echo "Invalid QA package" >&2; exit 2; }
 mkdir -p "$PURAMA_QA_ARTIFACTS"
 
@@ -118,6 +120,11 @@ PY
 
 qa_adb shell am start -W -a android.intent.action.VIEW -d "$PURAMA_QA_URI" "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/launch-prepared.txt"
 qa_wait_phase prepared 600
+PURAMA_QA_RUN_ID="$(python3 - "$PURAMA_QA_ARTIFACTS/prepared.json" <<'PY'
+import json,sys
+print(json.load(open(sys.argv[1]))['runId'])
+PY
+)"
 qa_adb exec-out screencap -p >"$PURAMA_QA_ARTIFACTS/prepared.png"
 
 qa_adb shell pidof "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/prepared-pid.txt"
@@ -134,16 +141,17 @@ qa_adb shell svc data disable
 qa_adb shell cmd connectivity airplane-mode enable
 qa_adb shell settings put global airplane_mode_on 1
 qa_adb reverse --remove-all
-qa_adb shell settings get global airplane_mode_on >"$PURAMA_QA_ARTIFACTS/airplane-mode.txt"
-qa_adb shell settings get global wifi_on >"$PURAMA_QA_ARTIFACTS/wifi-on.txt"
-qa_adb shell settings get global mobile_data >"$PURAMA_QA_ARTIFACTS/mobile-data.txt"
-qa_adb shell dumpsys connectivity >"$PURAMA_QA_ARTIFACTS/connectivity-offline.txt"
-[[ "$(tr -d '\r\n' <"$PURAMA_QA_ARTIFACTS/airplane-mode.txt")" == "1" ]] || { echo "Airplane mode not active" >&2; exit 23; }
-[[ "$(tr -d '\r\n' <"$PURAMA_QA_ARTIFACTS/wifi-on.txt")" == "0" ]] || { echo "Wi-Fi not disabled" >&2; exit 23; }
-[[ "$(tr -d '\r\n' <"$PURAMA_QA_ARTIFACTS/mobile-data.txt")" == "0" ]] || { echo "Mobile data not disabled" >&2; exit 23; }
+# Android applies radio changes asynchronously. Preferences alone cannot prove
+# isolation: ConnectivityService may still report a live, validated Wi-Fi route.
+python3 "$PURAMA_QA_SCRIPT_DIR/wait-for-android-offline.py" \
+  --artifact-dir "$PURAMA_QA_ARTIFACTS" --run-id "$PURAMA_QA_RUN_ID" --phase before-restart
 
 qa_adb shell am start -W -a android.intent.action.VIEW -d "$PURAMA_QA_URI" "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/launch-offline.txt"
+python3 "$PURAMA_QA_SCRIPT_DIR/wait-for-android-offline.py" \
+  --artifact-dir "$PURAMA_QA_ARTIFACTS" --run-id "$PURAMA_QA_RUN_ID" --phase after-restart
 qa_wait_phase complete 900
+python3 "$PURAMA_QA_SCRIPT_DIR/wait-for-android-offline.py" \
+  --artifact-dir "$PURAMA_QA_ARTIFACTS" --run-id "$PURAMA_QA_RUN_ID" --phase after-completion
 qa_adb exec-out screencap -p >"$PURAMA_QA_ARTIFACTS/offline.png"
 qa_adb shell pidof "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/offline-pid.txt"
 
@@ -165,8 +173,24 @@ required=['draftRestoredAfterProcessRestart','firstNativeAnswerRestored','pendin
  'noPlaintextFixtureInDatabaseFiles','globalFetchXHRWebSocketBlocked']
 assert all(completed['checks'].get(key) is True for key in required)
 assert completed['checks']['unexpectedJsNetworkCalls'] == 0
+network=[]
+for phase in ('before-restart','after-restart','after-completion'):
+    receipt=json.loads((root/('network-'+phase)/'receipt.json').read_text())
+    assert receipt['schema'] == 1 and receipt['status'] == 'PASS'
+    assert receipt['phase'] == phase and receipt['runId'] == prepared['runId']
+    assert receipt['requiredStableObservations'] == receipt['stableObservations'] == 3
+    assert len(receipt['observations']) >= 3
+    for observation in receipt['observations'][-3:]:
+        assert observation['offline'] is True and not observation.get('fatal')
+        assert observation['settings'] == {'airplane-mode':'1','wifi-on':'0','mobile-data':'0'}
+        assert observation['connectivity']['recognized'] is True
+        assert observation['connectivity']['activeDefaultNetwork'] is None
+        assert observation['connectivity']['currentNetworksEmpty'] is True
+    network.append(receipt)
+assert network[0]['adb'] == network[1]['adb'] == network[2]['adb']
 result={'schema':1,'status':'PASS','scenario':'native Android process restart + offline inference + encrypted persistence',
  'prepared':prepared,'offline':completed,
+ 'networkObservations':network,
  'adb':{'emulatorOnly':True,'processForceStopped':True,'airplaneMode':True,'wifiDisabled':True,'mobileDataDisabled':True,
         'metroReverseRemoved':True,'api':(root/'android-api.txt').read_text().strip(),'abi':(root/'android-abi.txt').read_text().strip()},
  'limitations':completed['limitations']}
