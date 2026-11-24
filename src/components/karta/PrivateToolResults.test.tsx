@@ -68,6 +68,24 @@ afterEach(async () => {
 });
 
 describe('panneau de résultats privés', () => {
+  it('affiche la synthèse entière comme texte de modèle sans inventer de références', async () => {
+    const summary = '<img src=x onerror=alert(1)>\n' + 'Texte complet 🌍\n'.repeat(500) + 'FIN_DU_RAPPORT';
+    const row = result(1, summary);
+    row.tool_name = 'programmatic_report';
+    row.payload.tool_name = 'programmatic_report';
+    row.payload.sources = [];
+    api.listPrivateToolResults.mockResolvedValue([row]);
+    await render();
+    expect(host.querySelector('h3')?.textContent).toBe('Synthèse de recherche');
+    expect(host.querySelector('p.whitespace-pre-wrap')?.textContent).toBe(summary);
+    expect(host.textContent).toContain('Synthèse générée par le modèle');
+    expect(host.querySelector('img')).toBeNull();
+    expect(host.querySelector('a')).toBeNull();
+    expect(host.querySelector('input')?.getAttribute('aria-label')).toContain('synthèse de recherche');
+    expect(props.onUseResults).not.toHaveBeenCalled();
+    expect(api.deletePrivateToolResult).not.toHaveBeenCalled();
+  });
+
   it('rend le contenu fournisseur en texte et nomme les contrôles sans synthèse automatique', async () => {
     api.listPrivateToolResults.mockResolvedValue([result(1, '<img src=x onerror=alert(1)> **texte**')]);
     await render();

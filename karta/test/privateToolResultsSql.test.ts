@@ -6,6 +6,7 @@ import { normalizeModelUsage } from "../src/claude/usage.js";
 import { projectPrivateToolResult, type PrivateToolResultPayload } from "../src/engine/private-tool-results.js";
 import { simulateQuantumCircuit } from "../src/quantum/simulator.js";
 import { parsePrivateToolResult } from "../src/knowledge/private-result-view.js";
+import { PROGRAMMATIC_REPORT_MAX_BYTES } from "../src/knowledge/private-result-view.js";
 
 // Real migration in a PostgreSQL PGlite backend, with the existing parent DDL.
 // This does not substitute for native PostgreSQL multi-session locking tests.
@@ -84,6 +85,121 @@ beforeAll(async () => {
   await db.exec(migration);
   await db.exec(migration); // Safe reapplication retains the same policy/grant surface.
   await db.exec(await readFile(new URL("../migrations/029_model_usage_receipts.sql", import.meta.url), "utf8"));
+  await db.exec(await readFile(new URL("../migrations/033_programmatic_model_usage.sql", import.meta.url), "utf8"));
+  const reports = await readFile(new URL("../migrations/034_programmatic_private_reports.sql", import.meta.url), "utf8");
+  await db.exec(reports);
+  await db.exec(reports);
+});
+
+describe("complete programmatic reports — existing private SQL delivery", () => {
+  const report = (summary = `${sentinel}\n${"Rapport complet. ".repeat(400)}`, readTools: string[] = ["web_search"]) =>
+    projectPrivateToolResult("programmatic_report", { summary, read_tools: readTools })!;
+
+  beforeEach(async () => {
+    await db.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['knowledge_search','web_search'] WHERE id=$1", [agent]);
+  });
+
+  it.each([{ readTools: [] }, { readTools: ["knowledge_search"] }, { readTools: ["web_search"] }, { readTools: ["knowledge_search", "web_search"] }])(
+    "delivers full report text from successful reads $readTools through SQL and the owner parser", async ({ readTools }) => {
+      const runId = await run();
+      const data = report("a".repeat(59_998) + "🌍", readTools);
+      const id = await store(runId, { tool: "programmatic_report", data });
+      const result = (await db.query<{ payload: unknown }>("SELECT id,run_id,creator_agent_id,user_id,tool_name,payload,created_at::text AS created_at FROM purama_ai.karta_tool_results WHERE id=$1", [id])).rows[0];
+      expect(result.payload).toEqual(data);
+      const display = parsePrivateToolResult(result, owner, agent);
+      expect(display?.payload.summary).toBe(data.summary);
+      expect(display?.payload.sources).toEqual([]);
+      expect(display?.payload).not.toHaveProperty("details");
+      expect((await db.query("SELECT tools_enabled FROM purama_ai.creator_agents WHERE id=$1", [agent])).rows).toEqual([{ tools_enabled: ["knowledge_search", "web_search"] }]);
+      expect((await db.query("SELECT tools_used,result_summary FROM purama_ai.karta_runs WHERE id=$1", [runId])).rows).toEqual([{ tools_used: [], result_summary: null }]);
+      await role("authenticated", otherOwner);
+      expect((await rows()).rows).toHaveLength(0);
+      await role("authenticated", owner);
+      expect((await rows()).rows).toHaveLength(1);
+    },
+  );
+
+  it("enforces the exact compact byte bound with Unicode without truncating the stored report", async () => {
+    const overhead = Buffer.byteLength(JSON.stringify(report("a"))) - 1;
+    const extra = PROGRAMMATIC_REPORT_MAX_BYTES - overhead - 60_000;
+    const summary = "a".repeat(60_000 - extra) + "é".repeat(extra);
+    const data = report(summary);
+    expect(Buffer.byteLength(JSON.stringify(data))).toBe(PROGRAMMATIC_REPORT_MAX_BYTES);
+    const runId = await run();
+    await store(runId, { tool: "programmatic_report", data });
+    expect((await rows()).rows[0].payload.summary).toBe(summary);
+    await expect(store(runId, { operation: `${runId}:1`, tool: "programmatic_report",
+      data: { ...data, summary: "é" + summary.slice(1) } })).rejects.toThrow("Private result unavailable");
+  });
+
+  it.each([
+    { summary: "a".repeat(59_999) + "🌍" }, { summary: " \t\n\u00a0\ufeff" },
+    { status: "partial" }, { sources: [{ source: "wikidata", native_id: "Q42", label: "Forged reference", url: "https://www.wikidata.org/wiki/Q42", retrieved_at: stamp }] },
+    { extra: sentinel },
+    { details: { ...report().details, verification_status: "verified" } },
+    { details: { ...report().details, content_kind: "metadata_only" } },
+    { details: { ...report().details, report_truncated: true } },
+    { details: { ...report().details, full_text_retrieved: true } },
+    { details: { ...report().details, read_tools: ["web_search", "web_search"] } },
+    { details: { ...report().details, read_tools: ["send_email"] } },
+    { details: { ...report().details, read_tools: [null] } },
+    { details: { ...report().details, read_tools: "web_search" } },
+  ])("rejects fabricated, clipped or out-of-contract report payloads (%#)", async change => {
+    const runId = await run();
+    await expect(store(runId, { tool: "programmatic_report", data: { ...report(), ...change } })).rejects.toThrow("Private result unavailable");
+    expect((await rows()).rows).toHaveLength(0);
+  });
+
+  it.each([{ tools: null }, { tools: [] }, { tools: ["programmatic_report"] }, { tools: ["web_search", "send_email"] },
+    { tools: ["quantum_simulate"] }, { tools: ["knowledge_search"] }, { tools: [null] }])(
+    "refuses an ineligible catalog or a no-longer-authorized read ($tools)", async ({ tools }) => {
+      await db.query("UPDATE purama_ai.creator_agents SET tools_enabled=$2::text[] WHERE id=$1", [agent, tools]);
+      const runId = await run();
+      await expect(store(runId, { tool: "programmatic_report", data: report() })).rejects.toThrow("Private result unavailable");
+      expect((await rows()).rows).toHaveLength(0);
+    },
+  );
+
+  it("also rejects an empty catalog when the report did not perform a read", async () => {
+    await db.query("UPDATE purama_ai.creator_agents SET tools_enabled='{}' WHERE id=$1", [agent]);
+    await expect(store(await run(), { tool: "programmatic_report", data: report(sentinel, []) })).rejects.toThrow("Private result unavailable");
+  });
+
+  it.each(["inactive", "disabled", "simulation", "mock", "foreign", "closed"])(
+    "keeps owner, active-agent and live-open-run checks for reports: %s", async failure => {
+      if (failure === "inactive") await db.query("UPDATE purama_ai.creator_agents SET is_active=false WHERE id=$1", [agent]);
+      if (failure === "disabled") await db.query("UPDATE purama_ai.creator_agents SET karta_enabled=false WHERE id=$1", [agent]);
+      const runId = await run({ mode: failure === "simulation" ? "simulation" : "live", mock: failure === "mock",
+        userId: failure === "foreign" ? otherOwner : owner,
+        status: failure === "closed" ? "success" : "running", duration: failure === "closed" ? 1 : null });
+      await expect(store(runId, { tool: "programmatic_report", data: report() })).rejects.toThrow("Private result unavailable");
+      expect((await rows()).rows).toHaveLength(0);
+    },
+  );
+
+  it("refuses a report through an otherwise matching executing pending action", async () => {
+    const runId = await run();
+    const operation = await pending(runId, { tool: "programmatic_report" });
+    await expect(store(runId, { operation, tool: "programmatic_report", data: report() })).rejects.toThrow("Private result unavailable");
+    expect((await rows()).rows).toHaveLength(0);
+  });
+
+  it("reconciles only the same full report after closure and never recreates an owner-deleted result", async () => {
+    const runId = await run(); const data = report();
+    const id = await store(runId, { tool: "programmatic_report", data });
+    await role("authenticated");
+    expect((await db.query("DELETE FROM purama_ai.karta_tool_results WHERE id=$1 RETURNING id", [id])).rows).toHaveLength(0);
+    await role("service_role");
+    await finish(runId);
+    await db.query("UPDATE purama_ai.creator_agents SET karta_enabled=false,tools_enabled='{}' WHERE id=$1", [agent]);
+    expect(await store(runId, { tool: "programmatic_report", data })).toBe(id);
+    await expect(store(runId, { tool: "programmatic_report", data: { ...data, summary: "Different full report" } })).rejects.toThrow("Private result unavailable");
+    await role("authenticated");
+    expect((await db.query("DELETE FROM purama_ai.karta_tool_results WHERE id=$1 RETURNING id", [id])).rows).toEqual([{ id }]);
+    await role("service_role");
+    await expect(store(runId, { tool: "programmatic_report", data })).rejects.toThrow("Private result unavailable");
+    expect((await rows()).rows).toHaveLength(0);
+  });
 });
 afterAll(async () => { await db?.close(); });
 beforeEach(async () => {

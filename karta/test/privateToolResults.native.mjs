@@ -118,6 +118,8 @@ before(async () => {
   await admin.query('GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA purama_ai TO service_role; GRANT SELECT ON ALL TABLES IN SCHEMA purama_ai TO authenticated;');
   await admin.query(readFileSync(new URL('../migrations/028_private_tool_results.sql', import.meta.url), 'utf8'));
   await admin.query(readFileSync(new URL('../migrations/029_model_usage_receipts.sql', import.meta.url), 'utf8'));
+  await admin.query(readFileSync(new URL('../migrations/033_programmatic_model_usage.sql', import.meta.url), 'utf8'));
+  await admin.query(readFileSync(new URL('../migrations/034_programmatic_private_reports.sql', import.meta.url), 'utf8'));
 });
 
 after(async () => {
@@ -334,6 +336,62 @@ test('approved-action completion committed before a late insert is rechecked aft
     await gate.query('COMMIT');
     refused(await late);
     assert.deepEqual(await rows(), []);
+  } finally {
+    await gate.query('ROLLBACK').catch(() => {});
+    if (late) await late;
+    await Promise.all([caller, gate].map(close));
+  }
+});
+
+const reportPayload = {
+  schema_version: 1, tool_name: 'programmatic_report', status: 'complete',
+  summary: 'Synthèse entière générée par le modèle. '.repeat(200), sources: [],
+  details: { content_kind: 'model_generated_report', verification_status: 'unverified',
+    source_text_trust: 'untrusted_data', execution_mode: 'programmatic_reads', report_truncated: false,
+    read_tools: ['web_search'] },
+};
+const reportSql = 'SELECT purama_ai.karta_store_tool_result($1,$2,$3,$4,$5,$6::jsonb) AS id';
+
+test('complete reports preserve the compact byte limit and immutable acknowledgement on native PostgreSQL', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['web_search'] WHERE id=$1", [agent]);
+  const runId = await run();
+  const caller = await service('report_boundary');
+  const overhead = Buffer.byteLength(JSON.stringify({ ...reportPayload, summary: '' }));
+  const extra = 61_440 - overhead - 60_000;
+  const summary = 'a'.repeat(60_000 - extra) + 'é'.repeat(extra);
+  const payload = { ...reportPayload, summary };
+  assert.equal(Buffer.byteLength(JSON.stringify(payload)), 61_440);
+  const args = [owner, agentType, runId, `${runId}:0`, 'programmatic_report', JSON.stringify(payload)];
+  try {
+    const id = (await caller.query(reportSql, args)).rows[0].id;
+    assert.deepEqual(await rows(), [{ id, payload }]);
+    await assert.rejects(caller.query(reportSql, [owner, agentType, runId, `${runId}:1`, 'programmatic_report',
+      JSON.stringify({ ...payload, summary: 'é' + summary.slice(1) })]), { code: 'P0001', message: 'Private result unavailable' });
+    await caller.query("UPDATE purama_ai.karta_runs SET status='success',duration_ms=1,finished_at=now() WHERE id=$1", [runId]);
+    assert.equal((await caller.query(reportSql, args)).rows[0].id, id);
+    await assert.rejects(caller.query(reportSql, [owner, agentType, runId, `${runId}:0`, 'programmatic_report',
+      JSON.stringify({ ...payload, summary: 'Changed report' })]), { code: 'P0001', message: 'Private result unavailable' });
+    assert.deepEqual(await rows(), [{ id, payload }]);
+  } finally { await close(caller); }
+});
+
+test('programmatic report insertion rechecks a read-catalog revocation after its agent lock wait', { timeout: 30000 }, async () => {
+  await admin.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['web_search'] WHERE id=$1", [agent]);
+  const runId = await run();
+  const gate = await connect('report_revoke');
+  const caller = await service('report_revoked');
+  let late;
+  try {
+    await gate.query('BEGIN');
+    await gate.query("UPDATE purama_ai.creator_agents SET tools_enabled=ARRAY['knowledge_search'] WHERE id=$1", [agent]);
+    late = settle(caller.query(reportSql, [owner, agentType, runId, `${runId}:0`, 'programmatic_report', JSON.stringify(reportPayload)])
+      .then(result => result.rows[0].id));
+    await waitForBlocked([caller]);
+    await gate.query('COMMIT');
+    refused(await late);
+    assert.deepEqual(await rows(), []);
+    assert.deepEqual((await admin.query('SELECT tools_enabled FROM purama_ai.creator_agents WHERE id=$1', [agent])).rows,
+      [{ tools_enabled: ['knowledge_search'] }]);
   } finally {
     await gate.query('ROLLBACK').catch(() => {});
     if (late) await late;

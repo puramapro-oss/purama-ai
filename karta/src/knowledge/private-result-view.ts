@@ -1,6 +1,14 @@
 /** Shared, dependency-free projection of private tool results for the UI and chat boundary. */
-export type PrivateToolName = 'knowledge_search' | 'quantum_simulate';
+export type PrivateToolName = 'knowledge_search' | 'quantum_simulate' | 'programmatic_report';
 export type PrivateToolResultStatus = 'complete' | 'empty' | 'partial' | 'failed';
+
+export const PROGRAMMATIC_REPORT_MAX_UTF16_UNITS = 60_000;
+export const PROGRAMMATIC_REPORT_MAX_BYTES = 61_440;
+export const PROGRAMMATIC_REPORT_READ_TOOLS = Object.freeze(['knowledge_search', 'web_search'] as const);
+export const PROGRAMMATIC_REPORT_PROVENANCE = Object.freeze({
+  content_kind: 'model_generated_report', verification_status: 'unverified',
+  source_text_trust: 'untrusted_data', execution_mode: 'programmatic_reads', report_truncated: false,
+} as const);
 
 export interface PrivateToolSource {
   source: 'crossref' | 'wikidata';
@@ -57,19 +65,41 @@ export function privateToolSourceUrl(source: unknown): string | null {
   return null;
 }
 
+function validProgrammaticReport(payload: Record<string, unknown>): boolean {
+  const details = payload.details;
+  if (Object.keys(payload).length !== 6 || payload.status !== 'complete'
+    || !Array.isArray(payload.sources) || payload.sources.length !== 0 || !record(details)
+    || Object.keys(details).length !== 6
+    || Object.entries(PROGRAMMATIC_REPORT_PROVENANCE).some(([key, value]) => details[key] !== value)
+    || !Array.isArray(details.read_tools) || details.read_tools.length > PROGRAMMATIC_REPORT_READ_TOOLS.length
+    || details.read_tools.some(tool => !PROGRAMMATIC_REPORT_READ_TOOLS.some(allowed => allowed === tool))
+    || new Set(details.read_tools).size !== details.read_tools.length
+    || typeof payload.summary !== 'string' || /[\uD800-\uDFFF]/u.test(payload.summary)
+    || payload.summary.includes('\u0000')) return false;
+  // Serialize the fixed projection, never arbitrary fields/toJSON from a row.
+  const projected = {
+    schema_version: 1, tool_name: 'programmatic_report', status: 'complete',
+    summary: payload.summary, sources: [],
+    details: { ...PROGRAMMATIC_REPORT_PROVENANCE, read_tools: [...details.read_tools] },
+  };
+  return new TextEncoder().encode(JSON.stringify(projected)).byteLength <= PROGRAMMATIC_REPORT_MAX_BYTES;
+}
+
 export function parsePrivateToolResult(value: unknown, ownerId: string, agentId: string): PrivateToolResult | null {
   if (!isPrivateToolResultId(ownerId) || !isPrivateToolResultId(agentId)
     || !record(value) || !isPrivateToolResultId(value.id) || !isPrivateToolResultId(value.run_id)
     || typeof value.user_id !== 'string' || value.user_id.toLowerCase() !== ownerId.toLowerCase()
     || typeof value.creator_agent_id !== 'string' || value.creator_agent_id.toLowerCase() !== agentId.toLowerCase()
-    || (value.tool_name !== 'knowledge_search' && value.tool_name !== 'quantum_simulate')
+    || (value.tool_name !== 'knowledge_search' && value.tool_name !== 'quantum_simulate' && value.tool_name !== 'programmatic_report')
     || !timestamp(value.created_at) || !record(value.payload)) return null;
   const payload = value.payload;
   if (payload.schema_version !== 1 || payload.tool_name !== value.tool_name
     || typeof payload.status !== 'string' || !['complete', 'empty', 'partial', 'failed'].includes(payload.status)
-    || typeof payload.summary !== 'string' || !payload.summary.trim() || payload.summary.length > 4_000
+    || typeof payload.summary !== 'string' || !payload.summary.trim()
+    || payload.summary.length > (value.tool_name === 'programmatic_report' ? PROGRAMMATIC_REPORT_MAX_UTF16_UNITS : 4_000)
     || !Array.isArray(payload.sources) || payload.sources.length > 10
-    || (value.tool_name === 'quantum_simulate' && payload.sources.length !== 0)) return null;
+    || (value.tool_name === 'quantum_simulate' && payload.sources.length !== 0)
+    || (value.tool_name === 'programmatic_report' && !validProgrammaticReport(payload))) return null;
   const sources: PrivateToolSource[] = [];
   for (const source of payload.sources) {
     const url = privateToolSourceUrl(source);

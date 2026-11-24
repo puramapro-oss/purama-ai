@@ -105,3 +105,64 @@ La nouvelle sonde Desktop Commander a aussi échoué par absence de réponse du 
 Les commandes, sorties et empreintes sont conservées dans `boundary-evidence.zip` ; `boundary-verification.json` en donne le manifeste et les limites. Les comptages sont non additifs. Le résultat de CI sur le commit final sera consigné dans la description de la PR, sans produire un nouveau commit uniquement pour actualiser le compte rendu.
 
 Les noms de fichiers contenant un chemin, `%`, `?`, `#`, des contrôles ou des blancs périphériques sont désormais refusés explicitement avant rendu/envoi. Les noms usuels français, le propriétaire serveur, le bucket, l'absence d'écrasement et le contrat de retour `{ url }` sont conservés. L'objet de paramètres est capturé avant l'attente du rendu, empêchant une mutation du nom entre validation et upload. La publicité du bucket et les URL précédentes ne sont pas modifiées ; leur qualification active reste nécessaire.
+
+
+## Continuation du 24 novembre — lectures programmatiques natives
+
+État de conception : `PRET_A_CODER`, fondé sur la demande explicite de cette conversation d'intégrer Code Mode à IAO puis de terminer le fonctionnement, et sur la trajectoire documentée ci-dessus. Base de travail : consolidation `9ab7e16`, PR109 fusionnée. Identité IAO/KARTA, catalogue, permissions, mémoire et moteur conservés.
+
+Périmètre attribué : le parent tient les types/capacités, la validation stricte locale, les reçus multi-réponses, leur migration et les preuves ; un agent intervient uniquement sur le transport Anthropic et ses tests ; un autre sur l'exécuteur KARTA partagé et ses tests. L'inventaire Mac/Hostinger reste séparé, en lecture seule.
+
+Critères de réception définis avant les contrôles :
+
+1. Activation explicite, route Anthropic native et modèle exact qualifié ; mode direct, mock, local et catalogues mixtes inchangés. Les modèles et budgets de sortie/réflexion existants ne sont pas remplacés. La continuation a une limite supplémentaire explicite de huit réponses, seize lectures, 64 Kio par résultat et 256 Kio de résultats au total, sous le délai global existant.
+2. Catalogue non vide entièrement composé de lecteurs qualifiés (`knowledge_search`, `web_search` initialement) ; aucune mutation exposée à PTC. `sensitive:false` ne suffit pas à autoriser un outil.
+3. Un exécuteur KARTA partagé, avec utilisateur serveur, droits frais, arrêt global, autonomie, armement du brief et journal. Refus en simulation, après révocation ou si une approbation devient nécessaire. Aucun rappel fournisseur après arrêt constaté.
+4. Historique/conteneur/identifiants suivis ; validation du paquet avant exécution, doublons et fins incomplètes refusés, résultats textuels complets, aucune exécution de code dans Node. Réponses tardives et erreurs ne deviennent pas des succès.
+5. Chaque réponse reçue conserve ses compteurs, y compris en échec. Migration additive au reçu v1 historique ; aucune réinterprétation d'un reçu unique en somme de plusieurs appels, aucune modification des politiques d'accès.
+6. Tests du protocole avec le SDK réel et transport HTTP simulé ; tests de l'exécuteur, des droits, des arrêts, des branches historiques et de la migration SQL. Typecheck/build et CI avant fusion. Une qualification auprès du fournisseur reste distincte de ces tests.
+
+L'index GitNexus de ce lot couvre 28 fichiers du cœur et leurs entrées principales. `normalizeModelCatalog` est CRITICAL (6 appelants directs, 8 processus), `loadAnthropicModelCatalog` HIGH (1 appelant direct, 4 processus), `createRealClaudeClient` LOW (2 appelants directs, 2 processus), `runAgentCycle` LOW dans ce graphe (worker direct). Les risques élevés ont été signalés avant édition ; l'index est ciblé et ne constitue pas un audit de tout PURAMA.
+
+### Reprise du 25 novembre — livraison privée complète
+
+L'environnement a été indisponible avant publication du lot. À sa reprise, les empreintes des cinq fichiers moteur/transport et tests correspondants sont identiques à celles enregistrées avant l'interruption. La branche reçoit ensuite par fast-forward la consolidation `795d7db` (PR112–115) ; aucun fichier du cœur de ce lot ne recoupe ce delta. L'exclusion Vercel propre à ce lot est réappliquée en conservant toutes les exclusions précédentes.
+
+La revue a identifié une perte de livrable : la minimisation des traces effaçait la synthèse PTC du résultat du cycle sans la conserver dans le magasin privé. La conception est complétée avant implémentation :
+
+- Le parcours PTC est admis uniquement pour un agent personnalisé, un propriétaire et un run avec UUID valides, dans le catalogue fermé des lecteurs publics qualifiés. Les autres parcours gardent leur mode direct.
+- La synthèse intégrale est enregistrée sous `programmatic_report` dans la table/RPC existante `karta_tool_results`, avant la clôture du cycle ; ce nom n'est pas ajouté au catalogue d'outils du modèle ni à `tools_enabled`.
+- Le texte n'est pas tronqué. Sa taille maximale est de 60 000 unités UTF-16, sous le budget JSON existant avec réserve avant les 64 Kio SQL. Un dépassement ou une livraison non confirmée interdit le succès du cycle.
+- La provenance du rapport est fabriquée par le serveur : contenu généré par modèle, non vérifié indépendamment, données non fiables, lectures effectivement réussies. Une conclusion sans lecture garde `read_tools:[]` ; elle ne crée aucune preuve de recherche.
+- La migration 034 est additive. Les formats des deux résultats historiques, les contrôles de propriétaire, les verrous, RLS, droits, rapprochements identiques et protections après suppression sont préservés.
+- L'interface privée affiche le texte intégral échappé. Le contexte de chat conserve sa projection bornée et son indicateur explicite d'abrègement, avec une branche de provenance propre au rapport ; il ne l'assimile pas à une simulation quantique.
+
+Le sous-graphe de livraison couvre 35 fichiers. `projectPrivateToolResult` et `persistPrivateToolResult` sont CRITICAL (sept dépendants et cinq flux), risque signalé avant édition. Le parseur, l'interface et le formateur Edge sont LOW dans ce graphe. Les fonctions SQL restent hors index et exigent une revue et des tests dédiés.
+
+La réception doit inclure la chaîne réelle moteur → SDK → outil web → projection/persistance privée → parseur utilisateur, avec seulement les ports externes simulés. Elle doit aussi couvrir une réponse sans lecture, une sauvegarde refusée, un accusé de sauvegarde perdu, une révocation et un second appel invalide. Les tests locaux ne prouvent pas l'exécution du véritable sandbox fournisseur.
+
+### Réception locale du lot programmatique — 25 novembre
+
+Les preuves de cette réception sont conservées dans `programmatic-reads-20261125/`. Les heures internes sont en UTC ; la date de cette section utilise Europe/Paris. Elles décrivent l'état avant CI et ne remplacent pas la réception du commit publié.
+
+| Contrôle | Résultat observé | Portée |
+|---|---|---|
+| Protocole, moteur, intégration, qualification, entrées et reçus | PASS — 231/231 | Six fichiers, SDK réel, ports HTTP/stockage simulés ; aucune inférence réelle |
+| Reçus SQL 033 | PASS — 26/26 | PGlite, compatibilité v1 et enveloppe v2 bornée |
+| Résultats privés SQL 034 | PASS — 84/84 | PGlite, limites Unicode/JSON, identité, permissions et réconciliation |
+| Clôture des briefs SQL 035 | PASS — 18/18 | PGlite, synthèse sans lecture et conservation des transitions historiques |
+| Projection et persistance privées KARTA | PASS — 77/77 | Formats historiques et rapport intégral |
+| Contexte et autorisation Edge | PASS — 52/52 | Sources réelles, résolution des dépendances TypeScript/Zod déjà installées |
+| TypeScript KARTA complet et build | PASS | Production, scripts et tests pour le typage ; compilation de production séparée |
+| Revue indépendante des contrats partagés | PASS dans son périmètre | Reproductions négatives et empreintes dans `independent-shared-review.json` |
+| Interface et PostgreSQL natif | NON TESTÉ localement | Contrôles déjà présents dans les workflows du dépôt, attendus avant fusion |
+| Sandbox fournisseur, coût et latence réels | NON TESTÉ | Aucun appel d'inférence dans cette réception |
+| Production et charge | NON TESTÉ | Aucune activation ni migration de production |
+
+Les comptes par ligne ne doivent pas être additionnés aux matrices historiques, qui recouvrent certaines de ces assertions. Les rapports individuels précisent les noms et résultats des tests.
+
+Trois défauts trouvés pendant la réception ont été corrigés : le `CASE` de la limite SQL est parenthésé pour éviter une erreur PL/pgSQL 42601 ; la synthèse privée réussie sans lecture termine maintenant le brief via 035 ; les qualifications positives des modèles/outils et l'instantané de reçus refusent les propriétés héritées, tableaux creux et accesseurs. Une erreur de typage du résultat SQL dans un test a également été corrigée avant le passage du TypeScript complet. La correction 035 conserve le déclencheur et les droits existants ; un résultat déjà enregistré ne redevient pas une tâche automatiquement rejouable.
+
+L'index final porte sur 43 chemins : 1 313 nœuds, 3 134 relations et 81 flux. Il est explicitement partiel : 51 points d'entrée classés n'ont pas été explorés, 482 appels ont été écartés par les bornes de branchement et six parcours ont atteint leur budget. `useProgrammaticReads` et `runProgrammaticReads` sont désormais présents, avec un appelant direct dans `createRealClaudeClient.decide` et un risque LOW dans ce sous-graphe. Les analyses CRITICAL précédentes et la revue SQL dédiée restent pertinentes. L'absence d'un flux dans cet index ne prouve pas son absence dans l'application.
+
+La lecture native de l'API Models a reçu HTTP 200 et une page complète de 15 modèles. Les sélections MAIN/FAST ne figurent pas dans la source canonique inspectée : leurs capacités, l'inférence, les crédits et le sandbox restent à qualifier séparément. Le reçu expurgé conserve l'échec antérieur de lecture et l'issue inconnue d'une tentative expirée. Le constat Hostinger montre une persistance locale historique, un ancien backend arrêté et une prévisualisation sans backend qualifié ; une réponse HTTP 200 d'une interface n'est pas une preuve de fonctionnement de bout en bout. Aucun ancien worker n'a été relancé.

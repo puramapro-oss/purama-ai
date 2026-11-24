@@ -1,0 +1,132 @@
+{
+  "schema": "purama.anthropic-models-readonly-qualification.v1",
+  "observedAt": "2026-11-24T23:30:12Z",
+  "status": "PARTIEL",
+  "scope": "Qualification en lecture seule, avec une seule source canonique existante et aucun appel d'inférence.",
+  "canonicalSource": "mac_existing_canonical_configuration",
+  "destinationQualification": "PASS",
+  "credentialQualification": "PASS pour la lecture Models API",
+  "httpRequestIssued": true,
+  "httpStatus": 200,
+  "configuredMainModel": "NON QUALIFIE : selection absente de cette source",
+  "configuredFastModel": "NON QUALIFIE : selection absente de cette source",
+  "reason": "La lecture inerte des lignes ASCII ciblees du meme fichier a permis un GET Models natif, reponse200. Les selections MAIN et FAST ne sont pas declarees dans cette source ; aucune capacite de ces selections ne peut en etre deduite.",
+  "alternateAccountsOrCredentialsAttempted": false,
+  "mutations": false,
+  "inferenceRequested": false,
+  "requestDesign": {
+    "method": "GET",
+    "endpoint": "https://api.anthropic.com/v1/models?limit=1000",
+    "apiVersion": "2023-06-01",
+    "totalDeadlineSeconds": 5,
+    "redirectsAllowed": false,
+    "maximumBodyBytes": 1048576
+  },
+  "documentation": "https://platform.claude.com/docs/en/api/models/list",
+  "limits": [
+    "La reponse Models200 ne prouve ni le succes d'une inference ni l'activation de Code Mode.",
+    "Les selections MAIN/FAST du backend actuel restent a relier a leurs identifiants et capacites exacts ; leur absence de cette source ne prouve pas leur absence ailleurs.",
+    "L'issue de l'ancien appel expire reste inconnue dans l'historique.",
+    "Aucun secret ou contenu non cible du fichier n'est publie."
+  ],
+  "receipts": {
+    "qualification": [
+      {
+        "source": "canonical_mac",
+        "operation": "GET /v1/models",
+        "http_status": null,
+        "reason": "local_source_not_qualified",
+        "inference_requested": false
+      }
+    ],
+    "sourceDiagnostic": [
+      {
+        "source": "canonical_mac",
+        "network_operation": false,
+        "regular_file": true,
+        "size_bytes": 3750,
+        "within_size_limit": true,
+        "stage": "utf8_decode",
+        "error_type": "UnicodeDecodeError"
+      }
+    ],
+    "authorizedMetadataRetry": [
+      {
+        "source": "same_canonical_file",
+        "api_version": "2023-06-01",
+        "operation": "GET /v1/models",
+        "request_attempts": 1,
+        "http_status": 200,
+        "inference_requested": false,
+        "stage": "completed",
+        "source_format": "targeted_ascii_lines",
+        "line_count": 65,
+        "non_ascii_line_count": 14,
+        "target_occurrences": {
+          "ANTHROPIC_MODEL_FAST": 0,
+          "ANTHROPIC_BASE_URL": 0,
+          "ANTHROPIC_API_KEY": 1,
+          "ANTHROPIC_MODEL_MAIN": 0
+        },
+        "native_destination_qualified": true,
+        "credential_type_qualified": true,
+        "models": {
+          "MAIN": {
+            "configured": false
+          },
+          "FAST": {
+            "configured": false
+          }
+        },
+        "response_bytes": 15861,
+        "returned_model_count": 15,
+        "page_has_more": false,
+        "reason": "models_api_read_completed"
+      }
+    ]
+  },
+  "initialSourceReading": {
+    "regularFile": true,
+    "readSucceeded": true,
+    "textDecoding": "UTF-8 strict",
+    "errorType": "UnicodeDecodeError"
+  },
+  "followup": {
+    "source": "same_canonical_file",
+    "parser": "recognized_UTF16_BOM_or_targeted_ASCII_lines",
+    "remoteStatus": "failed",
+    "remoteReason": "Timeout - no response from device",
+    "createdAt": "2026-11-24T22:39:34.778984Z",
+    "completedAt": "2026-11-24T22:41:44.590662Z",
+    "requestOutcome": "UNKNOWN",
+    "reconciliationAt": "2026-11-24T23:25:17Z",
+    "reconciliationResult": "not_found_record_may_have_expired",
+    "requestReplayed": false,
+    "maximumModelsRequestsInProgram": 1,
+    "inferenceRequested": false
+  },
+  "sourceParsing": {
+    "format": "targeted_ascii_lines",
+    "lineCount": 65,
+    "nonAsciiLineCount": 14,
+    "targetOccurrences": {
+      "ANTHROPIC_MODEL_FAST": 0,
+      "ANTHROPIC_BASE_URL": 0,
+      "ANTHROPIC_API_KEY": 1,
+      "ANTHROPIC_MODEL_MAIN": 0
+    }
+  },
+  "successfulModelsRead": {
+    "apiVersion": "2023-06-01",
+    "httpStatus": 200,
+    "responseBytes": 15861,
+    "returnedModelCount": 15,
+    "hasMore": false,
+    "processExitCode": 0
+  },
+  "requestAccounting": {
+    "successfulMetadataRequestsObserved": 1,
+    "previousUnresolvedAttemptPreserved": true,
+    "inferenceRequests": 0
+  }
+}

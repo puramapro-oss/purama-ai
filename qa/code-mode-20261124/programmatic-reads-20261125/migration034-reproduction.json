@@ -1,0 +1,18 @@
+{
+  "file": "/workspace/scratch/200bdf486cef/purama-ai/karta/migrations/034_programmatic_private_reports.sql",
+  "sha256Before": "09ff639f8d58d778b50a6308ef562636773b43c64177f6f9e20a823f15e3954f",
+  "results": [
+    {
+      "name": "original",
+      "status": "FAIL",
+      "code": "42601",
+      "position": "1143",
+      "internalPosition": null,
+      "migrationLine": 26
+    },
+    {
+      "name": "parenthesized",
+      "status": "PASS"
+    }
+  ]
+}

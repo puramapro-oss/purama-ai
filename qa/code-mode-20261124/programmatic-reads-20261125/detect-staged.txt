@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795564412520,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 60 files, 195 symbols
+Affected processes: 53
+Risk level: critical
+
+Changed symbols:
+  Interface ModelExecutionCapability → karta/src/claude/execution-profile.ts
+  Property programmaticToolCalling → karta/src/claude/execution-profile.ts
+  Function normalizeModelCatalog → karta/src/claude/execution-profile.ts
+  Function loadAnthropicModelCatalog → karta/src/claude/model-catalog.ts
+  Const PROGRAMMATIC_CODE_VERSION → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_CALLS → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_RESULT_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_PROGRAMMATIC_TOTAL_RESULT_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_HISTORY_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_RESPONSE_BYTES → karta/src/claude/programmatic.ts
+  Const MAX_CONTENT_BLOCKS → karta/src/claude/programmatic.ts
+  Const IDENTIFIER → karta/src/claude/programmatic.ts
+  TypeAlias RecordValue → karta/src/claude/programmatic.ts
+  TypeAlias Bridge → karta/src/claude/programmatic.ts
+  Property id → karta/src/claude/programmatic.ts
+... and 180 more
+
+Affected execution flows:
+  • FinishOutcome → SendEmail (4 steps) — changed: finishOutcome
+  • FinishOutcome → Deliver (3 steps) — changed: finishOutcome
+  • StartAgentCycleWorker → IsGlobalKillSwitchActive (3 steps) — changed: runAgentCycle
+  • CreatorAgentDetail → IsPrivateToolResultId (6 steps) — changed: PrivateToolResults
+  • CreatorAgentDetail → Record (6 steps) — changed: parsePrivateToolResult, validProgrammaticReport, PrivateToolResults
+  • FinishOutcome → HasReceipt (5 steps) — changed: finishOutcome
+  • FinishOutcome → AssertActive (5 steps) — changed: finishOutcome
+  • CreatorAgentDetail → Timestamp (5 steps) — changed: parsePrivateToolResult, PrivateToolResults
+  • Decide → Invalid (5 steps) — changed: decide
+  • Decide → Plain (5 steps) — changed: decide
+... and 43 more

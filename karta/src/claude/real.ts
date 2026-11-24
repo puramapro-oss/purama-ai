@@ -9,6 +9,7 @@ import { normalizeModelUsage } from "./usage.js";
 import { configuredModelCatalog, normalizeModelCatalog, resolveModelExecutionPlan, type ModelExecutionCapability } from "./execution-profile.js";
 import { createLmStudioTransport, type LmStudioOptions } from "./lmstudio.js";
 import { applyPublicPromptCache, parseAnthropicPromptCacheMode } from "./prompt-cache.js";
+import { isDirectToolCaller, parseProgrammaticReadsMode, runProgrammaticReads, useProgrammaticReads } from "./programmatic.js";
 
 /**
  * Client Claude réel (tool-use natif Anthropic). Structurellement complet et prêt à l'emploi —
@@ -52,6 +53,7 @@ export function createRealClaudeClient(options: {
     throw new Error("KARTA_MODEL_TIMEOUT_MS invalide : entier de 1000 à 120000 requis");
   }
   const promptCacheMode = parseAnthropicPromptCacheMode(config.anthropicPromptCache);
+  const programmaticReads = parseProgrammaticReadsMode(config.anthropicProgrammaticReads);
   const modelCatalog = normalizeModelCatalog(options.modelCatalog ?? configuredModelCatalog(
     config.anthropicModelMain, config.anthropicModelFast, process.env.KARTA_MODEL_PROFILES_JSON,
   ));
@@ -88,14 +90,14 @@ export function createRealClaudeClient(options: {
       // Reuse the existing monotonic runtime bound. The SDK's fetch timeout
       // ends at headers; awaiting the full APIPromise also covers JSON/error
       // body consumption and discards late results from non-cooperative I/O.
-      const { model, response } = await bounded(async signal => {
+      const result = await bounded<{ model: string; response: Anthropic.Message } | { model: string; decision: AgentDecision }>(async signal => {
         // Select after admission so pre-cancelled calls do not read context;
         // keep the same selected model for the request and its usage receipt.
         const model = plan?.model ?? local?.model ?? selectModel(input);
         // Project only after model selection, without mutating input.tools.
         // Reject ambiguous names before any network, including local discovery.
         const providerTools = toAnthropicTools(input.tools);
-        const send = () => client.messages.create({
+        const request = {
           model,
           max_tokens: plan?.maxOutputTokens ?? 1024,
           ...plan?.providerOptions,
@@ -108,7 +110,17 @@ export function createRealClaudeClient(options: {
             },
           ],
           tools: providerTools,
-        } as Anthropic.MessageCreateParamsNonStreaming, { signal, timeout: requestTimeoutMs, maxRetries: 0 });
+        } as Anthropic.MessageCreateParamsNonStreaming;
+        if (useProgrammaticReads({ enabled: programmaticReads, native: nativePromptCache,
+          model, catalog: modelCatalog, input })) {
+          const decision = await runProgrammaticReads({ request, tools: input.tools,
+            bridge: input.programmaticReads!, signal, baseURL: client.baseURL, onUsage: input.onUsage,
+            send: body => client.messages.create(body as unknown as Anthropic.MessageCreateParamsNonStreaming,
+              { signal, timeout: requestTimeoutMs, maxRetries: 0 }),
+          });
+          return { model, decision };
+        }
+        const send = () => client.messages.create(request, { signal, timeout: requestTimeoutMs, maxRetries: 0 });
         const response = local ? await local.run(signal, input.tools.length > 0, send) : await send();
         return { model, response };
       }, requestTimeoutMs, input.signal)
@@ -119,6 +131,9 @@ export function createRealClaudeClient(options: {
             ? "Appel au modèle annulé : aucune décision disponible"
             : "Réponse du modèle indisponible ou délai dépassé : aucune décision disponible");
         });
+
+      if ("decision" in result) return result.decision;
+      const { model, response } = result;
 
       // Rejected/truncated decisions can still consume provider tokens. Keep
       // their receipt before validating content, without another HTTP request.
@@ -154,6 +169,9 @@ export function createRealClaudeClient(options: {
           }
           summary += block.text;
         } else if (block.type === "tool_use") {
+          if (!isDirectToolCaller((block as unknown as Record<string, unknown>).caller)) {
+            throw new Error("Décision Claude invalide : provenance d’outil non prise en charge");
+          }
           if (response.stop_reason !== "tool_use" || typeof block.id !== "string"
             || !block.id.trim() || toolIds.has(block.id)) {
             throw new Error("Décision Claude incohérente : appel d'outil sans fin ou identifiant valide");
