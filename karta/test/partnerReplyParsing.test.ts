@@ -3,17 +3,29 @@ import { readFileSync } from "node:fs";
 const handlerUrl=new URL("../../supabase/functions/partner-sync-replies/handler.ts",import.meta.url).href;
 const {verifiedReplyMetadata,classifyPartnerReply,createPartnerReplyHandler}=await import(/* @vite-ignore */ handlerUrl);
 const user="00000000-0000-4000-8000-000000000001",prospect="00000000-0000-4000-8000-000000000011";
-type Row=Record<string,any>;
+type Row=Record<string,unknown>;
+type WorkflowNode={
+  id:string;name:string;type:string;retryOnFail?:boolean;onError?:string;
+  parameters:{jsCode?:string;url?:string;headerParameters?:{parameters:{name:string;value:string}[]}};
+};
+type Workflow={
+  nodes:WorkflowNode[];connections:Record<string,{main:{node:string}[][]}>;
+  settings:{timezone:string};
+};
+type GmailMessage={
+  id:string;threadId:string;internalDate:string;labelIds:string[];
+  payload:{mimeType:string;headers:{name:string;value:string}[];body:{data:string}};
+};
 describe("versioned reply workflow",()=>{
-  const workflow=JSON.parse(readFileSync(new URL("../../n8n/partner-reply-handler.json",import.meta.url),"utf8"));
-  const node=(id:string)=>workflow.nodes.find((n:Row)=>n.id===id);
-  const normalize=new Function("$input",node("normalize").parameters.jsCode);
-  const notifications=new Function("$input",node("notifications").parameters.jsCode);
+  const workflow:Workflow=JSON.parse(readFileSync(new URL("../../n8n/partner-reply-handler.json",import.meta.url),"utf8"));
+  const node=(id:string)=>workflow.nodes.find(n=>n.id===id)!;
+  const normalize=new Function("$input",node("normalize").parameters.jsCode!);
+  const notifications=new Function("$input",node("notifications").parameters.jsCode!);
   it("executes account validation without propagating Gmail credentials",()=>{
     expect(normalize({all:()=>[{json:[{user_id:user,gmail_access_token:"should-not-propagate"},{user_id:user},{user_id:"bad"}]}]})).toEqual([{json:{user_id:user}}]);
     expect(node("users").parameters.url).toContain("select=user_id");
     expect(JSON.stringify(workflow)).not.toContain("gmail_access_token");
-    expect(workflow.nodes.some((n:Row)=>n.type==="n8n-nodes-base.splitInBatches")).toBe(false);
+    expect(workflow.nodes.some(n=>n.type==="n8n-nodes-base.splitInBatches")).toBe(false);
   });
   it("emits only new durable receipts for the correct account",()=>{
     expect(notifications({all:()=>[{json:{user_id:user,recorded:[{prospect_id:prospect,kind:"human"}]}}]})).toEqual([{json:{user_id:user,prospect_id:prospect,kind:"human"}}]);
@@ -31,7 +43,7 @@ describe("versioned reply workflow",()=>{
     for(let i=0;i<workflow.nodes.length-1;i++)
       expect(workflow.connections[workflow.nodes[i].name].main[0][0].node).toBe(workflow.nodes[i+1].name);
     expect(node("sync").parameters.url).toMatch(/\/partner-sync-replies$/);
-    expect(node("sync").parameters.headerParameters.parameters).toContainEqual({name:"X-Impersonate-User-Id",value:"={{ $json.user_id }}"});
+    expect(node("sync").parameters.headerParameters!.parameters).toContainEqual({name:"X-Impersonate-User-Id",value:"={{ $json.user_id }}"});
     expect(node("sync").retryOnFail).toBe(false);expect(workflow.settings.timezone).toBe("UTC");
   });
 });
@@ -40,13 +52,13 @@ const parent="<sent@mail.example.invalid>";
 const c={action_id:user,prospect_id:prospect,provider_message_id:"provider",recipient:"person@example.invalid",
   sender:"Sender <sender@example.invalid>",reply_to:"sender@example.invalid",subject:"Test",
   sent_at:new Date(Date.now()-60_000).toISOString(),rfc_message_id:parent,reply_scan_page_token:null};
-function incoming(overrides:Row={}):Row {
+function incoming():GmailMessage {
   return {id:"message1",threadId:"thread1",internalDate:String(Date.now()-1_000),labelIds:["INBOX"],
     payload:{mimeType:"text/plain",headers:[
       {name:"From",value:"Person <person@example.invalid>"},
       {name:"Message-ID",value:"<reply@person.example.invalid>"},
       {name:"In-Reply-To",value:parent},{name:"References",value:parent}
-    ],body:{data:Buffer.from("Bonjour").toString("base64url")}},...overrides};
+    ],body:{data:Buffer.from("Bonjour").toString("base64url")}}};
 }
 describe("partner reply metadata and intent",()=>{
   it("requires exact message, sender, chronology and original RFC parent",()=>{
@@ -62,26 +74,30 @@ describe("partner reply metadata and intent",()=>{
     {labelIds:["DRAFT"]},
     {labelIds:"INBOX"},
   ])("rejects malformed or unrelated metadata %j",overrides=>{
-    expect(verifiedReplyMetadata(incoming(overrides),"message1",c,parent)).toBeNull();
+    expect(verifiedReplyMetadata({...incoming(),...overrides},"message1",c,parent)).toBeNull();
   });
   it("rejects duplicate From or Message-ID headers",()=>{
     for(const name of ["From","Message-ID"]) {
-      const m=incoming();m.payload.headers.push(m.payload.headers.find((h:Row)=>h.name===name));
+      const m=incoming();m.payload.headers.push(m.payload.headers.find(h=>h.name===name)!);
       expect(verifiedReplyMetadata(m,"message1",c,parent)).toBeNull();
     }
   });
   it("does not treat an API UUID or coincidentally matching Gmail thread as RFC linkage",()=>{
-    const m=incoming();m.payload.headers=m.payload.headers.map((h:Row)=>["In-Reply-To","References"].includes(h.name)?{...h,value:"provider"}:h);
+    const m=incoming();m.payload.headers=m.payload.headers.map(h=>["In-Reply-To","References"].includes(h.name)?{...h,value:"provider"}:h);
     expect(verifiedReplyMetadata(m,"message1",c,parent)).toBeNull();
   });
   it("accepts a verified original ancestor in a folded References header",()=>{
     const m=incoming();
-    m.payload.headers=m.payload.headers.map((h:Row)=>h.name==="In-Reply-To"?{...h,value:"<previous@person.example.invalid>"}:h.name==="References"?{...h,value:parent+"\r\n <previous@person.example.invalid>"}:h);
+    m.payload.headers=m.payload.headers.map(h=>h.name==="In-Reply-To"?{...h,value:"<previous@person.example.invalid>"}:h.name==="References"?{...h,value:parent+"\r\n <previous@person.example.invalid>"}:h);
+    expect(verifiedReplyMetadata(m,"message1",c,parent)).not.toBeNull();
+    m.payload.headers.find(h=>h.name==="References")!.value=parent+"\t<previous@person.example.invalid>";
     expect(verifiedReplyMetadata(m,"message1",c,parent)).not.toBeNull();
   });
   it("rejects injected header lines and excessive reference chains",()=>{
-    for(const value of [parent+"\r\nX-Injected: yes",Array.from({length:201},()=>parent).join(" ")]) {
-      const m=incoming();m.payload.headers.find((h:Row)=>h.name==="References").value=value;
+    const disallowedControls=[...Array.from({length:32},(_,index)=>index),127].filter(code=>code!==9);
+    for(const value of [parent+"\r\nX-Injected: yes",Array.from({length:201},()=>parent).join(" "),
+      ...disallowedControls.map(code=>parent+String.fromCharCode(code)+"<previous@person.example.invalid>")]) {
+      const m=incoming();m.payload.headers.find(h=>h.name==="References")!.value=value;
       expect(verifiedReplyMetadata(m,"message1",c,parent)).toBeNull();
     }
   });

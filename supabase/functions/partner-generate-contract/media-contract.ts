@@ -26,11 +26,17 @@ export class MediaPartnerContractError extends Error {
 
 const row = (value: unknown): Record<string, unknown> | null => value !== null
   && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
-const unsafeControls = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/;
+function unsafeControls(value: string): boolean {
+  for (let index = 0; index < value.length; index++) {
+    const code = value.charCodeAt(index);
+    if (code === 127 || (code < 32 && code !== 9 && code !== 10 && code !== 13)) return true;
+  }
+  return false;
+}
 
 function identity(value: unknown, email = false): string {
   if (typeof value !== "string" || !value.trim() || value.length > (email ? 254 : 200)
-    || /[\r\n]/.test(value) || unsafeControls.test(value)
+    || /[\r\n]/.test(value) || unsafeControls(value)
     || (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))) {
     throw new MediaPartnerContractError("media_contract_identity_invalid");
   }
@@ -58,8 +64,9 @@ export function buildMediaPartnerContractText(snapshot: Record<string, unknown>,
   const recipientEmail = identity(snapshot.recipient_email, true);
   const offer = row(snapshot.eligible_offer);
   if (!offer || typeof offer.name !== "string" || !offer.name.trim() || offer.name.length > 200
-    || /[\r\n]/.test(offer.name) || unsafeControls.test(offer.name)
-    || typeof offer.url !== "string" || offer.url.length > 2048 || /[\s\u0000-\u001f]/.test(offer.url)) {
+    || /[\r\n]/.test(offer.name) || unsafeControls(offer.name)
+    || typeof offer.url !== "string" || offer.url.length > 2048 || /\s/.test(offer.url)
+    || Array.from(offer.url).some(character => character.charCodeAt(0) < 32)) {
     throw new MediaPartnerContractError("media_contract_offer_invalid");
   }
   try {
@@ -73,7 +80,7 @@ export function buildMediaPartnerContractText(snapshot: Record<string, unknown>,
   }
   const keys = new Set<string>(mediaContractTermFields.map(([key]) => key));
   if (Object.keys(terms).some(key => !keys.has(key)) || mediaContractTermFields.some(([key]) =>
-    String(terms[key]).length > 2000 || unsafeControls.test(String(terms[key])))) {
+    String(terms[key]).length > 2000 || unsafeControls(String(terms[key])))) {
     throw new MediaPartnerContractError("media_contract_terms_invalid");
   }
   const clauses = mediaContractTermFields.map(([key, title], index) =>

@@ -61,9 +61,16 @@ export class MediaDraftError extends Error {
 function object(value: unknown): Row | null {
   return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Row : null;
 }
+function hasUnsafeControls(value: string): boolean {
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
+    if (code === 127 || (code < 32 && code !== 9 && code !== 10 && code !== 13)) return true;
+  }
+  return false;
+}
 function text(value: unknown, max: number): string {
   if (typeof value !== 'string' || !value.trim() || value.length > max
-    || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value)) throw new MediaDraftError('offer_required');
+    || hasUnsafeControls(value)) throw new MediaDraftError('offer_required');
   return value.trim();
 }
 function escape(value: string): string {
@@ -89,7 +96,7 @@ export function buildMediaOutreachDraft(prospect: Row, cfg: Row, step: string): 
   const urlText = text(offer.url, 2048);
   let url: URL;
   try { url = new URL(urlText); } catch { throw new MediaDraftError('offer_required'); }
-  if (url.protocol !== 'https:' || url.username || url.password || /[\\\s<>"\u0000-\u001f]/.test(urlText)) throw new MediaDraftError('offer_required');
+  if (url.protocol !== 'https:' || url.username || url.password || /[\\\s<>"]/.test(urlText)) throw new MediaDraftError('offer_required');
   const company = text(cfg.company_name, 200);
   const recipient = text(prospect.name, 200);
   if (/[\r\n]/.test(company)) throw new MediaDraftError('invalid_sender');

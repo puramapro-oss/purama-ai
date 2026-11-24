@@ -1,0 +1,36 @@
+{
+  "commit": "6fcc34b3bd115db4be690d2e7dc2c1c0e8e0784e",
+  "pull_request": "https://github.com/puramapro-oss/purama-ai/pull/111",
+  "status": "PARTIEL",
+  "karta_run": "https://github.com/puramapro-oss/purama-ai/actions/runs/45480685050",
+  "karta_job_id": 138752668921,
+  "karta_result": {
+    "files_passed": 211,
+    "files_failed": 2,
+    "tests_passed": 4890,
+    "tests_failed": 23,
+    "partner_outreach_sql_passed": 89,
+    "partner_media_policy_sql_passed": 55,
+    "partner_discovery_sql_passed": 8,
+    "partner_reply_tests": 50,
+    "partner_reply_failed": 22,
+    "assistant_policy_failed": 1
+  },
+  "site_run": "https://github.com/puramapro-oss/purama-ai/actions/runs/45480684944",
+  "site_job_id": 138752669911,
+  "site_result": {
+    "lint_errors": 9,
+    "lint_warnings": 22,
+    "browser_tests": "SKIPPED_AFTER_LINT_FAILURE",
+    "deno_check": "SKIPPED_AFTER_LINT_FAILURE"
+  },
+  "corrections_prepared": [
+    "Replace PostgreSQL repetition count {1,512} by separate bounded length and charset checks; preserve the 50 tests and add four 512/513 boundary cases.",
+    "Provide the new targeting configuration in the canonical assistant-policy fixture and retain the real model-prompt assertion and simulated provider failure.",
+    "Replace explicit any fixture types by concrete types.",
+    "Replace C0 regex classes by equivalent character-code predicates without disabling lint rules."
+  ],
+  "second_run": "PENDING",
+  "production_deployed": false,
+  "note": "Observed remote results. The failed run is retained; preparation of a correction is not evidence that its SQL or browser assertions passed."
+}

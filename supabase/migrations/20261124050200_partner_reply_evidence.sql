@@ -150,8 +150,11 @@ BEGIN
   reason:=purama_ai.partner_reply_lock(p_user_id,p_action_id,p_connection_email,p_connection_updated_at);
   IF reason IS NOT NULL THEN RETURN jsonb_build_object('status','blocked','reason',reason); END IF;
   SELECT * INTO action FROM purama_ai.partner_outreach_dispatches WHERE id=p_action_id AND user_id=p_user_id;
-  IF p_gmail_message_id IS NULL OR p_gmail_message_id !~ '^[A-Za-z0-9_-]{1,512}$'
-    OR p_gmail_thread_id IS NULL OR p_gmail_thread_id !~ '^[A-Za-z0-9_-]{1,512}$'
+  -- Keep the size bound separate: PostgreSQL rejects the {1,512} quantifier.
+  IF p_gmail_message_id IS NULL OR length(p_gmail_message_id) NOT BETWEEN 1 AND 512
+    OR p_gmail_message_id !~ '^[A-Za-z0-9_-]+$'
+    OR p_gmail_thread_id IS NULL OR length(p_gmail_thread_id) NOT BETWEEN 1 AND 512
+    OR p_gmail_thread_id !~ '^[A-Za-z0-9_-]+$'
     OR p_rfc_message_id IS NULL OR length(p_rfc_message_id)>900
     OR p_rfc_message_id !~ '^<[^<>[:space:]@]+@[^<>[:space:]@]+>$'
     OR action.rfc_message_id IS NULL OR p_parent_message_id IS DISTINCT FROM action.rfc_message_id

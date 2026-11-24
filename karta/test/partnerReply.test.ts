@@ -10,7 +10,20 @@ const user="00000000-0000-4000-8000-000000000001",other="00000000-0000-4000-8000
 const prospect="00000000-0000-4000-8000-000000000011",action="00000000-0000-4000-8000-000000000021",emailId="00000000-0000-4000-8000-000000000031";
 const provider="00000000-0000-4000-8000-000000000041",connection="2026-11-24T00:00:00.000Z";
 const parentRfc="<transport-message@mail.example.invalid>";
-type Row=Record<string,any>;
+type Row=Record<string,unknown>;
+type MessageOptions={
+  from?:string;parent?:string;references?:string;auto?:string;thread?:string;
+  receivedAt?:number;labels?:string[];text?:string;
+};
+type GmailMessage={
+  id:string;threadId:string;internalDate:string;labelIds:string[];
+  payload:{mimeType:string;headers:{name:string;value:string}[];body?:{data:string}};
+};
+type HarnessOptions={
+  accessEmail?:string;profileEmail?:string;providerError?:number;event?:string;
+  sent?:Row;pageError?:number;page?:Row;messages?:GmailMessage[];loseReceipt?:boolean;
+  beforeRecord?:()=>unknown;beforeFetch?:(url:string)=>unknown;
+};
 let db:PGlite,sentAt:string,receivedAt:number;
 
 beforeAll(async()=>{
@@ -60,7 +73,7 @@ const state=async()=>({prospect:(await db.query<Row>("SELECT * FROM purama_ai.pa
   receipts:(await db.query<Row>("SELECT * FROM purama_ai.partner_reply_receipts")).rows,
   suppressions:(await db.query<Row>("SELECT * FROM purama_ai.partner_outreach_suppressions")).rows});
 const response=(value:unknown,status=200)=>new Response(JSON.stringify(value),{status});
-function message(id="inbound1",options:Row={}):Row{
+function message(id="inbound1",options:MessageOptions={}):GmailMessage{
   const headers=[
     {name:"From",value:options.from??"Contact <recipient@example.invalid>"},
     {name:"Message-ID",value:"<"+id+"@recipient.example.invalid>"},
@@ -76,7 +89,7 @@ function request(body:Row={},auth="Bearer user-token",delegated?:string){
   return new Request("https://example.invalid/sync",{method:"POST",headers:{Authorization:auth,"Content-Type":"application/json",
     ...(delegated!==undefined?{"X-Impersonate-User-Id":delegated}:{})},body:JSON.stringify(body)});
 }
-function harness(options:Row={}){
+function harness(options:HarnessOptions={}){
   const calls:{url:string;method:string;redirect?:RequestInit["redirect"]}[]=[];
   const h=createPartnerReplyHandler({
     authenticate:async(token:string)=>token==="user-token"?user:null,
@@ -99,11 +112,11 @@ function harness(options:Row={}){
         subject:"Test",reply_to:["sender@example.invalid"],last_event:options.event??"delivered",...options.sent});
       if(url.includes("/messages?")){
         if(options.pageError)return response({},options.pageError);
-        return response(options.page??{messages:(options.messages??[message()]).map((m:Row)=>({id:m.id}))});
+        return response(options.page??{messages:(options.messages??[message()]).map(m=>({id:m.id}))});
       }
       if(url.includes("/messages/")){
         const parsed=new URL(url),id=decodeURIComponent(parsed.pathname.split("/").at(-1)!);
-        const found=(options.messages??[message()]).find((m:Row)=>m.id===id);
+        const found=(options.messages??[message()]).find(m=>m.id===id);
         if(!found)throw new Error("Unexpected message");
         if(parsed.searchParams.get("format")==="metadata"){
           const copy=structuredClone(found);delete copy.payload.body;return response(copy);
@@ -117,7 +130,7 @@ function harness(options:Row={}){
   return {handler:h,calls};
 }
 
-async function addOlderCandidates(count:number,options:Row={}) {
+async function addOlderCandidates(count:number,options:{replyTo?:string;invalid?:boolean}={}) {
   const actions:string[]=[];
   for(let index=0;index<count;index++) {
     const id="00000000-0000-4000-8000-"+String(100+index).padStart(12,"0");
@@ -223,6 +236,18 @@ describe("verified incoming partner replies",()=>{
     expect(outcomes.filter(r=>r.status==="recorded")).toHaveLength(1);
     expect(outcomes.filter(r=>r.status==="duplicate")).toHaveLength(19);
     expect((await state()).config.total_replies).toBe(1);
+  });
+  it.each([
+    {field:"p_gmail_message_id",length:512,status:"recorded"},
+    {field:"p_gmail_thread_id",length:512,status:"recorded"},
+    {field:"p_gmail_message_id",length:513,status:"blocked"},
+    {field:"p_gmail_thread_id",length:513,status:"blocked"},
+  ])("validates the real SQL boundary for $field ($length characters)",async({field,length,status})=>{
+    await bind();
+    const result=await record({[field]:"a".repeat(length)});
+    expect(result.status).toBe(status);
+    if(status==="blocked")expect(result.reason).toBe("reply_proof_mismatch");
+    expect((await state()).receipts).toHaveLength(status==="recorded"?1:0);
   });
   it("deduplicates a second Gmail copy with the same incoming RFC Message-ID",async()=>{
     await bind();await record();

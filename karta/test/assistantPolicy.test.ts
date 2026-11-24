@@ -54,6 +54,7 @@ function fixtureRows(): Record<string, Row[]> {
       activity_description: 'Données de test', expertise_areas: [], city: 'Ville fictive' }],
     partner_agent_config: [{ user_id: principal, company_name: 'Fiction', sender_name: 'Test Sender',
       sender_email: 'sender@example.invalid', sender_title: 'Test', outreach_tone: 'courtois',
+      target_countries: ['CH'], target_languages: ['de'],
       commission_first_payment: 10, commission_recurring: 5, require_approval_outreach: true }],
     partner_prospects: [{ id: prospectId, user_id: principal, name: 'Fictitious Prospect',
       email: 'prospect@example.invalid', type: 'association', niche: 'test', relance_count: 0 }],
@@ -520,6 +521,7 @@ describe('task endpoints', () => {
   });
   it.each(taskCases)('$name sends its actual task prompt and stops at simulated provider failure', async item => {
     const h = edge(item.name, { allowTavily: item.search,
+      ...(item.search ? { env: { ANTHROPIC_MODEL_MAIN: 'discovery-policy-model' } } : {}),
       provider: async () => new Response('simulated provider unavailable', { status: 503 }) });
     const response = await h.handler(request(item.body));
     expect(response.status).toBeGreaterThanOrEqual(500);
@@ -528,6 +530,17 @@ describe('task endpoints', () => {
     expect(h.unexpected).toEqual([]);
     expect(h.transport.mock.calls.map(call => call[0])).toEqual(item.search
       ? ['https://api.tavily.com/search', anthropicUrl] : [anthropicUrl]);
+    if (item.name === 'partner-find-prospects') {
+      expect(response.status).toBe(502);
+      expect(await response.json()).toEqual({ error: 'discovery_provider_failed' });
+      expect(h.modelBodies[0]!.model).toBe('discovery-policy-model');
+      expect(JSON.parse(h.modelBodies[0]!.messages[0]!.content)).toMatchObject({
+        target_countries: ['CH'], target_languages: ['de'],
+      });
+      expect(h.db.queries.find(query => query.table === 'partner_agent_config')?.filters)
+        .toContainEqual(['user_id', principal]);
+      expect(h.db.rpcCalls).toEqual([]);
+    }
     if (item.name === 'partner-send-outreach') {
       expect(h.db.rpcCalls).toEqual([
         { name: 'partner_outreach_reserve', args: {

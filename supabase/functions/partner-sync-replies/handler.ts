@@ -15,19 +15,25 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const opaque=/^[A-Za-z0-9_-]{1,512}$/;
 const email=/^[^\s@<>,;:]+@[^\s@<>,;:]+\.[^\s@<>,;:]+$/;
 const rfc=/^<[^<>\s@]+@[^<>\s@]+>$/;
-const controls=/[\x00-\x1f\x7f]/;
+function hasControls(value:string,allowHeaderWhitespace=false):boolean {
+  for(let index=0;index<value.length;index++) {
+    const code=value.charCodeAt(index);
+    if(code===127||code<32&&(!allowHeaderWhitespace||code!==9&&code!==10&&code!==13))return true;
+  }
+  return false;
+}
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"};
 const object=(v:unknown):Row|null=>v!==null&&typeof v==="object"&&!Array.isArray(v)?v as Row:null;
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json","Cache-Control":"no-store"}});
 function address(value:unknown):string|null {
-  if(typeof value!=="string"||value.length>998||controls.test(value)) return null;
+  if(typeof value!=="string"||value.length>998||hasControls(value)) return null;
   const text=value.trim();
   if(email.test(text)) return text.toLowerCase();
   const match=text.match(/^(?:"[^"]*"|[^<>"@,;]+)?\s*<([^<>]+)>$/);
   return match&&email.test(match[1])?match[1].toLowerCase():null;
 }
 function validRfc(value:unknown):value is string {
-  return typeof value==="string"&&value.length<=900&&!controls.test(value)&&rfc.test(value);
+  return typeof value==="string"&&value.length<=900&&!hasControls(value)&&rfc.test(value);
 }
 function header(headers:unknown,name:string,required=false):string|null {
   if(!Array.isArray(headers)||headers.length>200) return null;
@@ -35,7 +41,7 @@ function header(headers:unknown,name:string,required=false):string|null {
   if(matches.length>1||required&&matches.length!==1) return null;
   if(matches.length===0) return "";
   const value=matches[0].value;
-  if(typeof value!=="string"||value.length>16_384||/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(value)) return null;
+  if(typeof value!=="string"||value.length>16_384||hasControls(value,true)) return null;
   // RFC folding is accepted only as CRLF followed by whitespace.
   const unfolded=value.replace(/\r\n[ \t]+/g," ");
   return /[\r\n]/.test(unfolded)?null:unfolded.trim();
@@ -45,9 +51,9 @@ function candidate(value:unknown):Candidate|null {
   if(!c||typeof c.action_id!=="string"||!uuid.test(c.action_id)||typeof c.prospect_id!=="string"||!uuid.test(c.prospect_id)
     ||typeof c.provider_message_id!=="string"||!opaque.test(c.provider_message_id)
     ||!address(c.recipient)||!address(c.sender)||!address(c.reply_to)
-    ||typeof c.subject!=="string"||controls.test(c.subject)||typeof c.sent_at!=="string"||!Number.isFinite(Date.parse(c.sent_at))
+    ||typeof c.subject!=="string"||hasControls(c.subject)||typeof c.sent_at!=="string"||!Number.isFinite(Date.parse(c.sent_at))
     ||c.rfc_message_id!==null&&!validRfc(c.rfc_message_id)
-    ||c.reply_scan_page_token!==null&&(typeof c.reply_scan_page_token!=="string"||c.reply_scan_page_token.length>2048||controls.test(c.reply_scan_page_token))) return null;
+    ||c.reply_scan_page_token!==null&&(typeof c.reply_scan_page_token!=="string"||c.reply_scan_page_token.length>2048||hasControls(c.reply_scan_page_token))) return null;
   return c as Candidate;
 }
 export function verifiedReplyMetadata(message:unknown,expectedId:string,c:Candidate,parentRfc:string):Row|null {
@@ -162,7 +168,7 @@ export function createPartnerReplyHandler(deps:PartnerReplyDependencies) {
         const invalid=object(raw);
         if(typeof invalid?.action_id==="string"&&uuid.test(invalid.action_id)
           &&(invalid.reply_scan_page_token===null||typeof invalid.reply_scan_page_token==="string"
-            &&invalid.reply_scan_page_token.length<=2048&&!controls.test(invalid.reply_scan_page_token))) {
+            &&invalid.reply_scan_page_token.length<=2048&&!hasControls(invalid.reply_scan_page_token))) {
           try {await call("partner_reply_checkpoint",{...connection,p_action_id:invalid.action_id,
             p_expected_page_token:invalid.reply_scan_page_token,p_next_page_token:invalid.reply_scan_page_token});}
           catch { /* Invalid candidates remain explicitly reported. */ }
@@ -214,7 +220,7 @@ export function createPartnerReplyHandler(deps:PartnerReplyDependencies) {
         }
         const messages=page.messages??[];
         const next=page.nextPageToken??null;
-        if(!Array.isArray(messages)||messages.length>20||next!==null&&(typeof next!=="string"||next.length>2048||controls.test(next)))
+        if(!Array.isArray(messages)||messages.length>20||next!==null&&(typeof next!=="string"||next.length>2048||hasControls(next)))
           throw new Error("Invalid Gmail page");
         const seen=new Set<string>();
         for(const rawMessage of messages) {

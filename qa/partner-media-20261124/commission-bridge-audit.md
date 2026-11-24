@@ -6,7 +6,20 @@
 
 L’absence de raccord n’entraîne pas un retour silencieux au barème historique de 50 % / 10 %. Les composants de paiement actuellement versionnés ne consomment pas le snapshot de ce contrat. Ils ne produisent donc pas de commission médias à partir de celui-ci.
 
-Périmètre : code local de la branche `fix/partner-media-readiness-20261124`, base `18c40d0eb59b48636dd8d8fb54c0516b700ed746` et changements présents le 24 novembre 2026. Aucun état de production, autre dépôt de l’écosystème ou workflow n8n non versionné n’est supposé connu.
+Périmètre initial : code local de la branche `fix/partner-media-readiness-20261124`, base `18c40d0eb59b48636dd8d8fb54c0516b700ed746` et changements présents le 24 novembre 2026. La lecture complémentaire de ONE ci-dessous étend ce périmètre à des sources immuables identifiées. Aucun état de production ou workflow n8n non versionné n’est supposé connu.
+
+### Rapprochement avec PURAMA ONE
+
+**Le moteur d'affiliation existe déjà dans ONE et doit être réutilisé.** La limite constatée ici concerne son raccordement au parcours médias de PURAMA AI, pas l'absence d'un moteur dans l'écosystème.
+
+Lecture directe complémentaire du 24 novembre 2026 à la révision `a5fed2edaaa2332c0e9aba3321d9ee32cf89a17e` :
+
+- [`affiliation.ts`](https://github.com/puramapro-oss/purama-one/blob/a5fed2edaaa2332c0e9aba3321d9ee32cf89a17e/src/server/commerce/affiliation.ts) fournit notamment `bindAttribution` et `allocateAffiliation` : attribution, calculs et corrections de remboursement existent.
+- [`postgres-affiliation.ts`](https://github.com/puramapro-oss/purama-one/blob/a5fed2edaaa2332c0e9aba3321d9ee32cf89a17e/src/server/commerce/postgres-affiliation.ts) fournit `PostgresAffiliationStore`. Cet adaptateur se présente comme un adaptateur de test et exige un pool qualifié ; sa présence ne prouve pas une base opérationnelle raccordée.
+- [`product-referral.ts`](https://github.com/puramapro-oss/purama-one/blob/a5fed2edaaa2332c0e9aba3321d9ee32cf89a17e/src/lib/rewards/product-referral.ts) appelle réellement le moteur pour la part directe de 3 000 points de base, avec `simulationOnly: true`, `paymentAllowed: false` et `referralLinkCreated: false`. Le circuit lieu possède une répartition distincte, à préserver.
+- La [PR ONE 82](https://github.com/puramapro-oss/purama-one/pull/82) est ouverte, en brouillon et non fusionnée au moment de cette lecture. Les tests qu'elle rapporte n'ont pas été rejoués par ce lot.
+
+Le futur raccord doit relier contrats signés, identités, politique structurée et événements d'encaissement au moteur et au registre existants. Il ne doit pas créer un second moteur de commissions ni transformer une simulation en ordre de paiement.
 
 | Étape | État observé | Conséquence |
 | --- | --- | --- |
@@ -74,7 +87,7 @@ Une facture, un relevé et une référence de virement peuvent servir au suivi h
 2. **Raccorder le signataire au partenaire et au bénéficiaire.** Étendre `partner_active` avec la provenance du contrat, le snapshot approuvé et une identité bénéficiaire vérifiée, en préservant les lignes historiques. Une opération serveur idempotente doit prendre les données du contrat effectivement signé, jamais les taux courants de `partner_agent_config` ou une valeur du navigateur. L’activation doit attendre les données d’attribution nécessaires.
 3. **Raccorder les liens et codes au checkout existant.** Réutiliser les composants de partage et le parcours d’achat, avec un espace de codes explicite et une résolution serveur vers l’accord médias. Ne pas hériter implicitement du coupon influenceur de 50 % ni de sa fenêtre navigateur de 30 jours. Un panneau, un QR code et une publication peuvent être des supports distincts du même accord, sans créer plusieurs commissions pour une seule vente.
 4. **Rapprocher les événements Stripe existants.** Réutiliser `stripe_reconciliation_events` et l’authentification du webhook. Relier les indices de paiement au contrat et à la politique, vérifier le compte Stripe, le mode test/réel, le client, l’abonnement ou le paiement, les produits et les remboursements. Les événements incomplets restent à examiner.
-5. **Étendre le journal de commissions existant.** Ajouter la provenance, la devise, les montants dans l’unité minimale, la version de politique et une unicité économique indépendante du seul identifiant d’événement. Écrire des ajustements de remboursement et conserver les historiques. Le calcul doit utiliser exclusivement le 30/30 figé du contrat médias admissible.
+5. **Raccorder le moteur et le registre d'affiliation ONE existants.** Réutiliser leur politique, leur attribution immuable, leurs calculs et remboursements, avec un adaptateur de persistance qualifié. Relier la provenance, la devise, les montants dans l’unité minimale, la version de politique et l'unicité économique au suivi Partenaires. Éviter un deuxième registre financier faisant autorité. Le calcul médias doit utiliser le 30/30 figé du contrat admissible, sans écraser les conventions des circuits physiques.
 6. **Raccorder un règlement prouvé.** Réutiliser le compte Connect vérifié quand ce parcours est choisi, avec réservation du règlement, clé d’idempotence, preuve durable du prestataire et rapprochement des résultats incertains. Tant que ce raccord manque, le produit doit afficher un règlement manuel documenté ou un état à configurer, jamais un versement automatique accompli.
 
 ## Critères de réception du futur raccord

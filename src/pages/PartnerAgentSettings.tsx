@@ -39,6 +39,14 @@ const MEDIA_TERMS = [
   ['disputes', 'Réclamations et règlement des différends'],
 ] as const;
 
+function hasInvalidClauseControl(value: string): boolean {
+  for (let index = 0; index < value.length; index++) {
+    const code = value.charCodeAt(index);
+    if (code === 127 || (code < 32 && code !== 9 && code !== 10 && code !== 13)) return true;
+  }
+  return false;
+}
+
 export default function PartnerAgentSettings() {
   const { user } = useAuth();
   const userId = user?.id;
@@ -129,7 +137,7 @@ export default function PartnerAgentSettings() {
     const knownTerms = new Set<string>(MEDIA_TERMS.map(([key]) => key));
     if (typeof mediaTerms !== 'object' || Array.isArray(mediaTerms)
       || Object.entries(mediaTerms).some(([key, value]) => !knownTerms.has(key) || typeof value !== 'string'
-        || value.length > 2000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value))) {
+        || value.length > 2000 || hasInvalidClauseControl(value))) {
       toast.error('Conditions médias invalides', { description: 'Chaque rubrique accepte jusqu’à 2 000 caractères de texte. Vérifiez les conditions enregistrées.' });
       return;
     }

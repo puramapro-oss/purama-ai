@@ -57,3 +57,11 @@ L'analyse GitNexus applicative est partielle. Les impacts des fonctions existant
 - Commission européenne, transparence de l'interaction avec une IA : https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act
 
 Ces références motivent les garde-fous ; elles ne constituent pas une preuve d'exploitation en production. Les résultats distants de CI sont attachés à la demande d'intégration du lot.
+
+## Première réception distante et corrections
+
+La [PR 111](https://github.com/puramapro-oss/purama-ai/pull/111) a exécuté les suites KARTA : 89 cas SQL d'envoi, 55 de politique médias et 8 de découverte passent. La réception échoue sur un quantificateur de répétition non admis par PostgreSQL ; la correction sépare longueur et alphabet et ajoute quatre cas de bornes. La fixture historique de politique assistant reçoit son ciblage désormais requis, sans relâcher sa vérification du prompt réellement transmis. Les règles de lint ont été conservées : types des fixtures précisés et contrôles C0 réécrits avec le même comportement.
+
+La première CI a 4 890 tests réussis et 23 échecs ; ce résultat reste archivé dans `ci-first-result.json`. Le site s'est arrêté au lint avant navigateur et Deno. Le lint global corrigé passe localement avec zéro erreur et les 22 avertissements existants. Les 63 tests de politique assistant passent aussi après correction. La seconde exécution distante reste nécessaire.
+
+La lecture complémentaire de ONE confirme l'existence du moteur d'affiliation et du store à réutiliser. Le raccord médias et un règlement réel qualifié restent à établir ; voir les sources immuables ajoutées dans `commission-bridge-audit.md`.
