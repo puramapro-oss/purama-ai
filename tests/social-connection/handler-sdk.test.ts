@@ -10,7 +10,7 @@ const assert = Object.assign((value: unknown) => {
   },
 });
 
-// The import map loads the genuine installed Supabase 2.91.0 package. Only HTTP
+// The import map loads the genuine installed Supabase 2.119.2 package. Only HTTP
 // transport and the serve listener are injected; no API/database is contacted.
 await import("../../supabase/functions/social-connect/index.ts");
 const connect = handler();

@@ -67,8 +67,8 @@ function providerError(status = 403) {
   return jsonResponse({ code: '42501', message: 'synthetic provider detail', details: null, hint: null }, status);
 }
 
-test('SDK 2.91.0 builds a profile GET scoped by actor and purama_ai schema', async () => {
-  assert.equal(sdkVersion, '2.91.0');
+test('SDK 2.119.2 builds a profile GET scoped by actor and purama_ai schema', async () => {
+  assert.equal(sdkVersion, '2.119.2');
   const { calls, ports } = fixture(() => jsonResponse([PROFILE]));
   assert.deepEqual(await ports.getProfile(ACTOR), PROFILE);
   assert.equal(calls.length, 1);

@@ -10,6 +10,8 @@ Réception PR 108 : le premier arbre `2dc63a47c189e8b18cf8d05db551ef95f3057f64` 
 
 La deuxième tête `6ebe773d` reçoit 151/151 contrôles de matrice, mais révèle un pin npm ancien dans les imports Edge résolus manuellement par Deno. Le complément aligne 34 fichiers actifs, conserve leurs corps et assertions, reçoit 612 tests ciblés et le contrôle Deno 2.9.6 avant/après du point bloquant. Le typage CI couvre directement les 21 sources Edge concernées. La réception complète, y compris les étapes site auparavant sautées, reste obligatoire sur la nouvelle tête avant fusion ; preuves dans `qa/iao-continuity-20261124/sdk-upgrade/edge-imports/`.
 
+La réception de `58536f32` a identifié le module privé Entraide volontairement absent du checkout public. La qualification est répartie suivant l'architecture existante : 19 imports SDK accessibles dans la CI publique ; deux helpers privés reçus par les quatre routes Entraide avec Deno 2.9.6 et le bundle canonique local. Les huit tests du SDK passent après alignement de leur ancienne égalité de version ; 131 empreintes publiques concordent et le paquet privé reste inchangé. La réception privée doit correspondre au commit final avant fusion. Son automatisation dans GitHub n'est pas revendiquée.
+
 ## Qualification des appareils et dépendances — reprise du 24 novembre 2026
 
 État : `PRET_A_CODER` pour les corrections et qualifications des composants existants, dans le référentiel de 168 capacités approuvé et la demande actuelle de Matiss de tester, corriger et débloquer les parcours sur différents appareils. Les nouvelles pistes scientifiques ne sont pas assimilées à une validation de produit supplémentaire.
