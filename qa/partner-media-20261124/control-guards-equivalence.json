@@ -1,0 +1,7 @@
+{
+  "baseline": "6fcc34b3bd115db4be690d2e7dc2c1c0e8e0784e",
+  "file": "supabase/functions/partner-generate-contract/media-contract.ts",
+  "comparisons": 556,
+  "mismatches": [],
+  "coverage": "ASCII 0..127, additional Unicode whitespace, non-control Unicode; identity, offer name, URL and contract clause"
+}

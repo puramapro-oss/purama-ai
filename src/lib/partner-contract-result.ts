@@ -110,6 +110,15 @@ export function contractFeedback(result: PartnerContractResult): {
         preview_unavailable: 'Le PDF exact n’est pas accessible. L’approbation reste désactivée.',
         approval_required: 'Relisez le PDF exact pour autoriser cette demande de signature.',
         previous_attempt_requires_review: 'Une tentative antérieure doit être vérifiée avant tout nouvel envoi.',
+        media_contract_terms_incomplete: 'Complétez les dix rubriques « Conditions des contrats médias » dans les paramètres du partenariat avant de préparer le contrat.',
+        media_contract_terms_invalid: 'Vérifiez les dix rubriques « Conditions des contrats médias » dans les paramètres : chaque rubrique doit contenir entre 10 et 2 000 caractères de texte valide.',
+        media_contract_offer_invalid: 'Dans la qualification du prospect, renseignez le nom de l’offre et une page de présentation HTTPS valide.',
+        media_contract_rate_mismatch: 'Le projet média doit appliquer 30 % au premier paiement et aux échéances admissibles. Faites vérifier le projet avant de reprendre sa préparation.',
+        media_contract_version_invalid: 'La version des conditions du contrat média n’est pas prise en charge. Faites vérifier le projet avant de reprendre sa préparation.',
+        media_contract_identity_invalid: 'Vérifiez le nom et l’email de l’expéditeur, le nom de l’entreprise et les coordonnées du partenaire avant de préparer le contrat.',
+        editorial_contract_not_applicable: 'Ce dossier concerne une proposition rédactionnelle indépendante. Aucun contrat d’affiliation ne sera préparé pour ce profil.',
+        contract_profile_invalid: 'Vérifiez le type de proposition dans la qualification du prospect avant de préparer un contrat.',
+        campaign_role_mismatch: 'La proposition de contrat doit correspondre au rôle du destinataire. Vérifiez la qualification ; une rédaction indépendante reçoit une proposition éditoriale.',
       };
       return { kind: 'warning', title: 'Contrat bloqué',
         description: reasons[result.reason ?? ''] ?? 'Les conditions de préparation ou d’envoi ne sont pas réunies. Vérifiez le dossier.' };

@@ -50,3 +50,8 @@ verify_jwt = true
 # The handler fails closed if the secret is absent or does not match.
 [functions.contracts-webhook]
 verify_jwt = false
+
+# User identity is verified with auth.getUser; scheduler delegation requires the
+# exact service secret inside the handler. No caller-selected user is trusted.
+[functions.partner-sync-replies]
+verify_jwt = false

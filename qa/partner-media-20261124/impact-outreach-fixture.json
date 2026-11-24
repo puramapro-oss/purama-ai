@@ -1,0 +1,9 @@
+{
+  "error": "Target 'beforeEach' not found",
+  "target": {
+    "name": "beforeEach"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

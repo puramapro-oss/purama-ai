@@ -1,0 +1,9 @@
+{
+  "error": "Target 'buildMediaPartnerContractText' not found",
+  "target": {
+    "name": "buildMediaPartnerContractText"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

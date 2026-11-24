@@ -1,0 +1,9 @@
+{
+  "error": "Target 'findPart' not found",
+  "target": {
+    "name": "findPart"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

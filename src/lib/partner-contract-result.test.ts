@@ -41,4 +41,27 @@ describe('contract response boundary', () => {
   it.each(['unknown', 'in_progress', 'blocked', 'failed'])('never makes %s a send success', status => {
     expect(contractFeedback(parsePartnerContractResult({ status, reused: true })).kind).not.toBe('success');
   });
+  it.each([
+    ['media_contract_terms_incomplete', /Complétez les dix rubriques.*paramètres/],
+    ['media_contract_terms_invalid', /10 et 2 000 caractères/],
+    ['media_contract_offer_invalid', /qualification du prospect.*HTTPS/],
+    ['media_contract_rate_mismatch', /30 %.*échéances admissibles/],
+    ['media_contract_version_invalid', /version.*pas prise en charge/],
+    ['media_contract_identity_invalid', /expéditeur.*entreprise.*partenaire/],
+    ['editorial_contract_not_applicable', /rédactionnelle indépendante.*Aucun contrat d’affiliation/],
+    ['contract_profile_invalid', /type de proposition.*qualification/],
+    ['campaign_role_mismatch', /rôle du destinataire.*proposition éditoriale/],
+  ])('explains the media or editorial refusal %s without reporting a send', (reason, explanation) => {
+    const feedback = contractFeedback(parsePartnerContractResult({ status: 'blocked', reason, reused: false }));
+    expect(feedback.kind).toBe('warning');
+    expect(feedback.title).toBe('Contrat bloqué');
+    expect(feedback.description).toMatch(explanation);
+    expect(feedback.description).not.toContain(String(reason));
+  });
+  it('keeps an unknown blocked reason generic instead of displaying server details', () => {
+    const feedback = contractFeedback(parsePartnerContractResult({ status: 'blocked', reason: 'private_provider_details', reused: false }));
+    expect(feedback.kind).toBe('warning');
+    expect(feedback.description).toContain('Vérifiez le dossier');
+    expect(feedback.description).not.toContain('private_provider_details');
+  });
 });

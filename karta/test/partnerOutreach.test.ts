@@ -12,6 +12,8 @@ const { parseOutreachResult, outreachFeedback, outreachStepForStatus } = await i
 const historical = readFileSync(new URL("../../supabase/migrations/20260406230000_partner_agent.sql", import.meta.url), "utf8");
 const migration = readFileSync(new URL("../../supabase/migrations/20261110030000_partner_outreach_reservations.sql", import.meta.url), "utf8");
 const scheduleMigration = readFileSync(new URL("../../supabase/migrations/20261123020000_partner_outreach_schedule.sql", import.meta.url), "utf8");
+const discoveryMigration = readFileSync(new URL("../../supabase/migrations/20261124050000_partner_discovery_evidence.sql", import.meta.url), "utf8");
+const mediaPolicyMigration = readFileSync(new URL("../../supabase/migrations/20261124050100_partner_media_policy.sql", import.meta.url), "utf8");
 const user = "00000000-0000-4000-8000-000000000001";
 const other = "00000000-0000-4000-8000-000000000002";
 const prospect = "00000000-0000-4000-8000-000000000011";
@@ -33,8 +35,11 @@ beforeAll(async () => {
     INSERT INTO auth.users(id) VALUES ('${user}'), ('${other}');
   `);
   await db.exec(historical);
+  await db.exec(readFileSync(new URL("../../supabase/migrations/20260406210000_email_agent.sql", import.meta.url), "utf8"));
   await db.exec(migration);
   await db.exec(scheduleMigration);
+  await db.exec(discoveryMigration);
+  await db.exec(mediaPolicyMigration);
 });
 
 beforeEach(async () => {
@@ -50,8 +55,28 @@ beforeEach(async () => {
     VALUES ($1,$2,'Test prospect','recipient@example.invalid','ready_to_contact'),
       ($3,$4,'Other prospect','other-recipient@example.invalid','ready_to_contact')`,
   [prospect,user,otherProspect,other]);
+  await qualifyFixture(prospect, user);
+  await qualifyFixture(otherProspect, other);
 });
 afterAll(async () => { await db?.close(); });
+
+// Positive fixtures represent an operator-recorded, explicit opt-in. Discovery
+// alone is deliberately never enough to make a recipient eligible for Resend.
+async function qualifyFixture(id: string, owner: string) {
+  await db.query("SELECT set_config('request.jwt.claim.sub',$1,false)", [owner]);
+  await db.exec('SET ROLE authenticated');
+  try {
+    const result = await db.query<{ value: Row }>("SELECT purama_ai.partner_prospect_qualify($1,$2::jsonb) AS value", [id, JSON.stringify({
+      profile: 'legacy', role: 'commercial', source_url: 'https://fixture.example.invalid/contact',
+      country: 'FR', language: 'fr', consent_reference: 'Fictitious explicit opt-in receipt for this owned test contact',
+      consent_at: '2020-01-01T00:00:00Z', offer: {},
+    })]);
+    expect(result.rows[0].value).toMatchObject({ status: 'qualified' });
+  } finally {
+    await db.exec('RESET ROLE');
+    await db.query("SELECT set_config('request.jwt.claim.sub','',false)");
+  }
+}
 
 const functions: Record<string, string[]> = {
   partner_outreach_reserve: ["p_user_id","p_prospect_id","p_step","p_claim_token"],
@@ -84,6 +109,29 @@ async function prepare(id = prospect, claim = token): Promise<Row> {
   return mustRpc("partner_outreach_save_draft", {
     p_user_id:user,p_action_id:reserved.action_id,p_claim_token:claim,p_subject:"Test",p_body_html:"<p>Test</p>",
   });
+}
+
+async function seedFollowupHistory(number: number) {
+  for (let index = 0; index < number; index++) {
+    const step = index === 0 ? 'outreach' : `relance_${index}`;
+    if (index > 0) await db.query("UPDATE purama_ai.partner_prospects SET next_action_at=now()-interval '1 second' WHERE id=$1", [prospect]);
+    const reserved = await mustRpc('partner_outreach_reserve', { p_user_id: user, p_prospect_id: prospect, p_step: step, p_claim_token: token });
+    expect(reserved).toMatchObject({ status: 'preparing', claimed: true });
+    let ready = await mustRpc('partner_outreach_save_draft', { p_user_id: user, p_action_id: reserved.action_id,
+      p_claim_token: token, p_subject: 'Prior fixture subject', p_body_html: '<p>Previously recorded fixture email</p>' });
+    if (ready.status === 'pending_approval') ready = await mustRpc('partner_outreach_approve', {
+      p_user_id: user, p_email_id: ready.email_id, p_approval_version: (ready.approval as Row).version,
+    });
+    expect(await mustRpc('partner_outreach_begin_send', { p_user_id: user, p_action_id: ready.action_id, p_claim_token: token }))
+      .toMatchObject({ status: 'sending', claimed: true });
+    expect(await mustRpc('partner_outreach_finish', { p_user_id: user, p_action_id: ready.action_id,
+      p_claim_token: token, p_outcome: 'sent', p_provider_message_id: `prior-provider-${index}` }))
+      .toMatchObject({ status: 'sent' });
+    // Distinct provider UUID and verified RFC Message-ID are intentional. The
+    // reply suite separately verifies the real GET-provider binding operation.
+    await db.query('UPDATE purama_ai.partner_outreach_dispatches SET rfc_message_id=$1 WHERE id=$2',
+      [`<prior-fixture-${index}@example.invalid>`, ready.action_id]);
+  }
 }
 
 type HarnessOptions = {
@@ -156,7 +204,7 @@ it("approves exactly the frozen preview even if the editable legacy email row wa
   const h=harness();
   const pending=await (await h.handler(request())).json();
   expect(parseOutreachResult(pending).approval).toEqual({
-    version:expect.any(String),from:"Test Sender <sender@example.invalid>",
+    version:expect.any(String),from:"IAO — Purama <sender@example.invalid>",
     to:"recipient@example.invalid",subject:"Test",body_html:"<p>Test</p>",
   });
   await db.query("UPDATE purama_ai.partner_emails SET subject='Tampered',body_html='<script>ignored</script>',status='approved' WHERE id=$1",[pending.email_id]);
@@ -199,6 +247,7 @@ it("refuses another user's approval even with a forged user_id and the exact ver
 it("binds approval to both the email and its version, rejecting a different or stale draft", async () => {
   await requireApproval();
   await db.query("UPDATE purama_ai.partner_prospects SET user_id=$1 WHERE id=$2",[user,otherProspect]);
+  await qualifyFixture(otherProspect, user);
   const h=harness();
   const first=await (await h.handler(request())).json();
   const second=await (await h.handler(request({prospect_id:otherProspect}))).json();
@@ -216,7 +265,7 @@ it("binds approval to both the email and its version, rejecting a different or s
 it.each([
   ["status='rejected',has_replied=true","contact_suppressed","prospect"],
   ["has_replied=true","contact_has_replied","prospect"],
-  ["email='changed@example.invalid'","recipient_changed","prospect"],
+  ["email='changed@example.invalid'","contact_qualification_required","prospect"],
   ["is_active=false","agent_inactive","config"],
   ["sender_email='changed@example.invalid'","sender_changed","config"],
 ])("rechecks %s after preview and before an approved send", async (patch,reason,table) => {
@@ -227,6 +276,16 @@ it.each([
   if (table === "prospect") await db.query(`UPDATE purama_ai.partner_prospects SET ${patch} WHERE id=$1`,[prospect]);
   else await db.query(`UPDATE purama_ai.partner_agent_config SET ${patch} WHERE user_id=$1`,[user]);
   expect(await (await h.handler(approvalRequest(pending))).json()).toMatchObject({status:"blocked",reason});
+  expect(h.sends()).toHaveLength(0);
+});
+
+it('rejects the frozen recipient even when the replacement address was subsequently qualified', async () => {
+  await requireApproval();
+  const h = harness();
+  const pending = await (await h.handler(request())).json();
+  await db.query("UPDATE purama_ai.partner_prospects SET email='changed@example.invalid' WHERE id=$1", [prospect]);
+  await qualifyFixture(prospect, user);
+  expect(await (await h.handler(approvalRequest(pending))).json()).toMatchObject({ status: 'blocked', reason: 'recipient_changed' });
   expect(h.sends()).toHaveLength(0);
 });
 
@@ -242,6 +301,7 @@ it("does not interpret a configuration change as approval for an already pending
 
 it.each([1,2,3])("reopens and approves follow-up %i from the current prospect status without regenerating it", async (number) => {
   await requireApproval();
+  await seedFollowupHistory(number);
   const currentStatus=number === 1 ? "contacted" : `relance_${number-1}`;
   await db.query("UPDATE purama_ai.partner_prospects SET status=$1,relance_count=$2,first_contact_at=now()-interval '10 days',next_action_at=now()-interval '1 day' WHERE id=$3",[currentStatus,number-1,prospect]);
   const type=outreachStepForStatus(currentStatus);
@@ -422,6 +482,7 @@ it("rejects missing authentication and unauthorized step names without calls", a
 it("serializes the daily cap across different prospects and counts legacy sends", async () => {
   await db.query("UPDATE purama_ai.partner_agent_config SET daily_outreach_limit=1 WHERE user_id=$1",[user]);
   await db.query("UPDATE purama_ai.partner_prospects SET user_id=$1 WHERE id=$2",[user,otherProspect]);
+  await qualifyFixture(otherProspect, user);
   const h=harness();
   await Promise.all([h.handler(request()),h.handler(request({prospect_id:otherProspect}))]);
   expect(h.sends()).toHaveLength(1);
@@ -432,6 +493,7 @@ it("serializes the daily cap across different prospects and counts legacy sends"
 it("counts pre-migration outreach towards the daily cap", async () => {
   await db.query("UPDATE purama_ai.partner_agent_config SET daily_outreach_limit=1 WHERE user_id=$1",[user]);
   await db.query("UPDATE purama_ai.partner_prospects SET user_id=$1 WHERE id=$2",[user,otherProspect]);
+  await qualifyFixture(otherProspect, user);
   await db.query("INSERT INTO purama_ai.partner_emails(user_id,prospect_id,type,subject,body_html,status,sent_at) VALUES ($1,$2,'outreach','Old','Old','sent',now())",[user,otherProspect]);
   const h=harness();
   expect(await (await h.handler(request())).json()).toMatchObject({status:"blocked",reason:"daily_limit"});
@@ -484,6 +546,8 @@ it("reapplies the migration without losing evidence or reopening client permissi
   const before=(await db.query("SELECT * FROM purama_ai.partner_outreach_dispatches")).rows;
   await db.exec(migration);
   await db.exec(scheduleMigration);
+  await db.exec(discoveryMigration);
+  await db.exec(mediaPolicyMigration);
   expect((await db.query("SELECT * FROM purama_ai.partner_outreach_dispatches")).rows).toEqual(before);
   expect((await db.query("SELECT has_function_privilege('authenticated','purama_ai.partner_outreach_finish(uuid,uuid,uuid,text,text)','EXECUTE') AS allowed")).rows).toEqual([{allowed:false}]);
 });
@@ -604,6 +668,7 @@ describe('account outreach schedules', () => {
   });
 
   it('selects only due follow-ups and rechecks opposition when their queued call reaches the server', async () => {
+    await seedFollowupHistory(1);
     await db.query("UPDATE purama_ai.partner_prospects SET status='contacted',first_contact_at=now()-interval '5 days',next_action_at=now()-interval '1 day',relance_count=0 WHERE id=$1",[prospect]);
     expect((await db.query("SELECT * FROM purama_ai.partner_outreach_due('followup',100)")).rows)
       .toEqual([{prospect_id:prospect,user_id:user,step:'relance_1'}]);
@@ -670,8 +735,9 @@ it('uses admission wall time after the transaction started for its counted dispa
 
 it('bounds discovery per account by remaining quota and five candidate drafts per run', async () => {
   for(let i=0;i<9;i++) {
-    await db.query(`INSERT INTO purama_ai.partner_prospects(user_id,name,email,status)
-      VALUES ($1,'Additional fictitious recipient',$2,'ready_to_contact')`,[user,`candidate${i}@example.invalid`]);
+    const inserted = await db.query<{ id: string }>(`INSERT INTO purama_ai.partner_prospects(user_id,name,email,status)
+      VALUES ($1,'Additional fictitious recipient',$2,'ready_to_contact') RETURNING id`,[user,`candidate${i}@example.invalid`]);
+    await qualifyFixture(inserted.rows[0].id, user);
   }
   const due=()=>db.query<{user_id:string}>("SELECT * FROM purama_ai.partner_outreach_due('outreach',100)");
   expect((await due()).rows.filter(r=>r.user_id===user)).toHaveLength(5);

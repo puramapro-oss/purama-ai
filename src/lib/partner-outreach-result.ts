@@ -84,6 +84,18 @@ export function outreachFeedback(result: OutreachResult): {
         sender_changed: 'L’identité de l’expéditeur a changé depuis la préparation.',
         previous_attempt_requires_review: 'Une tentative antérieure existe. Son résultat doit être vérifié avant tout nouvel envoi.',
         stale_approval: 'Ce brouillon a changé. Rechargez son aperçu avant de le valider.',
+        contact_qualification_required: 'Vérifiez le rôle et la source de cette adresse dans la fiche du contact.',
+        provider_opt_in_required: 'Ce service d’envoi exige l’accord du destinataire. Renseignez une preuve réelle dans la qualification du contact.',
+        contact_role_required: 'Précisez le service ou le rôle de votre interlocuteur.',
+        campaign_role_mismatch: 'La proposition ne correspond pas au rôle du contact. Une rédaction indépendante reçoit une proposition éditoriale.',
+        offer_required: 'Renseignez le produit, sa page de référence et une description vérifiée.',
+        human_review_required: 'Le mode signé par une personne nécessite la validation du message exact.',
+        media_followup_limit: 'La séquence médias comporte au maximum deux relances.',
+        campaign_changed: 'L’offre, le rôle, les conditions ou la permission ont changé depuis cet aperçu. Aucun envoi n’a eu lieu.',
+        followup_thread_required: 'Le fil du message précédent doit être confirmé avant cette relance.',
+        reply_mailbox_required: 'Raccordez une boîte Gmail active correspondant à l’adresse d’envoi pour suivre les réponses.',
+        outreach_language_unsupported: 'Ce modèle médias est disponible en français, anglais, allemand, espagnol, italien et portugais. Choisissez une langue adaptée au destinataire.',
+        outreach_policy_migration_required: 'La mise à jour du service partenaires doit être terminée avant les envois.',
       };
       return { kind: 'warning', title: 'Envoi bloqué',
         description: reasons[result.reason ?? ''] ?? 'Les conditions d’envoi ne sont pas réunies. Aucun nouvel email n’a été envoyé.' };

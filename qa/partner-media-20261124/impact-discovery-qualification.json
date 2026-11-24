@@ -1,0 +1,9 @@
+{
+  "error": "Target 'handleQualification' not found",
+  "target": {
+    "name": "handleQualification"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
