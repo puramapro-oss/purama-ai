@@ -19,21 +19,21 @@ export function validateToolParams(tool: AnyToolDefinition, params: unknown): as
   const value = params as Record<string, unknown>;
   const required = new Set(schema.required ?? []);
   for (const key of required) {
-    if (!(key in value) || value[key] === undefined || value[key] === null) {
+    if (!Object.hasOwn(value, key) || value[key] === undefined || value[key] === null) {
       throw new Error(`Paramètre requis manquant pour ${tool.name}: ${key}`);
     }
   }
 
   if (schema.additionalProperties === false) {
     for (const key of Object.keys(value)) {
-      if (!(key in schema.properties)) {
+      if (!Object.hasOwn(schema.properties, key)) {
         throw new Error(`Paramètre inconnu pour ${tool.name}: ${key}`);
       }
     }
   }
 
   for (const [key, raw] of Object.entries(value)) {
-    const rule = schema.properties[key];
+    const rule = Object.hasOwn(schema.properties, key) ? schema.properties[key] : undefined;
     if (!rule || raw === undefined || raw === null) continue;
 
     const expected = rule.type;

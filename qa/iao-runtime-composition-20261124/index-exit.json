@@ -1,0 +1,1 @@
+{"command": ["/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus", "analyze", "--index-only", "--skip-fts", "--workers", "1", "--name", "iao-runtime-composition-20261124"], "exit": -9}

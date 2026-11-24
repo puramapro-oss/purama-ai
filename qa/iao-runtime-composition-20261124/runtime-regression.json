@@ -1,0 +1,24 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "test/iao-facade.test.ts",
+    "test/iaoAdmissionRevalidation.test.ts",
+    "test/iaoAdmissionDeadline.test.ts",
+    "test/iaoIdentityBoundary.test.ts",
+    "test/iaoCancellationReceiptMonotonicity.test.ts",
+    "test/iaoCompletedImmutability.test.ts",
+    "test/iaoCompletedRetention.test.ts",
+    "test/iaoExecutionBudget.test.ts",
+    "test/iaoPendingRetention.test.ts",
+    "test/kartaRuntimeDeadline.test.ts",
+    "test/runtimeLifecycle.test.ts",
+    "test/runtimeProbe.test.ts",
+    "test/runtimeDeadline.test.ts",
+    "test/runtimeUsageReadiness.test.ts"
+  ],
+  "exit": 0,
+  "seconds": 5.912,
+  "network": "No real provider or database requested; tests inject boundaries"
+}

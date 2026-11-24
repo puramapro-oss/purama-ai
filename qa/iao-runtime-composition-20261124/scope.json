@@ -1,0 +1,27 @@
+{
+  "state": "REALISE_ET_TESTE_LOCALEMENT_CI_PENDING",
+  "base": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "authorization": "Référentiel IAO168 approuvé, Go intègre tout et demande actuelle de poursuivre les corrections vérifiées ; politique existante KARTA d'arrêt des nouvelles admissions.",
+  "branch": "feat/iao-runtime-composition-20261124",
+  "owner": "/root",
+  "assignments": {
+    "/root": ["karta/src/api/server.ts", "docs/iao/IAO-INTERFACE-CONTRACT.md", "task_plan.md", "vercel.json", "qa/iao-runtime-composition-20261124/", "verification and consolidation publication"],
+    "/root/iao_final_ci_reception": ["karta/test/apiIaoGlobalStop.test.ts", "karta/test/apiIaoIntegration.test.ts readiness fixtures", "karta/test/apiIaoTransportBudget.test.ts readiness fixtures", "isolated reproduction evidence"],
+    "/root/iao_ar_continuity_audit": ["read-only canonical SMARANA and Fabric audit"],
+    "/root/iao_capability_gap_audit": ["read-only canonical session authority and Codex adapter audit"]
+  },
+  "acceptance": [
+    "Both IAO submit aliases refuse work when either admission probe observes global stop.",
+    "IAO requires explicitly inactive global stop; unknown and malformed readiness do not admit work.",
+    "The same guard covers conversation and memory-control admissions without an extra probe or model call.",
+    "Authenticated lookup/cancel, healthy dependency reporting and administrative stop release remain available.",
+    "The shared monotonic admission deadline, identity revalidation and lifecycle interruption remain unchanged.",
+    "Preserve negative baseline, targeted regression, typecheck/build and exact published-tree CI before consolidation merge."
+  ],
+  "limits": [
+    "A stop after the final probe is not claimed to be atomically ordered with provider effects.",
+    "No replacement session authority, tenant mapping, memory database, durable receipt or provider.",
+    "No paid service, model download/start, production deployment or main merge.",
+    "Private canonical code remains private and unchanged; a socket alone does not attest Fabric RPC/2."
+  ]
+}

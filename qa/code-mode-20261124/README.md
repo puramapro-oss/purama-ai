@@ -74,3 +74,34 @@ La reconstruction locale de l'index a échoué à plusieurs reprises ; les résu
 L'indexation de tout le runtime et des scripts KARTA a réussi. Les six fichiers du lot et tous les fichiers TypeScript du runtime ont des empreintes identiques à la proposition locale, sans changement pendant l'analyse (`reconciliation-mac-match.json`). Les tests et documents restent hors graphe. Le contrôle staged réussit : **5 symboles, tous dans les deux fichiers produit attendus, 6 flux, risque HIGH**. La comparaison `main` réussit aussi : **2 869 fichiers, 3 214 symboles, 309 flux, risque CRITICAL**, avec liste de symboles plafonnée ; elle inclut toute la consolidation antérieure. Ces résultats ne remplacent pas les limites d'extraction signalées par l'outil.
 
 Les reçus Mac et les sorties exactes de l'analyse sont conservés à côté des contrôles initiaux. La CI de la nouvelle tête doit être reçue après publication ; son résultat final sera attaché à la description de la PR pour éviter de modifier à nouveau les sources seulement pour y enregistrer ce résultat.
+
+## Suite corrective — paramètres d'outils et fichiers PDF
+
+Périmètre `PRET_A_CODER`, au titre de la demande de continuation du 24 novembre : corriger les défauts reproductibles dans l'architecture IAO existante, sans second moteur, changement de modèle, suppression de données ou nouvelle infrastructure. Le parent coordonne les sources produit ; deux revues séparées couvrent les paramètres et le transport PDF.
+
+Le raccordement à `04ff79cf8c5d1061e04cf631efac21601978433e` reprend l'admission par arrêt global de la PR 110. Le seul conflit est l'ajout simultané de branches dans `vercel.json` ; les deux interdictions de déploiement sont conservées.
+
+Critères de réception de ce complément :
+
+1. Les arguments et règles hérités ne satisfont pas un schéma d'outil ; les clés explicitement déclarées, objets sans prototype et valeurs optionnelles admises restent compatibles.
+2. Une décision dont la seconde action est invalide n'exécute ni ne met en approbation la première ; les diagnostics publics ne recopient pas les valeurs privées.
+3. Un nom PDF ne permet ni traversée de dossier, ni changement de bucket, ni divergence entre la destination d'upload et le lien rendu. La validation précède le rendu et le transport.
+4. Le parcours PDF valide produit un document lisible avec le SDK installé ; une erreur de stockage reste une erreur et aucune donnée privée n'est reprise dans le diagnostic de nom.
+5. Analyses d'impact avant édition, régressions rouges puis vertes, typecheck/build, revue indépendante, détection des changements et CI sur la tête finale.
+
+L'index ciblé de quatorze fichiers inclut tous les appelants directs du validateur et les entrées principales ; il ne couvre pas tout l'écosystème. Son analyse classe `validateToolParams` CRITICAL (cinq appelants directs, six processus) ; ce risque a été signalé avant édition. Les accès dynamiques à l'outil PDF restent UNKNOWN dans le graphe et sont complétés par la recherche des registres et agents consommateurs. Les paramètres d'indexation et empreintes seront conservés avec les reçus de ce complément.
+
+La nouvelle sonde Desktop Commander a aussi échoué par absence de réponse du Mac ; les deux connexions MacDevBridge retournent une erreur interne. Aucun contrôle de volume, bucket actif, sauvegarde ou serveur de production n'est déclaré réussi sur cette base. Le caractère public ou privé du bucket PDF n'est pas modifié par ce correctif de chemin.
+
+### Réception locale du complément
+
+- Validateur : 32 échecs reproduits parmi 76 cas avant correction ; les mêmes 76 passent après correction, sans modifier les attentes.
+- PDF : 34 échecs reproduits parmi 39 cas avant correction ; les mêmes 39 passent après correction. Le PDFKit, le lecteur PDF et le SDK Supabase sont réels, le transport HTTP est simulé.
+- Matrice de dix-huit fichiers : 351 assertions réussissent dans seize fichiers. Deux workers SQL (`approvalContinuation` et `approvalParentGuard`) sont interrompus par SIGKILL, laissant 90 assertions non exécutées et un code de sortie 1. Le champ `success: true` du reporter JSON ne qualifie pas cette commande comme réussie.
+- Le build de production passe. Le typecheck complet local est interrompu (137) ; le lint local ne démarre pas faute de dépendances racine. Les gates équivalentes doivent réussir dans la CI finale avant intégration.
+- Revue indépendante des cinq fichiers du complément : aucun blocage identifié, empreintes identiques à la sortie de revue. Elle ne remplace ni le typecheck complet, ni les contrôles en production.
+- Détection staged : huit symboles attendus dans trois fichiers runtime, neuf flux, risque HIGH. Deux symboles de `server.ts` proviennent de la consolidation PR110 ; les autres concernent ce correctif. Comparaison avec `main` : CRITICAL, incluant la consolidation antérieure et limitée au graphe déclaré.
+
+Les commandes, sorties et empreintes sont conservées dans `boundary-evidence.zip` ; `boundary-verification.json` en donne le manifeste et les limites. Les comptages sont non additifs. Le résultat de CI sur le commit final sera consigné dans la description de la PR, sans produire un nouveau commit uniquement pour actualiser le compte rendu.
+
+Les noms de fichiers contenant un chemin, `%`, `?`, `#`, des contrôles ou des blancs périphériques sont désormais refusés explicitement avant rendu/envoi. Les noms usuels français, le propriétaire serveur, le bucket, l'absence d'écrasement et le contrat de retour `{ url }` sont conservés. L'objet de paramètres est capturé avant l'attente du rendu, empêchant une mutation du nom entre validation et upload. La publicité du bucket et les URL précédentes ne sont pas modifiées ; leur qualification active reste nécessaire.

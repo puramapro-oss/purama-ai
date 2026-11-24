@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "kind": "independent static review, no execution",
+  "reviewer": "/root/iao_capability_gap_audit",
+  "base": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "checks": [
+    "IAO submission only",
+    "administrative recovery unchanged",
+    "lookup/cancel/health unchanged",
+    "rejected probe maps to generic 503",
+    "existing monotonic deadline preserved",
+    "strict false agrees with validated canonical probe"
+  ],
+  "risk": "CRITICAL admission path; partial graph cannot establish complete impact",
+  "limits": [
+    "No atomic ordering after final probe",
+    "Does not activate production ports"
+  ],
+  "sourceSha256": {
+    "karta/src/api/server.ts": "2d40844c00e618ab7e7b480afb549809769f431b307eb69336056113ae7793c0",
+    "docs/iao/IAO-INTERFACE-CONTRACT.md": "65d6125c764f86acc45b5b8249e56f933fb55158d24d3e800ea506dfb2367f66"
+  }
+}

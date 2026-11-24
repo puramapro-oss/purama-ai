@@ -16,7 +16,7 @@ vi.mock("../src/engine/killswitch.js", () => ({ setGlobalKillSwitch: vi.fn() }))
 
 const id = "11111111-1111-4111-8111-111111111111";
 const body = { type: "conversation", requestId: id, conversationId: "conversation", prompt: "test" };
-const ready = async (): Promise<RuntimeReadiness> => ({ ready: true, phase: "ready" });
+const ready = async (): Promise<RuntimeReadiness> => ({ ready: true, phase: "ready", globalKillSwitch: false });
 const cleanup: (() => Promise<void>)[] = [];
 afterEach(async () => { for (const close of cleanup.splice(0)) await close(); });
 
@@ -133,7 +133,7 @@ it.each(["lookup", "cancel"] as const)("preserves authenticated IAO %s after dep
   });
   const facade = new IaoFacade({ prepare });
   const authenticate = vi.fn(async () => identity());
-  const probe = vi.fn(async (): Promise<RuntimeReadiness> => ({ ready: available, phase: "ready" }));
+  const probe = vi.fn(async (): Promise<RuntimeReadiness> => ({ ready: available, phase: "ready", globalKillSwitch: false }));
   const server = await listen({ authenticator: { authenticate }, facade }, probe);
   const submitted = call(server, "/iao/requests", "POST", body);
   await admitted;
@@ -166,7 +166,7 @@ it.each(["unavailable", "rejecting"] as const)("refuses new IAO work while readi
   const facade = new IaoFacade({ prepare });
   const probe = async (): Promise<RuntimeReadiness> => {
     if (!recovered && mode === "rejecting") throw new Error("PRIVATE_READINESS_FAILURE");
-    return { ready: recovered, phase: "ready" };
+    return { ready: recovered, phase: "ready", globalKillSwitch: false };
   };
   const server = await listen({ authenticator: { authenticate }, facade }, probe);
   for (const path of ["/iao/requests", "/pura/requests"]) {
@@ -191,7 +191,7 @@ it.each(["/iao/requests", "/pura/requests"])("rechecks readiness after authentic
   });
   const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not run" }));
   const facade = new IaoFacade({ prepare });
-  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: available, phase: "ready" }));
+  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: available, phase: "ready", globalKillSwitch: false }));
   const pending = call(server, path, "POST", body);
   await authenticating;
   available = false;
@@ -202,7 +202,7 @@ it.each(["/iao/requests", "/pura/requests"])("rechecks readiness after authentic
 
 it("refuses admission when the final readiness check rejects without exposing its error", async () => {
   const probe = vi.fn<() => Promise<RuntimeReadiness>>()
-    .mockResolvedValueOnce({ ready: true, phase: "ready" })
+    .mockResolvedValueOnce({ ready: true, phase: "ready", globalKillSwitch: false })
     .mockRejectedValue(new Error("PRIVATE_FINAL_READINESS_FAILURE"));
   const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not run" }));
   const facade = new IaoFacade({ prepare });
@@ -221,7 +221,7 @@ it.each(["readiness", "lifetime"] as const)("rechecks %s after a partially recei
   const authenticate = async () => { entered(); return identity(); };
   const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not run" }));
   const facade = new IaoFacade({ prepare });
-  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: available, phase: "ready" }), lifetime.signal);
+  const server = await listen({ authenticator: { authenticate }, facade }, async () => ({ ready: available, phase: "ready", globalKillSwitch: false }), lifetime.signal);
   const encoded = JSON.stringify(body);
   const split = Math.floor(encoded.length / 2);
   let client!: ReturnType<typeof request>;
@@ -311,7 +311,7 @@ it("never admits new IAO work after its client disconnects during the final read
   let entered!: () => void;
   const checking = new Promise<void>(resolve => { entered = resolve; });
   const probe = vi.fn<() => Promise<RuntimeReadiness>>()
-    .mockResolvedValueOnce({ ready: true, phase: "ready" })
+    .mockResolvedValueOnce({ ready: true, phase: "ready", globalKillSwitch: false })
     .mockImplementation(() => { entered(); return new Promise(resolve => { release = resolve; }); });
   const prepare = vi.fn(async (): Promise<KartaIaoResult> => ({ kind: "accepted", preview: "must not execute" }));
   const facade = new IaoFacade({ prepare });
@@ -323,7 +323,7 @@ it("never admits new IAO work after its client disconnects during the final read
   await checking;
   client.destroy();
   await closed;
-  release({ ready: true, phase: "ready" });
+  release({ ready: true, phase: "ready", globalKillSwitch: false });
   await server.drainRequests();
   expect(prepare).not.toHaveBeenCalled();
   expect(() => facade.get("tenant", "actor", id)).toThrow("IAO request not found");
