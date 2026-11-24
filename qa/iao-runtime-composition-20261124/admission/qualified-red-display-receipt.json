@@ -1,0 +1,11 @@
+{
+  "exit": 1,
+  "seconds": 0.7667575649975333,
+  "head": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "productSHA256": "326a8d69b997662aa66d697de89c02e6891eca14a3429f71ac487ef5e018d4ae",
+  "testSHA256": "245275d953f26c3b36f286d50983cfdb8d160d7f12e38e1022ff94c2bfde9e2a",
+  "testCount": 8,
+  "purpose": "Same frozen reproduction rerun solely for readable assertion differences; not additional unique tests",
+  "listeningDisabled": true,
+  "sourceUnchanged": true
+}

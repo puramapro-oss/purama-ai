@@ -1,0 +1,15 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "exit": 137,
+  "seconds": 3.518,
+  "sourceSha256": {
+    "karta/src/api/server.ts": "2d40844c00e618ab7e7b480afb549809769f431b307eb69336056113ae7793c0",
+    "karta/test/apiIaoGlobalStop.test.ts": "17d2ae9be9dc635ae5edcc8b519ed69f77d96583de1d57dd2fa1defdd21935a0",
+    "karta/test/apiIaoIntegration.test.ts": "c8c7a0a523ab278834cde4679fe07a7a289bb63ff8245eb3e50715bbbf095d15",
+    "karta/test/apiIaoTransportBudget.test.ts": "9e91aaaa997994032025f7416bc9a751877771882a877c3444639db2be46f7d8"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "files": [
+    "karta/src/api/server.ts",
+    "karta/src/api/iaoRoutes.ts",
+    "karta/src/runtime/lifecycle.ts",
+    "karta/src/runtime/probe.ts",
+    "karta/src/index.ts",
+    "karta/src/config.ts",
+    "karta/src/iao/iaoFacade.ts"
+  ],
+  "reason": "Prior larger scopes killed -9; admission sources only; dependencies not parsed remain unknown."
+}

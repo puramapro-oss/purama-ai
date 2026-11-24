@@ -126,7 +126,12 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse,
     const host = iaoRuntime && readiness && !lifetime?.aborted ? iaoRuntime : undefined;
     await handleIaoRoute(req, res, host, readBody, json, {
       isActive: () => !lifetime?.aborted,
-      canAdmit: readyForWork,
+      canAdmit: async () => {
+        // New IAO work requires an explicitly inactive global stop. Keep this
+        // separate from dependency readiness so an administrator can lift it.
+        const state = await readiness?.();
+        return state?.ready === true && state.globalKillSwitch === false;
+      },
     });
     return;
   }

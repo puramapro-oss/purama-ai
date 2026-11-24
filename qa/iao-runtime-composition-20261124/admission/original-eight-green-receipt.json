@@ -1,0 +1,32 @@
+{
+  "startedAt": "2026-11-24T19:45:21.224261+00:00",
+  "finishedAt": "2026-11-24T19:45:22.138951+00:00",
+  "argv": [
+    "node",
+    "--max-old-space-size=768",
+    "/workspace/scratch/6431e6d17379/iao-capabilities-20261124/karta/node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "/workspace/scratch/6431e6d17379/iao-capabilities-20261124/karta/vitest.config.ts",
+    "--root",
+    "/workspace/scratch/6431e6d17379/iao-runtime-composition-20261124/karta",
+    "test/apiIaoGlobalStop.test.ts",
+    "--maxWorkers",
+    "1",
+    "--reporter=json",
+    "--outputFile",
+    "/workspace/scratch/6431e6d17379/iao-runtime-auth-review-20261124/original-eight-green.json"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-runtime-composition-20261124/karta",
+  "exitCode": 0,
+  "before": {
+    "karta/test/apiIaoGlobalStop.test.ts": "245275d953f26c3b36f286d50983cfdb8d160d7f12e38e1022ff94c2bfde9e2a",
+    "karta/src/api/server.ts": "2d40844c00e618ab7e7b480afb549809769f431b307eb69336056113ae7793c0"
+  },
+  "after": {
+    "karta/test/apiIaoGlobalStop.test.ts": "245275d953f26c3b36f286d50983cfdb8d160d7f12e38e1022ff94c2bfde9e2a",
+    "karta/src/api/server.ts": "2d40844c00e618ab7e7b480afb549809769f431b307eb69336056113ae7793c0"
+  },
+  "sourcesUnchanged": true,
+  "listeningDisabled": true
+}

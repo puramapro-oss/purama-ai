@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "file": "karta/test/apiIaoIntegration.test.ts",
+      "changedReadinessObjects": 8,
+      "onlyAdded": ", globalKillSwitch: false",
+      "assertionsAndDeadlinesUnchanged": true,
+      "sha256": "c8c7a0a523ab278834cde4679fe07a7a289bb63ff8245eb3e50715bbbf095d15"
+    },
+    {
+      "file": "karta/test/apiIaoTransportBudget.test.ts",
+      "changedReadinessObjects": 2,
+      "onlyAdded": ", globalKillSwitch: false",
+      "assertionsAndDeadlinesUnchanged": true,
+      "sha256": "9e91aaaa997994032025f7416bc9a751877771882a877c3444639db2be46f7d8"
+    }
+  ],
+  "totalObjects": 10,
+  "otherIaoRuntimeTestFiles": [
+    "karta/test/apiIaoGlobalStop.test.ts"
+  ],
+  "directHandleIaoRouteTestsUnchanged": true
+}
