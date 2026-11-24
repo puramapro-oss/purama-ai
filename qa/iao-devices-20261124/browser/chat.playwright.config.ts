@@ -23,6 +23,7 @@ export default defineConfig({
     /real auth client initializes without a session, supports concurrent reads and a simulated visibility return without page errors$/,
     /real auth client recovers a persisted session and clears it on sign-out without a stale identity$/,
     /real auth client does not restore a signed-out session when an older refresh completes late$/,
+    /real product database client avoids nested retries and allows an explicit read retry in both schemas$/,
   ],
   workers: 1,
   retries: 0,

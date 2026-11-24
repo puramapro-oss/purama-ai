@@ -1,0 +1,9 @@
+{
+  "head": "02bbf30348b9c7f12d6f35ce59eacaedc4a648a7",
+  "archive": "ci-quality-attempt.zip",
+  "sha256": "c806b016641aa4f298bf2b3d403f4951732f4672ae03f798f9830b1f96428962",
+  "bytes": 197596,
+  "members": 31,
+  "ciManifestSHA256": "837a12976c11d8aa6b96dfe7d67f9066681313e20533d72b9d889a25a95be1e5",
+  "status": "Historical failed quality gate preserved:151/156;5failures. Other received gates remain separately recorded."
+}

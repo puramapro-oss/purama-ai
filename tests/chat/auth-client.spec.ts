@@ -113,3 +113,48 @@ test('real auth client does not restore a signed-out session when an older refre
   expect(signedOutIndex).toBeGreaterThanOrEqual(0);
   expect(events.slice(signedOutIndex + 1).filter(event => event.userId !== null)).toEqual([]);
 });
+
+test('real product database client avoids nested retries and allows an explicit read retry in both schemas', async ({ page }, testInfo) => {
+  const databaseCalls: Array<{ method: string; path: string; schema: string | undefined; actor: string | null;
+    selection: string | null; retryCount: string | null; fixtureAuthorization: boolean }> = [];
+  const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*',
+    'access-control-allow-methods': 'GET, OPTIONS' };
+  let unavailable = true;
+  await page.route(authOrigin + '/rest/v1/**', async route => {
+    const request = route.request();
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers });
+    const url = new URL(request.url());
+    expect(request.method()).toBe('GET');
+    expect(['/rest/v1/subscriptions', '/rest/v1/user_tax_profiles']).toContain(url.pathname);
+    expect(request.postData()).toBeNull();
+    databaseCalls.push({ method: request.method(), path: url.pathname, schema: request.headers()['accept-profile'],
+      actor: url.searchParams.get('user_id'), selection: url.searchParams.get('select'),
+      retryCount: request.headers()['x-retry-count'] ?? null,
+      fixtureAuthorization: request.headers().authorization === 'Bearer ' + session.access_token });
+    // No Retry-After override: the actual product client must end this read once.
+    return route.fulfill({ status: unavailable ? 503 : 200, headers,
+      json: unavailable ? { code: 'FIXTURE_UNAVAILABLE', message: 'Synthetic database outage' } : [{ user_id: owner }] });
+  });
+  await open(page, true);
+  for (const schema of ['purama_ai', 'public'] as const) {
+    unavailable = true;
+    const path = schema === 'public' ? '/rest/v1/user_tax_profiles' : '/rest/v1/subscriptions';
+    const expectedCall = { method: 'GET', path, schema, actor: 'eq.' + owner, selection: 'user_id',
+      retryCount: null, fixtureAuthorization: true };
+    expect(await page.evaluate(({ schema, owner }) => window.__sdkAuthProbe.readDatabase(schema, owner), { schema, owner }))
+      .toEqual({ status: 503, data: null, error: 'FIXTURE_UNAVAILABLE' });
+    expect(databaseCalls.filter(call => call.path === path)).toEqual([expectedCall]);
+    unavailable = false;
+    expect(await page.evaluate(({ schema, owner }) => window.__sdkAuthProbe.readDatabase(schema, owner), { schema, owner }))
+      .toEqual({ status: 200, data: { user_id: owner }, error: null });
+    expect(databaseCalls.filter(call => call.path === path)).toEqual([expectedCall, expectedCall]);
+  }
+  await page.evaluate(() => window.__sdkAuthProbe.afterPendingTasks());
+  expect(databaseCalls).toHaveLength(4);
+  expect(calls).toEqual([]);
+  expect(pageErrors).toEqual([]);
+  await testInfo.attach('database-sdk-transport', { body: Buffer.from(JSON.stringify({
+    transport: 'synthetic HTTP; actual imported product client; no Retry-After override',
+    externalRequestsForwarded: 0, databaseCalls,
+  }, null, 2)), contentType: 'application/json' });
+});

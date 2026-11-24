@@ -1,0 +1,117 @@
+[
+  {
+    "file": "src/integrations/supabase/client.ts",
+    "argv": [
+      "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+      "impact",
+      "--uid",
+      "File:src/integrations/supabase/client.ts",
+      "--repo",
+      "iao-continuity-20261124",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--limit",
+      "10"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"File:src/integrations/supabase/client.ts\",\n    \"name\": \"client.ts\",\n    \"type\": \"File\",\n    \"filePath\": \"src/integrations/supabase/client.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 13,\n  \"risk\": \"LOW\",\n  \"riskSharedAxes\": \"LOW\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": false,\n    \"unusedAxes\": [\n      {\n        \"axis\": \"processes\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      },\n      {\n        \"axis\": \"modules\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      }\n    ]\n  },\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 4,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {\n    \"1\": 4,\n    \"2\": 8,\n    \"3\": 1\n  },\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {\n    \"1\": [\n      {\n        \"depth\": 1,\n        \"id\": \"File:src/components/ChatbotWidget.tsx\",\n        \"name\": \"ChatbotWidget.tsx\",\n        \"filePath\": \"src/components/ChatbotWidget.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:src/components/auth/AuthProvider.tsx\",\n        \"name\": \"AuthProvider.tsx\",\n        \"filePath\": \"src/components/auth/AuthProvider.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:src/lib/workshop.ts\",\n        \"name\": \"workshop.ts\",\n        \"filePath\": \"src/lib/workshop.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 1,\n        \"id\": \"File:tests/chat/sdk-init.ts\",\n        \"name\": \"sdk-init.ts\",\n        \"filePath\": \"tests/chat/sdk-init.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      }\n    ],\n    \"2\": [\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/App.tsx\",\n        \"name\": \"App.tsx\",\n        \"filePath\": \"src/App.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/components/ChatbotWidget.consultation.test.tsx\",\n        \"name\": \"ChatbotWidget.consultation.test.tsx\",\n        \"filePath\": \"src/components/ChatbotWidget.consultation.test.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/components/ChatbotWidget.workshop.test.tsx\",\n        \"name\": \"ChatbotWidget.workshop.test.tsx\",\n        \"filePath\": \"src/components/ChatbotWidget.workshop.test.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/components/OriginForgeDemo.tsx\",\n        \"name\": \"OriginForgeDemo.tsx\",\n        \"filePath\": \"src/components/OriginForgeDemo.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/lib/workshop.test.ts\",\n        \"name\": \"workshop.test.ts\",\n        \"filePath\": \"src/lib/workshop.test.ts\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/pages/Workshop.test.tsx\",\n        \"name\": \"Workshop.test.tsx\",\n        \"filePath\": \"src/pages/Workshop.test.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:src/pages/Workshop.tsx\",\n        \"name\": \"Workshop.tsx\",\n        \"filePath\": \"src/pages/Workshop.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      },\n      {\n        \"depth\": 2,\n        \"id\": \"File:tests/chat/harness.tsx\",\n        \"name\": \"harness.tsx\",\n        \"filePath\": \"tests/chat/harness.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      }\n    ],\n    \"3\": [\n      {\n        \"depth\": 3,\n        \"id\": \"File:tests/workshop-state/harness.tsx\",\n        \"name\": \"harness.tsx\",\n        \"filePath\": \"tests/workshop-state/harness.tsx\",\n        \"relationType\": \"IMPORTS\",\n        \"confidence\": 1,\n        \"processes\": []\n      }\n    ]\n  },\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 4,\n    \"hint\": \"\u26a0\ufe0f Index is 4 commits behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795544022357,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "file": "tests/chat/lifecycle.spec.ts",
+    "argv": [
+      "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+      "impact",
+      "--uid",
+      "File:tests/chat/lifecycle.spec.ts",
+      "--repo",
+      "iao-continuity-20261124",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--limit",
+      "10"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"File:tests/chat/lifecycle.spec.ts\",\n    \"name\": \"lifecycle.spec.ts\",\n    \"type\": \"File\",\n    \"filePath\": \"tests/chat/lifecycle.spec.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": false,\n    \"unusedAxes\": [\n      {\n        \"axis\": \"processes\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      },\n      {\n        \"axis\": \"modules\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      }\n    ]\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 4,\n    \"hint\": \"\u26a0\ufe0f Index is 4 commits behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795544022942,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "file": "tests/chat/sdk-init.ts",
+    "argv": [
+      "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+      "impact",
+      "--uid",
+      "File:tests/chat/sdk-init.ts",
+      "--repo",
+      "iao-continuity-20261124",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--limit",
+      "10"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"File:tests/chat/sdk-init.ts\",\n    \"name\": \"sdk-init.ts\",\n    \"type\": \"File\",\n    \"filePath\": \"tests/chat/sdk-init.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": false,\n    \"unusedAxes\": [\n      {\n        \"axis\": \"processes\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      },\n      {\n        \"axis\": \"modules\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      }\n    ]\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 4,\n    \"hint\": \"\u26a0\ufe0f Index is 4 commits behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795544023454,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "file": "tests/chat/auth-client.spec.ts",
+    "argv": [
+      "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+      "impact",
+      "--uid",
+      "File:tests/chat/auth-client.spec.ts",
+      "--repo",
+      "iao-continuity-20261124",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--limit",
+      "10"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"File:tests/chat/auth-client.spec.ts\",\n    \"name\": \"auth-client.spec.ts\",\n    \"type\": \"File\",\n    \"filePath\": \"tests/chat/auth-client.spec.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": false,\n    \"unusedAxes\": [\n      {\n        \"axis\": \"processes\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      },\n      {\n        \"axis\": \"modules\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      }\n    ]\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 4,\n    \"hint\": \"\u26a0\ufe0f Index is 4 commits behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795544024116,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "file": "qa/iao-devices-20261124/browser/chat.playwright.config.ts",
+    "argv": [
+      "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+      "impact",
+      "--uid",
+      "File:qa/iao-devices-20261124/browser/chat.playwright.config.ts",
+      "--repo",
+      "iao-continuity-20261124",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--limit",
+      "10"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"File:qa/iao-devices-20261124/browser/chat.playwright.config.ts\",\n    \"name\": \"chat.playwright.config.ts\",\n    \"type\": \"File\",\n    \"filePath\": \"qa/iao-devices-20261124/browser/chat.playwright.config.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": false,\n    \"unusedAxes\": [\n      {\n        \"axis\": \"processes\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      },\n      {\n        \"axis\": \"modules\",\n        \"reason\": \"file-nodes-have-no-process-or-community-membership\"\n      }\n    ]\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 4,\n    \"hint\": \"\u26a0\ufe0f Index is 4 commits behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795544024848,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  },
+  {
+    "symbol": "supabase",
+    "argv": [
+      "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+      "impact",
+      "supabase",
+      "--file",
+      "src/integrations/supabase/client.ts",
+      "--repo",
+      "iao-continuity-20261124",
+      "--direction",
+      "upstream",
+      "--include-tests",
+      "--limit",
+      "10"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"target\": {\n    \"id\": \"Const:src/integrations/supabase/client.ts:supabase\",\n    \"name\": \"supabase\",\n    \"type\": \"Const\",\n    \"filePath\": \"src/integrations/supabase/client.ts\"\n  },\n  \"direction\": \"upstream\",\n  \"impactedCount\": 0,\n  \"risk\": \"UNKNOWN\",\n  \"riskSharedAxes\": \"UNKNOWN\",\n  \"riskScale\": {\n    \"comparableAcrossKinds\": true,\n    \"unusedAxes\": []\n  },\n  \"riskNote\": \"No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record \u2014 plain-object property access, a bare-identifier read of a module-scope const \u2014 produces no edge to find. Confirm with a text search before treating the change as safe.\",\n  \"epistemic\": \"exact\",\n  \"summary\": {\n    \"direct\": 0,\n    \"processes_affected\": 0,\n    \"modules_affected\": 0\n  },\n  \"byDepthCounts\": {},\n  \"affected_processes\": [],\n  \"affected_modules\": [],\n  \"byDepth\": {},\n  \"staleness\": {\n    \"status\": \"behind\",\n    \"commitsBehind\": 4,\n    \"hint\": \"\u26a0\ufe0f Index is 4 commits behind HEAD. Run analyze tool to update.\"\n  }\n}\n",
+    "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795544213783,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+  }
+]

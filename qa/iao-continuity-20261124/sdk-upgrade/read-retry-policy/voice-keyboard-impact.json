@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+    "impact",
+    "--uid",
+    "File:tests/voice-consent/accessibility.spec.ts",
+    "--repo",
+    "iao-continuity-20261124",
+    "--direction",
+    "upstream",
+    "--include-tests",
+    "--limit",
+    "10"
+  ],
+  "exit_code": 1,
+  "stdout": "{\n  \"error\": \"Target 'File:tests/voice-consent/accessibility.spec.ts' not found\",\n  \"target\": {},\n  \"direction\": \"upstream\",\n  \"impactedCount\": null,\n  \"risk\": \"UNKNOWN\"\n}\n",
+  "stderr": "\n  GitNexus Impact (1.6.12)\n{\"level\":40,\"time\":1795545509929,\"name\":\"gitnexus\",\"msg\":\"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts.\"}\n"
+}

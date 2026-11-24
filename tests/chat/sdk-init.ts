@@ -67,7 +67,14 @@ function startRefresh(): void {
   });
 }
 
-export const authProbe = { state, readConcurrently, afterPendingTasks, simulateVisibilityReturn, signOut, startRefresh };
+async function readDatabase(schema: 'purama_ai' | 'public', actor: string) {
+  const result = schema === 'public'
+    ? await supabase.schema('public').from('user_tax_profiles').select('user_id').eq('user_id', actor).maybeSingle()
+    : await supabase.from('subscriptions').select('user_id').eq('user_id', actor).maybeSingle();
+  return { status: result.status, data: result.data, error: result.error?.code ?? null };
+}
+
+export const authProbe = { state, readConcurrently, afterPendingTasks, simulateVisibilityReturn, signOut, startRefresh, readDatabase };
 declare global { interface Window { __sdkAuthProbe: typeof authProbe } }
 window.__sdkAuthProbe = authProbe;
 

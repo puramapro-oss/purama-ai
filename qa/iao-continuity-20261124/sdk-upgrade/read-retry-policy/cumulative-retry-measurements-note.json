@@ -1,0 +1,5 @@
+{
+  "processStatus": "Interrupted after all four measurements were written, to stop pending TanStack GC timers",
+  "notAnExitZeroGate": true,
+  "comparisonGate": "independent-query-retry.json and its reproducible source complete normally; use those for the policy comparison"
+}
