@@ -562,7 +562,7 @@ export function ChatbotWidget() {
                     <button
                       key={suggestion}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                      className="scroll-my-1 text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                     >
                       {suggestion}
                     </button>

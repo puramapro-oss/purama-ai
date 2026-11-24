@@ -1,0 +1,80 @@
+{
+  "head": "189a019587b49783b4eaae8f16f7a281f0fbd126",
+  "run": 45321597917,
+  "functional": {
+    "passed": 112,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "diagnostics": {
+    "passed": 3,
+    "failed": 0
+  },
+  "artifact": "second-ci-evidence.zip",
+  "bytes": 76038,
+  "sha256": "8cfe8221689a3d2f087fe3da179ecb25aa61ef77376b03c60a51923a1f2e3a26",
+  "files": [
+    {
+      "path": "chat-report.json",
+      "bytes": 49352,
+      "sha256": "022aa5442f34727df7cc3f24dc2b5454232448260813535d4124a157f33ab77b"
+    },
+    {
+      "path": "hero-motion-report.json",
+      "bytes": 185189,
+      "sha256": "a41214898c3668fb5dcb05f9b18f599d4e6b946445057bc58d2a7d7f9af6a1b7"
+    },
+    {
+      "path": "offline-report.json",
+      "bytes": 53709,
+      "sha256": "98fba3bb0000fad9160c806ee45f9751eb6081fd3ec51949192ba66d97b62008"
+    },
+    {
+      "path": "public-report.json",
+      "bytes": 81622,
+      "sha256": "040ae3e5380ba6c473a07fd320bbf358fba717f40a673a63ffcdbc34ce7e4141"
+    },
+    {
+      "path": "touch-report.json",
+      "bytes": 18746,
+      "sha256": "d6fd1ebd45b776b7c7ea7a0771da68c00aea23188bcc2dd81f24932a7c2e0e4b"
+    },
+    {
+      "path": "device-receipt-189a.json",
+      "bytes": 9215,
+      "sha256": "0dd1e0b639f7fb26ec568ea26618f0f797cb0e2da53f3a55645434b5848be61d"
+    },
+    {
+      "path": "touch/test-failed-1.png",
+      "bytes": 39414,
+      "sha256": "04f9e4c4a54e993c0c5a57a4c8a1a01d880eec0eb529d87c00365c04627bdfb0"
+    },
+    {
+      "path": "touch/error-context.md",
+      "bytes": 5066,
+      "sha256": "5846e200eebf5a9e26edeaaf944e781e0965fdc74b2bbe9c4a7d26178dc51a39"
+    },
+    {
+      "path": "impact/impact-ChatbotWidget-scrollmargin.log",
+      "bytes": 1404,
+      "sha256": "636265521ea1b600ae45f52dfefad974de51f2c2392cad54576af68412ec101e"
+    },
+    {
+      "path": "impact/impact-touch-failure-observation.log",
+      "bytes": 1655,
+      "sha256": "f1277aaa0767d622600e9f6f6715b3f3ebd1478f4ec9008dd7d4c067a6f6679b"
+    },
+    {
+      "path": "impact/gitnexus-refresh-scrollmargin.log",
+      "bytes": 2430,
+      "sha256": "e3cbd0451052ac98689139bda2ab43ecce83efb24f79467028b1eb615778134f"
+    },
+    {
+      "path": "impact/gitnexus-refresh-scrollmargin-256.log",
+      "bytes": 989,
+      "sha256": "526efa8aba51fd935cf0b1fd50efb7db3a861f690bc8b7eb43dcf27d65b5a9e4"
+    }
+  ],
+  "note": "Exact CI report bytes and targeted failure evidence; full trace remains in the GitHub artifact. Impact records precede the scroll-margin adjustment and identify index scope/staleness."
+}

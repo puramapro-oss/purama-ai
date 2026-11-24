@@ -18,6 +18,8 @@ Première réception CI de la PR106 : KARTA 4 653/4 653, identité, concurrence 
 
 Réconciliation PR106 : la consolidation a reçu `38d888c` (i18next 26.3.4 exact) pendant la première CI. Les deux conflits de manifeste sont résolus en conservant ce pin et nos autres changements, sans réécrire l'historique. La tête `7bfc3c1` n'a eu aucun run CI ; seule la nouvelle tête de fusion peut être reçue. La comparaison GitNexus contre main a finalement abouti (risque HIGH pour l'écart global, index ciblé) ; la fusion reste limitée à la consolidation.
 
+Réception intermédiaire `189a019` : 112/113 exécutions appareils PASS et 3/3 diagnostics PASS ; un rognage partiel d'une suggestion Chromium persiste dans le scénario renforcé. Ajout local d'une marge de défilement de 4px ; assertion entière conservée, collecte de géométrie uniquement après échec. Validation finale attendue sur la nouvelle tête ; aucun ancien résultat n'est assimilé à cette nouvelle exécution.
+
 ## Intégration IAO — validation du 24 novembre 2026
 
 État de conception : `PRET_A_CODER` pour le référentiel de 168 capacités présenté à Matiss dans la conversation puis explicitement accepté par son message « Go intègre tout ». Cette validation autorise l'intégration dans les composants existants ; elle ne constitue pas une preuve de fonctionnement, ni une activation de production.

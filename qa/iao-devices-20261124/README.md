@@ -1,5 +1,13 @@
 # IAO — qualification ciblée des appareils du 24 novembre 2026
 
+## Ajustement après la réception de la tête réconciliée
+
+Sur `189a019587b49783b4eaae8f16f7a281f0fbd126`, la [deuxième CI](https://github.com/puramapro-oss/purama-ai/actions/runs/45321597917) valide 112/113 exécutions fonctionnelles et les 3 diagnostics, sans test ignoré ni flaky : chat 30/30, public 50/50, hors-ligne 30/30, tactile 2/3. Les anciens échecs WebKit et la saisie masquée sont levés dans cette recette. Le scénario renforcé détecte encore une suggestion partiellement visible sur Chromium 568 × 320 : ratio `0.99609375`, après `scrollIntoViewIfNeeded`, à `touch.spec.ts:29` dans cette tête.
+
+La trace conserve un `scrollTop` de 162 et le même ratio pendant 14 observations. Elle ne contient pas les rectangles nécessaires pour attribuer avec certitude l'écart à un axe ou à un arrondi. Le nouvel ajustement ajoute uniquement `scroll-my-1` aux suggestions : une marge de mise en vue de 4px, sans changer les dimensions des cibles, les callbacks ou la logique produit. L'assertion de visibilité entière reste identique ; les rectangles ne sont relevés qu'après un échec, puis l'erreur initiale est propagée. Aucun sondage préalable ne modifie le parcours passant. L’index ciblé a été actualisé après ces changements : 305 nœuds, 781 relations, 14 groupes et 7 flux. La première actualisation a épuisé son pool natif de 64 Mo ; la reprise à 256 Mo a réussi, avec les deux journaux conservés.
+
+Les sondes WebKit atteignent `/signup` avec un clic ordinaire mais ne prouvent pas une fluidité universelle : l'intervalle maximal entre frames observé est de 2 302ms sur bureau, 518ms sur téléphone et 468ms sur tablette. Le DPR relevé à l'init-script précède le traitement du meta viewport et n'est pas une mesure finale du DPR mobile ; les profils configurés restent à 1. L'ajustement tactile doit être qualifié par la CI suivante. Les rapports de ce passage et le détail du défaut sont conservés dans `second-ci-evidence.zip` avec leur manifeste.
+
 ## Corrections après la première exécution réelle
 
 La première CI sur `a5196d6ebf6f7eda1a5b90fef5b2f2ae7d291332` réussit les jobs KARTA, identité, concurrence et site, mais le nouveau job appareils découvre **4 échecs sur 113 exécutions** : 109 PASS, aucun test ignoré ou flaky. Chat : 30/30 ; hors-ligne : 30/30 ; public : 48/50 ; tactile : 1/3. La [tentative conservée](https://github.com/puramapro-oss/purama-ai/actions/runs/45318081850) n'est pas présentée comme une réception complète.

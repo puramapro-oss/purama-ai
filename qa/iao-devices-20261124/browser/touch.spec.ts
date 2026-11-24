@@ -26,7 +26,40 @@ test('touch controls preserve a draft through viewport rotation and stop the sam
   ]) {
     const suggestion = dialog.getByRole('button', { name, exact: true });
     await suggestion.scrollIntoViewIfNeeded();
-    await expect(suggestion).toBeInViewport({ ratio: 1 });
+    try {
+      await expect(suggestion).toBeInViewport({ ratio: 1 });
+    } catch (error) {
+      // Read geometry only after the unchanged assertion fails, so diagnostics
+      // cannot affect the scrolling or layout of a passing assertion.
+      let observation: unknown;
+      try {
+        observation = await suggestion.evaluate(element => {
+          const ancestors = [];
+          for (let node: Element | null = element; node && ancestors.length < 7; node = node.parentElement) {
+            const rect = node.getBoundingClientRect();
+            const style = getComputedStyle(node);
+            ancestors.push({
+              tag: node.tagName,
+              cssClass: node.getAttribute('class'),
+              rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height, top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
+              clientWidth: node.clientWidth, clientHeight: node.clientHeight,
+              scrollWidth: node.scrollWidth, scrollHeight: node.scrollHeight,
+              scrollTop: node.scrollTop, scrollLeft: node.scrollLeft,
+              overflowX: style.overflowX, overflowY: style.overflowY,
+              scrollMarginTop: style.scrollMarginTop, scrollMarginBottom: style.scrollMarginBottom,
+            });
+          }
+          return { innerWidth, innerHeight, devicePixelRatio, ancestors };
+        });
+      } catch (observationError) {
+        observation = { error: observationError instanceof Error ? observationError.message : String(observationError) };
+      }
+      await testInfo.attach('suggestion-scroll-failure.json', {
+        body: Buffer.from(JSON.stringify({ suggestion: name, observation }, null, 2)),
+        contentType: 'application/json',
+      });
+      throw error;
+    }
     await expect(page.getByRole('button', { name: "Fermer l'assistant" })).toBeInViewport({ ratio: 1 });
     await expect(input).toBeInViewport({ ratio: 1 });
   }
