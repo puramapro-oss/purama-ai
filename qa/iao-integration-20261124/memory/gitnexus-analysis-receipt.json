@@ -1,0 +1,54 @@
+{
+  "scope": "Fresh index of karta only; outside-karta consumers reviewed separately",
+  "commands": [
+    {
+      "step": "query",
+      "command": [
+        "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+        "query",
+        "SMARANA context memory projection buildMemoryPrompt",
+        "--repo",
+        "iao-integration-karta-20261124",
+        "--limit",
+        "3"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.754
+    },
+    {
+      "step": "context",
+      "command": [
+        "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+        "context",
+        "buildMemoryPrompt",
+        "--repo",
+        "iao-integration-karta-20261124",
+        "--file",
+        "src/integrations/localComputeFabricProvider.ts",
+        "--limit",
+        "30"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.542
+    },
+    {
+      "step": "impact",
+      "command": [
+        "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+        "impact",
+        "buildMemoryPrompt",
+        "--direction",
+        "upstream",
+        "--repo",
+        "iao-integration-karta-20261124",
+        "--file",
+        "src/integrations/localComputeFabricProvider.ts",
+        "--include-tests",
+        "--limit",
+        "100"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.756
+    }
+  ]
+}

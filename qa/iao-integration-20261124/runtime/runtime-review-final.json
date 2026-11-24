@@ -1,0 +1,91 @@
+{
+  "status": "PASS",
+  "scope": "Two runtime integration defects only: completed stale retention and final admission authority revalidation",
+  "at": "2026-11-24T01:26:24.175771+00:00",
+  "baseCommit": "60a3f6bce721331566951dee59b4c7b9a4b17099",
+  "files": {
+    "karta/src/iao/iaoFacade.ts": "d3ca5ae8ea61c1500a563fbf8e78ca74d14eba86c18f6824ee19eea86b148a26",
+    "karta/src/api/iaoRoutes.ts": "3b92f9c26b4846bf9de56b4ba1b8001b38bc5965d469087e5a1d98b85f7701cb",
+    "karta/test/iaoCompletedRetention.test.ts": "0e1576875cc73cd199feaad5189773694c0c59adb690d1344aacb4e5f738643c",
+    "karta/test/iaoAdmissionRevalidation.test.ts": "93e439ae7d621a96a31c1cb5a505f00d9cc51a830047f25f02c95b053f84cdc1",
+    "karta/test/apiIaoIntegration.test.ts": "76fb04a03f1e27c23014ae738c137633251f21c9addebce60999bc7191f26f00"
+  },
+  "changes": [
+    "Completed stale responses with valid final evidence now acquire a retention lease, remain partial/stale and withhold the proof. Pending work and partial responses without evidence remain protected.",
+    "Both POST aliases revalidate the existing authority immediately before submission under the original 15-second monotonic deadline, preserving the initial tenant, actor and session.",
+    "Existing HTTP assertions count two authentication calls for accepted submission and one per lookup/cancel; functional assertions remain in place."
+  ],
+  "checks": {
+    "before-complete": {
+      "exitCode": 1,
+      "logSha256": "cca253a97a0cfdb631040c5adc5938ff0a2eea604d1cd4d0e7d714a0dde0502d",
+      "summary": [
+        "Test Files  2 failed (2)",
+        "Tests  15 failed | 2 passed (17)",
+        "Duration  703ms (transform 42%, tests 35%, import 14%, setup 6%, worker 4%)"
+      ],
+      "receipt": "qa/iao-integration-20261124/runtime/before-complete.json"
+    },
+    "after": {
+      "exitCode": 0,
+      "logSha256": "ad2d1db6b200719eaa07b21948c2b23fee1d6d6cc131a5fafd87f0f2f9135ae5",
+      "summary": [
+        "Test Files  2 passed (2)",
+        "Tests  17 passed (17)",
+        "Duration  531ms (transform 50%, tests 24%, import 15%, setup 7%, worker 5%)"
+      ],
+      "receipt": "qa/iao-integration-20261124/runtime/after.json"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "logSha256": "e01586116b47a82ff45cc01bbe27d1eed26e67a4fae1cdde923d45280d30f84e",
+      "summary": [],
+      "receipt": "qa/iao-integration-20261124/runtime/typecheck.json"
+    },
+    "regressions": {
+      "exitCode": 1,
+      "logSha256": "9ae221b53503897156fd62fcef8ce57401b8cdb8a09eed517f1b2421d82f324b",
+      "summary": [
+        "Test Files  1 failed | 7 passed (8)",
+        "Tests  5 failed | 236 passed (241)",
+        "Duration  33.52s (tests 98%, import 1%, transform 1%)"
+      ],
+      "receipt": "qa/iao-integration-20261124/runtime/regressions.json"
+    },
+    "regressions-final": {
+      "exitCode": 0,
+      "logSha256": "38a0032eefd9558f7e9bc160462185432988ffd0282e381cfe233ec3cc007bca",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  258 passed (258)",
+        "Duration  33.87s (tests 98%, transform 1%, import 1%)"
+      ],
+      "receipt": "qa/iao-integration-20261124/runtime/regressions-final.json"
+    }
+  },
+  "diffCheckExitCode": 0,
+  "gitNexus": {
+    "alias": "iao-integration-karta-20261124",
+    "scope": "karta subtree at base commit, source linkage recorded by hashes; --skip-git and --skip-fts",
+    "routeImpact": {
+      "graphRisk": "MEDIUM",
+      "functionalRisk": "CRITICAL",
+      "impacted": 7,
+      "direct": 6,
+      "userWarnedBeforeEdit": true
+    },
+    "privateMethodAndTestFile": "UNKNOWN: no edges resolved; supplemented by explicit source review, not interpreted as no dependencies",
+    "evidence": [
+      "impact-retention.log",
+      "impact-admission.log",
+      "impact-existing-api-tests.log",
+      "impact-source-binding.json"
+    ]
+  },
+  "limits": [
+    "No real SMARANA, identity issuer or compute provider was configured or claimed verified.",
+    "No runtime composition change, new authority, RPC/2 bypass, install, commit, PR, Mac operation or production deployment.",
+    "No global completion assertion for the 168-capability program; parent owns wider integration and final detect_changes gate.",
+    "The new admission safeguard adds one authority call per accepted submission; it shares the existing deadline and does not change execution budgets."
+  ]
+}

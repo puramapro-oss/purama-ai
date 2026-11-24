@@ -1,0 +1,15 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "pid": 6,
+  "ownedProcessGroup": 6,
+  "NODE_OPTIONS": "--max-old-space-size=1024",
+  "startedEpochSeconds": 1795484753.063408,
+  "exitCode": 0,
+  "durationSeconds": 8.541,
+  "log": "karta-typecheck-1024.log"
+}

@@ -1,5 +1,32 @@
 # PURAMA AI — Task Plan V3
 
+## Intégration IAO — validation du 24 novembre 2026
+
+État de conception : `PRET_A_CODER` pour le référentiel de 168 capacités présenté à Matiss dans la conversation puis explicitement accepté par son message « Go intègre tout ». Cette validation autorise l'intégration dans les composants existants ; elle ne constitue pas une preuve de fonctionnement, ni une activation de production.
+
+Base reçue : `60a3f6bce721331566951dee59b4c7b9a4b17099`, branche canonique `audit/reliability-oauth-20261110`, dépôt `puramapro-oss/purama-ai`. Travail isolé : `feat/iao-integration-20261124`. Les contributions précédentes, les identités des projets et les protections de déploiement sont préservées.
+
+Critères communs : résultat observable, reprise sans doublon, isolation par compte/projet, annulation effective, conservation des créations et de leurs versions, qualification par appareil/fournisseur et mesure conjointe qualité/délai/coût. Les preuves logicielles, les fournisseurs réels et les appareils physiques restent distingués.
+
+Responsable : agent principal `/root`. Première étape : inspection des contrats et du code actuel avant attribution de périmètres d'écriture distincts. Le runtime IAO, sa mémoire, ses ports de calcul et les modes photo/caméra/AR seront raccordés aux autorités existantes ; aucune nouvelle mémoire, autorité de session ou orchestration concurrente n'est autorisée par cette intégration.
+
+La connexion MacDevBridge renvoie une erreur interne au début de ce lot. Les tâches indépendantes sur le dépôt restent exécutables ; aucune recette sur le Mac ou un appareil physique n'est revendiquée par défaut.
+
+### Attribution du premier lot
+
+- `/root/iao_runtime_review` : reproductions et corrections de rétention dans `karta/src/iao/iaoFacade.ts`, puis revalidation de session dans `karta/src/api/iaoRoutes.ts`, avec tests ciblés. Analyse GitNexus préalable obligatoire. Risque de frontière d'identité à annoncer avant la correction HTTP.
+- `/root/iao_inventory_coverage_review` : projection complète/abrégée et encodage des extraits dans `karta/src/integrations/localComputeFabricProvider.ts`, tests de frontière mémoire ; aucune nouvelle autorité ou fausse provenance. Après libération du périmètre runtime initial, contre-revue et correction complémentaire de la terminaison interne des réponses obsolètes dans `iaoFacade.ts`, puis tests globaux séquentiels.
+- `/root/iao_inventory_technical_review` : raccordement du handle hôte de l'atelier DreamForge au panneau IAO et à l'historique existants. Périmètre séparé de cette copie git : livraison DreamForge v9, `studio/app.mjs`, `studio/proposal-panel.mjs`, tests associés et contrat de création. Extension autorisée : reconstruction et contrôle des bundles, reçus et archive. `host-lifecycle.mjs`, le pont v1, Holo et le PDF historique sont préservés.
+- `/root` : diagnostic de composition, revue des contrats, conservation des preuves, vérification des arbres publiés et intégration dans la consolidation. Le suivi commun et les publications restent sous sa responsabilité. Le démarrage existant reste inchangé : les autorités de session, le port SMARANA durable et le serveur Fabric RPC/2 ne sont pas réunis dans les sources qualifiées.
+
+Acceptation du lot DreamForge : préparation sans effet, application corrélée une seule fois, refus d'un identifiant obsolète, même scène/historique chat et AR, invalidation après changement d'identité/projet/suspension/démontage. La sauvegarde serveur et l'AR physique restent des qualifications distinctes.
+
+### Réception locale du lot
+
+Trois fichiers produit KARTA sont corrigés et 40 nouveaux cas sont ajoutés. La dernière régression runtime réussit 261 tests ; le typage global et la compilation réussissent. La suite complète locale reste PARTIELLE : 4 576 succès, 35 refus d'ouverture de socket Unix et 42 cas non qualifiés après arrêt de workers, sur 4 653 cas recensés. La réception CI est suivie dans la PR de `feat/iao-integration-20261124`, avant intégration dans la consolidation. Les reproductions et interruptions sont conservées dans [le reçu du lot](qa/iao-integration-20261124/README.md).
+
+DreamForge est sauvegardé séparément en version 10 de sa livraison existante : 277 tests studio réussis, 13 nouveaux cas, bundle livré exécuté dans le banc DOM, historique et identité des anciens fichiers conservés. Le véritable hôte ONE, le modèle, la persistance serveur, la caméra et l'AR physique restent distincts de cette preuve logicielle. La validation des 168 capacités est conservée ; elle ne transforme pas l'ensemble du référentiel en fonctionnalités déjà intégrées et qualifiées.
+
 ## RÈGLE PERMANENTE (Tissma, 2026-07-26)
 **Ne jamais bloquer le développement sur le crédit Anthropic.** Il sera rechargé juste avant le vrai
 lancement, pas avant. Tout le code doit être écrit, testé structurellement et déployé avec Claude

@@ -1,0 +1,25 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> karta-engine@1.0.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+<--- Last few GCs --->
+
+[4284:0x1be24000]     9002 ms: Scavenge (interleaved) 506.9 (513.9) -> 505.2 (514.2) MB, pooled: 0 MB, 2.53 / 0.00 ms  (average mu = 0.330, current mu = 0.280) allocation failure; 
+[4284:0x1be24000]     9270 ms: Mark-Compact 507.2 (514.2) -> 501.9 (514.2) MB, pooled: 0 MB, 265.40 / 0.00 ms  (average mu = 0.193, current mu = 0.090) allocation failure; scavenge might not succeed
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0x91df90  [node]
+ 2: 0x75bb9f node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]
+ 3: 0xc77280  [node]
+ 4: 0xc7737f  [node]
+ 5: 0xf272b5  [node]
+ 6: 0xf272e2  [node]
+ 7: 0xf27664  [node]
+ 8: 0xf393ca  [node]
+ 9: 0xf3d880  [node]
+10: 0x1a420c1  [node]
+Aborted

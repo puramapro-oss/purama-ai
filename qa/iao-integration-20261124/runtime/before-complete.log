@@ -1,0 +1,782 @@
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-integration-20261124/karta
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /iao/requests 17ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.395Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /pura/requests 3ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.408Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /iao/requests 2ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.411Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /pura/requests 6ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.413Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed tenant 2ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.419Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed actor 1ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.420Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed session 4ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.421Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > retains the same admission deadline when final authentication stalls 5ms
+   → expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "actorId": "actor-a",
+        "conversationId": "conversation",
+        "identity": Object {
+          "actorId": "actor-a",
+          "session": Object {
+            "appSlug": "purama-ai",
+            "expiresAt": 1795483396426,
+            "issuedAt": 1795483335426,
+            "sessionId": "22222222-2222-4222-8222-222222222222",
+            "tenantId": "tenant-a",
+            "userId": "actor-a",
+          },
+          "tenantId": "tenant-a",
+        },
+        "prompt": "perform the authorized request",
+        "requestId": "11111111-1111-4111-8111-111111111111",
+        "tenantId": "tenant-a",
+        "type": "conversation",
+      },
+      AbortSignal {
+        Symbol(kEvents): undefined,
+        Symbol(events.maxEventTargetListeners): 0,
+        Symbol(events.maxEventTargetListenersWarned): false,
+        Symbol(kHandlers): undefined,
+        Symbol(kAborted): false,
+        Symbol(kReason): undefined,
+        Symbol(kComposite): false,
+      },
+    ]
+
+
+Number of calls: 1
+
+ × test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not dispatch after the client disconnects during final authentication 1ms
+   → expected "vi.fn()" to be called once with arguments: [ { …(3) }, 503, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   503,
++   202,
+    {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.430Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > preserves an unchanged authorized request and releases admission timers 1ms
+ × test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires the completed older result while preserving the more recently completed result 10ms
+   → expected function to throw an error, but it didn't
+ × test/iaoCompletedRetention.test.ts > retention of completed results that became stale > evicts the completed stale entry before the current result under capacity pressure 3ms
+   → IAO request not found
+ × test/iaoCompletedRetention.test.ts > retention of completed results that became stale > keeps a genuinely unfinished partial result eligible for a later KARTA receipt 2ms
+   → expected function to throw an error, but it didn't
+ × test/iaoCompletedRetention.test.ts > retention of completed results that became stale > never evicts a request whose port is still running, even after a stale receipt 1ms
+   → expected function to throw an error, but it didn't
+ × test/iaoCompletedRetention.test.ts > retention of completed results that became stale > preserves single delivery of a stale export and discards it after its completed lease 3ms
+   → expected function to throw an error, but it didn't
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > does not make another actor's completed result stale 1ms
+ × test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires a stale final receipt even when it contains no preview 9ms
+   → expected { identity: 'iao', …(6) } to match object { status: 'partial', stale: true }
+(5 matching properties omitted from actual)
+
+ Test Files  2 failed (2)
+      Tests  15 failed | 2 passed (17)
+   Start at  02:22:16
+   Duration  703ms (transform 42%, tests 35%, import 14%, setup 6%, worker 4%)
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /iao/requests
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.395Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:36:20
+     34|       async () => { revoked = true; return BODY; }, h.send,
+     35|       { isActive: () => true, canAdmit: async () => true });
+     36|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     37|     expect(h.prepare).not.toHaveBeenCalled();
+     38|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /pura/requests
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.408Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:36:20
+     34|       async () => { revoked = true; return BODY; }, h.send,
+     35|       { isActive: () => true, canAdmit: async () => true });
+     36|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     37|     expect(h.prepare).not.toHaveBeenCalled();
+     38|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /iao/requests
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.411Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:45:20
+     43|     await handleIaoRoute(h.req, h.res, { facade: h.facade, authenticat…
+     44|       { isActive: () => true, canAdmit: async () => { if (++probes ===…
+     45|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     46|     expect(h.prepare).not.toHaveBeenCalled();
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /pura/requests
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.413Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:45:20
+     43|     await handleIaoRoute(h.req, h.res, { facade: h.facade, authenticat…
+     44|       { isActive: () => true, canAdmit: async () => { if (++probes ===…
+     45|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     46|     expect(h.prepare).not.toHaveBeenCalled();
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed tenant
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.419Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:58:20
+     56|     await handleIaoRoute(h.req, h.res, { facade: h.facade, authenticat…
+     57|       async () => { read = true; return BODY; }, h.send);
+     58|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     59|     expect(h.prepare).not.toHaveBeenCalled();
+     60|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed actor
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.420Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:58:20
+     56|     await handleIaoRoute(h.req, h.res, { facade: h.facade, authenticat…
+     57|       async () => { read = true; return BODY; }, h.send);
+     58|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     59|     expect(h.prepare).not.toHaveBeenCalled();
+     60|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed session
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 401, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   401,
++   202,
+    {
+-     "error": "IAO authentication required",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.421Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:58:20
+     56|     await handleIaoRoute(h.req, h.res, { facade: h.facade, authenticat…
+     57|       async () => { read = true; return BODY; }, h.send);
+     58|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 401, { error…
+       |                    ^
+     59|     expect(h.prepare).not.toHaveBeenCalled();
+     60|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > retains the same admission deadline when final authentication stalls
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "actorId": "actor-a",
+        "conversationId": "conversation",
+        "identity": Object {
+          "actorId": "actor-a",
+          "session": Object {
+            "appSlug": "purama-ai",
+            "expiresAt": 1795483396426,
+            "issuedAt": 1795483335426,
+            "sessionId": "22222222-2222-4222-8222-222222222222",
+            "tenantId": "tenant-a",
+            "userId": "actor-a",
+          },
+          "tenantId": "tenant-a",
+        },
+        "prompt": "perform the authorized request",
+        "requestId": "11111111-1111-4111-8111-111111111111",
+        "tenantId": "tenant-a",
+        "type": "conversation",
+      },
+      AbortSignal {
+        Symbol(kEvents): undefined,
+        Symbol(events.maxEventTargetListeners): 0,
+        Symbol(events.maxEventTargetListenersWarned): false,
+        Symbol(kHandlers): undefined,
+        Symbol(kAborted): false,
+        Symbol(kReason): undefined,
+        Symbol(kComposite): false,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:69:29
+     67|     try {
+     68|       await vi.advanceTimersByTimeAsync(0);
+     69|       expect(h.prepare).not.toHaveBeenCalled();
+       |                             ^
+     70|       await vi.advanceTimersByTimeAsync(4_999);
+     71|       expect(h.send).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not dispatch after the client disconnects during final authentication
+AssertionError: expected "vi.fn()" to be called once with arguments: [ { …(3) }, 503, …(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+@@ -4,10 +4,17 @@
+      "setTimeout": [Function Mock],
+      "socket": {
+        "timeout": 15000,
+      },
+    },
+-   503,
++   202,
+    {
+-     "error": "IAO runtime unavailable",
++     "conversationId": "conversation",
++     "identity": "iao",
++     "preview": "authorized result",
++     "requestId": "11111111-1111-4111-8111-111111111111",
++     "stale": false,
++     "status": "partial",
++     "tenantId": "tenant-a",
++     "updatedAt": "2026-11-24T01:22:16.430Z",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ test/iaoAdmissionRevalidation.test.ts:86:20
+     84|       return trusted;
+     85|     } } }, async () => { read = true; return BODY; }, h.send);
+     86|     expect(h.send).toHaveBeenCalledExactlyOnceWith(h.res, 503, { error…
+       |                    ^
+     87|     expect(h.prepare).not.toHaveBeenCalled();
+     88|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+ FAIL  test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires the completed older result while preserving the more recently completed result
+AssertionError: expected function to throw an error, but it didn't
+ ❯ test/iaoCompletedRetention.test.ts:46:58
+     44|     newer.resolve(result(NEW)); await newWork;
+     45|     vi.setSystemTime(START + 1_001);
+     46|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+       |                                                          ^
+     47|     expect(facade.get("tenant-a", "actor-a", NEW)).toMatchObject({ sta…
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/15]⎯
+
+ FAIL  test/iaoCompletedRetention.test.ts > retention of completed results that became stale > evicts the completed stale entry before the current result under capacity pressure
+Error: IAO request not found
+ ❯ IaoFacade.#lookup src/iao/iaoFacade.ts:177:54
+    175|   #lookup(tenantId: string, actorId: string, requestId: string): Store…
+    176|     const stored = this.#requests.get(requestKey(tenantId, actorId, re…
+    177|     if (!stored || stored.actorId !== actorId) throw new IaoRequestNot…
+       |                                                      ^
+    178|     return stored;
+    179|   }
+ ❯ IaoFacade.get src/iao/iaoFacade.ts:153:23
+ ❯ test/iaoCompletedRetention.test.ts:57:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/15]⎯
+
+ FAIL  test/iaoCompletedRetention.test.ts > retention of completed results that became stale > keeps a genuinely unfinished partial result eligible for a later KARTA receipt
+AssertionError: expected function to throw an error, but it didn't
+ ❯ test/iaoCompletedRetention.test.ts:70:58
+     68|     expect(facade.recordKartaResult("tenant-a", "actor-a", OLD, result…
+     69|     vi.setSystemTime(START + 3_001);
+     70|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+       |                                                          ^
+     71|     expect(facade.get("tenant-a", "actor-a", NEW).status).toBe("partia…
+     72|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/15]⎯
+
+ FAIL  test/iaoCompletedRetention.test.ts > retention of completed results that became stale > never evicts a request whose port is still running, even after a stale receipt
+AssertionError: expected function to throw an error, but it didn't
+ ❯ test/iaoCompletedRetention.test.ts:85:58
+     83|     old.resolve(result(OLD)); await oldWork;
+     84|     vi.setSystemTime(START + 3_001);
+     85|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+       |                                                          ^
+     86|   });
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/15]⎯
+
+ FAIL  test/iaoCompletedRetention.test.ts > retention of completed results that became stale > preserves single delivery of a stale export and discards it after its completed lease
+AssertionError: expected function to throw an error, but it didn't
+ ❯ test/iaoCompletedRetention.test.ts:105:58
+    103|     expect(prepare).toHaveBeenCalledTimes(2);
+    104|     vi.setSystemTime(START + 1_001);
+    105|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+       |                                                          ^
+    106|   });
+    107|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/15]⎯
+
+ FAIL  test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires a stale final receipt even when it contains no preview
+AssertionError: expected { identity: 'iao', …(6) } to match object { status: 'partial', stale: true }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "stale": true,
+-   "status": "partial",
++   "status": "draft",
+  }
+
+ ❯ test/iaoCompletedRetention.test.ts:125:27
+    123|     await facade.submit(request(NEW));
+    124|     old.resolve({ kind: "accepted", evidence: { source: "karta", reque…
+    125|     expect(await oldWork).toMatchObject({ status: "partial", stale: tr…
+       |                           ^
+    126|     vi.setSystemTime(START + 1_001);
+    127|     expect(() => facade.get("tenant-a", "actor-a", OLD)).toThrow(IaoRe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/15]⎯
+

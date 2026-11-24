@@ -1,0 +1,76 @@
+{
+  "scope": "Independent review, completion immutability correction, and assembly verification of IAO in the existing KARTA repository.",
+  "productChanges": {
+    "file": "karta/src/iao/iaoFacade.ts",
+    "symbols": [
+      "IaoFacade.cancel",
+      "IaoFacade.#settleResult"
+    ],
+    "behavior": "Existing terminalAt makes a completed stale result internally immutable while retaining public partial/stale and hidden proof. No second registry or new public status."
+  },
+  "reviewedWithoutProductEdit": [
+    "karta/src/api/iaoRoutes.ts"
+  ],
+  "tests": {
+    "targeted": {
+      "status": "PASS",
+      "passed": 261,
+      "failed": 0,
+      "files": 8,
+      "report": "runtime-targeted-final-report.json"
+    },
+    "strictIdenticalBeforeAfter": {
+      "status": "PASS",
+      "before": {
+        "passed": 2,
+        "failed": 7
+      },
+      "after": {
+        "passed": 9,
+        "failed": 0
+      },
+      "report": "immutability-exact-before-after.json"
+    },
+    "independentAuthentication": {
+      "status": "PASS",
+      "scenarios": 5,
+      "report": "runtime-review-probe.json"
+    },
+    "fullSuite": {
+      "status": "PARTIEL",
+      "commandExitCode": 1,
+      "collectedFiles": 205,
+      "collectedCases": 4653,
+      "passed": 4576,
+      "blockedSocketCases": 35,
+      "unqualifiedAfterWorkerKill": 42,
+      "report": "failure-classification.json"
+    }
+  },
+  "globalTypecheck": {
+    "status": "PASS",
+    "command": "npm run typecheck",
+    "NODE_OPTIONS": "--max-old-space-size=1024",
+    "receipt": "karta-typecheck-1024-receipt.json"
+  },
+  "build": {
+    "status": "PASS",
+    "command": "npm run build",
+    "NODE_OPTIONS": "--max-old-space-size=512",
+    "receipt": "karta-build-serial-receipt.json"
+  },
+  "retainedEarlierFailures": [
+    "Original concurrent full-suite and global-typecheck exits 137 remain recorded; they are not completed validations.",
+    "Global typecheck with an artificially bounded 512 MiB heap exited 134 with explicit JavaScript heap exhaustion, then passed sequentially with 1024 MiB.",
+    "The first targeted run had an obsolete legacy oracle and an overly early lazy-sweep assertion; the contract expectation and clock were corrected, with no assertion removed."
+  ],
+  "capacityObservation": "Existing sweep evicts terminal work by insertion order, not completion timestamp. Pending ports remain protected. No eviction-policy change made.",
+  "impactLimitations": "GitNexus resolved exact target symbols but did not model private-method callers or the facade.cancel HTTP call. Manual source review covered these paths; UNKNOWN/LOW outputs were not treated as absence of impact.",
+  "sourceFilesChangedDuringSequentialValidation": [],
+  "ownership": "No Git operation, lockfile, credentials, production or Mac mutation. Root owns final detect_changes, source manifest and publication.",
+  "finalSourceHashes": "final-source-hashes.json",
+  "remainingQualification": [
+    "Hosted CI for the 35 native Unix socket cases and 42 cases interrupted by worker SIGKILL.",
+    "No live provider, model-semantic quality, deployment, device or universal capability qualification implied."
+  ]
+}

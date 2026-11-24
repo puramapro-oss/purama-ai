@@ -1,0 +1,623 @@
+{
+  "commandStatus": "FAIL",
+  "qualificationStatus": "PARTIEL",
+  "collectedFiles": 205,
+  "collectedCases": 4653,
+  "completedCases": 4611,
+  "passed": 4576,
+  "blockedSocketCases": 35,
+  "unqualifiedAfterWorkerKill": 42,
+  "workerErrors": 4,
+  "classificationByFile": {
+    "karta/test/chefBudgetAdmission.test.ts": {
+      "pending": 18
+    },
+    "karta/test/consultationPersistenceRecovery.test.ts": {
+      "pending": 6
+    },
+    "karta/test/localComputeFabricCancellation.test.ts": {
+      "passed": 2,
+      "failed": 14
+    },
+    "karta/test/localComputeFabricProvider.test.ts": {
+      "passed": 3,
+      "failed": 10
+    },
+    "karta/test/localComputeFabricResponseBoundary.test.ts": {
+      "failed": 11
+    },
+    "karta/test/partnerChat.test.ts": {
+      "passed": 12,
+      "pending": 1
+    },
+    "karta/test/walletRpcPermissions.test.ts": {
+      "pending": 17
+    }
+  },
+  "socketFailures": [
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 1,
+      "name": "IAO cancellation through the real local Unix transport closes an in-flight socket on cancellation (streaming=false)",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-YAYblb/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 2,
+      "name": "IAO cancellation through the real local Unix transport closes an in-flight socket on cancellation (streaming=true)",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-hDcNEq/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 3,
+      "name": "IAO cancellation through the real local Unix transport stops a cancellable fixture-daemon computation after the client disconnects",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-Q2DsF5/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 4,
+      "name": "IAO cancellation through the real local Unix transport closes the transport when the shorter KARTA deadline expires",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-cj0xEZ/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 5,
+      "name": "IAO cancellation through the real local Unix transport cancels the full IAO path, fences late output and replays without resending",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-Pdfv92/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 7,
+      "name": "IAO cancellation through the real local Unix transport retains scoped identity and fixed local budgets when the caller reconstructs KARTA",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-teL5Kz/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 8,
+      "name": "IAO cancellation through the real local Unix transport does not redirect, retry or fall back on HTTP 302",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-IuBA6C/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 9,
+      "name": "IAO cancellation through the real local Unix transport does not redirect, retry or fall back on HTTP 429",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-ZVkoFm/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 10,
+      "name": "IAO cancellation through the real local Unix transport does not redirect, retry or fall back on HTTP 500",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-V7JdRK/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 11,
+      "name": "IAO cancellation through the real local Unix transport releases cancellation listeners after success and ignores a later abort",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-NyFRVX/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 12,
+      "name": "IAO cancellation through the real local Unix transport closes a truncated response without accepting partial output or retrying",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-b6i4gQ/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 13,
+      "name": "IAO cancellation through the real local Unix transport handles an abort immediately after dispatch starts without sending a request",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-eD0Hyp/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 14,
+      "name": "IAO cancellation through the real local Unix transport isolates cancellation between concurrent requests on one provider",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-yGz6BM/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricCancellation.test.ts",
+      "caseIndex": 15,
+      "name": "IAO cancellation through the real local Unix transport keeps the absolute fabric deadline and releases signal listeners on timeout",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-c-Sa48eO/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 1,
+      "name": "local compute fabric provider accepts the strict local response contract",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-IRv0LU/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 2,
+      "name": "local compute fabric provider fails closed when the daemon does not attest local-only execution and accepted caps",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-gESfqq/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 3,
+      "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-7Na30M/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 4,
+      "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-UeSwi6/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 5,
+      "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-jvqMef/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 6,
+      "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-915ont/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 7,
+      "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-ZNnx16/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 8,
+      "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-Y1KJG6/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 9,
+      "name": "local compute fabric provider enforces one absolute deadline even while the provider streams",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-kCQrCp/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricProvider.test.ts",
+      "caseIndex": 10,
+      "name": "local compute fabric provider bounds the accumulated response",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-ojOmH8/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 0,
+      "name": "local compute response acceptance boundary rejects isolated continuation UTF-8 inside an otherwise attested JSON response",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-5c1a3D/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 1,
+      "name": "local compute response acceptance boundary rejects truncated sequence UTF-8 inside an otherwise attested JSON response",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-DpruT7/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 2,
+      "name": "local compute response acceptance boundary rejects overlong sequence UTF-8 inside an otherwise attested JSON response",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-WLUnEK/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 3,
+      "name": "local compute response acceptance boundary accepts valid Unicode even when the transport splits a multibyte sequence",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-Nhi6bk/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 4,
+      "name": "local compute response acceptance boundary preserves the exact transport byte cap at maximum + 0 byte(s)",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-jRYNpz/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 5,
+      "name": "local compute response acceptance boundary preserves the exact transport byte cap at maximum + 1 byte(s)",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-reUsDk/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 6,
+      "name": "local compute response acceptance boundary checks the response against one monotonic deadline at 4999 milliseconds",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-T98Ti3/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 7,
+      "name": "local compute response acceptance boundary checks the response against one monotonic deadline at 5000 milliseconds",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-w4bNM4/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 8,
+      "name": "local compute response acceptance boundary cannot accept JSON validation which finishes after the absolute deadline",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-GB86z1/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 9,
+      "name": "local compute response acceptance boundary keeps the same deadline across the parsed-response promise handoff",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-VgVjna/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    },
+    {
+      "file": "karta/test/localComputeFabricResponseBoundary.test.ts",
+      "caseIndex": 10,
+      "name": "local compute response acceptance boundary honors cancellation across the parsed-response promise handoff without exposing its reason",
+      "classification": "BLOQUE_ENVIRONMENT_UNIX_SOCKET",
+      "firstError": "Error: listen EPERM: operation not permitted /tmp/iao-r-DPZadg/fabric.sock",
+      "phase": "Local fixture server could not listen, before exercising the target behavior."
+    }
+  ],
+  "unqualifiedCases": [
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 0,
+      "name": "CHEF cumulative estimated-budget admission reserves 70 before admitting another 70 against a shared budget of 100",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 1,
+      "name": "CHEF cumulative estimated-budget admission admits two estimates that exactly fit the remaining shared budget",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 2,
+      "name": "CHEF cumulative estimated-budget admission also reserves token estimates when the currency budget is unlimited",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 3,
+      "name": "CHEF cumulative estimated-budget admission requires both the cost and token dimensions to fit",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 4,
+      "name": "CHEF cumulative estimated-budget admission adds already-consumed cost to all active estimates",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 5,
+      "name": "CHEF cumulative estimated-budget admission selects an affordable task when a higher-priority one does not fit",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 6,
+      "name": "CHEF cumulative estimated-budget admission refuses an unknown cost estimate under a configured budget",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 7,
+      "name": "CHEF cumulative estimated-budget admission refuses an unknown tokens estimate under a configured budget",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 8,
+      "name": "CHEF cumulative estimated-budget admission preserves unbounded legacy missions without estimates",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 9,
+      "name": "CHEF cumulative estimated-budget admission distinguishes an explicit zero estimate from an absent estimate",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 10,
+      "name": "CHEF cumulative estimated-budget admission does not treat an active legacy task with missing cost as free capacity",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 11,
+      "name": "CHEF cumulative estimated-budget admission keeps the full current estimate despite cumulative usage from an older attempt",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 12,
+      "name": "CHEF cumulative estimated-budget admission releases admission capacity after verified completion, retaining actual recorded usage",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 13,
+      "name": "CHEF cumulative estimated-budget admission does not pause affordable work assigned to another provider",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 14,
+      "name": "CHEF cumulative estimated-budget admission preserves worker-session, worktree and max_parallel admission restrictions",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 15,
+      "name": "CHEF cumulative estimated-budget admission does not overflow bigint while deciding that an estimate exceeds remaining capacity",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 16,
+      "name": "CHEF cumulative estimated-budget admission rejects a null lease and keeps the claim RPC server-only",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/chefBudgetAdmission.test.ts",
+      "caseIndex": 17,
+      "name": "CHEF cumulative estimated-budget admission can reapply the additive migration without changing existing claims",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/consultationPersistenceRecovery.test.ts",
+      "caseIndex": 0,
+      "name": "consultation recovery after a real SQL commit with a lost transport acknowledgement recovers a committed create privately without creating another operation or admission",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/consultationPersistenceRecovery.test.ts",
+      "caseIndex": 1,
+      "name": "consultation recovery after a real SQL commit with a lost transport acknowledgement does not turn a committed start with an unknown acknowledgement into a new provider admission",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/consultationPersistenceRecovery.test.ts",
+      "caseIndex": 2,
+      "name": "consultation recovery after a real SQL commit with a lost transport acknowledgement does not grant a second dispatch after the call reservation committed without its acknowledgement",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/consultationPersistenceRecovery.test.ts",
+      "caseIndex": 3,
+      "name": "consultation recovery after a real SQL commit with a lost transport acknowledgement reconciles the same committed receipt once and rejects a conflicting replacement",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/consultationPersistenceRecovery.test.ts",
+      "caseIndex": 4,
+      "name": "consultation recovery after a real SQL commit with a lost transport acknowledgement recovers the exact committed final result without duplicating usage or fabricating a price",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/consultationPersistenceRecovery.test.ts",
+      "caseIndex": 5,
+      "name": "consultation recovery after a real SQL commit with a lost transport acknowledgement preserves a committed early cancellation after its acknowledgement is lost",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/partnerChat.test.ts",
+      "caseIndex": 12,
+      "name": "executes the additive history migration and rejects cross-account dossier inserts through existing RLS",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 0,
+      "name": "starts from the historical PUBLIC and explicit client grants",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 1,
+      "name": "payment helpers called by anon denies increment_wallet_balance at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 2,
+      "name": "payment helpers called by anon denies prime_mark_payment at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 3,
+      "name": "payment helpers called by anon denies prime_suspend_payment at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 4,
+      "name": "payment helpers called by authenticated denies increment_wallet_balance at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 5,
+      "name": "payment helpers called by authenticated denies prime_mark_payment at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 6,
+      "name": "payment helpers called by authenticated denies prime_suspend_payment at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 7,
+      "name": "payment helpers called by audit_other denies increment_wallet_balance at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 8,
+      "name": "payment helpers called by audit_other denies prime_mark_payment at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 9,
+      "name": "payment helpers called by audit_other denies prime_suspend_payment at the function boundary without changing data",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 10,
+      "name": "also denies the default app_id invocation",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 11,
+      "name": "preserves a server wallet increment",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 12,
+      "name": "preserves server payment tracking",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 13,
+      "name": "preserves server payment suspension",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 14,
+      "name": "can be reapplied without reopening clients or dropping server access",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 15,
+      "name": "preserves function identity, owner, body and configuration",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    },
+    {
+      "file": "karta/test/walletRpcPermissions.test.ts",
+      "caseIndex": 16,
+      "name": "leaves unrelated public functions callable",
+      "classification": "NON_TESTE_AFTER_WORKER_SIGKILL",
+      "reason": "The worker was killed; report status cannot be treated as an intentional skip or PASS."
+    }
+  ],
+  "workerKilledFiles": [
+    "karta/test/chefBudgetAdmission.test.ts",
+    "karta/test/consultationPersistenceRecovery.test.ts",
+    "karta/test/partnerChat.test.ts",
+    "karta/test/walletRpcPermissions.test.ts"
+  ],
+  "reportCaveat": "Vitest top-level numPendingTests=1 and file status=passed are inconsistent with 42 pending assertion records and four killed workers; individual results and error logs were inspected. No pending case is counted as qualified.",
+  "unknowns": "Exact origin of SIGKILL is not established by this log. No functional assertion regression is established by the 35 fixture-listen failures."
+}

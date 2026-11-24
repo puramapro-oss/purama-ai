@@ -1,0 +1,10 @@
+{
+  "karta/src/iao/iaoFacade.ts": "5fdde33ec6e3119c059d3e4c7b17ca2985a1ea6b575fb09ad2793b70b7cdb5ab",
+  "karta/src/api/iaoRoutes.ts": "3b92f9c26b4846bf9de56b4ba1b8001b38bc5965d469087e5a1d98b85f7701cb",
+  "karta/src/integrations/localComputeFabricProvider.ts": "6106e335c105bb2b3f912c01a781289baf50bda60f8441501a5ef0a3d6a3556f",
+  "karta/test/iaoCompletedImmutability.test.ts": "637afd380c26c0302a9262a278af3d07bfa3aef51310ae284c562d69abc84050",
+  "karta/test/iaoCompletedRetention.test.ts": "0e1576875cc73cd199feaad5189773694c0c59adb690d1344aacb4e5f738643c",
+  "karta/test/iaoAdmissionRevalidation.test.ts": "93e439ae7d621a96a31c1cb5a505f00d9cc51a830047f25f02c95b053f84cdc1",
+  "karta/test/iao-facade.test.ts": "8b72918da0e445bf6a62d2f39b2b19ecd9add76730ef39735d9af5e49d84293c",
+  "karta/test/localComputeFabricMemoryProjection.test.ts": "dc5d7f94da82f97f93c66ecd5b6d013a51e253b53e961559862d30f3d1cac2ea"
+}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--strict",
+    "--skipLibCheck",
+    "--noUnusedLocals",
+    "--noUnusedParameters",
+    "--noImplicitReturns",
+    "--module",
+    "NodeNext",
+    "--moduleResolution",
+    "NodeNext",
+    "--target",
+    "ES2022",
+    "src/integrations/localComputeFabricProvider.ts",
+    "test/localComputeFabricMemoryProjection.test.ts"
+  ],
+  "cwd": "/workspace/scratch/6431e6d17379/iao-integration-20261124/karta",
+  "exitCode": 0,
+  "durationSeconds": 1.516,
+  "log": "typecheck.log",
+  "scope": "Strict type check of changed product function and new tests, including TypeScript imports."
+}

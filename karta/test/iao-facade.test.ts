@@ -128,14 +128,18 @@ describe("IAO facade contract", () => {
     expect(JSON.stringify(response)).not.toContain("not-a-uuid");
   });
 
-  it("keeps verified and blocked states terminal and marks late non-terminal results stale", async () => {
-    const facade = new IaoFacade({ prepare: vi.fn(async () => ({ kind: "accepted" as const, preview: "draft" })) });
+  it("keeps completed stale results immutable without exposing their final proof or redispatching", async () => {
+    const prepare = vi.fn(async () => ({ kind: "accepted" as const, preview: "draft" }));
+    const facade = new IaoFacade({ prepare });
     const first = await facade.submit(request());
     expect(first.status).toBe("partial");
     await facade.submit(request({ requestId: "44444444-4444-4444-8444-444444444444" }));
-    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "partial", stale: true });
-    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "blocked", reason: "x" })).toMatchObject({ status: "blocked" });
-    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toMatchObject({ status: "blocked" });
+    const completed = facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() });
+    expect(completed).toMatchObject({ status: "partial", stale: true });
+    expect(completed.proof).toBeUndefined();
+    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "blocked", reason: "x" })).toEqual(completed);
+    expect(facade.recordKartaResult("tenant-a", "user-a", REQUEST_ID, { kind: "accepted", evidence: evidence() })).toEqual(completed);
+    expect(prepare).toHaveBeenCalledTimes(2);
   });
 
   it("isolates conversation freshness between actors in the same tenant", async () => {

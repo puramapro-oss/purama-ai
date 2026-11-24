@@ -1,0 +1,46 @@
+{
+  "encoding": "gzip",
+  "losslessVerified": true,
+  "files": [
+    {
+      "logicalPath": "assembly/karta-full-serial-report.json",
+      "storedPath": "assembly/karta-full-serial-report.json.gz",
+      "originalBytes": 1834145,
+      "storedBytes": 173507,
+      "sha256": "96b43b5bf86b83f2cea8073a211acffbff1536ef53c38d74ae614c4fb815cc0d",
+      "storedSha256": "4d643221dc7ab7a5c5756ca9b853ac61a5f58f851b686b56710fe0dc6480dcec"
+    },
+    {
+      "logicalPath": "assembly/karta-full-serial.log",
+      "storedPath": "assembly/karta-full-serial.log.gz",
+      "originalBytes": 779163,
+      "storedBytes": 99270,
+      "sha256": "34076494a91688dae2f5fb5655491091c7785594fc8b42ceb6bc896e9facaa5a",
+      "storedSha256": "618431ddf3573e1f6f7402792af0d5d2369b5cab46aca3ec2c25a95d8e524cf2"
+    },
+    {
+      "logicalPath": "assembly/karta-full.log",
+      "storedPath": "assembly/karta-full.log.gz",
+      "originalBytes": 103161,
+      "storedBytes": 14218,
+      "sha256": "c3b1b306e4a3cac65e34e5933c048005774ea5aa9f009690ce82f5328d734426",
+      "storedSha256": "25e69f74c3553d43a788697edbc9791e0840f368cad3ee9077420424305d032c"
+    },
+    {
+      "logicalPath": "assembly/runtime-targeted-final-report.json",
+      "storedPath": "assembly/runtime-targeted-final-report.json.gz",
+      "originalBytes": 93629,
+      "storedBytes": 7893,
+      "sha256": "6e9e5807d99d1ac62c85c9457dbd874dc8b9a7dcb1b7c8d0884b07953d1f49ce",
+      "storedSha256": "af82f007216cb1094cb5488e46b4ae94246de97d693b47b0348102b108d87907"
+    },
+    {
+      "logicalPath": "assembly/runtime-targeted-report.json",
+      "storedPath": "assembly/runtime-targeted-report.json.gz",
+      "originalBytes": 94936,
+      "storedBytes": 8268,
+      "sha256": "9904775c09df4ca4fc48b610bd38b11091bf14b19f93553ccc3ab17cb5b74fc5",
+      "storedSha256": "875f69df346624f22511b9107e188b463d23b533ecc9c293a4873196b9c9f9f0"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+    "detect-changes",
+    "--scope",
+    "staged",
+    "--repo",
+    "iao-integration-root-karta-20261124",
+    "--limit",
+    "100"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 0.841,
+  "scope": "KARTA-only graph at real git root; exact staged file diff reviewed separately.",
+  "phase": "final-staged-analysis",
+  "changedFilesReported": 117,
+  "changedSymbols": 111,
+  "affectedProcesses": 13,
+  "riskLevel": "high"
+}

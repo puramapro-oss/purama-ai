@@ -1,0 +1,166 @@
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-integration-20261124/karta
+
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 4ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 0ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 0ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > coalesces concurrent duplicate requests and exposes an export exactly once 10ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects an idempotency key reused with a different payload 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > replays a completed durable action without repeating its KARTA effect 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > fails closed on a missing durable ACK without leaking the internal error 2ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > keeps verified and blocked states terminal and marks late non-terminal results stale 2ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > isolates conversation freshness between actors in the same tenant 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > marks a late initial result stale when a newer request finishes first 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > marks a late initial failure stale when a newer request finishes first 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > isolates idempotency keys between actors in the same tenant 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > uses SMARANA's durable receipt, then computes only from its authorized context 2ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > preserves a scoped completion idempotency key across facade reconstruction 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed on a conflicting payload after facade reconstruction 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed before effects when a reconstructed SMARANA context payload conflicts 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed before effects when reconstructed SMARANA control data conflicts 2ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed on missing ACK and provider timeout with generic dependencies 4ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > reports no effect when the context stage times out, and aborts the port on timeout 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > reports an uncertain effect when a durable control is cancelled mid-flight and forwards the abort 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects immediately without dispatch when the signal is already aborted 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > never dispatches conversation cancelled before the first microtask 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > never dispatches memory-control cancelled before the first microtask 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > reports no effect and never dispatches an already cancelled durable control 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > never dispatches completion when context returns after cancellation 2ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > keeps completion uncertain when cancelled after its actual dispatch 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > does not redeliver a compliant export after facade reconstruction 1ms
+ ✓ test/iao-facade.test.ts > IAO HTTP contract > rejects unknown request types and unexpected client identity fields 2ms
+ ✓ test/iao-facade.test.ts > IAO HTTP contract > returns generic authentication and lookup errors without cross-tenant disclosure 1ms
+ ✓ test/iao-facade.test.ts > IAO HTTP contract > cancels through POST /iao/requests/:id/cancel scoped to the authenticated actor 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > cancels a pending request, aborts KARTA, and stays terminal when the late result lands 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > refines the effect to none when KARTA confirms the interruption happened before any effect 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > records a late durable receipt on a cancelled control without redelivering export content 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > keeps verified and blocked requests immutable under cancel 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > surfaces timeout effect knowledge on blocked responses 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > stamps updatedAt as an ISO timestamp that moves on every transition 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > evicts terminal requests after retention but never a pending one 3ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > bounds retained requests by evicting the oldest terminal entries first 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > rejects out-of-range lease options 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > accepts context handed back before its deadline 6ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > accepts completion handed back before its deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > accepts control handed back before its deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects context resolution at 100 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects context resolution at 101 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects completion resolution at 100 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects completion resolution at 101 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects control resolution at 100 before the timer runs 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects control resolution at 101 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies context rejection at 100 as interruption 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies context rejection at 101 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies completion rejection at 100 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies completion rejection at 101 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies control rejection at 100 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies control rejection at 101 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > preserves an early context denial without exposing provider details 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > preserves an early completion denial without exposing provider details 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > preserves an early control denial without exposing provider details 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not dispatch context when the budget expires before its first microtask 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not dispatch control when the budget expires before its first microtask 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects parent cancellation during the final context Promise handoff 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects parent cancellation during the final completion Promise handoff 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects parent cancellation during the final control Promise handoff 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of context 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of context 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of completion 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of completion 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of control 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of control 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between normalized control and public prepare acceptance 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between normalized control and public prepare acceptance 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by parent-abort during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by parent-abort during validation (throws=true) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by deadline during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by deadline during validation (throws=true) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by parent-abort during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by parent-abort during validation (throws=true) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by deadline during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by deadline during validation (throws=true) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by parent-abort during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by parent-abort during validation (throws=true) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by deadline during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by deadline during validation (throws=true) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > includes context extraction in its own budget on parent-abort 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > includes context extraction in its own budget on deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > retains effect none when parent-abort occurs before completion dispatch 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > retains effect none when deadline occurs before completion dispatch 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke completion already accepted before later parent-abort 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke completion already accepted before later deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke control already accepted before later parent-abort 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke control already accepted before later deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > cleans up after an uncooperative context never settles 4ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > cleans up after an uncooperative completion never settles 2ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > cleans up after an uncooperative control never settles 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps separate stage budgets and the shared controller live after a successful context 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > marks an excerpt shortened by the context budget 4ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > marks an eligible source omitted after a complete excerpt exhausts the budget 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > marks nonempty eligible context omitted by a zero budget 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > does not claim truncation when the full eligible text exactly fits 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > does not disclose excluded sources through completeness metadata at budget 0 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > does not disclose excluded sources through completeness metadata at budget 4 0ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > preserves complete Unicode code points at budget 2 for A🌍B 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > preserves complete Unicode code points at budget 1 for 🌍 0ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > preserves complete Unicode code points at budget 3 for A🌍B 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > preserves complete Unicode code points at budget 4 for A🌍B 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > can use remaining space without splitting a preceding two-unit code point 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > keeps embedded delimiters inside memory data and preserves the decoded text 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > keeps embedded delimiters inside the JSON-encoded user message without changing its content 1ms
+ ✓ test/localComputeFabricMemoryProjection.test.ts > local compute memory projection > serializes the bounded projection through the existing local-only transport with in-process I/O 8ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ("false") 2ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ("0") 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization (1) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ([]) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization ({}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization (null) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a non-boolean authorization (undefined) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"text":7}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"text":null}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"relevance":"1"}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"relevance":null}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"relevance":null}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"sensitivity":"public"}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed source data ({"sensitivity":null}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure (null) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure (undefined) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ([]) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({"sources":null}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({"sources":{}}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects malformed context structure ({"sources":[null]}) 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own text field 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own authorized field 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own sensitivity field 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > requires an own relevance field 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects inherited authorization and custom prototypes 1ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active text field without executing it 1ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active authorized field without executing it 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active sensitivity field without executing it 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects an active relevance field without executing it 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects context and array accessors without invoking them 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > does not execute a custom array iterator 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects sparse arrays and array subclasses 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a context proxy without calling traps 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a array proxy without calling traps 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a source proxy without calling traps 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > rejects a revoked proxy with the generic error 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > validates the whole pack before transport, including a late malformed source 1ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > preserves authorized ordering, filtering, truncation and the input objects 0ms
+ ✓ test/localComputeFabricMemoryBoundary.test.ts > local compute fabric memory data boundary > accepts passive records with a null prototype and ignores unused metadata 0ms
+
+ Test Files  4 passed (4)
+      Tests  154 passed (154)
+   Start at  02:22:44
+   Duration  1.24s (transform 47%, tests 30%, import 14%, setup 5%, worker 3%)
+
+    Isolate  4 workers spawned · ~173ms startup each (spawn + environment, per file)
+             at least ~518ms faster with isolate: false — reuses workers across files instead of one per file
+

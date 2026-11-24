@@ -1,0 +1,279 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> karta-engine@1.0.0 test
+> vitest run test/iaoCompletedImmutability.test.ts test/iaoCompletedRetention.test.ts test/iaoPendingRetention.test.ts test/iao-facade.test.ts test/iaoAdmissionRevalidation.test.ts test/iaoIdentityBoundary.test.ts test/iaoAdmissionDeadline.test.ts test/kartaRuntimeDeadline.test.ts --maxWorkers=1 --reporter=verbose --reporter=json --outputFile.json=/workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/runtime-targeted-final-report.json
+
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-integration-20261124/karta
+
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 4ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 0ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects absent or mismatched server identity before KARTA dispatch 0ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > coalesces concurrent duplicate requests and exposes an export exactly once 3ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > rejects an idempotency key reused with a different payload 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > replays a completed durable action without repeating its KARTA effect 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > fails closed on a missing durable ACK without leaking the internal error 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > keeps completed stale results immutable without exposing their final proof or redispatching 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > isolates conversation freshness between actors in the same tenant 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > marks a late initial result stale when a newer request finishes first 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > marks a late initial failure stale when a newer request finishes first 1ms
+ ✓ test/iao-facade.test.ts > IAO facade contract > isolates idempotency keys between actors in the same tenant 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > uses SMARANA's durable receipt, then computes only from its authorized context 2ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > preserves a scoped completion idempotency key across facade reconstruction 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed on a conflicting payload after facade reconstruction 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed before effects when a reconstructed SMARANA context payload conflicts 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed before effects when reconstructed SMARANA control data conflicts 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > fails closed on missing ACK and provider timeout with generic dependencies 6ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > reports no effect when the context stage times out, and aborts the port on timeout 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > reports an uncertain effect when a durable control is cancelled mid-flight and forwards the abort 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects immediately without dispatch when the signal is already aborted 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > never dispatches conversation cancelled before the first microtask 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > never dispatches memory-control cancelled before the first microtask 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > reports no effect and never dispatches an already cancelled durable control 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > never dispatches completion when context returns after cancellation 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > keeps completion uncertain when cancelled after its actual dispatch 1ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > rejects malformed SMARANA receipts without exposing their content 0ms
+ ✓ test/iao-facade.test.ts > KARTA IAO adapter > does not redeliver a compliant export after facade reconstruction 1ms
+ ✓ test/iao-facade.test.ts > IAO HTTP contract > rejects unknown request types and unexpected client identity fields 1ms
+ ✓ test/iao-facade.test.ts > IAO HTTP contract > returns generic authentication and lookup errors without cross-tenant disclosure 1ms
+ ✓ test/iao-facade.test.ts > IAO HTTP contract > cancels through POST /iao/requests/:id/cancel scoped to the authenticated actor 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > cancels a pending request, aborts KARTA, and stays terminal when the late result lands 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > refines the effect to none when KARTA confirms the interruption happened before any effect 0ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > records a late durable receipt on a cancelled control without redelivering export content 0ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > keeps verified and blocked requests immutable under cancel 0ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > surfaces timeout effect knowledge on blocked responses 0ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > stamps updatedAt as an ISO timestamp that moves on every transition 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > evicts terminal requests after retention but never a pending one 1ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > bounds retained requests by evicting the oldest terminal entries first 0ms
+ ✓ test/iao-facade.test.ts > IAO cancellation and leases > rejects out-of-range lease options 0ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not renew the original lease when the same final receipt is repeated 6ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > ignores a later preview instead of replacing an already completed stale result 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not replace completed work with a later blocked result 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > returns completed stale work unchanged on cancel without signalling an uncertain effect 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > also treats a stale proof-only result as internally completed 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > does not redeliver a completed stale export through a repeated final callback 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > protects a draining port without renewing the completed lease when it finally returns 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > still cancels genuinely pending work and refines its effect when a valid receipt arrives 1ms
+ ✓ test/iaoCompletedImmutability.test.ts > immutability of internally completed stale IAO work > keeps a preview without a final proof open to its later completion 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires the completed older result while preserving the more recently completed result 6ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > evicts the completed stale entry before the current result under capacity pressure 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > keeps a genuinely unfinished partial result eligible for a later KARTA receipt 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > never evicts a request whose port is still running, even after a stale receipt 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > preserves single delivery of a stale export and discards it after its completed lease 2ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > does not make another actor's completed result stale 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires a stale final receipt even when it contains no preview 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects missing before reading or mutating 5ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects null before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects primitive before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects session null before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects session array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects empty tenant before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects whitespace actor before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects non-string tenant before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects session id number before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects NaN issuance before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects infinite expiry before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects string expiry before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects expired before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects future issuance before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects oversized lifetime before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects wrong audience before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects tenant mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects actor mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects invalid session id before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > rejects missing session before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > GET /iao/requests/11111111-1111-4111-8111-111111111111 identity admission > requires injected runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects missing before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects null before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects primitive before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects session null before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects session array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects empty tenant before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects whitespace actor before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects non-string tenant before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects session id number before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects NaN issuance before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects infinite expiry before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects string expiry before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects expired before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects future issuance before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects oversized lifetime before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects wrong audience before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects tenant mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects actor mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects invalid session id before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > rejects missing session before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel identity admission > requires injected runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects missing before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects null before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects primitive before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects session null before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects session array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects empty tenant before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects whitespace actor before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects non-string tenant before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects session id number before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects NaN issuance before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects infinite expiry before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects string expiry before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects expired before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects future issuance before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects oversized lifetime before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects wrong audience before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects tenant mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects actor mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects invalid session id before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > rejects missing session before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /iao/requests identity admission > requires injected runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects missing before reading or mutating 2ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects null before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects primitive before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects array before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects session null before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects session array before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects empty tenant before reading or mutating 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects whitespace actor before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects non-string tenant before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects session id number before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects NaN issuance before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects infinite expiry before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects string expiry before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects expired before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects future issuance before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects oversized lifetime before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects wrong audience before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects tenant mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects actor mismatch before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects invalid session id before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > rejects missing session before reading or mutating 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > POST /pura/requests identity admission > requires injected runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > permits valid scoped reads and cancellation 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > cannot read or cancel another tenantId 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > cannot read or cancel another actorId 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > invalid identity never reads or aborts pending request on GET 6ms
+ ✓ test/iaoIdentityBoundary.test.ts > invalid identity never reads or aborts pending request on POST 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > invalid identity precedes body parsing on /iao/requests 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > invalid identity precedes body parsing on /pura/requests 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > enforces exact expiry and lifetime boundaries against server clock 3ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary GET /iao/requests/11111111-1111-4111-8111-111111111111 > prohibits storage before sending success 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary GET /iao/requests/11111111-1111-4111-8111-111111111111 > prohibits storage before sending invalid-identity 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary GET /iao/requests/11111111-1111-4111-8111-111111111111 > prohibits storage before sending missing-runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary GET /iao/requests/11111111-1111-4111-8111-111111111111 > prohibits storage before sending not-found 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary GET /iao/requests/11111111-1111-4111-8111-111111111111 > prohibits storage before sending conflict 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary GET /iao/requests/11111111-1111-4111-8111-111111111111 > prohibits storage before sending failure 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel > prohibits storage before sending success 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel > prohibits storage before sending invalid-identity 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel > prohibits storage before sending missing-runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel > prohibits storage before sending not-found 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel > prohibits storage before sending conflict 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests/11111111-1111-4111-8111-111111111111/cancel > prohibits storage before sending failure 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests > prohibits storage before sending success 1ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests > prohibits storage before sending invalid-identity 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests > prohibits storage before sending missing-runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests > prohibits storage before sending not-found 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests > prohibits storage before sending conflict 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /iao/requests > prohibits storage before sending failure 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /pura/requests > prohibits storage before sending success 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /pura/requests > prohibits storage before sending invalid-identity 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /pura/requests > prohibits storage before sending missing-runtime 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /pura/requests > prohibits storage before sending not-found 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /pura/requests > prohibits storage before sending conflict 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > cache boundary POST /pura/requests > prohibits storage before sending failure 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > leaves unrelated GET /health unchanged 0ms
+ ✓ test/iaoIdentityBoundary.test.ts > leaves unrelated DELETE /iao/requests/11111111-1111-4111-8111-111111111111 unchanged 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > accepts context handed back before its deadline 5ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > accepts completion handed back before its deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > accepts control handed back before its deadline 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects context resolution at 100 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects context resolution at 101 before the timer runs 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects completion resolution at 100 before the timer runs 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects completion resolution at 101 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects control resolution at 100 before the timer runs 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects control resolution at 101 before the timer runs 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies context rejection at 100 as interruption 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies context rejection at 101 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies completion rejection at 100 as interruption 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies completion rejection at 101 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies control rejection at 100 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > classifies control rejection at 101 as interruption 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > preserves an early context denial without exposing provider details 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > preserves an early completion denial without exposing provider details 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > preserves an early control denial without exposing provider details 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not dispatch context when the budget expires before its first microtask 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not dispatch control when the budget expires before its first microtask 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects parent cancellation during the final context Promise handoff 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects parent cancellation during the final completion Promise handoff 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > rejects parent cancellation during the final control Promise handoff 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of context 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of context 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of completion 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of completion 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between bounded and consumption of control 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between bounded and consumption of control 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks parent-abort between normalized control and public prepare acceptance 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > checks deadline between normalized control and public prepare acceptance 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by parent-abort during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by parent-abort during validation (throws=true) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by deadline during validation (throws=false) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps context interrupted by deadline during validation (throws=true) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by parent-abort during validation (throws=false) 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by parent-abort during validation (throws=true) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by deadline during validation (throws=false) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps completion interrupted by deadline during validation (throws=true) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by parent-abort during validation (throws=false) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by parent-abort during validation (throws=true) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by deadline during validation (throws=false) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps control interrupted by deadline during validation (throws=true) 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > includes context extraction in its own budget on parent-abort 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > includes context extraction in its own budget on deadline 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > retains effect none when parent-abort occurs before completion dispatch 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > retains effect none when deadline occurs before completion dispatch 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke completion already accepted before later parent-abort 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke completion already accepted before later deadline 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke control already accepted before later parent-abort 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > does not revoke control already accepted before later deadline 0ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > cleans up after an uncooperative context never settles 4ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > cleans up after an uncooperative completion never settles 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > cleans up after an uncooperative control never settles 1ms
+ ✓ test/kartaRuntimeDeadline.test.ts > KARTA IAO monotonic stage deadlines > keeps separate stage budgets and the shared controller live after a successful context 1ms
+ ✓ test/iaoAdmissionDeadline.test.ts > expires readiness before admission and ignores its late result 6ms
+ ✓ test/iaoAdmissionDeadline.test.ts > expires authentication before admission and ignores its late result 2ms
+ ✓ test/iaoAdmissionDeadline.test.ts > expires body before admission and ignores its late result 3ms
+ ✓ test/iaoAdmissionDeadline.test.ts > expires final-readiness before admission and ignores its late result 1ms
+ ✓ test/iaoAdmissionDeadline.test.ts > expires lookup authentication without late facade access 4ms
+ ✓ test/iaoAdmissionDeadline.test.ts > expires cancel authentication without late facade access 1ms
+ ✓ test/iaoAdmissionDeadline.test.ts > shares the 15-second admission deadline across successive waits 1ms
+ ✓ test/iaoAdmissionDeadline.test.ts > checks the monotonic deadline after synchronous port metadata before dispatch 1ms
+ ✓ test/iaoAdmissionDeadline.test.ts > releases admission timers before awaiting work already admitted 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /iao/requests 4ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /pura/requests 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /iao/requests 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /pura/requests 0ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed tenant 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed actor 0ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed session 0ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > retains the same admission deadline when final authentication stalls 8ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not dispatch after the client disconnects during final authentication 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > preserves an unchanged authorized request and releases admission timers 2ms
+ ✓ test/iaoPendingRetention.test.ts > IAO pending cancellation retention > keeps cancelled work and its idempotency key until drain under retention pressure 6ms
+ ✓ test/iaoPendingRetention.test.ts > IAO pending cancellation retention > keeps cancelled work and its idempotency key until drain under capacity pressure 1ms
+ ✓ test/iaoPendingRetention.test.ts > IAO pending cancellation retention > keeps non-cancelled pending requests under retention and capacity pressure 1ms
+ ✓ test/iaoPendingRetention.test.ts > IAO pending cancellation retention > still evicts a drained terminal request to satisfy capacity before retention 1ms
+
+ Test Files  8 passed (8)
+      Tests  261 passed (261)
+   Start at  02:39:45
+   Duration  1.40s (tests 43%, transform 29%, import 17%, setup 6%, worker 5%)
+
+    Isolate  8 workers spawned · ~103ms startup each (spawn + environment, per file)
+             at least ~720ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /workspace/scratch/6431e6d17379/iao-integration-20261124/qa/iao-integration-20261124/assembly/runtime-targeted-final-report.json

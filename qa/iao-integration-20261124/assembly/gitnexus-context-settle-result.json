@@ -1,0 +1,180 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Method:src/iao/iaoFacade.ts:IaoFacade.#settleResult#2",
+    "name": "#settleResult",
+    "kind": "Method",
+    "filePath": "src/iao/iaoFacade.ts",
+    "startLine": 191,
+    "endLine": 200
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "has_method": [
+      {
+        "uid": "Class:src/iao/iaoFacade.ts:IaoFacade",
+        "name": "IaoFacade",
+        "filePath": "src/iao/iaoFacade.ts"
+      }
+    ]
+  },
+  "outgoing": {
+    "calls": [
+      {
+        "uid": "Function:src/iao/iaoFacade.ts:conversationKey",
+        "name": "conversationKey",
+        "filePath": "src/iao/iaoFacade.ts"
+      },
+      {
+        "uid": "Function:src/iao/iaoFacade.ts:isTerminal",
+        "name": "isTerminal",
+        "filePath": "src/iao/iaoFacade.ts"
+      },
+      {
+        "uid": "Function:test/apolloTool.test.ts:fn@33:47.fn@90:69.getter@91:4",
+        "name": "getter",
+        "filePath": "test/apolloTool.test.ts"
+      },
+      {
+        "uid": "Function:test/approvalParams.test.ts:fn@3:49.fn@82:65.getter@83:4",
+        "name": "getter",
+        "filePath": "test/approvalParams.test.ts"
+      },
+      {
+        "uid": "Function:test/approvalTracePrivacy.test.ts:fn@81:67.fn@251:84.getter@252:4",
+        "name": "getter",
+        "filePath": "test/approvalTracePrivacy.test.ts"
+      },
+      {
+        "uid": "Function:test/connectedResearch.test.ts:fn@68:66.fn@94:72.getter@98:4",
+        "name": "getter",
+        "filePath": "test/connectedResearch.test.ts"
+      },
+      {
+        "uid": "Function:test/executionOrigin.test.ts:fn@12:50.fn@50:86.getter@51:4",
+        "name": "getter",
+        "filePath": "test/executionOrigin.test.ts"
+      },
+      {
+        "uid": "Function:test/executionProfile.test.ts:fn@10:46.fn@54:43.getter@55:4",
+        "name": "getter",
+        "filePath": "test/executionProfile.test.ts"
+      },
+      {
+        "uid": "Function:test/iaoExecutionBudget.test.ts:fn@16:42.fn@57:94.fail@60:4",
+        "name": "fail",
+        "filePath": "test/iaoExecutionBudget.test.ts"
+      },
+      {
+        "uid": "Function:test/knowledgeSearch.test.ts:fn@106:53.fn@121:63.getter@122:4",
+        "name": "getter",
+        "filePath": "test/knowledgeSearch.test.ts"
+      },
+      {
+        "uid": "Function:test/localComputeFabricMemoryBoundary.test.ts:fn@10:54.fn@40:113.getter@41:4",
+        "name": "getter",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Function:test/localComputeFabricMemoryBoundary.test.ts:fn@10:54.fn@48:66.getter@49:4",
+        "name": "getter",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Function:test/localComputeFabricMemoryBoundary.test.ts:fn@10:54.fn@71:86.trap@72:4",
+        "name": "trap",
+        "filePath": "test/localComputeFabricMemoryBoundary.test.ts"
+      },
+      {
+        "uid": "Function:test/loopTracePrivacy.test.ts:fn@72:61.fn@228:121.getter@229:4",
+        "name": "getter",
+        "filePath": "test/loopTracePrivacy.test.ts"
+      },
+      {
+        "uid": "Function:test/loopTracePrivacy.test.ts:fn@72:61.fn@243:62.getter@244:4",
+        "name": "getter",
+        "filePath": "test/loopTracePrivacy.test.ts"
+      },
+      {
+        "uid": "Function:test/modelConsultation.test.ts:fn@344:52.fn@476:63.getter@479:4",
+        "name": "getter",
+        "filePath": "test/modelConsultation.test.ts"
+      },
+      {
+        "uid": "Function:test/modelConsultationStore.test.ts:fn@42:47.fn@82:80.getter@83:4",
+        "name": "getter",
+        "filePath": "test/modelConsultationStore.test.ts"
+      },
+      {
+        "uid": "Function:test/modelUsage.test.ts:fn@26:42.fn@173:71.getter@174:4",
+        "name": "getter",
+        "filePath": "test/modelUsage.test.ts"
+      },
+      {
+        "uid": "Function:test/privateToolResults.test.ts:fn@142:44.fn@143:89.getter@149:4",
+        "name": "getter",
+        "filePath": "test/privateToolResults.test.ts"
+      },
+      {
+        "uid": "Function:test/privateToolResults.test.ts:fn@38:38.fn@118:46.accessor@119:38",
+        "name": "accessor",
+        "filePath": "test/privateToolResults.test.ts"
+      },
+      {
+        "uid": "Function:test/quantumSimulator.test.ts:fn@117:38.fn@163:61.getter@164:4",
+        "name": "getter",
+        "filePath": "test/quantumSimulator.test.ts"
+      },
+      {
+        "uid": "Function:test/quantumSimulator.test.ts:fn@117:38.fn@177:83.trap@178:4",
+        "name": "trap",
+        "filePath": "test/quantumSimulator.test.ts"
+      },
+      {
+        "uid": "Function:test/webSearchInputBoundary.test.ts:fn@16:59.fn@54:110.getter@55:4",
+        "name": "getter",
+        "filePath": "test/webSearchInputBoundary.test.ts"
+      },
+      {
+        "uid": "Function:test/webSearchInputBoundary.test.ts:fn@16:59.fn@65:120.getter@66:4",
+        "name": "getter",
+        "filePath": "test/webSearchInputBoundary.test.ts"
+      },
+      {
+        "uid": "Function:test/webSearchInputBoundary.test.ts:fn@16:59.fn@77:72.getter@78:4",
+        "name": "getter",
+        "filePath": "test/webSearchInputBoundary.test.ts"
+      }
+    ],
+    "accesses": [
+      {
+        "uid": "Property:src/iao/iaoFacade.ts:StoredRequest.actorId",
+        "name": "actorId",
+        "filePath": "src/iao/iaoFacade.ts"
+      },
+      {
+        "uid": "Property:src/iao/iaoFacade.ts:StoredRequest.conversationId",
+        "name": "conversationId",
+        "filePath": "src/iao/iaoFacade.ts"
+      },
+      {
+        "uid": "Property:src/iao/iaoFacade.ts:StoredRequest.response",
+        "name": "response",
+        "filePath": "src/iao/iaoFacade.ts"
+      }
+    ],
+    "uses": [
+      {
+        "uid": "TypeAlias:src/iao/iaoFacade.ts:IaoResponse",
+        "name": "IaoResponse",
+        "filePath": "src/iao/iaoFacade.ts"
+      },
+      {
+        "uid": "TypeAlias:src/iao/iaoFacade.ts:KartaIaoResult",
+        "name": "KartaIaoResult",
+        "filePath": "src/iao/iaoFacade.ts"
+      }
+    ]
+  },
+  "processes": []
+}

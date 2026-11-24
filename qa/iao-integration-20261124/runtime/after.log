@@ -1,0 +1,26 @@
+
+ RUN  v5.0.3 /workspace/scratch/6431e6d17379/iao-integration-20261124/karta
+
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /iao/requests 5ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects a session revoked while reading the body on /pura/requests 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /iao/requests 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > rejects revocation during the final readiness wait on /pura/requests 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed tenant 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed actor 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not rebind a validated request to a changed session 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > retains the same admission deadline when final authentication stalls 7ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > does not dispatch after the client disconnects during final authentication 1ms
+ ✓ test/iaoAdmissionRevalidation.test.ts > current IAO authorization at dispatch > preserves an unchanged authorized request and releases admission timers 3ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires the completed older result while preserving the more recently completed result 7ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > evicts the completed stale entry before the current result under capacity pressure 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > keeps a genuinely unfinished partial result eligible for a later KARTA receipt 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > never evicts a request whose port is still running, even after a stale receipt 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > preserves single delivery of a stale export and discards it after its completed lease 3ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > does not make another actor's completed result stale 1ms
+ ✓ test/iaoCompletedRetention.test.ts > retention of completed results that became stale > expires a stale final receipt even when it contains no preview 1ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  02:22:41
+   Duration  531ms (transform 50%, tests 24%, import 15%, setup 7%, worker 5%)
+
