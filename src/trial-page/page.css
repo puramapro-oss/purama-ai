@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, sans-serif;
+  color-scheme: light;
+  --background: #fffdf7;
+  --foreground: #202d29;
+  --card: #fffdf7;
+  --card-foreground: #202d29;
+  --primary: #1a574c;
+  --primary-foreground: #fff;
+  --muted: #f0eee5;
+  --muted-foreground: #505c54;
+  --secondary: #f0eee5;
+  --secondary-foreground: #202d29;
+  --accent: #e2eee6;
+  --accent-foreground: #163e35;
+  --border: #d1d2c4;
+  --input: #a6b2a7;
+  --ring: #1a574c;
+  --destructive: #8d321e;
+  --radius: .75rem;
+  color: var(--foreground);
+  background-color: #f8f5ed;
+}
+
+body { margin: 0; }
+.trial-main { width: min(100%, 48rem); margin: 0 auto; padding: clamp(.75rem, 4vw, 2rem); }
+.atelier-home { display: inline-flex; align-items: center; min-height: 44px; color: var(--primary); margin-bottom: .75rem; }
+.trial-sheet { border: 1px solid var(--border); background: var(--background); border-radius: 1.25rem; box-shadow: 0 10px 35px #20372a0d; overflow-wrap: anywhere; }
+.trial-sheet > header { padding-top: 1.5rem; padding-bottom: 1.25rem; }
+.trial-sheet h1 { font: normal clamp(1.875rem, 5vw, 2.625rem)/1.12 Georgia, serif; color: #193f35; }
+.trial-sheet input, .trial-sheet select { max-width: 100%; }
+.trial-sheet :focus-visible, .atelier-home:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.trial-sheet h1:focus { outline: none; }
+
+@media (pointer: coarse) {
+  .trial-sheet :is(input, select, textarea) { font-size: 1rem; }
+  .trial-sheet :is(button, summary, a) { min-height: 44px; }
+}
