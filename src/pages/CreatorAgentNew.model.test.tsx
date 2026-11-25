@@ -84,3 +84,81 @@ describe('CreatorAgentNew — submitted model', () => {
     expect(toast.error).not.toHaveBeenCalled();
   });
 });
+
+describe('Organisation — préparation locale', () => {
+  async function openOrganization() {
+    await act(async () => root.render(
+      <MemoryRouter key="organization-test" initialEntries={['/dashboard/creator-agent/new?mode=organisation']}>
+        <CreatorAgentNew />
+      </MemoryRouter>,
+    ));
+  }
+  async function choose(select: HTMLSelectElement, value: string) {
+    await act(async () => {
+      select.value = value;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  it('covers eight families and 64 distinct mission IDs without submitting a request', async () => {
+    await openOrganization();
+    const [, family, mission] = host.querySelectorAll<HTMLSelectElement>('details select');
+    const ids = new Set<string>();
+    expect(family.options).toHaveLength(8);
+    for (const group of Array.from(family.options)) {
+      await choose(family, group.value);
+      expect(mission.value).toBe('');
+      for (const option of Array.from(mission.options)) {
+        if (option.value) ids.add(option.value);
+      }
+    }
+    expect(ids).toEqual(new Set(Array.from({ length: 64 }, (_, i) => String(i + 1))));
+    expect(api.createAgent).not.toHaveBeenCalled();
+    expect(api.generateAgent).not.toHaveBeenCalled();
+  });
+
+  it('preserves a manually edited form and clears it when the active account changes', async () => {
+    await openOrganization();
+    const panel = host.querySelector<HTMLElement>('[role="tabpanel"][data-state="active"]')!;
+    const input = panel.querySelector<HTMLInputElement>('input')!;
+    await fill(input, 'Mission privée');
+    const mission = host.querySelectorAll<HTMLSelectElement>('details select')[2];
+    await choose(mission, '1');
+    const prepare = Array.from(host.querySelectorAll('button')).find(button => button.textContent === 'Préparer ce brouillon')!;
+    expect(prepare.disabled).toBe(true);
+    expect(input.value).toBe('Mission privée');
+    const previousUser = auth.user;
+    try {
+      auth.user = { id: '81000000-0000-4000-8000-000000000002' };
+      await act(async () => root.render(
+        <MemoryRouter key="organization-test"><CreatorAgentNew /></MemoryRouter>,
+      ));
+      expect(host.querySelector<HTMLInputElement>('input')?.value ?? '').toBe('');
+      expect(host.textContent).not.toContain('Mission privée');
+    } finally {
+      auth.user = previousUser;
+    }
+    expect(api.createAgent).not.toHaveBeenCalled();
+  });
+
+  it.each(['entreprise', 'association'])('prepares an editable, inactive %s agent', async profile => {
+    await openOrganization();
+    const [context, , mission] = host.querySelectorAll<HTMLSelectElement>('details select');
+    await choose(context, profile);
+    await choose(mission, '1');
+    await clickButton('Préparer ce brouillon');
+    const prompt = host.querySelector<HTMLTextAreaElement>('textarea')!;
+    expect(prompt.value).toContain(profile === 'association' ? 'fonds affectés' : 'besoin du client');
+    expect(prompt.value).toContain('reçu d’import');
+    const prepare = Array.from(host.querySelectorAll('button')).find(b => b.textContent === 'Préparer ce brouillon');
+    expect(prepare?.disabled).toBe(true);
+    expect(api.createAgent).not.toHaveBeenCalled();
+    expect(api.generateAgent).not.toHaveBeenCalled();
+    await fill(prompt, prompt.value + ' Validation interne convenue.');
+    await clickButton("Créer l'agent");
+    expect(api.createAgent).toHaveBeenCalledExactlyOnceWith(auth.user.id, expect.objectContaining({
+      is_active: false, is_public: false, karta_enabled: false, schedule_enabled: false,
+      schedule_cron: null, tools_enabled: [], system_prompt: expect.stringContaining('Validation interne convenue.'),
+    }));
+  });
+});

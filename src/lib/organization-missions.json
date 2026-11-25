@@ -1,0 +1,386 @@
+[
+  {
+    "id": 1,
+    "family": "Commerce et catalogues",
+    "title": "Fiches fabricant prêtes à importer",
+    "acceptance": "Vérifier les références admises sur le reçu d’import."
+  },
+  {
+    "id": 2,
+    "family": "Commerce et catalogues",
+    "title": "Correspondance des références fournisseurs",
+    "acceptance": "Relier chaque identifiant fournisseur à une référence vérifiée."
+  },
+  {
+    "id": 3,
+    "family": "Commerce et catalogues",
+    "title": "Entretien des catalogues multisites",
+    "acceptance": "Comparer la version attendue et la version reçue sur chaque site."
+  },
+  {
+    "id": 4,
+    "family": "Commerce et catalogues",
+    "title": "Contrôle des tarifs d’achat",
+    "acceptance": "Rapprocher conditions tarifaires, unités et périodes de validité."
+  },
+  {
+    "id": 5,
+    "family": "Commerce et catalogues",
+    "title": "Préparation des réassorts",
+    "acceptance": "Soumettre les quantités proposées avec leur justification."
+  },
+  {
+    "id": 6,
+    "family": "Commerce et catalogues",
+    "title": "Vérification des réceptions",
+    "acceptance": "Pointer écarts et quantités sur les bons de réception."
+  },
+  {
+    "id": 7,
+    "family": "Commerce et catalogues",
+    "title": "Dossiers de litige transport",
+    "acceptance": "Rassembler les pièces nécessaires au dossier du transporteur."
+  },
+  {
+    "id": 8,
+    "family": "Commerce et catalogues",
+    "title": "Diagnostic des retours produits",
+    "acceptance": "Relier les causes de retour aux données de la période étudiée."
+  },
+  {
+    "id": 9,
+    "family": "Service client et opérations",
+    "title": "SAV sur les demandes répétitives",
+    "acceptance": "Vérifier la résolution et les éventuelles réouvertures."
+  },
+  {
+    "id": 10,
+    "family": "Service client et opérations",
+    "title": "Choix d’une pièce de rechange",
+    "acceptance": "Vérifier la compatibilité dans la notice du fabricant."
+  },
+  {
+    "id": 11,
+    "family": "Service client et opérations",
+    "title": "Suivi des demandes de devis",
+    "acceptance": "Associer chaque demande entrante à son responsable et à sa prochaine étape."
+  },
+  {
+    "id": 12,
+    "family": "Service client et opérations",
+    "title": "Maintenance de la base d’assistance",
+    "acceptance": "Rejouer les instructions modifiées dans la version concernée."
+  },
+  {
+    "id": 13,
+    "family": "Service client et opérations",
+    "title": "Replanification des interventions",
+    "acceptance": "Faire confirmer le créneau et les ressources nécessaires."
+  },
+  {
+    "id": 14,
+    "family": "Service client et opérations",
+    "title": "Dossiers d’entrée en relation",
+    "acceptance": "Vérifier les pièces exigées et signaler celles qui manquent."
+  },
+  {
+    "id": 15,
+    "family": "Service client et opérations",
+    "title": "Rapprochement commande et facture",
+    "acceptance": "Justifier chaque écart entre commande, réception et facture."
+  },
+  {
+    "id": 16,
+    "family": "Service client et opérations",
+    "title": "Passation des dossiers entre équipes",
+    "acceptance": "Faire confirmer la liste des dossiers et leurs prochaines échéances."
+  },
+  {
+    "id": 17,
+    "family": "Logiciels et agents IA",
+    "title": "Tests avant changement de modèle",
+    "acceptance": "Comparer deux versions sur les mêmes cas métier."
+  },
+  {
+    "id": 18,
+    "family": "Logiciels et agents IA",
+    "title": "Réduction du coût d’un traitement IA",
+    "acceptance": "Comparer les coûts à qualité et volume équivalents."
+  },
+  {
+    "id": 19,
+    "family": "Logiciels et agents IA",
+    "title": "Migration d’un fournisseur d’IA",
+    "acceptance": "Rejouer une tâche témoin et vérifier l’option de retour."
+  },
+  {
+    "id": 20,
+    "family": "Logiciels et agents IA",
+    "title": "Recherche privée chez le client",
+    "acceptance": "Tester les accès au fonds avec des comptes de rôles distincts."
+  },
+  {
+    "id": 21,
+    "family": "Logiciels et agents IA",
+    "title": "Maintenance d’un connecteur métier",
+    "acceptance": "Contrôler la synchronisation et les rejets sur un lot témoin."
+  },
+  {
+    "id": 22,
+    "family": "Logiciels et agents IA",
+    "title": "Surveillance des agents métier",
+    "acceptance": "Vérifier sur incident simulé les alertes et les traces de reprise."
+  },
+  {
+    "id": 23,
+    "family": "Logiciels et agents IA",
+    "title": "Accès sous licence dans un logiciel tiers",
+    "acceptance": "Vérifier le périmètre de licence et le décompte des usages."
+  },
+  {
+    "id": 24,
+    "family": "Logiciels et agents IA",
+    "title": "Répétition d’une restauration",
+    "acceptance": "Retrouver les dossiers témoins après restauration en environnement isolé."
+  },
+  {
+    "id": 25,
+    "family": "Savoir et documents",
+    "title": "Réponses sourcées aux équipes",
+    "acceptance": "Relier chaque réponse à une source ou signaler les données absentes."
+  },
+  {
+    "id": 26,
+    "family": "Savoir et documents",
+    "title": "Transmission du savoir d’un expert",
+    "acceptance": "Faire essayer la procédure par la personne qui reprend le poste."
+  },
+  {
+    "id": 27,
+    "family": "Savoir et documents",
+    "title": "Indexation d’archives numérisées",
+    "acceptance": "Retrouver un échantillon de pièces avec leur référence."
+  },
+  {
+    "id": 28,
+    "family": "Savoir et documents",
+    "title": "Parcours de formation à un outil",
+    "acceptance": "Faire réaliser un exercice sur la version du logiciel retenue."
+  },
+  {
+    "id": 29,
+    "family": "Savoir et documents",
+    "title": "Analyse d’impact d’une nouvelle notice",
+    "acceptance": "Relier les documents affectés aux passages révisés."
+  },
+  {
+    "id": 30,
+    "family": "Savoir et documents",
+    "title": "Dossier de réponse à un appel d’offres",
+    "acceptance": "Rapprocher les exigences et les pièces disponibles."
+  },
+  {
+    "id": 31,
+    "family": "Savoir et documents",
+    "title": "Inventaire des droits documentaires",
+    "acceptance": "Associer les autorisations connues aux documents correspondants."
+  },
+  {
+    "id": 32,
+    "family": "Savoir et documents",
+    "title": "Préparation d’une diffusion accessible",
+    "acceptance": "Vérifier la navigation au clavier et l’ordre de lecture."
+  },
+  {
+    "id": 33,
+    "family": "Médias et créations",
+    "title": "Montages verticaux sur rushes d’agence",
+    "acceptance": "Contrôler le cadrage, la durée, les droits et l’export."
+  },
+  {
+    "id": 34,
+    "family": "Médias et créations",
+    "title": "Localisation de vidéos de formation",
+    "acceptance": "Faire relire le lexique et contrôler la synchronisation."
+  },
+  {
+    "id": 35,
+    "family": "Médias et créations",
+    "title": "Audiodescription d’un catalogue vidéo",
+    "acceptance": "Vérifier que la description est audible aux moments utiles."
+  },
+  {
+    "id": 36,
+    "family": "Médias et créations",
+    "title": "Micro-livres illustrés et sonorisés",
+    "acceptance": "Contrôler ensemble texte, illustrations et narration."
+  },
+  {
+    "id": 37,
+    "family": "Médias et créations",
+    "title": "Prévisualisation de scènes",
+    "acceptance": "Faire valider l’ordre et le rythme du découpage."
+  },
+  {
+    "id": 38,
+    "family": "Médias et créations",
+    "title": "Licence de séquences originales",
+    "acceptance": "Rapprocher chaque séquence de ses droits d’utilisation."
+  },
+  {
+    "id": 39,
+    "family": "Médias et créations",
+    "title": "Recalage du son après remontage",
+    "acceptance": "Contrôler les repères de synchronisation après montage."
+  },
+  {
+    "id": 40,
+    "family": "Médias et créations",
+    "title": "Contrôle des livrables audiovisuels",
+    "acceptance": "Signaler les écarts de diffusion avec leurs minutages."
+  },
+  {
+    "id": 41,
+    "family": "Réseaux, lieux et événements",
+    "title": "Campagnes locales pour enseignes",
+    "acceptance": "Faire confirmer les informations propres à chaque site."
+  },
+  {
+    "id": 42,
+    "family": "Réseaux, lieux et événements",
+    "title": "Licence d’animation locale ANANDA",
+    "acceptance": "Vérifier le droit d’utilisation et les supports remis au lieu."
+  },
+  {
+    "id": 43,
+    "family": "Réseaux, lieux et événements",
+    "title": "Régie de préparation d’événement",
+    "acceptance": "Faire confirmer les responsables et les créneaux de préparation."
+  },
+  {
+    "id": 44,
+    "family": "Réseaux, lieux et événements",
+    "title": "Billetterie pour organisateurs tiers",
+    "acceptance": "Rapprocher les billets délivrés, utilisés et annulés."
+  },
+  {
+    "id": 45,
+    "family": "Réseaux, lieux et événements",
+    "title": "Dossier de réalisation pour sponsors",
+    "acceptance": "Associer les prestations promises aux preuves disponibles."
+  },
+  {
+    "id": 46,
+    "family": "Réseaux, lieux et événements",
+    "title": "Parcours de découverte sur place",
+    "acceptance": "Tester sur place les étapes et les supports du parcours."
+  },
+  {
+    "id": 47,
+    "family": "Réseaux, lieux et événements",
+    "title": "Places financées pour un public défini",
+    "acceptance": "Rapprocher droits ouverts, utilisation et solde des places."
+  },
+  {
+    "id": 48,
+    "family": "Réseaux, lieux et événements",
+    "title": "Marché privé de prestataires locaux",
+    "acceptance": "Faire accepter le résultat de la mission par le commanditaire."
+  },
+  {
+    "id": 49,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Licences de modèles professionnels",
+    "acceptance": "Vérifier l’ouverture du modèle et la portée de la licence."
+  },
+  {
+    "id": 50,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Outils métier de créateurs",
+    "acceptance": "Rejouer le cas d’essai sur la version livrée."
+  },
+  {
+    "id": 51,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Commandes groupées sur cahier des charges",
+    "acceptance": "Rapprocher chaque lot de sa commande et de son acceptation."
+  },
+  {
+    "id": 52,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Achats utiles chez un marchand tiers",
+    "acceptance": "Vérifier l’attribution de la vente avec le marchand."
+  },
+  {
+    "id": 53,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Accès financés par un commanditaire",
+    "acceptance": "Faire vérifier les accès convenus par le commanditaire."
+  },
+  {
+    "id": 54,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Cofondateur IA sur ventes admissibles",
+    "acceptance": "Rapprocher les ventes admissibles des conditions du projet."
+  },
+  {
+    "id": 55,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Qualification de fournisseurs sur mandat",
+    "acceptance": "Comparer les preuves datées aux critères de sélection."
+  },
+  {
+    "id": 56,
+    "family": "Créateurs, membres et commerce tiers",
+    "title": "Études d’usage financées",
+    "acceptance": "Valider le périmètre et les conclusions de l’étude."
+  },
+  {
+    "id": 57,
+    "family": "Industrie, terrain et objets",
+    "title": "Consignes terrain hors ligne",
+    "acceptance": "Retrouver les consignes à jour pendant un essai hors connexion."
+  },
+  {
+    "id": 58,
+    "family": "Industrie, terrain et objets",
+    "title": "Dossier de fin d’intervention",
+    "acceptance": "Relier le compte rendu au matériel effectivement traité."
+  },
+  {
+    "id": 59,
+    "family": "Industrie, terrain et objets",
+    "title": "Réduction des chutes de matière",
+    "acceptance": "Comparer les mesures de pertes sur deux lots comparables."
+  },
+  {
+    "id": 60,
+    "family": "Industrie, terrain et objets",
+    "title": "Inventaire contradictoire d’un parc",
+    "acceptance": "Justifier les écarts entre le registre et le constat sur place."
+  },
+  {
+    "id": 61,
+    "family": "Industrie, terrain et objets",
+    "title": "Suivi des emballages consignés",
+    "acceptance": "Rapprocher les retours des bordereaux et des avoirs."
+  },
+  {
+    "id": 62,
+    "family": "Industrie, terrain et objets",
+    "title": "Vente de kits MUKTI et accessoires",
+    "acceptance": "Vérifier les références, accessoires et pièces de la commande."
+  },
+  {
+    "id": 63,
+    "family": "Industrie, terrain et objets",
+    "title": "Remise en état d’équipements MUKTI",
+    "acceptance": "Documenter les contrôles de restitution de l’équipement."
+  },
+  {
+    "id": 64,
+    "family": "Industrie, terrain et objets",
+    "title": "Reconditionnement pour un parc de prêt",
+    "acceptance": "Attester l’état, le nettoyage et la remise en circulation du lot."
+  }
+]
