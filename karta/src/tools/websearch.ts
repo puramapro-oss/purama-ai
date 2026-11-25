@@ -251,6 +251,7 @@ export const webSearchTool: ToolDefinition<SearchParams, SearchResponse> = {
     "response_format=evidence fournit des extraits sourçables, non vérifiés ; aucune page lue par KARTA. " +
     "Envoyer seulement la requête publique nécessaire, jamais le profil privé complet.",
   sensitive: false,
+  programmaticRead: true,
   tracePolicy: "metadata_only",
   inputSchema: {
     type: "object",

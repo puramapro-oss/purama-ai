@@ -1,4 +1,4 @@
-# Résultats privés de recherche et de simulation
+# Résultats privés de recherche, de synthèse et de simulation
 
 ## Ce que ce changement rend utilisable
 
@@ -132,3 +132,84 @@ dans le dépôt n’est pas une preuve de son exécution.
 Ce lot n’effectue pas de migration de production, de déploiement, d’accès à une
 base privée tierce ou de soumission à un QPU. Il ne modifie ni le routage des
 modèles ni les règles d’approbation de KARTA.
+
+## Extension du 25 novembre 2026 : synthèse des lectures programmatiques
+
+Le parcours de lectures programmatiques ajoute une livraison finale dans cette
+même table, sous le type interne `programmatic_report`. Il ne crée pas un outil
+supplémentaire à activer. Le modèle, ses paramètres et son budget de sortie
+restent ceux choisis pour la mission. Le texte final du modèle est conservé
+avant que le moteur ne marque la mission comme réussie ; une livraison non
+confirmée reste un échec explicite.
+
+L’entrée du projecteur est exactement `{ summary, read_tools }`. `summary`
+contient le texte entier, avec ses espaces et retours à la ligne. `read_tools`
+énumère les noms distincts des lectures effectivement réussies, parmi
+`knowledge_search` et `web_search`. La liste peut être vide. Le projecteur ne
+prend aucune provenance fournie par le modèle : il construit les métadonnées
+fixes suivantes, avec un tableau `sources` vide :
+
+```json
+{
+  "content_kind": "model_generated_report",
+  "verification_status": "unverified",
+  "source_text_trust": "untrusted_data",
+  "execution_mode": "programmatic_reads",
+  "report_truncated": false,
+  "read_tools": ["knowledge_search", "web_search"]
+}
+```
+
+Le tableau ci-dessus illustre une mission ayant réussi les deux lectures. Il
+n’atteste aucune vérification indépendante des affirmations de la synthèse.
+Une URL éventuellement présente dans le texte reste du texte : elle n’est
+pas promue en référence fournisseur vérifiée.
+
+La synthèse est bornée à **60 000 unités UTF-16**, et son enveloppe JSON complète
+à **61 440 octets UTF-8**, avant l’espace réservé au rendu JSONB de PostgreSQL.
+Les deux limites s’appliquent simultanément. Un dépassement, un texte vide,
+une provenance altérée ou une structure non conforme refuse la livraison ;
+aucune synthèse abrégée n’est enregistrée à la place du texte entier. L’inspection
+inerte interdit toujours les accesseurs, proxys, cycles et méthodes `toJSON`.
+
+La migration additive `karta/migrations/034_programmatic_private_reports.sql`
+étend la contrainte de type et les deux fonctions existantes. La migration
+028 reste inchangée. Pour une nouvelle insertion de synthèse, la RPC exige un
+run réel, non factice, encore ouvert, appartenant au propriétaire et à son agent
+personnalisé actif. L’identité de livraison doit être une opération directe
+`run_id:index` ; une action en attente d’approbation est refusée pour ce type.
+Sous le verrou de l’agent, la RPC contrôle que le catalogue courant est non vide,
+entièrement composé des deux lecteurs qualifiés et contient chaque nom de
+`read_tools`. Aucune entrée `programmatic_report` n’est ajoutée à `tools_enabled`.
+
+La RPC conserve son ordre de verrouillage, l’identité unique de l’opération et
+la réconciliation de contenu JSONB identique. Une réconciliation après clôture
+peut retrouver une livraison existante ; elle ne peut ni la modifier ni la
+recréer après suppression. Les règles RLS, droits de lecture et suppression,
+cascades et restrictions sur les écritures directes sont conservés.
+
+Dans le panneau existant, **Synthèse de recherche** affiche le texte complet,
+échappé par React, et indique son origine de modèle. Le propriétaire peut le
+sélectionner et le supprimer comme les autres résultats. Lorsqu’il le joint
+explicitement à une question, le chat reçoit une projection de **2 500 octets
+JSON échappés au plus par résumé**, dans l’enveloppe totale existante de
+16 000 octets. `summary_truncated` signale l’extrait de contexte ;
+`report_truncated: false` décrit le résultat privé conservé entier. Le contexte
+précise `model_generated_report`, sans attribuer de provenance bibliographique
+ou quantique à ce texte. La sélection et l’affichage n’ajoutent aucun appel de
+modèle et n’inscrivent rien dans SMARANA.
+
+La mise en service exige les migrations KARTA jusqu’à 035 et des versions
+cohérentes du worker, du lecteur Edge et de l’interface. La migration 033 conserve
+les reçus de chaque réponse du fournisseur, 034 livre les rapports privés et
+035 clôture aussi les briefs utilisant une synthèse sans lecture.
+L’admission aux lectures programmatiques reste limitée aux agents personnalisés
+ayant une identité propriétaire et run vérifiable ; elle est désactivée par
+défaut. Les agents non personnalisés conservent le parcours direct existant.
+
+Les tests ajoutés qualifient les limites exactes en caractères et octets, la
+provenance, l’absence de troncature, la projection vers le panneau et le chat,
+les autorisations SQL, les accusés de réception identiques et une révocation
+de lecteur pendant l’attente d’un verrou sur PostgreSQL natif. Leur résultat
+effectif doit être consulté dans les reçus de validation du lot Code Mode ;
+l’ajout de cette section ne constitue pas une preuve de déploiement.

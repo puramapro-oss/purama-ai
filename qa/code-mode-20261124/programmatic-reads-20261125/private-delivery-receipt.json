@@ -1,0 +1,38 @@
+{
+  "head": "795d7db298416f98cf95103c096714f82c01c8cb",
+  "files": {
+    "karta/src/engine/private-tool-results.ts": "e4877d1dd2d8a8a941b830b7fb39152948ae8327c0f3252b85251493f4315244",
+    "karta/src/knowledge/private-result-view.ts": "d91ab79c81d4d6c806bb3fc5305bf7ff14a626ec1a82564cfc8881b337da50c4",
+    "src/components/karta/PrivateToolResults.tsx": "dabf8b3078fcf97ddb8b9d879f109e83bc4b62aa2f569377633d1135e73e9305",
+    "supabase/functions/_shared/private-tool-results.ts": "abc5d2a639d7ea5dd5cbc66c141f37b1dcb443e5ea6754f9b180b7b7fbcf3ee8",
+    "karta/migrations/034_programmatic_private_reports.sql": "f8a5d9049ba340b9d0f1a10d1f9da49b5ee2e76aca266eaa4d202e0c47c6067c",
+    "karta/test/privateToolResults.test.ts": "0c8196a8830820b6ed55ef548d13c3c3b2bc766752a87edd26e7e02fb4d5d463",
+    "karta/test/privateToolResultsSql.test.ts": "8ede14049a90d06f0c5ba469ae0e740c8ae18a8eff6b7a25efb2c79daf602f2f",
+    "karta/test/privateToolResults.native.mjs": "ae5a53383e60133ba7d8796ae2667f5906a172b43ea6d53ebb22b27d31e76f07",
+    "src/lib/private-tool-results.test.ts": "f9d394d675e74eef7da4cf02ab8060844a442b66ee23b7ca64c756e98b547a9d",
+    "src/components/karta/PrivateToolResults.test.tsx": "5b3b4bbe2489a438f8144f1b57259e7307e80ea6fcf1a9c45af08b46e0f212aa",
+    "tests/creator-chat-authorization.test.mjs": "e4b4fb9b6dcaac49769fbe61990fc73317e68d39a28df4ad135f197054ccb90b",
+    "docs/iao-private-results.md": "d866c599959b78b5b0c6ddc8c6b1988d2effa4970a0d3cb13daf4cb77d00a595"
+  },
+  "checks": {
+    "karta_non_sql": "PASS 77/77",
+    "edge": "PASS 52/52 (installed KARTA TypeScript/Zod dependency resolution; actual sources)",
+    "ui": "NOT TESTED: root Vitest/React/jsdom dependencies unavailable; startup MODULE_NOT_FOUND",
+    "sql": "PASS 84/84 privateToolResultsSql.test.ts, isolated threads pool, 1 worker",
+    "native_postgres": "NOT RUN LOCALLY: explicit PostgreSQL18 disposable-cluster fixture required"
+  },
+  "migration_028_unchanged": true,
+  "migration034_syntax_fix": {
+    "previous_sha256": "09ff639f8d58d778b50a6308ef562636773b43c64177f6f9e20a823f15e3954f",
+    "reproduction": "034-syntax-reproduction.json",
+    "fix": "Parenthesize CASE in PL/pgSQL IF summary-length condition."
+  },
+  "sql_receipt": "private-results-sql-fixed.json",
+  "sql_test_type_fix": {
+    "file": "karta/test/privateToolResultsSql.test.ts",
+    "previous_sha256": "ec79596b0a44a787c4e0f7db4e4cb1ee4989f0d6797c0cdab634c474a2330ba9",
+    "current_sha256": "8ede14049a90d06f0c5ba469ae0e740c8ae18a8eff6b7a25efb2c79daf602f2f",
+    "change": "Specify the selected row shape as { payload: unknown }; runtime assertions unchanged; no any cast.",
+    "verification": "No runner launched; root owns final TypeScript/build checks."
+  }
+}

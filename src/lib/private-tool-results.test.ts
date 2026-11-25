@@ -117,6 +117,44 @@ describe('lecture et suppression privées des résultats de mission', () => {
     expect(result?.payload.sources).toEqual([]);
   });
 
+  const reportRow = (summary = 'Synthèse complète. '.repeat(400)) => ({
+    ...row, tool_name: 'programmatic_report', payload: {
+      schema_version: 1, tool_name: 'programmatic_report', status: 'complete', summary, sources: [],
+      details: { content_kind: 'model_generated_report', verification_status: 'unverified',
+        source_text_trust: 'untrusted_data', execution_mode: 'programmatic_reads', report_truncated: false,
+        read_tools: ['knowledge_search', 'web_search'] },
+    },
+  });
+
+  it('livre une synthèse entière de plus de 4 000 caractères sans fausse référence ni détail interne', async () => {
+    const original = reportRow('x'.repeat(60_000));
+    client.from.mockReturnValue(queryResult({ data: [original], error: null }));
+    const [result] = await listPrivateToolResults(OWNER, AGENT);
+    expect(result.tool_name).toBe('programmatic_report');
+    expect(result.payload.summary).toBe(original.payload.summary);
+    expect(result.payload.sources).toEqual([]);
+    expect(result.payload).not.toHaveProperty('details');
+    expect(parsePrivateToolResult({ ...original, payload: { ...original.payload,
+      details: { ...original.payload.details, read_tools: [] } } }, OWNER, AGENT)).not.toBeNull();
+  });
+
+  it.each([
+    { summary: 'x'.repeat(60_001) }, { summary: '文'.repeat(25_000) }, { summary: '\ud800' },
+    { summary: 'a\u0000b' }, { status: 'partial' }, { sources: [source] },
+    { unknown: 'not part of the report' },
+    { details: { ...reportRow().payload.details, content_kind: 'metadata_only' } },
+    { details: { ...reportRow().payload.details, verification_status: 'verified' } },
+    { details: { ...reportRow().payload.details, source_text_trust: 'trusted' } },
+    { details: { ...reportRow().payload.details, report_truncated: true } },
+    { details: { ...reportRow().payload.details, read_tools: ['web_search', 'web_search'] } },
+    { details: { ...reportRow().payload.details, read_tools: ['send_email'] } },
+    { details: { ...reportRow().payload.details, physical_quantum_hardware: true } },
+    { details: null },
+  ])('refuse une synthèse altérée ou hors limites sans la tronquer (%#)', change => {
+    const original = reportRow();
+    expect(parsePrivateToolResult({ ...original, payload: { ...original.payload, ...change } }, OWNER, AGENT)).toBeNull();
+  });
+
   it('annule avant toute lecture si le signal est déjà périmé', async () => {
     const abort = new AbortController(); abort.abort();
     await expect(listPrivateToolResults(OWNER, AGENT, abort.signal)).rejects.toMatchObject({ name: 'AbortError' });

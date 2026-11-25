@@ -77,6 +77,9 @@ export interface ToolDefinition<Params = Record<string, unknown>, Result = unkno
   sensitive: boolean;
   /** Requires a claimed human approval even at the highest autonomy level. */
   requiresExplicitApproval?: true;
+  /** Server qualification for bounded, non-mutating programmatic reads. This
+   * is independent of sensitivity and never grants permission to execute. */
+  programmaticRead?: true;
   /**
    * Server-owned trace policy, independent of the approval flag above. A tool
    * marked metadata_only protects the whole cycle, including model summaries,

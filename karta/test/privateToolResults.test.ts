@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { simulateQuantumCircuit } from "../src/quantum/simulator.js";
 import { createPublicKnowledgeSearch } from "../src/knowledge/public-search.js";
 import { persistPrivateToolResult, projectPrivateToolResult, PRIVATE_TOOL_RESULT_MAX_BYTES } from "../src/engine/private-tool-results.js";
+import { PROGRAMMATIC_REPORT_MAX_BYTES } from "../src/knowledge/private-result-view.js";
 
 const rpc = vi.hoisted(() => vi.fn());
 vi.mock("../src/db/supabase.js", () => ({ supabase: { rpc } }));
@@ -208,5 +209,81 @@ describe("private result durable delivery", () => {
     if (field === "run") raw.runId = "invalid";
     if (field === "operation") raw.operationId = "another-operation";
     expect(await persistPrivateToolResult(raw)).toEqual({ status: "unavailable" }); expect(rpc).not.toHaveBeenCalled();
+  });
+});
+
+describe("complete private programmatic reports", () => {
+  const report = (summary = `${sentinel}\n  Texte complet 🌍  `, read_tools: unknown = ["web_search"]) => ({ summary, read_tools });
+
+  it.each([{ tools: [] }, { tools: ["knowledge_search"] }, { tools: ["web_search"] }, { tools: ["knowledge_search", "web_search"] }])(
+    "preserves the entire report and server-authored provenance for successful reads $tools", ({ tools }) => {
+      const raw = report("  Début\n" + "texte complet 🌍\n".repeat(500) + "Fin  ", tools);
+      const projected = projectPrivateToolResult("programmatic_report", raw)!;
+      expect(projected).toEqual({ schema_version: 1, tool_name: "programmatic_report", status: "complete",
+        summary: raw.summary, sources: [], details: {
+          content_kind: "model_generated_report", verification_status: "unverified", source_text_trust: "untrusted_data",
+          execution_mode: "programmatic_reads", report_truncated: false, read_tools: tools,
+        } });
+      expect(projected.summary.length).toBeGreaterThan(4000);
+      expect(projected.details).not.toHaveProperty("full_text_retrieved");
+      expect(projected.details).not.toHaveProperty("physical_quantum_hardware");
+    },
+  );
+
+  it("accepts 60,000 UTF-16 units and refuses any length or byte excess without clipping", () => {
+    expect(projectPrivateToolResult("programmatic_report", report("a".repeat(60_000)))!.summary).toHaveLength(60_000);
+    expect(() => projectPrivateToolResult("programmatic_report", report("a".repeat(60_001)))).toThrow(invalid);
+    const overhead = Buffer.byteLength(JSON.stringify(projectPrivateToolResult("programmatic_report", report("a")))) - 1;
+    const extraBytes = PROGRAMMATIC_REPORT_MAX_BYTES - overhead - 60_000;
+    const boundary = "a".repeat(60_000 - extraBytes) + "é".repeat(extraBytes);
+    const projected = projectPrivateToolResult("programmatic_report", report(boundary))!;
+    expect(Buffer.byteLength(JSON.stringify(projected))).toBe(PROGRAMMATIC_REPORT_MAX_BYTES);
+    expect(projected.summary).toBe(boundary);
+    expect(() => projectPrivateToolResult("programmatic_report", report("é" + boundary.slice(1)))).toThrow(invalid);
+    expect(() => projectPrivateToolResult("programmatic_report", report("🌍".repeat(30_000)))).toThrow(invalid);
+  });
+
+  it.each([
+    { summary: "", read_tools: [] }, { summary: " \n\t\u00a0\ufeff", read_tools: [] },
+    { summary: sentinel + "\ud800", read_tools: [] }, { summary: sentinel + "\u0000", read_tools: [] },
+    { summary: sentinel, read_tools: ["web_search", "web_search"] },
+    { summary: sentinel, read_tools: ["quantum_simulate"] }, { summary: sentinel, read_tools: ["send_email"] },
+    { summary: sentinel, read_tools: [null] }, { summary: sentinel, read_tools: "web_search" },
+    { summary: sentinel }, { read_tools: [] },
+    { summary: sentinel, read_tools: [], sources: [] },
+    { summary: sentinel, read_tools: [], verification_status: "verified" },
+  ])("refuses an incomplete or forged report input (%#)", raw => {
+    expect(() => projectPrivateToolResult("programmatic_report", raw)).toThrow(invalid);
+  });
+
+  it("snapshots report text and read names without running getters or proxies", async () => {
+    const raw = report(sentinel, ["web_search"]);
+    const result = persistPrivateToolResult({ ...input(), toolName: "programmatic_report", result: raw });
+    raw.summary = "MUTATED_AFTER_CALL"; (raw.read_tools as string[])[0] = "send_email";
+    expect(await result).toEqual({ status: "stored", id: resultId });
+    expect(rpc.mock.calls[0][1].p_payload).toMatchObject({ summary: sentinel, details: { read_tools: ["web_search"] } });
+    const getter = vi.fn(() => sentinel);
+    for (const malicious of [
+      Object.defineProperty(report(), "summary", { enumerable: true, get: getter }),
+      new Proxy(report(), { ownKeys: getter as never }),
+      { summary: sentinel, read_tools: Object.defineProperty(["web_search"], "0", { enumerable: true, get: getter }) },
+    ]) expect(() => projectPrivateToolResult("programmatic_report", malicious)).toThrow(invalid);
+    expect(getter).not.toHaveBeenCalled();
+  });
+
+  it.each([resultId, `${runId}:0\n`, `${runId}:01`, `${runId}:10000`, `${resultId}:0`])(
+    "rejects a pending-action or noncanonical report operation before RPC: %s", async operationId => {
+      expect(await persistPrivateToolResult({ ...input(), operationId, toolName: "programmatic_report", result: report() })).toEqual({ status: "unavailable" });
+      expect(rpc).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps a lost acknowledgement bounded to the same immutable full report", async () => {
+    rpc.mockImplementationOnce(() => ({ abortSignal: vi.fn().mockRejectedValue(new Error(sentinel)) }));
+    const raw = report("x".repeat(6000), []);
+    expect(await persistPrivateToolResult({ ...input(), toolName: "programmatic_report", result: raw })).toEqual({ status: "stored", id: resultId });
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[1]).toEqual(rpc.mock.calls[0]);
+    expect(rpc.mock.calls[0][1].p_payload.summary).toBe(raw.summary);
   });
 });
