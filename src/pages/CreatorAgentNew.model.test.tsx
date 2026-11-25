@@ -149,7 +149,7 @@ describe('Organisation — préparation locale', () => {
     await clickButton('Préparer ce brouillon');
     const prompt = host.querySelector<HTMLTextAreaElement>('textarea')!;
     expect(prompt.value).toContain(profile === 'association' ? 'fonds affectés' : 'besoin du client');
-    expect(prompt.value).toContain('reçu d’import');
+    expect(prompt.value).toContain('Le distributeur importe le lot et confirme les références acceptées.');
     const prepare = Array.from(host.querySelectorAll('button')).find(b => b.textContent === 'Préparer ce brouillon');
     expect(prepare?.disabled).toBe(true);
     expect(api.createAgent).not.toHaveBeenCalled();
