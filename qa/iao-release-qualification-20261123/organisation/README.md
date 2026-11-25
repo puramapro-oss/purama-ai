@@ -1,0 +1,9 @@
+# Réévaluer un changement sur deux activités
+
+Ce profil hors ligne examine six décisions structurées sur données fictives. Il couvre la préparation d'un lot fabricant, les doublons de reçu et la reprise après résultat inconnu, puis les places d'un atelier associatif, un mandat limité et un budget affecté. Il utilise le vérificateur de commandes CHEF existant. Aucun connecteur, paiement, contact, modèle ni déploiement ne sont nécessaires au comparateur.
+
+Exporter les six entrées avec `node compare.mjs --cases`. Pour chaque version évaluée, enregistrer séparément ses vraies sorties dans un document de forme `{"suite":"organisation-outcomes-v1","outputs":[...]}`. Chaque sortie fournit `id`, `entity`, `sources`, `decision` et `value`. Les identifiants et les références sont ceux de l'entrée. Les décisions sont `prepare`, `hold`, `reconcile` ou `execute`. La valeur est un entier dans l'unité demandée ou `null` lorsqu'aucun montant ou décompte n'est établi.
+
+Comparer avec `node compare.mjs reference.json candidate.json`. Le code 0 exige les six résultats attendus et au moins un progrès par rapport à la référence. Le code 1 conserve le rejet et les identifiants concernés. Une exception indique une entrée mal formée. L'ordre des cas et des références ne change pas le verdict. Pour une campagne réelle, conserver l'identité de la source des sorties, la version de chaque modèle/politique et les fichiers d'origine. Utiliser la même suite pour les deux versions. Le code exécuté par un profil CHEF doit venir d'une révision de confiance conservée hors du répertoire modifiable du candidat.
+
+Ce signal d'évaluation porte sur les sorties fournies. Les cas étant publics, un résultat peut être mémorisé. Les droits serveur, les effets réels et l'isolation des données nécessitent leurs propres contrôles indépendants. L'admission à une revue humaine ne promeut aucune version.

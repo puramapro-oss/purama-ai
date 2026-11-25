@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Loader2,
@@ -285,6 +285,9 @@ export default function MyEmployees() {
           {isLoading ? '…' : `${activeCount} actif${activeCount > 1 ? 's' : ''} sur ${sortedAgents.length}`} —
           activés par KARTA Engine, tes agents travaillent en autonomie selon les réglages ci-dessous.
         </p>
+        <Link to="/dashboard/creator-agent/new?mode=organisation" className="mt-2 inline-flex text-sm font-medium text-accent-cyan underline">
+          Préparer une mission pour mon organisation
+        </Link>
       </div>
 
       {hasError && (
