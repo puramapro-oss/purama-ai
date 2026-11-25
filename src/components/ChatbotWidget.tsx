@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { lazy, Suspense, useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -23,8 +23,11 @@ import { parseSSEStream } from '@/lib/sse';
 import { createRequestScope, type RequestLease } from '@/lib/request-scope';
 import { prepareChatMessages, CHAT_MAX_MESSAGE_LENGTH } from '../../supabase/functions/_shared/chat-input';
 import { ConsultationPanel } from '@/components/ConsultationPanel';
+import { sharedTrial, trialFromPrompt, type TrialEntry } from '@/lib/iao-trial-entry';
 import { isSuperAdmin } from '@/lib/constants';
 import { buildWorkshopConversationBrief, saveWorkshopDraft } from '@/lib/workshop';
+
+const IaoTrialPanel = lazy(() => import('@/components/IaoTrialPanel'));
 
 interface Message {
   id: string;
@@ -64,6 +67,9 @@ export function ChatbotWidget() {
   const [requests] = useState(createRequestScope);
   const [isOpen, setIsOpen] = useState(false);
   const [consultationOpen, setConsultationOpen] = useState(false);
+  const [trialEntry, setTrialEntry] = useState<TrialEntry | null>(null);
+  const trialTrigger = useRef<HTMLButtonElement>(null);
+  const launcher = useRef<HTMLButtonElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [busyKind, setBusyKind] = useState<'reply' | 'history' | null>(null);
@@ -100,9 +106,23 @@ export function ChatbotWidget() {
     setBusyKind(null);
     setIsEscalating(false);
     setConsultationOpen(false);
+    setTrialEntry(null);
     setDynamicSuggestions([]);
     return () => requests.invalidate();
   }, [requests, user?.id]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    const kind = sharedTrial(window.location.hash);
+    if (kind) setTrialEntry({ kind });
+    const openMethod = (event: HashChangeEvent) => {
+      const next = sharedTrial(window.location.hash);
+      if (next) setTrialEntry({ kind: next });
+      else if (event.oldURL && sharedTrial(new URL(event.oldURL).hash)) setTrialEntry(null);
+    };
+    window.addEventListener('hashchange', openMethod);
+    return () => window.removeEventListener('hashchange', openMethod);
+  }, [authLoading, user?.id]);
 
   const getWelcomeMessage = useCallback(() => {
     const path = location.pathname;
@@ -298,7 +318,22 @@ export function ChatbotWidget() {
     }
   };
 
-  const handleSend = () => { void sendMessage(inputValue); };
+  const openTrial = (prompt: string) => {
+    const lastPrompt = [...messages].reverse().find(message => message.role === 'user')?.content ?? '';
+    setTrialEntry(trialFromPrompt(prompt.trim() || lastPrompt));
+  };
+  const closeTrial = () => {
+    setTrialEntry(null);
+    if (sharedTrial(window.location.hash)) {
+      window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search);
+    }
+    requestAnimationFrame(() => (trialTrigger.current ?? launcher.current)?.focus());
+  };
+  const handleSend = () => {
+    const command = /^essaie[- ]le pour moi(?:\s*[:!,.?—–-]\s*|\s+|$)(.*)$/is.exec(inputValue.trim());
+    if (command) openTrial(command[1]);
+    else void sendMessage(inputValue);
+  };
   const handleSuggestionClick = (suggestion: string) => { void sendMessage(suggestion); };
 
   const handleEscalate = async () => {
@@ -380,6 +415,9 @@ export function ChatbotWidget() {
 
   return (
     <>
+      {trialEntry && <Suspense fallback={<p role="status" className="sr-only">Ouverture de l’essai…</p>}>
+        <IaoTrialPanel key={JSON.stringify([user?.id, trialEntry])} entry={trialEntry} onClose={closeTrial} />
+      </Suspense>}
       {/* Floating Button */}
       <AnimatePresence>
         {!isOpen && (
@@ -391,6 +429,7 @@ export function ChatbotWidget() {
           >
             <Button
               onClick={() => { setIsOpen(true); setHasNewMessage(false); }}
+              ref={launcher}
               aria-label="Ouvrir l'assistant PURA"
               className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent shadow-lg hover:shadow-xl transition-all relative"
             >
@@ -620,6 +659,11 @@ export function ChatbotWidget() {
 
             {/* Input */}
             <div className="shrink-0 p-4 border-t border-border">
+              <button type="button" ref={trialTrigger} disabled={authLoading || isLoading}
+                aria-haspopup="dialog" onClick={() => openTrial(inputValue)}
+                className="mb-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50">
+                Essaie-le pour moi
+              </button>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
