@@ -63,6 +63,84 @@ afterEach(async () => {
   vi.restoreAllMocks(); vi.unstubAllGlobals();
 });
 
+function councilCatalog(reflection: 'deep' | 'maximum' = 'deep') {
+  const catalog = catalogFixture();
+  for (const model of catalog.models) {
+    model.profiles = model.profiles.filter(profile => profile.reflection !== reflection);
+    if (!model.reflections.includes(reflection)) model.reflections.push(reflection);
+    model.profiles.push({ reflection, speed: 'standard', research: {
+      maxSearches: 2, maxPages: 4, maxReviewers: 2, maxRounds: 2, concurrency: 2,
+    } });
+  }
+  return catalog;
+}
+
+describe('Public IAO council', () => {
+  it('uses the qualified panel only on submission, keeps the standard choice for the next question', async () => {
+    const catalog = councilCatalog();
+    // A compatible reviewer cannot lead if its own plan has no critique round.
+    catalog.models[0].profiles.find(profile => profile.reflection === 'deep')!.research.maxRounds = 1;
+    api.catalog.mockResolvedValueOnce(catalog);
+    await render(); await fill('Question de consultation', 'Comparer ces pistes.');
+    expect(button('Conseil IAO').getAttribute('aria-pressed')).toBe('false');
+    await click('Conseil IAO');
+    expect(button('Conseil IAO').getAttribute('aria-pressed')).toBe('true');
+    expect(host.textContent).toContain('3 modèles');
+    expect(host.textContent).not.toMatch(/primary-model|reviewer-model|third-model|fourth-model/);
+    expect(api.consult).not.toHaveBeenCalled();
+    await click('Lancer la consultation');
+    expect(api.consult).toHaveBeenCalledExactlyOnceWith({
+      operationId: expect.any(String), question: 'Comparer ces pistes.',
+      preferences: { model: 'reviewer-model', reflection: 'deep', speed: 'standard' },
+      reviewerModels: ['primary-model', 'third-model'], research: { queries: [], urls: [] },
+    }, expect.any(AbortSignal));
+    await click('Nouvelle consultation');
+    expect(button('Conseil IAO').getAttribute('aria-pressed')).toBe('false');
+    await fill('Question de consultation', 'Seconde question'); await click('Lancer la consultation');
+    expect(api.consult.mock.calls[1][0]).toMatchObject({ preferences: { reflection: 'auto' }, reviewerModels: [] });
+  });
+
+  it('can use a maximum profile and respects its reviewer limit', async () => {
+    const catalog = councilCatalog('maximum');
+    catalog.models[0].profiles.find(profile => profile.reflection === 'maximum')!.research.maxReviewers = 1;
+    api.catalog.mockResolvedValueOnce(catalog);
+    await render(); await click('Conseil IAO');
+    expect(host.textContent).toContain('2 modèles');
+    await fill('Question de consultation', 'Vérifier les preuves'); await click('Lancer la consultation');
+    expect(api.consult.mock.calls[0][0]).toMatchObject({ preferences: { model: 'primary-model', reflection: 'maximum' },
+      reviewerModels: ['reviewer-model'] });
+  });
+
+  it('offers no council when a critique cannot be run with two compatible models', async () => {
+    const catalog = councilCatalog();
+    for (const model of catalog.models.slice(1)) model.profiles = model.profiles.filter(profile => profile.reflection !== 'deep');
+    api.catalog.mockResolvedValueOnce(catalog);
+    await render();
+    expect(host.textContent).not.toContain('Conseil IAO');
+    expect(api.consult).not.toHaveBeenCalled();
+  });
+
+  it('blocks an accepted panel after a catalogue change until the user chooses again', async () => {
+    api.catalog.mockResolvedValueOnce(councilCatalog());
+    await render(); await fill('Question de consultation', 'Question conservée'); await click('Conseil IAO');
+    await render(OWNER, 'second-token');
+    expect(host.textContent).toContain('Ce Conseil est devenu indisponible.');
+    expect(button('Lancer la consultation').disabled).toBe(true);
+    await click('Lancer la consultation'); expect(secondApi.consult).not.toHaveBeenCalled();
+    await click('Conseil IAO'); await click('Lancer la consultation');
+    expect(secondApi.consult.mock.calls[0][0]).toMatchObject({ question: 'Question conservée', reviewerModels: [] });
+  });
+
+  it('resets public council consent when switching accounts', async () => {
+    api.catalog.mockResolvedValueOnce(councilCatalog()); secondApi.catalog.mockResolvedValueOnce(councilCatalog());
+    await render(); await click('Conseil IAO'); await fill('Question de consultation', 'Brouillon privé');
+    await render(OTHER_OWNER, 'second-token');
+    expect(button('Conseil IAO').getAttribute('aria-pressed')).toBe('false');
+    expect(field('Question de consultation').value).toBe('');
+    expect(secondApi.consult).not.toHaveBeenCalled();
+  });
+});
+
 describe('ConsultationPanel — actual controls and lifecycle', () => {
   it('sends the chosen model, reflection, speed and opt-in public research exactly once', async () => {
     const pending = deferred<ConsultationOperation>(); api.consult.mockReturnValueOnce(pending.promise);
