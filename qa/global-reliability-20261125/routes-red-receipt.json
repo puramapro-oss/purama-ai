@@ -1,0 +1,16 @@
+{
+  "phase": "before correction",
+  "dateUtc": "2026-11-25T18:33:54.734596+00:00",
+  "baseline": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "command": "npm test -- test/apiIaoIntegration.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile=../qa/global-reliability-20261125/routes-red.json",
+  "cwd": "karta",
+  "exitCode": 1,
+  "sha256": {
+    "karta/src/api/iaoRoutes.ts": "3b92f9c26b4846bf9de56b4ba1b8001b38bc5965d469087e5a1d98b85f7701cb",
+    "karta/test/apiIaoIntegration.test.ts": "4c3564c661b3226de4a880f499b9d024cf327609fb9cbf661b687e8dbdd13472"
+  },
+  "total": 40,
+  "passed": 24,
+  "failed": 16,
+  "scope": "Real loopback HTTP with real server/routes/facade. Session authority, DB and queue use test doubles; no production service or model."
+}

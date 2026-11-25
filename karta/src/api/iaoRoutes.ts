@@ -8,6 +8,7 @@ export interface IaoRouteAuthenticator { authenticate(req: IncomingMessage): Pro
 export type IaoRouteRuntime = Readonly<{ facade: IaoFacade; authenticator: IaoRouteAuthenticator }>;
 export class IaoAuthenticationError extends Error { constructor() { super("IAO authentication required"); } }
 class IaoValidationError extends Error {}
+class IaoBodyTooLargeError extends Error { constructor() { super("IAO request body too large"); } }
 
 const SUBMIT_PATHS = new Set(["/iao/requests", "/pura/requests"]);
 const LOOKUP_PATH = /^\/iao\/requests\/([^/]+)$/;
@@ -76,7 +77,17 @@ export async function handleIaoRoute(
       if (!await beforeAdmission(canAdmit) || !isActive()) return unavailable();
       const identity = await beforeAdmission(() => authenticateIdentity(runtime.authenticator, req));
       if (!isActive()) return unavailable();
-      const body = await beforeAdmission(() => readBody(req));
+      const body = await beforeAdmission(async () => {
+        try { return await readBody(req); }
+        catch (error) {
+          // Preserve only the trusted HTTP reader's size refusal. Errors from
+          // the authority or the execution port cannot choose a response status.
+          if (error instanceof Error && Object.getOwnPropertyDescriptor(error, "status")?.value === 413) {
+            throw new IaoBodyTooLargeError();
+          }
+          throw error;
+        }
+      });
       if (!isActive()) return unavailable();
       const request = parseRequest(body, identity);
       // Authentication and body reads can outlive readiness. Require a final
@@ -135,20 +146,26 @@ export async function handleIaoRoute(
  * validating credentials and current revocation against their authority.
  */
 async function authenticateIdentity(authenticator: IaoRouteAuthenticator, req: IncomingMessage): Promise<IaoServerIdentity> {
-  const identity = await authenticator.authenticate(req);
-  const session = identity?.session;
-  const now = Date.now();
-  if (!isJson(identity) || typeof identity.tenantId !== "string" || !identity.tenantId.trim() ||
-    typeof identity.actorId !== "string" || !identity.actorId.trim() || !isJson(session) ||
-    session.tenantId !== identity.tenantId || session.userId !== identity.actorId || session.appSlug !== "purama-ai" ||
-    typeof session.sessionId !== "string" ||
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(session.sessionId) ||
-    !Number.isFinite(session.issuedAt) || !Number.isFinite(session.expiresAt) ||
-    session.issuedAt > now || session.expiresAt <= now || session.expiresAt - session.issuedAt > 15 * 60_000) {
+  try {
+    const identity = await authenticator.authenticate(req);
+    const session = identity?.session;
+    const now = Date.now();
+    if (!isJson(identity) || typeof identity.tenantId !== "string" || !identity.tenantId.trim() ||
+      typeof identity.actorId !== "string" || !identity.actorId.trim() || !isJson(session) ||
+      session.tenantId !== identity.tenantId || session.userId !== identity.actorId || session.appSlug !== "purama-ai" ||
+      typeof session.sessionId !== "string" ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(session.sessionId) ||
+      !Number.isFinite(session.issuedAt) || !Number.isFinite(session.expiresAt) ||
+      session.issuedAt > now || session.expiresAt <= now || session.expiresAt - session.issuedAt > 15 * 60_000) {
+      throw new IaoAuthenticationError();
+    }
+    // Snapshot the authenticated claims before awaiting body parsing/dispatch.
+    return Object.freeze({ tenantId: identity.tenantId, actorId: identity.actorId, session: Object.freeze({ ...session }) });
+  } catch {
+    // The recheck contract maps rejected credentials and authority exceptions
+    // to the same private refusal, including failures at final admission.
     throw new IaoAuthenticationError();
   }
-  // Snapshot the authenticated claims before awaiting body parsing/dispatch.
-  return Object.freeze({ tenantId: identity.tenantId, actorId: identity.actorId, session: Object.freeze({ ...session }) });
 }
 
 function parseRequest(body: Json, identity: IaoServerIdentity): IaoRequest {
@@ -178,6 +195,7 @@ function parseRequest(body: Json, identity: IaoServerIdentity): IaoRequest {
 function isJson(value: unknown): value is Json { return typeof value === "object" && value !== null && !Array.isArray(value); }
 function sendError(res: ServerResponse, error: unknown, sendJson: (res: ServerResponse, status: number, body: unknown) => void): void {
   if (error instanceof IaoAuthenticationError) sendJson(res, 401, { error: error.message });
+  else if (error instanceof IaoBodyTooLargeError) sendJson(res, 413, { error: error.message });
   else if (error instanceof IaoRequestNotFoundError) sendJson(res, 404, { error: "IAO request not found" });
   else if (error instanceof IaoRequestConflictError) sendJson(res, 409, { error: "IAO request conflict" });
   else if (error instanceof IaoValidationError) sendJson(res, 400, { error: error.message });

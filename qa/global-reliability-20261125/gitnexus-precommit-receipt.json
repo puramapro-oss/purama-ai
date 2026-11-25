@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-11-25T18:51:56.627698+00:00",
+  "tool": "GitNexus 1.6.12",
+  "candidateBase": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "staged": {
+    "command": [
+      "detect_changes",
+      "--scope",
+      "staged",
+      "--repo",
+      "purama-global-20261125",
+      "--limit",
+      "20"
+    ],
+    "exitCode": 0,
+    "changedFiles": 43,
+    "changedSymbols": 86,
+    "affectedProcesses": 12,
+    "risk": "high",
+    "log": "gitnexus-final-staged.log",
+    "scopeNote": "Selection before adding these analysis receipts; includes exactly three modified product files."
+  },
+  "defaultBranchComparison": {
+    "command": [
+      "node",
+      "/workspace/scratch/cf71ce6f4879/gitnexus-runtime/node_modules/gitnexus/dist/cli/index.js",
+      "detect_changes",
+      "--scope",
+      "compare",
+      "--base-ref",
+      "origin/main",
+      "--repo",
+      "purama-global-20261125",
+      "--limit",
+      "10"
+    ],
+    "startedAt": "2026-11-25T18:50:56.069047+00:00",
+    "elapsedSeconds": 5.916,
+    "exitCode": 0,
+    "scope": "compare",
+    "baseRef": "origin/main",
+    "baseCommit": "ae84415be0b9516422805910be999a2c1e6350c0",
+    "limitations": [
+      "Includes the entire existing consolidation relative to main, not only this correction.",
+      "FTS unavailable; changed-symbol listing capped; graph analysis is not exhaustive."
+    ],
+    "changedFiles": 3331,
+    "changedSymbols": 25999,
+    "affectedProcesses": 565,
+    "risk": "critical",
+    "log": "gitnexus-main-compare.log"
+  },
+  "productFiles": [
+    "karta/src/api/iaoRoutes.ts",
+    "karta/src/claude/consultation.ts",
+    "karta/src/claude/consultation-store.ts"
+  ],
+  "limitations": [
+    "The default-branch comparison includes the existing consolidation. It does not attribute the whole consolidation to this correction.",
+    "Graph traversal and changed-symbol listings are bounded; FTS unavailable.",
+    "Source review and executed tests complement the graph. No exhaustive proof is claimed."
+  ],
+  "productSha256": {
+    "karta/src/api/iaoRoutes.ts": "4336f6c1af6dfc11fd38a8acdcfdfd5938f6d3ae8cbcf4ece4a9a2c90457abfa",
+    "karta/src/claude/consultation.ts": "e3504dcb29f76870e3e1b98f415e8b4862ca7d5fd6c07b13da15dfb2d7b6d0f1",
+    "karta/src/claude/consultation-store.ts": "c2b456ba6f893b529a3d20381ffa1b27b20063a3ba82f1ff342097b02f8a700c"
+  }
+}

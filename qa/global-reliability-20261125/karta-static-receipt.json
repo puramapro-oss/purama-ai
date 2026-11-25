@@ -1,0 +1,38 @@
+[
+  {
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/workspace/scratch/3062ca2cddff/purama-ai/karta",
+    "exitCode": 0,
+    "startedAtUtc": "2026-11-25T18:36:36Z",
+    "durationSeconds": 17.926,
+    "log": "karta-typecheck.log",
+    "sourceHashes": {
+      "karta/src/api/iaoRoutes.ts": "4336f6c1af6dfc11fd38a8acdcfdfd5938f6d3ae8cbcf4ece4a9a2c90457abfa",
+      "karta/src/claude/consultation.ts": "e3504dcb29f76870e3e1b98f415e8b4862ca7d5fd6c07b13da15dfb2d7b6d0f1",
+      "karta/src/claude/consultation-store.ts": "c2b456ba6f893b529a3d20381ffa1b27b20063a3ba82f1ff342097b02f8a700c"
+    },
+    "sourcesModifiedBeforeCommand": true
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "cwd": "/workspace/scratch/3062ca2cddff/purama-ai/karta",
+    "exitCode": 0,
+    "startedAtUtc": "2026-11-25T18:36:54Z",
+    "durationSeconds": 6.559,
+    "log": "karta-build.log",
+    "sourceHashes": {
+      "karta/src/api/iaoRoutes.ts": "4336f6c1af6dfc11fd38a8acdcfdfd5938f6d3ae8cbcf4ece4a9a2c90457abfa",
+      "karta/src/claude/consultation.ts": "e3504dcb29f76870e3e1b98f415e8b4862ca7d5fd6c07b13da15dfb2d7b6d0f1",
+      "karta/src/claude/consultation-store.ts": "c2b456ba6f893b529a3d20381ffa1b27b20063a3ba82f1ff342097b02f8a700c"
+    },
+    "sourcesModifiedBeforeCommand": true
+  }
+]

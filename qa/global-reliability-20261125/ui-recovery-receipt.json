@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "report": "Consultation UI recovery receipt",
+  "recorded_at_utc": "2026-11-25 18:37:08 UTC",
+  "observer": "infra_mac",
+  "repository": "purama-ai",
+  "repository_base_commit": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "working_directory": "/workspace/scratch/3062ca2cddff/purama-ai",
+  "source_verified_at": "2026-11-25T19:35:31+01:00",
+  "product_changed": false,
+  "reviewed_sources": [
+    {
+      "path": "src/components/ConsultationPanel.tsx",
+      "sha256": "d0394cbd9c0d865418b1a9413fafe083585eb43c9a82436f238481eca77adad5",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "src/components/ConsultationPanel.test.tsx",
+      "sha256": "2850117ce62d00aa9328ccf70290a4c3d181f6a0159a57b67d17c2c87c4f36ee",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "src/lib/consultation-client.ts",
+      "sha256": "2c82a93b3b3306451b3db54cd3ae0121fd77967a343917fe16a5603a4a755be3",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "karta/migrations/032_model_consultation.sql",
+      "sha256": "28992c117e5e5fc7d92af4088d896ec1d52636f1cb5feff71ba86219bdcc0802",
+      "unchanged_from_base": true
+    }
+  ],
+  "execution": {
+    "command": "node node_modules/vitest/vitest.mjs run src/components/ConsultationPanel.test.tsx --testNamePattern='retains only|does not claim|aborts the local request' --reporter=verbose",
+    "runner": "vitest 4.1.12",
+    "environment": "jsdom with mocked consultation client; no real provider calls",
+    "runner_start_display": "19:32:58",
+    "runner_date": "2026-11-25",
+    "runner_timezone": "Europe/Paris (+01:00), confirmed by subsequent date output",
+    "exit_code": 0,
+    "test_files_passed": 1,
+    "tests_passed": 3,
+    "tests_skipped": 25,
+    "tests_failed": 0,
+    "duration_seconds_reported": 1.19,
+    "passed_test_names": [
+      "aborts the local request and sends durable cancellation for the same operation, ignoring a late answer",
+      "retains only the operation UUID on network loss and resumes with status after remount",
+      "does not claim that an absent or failed cancellation is complete"
+    ]
+  },
+  "decision": {
+    "status": "PASS",
+    "scope": "Existing recovery safety invariant and targeted UI controls",
+    "result": "Keep the retained UUID after an uncertain result. The supported recovery path is durable cancellation of the same UUID, followed by a new consultation only after a terminal result.",
+    "contract_evidence": [
+      "model_consultation_cancel inserts model_consultation_cancellations when an operation is absent and returns cancelled_view.",
+      "model_consultation_status and model_consultation_resume also consult the cancellation tombstone.",
+      "A null/404 from status does not prove that a delayed create can no longer occur.",
+      "A null/404 cancellation response is not a confirmed terminal cancellation and must not be converted into an optimistic reset."
+    ],
+    "product_patch": "No UI patch proposed or applied."
+  },
+  "inspected_not_executed": [
+    {
+      "path": "karta/test/consultationPersistenceRecovery.test.ts",
+      "test": "preserves a committed early cancellation after its acknowledgement is lost",
+      "scope": "Read-only inspection of existing durable tombstone / delayed admission test; not counted among executed tests."
+    }
+  ],
+  "limitations": [
+    "No end-to-end live provider, real account or physical-device validation in this receipt.",
+    "Three selected UI tests passed; the other 25 tests were intentionally not executed in this run.",
+    "No claim that every deployment already has migration 032 or the correct canonical auth backend."
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "scope": "Consultation request identity and historical receipt recovery",
+  "status": "PASS",
+  "observedAt": "2026-11-25T18:38:17.327336+00:00",
+  "baseCommit": "d25f2e72a59689def3d8095db31c086a8b6eeca9",
+  "baseTree": "ee2538b86074a45ed446890cc2cf1fbe0fab0d96",
+  "defect": {
+    "reproduction": "Four semantically identical requests, differing only by omitted/empty optional fields after the real HTTP parser, produced four request hashes and a false PostgreSQL identity conflict.",
+    "before": {
+      "tests": 27,
+      "passed": 19,
+      "failed": 8,
+      "commandExit": 1,
+      "log": "conseil-before-clean.txt"
+    }
+  },
+  "changes": [
+    "Stable request serialization for new operations, preserving text and meaningful array order.",
+    "After a conflict only, bounded service-role read of four identity columns, filtered by owner and operation.",
+    "Strict passive snapshot and exact normalized request comparison before the existing resume RPC receives the original historical hash and request.",
+    "A conflicting begin recovers read-only and returns created:false, without a second create, claim, provider call or reservation.",
+    "No SQL migration, historical hash rewrite, result replacement or production action."
+  ],
+  "verification": [
+    {
+      "name": "New regression and historical compatibility cases",
+      "tests": 28,
+      "passed": 28,
+      "failed": 0,
+      "commandExit": 0,
+      "command": "node node_modules/vitest/vitest.mjs run test/consultationIdentityCompatibility.test.ts --maxWorkers=1",
+      "cwd": "karta",
+      "log": "conseil-after.txt",
+      "source": "final hashes below"
+    },
+    {
+      "name": "Existing consultation suites",
+      "files": 8,
+      "tests": 248,
+      "passed": 248,
+      "failed": 0,
+      "commandExit": 0,
+      "command": "node node_modules/vitest/vitest.mjs run test/modelConsultation.test.ts test/modelConsultationStore.test.ts test/modelConsultationStoreSql.test.ts test/consultationHost.test.ts test/consultationIntegration.test.ts test/consultationPersistenceRecovery.test.ts test/consultationTransport.test.ts test/consultationProfileMatrix.test.ts --maxWorkers=1",
+      "cwd": "karta",
+      "log": "conseil-regression.txt",
+      "qualification": "Executed after the initial fix, before the sole default-SDK chain correction described below. Existing injected-client paths were unchanged by that correction."
+    },
+    {
+      "name": "KARTA full TypeScript",
+      "commandExit": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=768 node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json --incremental false",
+      "cwd": "karta",
+      "log": "conseil-typecheck-after.txt",
+      "source": "final hashes below"
+    },
+    {
+      "name": "Whitespace check",
+      "commandExit": 0,
+      "command": "git diff --check -- karta/src/claude/consultation.ts karta/src/claude/consultation-store.ts karta/test/consultationIdentityCompatibility.test.ts"
+    }
+  ],
+  "sdkCorrection": {
+    "initialTypecheckExit": 2,
+    "detail": "The installed Supabase SDK requires abortSignal before maybeSingle. Corrected the default reader order, then passed an actual SDK transport test and full TypeScript.",
+    "verifiedTransport": "Intercepted HTTP only: first conflicting RPC, exact owner-scoped GET with explicit columns, then read-only historical resume RPC. No external requests."
+  },
+  "coveredBoundaries": [
+    "Fresh concurrent equivalent requests retain one reservation",
+    "Historical pending and complete records preserve their full SQL row",
+    "No provider constructed on recovery",
+    "Real changes to question, model, reflection, speed, reviewers, query or URL remain conflicts",
+    "Array order remains meaningful",
+    "Other owners cannot read or resume the operation",
+    "Mis-scoped, incomplete, extended, malformed, accessor-bearing identities are rejected",
+    "Reader failure, caller cancellation and stalled lookups fail closed",
+    "Custom clients without a reader never fall through to the production database"
+  ],
+  "impact": {
+    "tool": "GitNexus 1.6.12",
+    "repo": "purama-global-20261125",
+    "requestSnapshot": {
+      "risk": "LOW",
+      "directCallers": [
+        "normalizeConsultationRequest",
+        "runModelConsultation"
+      ],
+      "impactedCount": 6
+    },
+    "normalizeConsultationRequest": {
+      "risk": "LOW",
+      "directCallers": [
+        "createConsultationStore.requestSnapshot",
+        "createConsultationHost.consult"
+      ],
+      "impactedCount": 4
+    },
+    "createConsultationStore": {
+      "risk": "LOW",
+      "directCallers": [
+        "createConsultationHost"
+      ],
+      "impactedCount": 1
+    },
+    "limitations": [
+      "FTS extension unavailable; known-symbol impact and context queries used.",
+      "The graph does not replace the SQL permission, trigger and regression checks."
+    ]
+  },
+  "sourceSha256": {
+    "karta/src/claude/consultation.ts": "e3504dcb29f76870e3e1b98f415e8b4862ca7d5fd6c07b13da15dfb2d7b6d0f1",
+    "karta/src/claude/consultation-store.ts": "c2b456ba6f893b529a3d20381ffa1b27b20063a3ba82f1ff342097b02f8a700c",
+    "karta/test/consultationIdentityCompatibility.test.ts": "9ea823c2fb3aae276fa0bb1b8193bd094f4a5623e3f8c002909a80aa70fd0e40",
+    "karta/package-lock.json": "984588cf5764d38ac633fd9d80facaedd266798a9a145cbd57699b89cd907564"
+  },
+  "evidenceSha256": {
+    "conseil-before-clean.txt": "3842c07a7d9dd37012658921d68cb49900385f55ca9d2d69f063e68d2a1a9424",
+    "conseil-after.txt": "cf14b047fdc83890ea949ed4a46ce540086d75ed02ce6deacc0a04f60eeb733f",
+    "conseil-regression.txt": "0597453869b7a6bb712a632a8ccbd2cdf1119308e7a84442578db07b211d49c5",
+    "conseil-typecheck.txt": "7c354a77115a97bf9e2184a611ada4d0bde77be96cf281b865708fc462633c49",
+    "conseil-typecheck-after.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "conseil-impact-store-resume.txt": "e47cecbf803eb1b62a0a57004e213244c2f1add99a3fa5a8eee79a487526a9bf",
+    "conseil-impact-store-begin.txt": "4c98a7cd6e81face798647b1cef3d7ca01db51ce1f4bc9a9829e36338c3e9f0f"
+  },
+  "limitations": [
+    "PGlite executes production migrations in PostgreSQL/WASM with a serial backend; these cases do not establish native multi-connection lock timing.",
+    "The compatibility path uses existing service-role SELECT grants and immutable-identity triggers from migration 032; it has not been deployed against the production database.",
+    "The original narrative about 37 pieces/45 EUR versus 23 pieces/27 EUR was not recovered as an exact model trial and is not claimed fixed.",
+    "General consultations remain verificationStatus:unverified; completion records execution, not independent proof of every factual answer."
+  ]
+}

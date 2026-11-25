@@ -1,5 +1,14 @@
 # AGENTS-STATUS.md — Purama AI / KARTA Engine
 
+> **Note de continuité — 25 novembre 2026.** Ce document conserve le relevé
+> historique du **27 juillet 2026**. Les mentions « déployé », « healthy » et
+> « uniquement bloqué sur le crédit Anthropic » ci-dessous décrivent cette date,
+> pas l’état actuel. Avant toute remise en service, consulter le
+> [contrôle du 25 novembre](qa/global-reliability-20261125/README.md), les reçus de
+> la branche de consolidation et les conditions de
+> [déploiement coordonné](qa/reliability-audit-20261110/late-integration/README.md#déploiement-coordonné).
+> L’historique ci-dessous est conservé intégralement.
+
 > État réel au 2026-07-27, vérifié (pas déclaré) — cf `task_plan.md` pour le détail phase par phase et
 > la règle permanente sur le crédit Anthropic (mock actif tant qu'il n'est pas rechargé, jamais bloquant).
 > "Dernier test réussi" = déclenchement manuel réel effectué CETTE session (curl/API réels, vraie ligne
