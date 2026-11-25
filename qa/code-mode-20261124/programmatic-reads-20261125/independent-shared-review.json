@@ -1,0 +1,312 @@
+{
+  "schema": "purama.code-mode.shared-review.v1",
+  "review_completed_at_utc": "2026-11-24 23:49:32 UTC",
+  "status": "PASS",
+  "status_scope": "Les défauts concrets de cette revue bornée sont corrigés et leurs reproductions ciblées sont refusées. Ce statut ne qualifie ni la CI intégrale ni la production.",
+  "reviewer": "mac_execution_recheck",
+  "mode": "Revue indépendante en lecture seule ; un seul reçu local écrit ; aucune modification du produit.",
+  "scope": {
+    "full_review": [
+      "karta/src/config.ts",
+      "karta/src/claude/execution-profile.ts",
+      "karta/src/claude/model-catalog.ts",
+      "karta/src/claude/usage.ts",
+      "karta/src/engine/logger.ts",
+      "karta/src/engine/tool-input.ts",
+      "karta/migrations/033_programmatic_model_usage.sql",
+      "karta/test/programmaticInputValidation.test.ts",
+      "karta/test/programmaticModelQualification.test.ts",
+      "karta/test/programmaticUsage.test.ts",
+      "karta/test/programmaticUsageMigration.test.ts"
+    ],
+    "targeted_activation_review": [
+      "karta/src/claude/programmatic.ts:useProgrammaticReads",
+      "karta/src/engine/loop.ts:qualifiedRead"
+    ],
+    "excluded": [
+      "Revue exhaustive du moteur et du protocole, confiée à un autre agent",
+      "Déploiement et santé de production",
+      "Qualification de modèles avec un compte réel pendant cette revue",
+      "Migrations 034 et 035"
+    ]
+  },
+  "findings": [
+    {
+      "id": "SR-01",
+      "priority": "P2",
+      "title": "L'instantané des reçus acceptait un tableau creux, exécutait un getter et permettait de contourner la borne de huit réponses par surcharge de map.",
+      "scope": "Le tableau provient actuellement de la boucle interne, qui le construit par push. Aucune exploitation depuis une réponse du fournisseur n'est démontrée.",
+      "before": {
+        "minimal_reproductions": [
+          "Avec entry = { receipt: reçu v1 valide, codeExecutionRequests: 0 }, programmaticUsageEnvelope(new Array(1)) renvoyait un tableau dont la sérialisation contenait null.",
+          "programmaticUsageEnvelope(Object.defineProperty([entry], '0', { enumerable: true, get() { reads++; return entry; } })) exécutait le getter.",
+          "programmaticUsageEnvelope(Object.assign([entry], { map() { return Array(9).fill(entry); } })) renvoyait neuf réponses."
+        ],
+        "observed": {
+          "sparseAccepted": true,
+          "accessorInvocations": 1,
+          "overriddenMapOutputLength": 9
+        },
+        "runtime": "Node v24.22.3, processus isolé, code réel importé, exit 0"
+      },
+      "correction": "Refus des Proxy, du prototype de tableau non standard, des tableaux non denses, des propriétés supplémentaires et des accesseurs ; lecture des descripteurs propres indexés sans appeler la méthode map de l'entrée ; borne 1–8 ; instantané figé.",
+      "after": "PASS : huit formes invalides refusées ; aucun getter, map ni piège Proxy exécuté ; tableau ordinaire de huit reçus conservé."
+    },
+    {
+      "id": "SR-02",
+      "priority": "P2",
+      "title": "Des propriétés héritées pouvaient constituer une qualification positive du modèle ou de l'outil.",
+      "scope": "Défense contre une pollution de prototype synthétique dans un processus isolé. La pollution a été restaurée dans finally après chaque reproduction. Aucune voie distante de pollution de prototype ni exploitation en écriture n'est démontrée.",
+      "before": {
+        "minimal_reproductions": [
+          "Définir temporairement Object.prototype.programmaticToolCalling = true, puis normalizeModelCatalog([{ model: 'fixture', reasoning: 'budget', maxOutputTokens: 16384 }]) : le résultat acquérait un flag propre true.",
+          "Après correction du normaliseur, le même flag hérité activait encore useProgrammaticReads pour un élément de catalogue dépourvu de qualification propre.",
+          "Avec un modèle explicitement qualifié, définir temporairement Object.prototype.programmaticRead = true : un outil sans annotation propre activait useProgrammaticReads."
+        ],
+        "observed": {
+          "normalizer": {
+            "inputHasOwnQualification": false,
+            "baselineOwnQualification": false,
+            "normalizedOwnQualification": true
+          },
+          "activation": {
+            "catalogHasOwnFlag": false,
+            "baselineActivation": false,
+            "activationWithInheritedFlag": true
+          },
+          "toolAnnotation": {
+            "toolHasOwnProgrammaticRead": false,
+            "baselineActivation": false,
+            "activationWithInheritedReadFlag": true
+          }
+        }
+      },
+      "correction": [
+        "Object.hasOwn sur programmaticToolCalling lors de la normalisation et au point d'activation.",
+        "Descripteurs propres pour capabilities, code_execution, server_tools et supported dans la qualification native.",
+        "Object.hasOwn sur programmaticRead dans useProgrammaticReads et qualifiedRead.",
+        "Liste fermée knowledge_search/web_search conservée dans le moteur."
+      ],
+      "after": "PASS : les valeurs et getters hérités du modèle et de l'outil sont refusés sans appel des getters. La qualification native explicite reste acceptée. Vérification statique du second garde dans le moteur."
+    }
+  ],
+  "gitnexus": {
+    "index": "iao-reportdelivery-200b-20261125",
+    "direction": "upstream",
+    "depth": 3,
+    "scope_limitation": "Index focal ; les valeurs de risque décrivent les dépendances indexées et ne sont pas une mesure d'exploitabilité.",
+    "impacts": [
+      {
+        "symbol": "programmaticUsageEnvelope",
+        "exit_code": 0,
+        "risk": "LOW",
+        "impacted_count": 1,
+        "direct_callers": [
+          {
+            "name": "onUsage",
+            "file": "karta/src/engine/loop.ts",
+            "confidence": 0.85
+          }
+        ],
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        }
+      },
+      {
+        "symbol": "normalizeModelCatalog",
+        "exit_code": 0,
+        "risk": "CRITICAL",
+        "impacted_count": 14,
+        "direct_callers": [
+          {
+            "name": "models",
+            "file": "karta/src/claude/consultation-host.ts",
+            "confidence": 0.85
+          },
+          {
+            "name": "parsePolicy",
+            "file": "karta/src/claude/consultation-host.ts",
+            "confidence": 0.85
+          },
+          {
+            "name": "configuredModelCatalog",
+            "file": "karta/src/claude/execution-profile.ts",
+            "confidence": 0.85
+          },
+          {
+            "name": "resolveModelExecutionPlan",
+            "file": "karta/src/claude/execution-profile.ts",
+            "confidence": 0.85
+          },
+          {
+            "name": "loadAnthropicModelCatalog",
+            "file": "karta/src/claude/model-catalog.ts",
+            "confidence": 0.85
+          },
+          {
+            "name": "createRealClaudeClient",
+            "file": "karta/src/claude/real.ts",
+            "confidence": 0.85
+          }
+        ],
+        "summary": {
+          "direct": 6,
+          "processes_affected": 7,
+          "modules_affected": 2
+        },
+        "by_depth": {
+          "1": 6,
+          "2": 7,
+          "3": 1
+        },
+        "communicated_to_parent_before_correction": true
+      },
+      {
+        "symbol": "useProgrammaticReads",
+        "exit_code": 1,
+        "risk": "UNKNOWN",
+        "impacted_count": null,
+        "reason": "Target 'useProgrammaticReads' not found",
+        "manual_consumer": "createRealClaudeClient.decide",
+        "limitation": "Nouveau fichier hors de l'index focal ; absence de résultat non assimilée à un risque faible."
+      }
+    ],
+    "environment_notes": [
+      "Extension FTS absente ; l'outil a poursuivi sans FTS, sans installation.",
+      "Un premier appel a échoué à charger le préchargeur à cause d'un chemin relatif ; l'appel corrigé avec un chemin absolu a produit le résultat LOW repris ici.",
+      "Aucune reconstruction d'index pendant cette revue."
+    ]
+  },
+  "verification": {
+    "final_microprobe": {
+      "observed_at_utc": "2026-11-24 23:48:16 UTC",
+      "exit_code": 0,
+      "wall_time_seconds": 0.240771324,
+      "max_old_space_size_mb": 96,
+      "runtime": "Node v24.22.3 avec tsx, modules réels ; cache tsx désactivé",
+      "results": {
+        "checks": [
+          "sparse:rejected",
+          "accessor:rejected",
+          "overridden_map:rejected",
+          "proxy_array:rejected",
+          "proxy_entry:rejected",
+          "proxy_receipt:rejected",
+          "empty:rejected",
+          "nine:rejected",
+          "inherited_qualification_value:rejected",
+          "inherited_qualification_getter:rejected",
+          "native_inherited_capabilities:rejected",
+          "native_inherited_code_execution:rejected",
+          "native_inherited_server_tools:rejected",
+          "native_inherited_supported:rejected",
+          "inherited_tool_annotation_value:rejected",
+          "inherited_tool_annotation_getter:rejected"
+        ],
+        "negativeCases": 16,
+        "inputGetterInvocations": 0,
+        "inputMapInvocations": 0,
+        "proxyTrapInvocations": 0,
+        "ordinaryEightResponses": "PASS",
+        "unknownCounters": "PASS",
+        "explicitNativeQualification": "PASS",
+        "modelAndBudgetsPreserved": "PASS",
+        "networkRequests": 0
+      },
+      "qualification_fixture": "Modèle synthétique fixture, réflexion maximum, vitesse standard ; comparaison du plan avec et sans qualification."
+    },
+    "static_checks": [
+      {
+        "name": "Désactivé par défaut",
+        "result": "PASS",
+        "detail": "Opt-in off ; parseur refuse les valeurs autres que off/on."
+      },
+      {
+        "name": "Préservation des modèles et budgets",
+        "result": "PASS",
+        "detail": "La qualification est une capacité supplémentaire ; le calcul existant du plan est inchangé. Comparaison exécutée sur une fixture."
+      },
+      {
+        "name": "Entrées JSON, prototypes et doublons",
+        "result": "PASS",
+        "detail": "Revue du validateur et des tests : refus Proxy/getters/prototypes non standard/trous/cycles/valeurs non JSON ; bornes de taille/profondeur/nœuds ; uniqueItems structurel ; contraintes inconnues refusées sur les propriétés visitées."
+      },
+      {
+        "name": "Compatibilité v1 de migration033",
+        "result": "PASS",
+        "detail": "Prédicat v1 textuellement équivalent à migration029 après renommage de variable et normalisation des espaces ; comparaison exécutée sans base de données."
+      },
+      {
+        "name": "Reçus incomplets",
+        "result": "PASS",
+        "detail": "Compteurs inconnus normalisés en null ; un zéro explicite est conservé ; pas d'invention d'un coût ou d'un compteur."
+      },
+      {
+        "name": "Premier reçu de clôture",
+        "result": "PASS",
+        "detail": "Logger conserve le premier instantané, CAS et réconciliation ; élargissement de type v1/v2."
+      },
+      {
+        "name": "Borne huit réponses",
+        "result": "PASS",
+        "detail": "Borne propre du constructeur vérifiée à 0, 8 et 9 ; revue statique de la borne transport et du refus d'un dernier lot non terminal."
+      },
+      {
+        "name": "Garde du moteur",
+        "result": "PASS",
+        "detail": "Object.hasOwn(tool, 'programmaticRead') aux deux gardes ; liste fermée knowledge_search/web_search conservée."
+      }
+    ],
+    "parent_reported_tests": {
+      "independently_executed_by_reviewer": false,
+      "total": 231,
+      "suites": {
+        "protocol": 82,
+        "engine": 78,
+        "end_to_end": 6,
+        "model_qualification": 21,
+        "input_validation": 28,
+        "usage_receipts": 16
+      },
+      "note": "Résultat communiqué par le parent ; il ne remplace pas les preuves de CI du parent."
+    },
+    "no_heavy_runner": true,
+    "no_database_execution": true,
+    "no_external_network_requests": true,
+    "no_inference_requests": true,
+    "no_secret_reads": true,
+    "no_remote_operations": true
+  },
+  "reviewed_hashes_sha256": {
+    "karta/src/config.ts": "83000a053abdd17d6f0580680b03d9bb05a96398c1f54df5c42aaf9457b2f095",
+    "karta/src/claude/execution-profile.ts": "793ce02300b8229fb8476e18455b07a8e70803366fdfc3e71d23fc759267ce4e",
+    "karta/src/claude/model-catalog.ts": "c7a2f48e9069c35d096c192c612be2857866968089cec89765da22afe9481d79",
+    "karta/src/claude/usage.ts": "83410127667c3f2b0bee2afc6f951cac90b45781aa7e5978626214326b9b8c73",
+    "karta/src/engine/logger.ts": "3c65e4c6fbf6924c588c9b1cf1a4200251e4777bd69b3504a762baac6c3d4a6f",
+    "karta/src/engine/tool-input.ts": "91f67e4c1148cf55ca3c28678c7791d8c56ff6183fa2dc366b58cd20a5ef315e",
+    "karta/src/claude/programmatic.ts": "ce7434dddb69872fd42c8fa0d7148002ccf057404e76dbff795945162ebcf4bc",
+    "karta/src/engine/loop.ts": "db9740a44ea356821b38c2609ffaa462061ceb142e24bdb60ce031f296c6ddcb",
+    "karta/migrations/033_programmatic_model_usage.sql": "18575b5d7c8c33871c0ae65fadf91e8fbf5fb820287a29aec024e9c7bf5f1e41",
+    "karta/test/programmaticInputValidation.test.ts": "bbd150a31f9a178ee16ede08d6367cb37dc5b7702255d9fb89beef3bb5b5f4ea",
+    "karta/test/programmaticModelQualification.test.ts": "acc07a3753a9a3b2274889a9a740f9add6206d6f8cb133e3cdbd3b337ccadc6c",
+    "karta/test/programmaticUsage.test.ts": "0986e57c6c966cd9b93676a6dfb6f18fd52366830656b0a1dc3e6c6fef33c66f",
+    "karta/test/programmaticUsageMigration.test.ts": "41fb587aa8056373aaf571ecee186da3f39e22543bde5c9c7ab6ea698444e243"
+  },
+  "before_fix_hashes_sha256": {
+    "karta/src/claude/execution-profile.ts": "a3ac822b67660795b571bb6328046d2f95df374fa0dfdeec274e7dcd064a56d9",
+    "karta/src/claude/model-catalog.ts": "906704d972b9a4a79a2ed302f505edb606959383dc83833c0cfc01216db45137",
+    "karta/src/claude/usage.ts": "f972cb37dc4fe8b671c38bf24c76ef4313aa17760f8ff761ce1c3a0ad2e9436d"
+  },
+  "remaining": {
+    "unresolved_findings_in_bounded_scope": [],
+    "not_tested_by_reviewer": [
+      "CI intégrale",
+      "Exécution SQL réelle",
+      "Production",
+      "Performance et coût sous charge"
+    ],
+    "owner": "Le parent termine la réception SQL, le typage, le build et la livraison ; cette revue est close."
+  }
+}

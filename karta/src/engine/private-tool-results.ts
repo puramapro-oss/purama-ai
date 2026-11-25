@@ -2,8 +2,11 @@ import { isProxy } from "node:util/types";
 import { supabase } from "../db/supabase.js";
 import { QUANTUM_LIMITS } from "../quantum/simulator.js";
 import { bounded } from "../runtime/lifecycle.js";
+import {
+  PROGRAMMATIC_REPORT_MAX_UTF16_UNITS, PROGRAMMATIC_REPORT_PROVENANCE, PROGRAMMATIC_REPORT_READ_TOOLS,
+} from "../knowledge/private-result-view.js";
 
-export type PrivateToolResultName = "knowledge_search" | "quantum_simulate";
+export type PrivateToolResultName = "knowledge_search" | "quantum_simulate" | "programmatic_report";
 export interface PrivateToolResultSource {
   source: "crossref" | "wikidata";
   native_id: string;
@@ -40,7 +43,7 @@ export const PRIVATE_TOOL_RESULT_MAX_BYTES = 65_536;
 const MAX_TOOL_SNAPSHOT_BYTES = 524_288;
 const INVALID_RESULT = "Résultat privé indisponible : format ou identité non vérifiable.";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const names: readonly string[] = ["knowledge_search", "quantum_simulate"];
+const names: readonly string[] = ["knowledge_search", "quantum_simulate", "programmatic_report"];
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Obj = { [key: string]: Json };
 const invalid = (): never => { throw new Error(INVALID_RESULT); };
@@ -254,15 +257,29 @@ function projectQuantum(raw: Obj): PrivateToolResultPayload | null {
   };
 }
 
+function projectProgrammaticReport(raw: Obj): PrivateToolResultPayload {
+  if (Object.keys(raw).length !== 2 || !("summary" in raw) || !("read_tools" in raw)) return invalid();
+  const summary = textValue(raw.summary, PROGRAMMATIC_REPORT_MAX_UTF16_UNITS);
+  if (!summary.trim() || /[\uD800-\uDFFF]/u.test(summary)) return invalid();
+  const readTools = array(raw.read_tools, PROGRAMMATIC_REPORT_READ_TOOLS.length)
+    .map(tool => choice(tool, PROGRAMMATIC_REPORT_READ_TOOLS));
+  if (new Set(readTools).size !== readTools.length) return invalid();
+  return {
+    schema_version: 1, tool_name: "programmatic_report", status: "complete", summary, sources: [],
+    details: { ...PROGRAMMATIC_REPORT_PROVENANCE, read_tools: readTools },
+  };
+}
+
 /** A private product result, never a trace or a memory entry. Unknown tools are ignored. */
 export function projectPrivateToolResult(toolName: string, result: unknown): PrivateToolResultPayload | null {
   if (!names.includes(toolName)) return null;
   try {
     const raw = object(snapshot(result));
-    const projected = toolName === "knowledge_search" ? projectKnowledge(raw) : projectQuantum(raw);
+    const projected = toolName === "knowledge_search" ? projectKnowledge(raw)
+      : toolName === "quantum_simulate" ? projectQuantum(raw) : projectProgrammaticReport(raw);
     // PostgreSQL JSONB renders additional separators. The projected structures
     // have fewer than 3,000 entries; reserve 4 KiB below its 64 KiB text bound.
-    if (projected && (projected.summary.length > 4000 ||
+    if (projected && (projected.summary.length > (toolName === "programmatic_report" ? PROGRAMMATIC_REPORT_MAX_UTF16_UNITS : 4000) ||
         Buffer.byteLength(JSON.stringify(projected), "utf8") > PRIVATE_TOOL_RESULT_MAX_BYTES - 4096)) return invalid();
     return projected;
   } catch { return invalid(); }
@@ -279,8 +296,10 @@ export async function persistPrivateToolResult(input: PersistPrivateToolResultIn
     if (![input.userId, input.runId, agentId].every(value => UUID.test(value))) return { status: "unavailable" };
     const runId = input.runId.toLowerCase();
     const operationId = input.operationId.toLowerCase();
-    if (operationId !== input.operationId || !(UUID.test(operationId) ||
-        operationId.startsWith(runId + ":") && /^(0|[1-9]\d{0,3})$/.test(operationId.slice(runId.length + 1)))) return { status: "unavailable" };
+    // A strict end assertion also rejects a trailing newline accepted by `$`.
+    const isDirect = operationId.startsWith(runId + ":") && /^(0|[1-9]\d{0,3})(?![\s\S])/.test(operationId.slice(runId.length + 1));
+    if (operationId !== input.operationId || !(UUID.test(operationId) || isDirect)
+        || input.toolName === "programmatic_report" && !isDirect) return { status: "unavailable" };
     const payload = projectPrivateToolResult(input.toolName, input.result);
     if (!payload) return { status: "not_applicable" };
     const args = {

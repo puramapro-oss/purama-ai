@@ -1,0 +1,15 @@
+{
+  "name": "karta-full",
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile=/workspace/scratch/b2c640d17a9a/audit-evidence/karta-full-results.json"
+  ],
+  "cwd": "/workspace/scratch/b2c640d17a9a/purama-ai-audit/karta",
+  "started_epoch": 1795631565.5485764,
+  "finished_epoch": 1795632008.3047383,
+  "exit_code": 1
+}

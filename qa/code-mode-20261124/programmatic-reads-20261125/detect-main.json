@@ -1,0 +1,22 @@
+{
+  "command": [
+    "node",
+    "--require",
+    "/workspace/scratch/200bdf486cef/purama-ai/qa/code-mode-20261124/gitnexus-native-resource-bound.cjs",
+    "/workspace/scratch/200bdf486cef/tooling/node_modules/gitnexus/dist/cli/index.js",
+    "detect_changes",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "main",
+    "--repo",
+    "iao-programmatic-final-200b-20261125",
+    "--limit",
+    "300"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 2.94,
+  "base_head": "795d7db298416f98cf95103c096714f82c01c8cb",
+  "index_scope": "Focused final graph; SQL and repository outside 43 paths are not fully indexed",
+  "output": "detect-main.txt"
+}

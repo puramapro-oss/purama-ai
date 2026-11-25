@@ -15,6 +15,9 @@ export interface ModelExecutionCapability {
   maxOutputTokens: number;
   reasoning: "none" | "budget" | "adaptive";
   effortLevels?: ModelEffort[];
+  /** Exact native route/model qualified for programmatic tool calling.
+   * Absence is unknown; ordinary server-side code execution is insufficient. */
+  programmaticToolCalling?: true;
 }
 export interface ModelExecutionPlan {
   model: string;
@@ -58,10 +61,11 @@ export function normalizeModelCatalog(value: unknown): ModelExecutionCapability[
     const property = Object.getOwnPropertyDescriptor(value, String(index));
     if (!property || !("value" in property)) return invalid();
     const row: unknown = property.value;
-    if (!plain(row) || Object.getOwnPropertyNames(row).some(key => !["model", "reasoning", "maxOutputTokens", "effortLevels"].includes(key))
+    if (!plain(row) || Object.getOwnPropertyNames(row).some(key => !["model", "reasoning", "maxOutputTokens", "effortLevels", "programmaticToolCalling"].includes(key))
       || typeof row.model !== "string" || !MODEL.test(row.model) || result.some(item => item.model === row.model)
       || !Number.isSafeInteger(row.maxOutputTokens) || Number(row.maxOutputTokens) < 1024 || Number(row.maxOutputTokens) > 65_536
-      || typeof row.reasoning !== "string" || !["none", "budget", "adaptive"].includes(row.reasoning)) return invalid();
+      || typeof row.reasoning !== "string" || !["none", "budget", "adaptive"].includes(row.reasoning)
+      || (Object.hasOwn(row, "programmaticToolCalling") && row.programmaticToolCalling !== true)) return invalid();
     let effortLevels: ModelEffort[] | undefined;
     if (row.reasoning === "adaptive") {
       const levels = row.effortLevels;
@@ -77,7 +81,9 @@ export function normalizeModelCatalog(value: unknown): ModelExecutionCapability[
       effortLevels.sort((a, b) => EFFORTS.indexOf(a) - EFFORTS.indexOf(b));
     } else if (Object.hasOwn(row, "effortLevels")) return invalid();
     result.push({ model: row.model, maxOutputTokens: Number(row.maxOutputTokens),
-      reasoning: row.reasoning as ModelExecutionCapability["reasoning"], ...(effortLevels ? { effortLevels } : {}) });
+      reasoning: row.reasoning as ModelExecutionCapability["reasoning"], ...(effortLevels ? { effortLevels } : {}),
+      ...(Object.hasOwn(row, "programmaticToolCalling") && row.programmaticToolCalling === true
+        ? { programmaticToolCalling: true as const } : {}) });
   }
   return result;
 }

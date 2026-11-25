@@ -56,18 +56,26 @@ export async function loadAnthropicModelCatalog(options: {
         const limit = allowed.find(candidate => candidate.model === item.id);
         if (!limit || item.lifecycle !== "active" || !Number.isSafeInteger(item.max_tokens)
           || Number(item.max_tokens) < 1024) continue;
-        const capabilities = row(item.capabilities);
+        const capabilities = row(Object.getOwnPropertyDescriptor(item, "capabilities")?.value);
+        // The top-level code_execution capability denotes PTC. The similarly
+        // named server_tools flag alone only qualifies a hosted code tool.
+        const nativeCode = row(Object.getOwnPropertyDescriptor(capabilities, "code_execution")?.value);
+        const serverTools = row(Object.getOwnPropertyDescriptor(capabilities, "server_tools")?.value);
+        const hostedCode = row(Object.getOwnPropertyDescriptor(serverTools, "code_execution")?.value);
+        const programmatic = Object.getOwnPropertyDescriptor(nativeCode, "supported")?.value === true
+          && Object.getOwnPropertyDescriptor(hostedCode, "supported")?.value === true
+          ? { programmaticToolCalling: true as const } : {};
         const thinking = row(capabilities.thinking);
         const types = row(thinking.types);
         const effort = row(capabilities.effort);
         const levels = efforts.filter(level => supported(effort[level]));
         const maximum = Math.min(limit.maxOutputTokens, Number(item.max_tokens));
         if (supported(thinking) && supported(types.adaptive) && supported(effort) && levels.length) {
-          models.push({ model: item.id, maxOutputTokens: maximum, reasoning: "adaptive", effortLevels: levels });
+          models.push({ model: item.id, maxOutputTokens: maximum, reasoning: "adaptive", effortLevels: levels, ...programmatic });
         } else if (supported(thinking) && supported(types.enabled)) {
-          models.push({ model: item.id, maxOutputTokens: maximum, reasoning: "budget" });
+          models.push({ model: item.id, maxOutputTokens: maximum, reasoning: "budget", ...programmatic });
         } else if (supported(types.disabled) || capabilities.thinking === null) {
-          models.push({ model: item.id, maxOutputTokens: maximum, reasoning: "none" });
+          models.push({ model: item.id, maxOutputTokens: maximum, reasoning: "none", ...programmatic });
         }
       }
       return models.length ? normalizeModelCatalog(models) : [];

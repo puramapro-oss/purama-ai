@@ -1,0 +1,45 @@
+
+  GitNexus Impact (1.6.12)
+{"level":40,"time":1795564304542,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+{
+  "target": {
+    "id": "Function:karta/src/claude/programmatic.ts:useProgrammaticReads",
+    "name": "useProgrammaticReads",
+    "type": "Function",
+    "filePath": "karta/src/claude/programmatic.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 1,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1
+  },
+  "affected_processes": [
+    {
+      "name": "decide",
+      "type": "Function",
+      "filePath": "karta/src/claude/real.ts",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Claude",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ]
+}
