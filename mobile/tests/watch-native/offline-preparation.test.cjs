@@ -12,6 +12,22 @@ const helper = path.resolve(__dirname, '../../scripts/prepare-android-offline.py
 const runId = '7434e598-cf0b-446b-a091-56d4e15b958c';
 const dataDisable = ['shell', 'svc', 'data', 'disable'];
 const airplaneEnable = ['shell', 'cmd', 'connectivity', 'airplane-mode', 'enable'];
+const isubCommand = ['shell', 'dumpsys', 'isub'];
+const telephonyDebug = ['shell', 'dumpsys', 'activity', 'service', 'TelephonyDebugService'];
+const readyIsub = `SubscriptionManagerService:
+Active modem count=2
+Logical SIM slot sub id mapping:
+  Logical SIM slot 0: subId=1
+  Logical SIM slot 1: subId=2
+ICCID:
+  slot 0: synthetic
+  slot 1: synthetic
+defaultSubId=1
+defaultDataSubId=1
+activeDataSubId=-1
+areAllSubscriptionsLoaded=true
+`;
+const pendingIsub = readyIsub.replace('defaultDataSubId=1', 'defaultDataSubId=-1');
 const fakeAdb = `#!/usr/bin/env python3
 import json,os,pathlib,subprocess,sys,time
 p=pathlib.Path(os.environ['ANDROID_PREPARATION_TEST_PLAN'])
@@ -22,15 +38,17 @@ args=sys.argv[1:]
 serial=None
 if args[:1]==['-s']:
  serial=args[1];args=args[2:]
+if not state['calls']:state['settings'].update(plan.get('settings',{}))
 state['calls'].append({'args':args,'serial':serial})
+occurrence=sum(call['args']==args for call in state['calls'])
 state_path.write_text(json.dumps(state))
-if args==plan.get('delayAt'):
+if args==plan.get('delayAt') and occurrence==plan.get('delayAtOccurrence',occurrence):
  sys.stdout.write('partial before timeout\\n');sys.stdout.flush()
  time.sleep(5)
 if args==plan.get('forkAt'):
  subprocess.Popen([sys.executable,'-c','import time; time.sleep(5)'])
  sys.exit(0)
-if args==plan.get('failAt'):
+if args==plan.get('failAt') and occurrence==plan.get('failAtOccurrence',occurrence):
  sys.stdout.write('partial failed output\\n');sys.stderr.write('synthetic ADB failure\\n');sys.exit(7)
 if args==plan.get('stderrAt'):
  sys.stderr.write('synthetic unexpected stderr\\n')
@@ -46,9 +64,12 @@ elif args[:2]==['shell','getprop']:
 elif args==['shell','cmd','phone','help']:
  sys.stdout.write('Synthetic phone help: data enable/disable\\n');sys.exit(255)
 elif args==['shell','dumpsys','isub']:
- sys.stdout.write(plan.get('isub','SubscriptionManagerService:\\nActive modem count=2\\nLogical SIM slot 0: subId=1\\nLogical SIM slot 1: subId=2\\ndefaultDataSubId=1\\nactiveDataSubId=1\\nareAllSubscriptionsLoaded=true\\n'))
+ frames=plan.get('isubFrames',[plan.get('isub',plan['defaultIsub'])])
+ sys.stdout.write(frames[min(occurrence-1,len(frames)-1)])
 elif args==['shell','dumpsys','phone']:
  sys.stdout.write('DataSettingsManager-0:\\n  isUserDataEnabled='+str(state['settings']['mobile_data1']=='1').lower()+'\\n  device_provisioned=1\\n')
+elif args==['shell','dumpsys','activity','service','TelephonyDebugService']:
+ sys.stdout.write('Synthetic TelephonyDebugService: carrier config pending\\n')
 elif args[:4]==['shell','settings','get','global'] and len(args)==5:
  sys.stdout.write(state['settings'].get(args[4],'null')+'\\n')
 elif args==['shell','svc','wifi','disable']:
@@ -73,7 +94,7 @@ function execute(plan = {}, options = {}) {
     fs.mkdirSync(bin);
     fs.writeFileSync(path.join(bin, 'adb'), fakeAdb, { mode: 0o700 });
     const planPath = path.join(root, 'plan.json');
-    fs.writeFileSync(planPath, JSON.stringify(plan));
+    fs.writeFileSync(planPath, JSON.stringify({ defaultIsub: readyIsub, ...plan }));
     const artifacts = path.join(root, 'artifacts');
     const evidence = path.join(artifacts, 'network-preparation');
     if (options.existing) {
@@ -251,4 +272,97 @@ test('a second invocation cannot overwrite an earlier preparation receipt', () =
   assert.equal(exit, 2);
   assert.deepEqual(calls, []);
   assert.equal(rawReceipt, existing);
+});
+
+test('DATA readiness waits for a mapped default before the first mutation', () => {
+  const { exit, receipt, calls } = execute({ isubFrames: [pendingIsub, pendingIsub, readyIsub] });
+  assert.equal(exit, 0);
+  assert.equal(receipt.dataReadiness.status, 'READY');
+  assert.deepEqual(receipt.dataReadiness.observations.map(item => item.status), ['WAITING', 'READY']);
+  assert.equal(receipt.dataReadiness.observations[0].defaultDataSubId, -1);
+  assert.equal(receipt.dataReadiness.observations[1].defaultDataSubId, 1);
+  const firstMutation = calls.findIndex(call => mutationCalls([call]).length > 0);
+  assert.equal(calls.slice(0, firstMutation).filter(call => call.args.join(' ') === isubCommand.join(' ')).length, 3);
+  assert.ok(receipt.dataReadiness.timeoutSeconds <= 30);
+  assert.ok(receipt.dataReadiness.reservedSeconds > 0);
+});
+
+test('DATA readiness expires before mutation and retains a bounded telephony diagnostic', () => {
+  const { exit, receipt, calls, raw, wallSeconds } = execute({ isub: pendingIsub }, { timeout: 2 });
+  assert.equal(exit, 23);
+  assert.equal(receipt.reason, 'data_subscription_not_ready');
+  assert.equal(receipt.dataReadiness.status, 'FAIL');
+  assert.ok(receipt.dataReadiness.observations.length > 0);
+  assert.ok(receipt.dataReadiness.observations.every(item => item.defaultDataSubId === -1));
+  assert.deepEqual(mutationCalls(calls), []);
+  assert.equal(receipt.dataReadiness.diagnostic.status, 'OBSERVED');
+  assert.match(raw['data-readiness/telephony-debug'].stdout.toString(), /carrier config pending/);
+  assert.ok(wallSeconds < 2.8, 'Readiness and its diagnostic share the existing global deadline');
+});
+
+for (const [label, isub, reason] of [
+  ['missing DATA default', readyIsub.replace('defaultDataSubId=1\n', ''), 'missing_default_data_subscription'],
+  ['conflicting DATA defaults', readyIsub + 'defaultDataSubId=2\n', 'ambiguous_default_data_subscription'],
+  ['duplicated DATA default', readyIsub + 'defaultDataSubId=1\n', 'ambiguous_default_data_subscription'],
+  ['unmapped DATA default', readyIsub.replace('defaultDataSubId=1', 'defaultDataSubId=99'), 'default_data_not_mapped'],
+  ['duplicated active slot', readyIsub.replace('Logical SIM slot 1: subId=2', 'Logical SIM slot 0: subId=2'), 'ambiguous_active_subscription_mapping'],
+  ['unknown mapping section', readyIsub.replace('Logical SIM slot sub id mapping:', 'Different future mapping:'), 'unknown_subscription_mapping'],
+]) {
+  test('DATA readiness refuses ' + label + ' before mutation', () => {
+    const { exit, receipt, calls } = execute({ isub });
+    assert.equal(exit, 23);
+    assert.equal(receipt.reason, reason);
+    assert.deepEqual(mutationCalls(calls), []);
+    assert.equal(receipt.dataReadiness.observations[0].status, 'INVALID');
+    assert.equal(receipt.dataReadiness.diagnostic.status, 'OBSERVED');
+  });
+}
+
+test('DATA readiness accepts a mapped default without active DATA or provisioning', () => {
+  const { exit, receipt } = execute({ settings: { device_provisioned: '0', multi_sim_data_call: 'null' } });
+  assert.equal(exit, 0);
+  assert.equal(receipt.dataReadiness.status, 'READY');
+  assert.equal(receipt.snapshots[0].settings.device_provisioned, '0');
+  assert.equal(receipt.networkVerified, false);
+});
+
+test('DATA readiness is never awaited or diagnosed in inspect-only mode', () => {
+  const { exit, receipt, calls } = execute({ isub: pendingIsub }, { inspectOnly: true });
+  assert.equal(exit, 0);
+  assert.equal(receipt.status, 'OBSERVED');
+  assert.equal(receipt.dataReadiness, undefined);
+  assert.equal(calls.filter(call => call.args.join(' ') === isubCommand.join(' ')).length, 1);
+  assert.ok(!calls.some(call => call.args.join(' ') === telephonyDebug.join(' ')));
+  assert.deepEqual(mutationCalls(calls), []);
+});
+
+test('DATA readiness keeps its original failure when the diagnostic also fails', () => {
+  const { exit, receipt, calls, raw } = execute({ isub: pendingIsub, failAt: telephonyDebug }, { timeout: 2 });
+  assert.equal(exit, 23);
+  assert.equal(receipt.reason, 'data_subscription_not_ready');
+  assert.equal(receipt.dataReadiness.diagnostic.status, 'FAIL');
+  assert.equal(receipt.dataReadiness.diagnostic.reason, 'command_failed');
+  assert.match(raw['data-readiness/telephony-debug'].stderr.toString(), /synthetic ADB failure/);
+  assert.deepEqual(mutationCalls(calls), []);
+});
+
+test('DATA readiness preserves a failed ADB observation before any mutation', () => {
+  const { exit, receipt, calls, raw } = execute({ failAt: isubCommand, failAtOccurrence: 2 });
+  assert.equal(exit, 23);
+  assert.equal(receipt.reason, 'command_failed');
+  assert.match(receipt.failedCommand, /^data-readiness\/observation-001\/isub$/);
+  assert.equal(receipt.dataReadiness.observations[0].status, 'ERROR');
+  assert.match(raw[receipt.failedCommand].stderr.toString(), /synthetic ADB failure/);
+  assert.deepEqual(mutationCalls(calls), []);
+});
+
+test('DATA readiness bounds a blocked observation and still reserves time for diagnostics', () => {
+  const { exit, receipt, calls, raw, wallSeconds } = execute({ delayAt: isubCommand, delayAtOccurrence: 2 }, { timeout: 2 });
+  assert.equal(exit, 23);
+  assert.equal(receipt.reason, 'command_timeout');
+  assert.match(receipt.failedCommand, /^data-readiness\/observation-001\/isub$/);
+  assert.match(raw[receipt.failedCommand].stdout.toString(), /partial before timeout/);
+  assert.equal(receipt.dataReadiness.diagnostic.status, 'OBSERVED');
+  assert.deepEqual(mutationCalls(calls), []);
+  assert.ok(wallSeconds < 2.8);
 });

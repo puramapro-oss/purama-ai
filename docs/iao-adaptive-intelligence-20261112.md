@@ -422,6 +422,27 @@ le `SmaranaIaoPort` courant : signatures, reçus durables et autorité de sessio
 différents. Le bearer fixe de cet ancien montage n'établit pas une session utilisateur
 révocable. Les recherches ciblées ne démontrent pas l'absence d'autres travaux ailleurs.
 
+La référence SMARANA consommée par T04 a ensuite été retrouvée et vérifiée :
+`file:vendor/purama-smarana-0.1.0.tgz`, 106 809 octets, SHA-256
+`72daccecac6a921ebd2d4aa485a205afbd2ac75edd6ef87474b04bd04a4cad32`,
+identique dans le HEAD T04 `ab237aeb5d12c6b1c470a3dd69d047f0ea1b0b65`.
+Son reçu désigne la source SMARANA `04b62c70a1abbe0f6dee9856a969dd39457180e6`.
+L'archive inclut les primitives PostgreSQL de contexte persistant, de reprise
+opaque, d'export durable et de purge : ces composants existent et sont à réutiliser.
+Le numéro `0.1.0` seul n'identifie pas cette archive, car d'autres checkouts portent
+le même numéro avec des exports antérieurs.
+
+Cette identification ne qualifie pas encore leur raccordement aux signatures
+actuelles de `SmaranaIaoPort`. Le reçu T04 conserve un échec de purge lié à
+`source_object_ids IS NULL`, et le worktree portant le correctif en cours comporte sept fichiers
+suivis modifiés ; aucun test SQL récent de ce correctif n'a été exécuté dans cette
+reprise. Ce travail propriétaire est préservé. Le contrat IAO courant ne désigne
+toujours pas d'émetteur de session ; les sessions de compte Supabase existantes
+ne fournissent pas automatiquement la relation autorisée entre tenant, acteur et
+session IAO. La lecture ciblée des sources et reçus natifs n'a pas retrouvé de
+décision d'autorité plus récente. Le rejeu Fabric durable après redémarrage reste
+une qualification séparée.
+
 **Qualification Android.** Sur `e04369c`, sept workflows GitHub ont réussi ; le job
 Android du run `45699636288` a échoué avant le redémarrage hors ligne. Les 42 relevés
 conservent `mobile_data=1`, alors que les 41 derniers montrent un ensemble de réseaux

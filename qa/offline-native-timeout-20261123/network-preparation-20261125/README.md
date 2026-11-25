@@ -110,3 +110,46 @@ le rouge/vert et les pièces exactes de ce passage. Ils ne qualifient pas encore
 la préparation réseau réelle de la nouvelle version. La source SDK35
 [BasicShellCommandHandler](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/modules/utils/BasicShellCommandHandler.java)
 explique ce retour après l’affichage de l’aide.
+
+### Abonnement DATA absent : précondition de préparation
+
+Le run `45716525092` de `262f33d308402b3c3a91b537016fc557ec7bbb8d`
+franchit les deux corrections d’instrumentation et reçoit les 43 tests.
+Le préparateur termine en 3,530634 secondes, mais son succès signifie seulement
+que les commandes sont revenues normalement. L’observateur refuse la coupure :
+40 relevés complets gardent `mobile_data=1` et un ensemble de réseaux vide ;
+le 41e appel commence à la fin des 45 secondes disponibles et est interrompu.
+L’inspection finale réussit immédiatement après, sans preuve d’une panne générale ADB.
+
+Les dumps initiaux, après DATA et après mode avion identifient un modem unique,
+une SIM de souscription 1, mais `defaultDataSubId=-1` et `activeDataSubId=-1`.
+Le défaut DATA reste absent dans l’inspection finale. `mobile_data1` et
+`multi_sim_data_call` sont `null` : le masquage par une clé multi-SIM n’explique
+pas cette réception. Le shell DATA retourne zéro bien que la cible par défaut
+nécessaire à sa mise en œuvre manque.
+
+La nouvelle préparation attend donc, avant toute mutation, que le vrai défaut
+DATA corresponde à une souscription du mapping actif. Elle ne substitue pas
+`defaultSubId`, n’exige pas `activeDataSubId` et ne force aucun réglage DATA.
+Cette attente est bornée dans le budget global de préparation. L’absence de
+convergence et les formats ambigus sont refusés avant la coupure ; le diagnostic
+complémentaire demeure en lecture seule et ne remplace pas la cause primaire.
+L’observateur final conserve tous ses critères.
+
+AOSP explique pourquoi l’initialisation des souscriptions ne suffit pas à établir
+ce défaut : la configuration opérateur doit aussi être chargée avant la sélection
+automatique. Le lancement immédiat du contrôle constitue une hypothèse étayée
+pour ce passage, à vérifier dans la prochaine CI. Il n’explique pas rétroactivement
+le run `e04369c`, dont le dump téléphonique initial n’a pas été reçu.
+
+Sources : [PhoneInterfaceManager figé](https://android.googlesource.com/platform/packages/services/Telephony/+/0f31d1f00721da0b6d830f51d621f15650956fd1/src/com/android/phone/PhoneInterfaceManager.java),
+[MultiSimSettingController — SDK35](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/refs/heads/androidx-constraintlayout-release/android-35/com/android/internal/telephony/MultiSimSettingController.java),
+[diagnostic TelephonyDebugService utilisé par CTS](https://android.googlesource.com/platform/cts/+/927ad37e0ac7d0a863d14f5beba3eb9a5b1d4db0/hostsidetests/statsd/atom/AtomTestCase.java).
+
+Régression ciblée sur les 13 nouveaux scénarios : 12 échecs et un succès avant
+la correction, puis suite complète de 56 tests réussis après correction
+(33 préparation, 23 observateur inchangé), sans cas ignoré. Le parser reconnaît
+aussi les quatre dumps réels de `262f` comme attente d’un défaut DATA, plutôt
+que comme un format inconnu. Le reçu `ci-data-default-failure.json` et son archive
+conservent les sources, journaux et preuves. La convergence réelle de la nouvelle
+attente reste NON TESTÉE jusqu’à réception de la prochaine CI.

@@ -25,6 +25,7 @@ import uuid
 MAX_STDOUT_BYTES = 2 * 1024 * 1024
 MAX_STDERR_BYTES = 65536
 MAX_COMMAND_SECONDS = 5.0
+MAX_DATA_READY_SECONDS = 30.0
 RADIO_SETTINGS = (
     "airplane_mode_on", "wifi_on", "mobile_data", "multi_sim_data_call",
     "device_provisioned", "device_provisioning_mobile_data",
@@ -40,6 +41,51 @@ class PreparationError(Exception):
         super().__init__(reason)
         self.reason = reason
         self.command = command
+
+
+def inspect_data_subscription(text: str) -> dict:
+    """Read the current isub mapping; never substitute a general/active default."""
+    defaults = re.findall(r"^defaultDataSubId=([^\r\n]*)\r?$", text, re.M)
+    if not defaults:
+        return {"status": "INVALID", "reason": "missing_default_data_subscription"}
+    if len(defaults) != 1:
+        return {"status": "INVALID", "reason": "ambiguous_default_data_subscription"}
+    if not re.fullmatch(r"-1|0|[1-9][0-9]{0,9}", defaults[0]):
+        return {"status": "INVALID", "reason": "unknown_default_data_subscription"}
+    default = int(defaults[0])
+    if default >= 2147483647:
+        return {"status": "INVALID", "reason": "unknown_default_data_subscription"}
+    headers = list(re.finditer(r"^SubscriptionManagerService:[ \t]*\r?$", text, re.M))
+    counts = list(re.finditer(r"^Active modem count=([0-9]{1,2})\r?$", text, re.M))
+    starts = list(re.finditer(r"^Logical SIM slot sub id mapping:[ \t]*\r?$", text, re.M))
+    ends = list(re.finditer(r"^ICCID:[ \t]*\r?$", text, re.M))
+    if any(len(items) != 1 for items in (headers, counts, starts, ends)):
+        return {"status": "INVALID", "reason": "unknown_subscription_mapping"}
+    if not headers[0].end() < counts[0].start() < starts[0].start() < ends[0].start():
+        return {"status": "INVALID", "reason": "unknown_subscription_mapping"}
+    count = int(counts[0].group(1))
+    if count > 16:
+        return {"status": "INVALID", "reason": "unknown_subscription_mapping"}
+    mapping = {}
+    for line in text[starts[0].end():ends[0].start()].splitlines():
+        if not line.strip():
+            continue
+        match = re.fullmatch(r"[ \t]+Logical SIM slot ([0-9]{1,2}): subId=([0-9]{1,10})[ \t]*", line)
+        if not match:
+            return {"status": "INVALID", "reason": "unknown_subscription_mapping"}
+        slot, sub_id = map(int, match.groups())
+        if slot in mapping or sub_id in mapping.values():
+            return {"status": "INVALID", "reason": "ambiguous_active_subscription_mapping"}
+        if slot >= count or sub_id >= 2147483647:
+            return {"status": "INVALID", "reason": "unknown_subscription_mapping"}
+        mapping[slot] = sub_id
+    state = {"defaultDataSubId": default, "activeModemCount": count,
+             "activeSubscriptionMapping": mapping}
+    if default == -1:
+        return {**state, "status": "WAITING", "reason": "default_data_not_selected"}
+    if default not in mapping.values():
+        return {**state, "status": "INVALID", "reason": "default_data_not_mapped"}
+    return {**state, "status": "READY", "reason": "mapped_default_data_subscription"}
 
 
 def bounded_command(command: list[str], deadline: float) -> tuple[bytes, bytes, dict]:
@@ -124,13 +170,17 @@ class Preparation:
         temporary.write_text(json.dumps(self.receipt, indent=2) + "\n")
         temporary.replace(self.directory / "receipt.json")
 
-    def run(self, name: str, arguments: list[str], mutation: bool = False) -> str:
+    def run(self, name: str, arguments: list[str], mutation: bool = False,
+            deadline: float | None = None) -> str:
         # Leave a small part of the same global budget for kill/reap and receipt.
-        remaining = self.deadline - time.monotonic() - 0.1
+        command_deadline = min(self.deadline - 0.1, deadline if deadline is not None else self.deadline)
+        remaining = command_deadline - time.monotonic()
         if remaining <= 0:
             raise PreparationError("preparation_deadline", name)
         if mutation and not self.receipt["emulatorVerified"]:
             raise PreparationError("emulator_guard_required", name)
+        if mutation and self.receipt.get("dataReadiness", {}).get("status") != "READY":
+            raise PreparationError("data_subscription_guard_required", name)
         self.receipt["mutationAttempted"] |= mutation
         began = time.monotonic()
         command = self.adb + arguments
@@ -215,6 +265,61 @@ class Preparation:
             first = snapshot["errors"][0]
             raise PreparationError(first["reason"], first["command"])
 
+    def wait_for_data_subscription(self) -> None:
+        began = time.monotonic()
+        available = max(0.0, self.deadline - began - 0.1)
+        # Reserve one bounded diagnostic plus receipt time, or half a shortened
+        # test budget. Waiting and diagnostics never extend the global deadline.
+        reserve = min(MAX_COMMAND_SECONDS + 0.1, available / 2)
+        budget = min(MAX_DATA_READY_SECONDS, available - reserve)
+        deadline = began + budget
+        readiness = {"status": "WAITING", "startedAt": utc_now(),
+                     "timeoutSeconds": round(budget, 6), "reservedSeconds": round(reserve, 6),
+                     "observations": []}
+        self.receipt["dataReadiness"] = readiness
+        try:
+            while time.monotonic() < deadline:
+                index = len(readiness["observations"]) + 1
+                name = "data-readiness/observation-%03d/isub" % index
+                observation = {"index": index, "observedAt": utc_now(), "command": name}
+                readiness["observations"].append(observation)
+                try:
+                    text = self.run(name, ["shell", "dumpsys", "isub"], deadline=deadline)
+                except PreparationError as error:
+                    observation.update(status="ERROR", reason=error.reason)
+                    raise
+                observation.update(inspect_data_subscription(text))
+                self.checkpoint()
+                if observation["status"] == "READY":
+                    readiness.update(status="READY", reason=observation["reason"])
+                    return
+                if observation["status"] == "INVALID":
+                    raise PreparationError(observation["reason"], name)
+                remaining = deadline - time.monotonic()
+                if remaining > 0:
+                    time.sleep(min(1.0, remaining))
+            raise PreparationError("data_subscription_not_ready", "data-readiness")
+        except PreparationError as error:
+            readiness.update(status="FAIL", reason=error.reason,
+                             waitElapsedSeconds=round(time.monotonic() - began, 6))
+            failure = {"command": error.command, "reason": error.reason}
+            if failure not in self.receipt["failures"]:
+                self.receipt["failures"].append(failure)
+            diagnostic = {"command": "data-readiness/telephony-debug", "status": "OBSERVED"}
+            readiness["diagnostic"] = diagnostic
+            try:
+                self.run(diagnostic["command"],
+                         ["shell", "dumpsys", "activity", "service", "TelephonyDebugService"])
+            except PreparationError as secondary:
+                diagnostic.update(status="FAIL", reason=secondary.reason)
+            except (OSError, ValueError) as secondary:
+                diagnostic.update(status="FAIL", reason="diagnostic_error", error=str(secondary))
+            raise
+        finally:
+            readiness.setdefault("waitElapsedSeconds", round(time.monotonic() - began, 6))
+            readiness["finishedAt"] = utc_now()
+            self.checkpoint()
+
     def execute(self, inspect_only: bool) -> None:
         if len(self.adb) == 1:
             # Pin the selected device so a subsequent default-device change
@@ -235,6 +340,7 @@ class Preparation:
         if inspect_only:
             self.receipt.update(status="OBSERVED", reason="read_only_diagnostics_collected")
             return
+        self.wait_for_data_subscription()
         # Preserve the existing mutation order while exposing the previously
         # missing state between DATA disable and enabling airplane mode.
         self.run("controls/wifi-disable", ["shell", "svc", "wifi", "disable"], mutation=True)

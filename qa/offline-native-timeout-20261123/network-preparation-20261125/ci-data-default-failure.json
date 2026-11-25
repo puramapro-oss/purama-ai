@@ -1,0 +1,807 @@
+{
+  "phase": "mapped-default-data-readiness",
+  "recordedAt": "2026-11-25T23:16:55.403952+00:00",
+  "parentCommit": "262f33d308402b3c3a91b537016fc557ec7bbb8d",
+  "parentTree": "50d3e7626aa591b1ad3ecfeb983f281daf82d090",
+  "localParent": "c29857a00452eb846f79d175a80b26ee6130ac5a",
+  "sourceSha256": {
+    "mobile/scripts/prepare-android-offline.py": "4f69fbed87c5ace67d9f5106a61c432b0776807d112fcfb20e21fcac8c11cb05",
+    "mobile/tests/watch-native/offline-preparation.test.cjs": "fcabb5b83edcd17be056fe6f823facd6b6f611472a2ee836de6f1688e35b4793"
+  },
+  "observedFailure": {
+    "preparationStatus": "COMMANDS_COMPLETED",
+    "preparationSeconds": 3.530634,
+    "modemCount": 1,
+    "activeMapping": {
+      "0": 1
+    },
+    "defaultDataSubId": -1,
+    "activeDataSubId": -1,
+    "mobileData": "1",
+    "mobileData1": "null",
+    "multiSimDataCall": "null",
+    "dataDisableExitCode": 0,
+    "observerSeconds": 45.001488,
+    "completeObservations": 40,
+    "completeObservationsRadioFlags": [
+      "1",
+      "0",
+      "1"
+    ],
+    "completeObservationsCurrentNetworksEmpty": true,
+    "lastObservation": "The 41st observation begins at the global observation deadline and is interrupted; final inspection immediately succeeds."
+  },
+  "change": "Verify mapped defaultDataSubId before any mutation; at most30s within existing60s global budget. Reserve bounded diagnostic/receipt time. Refuse absent, ambiguous, invalid or unmapped state; leave inspect-only immediate and all radio/observer criteria unchanged.",
+  "causalScope": "The absent default DATA target explains the ineffective shell command in run45716525092. Readiness initialization may converge if awaited before radio cut-off; the next CI must establish that. No retrospective proof of the original e043 telephony state is claimed.",
+  "tests": {
+    "before": {
+      "command": "node --test --test-name-pattern='DATA readiness' mobile/tests/watch-native/offline-preparation.test.cjs",
+      "exitCode": 1,
+      "tests": 13,
+      "pass": 1,
+      "fail": 12,
+      "log": "local/quality-data-ready-red.log"
+    },
+    "after": {
+      "command": "node --test mobile/tests/watch-native/offline-preparation.test.cjs mobile/tests/watch-native/offline-network.test.cjs",
+      "exitCode": 0,
+      "tests": 56,
+      "pass": 56,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 21463.037143,
+      "preparationTests": 33,
+      "unchangedObserverTests": 23,
+      "log": "local/quality-data-ready-green.log"
+    },
+    "realDumps": {
+      "count": 4,
+      "recognizedState": "WAITING",
+      "defaultDataSubId": -1,
+      "activeMapping": {
+        "0": 1
+      },
+      "log": "local/quality-data-ready-verification.log"
+    }
+  },
+  "pythonAstParse": "PASS",
+  "unchangedFilesVerified": [
+    "mobile/scripts/wait-for-android-offline.py",
+    ".github/workflows/mobile-native-watch.yml",
+    "mobile/scripts/qualify-android-network.sh",
+    "mobile/scripts/qualify-offline-android.sh"
+  ],
+  "impact": {
+    "risk": "CRITICAL/PARTIEL; UNKNOWN on unresolved const/class edges",
+    "userWarnedBeforeEdit": true,
+    "preEditTargets": [
+      "Preparation",
+      "snapshot",
+      "execute",
+      "fakeAdb"
+    ],
+    "manualScope": "CLI main, shared preparer and two Android qualification launchers. No inferred absence of impact from unresolved graph edges."
+  },
+  "artifactMetadata": {
+    "repository": "puramapro-oss/purama-ai",
+    "headSha": "262f33d308402b3c3a91b537016fc557ec7bbb8d",
+    "checkoutMergeSha": "0e35d4929ce8b1da4ca7c06302dc087bf97ca035",
+    "treeSha": "50d3e7626aa591b1ad3ecfeb983f281daf82d090",
+    "mergeParents": [
+      "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+      "262f33d308402b3c3a91b537016fc557ec7bbb8d"
+    ],
+    "runId": 45716525092,
+    "jobId": 139564117171,
+    "artifactId": 15070062885,
+    "artifactBytes": 299917,
+    "artifactSha256": "f3ee067bffd518ffd660c1a89ef1d38839f3d9fcd23916f2a0732bc3c2b28671",
+    "digestVerified": true,
+    "artifactUrl": "https://github.com/puramapro-oss/purama-ai/actions/runs/45716525092/artifacts/15070062885",
+    "artifactMembers": 427,
+    "selectedFiles": [
+      {
+        "path": "checkout.txt",
+        "bytes": 82,
+        "sha256": "cce28d5de3b05e62b8937ba12181b5f78484b156001c563851eae5c9da397be2"
+      },
+      {
+        "path": "emulator-version.txt",
+        "bytes": 655,
+        "sha256": "d678ca7fa00eee8fd6241663550b9625d4f31545c917b35f5448ce2693d27bf4"
+      },
+      {
+        "path": "final-state/network-preparation/identity/abi.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/abi.txt",
+        "bytes": 7,
+        "sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62"
+      },
+      {
+        "path": "final-state/network-preparation/identity/api.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/api.txt",
+        "bytes": 3,
+        "sha256": "90d7ec0f0acef104d8b6252794295f661a0149634868d02a1ae0c358099638f5"
+      },
+      {
+        "path": "final-state/network-preparation/identity/emulator.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/emulator.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "final-state/network-preparation/identity/fingerprint.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/fingerprint.txt",
+        "bytes": 82,
+        "sha256": "633fbfc3b92b012914165717ce367282664c75ad9f6e533b4a1ad6e2418ec93a"
+      },
+      {
+        "path": "final-state/network-preparation/receipt.json",
+        "bytes": 9641,
+        "sha256": "8a6aa2f1e848e5cae40791aa7da9a47c500b25ef015d958a9665e5f4c3290b36"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/airplane_mode_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/airplane_mode_on.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/device_provisioned.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/device_provisioned.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/device_provisioning_mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/device_provisioning_mobile_data.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/isub.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/isub.txt",
+        "bytes": 5434,
+        "sha256": "1d417976c4f5f3f397dc5279e10f4ce04c49df40671084e08a89702bb7d57395"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/mobile_data.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/mobile_data1.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/mobile_data1.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/multi_sim_data_call.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/multi_sim_data_call.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/phone.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/phone.txt",
+        "bytes": 4012,
+        "sha256": "ff8e0404acf679c9e4d48f2ef8b4a55530fab5436a4d3a1b9ad580154aad787b"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/wifi_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/snapshots/observed/wifi_on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-before-restart/observation-001/airplane-mode.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-001/airplane-mode.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-before-restart/observation-001/connectivity-offline.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-001/connectivity-offline.txt",
+        "bytes": 29544,
+        "sha256": "8cd61923e856e96d0ef9899a99da815c2d27ac4dafc2c357448b86534a33aeaa"
+      },
+      {
+        "path": "network-before-restart/observation-001/mobile-data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-001/mobile-data.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-before-restart/observation-001/wifi-on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-001/wifi-on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-before-restart/observation-040/airplane-mode.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-040/airplane-mode.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-before-restart/observation-040/connectivity-offline.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-040/connectivity-offline.txt",
+        "bytes": 45787,
+        "sha256": "755813673335f5b8db2365e70c171badd14a3c37a924f4bc89e68724b3e2175c"
+      },
+      {
+        "path": "network-before-restart/observation-040/mobile-data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-040/wifi-on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/observation-040/mobile-data.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-before-restart/observation-040/wifi-on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-before-restart/observation-041/airplane-mode.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-before-restart/receipt.json",
+        "bytes": 104291,
+        "sha256": "ad079a4a6313abeea72f0f06506eb06288615230299374d15dfd489c5a45ee22"
+      },
+      {
+        "path": "network-before-restart/observation-041/airplane-mode.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/airplane-enable.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/airplane-enable.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/airplane-setting.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/airplane-setting.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/data-disable.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/data-disable.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/remove-reverses.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/remove-reverses.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/wifi-disable.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/controls/wifi-disable.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/abi.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/abi.txt",
+        "bytes": 7,
+        "sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62"
+      },
+      {
+        "path": "network-preparation/identity/api.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/api.txt",
+        "bytes": 3,
+        "sha256": "90d7ec0f0acef104d8b6252794295f661a0149634868d02a1ae0c358099638f5"
+      },
+      {
+        "path": "network-preparation/identity/emulator.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/emulator.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-preparation/identity/fingerprint.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/fingerprint.txt",
+        "bytes": 82,
+        "sha256": "633fbfc3b92b012914165717ce367282664c75ad9f6e533b4a1ad6e2418ec93a"
+      },
+      {
+        "path": "network-preparation/receipt.json",
+        "bytes": 26004,
+        "sha256": "9105e645098ca0a7fc17a8d06c9d50874108bd23ca33dd4a5c1f5e863db80b4a"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/airplane_mode_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/airplane_mode_on.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/device_provisioned.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/device_provisioned.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/device_provisioning_mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/device_provisioning_mobile_data.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/isub.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/isub.txt",
+        "bytes": 5389,
+        "sha256": "45c3cfb0e227ca5f5a9a815b4246c2f55fb4c20a3b0ae90b0193b188123f7781"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/mobile_data.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/mobile_data1.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/mobile_data1.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/multi_sim_data_call.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/multi_sim_data_call.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/phone.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/wifi_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/phone.txt",
+        "bytes": 3341,
+        "sha256": "e6e7f3c2702701dcababb85d3aee94d8b905c4038f7230044fd0c99bd10e39a9"
+      },
+      {
+        "path": "network-preparation/snapshots/after-airplane/wifi_on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/airplane_mode_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/airplane_mode_on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/device_provisioned.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/device_provisioned.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/device_provisioning_mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/device_provisioning_mobile_data.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/isub.txt",
+        "bytes": 5389,
+        "sha256": "45c3cfb0e227ca5f5a9a815b4246c2f55fb4c20a3b0ae90b0193b188123f7781"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/isub.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/mobile_data.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/mobile_data1.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/mobile_data1.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/multi_sim_data_call.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/multi_sim_data_call.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/phone.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/phone.txt",
+        "bytes": 3341,
+        "sha256": "e6e7f3c2702701dcababb85d3aee94d8b905c4038f7230044fd0c99bd10e39a9"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/wifi_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/after-data/wifi_on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/before/airplane_mode_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/airplane_mode_on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/before/device_provisioned.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/device_provisioned.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "network-preparation/snapshots/before/device_provisioning_mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/isub.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/device_provisioning_mobile_data.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/before/isub.txt",
+        "bytes": 5365,
+        "sha256": "db438df19c8f2a415e615e8a7b4a492b92df3007b4cc38f68dc929d2a412c92b"
+      },
+      {
+        "path": "network-preparation/snapshots/before/mobile_data.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/mobile_data.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-preparation/snapshots/before/mobile_data1.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/mobile_data1.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/before/multi_sim_data_call.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/multi_sim_data_call.txt",
+        "bytes": 5,
+        "sha256": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+      },
+      {
+        "path": "network-preparation/snapshots/before/phone.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/phone.txt",
+        "bytes": 3185,
+        "sha256": "ea173bd50ba027ed4c3528cb03ef5ea947028d40f0cfdf6246b5f7c9bd11201c"
+      },
+      {
+        "path": "network-preparation/snapshots/before/wifi_on.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/snapshots/before/wifi_on.txt",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "path": "run-id.txt",
+        "bytes": 37,
+        "sha256": "d145363b41d0dc66f15576405a56eb36f38ece334fdefdba0f3869846694cefc"
+      },
+      {
+        "path": "system-image-source.properties",
+        "bytes": 357,
+        "sha256": "809a6f5103c048607257f03f18e22dd740137e9009c99d4a496de846b6ee3412"
+      }
+    ],
+    "commandStreamsVerified": 420,
+    "preparationStatus": "COMMANDS_COMPLETED",
+    "inspectionStatus": "OBSERVED",
+    "observerStatus": "FAIL",
+    "observations": 41,
+    "completeObservations": 40,
+    "offlineNetworkCompleteObservations": 40,
+    "allCompleteMobileDataFlags": [
+      "1"
+    ],
+    "terminalObservationFailure": "adb_observation_failed",
+    "fullAndroidConclusion": "skipped",
+    "syntheticTests": {
+      "tests": 43,
+      "pass": 43,
+      "fail": 0
+    }
+  },
+  "evidenceArchive": {
+    "path": "ci-data-default-failure.zip",
+    "bytes": 70629,
+    "sha256": "51c10bb593e8edd119ba930d2d1a6e499ed750cd31c6f2f81448e1f9019caac5",
+    "members": 136
+  },
+  "logs": {
+    "quality-data-ready-red.log": {
+      "bytes": 12271,
+      "sha256": "82438d06fef5213d29f566680dda3a2d4c5105e7fc7972b1ca0e23ab964e44f9"
+    },
+    "quality-data-ready-green.log": {
+      "bytes": 5062,
+      "sha256": "85dfac1375d047a3ac28e053ba2b057efcbb33db295f8eea0a17c1b66257bb64"
+    },
+    "quality-data-ready-verification.log": {
+      "bytes": 1864,
+      "sha256": "31246948b05a8ecc619d79ff991433265d695aa16df79ad041ea0727b190ea29"
+    },
+    "quality-data-ready-impact-Preparation.txt": {
+      "bytes": 1066,
+      "sha256": "3899d245cbad199d96f60a23a999697b5bf40ca50716ef5929f905c205f36ecb"
+    },
+    "quality-data-ready-impact-Preparation.stderr": {
+      "bytes": 338,
+      "sha256": "85555ebcd95097e4aefd6b0a90bb22ab38e79de2caf58f255faf94e68186a2a8"
+    },
+    "quality-data-ready-impact-snapshot.txt": {
+      "bytes": 33404,
+      "sha256": "500a1edcb2c19a9095aa1fe0f1cf57f49298ff1e45db46b43e75e0732f1c94a2"
+    },
+    "quality-data-ready-impact-snapshot.stderr": {
+      "bytes": 338,
+      "sha256": "a5252f2ca884a3d34ee19a1e565efcd625ded6264902e81a76814d8f00fcf94c"
+    },
+    "quality-data-ready-impact-execute.txt": {
+      "bytes": 30923,
+      "sha256": "60784247fc592a79d9968ec257e439ced8db2a807b2c78257f38d1c039c39d51"
+    },
+    "quality-data-ready-impact-execute.stderr": {
+      "bytes": 338,
+      "sha256": "a5252f2ca884a3d34ee19a1e565efcd625ded6264902e81a76814d8f00fcf94c"
+    },
+    "quality-data-ready-impact-fakeAdb.txt": {
+      "bytes": 1035,
+      "sha256": "33a0da21b12213e7d643ef836c0e4b1daf1c50b4031e0410d3abe3633e3a8275"
+    },
+    "quality-data-ready-impact-fakeAdb.stderr": {
+      "bytes": 338,
+      "sha256": "88fd09c655bb65dd544617bf7c2e5e4d0e6b58859d175adfe477f3655789e7e4"
+    }
+  },
+  "primarySources": [
+    "https://android.googlesource.com/platform/packages/services/Telephony/+/0f31d1f00721da0b6d830f51d621f15650956fd1/src/com/android/phone/PhoneInterfaceManager.java",
+    "https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/refs/heads/androidx-constraintlayout-release/android-35/com/android/internal/telephony/MultiSimSettingController.java",
+    "https://android.googlesource.com/platform/cts/+/927ad37e0ac7d0a863d14f5beba3eb9a5b1d4db0/hostsidetests/statsd/atom/AtomTestCase.java"
+  ],
+  "nativeReception": "NON TESTÉ for this corrected source until the next CI; no new full Android qualification or runtime activation claimed.",
+  "nativeInventory": {
+    "document": "docs/iao-adaptive-intelligence-20261112.md",
+    "reviewer": "native_iao_reprise",
+    "status": "PASS for read-only reference reconciliation",
+    "smaranaArchiveSha256": "72daccecac6a921ebd2d4aa485a205afbd2ac75edd6ef87474b04bd04a4cad32",
+    "limits": "Historical archive and uncommitted purge fix distinguished; no current port/session/Fabric durability admission."
+  },
+  "independentReview": {
+    "reviewer": "qualite_routage_iao",
+    "status": "PASS",
+    "scope": "Exact helper/tests hashes, source diff, real isub format, red/green logs, mutation guard, shared bounds, primary failure and inspect-only behavior; no tests rerun; real CI pending."
+  }
+}
