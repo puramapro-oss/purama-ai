@@ -42,6 +42,21 @@ const publicError = (error: unknown) => error instanceof ConsultationClientError
 const fieldClass = 'mt-1 w-full rounded-md border border-input bg-background px-2 py-2 text-sm disabled:opacity-50';
 const buttonClass = 'rounded-md border border-input px-3 py-2 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
 
+function choosePublicCouncil(models: ConsultationCatalog['models']) {
+  for (const reflection of ['deep', 'maximum'] as const) {
+    const candidates = models.flatMap(model => {
+      const profile = model.profiles.find(item => item.reflection === reflection && item.speed === 'standard');
+      return profile ? [{ model: model.model, limits: profile.research }] : [];
+    });
+    const lead = candidates.find(item => item.limits.maxRounds >= 2 && item.limits.maxReviewers >= 1);
+    if (!lead || candidates.length < 2) continue;
+    const reviewerModels = candidates.filter(item => item.model !== lead.model)
+      .slice(0, Math.min(2, lead.limits.maxReviewers)).map(item => item.model);
+    return { preferences: { model: lead.model, reflection, speed: 'standard' as const }, reviewerModels };
+  }
+  return null;
+}
+
 /** One private operation at a time. Recovery reads status; it never sends the
  * question again. Only the opaque operation UUID is retained across reloads. */
 export function ConsultationPanel({ userId, accessToken, technicalDetails = false }: {
@@ -59,6 +74,7 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
   const [reflection, setReflection] = useState<ConsultationReflection>('auto');
   const [speed, setSpeed] = useState<ConsultationSpeed>('standard');
   const [reviewers, setReviewers] = useState<string[]>([]);
+  const [council, setCouncil] = useState<ReturnType<typeof choosePublicCouncil>>(null);
   const [question, setQuestion] = useState('');
   const [queries, setQueries] = useState('');
   const [urls, setUrls] = useState('');
@@ -70,7 +86,7 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
   useLayoutEffect(() => {
     scope.invalidate();
     setCatalog(null); setCatalogError(null); setModel(''); setReflection('auto'); setSpeed('standard'); setReviewers([]);
-    setQuestion(''); setQueries(''); setUrls(''); setOperation(null); setOperationId(retainedId(userId)); setBusy(null); setError(null);
+    setCouncil(null); setQuestion(''); setQueries(''); setUrls(''); setOperation(null); setOperationId(retainedId(userId)); setBusy(null); setError(null);
     return () => scope.invalidate();
   }, [scope, userId, technicalDetails]);
 
@@ -88,13 +104,14 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
     return () => scope.cancel('catalog');
   }, [client, scope, userId, technicalDetails]);
 
-  // Reuse the server's qualified catalogue and existing standard profile. Public
-  // requests never inherit a technical selection or add reviewers implicitly.
-  const selected = technicalDetails ? catalog?.models.find(item => item.model === model)
-    : catalog?.models.find(item => item.profiles.some(variant => variant.reflection === 'auto' && variant.speed === 'standard'));
+  // Keep the exact panel accepted for this question even if the catalogue changes.
+  const councilOffer = !technicalDetails && catalog?.available ? choosePublicCouncil(catalog.models) : null;
+  const activeCouncil = technicalDetails ? null : council;
+  const defaultModel = catalog?.models.find(item => item.profiles.some(variant => variant.reflection === 'auto' && variant.speed === 'standard'));
   const preferences = technicalDetails ? { model, reflection, speed }
-    : { model: selected?.model ?? '', reflection: 'auto' as const, speed: 'standard' as const };
-  const activeReviewers = technicalDetails ? reviewers : [];
+    : activeCouncil?.preferences ?? { model: defaultModel?.model ?? '', reflection: 'auto' as const, speed: 'standard' as const };
+  const selected = catalog?.models.find(item => item.model === preferences.model);
+  const activeReviewers = technicalDetails ? reviewers : activeCouncil?.reviewerModels ?? [];
   const profile = selected?.profiles.find(item => item.reflection === preferences.reflection && item.speed === preferences.speed);
   const searchQueries = lines(queries);
   const pageUrls = lines(urls);
@@ -102,12 +119,17 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
     reviewerModels: [...activeReviewers], research: { queries: searchQueries, urls: pageUrls } };
   const problems: string[] = [];
   if (catalog?.available) {
-    if (!selected || !profile) problems.push(technicalDetails ? 'Choisissez un modèle et des réglages disponibles.'
+    if (!activeCouncil && (!selected || !profile)) problems.push(technicalDetails ? 'Choisissez un modèle et des réglages disponibles.'
       : 'L’analyse automatique est temporairement indisponible. Réessayez plus tard.');
     if (question.length > 8000) problems.push('La question est limitée à 8 000 caractères.');
-    if (profile && activeReviewers.length > profile.research.maxReviewers) problems.push(`Ce profil autorise ${profile.research.maxReviewers} avis supplémentaires. Retirez les avis en trop.`);
-    if (activeReviewers.some(name => name === preferences.model || !catalog.models.some(item => item.model === name
-      && item.profiles.some(variant => variant.reflection === preferences.reflection && variant.speed === preferences.speed)))) {
+    const tooManyReviewers = profile && activeReviewers.length > profile.research.maxReviewers;
+    const incompatibleReviewer = activeReviewers.some(name => name === preferences.model || !catalog.models.some(item => item.model === name
+      && item.profiles.some(variant => variant.reflection === preferences.reflection && variant.speed === preferences.speed)));
+    if (activeCouncil && (!profile || profile.research.maxRounds < 2 || tooManyReviewers || incompatibleReviewer)) {
+      problems.push('Ce Conseil est devenu indisponible. Désactivez-le pour choisir une autre analyse.');
+    }
+    if (technicalDetails && tooManyReviewers) problems.push(`Ce profil autorise ${profile.research.maxReviewers} avis supplémentaires. Retirez les avis en trop.`);
+    if (technicalDetails && incompatibleReviewer) {
       problems.push('Retirez les modèles consultés qui ne prennent pas en charge ces réglages ou qui sont déjà le modèle principal.');
     }
     if (searchQueries.length && !catalog.research.search) problems.push('La recherche web n’est pas disponible. Retirez les requêtes pour continuer sans recherche.');
@@ -170,6 +192,13 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
       : <p role="status" className="text-sm">{availabilityLabels[catalog.reason]}</p>}
     <form onSubmit={event => { event.preventDefault(); void consult(); }} className="space-y-3">
       <fieldset disabled={!catalog?.available || locked} className="space-y-3">
+        {(councilOffer || activeCouncil) && <div className="space-y-1">
+          <button type="button" aria-pressed={!!activeCouncil} className={buttonClass + ' aria-pressed:bg-accent'}
+            onClick={() => setCouncil(activeCouncil ? null : councilOffer)}>Conseil IAO</button>
+          <p className="text-xs text-muted-foreground">{activeCouncil
+            ? `À l’envoi, ${activeCouncil.reviewerModels.length + 1} modèles recevront votre question et les sources choisies, puis confronteront leurs avis. Cette analyse peut consommer davantage de quota.`
+            : 'Comparer plusieurs avis et obtenir une synthèse pour cette question.'}</p>
+        </div>}
         {technicalDetails && <details className="rounded-md border border-border p-2 space-y-3">
           <summary className="cursor-pointer text-xs font-medium">Réglages techniques du fondateur</summary>
           <label className="block text-xs font-medium">Modèle principal
@@ -232,7 +261,7 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
         <button type="button" className={buttonClass} disabled={busy !== null} onClick={() => { void recover(); }}>Vérifier le résultat</button>
         {(!operation || operation.status === 'running') && <button type="button" className={buttonClass} disabled={busy === 'cancel'} onClick={() => { void cancel(); }}>Arrêter la consultation</button>}
         {operation && operation.status !== 'running' && <button type="button" className={buttonClass} disabled={busy !== null}
-          onClick={() => { remember(null); setOperation(null); setError(null); setQuestion(''); }}>Nouvelle consultation</button>}
+          onClick={() => { remember(null); setOperation(null); setError(null); setQuestion(''); setCouncil(null); }}>Nouvelle consultation</button>}
       </div>
       <p className="text-xs text-muted-foreground">Vérifier le résultat ne relance pas l’analyse. L’annulation n’annule pas les ressources déjà consommées.</p>
     </div>}

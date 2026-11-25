@@ -130,6 +130,30 @@ describe("multi-model consultation composition", () => {
     expect(h.claims[0].requestHash).toMatch(/^[a-f0-9]{64}$/);
   });
 
+  it("asks for independent proposals, targeted objections and an evidence-based synthesis", async () => {
+    const h = harness();
+    const result = await runModelConsultation(request({ reviewerModels: MODEL_NAMES.slice(1, 3) }), h.deps);
+    expect(result.status).toBe("complete");
+    const proposals = h.modelCalls.filter(call => call.phase === "proposal");
+    const critiques = h.modelCalls.filter(call => call.phase === "critique");
+    const [synthesis] = h.modelCalls.filter(call => call.phase === "synthesis");
+    expect(new Set(h.modelCalls.map(call => call.input.systemPrompt)).size).toBe(3);
+    for (const { input } of proposals) {
+      expect(input.context).not.toHaveProperty("opinions");
+      expect(input.systemPrompt).toContain("proposition indépendante");
+    }
+    const proposedOpinions = proposals.map((call, index) => ({
+      label: `proposal-${index + 1}`, text: `${call.name}: avis non vérifié`,
+    }));
+    for (const { input } of critiques) {
+      expect(input.context.opinions).toEqual(proposedOpinions);
+      expect(input.systemPrompt).toContain("objection");
+    }
+    expect(synthesis.input.context.opinions).toHaveLength(proposals.length + critiques.length);
+    expect(synthesis.input.systemPrompt).toContain("reprendre telle quelle");
+    expect(synthesis.input.systemPrompt).toContain("désaccords importants");
+  });
+
   it.each([
     { reflection: "standard", speed: "standard", peers: 1, proposals: 2, critiques: 0 },
     { reflection: "deep", speed: "fast", peers: 2, proposals: 3, critiques: 2 },

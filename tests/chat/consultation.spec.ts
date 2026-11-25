@@ -113,6 +113,45 @@ for (const kind of ['member', 'unverified'] as const) {
   });
 }
 
+test('member opts into Conseil IAO and submits one consultation with two distinct reviewers', async ({ page }) => {
+  const secondPeer = 'studio/second-reviewer@revision-1';
+  const catalog = completeCatalog();
+  const profileSource = catalog.models[0];
+  catalog.models = [main, peer, secondPeer].map(model => ({
+    ...profileSource,
+    model,
+    profiles: profileSource.profiles.map(profile => profile.reflection === 'deep' && profile.speed === 'standard'
+      ? { ...profile, research: { ...profile.research, maxReviewers: 2, maxRounds: 2 } }
+      : profile),
+  }));
+  await openAnalysis(page, 'member', catalog);
+  const region = panel(page);
+  const council = region.getByRole('button', { name: 'Conseil IAO', exact: true });
+  await expect(council).toHaveAttribute('aria-pressed', 'false');
+  await expect(region.getByRole('combobox')).toHaveCount(0);
+  expect(await calls(page, 'consult')).toHaveLength(0);
+
+  const callsBeforeActivation = await page.evaluate(() => window.__chatHarness.calls.length);
+  await council.click();
+  await expect(council).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.evaluate(() => window.__chatHarness.calls.length)).toBe(callsBeforeActivation);
+  const question = 'Quelles hypothèses dois-je vérifier avant de tester ces deux options ?';
+  const request = await running(page, question);
+  expect(request.question).toBe(question);
+  expect(request.preferences).toEqual({ model: main, reflection: 'deep', speed: 'standard' });
+  expect(request.reviewerModels).toEqual([peer, secondPeer]);
+  expect(request.research).toEqual({ queries: [], urls: [] });
+
+  const answer = 'Les deux options dépendent du délai. Mesurez-le avant de choisir.';
+  await respond(page, request, answer);
+  await expect(region.getByRole('article', { name: 'Résultat de consultation' })).toContainText(answer);
+  await expect(region.getByRole('combobox')).toHaveCount(0);
+  for (const internalName of [main, peer, secondPeer, profileSource.provider]) {
+    await expect(region).not.toContainText(internalName);
+  }
+  expect(await calls(page, 'consult')).toHaveLength(1);
+});
+
 test('visitor and anonymous session cannot open private consultation or send its request', async ({ page }) => {
   await expect(page.getByRole('group', { name: 'Mode de conversation' })).toHaveCount(0);
   await identity(page, 'anonymous');
