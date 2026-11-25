@@ -22,6 +22,11 @@ du module de retour correctif durable et de leurs tests. Le raccordement réutil
 CHEF et la politique canonique. Il ne crée ni orchestrateur parallèle, ni nouvelle
 migration, ni installation d'un observateur.
 
+Un seul réglage supplémentaire de publication est ajouté dans `vercel.json` :
+`git.deploymentEnabled["audit/unlazy-reconciliation-20261125"] = false`.
+Il maintient le déploiement automatique désactivé pour cette branche de revue.
+Toutes les entrées existantes et les autres propriétés du fichier sont conservées.
+
 ## Qualification de la composition
 
 L'arbre testé avant ajout de ce dossier de reçus est

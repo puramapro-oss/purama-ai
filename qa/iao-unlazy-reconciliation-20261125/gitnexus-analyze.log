@@ -11,4 +11,3 @@
   /workspace/scratch/c84d8dbc952f/iao-audit
 
   FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
-

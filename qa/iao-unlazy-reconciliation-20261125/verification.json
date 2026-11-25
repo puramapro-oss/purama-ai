@@ -30,7 +30,8 @@
     "karta/test/chefVerificationFeedback.test.ts",
     "karta/test/chefWorkshopConfig.test.ts",
     "karta/test/localComputeFabricProvider.test.ts",
-    "qa/iao-observed-verification-20261124/**"
+    "qa/iao-observed-verification-20261124/**",
+    "vercel.json"
   ],
   "ownership": "Exact lot terms absent in both Mac LOCKS files. Source worktree held read-only. New isolated Linux clone is the sole writable target delegated by root.",
   "priorEvidence": "Source QA receipt and native Mac 79/79 refer to82d, separately qualified current d25 frontend855/offline69/browser5.",
@@ -44,7 +45,16 @@
     "productAndTestFiles": 18,
     "inheritedQaFiles": 64,
     "preservesSource82dAll18Paths": true,
-    "preservesD25OtherPaths": true
+    "additionalConfigChange": {
+      "path": "vercel.json",
+      "newBranch": "audit/unlazy-reconciliation-20261125",
+      "deploymentEnabled": false,
+      "allPreviousConfigurationUnchanged": true,
+      "noDuplicateKeys": true,
+      "sha256": "9b7ff0336b80b1e358707be1c00a4967d7fab92f9f6e00d2aba2a9c05e9763cc",
+      "authorization": "Root requested this exact additional guard before review publication; no push or deployment performed."
+    },
+    "preservesD25OtherPathsExceptDeclaredDeploymentGuard": true
   },
   "verification": {
     "composedLinux": {
@@ -271,7 +281,8 @@
       "changedSymbols": 132,
       "affectedFlows": 30,
       "risk": "CRITICAL",
-      "receipt": "detect-final-staged.txt"
+      "receipt": "detect-final-staged.txt",
+      "atMergeCommit": "0685c1a76e99d52f95cb840f14571f9f9f506d14"
     },
     "defaultBranchComparison": {
       "base": "ae84415be0b9516422805910be999a2c1e6350c0",
@@ -378,5 +389,6 @@
     "Observation is optional, requires host-trusted executable and explicit profiles.",
     "Missing prior-generation checkpoint requires explicit reconciliation, not unsafe automatic retry.",
     "Current composition has not run hosted CI; 8 successful workflows on d25 are baseline evidence only."
-  ]
+  ],
+  "qaLogNormalization": "log-normalization.json"
 }
