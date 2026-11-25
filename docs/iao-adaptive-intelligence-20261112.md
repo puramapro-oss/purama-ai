@@ -254,3 +254,130 @@ La publication en PR ne signifie pas fusion ou service actif.
 - [Bloxks : documentation des intégrations](https://bloxks.app/docs/integrations)
 
 Ces sources décrivent leurs contrats, pas la qualification de l'intégration PURAMA.
+
+## Réconciliation du 25 novembre 2026 : continuité et transition personnelle
+
+**Base examinée :** [dd59dae6](https://github.com/puramapro-oss/purama-ai/commit/dd59dae670db7d3fca0d0b7173ad55aec5d10891),
+arbre `dcf21bb64af2d10d6a8b2f24030c3f5a157378ac`, branche de revue PR40.
+Cette section décrit une lecture des sources ; elle ne revendique aucun nouveau
+test, raccordement distant ou déploiement. Les réceptions R1/R2 ci-dessus gardent
+leurs dates et périmètres. La présence d'un composant ne prouve pas sa mise en service.
+
+### Réutilisation de l'existant
+
+| Besoin | Source à réutiliser | Portée observée et limite |
+| --- | --- | --- |
+| Essayer une tâche | `src/components/IaoTrialPanel.tsx`, `src/lib/iao-trial-entry.ts` | Raccordés au chat et à la page d'essais ; panier, médias et atelier seulement. Aucun bilan d'abonnements n'est établi. |
+| Mémoire et continuité | `shared/smarana.ts`, `mobile/lib/smarana-store.ts`, `mobile/lib/smarana-sync.ts` | Réplique de conversations raccordée à `usePuramaConversation` ; pas d'importeur d'historiques IA externes identifié. |
+| Import/export local | `public/offline-workspace.js`, `public/offline-library-backup.js` | Textes, sauvegarde versionnée, prévisualisation et ajout préservant l'éditeur ; pas une migration universelle de mémoire. |
+| Choix et confrontation | `src/components/ConsultationPanel.tsx`, `karta/src/claude/consultation.ts` et son registre durable | Catalogue, consultation, reprise par identifiant, annulation et reçus ; comptes et transports réels à qualifier. |
+| Réaliser et vérifier | `src/pages/Workshop.tsx`, `karta/WORKSHOP.md`, `docs/iao-observed-verification.md` | Passage chat → atelier, artefacts et observations configurées ; les observateurs doivent être qualifiés pour leur modalité. |
+| Partager une méthode | `docs/distribution/README.md`, parcours `/modeles/:id` | Copie privée explicite d'une configuration d'agent ; aucun apprentissage automatique de toutes les réussites n'en découle. |
+
+`src/components/AgentComparator.tsx` conserve un comparateur statique d'agents,
+avec chiffres codés en dur ; aucun raccordement dans `src` n'a été retrouvé lors
+de cette lecture. Il ne fournit ni mesure concurrentielle ni preuve de remplacement.
+L'absence d'un parcours dans cet arbre ne démontre pas son absence dans tous les projets.
+
+### Assemblage natif encore requis
+
+`karta/src/index.ts` appelle `startApiServer(readiness, { lifetime })` sans
+`iaoRuntime`. Le contrat [IAO](iao/IAO-INTERFACE-CONTRACT.md) exige une autorité de
+session/espace, un `SmaranaIaoPort` concret avec reçus et déduplication durables,
+ainsi qu'un port Fabric qualifié pour le rejeu après redémarrage. Les routes sans
+runtime répondent `503` par contrat. L'adaptateur `KartaRuntimeIaoPort` ne fournit
+pas ces dépendances. Ce constat de source ne constitue pas un relevé de production.
+La transition décrite ci-dessous ne doit pas contourner cette admission ni créer
+un second magasin mémoire, ordonnanceur, portefeuille ou moteur d'exécution.
+
+### Périmètre de conception proposé
+
+**État : `CONCEPTION_EN_COURS`.** Le nouveau parcours combine reprise de contexte,
+épreuves personnelles et bilan d'usages remplaçables, dans l'interface IAO existante.
+La validation de conception reste distincte de la disponibilité du code et de sa
+qualification. Les corrections des composants existants déjà autorisés continuent
+indépendamment ; ce document ne les bloque pas et n'annonce aucune implémentation.
+
+**Import choisi et traçable.** La personne choisit un fichier, puis les conversations,
+projets ou éléments de contexte à reprendre. Un format non reconnu est refusé avec
+explication ; aucun accès implicite au compte d'un autre fournisseur n'est ajouté.
+Les plafonds de taille, de nombre d'éléments et de durée sont obligatoires avant
+admission. Un dépassement est annoncé avant écriture, sans troncature silencieuse ;
+une borne absente ou une structure invalide ferme l'import concerné.
+Chaque élément conserve sa source, son identifiant d'origine s'il existe, son auteur
+(`user`, `assistant` ou autre rôle explicite), ses dates connues, son empreinte et la
+version du lecteur. Une date inconnue reste inconnue. Une affirmation d'assistant
+reste une production d'assistant, et ne devient ni fait confirmé ni préférence utilisateur.
+Les messages et instructions importés sont des données ; ils n'accordent aucun droit,
+ne déclenchent aucun outil et ne modifient pas les règles de l'agent.
+
+**Prévisualisation et conflits.** Avant écriture, montrer les éléments retenus,
+exclus, invalides, déjà présents ou contradictoires, ainsi que la destination privée.
+Les originaux restent conservés. L'annulation de l'aperçu n'écrit rien ; le changement
+de compte ou d'espace invalide la sélection. Une divergence avec une donnée existante
+conserve les deux provenances et demande un choix, sans écrasement ni fusion silencieuse.
+Les éléments non sélectionnés ne partent pas vers un modèle. Tout partage ultérieur
+avec un fournisseur suit les autorisations et budgets existants de la mission.
+
+**Idempotence et réversibilité.** L'identité d'import associe l'espace autorisé,
+la source, l'élément et sa version/empreinte. Rejouer la même opération retrouve son
+reçu ; un contenu divergent sous la même identité est refusé avant effet. Deux
+sources distinctes au texte égal restent distinguables. Une édition locale après
+import n'autorise ni son écrasement ni une duplication lors du rejeu. La réception
+doit être atomique dans le périmètre annoncé, ou exposer précisément les éléments
+reçus et leur reprise stable ; une interruption ne déclenche pas une réimportation aveugle.
+Un export choisi restitue contenu, provenance, versions et conflits dans un format
+documenté, sans secrets ni permissions. Sa relecture doit être vérifiée. Retirer un
+élément du contexte actif ne supprime ni l'original ni les travaux qui en dépendent.
+
+**Usages indispensables.** Définir avant l'essai les tâches importantes, fonctions
+incontournables, formats, outils, confidentialité, délai et qualité attendue.
+Un manque critique empêche de déclarer l'usage remplaçable, même si une moyenne
+globale est favorable. Le catalogue doit distinguer capacité disponible, configurée
+et effectivement éprouvée ; l'accès API à un modèle n'équivaut pas à toute son application.
+
+**Épreuves représentatives et sans double effet.** Choisir les cas et critères avant
+de connaître les résultats, inclure cas difficiles, données incomplètes et échecs,
+et conserver des cas réservés à l'évaluation. Comparer avec une référence identifiée,
+un contexte pertinent et des budgets/temps explicités. Séparer préparation simulée
+et exécution réelle. Une seule voie peut effectuer un envoi, achat ou réservation ;
+l'autre reste en lecture, copie isolée ou préparation. Avant toute reprise d'une
+action incertaine, rapprocher l'état externe et son identifiant d'opération.
+
+**Coûts et restitution.** Rapprocher les reçus existants : modèles, outils, échecs,
+reprises, vérification et assistance. Pour l'utilisateur, inclure abonnement,
+dépassements, services encore nécessaires et temps de correction, mesuré séparément
+d'une valorisation monétaire éventuelle. Distinguer estimation, montant constaté
+et coût inconnu ; un inconnu ne devient jamais zéro. Un budget partagé borné et un
+arrêt de mission s'appliquent à tous les sous-appels, avec les mécanismes existants.
+Afficher `PASS` seulement pour un usage et une version dont tous les critères requis
+ont été reçus ; `PARTIEL` pour une couverture incomplète, `BLOQUÉ` pour une dépendance
+identifiée, `NON TESTÉ` pour une épreuve absente. Aucun bilan ne résilie un abonnement.
+
+### Réception et décisions préalables à l'implémentation
+
+La recette devra couvrir import fidèle avec rôles/provenances, aperçu annulé sans
+écriture, conflit préservé, isolation des espaces, rejeu après interruption, édition
+locale conservée, export relu, dépassement des bornes, coût inconnu et absence de
+double action. Chaque preuve indiquera version, entrées, méthode, résultat et limites.
+La préférence durable et les économies exigent des usages réels suivis ; elles ne
+sont déduites ni d'une simulation ni d'un accord entre modèles.
+**Première version proposée pour validation :** fichiers texte/Markdown déjà pris
+en charge par l'espace hors ligne, avec provenance choisie et rôle inconnu conservé
+quand il n'est pas explicitement structuré. Les exports propres à un fournisseur
+exigent un lecteur identifié et des fichiers de référence autorisés avant admission ;
+ils ne sont pas annoncés compatibles sur la seule extension JSON ou ZIP.
+Plafonds proposés : 10 Mio par import, 100 conversations, 5 000 éléments et
+50 000 caractères par élément ; dépassement refusé avant écriture, prévisualisation
+bornée à 30 secondes et reprise d'écriture par lots d'au plus 100 éléments avec
+reçus. Ces valeurs sont des choix de conception, pas des performances mesurées.
+Destination : espace privé explicitement sélectionné, sous l'autorité SMARANA et
+sa politique de mémoire existantes ; aucune nouvelle rétention globale n'est ajoutée.
+Premier périmètre d'évaluation : documents, création de contenus et missions
+récurrentes autorisées ; la personne définit les fonctions indispensables de chaque
+usage, et une fonction critique manquante interdit son statut de remplacement.
+
+Avant passage à `PRET_A_CODER`, valider ce périmètre de première version ; les
+lecteurs supplémentaires seront qualifiés séparément sur leurs formats réels.
+Réutiliser les reçus et suivis existants ; aucun registre parallèle n'est créé.
+La validation de cette évolution et l'assemblage natif restent ouverts.
