@@ -290,10 +290,14 @@ pas ces dépendances. Ce constat de source ne constitue pas un relevé de produc
 La transition décrite ci-dessous ne doit pas contourner cette admission ni créer
 un second magasin mémoire, ordonnanceur, portefeuille ou moteur d'exécution.
 
-### Périmètre de conception proposé
+### Reprise sélective de contexte : conception ouverte
 
-**État : `CONCEPTION_EN_COURS`.** Le nouveau parcours combine reprise de contexte,
-épreuves personnelles et bilan d'usages remplaçables, dans l'interface IAO existante.
+**État : `CONCEPTION_EN_COURS`.** Le parcours encore proposé concerne la reprise
+sélective de contexte dans l'interface IAO existante. La décision utilisateur de
+retirer le « comparateur d'IA » est conservée : le nouveau comparateur et le bilan
+comparatif d'abonnements proposés dans la première réconciliation ne sont pas
+retenus. L'historique de cette proposition reste dans Git. Les essais locaux
+existants et la qualification interne SATYA/PRAMANA restent des contrôles de travail.
 La validation de conception reste distincte de la disponibilité du code et de sa
 qualification. Les corrections des composants existants déjà autorisés continuent
 indépendamment ; ce document ne les bloque pas et n'annonce aucune implémentation.
@@ -332,14 +336,14 @@ documenté, sans secrets ni permissions. Sa relecture doit être vérifiée. Ret
 
 **Usages indispensables.** Définir avant l'essai les tâches importantes, fonctions
 incontournables, formats, outils, confidentialité, délai et qualité attendue.
-Un manque critique empêche de déclarer l'usage remplaçable, même si une moyenne
+Un manque critique empêche de déclarer l'usage qualifié, même si une moyenne
 globale est favorable. Le catalogue doit distinguer capacité disponible, configurée
 et effectivement éprouvée ; l'accès API à un modèle n'équivaut pas à toute son application.
 
 **Épreuves représentatives et sans double effet.** Choisir les cas et critères avant
 de connaître les résultats, inclure cas difficiles, données incomplètes et échecs,
-et conserver des cas réservés à l'évaluation. Comparer avec une référence identifiée,
-un contexte pertinent et des budgets/temps explicités. Séparer préparation simulée
+et conserver des cas réservés à l'évaluation interne. Vérifier avec une référence
+identifiée, un contexte pertinent et des budgets/temps explicités. Séparer préparation simulée
 et exécution réelle. Une seule voie peut effectuer un envoi, achat ou réservation ;
 l'autre reste en lecture, copie isolée ou préparation. Avant toute reprise d'une
 action incertaine, rapprocher l'état externe et son identifiant d'opération.
@@ -352,7 +356,7 @@ et coût inconnu ; un inconnu ne devient jamais zéro. Un budget partagé borné
 arrêt de mission s'appliquent à tous les sous-appels, avec les mécanismes existants.
 Afficher `PASS` seulement pour un usage et une version dont tous les critères requis
 ont été reçus ; `PARTIEL` pour une couverture incomplète, `BLOQUÉ` pour une dépendance
-identifiée, `NON TESTÉ` pour une épreuve absente. Aucun bilan ne résilie un abonnement.
+identifiée, `NON TESTÉ` pour une épreuve absente.
 
 ### Réception et décisions préalables à l'implémentation
 
@@ -375,9 +379,60 @@ Destination : espace privé explicitement sélectionné, sous l'autorité SMARAN
 sa politique de mémoire existantes ; aucune nouvelle rétention globale n'est ajoutée.
 Premier périmètre d'évaluation : documents, création de contenus et missions
 récurrentes autorisées ; la personne définit les fonctions indispensables de chaque
-usage, et une fonction critique manquante interdit son statut de remplacement.
+usage, et une fonction critique manquante interdit son statut de qualification complète.
 
 Avant passage à `PRET_A_CODER`, valider ce périmètre de première version ; les
 lecteurs supplémentaires seront qualifiés séparément sur leurs formats réels.
 Réutiliser les reçus et suivis existants ; aucun registre parallèle n'est créé.
 La validation de cette évolution et l'assemblage natif restent ouverts.
+
+### Reprise de qualité : sources et écarts vérifiés le 25 novembre
+
+La reprise part du commit `e04369c79c6395347b66557c0566dc913dc5613d`, arbre
+`fe3506e8682cd5cd0a4ad9784fe041438475013d`. Les PR121 et PR123 restent des travaux
+distincts à préserver. Les ajouts ci-dessous concernent la qualification existante,
+sans valider implicitement un nouveau produit ou une nouvelle mémoire.
+
+| Objectif | Mécanisme déjà présent à conserver | Preuve supplémentaire nécessaire |
+| --- | --- | --- |
+| Réduire les attentes inutiles | Catalogue mutualisé, cache de 60 secondes, annulations indépendantes et exclusion d'un chargement abandonné dans `consultation-host.ts`. | Mesurer la latence sur les transports et modèles réellement utilisés. |
+| Préserver la qualité choisie | Modèle exact et profil de réflexion compatibles dans `execution-profile.ts` et le client de consultation. | Vérifier le fond des réponses ; la conformité du format ne démontre pas leur vérité. |
+| Traiter les demandes complexes | Propositions indépendantes, critiques bornées et synthèse unique dans `consultation.ts`. | Une concordance entre modèles doit être confrontée aux sources, calculs ou observations adaptés. |
+| Éviter les doublons d'exécution | Identité et stockage de consultation, reprise sans nouvelle inférence, gestion des résultats incertains. | La durabilité propre à chaque service, notamment Fabric après redémarrage, doit être qualifiée séparément. |
+| Contrôler ressources et arrêt | Réservations avant les sous-appels, concurrence limitée, vérification de politique et propagation de l'annulation. | Le budget collectif d'une mission ne doit pas être annoncé complet sur la seule présence de budgets par appel. |
+| Préserver le contexte autorisé | Validation et filtrage des paquets mémoire, déduplication des textes strictement identiques, Unicode conservé et abrégements signalés. | Qualification du port mémoire durable et de l'autorité de session effectivement raccordés. |
+
+Cette table résume une revue ciblée des sources et tests existants. Elle ne constitue
+ni une nouvelle exécution des suites ni une mesure comparative de puissance.
+
+**Mac et Fabric.** L'accès Desktop Commander est revenu. Les huit terminaux Codex,
+les travaux Grok et les modifications du checkout principal sont préservés. Le
+serveur existant a été retrouvé dans le worktree `local-oss-router-20261003`, sous
+`.coord/local-oss/` ; ses trois sources concordent avec le reçu canonique du lot
+`CHATGPT-AUDIT-20261125-B9BAF60C`. Les journaux des 60 tests et leurs empreintes ont
+été relus, sans relancer ces tests. `fabric_gateway_v2.py` conserve toutefois son
+registre de rejeu en mémoire et exclut explicitement une garantie après redémarrage.
+Le socket par défaut, ancien et sans propriétaire observé, ne répond pas au GET
+`/health` du 25 novembre à 22:01:18 UTC. Aucun daemon n'a été démarré pour ce relevé.
+
+**Mémoire et session.** Le worktree T04 contient un montage ancien
+`configuredMemoryRuntime.ts` et un `SmaranaAkashaMemoryPort` implémentant
+`AkashaMemoryPort`. Ces composants sont à réutiliser, mais ne satisfont pas directement
+le `SmaranaIaoPort` courant : signatures, reçus durables et autorité de session sont
+différents. Le bearer fixe de cet ancien montage n'établit pas une session utilisateur
+révocable. Les recherches ciblées ne démontrent pas l'absence d'autres travaux ailleurs.
+
+**Qualification Android.** Sur `e04369c`, sept workflows GitHub ont réussi ; le job
+Android du run `45699636288` a échoué avant le redémarrage hors ligne. Les 42 relevés
+conservent `mobile_data=1`, alors que les 41 derniers montrent un ensemble de réseaux
+actifs vide. Les reçus ne permettent pas d'identifier la cause du réglage. Les sources
+[Android SDK35](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/internal/telephony/GlobalSettingsHelper.java)
+montrent que cette clé peut être spécifique à une souscription ; cette possibilité
+n'est pas assimilée à la configuration réellement observée.
+
+La correction en cours réutilise un préparateur commun et place le contrôle réseau
+avant la compilation native longue. Les états téléphone/souscriptions, l'image et
+les commandes sont reçus séparément. L'observateur hors ligne conserve ses critères
+et ses trois observations stables. Un contrôle réseau seul ne qualifie ni le modèle,
+ni SQLCipher, ni la reprise complète. Le suivi du lot reste dans
+`qa/offline-native-timeout-20261123/network-preparation-20261125/`.

@@ -136,15 +136,19 @@ else
   [[ "$PURAMA_QA_PID_STATUS" == "1" ]] || { echo "Could not verify process stop" >&2; exit 22; }
 fi
 
-qa_adb shell svc wifi disable
-qa_adb shell svc data disable
-qa_adb shell cmd connectivity airplane-mode enable
-qa_adb shell settings put global airplane_mode_on 1
-qa_adb reverse --remove-all
+python3 "$PURAMA_QA_SCRIPT_DIR/prepare-android-offline.py" \
+  --artifact-dir "$PURAMA_QA_ARTIFACTS" --run-id "$PURAMA_QA_RUN_ID"
 # Android applies radio changes asynchronously. Preferences alone cannot prove
 # isolation: ConnectivityService may still report a live, validated Wi-Fi route.
-python3 "$PURAMA_QA_SCRIPT_DIR/wait-for-android-offline.py" \
-  --artifact-dir "$PURAMA_QA_ARTIFACTS" --run-id "$PURAMA_QA_RUN_ID" --phase before-restart
+if python3 "$PURAMA_QA_SCRIPT_DIR/wait-for-android-offline.py" \
+  --artifact-dir "$PURAMA_QA_ARTIFACTS" --run-id "$PURAMA_QA_RUN_ID" --phase before-restart; then
+  :
+else
+  PURAMA_QA_NETWORK_STATUS=$?
+  python3 "$PURAMA_QA_SCRIPT_DIR/prepare-android-offline.py" --inspect-only \
+    --artifact-dir "$PURAMA_QA_ARTIFACTS/network-failure-state" --run-id "$PURAMA_QA_RUN_ID" || true
+  exit "$PURAMA_QA_NETWORK_STATUS"
+fi
 
 qa_adb shell am start -W -a android.intent.action.VIEW -d "$PURAMA_QA_URI" "$PURAMA_QA_PACKAGE" >"$PURAMA_QA_ARTIFACTS/launch-offline.txt"
 python3 "$PURAMA_QA_SCRIPT_DIR/wait-for-android-offline.py" \
