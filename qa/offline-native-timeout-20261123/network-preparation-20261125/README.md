@@ -66,6 +66,20 @@ toute conclusion. Aucun critère de l'observateur n'est assoupli dans ce lot.
 
 ## Sources de diagnostic
 
+### Première réception du contrôle préalable
+
+Le run `45713386695` du commit `a4153c6f2653f4ffeedbf254f06937d0ab7018e2`
+reçoit les 43 tests synthétiques, puis démarre réellement l'émulateur. Le relevé
+`emulator -version` échoue toutefois avec le code 127, car il choisit le binaire
+graphique et ne trouve pas `libpulse.so.0`. Aucun helper ni observateur n'a été
+exécuté dans ce passage ; aucun état téléphonique n'en est déduit.
+
+Le lanceur utilise désormais `-no-window -version`, cohérent avec le mode déjà
+démarré par l'action. Cette correction d'interrogation ne change aucun critère
+réseau et n'ajoute pas de bibliothèque audio. Les preuves de cet échec sont dans
+`ci-version-failure.json` et `ci-version-failure.zip`. Le nouveau passage réel
+reste à recevoir ; les preuves de la phase précédente demeurent inchangées.
+
 - [Réglages par souscription — SDK35 figé](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/internal/telephony/GlobalSettingsHelper.java).
 - [Traitement DATA — SDK35 figé](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/internal/telephony/data/DataSettingsManager.java).
 - [Action émulateur épinglée](https://github.com/ReactiveCircus/android-emulator-runner/blob/a421e43855164a8197daf9d8d40fe71c6996bb0d/src/main.ts) : chaque entrée de script est exécutée séparément ; la logique du contrôle est donc réunie dans un lanceur Bash unique.

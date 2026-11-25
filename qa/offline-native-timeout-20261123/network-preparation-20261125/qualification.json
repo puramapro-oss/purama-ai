@@ -208,5 +208,8 @@
       "sha256": "c3fbfc3f9b94cd5b98b8843bc59154cbbc8df493dd23b2de5d2b16af94f44170",
       "bytes": 108710
     }
-  }
+  },
+  "qualifiedSourceCommit": "a4153c6f2653f4ffeedbf254f06937d0ab7018e2",
+  "qualifiedSourceTree": "a2812ceb35c6c6e4dffcf244b2036aa5f9bbfa3a",
+  "receiptScopeNote": "This first-phase receipt retains source and artifact hashes at the published commit above. The subsequent headless metadata fix is received separately in ci-version-failure.json; earlier tests are not relabeled as tests of that fix."
 }

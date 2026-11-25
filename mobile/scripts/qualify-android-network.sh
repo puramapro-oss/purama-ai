@@ -13,7 +13,7 @@ PURAMA_QA_NETWORK_SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
 mkdir -p "$PURAMA_QA_NETWORK_DIR"
 git -C "$PURAMA_QA_NETWORK_SCRIPT_DIR/.." rev-parse HEAD HEAD^{tree} > "$PURAMA_QA_NETWORK_DIR/checkout.txt"
 [[ -n "$PURAMA_QA_NETWORK_SDK" ]] || { echo "Android SDK location unavailable" >&2; exit 2; }
-timeout --signal=TERM 5s "$PURAMA_QA_NETWORK_SDK/emulator/emulator" -version \
+timeout --signal=TERM 5s "$PURAMA_QA_NETWORK_SDK/emulator/emulator" -no-window -version \
   > "$PURAMA_QA_NETWORK_DIR/emulator-version.txt" 2>&1
 cp "$PURAMA_QA_NETWORK_SDK/system-images/android-35/google_apis/x86_64/source.properties" \
   "$PURAMA_QA_NETWORK_DIR/system-image-source.properties"
