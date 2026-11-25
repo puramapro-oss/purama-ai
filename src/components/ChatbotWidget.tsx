@@ -610,6 +610,14 @@ export function ChatbotWidget() {
                 )}
               </div>
 
+            <div className="px-4 pb-2">
+              <button type="button" ref={trialTrigger} disabled={authLoading || isLoading}
+                aria-haspopup="dialog" onClick={() => openTrial(inputValue)}
+                className="rounded-full border border-primary/40 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50">
+                Essaie-le pour moi
+              </button>
+            </div>
+
             {/* Suggestions */}
             {!isLoading && !authLoading && (messages.length <= 2 || dynamicSuggestions.length > 0) && (
               <div className="px-4 pb-2">
@@ -659,11 +667,6 @@ export function ChatbotWidget() {
 
             {/* Input */}
             <div className="shrink-0 p-4 border-t border-border">
-              <button type="button" ref={trialTrigger} disabled={authLoading || isLoading}
-                aria-haspopup="dialog" onClick={() => openTrial(inputValue)}
-                className="mb-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50">
-                Essaie-le pour moi
-              </button>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
