@@ -607,3 +607,60 @@ test('three large Unicode results remain bounded valid JSON with explicit omissi
   for (const row of context.results) assert.equal(row.sources.length + row.sources_omitted, 10);
   assert.equal(state.providerCalls.length, 1);
 });
+
+function programmaticReportRow(summary = `${PRIVATE_CANARY}\n${'Texte de synthèse 🌍 < & >\n'.repeat(600)}`) {
+  return resultRow({ tool_name: 'programmatic_report', payload: {
+    schema_version: 1, tool_name: 'programmatic_report', status: 'complete', summary, sources: [],
+    details: { content_kind: 'model_generated_report', verification_status: 'unverified',
+      source_text_trust: 'untrusted_data', execution_mode: 'programmatic_reads', report_truncated: false,
+      read_tools: ['web_search'] },
+  } });
+}
+
+test('a complete selected report enters the existing chat as a marked model-generated excerpt', async () => {
+  const original = programmaticReportRow();
+  const { state, invoke } = harness({ resultRows: [original] });
+  const response = await invoke({ body: { tool_result_ids: [RESULT_ID] } });
+  assert.equal(response.status, 200);
+  assert.equal(state.providerCalls.length, 1);
+  const call = state.providerCalls[0];
+  assert.match(call.system, /texte généré par un modèle, non vérifié/);
+  const encoded = call.messages.at(-1).content.split(RESULT_MARKER)[1];
+  assert.ok(Buffer.byteLength(encoded) <= 16_000);
+  assert.doesNotMatch(encoded, /[<>&]/);
+  const [report] = JSON.parse(encoded).results;
+  assert.equal(report.tool_name, 'programmatic_report');
+  assert.equal(report.summary_truncated, true);
+  assert.ok(report.summary.endsWith('…'));
+  assert.ok(Buffer.byteLength(JSON.stringify(report.summary).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')) <= 2500);
+  assert.equal(report.evidence.content_kind, 'model_generated_report');
+  assert.equal(report.evidence.verification_status, 'unverified');
+  assert.equal(report.evidence.source_text_trust, 'untrusted_data');
+  assert.equal(report.evidence.execution_mode, 'programmatic_reads');
+  assert.equal(report.evidence.report_truncated, false);
+  assert.equal(report.evidence.physical_quantum_hardware, undefined);
+  assert.deepEqual(report.sources, []);
+  assert.equal(report.sources_omitted, 0);
+  assert.doesNotMatch(JSON.stringify(state.writes), /SELECTED_PRIVATE_RESULT_CANARY/);
+  assert.deepEqual(state.errors, []);
+  assert.ok(original.payload.summary.length > 4000);
+});
+
+for (const [name, change] of [
+  ['byte overflow', { summary: '文'.repeat(25_000) }],
+  ['text overflow', { summary: 'x'.repeat(60_001) }],
+  ['forged citations', { sources: resultRow().payload.sources }],
+  ['verified provenance', { details: { ...programmaticReportRow().payload.details, verification_status: 'verified' } }],
+  ['clipped report', { details: { ...programmaticReportRow().payload.details, report_truncated: true } }],
+]) {
+  test(`a selected programmatic report with ${name} fails before the paid chat call`, async () => {
+    const row = programmaticReportRow();
+    Object.assign(row.payload, change);
+    const { state, invoke } = harness({ resultResponseOverride: [row] });
+    const response = await invoke({ body: { tool_result_ids: [RESULT_ID] } });
+    assert.equal(response.status, 503);
+    assertNoEffects(state);
+    assert.doesNotMatch(await response.text(), /SELECTED_PRIVATE_RESULT_CANARY/);
+    assert.deepEqual(state.errors, []);
+  });
+}

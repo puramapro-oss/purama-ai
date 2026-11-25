@@ -1,7 +1,7 @@
 import { supabase } from "../db/supabase.js";
 import { isDeepStrictEqual } from "node:util";
 import type { AgentTrigger, AgentType, ToolCallRecord, AgentRunResult } from "./types.js";
-import type { ModelUsageReceipt } from "../claude/usage.js";
+import type { RunModelUsageEnvelope } from "../claude/usage.js";
 
 export interface RunLogHandle {
   runId: string;
@@ -20,7 +20,7 @@ export interface RunLogHandle {
     errorMessage?: string;
     mock: boolean;
     /** Provider metadata only; omitted means unknown, never a zero-cost claim. */
-    modelUsage?: ModelUsageReceipt;
+    modelUsage?: RunModelUsageEnvelope;
   }) => Promise<void>;
 }
 
@@ -116,7 +116,7 @@ export async function startRun(
           result_summary: outcome.resultSummary,
           error_message: outcome.errorMessage ?? null,
           claude_mock: outcome.mock,
-          model_usage: outcome.modelUsage ? JSON.parse(JSON.stringify(outcome.modelUsage)) as ModelUsageReceipt : null,
+          model_usage: outcome.modelUsage ? JSON.parse(JSON.stringify(outcome.modelUsage)) as RunModelUsageEnvelope : null,
           duration_ms: Date.now() - startedAt,
           finished_at: new Date().toISOString(),
         };
@@ -172,7 +172,7 @@ interface CompletionPatch {
   result_summary: string;
   error_message: string | null;
   claude_mock: boolean;
-  model_usage: ModelUsageReceipt | null;
+  model_usage: RunModelUsageEnvelope | null;
   duration_ms: number;
   finished_at: string;
 }

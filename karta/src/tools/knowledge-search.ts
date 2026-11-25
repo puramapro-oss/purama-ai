@@ -13,6 +13,7 @@ export function createKnowledgeSearchTool(options?: Parameters<typeof createPubl
       "nécessaire, jamais des secrets ni le profil privé. Une panne partielle conserve les résultats mais signale ok=false ; " +
       "elle ne constitue pas une recherche entièrement réussie.",
     sensitive: false,
+    programmaticRead: true,
     tracePolicy: "metadata_only",
     inputSchema: {
       type: "object",

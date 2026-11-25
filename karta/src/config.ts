@@ -20,6 +20,8 @@ export const config = {
   anthropicTimeoutMs: Number(process.env.KARTA_MODEL_TIMEOUT_MS ?? 60_000),
   // Opt-in only; validated before a real client can make any request.
   anthropicPromptCache: process.env.KARTA_ANTHROPIC_PROMPT_CACHE ?? "off",
+  // Native, qualified read-only PTC is opt-in; compatible/local routes stay direct.
+  anthropicProgrammaticReads: process.env.KARTA_ANTHROPIC_PROGRAMMATIC_READS ?? "off",
   // Voir .env.example : mock actif tant que le crédit Anthropic n'est pas rechargé (règle permanente 2026-07-26).
   mockClaude: (process.env.KARTA_MOCK_CLAUDE ?? "true") !== "false",
 

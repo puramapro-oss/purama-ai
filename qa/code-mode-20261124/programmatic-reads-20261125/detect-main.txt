@@ -1,0 +1,37 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795564413222,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+Changes: 3301 files, 961 symbols
+Affected processes: 81
+Risk level: critical
+
+Changed symbols:
+  Function readBody → karta/src/api/server.ts
+  Class RequestError → karta/src/api/server.ts
+  Method constructor → karta/src/api/server.ts
+  Function readActive → karta/src/api/server.ts
+  Function isAuthorized → karta/src/api/server.ts
+  Function digest → karta/src/api/server.ts
+  Function readIdempotencyKey → karta/src/api/server.ts
+  Function startApiServer → karta/src/api/server.ts
+  Function consultationHost → karta/src/api/server.ts
+  Function server → karta/src/api/server.ts
+  Function active → karta/src/api/server.ts
+  Function finished → karta/src/api/server.ts
+  Method drainRequests → karta/src/api/server.ts
+  Function handleRequest → karta/src/api/server.ts
+  Function readyForWork → karta/src/api/server.ts
+... and 946 more
+
+Affected execution flows:
+  • FinishOutcome → SendEmail (4 steps) — changed: sendEmail, deliver, notify, finishOutcome
+  • FinishOutcome → Deliver (3 steps) — changed: deliver, notify, finishOutcome
+  • StartAgentCycleWorker → IsGlobalKillSwitchActive (3 steps) — changed: isGlobalKillSwitchActive, startAgentCycleWorker, runAgentCycle
+  • CreatorAgentDetail → IsPrivateToolResultId (6 steps) — changed: deletePrivateToolResult, ownedResultRequest, isPrivateToolResultId, removeResult, PrivateToolResults, CreatorAgentDetail
+  • CreatorAgentDetail → Record (6 steps) — changed: listPrivateToolResults, parsePrivateToolResult, validProgrammaticReport, record, PrivateToolResults, CreatorAgentDetail
+  • FinishOutcome → HasReceipt (5 steps) — changed: sendEmail, deliver, notify, hasReceipt, finishOutcome
+  • FinishOutcome → AssertActive (5 steps) — changed: sendEmail, deliver, assertActive, notify, finishOutcome
+  • CreatorAgentDetail → Timestamp (5 steps) — changed: listPrivateToolResults, parsePrivateToolResult, timestamp, PrivateToolResults, CreatorAgentDetail
+  • Decide → Invalid (5 steps) — changed: decide, resolveModelExecutionPlan, normalizeModelPreferences, invalid, selectModel
+  • Decide → Plain (5 steps) — changed: decide, resolveModelExecutionPlan, normalizeModelPreferences, plain, selectModel
+... and 71 more

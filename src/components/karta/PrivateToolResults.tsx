@@ -25,6 +25,7 @@ const STATUS_LABEL: Record<PrivateToolResultStatus, string> = {
 };
 const RESULT_TITLE = {
   knowledge_search: 'Recherche de références', quantum_simulate: 'Simulation quantique locale',
+  programmatic_report: 'Synthèse de recherche',
 };
 
 /** Private mission deliverables stay separate from activity traces and model calls. */
@@ -99,7 +100,7 @@ export function PrivateToolResults({
       <div>
         <h2 ref={resultsHeadingRef} tabIndex={-1} id="private-tool-results-title" className="font-semibold text-foreground">Résultats privés de cet agent</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Consulte les 20 résultats les plus récents de ses recherches et simulations, puis choisis jusqu’à trois résultats à joindre à ta prochaine question.
+          Consulte les 20 résultats les plus récents de ses recherches, synthèses et simulations, puis choisis jusqu’à trois résultats à joindre à ta prochaine question.
         </p>
       </div>
       <Button type="button" variant="outline" size="sm"
@@ -119,7 +120,7 @@ export function PrivateToolResults({
     {loadError ? <p role="alert" className="text-sm text-destructive">{loadError}</p> : null}
     {deleteError ? <p role="alert" className="text-sm text-destructive">{deleteError}</p> : null}
     {!loading && !loadError && results.length === 0 ? <p className="text-sm text-muted-foreground">
-      Aucun résultat privé disponible. Les recherches et simulations réellement exécutées apparaîtront ici.
+      Aucun résultat privé disponible. Les recherches, synthèses et simulations réellement produites apparaîtront ici.
     </p> : null}
 
     <div className="space-y-3">
@@ -135,6 +136,9 @@ export function PrivateToolResults({
               {new Date(result.created_at).toLocaleString('fr-FR')}
             </time>
           </div>
+          {result.tool_name === 'programmatic_report' ? <p className="mt-2 text-xs text-muted-foreground">
+            Synthèse générée par le modèle ; ses affirmations restent à vérifier.
+          </p> : null}
           <p className="mt-3 whitespace-pre-wrap break-words text-sm text-foreground/90">{result.payload.summary}</p>
           {result.payload.sources.length > 0 ? <div className="mt-3">
             <h4 className="text-sm font-medium">Références reçues</h4>

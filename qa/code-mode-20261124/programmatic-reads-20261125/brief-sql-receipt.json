@@ -1,0 +1,16 @@
+{
+  "command": [
+    "npm",
+    "test",
+    "--",
+    "--pool=threads",
+    "--maxWorkers=1",
+    "test/programmaticBriefCompletion.test.ts",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/workspace/scratch/200bdf486cef/code-mode-ptc/brief-sql-received-report.json"
+  ],
+  "started_at_utc": "2026-11-24T23:46:25.118897+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 5.467
+}

@@ -1,3 +1,5 @@
+import { isProxy } from "node:util/types";
+
 /** Provider-reported counters, not a price estimate or a reconciled invoice. */
 export interface ModelUsageReceipt {
   readonly version: 1;
@@ -13,6 +15,23 @@ export interface ModelUsageReceipt {
   readonly cacheCreation5mInputTokens: number | null;
   readonly cacheCreation1hInputTokens: number | null;
 }
+
+/** Separate bounds and accounting for a multi-response hosted program. A v1
+ * receipt always remains a single provider response, never a synthetic sum. */
+export const MAX_PROGRAMMATIC_RESPONSES = 8;
+export interface ProgrammaticUsageDetails {
+  readonly codeExecutionRequests: number | null;
+}
+export interface ProgrammaticUsageResponse extends ProgrammaticUsageDetails {
+  readonly receipt: ModelUsageReceipt;
+}
+export interface ProgrammaticUsageEnvelope {
+  readonly version: 2;
+  readonly apiFormat: "anthropic_messages";
+  readonly routeKind: "anthropic";
+  readonly responses: readonly ProgrammaticUsageResponse[];
+}
+export type RunModelUsageEnvelope = ModelUsageReceipt | ProgrammaticUsageEnvelope;
 
 /** Read JSON data only: inherited values and accessors are not provider receipts. */
 function ownField(value: unknown, key: string): unknown {
@@ -71,4 +90,49 @@ export function normalizeModelUsage(
     cacheCreation5mInputTokens: tokenCount(ownField(cacheCreation, "ephemeral_5m_input_tokens")),
     cacheCreation1hInputTokens: tokenCount(ownField(cacheCreation, "ephemeral_1h_input_tokens")),
   });
+}
+
+/** Hosted execution requests are additional provider metadata, not dollars or
+ * runtime seconds. Missing and malformed counters remain explicitly unknown. */
+export function normalizeProgrammaticUsage(response: unknown): ProgrammaticUsageDetails {
+  const usage = ownField(response, "usage");
+  const serverTools = ownField(usage, "server_tool_use");
+  return Object.freeze({ codeExecutionRequests: tokenCount(ownField(serverTools, "code_execution_requests")) });
+}
+
+/** Snapshot the complete ordered chain into the existing immutable run log.
+ * Only normalized metadata survives; code, prompts and result bodies do not. */
+export function programmaticUsageEnvelope(responses: readonly ProgrammaticUsageResponse[]): ProgrammaticUsageEnvelope {
+  if (isProxy(responses) || !Array.isArray(responses) || Object.getPrototypeOf(responses) !== Array.prototype
+    || responses.length < 1 || responses.length > MAX_PROGRAMMATIC_RESPONSES
+    || Reflect.ownKeys(responses).length !== responses.length + 1) {
+    throw new Error("Journal de consommation programmatique invalide");
+  }
+  const snapshot: ProgrammaticUsageResponse[] = [];
+  for (let index = 0; index < responses.length; index++) {
+    const descriptor = Object.getOwnPropertyDescriptor(responses, String(index));
+    if (!descriptor?.enumerable || !("value" in descriptor) || isProxy(descriptor.value)) {
+      throw new Error("Journal de consommation programmatique invalide");
+    }
+    const value: unknown = descriptor.value;
+    const receipt = ownField(value, "receipt");
+    if (isProxy(receipt) || ownField(receipt, "version") !== 1 || ownField(receipt, "apiFormat") !== "anthropic_messages"
+      || ownField(receipt, "routeKind") !== "anthropic") {
+      throw new Error("Journal de consommation programmatique invalide");
+    }
+    const normalized: ModelUsageReceipt = Object.freeze({
+      version: 1, apiFormat: "anthropic_messages", routeKind: "anthropic",
+      requestedModel: identifier(ownField(receipt, "requestedModel")),
+      responseModel: identifier(ownField(receipt, "responseModel")),
+      responseId: identifier(ownField(receipt, "responseId")),
+      inputTokens: tokenCount(ownField(receipt, "inputTokens")),
+      outputTokens: tokenCount(ownField(receipt, "outputTokens")),
+      cacheReadInputTokens: tokenCount(ownField(receipt, "cacheReadInputTokens")),
+      cacheCreationInputTokens: tokenCount(ownField(receipt, "cacheCreationInputTokens")),
+      cacheCreation5mInputTokens: tokenCount(ownField(receipt, "cacheCreation5mInputTokens")),
+      cacheCreation1hInputTokens: tokenCount(ownField(receipt, "cacheCreation1hInputTokens")),
+    });
+    snapshot.push(Object.freeze({ receipt: normalized, codeExecutionRequests: tokenCount(ownField(value, "codeExecutionRequests")) }));
+  }
+  return Object.freeze({ version: 2, apiFormat: "anthropic_messages", routeKind: "anthropic", responses: Object.freeze(snapshot) });
 }
