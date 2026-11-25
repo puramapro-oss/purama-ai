@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "scope": "main",
+  "started_at": "2026-11-24T22:49:08.745127+00:00",
+  "elapsed_seconds": 2.021,
+  "head": "afaffbe26d7976f132d053b4600eb4fba300437b",
+  "base_ref": "origin/main",
+  "base_ref_commit": "ae84415be0b9516422805910be999a2c1e6350c0",
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/workspace/scratch/53633327df3e/gitnexus-native-tool/node_modules/gitnexus/dist/cli/index.js",
+    "detect-changes",
+    "--scope",
+    "compare",
+    "--base-ref",
+    "origin/main",
+    "--repo",
+    "purama-ai-partner-native-53633327",
+    "--limit",
+    "100"
+  ],
+  "exit_code": 0,
+  "summary": {
+    "files": 3218,
+    "symbols": 553,
+    "affected_processes": 34,
+    "risk": "critical"
+  },
+  "staged_paths_at_detection": [
+    ".github/workflows/purama-chef-hardening.yml",
+    "karta/test/partnerDiscovery.native.mjs",
+    "qa/partner-discovery-20261124/native/README.md",
+    "qa/partner-discovery-20261124/native/backend-impact-fresh.json",
+    "qa/partner-discovery-20261124/native/backend-impact-fresh.log.gz",
+    "qa/partner-discovery-20261124/native/backend-index-analyze.log.gz",
+    "qa/partner-discovery-20261124/native/backend-index-initial-receipt.json",
+    "qa/partner-discovery-20261124/native/backend-index-initial.log.gz",
+    "qa/partner-discovery-20261124/native/backend-index-receipt.json",
+    "qa/partner-discovery-20261124/native/backend-index-scope.json",
+    "qa/partner-discovery-20261124/native/backend-receipt.json",
+    "qa/partner-discovery-20261124/native/impact-before.json",
+    "qa/partner-discovery-20261124/native/impact-before.log.gz",
+    "qa/partner-discovery-20261124/native/scope.json",
+    "vercel.json"
+  ],
+  "log": "qa/partner-discovery-20261124/native/backend-detect-main.log.gz",
+  "graph_partial": true,
+  "native_runtime_status": "NON_TESTE",
+  "interpretation": "Historical comparison with remote main, not this patch alone. Includes previously merged work outside this qualification; bounded graph is not a global blast-radius assessment. No product source is changed by this native scope."
+}

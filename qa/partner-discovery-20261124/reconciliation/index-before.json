@@ -1,0 +1,33 @@
+{
+  "base": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+  "scope": "13-file pre-edit analysis. Canonical PR111 with the clean auto-merged client and existing decoder; not a final merged product or full repository graph.",
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "analyze",
+    "--index-only",
+    "--name",
+    "purama-partner-reconcile-53633327",
+    "--workers",
+    "1"
+  ],
+  "exit_code": 0,
+  "seconds": 12.959,
+  "inputs": {
+    "src/App.tsx": "3d02997080df6a9e97da87babbc41a46d0944d703b4116ab1ca877e81eec0c55",
+    "src/pages/PartnerAgentProspects.tsx": "9dd6ec1cc2b20a840b47c53b75b2c1515537ae5932084aeb83f9212b41f1d4a9",
+    "src/pages/PartnerAgentSettings.tsx": "586e8bbb31dac10704ac131f59457baa7a6a93aa43779815b63f1117886d0f86",
+    "src/lib/partner.ts": "4fb24024098a845855333c279b520e8fca391084ca600e69a292389796f480df",
+    "src/lib/partner-discovery-result.ts": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+    "src/lib/request-deadline.ts": "608884d254e95ecf3cfc7b2844356634037aaed9daaa84f93be77f9aa64be524",
+    "supabase/functions/partner-find-prospects/index.ts": "c2f8d8333901dfa67d4c17ca70978ae811ab3c17778bfdead85b0c48b01fd119",
+    "supabase/functions/partner-find-prospects/handler.ts": "41980e7fbde8bc9dfbdcb4b2d32279344a274243d16d26ab2606cbde05383058",
+    "supabase/functions/_shared/assistant-policy.ts": "789c49e58ec5febfc4f2a0358a59f993fd2586d0b9119e30d8fd7005183e38fb",
+    "supabase/functions/_shared/assistant-response.ts": "5ee58bfbd63ab9ba1f407f95b923f75962a44774cc961fecdfb7521c9216b714",
+    "supabase/functions/_shared/request-body.ts": "19d00cc3eba792c8bc72878ff39e46320f910eed7c13ddf16a9d977f2860667c",
+    "supabase/functions/_shared/request-deadline.ts": "9fb5957cf195d7fd0dbd822dede78eee7a3fd9da0326f0de53b219ab8e97fcd6",
+    "karta/src/claude/assistant-policy.ts": "556316344ee9d8920117fead638db4b2e46d6829d92d3b3d81c96431d3bf10a3"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=384",
+    "--max-semi-space-size=4",
+    "/home/agent/.npm/_npx/5e786f48223a616c/node_modules/gitnexus/dist/cli/index.js",
+    "impact",
+    "partnerDiscovery.test.ts",
+    "--uid",
+    "File:karta/test/partnerDiscovery.test.ts",
+    "--direction",
+    "upstream",
+    "--include-tests",
+    "-r",
+    "purama-ai-partner-53633327"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 4.377,
+  "base": "4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b",
+  "scope": "Previously qualified bounded graph; test callbacks may be unresolved."
+}

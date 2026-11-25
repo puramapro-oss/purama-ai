@@ -1,0 +1,28 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false",
+    "--pretty",
+    "false",
+    "-p",
+    "tsconfig.partner-ci-temp.json"
+  ],
+  "working_directory": "karta",
+  "exit_code": 0,
+  "elapsed_seconds": 8.186,
+  "test_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff",
+  "temporary_config": {
+    "extends": "./tsconfig.json",
+    "include": [
+      "test/partnerDiscovery.test.ts",
+      "test/assistantPolicy.test.ts"
+    ]
+  },
+  "scope": "Two affected tests; inherited unchanged KARTA options. Global CI gate required."
+}

@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-11-24T19:58:59.201301+00:00",
+  "baseCommit": "18c40d0eb59b48636dd8d8fb54c0516b700ed746",
+  "status": "PASS_TARGETED_DOM_NOT_DEPLOYED",
+  "scope": [
+    "src/pages/PartnerAgentProspects.tsx",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx"
+  ],
+  "sourceSha256": {
+    "src/pages/PartnerAgentProspects.tsx": "b70985d65b2d0db0888b6d9ad9fc38d7dcd681504ab3115a27b90ee4a54f5e5a",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "97a85bf1d46338fad299d5bb4397bb68c0f079e5e3926b43a016d6cd44e8aa00"
+  },
+  "originalProductSha256": "876b65fc127376892e415cb81554b3da277c9283aeec4a1d02b248fc4ec3293a",
+  "impact": {
+    "coordinatedBy": "parent",
+    "symbolContext": "handleFind -> findProspects / refresh",
+    "limitation": "Impact UNKNOWN for React links in scoped product graph, supplemented by source callers; see sibling GitNexus evidence."
+  },
+  "runs": [
+    {
+      "phase": "original product",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 15,
+      "durationSeconds": 2.47,
+      "proof": "ui-discovery-before.log",
+      "finding": "Real Radix Select rejects the empty option value before discovery can be used."
+    },
+    {
+      "phase": "nonempty niche sentinel only",
+      "exitCode": 1,
+      "passed": 4,
+      "failed": 11,
+      "durationSeconds": 3.11,
+      "proof": "ui-discovery-select-only.log",
+      "finding": "Duplicate invocation and stale identity/draft/dialog/unmount effects reproduced."
+    },
+    {
+      "phase": "first product reception before independent commit-phase counterexample",
+      "exitCode": 0,
+      "passed": 50,
+      "failed": 0,
+      "files": 4,
+      "durationSeconds": 6.45,
+      "proof": "ui-discovery-final.log",
+      "included": {
+        "discoveryNew": 15,
+        "contractsExisting": 12,
+        "settingsOwnershipExisting": 18,
+        "settingsScheduleExisting": 5
+      },
+      "note": "Totals are inclusive. Earlier and repeated runs are not added."
+    },
+    {
+      "phase": "ESLint two changed UI paths",
+      "exitCode": 0,
+      "warnings": 0,
+      "proof": "ui-discovery-lint.log"
+    },
+    {
+      "phase": "independent counterexample moved to the official discovery suite, before the form-ownership fix",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 15,
+      "durationSeconds": 1.25,
+      "proof": "ui-discovery-commit-before.log",
+      "productSha256": "c378e4684ba37fb9c08dff21587521e6030ed766be00e18447c0e86e5c1c7b74",
+      "testSha256": "97a85bf1d46338fad299d5bb4397bb68c0f079e5e3926b43a016d6cd44e8aa00",
+      "finding": "A parent layout effect during A to B could launch the old A draft before the passive reset. One real helper invocation with the stale fixture query was observed.",
+      "note": "The other 15 discovery cases were intentionally excluded by testNamePattern in this reproduction only."
+    },
+    {
+      "phase": "final product with synchronous form ownership and immediate render filtering",
+      "exitCode": 0,
+      "passed": 51,
+      "failed": 0,
+      "files": 4,
+      "durationSeconds": 6.46,
+      "proof": "ui-discovery-owned-form.log",
+      "included": {
+        "discoveryNew": 16,
+        "contractsExisting": 12,
+        "settingsOwnershipExisting": 18,
+        "settingsScheduleExisting": 5
+      },
+      "productSha256": "b70985d65b2d0db0888b6d9ad9fc38d7dcd681504ab3115a27b90ee4a54f5e5a",
+      "testSha256": "97a85bf1d46338fad299d5bb4397bb68c0f079e5e3926b43a016d6cd44e8aa00",
+      "note": "51 is the complete targeted total. Prior 50-pass and all repeated runs are not added."
+    },
+    {
+      "phase": "final ESLint two changed UI paths",
+      "exitCode": 0,
+      "warnings": 0,
+      "proof": "ui-discovery-owned-form-lint.log"
+    }
+  ],
+  "testCommand": "timeout 90s env NODE_OPTIONS='--max-old-space-size=512 --max-semi-space-size=8' node node_modules/vitest/vitest.mjs run src/pages/PartnerAgentProspects.discovery.test.tsx src/pages/PartnerAgentProspects.contract.test.tsx src/pages/PartnerAgentSettings.ownership.test.tsx src/pages/PartnerAgentSettings.schedule.test.tsx --maxWorkers=1 --pool=threads --reporter=verbose",
+  "lintCommand": "timeout 60s env NODE_OPTIONS='--max-old-space-size=512 --max-semi-space-size=8' node node_modules/eslint/bin/eslint.js src/pages/PartnerAgentProspects.tsx src/pages/PartnerAgentProspects.discovery.test.tsx --max-warnings=0",
+  "mechanism": "Real React component and Radix controls, real findProspects client helper; controlled Supabase invocation, list and notifications; fetch fails if used.",
+  "changes": [
+    "Nonempty all-niches option maps to unchanged undefined niche request.",
+    "Synchronous request admission keyed by account and account epoch.",
+    "Late results cannot affect a different account cycle or changed/reopened draft.",
+    "Account changes clear discovery draft and reset current busy state.",
+    "Dialog close/edit does not pretend to undo an already accepted server request.",
+    "Discovery copy describes candidates to verify and uses DialogDescription.",
+    "Form owner and account epoch captured on opening; foreign drafts are removed from the DOM in the commit and refused at admission before passive reset."
+  ],
+  "remaining": [
+    "Native browser execution not performed by this task.",
+    "Typecheck, aggregate tests and detect_changes delegated to parent for the final composition.",
+    "Existing contract-dialog description warnings remain in the adjacent test suite.",
+    "No provider calls, migrations, campaign, real contact, commission, payment, deployment or merge executed."
+  ],
+  "proofFiles": {
+    "ui-discovery-before.log": {
+      "sha256": "441e1ad32134ec1776fe75b185dbf2877addc7ffeb0ec3f8555061c95dfffdc0",
+      "bytes": 198062
+    },
+    "ui-discovery-select-only.log": {
+      "sha256": "16c87567af1cc0f6bb7f0a4e956df7ad791edcab5d51b4274253ae01a5acf653",
+      "bytes": 27559
+    },
+    "ui-discovery-final.log": {
+      "sha256": "bfbef32a8906e4e9bba642d98e509a11b19cc9e2f2be49997626011ccdab9489",
+      "bytes": 12616
+    },
+    "ui-discovery-lint.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "ui-discovery-commit-before.log": {
+      "sha256": "b5781e372a9dfd898729dcf0b1440f572a861c1f0d71ee5c3cba3c470ff03ba6",
+      "bytes": 4852
+    },
+    "ui-discovery-owned-form.log": {
+      "sha256": "34f1218189d2533baf120337f724a2f8c2f574de2bb036dd07fa8a3e6b69a3bd",
+      "bytes": 12834
+    },
+    "ui-discovery-owned-form-lint.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "initialReceptionSourceSha256": {
+    "src/pages/PartnerAgentProspects.tsx": "c378e4684ba37fb9c08dff21587521e6030ed766be00e18447c0e86e5c1c7b74",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "bf55bbaefbcf258c0e69bf3635a36ab29e5d9cc4906f709c9e732406d61fee12"
+  },
+  "initialReceptionRecordedAtUTC": "2026-11-24T19:50:51.227757+00:00",
+  "counterReview": {
+    "status": "PASS_SCOPED_REVIEW",
+    "author": "qualification_deploiement",
+    "historicalProbeLocation": "/workspace/scratch/53633327df3e/partner-discovery-review",
+    "officialCase": "hides and rejects the old account draft during commit before passive effects reset it",
+    "preservation": "Historical probe files moved outside the repository; all original receipt logs and source hashes retained.",
+    "conclusion": "Reviewer confirms the reproduced commit-phase window is closed, account/epoch locks and draft revision guards remain coherent, and contracts/outreach are unchanged. No further blocking issue found in this UI diff.",
+    "tests": "Reviewer did not rerun the full suite; the 51-pass execution is the implementer receipt."
+  }
+}

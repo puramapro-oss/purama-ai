@@ -1,0 +1,25 @@
+{
+  "at_utc": "2026-11-24T21:30:00.391567+00:00",
+  "command": [
+    "node",
+    "--max-old-space-size=640",
+    "--max-semi-space-size=4",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exit_code": 0,
+  "seconds": 19.374,
+  "sources": {
+    "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+    "src/lib/partner-discovery-result.ts": "be213e14cdd03b64e41af3eb878bb83dfff35bc7e64802dae29736a4dde134c1",
+    "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+    "src/lib/partner-discovery-result.test.ts": "c3aed9cc9423b11b3aa91a83bd4ecb8e5336ae215b45bd9da1471f09d58ae5e1",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "1b41020d5be81bb091ea5c72510dda4dead987247e21e7e32a04ea8c4dbe158b",
+    "tests/quality/partner-media.spec.ts": "e1e427670babfdd1fc6d816173639b6ea59bfe4203de4d594aef65295b4e4d40"
+  },
+  "sources_unchanged": true,
+  "canonical_base": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+  "head_before_merge": "849402e342ea3dc757b2e009ff7c08c1532b1d97"
+}

@@ -1,0 +1,289 @@
+{
+  "created_at_utc": "2026-11-24T21:05:40.699100+00:00",
+  "base_commit": "4a7ad16cbfbb7c7762f15d5e3de2b942ddc00e8b",
+  "pr": 112,
+  "diagnosis": {
+    "ci_karta_run": 45484899106,
+    "ci_karta_job": 138767550745,
+    "type_errors": "Four direct property accesses on unknown Response.json() in newly added partnerDiscovery.test.ts; all attributed to this lot.",
+    "lint_errors": "One prefer-const in the same new test; see ../ci-site-lint-initial.json.",
+    "production_errors_found_in_these_logs": false
+  },
+  "changes": [
+    "Preserve error/inserted assertions using toHaveProperty or toMatchObject, without casting unknown JSON.",
+    "Preserve original nested prospects toHaveLength assertion after explicit runtime object and property guard.",
+    "Declare advance as const before calling the handler; provider closure is invoked afterwards."
+  ],
+  "assertion_review": {
+    "flattened_key": "String and array paths both accepted a flattened prospects.length property under KARTA Vitest 5.0.3; neither retained.",
+    "final": "Explicit object/field guard plus original toHaveLength preserves nested shape and passes the concrete matcher counterexample.",
+    "micro_probe_counted_in_product_coverage": false
+  },
+  "validation": {
+    "scoped_typecheck": "PASS",
+    "focused_runtime": "PASS: 152/152, same 89 discovery + 63 policy cases",
+    "focused_lint": "PASS",
+    "diff_check": "PASS",
+    "global_karta_typecheck_local": "BLOQUE: V8 OOM at 384 MiB, SIGKILL at 512 MiB; both receipts preserved. Global CI remains required.",
+    "temporary_config_failure": "First scoped config outside KARTA changed default Node type resolution; failed evidence retained; corrected by placing temporary extending config in KARTA and removing it afterwards. No official config changed.",
+    "unique_lot_case_total": 235,
+    "unique_lot_case_total_basis": "152 rerun here + 83 previously received unchanged frontend cases, not cumulative historical runs.",
+    "checks": {
+      "karta-typecheck-targeted": {
+        "command": [
+          "node",
+          "--max-old-space-size=256",
+          "--max-semi-space-size=4",
+          "--v8-pool-size=1",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit",
+          "--incremental",
+          "false",
+          "--pretty",
+          "false",
+          "-p",
+          "tsconfig.partner-ci-temp.json"
+        ],
+        "working_directory": "karta",
+        "exit_code": 0,
+        "elapsed_seconds": 8.186,
+        "test_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff",
+        "temporary_config": {
+          "extends": "./tsconfig.json",
+          "include": [
+            "test/partnerDiscovery.test.ts",
+            "test/assistantPolicy.test.ts"
+          ]
+        },
+        "scope": "Two affected tests; inherited unchanged KARTA options. Global CI gate required."
+      },
+      "karta-vitest-final": {
+        "command": [
+          "node",
+          "--max-old-space-size=256",
+          "--max-semi-space-size=4",
+          "--v8-pool-size=1",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/partnerDiscovery.test.ts",
+          "test/assistantPolicy.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "working_directory": "karta",
+        "exit_code": 0,
+        "elapsed_seconds": 24.109,
+        "test_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff"
+      },
+      "karta-test-lint-final": {
+        "command": [
+          "node",
+          "--max-old-space-size=256",
+          "--max-semi-space-size=4",
+          "--v8-pool-size=1",
+          "node_modules/eslint/bin/eslint.js",
+          "karta/test/partnerDiscovery.test.ts"
+        ],
+        "working_directory": ".",
+        "exit_code": 0,
+        "elapsed_seconds": 3.547,
+        "test_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff"
+      },
+      "matcher-equivalence-probe": {
+        "command": [
+          "node",
+          "--max-old-space-size=256",
+          "--max-semi-space-size=4",
+          "--v8-pool-size=1",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "test/partnerDiscovery.matcher-probe.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.208,
+        "probe_removed": true,
+        "counted_as_business_tests": false,
+        "note": "Explicit object/field guard preserves original toHaveLength assertion and rejects flattened key; concrete KARTA Vitest 5.0.3 matcher check."
+      }
+    }
+  },
+  "scope": {
+    "changed_source_or_test_files": [
+      "karta/test/partnerDiscovery.test.ts"
+    ],
+    "product_bytes_unchanged": true,
+    "official_compiler_config_unchanged": true,
+    "new_tests_added": 0,
+    "committed_or_pushed_by_this_agent": false,
+    "deployed_or_external_operations": false
+  },
+  "impact": {
+    "status": "UNKNOWN: test file/callback edges not resolved",
+    "receipt": "gitnexus-test-impact.log",
+    "manual_complement": "gitnexus-manual-complement.json",
+    "indexed_test_bytes_matched_before": true,
+    "final_index_refresh_owner": "root"
+  },
+  "hashes": {
+    "supabase/functions/partner-find-prospects/index.ts": {
+      "before_sha256": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9",
+      "after_sha256": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9",
+      "unchanged": true
+    },
+    "src/lib/partner.ts": {
+      "before_sha256": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+      "after_sha256": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+      "unchanged": true
+    },
+    "src/pages/PartnerAgentProspects.tsx": {
+      "before_sha256": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+      "after_sha256": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+      "unchanged": true
+    },
+    "src/lib/partner-discovery-result.ts": {
+      "before_sha256": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+      "after_sha256": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+      "unchanged": true
+    },
+    "src/lib/partner-discovery-result.test.ts": {
+      "before_sha256": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+      "after_sha256": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+      "unchanged": true
+    },
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": {
+      "before_sha256": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0",
+      "after_sha256": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0",
+      "unchanged": true
+    },
+    "karta/test/assistantPolicy.test.ts": {
+      "before_sha256": "0692018a9580ce4e5321383788047cf3f160349b3bcd2671bdedf752e3d0b301",
+      "after_sha256": "0692018a9580ce4e5321383788047cf3f160349b3bcd2671bdedf752e3d0b301",
+      "unchanged": true
+    },
+    "karta/test/partnerDiscovery.test.ts": {
+      "before_sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
+      "after_sha256": "e7d507119ff7add17737cb304df9062d3b31ffdae1c046d59b0f227b8030a9ff",
+      "unchanged": false
+    }
+  },
+  "evidence": {
+    "gitnexus-manual-complement.json": {
+      "bytes": 749,
+      "sha256": "479e5cd51ff2d956f23bed649975431ec0cd6632f8626d692a476114d4384b41"
+    },
+    "gitnexus-test-impact-command.json": {
+      "bytes": 576,
+      "sha256": "6ede1285d0786cdd912b231f5bcf09acb6ef3f54af95b54592755982b640c1f4"
+    },
+    "gitnexus-test-impact.log": {
+      "bytes": 1645,
+      "sha256": "8b070d280234c39fa18b13a8a57e2391796d1ec2855d851891cd71143dec189b"
+    },
+    "karta-job-before.json": {
+      "bytes": 894,
+      "sha256": "9ceb37c5e2f04794e0e758ca9795023bb77586a284d256526f8db857730a1640"
+    },
+    "karta-job-before.log.gz": {
+      "bytes": 4008,
+      "sha256": "edbf3790bf9cf53f9dde8923aaa97c618f398d257a5a10df3391a0eae81d3419"
+    },
+    "karta-test-lint-final-intermediate.json": {
+      "bytes": 293,
+      "sha256": "c745e949a5433675b77f5b0ce902a28ca75ba596e71ada339261b1d2ffe57c83"
+    },
+    "karta-test-lint-final-intermediate.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "karta-test-lint-final.json": {
+      "bytes": 364,
+      "sha256": "f6b78475423616b9ee983813c3f63830c23aa02cc03f347ea16dc39f98712d1d"
+    },
+    "karta-test-lint-final.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "karta-typecheck-384-oom.json": {
+      "bytes": 449,
+      "sha256": "1a6d4c83de4048b2c9bb5ab86682181f8aecc14bf1bc36a128514be71be480fc"
+    },
+    "karta-typecheck-384-oom.log": {
+      "bytes": 807,
+      "sha256": "a6f31a2d7084ec970f86caccc9b7dfc45e75138a9465119910c5cace54ad67f9"
+    },
+    "karta-typecheck-512-sigkill.json": {
+      "bytes": 449,
+      "sha256": "702c892aac558c0acd9d1b8c2255dee6991dd3083cf2c02b6797c410f74c29f3"
+    },
+    "karta-typecheck-512-sigkill.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "karta-typecheck-targeted-config-location-failure.json": {
+      "bytes": 847,
+      "sha256": "fb5f41f7f033548eaa711f7a6cfd6ff56badd281d21e1743a097a115f8900abf"
+    },
+    "karta-typecheck-targeted-config-location-failure.log": {
+      "bytes": 9976,
+      "sha256": "abf0b1a466ed44a20bf3438ff35c5fb75ee69ad9d1a501b20f479f2f11bd9dca"
+    },
+    "karta-typecheck-targeted-intermediate.json": {
+      "bytes": 707,
+      "sha256": "c9d06da1e79311cf684e9d4ab4e2c135127320e68f85d4c1cb1df8ae849ffcd7"
+    },
+    "karta-typecheck-targeted-intermediate.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "karta-typecheck-targeted.json": {
+      "bytes": 705,
+      "sha256": "b0dabd4afe8a6b46b406d4f9b5e64c4bbd23f088be5d19f5b5d2aac2b77dcbb5"
+    },
+    "karta-typecheck-targeted.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "karta-vitest-final-intermediate.json": {
+      "bytes": 373,
+      "sha256": "e2ba31fb58973c000c2b9bb743de9b24bf14d75e179d3255ca46ecff999f6920"
+    },
+    "karta-vitest-final-intermediate.log": {
+      "bytes": 201,
+      "sha256": "19effd701f649b83863fa124a16b0c373ec59aa179fb7a2c30878be85d765b3e"
+    },
+    "karta-vitest-final.json": {
+      "bytes": 458,
+      "sha256": "26dafbb5c3ecbea4b09168877de0009e09d69fc9edf5de4b7915b41bc02598fc"
+    },
+    "karta-vitest-final.log": {
+      "bytes": 200,
+      "sha256": "481cec92abd1ecb79a6cfab0ba63bb5c512a430d0024f9e6276775d730317811"
+    },
+    "matcher-array-path-failure.json": {
+      "bytes": 484,
+      "sha256": "8fffea3b08ac89ba897ec6d699190d3b5f415133aaafee4cdd830aef532c8e62"
+    },
+    "matcher-array-path-failure.log": {
+      "bytes": 1077,
+      "sha256": "2fd07894d7097c90f0f22165589b57dd4d819605d645a61797572cc52a33aad3"
+    },
+    "matcher-array-path-failure.ts.txt": {
+      "bytes": 915,
+      "sha256": "5f27ebbbe17367052d10a9792be3329092ba9443ec734f7bb42b0fa959733839"
+    },
+    "matcher-equivalence-probe.json": {
+      "bytes": 534,
+      "sha256": "d7b129494b0080715382caaadb7072ef5224543612c7a4ae92ab4445d76fee93"
+    },
+    "matcher-equivalence-probe.log": {
+      "bytes": 218,
+      "sha256": "e857f9021ed55001cc495d1df6dd94f0208cbf0503659667248926193b4b4888"
+    },
+    "matcher-equivalence-probe.ts.txt": {
+      "bytes": 1081,
+      "sha256": "6ed00464d3bf2725da645c14f96f9e8d1b13d1d6b7a0f6f40d4ad590ac1a8780"
+    }
+  }
+}

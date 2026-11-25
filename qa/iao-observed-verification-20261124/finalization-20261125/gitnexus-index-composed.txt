@@ -1,0 +1,14 @@
+
+  GitNexus Analyzer (1.6.12)
+[2KIndex lock: OS socket lock unavailable here — using the file lock.
+{"level":40,"time":1795565401985,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":0,"entryPointsUnexplored":63,"walksCutByBudget":13,"tracesDepthCapped":0,"calleesDropped":415,"processesDropped":0},"msg":"[processes] 95 flows reported, but whole flows are MISSING: 0 of 107 candidate entry point(s) never ranked in, 63 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 415 callee(s) skipped at maxBranching, 13 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2KIncremental: changed=1, added=0, deleted=0 (skipping wipe + 27 unchanged file rows preserved)
+[2KFTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.
+[2KParse cache: pruned 1 stale chunk entries
+
+  Repository indexed successfully (6.5s)
+
+  1,311 nodes | 3,443 edges | 38 clusters | 95 flows
+  /workspace/scratch/a042d0274492/purama-ai
+
+  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.

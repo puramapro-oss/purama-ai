@@ -3,7 +3,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import { parseOutreachResult, type OutreachResult, type OutreachStep } from './partner-outreach-result';
 import { parsePartnerContractResult, type PartnerContractResult } from './partner-contract-result';
+import { parsePartnerDiscoveryResult, readPartnerDiscoveryError } from './partner-discovery-result';
 export { contractFeedback } from './partner-contract-result';
+export { partnerDiscoveryFeedback } from './partner-discovery-result';
 export type { PartnerContractResult, PartnerContractApproval } from './partner-contract-result';
 export { outreachFeedback, outreachStepForStatus } from './partner-outreach-result';
 export type { OutreachResult, OutreachApproval, OutreachStep } from './partner-outreach-result';
@@ -183,6 +185,8 @@ export interface PartnerActive {
   joined_at: string;
   last_activity_at: string | null;
   created_at: string;
+  /** Read-only projection from the linked prospect, never a financial entitlement. */
+  outreach_profile?: PartnerOutreachProfile;
 }
 
 export interface PartnerCommission {
@@ -429,12 +433,16 @@ export async function findProspects(
   query: string,
   niche?: string,
   type?: ProspectType,
-): Promise<{ inserted: number; prospects: PartnerProspect[] }> {
-  const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
-    body: { query, niche, type },
-  });
-  if (error) throw error;
-  return data as { inserted: number; prospects: PartnerProspect[] };
+): Promise<{ inserted: number; skipped?: number; prospects: PartnerProspect[] }> {
+  try {
+    const { data, error } = await supabase.functions.invoke('partner-find-prospects', {
+      body: { query, niche, type },
+    });
+    if (error) throw error;
+    return parsePartnerDiscoveryResult(data);
+  } catch (error) {
+    throw await readPartnerDiscoveryError(error);
+  }
 }
 
 // =============================================================
@@ -519,11 +527,17 @@ export async function listActivePartners(
 ): Promise<PartnerActive[]> {
   const { data, error } = await sb()
     .from('partner_active')
-    .select('*')
+    .select('*, prospect:partner_prospects(user_id,outreach_profile)')
     .eq('user_id', userId)
     .order('total_revenue_generated', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as PartnerActive[];
+  return (data ?? []).filter((value: PartnerActive) => value.user_id === userId)
+    .map((value: PartnerActive & { prospect?: { user_id?: unknown; outreach_profile?: unknown } | null }) => {
+      const { prospect, ...partner } = value;
+      const profile = prospect?.user_id === userId ? prospect.outreach_profile : undefined;
+      return { ...partner, outreach_profile: profile === 'legacy' || profile === 'media_affiliate'
+        || profile === 'editorial' ? profile : undefined };
+    });
 }
 
 // =============================================================
@@ -560,6 +574,11 @@ export async function partnerStats(userId: string): Promise<{
     sb().from('partner_active').select('total_revenue_generated', { count: 'exact' }).eq('user_id', userId).eq('is_active', true),
     sb().from('partner_commissions').select('amount,status', { count: 'exact' }).eq('user_id', userId),
   ]);
+  // A failed read is not an empty dataset. Let the account-scoped view offer a
+  // retry instead of presenting fabricated zero activity or balances.
+  if ([prospects, emails, partners, commissions].some(result => result.error)) {
+    throw new Error('Les statistiques partenaires ne sont pas disponibles. Réessayez le chargement.');
+  }
   // deno-lint-ignore no-explicit-any
   const prosRows = (prospects.data ?? []) as Array<{ status: string }>;
   // deno-lint-ignore no-explicit-any

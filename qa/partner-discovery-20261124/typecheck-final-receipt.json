@@ -1,0 +1,24 @@
+{
+  "started_utc": "2026-11-24T20:32:37.715888+00:00",
+  "base_commit": "04ff79cf8c5d1061e04cf631efac21601978433e",
+  "command": [
+    "node",
+    "--max-old-space-size=640",
+    "--max-semi-space-size=4",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "-p",
+    "tsconfig.app.json"
+  ],
+  "exit_code": 0,
+  "duration_seconds": 16.743,
+  "source_sha256": {
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/lib/partner-discovery-result.ts": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "src/lib/partner-discovery-result.test.ts": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+    "src/pages/PartnerAgentProspects.discovery.test.tsx": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0"
+  },
+  "source_files_unchanged": true,
+  "scope": "Global frontend TypeScript project, exact final client/UI source. No provider, database or production call."
+}

@@ -1,0 +1,8 @@
+Changes: 309 files, 3 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Function runtime → karta/test/assistantPolicy.test.ts
+  Function load → karta/test/assistantPolicy.test.ts
+  Function fetch → karta/test/assistantPolicy.test.ts

@@ -1,0 +1,44 @@
+{
+  "candidate": "68570e8059ad4f1f17873cab48ec834b1b1ec608",
+  "integration_status": "FAILED_INTERMEDIATE_CI",
+  "chef": {
+    "run_id": 45503588580,
+    "job_id": 138832913146,
+    "tests_passed": 5353,
+    "tests_total": 5354,
+    "files_passed": 221,
+    "files_total": 222,
+    "failed_test": "partnerReplyDraft.test.ts:382 — Resend dispatch identifier incorrectly expected to establish a Gmail parent",
+    "actual_result": {
+      "status": "allowed",
+      "reason": null
+    },
+    "suites": {
+      "partnerReplyDraft": "59/60",
+      "partnerAffiliationAdmission": "68/68",
+      "partnerContractContactGuard": "20/20",
+      "providerCompletion": "8/8",
+      "gmailPartnerGuard": "18/18",
+      "partnerReplyDraftHandler": "26/26",
+      "partnerReplyDraftParsing": "39/39"
+    }
+  },
+  "iao": {
+    "run_id": 45503588573,
+    "job_id": 138832910214,
+    "typecheck": "FAILED",
+    "diagnostic": "test/partnerContractContactGuard.test.ts(68,19): TS18046: row is of type unknown",
+    "tests": "NOT RUN"
+  },
+  "correction": {
+    "production_code_changed": false,
+    "oracle_changes": "Only the unrelated-recipient Resend-ID witness becomes allowed; actual Gmail parent/thread and media-recipient assertions remain blocked.",
+    "typing": "Query row shape now exposes submission_started_at: unknown before comparing it with null.",
+    "targeted_typecheck_exit_code": 0,
+    "targeted_lint_exit_code": 0
+  },
+  "provenance": [
+    "https://github.com/puramapro-oss/purama-ai/actions/runs/45503588580/job/138832913146",
+    "https://github.com/puramapro-oss/purama-ai/actions/runs/45503588573/job/138832910214"
+  ]
+}

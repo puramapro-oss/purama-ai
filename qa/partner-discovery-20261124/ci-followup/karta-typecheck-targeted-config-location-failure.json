@@ -1,0 +1,27 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "--max-semi-space-size=4",
+    "--v8-pool-size=1",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false",
+    "--pretty",
+    "false",
+    "-p",
+    "/workspace/scratch/53633327df3e/iao-discovery-audit/tsconfig-ci-targeted.json"
+  ],
+  "working_directory": "karta",
+  "temporary_config": {
+    "extends": "/workspace/scratch/53633327df3e/purama-ai/karta/tsconfig.json",
+    "include": [
+      "/workspace/scratch/53633327df3e/purama-ai/karta/test/partnerDiscovery.test.ts",
+      "/workspace/scratch/53633327df3e/purama-ai/karta/test/assistantPolicy.test.ts"
+    ]
+  },
+  "exit_code": 2,
+  "elapsed_seconds": 5.555,
+  "scope": "Two affected KARTA test files with inherited unchanged KARTA compiler options. Does not replace global CI typecheck."
+}

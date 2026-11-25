@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-24T21:44:49.093967+00:00",
+  "status": "PARTIEL",
+  "phase": "Final independent source review and native typecheck at the recorded composition hashes; release gates remain explicitly incomplete.",
+  "reviewer": "qualification_deploiement",
+  "canonical_media_commit": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+  "prior_discovery_head": "849402e",
+  "frontend": {
+    "reviewed_sha256": {
+      "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+      "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+      "src/lib/partner-discovery-result.ts": "a74828e029d78d49976dd2910bf34c220983c5cc02e01baec38436ed2efc7bee"
+    },
+    "observed_current_sha256": {
+      "src/pages/PartnerAgentProspects.tsx": "bbc13d611bfa62bf92c861a82b0c8d89d06bb0f81064a23f4ddb8cd2edb12d85",
+      "src/lib/partner.ts": "6516bbb530a17218fad6994910684450b3125aa722e2bd00246a24e12e8ae619",
+      "src/lib/partner-discovery-result.ts": "a74828e029d78d49976dd2910bf34c220983c5cc02e01baec38436ed2efc7bee"
+    },
+    "review_status": "PASS",
+    "preserved": [
+      "Authenticated qualification RPC and evidence/consent/offer/profile fields",
+      "Filtered manual-save patch",
+      "Account epoch and draft owner/revision admission",
+      "Synchronous duplicate-request lock and pre-effect masking",
+      "Canonical identified/qualification wording",
+      "Bounded original error stream, fixed local messages, unknown/partial preservation",
+      "Canonical 25-candidate cap, validated optional skipped and inserted+skipped <= 25"
+    ],
+    "author_tests_received": {
+      "passed": 101,
+      "total": 101,
+      "independently_rerun": false,
+      "receipt": "frontend-feedback-receipt.json",
+      "receipt_sha256": "f36c2e8026304ff713c2228067988582aad36c0ab579ad04c8c85c99d2e348d8",
+      "counting": "Final inclusive frontend run, not added to 98, 83 or historical 235 runs."
+    },
+    "code_catalogue": {
+      "status": "PASS",
+      "emitted_codes": [
+        "discovery_cancelled",
+        "discovery_configuration_invalid",
+        "discovery_configuration_unavailable",
+        "discovery_deadline_exceeded",
+        "discovery_extraction_invalid",
+        "discovery_method_not_allowed",
+        "discovery_provider_failed",
+        "discovery_provider_invalid",
+        "discovery_provider_not_configured",
+        "discovery_request_invalid",
+        "discovery_search_invalid",
+        "discovery_storage_unavailable",
+        "discovery_storage_unconfirmed",
+        "discovery_targeting_changed",
+        "discovery_targeting_invalid",
+        "discovery_targeting_required",
+        "discovery_unauthorized",
+        "discovery_unavailable"
+      ],
+      "unmapped_codes": [],
+      "legacy_messages_preserved": true,
+      "meaning": "Only fixed local messages are displayed; unknown codes remain conservative without reflecting provider diagnostics."
+    }
+  },
+  "backend": {
+    "review_status": "PASS",
+    "native_deno_status": "PASS",
+    "reviewed_contracts": [
+      "Single canonical discovery handler and service-only atomic import RPC",
+      "25 candidates / query 1000 / max_tokens 4000 / content 2000 / title 200",
+      "Actual token-position source evidence, unknown role classification distinct from consent",
+      "Always ai_search / found_by_ai / identified on discovery",
+      "Account targeting validation and re-read before import",
+      "Unknown result for transport interruption, invalid receipt and ambiguous SQLSTATE; confirmed transaction rejection stays failed"
+    ],
+    "additional_reception_gate": "Concrete rollback witness added to the existing SQL suite and read: valid first candidate followed by unproven email, expecting no persisted row and unchanged counter. Execution not received locally.",
+    "reviewed_sha256": {
+      "supabase/functions/partner-find-prospects/index.ts": "a19c851166e285cd90dd77581c7518bf95178a4c39f7d0b5a63f16b8e9d72f85",
+      "supabase/functions/partner-find-prospects/handler.ts": "e87861a410cdcbeb04668bcfd85bbf8d98b0853ac0f615bb5612924e134f29f6"
+    },
+    "author_tests_received": {
+      "passed": 180,
+      "total": 180,
+      "discovery": 117,
+      "assistant_policy": 63,
+      "independently_rerun": false,
+      "receipt": "backend/runtime-final.json",
+      "log": "backend/runtime-final.log",
+      "receipt_sha256": "75bbd067ee2b1c53b28176041f32584777feb257964f8d242beae80ccac1afd4"
+    },
+    "closed_findings": [
+      {
+        "id": "strict_stop_reason_type",
+        "finding": "String coercion permits stop_reason:[\"end_turn\"]; the shared reader also coerces. Require an actual string in the local discovery boundary.",
+        "owner": "iao_partenaires_audit",
+        "status": "CLOSED_AT_RECORDED_SOURCE_HASH",
+        "resolution": "Local typeof stop_reason check before the shared reader."
+      },
+      {
+        "id": "early_failure_envelopes",
+        "finding": "Early unauthorized/method/configuration-invalid responses omit the failed/0 receipt envelope; the bounded client therefore reports unknown despite no import. Preserve HTTP statuses while normalizing local failure receipts.",
+        "owner": "iao_partenaires_audit",
+        "status": "CLOSED_AT_RECORDED_SOURCE_HASH",
+        "resolution": "All early non-OPTIONS failures use failureResponse with failed/0 envelope and the original HTTP status."
+      }
+    ]
+  },
+  "canonical_preservation": {
+    "checked_files": 15,
+    "all_identical": true,
+    "files": [
+      {
+        "path": "supabase/migrations/20261124050000_partner_discovery_evidence.sql",
+        "canonical_sha256": "d3db17cd10d5af5a0573c9356b7a339a4f37327266484e581eee3e9b286e0388",
+        "worktree_sha256": "d3db17cd10d5af5a0573c9356b7a339a4f37327266484e581eee3e9b286e0388",
+        "identical": true
+      },
+      {
+        "path": "supabase/migrations/20261124050100_partner_media_policy.sql",
+        "canonical_sha256": "9ed9de303251d3dc4ad832b6360352b91c0c1aa838289bb05109e3b464b155b6",
+        "worktree_sha256": "9ed9de303251d3dc4ad832b6360352b91c0c1aa838289bb05109e3b464b155b6",
+        "identical": true
+      },
+      {
+        "path": "supabase/migrations/20261124050200_partner_reply_evidence.sql",
+        "canonical_sha256": "c4206df1f246731cb791f4c41f59a0d0d95fda3938995489fa5c5d7cf6d5a920",
+        "worktree_sha256": "c4206df1f246731cb791f4c41f59a0d0d95fda3938995489fa5c5d7cf6d5a920",
+        "identical": true
+      },
+      {
+        "path": "supabase/functions/partner-sync-replies/handler.ts",
+        "canonical_sha256": "1be841307ccde1c926fea69a77f4ac7b07e48d869eb2aa441dccd3f540acaba2",
+        "worktree_sha256": "1be841307ccde1c926fea69a77f4ac7b07e48d869eb2aa441dccd3f540acaba2",
+        "identical": true
+      },
+      {
+        "path": "supabase/functions/partner-sync-replies/index.ts",
+        "canonical_sha256": "f8b9401d3b4753ea88ef6db32cfb351eb3f66908ec256e07d57f6139f5a776cd",
+        "worktree_sha256": "f8b9401d3b4753ea88ef6db32cfb351eb3f66908ec256e07d57f6139f5a776cd",
+        "identical": true
+      },
+      {
+        "path": "supabase/functions/partner-generate-contract/handler.ts",
+        "canonical_sha256": "f1e075e7843c9ff055603648b718c525797ce161343e2c968e513a0d5973c130",
+        "worktree_sha256": "f1e075e7843c9ff055603648b718c525797ce161343e2c968e513a0d5973c130",
+        "identical": true
+      },
+      {
+        "path": "supabase/functions/partner-generate-contract/media-contract.ts",
+        "canonical_sha256": "13e4339e8731baefe75742c2f4e5f9db6cda66ae1c56c2090968a8cbb0c8ddce",
+        "worktree_sha256": "13e4339e8731baefe75742c2f4e5f9db6cda66ae1c56c2090968a8cbb0c8ddce",
+        "identical": true
+      },
+      {
+        "path": "supabase/functions/partner-send-outreach/handler.ts",
+        "canonical_sha256": "1ea7e5be4b706e9aa66966f898dd536d7d9e913ce0acaf90ea7822b300c8b2dd",
+        "worktree_sha256": "1ea7e5be4b706e9aa66966f898dd536d7d9e913ce0acaf90ea7822b300c8b2dd",
+        "identical": true
+      },
+      {
+        "path": "supabase/functions/partner-send-outreach/media-draft.ts",
+        "canonical_sha256": "0a86686c0ff837815e1a74f5b5c0a65e361be6450714f1f333519b71f4d5cc2c",
+        "worktree_sha256": "0a86686c0ff837815e1a74f5b5c0a65e361be6450714f1f333519b71f4d5cc2c",
+        "identical": true
+      },
+      {
+        "path": "n8n/partner-reply-handler.json",
+        "canonical_sha256": "7fd1f650e6d5bf3382540389a4e19eb961d6a3f09b41009db0d4c873116c9d07",
+        "worktree_sha256": "7fd1f650e6d5bf3382540389a4e19eb961d6a3f09b41009db0d4c873116c9d07",
+        "identical": true
+      },
+      {
+        "path": "src/lib/partner-contract-result.ts",
+        "canonical_sha256": "51177c0097afc84812d2d1594892966ca62f582bda8199cfe531dfc17327d483",
+        "worktree_sha256": "51177c0097afc84812d2d1594892966ca62f582bda8199cfe531dfc17327d483",
+        "identical": true
+      },
+      {
+        "path": "src/lib/partner-outreach-result.ts",
+        "canonical_sha256": "d3fd726488b8950527315a6789c92e8e18a3fa60bca89e29b4ef1206181dd251",
+        "worktree_sha256": "d3fd726488b8950527315a6789c92e8e18a3fa60bca89e29b4ef1206181dd251",
+        "identical": true
+      },
+      {
+        "path": "src/pages/PartnerAgentSettings.tsx",
+        "canonical_sha256": "586e8bbb31dac10704ac131f59457baa7a6a93aa43779815b63f1117886d0f86",
+        "worktree_sha256": "586e8bbb31dac10704ac131f59457baa7a6a93aa43779815b63f1117886d0f86",
+        "identical": true
+      },
+      {
+        "path": "src/pages/PartnerAgentPartners.tsx",
+        "canonical_sha256": "f9f955d378593ce6a94210ab2c7f9264dcf34558a2f46dc9405da873c1729ec5",
+        "worktree_sha256": "f9f955d378593ce6a94210ab2c7f9264dcf34558a2f46dc9405da873c1729ec5",
+        "identical": true
+      },
+      {
+        "path": "supabase/config.toml",
+        "canonical_sha256": "061191668476ae0757f74105bb4ccc0ecc2498add0a5741bba757917021daa2d",
+        "worktree_sha256": "061191668476ae0757f74105bb4ccc0ecc2498add0a5741bba757917021daa2d",
+        "identical": true
+      }
+    ],
+    "meaning": "Three SQL migrations and media/reply runtime, policy and UI files are byte-identical to the canonical commit at this observation. This proves preservation, not live activation."
+  },
+  "policy_invariants": [
+    "Observed source evidence never grants opt-in; qualified address and permission remain separately enforced at prepare/send.",
+    "Manual pipeline status alone does not authorize outreach.",
+    "Media affiliate 30/30 contract policy stays scoped to media_affiliate; editorial and legacy remain separate.",
+    "Reply reconciliation requires durable provider/RFC and mailbox/thread proof; refusals and automatic replies stop generic follow-ups.",
+    "No new payment/commission bridge is introduced; canonical missing commercial integration remains explicit."
+  ],
+  "limits": [
+    "Previous Deno receipts on backend 8525f626... are historical and are not added to this composition gate.",
+    "Final author suites include 101 frontend and 180 runtime cases; historical runs are not additional tests.",
+    "Local SQL reception remains incomplete after two killed attempts; native PostgreSQL multi-session contention remains untested.",
+    "No infrastructure mutation, provider/business call, contact, financial transaction, migration or deployment performed in this review."
+  ],
+  "prior_provisional_sha256": "2b34dff58549b0915203af28da9205e3ccc9dbd3f2fa5ae156a76ee5d05be7ba",
+  "independent_source_review_status": "PASS",
+  "native_typecheck": {
+    "status": "PASS",
+    "executed_independently": true,
+    "receipt": "native-typecheck.json",
+    "receipt_sha256": "1b008dbbd66c18c7a475a1113cd5c4a00938cf0a4ef596c55dbba69960c9534a",
+    "log": "native-typecheck.log",
+    "log_sha256": "501a9d10c80e8ec94020d4c277d252e013327869411c6f0c8358446914d52c71",
+    "exit_code": 0,
+    "elapsed_seconds": 1.3214746880112216,
+    "ended_at_utc": "2026-11-24T21:42:05.904674+00:00",
+    "local_input_files": 7,
+    "inputs_unchanged_after": true,
+    "repository_inputs_match": true
+  },
+  "remaining_reception_gates": {
+    "local_sql": {
+      "status": "BLOQUE",
+      "cases": 9,
+      "passing_result_received": false,
+      "first_attempt_receipt": "backend/canonical-sql.json",
+      "first_attempt_exit_code": 1,
+      "first_attempt_observation": "Worker terminated by SIGKILL; no completed PASS result.",
+      "bounded_retry_receipt": "backend/canonical-sql-threads.json",
+      "bounded_retry_exit_code": -9,
+      "meaning": "SQL migration source preserved; local reception is incomplete. Not an observed failed business assertion."
+    },
+    "native_postgresql_multisession": {
+      "status": "NON_TESTE",
+      "meaning": "PGlite queued single-connection tests would not certify multi-session concurrency."
+    },
+    "application_typecheck_build_browser_ci": {
+      "status": "PARENT_OWNED",
+      "meaning": "Consult the parent reception receipts for current results; this independent review does not substitute for them."
+    },
+    "production": {
+      "status": "NON_TESTE",
+      "meaning": "No deployed campaign, provider exchange, contact, migration or financial operation certified."
+    }
+  }
+}

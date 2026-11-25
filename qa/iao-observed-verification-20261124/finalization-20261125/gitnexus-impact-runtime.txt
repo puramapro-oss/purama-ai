@@ -1,0 +1,55 @@
+{
+  "target": {
+    "id": "Function:karta/test/assistantPolicy.test.ts:runtime",
+    "name": "runtime",
+    "type": "Function",
+    "filePath": "karta/test/assistantPolicy.test.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 2,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 2,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 2
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Test",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:karta/test/assistantPolicy.test.ts",
+        "name": "assistantPolicy.test.ts",
+        "filePath": "karta/test/assistantPolicy.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:karta/test/assistantPolicy.test.ts:edge",
+        "name": "edge",
+        "filePath": "karta/test/assistantPolicy.test.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}

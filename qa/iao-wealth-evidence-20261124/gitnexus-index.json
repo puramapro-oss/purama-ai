@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/workspace/scratch/6431e6d17379/gitnexus-tool/node_modules/.bin/gitnexus",
+    "analyze",
+    "--index-only",
+    "--skip-fts",
+    "--workers",
+    "1",
+    "--name",
+    "iao-wealth-evidence-20261124"
+  ],
+  "temporary_scope": "*\n!scripts/\nscripts/*\n!scripts/ci/\nscripts/ci/*\n!scripts/ci/check-wealth-diff.sh\n!scripts/ci/test-wealth-diff.py\n!.github/\n.github/*\n!.github/workflows/\n.github/workflows/*\n!.github/workflows/wealth-engine-continuity.yml\n",
+  "index_path": "/dev/shm/iao-wealth-evidence-index-20261124",
+  "exit_code": 0,
+  "seconds": 4.584656887003803,
+  "stdout": "\u001b[2K\nIndex lock: OS socket lock unavailable here — using the file lock.\n\u001b[2K\nFTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.\n\n  Repository indexed successfully (2.5s)\n\n  19 nodes | 32 edges | 2 clusters | 2 flows\n  /workspace/scratch/6431e6d17379/iao-wealth-evidence-20261124\n\n  FTS disabled for this index. To enable keyword search, run gitnexus analyze without --skip-fts and with GITNEXUS_SKIP_FTS unset.\n\n",
+  "stderr": "\n  GitNexus Analyzer (1.6.12)\n",
+  "coverage": "Only two CI scripts and one workflow; not a product-wide index"
+}

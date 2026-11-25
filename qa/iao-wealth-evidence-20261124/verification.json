@@ -1,0 +1,143 @@
+{
+  "status": "PASS_LOCAL_CI_NOT_RUN",
+  "observed_at_utc": "2026-11-24T22:12:05.050627+00:00",
+  "base": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+  "branch": "fix/iao-wealth-evidence-20261124",
+  "expected_scope": [
+    "scripts/ci/check-wealth-diff.sh",
+    "scripts/ci/test-wealth-diff.py",
+    "vercel.json",
+    "qa/iao-wealth-evidence-20261124/**"
+  ],
+  "regressions": {
+    "before": {
+      "passed": 36,
+      "failed": 3,
+      "total": 39
+    },
+    "after": {
+      "passed": 39,
+      "failed": 0,
+      "total": 39
+    },
+    "same_test_source": true,
+    "prior_27_cases_preserved": true
+  },
+  "comparison": {
+    "base": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+    "head": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+    "before_exit": 2,
+    "after_exit": 0,
+    "exact_archive_exceptions": 54
+  },
+  "files": [
+    {
+      "path": "scripts/ci/check-wealth-diff.sh",
+      "bytes": 6802,
+      "sha256": "12f175ef0258c4ccc94517c8ebe558283e3984c24c97624c5e623259583d2333",
+      "base_blob": "20fbf017bd7c99b804227e762e15879586859805",
+      "unchanged_from_base": false
+    },
+    {
+      "path": "scripts/ci/test-wealth-diff.py",
+      "bytes": 9114,
+      "sha256": "5566145034013f37cc0d927c88fe96538e104ec7715a8e5c23dbcb3a9fd3a482",
+      "base_blob": "f5828d13e1d672da43fffa145a6ca46b0982aa27",
+      "unchanged_from_base": false
+    },
+    {
+      "path": "vercel.json",
+      "bytes": 3094,
+      "sha256": "3066e6cbe9d24a379a888cdafd12b2d1784882e9f6527f3824d0b583aec4c8cb",
+      "base_blob": "534ea509b44c34af99de06308894f311d37889cc",
+      "unchanged_from_base": false
+    },
+    {
+      "path": "qa/iao-continuity-20261124/auth-sdk/edge-npm-alignment-karta.log",
+      "bytes": 426,
+      "sha256": "d44ce114799fe915fc5339aea889fcafcfe51e008e279731f009d73a72ffcda2",
+      "base_blob": "82ac622e1bf22f17b5160b11f21de59ab29f8401",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "qa/iao-continuity-20261124/ci-first-attempt/device-job-excerpts.log",
+      "bytes": 6619,
+      "sha256": "b746ff79f80c1183b0618e5ed6f558df414de2925c7cb0ce54c6d33a719ba74b",
+      "base_blob": "307635738311c75bbf1181d9ca648073aa7d3d64",
+      "unchanged_from_base": true
+    }
+  ],
+  "deployment_guard": {
+    "only_new_entry_added": true,
+    "new_branch_disabled": true,
+    "existing_configuration_preserved": true
+  },
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "-n",
+        "scripts/ci/check-wealth-diff.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "gitnexus": {
+    "pre_edit_impact": {
+      "target": "main",
+      "file": "scripts/ci/test-wealth-diff.py",
+      "repo": "iao-runtime-composition-20261124",
+      "exit_code": 1,
+      "result": "Target not found",
+      "risk": "UNKNOWN",
+      "impactedCount": null
+    },
+    "post_edit_limited_index": {
+      "nodes": 19,
+      "edges": 32,
+      "flows": 2,
+      "fts": false,
+      "direct_callers": 1,
+      "risk": "LOW",
+      "scope": "two CI scripts and Wealth workflow only"
+    },
+    "final_detections": "collected separately after staging; no product-wide graph coverage claimed"
+  },
+  "ci_failure_provenance": {
+    "head": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+    "run": 45492058278,
+    "job": 138792674407,
+    "failed_step": "Record the exact PR comparison",
+    "exit_code": 2,
+    "gitnexus_install_analyze_detect": "skipped"
+  },
+  "limits": [
+    "No CI run of this correction yet",
+    "No publication or deployment",
+    "No product, model, DB or provider test in this lot",
+    "Bounded claim and concurrency discovery only"
+  ],
+  "publication_parent": "48869219a22fef71edeb069a2f2b50d966edc363",
+  "fresh_base_reconciliation": {
+    "preparation_base": "9ab7e16b9d1230185d52d216a406c90a3a4a486d",
+    "publication_parent": "48869219a22fef71edeb069a2f2b50d966edc363",
+    "all_ten_preimages_unchanged": true,
+    "concurrent_PR112_changes_disjoint": true,
+    "existing_vercel_configuration_unchanged": true,
+    "full_comparison_exit": 0,
+    "full_comparison_base": "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+    "worktree_fast_forward_preserved_all_prepared_bytes": true
+  }
+}

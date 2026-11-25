@@ -1,0 +1,29 @@
+{
+  "started_utc": "2026-11-24T20:34:28.591148+00:00",
+  "base_commit": "04ff79cf8c5d1061e04cf631efac21601978433e",
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "exit_code": 137,
+  "timed_out": false,
+  "duration_seconds": 26.31,
+  "environment_limits": {
+    "NODE_OPTIONS": "--max-old-space-size=736 --max-semi-space-size=1",
+    "GOMAXPROCS": "1",
+    "MALLOC_ARENA_MAX": "2",
+    "UV_THREADPOOL_SIZE": "1"
+  },
+  "source_sha256": {
+    "src/lib/partner.ts": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+    "src/lib/partner-discovery-result.ts": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+    "src/pages/PartnerAgentProspects.tsx": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+    "supabase/functions/partner-find-prospects/index.ts": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9",
+    "package.json": "6f0a54b63d6e4917bc055dd00fa1975d323e2c9a1887f22673582aee5e283349",
+    "package-lock.json": "07d29f490a10f6a0c0da15844e480b7e4f0e21f58004d983d1a633a46ee03da5",
+    "vite.config.ts": "fd5a532a26f76a7a30967be55714ae475b884904d74a9216905678f8c89a90e6"
+  },
+  "source_files_unchanged": true,
+  "scope": "Exact npm run build including offline asset validation and unchanged Vite build/minification. Resource settings only; no deployment or production API."
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Loader2, Check, X, Filter, Send, MessageSquare,
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -17,13 +17,18 @@ import {
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  listLogs, approveLog, rejectLog, sendDraft, getDraftPreview, reconcileDraft,
+  listLogs, getEmailAgentLog, approveLog, rejectLog, sendDraft, getDraftPreview, reconcileDraft,
   ACTION_META, CATEGORY_META,
   type EmailAgentLog, type EmailAction, type EmailDraftPreview,
 } from '@/lib/email-agent';
 
 export default function EmailAgentLogs() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const requestedLogId = searchParams.get('log');
+  const [linkLoading, setLinkLoading] = useState(false);
+  const [linkError, setLinkError] = useState('');
+  const [linkRetry, setLinkRetry] = useState(0);
   const [logs, setLogs] = useState<EmailAgentLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | EmailAction>('all');
@@ -84,7 +89,7 @@ export default function EmailAgentLogs() {
     setOperationError(''); setReconciliation(''); setPreviewLoading(false);
   };
 
-  const openLog = async (log: EmailAgentLog) => {
+  const openLog = useCallback(async (log: EmailAgentLog) => {
     if (log.user_id !== ownerRef.current || busyRef.current) return;
     const version = ++viewVersion.current;
     operation.current?.abort();
@@ -103,7 +108,29 @@ export default function EmailAgentLogs() {
     } finally {
       if (version === viewVersion.current && ownerRef.current === log.user_id) setPreviewLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    setLinkError(''); setLinkLoading(false);
+    if (!owner || !requestedLogId) return;
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedLogId)) {
+      setLinkError('Le lien vers ce brouillon est invalide.'); return;
+    }
+    let active = true;
+    const version = ++viewVersion.current;
+    const controller = new AbortController();
+    setLinkLoading(true);
+    void getEmailAgentLog(owner, requestedLogId, controller.signal).then(log => {
+      if (!active || ownerRef.current !== owner || viewVersion.current !== version) return;
+      if (log) void openLog(log);
+      else setLinkError('Ce brouillon n’est pas accessible sur ce compte ou a été retiré.');
+    }).catch(() => {
+      if (active && ownerRef.current === owner && viewVersion.current === version) {
+        setLinkError('Le brouillon n’a pas pu être chargé. Réessayez sa lecture.');
+      }
+    }).finally(() => { if (active && ownerRef.current === owner) setLinkLoading(false); });
+    return () => { active = false; controller.abort(); };
+  }, [owner, requestedLogId, linkRetry, openLog]);
 
   const handleApprove = async () => {
     if (!selected || !preview || busyRef.current || selected.user_id !== ownerRef.current
@@ -205,6 +232,11 @@ export default function EmailAgentLogs() {
         </div>
       </motion.div>
 
+      {linkLoading && <p role="status" className="text-sm text-muted-foreground">Chargement du brouillon partenaire…</p>}
+      {linkError && <div role="alert" className="space-y-2 text-sm">
+        <p>{linkError}</p><Button variant="outline" size="sm" onClick={() => setLinkRetry(value => value + 1)}>Réessayer ce brouillon</Button>
+      </div>}
+
       {loading ? (
         <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-accent-cyan" /></div>
       ) : logs.length === 0 ? (
@@ -273,6 +305,7 @@ export default function EmailAgentLogs() {
                   <MessageSquare className="w-5 h-5 text-accent-cyan" />
                   {selected.subject || '(sans objet)'}
                 </DialogTitle>
+                <DialogDescription>Consultez le message reçu et vérifiez le contenu de la réponse avant de l’approuver.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="text-xs text-muted-foreground">

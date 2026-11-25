@@ -1,0 +1,528 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-11-24T20:34:34.806824+00:00",
+  "status": "PASS_SCOPED_INSPECTION",
+  "scope": "Current QA files including decoded compressed journals, plus the eight changed publication source/test paths listed below. No external machine or credential registry was accessed for this check.",
+  "filesInspected": 84,
+  "decodedBytes": 906323,
+  "findings": [],
+  "missingReadmeLinks": [],
+  "review": {
+    "credentials": "No real credential, private-key block or token pattern found in this snapshot. Named environment variables and synthetic test diagnostics are not credentials.",
+    "infrastructure": "No private infrastructure path/host marker, nonfixture IPv4 address, or excluded deployment report found in this snapshot.",
+    "productionClaims": "Production/deployment mentions were reviewed: build-mode labels, source/test descriptions, or explicit limits. No assertion of a completed production deployment found.",
+    "productionMentionsReviewed": 28,
+    "history": "Existing red/green records remain preserved. No historical failure was deleted or changed to a success."
+  },
+  "limitations": [
+    "This is a targeted publication inspection, not a repository-wide secret scanner or a production security certification.",
+    "Files added or edited after this timestamp need the final publication check coordinated by the parent.",
+    "WAIT_ROOT markers in README intentionally retain pending backend/global/native/build receipts."
+  ],
+  "files": [
+    {
+      "file": "karta/test/assistantPolicy.test.ts",
+      "sha256": "0692018a9580ce4e5321383788047cf3f160349b3bcd2671bdedf752e3d0b301",
+      "bytes": 32222,
+      "decodedBytes": 32222
+    },
+    {
+      "file": "karta/test/partnerDiscovery.test.ts",
+      "sha256": "03b8ef2e6fa716349d99d7996f18133e2ac07480833258ff2c8831dc62cc4650",
+      "bytes": 32056,
+      "decodedBytes": 32056
+    },
+    {
+      "file": "qa/partner-discovery-20261124/README.md",
+      "sha256": "2f14a5d5a0770cc3a8e1484cb1e5a74fc170297605675d95ad6d37731a1d73fc",
+      "bytes": 6255,
+      "decodedBytes": 6255
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-gitnexus-partner-bounded.log.gz",
+      "sha256": "c45bd2479ae858b82f87b8a0466042387cfa1101842be8bf5204c544bdcd48a5",
+      "bytes": 643,
+      "decodedBytes": 1156
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-gitnexus-partner-initial.log.gz",
+      "sha256": "0d74ac3407913e064b2a278d340c56a15458e7a04e485c0ec5514e6261dbb05b",
+      "bytes": 336,
+      "decodedBytes": 518
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-gitnexus-partner-product.log.gz",
+      "sha256": "709e1b524e9770f1a24240f24c3dfdc0d9ce91b689ccddc1a77ffada35c97ba2",
+      "bytes": 1551,
+      "decodedBytes": 3973
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-gitnexus-partner-sequential.log.gz",
+      "sha256": "bc88368f33fb3fb200a84c35650b4d263864e4bec5ac6339d208957f0ce2259a",
+      "bytes": 1044,
+      "decodedBytes": 1961
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-iao-discovery-audit-before.json.gz",
+      "sha256": "f3d780d42decde807e3e7325c4bc1ddbf40fe15ca96b7e7b9bee56642fb73636",
+      "bytes": 710,
+      "decodedBytes": 3763
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-iao-discovery-audit-red-receipt.json.gz",
+      "sha256": "8ce5d580e52086ddf6e3c079e7c8fcba5a37fa5aafc8660ad307b86952deab5d",
+      "bytes": 688,
+      "decodedBytes": 1175
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-iao-discovery-audit-red.log.gz",
+      "sha256": "af62c9c7d305860f901abdf929d1851cf26c181f52ede738009b6057758bf9a1",
+      "bytes": 4538,
+      "decodedBytes": 31539
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline-partner-ui-discovery-red.log.gz",
+      "sha256": "20b8a0d9b705249c7f653d6c4dca74014e1fbb81fe54c0de130a5ea80518f272",
+      "bytes": 4436,
+      "decodedBytes": 198062
+    },
+    {
+      "file": "qa/partner-discovery-20261124/baseline.json",
+      "sha256": "8751e82218f9f7b2c12f812195061ae597e2a68008f4baa125f220abf1f31a31",
+      "bytes": 2393,
+      "decodedBytes": 2393
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build-container-832-receipt.json",
+      "sha256": "426f8ce39bb22009b63839aacf11214dccb9c44c43f7b07930eeec6caae37f3a",
+      "bytes": 219,
+      "decodedBytes": 219
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build-container-832.log",
+      "sha256": "06e0b2e766bfcee71f11f9810329ac4b0348e587a54b08467d43dc1d13e2bb7c",
+      "bytes": 1588,
+      "decodedBytes": 1588
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build-final.log",
+      "sha256": "908ed8b192454dcf13d0f9e8bfdc98ba9ae7d9eb254ab42324592854119a37da",
+      "bytes": 630,
+      "decodedBytes": 630
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build-jitless-final-receipt.json",
+      "sha256": "9785b41b434c41099bcf294d6f5ba9779f94a3556f6ef77f318bccd3264b2213",
+      "bytes": 1278,
+      "decodedBytes": 1278
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build-jitless-final.log",
+      "sha256": "977a5432b9a276149051fb56313299e83e8c0e8c2cea92851d4c9a3340f99d80",
+      "bytes": 15391,
+      "decodedBytes": 15391
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build-receipt.json",
+      "sha256": "9c63102379121e3b84730563711c76e13e34e315f396c8f721165a3b9f286556",
+      "bytes": 177,
+      "decodedBytes": 177
+    },
+    {
+      "file": "qa/partner-discovery-20261124/build.log",
+      "sha256": "9eaf02acd894e25517227981b8a735ace88c4fb75fbc4f52abf1a1cc0c518da9",
+      "bytes": 1471,
+      "decodedBytes": 1471
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-context-find.json",
+      "sha256": "1e54c0c6d1ea9818527679f092912045c4b0d2adaf5872086879d830d3b89f8d",
+      "bytes": 869,
+      "decodedBytes": 869
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-context-find.stderr.log",
+      "sha256": "fdaa1dc1d8c11afd778385bfe6237fba28f57dfedc5fd426f89730efb823c29b",
+      "bytes": 339,
+      "decodedBytes": 339
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-edge.json",
+      "sha256": "deea96caa655a3f531bae002c52a7422ada0f65fd96b026f2720cb421e4aff65",
+      "bytes": 924,
+      "decodedBytes": 924
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-edge.stderr.log",
+      "sha256": "e4882d00758a922e08153160c3cb97b3805a265dba539bcad07e45f8979b672e",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-entry.json",
+      "sha256": "a2878bfdcc6513b92dc554afdd176223ac3e6ada5fc628e7e3d55e25b8f015b2",
+      "bytes": 1171,
+      "decodedBytes": 1171
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-entry.stderr.log",
+      "sha256": "c5861b946233e12baee2c4044723ef740de1ca0c18f40d656679ca2eefcc2efb",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-find.json",
+      "sha256": "f7af0bf70fc975a91d6bcee65a15030477cf6a95abd175932dc6caf238055025",
+      "bytes": 953,
+      "decodedBytes": 953
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-find.stderr.log",
+      "sha256": "7002dd449561536b0a24e71a4dbec5f1f2783c680a57c346110d636b2e63ca27",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-ui.json",
+      "sha256": "0f00869afca934459e7f78273293d7e6596f6beaa93110ca039b9a38707882a8",
+      "bytes": 947,
+      "decodedBytes": 947
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-impact-ui.stderr.log",
+      "sha256": "410d398a5f3c15a3378ad4f0275fc6395eeec20023dc7d12f9a34379a907a1ae",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-partner-product-qualified.log.gz",
+      "sha256": "550458084127ca6ee8f53cb136a9adad9fa24c05a3761ec890f10e9f5c58209f",
+      "bytes": 1074,
+      "decodedBytes": 2037
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-partner-review-refresh.log.gz",
+      "sha256": "f340da113c43c2f6d041a129c8a31065987def821888ef6a629497e096dd469e",
+      "bytes": 850,
+      "decodedBytes": 1528
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-partner-scoped.log.gz",
+      "sha256": "8d9b28bc42bef3fb19f818123f088ed9fbaba609915ba5b78755d602d264fba7",
+      "bytes": 723,
+      "decodedBytes": 1309
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-query.json",
+      "sha256": "e77896331a3f0cd022ce132bccec84a52a6af49da9a6b6099421119db8974848",
+      "bytes": 699,
+      "decodedBytes": 699
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-query.stderr.log",
+      "sha256": "67cd2024557e8e7da7b99d7c7b284e403ce07ca47c0f8fa8a8db6f98c81ea4b1",
+      "bytes": 337,
+      "decodedBytes": 337
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-client.json",
+      "sha256": "f5de5363b5f19ea74a4fe2c28c0a762bf73ec034b68c0283082d5520d8e4a8eb",
+      "bytes": 1733,
+      "decodedBytes": 1733
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-client.stderr.log",
+      "sha256": "13604932010fad6ef6ea2127c63b340a148e4d37bf85c9ca6f28d89710d8cbb8",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-entry.json",
+      "sha256": "a2878bfdcc6513b92dc554afdd176223ac3e6ada5fc628e7e3d55e25b8f015b2",
+      "bytes": 1171,
+      "decodedBytes": 1171
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-entry.stderr.log",
+      "sha256": "8246d54d61be2b5546f4256186c5b1003c9ca675d81659b9efa0fb2fbef30975",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-extraction.json",
+      "sha256": "0bc6328e6b7e33cfa2932a53cff29b6292ba539a8dee160916231e70b3544eec",
+      "bytes": 942,
+      "decodedBytes": 942
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-extraction.stderr.log",
+      "sha256": "ac6a3f7088fcec416164a193717f961ae0100cbcf3c5262e5725100f51f64ecb",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-policy-fixture.json",
+      "sha256": "8832f90676566c428825e539287d68a388094a581a5b3bf521612fb5aa61153d",
+      "bytes": 911,
+      "decodedBytes": 911
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-policy-fixture.stderr.log",
+      "sha256": "b24e8279c01cd4c020d0227e3953e501e2a914c096df74ae0748b430dfcc1eb0",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-search-sources.json",
+      "sha256": "28f9b5a4d4185d7db034effbba9b092d77e0c1f7c77e7b21b4d8cc22fa3a2c88",
+      "bytes": 942,
+      "decodedBytes": 942
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-search-sources.stderr.log",
+      "sha256": "c43cc2d1d5212e87b0b66778d4f1481e0f7b47cfaf6342e5092b783026e409f0",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-source-emails.json",
+      "sha256": "6720d56e3f3b96e8e697f17ce03bfebd45a5599493f69de2f9427e904e333f74",
+      "bytes": 1392,
+      "decodedBytes": 1392
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-source-emails.stderr.log",
+      "sha256": "5fbaf3b69da9bdc608d733a931ac590a9e4068654f90f8b0470e9d25f2a8e65e",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-source-prospects.json",
+      "sha256": "60434f0c52ed00c7a6867ae53f8856ff555eda286bf4ab71eb30771e6d0edcc9",
+      "bytes": 948,
+      "decodedBytes": 948
+    },
+    {
+      "file": "qa/partner-discovery-20261124/gitnexus-review-impact-source-prospects.stderr.log",
+      "sha256": "d5bcda0a9df4c5a6ae5e3311beb16271d0a27b6548546f2b3a19654c4d820be3",
+      "bytes": 338,
+      "decodedBytes": 338
+    },
+    {
+      "file": "qa/partner-discovery-20261124/graph-scope.json",
+      "sha256": "ef6b1fd5dc70ba3b9ad21e23bd549b648a9c5ff47ac2b34eeed368c7ed8b4816",
+      "bytes": 10673,
+      "decodedBytes": 10673
+    },
+    {
+      "file": "qa/partner-discovery-20261124/native-typecheck.json",
+      "sha256": "e49c95a0d43c0189a9ccaf4b8fb29ba49a50f532b6159178d33a7ab6dfa5b8f6",
+      "bytes": 2360,
+      "decodedBytes": 2360
+    },
+    {
+      "file": "qa/partner-discovery-20261124/native-typecheck.log",
+      "sha256": "09a4fdada896923cb5b9bb63b837b7f75a2c26b573cc70c01d2fa8b4535776f6",
+      "bytes": 4116,
+      "decodedBytes": 4116
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-client-initial-receipt.json",
+      "sha256": "85c4b0d87736ce7775d9cd7d45eb8aeee498dec33663a8c50457198789e81dbe",
+      "bytes": 1027,
+      "decodedBytes": 1027
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-client-initial.log",
+      "sha256": "33fdf021398d62f4ef2a2d384f6f49c728df7a23f0edbcf49501f23848fa1d7c",
+      "bytes": 638,
+      "decodedBytes": 638
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-final-receipt.json",
+      "sha256": "5575e6949e0996f2842968f46a2ae93a4c68e0cfa743b9bb3dc9de346419395e",
+      "bytes": 1088,
+      "decodedBytes": 1088
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-receipt.json",
+      "sha256": "0936fc6038e99b13344e7e03782363e9a9ff021e09eb496c1ad8a05a8b83639b",
+      "bytes": 236,
+      "decodedBytes": 236
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-sequential-receipt.json",
+      "sha256": "c52c16c3e9da2e0a8962b54fb06e1be6eef1a717671c5e1a314aacc574217a28",
+      "bytes": 321,
+      "decodedBytes": 321
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck-sequential.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/typecheck.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-after.log.gz",
+      "sha256": "9b51cce5085a32f6d98752b8d324d970fb202897396a825564a3e01a43f9be69",
+      "bytes": 4384,
+      "decodedBytes": 27573
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-before.log.gz",
+      "sha256": "668d65150692f1b4010b24cf194b262615375bc533944d9fc39e9d5d999a279a",
+      "bytes": 4586,
+      "decodedBytes": 41846
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-final.log.gz",
+      "sha256": "117f99a385c22bfdd16ccdc46d93e8a5858eaf637ef9b85525e7a924104c9c8b",
+      "bytes": 2860,
+      "decodedBytes": 18632
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-frozen-lint.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "bytes": 20,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-frozen.log.gz",
+      "sha256": "44cf63bb4836ee2edbacbd5a4740f992ab21a8b7e6485988f738ab55b8dbb5ea",
+      "bytes": 2844,
+      "decodedBytes": 18805
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-lint.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "bytes": 20,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-realm-diagnostic.log.gz",
+      "sha256": "4bdbdc7089cb1f6dc56d24cbf751851d8a7b8a12e59e37a4efd5f0ec1656ece7",
+      "bytes": 1340,
+      "decodedBytes": 6534
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-receipt.json",
+      "sha256": "f374605fcf2d6f30942ee1b000d4d62f00d536400ff92411e83ccf2725027012",
+      "bytes": 11699,
+      "decodedBytes": 11699
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-status-before.log.gz",
+      "sha256": "e9ba10358612f0f0a74de4844d3c7c0e0cf1e41ee8c99740c9ce5c320a79e826",
+      "bytes": 1264,
+      "decodedBytes": 6298
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-typed-lint.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "bytes": 20,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-client-typed.log.gz",
+      "sha256": "20c0276dc95fb3f5ecc03ad3c70ddd3492cd28e3db011584366d94b17f2dcce8",
+      "bytes": 2871,
+      "decodedBytes": 18809
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-before.log",
+      "sha256": "441e1ad32134ec1776fe75b185dbf2877addc7ffeb0ec3f8555061c95dfffdc0",
+      "bytes": 198062,
+      "decodedBytes": 198062
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-commit-before.log",
+      "sha256": "b5781e372a9dfd898729dcf0b1440f572a861c1f0d71ee5c3cba3c470ff03ba6",
+      "bytes": 4852,
+      "decodedBytes": 4852
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-final.log",
+      "sha256": "bfbef32a8906e4e9bba642d98e509a11b19cc9e2f2be49997626011ccdab9489",
+      "bytes": 12616,
+      "decodedBytes": 12616
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-owned-form-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "decodedBytes": 0
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-owned-form.log",
+      "sha256": "34f1218189d2533baf120337f724a2f8c2f574de2bb036dd07fa8a3e6b69a3bd",
+      "bytes": 12834,
+      "decodedBytes": 12834
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-receipt.json",
+      "sha256": "1b0b54de561e6329c50b1110bfaffcf07a66065c72492171fbb4909fbb50bf18",
+      "bytes": 7794,
+      "decodedBytes": 7794
+    },
+    {
+      "file": "qa/partner-discovery-20261124/ui-discovery-select-only.log",
+      "sha256": "16c87567af1cc0f6bb7f0a4e956df7ad791edcab5d51b4274253ae01a5acf653",
+      "bytes": 27559,
+      "decodedBytes": 27559
+    },
+    {
+      "file": "src/lib/partner-discovery-result.test.ts",
+      "sha256": "0e5cd2a217e0166194e22673b3b07c2109475aa2d4e63dadce39c67b15664602",
+      "bytes": 10015,
+      "decodedBytes": 10015
+    },
+    {
+      "file": "src/lib/partner-discovery-result.ts",
+      "sha256": "a854e6b4a318836385fdd19968f67b942a6b3f93973a57c3f9ebc92bc3988bd6",
+      "bytes": 6226,
+      "decodedBytes": 6226
+    },
+    {
+      "file": "src/lib/partner.ts",
+      "sha256": "5b65217db3dc1e07912825cbbf2c5c39799b555f03311f8ecbe7ec9fc211fa5b",
+      "bytes": 21774,
+      "decodedBytes": 21774
+    },
+    {
+      "file": "src/pages/PartnerAgentProspects.discovery.test.tsx",
+      "sha256": "47f143715176f6bcde6ef0a688edc5172f3d165287fe87e47c68a7adb6b0acc0",
+      "bytes": 19829,
+      "decodedBytes": 19829
+    },
+    {
+      "file": "src/pages/PartnerAgentProspects.tsx",
+      "sha256": "6edcc6fcb414a0304ccacc311738e48de9a4ee27a0330ec8f636b06145856903",
+      "bytes": 34420,
+      "decodedBytes": 34420
+    },
+    {
+      "file": "supabase/functions/partner-find-prospects/index.ts",
+      "sha256": "8525f626be7385140773873e72322c55b5695a93886e68051f86ef4e12c1eda9",
+      "bytes": 20990,
+      "decodedBytes": 20990
+    }
+  ]
+}

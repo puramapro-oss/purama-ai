@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const today = new Date().toISOString().slice(0, 10);
 let reserved = 0;
 const rpc = vi.fn(async (name: string, params: Record<string, unknown>) => {
+  if (name === "partner_direct_send_guard") return { data: { status: "allowed", reason: null }, error: null };
   if (name !== "karta_reserve_daily_counter") return { data: null, error: { message: "unexpected rpc" } };
   if (params.p_day !== today || params.p_counter_key !== "gmail_send") {
     return { data: null, error: { message: "invalid counter request" } };
@@ -67,7 +68,8 @@ describe("gmail_send hardening", () => {
       messageId: "message-1",
     });
     expect(reserved).toBe(6);
-    expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc.mock.calls.filter(([name]) => name === "karta_reserve_daily_counter")).toHaveLength(1);
+    expect(rpc.mock.calls.filter(([name]) => name === "partner_direct_send_guard")).toHaveLength(2);
   });
 
   it("bloque lorsque la réservation atomique n'accorde plus de place", async () => {

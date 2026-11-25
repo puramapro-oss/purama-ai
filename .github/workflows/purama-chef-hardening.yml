@@ -150,7 +150,7 @@ jobs:
         run: node --test tests/oauth-gmail/draft-approval-client.test.mjs
       # The two private Entraide helpers are received through the four real routes
       # after canonical bundle preparation; see tests/entraide/README.md.
-      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/email-agent-send-draft/index.ts supabase/functions/email-agent-reconcile-draft/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/chef-workshop/index.ts supabase/functions/_shared/billing-boundary.ts supabase/functions/_shared/ots-auth.ts supabase/functions/contracts-cancel/index.ts supabase/functions/contracts-create/index.ts supabase/functions/contracts-get/index.ts supabase/functions/contracts-list-user/index.ts supabase/functions/creator-agent-run/index.ts supabase/functions/founder-dashboard/reader.ts supabase/functions/karta-trigger/index.ts supabase/functions/legal-build-case/index.ts supabase/functions/legal-chat/index.ts supabase/functions/partner-find-prospects/index.ts supabase/functions/partner-send-outreach/index.ts supabase/functions/partner-generate-contract/index.ts supabase/functions/partner-sync-replies/index.ts
+      - run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/contracts-ots-stamp/index.ts supabase/functions/contracts-ots-verify/index.ts supabase/functions/contracts-webhook/index.ts supabase/functions/check-subscription/index.ts supabase/functions/process-influencer-payments/index.ts supabase/functions/founder-dashboard/index.ts supabase/functions/agent-chat/index.ts supabase/functions/stripe-webhook/index.ts supabase/functions/oauth-google/index.ts supabase/functions/email-agent-gmail-oauth/index.ts supabase/functions/email-agent-send-draft/index.ts supabase/functions/email-agent-reconcile-draft/index.ts supabase/functions/creator-agent-chat/index.ts supabase/functions/create-checkout/index.ts supabase/functions/customer-portal/index.ts supabase/functions/chef-workshop/index.ts supabase/functions/_shared/billing-boundary.ts supabase/functions/_shared/ots-auth.ts supabase/functions/contracts-cancel/index.ts supabase/functions/contracts-create/index.ts supabase/functions/contracts-get/index.ts supabase/functions/contracts-list-user/index.ts supabase/functions/creator-agent-run/index.ts supabase/functions/founder-dashboard/reader.ts supabase/functions/karta-trigger/index.ts supabase/functions/legal-build-case/index.ts supabase/functions/legal-chat/index.ts supabase/functions/partner-find-prospects/index.ts supabase/functions/partner-send-outreach/index.ts supabase/functions/partner-generate-contract/index.ts supabase/functions/partner-sync-replies/index.ts supabase/functions/partner-prepare-reply/index.ts
       - run: npm run test:commerce:plans
       - name: Authenticated model consultation Edge contract
         run: deno check --no-config --no-lock --node-modules-dir=manual supabase/functions/iao-consultation/index.ts
@@ -330,3 +330,14 @@ jobs:
         run: node --test test/privateToolResults.native.mjs
       - name: Model consultation admission and cancellation concurrency
         run: node --test test/consultationStore.native.mjs
+      - name: Partner discovery atomic imports on native PostgreSQL
+        id: partner_discovery_native
+        run: node --test test/partnerDiscovery.native.mjs
+      - name: Preserve partner discovery concurrency evidence
+        if: ${{ always() && (steps.partner_discovery_native.outcome == 'success' || steps.partner_discovery_native.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: partner-discovery-native-${{ github.sha }}
+          path: qa/partner-discovery-20261124/native/runtime-report.json
+          if-no-files-found: error
+          retention-days: 14
