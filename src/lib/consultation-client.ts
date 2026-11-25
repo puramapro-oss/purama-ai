@@ -34,10 +34,10 @@ export class ConsultationClientError extends Error {
       forbidden: 'Cette consultation n’est pas accessible à ce compte.',
       conflict: 'Cette demande correspond déjà à un autre contenu. Consultez son état.',
       budget: 'La capacité disponible ne permet pas cette consultation.',
-      rate_limit: 'Trop de demandes ont été envoyées. Patientez avant de vérifier le résultat.',
+      rate_limit: 'Trop de demandes ont été envoyées. Patientez avant d’actualiser l’état de la consultation.',
       not_found: 'Cette consultation est introuvable pour ce compte.',
-      timeout: 'Le délai de réponse est dépassé. Vérifiez le résultat avant une autre demande.',
-      interrupted: 'La connexion a été interrompue. Vérifiez l’état de la consultation.',
+      timeout: 'Le délai de réponse est dépassé. Actualisez l’état de la consultation avant une autre demande.',
+      interrupted: 'La connexion a été interrompue. Actualisez l’état de la consultation.',
       unavailable: 'Le service de consultation est temporairement indisponible.',
     };
     super(messages[code]);

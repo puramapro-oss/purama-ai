@@ -38,7 +38,7 @@ function retain(userId: string, operationId: string | null) {
 }
 const lines = (value: string) => value.split('\n').map(row => row.trim()).filter(Boolean);
 const publicError = (error: unknown) => error instanceof ConsultationClientError
-  ? error.message : 'La réponse n’a pas pu être confirmée. Vérifiez le résultat avant une autre demande.';
+  ? error.message : 'L’état de la consultation n’a pas pu être confirmé.';
 const fieldClass = 'mt-1 w-full rounded-md border border-input bg-background px-2 py-2 text-sm disabled:opacity-50';
 const buttonClass = 'rounded-md border border-input px-3 py-2 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary';
 
@@ -55,6 +55,20 @@ function choosePublicCouncil(models: ConsultationCatalog['models']) {
     return { preferences: { model: lead.model, reflection, speed: 'standard' as const }, reviewerModels };
   }
   return null;
+}
+
+function ConsultationSources({ sources, technicalDetails }: {
+  sources: NonNullable<ConsultationOperation['result']>['sources']; technicalDetails: boolean;
+}) {
+  return <ol className="mt-2 space-y-2 text-xs">{sources.map(source => <li key={source.id} className="break-words">
+    <a href={consultationSourceUrl(source.url) ?? undefined} target="_blank" rel="noopener noreferrer" className="underline text-primary">
+      {source.id} — {source.title || source.url}
+    </a>
+    <p className="text-muted-foreground">{technicalDetails && <>{source.provider} · </>}{source.retrievedAt}</p>
+    {source.text.trim() ? <p className="whitespace-pre-wrap">{source.text}</p>
+      : <p className="text-muted-foreground">Aucun extrait de texte disponible.</p>}
+    {source.truncated && <p className="text-muted-foreground">Titre ou extrait abrégé.</p>}
+  </li>)}</ol>;
 }
 
 /** One private operation at a time. Recovery reads status; it never sends the
@@ -145,7 +159,7 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
   const locked = operationId !== null || busy !== null;
   const remember = (id: string | null) => { setOperationId(id); retain(userId, id); };
   const apply = (value: ConsultationOperation | null) => {
-    if (!value) { setError('Aucun résultat confirmé pour cette demande. Son état reste à vérifier.'); return; }
+    if (!value) { setError('Aucun résultat reçu pour cette demande. Son état reste à confirmer.'); return; }
     setOperation(value); setError(null);
   };
 
@@ -177,11 +191,14 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
     if (!lease) return;
     setBusy('cancel'); setError(null);
     try { const received = await client.cancel(operationId, lease.signal); if (lease.current()) apply(received); }
-    catch { if (lease.current()) setError('L’annulation n’a pas été confirmée. Vérifiez le résultat ; aucun renvoi automatique n’est effectué.'); }
+    catch { if (lease.current()) setError('L’annulation n’a pas été confirmée. Actualisez l’état de la consultation.'); }
     finally { if (lease.finish()) setBusy(null); }
   }
 
   const result = operation?.result;
+  const citations = new Set(result?.answer ? result.citedSourceIds : []);
+  const citedSources = result?.sources.filter(source => citations.has(source.id)) ?? [];
+  const additionalSources = result?.sources.filter(source => !citations.has(source.id)) ?? [];
   return <section aria-label="Analyse approfondie PURAMA" className="min-h-0 flex-1 overflow-y-auto px-4 py-3 space-y-4">
     <div>
       <h4 className="font-medium">Analyse approfondie PURAMA</h4>
@@ -254,32 +271,36 @@ export function ConsultationPanel({ userId, accessToken, technicalDetails = fals
         disabled={!catalog?.available || locked || !question.trim() || problems.length > 0}>Lancer la consultation</button>}
     </form>
     {operationId && <div className="space-y-2">
-      <p role="status" className="text-sm">{busy === 'consult' ? 'Consultation en cours…' : busy === 'status' ? 'Vérification du résultat…'
-        : busy === 'cancel' ? 'Annulation en cours…' : operation ? operationLabels[operation.status] : 'Cette demande reste à vérifier.'}</p>
+      <p role="status" className="text-sm">{busy === 'consult' ? 'Consultation en cours…' : busy === 'status' ? 'Actualisation de l’état…'
+        : busy === 'cancel' ? 'Annulation en cours…' : operation ? operationLabels[operation.status] : 'L’état de cette demande reste à confirmer.'}</p>
       {operation?.cancelRequested && operation.status !== 'cancelled' && <p className="text-xs">Annulation demandée. Un appel déjà parti peut avoir consommé des ressources.</p>}
       <div className="flex flex-wrap gap-2">
-        <button type="button" className={buttonClass} disabled={busy !== null} onClick={() => { void recover(); }}>Vérifier le résultat</button>
+        <button type="button" className={buttonClass} disabled={busy !== null} onClick={() => { void recover(); }}>Actualiser l’état</button>
         {(!operation || operation.status === 'running') && <button type="button" className={buttonClass} disabled={busy === 'cancel'} onClick={() => { void cancel(); }}>Arrêter la consultation</button>}
         {operation && operation.status !== 'running' && <button type="button" className={buttonClass} disabled={busy !== null}
           onClick={() => { remember(null); setOperation(null); setError(null); setQuestion(''); setCouncil(null); }}>Nouvelle consultation</button>}
       </div>
-      <p className="text-xs text-muted-foreground">Vérifier le résultat ne relance pas l’analyse. L’annulation n’annule pas les ressources déjà consommées.</p>
+      <p className="text-xs text-muted-foreground">L’actualisation consulte le suivi de la demande. Un appel déjà parti peut avoir consommé des ressources.</p>
     </div>}
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
     {result && <article aria-label="Résultat de consultation" className="space-y-3 border-t border-border pt-3">
       {technicalDetails && <p className="text-xs text-muted-foreground">Modèle : {result.plan.model} · {reflectionLabels[result.plan.reflection]} · {speedLabels[result.plan.speed]}</p>}
       {result.answer && <p className="text-sm whitespace-pre-wrap break-words">{result.answer}</p>}
       {!result.answer && <p className="text-sm">Aucune réponse exploitable n’a été reçue.</p>}
-      <p className="text-xs font-medium">Sources non vérifiées. Cette analyse ne remplace pas la vérification des sources.</p>
+      {result.answer && <p className="text-xs font-medium">
+        {citedSources.length === 0 && 'Aucune citation reliée à une source recueillie. '}
+        La vérification indépendante des faits reste à faire.
+      </p>}
       {result.disagreements.length > 0 && <div><h5 className="text-sm font-medium">Désaccords</h5><ul className="list-disc pl-4 text-sm">{result.disagreements.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
       {result.uncertainties.length > 0 && <div><h5 className="text-sm font-medium">Incertitudes</h5><ul className="list-disc pl-4 text-sm">{result.uncertainties.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
-      {result.sources.length > 0 && <ol className="space-y-2 text-xs">{result.sources.map(source => <li key={source.id} className="break-words">
-        <a href={consultationSourceUrl(source.url) ?? undefined} target="_blank" rel="noopener noreferrer" className="underline text-primary">{source.id} — {source.title || source.url}</a>
-        {result.citedSourceIds.includes(source.id) && <span> · citée</span>}
-        <p className="text-muted-foreground">{technicalDetails && <>{source.provider} · </>}{source.retrievedAt}</p>
-        <p className="whitespace-pre-wrap">{source.text}</p>
-        {source.truncated && <p className="text-muted-foreground">Extrait abrégé.</p>}
-      </li>)}</ol>}
+      {citedSources.length > 0 && <div>
+        <h5 className="text-sm font-medium">Sources citées ({citedSources.length})</h5>
+        <ConsultationSources sources={citedSources} technicalDetails={technicalDetails} />
+      </div>}
+      {additionalSources.length > 0 && <details className="text-xs">
+        <summary className="cursor-pointer font-medium">Sources recueillies sans citation ({additionalSources.length})</summary>
+        <ConsultationSources sources={additionalSources} technicalDetails={technicalDetails} />
+      </details>}
     </article>}
   </section>;
 }

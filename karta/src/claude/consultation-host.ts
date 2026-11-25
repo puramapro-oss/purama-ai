@@ -7,6 +7,7 @@ import { createRealClaudeClient } from "./real.js";
 import { loadAnthropicModelCatalog } from "./model-catalog.js";
 import { normalizeModelCatalog, resolveModelExecutionPlan, type ModelExecutionCapability } from "./execution-profile.js";
 import { normalizeConsultationRequest, runModelConsultation, type ConsultationRequest, type ConsultationResult, type ConsultationDependencies } from "./consultation.js";
+import { allocateSourceExcerpts, MODEL_SOURCE_EXCERPT_LIMITS } from "./consultation-excerpts.js";
 import { createConsultationStore, type ConsultationEstimates, type ConsultationOperation } from "./consultation-store.js";
 import type { ClaudeClient } from "./types.js";
 
@@ -57,39 +58,32 @@ function parsePolicy(raw: string | undefined): ConsultationPolicy | null {
 /** Bound persisted excerpts in encoded bytes, including JSON escapes. Keep the
  * complete answer, citation identities, URLs and private usage receipts. */
 function persistableConsultationResult(result: ConsultationResult): ConsultationResult {
-  const excerpt = (value: string, maximum: number): string => {
-    let lower = 0; let upper = value.length;
-    while (lower < upper) {
-      const middle = Math.ceil((lower + upper) / 2);
-      if (Buffer.byteLength(JSON.stringify(value.slice(0, middle)), "utf8") <= maximum) lower = middle;
-      else upper = middle - 1;
-    }
-    if (lower && /[\uD800-\uDBFF]/.test(value[lower - 1])) lower--;
-    return value.slice(0, lower);
-  };
-  let remaining = 16_384;
-  return { ...result, sources: result.sources.map(source => {
-    const text = excerpt(source.text.slice(0, 2000), Math.min(2048, Math.max(2, remaining)));
-    remaining -= Buffer.byteLength(JSON.stringify(text), "utf8");
-    const title = excerpt(source.title, 128);
-    return { ...source, text, title, truncated: source.truncated === true || text !== source.text || title !== source.title };
-  }) };
+  const modelExcerpts = allocateSourceExcerpts(result.sources.map(s => s.text), MODEL_SOURCE_EXCERPT_LIMITS);
+  const texts = allocateSourceExcerpts(modelExcerpts, { total: 16_384, perSource: 2048, unit: "jsonUtf8" });
+  const titles = allocateSourceExcerpts(result.sources.map(s => s.title), {
+    total: 128 * result.sources.length, perSource: 128, unit: "jsonUtf8",
+  });
+  return { ...result, sources: result.sources.map((source, i) => ({
+    ...source, text: texts[i], title: titles[i],
+    truncated: source.truncated === true || texts[i] !== source.text || titles[i] !== source.title,
+  })) };
 }
 function publicOperation(value: ConsultationOperation): PublicOperation {
   const source = value.result;
-  let remaining = 32_000;
+  const sources = source?.sources ?? [];
+  const texts = allocateSourceExcerpts(sources.map(s => s.text), MODEL_SOURCE_EXCERPT_LIMITS);
+  const titles = allocateSourceExcerpts(sources.map(s => s.title), {
+    total: 512 * sources.length, perSource: 512, unit: "utf16",
+  });
   const result = source ? {
     status: source.status, reason: source.reason,
     plan: { model: source.plan.model, reflection: source.plan.reflection, speed: source.plan.speed,
       maxOutputTokens: source.plan.maxOutputTokens, timeoutMs: source.plan.timeoutMs, research: { ...source.plan.research } },
     answer: source.answer, citedSourceIds: [...source.citedSourceIds], disagreements: [...source.disagreements],
     uncertainties: [...source.uncertainties], verificationStatus: "unverified" as const,
-    sources: source.sources.map(s => {
-      const text = s.text.slice(0, Math.min(2000, remaining)); remaining -= text.length;
-      return { id: s.id, provider: s.provider, retrievedAt: s.retrievedAt, url: s.url,
-        title: s.title.slice(0, 512), text, contentKind: s.contentKind,
-        verificationStatus: "unverified" as const, truncated: s.truncated === true || text !== s.text || s.title.length > 512 };
-    }),
+    sources: sources.map((s, i) => ({ id: s.id, provider: s.provider, retrievedAt: s.retrievedAt, url: s.url,
+      title: titles[i], text: texts[i], contentKind: s.contentKind,
+      verificationStatus: "unverified" as const, truncated: s.truncated === true || texts[i] !== s.text || titles[i] !== s.title })),
   } : null;
   return { operationId: value.operationId, cancelRequested: value.cancelRequested, result,
     status: value.resourceState === "reconciliation_required" ? "reconciliation_required"

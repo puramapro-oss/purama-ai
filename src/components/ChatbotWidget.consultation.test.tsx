@@ -459,7 +459,7 @@ describe('ChatbotWidget — connected private consultation mode', () => {
     await click('Analyse approfondie');
     expect(host.querySelector('[aria-label="Modèle principal"]')).toBeNull();
     expect(host.textContent).not.toContain('Une réponse utile.');
-    expect(host.textContent).not.toContain('Vérifier le résultat');
+    expect(host.textContent).not.toContain('Actualiser l’état');
     expect(invoke.mock.calls.at(-1)?.[1].headers).toMatchObject({ Authorization: 'Bearer second-token' });
     expect(invoke.mock.calls.filter(call => call[1].body.action === 'consult')).toHaveLength(1);
   });

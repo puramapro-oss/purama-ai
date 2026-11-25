@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { isProxy } from "node:util/types";
 import type { ClaudeClient } from "./types.js";
 import type { ModelUsageReceipt } from "./usage.js";
+import { allocateSourceExcerpts, MODEL_SOURCE_EXCERPT_LIMITS, utf16Prefix } from "./consultation-excerpts.js";
 import { normalizeModelCatalog, normalizeModelPreferences, resolveModelExecutionPlan, type ModelExecutionCapability,
   type ModelExecutionPlan, type ModelExecutionPreferences } from "./execution-profile.js";
 import type { ConnectedResearchResult } from "../knowledge/connected-research.js";
@@ -80,7 +81,8 @@ const PHASE_PROMPTS = {
     + "Réponds directement à la question. Si des propositions sont présentes, compare leurs appuis et les objections. "
     + "Tu peux reprendre telle quelle la meilleure proposition si les autres n’apportent aucune amélioration étayée. "
     + "Conserve les désaccords importants non résolus et précise ce qui permettrait de les trancher. "
-    + "Cite uniquement les identifiants des sources fournies qui étayent ta réponse. Signale les avis ou sources indisponibles.",
+    + "Cite uniquement les identifiants dont l’extrait fourni contient un passage qui étaye ta réponse. "
+    + "Un titre ou un identifiant seul ne suffit pas. Signale les avis ou sources indisponibles.",
 };
 const hash = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const invalid = (): never => { throw new Error("Consultation invalide ou capacité non qualifiée"); };
@@ -273,15 +275,15 @@ export async function runModelConsultation(
           collect(retrieved, "firecrawl");
         });
       }
-      let remainingText = 32_000;
-      const modelSources = sources.map(source => {
-        const text = source.text.slice(0, Math.min(2000, remainingText));
-        remainingText -= text.length;
+      const excerpts = allocateSourceExcerpts(sources.map(source => source.text), MODEL_SOURCE_EXCERPT_LIMITS);
+      const modelSources = sources.map((source, index) => {
+        const text = excerpts[index];
         return { id: source.id, provider: source.provider, retrievedAt: source.retrievedAt,
-          domain: new URL(source.url).hostname, title: source.title.slice(0, 512), contentKind: source.contentKind,
+          domain: new URL(source.url).hostname, title: utf16Prefix(source.title, 512), contentKind: source.contentKind,
           text, textTruncated: text !== source.text, titleTruncated: source.title.length > 512,
           verificationStatus: "unverified" };
       });
+      const citableIds = modelSources.filter(source => source.text.trim()).map(source => source.id);
       const modelCall = (model: string, kind: "proposal" | "critique" | "synthesis", context: Record<string, unknown>) => {
         // Entire serialized context, including metadata and reviews. This is a
         // byte ceiling, not an estimated tokenizer or model context guarantee.
@@ -297,25 +299,34 @@ export async function runModelConsultation(
           if (decision.mock || !Array.isArray(decision.toolCalls) || decision.toolCalls.length
             || typeof decision.summary !== "string" || !decision.summary.trim()
             || decision.summary.length > (kind === "synthesis" ? 32_000 : 4000)) return invalid();
-          return kind === "synthesis" ? conclusion(decision.summary, sources.map(item => item.id)) : decision.summary;
+          return kind === "synthesis" ? conclusion(decision.summary, citableIds) : decision.summary;
         }, model);
       };
       const opinions: Array<{ label: string; text: string }> = [];
       if (request.reviewerModels.length) {
         const panel = async (kind: "proposal" | "critique", names: string[]) => {
-          const collected: Array<{ label: string; text: string }> = [];
+          const values: Array<string | undefined> = [];
           const prior = structuredClone(opinions);
-          for (let start = 0; start < names.length; start += plan.research.concurrency) {
-            const batch = names.slice(start, start + plan.research.concurrency);
-            const values = await Promise.all(batch.map(model => modelCall(model, kind, {
-              question: request.question, sources: modelSources, ...(kind === "critique" ? { opinions: prior } : {}),
-            })));
-            values.forEach((value, index) => { if (typeof value === "string") collected.push({ label: `${kind}-${start + index + 1}`, text: value }); });
-          }
-          opinions.push(...collected);
+          let next = 0;
+          const worker = async () => {
+            while (next < names.length && !accountingFailed) {
+              activeSignal.throwIfAborted();
+              const index = next++;
+              const value = await modelCall(names[index], kind, {
+                question: request.question, sources: modelSources, ...(kind === "critique" ? { opinions: prior } : {}),
+              });
+              if (typeof value === "string") values[index] = value;
+            }
+          };
+          // Refill a slot after settlement. Publish opinions in request order when the round is complete.
+          const concurrency = Math.min(names.length, plan.research.concurrency);
+          await Promise.all(Array.from({ length: concurrency }, worker));
+          values.forEach((text, index) => {
+            if (text !== undefined) opinions.push({ label: `${kind}-${index + 1}`, text });
+          });
         };
         await panel("proposal", selectedModels);
-        if (plan.research.maxRounds > 1) await panel("critique", request.reviewerModels);
+        if (opinions.length && plan.research.maxRounds > 1) await panel("critique", request.reviewerModels);
       }
       const final = await modelCall(request.preferences.model, "synthesis", {
         question: request.question, sources: modelSources, opinions,

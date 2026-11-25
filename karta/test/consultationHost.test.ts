@@ -439,7 +439,7 @@ describe("real consultation host composition", () => {
             costMicros: null, sourceTextTrust: "untrusted_data",
             sources: Array.from({ length: 15 }, (_, i) => ({ sourceId: `r${index}-${i}`,
               url: `https://example.com/${index}-${i}/` + "a".repeat(8000), title: "Titre 🌍".repeat(200),
-              text: "€".repeat(30_000), contentKind: "search_excerpt" as const })) };
+              text: `Passage ${index}-${i} : ` + "€🌍\"\n".repeat(6_000), contentKind: "search_excerpt" as const })) };
         },
         scrape: async () => { throw new Error("not requested"); },
       },
@@ -459,5 +459,38 @@ describe("real consultation host composition", () => {
     expect(Buffer.byteLength(JSON.stringify(stored), "utf8")).toBeLessThan(2_097_152);
     expect(stored?.result?.receipts).toHaveLength(3);
     expect(stored?.result?.sources.every(s => s.truncated)).toBe(true);
+    const excerpts = stored!.result!.sources;
+    const supplied = f.decide.mock.calls[0][0].context.sources as Array<{ id: string; text: string }>;
+    const encodedBytes = (text: string) => Buffer.byteLength(JSON.stringify(text), "utf8");
+    expect(excerpts.reduce((total, source) => total + encodedBytes(source.text), 0)).toBeLessThanOrEqual(16_384);
+    for (const [index, source] of excerpts.entries()) {
+      expect(source.text).toMatch(new RegExp(`^Passage ${Math.floor(index / 15)}-${index % 15} :`));
+      expect(supplied[index].id).toBe(source.id);
+      expect(supplied[index].text).toContain(source.text);
+      expect(encodedBytes(source.text)).toBeLessThanOrEqual(2048);
+      expect(encodedBytes(source.title)).toBeLessThanOrEqual(128);
+      expect(Buffer.from(source.text).toString()).toBe(source.text);
+      expect(result.result!.sources[index].text).toBe(source.text);
+    }
+    expect(await host.status(user, id, new AbortController().signal)).toEqual(result);
+    expect(f.decide).toHaveBeenCalledOnce();
+  });
+  it("reads historical excerpts without restoring unavailable text or splitting Unicode characters", async () => {
+    const f = fixture();
+    const signal = new AbortController().signal;
+    await f.host.consult(user, input, signal);
+    const original = (await f.store.status())!;
+    const legacySource = { id: "S1", sourceId: "old-1", url: "https://example.com/one", provider: "perplexity",
+      retrievedAt: "2026-11-13T00:00:00Z", contentKind: "search_excerpt" as const, verificationStatus: "unverified" as const,
+      title: "t".repeat(511) + "🌍", text: "x".repeat(1999) + "🌍" };
+    f.store.status.mockResolvedValue({ ...original, result: { ...original.result!, citedSourceIds: ["S2"], sources: [
+      legacySource, { ...legacySource, id: "S2", sourceId: "old-2", url: "https://example.com/two", title: "Archive", text: "", truncated: true },
+    ] } });
+    const recovered = (await f.host.status(user, id, signal))!.result!;
+    expect(recovered.sources[0]).toMatchObject({ title: "t".repeat(511), text: "x".repeat(1999), truncated: true });
+    expect(recovered.sources[1]).toMatchObject({ id: "S2", text: "", truncated: true, verificationStatus: "unverified" });
+    expect(recovered.citedSourceIds).toEqual(["S2"]);
+    expect(recovered.verificationStatus).toBe("unverified");
+    expect(f.decide).toHaveBeenCalledOnce();
   });
 });
