@@ -223,6 +223,70 @@ describe("multi-model consultation composition", () => {
     expect(active).toBe(0);
   });
 
+  it("reuses each settled slot and passes proposals to critics in the requested order", async () => {
+    vi.useFakeTimers();
+    const h = harness();
+    const names = MODEL_NAMES.slice(0, 3);
+    const delays = [100, 1, 99];
+    const start = Date.now();
+    const timeline: Array<[string, string, number]> = [];
+    h.state.decide = async ({ phase, name }) => {
+      timeline.push([phase, name, Date.now() - start]);
+      if (phase === "proposal") await new Promise(done => setTimeout(done, delays[names.indexOf(name)]));
+      const summary = phase === "synthesis"
+        ? JSON.stringify({ answer: "Synthèse", citedSourceIds: [], disagreements: [], uncertainties: [] })
+        : name;
+      return { summary, toolCalls: [], requiresApproval: false, mock: false };
+    };
+    h.state.settle = async receipt => {
+      if (receipt.call.kind === "proposal" && receipt.call.model === names[1]) {
+        await new Promise(done => setTimeout(done, 3));
+      }
+    };
+    const running = runModelConsultation(request({ reviewerModels: names.slice(1) }), h.deps);
+    await vi.advanceTimersByTimeAsync(210);
+    expect((await running).status).toBe("complete");
+    expect(timeline).toEqual([
+      ["proposal", names[0], 0], ["proposal", names[1], 0], ["proposal", names[2], 4],
+      ["critique", names[1], 103], ["critique", names[2], 103], ["synthesis", names[0], 103],
+    ]);
+    const proposals = names.map((text, index) => ({ label: `proposal-${index + 1}`, text }));
+    for (const call of h.modelCalls.filter(call => call.phase === "critique")) {
+      expect(call.input.context.opinions).toEqual(proposals);
+    }
+  });
+
+  it("skips empty critiques and synthesizes a partial answer when every proposal is unavailable", async () => {
+    const h = harness();
+    h.state.deny.add("proposal");
+    const result = await runModelConsultation(request({ reviewerModels: MODEL_NAMES.slice(1, 3) }), h.deps);
+    expect(h.reservations.map(call => call.kind)).toEqual(["proposal", "proposal", "proposal", "synthesis"]);
+    expect(h.settlements.map(receipt => receipt.status)).toEqual(["blocked", "blocked", "blocked", "completed"]);
+    expect(h.modelCalls.map(call => call.phase)).toEqual(["synthesis"]);
+    expect(h.modelCalls[0].input.context).toMatchObject({
+      opinions: [], unavailableCalls: ["proposal", "proposal", "proposal"],
+    });
+    expect(result).toMatchObject({ status: "partial", reason: "some_calls_unavailable" });
+  });
+
+  it("closes the queue after a settlement failure while another proposal is in flight", async () => {
+    vi.useFakeTimers();
+    const h = harness();
+    h.state.decide = async ({ name }) => {
+      if (name === MODEL_NAMES[0]) await new Promise(done => setTimeout(done, 10));
+      return { summary: name, toolCalls: [], requiresApproval: false, mock: false };
+    };
+    h.state.settle = async receipt => {
+      if (receipt.call.model === MODEL_NAMES[1]) throw new Error("Settlement unavailable");
+    };
+    const running = runModelConsultation(request({ reviewerModels: MODEL_NAMES.slice(1) }), h.deps);
+    await vi.advanceTimersByTimeAsync(11);
+    expect(await running).toMatchObject({ status: "failed", reason: "accounting_unavailable", answer: null });
+    expect(h.reservations.map(call => call.model)).toEqual(MODEL_NAMES.slice(0, 2));
+    expect(h.modelCalls.map(call => call.name)).toEqual(MODEL_NAMES.slice(0, 2));
+    expect(h.settlements).toHaveLength(2);
+  });
+
   it("does not forward undeclared source metadata to the models or final result", async () => {
     const h = harness();
     h.state.search = async () => {
@@ -234,6 +298,76 @@ describe("multi-model consultation composition", () => {
     expect(result.status).toBe("complete");
     expect(JSON.stringify(result)).not.toContain("PRIVATE-UNDECLARED-METADATA");
     expect(JSON.stringify(h.modelCalls[0].input.context)).not.toContain("PRIVATE-UNDECLARED-METADATA");
+  });
+
+  it.each([18, 32])("shares the excerpt budget across all %i retrieved sources", async count => {
+    const h = harness();
+    h.state.search = async query => {
+      const value = researchResult("perplexity", query);
+      const offset = Number(query);
+      const length = Math.min(12, count - offset);
+      value.sources = Array.from({ length }, (_, index) => ({
+        ...value.sources[0], sourceId: String(offset + index), text: "x".repeat(3000),
+      }));
+      return value;
+    };
+    const queries = count === 18 ? ["0", "12"] : ["0", "12", "24"];
+    const result = await runModelConsultation(request({ research: { queries, urls: [] } }), h.deps);
+    expect(result.status).toBe("complete");
+    expect(result.verificationStatus).toBe("unverified");
+    const supplied = h.modelCalls[0].input.context.sources as Array<{ id: string; text: string; textTruncated: boolean }>;
+    const sizes = supplied.map(source => source.text.length);
+    expect(supplied).toHaveLength(count);
+    expect(sizes.reduce((sum, size) => sum + size, 0)).toBe(32_000);
+    expect(Math.min(...sizes)).toBe(Math.floor(32_000 / count));
+    expect(Math.max(...sizes)).toBe(Math.ceil(32_000 / count));
+    expect(supplied.every(source => source.textTruncated)).toBe(true);
+    expect(result.citedSourceIds).toEqual(supplied.map(source => source.id));
+  });
+
+  it.each(["", " \n\t "])("retains a discovered link but rejects an attribution without a supplied passage", async text => {
+    const h = harness();
+    h.state.search = async () => {
+      const item = researchResult("perplexity");
+      item.sources[0].text = text;
+      return item;
+    };
+    // The fixture cites every supplied ID, including the metadata-only result.
+    const result = await runModelConsultation(request({ research: { queries: ["public"], urls: [] } }), h.deps);
+    expect(result.sources).toMatchObject([{ id: "S1", text, verificationStatus: "unverified" }]);
+    expect(result.status).toBe("failed");
+    expect(result.answer).toBeNull();
+    expect(result.citedSourceIds).toEqual([]);
+  });
+
+  it("preserves useful indentation and complete Unicode characters while reallocating unused capacity", async () => {
+    const h = harness();
+    h.state.search = async () => {
+      const value = researchResult("perplexity");
+      const texts = ["   bref", "\t".repeat(4000), " ".repeat(3500) + "indice", ...Array<string>(17).fill("a" + "🌱".repeat(2000))];
+      value.sources = texts.map((text, index) => ({ ...value.sources[0], sourceId: String(index), text }));
+      return value;
+    };
+    h.state.conclusion = () => JSON.stringify({ answer: "Résultat", citedSourceIds: ["S1", "S3", "S20"], disagreements: [], uncertainties: [] });
+    const result = await runModelConsultation(request({ research: { queries: ["public"], urls: [] } }), h.deps);
+    expect(result.status).toBe("complete");
+    const supplied = h.modelCalls[0].input.context.sources as Array<{ text: string }>;
+    expect(supplied.slice(0, 3).map(source => source.text)).toEqual(["   bref", "", "indice"]);
+    const long = supplied.slice(3).map(source => source.text);
+    expect(long.every(text => text.length > 1800 && !/[\uD800-\uDFFF]/u.test(text))).toBe(true);
+    expect(supplied.reduce((used, source) => used + source.text.length, 0)).toBeGreaterThanOrEqual(31_998);
+  });
+
+  it("keeps the source title inside 512 UTF-16 units without splitting a supplementary character", async () => {
+    const h = harness();
+    h.state.search = async () => {
+      const value = researchResult("perplexity");
+      value.sources[0].title = "x".repeat(511) + "🌱";
+      return value;
+    };
+    const result = await runModelConsultation(request({ research: { queries: ["public"], urls: [] } }), h.deps);
+    expect(result.status).toBe("complete");
+    expect(h.modelCalls[0].input.context.sources).toMatchObject([{ title: "x".repeat(511), titleTruncated: true }]);
   });
 
   it("keeps individual source IDs and bounds text supplied to all consulted models", async () => {

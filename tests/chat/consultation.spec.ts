@@ -113,6 +113,29 @@ for (const kind of ['member', 'unverified'] as const) {
   });
 }
 
+test('separates cited evidence from additional retrieved material in the member view', async ({ page }) => {
+  await openAnalysis(page);
+  const request = await running(page, 'Retrouve les références utilisées.');
+  const operation = operationFixture(request.operationId);
+  const result = operation.result!;
+  result.sources.push({ ...result.sources[0], id: 'source-2', title: 'Document complémentaire',
+    url: 'https://example.com/autre', text: '', truncated: true });
+  await page.evaluate(({ endpoint, operation }) => {
+    window.__chatHarness.pending.find(item => item.key === endpoint)!.respond({ json: { ok: true, operation } });
+  }, { endpoint, operation });
+  const article = panel(page).getByRole('article', { name: 'Résultat de consultation' });
+  await expect(article.getByRole('heading', { name: 'Sources citées (1)' })).toBeVisible();
+  await expect(article.getByRole('link', { name: /Une source publique/ })).toBeVisible();
+  await expect(article.getByRole('link', { name: /Document complémentaire/ })).toHaveCount(0);
+  const more = article.locator('summary', { hasText: 'Sources recueillies sans citation (1)' });
+  await more.focus(); await page.keyboard.press('Enter');
+  await expect(article.getByRole('link', { name: /Document complémentaire/ })).toBeVisible();
+  await expect(article.getByText('Aucun extrait de texte disponible.')).toBeVisible();
+  await expect(article.getByText('Titre ou extrait abrégé.')).toBeVisible();
+  await expect(article.getByText('La vérification indépendante des faits reste à faire.')).toBeVisible();
+  expect(await calls(page, 'consult')).toHaveLength(1);
+});
+
 test('member opts into Conseil IAO and submits one consultation with two distinct reviewers', async ({ page }) => {
   const secondPeer = 'studio/second-reviewer@revision-1';
   const catalog = completeCatalog();
@@ -230,12 +253,12 @@ test('closing and reopening a pending consultation recovers status without resen
   await respond(page, request, 'Réponse tardive de la fenêtre fermée.');
   await catalogue(page);
   await page.getByRole('button', { name: "Ouvrir l'assistant PURA" }).click();
-  await expect(panel(page)).toContainText('Cette demande reste à vérifier.');
+  await expect(panel(page)).toContainText('L’état de cette demande reste à confirmer.');
   await expect(panel(page)).toContainText('Consultation disponible.');
   await expect(panel(page)).not.toContainText('Réponse tardive de la fenêtre fermée.');
   const operation = operationFixture(request.operationId); operation.result!.answer = 'Réponse récupérée par lecture de statut.';
   await queue(page, [{ json: { ok: true, operation } }]);
-  await page.getByRole('button', { name: 'Vérifier le résultat' }).click();
+  await page.getByRole('button', { name: 'Actualiser l’état' }).click();
   await expect(panel(page)).toContainText('Réponse récupérée par lecture de statut.');
   expect(await calls(page, 'consult')).toHaveLength(1);
   expect((await calls(page, 'status'))[0].body.operationId).toBe(request.operationId);
@@ -254,12 +277,12 @@ test('browser reload preserves only the pending UUID after a malformed upstream 
   expect(retained).toEqual({ [`purama.consultation.pending.${OWNER}`]: request.operationId });
   await page.reload();
   await page.getByRole('button', { name: "Ouvrir l'assistant PURA" }).click();
-  await openAnalysis(page); await expect(panel(page)).toContainText('Cette demande reste à vérifier.');
+  await openAnalysis(page); await expect(panel(page)).toContainText('L’état de cette demande reste à confirmer.');
   await expect(panel(page)).toContainText('Consultation disponible.');
   await expect(page.getByRole('textbox', { name: 'Question de consultation' })).toHaveValue('');
   const operation = operationFixture(String(request.operationId));
   await queue(page, [{ json: { ok: true, operation } }]);
-  await page.getByRole('button', { name: 'Vérifier le résultat' }).click();
+  await page.getByRole('button', { name: 'Actualiser l’état' }).click();
   await expect(panel(page)).toContainText('Une réponse utile.');
   expect(await calls(page, 'consult')).toHaveLength(0);
   expect((await calls(page, 'status'))[0].body.operationId).toBe(request.operationId);
@@ -291,7 +314,7 @@ test('account change discards a late answer and does not recover the previous ac
   await expect(panel(page)).toContainText('Consultation disponible.');
   await expect(panel(page)).not.toContainText('Réponse réservée au premier compte.');
   await expect(page.getByRole('textbox', { name: 'Question de consultation' })).toHaveValue('');
-  await expect(page.getByRole('button', { name: 'Vérifier le résultat' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Actualiser l’état' })).toHaveCount(0);
   expect(await calls(page, 'status')).toHaveLength(0);
   expect(await page.evaluate(owner => sessionStorage.getItem(`purama.consultation.pending.${owner}`), OTHER_OWNER)).toBeNull();
 });

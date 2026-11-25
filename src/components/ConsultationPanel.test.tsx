@@ -302,8 +302,8 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
     expect(host.textContent).not.toContain('Nouvelle consultation');
     await act(async () => { root.render(null); }); await render();
     expect(field('Question de consultation').value).toBe('');
-    expect(host.textContent).toContain('Cette demande reste à vérifier.');
-    await click('Vérifier le résultat');
+    expect(host.textContent).toContain('L’état de cette demande reste à confirmer.');
+    await click('Actualiser l’état');
     expect(api.status).toHaveBeenCalledExactlyOnceWith(operationId, expect.any(AbortSignal));
     expect(api.consult).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain('Une réponse utile.');
@@ -312,7 +312,7 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
   it('does not claim that an absent or failed cancellation is complete', async () => {
     sessionStorage.setItem(pendingKey(), OPERATION); api.cancel.mockResolvedValueOnce(null);
     await render(); await click('Arrêter la consultation');
-    expect(host.textContent).toContain('Aucun résultat confirmé');
+    expect(host.textContent).toContain('Aucun résultat reçu');
     expect(host.textContent).not.toContain('Consultation annulée.');
     expect(host.textContent).not.toContain('Nouvelle consultation');
     api.cancel.mockRejectedValueOnce(new Error('secret provider message'));
@@ -330,7 +330,7 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
     expect(signal.aborted).toBe(true);
     expect(field('Question de consultation').value).toBe('');
     expect(host.querySelector('select')).toBeNull();
-    expect(host.textContent).not.toContain('Vérifier le résultat');
+    expect(host.textContent).not.toContain('Actualiser l’état');
     expect(sessionStorage.getItem(pendingKey(OTHER_OWNER))).toBeNull();
     await act(async () => { pending.resolve(operationFixture(request.operationId)); });
     expect(host.textContent).not.toContain('Une réponse utile.');
@@ -341,18 +341,42 @@ describe('ConsultationPanel — actual controls and lifecycle', () => {
     expect(secondApi.consult.mock.calls[0][0].operationId).not.toBe(request.operationId);
   });
 
+  it.each([
+    { total: 0, cited: 0 }, { total: 2, cited: 0 }, { total: 2, cited: 1 }, { total: 2, cited: 2 },
+  ])('shows $cited cited references separately from $total retrieved sources', async ({ total, cited }) => {
+    const operation = operationFixture();
+    const result = operation.result!;
+    const source = result.sources[0];
+    result.sources = Array.from({ length: total }, (_, i) => ({ ...source, id: 'S' + (i + 1),
+      title: 'Référence ' + (i + 1), text: i === 0 ? ' ' : source.text, truncated: i === 0 }));
+    result.citedSourceIds = result.sources.slice(total - cited).map(item => item.id);
+    api.consult.mockResolvedValueOnce(operation);
+    await render(); await fill('Question de consultation', 'Comparer les références.'); await click('Lancer la consultation');
+    const article = host.querySelector('article')!;
+    const additional = article.querySelector('details');
+    expect(article.textContent).toContain('La vérification indépendante des faits reste à faire.');
+    expect(article.textContent?.includes('Aucune citation reliée')).toBe(cited === 0);
+    expect(article.textContent?.includes('Sources citées (' + cited + ')')).toBe(cited > 0);
+    expect([...article.querySelectorAll('a')].filter(link => !link.closest('details')).map(link => link.textContent?.trim()))
+      .toEqual(result.sources.slice(total - cited).map(item => item.id + ' — ' + item.title));
+    expect(additional?.querySelectorAll('a').length ?? 0).toBe(total - cited);
+    expect(additional?.open ?? false).toBe(false);
+    expect(article.textContent?.includes('Aucun extrait de texte disponible.')).toBe(total > 0);
+    expect(article.textContent?.includes('Titre ou extrait abrégé.')).toBe(total > 0);
+  });
+
   it('renders sources and model text as text, includes uncertainty, and distinguishes usage reconciliation', async () => {
     sessionStorage.setItem(pendingKey(), OPERATION);
     const response = operationFixture(OPERATION, 'reconciliation_required');
     response.result!.answer = '<img src=x onerror=alert(1)> réponse';
     response.result!.sources[0].title = '<script>source</script>';
     api.status.mockResolvedValueOnce(response);
-    await render(); await click('Vérifier le résultat');
+    await render(); await click('Actualiser l’état');
     expect(host.textContent).toContain('<img src=x onerror=alert(1)> réponse');
     expect(host.querySelector('script, img')).toBeNull();
     const link = host.querySelector('a');
     expect(link?.href).toBe('https://example.com/source'); expect(link?.rel).toBe('noopener noreferrer');
-    expect(host.textContent).toContain('Sources non vérifiées');
+    expect(host.textContent).toContain('La vérification indépendante des faits reste à faire');
     expect(host.textContent).toContain('Les estimations diffèrent'); expect(host.textContent).toContain('La date reste incertaine');
     expect(host.textContent).toContain('Le suivi des usages doit être rapproché');
     expect(api.consult).not.toHaveBeenCalled();
