@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { isAbsolute, normalize } from "node:path";
 import type { ChefVerificationProfile } from "./verifier.js";
 import { isWorkshopExportPath } from "./workshop-artifact.js";
+import { normalizeChefObservationProfile } from "./observations.js";
 
 export const WORKSHOP_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const WORKSHOP_ID = /^[a-z0-9][a-z0-9-]{0,47}$/;
@@ -83,6 +84,7 @@ export function parseWorkshopProjects(raw = process.env.CHEF_WORKSHOP_PROJECTS_J
         profile.args = p.args as string[];
       }
       if (p.timeoutMs !== undefined) profile.timeoutMs = integer(p.timeoutMs, 1000, 1_200_000);
+      if (p.observation !== undefined) profile.observation = normalizeChefObservationProfile(p.observation);
       return profile;
     });
     const names = verificationProfiles.map(p => p.name);

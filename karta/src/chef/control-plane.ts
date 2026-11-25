@@ -5,6 +5,7 @@ import { ChefProcessStopUnconfirmedError } from "./process.js";
 import type { ChefClaimUsage, ChefControlPlane, ChefEvidenceClaim, ChefRuntimeTask } from "./supervisor.js";
 import { normalizeChefRequirementKeys, type ChefVerificationEvidence } from "./verifier.js";
 import { normalizeChefCapabilitySelection } from "./capability-selection.js";
+import { CHEF_VERIFICATION_FEEDBACK_PROFILE, verificationFeedbackFromRow, type ChefVerificationFeedback } from "./verification-feedback.js";
 
 export interface SupabaseChefControlPlaneOptions {
   repo: string;
@@ -40,6 +41,19 @@ export class SupabaseChefControlPlane implements ChefControlPlane {
   constructor(private readonly options: SupabaseChefControlPlaneOptions) {
     if (!options.repo || !options.defaultCwd) throw new Error("Métadonnées CHEF incomplètes");
     if (options.defaultVerificationProfiles.length === 0) throw new Error("Profils de vérification par défaut requis");
+  }
+
+  async loadVerificationFeedback(task: ChefRuntimeTask): Promise<ChefVerificationFeedback | null> {
+    if (task.attempt <= 1 || task.capabilitySelection) return null;
+    const result = await supabase.from("chef_evidence")
+      .select("task_id,attempt,fencing_token,worker_id,sha256,payload")
+      .eq("task_id", task.id).eq("attempt", task.attempt - 1).eq("kind", "other")
+      .is("requirement_id", null).eq("payload->>profile", CHEF_VERIFICATION_FEEDBACK_PROFILE)
+      .order("created_at", { ascending: false }).limit(2);
+    assertRpc(result.error, "chef_verification_feedback");
+    if (!result.data?.length) return null;
+    if (result.data.length !== 1) throw new Error("Retour de vérification ambigu");
+    return verificationFeedbackFromRow(result.data[0], task);
   }
 
   async housekeeping(missionId: string): Promise<void> {

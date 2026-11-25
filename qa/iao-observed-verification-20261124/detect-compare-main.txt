@@ -1,0 +1,39 @@
+
+  GitNexus Detect Changes (1.6.12)
+{"level":40,"time":1795556120829,"name":"gitnexus","msg":"GitNexus: FTS extension unavailable; continuing without FTS features. load-only policy (no install attempted); LOAD fts failed: Binder exception: Extension: fts is an official extension and has not been installed. You can install it by: install fts."}
+LISTING CAPPED: the changed-symbol list was capped, so it does not name every changed symbol. The counts and risk level still cover all of them.
+
+Changes: 2989 files, 1010 symbols
+Affected processes: 83
+Risk level: critical
+
+Changed symbols:
+  TypeAlias ChefProvider → karta/src/chef/brief.ts
+  TypeAlias ChefAccessMode → karta/src/chef/brief.ts
+  Interface ChefBriefRequirement → karta/src/chef/brief.ts
+  Property key → karta/src/chef/brief.ts
+  Property description → karta/src/chef/brief.ts
+  Property critical → karta/src/chef/brief.ts
+  Interface ChefBriefTask → karta/src/chef/brief.ts
+  Property key → karta/src/chef/brief.ts
+  Property title → karta/src/chef/brief.ts
+  Property instructions → karta/src/chef/brief.ts
+  Property dependsOn → karta/src/chef/brief.ts
+  Property requirementKeys → karta/src/chef/brief.ts
+  Property provider → karta/src/chef/brief.ts
+  Property accessMode → karta/src/chef/brief.ts
+  Property scopeKey → karta/src/chef/brief.ts
+... and 995 more
+
+Affected execution flows:
+  • ProjectLoop → Cleanup (10 steps) — changed: captureWorkshopHead, git, projectLoop, assertCleanWorkshop, append, requestStop, checkStopped, fail, cleanup, runChefProcess
+  • ProjectLoop → GroupState (9 steps) — changed: captureWorkshopHead, git, projectLoop, assertCleanWorkshop, append, requestStop, checkStopped, groupState, runChefProcess
+  • ProjectLoop → ChefProcessStopUnconfirmedError (8 steps) — changed: ChefProcessStopUnconfirmedError, captureWorkshopHead, git, projectLoop, assertCleanWorkshop, append, requestStop, runChefProcess
+  • ProjectLoop → SignalGroup (8 steps) — changed: captureWorkshopHead, git, projectLoop, assertCleanWorkshop, append, requestStop, signalGroup, runChefProcess
+  • CreateChefMission → Record (6 steps) — changed: normalizeChefCapabilitySelection, record, hashChefBrief, normalizeChefBrief, validateChefBrief, createChefMission
+  • Main → Text (6 steps) — changed: main, checkWorkshopRuntime, catalogue, parseWorkshopProjects, strings, text
+  • CreateChefMission → NonEmpty (5 steps) — changed: hashChefBrief, normalizeChefBrief, validateChefBrief, nonEmpty, createChefMission
+  • CreateChefMission → UniqueStrings (5 steps) — changed: normalizeChefBrief, validateChefBrief, ownedPaths, uniqueStrings, createChefMission
+  • CreateChefMission → ExactKeys (5 steps) — changed: normalizeChefCapabilitySelection, exactKeys, normalizeChefBrief, validateChefBrief, createChefMission
+  • CreateChefMission → Identifiers (5 steps) — changed: normalizeChefCapabilitySelection, identifiers, normalizeChefBrief, validateChefBrief, createChefMission
+... and 73 more

@@ -1,0 +1,96 @@
+{
+  "target": {
+    "id": "Class:karta/src/chef/control-plane.ts:SupabaseChefControlPlane",
+    "name": "SupabaseChefControlPlane",
+    "type": "Class",
+    "filePath": "karta/src/chef/control-plane.ts"
+  },
+  "direction": "upstream",
+  "impactedCount": 5,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "ChefControlPlane is an interface with 1 implementation and 1 interface-level consumer; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 0,
+    "dispatchBoundary": 2,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 4,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 4,
+    "2": 1
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Chef",
+      "hits": 2,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:karta/src/chef/worker-main.ts",
+        "name": "worker-main.ts",
+        "filePath": "karta/src/chef/worker-main.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:karta/src/chef/workshop-runtime.ts",
+        "name": "workshop-runtime.ts",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:karta/src/chef/worker-main.ts:main",
+        "name": "main",
+        "filePath": "karta/src/chef/worker-main.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:karta/src/chef/workshop-runtime.ts:defaultDependencies.createWorker@227:4#2",
+        "name": "createWorker",
+        "filePath": "karta/src/chef/workshop-runtime.ts",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:karta/src/chef/workshop-main.ts",
+        "name": "workshop-main.ts",
+        "filePath": "karta/src/chef/workshop-main.ts",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ]
+  }
+}

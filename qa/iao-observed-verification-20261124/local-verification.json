@@ -1,0 +1,479 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-24T21:35:08.603350+00:00",
+  "baseSha": "3c6d6c3a669d481b7c9bada7800c4721c0bb94de",
+  "sourceSha256": {
+    "AGENTS.md": "3b7e3a49e31c26fa5ab87fedb8f91b8cd52fc1141253beb83921e0fc5492b949",
+    "docs/iao-observed-verification.md": "e6c71706c7fc1ea798e420bc50690cefa3334d8d30d930e59f56605982a70616",
+    "karta/src/chef/codex-cli-driver.ts": "b8d9d16adceded9889f3c041f408d2ad9685e16bbf1b8cc9dd7f91c769b82b44",
+    "karta/src/chef/control-plane.ts": "528a404dadb12917ddf8f4e56e44530d233c3a87919dc5aa80116a4fde30c353",
+    "karta/src/chef/observations.ts": "4350f03ae2091a9c8d8fadd7646c1b256b3da6957b078772ab46b68ef867c3c8",
+    "karta/src/chef/supervisor.ts": "54ac9ce09416a44f40f6b2fad2919d25e1802b9600d14ee9f664b9a0de27b97d",
+    "karta/src/chef/verification-feedback.ts": "0bb8672325f18c3ea617c131496117682e94adf13b009376b326a127a18cac72",
+    "karta/src/chef/verifier.ts": "142dbcfc33ec6b65a47a40b5303954818f3164ea8cec11c1f7b6f2b03971b672",
+    "karta/src/chef/workshop-config.ts": "5c9c2a149c6d496afc663f8a066af7af3f2fe1b911d7e25b0f94821f05dd3346",
+    "karta/src/claude/assistant-policy.ts": "96007c92a42467b963e9e2766fc0540dab5f1c8e2030c3e74eef504b2feaeecd",
+    "karta/src/integrations/localComputeFabricProvider.ts": "7605222616540cfaacd477f3087b95e21a79fbcd6223c6a26fec3191e7d5f35e",
+    "karta/test/assistantPolicy.test.ts": "d55d7cb6a81c7bf9d04a599e7261becef676ccea5ead75d0712e660f1d2b04bc",
+    "karta/test/chefCodexCliDriver.test.ts": "a2c08226f129908337f50272b59314a98359e725e916be61902598f8f3c698e2",
+    "karta/test/chefCorrectionLoop.test.ts": "04c035c560d06d5881e537dd582a111c4d39fdf02ac1166dd2f0353dfd56985a",
+    "karta/test/chefObservedVerification.test.ts": "6b592783755ebee938dc1b46cc40d751a8a0f43e4576745131b3360ba87e2697",
+    "karta/test/chefVerificationFeedback.test.ts": "334742c03293407e606a95c66c32fb0d040399791545162a6820108b6380fce4",
+    "karta/test/chefWorkshopConfig.test.ts": "1cae5412e9c37c41f2d47fbb0e2767d6c9080476a7de449b032ed366b3323c60",
+    "karta/test/localComputeFabricProvider.test.ts": "631352dc00a1add6b889ff982c48e5ba22e83d17a0d7be3b3e57103100de2e5e"
+  },
+  "commands": [
+    {
+      "label": "karta-typecheck-final",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 137,
+      "durationSeconds": 4.47
+    },
+    {
+      "label": "karta-build-final",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 4.62
+    },
+    {
+      "label": "chef-final-consolidated",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "test/chefVerificationFeedback.test.ts",
+        "test/chefObservedVerification.test.ts",
+        "test/chefCorrectionLoop.test.ts",
+        "test/chefVerifier.test.ts",
+        "test/chefSupervisor.test.ts",
+        "test/chefSupervisorCancellation.test.ts",
+        "test/chefVerificationGitIntegration.test.ts",
+        "test/chefEvidenceAdapter.test.ts",
+        "test/chefBudgetAccounting.test.ts",
+        "test/chefCapabilityRuntime.test.ts",
+        "test/chefWorkshopConfig.test.ts",
+        "test/chefWorkshopService.test.ts",
+        "test/assistantPolicy.test.ts",
+        "test/chefCodexCliDriver.test.ts",
+        "--maxWorkers=1",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/workspace/scratch/a042d0274492/chef-final-consolidated.json"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 11.25
+    },
+    {
+      "label": "karta-typecheck-final-serial",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 9.8
+    }
+  ],
+  "finalFocused": {
+    "sourceReport": "chef-final-consolidated.json",
+    "assertions": {
+      "passed": 400
+    },
+    "suites": [
+      {
+        "file": "assistantPolicy.test.ts",
+        "assertions": {
+          "passed": 63
+        },
+        "failures": []
+      },
+      {
+        "file": "chefBudgetAccounting.test.ts",
+        "assertions": {
+          "passed": 12
+        },
+        "failures": []
+      },
+      {
+        "file": "chefCapabilityRuntime.test.ts",
+        "assertions": {
+          "passed": 31
+        },
+        "failures": []
+      },
+      {
+        "file": "chefCodexCliDriver.test.ts",
+        "assertions": {
+          "passed": 35
+        },
+        "failures": []
+      },
+      {
+        "file": "chefCorrectionLoop.test.ts",
+        "assertions": {
+          "passed": 4
+        },
+        "failures": []
+      },
+      {
+        "file": "chefEvidenceAdapter.test.ts",
+        "assertions": {
+          "passed": 20
+        },
+        "failures": []
+      },
+      {
+        "file": "chefObservedVerification.test.ts",
+        "assertions": {
+          "passed": 24
+        },
+        "failures": []
+      },
+      {
+        "file": "chefSupervisor.test.ts",
+        "assertions": {
+          "passed": 21
+        },
+        "failures": []
+      },
+      {
+        "file": "chefSupervisorCancellation.test.ts",
+        "assertions": {
+          "passed": 1
+        },
+        "failures": []
+      },
+      {
+        "file": "chefVerificationFeedback.test.ts",
+        "assertions": {
+          "passed": 67
+        },
+        "failures": []
+      },
+      {
+        "file": "chefVerificationGitIntegration.test.ts",
+        "assertions": {
+          "passed": 14
+        },
+        "failures": []
+      },
+      {
+        "file": "chefVerifier.test.ts",
+        "assertions": {
+          "passed": 4
+        },
+        "failures": []
+      },
+      {
+        "file": "chefWorkshopConfig.test.ts",
+        "assertions": {
+          "passed": 43
+        },
+        "failures": []
+      },
+      {
+        "file": "chefWorkshopService.test.ts",
+        "assertions": {
+          "passed": 61
+        },
+        "failures": []
+      }
+    ]
+  },
+  "beforeImplementation": {
+    "observation": {
+      "sourceReport": "observed-red.json",
+      "assertions": {
+        "failed": 18,
+        "passed": 3
+      },
+      "suites": [
+        {
+          "file": "chefObservedVerification.test.ts",
+          "assertions": {
+            "failed": 18,
+            "passed": 3
+          },
+          "failures": [
+            {
+              "name": "CHEF observed final artifact binds an executed observation to the actual artifact and configured checks",
+              "error": "AssertionError: expected undefined to match object { artifactPath: 'result.txt', …(2) }"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with missing audio observation",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with wrong modality",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with unobserved audio",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with observed defect",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with sample instead of full coverage",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with no coverage",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with duplicate observations",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with unknown check",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with stale artifact hash",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with unversioned report",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses command exit zero with empty observation method",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact refuses an artifact modified during the observation",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact requires every configured modality on the same artifact",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact retains sampled coverage without presenting it as full coverage",
+              "error": "AssertionError: expected undefined to match object { Object (observations) }"
+            },
+            {
+              "name": "CHEF observed final artifact does not accept a different artifact through a symlink",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact fails closed for a missing final artifact",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact enforces the configured artifact read budget",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            }
+          ]
+        }
+      ]
+    },
+    "correctionLoop": {
+      "sourceReport": "correction-red.json",
+      "assertions": {
+        "failed": 3
+      },
+      "suites": [
+        {
+          "file": "chefCorrectionLoop.test.ts",
+          "assertions": {
+            "failed": 3
+          },
+          "failures": [
+            {
+              "name": "CHEF durable correction loop with a real repository and verifier command feeds the observed failed criterion into the next attempt and verifies the corrected commit",
+              "error": "AssertionError: expected [] to have a length of 1 but got +0"
+            },
+            {
+              "name": "CHEF durable correction loop with a real repository and verifier command blocks a foreign commit between attempts before starting the correction driver",
+              "error": "AssertionError: expected [] to have a length of 1 but got +0"
+            },
+            {
+              "name": "CHEF durable correction loop with a real repository and verifier command stops after an unchanged output fails the same observed criterion again",
+              "error": "AssertionError: expected [] to have a length of 1 but got +0"
+            }
+          ]
+        }
+      ]
+    },
+    "lateArtifactMutation": {
+      "sourceReport": "observed-late-mutation-red.json",
+      "assertions": {
+        "skipped": 22,
+        "failed": 2
+      },
+      "suites": [
+        {
+          "file": "chefObservedVerification.test.ts",
+          "assertions": {
+            "skipped": 22,
+            "failed": 2
+          },
+          "failures": [
+            {
+              "name": "CHEF observed final artifact invalidates an earlier observation when a later profile can rewrite its artifact",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            },
+            {
+              "name": "CHEF observed final artifact invalidates an earlier observation when a later profile can delete its artifact",
+              "error": "AssertionError: expected true to be false // Object.is equality"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "localFabricAssembly": {
+    "sourceReport": "policy-tests-local-assembly.json",
+    "assertions": {
+      "passed": 1,
+      "skipped": 12
+    },
+    "suites": [
+      {
+        "file": "localComputeFabricProvider.test.ts",
+        "assertions": {
+          "passed": 1,
+          "skipped": 12
+        },
+        "failures": []
+      }
+    ]
+  },
+  "environmentLimits": {
+    "fabric": {
+      "exitCode": 1,
+      "reason": "listen EPERM for Unix sockets before transport; not a provider execution",
+      "report": {
+        "sourceReport": "policy-tests.json",
+        "assertions": {
+          "passed": 101,
+          "failed": 10
+        },
+        "suites": [
+          {
+            "file": "assistantPolicy.test.ts",
+            "assertions": {
+              "passed": 63
+            },
+            "failures": []
+          },
+          {
+            "file": "chefCodexCliDriver.test.ts",
+            "assertions": {
+              "passed": 35
+            },
+            "failures": []
+          },
+          {
+            "file": "localComputeFabricProvider.test.ts",
+            "assertions": {
+              "passed": 3,
+              "failed": 10
+            },
+            "failures": [
+              {
+                "name": "local compute fabric provider accepts the strict local response contract",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-wOOfL2/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider fails closed when the daemon does not attest local-only execution and accepted caps",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-glJwze/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-rQAQqY/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-aoMCkR/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-FEGcir/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-moaWul/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-j5i4YM/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider rejects malformed or over-disclosing responses",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-o958U7/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider enforces one absolute deadline even while the provider streams",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-Vy4feR/fabric.sock"
+              },
+              {
+                "name": "local compute fabric provider bounds the accumulated response",
+                "error": "Error: listen EPERM: operation not permitted /tmp/iao-fabric-QKfXAs/fabric.sock"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "sql": {
+      "exitCode": 1,
+      "reason": "Three worker forks terminated with SIGKILL before assertions; pending cases are not passes",
+      "report": {
+        "sourceReport": "chef-sql-regression.json",
+        "assertions": {
+          "pending": 66
+        },
+        "suites": [
+          {
+            "file": "chefBudgetAdmission.test.ts",
+            "assertions": {
+              "pending": 18
+            },
+            "failures": []
+          },
+          {
+            "file": "chefEvidenceFreshness.test.ts",
+            "assertions": {
+              "pending": 31
+            },
+            "failures": []
+          },
+          {
+            "file": "chefEvidenceGate.test.ts",
+            "assertions": {
+              "pending": 17
+            },
+            "failures": []
+          }
+        ]
+      }
+    },
+    "typecheckRetry": "Initial concurrent typecheck killed with exit137; serial retry on same source exited0. Earlier heap384 attempt exhausted V8 heap.",
+    "gitnexus": "Scoped index, FTS disabled, truncated traces; full indexing exceeded resources. See scope and logs."
+  },
+  "notEstablished": [
+    "Live model compliance",
+    "Real audiovisual perceptual observer quality",
+    "Production deployment",
+    "Automatic refresh of unrelated clients or sessions"
+  ],
+  "reviewCorrections": [
+    "Rehash all observed artifacts after later profiles, including ignored exports",
+    "Canonicalize valid uppercase commit SHA",
+    "Compare failed profiles and observation IDs independent of ordering"
+  ],
+  "retainedSafetyBoundary": "Only immediately preceding generation may supply feedback; no historical checkpoint jump over interrupted attempts."
+}
