@@ -231,7 +231,6 @@ class Preparation:
                            ("abi", "ro.product.cpu.abi"),
                            ("fingerprint", "ro.build.fingerprint")):
             self.run("identity/" + name, ["shell", "getprop", prop])
-        self.run("identity/phone-help", ["shell", "cmd", "phone", "help"])
         self.snapshot("observed" if inspect_only else "before")
         if inspect_only:
             self.receipt.update(status="OBSERVED", reason="read_only_diagnostics_collected")

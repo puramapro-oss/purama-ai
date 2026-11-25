@@ -1,0 +1,222 @@
+{
+  "phase": "remove-documentary-help-gate",
+  "recordedAt": "2026-11-25T22:48:54.138546+00:00",
+  "parentCommit": "337dcdd1ee7d47999bdc8175f251d2032636a159",
+  "parentTree": "a3e5182118d1c4fe365a02d3d10001936e04c26a",
+  "localParent": "82af8927c7f38364ae4ab26e464a8871bcb64db4",
+  "failure": {
+    "command": "adb -s emulator-5554 shell cmd phone help",
+    "exitCode": 255,
+    "stdoutBytes": 16019,
+    "stderrBytes": 0,
+    "mutationAttempted": false,
+    "observerInvoked": false
+  },
+  "change": "Remove documentary help from the mandatory preparation path. No acceptance of nonzero exit codes, no change to radio controls or offline observer.",
+  "primarySource": "https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/modules/utils/BasicShellCommandHandler.java",
+  "sourceNote": "handleDefaultCommands calls onHelp then returns -1; the observed runtime help exits255. This source supports the command behavior, not a general emulator equivalence.",
+  "sourceSha256": {
+    "mobile/scripts/prepare-android-offline.py": "0ec00388807ebd481bb9be50f8e935aa5274f61c0b7001258cde5189420ee7e6",
+    "mobile/tests/watch-native/offline-preparation.test.cjs": "1edea7d2e4e02f92cfebf78749552b055c4f655941f8b2b050ca0b83bc3b2b00"
+  },
+  "regression": {
+    "fixture": "Existing synthetic help emits ordinary help and exits255 as observed in CI.",
+    "before": {
+      "command": "node --test --test-name-pattern='synthetic preparation|read-only inspection reports' mobile/tests/watch-native/offline-preparation.test.cjs",
+      "exitCode": 1,
+      "tests": 2,
+      "pass": 0,
+      "fail": 2,
+      "log": "local/quality-phone-help-red.log"
+    },
+    "after": {
+      "command": "node --test mobile/tests/watch-native/offline-preparation.test.cjs mobile/tests/watch-native/offline-network.test.cjs",
+      "exitCode": 0,
+      "tests": 43,
+      "pass": 43,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 8633.809796,
+      "log": "local/quality-phone-help-green.log"
+    }
+  },
+  "syntax": {
+    "pythonAstParse": true
+  },
+  "impact": {
+    "risk": "CRITICAL",
+    "partial": true,
+    "exactUidExitCode": 1,
+    "note": "Ambiguous execute lookup followed by UID produced a broad cross-language graph. User warned before edits. Manual direct references: Preparation.execute called by main; helper called by both native qualification launchers. The fakeAdb const has no resolved graph callers; its use in execute is directly verified. No absent-edge safety claim."
+  },
+  "artifactMetadata": {
+    "repository": "puramapro-oss/purama-ai",
+    "headSha": "337dcdd1ee7d47999bdc8175f251d2032636a159",
+    "checkoutMergeSha": "d0015c928eaed945b499376229503f34af981544",
+    "treeSha": "a3e5182118d1c4fe365a02d3d10001936e04c26a",
+    "mergeParents": [
+      "42d508b46dc7e7cda7efe3c6bfd4396450afedef",
+      "337dcdd1ee7d47999bdc8175f251d2032636a159"
+    ],
+    "runId": 45715335512,
+    "jobId": 139560003836,
+    "artifactId": 15069317970,
+    "artifactBytes": 15431,
+    "artifactSha256": "3a268b1fdfadad3ba965d55f392f068f6b94a86e78301d63945d517b77b48679",
+    "digestVerified": true,
+    "artifactUrl": "https://github.com/puramapro-oss/purama-ai/actions/runs/45715335512/artifacts/15069317970",
+    "artifactMembers": 26,
+    "files": [
+      {
+        "path": "checkout.txt",
+        "bytes": 82,
+        "sha256": "3f54af6d814a7f7e6df01e7ee182a59f9be406924ee22703355308a6f1276ca2"
+      },
+      {
+        "path": "final-state/network-preparation/identity/abi.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "emulator-version.txt",
+        "bytes": 655,
+        "sha256": "d678ca7fa00eee8fd6241663550b9625d4f31545c917b35f5448ce2693d27bf4"
+      },
+      {
+        "path": "final-state/network-preparation/identity/abi.txt",
+        "bytes": 7,
+        "sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62"
+      },
+      {
+        "path": "final-state/network-preparation/identity/api.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/emulator.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/api.txt",
+        "bytes": 3,
+        "sha256": "90d7ec0f0acef104d8b6252794295f661a0149634868d02a1ae0c358099638f5"
+      },
+      {
+        "path": "final-state/network-preparation/identity/emulator.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "final-state/network-preparation/identity/fingerprint.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/fingerprint.txt",
+        "bytes": 82,
+        "sha256": "633fbfc3b92b012914165717ce367282664c75ad9f6e533b4a1ad6e2418ec93a"
+      },
+      {
+        "path": "final-state/network-preparation/identity/phone-help.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "final-state/network-preparation/identity/phone-help.txt",
+        "bytes": 16019,
+        "sha256": "b44a9d771f803adc755d18ebe5d635d231eb9c4f70b14715e7a0f5431aa29006"
+      },
+      {
+        "path": "final-state/network-preparation/receipt.json",
+        "bytes": 3894,
+        "sha256": "51490c897b182b7d66ffbf7f3603d6c928857a749a4d767cc4779cb793dd80e8"
+      },
+      {
+        "path": "network-preparation/identity/abi.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/abi.txt",
+        "bytes": 7,
+        "sha256": "aaf631698ae5160ceb04a97681a14887fdcab47cd6e0f163c87485b3b1340b62"
+      },
+      {
+        "path": "network-preparation/identity/api.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/emulator.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/api.txt",
+        "bytes": 3,
+        "sha256": "90d7ec0f0acef104d8b6252794295f661a0149634868d02a1ae0c358099638f5"
+      },
+      {
+        "path": "network-preparation/identity/emulator.txt",
+        "bytes": 2,
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      {
+        "path": "network-preparation/identity/fingerprint.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/fingerprint.txt",
+        "bytes": 82,
+        "sha256": "633fbfc3b92b012914165717ce367282664c75ad9f6e533b4a1ad6e2418ec93a"
+      },
+      {
+        "path": "network-preparation/identity/phone-help.stderr.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "network-preparation/identity/phone-help.txt",
+        "bytes": 16019,
+        "sha256": "b44a9d771f803adc755d18ebe5d635d231eb9c4f70b14715e7a0f5431aa29006"
+      },
+      {
+        "path": "network-preparation/receipt.json",
+        "bytes": 3890,
+        "sha256": "4e28fa19e684eb530b9c54e0f6f0c52660a82f193ea728456aa6700f3eac4358"
+      },
+      {
+        "path": "run-id.txt",
+        "bytes": 37,
+        "sha256": "92b64ef1279c3a94f5bf6dda0e75db7a84b108347b424e0101cf8bb798b6203a"
+      },
+      {
+        "path": "system-image-source.properties",
+        "bytes": 357,
+        "sha256": "809a6f5103c048607257f03f18e22dd740137e9009c99d4a496de846b6ee3412"
+      }
+    ],
+    "commandStreamsVerified": 20,
+    "failedCommand": "adb -s emulator-5554 shell cmd phone help",
+    "commandExitCode": 255,
+    "stdoutBytes": 16019,
+    "stderrBytes": 0,
+    "mutationsAttempted": false,
+    "offlineObserverInvoked": false,
+    "fullAndroidConclusion": "skipped",
+    "syntheticTests": {
+      "tests": 43,
+      "pass": 43,
+      "fail": 0
+    }
+  },
+  "evidenceZipSha256": "4b9f2791e2a6635a9bb7ff75754fc093af63d308d25fdf78a9fe3fb77c96cb2c",
+  "nativeReception": "NON TESTÉ for the corrected helper until the next real CI. The previous run validates the headless version probe but has no phone/isub/radio state snapshots.",
+  "independentReview": {
+    "reviewer": "qualite_routage_iao",
+    "status": "PASS",
+    "scope": "Targeted source diff, received help streams and red/green logs; no tests rerun; no radio acceptance weakened; real CI pending."
+  }
+}

@@ -88,3 +88,25 @@ Le scope et la répartition des fichiers sont dans `scope.json`. `evidence.zip`
 préserve les preuves sélectionnées et les analyses ; `qualification.json`
 relie leurs empreintes aux sources contrôlées. Le document IAO existant conserve
 séparément la réconciliation des décisions utilisateur et des composants natifs.
+
+### Réception de la commande d’aide et correction ciblée
+
+Le run `45715335512` du commit `337dcdd1ee7d47999bdc8175f251d2032636a159`
+a franchi le relevé de version sans fenêtre : émulateur 37.3.10.0 et image
+API35/google_apis/x86_64, révision 9. Il s’arrête ensuite sur `cmd phone help`,
+qui émet 16 019 octets d’aide normale, sans stderr, puis retourne 255. Aucun
+réglage n’a été changé et l’observateur n’a pas démarré. Le checkout de fusion
+`d0015c928eaed945b499376229503f34af981544` porte bien l’arbre `a3e51821`.
+
+L’aide documentaire est retirée du chemin obligatoire. Le refus des erreurs des
+autres commandes, les contrôles radio et l’observateur demeurent identiques.
+La fixture existante reproduit désormais le retour 255 observé : les deux cas
+fonctionnels ciblés échouent avant la correction, puis les 43 tests réussissent
+après, sans cas ignoré. La revue du graphe a signalé un impact CRITICAL partiel
+sur le nom générique `execute` ; les appels directs ont aussi été inspectés.
+
+Le reçu `ci-help-failure.json` et l’archive `ci-help-failure.zip` lient les sources,
+le rouge/vert et les pièces exactes de ce passage. Ils ne qualifient pas encore
+la préparation réseau réelle de la nouvelle version. La source SDK35
+[BasicShellCommandHandler](https://android.googlesource.com/platform/prebuilts/fullsdk/sources/+/dc3f885ebe8ddc75bd9cf2d567eef4d1ed433a09/android-35/com/android/modules/utils/BasicShellCommandHandler.java)
+explique ce retour après l’affichage de l’aide.

@@ -44,7 +44,7 @@ elif args[:2]==['shell','getprop']:
  props={'ro.kernel.qemu':plan.get('qemu','1'),'ro.build.version.sdk':'35','ro.product.cpu.abi':'x86_64','ro.build.fingerprint':'synthetic-api35-fingerprint'}
  sys.stdout.write(props[args[2]]+'\\n')
 elif args==['shell','cmd','phone','help']:
- sys.stdout.write('Synthetic phone help: data enable/disable\\n')
+ sys.stdout.write('Synthetic phone help: data enable/disable\\n');sys.exit(255)
 elif args==['shell','dumpsys','isub']:
  sys.stdout.write(plan.get('isub','SubscriptionManagerService:\\nActive modem count=2\\nLogical SIM slot 0: subId=1\\nLogical SIM slot 1: subId=2\\ndefaultDataSubId=1\\nactiveDataSubId=1\\nareAllSubscriptionsLoaded=true\\n'))
 elif args==['shell','dumpsys','phone']:
